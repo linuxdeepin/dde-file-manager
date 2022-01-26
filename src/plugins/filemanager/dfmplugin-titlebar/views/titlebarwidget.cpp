@@ -124,7 +124,12 @@ void TitleBarWidget::initConnect()
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
-    connect(crumbBar, &CrumbBar::hideAddressBar, addressBar, &AddressBar::hide);
+    connect(crumbBar, &CrumbBar::showAddressBar, addressBar, &AddressBar::setText);
+    connect(crumbBar, &CrumbBar::hideAddressBar, this, [this](bool cd) {
+        addressBar->hide();
+        if (cd)
+            TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
+    });
     connect(crumbBar, &CrumbBar::selectedUrl, this, [this](const QUrl &url) {
         TitleBarEventCaller::sendCd(this, url);
     });
@@ -153,6 +158,14 @@ void TitleBarWidget::showAddrsssBar(const QUrl &url)
     addressBar->show();
     addressBar->setFocus();
     addressBar->setCurrentUrl(url);
+}
+
+void TitleBarWidget::showAddressBar(const QString &text)
+{
+    crumbBar->hide();
+    addressBar->show();
+    addressBar->setFocus();
+    addressBar->setText(text);
 }
 
 void TitleBarWidget::showCrumbBar()

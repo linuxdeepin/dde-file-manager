@@ -45,17 +45,18 @@ public:
     virtual ~CrumbBar() override;
 
     CrumbInterface *controller() const;
+    QUrl lastUrl() const;
 
 Q_SIGNALS:
-    void hideAddressBar();
+    void showAddressBar(const QString &text);
+    void hideAddressBar(bool cd);
     void selectedUrl(const QUrl &url);
     void editUrl(const QUrl &url);
 
 public Q_SLOTS:
     void onCustomContextMenu(const QPoint &point);
     void onUrlChanged(const QUrl &url);
-    void onHideAddressBar();
-    void onKeepAddressBar();
+    void onKeepAddressBar(const QUrl &url);
     void onHideAddrAndUpdateCrumbs(const QUrl &url);
 
 protected:

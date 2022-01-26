@@ -42,6 +42,7 @@
 #include <QClipboard>
 #include <QPushButton>
 #include <QMouseEvent>
+#include <QUrlQuery>
 
 DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -131,7 +132,7 @@ void CrumbBarPrivate::updateController(const QUrl &url)
             crumbController = new CrumbInterface;
         }
         crumbController->setParent(q);
-        QObject::connect(crumbController, &CrumbInterface::hideAddressBar, q, &CrumbBar::onHideAddressBar);
+        QObject::connect(crumbController, &CrumbInterface::hideAddressBar, q, &CrumbBar::hideAddressBar);
         QObject::connect(crumbController, &CrumbInterface::keepAddressBar, q, &CrumbBar::onKeepAddressBar);
         QObject::connect(crumbController, &CrumbInterface::hideAddrAndUpdateCrumbs, q, &CrumbBar::onHideAddrAndUpdateCrumbs);
     }
@@ -274,6 +275,16 @@ CrumbInterface *CrumbBar::controller() const
     return d->crumbController;
 }
 
+QUrl CrumbBar::lastUrl() const
+{
+    if (!d->lastUrl.isEmpty() && d->lastUrl.isValid()) {
+        return d->lastUrl;
+    } else {
+        QString homePath { StandardPaths::location(StandardPaths::kHomePath) };
+        return QUrl::fromLocalFile(homePath);
+    }
+}
+
 void CrumbBar::mousePressEvent(QMouseEvent *event)
 {
     d->clickedPos = event->globalPos();
@@ -395,19 +406,16 @@ void CrumbBar::onUrlChanged(const QUrl &url)
         d->crumbController->crumbUrlChangedBehavior(url);
 }
 
-void CrumbBar::onHideAddressBar()
+void CrumbBar::onKeepAddressBar(const QUrl &url)
 {
-    emit hideAddressBar();
-}
-
-void CrumbBar::onKeepAddressBar()
-{
-    // TODO(zhangs): impl me!
+    QUrlQuery query { url.query() };
+    QString searchKey { query.queryItemValue("keyword", QUrl::FullyDecoded) };
+    emit showAddressBar(searchKey);
 }
 
 void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
 {
-    emit hideAddressBar();
+    emit hideAddressBar(false);
 
     d->clearCrumbs();
 
@@ -417,6 +425,7 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
         return;
     }
 
+    d->lastUrl = url;
     QList<CrumbData> &&crumbDataList = d->crumbController->seprateUrl(url);
 
     // create QStandardItem by crumb data

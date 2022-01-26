@@ -55,6 +55,7 @@ class CrumbBarPrivate
     QHBoxLayout *crumbBarLayout;
     QPoint clickedPos;
     bool clickableAreaEnabled { false };
+    QUrl lastUrl;
 
     CrumbInterface *crumbController { nullptr };
 

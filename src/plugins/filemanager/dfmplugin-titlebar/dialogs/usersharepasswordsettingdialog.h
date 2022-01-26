@@ -20,53 +20,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef CONNECTTOSERVERDIALOG_H
-#define CONNECTTOSERVERDIALOG_H
+#ifndef USERSHAREPASSWORDSETTINGDIALOG_H
+#define USERSHAREPASSWORDSETTINGDIALOG_H
 
 #include "dfmplugin_titlebar_global.h"
 
 #include <DDialog>
-#include <QUrl>
-
-DWIDGET_BEGIN_NAMESPACE
-class DIconButton;
-class DListView;
-DWIDGET_END_NAMESPACE
-
-QT_BEGIN_NAMESPACE
-class QComboBox;
-QT_END_NAMESPACE
+#include <DPasswordEdit>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-class ConnectToServerDialog : public DTK_WIDGET_NAMESPACE::DDialog
+class UserSharePasswordSettingDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
-    explicit ConnectToServerDialog(const QUrl &url, QWidget *parent = nullptr);
+    explicit UserSharePasswordSettingDialog(QWidget *parent = nullptr);
+    void initializeUi();
 
 public slots:
     void onButtonClicked(const int &index);
-    void onCurrentTextChanged(const QString &string);
 
 private:
-    void initializeUi();
-    void initConnect();
-    void onAddButtonClicked();
-    void onDelButtonClicked();
-
-    enum DialogButton {
-        kCannelButton,
-        kConnectButton
-    };
-
-    QUrl currentUrl;
-    QComboBox *serverComboBox { nullptr };
-    DTK_WIDGET_NAMESPACE::DIconButton *theAddButton { nullptr };
-    DTK_WIDGET_NAMESPACE::DIconButton *theDelButton { nullptr };
-    DTK_WIDGET_NAMESPACE::DListView *collectionServerView { nullptr };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordEdit;
+    QWidget *content;
 };
 
 DPTITLEBAR_END_NAMESPACE
 
-#endif   // CONNECTTOSERVERDIALOG_H
+#endif   // USERSHAREPASSWORDSETTINGDIALOG_H

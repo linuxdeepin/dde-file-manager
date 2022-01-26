@@ -23,6 +23,7 @@
 #include "titlebarhelper.h"
 #include "events/titlebareventcaller.h"
 #include "dialogs/connecttoserverdialog.h"
+#include "dialogs/usersharepasswordsettingdialog.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
@@ -266,6 +267,21 @@ void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
 
 void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
 {
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    auto window = windowService->findWindowById(windowId);
+    if (!window || window->property("UserSharePwdSettingDialogShown").toBool()) {
+        return;
+    }
+
+    UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(window);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
+    window->setProperty("UserSharePwdSettingDialogShown", true);
+    QObject::connect(dialog, &UserSharePasswordSettingDialog::closed, [=] {
+        window->setProperty("UserSharePwdSettingDialogShown", false);
+    });
 }
 
 QMutex &TitleBarHelper::mutex()

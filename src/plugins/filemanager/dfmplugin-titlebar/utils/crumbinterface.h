@@ -64,9 +64,9 @@ public:
     void registerSeprateUrlCallback(const seprateUrlCallback &func);
 
 signals:
-    void hideAddressBar();
+    void hideAddressBar(bool cd);
     void pauseSearch();
-    void keepAddressBar();
+    void keepAddressBar(const QUrl &url);
     void hideAddrAndUpdateCrumbs(const QUrl &url);
     void completionFound(const QStringList &completions);   //< emit multiple times with less or equials to 10 items in a group.
     void completionListTransmissionCompleted();   //< emit when all avaliable completions has been sent.

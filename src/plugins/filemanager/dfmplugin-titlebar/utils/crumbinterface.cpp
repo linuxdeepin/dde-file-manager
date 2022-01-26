@@ -43,8 +43,11 @@ void CrumbInterface::processAction(CrumbInterface::ActionType type)
     switch (type) {
     case kEscKeyPressed:
     case kClearButtonPressed:
+        emit hideAddressBar(keepAddr);
+        break;
     case kAddressBarLostFocus:
-        emit hideAddressBar();
+        if (!keepAddr)
+            emit hideAddressBar(keepAddr);
         break;
     case kPauseButtonClicked:
         emit pauseSearch();
@@ -55,7 +58,7 @@ void CrumbInterface::processAction(CrumbInterface::ActionType type)
 void CrumbInterface::crumbUrlChangedBehavior(const QUrl &url)
 {
     if (keepAddr) {
-        emit keepAddressBar();
+        emit keepAddressBar(url);
     } else {
         emit hideAddrAndUpdateCrumbs(url);
     }

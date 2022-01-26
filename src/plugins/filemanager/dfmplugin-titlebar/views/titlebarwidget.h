@@ -53,6 +53,7 @@ private:
     void initializeUi();
     void initConnect();
     void showAddrsssBar(const QUrl &url);   // switch addrasssBar and crumbBar show
+    void showAddressBar(const QString &text);
     void showCrumbBar();
     void showSearchButton();
     void showSearchFilterButton();

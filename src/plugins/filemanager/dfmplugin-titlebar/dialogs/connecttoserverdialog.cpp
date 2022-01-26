@@ -25,10 +25,13 @@
 #include "utils/titlebarhelper.h"
 #include "events/titlebareventcaller.h"
 
-#include "dfm-base/utils/windowutils.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/windowutils.h"
+
+#include <DIconButton>
+#include <DListView>
 
 #include <QComboBox>
 #include <QVBoxLayout>
@@ -43,8 +46,6 @@
 #include <QLabel>
 #include <QCompleter>
 #include <QWindow>
-#include <DIconButton>
-#include <DListView>
 
 DFMBASE_USE_NAMESPACE
 DPTITLEBAR_USE_NAMESPACE

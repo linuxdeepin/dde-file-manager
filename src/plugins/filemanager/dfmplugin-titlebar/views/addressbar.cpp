@@ -97,7 +97,7 @@ void AddressBarPrivate::initConnect()
     connect(q, &QLineEdit::returnPressed,
             this, &AddressBarPrivate::onReturnPressed);
 
-    QAction *clearAction = findChild<QAction *>("_q_qlineeditclearaction");
+    QAction *clearAction = q->findChild<QAction *>("_q_qlineeditclearaction");
     if (clearAction)
         connect(clearAction, &QAction::triggered, q, &AddressBar::clearButtonPressed);
 
