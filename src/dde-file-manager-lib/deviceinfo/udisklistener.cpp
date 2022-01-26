@@ -56,6 +56,7 @@
 #include <QProcess>
 #include <QStorageInfo>
 #include <QUrlQuery>
+#include <QtConcurrent>
 
 
 class UDiskFileWatcher;
@@ -780,24 +781,33 @@ bool UDiskListener::mountByUDisks(const QString &path)
         if (blkdev->isEncrypted()) {
             MountSecretDiskAskPasswordDialog dlg("");
             dlg.exec();
+
             QString passwd = dlg.password();
-            if (passwd.isEmpty()) {
-                qDebug() << "user inputed a null string to unlock device";
-                return false;
-            }
+            // lock may take a long time, if this code block run in main thread may cause ui blocking.
+            // cd to the mounted path after mounted is handled in Subscribers, AppController is derived from Subscriber
+            // and override the function `doSubscriberAction`. after mounted, the function is invoked.
+            // so we can mount asynchronously with no apprehension
+            QtConcurrent::run([=]{
+                if (passwd.isEmpty()) {
+                    qDebug() << "user inputed a null string to unlock device";
+                    return false;
+                }
 
-            QString clearBlkPath = blkdev->unlock(passwd, {});
-            if (clearBlkPath.isEmpty()) {
-                qInfo() << "cannot unlock device! " << blkdev->lastError();
-                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                             tr("Mounting device error"), tr("Wrong password"));
-                return false;
-            }
+                QString clearBlkPath = blkdev->unlock(passwd, {});
+                if (clearBlkPath.isEmpty()) {
+                    qInfo() << "cannot unlock device! " << blkdev->lastError();
+                    DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+                                                 tr("Mounting device error"), tr("Wrong password"));
+                    return false;
+                }
 
-            QSharedPointer<DBlockDevice> unlockedDev(DDiskManager::createBlockDevice(clearBlkPath));
-            if (!unlockedDev)
-                return false;
-            blkdev.swap(unlockedDev);
+                QSharedPointer<DBlockDevice> unlockedDev(DDiskManager::createBlockDevice(clearBlkPath));
+                if (unlockedDev)
+                    MountUtils::mountBlkWithParams(unlockedDev.data());
+                else
+                    qWarning() << "cannot create cleartext block device !" << clearBlkPath;
+            });
+            return true;
         }
 
         if (!blkdev->hasFileSystem()) {
