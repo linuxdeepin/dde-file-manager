@@ -484,18 +484,18 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app,
     // Resulting icon
     QIcon icon;
 
-    // First attempt, check whether icon is a valid file
+    // First attempt, try load icon from theme
+    icon = QIcon::fromTheme(app.getIcon());
+    if (!icon.isNull()) {
+        return icon;
+    }
+
+    // Second attempt, check whether icon is a valid file
     if (QFile(app.getIcon()).exists()) {
         icon = QIcon(app.getIcon());
         if (!icon.isNull()) {
             return icon;
         }
-    }
-
-    // Second attempt, try load icon from theme
-    icon = QIcon::fromTheme(app.getIcon());
-    if (!icon.isNull()) {
-        return icon;
     }
 
     // Next, try luck with application name
