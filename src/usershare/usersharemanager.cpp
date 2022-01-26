@@ -412,7 +412,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     if (!info.shareName().isEmpty() && QFile(info.path()).exists()) {
         // 共享文件的共享名不能以-开头
         if (info.shareName().startsWith("-") || info.shareName().endsWith(" ")) {
-            dialogManager->showErrorDialog(tr("The share name must not contain %<>*?|/\\+=;:,\" and should not start with %1").arg("-"), "");
+            dialogManager->showErrorDialog(tr("The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.").arg("%<>*?|/\\+=;:,\""), "");
             return false;
         }
         QString cmd = "net";
@@ -450,7 +450,7 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
 
             // 共享文件的共享名输入特殊字符会报这个错误信息
             if (err.contains("contains invalid characters")) {
-                dialogManager->showErrorDialog(tr("The share name must not contain %<>*?|/\\+=;:,\" and should not start with %1").arg("-"), "");
+                dialogManager->showErrorDialog(tr("The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.").arg("%<>*?|/\\+=;:,\""), "");
                 return false;
             }
 
