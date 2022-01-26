@@ -205,11 +205,15 @@ void FileSystemNode::sortAllChildren(const DAbstractFileInfo::CompareFunction &s
     int row = 0;
     rwLock->lockForWrite();
     for (const auto & needNode : visibleChildren) {
-        if (*cancel)
+        if (*cancel) {
+            rwLock->unlock();
             return;
+        }
         row = FindInsertPosInOrderList(needNode, sortList, sortFun, order, cancel);
-        if (*cancel)
+        if (*cancel) {
+            rwLock->unlock();
             return;
+        }
         sortList.insert(row, needNode);
     }
     visibleChildren = sortList;
