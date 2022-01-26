@@ -61,45 +61,29 @@ public:
 typedef bool (*fpCanReadLine)(QIODevice*);
 TEST_F(TestTextPreview, set_file_url)
 {
-    EXPECT_FALSE(m_testPreview->setFileUrl(m_url));
-
-    bool (*st_canReadLine)() = [](){
-      return true;
-    };
-
-    Stub stub;
-    fpCanReadLine IODeviceFp = (fpCanReadLine)(&QIODevice::canReadLine);
-    stub.set(IODeviceFp, st_canReadLine);
-
-    QFile fp("./2.txt");
-    fp.open(QIODevice::ReadWrite|QIODevice::Text);
-    fp.write("I am writing file");
-    fp.close();
-    EXPECT_TRUE(m_testPreview->setFileUrl(DUrl("file:./2.txt")));
-    QFile fp1("./2.txt");
-    fp1.remove();
+    EXPECT_TRUE(m_testPreview->setFileUrl(m_url));
 }
 
 TEST_F(TestTextPreview, get_file_url)
 {
-    EXPECT_FALSE(m_testPreview->setFileUrl(m_url));
+    EXPECT_TRUE(m_testPreview->setFileUrl(m_url));
     EXPECT_TRUE(m_testPreview->fileUrl() == m_url);
 }
 
 TEST_F(TestTextPreview, get_content_widget)
 {
-    EXPECT_FALSE(m_testPreview->setFileUrl(m_url));
-    EXPECT_TRUE(m_testPreview->contentWidget() == nullptr);
+    EXPECT_TRUE(m_testPreview->setFileUrl(m_url));
+    EXPECT_TRUE(m_testPreview->contentWidget() != nullptr);
 }
 
 TEST_F(TestTextPreview, get_title)
 {
-    EXPECT_FALSE(m_testPreview->setFileUrl(m_url));
+    EXPECT_TRUE(m_testPreview->setFileUrl(m_url));
     EXPECT_FALSE(!m_testPreview->title().isEmpty());
 }
 
 TEST_F(TestTextPreview, get_show_statusbar_separator)
 {
-    EXPECT_FALSE(m_testPreview->setFileUrl(m_url));
+    EXPECT_TRUE(m_testPreview->setFileUrl(m_url));
     EXPECT_TRUE(m_testPreview->showStatusBarSeparator());
 }

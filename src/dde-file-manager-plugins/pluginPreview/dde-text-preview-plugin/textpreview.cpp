@@ -86,7 +86,7 @@ bool TextPreview::setFileUrl(const DUrl &url)
 
     char * txt = new char[buf.size()];
     copy(buf.begin(), buf.end(), txt);
-    m_textData = QString(txt);
+    m_textData = QString::fromLocal8Bit(txt, static_cast<int>(buf.size()));
     delete [] txt;
     txt = nullptr;
     m_textSize = m_textData.count();
