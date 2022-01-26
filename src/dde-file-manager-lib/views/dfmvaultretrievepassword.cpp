@@ -28,6 +28,7 @@
 #include "dfmvaultunlockpages.h"
 
 #include <DFontSizeManager>
+#include <DApplication>
 
 #include <QStringList>
 #include <QFrame>
@@ -51,7 +52,7 @@ const QString PolicyKitRetrievePasswordActionId = "com.deepin.filemanager.vault.
 
 DFMVaultRetrievePassword *DFMVaultRetrievePassword::instance()
 {
-    static DFMVaultRetrievePassword s_instance;
+    static DFMVaultRetrievePassword s_instance(static_cast<QApplication*>(qApp)->activeWindow());
     return &s_instance;
 }
 

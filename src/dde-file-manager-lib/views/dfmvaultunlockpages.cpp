@@ -35,6 +35,7 @@
 #include <DToolTip>
 #include <DLabel>
 #include <DFontSizeManager>
+#include <DApplication>
 
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -246,7 +247,7 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
 {
     if (!m_instance)
-        m_instance = new DFMVaultUnlockPages();
+        m_instance = new DFMVaultUnlockPages(static_cast<QApplication*>(qApp)->activeWindow());
     return m_instance;
 }
 

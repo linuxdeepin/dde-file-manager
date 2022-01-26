@@ -34,6 +34,8 @@
 #include "vaulthelper.h"
 
 #include <DLabel>
+#include <DApplication>
+
 #include <QFrame>
 #include <QRegExpValidator>
 #include <QStackedWidget>
@@ -170,7 +172,7 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
 
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
 {
-    static DFMVaultRemovePages s_instance;
+    static DFMVaultRemovePages s_instance(static_cast<QApplication*>(qApp)->activeWindow());
     return &s_instance;
 }
 

@@ -25,6 +25,8 @@
 
 #include "dfmvaultpagebase.h"
 
+#include <DApplication>
+
 QT_BEGIN_NAMESPACE
 class QStackedWidget;
 class QMouseEvent;
@@ -43,7 +45,7 @@ class DFMVaultActiveView : public DFMVaultPageBase
 public:
     static DFMVaultActiveView *getInstance()
     {
-        static DFMVaultActiveView dlg;
+        static DFMVaultActiveView dlg(static_cast<QApplication*>(qApp)->activeWindow());
         return &dlg;
     }
 

@@ -27,6 +27,7 @@
 
 #include <DToolTip>
 #include <DFloatingWidget>
+#include <DApplication>
 
 #include <QPlainTextEdit>
 #include <QAbstractButton>
@@ -109,7 +110,7 @@ DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
 
 DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 {
-    static DFMVaultRecoveryKeyPages s_instance;
+    static DFMVaultRecoveryKeyPages s_instance(static_cast<QApplication*>(qApp)->activeWindow());
     return &s_instance;
 }
 
