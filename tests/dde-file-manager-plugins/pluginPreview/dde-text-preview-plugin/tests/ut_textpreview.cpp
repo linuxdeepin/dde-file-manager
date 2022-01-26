@@ -58,7 +58,6 @@ public:
      DUrl m_url;
 };
 
-typedef bool (*fpCanReadLine)(QIODevice*);
 TEST_F(TestTextPreview, set_file_url)
 {
     EXPECT_TRUE(m_testPreview->setFileUrl(m_url));
@@ -79,7 +78,7 @@ TEST_F(TestTextPreview, get_content_widget)
 TEST_F(TestTextPreview, get_title)
 {
     EXPECT_TRUE(m_testPreview->setFileUrl(m_url));
-    EXPECT_FALSE(!m_testPreview->title().isEmpty());
+    EXPECT_TRUE(!m_testPreview->title().isEmpty());
 }
 
 TEST_F(TestTextPreview, get_show_statusbar_separator)
