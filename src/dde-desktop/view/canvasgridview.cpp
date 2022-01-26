@@ -613,7 +613,7 @@ void CanvasGridView::delayAutoMerge(int ms)
 DUrl CanvasGridView::currentCursorFile() const
 {
     DUrl ret;
-    DAbstractFileInfoPointer fp = model()->fileInfo(d->currentCursorIndex);
+    DAbstractFileInfoPointer fp = model()->fileInfo(d->m_currentMousePressIndex);
     if (fp) {
         ret = fp->fileUrl();
     }
