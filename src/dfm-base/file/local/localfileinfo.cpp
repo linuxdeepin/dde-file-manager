@@ -203,6 +203,12 @@ QString LocalFileInfo::fileName() const
     QString fileName;
     if (d->dfmFileInfo) {
         fileName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardName, &success).toString();
+
+        // trans "/" to "smb-share:server=xxx,share=xxx"
+        if(fileName == R"(/)" && FileUtils::isGvfsFile(d->url)) {
+            fileName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::IdFilesystem, &success).toString();
+        }
+
         if (!success)
             qWarning() << "get dfm-io DFileInfo StandardName failed!";
     }
@@ -477,6 +483,7 @@ bool LocalFileInfo::isReadable() const
 bool LocalFileInfo::isWritable() const
 {
     d->lock.lockForRead();
+
     bool success = false;
     bool isWritable = false;
     if (d->dfmFileInfo) {
@@ -959,7 +966,7 @@ QDateTime LocalFileInfo::lastRead() const
     bool success = false;
     uint64_t data = 0;
     if (d->dfmFileInfo) {
-        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeChanged, &success).value<uint64_t>();
+        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::TimeAccess, &success).value<uint64_t>();
         if (!success)
             qWarning() << "get dfm-io DFileInfo TimelastRead failed!";
     }

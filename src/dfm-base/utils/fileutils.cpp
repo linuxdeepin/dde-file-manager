@@ -32,6 +32,8 @@
 #include <QDebug>
 #include <QApplication>
 
+#include <unistd.h>
+
 DFMBASE_BEGIN_NAMESPACE
 
 /*!
@@ -218,6 +220,18 @@ int FileUtils::supportedMaxLength(const QString &fileSystem)
 
     const int DefaultLength = 11;
     return datas.value(fileSystem.toUpper(), DefaultLength);
+}
+
+bool FileUtils::isGvfsFile(const QUrl &url)
+{
+    if(!url.isValid())
+        return false;
+
+    const QString &path = url.toLocalFile();
+
+    QRegExp reg(QString("/run/user/%1/.?gvfs/.+").arg(getuid()));
+
+    return -1 != reg.indexIn(path);
 }
 
 DFMBASE_END_NAMESPACE
