@@ -1570,7 +1570,14 @@ bool FileController::setPermissions(const QSharedPointer<DFMSetPermissionEvent> 
 
     event->accept();
 
-    return file.setPermissions(event->permissions());
+    if (file.setPermissions(event->permissions())) {
+        // 如果是快捷方式，发送文件属性变化信号，重绘item
+        QFileInfo fileInfo(file);
+        if (fileInfo.isSymLink())
+            DAbstractFileWatcher::ghostSignal(event->url().parentUrl(), &DAbstractFileWatcher::fileAttributeChanged, event->url());
+        return true;
+    }
+    return false;
 }
 
 bool FileController::shareFolder(const QSharedPointer<DFMFileShareEvent> &event) const
