@@ -42,7 +42,7 @@ public:
     QSize itemIconSize;
 
     QPointer<ExpandedItem> expandedItem;
-    mutable QModelIndex lastAndExpandedInde;
+    mutable QModelIndex lastAndExpandedIndex;
     mutable QModelIndex expandedIndex;
 
     // default icon size is 64px.

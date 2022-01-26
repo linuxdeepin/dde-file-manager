@@ -234,7 +234,7 @@ void IconItemDelegate::hideNotEditingIndexWidget()
         parent()->parent()->setIndexWidget(d->expandedIndex, nullptr);
         d->expandedItem->hide();
         d->expandedIndex = QModelIndex();
-        d->lastAndExpandedInde = QModelIndex();
+        d->lastAndExpandedIndex = QModelIndex();
     }
 }
 
@@ -258,7 +258,7 @@ void IconItemDelegate::onTriggerEdit(const QModelIndex &index)
         parent()->parent()->setIndexWidget(index, nullptr);
         d->expandedItem->hide();
         d->expandedIndex = QModelIndex();
-        d->lastAndExpandedInde = QModelIndex();
+        d->lastAndExpandedIndex = QModelIndex();
         parent()->parent()->edit(index);
     }
 }
@@ -419,11 +419,10 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
             d->expandedItem->setFixedWidth(0);
             double iconTopOffset = (opt.rect.height() - iconRect.height()) / 3.0;
 
-            qDebug() << "iconTopOffset: " << static_cast<int>(std::ceil(iconTopOffset)) << "opt rect height: " << opt.rect.height() << "iconRect height " << iconRect.height();
             d->expandedItem->setContentsMargins(backgroundMargin, static_cast<int>(std::ceil(iconTopOffset)), backgroundMargin, 0);
 
             if (parent()->parent()->indexOfRow(index) == parent()->parent()->rowCount() - 1) {
-                d->lastAndExpandedInde = index;
+                d->lastAndExpandedIndex = index;
             }
 
             parent()->updateGeometries();
@@ -445,6 +444,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 void IconItemDelegate::editTextChangedHandle(IconItemEditor *editor)
 {
 
+    // ToDo(yanghao): 代码调整
     if (!editor->getTextEdit() || editor->getTextEdit()->isReadOnly())
         return;
 
@@ -459,7 +459,7 @@ void IconItemDelegate::editTextChangedHandle(IconItemEditor *editor)
     }
 
     //得到处理之后的文件名称
-    QString dstText = "" /*DFMGlobal::preprocessingFileName(srcText)*/;
+    QString dstText = srcText; /*DFMGlobal::preprocessingFileName(srcText)*/
 
     //如果存在非法字符且更改了当前的文本文件
     if (srcText != dstText) {
@@ -530,14 +530,14 @@ QSize IconItemDelegate::iconSizeByIconSizeLevel() const
     return QSize(size, size);
 }
 
-QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &index) const
 {
 
     Q_D(const IconItemDelegate);
 
     const QSize &size = d->itemSizeHint;
 
-    if (index.isValid() && index == d->lastAndExpandedInde) {
+    if (index.isValid() && index == d->lastAndExpandedIndex) {
         d->expandedItem->setIconHeight(parent()->parent()->iconSize().height());
         return QSize(size.width(), d->expandedItem->heightForWidth(size.width()));
     }
@@ -572,6 +572,8 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
         //阻塞信号等待当前函数
         const QSignalBlocker blocker(sender());
         // Todo(yanghao):
+        auto that = const_cast<IconItemDelegate *>(this);
+        that->editTextChangedHandle(editor);
     },
             Qt::UniqueConnection);
 

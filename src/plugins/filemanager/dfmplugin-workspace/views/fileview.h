@@ -67,6 +67,7 @@ public:
     void setModel(QAbstractItemModel *model) override;
 
     QModelIndex indexAt(const QPoint &pos) const override;
+    virtual QRect visualRect(const QModelIndex &index) const override;
 
     FileSortFilterProxyModel *proxyModel() const;
     int getColumnWidth(const int &column) const;
@@ -160,6 +161,8 @@ private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
     void caculateListViewSelection(const QRect &rect, QItemSelection *selection);
+
+
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -662,6 +662,44 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
     return proxyModel()->index(index, 0);
 }
 
+QRect FileView::visualRect(const QModelIndex &index) const
+{
+    QRect rect;
+    if (index.column() != 0)
+        return rect;
+
+    QSize itemSize = itemSizeHint();
+
+    if (itemSize.width() == -1) {
+        rect.setLeft(kListViewSpacing - horizontalScrollBar()->value());
+        rect.setRight(viewport()->width() - kListViewSpacing - 1);
+        rect.setTop(index.row() * (itemSize.height() + kListViewSpacing * 2) + kListViewSpacing);
+        rect.setHeight(itemSize.height());
+
+        if (d->allowedAdjustColumnSize) {
+            rect.setWidth(d->headerView->length());
+        }
+    } else {
+        int itemWidth = itemSize.width() + kIconViewSpacing * 2;
+        int columnCount = d->iconModeColumnCount(itemWidth);
+
+        if (columnCount == 0)
+            return rect;
+
+        int columnIndex = index.row() % columnCount;
+        int rowIndex = index.row() / columnCount;
+
+        rect.setTop(rowIndex * (itemSize.height() + kIconViewSpacing * 2) + kIconViewSpacing);
+        rect.setLeft(columnIndex * itemWidth + kIconViewSpacing);
+        rect.setSize(itemSize);
+    }
+
+    rect.moveLeft(rect.left() - horizontalOffset());
+    rect.moveTop(rect.top() - verticalOffset());
+
+    return rect;
+}
+
 void FileView::updateGeometries()
 {
 
@@ -830,3 +868,5 @@ void FileView::saveViewModeState()
     setFileViewStateValue(url, "iconSizeLevel", d->statusBar->scalingSlider()->value());
     setFileViewStateValue(url, "viewMode", static_cast<int>(d->currentViewMode));
 }
+
+
