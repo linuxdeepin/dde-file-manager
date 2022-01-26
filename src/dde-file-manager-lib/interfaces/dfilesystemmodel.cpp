@@ -2378,9 +2378,7 @@ bool DFileSystemModel::doSortBusiness(bool emitDataChange)
     }
 
     QList<FileSystemNodePointer> list;
-    beginInsertRows(createIndex(node, 0), 0, node->childrenCount());
     bool ok = sort(node->fileInfo, list);
-    endInsertRows();
 
     if (ok && !isNeedToBreakBusyCase) {
         if (!list.isEmpty())
