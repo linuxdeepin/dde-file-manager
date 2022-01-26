@@ -122,6 +122,11 @@ int main(int argc, char *argv[])
     if (DesktopInfo().waylandDectected()) {
         //! 以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
+#ifndef __x86_64
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
+#endif
     } else {
         //fix bug59539 向桌面拖拽文件，进度条框无法拖动
         //根因：桌面启动时窗管未完全启动，导致xcb插件fallback到不同的分支

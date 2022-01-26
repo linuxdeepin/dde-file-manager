@@ -178,6 +178,11 @@ int main(int argc, char *argv[])
     if (DFMGlobal::isWayLand()) {
         //以下代码用于视频预览使用
         setenv("PULSE_PROP_media.role", "video", 1);
+#ifndef __x86_64
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        format.setDefaultFormat(format);
+#endif
     }
 
     app.setOrganizationName(QMAKE_ORGANIZATION_NAME);
