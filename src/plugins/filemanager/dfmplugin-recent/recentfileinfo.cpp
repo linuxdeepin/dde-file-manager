@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recentfileinfo.h"
-#include "utils/recenthelper.h"
+#include "utils/recentmanager.h"
 
 #include "interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
@@ -76,7 +76,7 @@ QString RecentFileInfo::fileName() const
 
 bool RecentFileInfo::exists() const
 {
-    if (url() == RecentHelper::rootUrl())
+    if (url() == RecentManager::rootUrl())
         return true;
     return d->proxy && d->proxy->exists();
 }
@@ -112,7 +112,7 @@ QDateTime RecentFileInfo::lastModified() const
 
 QFile::Permissions RecentFileInfo::permissions() const
 {
-    if (url() == RecentHelper::rootUrl()) {
+    if (url() == RecentManager::rootUrl()) {
         return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
     }
     if (d->proxy)

@@ -23,7 +23,7 @@
 #include "recentfileinfo.h"
 #include "recentdiriterator.h"
 #include "recentfilewatcher.h"
-#include "utils/recenthelper.h"
+#include "utils/recentmanager.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -68,11 +68,11 @@ void Recent::initialize()
         abort();
     }
 
-    UrlRoute::regScheme(RecentHelper::scheme(), "/", RecentHelper::icon(), true, tr("Recent"));
+    UrlRoute::regScheme(RecentManager::scheme(), "/", RecentManager::icon(), true, tr("Recent"));
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<RecentFileInfo>(RecentHelper::scheme());
-    WacherFactory::regClass<RecentFileWatcher>(RecentHelper::scheme());
-    DirIteratorFactory::regClass<RecentDirIterator>(RecentHelper::scheme());
+    InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
+    WacherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
+    DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
 
     GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
     Q_ASSERT(GlobalPrivate::winServ);
@@ -80,9 +80,11 @@ void Recent::initialize()
 
     GlobalPrivate::fileOperationsService = ctx.service<FileOperationsService>(FileOperationsService::name());
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &RecentHelper::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &RecentHelper::writeToClipBoardHandle;
-    GlobalPrivate::fileOperationsService->registerOperations(RecentHelper::scheme(), fileOpeationsHandle);
+    fileOpeationsHandle->openFiles = &RecentManager::openFilesHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &RecentManager::writeToClipBoardHandle;
+    GlobalPrivate::fileOperationsService->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
+
+    RecentManager::instance();
 }
 
 bool Recent::start()
@@ -106,7 +108,7 @@ bool Recent::start()
         qCritical() << "Failed, init workspace \"workspaceService\" is empty";
         abort();
     }
-    GlobalPrivate::workspaceService->addScheme(RecentHelper::scheme());
+    GlobalPrivate::workspaceService->addScheme(RecentManager::scheme());
 
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
     return true;
@@ -140,18 +142,18 @@ void Recent::addRecentItem()
 {
     SideBar::ItemInfo item;
     item.group = SideBar::DefaultGroup::kCommon;
-    item.url = RecentHelper::rootUrl();
-    item.iconName = RecentHelper::icon().name();
+    item.url = RecentManager::rootUrl();
+    item.iconName = RecentManager::icon().name();
     item.text = tr("Recent");
     item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    item.contextMenuCb = RecentHelper::contenxtMenuHandle;
+    item.contextMenuCb = RecentManager::contenxtMenuHandle;
 
     GlobalPrivate::sideBarService->insertItem(0, item);
 }
 
 void Recent::removeRecentItem()
 {
-    GlobalPrivate::sideBarService->removeItem(RecentHelper::rootUrl());
+    GlobalPrivate::sideBarService->removeItem(RecentManager::rootUrl());
 }
 
 void Recent::regRecentCrumbToTitleBar()
@@ -162,11 +164,11 @@ void Recent::regRecentCrumbToTitleBar()
         if (ctx.load(TitleBarService::name())) {
             auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
             TitleBar::CustomCrumbInfo info;
-            info.scheme = RecentHelper::scheme();
-            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == RecentHelper::scheme(); };
+            info.scheme = RecentManager::scheme();
+            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == RecentManager::scheme(); };
             info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
                 Q_UNUSED(url);
-                return { TitleBar::CrumbData(RecentHelper::rootUrl(), tr("Recent"), RecentHelper::icon().name()) };
+                return { TitleBar::CrumbData(RecentManager::rootUrl(), tr("Recent"), RecentManager::icon().name()) };
             };
             titleBarServ->addCustomCrumbar(info);
         }

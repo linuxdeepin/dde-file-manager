@@ -57,7 +57,7 @@ public:
     virtual QUrl url() const override;
 
 private:
-    RecentDirIteratorPrivate *const d { nullptr };
+    QScopedPointer<RecentDirIteratorPrivate> d;
 };
 
 DPRECENT_END_NAMESPACE

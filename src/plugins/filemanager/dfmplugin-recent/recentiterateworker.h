@@ -38,7 +38,8 @@ public slots:
     void doWork();
 
 signals:
-    void recentUrls(QList<QPair<QUrl, qint64>> &results);
+    void updateRecentFileInfo(const QUrl &url, qint64 readTime);
+    void deleteExistRecentUrls(QList<QUrl> &urls);
 };
 DPRECENT_END_NAMESPACE
 #endif   // RECENTITERATEWORKER_H

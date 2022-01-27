@@ -20,7 +20,8 @@
  */
 
 #include "recentiterateworker.h"
-#include "utils/recenthelper.h"
+#include "utils/recentmanager.h"
+#include "recentfileinfo.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -29,6 +30,7 @@
 #include <QUrl>
 #include <QMetaType>
 #include <QList>
+#include <QMutexLocker>
 
 DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
@@ -36,15 +38,15 @@ DPRECENT_BEGIN_NAMESPACE
 RecentIterateWorker::RecentIterateWorker()
     : QObject()
 {
-    qRegisterMetaType<QList<QPair<QUrl, qint64>>>("QList<QPair<QUrl,qint64> >&");
 }
 
 void RecentIterateWorker::doWork()
 {
-    QFile file(RecentHelper::xbelPath());
-    QList<QPair<QUrl, qint64>> urlList;
 
-    if (file.open(QIODevice::ReadOnly)) {
+    QFile file(RecentManager::xbelPath());
+    QList<QUrl> urlList;
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QXmlStreamReader reader(&file);
 
         while (!reader.atEnd()) {
@@ -59,15 +61,31 @@ void RecentIterateWorker::doWork()
             if (!location.isEmpty()) {
                 QUrl url = QUrl(location.toString());
                 QFileInfo info(url.toLocalFile());
-                QUrl recentUrl = url;
-                recentUrl.setScheme(RecentHelper::scheme());
                 if (info.exists() && info.isFile()) {
+                    QUrl recentUrl = url;
+                    recentUrl.setScheme(RecentManager::scheme());
                     qint64 readTimeSecs = QDateTime::fromString(readTime.toString(), Qt::ISODate).toSecsSinceEpoch();
-                    urlList.append(qMakePair(recentUrl, readTimeSecs));
+                    urlList.append(recentUrl);
+                    emit updateRecentFileInfo(recentUrl, readTimeSecs);
                 }
             }
         }
-        emit recentUrls(urlList);
+        file.close();
+
+        QList<QUrl> deleteUrls;
+        const auto &recentNodes = RecentManager::instance()->getRecentNodes();
+        for (const QUrl &url : recentNodes.keys()) {
+            if (!urlList.contains(url)) {
+                deleteUrls << url;
+            } else {
+                auto info = recentNodes[url];
+                if (!info) {
+                    deleteUrls << url;
+                }
+            }
+        }
+        if (!deleteUrls.isEmpty())
+            emit deleteExistRecentUrls(deleteUrls);
     }
 }
 DPRECENT_END_NAMESPACE

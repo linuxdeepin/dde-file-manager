@@ -24,36 +24,26 @@
 
 #include "dfmplugin_recent_global.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
-#include "dfm-base/interfaces/abstractfilewatcher.h"
 
 #include <QQueue>
-#include <QThread>
 
 DPRECENT_BEGIN_NAMESPACE
 
 class RecentDirIterator;
-class RecentDirIteratorPrivate : public QObject
+
+class RecentDirIteratorPrivate
 {
-    Q_OBJECT
     friend class RecentDirIterator;
 
 public:
     explicit RecentDirIteratorPrivate(RecentDirIterator *qq);
     ~RecentDirIteratorPrivate();
 
-signals:
-    void asyncHandleFileChanged();
-
-private slots:
-    void handleFileChanged(QList<QPair<QUrl, qint64>> &results);
-
 private:
-    QThread workerThread;
     QUrl currentUrl;
     QQueue<QUrl> urlList;
     QMap<QUrl, AbstractFileInfoPointer> recentNodes;
     RecentDirIterator *q { nullptr };
-    AbstractFileWatcherPointer watcher;
 };
 
 DPRECENT_END_NAMESPACE

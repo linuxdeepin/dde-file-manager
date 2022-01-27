@@ -23,77 +23,23 @@
 #include "recentdiriterator.h"
 #include "recentfileinfo.h"
 #include "recentiterateworker.h"
-#include "utils/recenthelper.h"
+#include "utils/recentmanager.h"
 #include "private/recentdiriterator_p.h"
 
 #include "dfm-base/base/schemefactory.h"
 
-DPRECENT_BEGIN_NAMESPACE
+DPRECENT_USE_NAMESPACE
 
 RecentDirIteratorPrivate::RecentDirIteratorPrivate(RecentDirIterator *qq)
-    : QObject(nullptr),
-      q(qq)
+    : q(qq)
 {
-
-    RecentIterateWorker *worker = new RecentIterateWorker;
-    worker->moveToThread(&workerThread);
-    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-    connect(this, &RecentDirIteratorPrivate::asyncHandleFileChanged, worker, &RecentIterateWorker::doWork);
-    connect(worker, &RecentIterateWorker::recentUrls, this, &RecentDirIteratorPrivate::handleFileChanged);
-    workerThread.start();
-
-    emit asyncHandleFileChanged();
-    watcher = WacherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentHelper::xbelPath()));
-    connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentDirIteratorPrivate::asyncHandleFileChanged);
-    connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentDirIteratorPrivate::asyncHandleFileChanged);
-    watcher->startWatcher();
+    recentNodes = RecentManager::instance()->getRecentNodes();
     for (QUrl url : recentNodes.keys())
         urlList << url;
 }
 
 RecentDirIteratorPrivate::~RecentDirIteratorPrivate()
 {
-}
-
-void RecentDirIteratorPrivate::handleFileChanged(QList<QPair<QUrl, qint64>> &results)
-{
-    // Todo(yanghao): performance optimization
-
-    QList<QUrl> urlList;
-    for (auto pair : results) {
-        const QUrl &url = pair.first;
-        urlList << url;
-        if (!recentNodes.contains(url)) {
-            recentNodes[url] = QSharedPointer<RecentFileInfo>(new RecentFileInfo(url));
-            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
-            if (watcher) {
-                emit watcher->subfileCreated(url);
-            }
-        }
-    }
-
-    // delete does not exist url.
-    for (auto iter = recentNodes.begin(); iter != recentNodes.end();) {
-
-        const QUrl url = iter.key();
-        if (!urlList.contains(url)) {
-            iter = recentNodes.erase(iter);
-            QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(RecentHelper::rootUrl());
-            if (watcher) {
-                emit watcher->fileDeleted(url);
-            }
-
-        } else {
-            auto info = iter.value();
-            if (info) {
-                // Todo(yanghao):updateInfo
-                //               iter.value()->updateInfo();
-                ++iter;
-            } else {
-                iter = recentNodes.erase(iter);
-            }
-        }
-    }
 }
 
 RecentDirIterator::RecentDirIterator(const QUrl &url,
@@ -107,12 +53,6 @@ RecentDirIterator::RecentDirIterator(const QUrl &url,
 
 RecentDirIterator::~RecentDirIterator()
 {
-    if (d) {
-        d->watcher->stopWatcher();
-        d->workerThread.quit();
-        d->workerThread.wait();
-        delete d;
-    }
 }
 
 QUrl RecentDirIterator::next()
@@ -154,7 +94,5 @@ const AbstractFileInfoPointer RecentDirIterator::fileInfo() const
 
 QUrl RecentDirIterator::url() const
 {
-    return RecentHelper::rootUrl();
+    return RecentManager::rootUrl();
 }
-
-DPRECENT_END_NAMESPACE

@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recentfilewatcher.h"
-#include "utils/recenthelper.h"
+#include "utils/recentmanager.h"
 #include "private/recentfilewatcher_p.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -87,7 +87,7 @@ RecentFileWatcher::~RecentFileWatcher()
 
 void RecentFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
 {
-    if (subfileUrl.scheme() != RecentHelper::scheme())
+    if (subfileUrl.scheme() != RecentManager::scheme())
         return;
     if (enabled) {
         addWatcher(subfileUrl);
@@ -102,14 +102,11 @@ void RecentFileWatcher::addWatcher(const QUrl &url)
         return;
     }
 
-    QUrl real_url = url;
-    real_url.setScheme(SchemeTypes::kFile);
-    AbstractFileWatcherPointer watcher = WacherFactory::create<AbstractFileWatcher>(real_url);
+    AbstractFileWatcherPointer watcher = WacherFactory::create<AbstractFileWatcher>(url);
     if (!watcher)
         return;
 
     watcher->moveToThread(this->thread());
-    watcher->setParent(this);
 
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentFileWatcher::onFileAttributeChanged);
     connect(watcher.data(), &AbstractFileWatcher::fileDeleted, this, &RecentFileWatcher::onFileDeleted);
@@ -133,8 +130,9 @@ void RecentFileWatcher::removeWatcher(const QUrl &url)
 void RecentFileWatcher::onFileDeleted(const QUrl &url)
 {
     QUrl newUrl = url;
-    newUrl.setScheme(RecentHelper::scheme());
+    newUrl.setScheme(RecentManager::scheme());
     removeWatcher(newUrl);
+    RecentManager::instance()->removeRecentFile(newUrl);
 
     emit fileDeleted(newUrl);
 }
@@ -142,7 +140,7 @@ void RecentFileWatcher::onFileDeleted(const QUrl &url)
 void RecentFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
     QUrl newUrl = url;
-    newUrl.setScheme(RecentHelper::scheme());
+    newUrl.setScheme(RecentManager::scheme());
 
     emit fileAttributeChanged(newUrl);
 }

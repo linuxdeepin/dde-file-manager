@@ -19,26 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMRECENTHELPER_H
-#define DFMRECENTHELPER_H
+#ifndef RECENTMANAGER_H
+#define RECENTMANAGER_H
 
 #include "dfmplugin_recent_global.h"
+#include "recentfileinfo.h"
 
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
 
 #include <QUrl>
 #include <QDebug>
 #include <QDir>
 #include <QIcon>
 #include <QFile>
+#include <QQueue>
+#include <QThread>
+#include <QTimer>
 
 DPRECENT_BEGIN_NAMESPACE
 
-class RecentHelper final
+class RecentManager final : public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(RecentManager)
 
 public:
+    static RecentManager *instance();
+
     inline static QString scheme()
     {
         return "recent";
@@ -63,9 +72,28 @@ public:
     static bool writeToClipBoardHandle(const quint64 windowId,
                                        const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                                        const QList<QUrl> urls);
+    QMap<QUrl, AbstractFileInfoPointer> getRecentNodes() const;
+    bool removeRecentFile(const QUrl &url);
+
+signals:
+    void asyncHandleFileChanged();
 
 private:
-    explicit RecentHelper() = delete;
+    explicit RecentManager(QObject *parent = nullptr);
+    ~RecentManager() override;
+    void init();
+
+private slots:
+    void updateRecent();
+    void onUpdateRecentFileInfo(const QUrl &url, qint64 readTime);
+    void onDeleteExistRecentUrls(QList<QUrl> &urls);
+
+private:
+    QTimer updateRecentTimer;
+    QThread workerThread;
+    AbstractFileWatcherPointer watcher;
+    QMap<QUrl, AbstractFileInfoPointer> recentNodes;
 };
+
 DPRECENT_END_NAMESPACE
-#endif   // DFMRECENTHELPER_H
+#endif   // RECENTMANAGER_H
