@@ -258,7 +258,8 @@ void SideBarWidget::updateSeparatorVisibleState()
         SideBarItem *item = sidebarModel->itemFromIndex(i);
         if (item->group() != lastGroupName) {
             if (dynamic_cast<SideBarItemSeparator *>(item)) {   // Separator
-                sidebarView->setRowHidden(i, lastGroupItemCount == 0);
+                if (lastGroupItemCount == 0)
+                    sidebarView->setRowHidden(i, true);
                 lastSeparatorIndex = i;
                 lastGroupItemCount = 0;
                 lastGroupName = item->group();

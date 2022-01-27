@@ -20,44 +20,47 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef CRUMBMANAGER_H
-#define CRUMBMANAGER_H
+#ifndef OPTIONBUTTONMANAGER_H
+#define OPTIONBUTTONMANAGER_H
 
 #include "dfmplugin_titlebar_global.h"
 
 #include <QObject>
-#include <QMap>
-#include <QSharedPointer>
-
-#include <functional>
+#include <QHash>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-class CrumbInterface;
-class CrumbManager final : public QObject
+class OptionButtonManager : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CrumbManager)
+    Q_DISABLE_COPY(OptionButtonManager)
 
 public:
-    using KeyType = QString;
-    using CrumbCreator = std::function<CrumbInterface *()>;
-    using CrumbCreatorMap = QMap<KeyType, CrumbCreator>;
+    enum OptBtnVisibleState {
+        kDoNotHide = 0x00,
+        kHideListViewBtn = 0x01,
+        kHideIconViewBtn = 0x02,
+        kHideDetailSpaceBtn = 0x04,
+    };
+
+    using Scheme = QString;
+    using OptBtnVisibleStateMap = QHash<Scheme, OptBtnVisibleState>;
 
 public:
-    static CrumbManager *instance();
+    static OptionButtonManager *instance();
 
-    void registerCrumbCreator(const KeyType &scheme, const CrumbCreator &creator);
-    bool isRegisted(const KeyType &scheme) const;
-    CrumbInterface *createControllerByUrl(const QUrl &url);
-
-private:
-    explicit CrumbManager(QObject *parent = nullptr);
+    // TODO(zhangs): setCustomActionList
+    void setOptBtnVisibleState(const Scheme &scheme, OptBtnVisibleState state);
+    OptBtnVisibleState optBtnVisibleState(const Scheme &scheme) const;
+    bool hasVsibleState(const Scheme &scheme) const;
 
 private:
-    CrumbCreatorMap creators;
+    explicit OptionButtonManager(QObject *parent = nullptr);
+
+private:
+    OptBtnVisibleStateMap stateMap;
 };
 
 DPTITLEBAR_END_NAMESPACE
 
-#endif   // CRUMBMANAGER_H
+#endif   // OPTIONBUTTONMANAGER_H

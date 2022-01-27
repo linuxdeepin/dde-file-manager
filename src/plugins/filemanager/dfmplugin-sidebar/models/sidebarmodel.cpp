@@ -27,7 +27,7 @@
 #include <QDebug>
 #include <QtConcurrent>
 
-#define MODELITEM_MIMETYPE "application/x-dfmsidebaritemmodeldata"
+static constexpr char kModelitemMimetype[] { "application/x-dfmsidebaritemmodeldata" };
 
 DPSIDEBAR_USE_NAMESPACE
 
@@ -84,8 +84,8 @@ bool SideBarModel::canDropMimeData(const QMimeData *data, Qt::DropAction action,
     SideBarItem *sourceItem = nullptr;
 
     // check if is item internal move by action and mimetype:
-    if (action == Qt::MoveAction && data->formats().contains(MODELITEM_MIMETYPE)) {
-        int oriRowIndex = GlobalPrivate::getRowIndexFromMimeData(data->data(MODELITEM_MIMETYPE));
+    if (action == Qt::MoveAction && data->formats().contains(kModelitemMimetype)) {
+        int oriRowIndex = GlobalPrivate::getRowIndexFromMimeData(data->data(kModelitemMimetype));
         if (oriRowIndex >= 0) {
             sourceItem = this->itemFromIndex(oriRowIndex);
         }
@@ -113,7 +113,7 @@ QMimeData *SideBarModel::mimeData(const QModelIndexList &indexes) const
     QMimeData *data = QStandardItemModel::mimeData(indexes);
     if (!data)
         return nullptr;
-    data->setData(MODELITEM_MIMETYPE, GlobalPrivate::generateMimeData(indexes));
+    data->setData(kModelitemMimetype, GlobalPrivate::generateMimeData(indexes));
     return data;
 }
 
@@ -145,10 +145,13 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
         int beginRowIndex = -1;
         // find insert group
         for (int rowIndex = rowCount() - 1; rowIndex >= 0; rowIndex--) {
+            if (dynamic_cast<SideBarItemSeparator *>(this->item(rowIndex, 0)))
+                continue;
+
             auto findedItem = dynamic_cast<SideBarItem *>(this->item(rowIndex, 0));
 
             if (!findedItem)
-                return false;
+                continue;
 
             if (findedItem->group() == item->group()) {
                 if (-1 == endRowIndex)
@@ -189,7 +192,7 @@ int SideBarModel::appendRow(SideBarItem *item)
                 auto findedItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
 
                 if (!findedItem)
-                    return -1;
+                    continue;
 
                 if (findedItem && findedItem->group() == currentGroup) {
                     QStandardItemModel::insertRow(row + 1, item);

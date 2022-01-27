@@ -22,6 +22,7 @@
 #include "private/optionbuttonbox_p.h"
 #include "views/optionbuttonbox.h"
 #include "events/titlebareventcaller.h"
+#include "utils/optionbuttonmanager.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -116,6 +117,21 @@ void OptionButtonBox::setDetailButton(QToolButton *detailButton)
 void OptionButtonBox::onUrlChanged(const QUrl &url)
 {
     d->loadViewMode(url);
+    if (OptionButtonManager::instance()->hasVsibleState(url.scheme())) {
+        auto state = OptionButtonManager::instance()->optBtnVisibleState(url.scheme());
+        if (state & OptionButtonManager::kHideListViewBtn)
+            d->listViewButton->setHidden(true);
+
+        if (state & OptionButtonManager::kHideIconViewBtn)
+            d->iconViewButton->setHidden(true);
+
+        if (state & OptionButtonManager::kHideDetailSpaceBtn)
+            d->detailButton->setHidden(true);
+    } else {
+        d->listViewButton->setHidden(false);
+        d->iconViewButton->setHidden(false);
+        d->detailButton->setHidden(false);
+    }
 }
 
 void OptionButtonBox::initializeUi()

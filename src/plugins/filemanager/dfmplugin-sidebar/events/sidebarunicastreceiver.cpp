@@ -71,8 +71,9 @@ void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info)
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
         if (item) {
             sidebar->addItem(item);
+            // for select to computer
             QUrl &&itemUrl = item->url();
-            QUrl &&sidebarUrl = sidebar->currentUrl().url();
+            QUrl &&sidebarUrl = sidebar->currentUrl();
             if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
                 sidebar->setCurrentUrl(item->url());
         }
@@ -96,15 +97,12 @@ void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const QString &ne
 
 void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info)
 {
+    Q_ASSERT(index >= 0 && index <= UINT8_MAX);
+
     if (SideBarHelper::allCacheInfo().contains(info)) {
         qWarning() << "Cannot add repeated info " << info.url;
         return;
     }
-    // Todo: index position
-    if (index >= SideBarHelper::allCacheInfo().size())
-        index = SideBarHelper::allCacheInfo().size();
-    if (index <= 0)
-        index = 0;
 
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar) {

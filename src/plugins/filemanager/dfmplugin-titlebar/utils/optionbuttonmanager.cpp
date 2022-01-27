@@ -20,44 +20,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "crumbmanager.h"
-#include "utils/crumbinterface.h"
-
-#include <QDebug>
+#include "optionbuttonmanager.h"
 
 DPTITLEBAR_USE_NAMESPACE
 
-CrumbManager *CrumbManager::instance()
+OptionButtonManager *OptionButtonManager::instance()
 {
-    static CrumbManager manager;
+    static OptionButtonManager manager;
     return &manager;
 }
 
-void CrumbManager::registerCrumbCreator(const CrumbManager::KeyType &scheme, const CrumbManager::CrumbCreator &creator)
+void OptionButtonManager::setOptBtnVisibleState(const OptionButtonManager::Scheme &scheme, OptionButtonManager::OptBtnVisibleState state)
 {
-    if (isRegisted(scheme))
-        return;
-
-    creators.insert(scheme, creator);
+    stateMap.insert(scheme, state);
 }
 
-bool CrumbManager::isRegisted(const KeyType &KeyType) const
+OptionButtonManager::OptBtnVisibleState OptionButtonManager::optBtnVisibleState(const OptionButtonManager::Scheme &scheme) const
 {
-    return creators.contains(KeyType) ? true : false;
+    return stateMap[scheme];
 }
 
-CrumbInterface *CrumbManager::createControllerByUrl(const QUrl &url)
+bool OptionButtonManager::hasVsibleState(const OptionButtonManager::Scheme &scheme) const
 {
-    KeyType &&theType = url.scheme();
-    if (!creators.contains(theType)) {
-        qWarning() << "Scheme: " << theType << "not registered!";
-        return nullptr;
-    }
-
-    return creators.value(theType)();
+    return stateMap.contains(scheme);
 }
 
-CrumbManager::CrumbManager(QObject *parent)
+OptionButtonManager::OptionButtonManager(QObject *parent)
     : QObject(parent)
 {
 }

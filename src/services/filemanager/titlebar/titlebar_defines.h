@@ -54,7 +54,9 @@ struct CustomCrumbInfo
 {
     QString scheme;
     bool keepAddressBar { false };   // don't lost focus at addressbar, only search use it now
-
+    bool hideListViewBtn { false };
+    bool hideIconViewBtn { false };
+    bool hideDetailSpaceBtn { false };
     supportedUrlCallback supportedCb { nullptr };
     seprateUrlCallback seperateCb { nullptr };
 };

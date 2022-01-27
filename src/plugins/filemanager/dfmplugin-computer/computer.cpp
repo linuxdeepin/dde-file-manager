@@ -75,6 +75,7 @@ void Computer::initialize()
     DSB_FM_USE_NAMESPACE
     Q_ASSERT_X(ctx.loaded(WindowsService::name()), "Computer", "WindowService not loaded");
     GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
+    connect(GlobalPrivate::winServ, &WindowsService::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
     connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::winServ, &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 }
@@ -90,9 +91,15 @@ dpf::Plugin::ShutdownFlag Computer::stop()
     return kSync;
 }
 
-void Computer::onWindowOpened(quint64 windId)
+void Computer::onWindowCreated(quint64 winId)
 {
-    auto window = GlobalPrivate::winServ->findWindowById(windId);
+    Q_UNUSED(winId);
+    regComputerCrumbToTitleBar();
+}
+
+void Computer::onWindowOpened(quint64 winId)
+{
+    auto window = GlobalPrivate::winServ->findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
     if (window->workSpace())
@@ -106,12 +113,10 @@ void Computer::onWindowOpened(quint64 windId)
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
 
     if (window->titleBar()) {
-        regComputerCrumbToTitleBar();
         regComputerToSearch();
     } else {
         connect(window, &FileManagerWindow::titleBarInstallFinished, this,
                 [this] {
-                    regComputerCrumbToTitleBar();
                     regComputerToSearch();
                 },
                 Qt::DirectConnection);
@@ -150,6 +155,9 @@ void Computer::regComputerCrumbToTitleBar()
             auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
             TitleBar::CustomCrumbInfo info;
             info.scheme = ComputerUtils::scheme();
+            info.hideIconViewBtn = true;
+            info.hideListViewBtn = true;
+            info.hideDetailSpaceBtn = true;
             info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == ComputerUtils::scheme(); };
             info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
                 Q_UNUSED(url);

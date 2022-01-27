@@ -47,10 +47,10 @@ public:
     bool initialize();
     bool start();
     const LifeCycle &lifeCycle() const;
-    PluginServiceContext &serviceContext() const;
+    [[gnu::hot]] PluginServiceContext &serviceContext() const;
     EventCallProxy &eventProxy() const;
-    EventDispatcherManager &eventDispatcher() const;
-    EventUnicastManager &eventUnicast() const;
+    [[gnu::hot]] EventDispatcherManager &eventDispatcher() const;
+    [[gnu::hot]] EventUnicastManager &eventUnicast() const;
     const Listener &listener() const;
 
 private:

@@ -33,6 +33,7 @@
 
 #include <QHBoxLayout>
 #include <QToolButton>
+#include <QPushButton>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
@@ -53,11 +54,11 @@ private:
     void initializeUi();
     void initConnect();
     void showAddrsssBar(const QUrl &url);   // switch addrasssBar and crumbBar show
-    void showAddressBar(const QString &text);
     void showCrumbBar();
     void showSearchButton();
     void showSearchFilterButton();
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void toggleSearchButtonState(bool switchBtn = true);
 
 signals:
     void currentUrlChanged(const QUrl &url);
@@ -65,16 +66,19 @@ signals:
 private slots:
     void onSearchButtonClicked();
     void onAddressBarJump();
+    void searchBarActivated();
+    void searchBarDeactivated();
 
 private:
     QUrl titlebarUrl;
     QHBoxLayout *titleBarLayout { nullptr };   // 标题栏布局
     NavWidget *curNavWidget { nullptr };   // 导航小部件
     AddressBar *addressBar { nullptr };   // 地址编辑栏
-    QToolButton *searchButton { nullptr };   // 搜索栏按钮
+    QPushButton *searchButton { nullptr };   // 搜索栏按钮
     QToolButton *searchFilterButton { nullptr };   // 搜索过滤按钮
     OptionButtonBox *optionButtonBox { nullptr };   // 功能按鈕栏
     CrumbBar *crumbBar { nullptr };   // 面包屑
+    bool searchButtonSwitchState { false };
 };
 
 DPTITLEBAR_END_NAMESPACE

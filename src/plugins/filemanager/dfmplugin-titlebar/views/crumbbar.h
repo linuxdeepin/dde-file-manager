@@ -48,7 +48,7 @@ public:
     QUrl lastUrl() const;
 
 Q_SIGNALS:
-    void showAddressBar(const QString &text);
+    void showAddressBarText(const QString &text);
     void hideAddressBar(bool cd);
     void selectedUrl(const QUrl &url);
     void editUrl(const QUrl &url);

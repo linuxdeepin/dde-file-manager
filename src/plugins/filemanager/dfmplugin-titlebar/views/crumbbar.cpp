@@ -410,7 +410,7 @@ void CrumbBar::onKeepAddressBar(const QUrl &url)
 {
     QUrlQuery query { url.query() };
     QString searchKey { query.queryItemValue("keyword", QUrl::FullyDecoded) };
-    emit showAddressBar(searchKey);
+    emit showAddressBarText(searchKey);
 }
 
 void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)

@@ -90,9 +90,10 @@ void TitleBarWidget::initializeUi()
     titleBarLayout->addWidget(crumbBar);
 
     // search button
-    searchButton = new QToolButton;
+    searchButton = new QPushButton;
     searchButton->setFixedSize({ 36, 36 });
     searchButton->setFocusPolicy(Qt::NoFocus);
+    searchButton->setFlat(true);
     searchButton->setIcon(QIcon::fromTheme("search"));
     searchButton->setIconSize({ 16, 16 });
     titleBarLayout->addWidget(searchButton);
@@ -118,15 +119,17 @@ void TitleBarWidget::initializeUi()
 
 void TitleBarWidget::initConnect()
 {
-    connect(searchButton, &QToolButton::clicked,
-            this, &TitleBarWidget::onSearchButtonClicked);
-
+    connect(searchButton, &QToolButton::clicked, this, &TitleBarWidget::onSearchButtonClicked);
     connect(this, &TitleBarWidget::currentUrlChanged, optionButtonBox, &OptionButtonBox::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
-    connect(crumbBar, &CrumbBar::showAddressBar, addressBar, &AddressBar::setText);
+    connect(crumbBar, &CrumbBar::showAddressBarText, addressBar, [this](const QString &text) {
+        addressBar->setText(text);
+        searchBarActivated();
+    });
     connect(crumbBar, &CrumbBar::hideAddressBar, this, [this](bool cd) {
         addressBar->hide();
+        searchBarDeactivated();
         if (cd)
             TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
     });
@@ -158,14 +161,7 @@ void TitleBarWidget::showAddrsssBar(const QUrl &url)
     addressBar->show();
     addressBar->setFocus();
     addressBar->setCurrentUrl(url);
-}
-
-void TitleBarWidget::showAddressBar(const QString &text)
-{
-    crumbBar->hide();
-    addressBar->show();
-    addressBar->setFocus();
-    addressBar->setText(text);
+    searchBarActivated();
 }
 
 void TitleBarWidget::showCrumbBar()
@@ -213,10 +209,34 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
+{
+    if (switchBtn) {
+        searchButton->setHidden(true);
+        searchButton->setObjectName("filterButton");
+        searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
+        searchButton->style()->unpolish(searchButton);
+        searchButton->style()->polish(searchButton);
+        searchButton->setFlat(true);
+        searchButtonSwitchState = true;
+    } else {
+        searchButton->setHidden(false);
+        searchButton->style()->unpolish(searchButton);
+        searchButton->style()->polish(searchButton);
+        searchButton->setIcon(QIcon::fromTheme("search"));
+        searchButton->setDown(false);
+        searchButtonSwitchState = false;
+        // TODO(zhangs): workspace->toggleAdvanceSearchBar(false);
+    }
+}
+
 void TitleBarWidget::onSearchButtonClicked()
 {
-    showAddrsssBar(QUrl());
-    searchButton->hide();
+    if (!searchButtonSwitchState) {
+        showAddrsssBar(QUrl());
+    } else {
+        // TODO(zhangs): toggle asb visible
+    }
 }
 
 void TitleBarWidget::onAddressBarJump()
@@ -225,4 +245,14 @@ void TitleBarWidget::onAddressBarJump()
     if (titlebarUrl.isLocalFile())
         QDir::setCurrent(titlebarUrl.toLocalFile());
     QDir::setCurrent(currentDir);
+}
+
+void TitleBarWidget::searchBarActivated()
+{
+    toggleSearchButtonState(true);
+}
+
+void TitleBarWidget::searchBarDeactivated()
+{
+    toggleSearchButtonState(false);
 }

@@ -255,7 +255,6 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
 
     auto window = new FMWindow(showedUrl);
     window->show();
-    emit windowCreated(window->internalWinId());
     d->loadWindowState(window);
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());
@@ -265,6 +264,7 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     connect(window, &FileManagerWindow::reqShowHotkeyHelp, this, [this, window]() {
         d->onShowHotkeyHelp(window);
     });
+    emit windowCreated(window->internalWinId());
 
     qInfo() << "New window created: " << window->winId() << showedUrl;
     d->windows.insert(window->internalWinId(), window);

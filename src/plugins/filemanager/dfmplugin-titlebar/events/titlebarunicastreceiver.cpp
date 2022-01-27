@@ -22,6 +22,7 @@
 */
 #include "titlebarunicastreceiver.h"
 #include "utils/crumbmanager.h"
+#include "utils/optionbuttonmanager.h"
 #include "utils/crumbinterface.h"
 
 #include <QSharedPointer>
@@ -53,10 +54,21 @@ void TitleBarUnicastReceiver::connectService()
 
 bool TitleBarUnicastReceiver::invokeAddCustomCrumbar(const CustomCrumbInfo &info)
 {
+    Q_ASSERT(!info.scheme.isEmpty());
     if (CrumbManager::instance()->isRegisted(info.scheme)) {
         qWarning() << "Crumb sechme " << info.scheme << "has been resigtered!";
         return false;
     }
+
+    int state { OptionButtonManager::kDoNotHide };
+    if (info.hideListViewBtn)
+        state |= OptionButtonManager::kHideListViewBtn;
+    if (info.hideIconViewBtn)
+        state |= OptionButtonManager::kHideIconViewBtn;
+    if (info.hideDetailSpaceBtn)
+        state |= OptionButtonManager::kHideDetailSpaceBtn;
+    if (state != OptionButtonManager::kDoNotHide)
+        OptionButtonManager::instance()->setOptBtnVisibleState(info.scheme, static_cast<OptionButtonManager::OptBtnVisibleState>(state));
 
     CrumbManager::instance()->registerCrumbCreator(info.scheme, [=]() {
         CrumbInterface *interface { new CrumbInterface };
@@ -65,6 +77,7 @@ bool TitleBarUnicastReceiver::invokeAddCustomCrumbar(const CustomCrumbInfo &info
         interface->registerSeprateUrlCallback(info.seperateCb);
         return interface;
     });
+
     return true;
 }
 

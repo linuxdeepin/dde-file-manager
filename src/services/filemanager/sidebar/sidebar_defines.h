@@ -54,12 +54,12 @@ using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targe
 
 struct ItemInfo
 {
-    QString group;
+    QString group;   //< SideBar::DefaultGroup
     QString iconName;
     QString text;
     QUrl url;
-    Qt::ItemFlags flag;
-    bool removable { false };
+    Qt::ItemFlags flag;   //< Qt::ItemFlag
+    bool removable { false };   //< item will set actionList(right edge)
 
     CdActionCallback cdCb { nullptr };
     ContextMenuCallback contextMenuCb { nullptr };
