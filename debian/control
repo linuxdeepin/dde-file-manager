@@ -115,18 +115,6 @@ Description: Development package for libdfm-extension
  This package contains the header files and pkgconfig
  of libdfm-extension
 
-Package: dde-select-dialog-wayland
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Description: dbus service for wayland
- Deepin select dialog for wayland.
-
-Package: dde-select-dialog-x11
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Description: dbus service for x11
- Deepin select dialog for x11.
-
 Package: libdde-file-manager
 Architecture: any
 Depends:
