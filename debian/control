@@ -102,18 +102,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Vers
 Description: plugin of dde-dock
  Disk mount plugin of dde-dock which is created by libdde-file-manager
 
-Package: dde-select-dialog-wayland
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Description: dbus service for wayland
- Deepin select dialog for wayland.
-
-Package: dde-select-dialog-x11
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
-Description: dbus service for x11
- Deepin select dialog for x11.
-
 Package: libdde-file-manager
 Architecture: any
 Depends:
