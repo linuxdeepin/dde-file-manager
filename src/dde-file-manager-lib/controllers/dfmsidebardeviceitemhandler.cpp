@@ -68,18 +68,15 @@ DViewItemAction *DFMSideBarDeviceItemHandler::createUnmountOrEjectAction(const D
 
 DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
 {
-    // 先进行解密
-    const DUrl &decodeUrl = DUrl(QUrl::fromPercentEncoding(url.toString().toLocal8Bit()));
-
-    DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, decodeUrl);
+    DAbstractFileInfoPointer infoPointer = DFileService::instance()->createFileInfo(nullptr, url);
     //fix 60959 如果是smb,sftp,ftp的共享文件，本来是显示的，但是断网了以后，新开窗口就创建了新的dfmrootfileinfo判断文件就不存在，
     //到DRootFileManager中去获取缓存，如果缓存不存在就返回
-    const QString &urlPath = decodeUrl.path();
+    const QString &urlPath = url.path();
 
     bool fileinfoExist = infoPointer && infoPointer->exists();
     if(!infoPointer
             || (!fileinfoExist && infoPointer->suffix() == SUFFIX_GVFSMP && (FileUtils::isSmbPath(urlPath) || (urlPath.contains("ftp") && urlPath.contains("host"))))) {
-        infoPointer = DRootFileManager::getFileInfo(decodeUrl);
+        infoPointer = DRootFileManager::getFileInfo(url);
     }
     fileinfoExist = infoPointer && infoPointer->exists();
     if(!infoPointer
@@ -89,7 +86,7 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     QString displayName = infoPointer->fileDisplayName();
     QString iconName = infoPointer->iconName() + "-symbolic";
 
-    DFMSideBarItem * item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, decodeUrl);
+    DFMSideBarItem * item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
 
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
 
@@ -100,7 +97,7 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     item->setData(SIDEBAR_ID_DEVICE, DFMSideBarItem::ItemUseRegisteredHandlerRole);
 
     DViewItemActionList lst;
-    DViewItemAction * act = createUnmountOrEjectAction(decodeUrl, false);
+    DViewItemAction * act = createUnmountOrEjectAction(url, false);
     act->setIcon(QIcon::fromTheme("media-eject-symbolic"));
     act->setVisible(actionlist.contains(MenuAction::Eject) ||
                     actionlist.contains(MenuAction::Unmount) ||
