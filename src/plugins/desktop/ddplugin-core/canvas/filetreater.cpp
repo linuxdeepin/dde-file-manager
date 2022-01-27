@@ -33,14 +33,14 @@
 DSB_D_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-class FileTreaterGlobal : public FileTreater{};
+class FileTreaterGlobal : public FileTreater
+{
+};
 Q_GLOBAL_STATIC(FileTreaterGlobal, fileTreater)
 
 FileTreaterPrivate::FileTreaterPrivate(FileTreater *q_ptr)
-    : QObject (q_ptr)
-    , q(q_ptr)
+    : QObject(q_ptr), q(q_ptr)
 {
-
 }
 
 void FileTreaterPrivate::doFileDeleted(const QUrl &url)
@@ -110,8 +110,8 @@ void FileTreaterPrivate::doUpdateChildren(const QList<QUrl> &childrens)
 
 void FileTreaterPrivate::doWatcherEvent()
 {
-//    if (refreshedFlag)
-//        return;
+    //    if (refreshedFlag)
+    //        return;
 
     if (processFileEventRuning)
         return;
@@ -148,7 +148,7 @@ void FileTreaterPrivate::doWatcherEvent()
             fileMap.insert(url, itemInfo);
 
             emit q->fileCreated(url);
-        } else if (kRmFile == eventType){
+        } else if (kRmFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
             if (Q_UNLIKELY(!fileList.contains(url)))
                 continue;
@@ -211,15 +211,13 @@ bool FileTreaterPrivate::checkFileEventQueue()
 }
 
 FileTreater::FileTreater(QObject *parent)
-    : QObject(parent)
-    , d(new FileTreaterPrivate(this))
+    : QObject(parent), d(new FileTreaterPrivate(this))
 {
     Q_ASSERT(thread() == qApp->thread());
 }
 
 FileTreater::~FileTreater()
 {
-
 }
 
 FileTreater *FileTreater::instance()
@@ -333,7 +331,7 @@ void FileTreater::refresh()
         return;
     }
 
-    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildrens, d.data(), &FileTreaterPrivate::doUpdateChildren, Qt::QueuedConnection);
+    QObject::connect(d->traversalThread.data(), &TraversalDirThread::updateChildren, d.data(), &FileTreaterPrivate::doUpdateChildren, Qt::QueuedConnection);
     d->traversalThread->start();
 }
 
@@ -377,7 +375,7 @@ bool FileTreater::sort()
 
     QList<DFMLocalFileInfoPointer> list = d->fileMap.values();
 
-    std::sort(list.begin(), list.end(), [sortFun,  this](const DFMLocalFileInfoPointer info1, const DFMLocalFileInfoPointer info2) {
+    std::sort(list.begin(), list.end(), [sortFun, this](const DFMLocalFileInfoPointer info1, const DFMLocalFileInfoPointer info2) {
         return sortFun(info1, info2, this->d->sortOrder);
     });
     QList<QUrl> fileList;
