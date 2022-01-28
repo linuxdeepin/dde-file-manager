@@ -21,6 +21,7 @@
 */
 #include "fileviewhelper.h"
 #include "models/fileviewmodel.h"
+#include "models/filesortfilterproxymodel.h"
 #include "views/fileview.h"
 #include "views/baseitemdelegate.h"
 #include "views/iconitemeditor.h"
@@ -186,7 +187,9 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     if (!editor) {
         return;
     }
-    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(itemDelegate()->editingIndex());
+
+    const auto &index = parent()->proxyModel()->mapToSource(itemDelegate()->editingIndex());
+    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index);
 
     if (!fileInfo) {
         return;

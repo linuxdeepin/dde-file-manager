@@ -670,7 +670,7 @@ QRect FileView::visualRect(const QModelIndex &index) const
 
     QSize itemSize = itemSizeHint();
 
-    if (itemSize.width() == -1) {
+    if (isListViewMode()) {
         rect.setLeft(kListViewSpacing - horizontalScrollBar()->value());
         rect.setRight(viewport()->width() - kListViewSpacing - 1);
         rect.setTop(index.row() * (itemSize.height() + kListViewSpacing * 2) + kListViewSpacing);
@@ -868,5 +868,3 @@ void FileView::saveViewModeState()
     setFileViewStateValue(url, "iconSizeLevel", d->statusBar->scalingSlider()->value());
     setFileViewStateValue(url, "viewMode", static_cast<int>(d->currentViewMode));
 }
-
-
