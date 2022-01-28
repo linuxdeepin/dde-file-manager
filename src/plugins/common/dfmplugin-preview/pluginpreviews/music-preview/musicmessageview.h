@@ -86,20 +86,20 @@ private:
     void characterEncodingTransform(MediaMeta &meta, void *obj);
 
 private:
-    QString m_uri;
-    QLabel *m_titleLabel;
-    QLabel *m_artistLabel;
-    QLabel *m_albumLabel;
-    QLabel *m_imgLabel;
-    QLabel *m_artistValue;
-    QLabel *m_albumValue;
+    QString currentUrl;
+    QLabel *titleLabel { nullptr };
+    QLabel *artistLabel { nullptr };
+    QLabel *albumLabel { nullptr };
+    QLabel *imgLabel { nullptr };
+    QLabel *artistValue { nullptr };
+    QLabel *albumValue { nullptr };
 
-    QMediaPlayer *m_player;
+    QMediaPlayer *mediaPlayer { nullptr };
 
-    QString m_title;
-    QString m_artist;
-    QString m_album;
-    int m_margins;
+    QString fileTitle;
+    QString fileArtist;
+    QString fileAlbum;
+    int viewMargins;
     QMap<QString, QByteArray> localeCodes;   //!  区域与编码
 };
 PREVIEW_END_NAMESPACE

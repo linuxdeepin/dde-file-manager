@@ -126,13 +126,16 @@ void BasicWidget::selectFileUrl(const QUrl &url)
     if (info.isNull())
         return;
 
-    filePosition->setRightValue(info->absoluteFilePath(), Qt::ElideMiddle, Qt::AlignVCenter, true);
+    QUrl selectUrl = UrlRoute::pathToReal(url.path());
+    QString path = selectUrl.url();
+
+    filePosition->setRightValue(path, Qt::ElideMiddle, Qt::AlignVCenter, true);
     fileCreated->setRightValue(info->birthTime().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
     fileAccessed->setRightValue(info->lastRead().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
     fileModified->setRightValue(info->lastModified().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
     fileCount->setVisible(false);
 
-    QMimeType mimeType = MimeDatabase::mimeTypeForUrl(url);
+    QMimeType mimeType = MimeDatabase::mimeTypeForUrl(QUrl::fromLocalFile(url.path()));
     MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
     switch (static_cast<int>(type)) {
     case MimeDatabase::FileType::kDirectory:

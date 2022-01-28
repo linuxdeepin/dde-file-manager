@@ -61,11 +61,11 @@ private:
     void durationToLabel(qint64 duration);
 
 private:
-    QMediaPlayer *m_player;
-    QPushButton *m_playControlButton;
-    QSlider *m_progressSlider;
-    QLabel *m_durationLabel;
-    QTimer *m_updateProgressTimer;
+    QMediaPlayer *mediaPlayer { nullptr };
+    QPushButton *playControlButton { nullptr };
+    QSlider *progressSlider { nullptr };
+    QLabel *durationLabel { nullptr };
+    QTimer *updateProgressTimer { nullptr };
 };
 PREVIEW_END_NAMESPACE
 #endif   // TOOLBARFRAME_H

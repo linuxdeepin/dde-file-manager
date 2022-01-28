@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liyigang<liyigang@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: liyigang<liyigang@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +55,11 @@ void DevicePropertyDialog::iniUI()
     QFrame *basicInfoFrame = new QFrame(this);
 
     basicInfo = new KeyValueLabel(this);
-    devicesProgressBar = new DColoredProgressBar(this);
+    basicInfo->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
+    devicesProgressBar = new DColoredProgressBar();
     devicesProgressBar->addThreshold(0, QColor(0xFF0080FF));
     devicesProgressBar->addThreshold(7000, QColor(0xFFFFAE00));
     devicesProgressBar->addThreshold(9000, QColor(0xFFFF0000));
-    devicesProgressBar->setMaximum(10000);
     devicesProgressBar->setMaximumHeight(8);
     devicesProgressBar->setTextVisible(false);
 
@@ -121,6 +121,8 @@ int DevicePropertyDialog::contentHeight() const
             + basicInfo->height()
             + devicesProgressBar->height()
             + expandsHeight
+            + contentsMargins().top()
+            + contentsMargins().bottom()
             + 40);
 }
 
@@ -128,6 +130,7 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DSC_NAMESPACE::DeviceInfo &
 {
     currentFileUrl = info.deviceUrl;
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));
+    basicInfo->setLeftValue(info.deviceName, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignLeft, true);
     deviceName->setText(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
     basicInfo->setLeftValue(info.deviceName, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignLeft, true);
@@ -152,7 +155,7 @@ void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize)
     QString sizeFreeStr = UniversalUtils::sizeFormat(totalSize - freeSize, 1);
     basicInfo->setRightValue(sizeFreeStr + QString("/") + sizeTotalStr, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignRight, true);
 
-    // fix bug#47111 在浅色模式下，手动设置进度条背景色
+    // 在浅色模式下，手动设置进度条背景色
     if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {
         DPalette palette = devicesProgressBar->palette();
         palette.setBrush(DPalette::ObviousBackground, QColor("#ededed"));
@@ -187,7 +190,7 @@ void DevicePropertyDialog::insertExtendedControl(int index, QWidget *widget)
 void DevicePropertyDialog::addExtendedControl(QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-    insertExtendedControl(vlayout->count() - 1, widget);
+    insertExtendedControl(vlayout->count(), widget);
 }
 
 void DevicePropertyDialog::showEvent(QShowEvent *event)

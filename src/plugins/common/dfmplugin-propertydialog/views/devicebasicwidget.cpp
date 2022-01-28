@@ -65,7 +65,7 @@ void DeviceBasicWidget::initUI()
     freeSize = new KeyValueLabel(this);
     freeSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     freeSize->setLeftValue(tr("Free space"));
-
+    //1602914
     QGridLayout *glayout = new QGridLayout;
     glayout->setContentsMargins(15, 15, 5, 10);
     glayout->setSpacing(16);

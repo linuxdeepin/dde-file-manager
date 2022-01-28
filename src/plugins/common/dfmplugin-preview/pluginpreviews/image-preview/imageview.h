@@ -36,7 +36,7 @@ public:
 
 private:
     QSize sourceImageSize;
-    QMovie *movie = nullptr;
+    QMovie *movie { nullptr };
 };
 PREVIEW_END_NAMESPACE
 #endif   // IMAGEVIEW_H

@@ -293,14 +293,6 @@ void FileView::wheelEvent(QWheelEvent *event)
 
 void FileView::keyPressEvent(QKeyEvent *event)
 {
-
-    switch (event->modifiers()) {
-    case Qt::NoModifier:
-        if (event->key() == Qt::Key_Space) {
-            WorkspaceEventCaller::sendShowPreviewDialog(WorkspaceHelper::instance()->windowId(this), selectedUrlList(), proxyModel()->getCurrentDirFileUrls());
-            break;
-        }
-    }
     // TODO(zhangs): impl me
     if (!d->shortcutHelper->processKeyPressEvent(event))
         return DListView::keyPressEvent(event);

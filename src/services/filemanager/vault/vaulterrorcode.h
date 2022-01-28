@@ -21,7 +21,10 @@
 
 #ifndef VAULTERRORCODE_H
 #define VAULTERRORCODE_H
+#include "dfm_filemanager_service_global.h"
 
+#include <QObject>
+DSB_FM_BEGIN_NAMESPACE
 enum class ErrorCode : int {
     //! 成功
     kSuccess = 0,
@@ -129,5 +132,6 @@ enum class EncryptType : int {
     MARS_128_GCM,
     MARS_128_CFB
 };
-
+DSB_FM_END_NAMESPACE
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::EncryptType);
 #endif   // VAULTERRORCODE_H

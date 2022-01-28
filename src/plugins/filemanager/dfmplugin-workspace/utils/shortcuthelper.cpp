@@ -268,8 +268,17 @@ void ShortcutHelper::showFilesProperty()
 
 void ShortcutHelper::previewFiles()
 {
-    // Todo(yanghao): sorted urls
-    FileOperaterHelperIns->previewFiles(view);
+    QList<QUrl> Urls = view->selectedUrlList();
+    QList<QUrl> selectUrls;
+    for (QUrl &url : Urls) {
+        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
+    }
+    Urls = view->proxyModel()->getCurrentDirFileUrls();
+    QList<QUrl> currentDirUrls;
+    for (QUrl &url : Urls) {
+        currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
+    }
+    FileOperaterHelperIns->previewFiles(view, selectUrls, currentDirUrls);
 }
 
 void ShortcutHelper::openAction(const QList<QUrl> &urls, const DirOpenMode openMode)

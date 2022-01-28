@@ -1,11 +1,3 @@
-#ifndef UNKNOWFILEPREVIEW_H
-#define UNKNOWFILEPREVIEW_H
-#include "dfmplugin_filepreview_global.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
-#include "utils/calculationutils.h"
-
-#include <QLabel>
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
@@ -26,6 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef UNKNOWFILEPREVIEW_H
+#define UNKNOWFILEPREVIEW_H
+#include "dfmplugin_filepreview_global.h"
+#include "dfm-base/interfaces/abstractbasepreview.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "utils/calculationutils.h"
+
+#include <QLabel>
 #include <QUrl>
 #include <QPointer>
 

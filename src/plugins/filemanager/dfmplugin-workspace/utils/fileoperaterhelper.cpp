@@ -22,9 +22,11 @@
 #include "fileoperaterhelper.h"
 #include "workspacehelper.h"
 #include "views/fileview.h"
+#include "models/filesortfilterproxymodel.h"
 #include "dfm-framework/framework.h"
 
 #include "services/common/propertydialog/property_defines.h"
+#include "services/common/preview/preview_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
@@ -194,9 +196,10 @@ void FileOperaterHelper::showFilesProperty(const FileView *view)
                                           urls);
 }
 
-void FileOperaterHelper::previewFiles(const FileView *view)
+void FileOperaterHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
 {
-    //Todo(yanghao):
+    quint64 winID = WorkspaceHelper::instance()->windowId(view);
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, winID, selectUrls, currentDirUrls);
 }
 
 void FileOperaterHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)

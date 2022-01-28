@@ -291,17 +291,15 @@ void EditStackedWidget::showTextShowFrame()
 
 void EditStackedWidget::selectFile(const QUrl &url)
 {
+    filerUrl = url;
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (!info.isNull()) {
         initTextShowFrame(info->fileName());
-    }
-
-    filerUrl = url;
-
-    if (!info->canRename()) {
-        nameEditIcon->hide();
-    } else {
-        nameEditIcon->show();
+        if (!info->canRename()) {
+            nameEditIcon->hide();
+        } else {
+            nameEditIcon->show();
+        }
     }
 }
 

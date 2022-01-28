@@ -32,8 +32,6 @@
 
 DWIDGET_USE_NAMESPACE
 PREVIEW_USE_NAMESPACE
-const int LEFTMINWIDTH = 50;
-const int LEFTMAXWIDTH = 380;
 SheetSidebar::SheetSidebar(DocSheet *parent, PreviewWidgesFlags widgesFlag)
     : QWidget(parent), docSheet(parent), widgetsFlag(widgesFlag)
 {

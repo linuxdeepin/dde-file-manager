@@ -23,6 +23,7 @@
 #include "vaulthandle_p.h"
 #include "vault/vaulterrorcode.h"
 
+#include <QDirIterator>
 #include <QObject>
 #include <QStandardPaths>
 #include <QProcess>
@@ -72,6 +73,8 @@ void VaultHandle::createVault(QString lockBaseDir, QString unlockFileDir, QStrin
 {
     vaultHandlePrivatePtr->mutex->lock();
     vaultHandlePrivatePtr->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
+    createDirIfNotExist(lockBaseDir);
+    createDirIfNotExist(unlockFileDir);
     int flg = vaultHandlePrivatePtr->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
     if (vaultHandlePrivatePtr->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalCreateVault(vaultHandlePrivatePtr->activeState.value(1));
@@ -99,6 +102,7 @@ void VaultHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QStrin
     vaultHandlePrivatePtr->mutex->lock();
     vaultHandlePrivatePtr->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
     qDebug() << "VaultHandle::unlockVault:" << QThread::currentThread();
+    createDirIfNotExist(unlockFileDir);
     int flg = vaultHandlePrivatePtr->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
     if (vaultHandlePrivatePtr->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
         emit signalUnlockVault(vaultHandlePrivatePtr->activeState.value(3));
@@ -131,8 +135,26 @@ void VaultHandle::lockVault(QString unlockFileDir)
         emit signalLockVault(flg);
         qInfo() << "encrypt success " << flg;
     }
+    createDirIfNotExist(unlockFileDir);
     vaultHandlePrivatePtr->activeState.clear();
     vaultHandlePrivatePtr->mutex->unlock();
+}
+
+void VaultHandle::createDirIfNotExist(QString path)
+{
+    if (!QFile::exists(path)) {
+        QDir().mkpath(path);
+    } else {   // 修复bug-52351 创建保险箱前，如果文件夹存在，则清空
+        QDir dir(path);
+        if (!dir.isEmpty()) {
+            QDirIterator dirsIterator(path, QDir::AllEntries | QDir::NoDotAndDotDot);
+            while (dirsIterator.hasNext()) {
+                if (!dir.remove(dirsIterator.next())) {
+                    QDir(dirsIterator.filePath()).removeRecursively();
+                }
+            }
+        }
+    }
 }
 
 /*!
@@ -225,9 +247,9 @@ int VaultHandlePrivate::runVaultProcess(QString lockBaseDir, QString unlockFileD
     process->terminate();
 
     if (process->exitStatus() == QProcess::NormalExit)
-        return static_cast<int>(ErrorCode::kSuccess);
-    else
         return process->exitCode();
+    else
+        return -1;
 }
 
 /*!
@@ -262,9 +284,9 @@ int VaultHandlePrivate::runVaultProcess(QString lockBaseDir, QString unlockFileD
     process->terminate();
 
     if (process->exitStatus() == QProcess::NormalExit)
-        return static_cast<int>(ErrorCode::kSuccess);
-    else
         return process->exitCode();
+    else
+        return -1;
 }
 
 /*!
@@ -285,10 +307,10 @@ int VaultHandlePrivate::lockVaultProcess(QString unlockFileDir)
     process->waitForFinished();
     process->terminate();
 
-    if (process->exitStatus() == QProcess::NormalExit && process->exitCode() == 0)
-        return static_cast<int>(ErrorCode::kSuccess);
-    else
+    if (process->exitStatus() == QProcess::NormalExit)
         return process->exitCode();
+    else
+        return -1;
 }
 
 /*!

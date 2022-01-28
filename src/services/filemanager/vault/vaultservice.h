@@ -23,6 +23,7 @@
 #define VAULTINTERFACE_H
 
 #include "dfm_filemanager_service_global.h"
+#include "vault_defines.h"
 #include "vaulterrorcode.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
@@ -59,7 +60,7 @@ public:
      * \param[in] decryptFileDir:    保险箱解密文件夹
      * \param[in] DSecureString:     保险箱密码
      */
-    void createVault(QString encryptBaseDir, QString decryptFileDir, QString DSecureString);
+    void createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString);
 
     /*!
      * \brief                       创建保险箱
@@ -69,13 +70,13 @@ public:
      * \param[in] type:             加密类型
      * \param[in] blockSize:        解密文件块大小(大小影响加密文件的多少以及效率),大小建议4的整数倍
      */
-    void createVault(QString encryptBaseDir, QString decryptFileDir, QString DSecureString, EncryptType type, int blockSize);
+    void createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString, EncryptType type, int blockSize);
 
     /*!
      * \brief                         加锁保险箱
      * \param[in] decryptFileDir:     保险箱解密文件夹
      */
-    void lockVault(QString decryptFileDir);
+    void lockVault(const QString &decryptFileDir);
 
     /*!
      * \brief                        解锁保险箱
@@ -83,7 +84,9 @@ public:
      * \param[in] decryptFileDir:    保险箱解密文件夹
      * \param[in] DSecureString:     保险箱密码
      */
-    void unlockVault(QString encryptBaseDir, QString decryptFileDir, QString DSecureString);
+    void unlockVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString);
+
+    ServiceVaultState vaultState(const QString &encryptBaseDir, const QString &decryptFileDir);
 
 signals:
 

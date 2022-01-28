@@ -26,11 +26,12 @@
 
 DPFILEPREVIEW_USE_NAMESPACE
 QStringList PreviewPluginLoaderPrivate::pluginPaths;
+constexpr char pluginPath[] { "/../../plugins/common/dfmplugin-preview" };
 PreviewPluginLoaderPrivate::PreviewPluginLoaderPrivate(QObject *parent)
     : QObject(parent)
 {
     if (pluginPaths.isEmpty()) {
-        QString pluginsDir(qApp->applicationDirPath() + "/../../plugins/common/dfmplugin-preview");
+        QString pluginsDir(qApp->applicationDirPath() + pluginPath);
         qInfo() << pluginsDir;
         if (!QDir(pluginsDir).exists()) {
             if (QT_PREPEND_NAMESPACE(qEnvironmentVariableIsEmpty)("DFM_PLUGIN_PATH"))

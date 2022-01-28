@@ -107,7 +107,9 @@ void ComputerEventCaller::sendOpenItem(const QUrl &url)
 
 void ComputerEventCaller::sendShowFilePropertyDialog(const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, QList<QUrl>() << url);
+    QList<QUrl> urls;
+    urls << url;
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
 }
 
 void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info)

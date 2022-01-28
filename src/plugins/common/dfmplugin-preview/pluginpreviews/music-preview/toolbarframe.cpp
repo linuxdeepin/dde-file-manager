@@ -33,55 +33,55 @@ PREVIEW_USE_NAMESPACE
 ToolBarFrame::ToolBarFrame(const QString &uri, QWidget *parent)
     : QFrame(parent)
 {
-    m_player = new QMediaPlayer(this);
+    mediaPlayer = new QMediaPlayer(this);
 
-    m_updateProgressTimer = new QTimer(this);
-    m_updateProgressTimer->setInterval(1000);
+    updateProgressTimer = new QTimer(this);
+    updateProgressTimer->setInterval(1000);
 
     initUI();
     initConnections();
 
-    m_player->setMedia(QUrl::fromUserInput(uri));
+    mediaPlayer->setMedia(QUrl::fromUserInput(uri));
 }
 
 void ToolBarFrame::initUI()
 {
-    m_playControlButton = new QPushButton(this);
-    m_playControlButton->setFixedSize(24, 24);
-    m_playControlButton->setStyleSheet("QPushButton{"
-                                       "border: none;"
-                                       "image: url(:/icons/icons/start_normal.png);"
-                                       "}"
-                                       "QPushButton::pressed{"
-                                       "image: url(:/icons/icons/start_pressed.png);"
-                                       "}"
-                                       "QPushButton::hover{"
-                                       "image: url(:/icons/icons/start_hover.png);"
-                                       "}");
+    playControlButton = new QPushButton(this);
+    playControlButton->setFixedSize(24, 24);
+    playControlButton->setStyleSheet("QPushButton{"
+                                     "border: none;"
+                                     "image: url(:/icons/icons/start_normal.png);"
+                                     "}"
+                                     "QPushButton::pressed{"
+                                     "image: url(:/icons/icons/start_pressed.png);"
+                                     "}"
+                                     "QPushButton::hover{"
+                                     "image: url(:/icons/icons/start_hover.png);"
+                                     "}");
 
-    m_progressSlider = new QSlider(this);
-    m_progressSlider->setOrientation(Qt::Horizontal);
-    m_progressSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    progressSlider = new QSlider(this);
+    progressSlider->setOrientation(Qt::Horizontal);
+    progressSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    m_durationLabel = new QLabel(this);
+    durationLabel = new QLabel(this);
 
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(m_playControlButton, 0, Qt::AlignVCenter);
-    layout->addWidget(m_progressSlider, 0, Qt::AlignVCenter);
-    layout->addWidget(m_durationLabel, 0, Qt::AlignVCenter);
+    layout->addWidget(playControlButton, 0, Qt::AlignVCenter);
+    layout->addWidget(progressSlider, 0, Qt::AlignVCenter);
+    layout->addWidget(durationLabel, 0, Qt::AlignVCenter);
 
     setLayout(layout);
 }
 
 void ToolBarFrame::initConnections()
 {
-    connect(m_player, &QMediaPlayer::stateChanged, this, &ToolBarFrame::onPlayStateChanged);
-    connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &ToolBarFrame::onPlayStatusChanged);
-    connect(m_player, &QMediaPlayer::durationChanged, this, &ToolBarFrame::onPlayDurationChanged);
-    connect(m_playControlButton, &QPushButton::clicked, this, &ToolBarFrame::onPlayControlButtonClicked);
-    connect(m_updateProgressTimer, &QTimer::timeout, this, &ToolBarFrame::updateProgress);
-    connect(m_progressSlider, &QSlider::valueChanged, this, &ToolBarFrame::seekPosition);
+    connect(mediaPlayer, &QMediaPlayer::stateChanged, this, &ToolBarFrame::onPlayStateChanged);
+    connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &ToolBarFrame::onPlayStatusChanged);
+    connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &ToolBarFrame::onPlayDurationChanged);
+    connect(playControlButton, &QPushButton::clicked, this, &ToolBarFrame::onPlayControlButtonClicked);
+    connect(updateProgressTimer, &QTimer::timeout, this, &ToolBarFrame::updateProgress);
+    connect(progressSlider, &QSlider::valueChanged, this, &ToolBarFrame::seekPosition);
 }
 
 void ToolBarFrame::onPlayDurationChanged(qint64 duration)
@@ -102,34 +102,34 @@ void ToolBarFrame::onPlayStateChanged(const QMediaPlayer::State &state)
         iconName = "pause";
     }
 
-    m_playControlButton->setStyleSheet("QPushButton{"
-                                       "border: none;"
-                                       "image: url(:/icons/icons/"
-                                       + iconName + "_normal.png);"
-                                                    "}"
-                                                    "QPushButton::pressed{"
-                                                    "image: url(:/icons/icons/"
-                                       + iconName + "_pressed.png);"
-                                                    "}"
-                                                    "QPushButton::hover{"
-                                                    "image: url(:/icons/icons/"
-                                       + iconName + "_hover.png);"
-                                                    "}");
+    playControlButton->setStyleSheet("QPushButton{"
+                                     "border: none;"
+                                     "image: url(:/icons/icons/"
+                                     + iconName + "_normal.png);"
+                                                  "}"
+                                                  "QPushButton::pressed{"
+                                                  "image: url(:/icons/icons/"
+                                     + iconName + "_pressed.png);"
+                                                  "}"
+                                                  "QPushButton::hover{"
+                                                  "image: url(:/icons/icons/"
+                                     + iconName + "_hover.png);"
+                                                  "}");
 }
 
 void ToolBarFrame::onPlayStatusChanged(const QMediaPlayer::MediaStatus &status)
 {
     if (status == QMediaPlayer::LoadedMedia || status == QMediaPlayer::BufferedMedia) {
-        durationToLabel(m_player->duration());
+        durationToLabel(mediaPlayer->duration());
     }
 }
 
 void ToolBarFrame::onPlayControlButtonClicked()
 {
-    if (m_player->state() == QMediaPlayer::PlayingState) {
+    if (mediaPlayer->state() == QMediaPlayer::PlayingState) {
         pause();
-    } else if (m_player->state() == QMediaPlayer::StoppedState) {
-        m_progressSlider->setValue(0);
+    } else if (mediaPlayer->state() == QMediaPlayer::StoppedState) {
+        progressSlider->setValue(0);
         play();
     } else {
         play();
@@ -138,33 +138,33 @@ void ToolBarFrame::onPlayControlButtonClicked()
 
 void ToolBarFrame::updateProgress()
 {
-    m_progressSlider->setValue(static_cast<int>(m_player->position()));
+    progressSlider->setValue(static_cast<int>(mediaPlayer->position()));
 }
 
 void ToolBarFrame::seekPosition(const int &pos)
 {
-    if (qAbs(pos - m_player->position()) > 3) {
-        m_player->setPosition(pos);
+    if (qAbs(pos - mediaPlayer->position()) > 3) {
+        mediaPlayer->setPosition(pos);
     }
 }
 
 void ToolBarFrame::play()
 {
-    m_player->play();
-    m_updateProgressTimer->start();
+    mediaPlayer->play();
+    updateProgressTimer->start();
 }
 
 void ToolBarFrame::pause()
 {
-    m_player->pause();
-    m_updateProgressTimer->stop();
+    mediaPlayer->pause();
+    updateProgressTimer->stop();
 }
 
 void ToolBarFrame::stop()
 {
-    m_progressSlider->setValue(0);
-    m_player->stop();
-    m_updateProgressTimer->stop();
+    progressSlider->setValue(0);
+    mediaPlayer->stop();
+    updateProgressTimer->stop();
 }
 
 void ToolBarFrame::durationToLabel(qint64 duration)
@@ -186,8 +186,8 @@ void ToolBarFrame::durationToLabel(qint64 duration)
         secondsStr = QString::number(seconds);
     }
 
-    m_durationLabel->setText(QString("%1: %2").arg(minutesStr, secondsStr));
+    durationLabel->setText(QString("%1: %2").arg(minutesStr, secondsStr));
 
-    m_progressSlider->setMinimum(0);
-    m_progressSlider->setMaximum(static_cast<int>(duration));
+    progressSlider->setMinimum(0);
+    progressSlider->setMaximum(static_cast<int>(duration));
 }

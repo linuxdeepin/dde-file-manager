@@ -37,19 +37,16 @@ VideoPreview::VideoPreview(QObject *parent)
 {
     setlocale(LC_NUMERIC, "C");
 
-    // 强制不使用嵌入mpv窗口的模式
-    // 经确认，该函数已废弃，屏蔽后不影响使用
-    //   dmr::CompositingManager::get().overrideCompositeMode(true);
-
     playerWidget = new VideoWidget(this);
     statusBar = new VideoStatusBar(this);
 }
 
 VideoPreview::~VideoPreview()
 {
-    if (playerWidget) {
+    if (playerWidget->isVisible()) {
         playerWidget->hide();
-        delete playerWidget.data();
+        //        delete playerWidget.data();
+        playerWidget->deleteLater();
     }
 
     if (statusBar) {
@@ -105,7 +102,7 @@ Qt::Alignment VideoPreview::statusBarWidgetAlignment() const
 
 void VideoPreview::play()
 {
-    if (playerWidget) {
+    if (playerWidget->isVisible() && videoUrl.isValid()) {
         playerWidget->play(videoUrl);
     }
 }

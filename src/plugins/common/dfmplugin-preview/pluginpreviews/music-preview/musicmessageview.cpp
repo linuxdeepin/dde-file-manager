@@ -42,7 +42,7 @@
 PREVIEW_USE_NAMESPACE
 MusicMessageView::MusicMessageView(const QString &uri, QWidget *parent)
     : QFrame(parent),
-      m_uri(uri)
+      currentUrl(uri)
 {
     initUI();
     localeCodes.insert("zh_CN", "GB18030");
@@ -52,42 +52,42 @@ void MusicMessageView::initUI()
 {
     setFixedSize(600, 300);
 
-    m_titleLabel = new QLabel(this);
-    m_titleLabel->setObjectName("Title");
+    titleLabel = new QLabel(this);
+    titleLabel->setObjectName("Title");
 
-    m_artistLabel = new QLabel(this);
-    m_artistLabel->setObjectName("Artist");
-    m_artistLabel->setText(tr("Artist:"));
-    m_artistValue = new QLabel(this);
-    m_artistValue->setObjectName("artistValue");
+    artistLabel = new QLabel(this);
+    artistLabel->setObjectName("Artist");
+    artistLabel->setText(tr("Artist:"));
+    artistValue = new QLabel(this);
+    artistValue->setObjectName("artistValue");
 
-    m_albumLabel = new QLabel(this);
-    m_albumLabel->setObjectName("Album");
-    m_albumLabel->setText(tr("Album:"));
-    m_albumValue = new QLabel(this);
-    m_albumValue->setObjectName("albumValue");
+    albumLabel = new QLabel(this);
+    albumLabel->setObjectName("Album");
+    albumLabel->setText(tr("Album:"));
+    albumValue = new QLabel(this);
+    albumValue->setObjectName("albumValue");
 
-    m_imgLabel = new QLabel(this);
-    m_imgLabel->setFixedSize(QSize(240, 240));
+    imgLabel = new QLabel(this);
+    imgLabel->setFixedSize(QSize(240, 240));
 
-    m_player = new QMediaPlayer(this);
-    connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &MusicMessageView::mediaStatusChanged);
+    mediaPlayer = new QMediaPlayer(this);
+    connect(mediaPlayer, &QMediaPlayer::mediaStatusChanged, this, &MusicMessageView::mediaStatusChanged);
 
-    m_player->setMedia(QUrl::fromUserInput(m_uri));
+    mediaPlayer->setMedia(QUrl::fromUserInput(currentUrl));
 
     QHBoxLayout *artistLayout = new QHBoxLayout;
-    artistLayout->addWidget(m_artistLabel);
+    artistLayout->addWidget(artistLabel);
     artistLayout->addSpacing(5);
-    artistLayout->addWidget(m_artistValue, 1);
+    artistLayout->addWidget(artistValue, 1);
 
     QHBoxLayout *albumLayout = new QHBoxLayout;
-    albumLayout->addWidget(m_albumLabel);
+    albumLayout->addWidget(albumLabel);
     albumLayout->addSpacing(5);
-    albumLayout->addWidget(m_albumValue, 1);
+    albumLayout->addWidget(albumValue, 1);
 
     QVBoxLayout *messageLayout = new QVBoxLayout;
     messageLayout->setSpacing(0);
-    messageLayout->addWidget(m_titleLabel);
+    messageLayout->addWidget(titleLabel);
     messageLayout->addSpacing(10);
     messageLayout->addLayout(artistLayout);
     messageLayout->addSpacing(3);
@@ -96,7 +96,7 @@ void MusicMessageView::initUI()
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(m_imgLabel, 0, Qt::AlignTop);
+    mainLayout->addWidget(imgLabel, 0, Qt::AlignTop);
     mainLayout->addSpacing(15);
     mainLayout->addLayout(messageLayout);
     mainLayout->addStretch();
@@ -130,39 +130,39 @@ void MusicMessageView::updateElidedText()
     QFont font;
     font.setPixelSize(16);
     QFontMetrics fm(font);
-    m_titleLabel->setText(fm.elidedText(m_title, Qt::ElideRight, width() - m_imgLabel->width() - 40 - m_margins));
+    titleLabel->setText(fm.elidedText(fileTitle, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
 
     font.setPixelSize(12);
     fm = QFontMetrics(font);
-    m_artistValue->setText(fm.elidedText(m_artist, Qt::ElideRight, width() - m_imgLabel->width() - 40 - m_margins));
-    m_albumValue->setText(fm.elidedText(m_album, Qt::ElideRight, width() - m_imgLabel->width() - 40 - m_margins));
+    artistValue->setText(fm.elidedText(fileArtist, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
+    albumValue->setText(fm.elidedText(fileAlbum, Qt::ElideRight, width() - imgLabel->width() - 40 - viewMargins));
 }
 
 void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 {
     if (status == QMediaPlayer::BufferedMedia || status == QMediaPlayer::LoadedMedia) {
-        MediaMeta meta = tagOpenMusicFile(m_uri);
-        m_title = meta.title;
-        if (m_title.isEmpty()) {
-            QFileInfo file(m_uri);
+        MediaMeta meta = tagOpenMusicFile(currentUrl);
+        fileTitle = meta.title;
+        if (fileTitle.isEmpty()) {
+            QFileInfo file(currentUrl);
             QString fileName = file.baseName();
-            m_title = fileName;
+            fileTitle = fileName;
         }
-        m_artist = meta.artist;
-        if (m_artist.isEmpty())
-            m_artist = QString(tr("unknown artist"));
+        fileArtist = meta.artist;
+        if (fileArtist.isEmpty())
+            fileArtist = QString(tr("unknown artist"));
 
-        m_album = meta.album;
-        if (m_album.isEmpty())
-            m_album = QString(tr("unknown album"));
+        fileAlbum = meta.album;
+        if (fileAlbum.isEmpty())
+            fileAlbum = QString(tr("unknown album"));
 
-        QImage img = m_player->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
+        QImage img = mediaPlayer->metaData(QMediaMetaData::CoverArtImage).value<QImage>();
         if (img.isNull()) {
             img = QImage(":/icons/icons/default_music_cover.png");
         }
-        m_imgLabel->setPixmap(QPixmap::fromImage(img).scaled(m_imgLabel->size(), Qt::KeepAspectRatio));
+        imgLabel->setPixmap(QPixmap::fromImage(img).scaled(imgLabel->size(), Qt::KeepAspectRatio));
 
-        m_player->deleteLater();
+        mediaPlayer->deleteLater();
 
         updateElidedText();
     }
@@ -171,11 +171,11 @@ void MusicMessageView::mediaStatusChanged(QMediaPlayer::MediaStatus status)
 void MusicMessageView::resizeEvent(QResizeEvent *event)
 {
     QFrame::resizeEvent(event);
-    m_margins = (event->size().height() - m_imgLabel->height()) / 2;
-    if ((event->size().width() - m_margins - 250) < m_imgLabel->width()) {
-        m_margins = event->size().width() - 250 - m_imgLabel->width();
+    viewMargins = (event->size().height() - imgLabel->height()) / 2;
+    if ((event->size().width() - viewMargins - 250) < imgLabel->width()) {
+        viewMargins = event->size().width() - 250 - imgLabel->width();
     }
-    setContentsMargins(m_margins, m_margins, 0, m_margins);
+    setContentsMargins(viewMargins, viewMargins, 0, viewMargins);
     updateElidedText();
 }
 

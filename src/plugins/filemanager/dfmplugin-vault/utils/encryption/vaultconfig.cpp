@@ -1,0 +1,55 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     lixiang<lixianga@uniontech.com>
+ *
+ * Maintainer: lixiang<lixianga@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "vaultconfig.h"
+#include "utils/vaultglobaldefine.h"
+
+#include <QDir>
+#include <QSettings>
+
+DPVAULT_USE_NAMESPACE
+
+VaultConfig::VaultConfig(const QString &filePath)
+    : currentFilePath(filePath)
+{
+    if (filePath.isEmpty()) {
+        currentFilePath = kVaultBasePath + QDir::separator() + kVaultConfigFileName;
+    }
+    pSetting = new QSettings(currentFilePath, QSettings::IniFormat);
+}
+
+VaultConfig::~VaultConfig()
+{
+    if (pSetting)
+        delete pSetting;
+    pSetting = nullptr;
+}
+
+void VaultConfig::set(const QString &nodeName, const QString &keyName, QVariant value)
+{
+    pSetting->setValue(QString("/%1/%2").arg(nodeName).arg(keyName), value);
+}
+
+QVariant VaultConfig::get(const QString &nodeName, const QString &keyName)
+{
+    QVariant var = pSetting->value(QString("/%1/%2").arg(nodeName).arg(keyName));
+    return var;
+}

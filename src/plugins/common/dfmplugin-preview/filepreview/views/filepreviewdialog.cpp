@@ -226,19 +226,19 @@ void FilePreviewDialog::initUI()
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    QHBoxLayout *separator_layout = new QHBoxLayout(this);
+    QHBoxLayout *separatorLayout = new QHBoxLayout(this);
 
-    separator_layout->addSpacing(10);
-    separator_layout->addWidget(separator);
-    separator_layout->addSpacing(10);
+    separatorLayout->addSpacing(10);
+    separatorLayout->addWidget(separator);
+    separatorLayout->addSpacing(10);
 
-    layout->addLayout(separator_layout, 1);
+    layout->addLayout(separatorLayout, 1);
     layout->addWidget(statusBar, 0, Qt::AlignBottom);
 
-    QAction *shortcut_action = new QAction(this);
+    QAction *shortcutAction = new QAction(this);
 
-    shortcut_action->setShortcut(QKeySequence::Copy);
-    addAction(shortcut_action);
+    shortcutAction->setShortcut(QKeySequence::Copy);
+    addAction(shortcutAction);
 
     connect(statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
@@ -253,12 +253,6 @@ void FilePreviewDialog::initUI()
         }
         close();
     });
-
-    //    connect(shortcut_action, &QAction::triggered, this, [this] {
-    //        if (preview) {
-    //            preview->copyFile();
-    //        }
-    //    });
 }
 
 void FilePreviewDialog::switchToPage(int index)
@@ -281,17 +275,17 @@ void FilePreviewDialog::switchToPage(int index)
     }
 
     AbstractBasePreview *view = nullptr;
-    const QMimeType &mime_type = MimeDatabase::mimeTypeForUrl(fileList.at(index));
+    const QMimeType &mimeType = MimeDatabase::mimeTypeForUrl(fileList.at(index));
 
-    QStringList key_list(mime_type.name());
+    QStringList keyList(mimeType.name());
 
-    key_list.append(mime_type.aliases());
-    key_list.append(mime_type.allAncestors());
+    keyList.append(mimeType.aliases());
+    keyList.append(mimeType.allAncestors());
 
-    for (const QString &key : key_list) {
-        const QString &general_key = generalKey(key);
+    for (const QString &key : keyList) {
+        const QString &gKey = generalKey(key);
 
-        if (preview && (FilePreviewFactory::isSuitedWithKey(preview, key) || FilePreviewFactory::isSuitedWithKey(preview, general_key)) && !FileUtils::isDesktopFile(fileList.at(index))) {
+        if (preview && (FilePreviewFactory::isSuitedWithKey(preview, key) || FilePreviewFactory::isSuitedWithKey(preview, gKey)) && !FileUtils::isDesktopFile(fileList.at(index))) {
             if (preview->setFileUrl(fileList.at(index))) {
                 preview->contentWidget()->updateGeometry();
                 adjustSize();
@@ -305,9 +299,9 @@ void FilePreviewDialog::switchToPage(int index)
 
         view = FilePreviewFactory::create(key);
 
-        if (!view && general_key != key) {
+        if (!view && gKey != key) {
             if (!FileUtils::isDesktopFile(fileList.at(index))) {
-                view = FilePreviewFactory::create(general_key);
+                view = FilePreviewFactory::create(gKey);
             }
         }
 
@@ -422,10 +416,10 @@ void FilePreviewDialog::updateTitle()
 
 QString FilePreviewDialog::generalKey(const QString &key)
 {
-    const QStringList &_tmp = key.split('/');
+    const QStringList &tmp = key.split('/');
 
-    if (_tmp.size() > 1)
-        return _tmp.first() + "/*";
+    if (tmp.size() > 1)
+        return tmp.first() + "/*";
 
     return key;
 }

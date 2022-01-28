@@ -22,7 +22,10 @@
 #include "vaultservice.h"
 #include "private/vaultservice_p.h"
 #include "private/vaulthandle.h"
+#include "vault_defines.h"
 
+#include <QStorageInfo>
+#include <QStandardPaths>
 #include <QMetaType>
 #include <QThread>
 #include <QDebug>
@@ -59,7 +62,7 @@ VaultService::~VaultService()
  *      connect(vaultService, &vaultService::signalCreateVaultState, this, &class::createVaultState);
  * \endcode
  */
-void VaultService::createVault(QString encryptBaseDir, QString decryptFileDir, QString DSecureString)
+void VaultService::createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString)
 {
     emit vaultServicePrivate->sigCreateVault(encryptBaseDir, decryptFileDir, DSecureString);
 }
@@ -80,7 +83,7 @@ void VaultService::createVault(QString encryptBaseDir, QString decryptFileDir, Q
  *      connect(vaultService, &vaultService::signalCreateVaultState, this, &class::createVaultState);
  * \endcode
  */
-void VaultService::createVault(QString encryptBaseDir, QString decryptFileDir, QString DSecureString, EncryptType type, int blockSize)
+void VaultService::createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString, EncryptType type, int blockSize)
 {
     emit vaultServicePrivate->sigCreateVault(encryptBaseDir, decryptFileDir, DSecureString, type, blockSize);
 }
@@ -97,7 +100,7 @@ void VaultService::createVault(QString encryptBaseDir, QString decryptFileDir, Q
  *      connect(vaultService, &vaultService::signalLockVaultPrivate, this, &class::lockVault);
  * \endcode
  */
-void VaultService::lockVault(QString decryptFileDir)
+void VaultService::lockVault(const QString &decryptFileDir)
 {
     emit vaultServicePrivate->sigLockVault(decryptFileDir);
 }
@@ -116,16 +119,41 @@ void VaultService::lockVault(QString decryptFileDir)
  *      connect(vaultService, &vaultService::signalUnlockVaultPrivate, this, &class::unlockVault);
  * \endcode
  */
-void VaultService::unlockVault(QString encryptBaseDir, QString decryptFileDir, QString DSecureString)
+void VaultService::unlockVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString)
 {
     emit vaultServicePrivate->sigUnlockVault(encryptBaseDir, decryptFileDir, DSecureString);
+}
+
+ServiceVaultState VaultService::vaultState(const QString &encryptBaseDir, const QString &decryptFileDir)
+{
+    const QString &cryfsBinary = QStandardPaths::findExecutable("cryfs");
+    if (cryfsBinary.isEmpty()) {
+        // 记录保险箱状态
+        return kNotAvailable;
+    }
+    QString lockBaseDir = encryptBaseDir;
+
+    if (lockBaseDir.endsWith("/"))
+        lockBaseDir += "cryfs.config";
+    else
+        lockBaseDir += "/cryfs.config";
+
+    if (QFile::exists(lockBaseDir)) {
+        QStorageInfo info(decryptFileDir);
+        const QString &temp = info.fileSystemType();
+        if (info.isValid() && temp == "fuse.cryfs") {
+            return kUnlocked;
+        }
+        return kEncrypted;
+    } else {
+        return kNotExisted;
+    }
 }
 
 VaultServicePrivate::VaultServicePrivate(QObject *parent)
     : QObject(parent),
       vaultHandle(new VaultHandle())
 {
-    qRegisterMetaType<EncryptType>("encryptType");
 
     connect(this, &VaultServicePrivate::sigCreateVault, vaultHandle.data(), &VaultHandle::createVault, Qt::QueuedConnection);
     connect(this, &VaultServicePrivate::sigUnlockVault, vaultHandle.data(), &VaultHandle::unlockVault, Qt::QueuedConnection);

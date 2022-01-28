@@ -66,6 +66,11 @@ bool TextPreview::setFileUrl(const QUrl &url)
 
     device.open(url.path().toLocal8Bit().data(), ios::binary);
 
+    if (!device.is_open()) {
+        qInfo() << "File open failed";
+        return false;
+    }
+
     if (!textBrowser) {
         textBrowser = new QPlainTextEdit();
 

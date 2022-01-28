@@ -12,3 +12,5 @@ add_subdirectory(dfmplugin-detailspace)
 add_subdirectory(dfmplugin-computer)
 add_subdirectory(dfmplugin-trash)
 add_subdirectory(dfmplugin-optical)
+add_subdirectory(dfmplugin-vault)
+

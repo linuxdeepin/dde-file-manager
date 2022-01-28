@@ -97,7 +97,7 @@ bool ImagePreview::setFileUrl(const QUrl &url)
     if (currentFileUrl == url)
         return true;
 
-    QUrl tmpUrl = url;
+    QUrl tmpUrl = UrlRoute::fromLocalFile(url.path());
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return false;

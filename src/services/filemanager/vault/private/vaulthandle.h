@@ -49,6 +49,8 @@ private:
 
     void lockVault(QString unlockFileDir);
 
+    void createDirIfNotExist(QString path);
+
 signals:
     /*!
      * \brief                错误输出

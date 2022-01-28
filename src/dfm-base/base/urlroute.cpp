@@ -126,12 +126,14 @@ bool UrlRoute::isRootUrl(const QUrl &url)
     if (!hasScheme(url.scheme()))
         return false;
 
+    QString path = urlToPath(url);
+
     QUrl urlCmp;
     urlCmp.setScheme(url.scheme());
     urlCmp.setPath(kSchemeInfos[url.scheme()].rootPath());
 
     if (url.scheme() == urlCmp.scheme()
-        && url.path() == urlCmp.path())
+        && path == urlCmp.path())
         return true;
 
     return false;
@@ -330,6 +332,7 @@ QUrl UrlRoute::pathToUrl(const QString &path, const QString &scheme)
     QUrl result;
     result.setScheme(scheme);
     result.setPath(tempPath);
+    result.setHost("");
     return result;
 }
 

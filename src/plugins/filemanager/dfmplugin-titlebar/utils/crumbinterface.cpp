@@ -71,8 +71,9 @@ bool CrumbInterface::supportedUrl(const QUrl &url)
 
 QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
 {
-    if (seprateUrlFunc)
+    if (seprateUrlFunc) {
         return seprateUrlFunc(url);
+    }
 
     // default method
     QList<CrumbData> list;
