@@ -27,26 +27,23 @@
 #include <QFuture>
 #include <QFutureWatcher>
 #include <QtConcurrent/QtConcurrent>
+#include <QDBusInterface>
 
 #define BluetoothService "com.deepin.daemon.Bluetooth"
 #define BluetoothPath "/com/deepin/daemon/Bluetooth"
-#define BlutoothInterface "com.deepin.daemon.Bluetooth"
+#define BluetoothInterface "com.deepin.daemon.Bluetooth"
 
 #define BluetoothPage "bluetooth"
 #define ControlcenterService "com.deepin.dde.ControlCenter"
 #define ControlcenterPath "/com/deepin/dde/ControlCenter"
+#define ControlcenterInterface "com.deepin.dde.ControlCenter"
 
 BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
-    : q_ptr(qq),
+    : QObject(qq),
+      q_ptr(qq),
       m_model(new BluetoothModel(qq))
 {
-    Q_Q(BluetoothManager);
-    // initialize dbus interface
-    m_bluetoothInter = new DBusBluetooth(BluetoothService, BluetoothPath,
-                                         QDBusConnection::sessionBus(), q);
-    m_controlcenterInter = new DBusControlcenter(ControlcenterService, ControlcenterPath,
-                                                 QDBusConnection::sessionBus(), q);
-
+    init();
     initConnects();
 }
 
@@ -75,130 +72,36 @@ void BluetoothManagerPrivate::resolve(const QDBusReply<QString> &req)
     }
 }
 
-void BluetoothManagerPrivate::initConnects()
+void BluetoothManagerPrivate::init()
 {
     Q_Q(BluetoothManager);
+    // initialize dbus interface
+    m_bluetoothInter = new QDBusInterface(BluetoothService, BluetoothPath, BluetoothInterface,
+                                         QDBusConnection::sessionBus(), q);
+    m_controlcenterInter = new QDBusInterface(ControlcenterService, ControlcenterPath, ControlcenterInterface,
+                                                 QDBusConnection::sessionBus(), q);
+}
 
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::serviceValidChanged, q, [q](bool valid){
-        if (valid) {
-            qInfo() << "bluetooth service is valid now...";
-            QTimer::singleShot(1000, q, [q]{ q->refresh(); });
-        }
-    });
+void BluetoothManagerPrivate::initConnects()
+{
+    connectBluetoothDBusSignals("serviceValidChanged", SLOT(onServiceValidChanged(bool)));
+    connectBluetoothDBusSignals("AdapterAdded", SLOT(onAdapterAdded(const QString &)));
+    connectBluetoothDBusSignals("AdapterRemoved", SLOT(onAdapterRemoved(const QString &)));
+    connectBluetoothDBusSignals("AdapterPropertiesChanged", SLOT(onAdapterPropertiesChanged(const QString &)));
+    connectBluetoothDBusSignals("DeviceAdded", SLOT(onDeviceAdded(const QString &)));
+    connectBluetoothDBusSignals("DeviceRemoved", SLOT(onDeviceRemoved(const QString &)));
+    connectBluetoothDBusSignals("DevicePropertiesChanged", SLOT(onDevicePropertiesChanged(const QString &)));
+    connectBluetoothDBusSignals("TransferCreated", SLOT(onTransferCreated(const QString &, const QDBusObjectPath &, const QDBusObjectPath &)));
+    connectBluetoothDBusSignals("TransferRemoved", SLOT(onTransferRemoved(const QString &, const QDBusObjectPath &, const QDBusObjectPath &, bool)));
+    connectBluetoothDBusSignals("ObexSessionCreated", SLOT(onObexSessionCreated(const QDBusObjectPath &)));
+    connectBluetoothDBusSignals("ObexSessionRemoved", SLOT(onObexSessionRemoved(const QDBusObjectPath &)));
+    connectBluetoothDBusSignals("ObexSessionProgress", SLOT(onObexSessionProgress(const QDBusObjectPath &, qulonglong, qulonglong, int)));
+    connectBluetoothDBusSignals("TransferFailed", SLOT(onTransferFailed(const QString &, const QDBusObjectPath &, const QString &)));
+}
 
-    // adapter added
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::AdapterAdded, q, [=](const QString & json) {
-        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-        QJsonObject obj = doc.object();
-
-        BluetoothAdapter *adapter = new BluetoothAdapter(m_model);
-        inflateAdapter(adapter, obj);
-        m_model->addAdapter(adapter);
-    });
-
-    // adapter removed
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::AdapterRemoved, q, [=](const QString & json) {
-        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-        QJsonObject obj = doc.object();
-        const QString id = obj["Path"].toString();
-
-        const BluetoothAdapter *result = m_model->removeAdapater(id);
-        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
-        if (adapter) {
-            adapter->deleteLater();
-        }
-    });
-
-    // adapter changed
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::AdapterPropertiesChanged, q, [=](const QString & json) {
-        const QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-        const QJsonObject obj = doc.object();
-        const QString id = obj["Path"].toString();
-
-        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(m_model->adapterById(id));
-        if (adapter) {
-            inflateAdapter(adapter, obj);
-        }
-    });
-
-    // device added
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::DeviceAdded, q, [=](const QString & json) {
-        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-        QJsonObject obj = doc.object();
-        const QString adapterId = obj["AdapterPath"].toString();
-        const QString id = obj["Path"].toString();
-
-        const BluetoothAdapter *result = m_model->adapterById(adapterId);
-        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
-        if (adapter) {
-            const BluetoothDevice *result1 = adapter->deviceById(id);
-            BluetoothDevice *device = const_cast<BluetoothDevice *>(result1);
-            if (!device) {
-                device = new BluetoothDevice(adapter);
-            }
-            inflateDevice(device, obj);
-            adapter->addDevice(device);
-        }
-    });
-
-    // deivce removeed
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::DeviceRemoved, q, [=](const QString & json) {
-        QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-        QJsonObject obj = doc.object();
-        const QString adapterId = obj["AdapterPath"].toString();
-        const QString id = obj["Path"].toString();
-
-        const BluetoothAdapter *result = m_model->adapterById(adapterId);
-        BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
-        if (adapter) {
-            adapter->removeDevice(id);
-        }
-    });
-
-    // device changed
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::DevicePropertiesChanged, q, [this](const QString & json) {
-        const QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
-        const QJsonObject obj = doc.object();
-        const QString id = obj["Path"].toString();
-        for (const BluetoothAdapter *adapter : m_model->adapters()) {
-            BluetoothDevice *device = const_cast<BluetoothDevice *>(adapter->deviceById(id));
-            if (device) {
-                inflateDevice(device, obj);
-            }
-        }
-    });
-
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferCreated, q, [=](const QString & file, const QDBusObjectPath & transferPath, const QDBusObjectPath & sessionPath) {
-        qDebug() << file << transferPath.path() << sessionPath.path();
-    });
-
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferRemoved, q, [=](const QString & file, const QDBusObjectPath & transferPath, const QDBusObjectPath & sessionPath, bool done) {
-        Q_UNUSED(transferPath)
-        Q_Q(BluetoothManager);
-        if (!done) {
-            Q_EMIT q->transferCancledByRemote(sessionPath.path());
-        } else {
-            Q_EMIT q->fileTransferFinished(sessionPath.path(), file);
-        }
-    });
-
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionCreated, q, [=](const QDBusObjectPath & sessionPath) {
-        qDebug() << sessionPath.path();
-    });
-
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionRemoved, q, [=](const QDBusObjectPath & sessionPath) {
-        qDebug() << sessionPath.path();
-    });
-
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::ObexSessionProgress, q, [=](const QDBusObjectPath & sessionPath, qulonglong totalSize, qulonglong transferred, int currentIdx) {
-        Q_Q(BluetoothManager);
-        Q_EMIT q->transferProgressUpdated(sessionPath.path(), totalSize, transferred, currentIdx);
-    });
-
-    QObject::connect(m_bluetoothInter, &DBusBluetooth::TransferFailed, q, [=](const QString & file, const QDBusObjectPath & sessionPath, const QString & errInfo) {
-        Q_Q(BluetoothManager);
-        Q_EMIT q->transferFailed(sessionPath.path(), file, errInfo);
-    });
+bool BluetoothManagerPrivate::connectBluetoothDBusSignals(const QString &signal, const char *slot)
+{
+    return QDBusConnection::sessionBus().connect(BluetoothService, BluetoothPath, BluetoothInterface, signal, this, slot);
 }
 
 void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJsonObject &adapterObj)
@@ -218,7 +121,7 @@ void BluetoothManagerPrivate::inflateAdapter(BluetoothAdapter *adapter, const QJ
 
     // 异步获取适配器的所有设备
     QDBusObjectPath dPath(path);
-    QDBusPendingCall call = m_bluetoothInter->GetDevices(dPath);
+    QDBusPendingCall call = getBluetoothDevices(dPath);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
     QObject::connect(watcher, &QDBusPendingCallWatcher::finished, q, [this, watcher, adapterPointer, call] {
         if (!adapterPointer) {
@@ -287,6 +190,155 @@ void BluetoothManagerPrivate::inflateDevice(BluetoothDevice *device, const QJson
     device->setState(state);
 }
 
+QDBusPendingCall BluetoothManagerPrivate::getBluetoothDevices(const QDBusObjectPath &adapter)
+{
+    return m_bluetoothInter->asyncCallWithArgumentList("GetDevices", { QVariant::fromValue(adapter) });
+}
+
+QDBusPendingCall BluetoothManagerPrivate::getBluetoothAdapters()
+{
+    return m_bluetoothInter->asyncCall("GetAdapters");
+}
+
+QDBusPendingReply<QDBusObjectPath> BluetoothManagerPrivate::sendFiles(const QString &device, const QStringList &files)
+{
+    return m_bluetoothInter->asyncCallWithArgumentList("SendFiles", { QVariant::fromValue(device), QVariant::fromValue(files) });
+}
+
+void BluetoothManagerPrivate::cancelTransferSession(const QDBusObjectPath &sessionPath)
+{
+    m_bluetoothInter->asyncCallWithArgumentList("CancelTransferSession", { QVariant::fromValue(sessionPath) });
+}
+
+void BluetoothManagerPrivate::onServiceValidChanged(bool valid)
+{
+    Q_Q(BluetoothManager);
+    if (valid) {
+        qInfo() << "bluetooth service is valid now...";
+        QTimer::singleShot(1000, q, [q]{ q->refresh(); });
+    }
+}
+
+void BluetoothManagerPrivate::onAdapterAdded(const QString &json)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    QJsonObject obj = doc.object();
+
+    BluetoothAdapter *adapter = new BluetoothAdapter(m_model);
+    inflateAdapter(adapter, obj);
+    m_model->addAdapter(adapter);
+}
+
+void BluetoothManagerPrivate::onAdapterRemoved(const QString &json)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    QJsonObject obj = doc.object();
+    const QString id = obj["Path"].toString();
+
+    const BluetoothAdapter *result = m_model->removeAdapater(id);
+    BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
+    if (adapter) {
+        adapter->deleteLater();
+    }
+}
+
+void BluetoothManagerPrivate::onAdapterPropertiesChanged(const QString &json)
+{
+    const QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    const QJsonObject obj = doc.object();
+    const QString id = obj["Path"].toString();
+
+    BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(m_model->adapterById(id));
+    if (adapter) {
+        inflateAdapter(adapter, obj);
+    }
+}
+
+void BluetoothManagerPrivate::onDeviceAdded(const QString &json)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    QJsonObject obj = doc.object();
+    const QString adapterId = obj["AdapterPath"].toString();
+    const QString id = obj["Path"].toString();
+
+    const BluetoothAdapter *result = m_model->adapterById(adapterId);
+    BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
+    if (adapter) {
+        const BluetoothDevice *result1 = adapter->deviceById(id);
+        BluetoothDevice *device = const_cast<BluetoothDevice *>(result1);
+        if (!device) {
+            device = new BluetoothDevice(adapter);
+        }
+        inflateDevice(device, obj);
+        adapter->addDevice(device);
+    }
+}
+
+void BluetoothManagerPrivate::onDeviceRemoved(const QString &json)
+{
+    QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    QJsonObject obj = doc.object();
+    const QString adapterId = obj["AdapterPath"].toString();
+    const QString id = obj["Path"].toString();
+
+    const BluetoothAdapter *result = m_model->adapterById(adapterId);
+    BluetoothAdapter *adapter = const_cast<BluetoothAdapter *>(result);
+    if (adapter) {
+        adapter->removeDevice(id);
+    }
+}
+
+void BluetoothManagerPrivate::onDevicePropertiesChanged(const QString &json)
+{
+    const QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    const QJsonObject obj = doc.object();
+    const QString id = obj["Path"].toString();
+    for (const BluetoothAdapter *adapter : m_model->adapters()) {
+        BluetoothDevice *device = const_cast<BluetoothDevice *>(adapter->deviceById(id));
+        if (device) {
+            inflateDevice(device, obj);
+        }
+    }
+}
+
+void BluetoothManagerPrivate::onTransferCreated(const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath)
+{
+    qDebug() << file << transferPath.path() << sessionPath.path();
+}
+
+void BluetoothManagerPrivate::onTransferRemoved(const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath, bool done)
+{
+    Q_UNUSED(transferPath)
+    Q_Q(BluetoothManager);
+    if (!done) {
+        Q_EMIT q->transferCancledByRemote(sessionPath.path());
+    } else {
+        Q_EMIT q->fileTransferFinished(sessionPath.path(), file);
+    }
+}
+
+void BluetoothManagerPrivate::onObexSessionCreated(const QDBusObjectPath &sessionPath)
+{
+    qDebug() << sessionPath.path();
+}
+
+void BluetoothManagerPrivate::onObexSessionRemoved(const QDBusObjectPath &sessionPath)
+{
+    qDebug() << sessionPath.path();
+}
+
+void BluetoothManagerPrivate::onObexSessionProgress(const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIndex)
+{
+    Q_Q(BluetoothManager);
+    Q_EMIT q->transferProgressUpdated(sessionPath.path(), totalSize, transferred, currentIndex);
+}
+
+void BluetoothManagerPrivate::onTransferFailed(const QString &file, const QDBusObjectPath &sessionPath, const QString &errInfo)
+{
+    Q_Q(BluetoothManager);
+    Q_EMIT q->transferFailed(sessionPath.path(), file, errInfo);
+}
+
 /**
  * @brief This is BluetoothManager implement
  */
@@ -309,15 +361,15 @@ void BluetoothManager::refresh()
 {
     Q_D(BluetoothManager);
 
-    if (!d->m_bluetoothInter->isValid()) {
+    if (!d->m_bluetoothInter || !d->m_bluetoothInter->isValid()) {
         qCritical() << "bluetooth interface is not valid!!!";
         return;
     }
 
     // 获取蓝牙设备
-    QDBusPendingCall call = d->m_bluetoothInter->GetAdapters();
+    QDBusPendingCall call = d->getBluetoothAdapters();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [ = ] {
         if (!call.isError())
         {
             QDBusReply<QString> reply = call.reply();
@@ -344,7 +396,7 @@ bool BluetoothManager::hasAdapter()
 
 bool BluetoothManager::bluetoothSendEnable()
 {
-    QDBusInterface btIface(BluetoothService, BluetoothPath, BlutoothInterface, QDBusConnection::sessionBus());
+    QDBusInterface btIface(BluetoothService, BluetoothPath, BluetoothInterface, QDBusConnection::sessionBus());
     if (!btIface.isValid()) {
         qWarning() << "bluetooth interface is not valid";
         return false;
@@ -361,7 +413,7 @@ void BluetoothManager::showBluetoothSettings()
 {
     Q_D(BluetoothManager);
 
-    d->m_controlcenterInter->ShowModule(BluetoothPage);
+//    d->m_controlcenterInter->asyncCallWithArgumentList("ShowModule", { QVariant::fromValue(QString(BluetoothPage)) });
 }
 
 void BluetoothManager::sendFiles(const QString &id, const QStringList &filePath, const QString &senderToken)
@@ -374,7 +426,7 @@ void BluetoothManager::sendFiles(const QString &id, const QStringList &filePath,
 
     QFuture<QPair<QString, QString>> future = QtConcurrent::run([this, deviceAddress, filePath] {
        Q_D(BluetoothManager);
-       QDBusPendingReply<QDBusObjectPath> reply = d->m_bluetoothInter->SendFiles(deviceAddress, filePath);
+       QDBusPendingReply<QDBusObjectPath> reply = d->sendFiles(deviceAddress, filePath);
        reply.waitForFinished();
        return qMakePair<QString, QString>(reply.value().path(), reply.error().message());
     });
@@ -399,7 +451,7 @@ void BluetoothManager::sendFiles(const QString &id, const QStringList &filePath,
 bool BluetoothManager::cancelTransfer(const QString &sessionPath)
 {
     Q_D(BluetoothManager);
-    d->m_bluetoothInter->CancelTransferSession(QDBusObjectPath(sessionPath));
+    d->cancelTransferSession(QDBusObjectPath(sessionPath));
     qDebug() << sessionPath;
     return true;
 }
@@ -407,5 +459,5 @@ bool BluetoothManager::cancelTransfer(const QString &sessionPath)
 bool BluetoothManager::canSendBluetoothRequest()
 {
     Q_D(BluetoothManager);
-    return d->m_bluetoothInter->transportable();
+    return d->m_bluetoothInter->property("Transportable").toBool();
 }
