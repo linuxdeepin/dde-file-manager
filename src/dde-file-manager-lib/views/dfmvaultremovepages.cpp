@@ -172,7 +172,7 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
 
 DFMVaultRemovePages *DFMVaultRemovePages::instance()
 {
-    static DFMVaultRemovePages s_instance(static_cast<QApplication*>(qApp)->activeWindow());
+    static DFMVaultRemovePages s_instance;
     return &s_instance;
 }
 

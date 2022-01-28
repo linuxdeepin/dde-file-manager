@@ -92,6 +92,8 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     }
 
     if (page) {
+        page->setParent(static_cast<QWidget*>(this->widget()->parent()));
+        page->setWindowFlag(Qt::Dialog);
         page->setWndPtr(wndPtr);
         page->showTop();
         return false;

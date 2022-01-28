@@ -45,7 +45,7 @@ class DFMVaultActiveView : public DFMVaultPageBase
 public:
     static DFMVaultActiveView *getInstance()
     {
-        static DFMVaultActiveView dlg(static_cast<QApplication*>(qApp)->activeWindow());
+        static DFMVaultActiveView dlg;
         return &dlg;
     }
 

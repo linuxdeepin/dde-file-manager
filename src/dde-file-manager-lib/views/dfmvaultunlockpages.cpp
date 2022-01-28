@@ -247,7 +247,7 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
 DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
 {
     if (!m_instance)
-        m_instance = new DFMVaultUnlockPages(static_cast<QApplication*>(qApp)->activeWindow());
+        m_instance = new DFMVaultUnlockPages();
     return m_instance;
 }
 
@@ -376,6 +376,8 @@ bool DFMVaultUnlockPages::eventFilter(QObject *obj, QEvent *evt)
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evt);
             if (mouseEvent->button() == Qt::LeftButton) {
                 this->hide();
+                m_retrievePage->setParent(static_cast<QWidget*>(this->parent()));
+                m_retrievePage->setWindowFlag(Qt::Dialog);
                 m_retrievePage->show();
             }
         }

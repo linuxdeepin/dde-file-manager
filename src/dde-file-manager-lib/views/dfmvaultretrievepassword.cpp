@@ -52,7 +52,7 @@ const QString PolicyKitRetrievePasswordActionId = "com.deepin.filemanager.vault.
 
 DFMVaultRetrievePassword *DFMVaultRetrievePassword::instance()
 {
-    static DFMVaultRetrievePassword s_instance(static_cast<QApplication*>(qApp)->activeWindow());
+    static DFMVaultRetrievePassword s_instance;
     return &s_instance;
 }
 

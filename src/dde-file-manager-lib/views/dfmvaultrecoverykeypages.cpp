@@ -110,7 +110,7 @@ DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
 
 DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
 {
-    static DFMVaultRecoveryKeyPages s_instance(static_cast<QApplication*>(qApp)->activeWindow());
+    static DFMVaultRecoveryKeyPages s_instance;
     return &s_instance;
 }
 
