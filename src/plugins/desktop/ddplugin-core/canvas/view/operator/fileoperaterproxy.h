@@ -42,10 +42,15 @@ public:
     void cutFiles(const CanvasView *view);
     void pasteFiles(const CanvasView *view, const QPoint pos = QPoint(0, 0));
     void openFiles(const CanvasView *view);
+    void openFiles(const CanvasView *view, const QList<QUrl> &urls);
     void renameFiles(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl);
     void openFilesByApp(const CanvasView *view);
     void moveToTrash(const CanvasView *view);
     void deleteFiles(const CanvasView *view);
+
+    void dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
+    void dropToTrash(const QList<QUrl> &urls);
+    void dropToApp(const QList<QUrl> &urls, const QString &app);
 
 public:
     static void callBackFunction(const dfmbase::Global::CallbackArgus args);

@@ -29,6 +29,7 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "operator/canvasviewmenuproxy.h"
+#include "operator/fileoperaterproxy.h"
 #include "utils/desktoputils.h"
 
 #include <QGSettings>
@@ -39,6 +40,7 @@
 #include <QApplication>
 #include <QDrag>
 #include <QMimeData>
+#include <QTimer>
 
 DSB_D_USE_NAMESPACE
 
@@ -532,6 +534,26 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
     d->clickSelecter->release(releaseIndex);
 
     setState(NoState);
+}
+
+void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    auto pos = event->pos();
+    const QModelIndex &index = indexAt(pos);
+
+    if (isPersistentEditorOpen(index)) {
+        itemDelegate()->commitDataAndCloseEditor();
+        QTimer::singleShot(200, this, [this, pos](){
+            // file info and url changed,but pos will not change
+            const QModelIndex &renamedIndex = indexAt(pos);
+            const QUrl &renamedUrl = model()->url(renamedIndex);
+            FileOperaterProxyIns->openFiles(this, {renamedUrl});
+        });
+        return;
+    }
+
+    const QUrl &url = model()->url(index);
+    FileOperaterProxyIns->openFiles(this, {url});
 }
 
 void CanvasView::initUI()

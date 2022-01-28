@@ -21,9 +21,10 @@
  */
 #include "canvasmodel.h"
 #include "filetreater.h"
-
+#include "operator/fileoperaterproxy.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QDateTime>
 #include <QMimeData>
@@ -166,13 +167,13 @@ bool CanvasModel::isRefreshed() const
 
 QUrl CanvasModel::rootUrl() const
 {
-    return FileTreaterCt->desktopUrl();
+    return FileTreaterCt->rootUrl();
 }
 
 QUrl CanvasModel::url(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return FileTreaterCt->desktopUrl();
+        return FileTreaterCt->rootUrl();
 
     if (auto info = FileTreaterCt->fileInfo(index.row())) {
         return info->url();
@@ -237,26 +238,22 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
 
     // todo Compress
 
-    //todo
-//    if (DFMGlobal::isTrashDesktopFile(toUrl)) {
-//        toUrl = DUrl::fromTrashFile("/");
-//        fileService->moveToTrash(this, urlList);
-//        return true;
-//    } else if (DFMGlobal::isComputerDesktopFile(toUrl)) {
-//        return true;
-//    } else if (DFMGlobal::isDesktopFile(toUrl)) {
-//        return FileUtils::launchApp(toUrl.toLocalFile(), DUrl::toStringList(urlList));
-//    }
+    if (dfmbase::FileUtils::isTrashDesktopFile(targetFileUrl)) {
+        FileOperaterProxyIns->dropToTrash(urlList);
+        return true;
+    } else if (dfmbase::FileUtils::isComputerDesktopFile(targetFileUrl)) {
+        return true;
+    } else if (dfmbase::FileUtils::isDesktopFile(targetFileUrl)) {
+        FileOperaterProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());
+        return true;
+    }
 
     switch (action) {
     case Qt::CopyAction:
-        // todo copy
+    case Qt::MoveAction:
+        FileOperaterProxyIns->dropFiles(action, targetFileUrl, urlList);
         break;
     case Qt::LinkAction:
-        break;
-    case Qt::MoveAction:
-        // todo move to trash if targetFileUrl is trash
-        // else do copy.
         break;
     default:
         return false;

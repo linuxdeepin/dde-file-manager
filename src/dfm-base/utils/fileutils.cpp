@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "utils/fileutils.h"
+#include "desktopfile.h"
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -35,6 +36,9 @@
 #include <unistd.h>
 
 DFMBASE_BEGIN_NAMESPACE
+
+static constexpr char DDE_TRASH_ID[] {"dde-trash"};
+static constexpr char DDE_COMPUTER_ID[] {"dde-computer"};
 
 /*!
  * \class FileUtils
@@ -232,6 +236,29 @@ bool FileUtils::isGvfsFile(const QUrl &url)
     QRegExp reg(QString("/run/user/%1/.?gvfs/.+").arg(getuid()));
 
     return -1 != reg.indexIn(path);
+}
+
+bool FileUtils::isDesktopFile(const QUrl &url)
+{
+    return url.toLocalFile().endsWith(".desktop");
+}
+
+bool FileUtils::isTrashDesktopFile(const QUrl &url)
+{
+    if (isDesktopFile(url)) {
+        DesktopFile df(url.toLocalFile());
+        return df.getDeepinId() == DDE_TRASH_ID;
+    }
+    return false;
+}
+
+bool FileUtils::isComputerDesktopFile(const QUrl &url)
+{
+    if (isDesktopFile(url)) {
+        DesktopFile df(url.toLocalFile());
+        return df.getDeepinId() == DDE_COMPUTER_ID;
+    }
+    return false;
 }
 
 DFMBASE_END_NAMESPACE

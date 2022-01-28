@@ -170,6 +170,13 @@ void FileOperaterProxy::openFiles(const CanvasView *view)
                                           , view->selectionModel()->selectedUrls());
 }
 
+void FileOperaterProxy::openFiles(const CanvasView *view, const QList<QUrl> &urls)
+{
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles
+                                          , view->winId()
+                                          , urls);
+}
+
 void FileOperaterProxy::renameFiles(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl)
 {
     dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile
@@ -198,6 +205,45 @@ void FileOperaterProxy::deleteFiles(const CanvasView *view)
                                           , view->winId()
                                           , view->selectionModel()->selectedUrls()
                                           , AbstractJobHandler::JobFlag::kNoHint);
+}
+
+void FileOperaterProxy::dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
+{
+    // drop files from other app will auto append,independent of the view
+    auto view = CanvasIns->views().first();
+    if (action == Qt::MoveAction) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile
+                                              , view->winId()
+                                              , urls
+                                              , targetUrl
+                                              , AbstractJobHandler::JobFlag::kNoHint);
+    } else{
+        // default is copy file
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy
+                                              , view->winId()
+                                              , urls
+                                              , targetUrl
+                                              , AbstractJobHandler::JobFlag::kNoHint);
+    }
+}
+
+void FileOperaterProxy::dropToTrash(const QList<QUrl> &urls)
+{
+    auto view = CanvasIns->views().first();
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash
+                                          , view->winId()
+                                          , urls
+                                          , AbstractJobHandler::JobFlag::kNoHint);
+}
+
+void FileOperaterProxy::dropToApp(const QList<QUrl> &urls, const QString &app)
+{
+    auto view = CanvasIns->views().first();
+    QList<QString> apps { app };
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp
+                                          , view->winId()
+                                          , urls
+                                          , apps);
 }
 
 void FileOperaterProxy::callBackFunction(const CallbackArgus args)

@@ -74,7 +74,7 @@ public:
     QAtomicInteger<bool> canRefreshFlag = true;
     QAtomicInteger<bool> processFileEventRuning = false;
 
-    QUrl desktopUrl;
+    QUrl rootUrl;
     bool enableSort = true;
     dfmbase::AbstractFileInfo::SortKey sortRole = dfmbase::AbstractFileInfo::kSortByFileName;
     Qt::SortOrder sortOrder = Qt::AscendingOrder;

@@ -478,9 +478,6 @@ bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateT
 
 bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringList &fileUrls)
 {
-    if (fileUrls.empty())
-        return false;
-
     QStringList newFileUrls(fileUrls);
 
     if (isFileManagerSelf(desktopFilePath) && fileUrls.count() > 1) {

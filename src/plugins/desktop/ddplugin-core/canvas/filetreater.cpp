@@ -258,9 +258,9 @@ int FileTreater::indexOfChild(AbstractFileInfoPointer info)
  */
 void FileTreater::init()
 {
-    d->desktopUrl = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
-    if (Q_UNLIKELY(!d->desktopUrl.isValid())) {
-        qWarning() << "desktop url is invalid:" << d->desktopUrl;
+    d->rootUrl = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+    if (Q_UNLIKELY(!d->rootUrl.isValid())) {
+        qWarning() << "desktop url is invalid:" << d->rootUrl;
         return;
     }
 
@@ -271,7 +271,7 @@ void FileTreater::init()
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &FileTreaterPrivate::doFileUpdated);
     }
 
-    d->watcher = WacherFactory::create<AbstractFileWatcher>(d->desktopUrl);
+    d->watcher = WacherFactory::create<AbstractFileWatcher>(d->rootUrl);
     if (Q_LIKELY(!d->watcher.isNull())) {
         connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &FileTreaterPrivate::doFileDeleted);
         connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &FileTreaterPrivate::doFileCreated);
@@ -303,9 +303,9 @@ int FileTreater::fileCount() const
     return d->fileList.count();
 }
 
-QUrl FileTreater::desktopUrl() const
+QUrl FileTreater::rootUrl() const
 {
-    return d->desktopUrl;
+    return d->rootUrl;
 }
 
 bool FileTreater::canRefresh() const
@@ -325,7 +325,7 @@ void FileTreater::refresh()
         disconnect(d->traversalThread.data());
     }
 
-    d->traversalThread.reset(new TraversalDirThread(d->desktopUrl, QStringList(), d->filters, QDirIterator::NoIteratorFlags));
+    d->traversalThread.reset(new TraversalDirThread(d->rootUrl, QStringList(), d->filters, QDirIterator::NoIteratorFlags));
     if (Q_UNLIKELY(d->traversalThread.isNull())) {
         d->endRefresh();
         return;
