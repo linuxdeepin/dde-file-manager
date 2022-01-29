@@ -56,6 +56,27 @@ void DialogService::showErrorDialog(const QString &title, const QString &message
     d.setMaximumWidth(640);
     d.exec();
 }
+
+int DialogService::showMessageDialog(DialogService::MessageType messageLevel, const QString &title, const QString &message, QString btnTxt)
+{
+    DDialog d(title, message);
+    d.moveToCenter();
+    QStringList buttonTexts;
+    buttonTexts.append(btnTxt);
+    d.addButtons(buttonTexts);
+    d.setDefaultButton(0);
+    if (messageLevel == kMsgWarn) {
+        d.setIcon(QIcon::fromTheme("dialog-warning"));
+    } else if (messageLevel == kMsgErr) {
+        d.setIcon(QIcon::fromTheme("dialog-error"));
+    } else {
+        d.setIcon(QIcon::fromTheme("dialog-information"));
+    }
+    int code = d.exec();
+    qDebug() << code;
+    return code;
+}
+
 /*!
  * \brief DialogService::addTask 添加一个文件操作任务，当收到这个任务的线程结束时，自己移除掉这个任务
  *

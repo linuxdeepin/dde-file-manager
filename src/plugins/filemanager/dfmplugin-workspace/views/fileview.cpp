@@ -822,17 +822,7 @@ void FileView::openIndex(const QModelIndex &index)
     if (!item)
         return;
 
-    WorkspaceHelper::DirOpenMode mode;
-
-    if (d->isAlwaysOpenInCurrentWindow) {
-        mode = WorkspaceHelper::DirOpenMode::kOpenNewWindow;
-    } else {
-        if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
-            mode = WorkspaceHelper::DirOpenMode::kOpenNewWindow;
-        } else {
-            mode = WorkspaceHelper::DirOpenMode::kOpenInCurrentWindow;
-        }
-    }
+    auto mode = d->currentDirOpenMode();
     auto windowID = WorkspaceHelper::instance()->windowId(this);
     WorkspaceHelper::instance()->actionOpen(windowID, { item->url() }, mode);
 }

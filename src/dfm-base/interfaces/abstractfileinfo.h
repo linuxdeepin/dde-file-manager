@@ -193,6 +193,8 @@ public:
     virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
     virtual qint64 size() const;
+    virtual QString sizeFormat() const;
+    virtual QString sizeDisplayName() const;
     virtual QDateTime created() const;
     virtual QDateTime birthTime() const;
     virtual QDateTime metadataChangeTime() const;
@@ -200,7 +202,6 @@ public:
     virtual QDateTime lastRead() const;
     virtual QDateTime fileTime(QFile::FileTime time) const;
     virtual int countChildFile() const;
-    virtual QString sizeFormat() const;
     virtual QIcon fileIcon() const;
     virtual QMimeType fileMimeType() const;
     virtual QVariantHash extraProperties() const;

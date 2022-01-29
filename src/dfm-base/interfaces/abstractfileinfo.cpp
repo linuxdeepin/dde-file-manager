@@ -22,6 +22,7 @@
 #include "private/abstractfileinfo_p.h"
 #include "abstractfileinfo.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QMetaType>
 #include <QDateTime>
@@ -741,6 +742,35 @@ qint64 AbstractFileInfo::size() const
 
     return 0;
 }
+
+/*!
+ * \brief dfmbase::AbstractFileInfo::sizeFormat 使用kb，mb，gb显示文件大小
+ * \return
+ */
+QString dfmbase::AbstractFileInfo::sizeFormat() const
+{
+    CALL_PROXY(sizeFormat());
+
+    return QString();
+}
+
+QString dfmbase::AbstractFileInfo::sizeDisplayName() const
+{
+    CALL_PROXY(sizeDisplayName());
+
+    if (isDir()) {
+        int size = countChildFile();
+
+        if (size <= 1) {
+            return QObject::tr("%1 item").arg(size);
+        } else {
+            return QObject::tr("%1 items").arg(size);
+        }
+    } else {
+        return FileUtils::formatSize(size());
+    }
+}
+
 /*!
  * \brief created 获取文件的创建时间
  *
@@ -859,16 +889,7 @@ int dfmbase::AbstractFileInfo::countChildFile() const
 
     return -1;
 }
-/*!
- * \brief dfmbase::AbstractFileInfo::sizeFormat 使用kb，mb，gb显示文件大小
- * \return
- */
-QString dfmbase::AbstractFileInfo::sizeFormat() const
-{
-    CALL_PROXY(sizeFormat());
 
-    return QString();
-}
 /*!
  * \brief dfmbase::AbstractFileInfo::fileType 获取文件的设备类型
  * \return 返回文件的设备类型

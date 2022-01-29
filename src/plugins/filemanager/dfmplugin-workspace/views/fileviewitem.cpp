@@ -101,8 +101,8 @@ void FileViewItem::setUrl(const QUrl url)
     d->mimeType = MimeDatabase::mimeTypeForUrl(url);
     if (!d->mimeType.isValid())
         abort();
-
-    setData(QVariant(QIcon::fromTheme(d->mimeType.iconName())), kItemIconRole);
+    // Todo(yanghao)
+    setData(QVariant(d->fileinfo->fileIcon()), kItemIconRole);
     setData(QVariant(d->fileinfo->fileName()), kItemNameRole);
 }
 
@@ -203,19 +203,7 @@ QVariant FileViewItem::data(int role) const
     case kItemIconRole:
         return QStandardItem::data(Roles::kItemIconRole);
     case kItemFileSizeRole:
-        if (d->fileinfo->isDir()) {
-            int size = qSharedPointerDynamicCast<LocalFileInfo>(d->fileinfo)->countChildFile();
-            if (size <= 1) {
-                return QObject::tr("%1 item").arg(size);
-            } else {
-                return QObject::tr("%1 items").arg(size);
-            }
-        } else {
-            QSharedPointer<LocalFileInfo> local = qSharedPointerCast<LocalFileInfo>(d->fileinfo);
-            if (local)
-                return local->sizeFormat();
-            return QString::number(d->fileinfo->size());
-        }
+        return d->fileinfo->sizeDisplayName();
     case kItemFileMimeTypeRole:
         return d->fileinfo->fileTypeDisplayName();
     case kItemColumListRole: {

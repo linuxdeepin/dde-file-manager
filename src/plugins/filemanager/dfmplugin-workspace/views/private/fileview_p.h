@@ -24,6 +24,7 @@
 
 #include "views/fileviewitem.h"
 #include "views/fileview.h"
+#include "utils/workspacehelper.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
@@ -82,6 +83,7 @@ class FileViewPrivate
     bool normalKeyPressEventHandle(const QKeyEvent *event);
 
     bool cdUp();
+    WorkspaceHelper::DirOpenMode currentDirOpenMode() const;
 };
 
 DPWORKSPACE_END_NAMESPACE

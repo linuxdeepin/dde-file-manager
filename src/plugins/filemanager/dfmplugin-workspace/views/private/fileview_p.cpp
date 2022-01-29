@@ -130,8 +130,9 @@ bool FileViewPrivate::normalKeyPressEventHandle(const QKeyEvent *event)
     case Qt::Key_Enter:
         if (!urls.isEmpty()) {
             // Todo(yanghao):editingIndex handle
+            auto mode = currentDirOpenMode();
             auto windowID = WorkspaceHelper::instance()->windowId(q);
-            WorkspaceEventCaller::sendOpenFiles(windowID, urls);
+            WorkspaceHelper::instance()->actionOpen(windowID, urls, mode);
             return true;
         }
         break;
@@ -176,6 +177,22 @@ bool FileViewPrivate::cdUp()
         return true;
     }
     return false;
+}
+
+WorkspaceHelper::DirOpenMode FileViewPrivate::currentDirOpenMode() const
+{
+    WorkspaceHelper::DirOpenMode mode;
+
+    if (isAlwaysOpenInCurrentWindow) {
+        mode = WorkspaceHelper::DirOpenMode::kOpenNewWindow;
+    } else {
+        if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
+            mode = WorkspaceHelper::DirOpenMode::kOpenNewWindow;
+        } else {
+            mode = WorkspaceHelper::DirOpenMode::kOpenInCurrentWindow;
+        }
+    }
+    return mode;
 }
 
 bool FileViewPrivate::processKeyPressEvent(QKeyEvent *event)

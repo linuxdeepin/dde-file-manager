@@ -46,6 +46,11 @@ class DialogService final : public dpf::PluginService, dpf::AutoServiceRegister<
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
+    enum MessageType {
+        kMsgInfo = 1,
+        kMsgWarn = 2,
+        kMsgErr = 3
+    };
     static QString name()
     {
         return "org.deepin.service.DialogService";
@@ -54,6 +59,7 @@ public:
     DDialog *showQueryScanningDialog(const QString &title);
     void showErrorDialog(const QString &title, const QString &message);
     void showErrorDialogWhenMountNetworkDeviceFailed(DFMMOUNT::DeviceError err);
+    int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
     void addTask(const JobHandlePointer &task);
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();
