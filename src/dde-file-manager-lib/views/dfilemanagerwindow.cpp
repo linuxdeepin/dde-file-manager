@@ -1667,6 +1667,9 @@ void DFileManagerWindow::onRequestDestruct()
 
 void DFileManagerWindow::showEvent(QShowEvent *event)
 {
+    Q_D(DFileManagerWindow);
+    d->m_isNeedClosed = false;
+
     DMainWindow::showEvent(event);
 
     const QVariantMap &state = DFMApplication::appObtuselySetting()->value("WindowManager", "SplitterState").toMap();
