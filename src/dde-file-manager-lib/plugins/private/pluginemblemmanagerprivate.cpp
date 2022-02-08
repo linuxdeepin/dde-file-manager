@@ -52,8 +52,10 @@ PluginEmblemManagerPrivate::~PluginEmblemManagerPrivate()
 {
     if (updateTimer) {
         updateTimer->stop();
-        updateTimer->deleteLater();
-        updateTimer = nullptr;
+    }
+
+    if (clearCacheTimer) {
+        clearCacheTimer->stop();
     }
 
     if (isRunning()) {
@@ -101,8 +103,9 @@ void PluginEmblemManagerPrivate::asyncUpdateEmblemIconsFromPlugin(const DUrl &fi
 {
     QPair<QString, int> pair(fileUrl.toLocalFile(), systemIconCount);
     if (!filePathQueue.contains(pair)) {
+        mutexQueue.lock();
         filePathQueue.enqueue(pair);
-        smt.release();
+        mutexQueue.unlock();
     }
 }
 
@@ -121,8 +124,16 @@ void PluginEmblemManagerPrivate::run()
     }
 
     while (bWork) {
-        smt.acquire();
-        QPair<QString, int> data = filePathQueue.dequeue();
+        QPair<QString, int> data;
+        data.first = "";
+        data.second = -1;
+        mutexQueue.lock();
+        if (!filePathQueue.isEmpty()) {
+            data = filePathQueue.dequeue();
+        }
+        mutexQueue.unlock();
+        if (data.first == "" || data.second == -1)
+            continue;
         // 角标总数小于kMaxEmblemCount时，加载插件角标
         if (data.second < kMaxEmblemCount) {
 
@@ -248,6 +259,19 @@ void PluginEmblemManagerPrivate::setFilePath(const QString &iconPath, QStringLis
 }
 
 void PluginEmblemManagerPrivate::updatePluginEmblem()
+{
+    if (clearCacheTimer) {
+        clearCacheTimer->start();
+    } else {
+        clearCacheTimer = new QTimer(this);
+        clearCacheTimer->setSingleShot(true);
+        clearCacheTimer->setInterval(kEmblemUpdateTime);
+        connect(clearCacheTimer, &QTimer::timeout, this, &PluginEmblemManagerPrivate::doUpdateWork);
+        clearCacheTimer->start();
+    }
+}
+
+void PluginEmblemManagerPrivate::doUpdateWork()
 {
     clearEmblemIconsMap();
     emit q->updatePluginEmblem();

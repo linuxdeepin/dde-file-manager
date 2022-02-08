@@ -46,5 +46,8 @@ PluginEmblemManager::PluginEmblemManager(QObject *parent)
 
 PluginEmblemManager::~PluginEmblemManager()
 {
-
+    if (d) {
+        delete d;
+        d = nullptr;
+    }
 }

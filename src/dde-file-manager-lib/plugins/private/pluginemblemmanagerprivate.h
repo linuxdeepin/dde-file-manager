@@ -27,7 +27,6 @@
 #include <QThread>
 #include <QQueue>
 #include <QMutex>
-#include <QSemaphore>
 
 BEGEN_DFMEXT_NAMESPACE
 class DFMExtEmblemIconPlugin;
@@ -37,6 +36,7 @@ class QTimer;
 class PluginEmblemManager;
 class PluginEmblemManagerPrivate : public QThread
 {
+    Q_OBJECT
 public:
     explicit PluginEmblemManagerPrivate(PluginEmblemManager *qq);
     ~PluginEmblemManagerPrivate() override;
@@ -51,6 +51,7 @@ private slots:
     void updateTimerTimeout();
     // 更新插件角标
     void updatePluginEmblem();
+    void doUpdateWork();
 
 private:
     // 异步调用插件接口更新角标
@@ -78,13 +79,15 @@ private:
     QQueue<QPair<QString, int>> filePathQueue {};
     bool bWork { false };
     mutable QMutex mutexMap;
-    QSemaphore smt;
+    mutable QMutex mutexQueue;
     // 发送更新信号的定时器
     QTimer *updateTimer { nullptr };
     // 记录是否初始化了插件
     bool bInitPlugin { false };
     // 记录插件中是否存在角标类对象
     bool bHaveEmblemObj { false };
+    // 缓存清空定时器
+    QTimer *clearCacheTimer { nullptr };
 };
 
 #endif // PLUGINEMBLEMMANAGERPRIVATE_H
