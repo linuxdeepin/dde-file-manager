@@ -92,12 +92,12 @@ void StatusBar::itemSelected(const QList<const FileViewItem *> &itemList)
     d->folderContains = 0;
 
     for (const FileViewItem *item : itemList) {
-        if (item->fileinfo()->isDir()) {
+        if (item->fileInfo()->isDir()) {
             d->folderCount += 1;
             // TODO(liuyangming): caculate folder contains items count
         } else {
             d->fileCount += 1;
-            d->fileSize += item->fileinfo()->size();
+            d->fileSize += item->fileInfo()->size();
         }
     }
 

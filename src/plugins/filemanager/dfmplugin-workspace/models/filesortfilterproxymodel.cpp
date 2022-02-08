@@ -51,8 +51,8 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
     if (!rightItem)
         return false;
 
-    AbstractFileInfoPointer leftInfo = leftItem->fileinfo();
-    AbstractFileInfoPointer rightInfo = rightItem->fileinfo();
+    AbstractFileInfoPointer leftInfo = leftItem->fileInfo();
+    AbstractFileInfoPointer rightInfo = rightItem->fileInfo();
 
     if (!leftInfo)
         return false;
@@ -101,7 +101,7 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
     QModelIndex rowIndex = sourceModel()->index(sourceRow, 0, sourceParent);
 
-    AbstractFileInfoPointer fileInfo = fileModel->itemFromIndex(rowIndex)->fileinfo();
+    AbstractFileInfoPointer fileInfo = fileModel->itemFromIndex(rowIndex)->fileInfo();
 
     return fileInfo && !fileInfo->isHidden();
 }

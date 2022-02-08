@@ -106,7 +106,7 @@ void FileViewItem::setUrl(const QUrl url)
     setData(QVariant(d->fileinfo->fileName()), kItemNameRole);
 }
 
-AbstractFileInfoPointer FileViewItem::fileinfo() const
+AbstractFileInfoPointer FileViewItem::fileInfo() const
 {
     return d->fileinfo;
 }

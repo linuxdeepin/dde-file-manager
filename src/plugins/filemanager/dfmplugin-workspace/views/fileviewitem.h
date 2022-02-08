@@ -106,7 +106,7 @@ public:
     void refresh();
     QUrl url() const;
     void setUrl(const QUrl url);
-    AbstractFileInfoPointer fileinfo() const;
+    AbstractFileInfoPointer fileInfo() const;
     virtual void setCornerMark(const QIcon &tl, const QIcon &tr,
                                const QIcon &bl, const QIcon &br);
     virtual void setCornerMark(CornerMark flag, const QIcon &icon);

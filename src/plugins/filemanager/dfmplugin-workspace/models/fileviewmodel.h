@@ -74,6 +74,15 @@ public:
     int getColumnByRole(const FileViewItem::Roles role) const;
     AbstractFileWatcherPointer fileWatcher() const;
     QUrl getUrlByIndex(const QModelIndex &index) const;
+    void beginInsertRows(const QModelIndex &parent, int first, int last);
+    void endInsertRows();
+    void beginRemoveRows(const QModelIndex &parent, int first, int last);
+    void endRemoveRows();
+    void beginResetModel();
+    void endResetModel();
+    inline QModelIndex createIndex(int arow, int acolumn, void *adata) const;
+signals:
+    void requestSort();
 };
 
 DPWORKSPACE_END_NAMESPACE

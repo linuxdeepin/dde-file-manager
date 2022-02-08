@@ -99,7 +99,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
 {
     QList<QUrl>::iterator it = sourceUrls.begin();
     QList<QUrl>::iterator itend = sourceUrls.end();
-    if (allFilesList.isNull()) {
+    if (!allFilesList.isNull()) {
         it = allFilesList->begin();
         itend = allFilesList->end();
     }
