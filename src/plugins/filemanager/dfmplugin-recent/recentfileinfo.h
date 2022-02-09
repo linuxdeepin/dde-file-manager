@@ -37,12 +37,8 @@ class RecentFileInfo : public AbstractFileInfo
 public:
     explicit RecentFileInfo(const QUrl &url);
     ~RecentFileInfo() override;
-    virtual QString fileName() const override;
+
     virtual bool exists() const override;
-    virtual bool isHidden() const override;
-    virtual qint64 size() const override;
-    virtual QString sizeFormat() const override;
-    virtual QDateTime lastModified() const override;
     virtual QFile::Permissions permissions() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;

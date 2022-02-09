@@ -25,8 +25,6 @@
 #include "interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
-DPRECENT_USE_NAMESPACE
-
 DPRECENT_BEGIN_NAMESPACE
 
 class RecentFileInfoPrivate : public AbstractFileInfoPrivate
@@ -38,19 +36,10 @@ public:
     }
 
     virtual ~RecentFileInfoPrivate();
-    void setProxy(const AbstractFileInfoPointer &proxy);
-
-public:
-    AbstractFileInfoPointer proxy;
 };
 
 RecentFileInfoPrivate::~RecentFileInfoPrivate()
 {
-}
-
-void RecentFileInfoPrivate::setProxy(const AbstractFileInfoPointer &aproxy)
-{
-    proxy = aproxy;
 }
 
 RecentFileInfo::RecentFileInfo(const QUrl &url)
@@ -58,7 +47,7 @@ RecentFileInfo::RecentFileInfo(const QUrl &url)
 {
     d = static_cast<RecentFileInfoPrivate *>(dptr.data());
     if (url.path() != "/") {
-        d->setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(url.path())));
+        setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(url.path())));
     }
 }
 
@@ -66,48 +55,9 @@ RecentFileInfo::~RecentFileInfo()
 {
 }
 
-QString RecentFileInfo::fileName() const
-{
-    if (d->proxy) {
-        return d->proxy->fileName();
-    }
-    return QString();
-}
-
 bool RecentFileInfo::exists() const
 {
-    if (url() == RecentManager::rootUrl())
-        return true;
-    return d->proxy && d->proxy->exists();
-}
-
-bool RecentFileInfo::isHidden() const
-{
-    return d->proxy && d->proxy->isHidden();
-}
-
-qint64 RecentFileInfo::size() const
-{
-    if (d->proxy) {
-        return d->proxy->size();
-    }
-    return -1;
-}
-
-QString RecentFileInfo::sizeFormat() const
-{
-    if (d->proxy) {
-        return d->proxy->sizeFormat();
-    }
-    return QString();
-}
-
-QDateTime RecentFileInfo::lastModified() const
-{
-    if (d->proxy) {
-        return d->proxy->lastModified();
-    }
-    return QDateTime();
+    return AbstractFileInfo::exists() || url() == RecentManager::rootUrl();
 }
 
 QFile::Permissions RecentFileInfo::permissions() const
@@ -115,10 +65,7 @@ QFile::Permissions RecentFileInfo::permissions() const
     if (url() == RecentManager::rootUrl()) {
         return QFileDevice::ReadGroup | QFileDevice::ReadOwner | QFileDevice::ReadOther;
     }
-    if (d->proxy)
-        return d->proxy->permissions();
-
-    return QFile::Permissions();
+    return AbstractFileInfo::permissions();
 }
 
 bool RecentFileInfo::isReadable() const
