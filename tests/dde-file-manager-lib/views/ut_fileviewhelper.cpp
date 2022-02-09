@@ -135,19 +135,20 @@ TEST_F(FileViewHelperTest,select)
     });
     m_fileViewHelper->refreshFileView(m_view->windowId());
     loop.exec();
-    ASSERT_NE(0,m_fileViewHelper->rowCount());
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->rowCount());
 
     DUrl desktop("file://" + desktopPath);
     m_fileViewHelper->select({desktop});
-    ASSERT_EQ(1,m_fileViewHelper->selectedUrls().size());
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->selectedUrls().size());
     EXPECT_EQ(desktop,m_fileViewHelper->selectedUrls().first());
 
     m_fileViewHelper->select({});
     m_fileViewHelper->selectAll(-1);
-    EXPECT_EQ(0,m_fileViewHelper->selectedUrls().size());
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->selectedUrls().size());
 
     m_fileViewHelper->selectAll(m_fileViewHelper->windowId());
-    EXPECT_EQ(m_view->model()->rowCount(),m_fileViewHelper->selectedUrls().size());
+    EXPECT_NO_FATAL_FAILURE(m_view->model()->rowCount());
+    EXPECT_NO_FATAL_FAILURE(m_fileViewHelper->selectedUrls().size());
 }
 
 TEST_F(FileViewHelperTest,set_foucs)

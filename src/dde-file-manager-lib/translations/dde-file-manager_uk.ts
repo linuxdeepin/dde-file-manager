@@ -4670,7 +4670,7 @@
         <location filename="../../usershare/usersharemanager.cpp" line="415"/>
         <location filename="../../usershare/usersharemanager.cpp" line="453"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"/>
+        <translation>Назва спільного ресурсу не повинна містити %1 і не може починатися з дефіса (-) або пробілу чи завершуватися пробілом.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="447"/>

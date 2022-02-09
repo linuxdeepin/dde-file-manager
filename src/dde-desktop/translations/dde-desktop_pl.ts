@@ -89,17 +89,17 @@
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="771"/>
         <source>When login</source>
-        <translation>Podczas logowania</translation>
+        <translation>Po zalogowaniu</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="773"/>
         <source>When wakeup</source>
-        <translation>Kiedy się budzę</translation>
+        <translation>Po wybudzeniu</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="825"/>
         <source>Require a password on wakeup</source>
-        <translation>Wymagaj hasła podczas budzenia</translation>
+        <translation>Wymagaj hasło po wybudzeniu komputera</translation>
     </message>
     <message>
         <location filename="../../dde-wallpaper-chooser/frame.cpp" line="857"/>

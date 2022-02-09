@@ -4671,7 +4671,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <location filename="../../usershare/usersharemanager.cpp" line="415"/>
         <location filename="../../usershare/usersharemanager.cpp" line="453"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"/>
+        <translation>Il nome della condivisione non deve contenere %1 e non può iniziare con un trattino (-) o uno spazio vuoto o terminare con uno spazio vuoto.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="447"/>

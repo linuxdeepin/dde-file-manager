@@ -923,7 +923,7 @@
         <location filename="../views/dfmvaultremovepages.cpp" line="115"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation>刪除</translation>
+        <translation>刪 除</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="149"/>
@@ -1973,7 +1973,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="735"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation>刪除</translation>
+        <translation>刪 除</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="752"/>
@@ -2892,7 +2892,7 @@
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="75"/>
         <source>Delete</source>
         <comment>button</comment>
-        <translation>刪除</translation>
+        <translation>刪 除</translation>
     </message>
 </context>
 <context>

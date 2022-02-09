@@ -228,7 +228,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="495"/>
         <source>Double click to open it</source>
-        <translation>Dyklikojeni që ta hapet</translation>
+        <translation>Dyklikojeni që të hapet</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="839"/>
@@ -2426,7 +2426,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>Shfaq zgjatime kartelash</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -4670,7 +4670,7 @@
         <location filename="../../usershare/usersharemanager.cpp" line="415"/>
         <location filename="../../usershare/usersharemanager.cpp" line="453"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"/>
+        <translation>Pjesa s’duhet të përmbajë %1 dhe s’mund të fillojë me një vijë në mes (-) apo hapësirë të zbrazët, apo të përfundojë me një hapësirë të zbrazët.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="447"/>

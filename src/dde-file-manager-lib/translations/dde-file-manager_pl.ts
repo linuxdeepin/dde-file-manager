@@ -396,7 +396,7 @@
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="174"/>
         <source>Reset</source>
-        <translation>Resetuj</translation>
+        <translation>Zresetuj</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="193"/>
@@ -559,7 +559,7 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="458"/>
         <source>Original folder</source>
-        <translation>Oryginalny folder</translation>
+        <translation>Oryginalny katalog</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="190"/>
@@ -593,7 +593,7 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="469"/>
         <source>Target folder</source>
-        <translation>Folder docelowy</translation>
+        <translation>Katalog docelowy</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="472"/>
@@ -1348,7 +1348,7 @@
     <message>
         <location filename="../views/dfiledialog.cpp" line="1267"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
-        <translation>Ten plik zostanie ukryty, jeśli jego nazwa zaczyna się od (.). Czy chcesz go ukryć?</translation>
+        <translation>Plik zostanie ukryty jeśli jego nazwa będzie zaczynać się od kropki (.). Czy chcesz go ukryć?</translation>
     </message>
 </context>
 <context>
@@ -1540,7 +1540,7 @@
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="807"/>
         <source>%1 already exists in target folder</source>
-        <translation>%1 już istnieje w folderze docelowym</translation>
+        <translation>%1 już istnieje w katalogu docelowym</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="808"/>
@@ -1747,12 +1747,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="653"/>
         <source>Permanently delete %1?</source>
-        <translation>Permanentnie usunąć %1?</translation>
+        <translation>Czy usunąć permanentnie %1?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="654"/>
         <source>Permanently delete %1 items?</source>
-        <translation>Permanentnie usunąć %1 przedmioty?</translation>
+        <translation>Czy usunąć permanentnie %1 przedmioty?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="672"/>
@@ -1818,7 +1818,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
-        <translation>Nie udało się przywrócić pliku %1, folder docelowy nie istnieje</translation>
+        <translation>Nie udało się przywrócić pliku %1, katalog docelowy nie istnieje</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1229"/>
@@ -1871,12 +1871,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="651"/>
         <source>Are you sure you want to empty %1 item?</source>
-        <translation>Czy na pewno chcesz trwale usunąć %1 przedmiot?</translation>
+        <translation>Czy na pewno chcesz permanentnie usunąć %1 przedmiot?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="652"/>
         <source>Are you sure you want to empty %1 items?</source>
-        <translation>Czy na pewno chcesz trwale usunąć %1 przedmiotów?</translation>
+        <translation>Czy na pewno chcesz permanentnie usunąć %1 przedmiotów?</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="545"/>
@@ -2000,17 +2000,17 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1162"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
-        <translation>Nie udało się przywrócić pliku %1, folder docelowy jest tylko do odczytu</translation>
+        <translation>Nie udało się przywrócić pliku %1, katalog docelowy jest tylko do odczytu</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
-        <translation>Nie udało się przywrócić plików %1, folder docelowy jest tylko do odczytu</translation>
+        <translation>Nie udało się przywrócić plików %1, katalog docelowy jest tylko do odczytu</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
-        <translation>Nie udało się przywrócić pliku %1, folder docelowy nie istnieje</translation>
+        <translation>Nie udało się przywrócić pliku %1, katalog docelowy nie istnieje</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1501"/>
@@ -2419,7 +2419,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="133"/>
         <location filename="../configure/global-setting-template.js" line="133"/>
         <source>Show hidden files</source>
-        <translation>Wyświetl ukryte pliki</translation>
+        <translation>Wyświetlaj ukryte pliki</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
@@ -2454,7 +2454,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="171"/>
         <location filename="../configure/global-setting-template.js" line="171"/>
         <source>Index external storage device after connected to computer</source>
-        <translation>Indeksuj zewnętrzne urządzenie przechowywania po podłączeniu do komputera</translation>
+        <translation>Indeksuj zewnętrzne urządzenia z nośnikiem danych po podłączeniu do komputera</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="176"/>
@@ -2475,14 +2475,14 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation>Pokazuj zamontowane katalogi współdzielone Samba</translation>
+        <translation>Pokaż zamontowane katalogi współdzielone Samba</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
         <location filename="../configure/global-setting-template-pro.js" line="269"/>
         <location filename="../configure/global-setting-template.js" line="268"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>Użyj okna wyboru plików w Menedżerze plików</translation>
+        <translation>Używaj okna wyboru plików Menedżera Plików</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="275"/>
@@ -2510,21 +2510,21 @@
         <location filename="../configure/global-setting-template-pro.js" line="300"/>
         <location filename="../configure/global-setting-template.js" line="299"/>
         <source>Show file system on disk icon</source>
-        <translation>Pokaż system plików na ikonie dysku</translation>
+        <translation>Pokazuj system plików na ikonie dysku</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="188"/>
         <location filename="../configure/global-setting-template-pro.js" line="189"/>
         <location filename="../configure/global-setting-template.js" line="189"/>
         <source>Show hidden files in search results</source>
-        <translation>Wyświetl w wynikach wyszukiwania ukryte pliki</translation>
+        <translation>Wyświetlaj ukryte pliki w wynikach wyszukiwania</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="145"/>
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
         <source>Display recent file entry in left panel</source>
-        <translation>Wyświetl wpisy ostatnich plików w panelu po lewej stronie</translation>
+        <translation>Wyświetlaj ostatnie pliki w panelu po lewej stronie</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="197"/>
@@ -3051,7 +3051,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1333"/>
         <source>Hide this folder</source>
-        <translation>Ukryj folder</translation>
+        <translation>Ukryj katalog</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1333"/>
@@ -3155,7 +3155,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1439"/>
         <source>Unconnected network shared directory</source>
-        <translation>Niepodłączony współdzielony folder sieciowy</translation>
+        <translation>Niepodłączony współdzielony katalog sieciowy</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1457"/>
@@ -3666,13 +3666,13 @@
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="311"/>
         <location filename="../dialogs/propertydialog.cpp" line="1436"/>
         <source>Android mobile device</source>
-        <translation>Przenośne urządzenie Android</translation>
+        <translation>Urządzenie przenośne Android</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="313"/>
         <location filename="../dialogs/propertydialog.cpp" line="1437"/>
         <source>Apple mobile device</source>
-        <translation>Przenośne urządzenie Apple</translation>
+        <translation>Urządzenie przenośne Apple</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="315"/>
@@ -3931,7 +3931,7 @@
     <message>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="312"/>
         <source>Dimension</source>
-        <translation>Wymiar</translation>
+        <translation>Wymiary</translation>
     </message>
     <message>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="300"/>
@@ -4149,7 +4149,7 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="60"/>
         <source>Share this folder</source>
-        <translation>Współdziel folder</translation>
+        <translation>Współdziel katalog</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="69"/>
@@ -4217,7 +4217,7 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="340"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
-        <translation>Nazwa współdzielenia już istnieje. Czy chcesz zastąpić folder współdzielenia?</translation>
+        <translation>Nazwa współdzielenia już istnieje. Czy chcesz zastąpić katalog współdzielenia?</translation>
     </message>
 </context>
 <context>
@@ -4670,12 +4670,12 @@
         <location filename="../../usershare/usersharemanager.cpp" line="415"/>
         <location filename="../../usershare/usersharemanager.cpp" line="453"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa współdzielenia nie może zawierać %1, zaczynać się od myślnika (-) i zaczynać lub kończyć białym znakiem.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="447"/>
         <source>To protect the files, you cannot share this folder.</source>
-        <translation>Aby chronić pliki, nie możesz udostępniać tego folderu.</translation>
+        <translation>Aby chronić pliki, nie możesz udostępniać tego katalogu.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="470"/>
@@ -4698,7 +4698,7 @@
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="37"/>
         <source>Enter a password to protect shared folders</source>
-        <translation>Wprowadź hasło, aby chronić udostępnione foldery</translation>
+        <translation>Wprowadź hasło, aby chronić udostępnione katalogi</translation>
     </message>
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="45"/>

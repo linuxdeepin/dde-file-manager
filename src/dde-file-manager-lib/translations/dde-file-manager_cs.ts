@@ -228,7 +228,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="495"/>
         <source>Double click to open it</source>
-        <translation type="unfinished"/>
+        <translation>Otevřete dvojklikem</translation>
     </message>
     <message>
         <location filename="../models/computermodel.cpp" line="839"/>
@@ -248,7 +248,7 @@
     <message>
         <location filename="../models/computermodel.cpp" line="848"/>
         <source>Quick Access</source>
-        <translation type="unfinished"/>
+        <translation>Rychlý přístup</translation>
     </message>
 </context>
 <context>
@@ -647,32 +647,32 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="53"/>
         <source>Save Recovery Key</source>
-        <translation type="unfinished"/>
+        <translation>Uložit obnovovací klíč</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="60"/>
         <source>Keep the key safe to retrieve the vault password later</source>
-        <translation type="unfinished"/>
+        <translation>Klíč neztraťte, abyste případně byli schopní získat heslo k trezoru</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="67"/>
         <source>Save to default path</source>
-        <translation type="unfinished"/>
+        <translation>Uložit do výchozího umístění</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="73"/>
         <source>Save to other locations</source>
-        <translation type="unfinished"/>
+        <translation>Uložit do jiných umístění</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="75"/>
         <source>No permission, please reselect</source>
-        <translation type="unfinished"/>
+        <translation>Nejsou oprávnění, vyberte prosím</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="84"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Vybrat umístění</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="103"/>
@@ -682,7 +682,7 @@
     <message>
         <location filename="../views/dfmvaultactivesavekeyfileview.cpp" line="115"/>
         <source>The default path is invisible to other users, and the path information will not be shown.</source>
-        <translation type="unfinished"/>
+        <translation>Výchozí umístění není viditelné ostatním uživatelům a informace o umístění tak nebude zobrazena.</translation>
     </message>
 </context>
 <context>
@@ -816,12 +816,12 @@
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Cannot open this path</source>
-        <translation type="unfinished"/>
+        <translation>Toto umístění se nedaří otevřít</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="50"/>
         <source>Hint</source>
-        <translation type="unfinished"/>
+        <translation>Rada</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultfileview.cpp" line="51"/>
@@ -978,44 +978,44 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="303"/>
         <source>Unable to get the key file</source>
-        <translation type="unfinished"/>
+        <translation>Nedaří se získat soubor s klíčem</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Ověření se nezdařilo</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="195"/>
         <source>Select a path</source>
-        <translation type="unfinished"/>
+        <translation>Vybrat umístění</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="183"/>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="271"/>
         <source>Retrieve Password</source>
-        <translation type="unfinished"/>
+        <translation>Získat heslo nazpět</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
         <source>By key in the default path</source>
-        <translation type="unfinished"/>
+        <translation>Pomocí klíče ve výchozím umístění</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="191"/>
         <source>By key in the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Pomocí klíče v zadaném umístění</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="287"/>
         <source>Verification Successful</source>
-        <translation type="unfinished"/>
+        <translation>Ověření úspěšné</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="218"/>
         <source>Keep it safe</source>
-        <translation type="unfinished"/>
+        <translation>Bezpečně ho uschovejte</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
@@ -1027,13 +1027,13 @@
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Verify Key</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Ověřit klíč</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Přejít k odemknutí</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
@@ -1044,7 +1044,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="284"/>
         <source>Vault password: %1</source>
-        <translation type="unfinished"/>
+        <translation>Heslo k trezoru: %1</translation>
     </message>
 </context>
 <context>
@@ -1057,7 +1057,7 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Zapomněli jste heslo?</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="145"/>
@@ -1089,22 +1089,22 @@
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="271"/>
         <source>Please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Zkuste to znovu za %1 minut</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="298"/>
         <source>Wrong password, please try again %1 minutes later</source>
-        <translation type="unfinished"/>
+        <translation>Nesprávné heslo, zkuste to znovu za %1 minut</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
         <source>Wrong password, one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Nesprávné heslo, zbývá jeden pokus</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="303"/>
         <source>Wrong password, %1 chances left</source>
-        <translation type="unfinished"/>
+        <translation>Nesprávné heslo, zbývá %1 pokusů</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="348"/>
@@ -1203,7 +1203,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="248"/>
         <source>Failed to position the file pointer!</source>
-        <translation type="unfinished"/>
+        <translation>Nepodařilo se umístit ukazatel na soubor!</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="670"/>
@@ -1231,7 +1231,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3799"/>
         <source>Failed to position the file pointer, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Nepodařilo se umístit ukazatel na soubor, příčina: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
@@ -1702,7 +1702,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="518"/>
         <source>Device or resource busy</source>
-        <translation type="unfinished"/>
+        <translation>Zařízení nebo prostředek je zaneprázdněn</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="530"/>
@@ -2426,7 +2426,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>Zobrazit přípony souborů</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -2475,7 +2475,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Keep showing the mounted Samba shares</source>
-        <translation type="unfinished"/>
+        <translation>Pořád zobrazovat připojená Samba sdílení</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="269"/>
@@ -3155,7 +3155,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1439"/>
         <source>Unconnected network shared directory</source>
-        <translation type="unfinished"/>
+        <translation>Nepřipojená síťová sdílená složka</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1457"/>
@@ -3504,7 +3504,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
         <source>Clear saved password and unmount</source>
-        <translation type="unfinished"/>
+        <translation>Vymazat uložená hesla a odpojit</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
@@ -3519,7 +3519,7 @@
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>Načíst znovu</translation>
     </message>
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="348"/>
@@ -4111,7 +4111,7 @@
         <location filename="../views/dfilemanagerwindow.cpp" line="1566"/>
         <location filename="../../usershare/usersharemanager.cpp" line="549"/>
         <source>Failed to start Samba services</source>
-        <translation type="unfinished"/>
+        <translation>Nepodařilo se spustit služby Samba</translation>
     </message>
 </context>
 <context>
@@ -4120,7 +4120,7 @@
         <location filename="../controllers/recentcontroller.cpp" line="468"/>
         <source>Cancel</source>
         <comment>button</comment>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="469"/>
@@ -4131,17 +4131,17 @@
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="472"/>
         <source>Do you want to remove this item?</source>
-        <translation type="unfinished"/>
+        <translation>Chcete tuto položku odebrat?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="474"/>
         <source>Do yout want to remove %1 items?</source>
-        <translation type="unfinished"/>
+        <translation>Chcete odebrat %1 položek?</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="475"/>
         <source>It does not delete the original files</source>
-        <translation type="unfinished"/>
+        <translation>Nesmaže původní soubory</translation>
     </message>
 </context>
 <context>
@@ -4670,7 +4670,7 @@
         <location filename="../../usershare/usersharemanager.cpp" line="415"/>
         <location filename="../../usershare/usersharemanager.cpp" line="453"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"/>
+        <translation>Je třeba, aby název sdílení neobsahoval %1 a nezačínal na pomlčku (-) nebo prázdný znak, nebo na takový nekončil.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="447"/>
