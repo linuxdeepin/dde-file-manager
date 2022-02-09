@@ -94,7 +94,12 @@ void ComputerView::refresh()
 
 QList<QUrl> ComputerView::selectedUrlList() const
 {
-    // TODO(xust)
+    auto selectionModel = this->selectionModel();
+    if (selectionModel->hasSelection()) {
+        const QModelIndex &idx = selectionModel->currentIndex();
+        QUrl url = idx.data(ComputerModel::DataRoles::kDeviceUrlRole).toUrl();
+        return { url };
+    }
     return {};
 }
 
@@ -188,6 +193,17 @@ void ComputerView::initConnect()
 
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideNativeDisks, this, [this](bool hide) { this->hideSystemPartitions(hide); });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
+
+    QAction *actProperty = new QAction(this);
+    addAction(actProperty);
+    actProperty->setShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL));
+    connect(actProperty, &QAction::triggered, this, [this] {
+        QList<QUrl> &&selectedUrls = selectedUrlList();
+        if (selectedUrls.isEmpty())
+            return;
+        DFMEntryFileInfoPointer info(new EntryFileInfo(selectedUrls.first()));
+        ComputerControllerInstance->actProperties(ComputerUtils::getWinId(this), info);
+    });
 }
 
 void ComputerView::onMenuRequest(const QPoint &pos)
