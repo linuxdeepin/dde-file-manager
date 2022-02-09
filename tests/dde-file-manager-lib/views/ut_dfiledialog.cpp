@@ -15,6 +15,7 @@
 #define private public
 #define protected public
 #include "views/dfiledialog.h"
+#include "views/dfilemanagerwindow_p.h"
 
 
 namespace  {
@@ -266,6 +267,10 @@ TEST_F(TestDFileDialog, tst_getFileView)
 TEST_F(TestDFileDialog, tst_slots)
 {
     m_fileDialog->show();
+    DFileManagerWindow * pdlg = qobject_cast<DFileManagerWindow*>(m_fileDialog);
+    if (pdlg && pdlg->d_ptr) {
+        EXPECT_FALSE(pdlg->d_ptr->m_isNeedClosed);
+    }
     EXPECT_FALSE(m_fileDialog->isHidden());
     m_fileDialog->reject();
     EXPECT_TRUE(m_fileDialog->isHidden());
