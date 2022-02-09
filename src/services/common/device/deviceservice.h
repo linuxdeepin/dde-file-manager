@@ -23,11 +23,11 @@
 #ifndef DEVICESERVICE_H
 #define DEVICESERVICE_H
 
-#include "dfm_server_service_global.h"
+#include "dfm_common_service_global.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
-DSS_BEGIN_NAMESPACE
+DSC_BEGIN_NAMESPACE
 class DeviceMonitorHandler;
 class DeviceService final : public dpf::PluginService, dpf::AutoServiceRegister<DeviceService>
 {
@@ -126,6 +126,6 @@ private:
     QScopedPointer<DeviceMonitorHandler> monitorHandler;
 };
 
-DSS_END_NAMESPACE
+DSC_END_NAMESPACE
 
 #endif   // DEVICESERVICE_H

@@ -1,3 +1,2 @@
 usr/lib/*/libdfmservice-common.so.*
 usr/lib/*/libdfmservice-filemanager.so.*
-usr/lib/*/libdfmservice-server.so.*

@@ -23,7 +23,7 @@
 #ifndef DEVICESERVICEHELPER_H
 #define DEVICESERVICEHELPER_H
 
-#include "dfm_server_service_global.h"
+#include "dfm_common_service_global.h"
 
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/fileutils.h"
@@ -34,7 +34,7 @@
 
 #include <mutex>
 
-DSS_BEGIN_NAMESPACE
+DSC_BEGIN_NAMESPACE
 
 struct DeviceData
 {
@@ -136,6 +136,6 @@ private:
     static DevPtrList createAllDevices(DFMMOUNT::DeviceType type);
 };
 
-DSS_END_NAMESPACE
+DSC_END_NAMESPACE
 
 #endif   // DEVICESERVICEHELPER_H

@@ -23,7 +23,7 @@
 #ifndef DEVICEMONITORHANDLER_H
 #define DEVICEMONITORHANDLER_H
 
-#include "dfm_server_service_global.h"
+#include "dfm_common_service_global.h"
 #include "deviceservicehelper.h"
 
 #include <QObject>
@@ -31,7 +31,7 @@
 #include <QTimer>
 #include <QMutex>
 
-DSS_BEGIN_NAMESPACE
+DSC_BEGIN_NAMESPACE
 
 class DeviceService;
 class DeviceMonitorHandler : public QObject
@@ -87,6 +87,6 @@ private:
     QHash<QString, ProtocolDeviceData> allProtocolDevData;
 };
 
-DSS_END_NAMESPACE
+DSC_END_NAMESPACE
 
 #endif   // DEVICEMONITORHANDLER_H

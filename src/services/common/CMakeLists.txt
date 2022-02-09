@@ -60,6 +60,13 @@ FILE(GLOB MENU_FILES
 #    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.cpp"
 )
 
+FILE(GLOB DEVICESERVICE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/device/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/device/*/*.cpp"
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -67,6 +74,7 @@ add_library(${PROJECT_NAME}
     ${DIALOG_FILES}
     ${MENU_FILES}
     ${PROPERTYDIALOG_FILES}
+    ${DEVICESERVICE_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
@@ -76,6 +84,12 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(gsettings
     REQUIRED
     gsettings-qt
+    IMPORTED_TARGET
+)
+
+pkg_search_module(dfm-mount
+    REQUIRED
+    dfm-mount
     IMPORTED_TARGET
 )
 
@@ -98,6 +112,7 @@ target_link_libraries(
     DFM::base
     DFM::framework
     PkgConfig::gsettings
+    PkgConfig::dfm-mount
     ${DtkWidget_LIBRARIES}
 )
 

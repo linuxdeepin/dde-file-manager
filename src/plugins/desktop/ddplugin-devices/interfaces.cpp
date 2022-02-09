@@ -22,7 +22,7 @@
 */
 #include "interfaces.h"
 
-#include "deviceservice.h"
+#include "services/common/device/deviceservice.h"
 #include "devicemanagerdbus.h"
 #include "dbus_adaptor/devicemanagerdbus_adaptor.h"
 
@@ -31,7 +31,7 @@
 #include <dfm-framework/framework.h>
 #include <QDBusConnection>
 
-DSS_USE_NAMESPACE
+DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void Interfaces::initialize()

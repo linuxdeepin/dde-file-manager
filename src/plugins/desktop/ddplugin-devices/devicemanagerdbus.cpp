@@ -22,13 +22,13 @@
 */
 #include "devicemanagerdbus.h"
 
-#include "deviceservice.h"
+#include "services/common/device/deviceservice.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-framework/framework.h>
 
-DSS_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
 

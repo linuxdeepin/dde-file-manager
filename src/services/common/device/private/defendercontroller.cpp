@@ -38,7 +38,7 @@ static const char *const kDefenderServiceName = "com.deepin.defender.daemonservi
 static const char *const kDefenderServicePath = "/com/deepin/defender/daemonservice";
 static const char *const kDefenderInterfaceName = "com.deepin.defender.daemonservice";
 
-DSS_BEGIN_NAMESPACE
+DSC_BEGIN_NAMESPACE
 
 DefenderController &DefenderController::instance()
 {
@@ -169,4 +169,4 @@ std::once_flag &DefenderController::onceFlag()
     return flag;
 }
 
-DSS_END_NAMESPACE
+DSC_END_NAMESPACE

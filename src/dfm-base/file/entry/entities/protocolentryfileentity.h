@@ -47,9 +47,6 @@ public:
     virtual void refresh() override;
     virtual QUrl targetUrl() const override;
     virtual QMenu *createMenu() override;
-
-private:
-    QVariantHash convertFromQMap(const QVariantMap &orig);
 };
 
 DFMBASE_END_NAMESPACE

@@ -29,6 +29,7 @@
 #include "base/application/application.h"
 #include "base/application/settings.h"
 #include "base/urlroute.h"
+#include "utils/universalutils.h"
 
 #include <QMenu>
 
@@ -216,7 +217,7 @@ void BlockEntryFileEntity::refresh()
     auto id = QString(DeviceId::kBlockDeviceIdPrefix)
             + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
 
-    datas = convertFromQMap(DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, true));
+    datas = UniversalUtils::convertFromQMap(DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, true));
     auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
     if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
         auto clearBlkData = DeviceManagerInstance.invokeQueryBlockDeviceInfo(clearBlkId, true);
@@ -387,15 +388,4 @@ bool BlockEntryFileEntity::showSizeAndProgress() const
     }
 
     return true;
-}
-
-QVariantHash BlockEntryFileEntity::convertFromQMap(const QVariantMap &orig)
-{
-    QVariantHash ret;
-    auto iter = orig.cbegin();
-    while (iter != orig.cend()) {
-        ret.insert(iter.key(), iter.value());
-        iter += 1;
-    }
-    return ret;
 }

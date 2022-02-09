@@ -29,8 +29,6 @@
 
 namespace dfm_service_common {
 class DialogService;
-}
-namespace dfm_service_server {
 class DeviceService;
 }
 
@@ -97,7 +95,7 @@ private:
     void initConnection();
 
 private:
-    dfm_service_server::DeviceService *deviceServ { nullptr };
+    dfm_service_common::DeviceService *deviceServ { nullptr };
 };
 
 #endif   // DEVICEMANAGERDBUS_H

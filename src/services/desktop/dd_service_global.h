@@ -22,9 +22,9 @@
 #ifndef GLOBALDEFINITIONS_H
 #define GLOBALDEFINITIONS_H
 
-#define DSS_BEGIN_NAMESPACE namespace dfm_service_server{
-#define DSS_END_NAMESPACE }
-#define DSS_NAMESPACE dfm_service_server
-#define DSS_USE_NAMESPACE using namespace dfm_service_server;
+#define DDS_BEGIN_NAMESPACE namespace dfm_service_desktop {
+#define DDS_END_NAMESPACE }
+#define DDS_NAMESPACE dfm_service_desktop
+#define DDS_USE_NAMESPACE using namespace dfm_service_desktop;
 
-#endif //GLOBALDEFINITIONS_H
+#endif   //GLOBALDEFINITIONS_H

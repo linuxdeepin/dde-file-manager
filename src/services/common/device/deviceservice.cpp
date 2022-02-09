@@ -36,7 +36,7 @@
 #include <algorithm>
 
 DWIDGET_USE_NAMESPACE
-DSS_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
 

@@ -65,7 +65,6 @@ private:
     QString getIdLabel() const;
     QVariant getProperty(const char *const key) const;
     bool showSizeAndProgress() const;
-    QVariantHash convertFromQMap(const QVariantMap &orig);
 };
 
 DFMBASE_END_NAMESPACE

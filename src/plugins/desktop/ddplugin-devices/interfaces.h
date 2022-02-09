@@ -32,7 +32,7 @@ class DeviceManagerDBus;
 class Interfaces : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.server" FILE "interfaces.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "interfaces.json")
 
 public:
     virtual void initialize() override;
@@ -47,4 +47,4 @@ private:
     QScopedPointer<DeviceManagerDBus> deviceManager;
 };
 
-#endif // INTERFACES_H
+#endif   // INTERFACES_H

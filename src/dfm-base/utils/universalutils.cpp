@@ -273,4 +273,15 @@ int UniversalUtils::dockHeight()
     return dockHeight;
 }
 
+QVariantHash UniversalUtils::convertFromQMap(const QVariantMap map)
+{
+    QVariantHash ret;
+    auto iter = map.cbegin();
+    while (iter != map.cend()) {
+        ret.insert(iter.key(), iter.value());
+        iter += 1;
+    }
+    return ret;
+}
+
 DFMBASE_END_NAMESPACE

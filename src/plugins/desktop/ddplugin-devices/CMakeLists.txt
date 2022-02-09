@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(dfmsplugin-interfaces)
+project(ddplugin-devices)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -29,7 +29,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    DFMSERVICE::server
+    DFMSERVICE::common
 )
 
 #install library file

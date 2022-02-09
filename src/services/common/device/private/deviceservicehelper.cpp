@@ -38,7 +38,7 @@
 Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
 
 DWIDGET_USE_NAMESPACE
-DSS_BEGIN_NAMESPACE
+DSC_BEGIN_NAMESPACE
 
 using dfmbase::FinallyUtil;
 using namespace GlobalServerDefines;
@@ -602,4 +602,4 @@ void DeviceServiceHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *data,
     }
 }
 
-DSS_END_NAMESPACE
+DSC_END_NAMESPACE

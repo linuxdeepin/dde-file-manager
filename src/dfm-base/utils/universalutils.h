@@ -49,6 +49,8 @@ public:
     static bool checkLaunchAppInterface();
     static bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths);
     static int dockHeight();
+
+    static QVariantHash convertFromQMap(const QVariantMap map);
 };
 
 DFMBASE_END_NAMESPACE

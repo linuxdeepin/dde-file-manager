@@ -25,6 +25,7 @@
 #include "dbusservice/global_server_defines.h"
 #include "base/urlroute.h"
 #include "utils/devicemanager.h"
+#include "utils/universalutils.h"
 
 #include <QMenu>
 
@@ -133,7 +134,7 @@ void ProtocolEntryFileEntity::refresh()
     auto encodecId = entryUrl.path().remove("." + QString(SuffixInfo::kProtocol)).toUtf8();
     auto id = QString(QByteArray::fromBase64(encodecId));
 
-    datas = convertFromQMap(DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id));
+    datas = UniversalUtils::convertFromQMap(DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id));
 }
 
 QUrl ProtocolEntryFileEntity::targetUrl() const
@@ -165,15 +166,4 @@ QMenu *ProtocolEntryFileEntity::createMenu()
 
     menu->addAction(ContextMenuActionTrs::trProperties());
     return menu;
-}
-
-QVariantHash ProtocolEntryFileEntity::convertFromQMap(const QVariantMap &orig)
-{
-    QVariantHash ret;
-    auto iter = orig.cbegin();
-    while (iter != orig.cend()) {
-        ret.insert(iter.key(), iter.value());
-        iter += 1;
-    }
-    return ret;
 }
