@@ -1075,7 +1075,7 @@ void Frame::refreshList()
         }
 
         const QStringList &saverNameList = m_dbusScreenSaver->allScreenSaver();
-        const QString &currentScreensaver = m_dbusScreenSaver->GetScreenSaverCover(m_dbusScreenSaver->currentScreenSaver());
+        const QString &currentScreensaver = m_dbusScreenSaver->currentScreenSaver();
         if (saverNameList.isEmpty() && !m_dbusScreenSaver->isValid()) {
             qWarning() << "com.deepin.ScreenSaver allScreenSaver fail. retry";
             m_loadTimer.start(5000);
@@ -1116,7 +1116,7 @@ void Frame::refreshList()
             });
             connect(item, &WallpaperItem::buttonClicked, this, &Frame::onItemButtonClicked);
             //首次进入时，选中当前设置屏保
-            if(!isPressed && !coverPath.isEmpty() && coverPath == currentScreensaver) {
+            if(!isPressed && !name.isEmpty() && name == currentScreensaver) {
                 item->pressed();
                 isPressed = true;
             }
