@@ -81,8 +81,15 @@ public:
 
     virtual bool canRename() const override;
 
+    bool hasSpecialColumn() const;
+    QDateTime recentReadDateTime() const;
+    QString recentFilePath() const;
+    QDateTime trashDeletionDate() const;
+    QString trashSourceFilePath() const;
+
 private:
     DUrl m_parentUrl;
+    DAbstractFileInfoPointer m_targetFileInfo;
 
 };
 

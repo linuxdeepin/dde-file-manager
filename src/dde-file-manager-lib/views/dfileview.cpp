@@ -1674,8 +1674,16 @@ void DFileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int n
     DUrl root_url = rootUrl();
     //所有搜索目录统一类目顺序，存入"search:"配置项中
     if (root_url.isSearchFile()) {
+        // fix bug 112908
+        // 回收站、最近使用下搜索配置分别为"search:?url=trash:///"、"search:?url=recent:///"
+        const auto &targetUrl = root_url.searchTargetUrl();
         root_url = DUrl();
         root_url.setScheme(SEARCH_SCHEME);
+        if (targetUrl.isRecentFile()) {
+            root_url.setSearchTargetUrl(DUrl::fromRecentFile("/"));
+        } else if (targetUrl.isTrashFile()) {
+            root_url.setSearchTargetUrl(DUrl::fromTrashFile("/"));
+        }
     }
     d->setFileViewStateValue(root_url, "headerList", logicalIndexList);
     //及时同步到本地配置文件中
