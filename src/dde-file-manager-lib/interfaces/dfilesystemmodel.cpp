@@ -1633,8 +1633,16 @@ int DFileSystemModel::columnToRole(int column) const
         DUrl url = rootUrl();
         //搜索目录统一从"search:"项中取配置数据
         if (url.isSearchFile()) {
+            // fix bug 112908
+            // 回收站、最近使用下搜索配置分别为"search:?url=trash:///"、"search:?url=recent:///"
+            const auto &targetUrl = url.searchTargetUrl();
             url = DUrl();
             url.setScheme(SEARCH_SCHEME);
+            if (targetUrl.isRecentFile()) {
+                url.setSearchTargetUrl(DUrl::fromRecentFile("/"));
+            } else if (targetUrl.isTrashFile()) {
+                url.setSearchTargetUrl(DUrl::fromTrashFile("/"));
+            }
         }
         const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", url).toMap();
         if (map.contains("headerList")) {
@@ -1665,8 +1673,16 @@ int DFileSystemModel::roleToColumn(int role) const
         DUrl url = rootUrl();
         //搜索目录统一从"search:"项中取配置数据
         if (url.isSearchFile()) {
+            // fix bug 112908
+            // 回收站、最近使用下搜索配置分别为"search:?url=trash:///"、"search:?url=recent:///"
+            const auto &targetUrl = url.searchTargetUrl();
             url = DUrl();
             url.setScheme(SEARCH_SCHEME);
+            if (targetUrl.isRecentFile()) {
+                url.setSearchTargetUrl(DUrl::fromRecentFile("/"));
+            } else if (targetUrl.isTrashFile()) {
+                url.setSearchTargetUrl(DUrl::fromTrashFile("/"));
+            }
         }
         //获取修改过顺序后的列属性的索引
         const QVariantMap &map = DFMApplication::appObtuselySetting()->value("FileViewState", url).toMap();

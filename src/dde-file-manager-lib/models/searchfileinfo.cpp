@@ -24,6 +24,8 @@
 #include "searchfileinfo.h"
 #include "private/dabstractfileinfo_p.h"
 #include "views/dfileview.h"
+#include "recentfileinfo.h"
+#include "trashfileinfo.h"
 
 #include "dfileservices.h"
 
@@ -37,6 +39,10 @@
 
 namespace FileSortFunction {
 COMPARE_FUN_DEFINE(absoluteFilePath, FilePath, SearchFileInfo)
+COMPARE_FUN_DEFINE(trashDeletionDate, TrashDeletionDate, SearchFileInfo)
+COMPARE_FUN_DEFINE(trashSourceFilePath, TrashSourceFilePath, SearchFileInfo)
+COMPARE_FUN_DEFINE(recentReadDateTime, RecentLastReadTime, SearchFileInfo)
+COMPARE_FUN_DEFINE(recentFilePath, RecentFilePath2, SearchFileInfo)
 }
 
 SearchFileInfo::SearchFileInfo(const DUrl &url)
@@ -49,6 +55,8 @@ SearchFileInfo::SearchFileInfo(const DUrl &url)
         m_parentUrl.setSearchedFileUrl(DUrl());
 
         setProxy(DFileService::instance()->createFileInfo(Q_NULLPTR, url.searchedFileUrl()));
+    } else {
+        m_targetFileInfo = fileService->createFileInfo(nullptr, url.searchTargetUrl());
     }
 }
 
@@ -111,6 +119,10 @@ void SearchFileInfo::setColumnCompact(bool)
 
 QList<int> SearchFileInfo::userColumnRoles() const
 {
+    // fix bug 112908
+    if (hasSpecialColumn() && m_targetFileInfo)
+        return m_targetFileInfo->userColumnRoles();
+
     static QList<int> userColumnRoles = QList<int>() << DFileSystemModel::FileDisplayNameRole
 //                                                     << DFileSystemModel::FileUserRole + 1
 //                                                     << DFileSystemModel::FileUserRole + 2
@@ -124,6 +136,10 @@ QList<int> SearchFileInfo::userColumnRoles() const
 
 QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 {
+    // fix bug 112908
+    if (hasSpecialColumn() && m_targetFileInfo)
+        return m_targetFileInfo->userColumnDisplayName(userColumnRole);
+
     if (userColumnRole == DFileSystemModel::FileUserRole + 1)
         return qApp->translate("DFileSystemModel",  "Path");
     if (userColumnRole == DFileSystemModel::FileUserRole + 2)
@@ -139,6 +155,13 @@ QVariant SearchFileInfo::userColumnDisplayName(int userColumnRole) const
 QVariant SearchFileInfo::userColumnData(int userColumnRole) const
 {
     Q_D(const DAbstractFileInfo);
+
+    // fix bug 112908
+    if (hasSpecialColumn()) {
+        if (d->proxy)
+            return d->proxy->userColumnData(userColumnRole);
+        return DAbstractFileInfo::userColumnData(userColumnRole);
+    }
 
     if (userColumnRole == DFileSystemModel::FileUserRole + 2) {
         return QVariant::fromValue(qMakePair(lastModifiedDisplayName(), qMakePair(sizeDisplayName(), mimeTypeDisplayName())));
@@ -199,6 +222,9 @@ int SearchFileInfo::userColumnWidth(int userColumnRole, const QFontMetrics &font
 
 MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
 {
+    if (hasSpecialColumn() && m_targetFileInfo)
+        return m_targetFileInfo->menuActionByColumnRole(userColumnRole);
+
     if (userColumnRole == DFileSystemModel::FilePathRole) {
         return MenuAction::AbsolutePath;
     }
@@ -207,6 +233,9 @@ MenuAction SearchFileInfo::menuActionByColumnRole(int userColumnRole) const
 
 QList<int> SearchFileInfo::sortSubMenuActionUserColumnRoles() const
 {
+    if (hasSpecialColumn() && m_targetFileInfo)
+        return m_targetFileInfo->sortSubMenuActionUserColumnRoles();
+
     QList<int> roles;
     roles << DFileSystemModel::FileDisplayNameRole
           << DFileSystemModel::FilePathRole
@@ -296,6 +325,26 @@ DAbstractFileInfo::CompareFunction SearchFileInfo::compareFunByColumn(int column
 {
     if (columnRole == DFileSystemModel::FilePathRole)
         return FileSortFunction::compareFileListByFilePath;
+
+    if (m_targetFileInfo) {
+        if (m_targetFileInfo->fileUrl().isRecentFile()) {
+            if (columnRole == DFileSystemModel::FileLastReadRole) {
+                // 最近使用目录搜索，最近访问时间
+                return FileSortFunction::compareFileListByRecentLastReadTime;
+            } else if (columnRole == DFileSystemModel::FileUserRole + 1) {
+                // 最近使用目录搜索，路径
+                return FileSortFunction::compareFileListByRecentFilePath2;
+            }
+        } else if (m_targetFileInfo->fileUrl().isTrashFile()) {
+            if (columnRole == DFileSystemModel::FileUserRole + 3) {
+               // 回收站目录搜索，原始位置
+               return FileSortFunction::compareFileListByTrashSourceFilePath;
+           } else if (columnRole == DFileSystemModel::FileUserRole + 4) {
+               // 回收站目录搜索，删除时间
+               return FileSortFunction::compareFileListByTrashDeletionDate;
+           }
+        }
+    }
 
     return DAbstractFileInfo::compareFunByColumn(columnRole);
 }
@@ -388,7 +437,6 @@ QIcon SearchFileInfo::fileIcon() const
     if (info)
         return info->fileIcon();
 
-
     return QIcon::fromTheme("search");
 }
 
@@ -400,6 +448,13 @@ bool SearchFileInfo::canRename() const
     return DAbstractFileInfo::canRename();
 }
 
+bool SearchFileInfo::hasSpecialColumn() const
+{
+    // fix bug 112908
+    const auto &targetUrl = fileUrl().searchTargetUrl();
+    return (targetUrl.isRecentFile() || targetUrl.isTrashFile());
+}
+
 bool SearchFileInfo::canDrop() const
 {
     Q_D(const DAbstractFileInfo);
@@ -407,4 +462,44 @@ bool SearchFileInfo::canDrop() const
     if (d->proxy && d->proxy->fileUrl().isTaggedFile() && isVirtualEntry())
         return false;
     return DAbstractFileInfo::canDrop();
+}
+
+QDateTime SearchFileInfo::recentReadDateTime() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy && d->proxy->fileUrl().isRecentFile())
+        return static_cast<RecentFileInfo *>(d->proxy.data())->readDateTime();
+
+    return {};
+}
+
+QString SearchFileInfo::recentFilePath() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy && d->proxy->fileUrl().isRecentFile())
+        return static_cast<RecentFileInfo *>(d->proxy.data())->toLocalFile();
+
+    return {};
+}
+
+QDateTime SearchFileInfo::trashDeletionDate() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy && d->proxy->fileUrl().isTrashFile())
+        return static_cast<TrashFileInfo *>(d->proxy.data())->deletionDate();
+
+    return {};
+}
+
+QString SearchFileInfo::trashSourceFilePath() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (d->proxy && d->proxy->fileUrl().isTrashFile())
+        return static_cast<TrashFileInfo *>(d->proxy.data())->sourceFilePath();
+
+    return {};
 }
