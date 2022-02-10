@@ -31,6 +31,9 @@
 
 #include "stub.h"
 
+#define private public
+#include "controllers/vaultcontroller.h"
+
 DFM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
@@ -122,5 +125,11 @@ TEST_F(TestVaultHelper, isVaultEnabled)
             return;
         }
     }
+    EXPECT_FALSE(m_vaultHelper->isVaultEnabled());
+}
+
+TEST_F(TestVaultHelper, isVaultEnabled2)
+{
+    VaultController::ins()->m_vaultVisiable = false;
     EXPECT_FALSE(m_vaultHelper->isVaultEnabled());
 }
