@@ -99,12 +99,6 @@ QString DeviceManagerAdaptor::MountBlockDevice(const QString &id)
     return parent()->MountBlockDevice(id);
 }
 
-void DeviceManagerAdaptor::MountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts)
-{
-    // handle method call com.deepin.filemanager.service.DeviceManager.MountNetworkDevice
-    parent()->MountNetworkDevice(address, anonymous, opts);
-}
-
 QString DeviceManagerAdaptor::MountProtocolDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.MountProtocolDevice

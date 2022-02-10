@@ -29,6 +29,7 @@
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/dialog/dialogservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
+#include "services/common/device/deviceservice.h"
 
 #include <QString>
 #include <QIcon>
@@ -75,6 +76,7 @@ public:
     static DSB_FM_NAMESPACE::SideBarService *sbServIns();
     static DSC_NAMESPACE::DialogService *dlgServIns();
     static DSC_NAMESPACE::PropertyDialogService *propertyDlgServIns();
+    static DSC_NAMESPACE::DeviceService *deviceServIns();
 
     static bool isPresetSuffix(const QString &suffix);
 

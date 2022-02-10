@@ -50,7 +50,7 @@ public:
     static bool displayIcon();
     static bool tabAddable(quint64 windowId);
     static void handlePressed(QWidget *sender, const QString &text, bool *isSearch = nullptr);
-    static bool handleConnection(const QUrl &url);
+    static bool handleConnection(QWidget *sender, const QUrl &url);
 
     static void showSettingsDialog(quint64 windowId);
     static void showConnectToServerDialog(quint64 windowId);

@@ -27,6 +27,8 @@
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
+#include <dfm-mount/dfmprotocoldevice.h>
+
 DSC_BEGIN_NAMESPACE
 class DeviceMonitorHandler;
 class DeviceService final : public dpf::PluginService, dpf::AutoServiceRegister<DeviceService>
@@ -52,6 +54,7 @@ public:   // operations
     void detachProtocolDevice(const QString &deviceId);
     void detachAllMountedBlockDevices();
     void detachAllMountedProtocolDevices();
+
     void mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
     QString mountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
     void unmountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
@@ -74,7 +77,7 @@ public:   // operations
     bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
     void unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
 
-    void mountNetworkDevice(const QString &address, bool anonymous, const QVariantMap &opts);
+    void mountNetworkDevice(const QString &address, dfmmount::MountResult callback);
 
 public:   // status
     bool isBlockDeviceMonitorWorking() const;

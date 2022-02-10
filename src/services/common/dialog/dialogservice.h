@@ -30,6 +30,7 @@
 #include "dfm-base/utils/devicemanager.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
+#include <dfm-mount/base/dfmmount_global.h>
 
 #include <DDialog>
 
@@ -52,10 +53,10 @@ public:
 
     DDialog *showQueryScanningDialog(const QString &title);
     void showErrorDialog(const QString &title, const QString &message);
+    void showErrorDialogWhenMountNetworkDeviceFailed(DFMMOUNT::DeviceError err);
     void addTask(const JobHandlePointer &task);
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();
-    DFMBASE_NAMESPACE::NetworkMountInfo askInfoWhenMountingNetworkDevice(const QString &address);
     bool askForFormat();
 
 private:

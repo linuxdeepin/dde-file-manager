@@ -216,11 +216,6 @@ void DeviceManagerDBus::LockBlockDevice(QString id)
     deviceServ->lockBlockDevice(id);
 }
 
-void DeviceManagerDBus::MountNetworkDevice(QString address, bool anonymous, QVariantMap opts)
-{
-    deviceServ->mountNetworkDevice(address, anonymous, opts);
-}
-
 /*!
  * \brief user input a opts, then return devices list
  * \param opts: refrecne to DeviceService::blockDevicesIdList

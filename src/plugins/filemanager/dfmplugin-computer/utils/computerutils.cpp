@@ -222,6 +222,18 @@ dfm_service_common::PropertyDialogService *ComputerUtils::propertyDlgServIns()
     return ctx.service<DSC_NAMESPACE::PropertyDialogService>(DSC_NAMESPACE::PropertyDialogService::name());
 }
 
+dfm_service_common::DeviceService *ComputerUtils::deviceServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::DeviceService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::DeviceService>(DSC_NAMESPACE::DeviceService::name());
+}
+
 bool ComputerUtils::shouldSystemPartitionHide()
 {
     return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();

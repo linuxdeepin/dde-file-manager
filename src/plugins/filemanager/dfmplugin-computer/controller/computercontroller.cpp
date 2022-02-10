@@ -93,7 +93,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         } else if (suffix == SuffixInfo::kProtocol) {
             // TODO(xust)
         } else if (suffix == SuffixInfo::kStashedRemote) {
-            actMount(winId, info);
+            actMount(winId, info, true);
         } else if (suffix == SuffixInfo::kAppEntry) {
             QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
             QProcess::startDetached(cmd);
@@ -185,7 +185,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act)
 {
     if (!info) {
-        qDebug() << "a null info pointer is transfered";
+        qCritical() << "a null info pointer is transfered";
         return;
     }
 
@@ -206,9 +206,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     if (isEncrypted) {
         if (!isUnlocked) {
             QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
-            auto &ctx = dpfInstance.serviceContext();
-            auto dialogServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-            QString passwd = dialogServ->askPasswordForLockedDevice();
+            QString passwd = ComputerUtils::dlgServIns()->askPasswordForLockedDevice();
             if (passwd.isEmpty()) {
                 QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
                 return;
@@ -217,7 +215,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
 
             DeviceManagerInstance.unlockAndDo(shellId, passwd, [=](const QString &newID) {
                 if (newID.isEmpty())
-                    dialogServ->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
+                    ComputerUtils::dlgServIns()->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
                 else
                     mountDevice(winId, newID, act);
             });
@@ -318,13 +316,23 @@ void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer 
         mountDevice(winId, info, kEnterInNewTab);
 }
 
+static void onNetworkDeviceMountFinished(bool ok, dfmmount::DeviceError err, const QString &mntPath, quint64 winId, bool enterAfterMounted)
+{
+    if (ok) {
+        if (enterAfterMounted)
+            ComputerEventCaller::cdTo(winId, mntPath);
+    } else {
+        ComputerUtils::dlgServIns()->showErrorDialogWhenMountNetworkDeviceFailed(err);
+    }
+}
+
 void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, bool enterAfterMounted)
 {
     QString sfx = info->suffix();
     if (sfx == SuffixInfo::kStashedRemote) {
         QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->url());
-        DeviceManagerInstance.invokeMountNetworkDevice(devId, [](const QString &msg) {
-            return ComputerUtils::dlgServIns()->askInfoWhenMountingNetworkDevice(msg);
+        ComputerUtils::deviceServIns()->mountNetworkDevice(devId, [devId, enterAfterMounted, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+            onNetworkDeviceMountFinished(ok, err, mntPath, winId, enterAfterMounted);
         });
         return;
     } else if (sfx == SuffixInfo::kBlock) {

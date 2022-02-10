@@ -95,30 +95,22 @@ QString DialogService::askPasswordForLockedDevice()
     return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
 }
 
-dfmbase::NetworkMountInfo DialogService::askInfoWhenMountingNetworkDevice(const QString &address)
+void DialogService::showErrorDialogWhenMountNetworkDeviceFailed(dfmmount::DeviceError err)
 {
-    using namespace GlobalServerDefines::NetworkMountParamKey;
-    DFMBASE_USE_NAMESPACE;
-
-    NetworkMountInfo info;
-    MountAskPasswordDialog dlg;
-    if (!address.startsWith("smb"))
-        dlg.setDomainLineVisible(false);
-    dlg.setTitle(address);
-
-    if (dlg.exec() == QDialog::Accepted) {
-        QJsonObject loginInfo = dlg.getLoginData();
-        auto data = loginInfo.toVariantMap();
-        if (data.contains(kAnonymous) && data.value(kAnonymous).toBool()) {
-            info.anonymous = true;
-        } else {
-            info.userName = data.value(kUser).toString();
-            info.domain = data.value(kDomain).toString();
-            info.passwd = data.value(kPasswd).toString();
-            info.saveMode = data.value(kPasswdSaveMode).toInt();
-        }
+    switch (err) {
+    case dfmmount::DeviceError::UserErrorNetworkAnonymousNotAllowed:
+        showErrorDialog(tr("Mount error"), tr("Anonymous mount is not allowed"));
+        break;
+    case dfmmount::DeviceError::UserErrorNetworkWrongPasswd:
+        showErrorDialog(tr("Mount error"), tr("Wrong password is inputed"));
+        break;
+    case dfmmount::DeviceError::UserErrorUserCancelled:
+        break;
+    default:
+        showErrorDialog(tr("Mount error"), tr("Error occured while mounting device"));
+        qWarning() << "mount device failed: " << static_cast<int>(err);
+        break;
     }
-    return info;
 }
 
 bool DialogService::askForFormat()

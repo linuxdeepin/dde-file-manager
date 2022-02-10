@@ -163,33 +163,6 @@ QJsonObject MountAskPasswordDialog::getLoginData()
     return loginObj;
 }
 
-void MountAskPasswordDialog::setLoginData(const QJsonObject &obj)
-{
-    loginObj = obj;
-    using namespace NetworkMountParamKey;
-    QFontMetrics fm(this->font());
-    const QString &str = fm.elidedText(loginObj.value(kMessage).toString(), Qt::ElideMiddle,
-                                       this->size().width() - 80);
-
-    setTitle(str);
-
-    if (loginObj.value(kAnonymous).toBool()) {
-        anonymousButton->click();
-    } else {
-        registerButton->click();
-    }
-
-    usernameLineEdit->setText(loginObj.value(kUser).toString());
-    domainLineEdit->setText(loginObj.value(kDomain).toString());
-    passwordLineEdit->setText(loginObj.value(kPasswd).toString());
-
-    if (loginObj.value(kPasswdSaveMode).toInt() == kSavePermanently) {   // 2 for save password permanenty. and 1 for save before logout, 0 for never save.
-        passwordCheckBox->setChecked(true);
-    } else {
-        passwordCheckBox->setChecked(false);
-    }
-}
-
 void MountAskPasswordDialog::handleConnect()
 {
     using namespace NetworkMountParamKey;
@@ -237,4 +210,14 @@ void MountAskPasswordDialog::setDomainLineVisible(bool domainLineVisible)
         domainLineEdit->hide();
     }
     this->domainLineVisible = domainLineVisible;
+}
+
+void MountAskPasswordDialog::setDomain(const QString &domain)
+{
+    domainLineEdit->setText(domain);
+}
+
+void MountAskPasswordDialog::setUser(const QString &user)
+{
+    usernameLineEdit->setText(user);
 }

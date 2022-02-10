@@ -29,6 +29,7 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/dialog/dialogservice.h"
+#include "services/common/device/deviceservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -48,6 +49,13 @@ static DSC_NAMESPACE::DialogService *dlgServ()
 {
     auto &ctx = dpfInstance.serviceContext();
     auto dlgServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
+    return dlgServ;
+}
+
+static DSC_NAMESPACE::DeviceService *deviceServ()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto dlgServ = ctx.service<DSC_NAMESPACE::DeviceService>(DSC_NAMESPACE::DeviceService::name());
     return dlgServ;
 }
 
@@ -210,21 +218,26 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
     }
 }
 
-bool TitleBarHelper::handleConnection(const QUrl &url)
+bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
 {
     QString &&scheme = url.scheme();
     if (scheme != SchemeTypes::kSmb && scheme != SchemeTypes::kFtp && scheme != SchemeTypes::kSFtp)
         return false;
 
-    // TODO(xust) MAY BE TEMP CODE
     if (url.host().isEmpty()) {
         dlgServ()->showErrorDialog("", QObject::tr("Mounting device error"));
         return true;
     }
 
-    DeviceManagerInstance.invokeMountNetworkDevice(url.toString(), [](const QString &address) {
-        // TODO(xust) TEMP CODE. for now, connection can only be connected, we should use api directly to mount and enter shares
-        return dlgServ()->askInfoWhenMountingNetworkDevice(address);
+    deviceServ()->mountNetworkDevice(url.toString(), [sender](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+        if (!ok) {
+            dlgServ()->showErrorDialogWhenMountNetworkDeviceFailed(err);
+        } else {
+            QUrl u;
+            u.setScheme(SchemeTypes::kFile);
+            u.setPath(mntPath);
+            TitleBarEventCaller::sendCd(sender, u);
+        }
     });
 
     return true;

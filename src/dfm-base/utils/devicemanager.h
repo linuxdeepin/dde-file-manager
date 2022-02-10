@@ -32,20 +32,6 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-struct NetworkMountInfo
-{
-    QString userName;
-    QString domain;
-    QString passwd;
-    int saveMode { 0 };
-    bool anonymous { false };
-
-    inline bool isValid()
-    {
-        return anonymous || (!userName.isEmpty() && !domain.isEmpty() && !passwd.isEmpty());
-    }
-};
-
 class DeviceManager : public QObject
 {
     Q_OBJECT
@@ -69,8 +55,8 @@ public:
     void invokeDetachBlockDeviceForced(const QString &id);
     void invokeUnmountBlockDeviceForced(const QString &id);
     void invokeDetachProtocolDevice(const QString &id);
-    void invokeRenameBlockDevice(const QString &id, const QString &newName);
 
+    void invokeRenameBlockDevice(const QString &id, const QString &newName);
     QString invokeUnlockBlockDevice(const QString &id, const QString &passwd);
     QString invokeMountBlockDevice(const QString &id);
     void invokeUnmountBlockDevice(const QString &id);
@@ -79,9 +65,6 @@ public:
 
     using HandleAfterUnlock = std::function<void(const QString &unlockResult)>;
     void unlockAndDo(const QString &id, const QString &passwd, HandleAfterUnlock handler);
-
-    using AskForMountInfo = std::function<NetworkMountInfo(QString message)>;
-    QString invokeMountNetworkDevice(const QString address, AskForMountInfo requestMountInfo);
 
 signals:
     void serviceUnregistered(const QString &service);

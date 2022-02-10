@@ -52,16 +52,16 @@ public:
     bool getDomainLineVisible() const;
     void setDomainLineVisible(bool domainLineVisible);
 
+    void setDomain(const QString &domain);
+    void setUser(const QString &user);
+
     enum {
         kNeverSave,
         kSaveBeforeLogout,
         kSavePermanently,
     };
 
-signals:
-
 public slots:
-    void setLoginData(const QJsonObject &obj);
     void handleConnect();
     void handleButtonClicked(int index, QString text);
 
