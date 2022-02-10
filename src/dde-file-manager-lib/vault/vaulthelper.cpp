@@ -147,6 +147,9 @@ bool VaultHelper::killVaultTasks()
 
 bool VaultHelper::isVaultEnabled()
 {
+    if (!VaultController::ins()->isVaultVisiable())     // 判断域管策略,是否显示保险箱
+        return false;
+
     // 获取系统类型
     DSysInfo::UosType uosType = DSysInfo::uosType();
     // 获取系统版本
