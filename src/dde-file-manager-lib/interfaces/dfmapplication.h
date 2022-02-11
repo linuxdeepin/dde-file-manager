@@ -76,7 +76,8 @@ public:
         GA_ShowRecentFileEntry, // 在侧边栏显示“最近文件”入口
         GA_ShowCsdCrumbBarClickableArea, // 在面包屑栏预留可供点击以进入地址栏编辑状态的区域
         GA_ShowFileSystemTagOnDiskIcon, // 在磁盘图标上显示文件系统信息
-        GA_ShowDeleteConfirmDialog // 显示删除确认对话框
+        GA_ShowDeleteConfirmDialog, // 显示删除确认对话框
+        GA_HideLoopPartitions, // 隐藏 loop 分区
     };
 
     Q_ENUM(GenericAttribute)
