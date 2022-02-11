@@ -37,7 +37,8 @@ class DFMVaultUnlockPages : public DFMVaultPageBase
 {
     Q_OBJECT
 public:
-    static DFMVaultUnlockPages *instance();
+    explicit DFMVaultUnlockPages(QWidget *parent = nullptr);
+    ~DFMVaultUnlockPages() override {}
 
     enum EN_ToolTip {
         Warning = 0,
@@ -68,9 +69,6 @@ private slots:
     void slotTooltipTimerTimeout();
 
 private:
-    explicit DFMVaultUnlockPages(QWidget *parent = nullptr);
-    ~DFMVaultUnlockPages() override {}
-
     void showEvent(QShowEvent *event) override;
 
     void closeEvent(QCloseEvent *event) override;

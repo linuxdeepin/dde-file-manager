@@ -40,7 +40,7 @@ class DFMVaultRetrievePassword : public DFMVaultPageBase
 {
     Q_OBJECT
 public:
-    static DFMVaultRetrievePassword *instance();
+    explicit DFMVaultRetrievePassword(QWidget *parent = nullptr);
 
     /**
      * @brief verificationKey 验证密钥
@@ -87,7 +87,6 @@ private slots:
     void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
 
 private:
-    explicit DFMVaultRetrievePassword(QWidget *parent = nullptr);
 
     /**
      * @brief setVerificationPage   设置密钥验证页面

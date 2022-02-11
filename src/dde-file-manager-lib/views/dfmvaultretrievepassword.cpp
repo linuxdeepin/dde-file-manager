@@ -49,12 +49,6 @@ DWIDGET_USE_NAMESPACE
 const QString defaultKeyPath = VAULT_BASE_PATH + QString("/") + RSA_PUB_KEY_FILE_NAME + QString(".key");
 const QString PolicyKitRetrievePasswordActionId = "com.deepin.filemanager.vault.VerifyKey.RetrievePassword";
 
-DFMVaultRetrievePassword *DFMVaultRetrievePassword::instance()
-{
-    static DFMVaultRetrievePassword s_instance;
-    return &s_instance;
-}
-
 void DFMVaultRetrievePassword::verificationKey()
 {
     QString password;
@@ -307,8 +301,11 @@ void DFMVaultRetrievePassword::showEvent(QShowEvent *event)
     setVerificationPage();
 
     //! 保持和解锁界面对齐
-    QPoint pt = DFMVaultUnlockPages::instance()->pos();
-    move(pt.x(), pt.y());
+    DFMVaultUnlockPages *pWidget = qobject_cast<DFMVaultUnlockPages *>(parent());
+    if (pWidget) {
+        QPoint pt = pWidget->pos();
+        move(pt.x(), pt.y());
+    }
 
     event->accept();
 }

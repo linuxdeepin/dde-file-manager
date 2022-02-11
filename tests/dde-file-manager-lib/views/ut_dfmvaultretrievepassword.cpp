@@ -9,11 +9,11 @@ namespace  {
     class TestDFMVaultRetrievePassword : public testing::Test
     {
     public:
-        DFMVaultRetrievePassword* m_view;
+        QSharedPointer<DFMVaultRetrievePassword> m_view;
 
         virtual void SetUp() override
         {
-            m_view = DFMVaultRetrievePassword::instance();
+            m_view = QSharedPointer<DFMVaultRetrievePassword>(new DFMVaultRetrievePassword);
             m_view->show();
             std::cout << "start TestDFMVaultRetrievePassword" << std::endl;
         }

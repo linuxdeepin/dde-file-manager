@@ -21,11 +21,11 @@ namespace  {
 class TestDFMVaultUnlockPages: public testing::Test
 {
 public:
-    DFMVaultUnlockPages *m_view;
+    QSharedPointer<DFMVaultUnlockPages> m_view;
 
     virtual void SetUp() override
     {
-        m_view = DFMVaultUnlockPages::instance();
+        m_view = QSharedPointer<DFMVaultUnlockPages>(new DFMVaultUnlockPages);
         m_view->show();
         std::cout << "start TestDFMVaultUnlockPages" << std::endl;
     }

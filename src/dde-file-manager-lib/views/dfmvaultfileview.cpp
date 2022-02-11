@@ -64,23 +64,23 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
             break;
         }
         case VaultController::NotExisted: {
-            page = qobject_cast<DFMVaultPageBase *>(new DFMVaultActiveView);
+            page = qobject_cast<DFMVaultPageBase *>(new DFMVaultActiveView(wndPtr));
             break;
         }
         case VaultController::Encrypted: {
             if (url.host() == "certificate") {
-                page = DFMVaultRecoveryKeyPages::instance();
+                page = qobject_cast<DFMVaultRecoveryKeyPages *>(new DFMVaultRecoveryKeyPages(wndPtr));
             } else {
-                page = DFMVaultUnlockPages::instance();
+                page = qobject_cast<DFMVaultUnlockPages *>(new DFMVaultUnlockPages(wndPtr));
             }
             break;
         }
         default:
-            ;
+            break;
         }
     } else {
         if (url.host() == "delete") {
-            page = DFMVaultRemovePages::instance();
+            page = qobject_cast<DFMVaultRemovePages *>(new DFMVaultRemovePages(wndPtr));
         }
 
         //! 记录访问保险箱时间
@@ -92,13 +92,10 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     }
 
     if (page) {
+        page->setWindowFlag(Qt::Dialog);
         page->setWndPtr(wndPtr);
         page->showTop();
         return false;
-    }
-
-    if (DFMVaultRemovePages::instance()->isVisible()) {
-        DFMVaultRemovePages::instance()->raise();
     }
 
     return DFileView::setRootUrl(url);
