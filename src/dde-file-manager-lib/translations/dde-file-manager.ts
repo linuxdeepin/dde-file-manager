@@ -1196,41 +1196,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1593"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1600"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1121"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1595"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1602"/>
         <location filename="../models/searchfileinfo.cpp" line="130"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1597"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1604"/>
         <source>Size</source>
         <translation>Size</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1599"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1601"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1608"/>
         <source>Time created</source>
         <translation>Time created</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1603"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1610"/>
         <source>Last access</source>
         <translation>Last access</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1605"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1612"/>
         <location filename="../models/recentfileinfo.cpp" line="211"/>
         <location filename="../models/searchfileinfo.cpp" line="128"/>
         <location filename="../models/searchfileinfo.cpp" line="133"/>
@@ -1856,35 +1856,35 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="629"/>
-        <location filename="../controllers/filecontroller.cpp" line="685"/>
-        <location filename="../controllers/filecontroller.cpp" line="748"/>
-        <location filename="../controllers/filecontroller.cpp" line="774"/>
+        <location filename="../controllers/filecontroller.cpp" line="607"/>
+        <location filename="../controllers/filecontroller.cpp" line="663"/>
+        <location filename="../controllers/filecontroller.cpp" line="726"/>
+        <location filename="../controllers/filecontroller.cpp" line="752"/>
         <source>Unable to find the original file</source>
         <translation>Unable to find the original file</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="806"/>
-        <location filename="../controllers/filecontroller.cpp" line="825"/>
-        <location filename="../controllers/filecontroller.cpp" line="844"/>
+        <location filename="../controllers/filecontroller.cpp" line="783"/>
+        <location filename="../controllers/filecontroller.cpp" line="802"/>
+        <location filename="../controllers/filecontroller.cpp" line="821"/>
         <source>Kindly Reminder</source>
         <translation>Kindly Reminder</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="806"/>
-        <location filename="../controllers/filecontroller.cpp" line="825"/>
-        <location filename="../controllers/filecontroller.cpp" line="844"/>
+        <location filename="../controllers/filecontroller.cpp" line="783"/>
+        <location filename="../controllers/filecontroller.cpp" line="802"/>
+        <location filename="../controllers/filecontroller.cpp" line="821"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Please install File Roller first and then continue</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1506"/>
-        <location filename="../controllers/filecontroller.cpp" line="1526"/>
+        <location filename="../controllers/filecontroller.cpp" line="1470"/>
+        <location filename="../controllers/filecontroller.cpp" line="1490"/>
         <source>Unable to create files here: %1</source>
         <translation>Unable to create files here: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1508"/>
+        <location filename="../controllers/filecontroller.cpp" line="1472"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
@@ -2334,9 +2334,16 @@
         <translation>Hide system disk</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="300"/>
-        <location filename="../configure/global-setting-template-pro.js" line="300"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="293"/>
+        <location filename="../configure/global-setting-template-pro.js" line="293"/>
         <location filename="../configure/global-setting-template.js" line="299"/>
+        <source>Hide loop partitions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="306"/>
+        <location filename="../configure/global-setting-template-pro.js" line="306"/>
+        <location filename="../configure/global-setting-template.js" line="305"/>
         <source>Show file system on disk icon</source>
         <translation>Show file system on disk icon</translation>
     </message>
@@ -3079,7 +3086,7 @@
         <translation>Items: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="95"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="90"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="798"/>
@@ -3090,7 +3097,7 @@
         <translation>Open in new window</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="99"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="94"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="799"/>
@@ -3137,7 +3144,7 @@
         <translation>Paste</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="105"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="100"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
@@ -3146,7 +3153,7 @@
         <translation>Rename</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="112"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="107"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="914"/>
@@ -3179,7 +3186,7 @@
         <translation>Add to bookmark</translation>
     </message>
     <message>
-        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="118"/>
+        <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="113"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
