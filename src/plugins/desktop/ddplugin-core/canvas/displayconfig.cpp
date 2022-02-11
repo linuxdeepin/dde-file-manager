@@ -41,6 +41,18 @@ static const char * const kKeyAutoAlign = "AutoSort";
 static const char * const kKeyIconLevel = "IconLevel";
 static const char * const kKeyCustomWaterMask = "WaterMaskUseJson";
 
+static void compatibilityFuncForDisbaleAutoMerage(QSettings *set)
+{
+    Q_ASSERT(set);
+    static const QString keyAutoMerge = "AutoMerge";
+    set->beginGroup(kGroupGeneral);
+    if (set->contains(keyAutoMerge)) {
+        set->remove(keyAutoMerge);
+        set->sync();
+    }
+    set->endGroup();
+}
+
 DisplayConfig *DisplayConfig::instance()
 {
     return displayConfig;
@@ -60,12 +72,15 @@ DisplayConfig::DisplayConfig(QObject *parent) : QObject(parent)
     }
 
     settings = new QSettings(configPath, QSettings::IniFormat);
+    // to disable automerge after upgrading
+    compatibilityFuncForDisbaleAutoMerage(settings);
+
     auto work = new QThread(this);
     this->moveToThread(work);
     work->start();
     settings->setParent(work);
 
-    // 延迟同步
+    // delay sync
     syncTimer = new QTimer(this);
     syncTimer->setSingleShot(true);
     syncTimer->setInterval(1000);

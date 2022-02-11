@@ -41,8 +41,6 @@ DSB_D_BEGIN_NAMESPACE
 class CanvasViewPrivate : public QObject
 {
     Q_OBJECT
-    friend class CanvasView;
-    friend class ViewPainter;
 public:
     struct CanvasInfo
     {
@@ -77,6 +75,7 @@ public:
     bool isWaterMaskOn();
     QList<QUrl> selectedUrls() const;
 public:
+    QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
     QModelIndex firstIndex() const;
     QModelIndex lastIndex() const;
 public:
@@ -116,7 +115,7 @@ public: // 绘制扩展的特殊处理
             margins = view->d->gridMargins;
         return margins;
     }
-protected:
+public:
     static const QMargins gridMiniMargin;
     static const QSize dockReserveSize;
     bool showGrid = false;
@@ -136,9 +135,8 @@ protected:
     QPoint dragTargetGrid { QPoint(-1, -1) };
 
     CanvasViewMenuProxy *menuProxy = nullptr;
-private:
-    CanvasView *q;
     WaterMaskFrame *waterMask = nullptr;
+    CanvasView *q;
 };
 
 DSB_D_END_NAMESPACE

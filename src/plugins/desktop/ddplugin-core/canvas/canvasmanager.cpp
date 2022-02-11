@@ -28,6 +28,7 @@
 #include "canvas/view/operator/fileoperaterproxy.h"
 #include "dfm-framework/framework.h"
 #include "dfm-base/widgets/screenglobal.h"
+#include "dfm-base/base/schemefactory.h"
 
 DFMBASE_USE_NAMESPACE
 
@@ -54,18 +55,15 @@ void CanvasManager::init()
     GridIns;
 
     auto &ctx = dpfInstance.serviceContext();
-    // 获取屏幕服务
     d->screenScevice = ctx.service<ScreenService>(ScreenService::name());
+    connect(d->screenScevice, &ScreenService::screenGeometryChanged, this, &CanvasManager::onGeometryChanged);
+    connect(d->screenScevice, &ScreenService::screenAvailableGeometryChanged, this, &CanvasManager::onGeometryChanged);
 
     // 获取背景服务
     d->backgroundService = ctx.service<BackgroundService>(BackgroundService::name());
+    connect(d->backgroundService, &BackgroundService::sigBackgroundBuilded, this, &CanvasManager::onCanvasBuild);
 
-    d->canvasModel = new CanvasModel(this);
-    d->selectionModel = new CanvasSelectionModel(d->canvasModel, this);
-
-    // 绑定背景信号
-    // todo
-    initConnect();
+    d->initModel();
 
     // create views
     onCanvasBuild();
@@ -91,24 +89,6 @@ CanvasSelectionModel *CanvasManager::selectionModel() const
 QList<QSharedPointer<CanvasView> > CanvasManager::views() const
 {
     return d->viewMap.values();
-}
-
-void CanvasManager::initConnect()
-{
-    // 屏幕增删，模式改变
-    connect(d->backgroundService, &BackgroundService::sigBackgroundBuilded, this, &CanvasManager::onCanvasBuild);
-
-    // 屏幕大小改变
-    connect(d->screenScevice, &ScreenService::screenGeometryChanged, this, &CanvasManager::onGeometryChanged);
-
-    // 可用区改变
-    connect(d->screenScevice, &ScreenService::screenAvailableGeometryChanged, this, &CanvasManager::onGeometryChanged);
-
-    connect(d->canvasModel, &CanvasModel::fileCreated, d, &CanvasManagerPrivate::onFileCreated, Qt::QueuedConnection);
-    connect(d->canvasModel, &CanvasModel::fileDeleted, d, &CanvasManagerPrivate::onFileDeleted, Qt::QueuedConnection);
-    connect(d->canvasModel, &CanvasModel::fileRenamed, d, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
-    connect(d->canvasModel, &CanvasModel::fileSorted, d, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
-    connect(d->canvasModel, &CanvasModel::fileRefreshed, d, &CanvasManagerPrivate::onFileRefreshed, Qt::QueuedConnection);
 }
 
 void CanvasManager::onCanvasBuild()
@@ -234,12 +214,9 @@ void CanvasManager::onWallperSetting(CanvasView *view)
 
 void CanvasManager::reloadItem()
 {
-    // 初始化栅布局信息
-
-    //todo 默认初始化（按类型排序）以及按配置还原
     GridIns->setMode(CanvasGrid::Mode::Custom);
     QStringList existItems;
-    const QList<QUrl> &actualList = d->canvasModel->getFiles();
+    const QList<QUrl> actualList = d->canvasModel->files();
     for (const QUrl &df : actualList) {
         existItems.append(df.toString());
     }
@@ -264,6 +241,43 @@ CanvasManagerPrivate::CanvasManagerPrivate(CanvasManager *qq)
 CanvasManagerPrivate::~CanvasManagerPrivate()
 {
     viewMap.clear();
+}
+
+void CanvasManagerPrivate::initConnect()
+{
+    // 屏幕增删，模式改变
+
+
+
+
+}
+
+void CanvasManagerPrivate::initModel()
+{
+    canvasModel = new CanvasModel(q);
+    // sort
+    {
+        Qt::SortOrder sortOrder;
+        AbstractFileInfo::SortKey sortKey;
+        // role
+        {
+            int role;
+            DispalyIns->sortMethod(role, sortOrder);
+            if (role < AbstractFileInfo::kSortByFileName || role > AbstractFileInfo::kSortByFileMimeType)
+                sortKey = AbstractFileInfo::kSortByFileMimeType;
+            else
+                sortKey = static_cast<AbstractFileInfo::SortKey>(role);
+        }
+
+        canvasModel->setSortRole(sortKey, sortOrder);
+    }
+
+    selectionModel = new CanvasSelectionModel(canvasModel, q);
+    connect(canvasModel, &CanvasModel::fileCreated, this, &CanvasManagerPrivate::onFileCreated, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::fileDeleted, this, &CanvasManagerPrivate::onFileDeleted, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::fileRenamed, this, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::fileSorted, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::fileRefreshed, this, &CanvasManagerPrivate::onFileRefreshed, Qt::QueuedConnection);
 }
 
 CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int index)
@@ -342,15 +356,15 @@ void CanvasManagerPrivate::onFileRefreshed()
 
 void CanvasManagerPrivate::onFileSorted()
 {
+    auto oldMode = GridIns->mode();
     GridIns->setMode(CanvasGrid::Mode::Align);
     QStringList existItems;
-    const QList<QUrl> &actualList = canvasModel->getFiles();
-    for (const QUrl &df : actualList) {
+    const QList<QUrl> &actualList = canvasModel->files();
+    for (const QUrl &df : actualList)
         existItems.append(df.toString());
-    }
 
     GridIns->setItems(existItems);
-
+    GridIns->setMode(oldMode);
     q->update();
 }
 

@@ -25,6 +25,7 @@
 #include "grid/canvasgrid.h"
 
 #include <QKeyEvent>
+#include <QTimer>
 
 DSB_D_USE_NAMESPACE
 
@@ -32,7 +33,10 @@ KeySelecter::KeySelecter(CanvasView *parent)
     : ClickSelecter(parent)
     , view(parent)
 {
-
+    searchTimer = new QTimer(this);
+    searchTimer->setSingleShot(true);
+    searchTimer->setInterval(200);
+    connect(searchTimer, &QTimer::timeout, this, &KeySelecter::clearSearchKey);
 }
 
 void KeySelecter::keyPressed(QKeyEvent *event)
@@ -76,6 +80,21 @@ QList<Qt::Key> KeySelecter::filterKeys() const
     if (view->tabKeyNavigation())
         filter << Qt::Key_Tab << Qt::Key_Backtab;
     return filter;
+}
+
+void KeySelecter::keyboardSearch(const QString &search)
+{
+    if (search.isEmpty())
+        return;
+    bool reverseOrder = isShiftPressed();
+    searchKeys.append(search);
+    QModelIndex current = view->currentIndex();
+    QModelIndex index = view->d->findIndex(searchKeys, true, current, reverseOrder, !searchTimer->isActive());
+
+    if (index.isValid())
+        singleSelect(index);
+
+    searchTimer->start();
 }
 
 QPersistentModelIndex KeySelecter::moveCursor(QKeyEvent *event) const
@@ -134,5 +153,10 @@ void KeySelecter::incrementSelect(const QModelIndex &index)
     view->selectionModel()->select(index, QItemSelectionModel::Select);
     state.setCurrent(index);
     state.setContBegin(index);
+}
+
+void KeySelecter::clearSearchKey()
+{
+    searchKeys.clear();
 }
 

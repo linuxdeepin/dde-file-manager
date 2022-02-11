@@ -49,7 +49,7 @@ public:
 //        kFileLastReadRole = Qt::UserRole + 7,
 //        kFileCreatedRole = Qt::UserRole + 8,
         kFileDisplayNameRole = Qt::UserRole + 9,
-//        kFilePinyinName = Qt::UserRole + 10,
+        kFilePinyinName = Qt::UserRole + 10,
         kExtraProperties = Qt::UserRole + 11,
 //        kFileBaseNameRole = Qt::UserRole + 12,
         kFileSuffixRole = Qt::UserRole + 13,
@@ -79,16 +79,13 @@ public:
     DFMLocalFileInfoPointer fileInfo(int index);
 
     int indexOfChild(AbstractFileInfoPointer info);
-    const QList<QUrl> &getFiles() const;
+    QList<QUrl> files() const;
     int fileCount() const;
 
     QUrl rootUrl() const;
     bool canRefresh() const;
     void refresh();
     bool isRefreshed() const;
-
-    bool enableSort() const;
-    void setEnabledSort(const bool enabledSort);
     bool sort();
 
     Qt::SortOrder sortOrder() const;
@@ -107,7 +104,6 @@ signals:
 
     void fileRefreshed();
     void fileSorted();
-    void enableSortChanged(bool enableSort);
 
 protected:
     explicit FileTreater(QObject *parent = nullptr);

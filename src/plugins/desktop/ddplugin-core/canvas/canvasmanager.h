@@ -51,7 +51,6 @@ protected slots:
     void reloadItem();
 protected:
     explicit CanvasManager(QObject *parent = nullptr);
-    void initConnect();
 signals:
 
 private:

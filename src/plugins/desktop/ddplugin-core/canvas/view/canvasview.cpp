@@ -31,6 +31,7 @@
 #include "operator/canvasviewmenuproxy.h"
 #include "operator/fileoperaterproxy.h"
 #include "utils/desktoputils.h"
+#include "filetreater.h"
 
 #include <QGSettings>
 #include <QPainter>
@@ -242,6 +243,11 @@ QRegion CanvasView::visualRegionForSelection(const QItemSelection &selection) co
     return region;
 }
 
+void CanvasView::keyboardSearch(const QString &search)
+{
+    d->keySelecter->keyboardSearch(search);
+}
+
 QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -279,6 +285,19 @@ void CanvasView::paintEvent(QPaintEvent *event)
 
 void CanvasView::contextMenuEvent(QContextMenuEvent *event)
 {
+    /*             //新需求gesetting控制右键菜单隐藏功能,和产品确认调整为gsetting高于本身配置文件，即gsetting有相关配置后本身的json相关配置失效
+            auto tempGsetting = GridManager::instance()->isGsettingShow("context-menu", QVariant());
+            if (tempGsetting.isValid()) {
+                if (!tempGsetting.toBool())
+                    return;
+            } else {
+                auto tempConfig = DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", QVariant());
+                if (tempConfig.isValid())
+                    if (!tempConfig.toBool())
+                        return;
+            }
+    */ //todo
+
     QPoint gridPos = d->gridAt(event->pos());
     itemDelegate()->revertAndcloseEditor();
 
@@ -742,6 +761,36 @@ bool CanvasViewPrivate::isWaterMaskOn()
 QList<QUrl> CanvasViewPrivate::selectedUrls() const
 {
     return q->selectionModel()->selectedUrls();
+}
+
+QModelIndex CanvasViewPrivate::findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const
+{
+    int start = 0;
+    if (current.isValid()) {
+        QPoint gridPos = gridAt(q->visualRect(current).center());
+        start = gridIndex(gridPos);
+    }
+    const int gridCount = canvasInfo.gridCount();
+    for (int i = excludeCurrent ? 1 : 0; i < gridCount; ++i) {
+        int next = reverseOrder ? gridCount + start - i : start + i;
+        next = next % gridCount;
+        if (excludeCurrent && next == start)
+            continue;
+
+        auto item = visualItem(gridCoordinate(next).point());
+        QModelIndex index = q->model()->index(item);
+        if (!index.isValid())
+            continue;
+
+        const QString &pinyinName = q->model()->data(index, FileTreater::kFilePinyinName).toString();
+
+        if (matchStart ? pinyinName.startsWith(key, Qt::CaseInsensitive)
+                : pinyinName.contains(key, Qt::CaseInsensitive)) {
+            return index;
+        }
+    }
+
+    return QModelIndex();
 }
 
 QModelIndex CanvasViewPrivate::firstIndex() const

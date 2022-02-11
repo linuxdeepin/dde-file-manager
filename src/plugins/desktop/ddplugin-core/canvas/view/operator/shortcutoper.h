@@ -44,6 +44,7 @@ protected slots:
     void cutFiles();
     void pasteFiles();
     void tabToFirst();
+    void showMenu();
 protected:
     CanvasView *view;
 };

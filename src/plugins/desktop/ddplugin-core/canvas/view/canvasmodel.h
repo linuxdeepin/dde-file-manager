@@ -47,7 +47,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     inline QModelIndex rootIndex() const {
-        return createIndex(-2, 0, (quintptr)this);
+        return createIndex((quintptr)this, 0, (quintptr)this);
     }
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
@@ -59,7 +59,7 @@ public:
     QUrl rootUrl() const;
     QUrl url(const QModelIndex &index) const;
     DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
-    const QList<QUrl> &getFiles() const;
+    QList<QUrl> files() const;
 
     QMimeData *mimeData(const QModelIndexList &indexes) const override;
     bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
@@ -67,8 +67,6 @@ public:
     Qt::DropActions supportedDragActions() const override;
     Qt::DropActions supportedDropActions() const override;
 
-    bool enableSort() const;
-    void setEnabledSort(bool enabledSort);
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
     bool sort();
 

@@ -21,7 +21,7 @@
  */
 #include "filetreater.h"
 #include "private/filetreater_p.h"
-#include "canvas/displayconfig.h"
+//#include "canvas/displayconfig.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/base/urlroute.h"
@@ -41,6 +41,27 @@ Q_GLOBAL_STATIC(FileTreaterGlobal, fileTreater)
 FileTreaterPrivate::FileTreaterPrivate(FileTreater *q_ptr)
     : QObject(q_ptr), q(q_ptr)
 {
+}
+
+bool FileTreaterPrivate::doSort(QList<DFMLocalFileInfoPointer> &files) const
+{
+    if (files.isEmpty())
+        return true;
+
+    auto firstInfo = files.first();
+    AbstractFileInfo::CompareFunction sortFunc = firstInfo->compareFunByKey(sortRole);
+    if (sortFunc) {
+        // standard sort function
+        std::sort(files.begin(), files.end(), [sortFunc, this](const DFMLocalFileInfoPointer info1, const DFMLocalFileInfoPointer info2) {
+            return sortFunc(info1, info2, sortOrder);
+        });
+
+        // advanced sort for special case.
+        specialSort(files);
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void FileTreaterPrivate::doFileDeleted(const QUrl &url)
@@ -89,19 +110,34 @@ void FileTreaterPrivate::doFileUpdated(const QUrl &url)
 
 void FileTreaterPrivate::doUpdateChildren(const QList<QUrl> &childrens)
 {
-    fileList.clear();
-    fileMap.clear();
+    QList<DFMLocalFileInfoPointer> files;
     QString errString;
     for (auto children : childrens) {
-
         auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(children, true, &errString);
         if (Q_UNLIKELY(!itemInfo)) {
             qInfo() << "create LocalFileInfo error: " << errString;
             continue;
         }
 
-        fileList.append(children);
-        fileMap.insert(children, itemInfo);
+        files.append(itemInfo);
+    }
+
+    // defalut sort
+    doSort(files);
+
+    {
+        QList<QUrl> fileUrls;
+        QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
+        for (auto itemInfo : files) {
+            if (Q_UNLIKELY(!itemInfo))
+                continue;
+
+            fileUrls.append(itemInfo->url());
+            fileMaps.insert(itemInfo->url(), itemInfo);
+        }
+
+        fileList = fileUrls;
+        fileMap = fileMaps;
     }
 
     endRefresh();
@@ -203,6 +239,41 @@ void FileTreaterPrivate::endRefresh()
     refreshedFlag = true;
 }
 
+void FileTreaterPrivate::specialSort(QList<DFMLocalFileInfoPointer> &files) const
+{
+    if (sortRole == AbstractFileInfo::kSortByFileMimeType)
+        sortMainDesktopFile(files, sortOrder);
+}
+
+void FileTreaterPrivate::sortMainDesktopFile(QList<DFMLocalFileInfoPointer> &files, Qt::SortOrder order) const
+{
+    // let the main desktop files always on front or back.
+
+    //! warrning: the root url and LocalFileInfo::url must be like file://
+    QDir dir(rootUrl.toString());
+    QList<QPair<QString, DFMLocalFileInfoPointer>> mainDesktop = {{dir.filePath("dde-home.desktop"), DFMLocalFileInfoPointer()},
+        {dir.filePath("dde-trash.desktop"), DFMLocalFileInfoPointer()},
+        {dir.filePath("dde-computer.desktop"), DFMLocalFileInfoPointer()}
+    };
+    auto list = files;
+    for (auto it = mainDesktop.begin(); it != mainDesktop.end(); ++it) {
+        for (const DFMLocalFileInfoPointer &info : list)
+        if (info->url().toString() == it->first) {
+            it->second = info;
+            files.removeOne(info);
+        }
+    }
+
+    for (auto it = mainDesktop.begin(); it != mainDesktop.end(); ++it) {
+        if (it->second) {
+            if (order == Qt::AscendingOrder)
+                files.push_front(it->second);
+            else
+                files.push_back(it->second);
+        }
+    }
+}
+
 bool FileTreaterPrivate::checkFileEventQueue()
 {
     QMutexLocker lk(&watcherEventMutex);
@@ -293,7 +364,7 @@ void FileTreater::init()
     d->canRefreshFlag = true;
 }
 
-const QList<QUrl> &FileTreater::getFiles() const
+QList<QUrl> FileTreater::files() const
 {
     return d->fileList;
 }
@@ -340,47 +411,22 @@ bool FileTreater::isRefreshed() const
     return d->refreshedFlag;
 }
 
-bool FileTreater::enableSort() const
-{
-    return d->enableSort;
-}
-
-void FileTreater::setEnabledSort(const bool enabledSort)
-{
-    if (enabledSort == d->enableSort)
-        return;
-
-    d->enableSort = enabledSort;
-
-    emit enableSortChanged(enabledSort);
-}
-
 bool FileTreater::sort()
 {
-    if (!enableSort())
-        return false;
-
-    if (getFiles().isEmpty())
+    if (d->fileList.isEmpty())
         return true;
 
     d->beginRefresh();
 
-    auto firstInfo = d->fileMap.values().first();
-    AbstractFileInfo::CompareFunction sortFun = firstInfo->compareFunByKey(d->sortRole);
-
-    if (!sortFun) {
+    auto files = d->fileMap.values();
+    if (!d->doSort(files)) {
         d->endRefresh();
         return false;
     }
 
-    QList<DFMLocalFileInfoPointer> list = d->fileMap.values();
-
-    std::sort(list.begin(), list.end(), [sortFun, this](const DFMLocalFileInfoPointer info1, const DFMLocalFileInfoPointer info2) {
-        return sortFun(info1, info2, this->d->sortOrder);
-    });
     QList<QUrl> fileList;
     QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
-    for (auto itemInfo : list) {
+    for (auto itemInfo : files) {
         if (Q_UNLIKELY(!itemInfo))
             continue;
 

@@ -40,6 +40,8 @@ class CanvasManagerPrivate : public QObject
 public:
     explicit CanvasManagerPrivate(CanvasManager *qq);
     ~CanvasManagerPrivate();
+    void initConnect();
+    void initModel();
     CanvasViewPointer createView(const dfmbase::ScreenPointer &, int index);
     void updateView(const CanvasViewPointer &, const dfmbase::ScreenPointer &, int index);
 public:

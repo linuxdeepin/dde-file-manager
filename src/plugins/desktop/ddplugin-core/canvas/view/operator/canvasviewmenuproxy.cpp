@@ -81,6 +81,9 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
         }
         view->model()->setSortRole(role, order);
         view->model()->sort();
+        // save config
+        DispalyIns->setSortMethod(role, order);
+        return true;
     };
 
     QMenu *subMenu = tstMenu->addMenu(tr("Sort by"));
@@ -101,7 +104,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
 
     tstAction = subMenu->addAction(tr("Type"));
     connect(tstAction, &QAction::triggered, this, [=](){
-        // todo(wangcl):now, not type func
+        sortByRole(AbstractFileInfo::kSortByFileMimeType);
     });
 
     tstAction = tstMenu->addAction(tr("Auto arrange"));
@@ -118,6 +121,8 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
         } else {
             GridIns->setMode(CanvasGrid::Mode::Custom);
         }
+
+        CanvasIns->update();
     });
 
     tstAction = tstMenu->addAction(tr("Wallpaper and Screensaver"));

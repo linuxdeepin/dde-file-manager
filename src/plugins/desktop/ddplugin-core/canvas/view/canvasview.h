@@ -26,6 +26,7 @@
 #include <QAbstractItemView>
 
 DSB_D_BEGIN_NAMESPACE
+class ShortcutOper;
 class DragDropOper;
 class ClickSelecter;
 class KeySelecter;
@@ -37,6 +38,7 @@ class CanvasViewPrivate;
 class CanvasView : public QAbstractItemView
 {
     Q_OBJECT
+    friend class ShortcutOper;
     friend class DragDropOper;
     friend class BoxSelecter;
     friend class ClickSelecter;
@@ -58,6 +60,7 @@ public:
     virtual bool isIndexHidden(const QModelIndex &index) const override;
     QT_DEPRECATED virtual void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
     virtual QRegion visualRegionForSelection(const QItemSelection &selection) const override;
+    virtual void keyboardSearch(const QString &search) override;
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
 public:
     void setScreenNum(const int screenNum);

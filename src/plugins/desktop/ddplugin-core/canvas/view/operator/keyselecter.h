@@ -26,16 +26,18 @@
 #include <QObject>
 #include <QModelIndex>
 
+class QTimer;
 class QKeyEvent;
 DSB_D_BEGIN_NAMESPACE
 class CanvasView;
-class KeySelecter : private ClickSelecter
+class KeySelecter : public ClickSelecter
 {
     Q_OBJECT
 public:
     explicit KeySelecter(CanvasView *parent);
     void keyPressed(QKeyEvent *event);
     QList<Qt::Key> filterKeys() const;
+    void keyboardSearch(const QString &search);
 protected:
     QPersistentModelIndex moveCursor(QKeyEvent *event) const;
     void singleSelect(const QModelIndex &index);
@@ -43,8 +45,11 @@ protected:
 signals:
 
 public slots:
+    void clearSearchKey();
 protected:
     CanvasView *view;
+    QString searchKeys;
+    QTimer *searchTimer;
 };
 
 DSB_D_END_NAMESPACE

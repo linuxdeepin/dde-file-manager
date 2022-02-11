@@ -108,11 +108,14 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case FileTreater::kFileIconRole:
         return indexFileInfo->fileIcon();
+    case FileTreater::kFileNameRole:
+        return indexFileInfo->fileName();
     case Qt::EditRole:
     case Qt::DisplayRole:
-    case FileTreater::kFileNameRole:
     case FileTreater::kFileDisplayNameRole:
-        return indexFileInfo->fileName();
+        return indexFileInfo->fileDisplayName();
+    case FileTreater::kFilePinyinName:
+        return indexFileInfo->fileDisplayName(); //todo call fileDisplayPinyinName();
     case FileTreater::kFileLastModifiedRole:
         return indexFileInfo->lastModified().toString();    // todo by file info: lastModifiedDisplayName
     case FileTreater::kFileSizeRole:
@@ -136,6 +139,9 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
 {
+    if (index == rootIndex())
+        return Qt::ItemIsSelectable|Qt::ItemIsEnabled;
+
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid())
         return flags;
@@ -190,9 +196,9 @@ DFMLocalFileInfoPointer CanvasModel::fileInfo(const QModelIndex &index) const
     return FileTreaterCt->fileInfo(index.row());
 }
 
-const QList<QUrl> &CanvasModel::getFiles() const
+QList<QUrl> CanvasModel::files() const
 {
-    return FileTreaterCt->getFiles();
+    return FileTreaterCt->files();
 }
 
 QMimeData *CanvasModel::mimeData(const QModelIndexList &indexes) const
@@ -280,16 +286,6 @@ Qt::DropActions CanvasModel::supportedDropActions() const
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
-bool CanvasModel::enableSort() const
-{
-    return FileTreaterCt->enableSort();
-}
-
-void CanvasModel::setEnabledSort(bool enabledSort)
-{
-    FileTreaterCt->setEnabledSort(enabledSort);
-}
-
 void CanvasModel::sort(int column, Qt::SortOrder order)
 {
     Q_UNUSED(column)
@@ -341,7 +337,6 @@ void CanvasModel::connection()
     connect(FileTreaterCt, &FileTreater::fileRenamed, this, &CanvasModel::fileRenamed);
     connect(FileTreaterCt, &FileTreater::fileRefreshed, this, &CanvasModel::fileRefreshed);
     connect(FileTreaterCt, &FileTreater::fileSorted, this, &CanvasModel::fileSorted);
-    connect(FileTreaterCt, &FileTreater::enableSortChanged, this, &CanvasModel::enableSortChanged);
 }
 
 DSB_D_END_NAMESPACE

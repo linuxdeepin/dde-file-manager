@@ -44,7 +44,7 @@ public:
     };
 
     explicit FileTreaterPrivate(FileTreater *q_ptr);
-
+    bool doSort(QList<DFMLocalFileInfoPointer> &files) const;
     void doFileDeleted(const QUrl &url);
     void doFileCreated(const QUrl &url);
     void doFileRename(const QUrl &oldUrl, const QUrl &newUrl);
@@ -54,7 +54,9 @@ public:
 
     inline void beginRefresh();
     inline void endRefresh();
-
+protected:
+    void specialSort(QList<DFMLocalFileInfoPointer> &files) const;
+    void sortMainDesktopFile(QList<DFMLocalFileInfoPointer> &files, Qt::SortOrder order) const;
 private:
     bool checkFileEventQueue();
 

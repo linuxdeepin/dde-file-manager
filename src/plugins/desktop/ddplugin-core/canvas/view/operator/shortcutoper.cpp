@@ -20,7 +20,10 @@
  */
 #include "shortcutoper.h"
 #include "view/canvasview.h"
+#include "view/canvasmodel.h"
 #include "view/canvasselectionmodel.h"
+#include "delegate/canvasitemdelegate.h"
+#include "view/canvasview_p.h"
 #include "fileoperaterproxy.h"
 
 #include <DApplication>
@@ -118,7 +121,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         }
     } else if (modifiers == Qt::AltModifier) {
         if (key == Qt::Key_M) {
-            //todo menu
+            showMenu();
             return true;
         }
     }
@@ -175,4 +178,36 @@ void ShortcutOper::tabToFirst()
     view->selectionModel()->clear();
     QKeyEvent downKey(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
     QCoreApplication::sendEvent(view, &downKey);
+}
+
+void ShortcutOper::showMenu()
+{
+    //todo enable menu
+
+    QModelIndexList indexList = view->selectionModel()->selectedIndexes();
+    bool isEmptyArea = indexList.isEmpty();
+    Qt::ItemFlags flags;
+    QModelIndex index;
+    if (isEmptyArea) {
+        index = view->rootIndex();
+        flags = view->model()->flags(index);
+        if (!flags.testFlag(Qt::ItemIsEnabled))
+            return;
+    } else {
+        index = view->currentIndex();
+        flags = view->model()->flags(index);
+        if (!flags.testFlag(Qt::ItemIsEnabled)) {
+            isEmptyArea = true;
+            flags = view->rootIndex().flags();
+        }
+    }
+
+    view->itemDelegate()->revertAndcloseEditor();
+    if (isEmptyArea) {
+        view->selectionModel()->clearSelection();
+        view->d->menuProxy->showEmptyAreaMenu(flags, QPoint(0, 0));
+    } else {
+       auto gridPos = view->d->gridAt(view->visualRect(index).center());
+       view->d->menuProxy->showNormalMenu(index, flags, gridPos);
+    }
 }
