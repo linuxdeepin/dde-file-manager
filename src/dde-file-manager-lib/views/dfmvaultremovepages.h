@@ -42,7 +42,8 @@ class DFMVaultRemovePages : public DFMVaultPageBase
 {
     Q_OBJECT
 public:
-    static DFMVaultRemovePages *instance();
+    explicit DFMVaultRemovePages(QWidget *parent = nullptr);
+    ~DFMVaultRemovePages() override {}
 
     void showTop() override;
 
@@ -58,8 +59,6 @@ private slots:
     void slotCheckAuthorizationFinished(PolkitQt1::Authority::Result result);
 
 private:
-    explicit DFMVaultRemovePages(QWidget *parent = nullptr);
-    ~DFMVaultRemovePages() override {}
 
     void initConnect();
 

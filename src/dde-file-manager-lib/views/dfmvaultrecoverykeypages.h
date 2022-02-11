@@ -37,7 +37,8 @@ class DFMVaultRecoveryKeyPages : public DFMVaultPageBase
 {
     Q_OBJECT
 public:
-    static DFMVaultRecoveryKeyPages *instance();
+    explicit DFMVaultRecoveryKeyPages(QWidget *parent = nullptr);
+    ~DFMVaultRecoveryKeyPages() override;
 
     void showAlertMessage(const QString &text, int duration = 3000);
 private slots:
@@ -47,8 +48,6 @@ private slots:
 
     void onUnlockVault(int state);
 private:
-    explicit DFMVaultRecoveryKeyPages(QWidget *parent = nullptr);
-    ~DFMVaultRecoveryKeyPages() override;
 
     bool eventFilter(QObject *watched, QEvent *event) override;
 
