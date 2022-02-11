@@ -27,14 +27,19 @@
 #include "bluetoothmanager.h"
 
 #include <QDBusConnection>
-#include <QDBusReply>
+
+#include <com_deepin_daemon_bluetooth.h>
+#include <com_deepin_dde_controlcenter.h>
+
+
+using DBusBluetooth = com::deepin::daemon::Bluetooth;
+using DBusControlcenter = com::deepin::dde::ControlCenter;
 
 template<class T>
 class QFutureWatcher;
 
-class BluetoothManagerPrivate: public QObject
+class BluetoothManagerPrivate
 {
-    Q_OBJECT
 public:
     explicit BluetoothManagerPrivate(BluetoothManager *qq);
 
@@ -46,10 +51,10 @@ public:
      */
     void resolve(const QDBusReply<QString> &req);
 
-    void init();
+    /**
+     * @brief 蓝牙 dbus 信号的处理
+     */
     void initConnects();
-
-    bool connectBluetoothDBusSignals(const QString &signal, const char *slot);
 
     /**
      * @brief 获取适配器信息
@@ -65,31 +70,11 @@ public:
      */
     void inflateDevice(BluetoothDevice *device, const QJsonObject &deviceObj);
 
-    QDBusPendingCall getBluetoothDevices(const QDBusObjectPath &adapter);
-    QDBusPendingCall getBluetoothAdapters();
-    QDBusPendingReply<QDBusObjectPath> sendFiles(const QString &device, const QStringList &files);
-    void cancelTransferSession(const QDBusObjectPath &sessionPath);
-
-public Q_SLOTS:
-    void onServiceValidChanged(bool valid);
-    void onAdapterAdded(const QString &json);
-    void onAdapterRemoved(const QString &json);
-    void onAdapterPropertiesChanged(const QString &json);
-    void onDeviceAdded(const QString &json);
-    void onDeviceRemoved(const QString &json);
-    void onDevicePropertiesChanged(const QString &json);
-    void onTransferCreated(const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath);
-    void onTransferRemoved(const QString &file, const QDBusObjectPath &transferPath, const QDBusObjectPath &sessionPath, bool done);
-    void onObexSessionCreated(const QDBusObjectPath &sessionPath);
-    void onObexSessionRemoved(const QDBusObjectPath &sessionPath);
-    void onObexSessionProgress(const QDBusObjectPath &sessionPath, qulonglong totalSize, qulonglong transferred, int currentIndex);
-    void onTransferFailed(const QString &file, const QDBusObjectPath &sessionPath, const QString &errInfo);
-
 public:
     BluetoothManager *q_ptr {nullptr};
     BluetoothModel *m_model {nullptr};
-    QDBusInterface *m_bluetoothInter {nullptr};
-    QDBusInterface *m_controlcenterInter {nullptr};
+    DBusBluetooth *m_bluetoothInter {nullptr};
+    DBusControlcenter *m_controlcenterInter {nullptr};
     QFutureWatcher<QPair<QString, QString>> *m_watcher {nullptr};
 
     Q_DECLARE_PUBLIC(BluetoothManager)

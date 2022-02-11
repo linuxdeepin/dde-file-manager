@@ -32,7 +32,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
 
-#include <QJsonObject>
+
 
 namespace  {
 /**
@@ -65,19 +65,19 @@ TEST_F(TestBluetoothManager, connect)
     });
 
     EXPECT_NO_FATAL_FAILURE(
-        d->onAdapterAdded("");
-        d->onAdapterRemoved("");
-        d->onAdapterPropertiesChanged("");
-        d->onDeviceAdded("");
-        d->onDeviceRemoved("");
-        d->onDevicePropertiesChanged("");
-        d->onTransferCreated("", QDBusObjectPath(), QDBusObjectPath());
-        d->onTransferRemoved("", QDBusObjectPath(), QDBusObjectPath(), true);
-        d->onTransferRemoved("", QDBusObjectPath(), QDBusObjectPath(), false);
-        d->onObexSessionCreated(QDBusObjectPath());
-        d->onObexSessionRemoved(QDBusObjectPath());
-        d->onObexSessionProgress(QDBusObjectPath(), 0, 0, 0);
-        d->onTransferFailed("", QDBusObjectPath(), "");
+        emit d->m_bluetoothInter->AdapterAdded("");
+        emit d->m_bluetoothInter->AdapterRemoved("");
+        emit d->m_bluetoothInter->AdapterPropertiesChanged("");
+        emit d->m_bluetoothInter->DeviceAdded("");
+        emit d->m_bluetoothInter->DeviceRemoved("");
+        emit d->m_bluetoothInter->DevicePropertiesChanged("");
+        emit d->m_bluetoothInter->TransferCreated("", QDBusObjectPath(), QDBusObjectPath());
+        emit d->m_bluetoothInter->TransferRemoved("", QDBusObjectPath(), QDBusObjectPath(), true);
+        emit d->m_bluetoothInter->TransferRemoved("", QDBusObjectPath(), QDBusObjectPath(), false);
+        emit d->m_bluetoothInter->ObexSessionCreated(QDBusObjectPath());
+        emit d->m_bluetoothInter->ObexSessionRemoved(QDBusObjectPath());
+        emit d->m_bluetoothInter->ObexSessionProgress(QDBusObjectPath(), 0, 0, 0);
+        emit d->m_bluetoothInter->TransferFailed("", QDBusObjectPath(), "");
     );
 
     TestHelper::runInLoop([](){

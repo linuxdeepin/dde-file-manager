@@ -25,7 +25,6 @@
 #define BLUETOOTHMANAGER_H
 
 #include <QObject>
-#include <QDBusObjectPath>
 
 #include "dfmglobal.h"
 
