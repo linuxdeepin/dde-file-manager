@@ -46,8 +46,6 @@
 
 DWIDGET_USE_NAMESPACE
 
-DFMVaultUnlockPages *DFMVaultUnlockPages::m_instance = nullptr;
-
 DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     : DFMVaultPageBase(parent)
 {
@@ -97,7 +95,7 @@ DFMVaultUnlockPages::DFMVaultUnlockPages(QWidget *parent)
     m_tipsButton->setIcon(QIcon(":/icons/images/icons/light_32px.svg"));
 
     //! 找回密码页面
-    m_retrievePage = DFMVaultRetrievePassword::instance();
+    m_retrievePage = new DFMVaultRetrievePassword(this);
 
     // 主视图
     QFrame *mainFrame = new QFrame(this);
@@ -244,13 +242,6 @@ void DFMVaultUnlockPages::showToolTip(const QString &text, int duration, DFMVaul
     }
 }
 
-DFMVaultUnlockPages *DFMVaultUnlockPages::instance()
-{
-    if (!m_instance)
-        m_instance = new DFMVaultUnlockPages();
-    return m_instance;
-}
-
 void DFMVaultUnlockPages::hideEvent(QHideEvent *event)
 {
     if (m_frame)
@@ -376,8 +367,6 @@ bool DFMVaultUnlockPages::eventFilter(QObject *obj, QEvent *evt)
             QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(evt);
             if (mouseEvent->button() == Qt::LeftButton) {
                 this->hide();
-                m_retrievePage->setParent(static_cast<QWidget*>(this->parent()));
-                m_retrievePage->setWindowFlag(Qt::Dialog);
                 m_retrievePage->show();
             }
         }

@@ -401,7 +401,7 @@ void DFMSideBar::rootFileResult()
                 if (r == devitems.end()) {
                     this->addItem(DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                     devitems.append(url);
-                } else {
+                } else if (r > devitems.begin() && r < devitems.end()) {
                     this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                     devitems.insert(r, url);
                 }

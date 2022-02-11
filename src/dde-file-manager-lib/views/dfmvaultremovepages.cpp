@@ -170,12 +170,6 @@ void DFMVaultRemovePages::closeEvent(QCloseEvent *event)
     DFMVaultPageBase::closeEvent(event);
 }
 
-DFMVaultRemovePages *DFMVaultRemovePages::instance()
-{
-    static DFMVaultRemovePages s_instance;
-    return &s_instance;
-}
-
 void DFMVaultRemovePages::showTop()
 {
     VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::DELETEVAULTPAGE);

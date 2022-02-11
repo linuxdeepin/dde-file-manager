@@ -108,12 +108,6 @@ DFMVaultRecoveryKeyPages::~DFMVaultRecoveryKeyPages()
 
 }
 
-DFMVaultRecoveryKeyPages *DFMVaultRecoveryKeyPages::instance()
-{
-    static DFMVaultRecoveryKeyPages s_instance;
-    return &s_instance;
-}
-
 void DFMVaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)
 {
     Q_D(DFMVaultRecoveryKeyPages);
