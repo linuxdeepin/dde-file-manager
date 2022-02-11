@@ -102,7 +102,7 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
     }
 
     // 过滤snap产生的loop设备
-    if(blk->isLoopDevice()){
+    if(blk->isLoopDevice() && DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool()){
         qDebug()  << "block device is ignored by loop device:"  << blkPath;
         return true;
     }

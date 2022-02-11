@@ -113,6 +113,9 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             }
             Q_EMIT self->reloadComputerModel();
             break;
+        case DFMApplication::GA_HideLoopPartitions:
+            Q_EMIT self->reloadComputerModel();
+            break;
         default:
             break;
         }
