@@ -129,6 +129,7 @@ private:
         {"advance.dialog.default_chooser_dialog", DFMApplication::GA_OverrideFileChooserDialog},
         {"advance.dialog.delete_confirmation_dialog", DFMApplication::GA_ShowDeleteConfirmDialog},
         {"advance.other.hide_system_partition", DFMApplication::GA_HiddenSystemPartition},
+        {"advance.other.hide_loop_partitions", DFMApplication::GA_HideLoopPartitions},
         {"advance.other.show_crumbbar_clickable_area", DFMApplication::GA_ShowCsdCrumbBarClickableArea},
         {"advance.other.show_filesystemtag_on_diskicon", DFMApplication::GA_ShowFileSystemTagOnDiskIcon},
     };

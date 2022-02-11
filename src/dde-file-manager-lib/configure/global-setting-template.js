@@ -295,6 +295,12 @@
                             "hide": true
                         },
                         {
+                            "key": "hide_loop_partitions",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide loop partitions"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
                             "key": "show_filesystemtag_on_diskicon",
                             "text": qsTranslate("GenerateSettingTranslate", "Show file system on disk icon"),
                             "type": "checkbox",

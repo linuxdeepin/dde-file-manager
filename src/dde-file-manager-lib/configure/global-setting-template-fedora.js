@@ -289,6 +289,12 @@
                             "default": false
                         },
                         {
+                            "key": "hide_loop_partitions",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide loop partitions"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
                             "key": "show_crumbbar_clickable_area",
                             "text": "Show crumb bar clickable area",
                             "type": "checkbox",
