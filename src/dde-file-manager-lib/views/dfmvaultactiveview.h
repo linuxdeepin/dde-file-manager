@@ -41,11 +41,7 @@ DWIDGET_USE_NAMESPACE
 class DFMVaultActiveView : public DFMVaultPageBase
 {
 public:
-    static DFMVaultActiveView *getInstance()
-    {
-        static DFMVaultActiveView dlg;
-        return &dlg;
-    }
+    explicit DFMVaultActiveView(QWidget *parent = nullptr);
 
 protected:
     // 重写基类关闭事件
@@ -57,8 +53,6 @@ private slots:
     void slotNextWidget();
 
 private:
-    explicit DFMVaultActiveView(QWidget *parent = nullptr);
-
     // 复原操作
     void setBeginingState();
 
