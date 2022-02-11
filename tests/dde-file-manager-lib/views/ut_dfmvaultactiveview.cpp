@@ -31,11 +31,11 @@ namespace  {
     class TestDFMVaultActiveView : public testing::Test
     {
     public:
-        DFMVaultActiveView* m_view;
+        QSharedPointer<DFMVaultActiveView> m_view;
 
         virtual void SetUp() override
         {
-            m_view = DFMVaultActiveView::getInstance();
+            m_view = QSharedPointer<DFMVaultActiveView>(new DFMVaultActiveView());
             m_view->show();
             std::cout << "start TestDFMVaultActiveView" << std::endl;
         }

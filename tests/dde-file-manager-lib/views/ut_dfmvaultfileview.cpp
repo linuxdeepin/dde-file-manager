@@ -70,7 +70,6 @@ TEST_F(TestDFMVaultFileView, tst_setRootUrl)
                 break;
             }
             case VaultController::NotExisted: {
-                DFMVaultActiveView::getInstance()->close();
                 break;
             }
             case VaultController::Encrypted: {

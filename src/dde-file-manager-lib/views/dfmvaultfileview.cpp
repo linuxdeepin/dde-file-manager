@@ -64,7 +64,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
             break;
         }
         case VaultController::NotExisted: {
-            page = DFMVaultActiveView::getInstance();
+            page = qobject_cast<DFMVaultPageBase *>(new DFMVaultActiveView);
             break;
         }
         case VaultController::Encrypted: {
