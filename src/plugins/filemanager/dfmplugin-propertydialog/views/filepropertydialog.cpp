@@ -20,6 +20,8 @@
  */
 #include "filepropertydialog.h"
 #include "dfm-base/base/schemefactory.h"
+#include "basicwidget.h"
+#include "permissionmanagerwidget.h"
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>
@@ -39,7 +41,6 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
 
-static const int kArrowExpandHight = 30;
 static const int kArrowExpandSpacing = 10;
 
 FilePropertyDialog::FilePropertyDialog(QWidget *parent)
@@ -48,7 +49,6 @@ FilePropertyDialog::FilePropertyDialog(QWidget *parent)
 {
     platformWindowHandle->setEnableSystemResize(true);
     setFixedWidth(350);
-    initHeadUI();
     initInfoUI();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
 }
@@ -57,7 +57,7 @@ FilePropertyDialog::~FilePropertyDialog()
 {
 }
 
-void FilePropertyDialog::initHeadUI()
+QWidget *FilePropertyDialog::CreateHeadUI()
 {
     fileIcon = new DLabel(this);
     fileIcon->setFixedHeight(128);
@@ -71,7 +71,7 @@ void FilePropertyDialog::initHeadUI()
 
     QFrame *frame = new QFrame(this);
     frame->setLayout(vlayout);
-    addContent(frame);
+    return frame;
 }
 
 void FilePropertyDialog::initInfoUI()
@@ -93,8 +93,6 @@ void FilePropertyDialog::initInfoUI()
     mainWidget->setLayout(scrollWidgetLayout);
 
     scrollArea->setWidget(mainWidget);
-
-    basicWidget = new BasicWidget(this);
 
     QVBoxLayout *vlayout1 = new QVBoxLayout;
     vlayout1->addWidget(scrollArea);
@@ -122,12 +120,33 @@ int FilePropertyDialog::contentHeight()
 void FilePropertyDialog::setSelectFileUrl(const QUrl &url)
 {
     currentFileUrl = url;
+    QWidget *frame = CreateHeadUI();
+    addContent(frame);
     editStackWidget->selectFile(url);
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
     fileIcon->setPixmap(info->fileIcon().pixmap(128, 128));
-    addExtendedControl(basicWidget, true);
+    basicWidget = new BasicWidget(this);
+    permissionManagerWidget = new PermissionManagerWidget(this);
+    basicWidget->selectFileUrl(url);
+    addExtendedControl(basicWidget);
+    permissionManagerWidget->selectFileUrl(url);
+    addExtendedControl(permissionManagerWidget);
+}
+
+qint64 FilePropertyDialog::getFileSize()
+{
+    if (basicWidget)
+        return basicWidget->getFileSize();
+    return 0;
+}
+
+int FilePropertyDialog::getFileCount()
+{
+    if (basicWidget)
+        return basicWidget->getFileCount();
+    return 1;
 }
 
 void FilePropertyDialog::processHeight(int height)
@@ -137,41 +156,22 @@ void FilePropertyDialog::processHeight(int height)
     setGeometry(rect);
 }
 
-void FilePropertyDialog::insertExtendedControl(int index, ExtendedControlView *widget)
+void FilePropertyDialog::insertExtendedControl(int index, QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
-    widget->setSelectFileUrl(currentFileUrl);
     QMargins cm = vlayout->contentsMargins();
     QRect rc = contentsRect();
     widget->setFixedWidth(rc.width() - cm.left() - cm.right());
     extendedControl.append(widget);
+    DEnhancedWidget *hanceedWidget = new DEnhancedWidget(widget, widget);
+    connect(hanceedWidget, &DEnhancedWidget::heightChanged, this, &FilePropertyDialog::processHeight);
 }
 
-void FilePropertyDialog::addExtendedControl(ExtendedControlView *widget)
+void FilePropertyDialog::addExtendedControl(QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     insertExtendedControl(vlayout->count() - 1, widget);
-}
-
-void FilePropertyDialog::insertExtendedControl(int index, ExtendedControlDrawerView *widget, bool expansion)
-{
-    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-    vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
-    widget->setSelectFileUrl(currentFileUrl);
-    widget->setFixedHeight(kArrowExpandHight);
-    widget->setExpand(expansion);
-    QMargins cm = vlayout->contentsMargins();
-    QRect rc = contentsRect();
-    widget->setFixedWidth(rc.width() - cm.left() - cm.right());
-    extendedControl.append(widget);
-    connect(widget, &ExtendedControlDrawerView::heightChanged, this, &FilePropertyDialog::processHeight);
-}
-
-void FilePropertyDialog::addExtendedControl(ExtendedControlDrawerView *widget, bool expansion)
-{
-    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-    insertExtendedControl(vlayout->count() - 1, widget, expansion);
 }
 
 void FilePropertyDialog::closeDialog()

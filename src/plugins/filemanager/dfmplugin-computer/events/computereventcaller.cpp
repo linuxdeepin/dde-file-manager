@@ -24,6 +24,8 @@
 
 #include "services/filemanager/computer/computer_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/common/propertydialog/property_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
 
@@ -100,6 +102,25 @@ void ComputerEventCaller::sendOpenItem(const QUrl &url)
 {
     dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, url);
     qDebug() << "send open item: " << url;
+}
+
+void ComputerEventCaller::sendShowFilePropertyDialog(const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, url);
+}
+
+void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info)
+{
+    DSC_NAMESPACE::DeviceInfo devInfo;
+    devInfo.icon = info->fileIcon();
+    devInfo.deviceUrl = info->url();
+    devInfo.deviceName = info->displayName();
+    devInfo.deviceType = "test";   // TODO(xust) complete the device type here.
+    devInfo.fileSystem = info->extraProperty(GlobalServerDefines::DeviceProperty::kFileSystem).toString();
+    devInfo.totalCapacity = info->sizeTotal();
+    devInfo.availableSpace = info->sizeFree();
+
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultDeviceProperty, devInfo);
 }
 
 DPCOMPUTER_END_NAMESPACE

@@ -47,16 +47,12 @@ public:
      * \param[out] error error get error message
      * \return true if the registration is successful, otherwise it fails.
      * \example:
-     * class A :public ExtendedControlView
+     * class A :public QWidget
      * {
      *      Q_OBJECT
      *      Q_DISABLE_COPY(A)
      *  public:
-     *      explicit A(QWidget *parent = nullptr):ExtendedControlView(parent){}
-     *      virtual void setSelectFileUrl(const QUrl &url)
-     *      {
-     *          .......
-     *      }
+     *      explicit A(QWidget *parent = nullptr):QWidget(parent){}
      * }
      *
      * A * fun(const QUrl &url)
@@ -64,7 +60,6 @@ public:
      *      根据url判断是否创建控件对象
      *      创建
      *      A *a = new A();
-     *      a->setSelectFileUrl(url);
      *      return a;
      *      不创建
      *      return nullptr;
@@ -78,21 +73,12 @@ public:
      * }
      * PropertyDialogService *service = ctx.service<PropertyDialogService>(PropertyDialogService::name());
      * QString error;
-     * bool flg = service->registerMethod<A>(fun, 1, &error);
+     * bool flg = service->registerMethod(fun, 1, &error);
      */
-    template<typename T>
     bool registerMethod(RegisterCreateMethod::createControlView view, int index = -1, QString *error = nullptr)
     {
-        return RegisterCreateMethod::ins()->registerFunction<T>(view, index, error);
+        return RegisterCreateMethod::ins()->registerFunction(view, index, error);
     }
-
-    void addFileProperty(const QList<QUrl> &url);
-
-    void addDeviceProperty(const DeviceInfo &info);
-
-    void showTrashProperty(const QUrl &url);
-
-    void showComputerProperty(const QUrl &url);
 };
 DSC_END_NAMESPACE
 #endif   // PROPERTYDIALOGSERVICE_H

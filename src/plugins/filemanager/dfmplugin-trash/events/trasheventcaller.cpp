@@ -21,6 +21,7 @@
 #include "trasheventcaller.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -52,4 +53,9 @@ void TrashEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &
 void TrashEventCaller::sendEmptyTrash(const quint64 windowID, const QList<QUrl> &urls)
 {
     dispatcher()->publish(GlobalEventType::kCleanTrash, windowID, urls);
+}
+
+void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)
+{
+    dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeTrashProperty, url);
 }

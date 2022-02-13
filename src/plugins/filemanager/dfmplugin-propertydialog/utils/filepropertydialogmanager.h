@@ -48,13 +48,9 @@ public slots:
 
     void showFilePropertyDialog(const QList<QUrl> &urls);
 
-    void insertExtendedControlFileProperty(const QUrl &url, int index, DFMBASE_NAMESPACE::ExtendedControlView *widget);
+    void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget);
 
-    void addExtendedControlFileProperty(const QUrl &url, DFMBASE_NAMESPACE::ExtendedControlView *widget);
-
-    void insertExtendedControlFileProperty(const QUrl &url, int index, DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
-
-    void addExtendedControlFileProperty(const QUrl &url, DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
+    void addExtendedControlFileProperty(const QUrl &url, QWidget *widget);
 
     void closeFilePropertyDialog(const QUrl url);
 
@@ -69,15 +65,13 @@ public slots:
 
     void showDevicePropertyDialog(const DSC_NAMESPACE::DeviceInfo &info);
 
-    void insertExtendedControlDeviceProperty(const QUrl &url, int index, DFMBASE_NAMESPACE::ExtendedControlView *widget);
+    void insertExtendedControlDeviceProperty(const QUrl &url, int index, QWidget *widget);
 
-    void addExtendedControlDeviceProperty(const QUrl &url, DFMBASE_NAMESPACE::ExtendedControlView *widget);
-
-    void insertExtendedControlDeviceProperty(const QUrl &url, int index, DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
-
-    void addExtendedControlDeviceProperty(const QUrl &url, DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
+    void addExtendedControlDeviceProperty(const QUrl &url, QWidget *widget);
 
     void closeDevicePropertyDialog(const QUrl &url);
+
+    void updateCloseIndicator();
 
 public:
     static FilePropertyDialogManager *instance();
@@ -87,15 +81,18 @@ private:
      * \note: ***Used only by the createView property dialog plugin.***
      * \brief Used to create extended control objects.
      */
-    template<typename T>
-    QMap<int, T *> createView(const QUrl &url)
+    QMap<int, QWidget *> createView(const QUrl &url)
     {
-        return DSC_NAMESPACE::RegisterCreateMethod::ins()->createView<T>(url);
+        return DSC_NAMESPACE::RegisterCreateMethod::ins()->createView(url);
     }
+
+    QPoint getPropertyPos(int dialogWidth, int dialogHeight);
+    QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
 
 private:
     QMap<QUrl, FilePropertyDialog *> filePropertyDialogs;
     CloseAllDialog *closeAllDialog { nullptr };
+    QTimer *closeIndicatorTimer { nullptr };
 
     TrashPropertyDialog *trashPropertyDialog { nullptr };
     ComputerPropertyDialog *computerPropertyDialog { nullptr };

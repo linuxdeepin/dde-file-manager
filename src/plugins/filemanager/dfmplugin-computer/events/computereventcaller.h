@@ -24,6 +24,7 @@
 #define COMPUTEREVENTCALLER_H
 
 #include "dfmplugin_computer_global.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
 
 #include <QUrl>
 
@@ -45,6 +46,8 @@ public:
 
     static void sendContextActionTriggered(const QUrl &url, const QString &action);
     static void sendOpenItem(const QUrl &url);
+    static void sendShowFilePropertyDialog(const QUrl &url);
+    static void sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info);
 };
 
 DPCOMPUTER_END_NAMESPACE

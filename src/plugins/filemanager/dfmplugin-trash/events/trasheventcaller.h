@@ -36,6 +36,7 @@ public:
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
     static void sendEmptyTrash(const quint64 windowId, const QList<QUrl> &urls);
+    static void sendTrashPropertyDialog(const QUrl &url);
 };
 
 DPTRASH_END_NAMESPACE

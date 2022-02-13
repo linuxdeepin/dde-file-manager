@@ -126,9 +126,9 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DSC_NAMESPACE::DeviceInfo &
     currentFileUrl = info.deviceUrl;
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));
     deviceName->setText(info.deviceName);
-    deviceBasicWidget->setSelectFileInfo(info);
+    deviceBasicWidget->selectFileInfo(info);
     setProgressBar(info.totalCapacity, info.availableSpace);
-    addExtendedControl(deviceBasicWidget, true);
+    addExtendedControl(deviceBasicWidget);
 }
 
 void DevicePropertyDialog::handleHeight(int height)
@@ -165,42 +165,41 @@ void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize)
     });
 }
 
-void DevicePropertyDialog::insertExtendedControl(int index, ExtendedControlView *widget)
+void DevicePropertyDialog::insertExtendedControl(int index, QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
-    widget->setSelectFileUrl(currentFileUrl);
     QMargins cm = vlayout->contentsMargins();
     QRect rc = contentsRect();
     widget->setFixedWidth(rc.width() - cm.left() - cm.right());
     extendedControl.append(widget);
 }
 
-void DevicePropertyDialog::addExtendedControl(ExtendedControlView *widget)
+void DevicePropertyDialog::addExtendedControl(QWidget *widget)
 {
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     insertExtendedControl(vlayout->count() - 1, widget);
 }
 
-void DevicePropertyDialog::insertExtendedControl(int index, ExtendedControlDrawerView *widget, bool expansion)
-{
-    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-    widget->setSelectFileUrl(currentFileUrl);
-    widget->setFixedHeight(kArrowExpandHight);
-    widget->setExpand(expansion);
-    QMargins cm = vlayout->contentsMargins();
-    QRect rc = contentsRect();
-    widget->setFixedWidth(rc.width() - cm.left() - cm.right());
-    vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
-    extendedControl.append(widget);
-    connect(widget, &ExtendedControlDrawerView::heightChanged, this, &DevicePropertyDialog::handleHeight);
-}
+//void DevicePropertyDialog::insertExtendedControl(int index, ExtendedControlDrawerView *widget, bool expansion)
+//{
+//    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
+//    widget->setSelectFileUrl(currentFileUrl);
+//    widget->setFixedHeight(kArrowExpandHight);
+//    widget->setExpand(expansion);
+//    QMargins cm = vlayout->contentsMargins();
+//    QRect rc = contentsRect();
+//    widget->setFixedWidth(rc.width() - cm.left() - cm.right());
+//    vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
+//    extendedControl.append(widget);
+//    connect(widget, &ExtendedControlDrawerView::heightChanged, this, &DevicePropertyDialog::handleHeight);
+//}
 
-void DevicePropertyDialog::addExtendedControl(ExtendedControlDrawerView *widget, bool expansion)
-{
-    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-    insertExtendedControl(vlayout->count() - 1, widget, expansion);
-}
+//void DevicePropertyDialog::addExtendedControl(ExtendedControlDrawerView *widget, bool expansion)
+//{
+//    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
+//    insertExtendedControl(vlayout->count() - 1, widget, expansion);
+//}
 
 void DevicePropertyDialog::showEvent(QShowEvent *event)
 {

@@ -27,7 +27,7 @@ DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
 DeviceBasicWidget::DeviceBasicWidget(QWidget *parent)
-    : ExtendedControlDrawerView(parent)
+    : DArrowLineDrawer(parent)
 {
     initUI();
 }
@@ -71,14 +71,14 @@ void DeviceBasicWidget::initUI()
     setContent(deviceInfoFrame);
 }
 
-void DeviceBasicWidget::setSelectFileUrl(const QUrl &url)
+void DeviceBasicWidget::selectFileUrl(const QUrl &url)
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     fileCount->setRightValue(QString::number(info->countChildFile()));
     fileCount->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 }
 
-void DeviceBasicWidget::setSelectFileInfo(const DeviceInfo &info)
+void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
 {
     deviceType->setRightValue(info.deviceType);
     deviceType->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
@@ -93,4 +93,8 @@ void DeviceBasicWidget::setSelectFileInfo(const DeviceInfo &info)
     QString sizeFreeStr = UniversalUtils::sizeFormat(info.availableSpace, 1);
     freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
+}
+
+void DeviceBasicWidget::slotFileDirSizeChange(qint64 size)
+{
 }

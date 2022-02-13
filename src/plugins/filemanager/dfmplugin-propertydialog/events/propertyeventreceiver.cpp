@@ -18,8 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "propertyunicastreceiver.h"
+#include "propertyeventreceiver.h"
 #include "utils/filepropertydialogmanager.h"
+#include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -30,55 +31,49 @@ DPPROPERTYDIALOG_USE_NAMESPACE
 #define STR1(s) #s
 #define STR2(s) STR1(s)
 
-/*!
- * \brief topic is defined in SideBarService
- * \param func
- * \return
- */
-inline QString topic(const QString &func)
-{
-    return QString(STR2(DSC_NAMESPACE)) + "::" + func;
-}
-
-PropertyUnicastReceiver::PropertyUnicastReceiver(QObject *parent)
+PropertyEventReceiver::PropertyEventReceiver(QObject *parent)
     : QObject(parent)
 {
 }
 
-PropertyUnicastReceiver *PropertyUnicastReceiver::instance()
+PropertyEventReceiver *PropertyEventReceiver::instance()
 {
-    static PropertyUnicastReceiver receiver;
+    static PropertyEventReceiver receiver;
     return &receiver;
 }
 
-void PropertyUnicastReceiver::connectService()
+void PropertyEventReceiver::connectService()
 {
-    dpfInstance.eventUnicast().connect(topic("PropertyDialogService::addFileProperty"), this, &PropertyUnicastReceiver::addFilePropertyControl);
-    dpfInstance.eventUnicast().connect(topic("PropertyDialogService::addDeviceProperty"), this, &PropertyUnicastReceiver::addDeviceProperty);
-    dpfInstance.eventUnicast().connect(topic("PropertyDialogService::showTrashProperty"), this, &PropertyUnicastReceiver::showTrashProperty);
-    dpfInstance.eventUnicast().connect(topic("PropertyDialogService::showComputerProperty"), this, &PropertyUnicastReceiver::showComputerProperty);
+    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeDefaultFileProperty, this, &PropertyEventReceiver::showFilePropertyControl);
+    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeDefaultDeviceProperty, this, &PropertyEventReceiver::showDeviceProperty);
+    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeTrashProperty, this, &PropertyEventReceiver::showTrashProperty);
+    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeComputerProperty, this, &PropertyEventReceiver::showComputerProperty);
 }
 
-void PropertyUnicastReceiver::addFilePropertyControl(const QList<QUrl> &url)
+void PropertyEventReceiver::showFilePropertyControl(const QList<QUrl> &url)
 {
     FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
     fileDialogManager->showFilePropertyDialog(url);
 }
 
-void PropertyUnicastReceiver::addDeviceProperty(const DeviceInfo &info)
+void PropertyEventReceiver::showDeviceProperty(const DeviceInfo &info)
 {
     FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
     fileDialogManager->showDevicePropertyDialog(info);
 }
 
-void PropertyUnicastReceiver::showTrashProperty(const QUrl &url)
+void PropertyEventReceiver::showTrashProperty(const QUrl &url)
 {
     FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
     fileDialogManager->showTrashPropertyDialog();
 }
 
-void PropertyUnicastReceiver::showComputerProperty(const QUrl &url)
+void PropertyEventReceiver::showComputerProperty(const QUrl &url)
 {
     FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
     fileDialogManager->showComputerPropertyDialog();
+}
+
+void PropertyEventReceiver::showCustomizeProperty(const QUrl &url)
+{
 }

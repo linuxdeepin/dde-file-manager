@@ -42,10 +42,11 @@ void KeyValueLabel::initUI()
     rightValueLabel = new DLabel(this);
     glayout = new QGridLayout;
     glayout->setMargin(0);
-    glayout->addWidget(leftValueLabel, 0, 0, 1, 1);
-    glayout->addWidget(rightValueLabel, 0, 1, 1, 1);
+    glayout->addWidget(leftValueLabel, 0, 0, 1, 2);
+    glayout->addWidget(rightValueLabel, 0, 2, 1, 4);
     glayout->setColumnStretch(0, 1);
-    glayout->setColumnStretch(1, 2);
+    glayout->setColumnStretch(1, 1);
+    glayout->setColumnStretch(2, 2);
     setLayout(glayout);
 }
 
@@ -148,4 +149,14 @@ void KeyValueLabel::setRightFontSizeWeight(DFontSizeManager::SizeType sizeType, 
 {
     DFontSizeManager::instance()->bind(rightValueLabel, sizeType, fontWeight);
     rightValueLabel->setForegroundRole(foregroundRole);
+}
+
+QString KeyValueLabel::LeftValue()
+{
+    return leftValueLabel->text();
+}
+
+QString KeyValueLabel::RightValue()
+{
+    return rightValueLabel->text();
 }

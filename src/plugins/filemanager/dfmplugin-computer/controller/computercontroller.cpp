@@ -449,21 +449,11 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
         return;
 
     if (info->suffix() == SuffixInfo::kUserDir) {
-        ComputerUtils::propertyDlgServIns()->addFileProperty({ info->targetUrl() });
+        ComputerEventCaller::sendShowFilePropertyDialog(info->targetUrl());
         return;
     }
 
-    DSC_USE_NAMESPACE;
-    DeviceInfo devInfo;
-    devInfo.icon = info->fileIcon();
-    devInfo.deviceUrl = info->url();
-    devInfo.deviceName = info->displayName();
-    devInfo.deviceType = "test";   // TODO(xust) complete the device type here.
-    devInfo.fileSystem = info->extraProperty(DeviceProperty::kFileSystem).toString();
-    devInfo.totalCapacity = info->sizeTotal();
-    devInfo.availableSpace = info->sizeFree();
-
-    ComputerUtils::propertyDlgServIns()->addDeviceProperty(devInfo);
+    ComputerEventCaller::sendShowDevicePropertyDialog(info);
 }
 
 void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)

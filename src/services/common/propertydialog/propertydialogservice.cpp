@@ -19,6 +19,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "propertydialogservice.h"
+#include "dfm-base/utils/universalutils.h"
+
+DSC_BEGIN_NAMESPACE
+namespace PropertyEventType {
+const int  kEvokeTrashProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int  kEvokeComputerProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int  kEvokeDefaultFileProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int  kEvokeDefaultDeviceProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int  kEvokeCustomizeProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+}
+DSC_END_NAMESPACE
 
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
@@ -27,24 +38,4 @@ PropertyDialogService::PropertyDialogService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<PropertyDialogService>()
 {
-}
-
-void PropertyDialogService::addFileProperty(const QList<QUrl> &url)
-{
-    dpfInstance.eventUnicast().push(DSC_FUNC_NAME, url);
-}
-
-void PropertyDialogService::addDeviceProperty(const DeviceInfo &info)
-{
-    dpfInstance.eventUnicast().push(DSC_FUNC_NAME, info);
-}
-
-void PropertyDialogService::showTrashProperty(const QUrl &url)
-{
-    dpfInstance.eventUnicast().push(DSC_FUNC_NAME, url);
-}
-
-void PropertyDialogService::showComputerProperty(const QUrl &url)
-{
-    dpfInstance.eventUnicast().push(DSC_FUNC_NAME, url);
 }

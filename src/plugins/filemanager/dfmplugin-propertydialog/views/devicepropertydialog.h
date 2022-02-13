@@ -59,13 +59,13 @@ private:
 public slots:
     void setSelectDeviceInfo(const DSC_NAMESPACE::DeviceInfo &info);
 
-    void insertExtendedControl(int index, DFMBASE_NAMESPACE::ExtendedControlView *widget);
+    void insertExtendedControl(int index, QWidget *widget);
 
-    void addExtendedControl(DFMBASE_NAMESPACE::ExtendedControlView *widget);
+    void addExtendedControl(QWidget *widget);
 
-    void insertExtendedControl(int index, DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
+    //    void insertExtendedControl(int index, DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
 
-    void addExtendedControl(DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
+    //    void addExtendedControl(DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
 
 signals:
     void closed(const QUrl &url);

@@ -22,13 +22,14 @@
 #define DEVICEBASICWIDGET_H
 
 #include "dfmplugin_propertydialog_global.h"
-#include "dfm-base/interfaces/extendedcontrolview.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "services/common/propertydialog/property_defines.h"
 
+#include <DArrowLineDrawer>
+
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
-class DeviceBasicWidget : public DFMBASE_NAMESPACE::ExtendedControlDrawerView
+class DeviceBasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
 public:
@@ -39,9 +40,9 @@ private:
     void initUI();
 
 public:
-    virtual void setSelectFileUrl(const QUrl &url) override;
+    void selectFileUrl(const QUrl &url);
 
-    void setSelectFileInfo(const DSC_NAMESPACE::DeviceInfo &info);
+    void selectFileInfo(const DSC_NAMESPACE::DeviceInfo &info);
 
 public slots:
     void slotFileDirSizeChange(qint64 size);

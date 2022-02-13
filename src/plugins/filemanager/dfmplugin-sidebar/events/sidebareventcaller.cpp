@@ -24,6 +24,7 @@
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-framework/framework.h>
 #include <QUrl>
@@ -56,4 +57,11 @@ void SideBarEventCaller::sendOpenWindow(const QUrl &url)
 void SideBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
     dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+}
+
+void SideBarEventCaller::sendShowFilePropertyDialog(const QUrl &url)
+{
+    QList<QUrl> urls;
+    urls << url;
+    dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
 }

@@ -24,14 +24,13 @@
 #include "dfmplugin_propertydialog_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "utils/filecalculationutils.h"
-#include "dfm-base/interfaces/extendedcontrolview.h"
 
 #include <DArrowLineDrawer>
 
 #include <QCheckBox>
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
-class BasicWidget : public DFMBASE_NAMESPACE::ExtendedControlDrawerView
+class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
 public:
@@ -42,7 +41,11 @@ private:
     void initUI();
 
 public:
-    virtual void setSelectFileUrl(const QUrl &url) override;
+    void selectFileUrl(const QUrl &url);
+
+    qint64 getFileSize();
+
+    int getFileCount();
 
 public slots:
     void slotFileDirSizeChange(qint64 size);
@@ -62,6 +65,8 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
     QCheckBox *hideFile { nullptr };
     FileCalculationUtils *fileCalculationUtils { nullptr };
+    int fSize { 0 };
+    int fCount { 0 };
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // BASICWIDGET_H

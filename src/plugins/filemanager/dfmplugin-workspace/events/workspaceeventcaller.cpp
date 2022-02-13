@@ -23,6 +23,7 @@
 #include "workspaceeventcaller.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
+#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm_global_defines.h"
@@ -118,4 +119,9 @@ void WorkspaceEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl
 void WorkspaceEventCaller::sendOpenInTerminal(const quint64 windowID, const QList<QUrl> &urls)
 {
     dispatcher()->publish(GlobalEventType::kOpenInTerminal, windowID, urls);
+}
+
+void WorkspaceEventCaller::sendShowFilePropertyDialog(const QList<QUrl> &urls)
+{
+    dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
 }

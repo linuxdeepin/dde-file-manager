@@ -22,13 +22,21 @@
 #define PROPERTY_DEFINE_H
 
 #include "dfm_common_service_global.h"
-#include "dfm-base/interfaces/extendedcontrolview.h"
 #include "dfm-base/utils/finallyutil.h"
 
 #include <QUrl>
 #include <QIcon>
+#include <QDebug>
 
 DSC_BEGIN_NAMESPACE
+
+namespace PropertyEventType {
+extern const int  kEvokeTrashProperty;
+extern const int  kEvokeComputerProperty;
+extern const int  kEvokeDefaultFileProperty;
+extern const int  kEvokeDefaultDeviceProperty;
+extern const int  kEvokeCustomizeProperty;
+}
 
 struct DeviceInfo
 {
@@ -61,10 +69,8 @@ public:
 protected:
     //创建函数列表
     QHash<int, createControlView> constructList {};
-    QHash<int, QString> listclass {};
 
 public:
-    template<class CT>
     bool registerFunction(createControlView view, int index = -1, QString *errorString = nullptr)
     {
         QString error;
@@ -78,26 +84,17 @@ public:
         }
 
         constructList.insert(index, view);
-        const QMetaObject *metaObject = CT().metaObject()->superClass();
-        listclass.insert(index, metaObject->className());
         finally.dismiss();
         return true;
     }
 
-    template<class CT>
-    QMap<int, CT *> createView(const QUrl &url)
+    QMap<int, QWidget *> createView(const QUrl &url)
     {
-        QMap<int, CT *> temp {};
-        const QMetaObject *metaObject = CT().metaObject();
-        if (listclass.values().contains(metaObject->className())) {
-            QList<int> keylist = listclass.keys(metaObject->className());
-            for (int i = 0; i < keylist.count(); ++i) {
-                int index = keylist[i];
-                CT *g = static_cast<CT *>(constructList.value(index)(url));
-                if (g != nullptr)
-                    temp.insert(index, g);
-            }
-            return temp;
+        QMap<int, QWidget *> temp {};
+        for (int i = 0; i < constructList.count(); ++i) {
+            QWidget *g = constructList.value(i)(url);
+            if (g != nullptr)
+                temp.insert(i, g);
         }
         return temp;
     }

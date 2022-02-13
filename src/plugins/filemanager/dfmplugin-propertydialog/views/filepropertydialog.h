@@ -25,12 +25,10 @@
 #include "dfmplugin_propertydialog_global.h"
 #include "dfm_common_service_global.h"
 #include "editstackedwidget.h"
-#include "dfm-base/interfaces/extendedcontrolview.h"
-#include "basicwidget.h"
 
-#include <dplatformwindowhandle.h>
 #include <DDialog>
 #include <DCheckBox>
+#include <DPlatformWindowHandle>
 
 #include <QScrollArea>
 #include <QTextEdit>
@@ -41,8 +39,9 @@ DWIDGET_END_NAMESPACE
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
 class BasicWidget;
+class PermissionManagerWidget;
 class NameTextEdit;
-class FilePropertyDialog : public DDialog
+class FilePropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
@@ -50,7 +49,7 @@ public:
     virtual ~FilePropertyDialog() override;
 
 private:
-    void initHeadUI();
+    QWidget *CreateHeadUI();
 
     void initInfoUI();
 
@@ -59,17 +58,17 @@ private:
 public:
     void setSelectFileUrl(const QUrl &url);
 
+    qint64 getFileSize();
+
+    int getFileCount();
+
 public slots:
 
     void processHeight(int height);
 
-    void insertExtendedControl(int index, DFMBASE_NAMESPACE::ExtendedControlView *widget);
+    void insertExtendedControl(int index, QWidget *widget);
 
-    void addExtendedControl(DFMBASE_NAMESPACE::ExtendedControlView *widget);
-
-    void insertExtendedControl(int index, DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
-
-    void addExtendedControl(DFMBASE_NAMESPACE::ExtendedControlDrawerView *widget, bool expansion = false);
+    void addExtendedControl(QWidget *widget);
 
     void closeDialog();
 
@@ -85,6 +84,7 @@ protected:
 private:
     QScrollArea *scrollArea { nullptr };
     BasicWidget *basicWidget { nullptr };
+    PermissionManagerWidget *permissionManagerWidget { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *fileIcon { nullptr };
     EditStackedWidget *editStackWidget { nullptr };
     QFrame *textShowFrame { nullptr };

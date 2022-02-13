@@ -292,8 +292,17 @@ void EditStackedWidget::showTextShowFrame()
 void EditStackedWidget::selectFile(const QUrl &url)
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-    initTextShowFrame(info->fileName());
+    if (!info.isNull()) {
+        initTextShowFrame(info->fileName());
+    }
+
     filerUrl = url;
+
+    if (!info->canRename()) {
+        nameEditIcon->hide();
+    } else {
+        nameEditIcon->show();
+    }
 }
 
 void EditStackedWidget::elideText(QTextLayout *layout, const QSizeF &size,

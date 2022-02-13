@@ -61,6 +61,10 @@ public:
 
     void setRightFontSizeWeight(DFontSizeManager::SizeType sizeType, QFont::Weight fontWeight = QFont::Normal, DPalette::ColorType foregroundRole = DPalette::NoType);
 
+    QString LeftValue();
+
+    QString RightValue();
+
 private:
     DLabel *leftValueLabel = nullptr;
     DLabel *rightValueLabel = nullptr;

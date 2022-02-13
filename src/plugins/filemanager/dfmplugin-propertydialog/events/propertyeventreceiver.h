@@ -27,27 +27,29 @@
 #include <QObject>
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
-class PropertyUnicastReceiver : public QObject
+class PropertyEventReceiver : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(PropertyUnicastReceiver)
+    Q_DISABLE_COPY(PropertyEventReceiver)
 private:
-    explicit PropertyUnicastReceiver(QObject *parent = nullptr);
+    explicit PropertyEventReceiver(QObject *parent = nullptr);
 
 public:
-    static PropertyUnicastReceiver *instance();
+    static PropertyEventReceiver *instance();
     void connectService();
 
 signals:
 
 public slots:
-    void addFilePropertyControl(const QList<QUrl> &url);
+    void showFilePropertyControl(const QList<QUrl> &url);
 
-    void addDeviceProperty(const DSC_NAMESPACE::DeviceInfo &info);
+    void showDeviceProperty(const DSC_NAMESPACE::DeviceInfo &info);
 
     void showTrashProperty(const QUrl &url);
 
     void showComputerProperty(const QUrl &url);
+
+    void showCustomizeProperty(const QUrl &url);
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // PROPERTYDIALOGEVENTRECEIVER_H

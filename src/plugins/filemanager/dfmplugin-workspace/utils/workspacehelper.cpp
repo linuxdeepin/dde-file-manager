@@ -23,7 +23,6 @@
 #include "views/fileview.h"
 #include "events/workspaceeventcaller.h"
 #include "services/filemanager/windows/windowsservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
@@ -33,7 +32,6 @@
 DPWORKSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 QMap<quint64, WorkspaceWidget *> WorkspaceHelper::kWorkspaceMap {};
 
@@ -149,11 +147,7 @@ void WorkspaceHelper::actionOpen(quint64 windowId, const QList<QUrl> &urls, cons
 void WorkspaceHelper::actionProperty(quint64 windowId, const QList<QUrl> &urls)
 {
     Q_UNUSED(windowId)
-
-    auto &ctx = dpfInstance.serviceContext();
-    Q_ASSERT_X(ctx.loaded(PropertyDialogService::name()), "WorkspaceHelper", "PropertyDialogService not loaded");
-    auto propertyDialogService = ctx.service<PropertyDialogService>(PropertyDialogService::name());
-    propertyDialogService->addFileProperty(urls);
+    WorkspaceEventCaller::sendShowFilePropertyDialog(urls);
 }
 
 void WorkspaceHelper::actionDeleteFiles(quint64 windowId, const QList<QUrl> &urls)

@@ -27,6 +27,4 @@
 #define DSC_NAMESPACE dfm_service_common
 #define DSC_USE_NAMESPACE using namespace dfm_service_common;
 
-#define DSC_FUNC_NAME (QString(metaObject()->className()) + "::" + QString(__FUNCTION__))
-
 #endif   //GLOBALDEFINITIONS_H

@@ -19,14 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "propertydialog.h"
-#include "events/propertyunicastreceiver.h"
+#include "events/propertyeventreceiver.h"
 
 DFMBASE_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
 
 void PropertyDialog::initialize()
 {
-    PropertyUnicastReceiver::instance()->connectService();
+    PropertyEventReceiver::instance()->connectService();
 }
 
 bool PropertyDialog::start()

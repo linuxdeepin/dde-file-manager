@@ -97,14 +97,7 @@ void TrashManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const Q
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Properties"), [url]() {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(PropertyDialogService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-        PropertyDialogService *service = ctx.service<PropertyDialogService>(PropertyDialogService::name());
-        service->showTrashProperty(url);
+        TrashEventCaller::sendTrashPropertyDialog(url);
     });
     menu->exec(globalPos);
     delete menu;
