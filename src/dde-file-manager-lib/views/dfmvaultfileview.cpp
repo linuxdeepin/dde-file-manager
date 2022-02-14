@@ -103,7 +103,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
 
 void DFMVaultFileView::onLeaveVault(int state)
 {
-    if (state == 0) {
+    if (state == 0 || state == 1) {
         this->cd(DUrl(COMPUTER_ROOT));
         VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     }

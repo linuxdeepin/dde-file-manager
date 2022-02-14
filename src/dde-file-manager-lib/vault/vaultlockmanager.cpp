@@ -209,7 +209,7 @@ void VaultLockManager::slotLockVault(int msg)
 {
     Q_D(VaultLockManager);
 
-    if (static_cast<ErrorCode>(msg) == ErrorCode::Success) {
+    if (static_cast<ErrorCode>(msg) == ErrorCode::Success  || msg == 1) {
         d->m_alarmClock.stop();
     } else {
         qDebug() << "vault cannot lock";
