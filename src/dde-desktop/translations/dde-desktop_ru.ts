@@ -1,44 +1,44 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="ru" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ru">
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3348"/>
+        <location filename="../view/canvasgridview.cpp" line="3373"/>
         <source>Icon size</source>
         <translation>Размер значка</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3356"/>
+        <location filename="../view/canvasgridview.cpp" line="3381"/>
         <source>Auto merge</source>
         <translation>Автоматическое объединение</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3368"/>
+        <location filename="../view/canvasgridview.cpp" line="3393"/>
         <source>Auto arrange</source>
         <translation>Автоматическое размещение</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3405"/>
+        <location filename="../view/canvasgridview.cpp" line="3430"/>
         <source>Corner Settings</source>
         <translation>Угловая Навигация</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3414"/>
-        <location filename="../view/canvasgridview.cpp" line="3419"/>
+        <location filename="../view/canvasgridview.cpp" line="3439"/>
+        <location filename="../view/canvasgridview.cpp" line="3444"/>
         <source>Set Wallpaper</source>
         <translation>Установить в Качестве Обоев</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3417"/>
+        <location filename="../view/canvasgridview.cpp" line="3442"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Обои и Заставка рабочего стола</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3595"/>
+        <location filename="../view/canvasgridview.cpp" line="3620"/>
         <source>Properties</source>
         <translation>Свойства</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3396"/>
+        <location filename="../view/canvasgridview.cpp" line="3421"/>
         <source>Display Settings</source>
         <translation>Настройки Экрана</translation>
     </message>
@@ -74,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="166"/>
+        <location filename="../main.cpp" line="168"/>
         <source>Desktop</source>
         <translation>Рабочий Стол</translation>
     </message>
@@ -158,14 +158,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="403"/>
-        <location filename="../view/watermaskframe.cpp" line="404"/>
+        <location filename="../view/watermaskframe.cpp" line="390"/>
+        <location filename="../view/watermaskframe.cpp" line="391"/>
         <source>Not authorized</source>
         <translation>Не авторизован</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="414"/>
-        <location filename="../view/watermaskframe.cpp" line="415"/>
+        <location filename="../view/watermaskframe.cpp" line="401"/>
+        <location filename="../view/watermaskframe.cpp" line="402"/>
         <source>In trial period</source>
         <translation>Пробный период</translation>
     </message>

@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
 <context>
     <name>AppController</name>
     <message>
@@ -1377,7 +1375,7 @@
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
-        <location filename="../models/searchfileinfo.cpp" line="130"/>
+        <location filename="../models/searchfileinfo.cpp" line="146"/>
         <source>Time modified</source>
         <translation>Time modified</translation>
     </message>
@@ -1405,8 +1403,8 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
-        <location filename="../models/searchfileinfo.cpp" line="128"/>
-        <location filename="../models/searchfileinfo.cpp" line="133"/>
+        <location filename="../models/searchfileinfo.cpp" line="144"/>
+        <location filename="../models/searchfileinfo.cpp" line="149"/>
         <source>Path</source>
         <translation>Path</translation>
     </message>
@@ -1414,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2805"/>
+        <location filename="../views/dfileview.cpp" line="2813"/>
         <source>Disc mount error</source>
         <translation>Disc mount error</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2805"/>
+        <location filename="../views/dfileview.cpp" line="2813"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>The disc is in use, please end the running process and remount the disc.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2818"/>
+        <location filename="../views/dfileview.cpp" line="2826"/>
         <source>Mounting failed</source>
         <translation>Mounting failed</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3545"/>
+        <location filename="../views/dfileview.cpp" line="3553"/>
         <source>(Reverse)</source>
         <translation>(Reverse)</translation>
     </message>
@@ -1948,7 +1946,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirm</translation>
@@ -2114,7 +2111,7 @@
     <message>
         <location filename="../views/fileitem.cpp" line="203"/>
         <source>%1 are not allowed</source>
-        <translation type="unfinished">%1 are not allowed</translation>
+        <translation>%1 are not allowed</translation>
     </message>
 </context>
 <context>
@@ -2520,7 +2517,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="293"/>
         <location filename="../configure/global-setting-template.js" line="299"/>
         <source>Hide loop partitions</source>
-        <translation type="unfinished"></translation>
+        <translation>Hide loop partitions</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="306"/>
@@ -3777,12 +3774,12 @@
         <translation>Folder is empty</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="322"/>
+        <location filename="../models/searchfileinfo.cpp" line="371"/>
         <source>Searching...</source>
         <translation>Searching...</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="327"/>
+        <location filename="../models/searchfileinfo.cpp" line="376"/>
         <source>No results</source>
         <translation>No results</translation>
     </message>
@@ -4449,7 +4446,7 @@
         <translation>New folder</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="338"/>
+        <location filename="../models/searchfileinfo.cpp" line="387"/>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Search</source>
         <translation>Search</translation>
@@ -4657,12 +4654,12 @@
     <message>
         <location filename="../deviceinfo/udisklistener.cpp" line="800"/>
         <source>Mounting device error</source>
-        <translation type="unfinished">Mounting device error</translation>
+        <translation>Mounting device error</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udisklistener.cpp" line="800"/>
         <source>Wrong password</source>
-        <translation type="unfinished">Wrong password</translation>
+        <translation>Wrong password</translation>
     </message>
 </context>
 <context>

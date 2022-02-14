@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AppController</name>
     <message>
@@ -1377,7 +1375,7 @@
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
-        <location filename="../models/searchfileinfo.cpp" line="130"/>
+        <location filename="../models/searchfileinfo.cpp" line="146"/>
         <source>Time modified</source>
         <translation>修改时间</translation>
     </message>
@@ -1405,8 +1403,8 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
-        <location filename="../models/searchfileinfo.cpp" line="128"/>
-        <location filename="../models/searchfileinfo.cpp" line="133"/>
+        <location filename="../models/searchfileinfo.cpp" line="144"/>
+        <location filename="../models/searchfileinfo.cpp" line="149"/>
         <source>Path</source>
         <translation>路径</translation>
     </message>
@@ -1414,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2805"/>
+        <location filename="../views/dfileview.cpp" line="2813"/>
         <source>Disc mount error</source>
         <translation>光盘挂载错误</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2805"/>
+        <location filename="../views/dfileview.cpp" line="2813"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>当前光驱设备正在占用，请关闭占用进程再重新挂载</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2818"/>
+        <location filename="../views/dfileview.cpp" line="2826"/>
         <source>Mounting failed</source>
         <translation>挂载失败</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3545"/>
+        <location filename="../views/dfileview.cpp" line="3553"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1948,7 +1946,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>确 定</translation>
@@ -1981,7 +1978,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="752"/>
         <source>Remove</source>
         <comment>button</comment>
-        <translation>删 除</translation>
+        <translation>移 除</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="912"/>
@@ -3777,12 +3774,12 @@
         <translation>文件夹为空</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="322"/>
+        <location filename="../models/searchfileinfo.cpp" line="371"/>
         <source>Searching...</source>
         <translation>正在搜索...</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="327"/>
+        <location filename="../models/searchfileinfo.cpp" line="376"/>
         <source>No results</source>
         <translation>无搜索结果</translation>
     </message>
@@ -4040,7 +4037,7 @@
     <message>
         <location filename="../views/dtagedit.cpp" line="96"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>输入标记信息，如“工作”、“家人”等。多个标记信息之间用逗号分隔。</translation>
+        <translation>输入标记信息，如“工作”、“家人”等。多个标记信息之间用英文半角逗号分隔。</translation>
     </message>
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="47"/>
@@ -4449,7 +4446,7 @@
         <translation>新建文件夹</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="338"/>
+        <location filename="../models/searchfileinfo.cpp" line="387"/>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Search</source>
         <translation>搜索</translation>
