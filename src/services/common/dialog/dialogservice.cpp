@@ -116,7 +116,7 @@ QString DialogService::askPasswordForLockedDevice()
     return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
 }
 
-void DialogService::showErrorDialogWhenMountNetworkDeviceFailed(dfmmount::DeviceError err)
+void DialogService::showErrorDialogWhenMountDeviceFailed(dfmmount::DeviceError err)
 {
     switch (err) {
     case dfmmount::DeviceError::UserErrorNetworkAnonymousNotAllowed:

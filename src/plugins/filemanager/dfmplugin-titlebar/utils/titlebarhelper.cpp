@@ -231,7 +231,7 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
 
     deviceServ()->mountNetworkDevice(url.toString(), [sender](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
         if (!ok) {
-            dlgServ()->showErrorDialogWhenMountNetworkDeviceFailed(err);
+            dlgServ()->showErrorDialogWhenMountDeviceFailed(err);
         } else {
             QUrl u;
             u.setScheme(SchemeTypes::kFile);

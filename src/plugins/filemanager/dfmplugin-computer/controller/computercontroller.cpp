@@ -48,6 +48,11 @@ DFMBASE_USE_NAMESPACE
 DPCOMPUTER_USE_NAMESPACE
 using namespace GlobalServerDefines;
 
+static void setCursorStatus(bool busy = false)
+{
+    QApplication::setOverrideCursor(busy ? Qt::WaitCursor : Qt::ArrowCursor);
+}
+
 ComputerController *ComputerController::instance()
 {
     static ComputerController instance;
@@ -60,7 +65,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     if (!info) {
         qDebug() << "cannot create info of " << url;
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
+        setCursorStatus();
         return;
     }
 
@@ -80,7 +85,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
             if (ComputerUtils::dlgServIns()->askForFormat())
                 actFormat(winId, info);
         }
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
+        setCursorStatus();
         return;
     }
 
@@ -122,8 +127,14 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
     if (removable && info->suffix() == SuffixInfo::kBlock) {
+        setCursorStatus(true);
         QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
-        DeviceManagerInstance.invokeRenameBlockDevice(devId, name);
+        ComputerUtils::deviceServIns()->renameBlockDeviceAsync(devId, name, {}, [=](bool ok, dfmmount::DeviceError err) {
+            setCursorStatus();
+            if (!ok) {
+                qInfo() << "rename block device failed: " << devId << static_cast<int>(err);
+            }
+        });
         return;
     }
 
@@ -205,19 +216,23 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
 
     if (isEncrypted) {
         if (!isUnlocked) {
-            QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+            setCursorStatus();
             QString passwd = ComputerUtils::dlgServIns()->askPasswordForLockedDevice();
             if (passwd.isEmpty()) {
-                QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+                setCursorStatus();
                 return;
             }
-            QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+            setCursorStatus(true);
 
-            DeviceManagerInstance.unlockAndDo(shellId, passwd, [=](const QString &newID) {
-                if (newID.isEmpty())
+            ComputerUtils::deviceServIns()->unlockBlockDeviceAsync(passwd, shellId, {}, [=](bool ok, dfmmount::DeviceError err, const QString &newId) {
+                setCursorStatus();
+
+                if (ok) {
+                    this->mountDevice(winId, newId, act);
+                } else {
                     ComputerUtils::dlgServIns()->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
-                else
-                    mountDevice(winId, newID, act);
+                    qInfo() << "unlock device failed: " << shellId << static_cast<int>(err);
+                }
             });
         } else {
             auto realDevId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
@@ -230,23 +245,22 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
 
 void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAfterMount act)
 {
-    QFutureWatcher<QString> *watcher = new QFutureWatcher<QString>();
-    connect(watcher, &QFutureWatcher<QString>::finished, [=] {
-        QString path = watcher->result();
-        QUrl u;
-        u.setScheme(SchemeTypes::kFile);
-        u.setPath(path);
-        if (act == kEnterDirectory)
-            ComputerEventCaller::cdTo(winId, path);
-        else if (act == kEnterInNewWindow)
-            ComputerEventCaller::sendEnterInNewWindow(u);
-        else if (act == kEnterInNewTab)
-            ComputerEventCaller::sendEnterInNewTab(winId, u);
-        watcher->deleteLater();
+    setCursorStatus(true);
+    ComputerUtils::deviceServIns()->mountBlockDeviceAsync(id, {}, [=](bool ok, dfmmount::DeviceError err, const QString &mpt) {
+        if (ok) {
+            QUrl u = ComputerUtils::makeLocalUrl(mpt);
+            if (act == kEnterDirectory)
+                ComputerEventCaller::cdTo(winId, mpt);
+            else if (act == kEnterInNewWindow)
+                ComputerEventCaller::sendEnterInNewWindow(u);
+            else if (act == kEnterInNewTab)
+                ComputerEventCaller::sendEnterInNewTab(winId, u);
+        } else {
+            qDebug() << "mount device failed: " << id << static_cast<int>(err);
+            ComputerUtils::dlgServIns()->showErrorDialogWhenMountDeviceFailed(err);
+        }
+        setCursorStatus();
     });
-    QFuture<QString> fu = QtConcurrent::run(&DeviceManagerInstance, &DeviceManager::invokeMountBlockDevice, id);
-    watcher->setFuture(fu);
-    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 winId, const QString &actionText, bool triggerFromSidebar)
@@ -322,7 +336,7 @@ static void onNetworkDeviceMountFinished(bool ok, dfmmount::DeviceError err, con
         if (enterAfterMounted)
             ComputerEventCaller::cdTo(winId, mntPath);
     } else {
-        ComputerUtils::dlgServIns()->showErrorDialogWhenMountNetworkDeviceFailed(err);
+        ComputerUtils::dlgServIns()->showErrorDialogWhenMountDeviceFailed(err);
     }
 }
 
@@ -349,10 +363,32 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
     QString devId;
     if (info->suffix() == SuffixInfo::kBlock) {
         devId = ComputerUtils::getBlockDevIdByUrl(info->url());
-        DeviceManagerInstance.invokeUnmountBlockDevice(devId);
+        if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()) {
+            QString cleartextId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
+            ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(cleartextId, {}, [=](bool ok, dfmmount::DeviceError err) {
+                if (ok) {
+                    ComputerUtils::deviceServIns()->lockBlockDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
+                        if (!ok) {
+                            qInfo() << "lock device failed: " << devId << static_cast<int>(err);
+                        }
+                    });
+                } else {
+                    qInfo() << "unmount cleartext device failed: " << cleartextId << static_cast<int>(err);
+                }
+            });
+        } else {
+            ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
+                if (!ok) {
+                    qInfo() << "unlock device failed: " << devId << static_cast<int>(err);
+                }
+            });
+        }
     } else if (info->suffix() == SuffixInfo::kProtocol) {
         devId = ComputerUtils::getProtocolDevIdByUrl(info->url());
-        DeviceManagerInstance.invokeUnmountProtocolDevice(devId);
+        ComputerUtils::deviceServIns()->unmountProtocolDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
+            if (!ok)
+                qWarning() << "unmount protocol device failed: " << devId << static_cast<int>(err);
+        });
     } else {
         qDebug() << info->url() << "is not support " << __FUNCTION__;
     }

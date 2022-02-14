@@ -58,8 +58,8 @@ public:
 
     DDialog *showQueryScanningDialog(const QString &title);
     void showErrorDialog(const QString &title, const QString &message);
-    void showErrorDialogWhenMountNetworkDeviceFailed(DFMMOUNT::DeviceError err);
     int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
+    void showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError err);
     void addTask(const JobHandlePointer &task);
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();

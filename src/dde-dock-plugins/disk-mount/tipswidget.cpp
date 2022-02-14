@@ -39,13 +39,13 @@ TipsWidget::TipsWidget(QWidget *parent)
 void TipsWidget::setText(const QString &text)
 {
     curText = text;
-    setFixedSize(fontMetrics().width(text) + 6, fontMetrics().height());
+    setFixedSize(fontMetrics().width(text) + 20, fontMetrics().height());
     update();
 }
 
 void TipsWidget::refreshFont()
 {
-    setFixedSize(fontMetrics().width(curText) + 6, fontMetrics().height());
+    setFixedSize(fontMetrics().width(curText) + 20, fontMetrics().height());
     update();
 }
 

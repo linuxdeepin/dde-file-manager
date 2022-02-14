@@ -58,9 +58,7 @@ public:
 
     void invokeRenameBlockDevice(const QString &id, const QString &newName);
     QString invokeUnlockBlockDevice(const QString &id, const QString &passwd);
-    QString invokeMountBlockDevice(const QString &id);
     void invokeUnmountBlockDevice(const QString &id);
-    QString invokeMountProtocolDevice(const QString &id);
     void invokeUnmountProtocolDevice(const QString &id);
 
     using HandleAfterUnlock = std::function<void(const QString &unlockResult)>;

@@ -73,6 +73,7 @@ public slots:
     void DetachProtocolDevice(QString id);
     void DetachAllMountedDevices();
     void DetachAllMountedDevicesForced();
+
     QString MountBlockDevice(QString id);
     void UnmountBlockDevice(QString id);
     void UnmountBlockDeviceForced(QString id);

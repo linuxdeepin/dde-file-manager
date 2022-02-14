@@ -5,16 +5,16 @@ project(ddplugin-devices)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(INTERFACES_H
-    interfaces.h
+    device.h
     devicemanagerdbus.h
     dbus_adaptor/devicemanagerdbus_adaptor.h
 )
 
 set(INTERFACES_CPP
-    interfaces.cpp
+    device.cpp
     devicemanagerdbus.cpp
     dbus_adaptor/devicemanagerdbus_adaptor.cpp
-    interfaces.json
+    device.json
 )
 
 add_library(${PROJECT_NAME}

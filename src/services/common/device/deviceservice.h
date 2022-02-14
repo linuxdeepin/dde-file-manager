@@ -26,8 +26,7 @@
 #include "dfm_common_service_global.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
-
-#include <dfm-mount/dfmprotocoldevice.h>
+#include <dfm-mount/base/dfmmount_global.h>
 
 DSC_BEGIN_NAMESPACE
 class DeviceMonitorHandler;
@@ -55,29 +54,34 @@ public:   // operations
     void detachAllMountedBlockDevices();
     void detachAllMountedProtocolDevices();
 
-    void mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+    void mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallbackWithMessage callback = nullptr);
     QString mountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
-    void unmountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+
+    void unmountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallback callback = nullptr);
     bool unmountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
-    void ejectBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+
+    void ejectBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallback callback = nullptr);
     bool ejectBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
-    void poweroffBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+
+    void poweroffBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallback callback = nullptr);
     bool poweroffBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
+
+    void renameBlockDeviceAsync(const QString &deviceId, const QString &newName, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallback callback = nullptr);
     bool renameBlockDevice(const QString &deviceId, const QString &newName, const QVariantMap &opts = {});
-    void renameBlockDeviceAsync(const QString &deviceId, const QString &newName, const QVariantMap &opts = {});
 
     QString unlockBlockDevice(const QString &passwd, const QString &deviceId, const QVariantMap &opts = {});
-    void unlockBlockDeviceAsync(const QString &passwd, const QString &deviceId, const QVariantMap &opts = {});
-    bool preLockBlock(const QString &deviceId);
+    void unlockBlockDeviceAsync(const QString &passwd, const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallbackWithMessage callback = nullptr);
+
     bool lockBlockDevice(const QString &deviceId, const QVariantMap &opts = {});
-    void lockBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
+    void lockBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallback callback = nullptr);
 
+    void mountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallbackWithMessage callback = nullptr);
     QString mountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
-    void mountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
-    bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
-    void unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {});
 
-    void mountNetworkDevice(const QString &address, dfmmount::MountResult callback);
+    void unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallback callback = nullptr);
+    bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
+
+    void mountNetworkDevice(const QString &address, dfmmount::DeviceOperateCallbackWithMessage callback);
 
 public:   // status
     bool isBlockDeviceMonitorWorking() const;
