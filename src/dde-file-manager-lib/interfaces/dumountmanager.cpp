@@ -240,16 +240,8 @@ bool DUMountManager::ejectDrive(const QString &driveName)
             qInfo() << "eject done:" << driveName;
             return true;
         }
-    }
-
-    if (drv->removable()) {
-        drv->eject({});
-
-        if (drv->lastError().isValid()) {
-            qWarning() << drv->lastError() << "id:" << drv->lastError().type();
-            errorMsg = tr("The device is busy, cannot remove now");
-            return false;
-        }
+        qInfo() << "drive is optical but is unejectable.";
+        return false;
     }
 
     if (drv->canPowerOff()) {
