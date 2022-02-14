@@ -20,13 +20,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "localfileinfo.h"
+#include "dfileiconprovider.h"
 #include "private/localfileinfo_p.h"
 #include "base/urlroute.h"
 #include "base/standardpaths.h"
 #include "base/schemefactory.h"
 #include "utils/fileutils.h"
 #include "utils/systempathutil.h"
-#include "dfileiconprovider.h"
+#include "utils/chinese2pinyin.h"
 
 #include <dfm-io/local/dlocalfileinfo.h>
 
@@ -1176,6 +1177,18 @@ QString LocalFileInfo::sizeFormat() const
 QString LocalFileInfo::fileDisplayName() const
 {
     return fileName();
+}
+
+/*!
+ * \brief fileDisplayPinyinName 文件的拼音名称，一般为文件的显示名称转为拼音
+ *
+ * \return QString 文件的拼音名称
+ */
+QString LocalFileInfo::fileDisplayPinyinName() const
+{
+    const QString &displayName = fileDisplayName();
+
+    return Pinyin::Chinese2Pinyin(displayName);
 }
 /*!
  * \brief toQFileInfo 获取他的QFileInfo实例对象

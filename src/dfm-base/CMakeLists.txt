@@ -17,6 +17,7 @@ set(QRC_FILE
     qrc/themes/themes.qrc
     qrc/configure.qrc
     qrc/resources/resources.qrc
+    qrc/chinese2pinyin/chinese2pinyin.qrc
     )
 qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
