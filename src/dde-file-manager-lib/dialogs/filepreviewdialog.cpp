@@ -365,6 +365,9 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
             close();
             return true;
         }
+        case Qt::Key_Escape:
+            close();
+            break;
         default:
             break;
         }
@@ -604,7 +607,7 @@ void FilePreviewDialog::done(int r)
 
 void FilePreviewDialog::DoneCurrent()
 {
-    if (m_preview) {
+    if (this != nullptr && m_preview) {
         m_preview->DoneCurrent();
     }
 }
