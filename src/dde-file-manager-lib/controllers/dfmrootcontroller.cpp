@@ -207,7 +207,8 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         reloadBlkName(blks, blk);
 
         using namespace DFM_NAMESPACE;
-        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
+        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()
+                && !blk->isLoopDevice()) {
             qDebug()  << "block device is ignored by hintSystem&HiddenSystemPartition:"  << blks;
             continue;
         }
