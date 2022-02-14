@@ -78,6 +78,8 @@ bool DoMoveToTrashFilesWorker::statisticsFilesSize()
     trashLocalDir = QString("%1/.local/share/Trash").arg(QDir::homePath());
     targetStorageInfo.reset(new QStorageInfo(trashLocalDir));
 
+    targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
+
     return true;
 }
 /*!
@@ -96,14 +98,14 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             return false;
 
         if (url.path().startsWith(targetUrl.path())) {
-            compeleteFilesCount++;
+            completeFilesCount++;
             continue;
         }
 
         // url是否可以删除 canrename
         if (!isCanMoveToTrash(url, &result)) {
             if (result) {
-                compeleteFilesCount++;
+                completeFilesCount++;
                 continue;
             }
 
@@ -116,7 +118,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
             if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, url, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
-                compeleteFilesCount++;
+                completeFilesCount++;
                 continue;
             }
         }
@@ -263,6 +265,11 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
         return action == AbstractJobHandler::SupportAction::kSkipAction;
     }
 
+    if (!isConvert) {
+        completeFiles->append(fileInfo->url());
+        completeFiles->append(QUrl::fromLocalFile(targetPath));
+    }
+
     handler->deleteFile(fileInfo->url());
 
     return true;
@@ -285,6 +292,13 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
     emitCurrentTaskNotify(fileInfo->url(), targetUrl);
 
+    // ToDo:: 不是检查文件是否超过1G，再检查磁盘空间是否够用，再执行拷贝文件，再去删除文件
+    if (checkFileOutOfLimit(fileInfo)) {
+        completeFilesCount++;
+        // ToDo::大于1G，执行彻底删除代码
+        return deleteFile(sourceUrl, QUrl(), fileInfo, &result);
+    }
+
     // ToDo::判断是否同盘，是就直接rename
     if (isSameDisk == 1) {
 
@@ -296,19 +310,17 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
             }
         } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
-        compeleteFilesCount++;
+        completeFilesCount++;
+
+        if (!isConvert && action == AbstractJobHandler::SupportAction::kNoAction) {
+            completeFiles->append(fileInfo->url());
+            completeFiles->append(QUrl::fromLocalFile(targetPath));
+        }
 
         if (action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kNoAction)
             return true;
-
-        return false;
     }
 
-    // ToDo:: 不是检查文件是否操过1G，再检查磁盘空间是否够用，再执行拷贝文件，再去删除文件
-    if (checkFileOutOfLimit(fileInfo)) {
-        // ToDo::大于1G，执行侧底删除代码
-        return deleteFile(sourceUrl, QUrl(), fileInfo, &result);
-    }
     // 检查磁盘空间是否不足
     if (!checkDiskSpaceAvailable(sourceUrl, QUrl::fromLocalFile(targetPath), targetStorageInfo, &result))
         return result;

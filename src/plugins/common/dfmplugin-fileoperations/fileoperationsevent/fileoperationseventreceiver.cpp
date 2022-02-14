@@ -153,6 +153,47 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
     }
 }
 
+void FileOperationsEventReceiver::initDBus()
+{
+    qInfo() << "Start initilize dbus: `OperationsStackManagerInterface`";
+    // Note: the plugin depends on `dde-file-manager-server`!
+    // the plugin will not work if `dde-file-manager-server` not run.
+    static const QString OperationsStackService = "com.deepin.filemanager.service";
+    static const QString OperationsStackPath = "com/deepin/filemanager/service/OperationsStackManager";
+    operationsStackDbus.reset(new OperationsStackManagerInterface(OperationsStackService,
+                                                                  OperationsStackPath,
+                                                                  QDBusConnection::sessionBus(),
+                                                                  this));
+    qInfo() << "Finish initilize dbus: `OperationsStackManagerInterface`";
+}
+
+bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVariantMap &ret)
+{
+    if (!ret.contains("event") || !ret.contains("sources") || !ret.contains("target"))
+        return false;
+    GlobalEventType eventType = ret.value("event").value<GlobalEventType>();
+    QSharedPointer<QList<QUrl>> sources /*= ret.value("sources").value<QSharedPointer<QList<QUrl>>>()*/;
+    QUrl target = ret.value("sources").value<QUrl>();
+    switch (eventType) {
+    case kCutFile:
+        handleOperationCut(windowId, *sources, target, AbstractJobHandler::JobFlag::kRevocation);
+        break;
+    case kDeleteFiles:
+        handleOperationDeletes(windowId, *sources, AbstractJobHandler::JobFlag::kRevocation);
+        break;
+    case kMoveToTrash:
+        handleOperationMoveToTrash(windowId, *sources, AbstractJobHandler::JobFlag::kRevocation);
+        break;
+    case kRestoreFromTrash:
+        handleOperationRestoreFromTrash(windowId, *sources, AbstractJobHandler::JobFlag::kRevocation);
+        break;
+    default:
+        return false;
+    }
+
+    return true;
+}
+
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
@@ -847,6 +888,49 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
                                           windowId, urls, result, error);
 
     return ok;
+}
+
+bool FileOperationsEventReceiver::handleOperationSaveOperations(const quint64 windowId, QVariantMap values)
+{
+    if (operationsStackDbus) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        operationsStackDbus->SaveOperations(values);
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return true;
+    }
+    return false;
+}
+
+bool FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack(const quint64 windowId)
+{
+    if (operationsStackDbus) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        operationsStackDbus->CleanOperations();
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return true;
+    }
+    return false;
+}
+
+bool FileOperationsEventReceiver::handleOperationRevocation(const quint64 windowId)
+{
+    QVariantMap ret;
+    if (operationsStackDbus) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
+        auto &&reply = operationsStackDbus->RevocationOperations();
+        reply.waitForFinished();
+        if (reply.isValid())
+            ret = reply.value();
+        else {
+            qCritical() << "D-Bus reply is invalid " << reply.error();
+            return false;
+        }
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+
+        return revocation(windowId, ret);
+    }
+
+    return false;
 }
 
 void FileOperationsEventReceiver::invokeRegister(const QString scheme, const FileOperationsFunctions functions)

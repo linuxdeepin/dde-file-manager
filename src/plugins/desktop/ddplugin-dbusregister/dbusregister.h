@@ -29,6 +29,7 @@
 
 class QDBusConnection;
 class DeviceManagerDBus;
+class OperationsStackManagerDbus;
 class DBusRegister : public dpf::Plugin
 {
     Q_OBJECT
@@ -42,9 +43,12 @@ public:
 private:
     static std::once_flag &onceFlag();
     void initServiceDBusInterfaces(QDBusConnection &connection);
+    void initDeviceDBus(QDBusConnection &connection);
+    void initOperationsDBus(QDBusConnection &connection);
 
 private:
     QScopedPointer<DeviceManagerDBus> deviceManager;
+    QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
 };
 
 #endif   // INTERFACES_H

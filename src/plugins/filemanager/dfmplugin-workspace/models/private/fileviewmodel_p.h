@@ -29,7 +29,6 @@
 
 #include <QReadWriteLock>
 #include <QQueue>
-#include <QSemaphore>
 #include <QTimer>
 #include <QPointer>
 

@@ -132,8 +132,9 @@ bool DoCutFilesWorker::cutFiles()
 bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo)
 {
     // try rename
-    if (doRenameFile(fromInfo, toInfo))
+    if (doRenameFile(fromInfo, toInfo)) {
         return true;
+    }
 
     bool result = false;
     // check space
@@ -220,8 +221,13 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
         if (sourceInfo->isSymLink()) {
             // TODO(lanxs)
 
-            if (targetInfo->exists()) {
-                bool succ = deleteFile(sourceUrl, targetUrl, targetInfo, &result);
+            if (newTargetInfo->exists()) {
+
+                if (!isConvert && targetInfo == this->targetInfo) {
+                    completeFiles->append(sourceUrl);
+                    completeTargetFiles->append(newTargetInfo->url());
+                }
+                bool succ = deleteFile(sourceUrl, targetUrl, sourceInfo, &result);
                 if (!succ) {
                     return result;
                 }
@@ -240,6 +246,10 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                 return action == AbstractJobHandler::SupportAction::kSkipAction;
             }
 
+            if (!isConvert && targetInfo == this->targetInfo) {
+                completeFiles->append(sourceUrl);
+                completeTargetFiles->append(newTargetInfo->url());
+            }
             // remove old link file
             if (!deleteFile(sourceUrl, targetUrl, sourceInfo, &result))
                 return result;

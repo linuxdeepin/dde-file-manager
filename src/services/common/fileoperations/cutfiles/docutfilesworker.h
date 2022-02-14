@@ -61,7 +61,6 @@ protected:
                                                            const QString &errorMsg = QString());
 
 private:
-    AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer
     QSharedPointer<QStorageInfo> targetStorageInfo { nullptr };   // target file's device infor
     int totalMoveFilesCount = 1;
     int completedFilesCount = 0;

@@ -100,6 +100,9 @@ public:
                         AbstractFileInfoPointer &newTargetInfo,
                         QString &fileNewName,
                         bool *result);
+
+protected:
+    AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer
 };
 
 DSC_END_NAMESPACE

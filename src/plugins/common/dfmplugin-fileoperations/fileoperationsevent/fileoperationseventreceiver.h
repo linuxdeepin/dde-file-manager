@@ -24,6 +24,7 @@
 #define FILEOPERATIONSEVENTRECEIVER_H
 
 #include "dfmplugin_fileoperations_global.h"
+#include "dbus_interface/operationsstackmanagerdbus_interface.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
@@ -40,7 +41,6 @@ Q_DECLARE_METATYPE(QList<QUrl>)
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 class FileCopyMoveJob;
-
 class FileOperationsEventReceiver final : public QObject
 {
     Q_OBJECT
@@ -170,6 +170,9 @@ public slots:
                                              QMimeData *data);
     bool handleOperationOpenInTerminal(const quint64 windowId,
                                        const QList<QUrl> urls);
+    bool handleOperationSaveOperations(const quint64 windowId, QVariantMap values);
+    bool handleOperationCleanSaveOperationsStack(const quint64 windowId);
+    bool handleOperationRevocation(const quint64 windowId);
 
 private slots:
     void invokeRegister(const QString scheme, const FileOperationsFunctions functions);
@@ -185,6 +188,9 @@ private:
     QString newDocmentName(QString targetdir,
                            const QString &baseName,
                            const QString &suffix);
+    void initDBus();
+
+    bool revocation(const quint64 windowId, const QVariantMap &ret);
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };
@@ -193,8 +199,11 @@ private:
     QPointer<DSC_NAMESPACE::DialogService> dialogService { nullptr };
     QMap<QString, FileOperationsFunctions> functions;
     QSharedPointer<QMutex> functionsMutex { nullptr };
+    QSharedPointer<OperationsStackManagerInterface> operationsStackDbus;
 };
 
 DPFILEOPERATIONS_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QSharedPointer<QList<QUrl>>)
 
 #endif   // FILEOPERATIONSEVENTRECEIVER_H

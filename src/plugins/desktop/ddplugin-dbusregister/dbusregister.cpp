@@ -25,6 +25,7 @@
 #include "services/common/device/deviceservice.h"
 #include "devicemanagerdbus.h"
 #include "dbus_adaptor/devicemanagerdbus_adaptor.h"
+#include "dbus_adaptor/operationsstackmanagerdbus_adaptor.h"
 
 #include "dfm-base/base/urlroute.h"
 
@@ -77,15 +78,33 @@ void DBusRegister::initServiceDBusInterfaces(QDBusConnection &connection)
             qWarning("Cannot register the \"com.deepin.filemanager.service\" service.\n");
             return;
         }
-
-        // register object
-        deviceManager.reset(new DeviceManagerDBus);
-        Q_UNUSED(new DeviceManagerAdaptor(deviceManager.data()));
-        if (!connection.registerObject("/com/deepin/filemanager/service/DeviceManager",
-                                       deviceManager.data())) {
-            qWarning("Cannot register the \"/com/deepin/filemanager/service/DeviceManager\" object.\n");
-            deviceManager->deleteLater();
-            return;
-        }
+        initDeviceDBus(connection);
+        initOperationsDBus(connection);
     });
+}
+
+void DBusRegister::initDeviceDBus(QDBusConnection &connection)
+{
+    // register object
+    deviceManager.reset(new DeviceManagerDBus);
+    Q_UNUSED(new DeviceManagerAdaptor(deviceManager.data()));
+    if (!connection.registerObject("/com/deepin/filemanager/service/DeviceManager",
+                                   deviceManager.data())) {
+        qWarning("Cannot register the \"/com/deepin/filemanager/service/DeviceManager\" object.\n");
+        deviceManager.reset(nullptr);
+        return;
+    }
+}
+
+void DBusRegister::initOperationsDBus(QDBusConnection &connection)
+{
+    // register object
+    operationsStackManager.reset(new OperationsStackManagerDbus);
+    Q_UNUSED(new OperationsStackManagerAdaptor(operationsStackManager.data()));
+    if (!connection.registerObject("/com/deepin/filemanager/service/OperationsStackManager",
+                                   operationsStackManager.data())) {
+        qWarning("Cannot register the \"/com/deepin/filemanager/service/OperationsStackManager\" object.\n");
+        operationsStackManager.reset(nullptr);
+        return;
+    }
 }

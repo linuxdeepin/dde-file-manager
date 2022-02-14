@@ -246,7 +246,7 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
         return result;
 
     bool reslut = false;
-
+    bool oldExist = newTargetInfo->exists();
     if (fromInfo->isSymLink()) {
         reslut = creatSystemLink(fromInfo, newTargetInfo);
     } else if (fromInfo->isDir()) {
@@ -254,6 +254,12 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
     } else {
         reslut = checkAndCopyFile(fromInfo, newTargetInfo);
     }
+
+    if (targetInfo == toInfo && !oldExist && newTargetInfo->exists()) {
+        completeFiles->append(fromInfo->url());
+        completeTargetFiles->append(newTargetInfo->url());
+    }
+
     return reslut;
 }
 
@@ -823,9 +829,9 @@ bool DoCopyFilesWorker::checkAndcopyDir(const AbstractFileInfoPointer &fromInfo,
     QFileDevice::Permissions permissions = fromInfo->permissions();
     if (!toInfo->exists()) {
         do {
-            if (handler->mkdir(toInfo->url())) {
+            if (handler->mkdir(toInfo->url()))
                 break;
-            }
+
             action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kMkdirError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
         cancelThreadProcessingError();

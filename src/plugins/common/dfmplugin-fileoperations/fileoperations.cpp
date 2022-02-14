@@ -209,4 +209,13 @@ void FileOperations::initEventHandle()
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kWriteCustomToClipboard,
                                             FileOperationsEventReceiver::instance(),
                                             &FileOperationsEventReceiver::handleOperationWriteDataToClipboard);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSaveOperator,
+                                            FileOperationsEventReceiver::instance(),
+                                            &FileOperationsEventReceiver::handleOperationSaveOperations);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCleanSaveOperator,
+                                            FileOperationsEventReceiver::instance(),
+                                            &FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRevocation,
+                                            FileOperationsEventReceiver::instance(),
+                                            &FileOperationsEventReceiver::handleOperationRevocation);
 }

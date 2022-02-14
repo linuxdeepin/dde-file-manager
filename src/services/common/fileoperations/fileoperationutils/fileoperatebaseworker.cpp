@@ -530,15 +530,23 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     if (!doCheckFile(fromInfo, toInfo, newTargetInfo, result))
         return ok;
 
+    bool oldExist = newTargetInfo->exists();
+
     if (fromInfo->isSymLink()) {
         ok = creatSystemLink(fromInfo, newTargetInfo, result);
-        if (!deleteFile(fromInfo->url(), toInfo->url(), fromInfo, result))
-            return false;
+        if (ok)
+            ok = deleteFile(fromInfo->url(), toInfo->url(), fromInfo, result);
     } else if (fromInfo->isDir()) {
         ok = copyDir(fromInfo, newTargetInfo, result);
     } else {
         ok = copyFile(fromInfo, newTargetInfo, result);
     }
+
+    if (!isConvert && !oldExist && newTargetInfo->exists() && targetInfo == toInfo) {
+        completeFiles->append(fromInfo->url());
+        completeFiles->append(newTargetInfo->url());
+    }
+
     return ok;
 }
 /*!

@@ -24,6 +24,9 @@
 #include "statisticsfilessize.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/framework.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -49,6 +52,7 @@ void AbstractWorker::setWorkArgs(const JobHandlePointer &handle, const QList<QUr
     initHandleConnects(handle);
     this->sourceUrls = sources;
     this->targetUrl = target;
+    isConvert = flags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
     jobFlags = flags;
 }
 
@@ -87,6 +91,7 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
             handlingErrorCondition->wakeAll();
     }
 }
+
 /*!
  * \brief AbstractWorker::stop stop task
  */
@@ -230,6 +235,8 @@ bool AbstractWorker::initArgs()
     if (!errorThreadIdQueueMutex)
         errorThreadIdQueueMutex.reset(new QMutex);
 
+    completeFiles.reset(new QList<QUrl>);
+
     return true;
 }
 /*!
@@ -246,6 +253,8 @@ void AbstractWorker::endWork()
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
 
     emit finishedNotify(info);
+
+    saveOperations();
 }
 /*!
  * \brief AbstractWorker::emitStateChangedNotify send state changed signal
@@ -470,6 +479,42 @@ QString AbstractWorker::getNonExistFileName(const AbstractFileInfoPointer fromIn
     } while (targetFileInfo && targetFileInfo->exists());
 
     return newFileName;
+}
+
+void AbstractWorker::saveOperations()
+{
+    if (!isConvert && !completeTargetFiles->isEmpty()) {
+        // send saveoperator event
+        if (jobType == AbstractJobHandler::JobType::kCopyType || jobType == AbstractJobHandler::JobType::kCutType
+            || jobType == AbstractJobHandler::JobType::kMoveToTrashType || jobType == AbstractJobHandler::JobType::kRestoreType) {
+            GlobalEventType operatorType = kDeleteFiles;
+            QUrl targetUrl;
+            switch (jobType) {
+            case AbstractJobHandler::JobType::kCopyType:
+                operatorType = kDeleteFiles;
+                targetUrl = UrlRoute::urlParent(completeFiles->first());
+                break;
+            case AbstractJobHandler::JobType::kCutType:
+                operatorType = kCutFile;
+                targetUrl = UrlRoute::urlParent(completeFiles->first());
+                break;
+            case AbstractJobHandler::JobType::kMoveToTrashType:
+                operatorType = kRestoreFromTrash;
+                break;
+            case AbstractJobHandler::JobType::kRestoreType:
+                operatorType = kMoveToTrash;
+                break;
+            default:
+                operatorType = kDeleteFiles;
+                break;
+            }
+            QVariantMap values;
+            values.insert("event", QVariant::fromValue(operatorType));
+            values.insert("sources", QVariant::fromValue(completeTargetFiles));
+            values.insert("target", QVariant::fromValue(targetUrl));
+            dpfInstance.eventDispatcher().publish(kSaveOperator, values);
+        }
+    }
 }
 
 AbstractWorker::~AbstractWorker()

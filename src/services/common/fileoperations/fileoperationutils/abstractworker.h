@@ -138,6 +138,7 @@ protected:
     explicit AbstractWorker(QObject *parent = nullptr);
     QString formatFileName(const QString &fileName);
     QString getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir);
+    void saveOperations();
 
 public:
     virtual ~AbstractWorker();
@@ -158,6 +159,7 @@ public:
     AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
     bool isSourceFileLocal { false };   // 源文件是否在本地设备上
     bool isTargetFileLocal { false };   // 目标文件是否在本地设备上
+    bool isConvert { false };   // is convert operation
     QSharedPointer<QWaitCondition> waitCondition { nullptr };   // 线程等待
     QSharedPointer<QMutex> conditionMutex { nullptr };   // 线程等待锁
     QSharedPointer<QList<QUrl>> allFilesList { nullptr };   // 所有源文件的统计文件
@@ -168,6 +170,7 @@ public:
     QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
     QSharedPointer<QThread> updateProccessThread { nullptr };   // update proccess timer thread
     QSharedPointer<QList<QUrl>> completeFiles { nullptr };   // List of all copied files
+    QSharedPointer<QList<QUrl>> completeTargetFiles { nullptr };   // List of all complete target files
 };
 
 DSC_END_NAMESPACE

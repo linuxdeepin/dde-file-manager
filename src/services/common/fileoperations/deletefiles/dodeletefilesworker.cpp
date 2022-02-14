@@ -104,7 +104,11 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
             }
         } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
-        deleteFilesCount++;
+        if (sourceUrls.contains(url)) {
+            if (action != AbstractJobHandler::SupportAction::kNoAction)
+                completeFiles->append(url);
+            deleteFilesCount++;
+        }
 
         if (action == AbstractJobHandler::SupportAction::kSkipAction)
             continue;
@@ -136,8 +140,12 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
             ok = deleteDirOnOtherDevice(info);
         }
 
+        deleteFilesCount++;
+
         if (!ok)
             return false;
+
+        completeFiles->append(url);
     }
     return true;
 }

@@ -49,6 +49,7 @@ public:
         kCopyIntegrityChecking = 0x40,   // 复制文件时进行完整性校验
         kDeleteForceDeleteFile = 0x80,   // 强制删除文件夹(去除文件夹的只读权限)
         kDontFormatFileName = 0x100,   // 拷贝时不处理文件名称
+        kRevocation = 0x200,   // 拷贝时不处理文件名称
     };
     Q_ENUM(JobFlag)
     Q_DECLARE_FLAGS(JobFlags, JobFlag)

@@ -25,6 +25,8 @@
 
 #include "dfm_base_global.h"
 
+#include <QObject>
+
 DFMBASE_BEGIN_NAMESPACE
 
 /*!
@@ -74,4 +76,7 @@ enum GlobalEventType {
     kMaxCustom = 65535   // last user event id
 };
 DFMBASE_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::GlobalEventType)
+
 #endif   // DFM_EVENT_DEFINES_H
