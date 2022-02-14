@@ -288,7 +288,7 @@ void DFMVaultRemovePages::slotCheckAuthorizationFinished(Authority::Result resul
 void DFMVaultRemovePages::onLockVault(int state)
 {
     if (m_bRemoveVault) {
-        if (state == 0) {
+        if (state == 0 || state == 1) {
             // 切换至删除界面
             showRemoveWidget();
             emit accepted();
