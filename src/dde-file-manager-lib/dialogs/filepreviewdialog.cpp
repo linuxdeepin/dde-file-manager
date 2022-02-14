@@ -495,7 +495,7 @@ void FilePreviewDialog::switchToPage(int index)
         const QString &general_key = generalKey(key);
 
         if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)
-                          || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
+                          || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key)) && !info->isDesktopFile()) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
                 m_preview->contentWidget()->updateGeometry();
                 adjustSize();
@@ -509,7 +509,9 @@ void FilePreviewDialog::switchToPage(int index)
         preview = DFMFilePreviewFactory::create(key);
 
         if (!preview && general_key != key) {
-            preview = DFMFilePreviewFactory::create(general_key);
+            if(!info->isDesktopFile()){
+                preview = DFMFilePreviewFactory::create(general_key);
+            }
         }
 
         if (preview) {
