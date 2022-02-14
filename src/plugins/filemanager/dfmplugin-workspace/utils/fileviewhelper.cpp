@@ -274,7 +274,7 @@ void FileViewHelper::init()
         auto action = ClipBoard::instance()->clipboardAction();
         auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
         auto windowId = WorkspaceHelper::instance()->windowId(parent());
-        WorkspaceHelper::instance()->actionPastFiles(windowId, action, sourceUrls, parent()->rootUrl());
+        WorkspaceHelper::instance()->actionPasteFiles(windowId, action, sourceUrls, parent()->rootUrl());
     });
 
     parent()->addAction(copyAction);

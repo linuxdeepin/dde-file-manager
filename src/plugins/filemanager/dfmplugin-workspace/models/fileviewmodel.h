@@ -66,6 +66,12 @@ public:
     virtual bool canFetchMore(const QModelIndex &parent) const override;
     virtual QVariant headerData(int column, Qt::Orientation, int role) const override;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
+    virtual QStringList mimeTypes() const override;
+    virtual QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+
+    virtual Qt::DropActions supportedDragActions() const override;
+    virtual Qt::DropActions supportedDropActions() const override;
 
     virtual void updateViewItem(const QModelIndex &index);
 

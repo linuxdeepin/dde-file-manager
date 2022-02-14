@@ -39,3 +39,8 @@ bool dfmbase::WindowUtils::keyCtrlIsPressed()
 {
     return qApp->keyboardModifiers() == Qt::ControlModifier;
 }
+
+bool dfmbase::WindowUtils::keyAltIsPressed()
+{
+    return qApp->keyboardModifiers() == Qt::AltModifier;
+}

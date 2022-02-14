@@ -27,6 +27,8 @@
 #include "models/filesortfilterproxymodel.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
+#include "utils/dragdrophelper.h"
+#include "utils/viewdrawhelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
@@ -37,6 +39,8 @@ DPWORKSPACE_USE_NAMESPACE
 FileViewPrivate::FileViewPrivate(FileView *qq)
     : q(qq)
 {
+    dragDropHelper = new DragDropHelper(qq);
+    viewDrawHelper = new ViewDrawHelper(qq);
 }
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
@@ -163,6 +167,20 @@ bool FileViewPrivate::normalKeyPressEventHandle(const QKeyEvent *event)
     }
 
     return false;
+}
+
+QModelIndexList FileViewPrivate::selectedDraggableIndexes()
+{
+    QModelIndexList indexes = q->selectedIndexes();
+
+    auto isNotDragEnabled = [=](const QModelIndex &index) {
+        return !(q->model()->flags(index) & Qt::ItemIsDragEnabled);
+    };
+
+    indexes.erase(std::remove_if(indexes.begin(), indexes.end(), isNotDragEnabled),
+                  indexes.end());
+
+    return indexes;
 }
 
 bool FileViewPrivate::cdUp()

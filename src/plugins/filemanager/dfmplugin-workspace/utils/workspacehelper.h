@@ -65,9 +65,9 @@ public:
     void actionNewFolder(quint64 windowId, const QUrl &url);
     void actionRenameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl);
     void actionWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
-    void actionPastFiles(const quint64 windowId, const ClipBoard::ClipboardAction action,
-                         const QList<QUrl> &sourceUrls, const QUrl &target,
-                         const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
+    void actionPasteFiles(const quint64 windowId, const ClipBoard::ClipboardAction action,
+                          const QList<QUrl> &sourceUrls, const QUrl &target,
+                          const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);

@@ -216,6 +216,7 @@ public:
     virtual QString fileTypeDisplayName() const;
     virtual bool canRedirectionFileUrl() const;
     virtual QUrl redirectedFileUrl() const;
+    virtual bool canMoveOrCopy() const;
     virtual bool canDrop() const;
     virtual QUrl parentUrl() const;
     virtual Qt::DropActions supportedDragActions() const;

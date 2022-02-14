@@ -57,6 +57,9 @@ class FileViewPrivate
     QTimer *sortTimer { nullptr };
     QUrl url;
 
+    DragDropHelper *dragDropHelper { nullptr };
+    ViewDrawHelper *viewDrawHelper { nullptr };
+
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int currentIconSizeLevel = 1;
     FileViewItem::Roles currentSortRole = FileViewItem::Roles::kItemNameRole;
@@ -81,6 +84,7 @@ class FileViewPrivate
 
     bool processKeyPressEvent(QKeyEvent *event);
     bool normalKeyPressEventHandle(const QKeyEvent *event);
+    QModelIndexList selectedDraggableIndexes();
 
     bool cdUp();
     WorkspaceHelper::DirOpenMode currentDirOpenMode() const;

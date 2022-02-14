@@ -32,6 +32,8 @@
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "utils/fileviewhelper.h"
+#include "utils/dragdrophelper.h"
+#include "utils/viewdrawhelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -41,6 +43,7 @@
 #include <QScrollBar>
 #include <QScroller>
 #include <QTimer>
+#include <QDrag>
 
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -56,6 +59,10 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setTextElideMode(Qt::ElideMiddle);
     setAlternatingRowColors(false);
     setSelectionRectVisible(true);
+    setDefaultDropAction(Qt::CopyAction);
+    setDragDropOverwriteMode(true);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setDragEnabled(true);
 
     initializeModel();
     initializeDelegate();
@@ -442,6 +449,11 @@ bool FileView::isSelected(const QModelIndex &index) const
     return selectionModel()->isSelected(index);
 }
 
+QModelIndex FileView::currentPressIndex() const
+{
+    return d->currentPressedIndex;
+}
+
 int FileView::itemCountForRow() const
 {
 
@@ -572,6 +584,9 @@ void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
 {
     Q_UNUSED(flags)
 
+    if (flags == QItemSelectionModel::NoUpdate)
+        return;
+
     // select with shift
     if (WindowUtils::keyShiftIsPressed()) {
         if (!d->currentPressedIndex.isValid()) {
@@ -625,6 +640,10 @@ void FileView::mousePressEvent(QMouseEvent *event)
 {
     switch (event->button()) {
     case Qt::LeftButton: {
+        if (dragDropMode() != NoDragDrop) {
+            setDragDropMode(DragDrop);
+        }
+
         bool isEmptyArea = FileViewHelper::isEmptyArea(this, event->pos());
 
         QModelIndex index = indexAt(event->pos());
@@ -639,12 +658,50 @@ void FileView::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void FileView::mouseMoveEvent(QMouseEvent *event)
+{
+    DListView::mouseMoveEvent(event);
+}
+
 void FileView::mouseReleaseEvent(QMouseEvent *event)
 {
     d->currentSelection = QItemSelection();
+    d->currentPressedIndex = QModelIndex();
 
     if (!QScroller::hasScroller(this))
         return DListView::mouseReleaseEvent(event);
+}
+
+void FileView::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (d->dragDropHelper->dragEnter(event))
+        return;
+
+    DListView::dragEnterEvent(event);
+}
+
+void FileView::dragMoveEvent(QDragMoveEvent *event)
+{
+    if (d->dragDropHelper->dragMove(event))
+        return;
+
+    DListView::dragMoveEvent(event);
+}
+
+void FileView::dragLeaveEvent(QDragLeaveEvent *event)
+{
+    if (d->dragDropHelper->dragLeave(event))
+        return;
+
+    DListView::dragLeaveEvent(event);
+}
+
+void FileView::dropEvent(QDropEvent *event)
+{
+    if (d->dragDropHelper->drop(event))
+        return;
+
+    DListView::dropEvent(event);
 }
 
 QModelIndex FileView::indexAt(const QPoint &pos) const
@@ -712,6 +769,52 @@ void FileView::updateGeometries()
     DListView::updateGeometries();
 }
 
+void FileView::startDrag(Qt::DropActions supportedActions)
+{
+    QModelIndexList indexes = d->selectedDraggableIndexes();
+    if (!indexes.isEmpty()) {
+        if (indexes.count() == 1) {
+            DListView::startDrag(supportedActions);
+            return;
+        }
+
+        QMimeData *data = model()->mimeData(indexes);
+        if (!data)
+            return;
+
+        QPixmap pixmap = d->viewDrawHelper->renderDragPixmap(indexes);
+        QDrag *drag = new QDrag(this);
+        drag->setPixmap(pixmap);
+        drag->setMimeData(data);
+        drag->setHotSpot(QPoint(static_cast<int>(pixmap.size().width() / (2 * pixmap.devicePixelRatio())),
+                                static_cast<int>(pixmap.size().height() / (2 * pixmap.devicePixelRatio()))));
+
+        Qt::DropAction dropAction = Qt::IgnoreAction;
+        Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
+        if (defaultDropAction != Qt::IgnoreAction && (supportedActions & defaultDropAction))
+            dropAction = defaultDropAction;
+        else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
+            dropAction = Qt::CopyAction;
+
+        drag->exec(supportedActions, dropAction);
+    }
+}
+
+QModelIndexList FileView::selectedIndexes() const
+{
+    FileSelectionModel *fileSelectionModel = dynamic_cast<FileSelectionModel *>(selectionModel());
+    if (fileSelectionModel)
+        return fileSelectionModel->selectedIndexes();
+
+    return QModelIndexList();
+}
+
+void FileView::showEvent(QShowEvent *event)
+{
+    DListView::showEvent(event);
+    setFocus();
+}
+
 void FileView::initializeModel()
 {
     FileViewModel *model = new FileViewModel(this);
@@ -719,12 +822,12 @@ void FileView::initializeModel()
     proxyModel->setSourceModel(model);
     setModel(proxyModel);
 
-    d->sortTimer = new QTimer(this);
-    d->sortTimer->setInterval(5);
-    d->sortTimer->setSingleShot(true);
-
-    FileSelectionModel *selectionModel = new FileSelectionModel(model);
+    FileSelectionModel *selectionModel = new FileSelectionModel(proxyModel, this);
     setSelectionModel(selectionModel);
+
+    d->sortTimer = new QTimer(this);
+    d->sortTimer->setInterval(20);
+    d->sortTimer->setSingleShot(true);
 }
 
 void FileView::initializeDelegate()
@@ -775,7 +878,7 @@ void FileView::updateStatusBar()
 
     QList<const FileViewItem *> list;
     for (const QModelIndex &index : selectedIndexes())
-        list << sourceItem(index);
+        list << model()->itemFromIndex(proxyModel()->mapToSource(index));
 
     d->statusBar->itemSelected(list);
 }

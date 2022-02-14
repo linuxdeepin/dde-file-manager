@@ -161,7 +161,7 @@ void WorkspaceHelper::actionWriteToClipboard(const quint64 windowId, const ClipB
     WorkspaceEventCaller::sendWriteToClipboard(windowId, action, urls);
 }
 
-void WorkspaceHelper::actionPastFiles(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
+void WorkspaceHelper::actionPasteFiles(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
 {
     if (action == ClipBoard::kCopyAction) {
         WorkspaceEventCaller::sendCopyFiles(windowId, sourceUrls, target, flags);

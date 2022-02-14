@@ -176,6 +176,34 @@ FileViewHelper *BaseItemDelegate::parent() const
     return dynamic_cast<FileViewHelper *>(QStyledItemDelegate::parent());
 }
 
+void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const
+{
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    QRectF iconRect = opt.rect;
+    iconRect.setSize(size);
+
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, QIcon::Normal);
+}
+
+QSize BaseItemDelegate::getIndexIconSize(const QStyleOptionViewItem &option, const QModelIndex &index, const QSize &size) const
+{
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    QRectF iconRect = opt.rect;
+    iconRect.setSize(size);
+
+    QSize iconSize = opt.icon.actualSize(iconRect.size().toSize(), QIcon::Normal, QIcon::Off);
+    if (iconSize.width() > size.width() || iconSize.height() > size.height())
+        iconSize.scale(size, Qt::KeepAspectRatio);
+
+    return iconSize;
+}
+
 QModelIndex BaseItemDelegate::editingIndex() const
 {
     Q_D(const BaseItemDelegate);

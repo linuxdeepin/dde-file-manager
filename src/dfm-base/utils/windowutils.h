@@ -33,6 +33,8 @@ public:
     static bool keyShiftIsPressed();
 
     static bool keyCtrlIsPressed();
+
+    static bool keyAltIsPressed();
 };
 
 DFMBASE_END_NAMESPACE

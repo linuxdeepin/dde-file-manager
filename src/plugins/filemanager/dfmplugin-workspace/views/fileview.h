@@ -32,6 +32,8 @@
 DWIDGET_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class DragDropHelper;
+class ViewDrawHelper;
 class FileViewItem;
 class FileViewModel;
 class FileViewPrivate;
@@ -40,6 +42,8 @@ class FileSortFilterProxyModel;
 class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseView
 {
     Q_OBJECT
+    friend class DragDropHelper;
+    friend class ViewDrawHelper;
     friend class FileViewPrivate;
     QSharedPointer<FileViewPrivate> d;
     using RandeIndex = QPair<int, int>;
@@ -95,6 +99,7 @@ public:
     }
 
     bool isSelected(const QModelIndex &index) const;
+    QModelIndex currentPressIndex() const;
 
     using DListView::edit;
     using DListView::updateGeometries;
@@ -119,8 +124,16 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
     void updateGeometries() override;
+    void startDrag(Qt::DropActions supportedActions) override;
+    QModelIndexList selectedIndexes() const override;
+    void showEvent(QShowEvent *event) override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);

@@ -988,6 +988,16 @@ QUrl dfmbase::AbstractFileInfo::redirectedFileUrl() const
 
     return QUrl();
 }
+
+bool dfmbase::AbstractFileInfo::canMoveOrCopy() const
+{
+    // TODO(liyigang) : temp impl
+    if (!isReadable())
+        return false;
+
+    return true;
+}
+
 /*!
  * \brief dfmbase::AbstractFileInfo::canDrop
  * \return

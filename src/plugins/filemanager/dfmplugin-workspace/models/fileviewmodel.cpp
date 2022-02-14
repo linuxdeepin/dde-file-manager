@@ -23,11 +23,13 @@
 #include "fileviewmodel.h"
 #include "private/fileviewmodel_p.h"
 #include "views/fileview.h"
+#include "utils/workspacehelper.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <QApplication>
 #include <QPointer>
 #include <QList>
+#include <QMimeData>
 
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
@@ -170,6 +172,9 @@ QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent)
 
 const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 {
+    if (-1 == index.row())
+        return d->root.data();
+
     if (0 > index.row() || index.row() >= d->nodeManager->childrenCount())
         return nullptr;
 
@@ -360,12 +365,108 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
     if (!item)
         return flags;
 
+    flags |= Qt::ItemIsDragEnabled;
+
     const AbstractFileInfoPointer &fileInfo = item->fileInfo();
     if (fileInfo && fileInfo->canRename()) {
         flags |= Qt::ItemIsEditable;
     }
+    if (fileInfo && fileInfo->isWritable()) {
+        if (fileInfo->canDrop())
+            flags |= Qt::ItemIsDropEnabled;
+        else
+            flags |= Qt::ItemNeverHasChildren;
+    }
 
     return flags;
+}
+
+QStringList FileViewModel::mimeTypes() const
+{
+    return QStringList(QLatin1String("text/uri-list"));
+}
+
+QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
+{
+    QList<QUrl> urls;
+    QSet<QUrl> urlsSet;
+    QList<QModelIndex>::const_iterator it = indexes.begin();
+
+    for (; it != indexes.end(); ++it) {
+        if ((*it).column() == 0) {
+            const AbstractFileInfoPointer &fileInfo = this->fileInfo(*it);
+            const QUrl &url = fileInfo->url();
+
+            if (urlsSet.contains(url))
+                continue;
+
+            urls << url;
+            urlsSet << url;
+        }
+    }
+
+    QMimeData *data = new QMimeData();
+    data->setUrls(urls);
+
+    return data;
+}
+
+bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    Q_UNUSED(row)
+    Q_UNUSED(column)
+
+    if (!parent.isValid())
+        return false;
+
+    QUrl targetUrl = itemFromIndex(parent)->url();
+    AbstractFileInfoPointer targetFileInfo = itemFromIndex(parent)->fileInfo();
+    const QList<QUrl> dropUrls = data->urls();
+
+    if (targetFileInfo->isSymLink()) {
+        // TODO: trans 'targetUrl' to source url
+    }
+
+    bool ret { true };
+
+    switch (action) {
+    case Qt::CopyAction:
+        if (dropUrls.count() > 0) {
+            // call copy
+            FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
+            quint64 windowID = WorkspaceHelper::instance()->windowId(view);
+            WorkspaceHelper::instance()->actionPasteFiles(windowID, ClipBoard::kCopyAction, dropUrls, targetUrl);
+        }
+        break;
+    case Qt::MoveAction:
+        if (dropUrls.count() > 0) {
+            // call move
+            FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
+            quint64 windowID = WorkspaceHelper::instance()->windowId(view);
+            WorkspaceHelper::instance()->actionPasteFiles(windowID, ClipBoard::kCutAction, dropUrls, targetUrl);
+        }
+        break;
+    default:
+        break;
+    }
+
+    return ret;
+}
+
+Qt::DropActions FileViewModel::supportedDragActions() const
+{
+    if (d->root)
+        return d->root->fileInfo()->supportedDragActions();
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+
+Qt::DropActions FileViewModel::supportedDropActions() const
+{
+    if (d->root)
+        return d->root->fileInfo()->supportedDropActions();
+
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
 void FileViewModel::updateViewItem(const QModelIndex &index)
