@@ -25,6 +25,7 @@
 #include "trashfilewatcher.h"
 #include "events/trasheventcaller.h"
 
+#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/dialog/dialogservice.h"
@@ -32,9 +33,15 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 
+#include <DHorizontalLine>
+#include <DApplicationHelper>
+
 #include <QFileInfo>
 #include <QFile>
 #include <QMenu>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
 DPTRASH_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -53,6 +60,13 @@ QUrl TrashManager::rootUrl()
     url.setScheme(scheme());
     url.setPath("/");
     return url;
+}
+
+quint64 TrashManager::windowId(QWidget *sender)
+{
+    auto &ctx = dpfInstance.serviceContext();
+    auto windowService = ctx.service<WindowsService>(WindowsService::name());
+    return windowService->findWindowId(sender);
 }
 
 void TrashManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
@@ -77,8 +91,8 @@ void TrashManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const Q
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Empty Trash"), [windowId, url]() {
-        QUrl url = TrashManager::toLocalFile(url);
-        TrashEventCaller::sendEmptyTrash(windowId, { url });
+        QUrl toLocalFileUrl = TrashManager::toLocalFile(url);
+        TrashEventCaller::sendEmptyTrash(windowId, { toLocalFileUrl });
     });
 
     menu->addSeparator();
@@ -138,6 +152,52 @@ bool TrashManager::writeToClipBoardHandle(const quint64 windowId, const ClipBoar
     }
     // Todo(yanghao)
     return true;
+}
+
+QFrame *TrashManager::createEmptyTrashTopWidget()
+{
+    QFrame *emptyTrashHolder = new QFrame;
+    emptyTrashHolder->setFrameShape(QFrame::NoFrame);
+
+    QHBoxLayout *emptyTrashLayout = new QHBoxLayout;
+    QLabel *trashLabel = new QLabel(emptyTrashHolder);
+
+    trashLabel->setText(tr("Trash"));
+    QFont f = trashLabel->font();
+    f.setPixelSize(17);
+    f.setBold(true);
+    trashLabel->setFont(f);
+    QPushButton *emptyTrashButton = new QPushButton;
+    emptyTrashButton->setContentsMargins(0, 0, 0, 0);
+    emptyTrashButton->setObjectName("EmptyTrashButton");
+
+    emptyTrashButton->setText(tr("Empty"));
+    emptyTrashButton->setToolTip(QObject::tr("Empty Trash"));
+    emptyTrashButton->setFixedSize({ 86, 36 });
+    DPalette pal = DApplicationHelper::instance()->palette(emptyTrashHolder);
+    QPalette buttonPalette = emptyTrashButton->palette();
+    buttonPalette.setColor(QPalette::ButtonText, pal.color(DPalette::Active, DPalette::TextWarning));
+    emptyTrashButton->setPalette(buttonPalette);
+
+    QObject::connect(emptyTrashButton, &QPushButton::clicked,
+
+                     TrashManager::instance(), [emptyTrashButton] {
+                         auto windId = TrashManager::instance()->windowId(emptyTrashButton);
+                         QUrl url = TrashManager::toLocalFile(TrashManager::rootUrl());
+                         TrashEventCaller::sendEmptyTrash(windId, { url });
+                     });
+    QPalette pa = emptyTrashButton->palette();
+    pa.setColor(QPalette::ColorRole::Text, QColor("#FF5736"));
+    emptyTrashButton->setPalette(pa);
+    emptyTrashLayout->addWidget(trashLabel, 0, Qt::AlignLeft);
+    emptyTrashLayout->addWidget(emptyTrashButton, 0, Qt::AlignRight);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout;
+    DHorizontalLine *emptyTrashSplitLine = new DHorizontalLine;
+    mainLayout->addLayout(emptyTrashLayout);
+    mainLayout->addWidget(emptyTrashSplitLine);
+    emptyTrashHolder->setLayout(mainLayout);
+    return emptyTrashHolder;
 }
 
 QUrl TrashManager::toLocalFile(const QUrl &url)

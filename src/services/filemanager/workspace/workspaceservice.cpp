@@ -78,3 +78,8 @@ bool WorkspaceService::tabAddable(const quint64 windowID)
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toBool();
 }
+
+void WorkspaceService::addCustomTopWidget(const Workspace::CustomTopWidgetInfo &info)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info);
+}

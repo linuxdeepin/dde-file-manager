@@ -37,6 +37,29 @@ DSC_USE_NAMESPACE
 
 QMap<quint64, WorkspaceWidget *> WorkspaceHelper::kWorkspaceMap {};
 
+void WorkspaceHelper::registerTopWidgetCreator(const WorkspaceHelper::KeyType &scheme, const WorkspaceHelper::TopWidgetCreator &creator)
+{
+    if (isRegistedTopWidget(scheme))
+        return;
+
+    topWidgetCreators.insert(scheme, creator);
+}
+
+bool WorkspaceHelper::isRegistedTopWidget(const WorkspaceHelper::KeyType &scheme) const
+{
+    return topWidgetCreators.contains(scheme);
+}
+
+QFrame *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
+{
+    const KeyType &theType = url.scheme();
+    if (!topWidgetCreators.contains(theType)) {
+        qWarning() << "Scheme: " << theType << "not registered!";
+        return nullptr;
+    }
+    return topWidgetCreators.value(theType)();
+}
+
 WorkspaceHelper *WorkspaceHelper::instance()
 {
     static WorkspaceHelper helper;

@@ -29,6 +29,10 @@
 #include <QUrl>
 #include <QIcon>
 
+QT_BEGIN_NAMESPACE
+class QFrame;
+QT_END_NAMESPACE
+
 DPTRASH_BEGIN_NAMESPACE
 
 class TrashManager final : public QObject
@@ -50,20 +54,20 @@ public:
     }
 
     static QUrl rootUrl();
+    quint64 windowId(QWidget *sender);
 
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
-
     static bool writeToClipBoardHandle(const quint64 windowId,
                                        const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                                        const QList<QUrl> urls);
+    static QFrame *createEmptyTrashTopWidget();
+
     static QUrl fromTrashFile(const QString &filePath)
     {
         QUrl url;
-
         url.setScheme(TrashManager::scheme());
         url.setPath(filePath);
-
         return url;
     }
 

@@ -30,6 +30,7 @@ void WorkspaceUnicastReceiver::connectService()
 {
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::addScheme"), this, &WorkspaceUnicastReceiver::invokeAddScheme);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::tabAddable"), this, &WorkspaceUnicastReceiver::invokeTabAddable);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::addCustomTopWidget"), this, &WorkspaceUnicastReceiver::invokeAddCustomTopWidget);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -44,6 +45,18 @@ bool WorkspaceUnicastReceiver::invokeTabAddable(const quint64 windowID)
         return false;
 
     return widget->canAddNewTab();
+}
+
+bool WorkspaceUnicastReceiver::invokeAddCustomTopWidget(const dfm_service_filemanager::Workspace::CustomTopWidgetInfo &info)
+{
+    if (WorkspaceHelper::instance()->isRegistedTopWidget(info.scheme)) {
+        qWarning() << "custom top widget sechme " << info.scheme << "has been resigtered!";
+        return false;
+    }
+
+    WorkspaceHelper::instance()->registerTopWidgetCreator(info.scheme, info.createTopWidgetCb);
+
+    return true;
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)

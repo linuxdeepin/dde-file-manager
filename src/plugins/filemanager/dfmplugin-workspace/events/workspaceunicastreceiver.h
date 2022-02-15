@@ -3,6 +3,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
+#include "services/filemanager/workspace/workspace_defines.h"
+
 #include <QObject>
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -18,6 +20,7 @@ public:
 public slots:
     void invokeAddScheme(const QString &scheme);
     bool invokeTabAddable(const quint64 windowID);
+    bool invokeAddCustomTopWidget(const DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo &info);
 
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);

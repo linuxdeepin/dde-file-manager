@@ -38,16 +38,18 @@
 #include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+
 DPWORKSPACE_USE_NAMESPACE
 
 namespace GlobalPrivate {
-static WindowsService *windowService { nullptr };
+static DSB_FM_NAMESPACE::WindowsService *windowService { nullptr };
 }   // namespace GlobalPrivate
 
 void Workspace::initialize()
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
+
     ViewFactory::regClass<FileView>(SchemeTypes::kFile);
 
     auto &ctx = dpfInstance.serviceContext();
@@ -67,6 +69,8 @@ void Workspace::initialize()
 
 bool Workspace::start()
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
     dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kSwitchMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,

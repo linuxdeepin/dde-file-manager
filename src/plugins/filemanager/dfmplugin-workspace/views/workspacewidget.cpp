@@ -59,7 +59,10 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     if (!tabBar->currentTab())
         tabBar->createTab(nullptr);
 
+    initCustomTopWidgets(url);
+
     QString scheme { url.scheme() };
+
     if (!views.contains(scheme)) {
         QString error;
         ViewPtr fileView = ViewFactory::create<AbstractBaseView>(url, &error);
@@ -74,6 +77,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         tabBar->setCurrentUrl(url);
         return;
     }
+
     views[scheme]->setRootUrl(url);
     viewStackLayout->setCurrentWidget(views[scheme]->widget());
     tabBar->setCurrentView(views[scheme].get());
@@ -233,8 +237,12 @@ void WorkspaceWidget::initViewLayout()
     viewStackLayout = new QStackedLayout;
     viewStackLayout->setSpacing(0);
     viewStackLayout->setContentsMargins(0, 0, 0, 0);
+    topWidgetContainer = new QFrame;
+    QVBoxLayout *layout = new QVBoxLayout;
+    topWidgetContainer->setLayout(layout);
 
     widgetLayout = new QVBoxLayout;
+    //    widgetLayout->addWidget(topWidgetContainer);
     widgetLayout->addWidget(tabTopLine);
     widgetLayout->addLayout(tabBarLayout);
     widgetLayout->addWidget(tabBottomLine);
@@ -252,4 +260,28 @@ void WorkspaceWidget::handleCtrlN()
         return;
     }
     WorkspaceEventCaller::sendOpenWindow(fileView->selectedUrlList());
+}
+
+void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
+{
+    QString scheme { url.scheme() };
+
+    if (topWidgets.contains(scheme)) {
+        for (auto widget : topWidgets.values()) {
+            widget->hide();
+        }
+        topWidgets[scheme]->setHidden(false);
+    } else {
+        for (auto widget : topWidgets.values()) {
+            widget->hide();
+        }
+
+        auto topWidget = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
+        if (topWidget) {
+            TopWidgetPtr topWidgetPtr = QSharedPointer<QFrame>(topWidget);
+            widgetLayout->insertWidget(0, topWidget);
+            topWidgets.insert(scheme, topWidgetPtr);
+            topWidgetPtr->setHidden(false);
+        }
+    }
 }

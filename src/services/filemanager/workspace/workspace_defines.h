@@ -25,6 +25,13 @@
 
 #include "dfm_filemanager_service_global.h"
 
+#include <QObject>
+
+#include <functional>
+
+QT_BEGIN_NAMESPACE
+class QFrame;
+QT_END_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
 namespace Workspace {
@@ -36,9 +43,19 @@ extern const int kTabChanged;
 extern const int kTabMoved;
 extern const int kTabRemoved;
 };   // namespace EventType
+using createTopWidgetCallback = std::function<QFrame *()>;
+
+struct CustomTopWidgetInfo
+{
+    QString scheme;
+    createTopWidgetCallback createTopWidgetCb { nullptr };
+};
 
 }   // namespace Workspace
 
 DSB_FM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::createTopWidgetCallback);
 
 #endif   // WORKSPACE_DEFINES_H

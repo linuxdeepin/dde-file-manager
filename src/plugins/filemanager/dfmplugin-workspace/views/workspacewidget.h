@@ -40,18 +40,22 @@ class DIconButton;
 class DHorizontalLine;
 DWIDGET_END_NAMESPACE
 
+QT_BEGIN_NAMESPACE
+class QFrame;
 class QHBoxLayout;
 class QVBoxLayout;
 class QStackedLayout;
+QT_END_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
 class TabBar;
 class FileView;
-class WorkspaceWidget : public dfmbase::AbstractFrame
+class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
     using ViewPtr = QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView>;
+    using TopWidgetPtr = QSharedPointer<QFrame>;
 
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
@@ -81,12 +85,14 @@ private:
     void initTabBar();
     void initViewLayout();
     void handleCtrlN();
-
+    void initCustomTopWidgets(const QUrl &url);
     QUrl workspaceUrl;
+    QFrame *topWidgetContainer { nullptr };
     QHBoxLayout *tabBarLayout { nullptr };
     QVBoxLayout *widgetLayout { nullptr };
     QStackedLayout *viewStackLayout { nullptr };
     QMap<QString, ViewPtr> views;
+    QMap<QString, TopWidgetPtr> topWidgets;
 
     TabBar *tabBar { nullptr };
     DTK_WIDGET_NAMESPACE::DIconButton *newTabButton { nullptr };

@@ -31,7 +31,11 @@
 #include <QMutex>
 #include <QObject>
 
-DFMBASE_USE_NAMESPACE
+#include <functional>
+
+QT_BEGIN_NAMESPACE
+class QFrame;
+QT_END_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 
 class WorkspaceWidget;
@@ -44,6 +48,13 @@ public:
         kOpenNewWindow,
         //kForceOpenNewWindow // Todo(yanghao): ???
     };
+    using KeyType = QString;
+    using TopWidgetCreator = std::function<QFrame *()>;
+    using TopWidgetCreatorMap = QMap<KeyType, TopWidgetCreator>;
+
+    void registerTopWidgetCreator(const KeyType &scheme, const TopWidgetCreator &creator);
+    bool isRegistedTopWidget(const KeyType &scheme) const;
+    QFrame *createTopWidgetByUrl(const QUrl &url);
 
     static WorkspaceHelper *instance();
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
@@ -64,10 +75,10 @@ public:
     void actionOpenInTerminal(quint64 windowId, const QList<QUrl> &urls);
     void actionNewFolder(quint64 windowId, const QUrl &url);
     void actionRenameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl);
-    void actionWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
-    void actionPasteFiles(const quint64 windowId, const ClipBoard::ClipboardAction action,
-                          const QList<QUrl> &sourceUrls, const QUrl &target,
-                          const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
+    void actionWriteToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
+    void actionPasteFiles(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                         const QList<QUrl> &sourceUrls, const QUrl &target,
+                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
@@ -77,6 +88,9 @@ private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
     static QMutex &mutex();
     static QMap<quint64, WorkspaceWidget *> kWorkspaceMap;
+
+private:
+    TopWidgetCreatorMap topWidgetCreators;
     Q_DISABLE_COPY(WorkspaceHelper)
 };
 

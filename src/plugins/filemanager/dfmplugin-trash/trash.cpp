@@ -28,6 +28,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
@@ -36,12 +37,11 @@
 #include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-
 DPTRASH_USE_NAMESPACE
 
 namespace GlobalPrivate {
+DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 static WindowsService *winServ { nullptr };
 static SideBarService *sideBarService { nullptr };
 static WorkspaceService *workspaceService { nullptr };
@@ -50,6 +50,8 @@ static FileOperationsService *fileOperationsService { nullptr };
 
 void Trash::initialize()
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
     auto &ctx = dpfInstance.serviceContext();
     QString errStr;
     if (!ctx.load(SideBarService::name(), &errStr)) {
@@ -80,6 +82,8 @@ void Trash::initialize()
 
 bool Trash::start()
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
     auto &ctx = dpfInstance.serviceContext();
     GlobalPrivate::sideBarService = ctx.service<SideBarService>(SideBarService::name());
     if (!GlobalPrivate::sideBarService) {
@@ -97,6 +101,11 @@ bool Trash::start()
     }
     GlobalPrivate::workspaceService->addScheme(TrashManager::scheme());
 
+    Workspace::CustomTopWidgetInfo info;
+    info.scheme = TrashManager::scheme();
+    info.createTopWidgetCb = TrashManager::createEmptyTrashTopWidget;
+    GlobalPrivate::workspaceService->addCustomTopWidget(info);
+
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &TrashManager::openFilesHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &TrashManager::writeToClipBoardHandle;
@@ -112,6 +121,8 @@ dpf::Plugin::ShutdownFlag Trash::stop()
 
 void Trash::onWindowOpened(quint64 windId)
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
     auto window = GlobalPrivate::winServ->findWindowById(windId);
     Q_ASSERT_X(window, "Trash", "Cannot find window by id");
     if (window->titleBar())
@@ -122,6 +133,8 @@ void Trash::onWindowOpened(quint64 windId)
 
 void Trash::regTrashCrumbToTitleBar()
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
     static std::once_flag flag;
     std::call_once(flag, []() {
         auto &ctx = dpfInstance.serviceContext();
@@ -137,6 +150,8 @@ void Trash::regTrashCrumbToTitleBar()
 
 void Trash::installToSideBar()
 {
+    DSB_FM_USE_NAMESPACE
+    DFMBASE_USE_NAMESPACE
     SideBar::ItemInfo item;
     item.group = SideBar::DefaultGroup::kCommon;
     item.url = TrashManager::rootUrl();
