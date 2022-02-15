@@ -272,6 +272,13 @@ void DiskControlWidget::doUnMountAll()
                          "canPowerOff" << diskDev->canPowerOff() <<
                          "ejectable" << diskDev->ejectable();
 
+                QDBusError lastErr = blDev->lastError();
+                if (lastErr.isValid()) {
+                    qWarning() << "unmount device failed: " << blDevStr << lastErr.message();
+                    NotifyMsg(DUMountManager::tr("The device is busy, cannot remove now"));
+                    break;
+                }
+
                 if (diskDev->optical()) { // is optical
                     if (diskDev->ejectable()) {
                         diskDev->eject({});
