@@ -64,6 +64,7 @@ set(core_cxx_cpp
     canvas/view/operator/shortcutoper.cpp
     canvas/view/operator/canvasviewmenuproxy.cpp
     canvas/view/operator/fileoperaterproxy.cpp
+    canvas/view/operator/viewsettingutil.cpp
     canvas/delegate/canvasitemdelegate.cpp
     canvas/delegate/elidetextlayout.cpp
     canvas/delegate/itemeditor.cpp
@@ -120,6 +121,7 @@ set(core_cxx_h
     canvas/view/operator/canvasviewmenuproxy.h
     canvas/view/operator/fileoperaterproxy_p.h
     canvas/view/operator/fileoperaterproxy.h
+    canvas/view/operator/viewsettingutil.h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h
     canvas/delegate/elidetextlayout.h

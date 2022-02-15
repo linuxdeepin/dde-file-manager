@@ -18,40 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SHORTCUTOPER_H
-#define SHORTCUTOPER_H
+#ifndef VIEWSETTINGUTIL_H
+#define VIEWSETTINGUTIL_H
 
 #include "dfm_desktop_service_global.h"
 
 #include <QObject>
-#include <QKeyEvent>
+#include <QTimer>
 
+class QKeyEvent;
+class QMouseEvent;
 DSB_D_BEGIN_NAMESPACE
-class CanvasView;
-class ShortcutOper : public QObject
+
+class ViewSettingUtil : public QObject
 {
     Q_OBJECT
 public:
-    explicit ShortcutOper(CanvasView *parent);
-    void regShortcut();
-    bool keyPressed(QKeyEvent *event);
-    bool disableShortcut() const;
-protected slots:
-    void acitonTriggered();
-    void helpAction();
-    void openAction();
-    void moveToTrash();
-    void deleteFile();
-    void copyFiles();
-    void cutFiles();
-    void pasteFiles();
-    void tabToFirst();
-    void showMenu();
-    void clearClipBoard();
-protected:
-    CanvasView *view;
+    explicit ViewSettingUtil(QObject *parent = nullptr);
+    void checkTouchDrag(QMouseEvent *event);
+    bool isDelayDrag() const;
+signals:
+
+public slots:
+private:
+    QTimer touchDragTimer; // delay to start drag when touch moving
 };
 
 DSB_D_END_NAMESPACE
 
-#endif // SHORTCUTOPER_H
+#endif // VIEWSETTINGUTIL_H

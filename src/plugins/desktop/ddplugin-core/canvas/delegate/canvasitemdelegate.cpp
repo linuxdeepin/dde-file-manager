@@ -27,8 +27,10 @@
 #include "view/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "view/operator/fileoperaterproxy.h"
+
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -44,7 +46,7 @@ QT_BEGIN_NAMESPACE
 Q_WIDGETS_EXPORT void qt_blurImage(QImage &blurImage, qreal radius, bool quality, int transposed = 0);
 QT_END_NAMESPACE
 
-
+DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
 
@@ -140,6 +142,7 @@ CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
     setIconLevel(iconLevel);
     d->textLineHeight = parent()->fontMetrics().height();
 
+    connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &CanvasItemDelegate::clipboardDataChanged);
 
     // TODO:  model rowsInserted and iconSizeChanged etc
 }
@@ -403,6 +406,22 @@ QList<QRectF> CanvasItemDelegate::elideTextRect(const QModelIndex &index, const 
 
 bool CanvasItemDelegate::isTransparent(const QModelIndex &index) const
 {
+    // in cutting
+    if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction ) {
+        DFMLocalFileInfoPointer file = parent()->model()->fileInfo(index);
+        if (!file.get())
+            return false;
+
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->url()))
+            return true;
+
+        // the linked file only judges the URL, not the inode,
+        // because the inode of the linked file is consistent with that of the source file
+        if (!file->isSymLink()) {
+            if (ClipBoard::instance()->clipboardFileInodeList().contains(file->inode()))
+                return true;
+        }
+    }
     return false;
 }
 
@@ -681,6 +700,17 @@ void CanvasItemDelegate::revertAndcloseEditor()
     QModelIndex index = view->currentIndex();
     if (view->isPersistentEditorOpen(index))
         view->closePersistentEditor(index);
+}
+
+void CanvasItemDelegate::clipboardDataChanged()
+{
+    auto index = parent()->currentIndex();
+    if (parent()->isPersistentEditorOpen(index)) {
+        if (ItemEditor *wid = qobject_cast<ItemEditor *>(parent()->indexWidget(index)))
+            wid->setOpacity(isTransparent(index) ? 0.3 : 1);
+    }
+
+    parent()->update();
 }
 
 void CanvasItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const

@@ -33,10 +33,11 @@ class CanvasViewMenuProxy : public QObject
 public:
     explicit CanvasViewMenuProxy(CanvasView *parent = nullptr);
     ~CanvasViewMenuProxy();
-
+    static bool disableMenu();
     void showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos);
     void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos);
-
+public slots:
+    void changeIconLevel(bool increase);
 private:
     CanvasView *view;
     DSC_NAMESPACE::MenuService *extensionMenuServer = nullptr;

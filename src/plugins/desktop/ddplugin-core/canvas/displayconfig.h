@@ -21,12 +21,17 @@
 #ifndef DISPLAYCONFIG_H
 #define DISPLAYCONFIG_H
 
+#include "dfm_desktop_service_global.h"
+
 #include <QObject>
 #include <QMutex>
 #include <QVariant>
 
 class QSettings;
 class QTimer;
+
+DSB_D_BEGIN_NAMESPACE
+
 class DisplayConfig : public QObject
 {
     Q_OBJECT
@@ -66,5 +71,7 @@ private:
 };
 
 #define DispalyIns DisplayConfig::instance()
+
+DSB_D_END_NAMESPACE
 
 #endif   // DISPLAYCONFIG_H

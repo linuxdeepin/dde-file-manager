@@ -77,6 +77,8 @@ public slots:
     void updateItemSizeHint() const;
     void commitDataAndCloseEditor();
     void revertAndcloseEditor();
+protected slots:
+    void clipboardDataChanged();
 public:
     static const int kTextPadding;
     static const int kIconSpacing;

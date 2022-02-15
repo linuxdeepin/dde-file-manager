@@ -57,7 +57,8 @@ QRect CanvasView::visualRect(const QModelIndex &index) const
 
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
 {
-    // todo(Lee)
+    Q_UNUSED(index)
+    Q_UNUSED(hint)
 }
 
 QModelIndex CanvasView::indexAt(const QPoint &point) const
@@ -283,18 +284,8 @@ void CanvasView::paintEvent(QPaintEvent *event)
 
 void CanvasView::contextMenuEvent(QContextMenuEvent *event)
 {
-    /*             //新需求gesetting控制右键菜单隐藏功能,和产品确认调整为gsetting高于本身配置文件，即gsetting有相关配置后本身的json相关配置失效
-            auto tempGsetting = GridManager::instance()->isGsettingShow("context-menu", QVariant());
-            if (tempGsetting.isValid()) {
-                if (!tempGsetting.toBool())
-                    return;
-            } else {
-                auto tempConfig = DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", QVariant());
-                if (tempConfig.isValid())
-                    if (!tempConfig.toBool())
-                        return;
-            }
-    */ //todo
+    if (CanvasViewMenuProxy::disableMenu())
+        return;
 
     QPoint gridPos = d->gridAt(event->pos());
     itemDelegate()->revertAndcloseEditor();
@@ -312,6 +303,9 @@ void CanvasView::contextMenuEvent(QContextMenuEvent *event)
 
 void CanvasView::startDrag(Qt::DropActions supportedActions)
 {
+    if (d->viewSetting->isDelayDrag())
+        return;
+
     QModelIndexList validIndexes = selectionModel()->selectedIndexes();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
@@ -534,8 +528,6 @@ QRect CanvasView::itemRect(const QModelIndex &index) const
 
 void CanvasView::keyPressEvent(QKeyEvent *event)
 {
-    // todo(zy) disable shortcuts ("ApplicationAttribute", "DisableDesktopShortcuts", false)
-    // todo 触摸屏
     if (d->keySelecter->filterKeys().contains(static_cast<Qt::Key>(event->key()))) {
         d->keySelecter->keyPressed(event);
         return;
@@ -550,7 +542,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 {
     // must get index on pos before QAbstractItemView::mousePressEvent
     auto index = indexAt(event->pos());
-
+    d->viewSetting->checkTouchDrag(event);
     QAbstractItemView::mousePressEvent(event);
 
     if (!index.isValid() && event->button() == Qt::LeftButton) {   //empty area
@@ -604,11 +596,7 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 void CanvasView::wheelEvent(QWheelEvent *event)
 {
     if (isCtrlPressed()) {
-        if (event->angleDelta().y() > 0) {
-            emit sigZoomIcon(true);
-        } else {
-            emit sigZoomIcon(false);
-        }
+        d->menuProxy->changeIconLevel(event->angleDelta().y() > 0);
         event->accept();
     }
 }
@@ -637,6 +625,7 @@ void CanvasView::initUI()
 
     // repaint when selecting with mouse move.
     connect(BoxSelIns, &BoxSelecter::changed, this, static_cast<void (CanvasView::*)()>(&CanvasView::update));
+    connect(qApp, &QApplication::fontChanged, this, &CanvasView::updateGrid);
 
     Q_ASSERT(selectionModel());
     d->operState().setView(this);
@@ -670,6 +659,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     dragDropOper = new DragDropOper(q);
     shortcutOper = new ShortcutOper(q);
     menuProxy = new CanvasViewMenuProxy(q);
+    viewSetting = new ViewSettingUtil(q);
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()

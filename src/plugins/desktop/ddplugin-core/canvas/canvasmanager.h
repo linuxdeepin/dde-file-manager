@@ -47,6 +47,7 @@ public slots:
     void onCanvasBuild();
     void onGeometryChanged();
     void onWallperSetting(CanvasView *);
+    void onChangeIconLevel(bool increase);
 protected slots:
     void reloadItem();
 protected:

@@ -31,8 +31,10 @@
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "base/application/application.h"
+#include "base/application/settings.h"
 
-#include "dfm-framework/framework.h"
+#include <QGSettings>
 
 #include <QMenu>
 #include <QtDebug>
@@ -52,6 +54,19 @@ CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()
 {
+}
+
+bool CanvasViewMenuProxy::disableMenu()
+{
+    // the gsetting control is higher than json profile. it doesn't check json profile if there is gsetting value.
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.desktop")) {
+        QGSettings set("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
+        QVariant var = set.get("contextMenu");
+        if (var.isValid())
+            return !var.toBool();
+    }
+
+    return Application::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", false).toBool();
 }
 
 void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos)
@@ -94,3 +109,9 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
         menu->exec(QCursor::pos());
     }
 }
+
+void CanvasViewMenuProxy::changeIconLevel(bool increase)
+{
+    CanvasIns->onChangeIconLevel(increase);
+}
+

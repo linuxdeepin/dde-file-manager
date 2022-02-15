@@ -32,6 +32,7 @@
 #include "operator/dragdropoper.h"
 #include "operator/shortcutoper.h"
 #include "operator/canvasviewmenuproxy.h"
+#include "operator/viewsettingutil.h"
 #include "gridcoordinate.h"
 #include "dfm_desktop_service_global.h"
 
@@ -130,6 +131,7 @@ public:
     KeySelecter *keySelecter;
     DragDropOper *dragDropOper;
     ShortcutOper *shortcutOper;
+    ViewSettingUtil *viewSetting;
     OperState state;
     bool flicker = false;
 

@@ -30,6 +30,8 @@
 #include <QSettings>
 #include <QDebug>
 
+DSB_D_USE_NAMESPACE
+
 class DisplayConfigGlobal : public DisplayConfig{};
 Q_GLOBAL_STATIC(DisplayConfigGlobal, displayConfig)
 

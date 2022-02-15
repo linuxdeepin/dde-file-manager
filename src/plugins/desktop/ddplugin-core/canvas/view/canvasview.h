@@ -99,10 +99,6 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-
-signals:
-    void sigZoomIcon(const bool increase);
-
 private:
     QScopedPointer<CanvasViewPrivate> d;
 };

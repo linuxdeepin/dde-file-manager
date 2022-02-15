@@ -25,21 +25,31 @@
 #include "delegate/canvasitemdelegate.h"
 #include "view/canvasview_p.h"
 #include "fileoperaterproxy.h"
+#include "canvasmanager.h"
+
+#include "base/application/application.h"
+#include "base/application/settings.h"
+#include "dfm-base/utils/clipboard.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <DApplication>
 
 #include <QAction>
 
+DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
-#define regAction(shortcut, slotFunc) \
+#define regAction(shortcut) \
     {\
         QAction *action = new QAction(view);\
         action->setShortcut(shortcut);\
+        action->setProperty("_view_shortcut_key", shortcut);\
         view->addAction(action);\
-        connect(action, &QAction::triggered, this, slotFunc);\
+        connect(action, &QAction::triggered, this, &ShortcutOper::acitonTriggered);\
     }
+
+#define actionShortcutKey(action) action->property("_view_shortcut_key").value<QKeySequence::StandardKey>()
 
 ShortcutOper::ShortcutOper(CanvasView *parent)
     : QObject(parent)
@@ -49,16 +59,16 @@ ShortcutOper::ShortcutOper(CanvasView *parent)
 
 void ShortcutOper::regShortcut()
 {
-    regAction(QKeySequence::HelpContents, &ShortcutOper::helpAction); // F1
-    regAction(QKeySequence::Refresh, [this](){view->refresh();}); // F5
-    regAction(QKeySequence::Delete, &ShortcutOper::moveToTrash); // Del
-    regAction(QKeySequence::SelectAll, [this](){view->selectAll();}); // ctrl+a
-    regAction(QKeySequence::ZoomIn, [this](){view->sigZoomIcon(true);}); // ctrl++(c_s_=)
-    regAction(QKeySequence::ZoomOut, [this](){view->sigZoomIcon(false);});// ctrl+-
-    regAction(QKeySequence::Copy, &ShortcutOper::copyFiles);// ctrl+c
-    regAction(QKeySequence::Cut, &ShortcutOper::cutFiles);// ctrl+x
-    regAction(QKeySequence::Paste, &ShortcutOper::pasteFiles);// ctrl+v
-    regAction(QKeySequence::Undo, [this](){qDebug() << "Undo";});// ctrl+z
+    regAction(QKeySequence::HelpContents); // F1
+    regAction(QKeySequence::Refresh); // F5
+    regAction(QKeySequence::Delete); // Del
+    regAction(QKeySequence::SelectAll); // ctrl+a
+    regAction(QKeySequence::ZoomIn); // ctrl+-
+    regAction(QKeySequence::ZoomOut);// ctrl++(c_s_=)
+    regAction(QKeySequence::Copy);// ctrl+c
+    regAction(QKeySequence::Cut);// ctrl+x
+    regAction(QKeySequence::Paste);// ctrl+v
+    regAction(QKeySequence::Undo);// ctrl+z
     //regAction(QKeySequence::New, [this](){qDebug() << "New";});// ctrl+n
     //regAction(QKeySequence::Open, &ShortcutOper::openAction); // ctrl+o
 }
@@ -68,6 +78,26 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
     if (!event || !view)
         return false;
 
+    if (disableShortcut()) {
+        bool specialShortcut = false;
+        if (event->modifiers() == Qt::NoModifier || event->modifiers() == Qt::KeypadModifier) {
+            switch (event->key()) {
+            case Qt::Key_Up:
+            case Qt::Key_Down:
+            case Qt::Key_Left:
+            case Qt::Key_Right:
+            case Qt::Key_Enter:
+            case Qt::Key_Return:
+                specialShortcut = true;
+                break;
+            default:
+                specialShortcut = false; // other keys is disable
+            }
+        }
+        if (!specialShortcut)
+            return true; // return true to ingore the event.
+    }
+
     Qt::KeyboardModifiers modifiers = event->modifiers();
     auto key = event->key();
     if (modifiers == Qt::NoModifier) {
@@ -76,7 +106,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             tabToFirst();
             return true;
         case Qt::Key_Escape:
-            // todo clear clipboard
+            clearClipBoard();
         default:
             break;
         }
@@ -107,6 +137,9 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         }
     } else if (modifiers == Qt::ControlModifier) {
         switch (event->key()) {
+        case Qt::Key_Equal:
+            CanvasIns->onChangeIconLevel(true);
+            return true;
         case Qt::Key_H:
             // todo swich hidden
             return true;
@@ -124,6 +157,62 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
     }
 
     return false;
+}
+
+bool ShortcutOper::disableShortcut() const
+{
+    return DFMBASE_NAMESPACE::Application::appObtuselySetting()->value(
+                "ApplicationAttribute", "DisableDesktopShortcuts", false).toBool();
+}
+
+void ShortcutOper::acitonTriggered()
+{
+    QAction *ac = qobject_cast<QAction *>(sender());
+    if (!ac)
+        return;
+
+    auto key = actionShortcutKey(ac);
+    switch (key) {
+    case QKeySequence::Copy:
+        copyFiles();
+        break;
+    case QKeySequence::Cut:
+        cutFiles();
+        break;
+    case QKeySequence::Paste:
+        pasteFiles();
+        break;
+    case QKeySequence::Undo:
+        qDebug() << "Undo";
+        break;
+    default:
+        break;
+    }
+
+    if (!disableShortcut()) {
+        switch (key) {
+        case QKeySequence::HelpContents:
+            helpAction();
+            break;
+        case QKeySequence::Refresh:
+            view->refresh();
+            break;
+        case QKeySequence::Delete:
+            moveToTrash();
+            break;
+        case QKeySequence::SelectAll:
+            view->selectAll();
+            break;
+        case QKeySequence::ZoomIn:
+            CanvasIns->onChangeIconLevel(true);
+            break;
+        case QKeySequence::ZoomOut:
+            CanvasIns->onChangeIconLevel(false);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 void ShortcutOper::helpAction()
@@ -179,7 +268,8 @@ void ShortcutOper::tabToFirst()
 
 void ShortcutOper::showMenu()
 {
-    //todo enable menu
+    if (CanvasViewMenuProxy::disableMenu())
+        return;
 
     QModelIndexList indexList = view->selectionModel()->selectedIndexes();
     bool isEmptyArea = indexList.isEmpty();
@@ -206,5 +296,16 @@ void ShortcutOper::showMenu()
     } else {
        auto gridPos = view->d->gridAt(view->visualRect(index).center());
        view->d->menuProxy->showNormalMenu(index, flags, gridPos);
+    }
+}
+
+void ShortcutOper::clearClipBoard()
+{
+    auto urls = ClipBoard::instance()->clipboardFileUrlList();
+    auto homePath = view->model()->rootUrl();
+    if (!urls.isEmpty()) {
+        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(urls.first(), false, nullptr);
+        if (itemInfo && (itemInfo->absolutePath() == homePath.toLocalFile()))
+            ClipBoard::instance()->clearClipboard();
     }
 }

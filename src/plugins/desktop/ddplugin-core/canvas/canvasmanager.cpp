@@ -245,11 +245,6 @@ CanvasManagerPrivate::~CanvasManagerPrivate()
     viewMap.clear();
 }
 
-void CanvasManagerPrivate::initConnect()
-{
-    // 屏幕增删，模式改变
-}
-
 void CanvasManagerPrivate::initModel()
 {
     canvasModel = new CanvasModel(q);
@@ -298,9 +293,6 @@ CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int 
 
     auto avRect = relativeRect(sp->availableGeometry(), sp->geometry());
     view->setGeometry(avRect);
-
-    connect(view.get(), &CanvasView::sigZoomIcon, this, &CanvasManagerPrivate::onZoomIcon, Qt::UniqueConnection);
-
     return view;
 }
 
@@ -379,25 +371,24 @@ void CanvasManagerPrivate::onFileSorted()
     q->update();
 }
 
-void CanvasManagerPrivate::onZoomIcon(bool increase)
+void CanvasManager::onChangeIconLevel(bool increase)
 {
-    CanvasView *view = qobject_cast<CanvasView *>(sender());
-    if (!view)
+    if (d->viewMap.isEmpty())
         return;
+    auto view = d->viewMap.values().first();
+    Q_ASSERT(view);
+    auto delegate = view->itemDelegate();
+    Q_ASSERT(delegate);
 
-    int currentLevel = view->itemDelegate()->iconLevel();
-    int expectLevel = -1;
-    if (increase && currentLevel < view->itemDelegate()->maximumIconLevel()) {
-        expectLevel = currentLevel + 1;
-    } else if (!increase && currentLevel > view->itemDelegate()->minimumIconLevel()) {
-        expectLevel = currentLevel - 1;
-    }
-    if (-1 != expectLevel) {
-        for (const CanvasViewPointer &v : viewMap.values()) {
-            v->itemDelegate()->setIconLevel(expectLevel);
+    int currentLevel = delegate->iconLevel();
+    currentLevel = increase ? currentLevel + 1 : currentLevel - 1;
+
+    if (currentLevel >= delegate->minimumIconLevel() && currentLevel <= delegate->maximumIconLevel()) {
+        for (const CanvasViewPointer &v : d->viewMap.values()) {
+            v->itemDelegate()->setIconLevel(currentLevel);
             v->updateGrid();
         }
-        DispalyIns->setIconLevel(expectLevel);
+        DispalyIns->setIconLevel(currentLevel);
     }
 }
 
