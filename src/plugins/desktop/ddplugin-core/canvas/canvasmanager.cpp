@@ -22,6 +22,7 @@
 
 #include "private/canvasmanager_p.h"
 #include "view/canvasview_p.h"
+#include "delegate/canvasitemdelegate.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "wallpaperservice.h"
@@ -301,6 +302,8 @@ CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int 
     auto avRect = relativeRect(sp->availableGeometry(), sp->geometry());
     view->setGeometry(avRect);
 
+    connect(view.get(), &CanvasView::sigZoomIcon, this, &CanvasManagerPrivate::onZoomIcon, Qt::UniqueConnection);
+
     return view;
 }
 
@@ -322,14 +325,16 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, const Scree
 
 void CanvasManagerPrivate::onFileCreated(const QUrl &url)
 {
+    // todo:判断文件是否为隐藏文件，当前若不显示隐藏文件，则跳过
     QString path = url.toString();
     QPair<int, QPoint> pos;
     if (GridIns->point(path, pos)) {
         // already hand by call back
         qDebug() << "item:" << path << " existed:" << pos.first << pos.second;
-        return;
+    } else {
+        GridIns->append(path);
     }
-    GridIns->append(path);
+
     q->update();
 }
 
@@ -339,6 +344,15 @@ void CanvasManagerPrivate::onFileDeleted(const QUrl &url)
     QPair<int, QPoint> pos;
     if (GridIns->point(path, pos)) {
         GridIns->remove(pos.first, path);
+
+        // todo:当选中的文件中有文件被移除时就清空所有选中项
+
+        if (CanvasGrid::Mode::Align == GridIns->mode()) {
+            GridIns->setItems(GridIns->items());
+        } else {
+            GridIns->popOverload();
+        }
+
         q->update();
     }
 }
@@ -366,6 +380,28 @@ void CanvasManagerPrivate::onFileSorted()
     GridIns->setItems(existItems);
     GridIns->setMode(oldMode);
     q->update();
+}
+
+void CanvasManagerPrivate::onZoomIcon(bool increase)
+{
+    CanvasView *view = qobject_cast<CanvasView *>(sender());
+    if (!view)
+        return;
+
+    int currentLevel = view->itemDelegate()->iconLevel();
+    int expectLevel = -1;
+    if (increase && currentLevel < view->itemDelegate()->maximumIconLevel()) {
+        expectLevel = currentLevel + 1;
+    } else if (!increase && currentLevel > view->itemDelegate()->minimumIconLevel()) {
+        expectLevel = currentLevel - 1;
+    }
+    if (-1 != expectLevel) {
+        for (const CanvasViewPointer &v : viewMap.values()) {
+            v->itemDelegate()->setIconLevel(expectLevel);
+            v->updateGrid();
+        }
+        DispalyIns->setIconLevel(expectLevel);
+    }
 }
 
 void CanvasManagerPrivate::backgroundDeleted()

@@ -559,6 +559,8 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 {
     auto pos = event->pos();
     const QModelIndex &index = indexAt(pos);
+    if (!index.isValid())
+        return;
 
     if (isPersistentEditorOpen(index)) {
         itemDelegate()->commitDataAndCloseEditor();
@@ -573,6 +575,18 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
 
     const QUrl &url = model()->url(index);
     FileOperaterProxyIns->openFiles(this, {url});
+}
+
+void CanvasView::wheelEvent(QWheelEvent *event)
+{
+    if (isCtrlPressed()) {
+        if (event->angleDelta().y() > 0) {
+            emit sigZoomIcon(true);
+        } else {
+            emit sigZoomIcon(false);
+        }
+        event->accept();
+    }
 }
 
 void CanvasView::initUI()

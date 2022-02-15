@@ -123,7 +123,7 @@ void FileTreaterPrivate::doUpdateChildren(const QList<QUrl> &childrens)
     }
 
     // defalut sort
-    doSort(files);
+//    doSort(files);// todo
 
     {
         QList<QUrl> fileUrls;

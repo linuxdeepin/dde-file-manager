@@ -53,8 +53,8 @@ void ShortcutOper::regShortcut()
     regAction(QKeySequence::Refresh, [this](){view->refresh();}); // F5
     regAction(QKeySequence::Delete, &ShortcutOper::moveToTrash); // Del
     regAction(QKeySequence::SelectAll, [this](){view->selectAll();}); // ctrl+a
-    regAction(QKeySequence::ZoomIn, [this](){qDebug() << "zoom in";}); // ctrl+-
-    regAction(QKeySequence::ZoomOut, [this](){qDebug() << "zoom out";});// ctrl++(c_s_=)
+    regAction(QKeySequence::ZoomIn, [this](){view->sigZoomIcon(true);}); // ctrl++(c_s_=)
+    regAction(QKeySequence::ZoomOut, [this](){view->sigZoomIcon(false);});// ctrl+-
     regAction(QKeySequence::Copy, &ShortcutOper::copyFiles);// ctrl+c
     regAction(QKeySequence::Cut, &ShortcutOper::cutFiles);// ctrl+x
     regAction(QKeySequence::Paste, &ShortcutOper::pasteFiles);// ctrl+v
@@ -107,9 +107,6 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         }
     } else if (modifiers == Qt::ControlModifier) {
         switch (event->key()) {
-        case Qt::Key_Equal:
-            qDebug() << "zoom in";
-            return true;
         case Qt::Key_H:
             // todo swich hidden
             return true;

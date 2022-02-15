@@ -60,6 +60,8 @@ public slots:
     void onFileSorted();
     void onEnableSortChanged(bool enableSort);
 
+    void onZoomIcon(bool increase);
+
 protected slots:
     void backgroundDeleted();
 public:
