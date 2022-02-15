@@ -272,15 +272,6 @@ void DiskControlWidget::doUnMountAll()
                          "canPowerOff" << diskDev->canPowerOff() <<
                          "ejectable" << diskDev->ejectable();
 
-                if (diskDev->removable()) {
-                    diskDev->eject({});
-                    qDebug() << "unmountAll";
-                    if (diskDev->lastError().isValid()) {
-                        qWarning() << diskDev->lastError().name() << blockDevices;
-                        NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
-                        continue;
-                    }
-                }
                 if (diskDev->optical()) { // is optical
                     if (diskDev->ejectable()) {
                         diskDev->eject({});
