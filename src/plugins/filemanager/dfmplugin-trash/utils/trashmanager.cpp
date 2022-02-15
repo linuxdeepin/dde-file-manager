@@ -91,8 +91,8 @@ void TrashManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const Q
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Empty Trash"), [windowId, url]() {
-        QUrl toLocalFileUrl = TrashManager::toLocalFile(url);
-        TrashEventCaller::sendEmptyTrash(windowId, { toLocalFileUrl });
+        QUrl localUrl = TrashManager::toLocalFile(url);
+        TrashEventCaller::sendEmptyTrash(windowId, { localUrl });
     });
 
     menu->addSeparator();
@@ -202,7 +202,7 @@ QFrame *TrashManager::createEmptyTrashTopWidget()
 
 QUrl TrashManager::toLocalFile(const QUrl &url)
 {
-    return StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path();
+    return QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path());
 }
 
 TrashManager::TrashManager(QObject *parent)

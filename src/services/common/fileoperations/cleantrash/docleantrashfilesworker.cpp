@@ -66,7 +66,11 @@ bool DoCleanTrashFilesWorker::statisticsFilesSize()
         return false;
     }
 
-    if (sourceUrls.count() == 1 && sourceUrls.first().path() == StandardPaths::location(StandardPaths::kTrashFilesPath))
+    QString path = sourceUrls.first().path();
+    if(path.endsWith("/"))
+        path.chop(1);
+
+    if (sourceUrls.count() == 1 && path == StandardPaths::location(StandardPaths::kTrashFilesPath))
         allFilesList = FileOperationsUtils::getDirFiles(sourceUrls.first());
 
     return true;
@@ -132,6 +136,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
         if (!clearTrashFile(fileInfo))
             return false;
         cleanTrashFilesCount++;
+        ++it;
     }
     return true;
 }

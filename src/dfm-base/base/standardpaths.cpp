@@ -171,7 +171,8 @@ QString StandardPaths::location(const QString &dirName)
         { "music", location(kMusicPath) },
         { "pictures", location(kPicturesPath) },
         { "documents", location(kDocumentsPath) },
-        { "downloads", location(kDownloadsPath) }
+        { "downloads", location(kDownloadsPath) },
+        { "trash", location(kTrashFilesPath) }
     };
 
     return pathConvert.value(dirName, "");

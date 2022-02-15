@@ -730,7 +730,7 @@ uint LocalFileInfo::ownerId() const
     bool success = false;
     uint ownerId = 0;
     if (d->dfmFileInfo) {
-        ownerId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::OwnerUser, &success).toUInt();
+        ownerId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::UnixUID, &success).toUInt();
         if (!success)
             qWarning() << "get dfm-io DFileInfo OwnerUser failed!";
     }

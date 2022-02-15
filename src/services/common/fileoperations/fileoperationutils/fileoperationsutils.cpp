@@ -170,12 +170,15 @@ QSharedPointer<QList<QUrl>> FileOperationsUtils::getDirFiles(const QUrl &url)
         return nullptr;
     }
 
+    QString urlPath = url.path();
+    if(!urlPath.endsWith("/"))
+        urlPath.append("/");
     QSharedPointer<QList<QUrl>> files(new QList<QUrl>());
     while ((ptr = readdir(dir)) != nullptr) {
         if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0) {
             continue;
         } else if (ptr->d_type == 4 || ptr->d_type == 8 || ptr->d_type == 10) {
-            files->append(QUrl::fromLocalFile(ptr->d_name));
+            files->append(QUrl::fromLocalFile(urlPath + ptr->d_name));
         }
     }
 
