@@ -27,8 +27,11 @@
 #include "utils/workspacehelper.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include <DAnchors>
+
 #include <QObject>
 #include <QUrl>
+#include <QLabel>
 
 namespace GlobalPrivate {
 const int kListViewMinimumWidth { 80 };
@@ -39,7 +42,7 @@ const int kListViewIconSize { 24 };
 DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileViewHelper;
-class StatusBar;
+class FileViewStatusBar;
 class HeaderView;
 class BaseItemDelegate;
 class FileSortFilterProxyModel;
@@ -50,8 +53,9 @@ class FileViewPrivate
 
     QAtomicInteger<bool> allowedAdjustColumnSize { true };
     QHash<int, BaseItemDelegate *> delegates;
-    StatusBar *statusBar { nullptr };
+    FileViewStatusBar *statusBar { nullptr };
     HeaderView *headerView { nullptr };
+    DAnchors<QLabel> contentLabel { nullptr };
     FileSortFilterProxyModel *proxyModel { nullptr };
     QTimer *updateStatusBarTimer { nullptr };
     QTimer *sortTimer { nullptr };
@@ -88,6 +92,8 @@ class FileViewPrivate
 
     bool cdUp();
     WorkspaceHelper::DirOpenMode currentDirOpenMode() const;
+
+    void initContentLabel();
 };
 
 DPWORKSPACE_END_NAMESPACE

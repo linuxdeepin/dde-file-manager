@@ -43,6 +43,7 @@ FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
 FileViewModelPrivate::~FileViewModelPrivate()
 {
 }
+
 // 文件在当前目录下创建、修改、删除都需要顺序处理，并且都是在遍历目录完成后才有序的处理
 // 处理方式，收到这3个事件，都加入到事件处理队列
 // 判断当前遍历目录是否完成，是-启动异步文件监视事件处理，否-文件遍历完成时，启动异步文件监视事件处理
@@ -337,6 +338,7 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
 
     if (d->canFetchMoreFlag) {
         d->canFetchMoreFlag = false;
+        setState(Busy);
         d->traversalThread->start();
     }
 }
@@ -551,6 +553,21 @@ QModelIndex FileViewModel::createIndex(int arow, int acolumn, void *adata) const
     return QAbstractItemModel::createIndex(arow, acolumn, adata);
 }
 
+FileViewModel::State FileViewModel::state() const
+{
+    return d->currentState;
+}
+
+void FileViewModel::setState(FileViewModel::State state)
+{
+    if (d->currentState == state)
+        return;
+
+    d->currentState = state;
+
+    emit stateChanged();
+}
+
 int FileViewModel::getColumnWidth(const int &column) const
 {
     // TODO(liuyangming): get column width from config
@@ -588,6 +605,9 @@ void FileNodeManagerThread::onHandleTraversalFinished()
 {
     isTraversalFinished = true;
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+
+    if (!isRunning())
+        model()->setState(FileViewModel::Idle);
 }
 
 void FileNodeManagerThread::removeFile(const QUrl &url)
@@ -607,6 +627,8 @@ void FileNodeManagerThread::stop()
     cacheChildren = false;
     isTraversalFinished = false;
     stoped = false;
+
+    model()->setState(FileViewModel::Idle);
 }
 
 void FileNodeManagerThread::clearChildren()
@@ -789,13 +811,17 @@ void FileNodeManagerThread::run()
             needInsertList.append(url);
         } else {
             needInsertList.append(url);
-            if (!insertChildren(needInsertList))
+            if (!insertChildren(needInsertList)) {
+                model()->setState(FileViewModel::Idle);
                 return;
+            }
         }
     }
     if (needInsertList.count() > 0) {
         insertChildren(needInsertList);
     }
+
+    model()->setState(FileViewModel::Idle);
 }
 
 bool FileNodeManagerThread::insertChildrenByCeiled()

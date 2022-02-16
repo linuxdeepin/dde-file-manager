@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuyangming<liuyangming@uniontech.com>
  *
@@ -19,17 +19,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "statusbar_p.h"
+#include "basicstatusbar_p.h"
+#include "widgets/dfmstatusbar/basicstatusbar.h"
 
-DPWORKSPACE_USE_NAMESPACE
+#include <DAnchors>
 
-StatusBarPrivate::StatusBarPrivate(QObject *parent)
-    : QObject(parent)
+#include <QLabel>
+#include <QHBoxLayout>
+
+DFMBASE_USE_NAMESPACE
+
+BasicStatusBarPrivate::BasicStatusBarPrivate(BasicStatusBar *qq)
+    : QObject(qq),
+      q(qq)
 {
     initFormatStrings();
 }
 
-void StatusBarPrivate::initFormatStrings()
+void BasicStatusBarPrivate::initFormatStrings()
 {
     onlyOneItemCounted = tr("%1 item");
     counted = tr("%1 items");
@@ -40,4 +47,23 @@ void StatusBarPrivate::initFormatStrings()
     selectOnlyOneFile = tr("%1 file selected (%2)");
     selectFiles = tr("%1 files selected (%2)");
     selectedNetworkOnlyOneFolder = tr("%1 folder selected");
+}
+
+void BasicStatusBarPrivate::initTipLabel()
+{
+    tip = new QLabel(counted.arg("0"), q);
+    tip->setAlignment(Qt::AlignCenter);
+    tip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    tip->show();
+}
+
+void BasicStatusBarPrivate::initLayout()
+{
+    layout = new QHBoxLayout(q);
+    q->setLayout(layout);
+
+    q->clearLayoutAndAnchors();
+    layout->addWidget(tip);
+    layout->setSpacing(14);
+    layout->setContentsMargins(0, 0, 4, 0);
 }

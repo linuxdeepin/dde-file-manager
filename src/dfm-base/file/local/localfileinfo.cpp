@@ -1463,6 +1463,20 @@ QMimeType LocalFileInfo::fileMimeType() const
     return MimeDatabase::mimeTypeForUrl(d->url);
 }
 
+QString LocalFileInfo::emptyDirectoryTip() const
+{
+    if (!exists()) {
+        return QObject::tr("File has been moved or deleted");
+    } else if (!isReadable()) {
+        return QObject::tr("You do not have permission to access this folder");
+    } else if (isDir()) {
+        if (!isExecutable())
+            return QObject::tr("You do not have permission to traverse files in it");
+    }
+
+    return AbstractFileInfo::emptyDirectoryTip();
+}
+
 void LocalFileInfo::init(const QUrl &url)
 {
     if (url.isEmpty()) {

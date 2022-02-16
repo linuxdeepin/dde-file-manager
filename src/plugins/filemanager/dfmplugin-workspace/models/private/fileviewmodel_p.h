@@ -115,6 +115,8 @@ class FileViewModelPrivate : public QObject
     dfmbase::DThreadList<QUrl> updateurlList;
     QTimer updateTimer;
 
+    FileViewModel::State currentState = FileViewModel::Idle;
+
 public:
     explicit FileViewModelPrivate(FileViewModel *qq);
     virtual ~FileViewModelPrivate();

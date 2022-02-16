@@ -49,6 +49,11 @@ class FileViewModel : public QAbstractItemModel
     QSharedPointer<FileViewModelPrivate> d;
 
 public:
+    enum State {
+        Idle,
+        Busy
+    };
+
     explicit FileViewModel(QAbstractItemView *parent = nullptr);
     virtual ~FileViewModel() override;
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
@@ -87,8 +92,12 @@ public:
     void beginResetModel();
     void endResetModel();
     inline QModelIndex createIndex(int arow, int acolumn, void *adata) const;
+
+    State state() const;
+    void setState(FileViewModel::State state);
 signals:
     void requestSort();
+    void stateChanged();
 };
 
 DPWORKSPACE_END_NAMESPACE

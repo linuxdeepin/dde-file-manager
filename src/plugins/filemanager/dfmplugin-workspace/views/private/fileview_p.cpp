@@ -22,7 +22,7 @@
 
 #include "fileview_p.h"
 #include "views/headerview.h"
-#include "views/statusbar.h"
+#include "views/fileviewstatusbar.h"
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
 #include "events/workspaceeventcaller.h"
@@ -211,6 +211,30 @@ WorkspaceHelper::DirOpenMode FileViewPrivate::currentDirOpenMode() const
         }
     }
     return mode;
+}
+
+void FileViewPrivate::initContentLabel()
+{
+    if (!contentLabel) {
+        contentLabel = new QLabel(q);
+
+        QPalette palette = contentLabel->palette();
+        QStyleOption opt;
+        opt.initFrom(contentLabel);
+        QColor color = opt.palette.color(QPalette::Inactive, QPalette::Text);
+        palette.setColor(QPalette::Text, color);
+        contentLabel->setPalette(palette);
+
+        auto font = contentLabel->font();
+        font.setFamily("SourceHanSansSC-Light");
+        font.setPixelSize(20);
+        contentLabel->setFont(font);
+
+        contentLabel.setCenterIn(q);
+        contentLabel->setStyleSheet(q->styleSheet());
+        contentLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+        contentLabel->show();
+    }
 }
 
 bool FileViewPrivate::processKeyPressEvent(QKeyEvent *event)

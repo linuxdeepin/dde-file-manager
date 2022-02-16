@@ -143,6 +143,7 @@ private slots:
     void loadViewState(const QUrl &url);
     void saveViewModeState();
     void delaySort();
+    void onModelStateChanged();
 
 private:
     void initializeModel();
@@ -151,6 +152,8 @@ private:
     void initializeConnect();
 
     void updateStatusBar();
+    void updateLoadingIndicator();
+    void updateContentLabel();
     void setDefaultViewMode();
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);
@@ -174,8 +177,6 @@ private:
     void caculateSelection(const QRect &rect, QItemSelection *selection);
     void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
     void caculateListViewSelection(const QRect &rect, QItemSelection *selection);
-
-
 };
 
 DPWORKSPACE_END_NAMESPACE

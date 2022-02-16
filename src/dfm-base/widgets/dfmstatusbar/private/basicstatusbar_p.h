@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuyangming<liuyangming@uniontech.com>
  *
@@ -19,22 +19,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef STATUSBAR_P_H
-#define STATUSBAR_P_H
+#ifndef BASICSTATUSBAR_P_H
+#define BASICSTATUSBAR_P_H
 
-#include "dfmplugin_workspace_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <DAnchors>
 
 #include <QObject>
 #include <QString>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+class QLabel;
+class QHBoxLayout;
 
-class StatusBarPrivate : public QObject
+DFMBASE_BEGIN_NAMESPACE
+
+class BasicStatusBar;
+class BasicStatusBarPrivate : public QObject
 {
+    Q_OBJECT
+    friend class BasicStatusBar;
+    BasicStatusBar *const q;
+
 public:
-    explicit StatusBarPrivate(QObject *parent = nullptr);
+    explicit BasicStatusBarPrivate(BasicStatusBar *qq);
+
+    void initFormatStrings();
+
+    void initTipLabel();
+    void initLayout();
 
     QString onlyOneItemCounted;
     QString counted;
@@ -52,9 +65,10 @@ public:
     int folderCount = 0;
     int folderContains = 0;
 
-    void initFormatStrings();
+    QHBoxLayout *layout = nullptr;
+    QLabel *tip = nullptr;
 };
 
-DPWORKSPACE_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // STATUSBAR_P_H
+#endif   // BASICSTATUSBARPRIVATE_H

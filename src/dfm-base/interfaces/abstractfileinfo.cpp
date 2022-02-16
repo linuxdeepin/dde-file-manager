@@ -1078,6 +1078,16 @@ bool dfmbase::AbstractFileInfo::isDragCompressFileFormat() const
 
     return true;
 }
+
+QString dfmbase::AbstractFileInfo::emptyDirectoryTip() const
+{
+    return QObject::tr("Folder is empty");
+}
+
+QString dfmbase::AbstractFileInfo::loadingTip() const
+{
+    return QObject::tr("Loading...");
+}
 /*!
  * \brief dfmbase::AbstractFileInfo::fileIcon
  * \return

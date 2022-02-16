@@ -83,6 +83,10 @@ FILE (GLOB WIDGETS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmwindow/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmstatusbar/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmstatusbar/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmstatusbar/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmstatusbar/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/action/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/action/*.cpp"
 )

@@ -28,7 +28,7 @@
 #include "baseitemdelegate.h"
 #include "iconitemdelegate.h"
 #include "listitemdelegate.h"
-#include "statusbar.h"
+#include "fileviewstatusbar.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 #include "utils/fileviewhelper.h"
@@ -839,7 +839,7 @@ void FileView::initializeDelegate()
 
 void FileView::initializeStatusBar()
 {
-    d->statusBar = new StatusBar(this);
+    d->statusBar = new FileViewStatusBar(this);
     d->statusBar->resetScalingSlider(kIconSizeList.length() - 1);
 
     d->updateStatusBarTimer = new QTimer(this);
@@ -866,6 +866,8 @@ void FileView::initializeConnect()
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
+
+    connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
 }
 
 void FileView::updateStatusBar()
@@ -876,11 +878,52 @@ void FileView::updateStatusBar()
         return;
     }
 
-    QList<const FileViewItem *> list;
+    QList<AbstractFileInfo *> list;
     for (const QModelIndex &index : selectedIndexes())
-        list << model()->itemFromIndex(proxyModel()->mapToSource(index));
+        list << model()->itemFromIndex(proxyModel()->mapToSource(index))->fileInfo().data();
 
     d->statusBar->itemSelected(list);
+}
+
+void FileView::updateLoadingIndicator()
+{
+    auto state = model()->state();
+    if (state == FileViewModel::Busy) {
+        QString tip;
+
+        AbstractFileInfoPointer fileInfo = model()->itemFromIndex(rootIndex())->fileInfo();
+        if (fileInfo)
+            tip = fileInfo->loadingTip();
+
+        d->statusBar->showLoadingIncator(tip);
+    }
+
+    if (state == FileViewModel::Idle) {
+        d->statusBar->hideLoadingIncator();
+        updateStatusBar();
+    }
+}
+
+void FileView::updateContentLabel()
+{
+    d->initContentLabel();
+    if (model()->state() == FileViewModel::Busy
+        || model()->canFetchMore(rootIndex())) {
+        d->contentLabel->setText(QString());
+        return;
+    }
+
+    if (count() <= 0) {
+        // set custom empty tips
+        AbstractFileInfoPointer fileInfo = model()->itemFromIndex(rootIndex())->fileInfo();
+        if (fileInfo) {
+            d->contentLabel->setText(fileInfo->emptyDirectoryTip());
+            d->contentLabel->adjustSize();
+            return;
+        }
+    }
+
+    d->contentLabel->setText(QString());
 }
 
 void FileView::setDefaultViewMode()
@@ -903,6 +946,16 @@ void FileView::loadViewState(const QUrl &url)
 void FileView::delaySort()
 {
     QAbstractItemView::model()->sort(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
+}
+
+void FileView::onModelStateChanged()
+{
+    updateContentLabel();
+    updateLoadingIndicator();
+
+    if (d->headerView) {
+        d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, model()->state() == FileViewModel::Busy);
+    }
 }
 
 void FileView::openIndexByClicked(const ClickedAction action, const QModelIndex &index)

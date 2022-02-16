@@ -19,63 +19,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef STATUSBAR_H
-#define STATUSBAR_H
+#ifndef FILEVIEWSTATUSBAR_H
+#define FILEVIEWSTATUSBAR_H
 
 #include "dfmplugin_workspace_global.h"
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/widgets/dfmstatusbar/basicstatusbar.h"
 
 #include <dpicturesequenceview.h>
 #include <dslider.h>
 
-#include <QFrame>
-
-class QLabel;
-class QSlider;
-class QString;
-class QLineEdit;
-class QComboBox;
-class QHBoxLayout;
-class QPushButton;
-
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 
-class FileViewItem;
-class StatusBarPrivate;
-class StatusBar : public QFrame
+class FileViewStatusBar : public BasicStatusBar
 {
     Q_OBJECT
 public:
-    explicit StatusBar(QWidget *parent = nullptr);
-
-    QSize sizeHint() const override;
+    explicit FileViewStatusBar(QWidget *parent = nullptr);
 
     void resetScalingSlider(const int stepCount);
     void setScalingVisible(const bool visible);
     int scalingValue();
     QSlider *scalingSlider() const;
+    void showLoadingIncator(const QString &tip);
+    void hideLoadingIncator();
 
-public Q_SLOTS:
-    void itemSelected(const QList<const FileViewItem *> &itemList);
-    void itemCounted(const int count);
-    void updateStatusMessage();
+protected:
+    void clearLayoutAndAnchors() override;
 
 private:
-    void initUI();
     void initScalingSlider();
     void initLoadingIndicator();
-    void initLayout();
-    void clearLayoutAndAnchors();
+    void setCustomLayout();
 
-    // normal status components
-    QHBoxLayout *layout = nullptr;
-    QLabel *label = nullptr;
     DPictureSequenceView *loadingIndicator = nullptr;
     QSlider *scaleSlider = nullptr;
-
-    QSharedPointer<StatusBarPrivate> d;
-    Q_DECLARE_PRIVATE_D(d, StatusBar)
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -232,6 +232,10 @@ public:
     virtual bool canDragCompress() const;
     virtual bool isDragCompressFileFormat() const;
 
+    // property for view
+    virtual QString emptyDirectoryTip() const;
+    virtual QString loadingTip() const;
+
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);
     void setProxy(const AbstractFileInfoPointer &proxy);
