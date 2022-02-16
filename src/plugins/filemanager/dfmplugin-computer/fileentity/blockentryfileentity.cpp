@@ -21,37 +21,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "blockentryfileentity.h"
-#include "file/entry/entryfileinfo.h"
-#include "dbusservice/global_server_defines.h"
-#include "utils/fileutils.h"
-#include "utils/devicemanager.h"
+#include "utils/computerdatastruct.h"
+#include "utils/computerutils.h"
 
-#include "base/application/application.h"
-#include "base/application/settings.h"
-#include "base/urlroute.h"
-#include "utils/universalutils.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/urlroute.h"
 
 #include <QMenu>
 
 DFMBASE_USE_NAMESPACE
+DPCOMPUTER_USE_NAMESPACE
 
 namespace IconName {
-const char *const kRootBlock { "drive-harddisk-root" };
-const char *const kInnerBlock { "drive-harddisk" };
-const char *const kEncryptedInnerBlock { "drive-harddisk-encrypted" };
-const char *const kRemovableBlock { "drive-removable-media" };
-const char *const kEncryptedRemovableBlock { "drive-removable-media-encrypted" };
-const char *const kOpticalBlock { "media-optical" };
-const char *const kOpticalBlockExternal { "media-external" };
+static constexpr char kRootBlock[] { "drive-harddisk-root" };
+static constexpr char kInnerBlock[] { "drive-harddisk" };
+static constexpr char kEncryptedInnerBlock[] { "drive-harddisk-encrypted" };
+static constexpr char kRemovableBlock[] { "drive-removable-media" };
+static constexpr char kEncryptedRemovableBlock[] { "drive-removable-media-encrypted" };
+static constexpr char kOpticalBlock[] { "media-optical" };
+static constexpr char kOpticalBlockExternal[] { "media-external" };
 }   // namespace IconName
-
-namespace AdditionalProperty {
-const char *const kClearBlockProperty { "ClearBlockDeviceInfo" };
-const char *const kAliasGroupName { "LocalDiskAlias" };
-const char *const kAliasItemName { "Items" };
-const char *const kAliasItemUUID { "uuid" };
-const char *const kAliasItemAlias { "alias" };
-}   // namespace AdditionalProperty
 
 using namespace GlobalServerDefines;
 
@@ -80,7 +75,7 @@ QString BlockEntryFileEntity::displayName() const
         if (datas.value(DeviceProperty::kCleartextDevice).toString().length() == 1) {
             return tr("%1 Encrypted").arg(FileUtils::formatSize(datas.value(DeviceProperty::kSizeTotal).toLongLong()));
         } else {
-            return datas.value(AdditionalProperty::kClearBlockProperty).toMap().value(DeviceProperty::kIdLabel).toString();
+            return datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap().value(DeviceProperty::kIdLabel).toString();
         }
     }
 
@@ -217,16 +212,23 @@ void BlockEntryFileEntity::refresh()
     auto id = QString(DeviceId::kBlockDeviceIdPrefix)
             + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
 
-    datas = UniversalUtils::convertFromQMap(DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, true));
+    auto queryInfo = [](const QString &id, bool detail) {
+        if (DeviceManagerInstance.isServiceDBusRunning())
+            return DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, detail);
+        else
+            return ComputerUtils::deviceServIns()->blockDeviceInfo(id, detail);
+    };
+
+    datas = UniversalUtils::convertFromQMap(queryInfo(id, true));
     auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
     if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
-        auto clearBlkData = DeviceManagerInstance.invokeQueryBlockDeviceInfo(clearBlkId, true);
-        datas.insert(AdditionalProperty::kClearBlockProperty, clearBlkData);
+        auto clearBlkData = queryInfo(clearBlkId, true);
+        datas.insert(BlockAdditionalProperty::kClearBlockProperty, clearBlkData);
     }
 }
 
 QMenu *BlockEntryFileEntity::createMenu()
-{   // this might be a temperary solution, see if the framework can provide menu generate
+{
     QMenu *menu = new QMenu();
 
     menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
@@ -290,12 +292,12 @@ bool BlockEntryFileEntity::renamable() const
 
 QString BlockEntryFileEntity::getNameOrAlias() const
 {
-    const auto &lst = Application::genericSetting()->value(AdditionalProperty::kAliasGroupName, AdditionalProperty::kAliasItemName).toList();
+    const auto &lst = Application::genericSetting()->value(BlockAdditionalProperty::kAliasGroupName, BlockAdditionalProperty::kAliasItemName).toList();
 
     for (const QVariant &v : lst) {
         const QVariantMap &map = v.toMap();
-        if (map.value(AdditionalProperty::kAliasItemUUID).toString() == datas.value(DeviceProperty::kUUID).toString()) {
-            return map.value(AdditionalProperty::kAliasItemAlias).toString();
+        if (map.value(BlockAdditionalProperty::kAliasItemUUID).toString() == datas.value(DeviceProperty::kUUID).toString()) {
+            return map.value(BlockAdditionalProperty::kAliasItemAlias).toString();
         }
     }
 
@@ -369,8 +371,8 @@ QString BlockEntryFileEntity::getIdLabel() const
 QVariant BlockEntryFileEntity::getProperty(const char *const key) const
 {
     if (datas.value(DeviceProperty::kIsEncrypted).toBool()) {
-        if (datas.contains(AdditionalProperty::kClearBlockProperty))
-            return datas.value(AdditionalProperty::kClearBlockProperty).toMap().value(key);
+        if (datas.contains(BlockAdditionalProperty::kClearBlockProperty))
+            return datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap().value(key);
         return {};
     }
     return datas.value(key);
@@ -382,7 +384,7 @@ bool BlockEntryFileEntity::showSizeAndProgress() const
         return false;
 
     if (datas.value(DeviceProperty::kIsEncrypted).toBool()) {
-        if (datas.contains(AdditionalProperty::kClearBlockProperty))
+        if (datas.contains(BlockAdditionalProperty::kClearBlockProperty))
             return true;
         return false;
     }

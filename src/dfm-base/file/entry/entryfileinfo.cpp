@@ -30,64 +30,6 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-namespace DeviceId {
-const char *const kBlockDeviceIdPrefix { "/org/freedesktop/UDisks2/block_devices/" };
-}   // namespace DeviceId
-
-namespace SuffixInfo {
-const char *const kUserDir { "userdir" };
-const char *const kProtocol { "protodev" };
-const char *const kBlock { "blockdev" };
-}   // namespace SuffixInfo
-
-// this might be a temperary solution
-namespace ContextMenuActionTrs {
-QString trOpenInNewWin()
-{
-    return QObject::tr("Open in new window");
-}
-QString trOpenInNewTab()
-{
-    return QObject::tr("Open in new tab");
-}
-QString trMount()
-{
-    return QObject::tr("Mount");
-}
-QString trUnmount()
-{
-    return QObject::tr("Unmount");
-}
-QString trRename()
-{
-    return QObject::tr("Rename");
-}
-QString trEject()
-{
-    return QObject::tr("Eject");
-}
-QString trSafelyRemove()
-{
-    return QObject::tr("Safely Remove");
-}
-QString trProperties()
-{
-    return QObject::tr("Properties");
-}
-QString trFormat()
-{
-    return QObject::tr("Format");
-}
-QString trRemove()
-{
-    return QObject::tr("Remove");
-}
-QString trLogoutAndClearSavedPasswd()
-{
-    return QObject::tr("Clear saved password and unmount");
-}
-}   // namespace ContextMenuActionTrs
-
 EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
 {

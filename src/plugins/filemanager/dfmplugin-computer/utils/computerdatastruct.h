@@ -56,5 +56,40 @@ struct ComputerItemData
     DFMEntryFileInfoPointer info { nullptr };
 };
 
+namespace SuffixInfo {
+static constexpr char kAppEntry[] { "appentry" };
+static constexpr char kBlock[] { "blockdev" };
+static constexpr char kProtocol[] { "protodev" };
+static constexpr char kStashedProtocol[] { "protodevstashed" };
+static constexpr char kUserDir[] { "userdir" };
+}
+
+namespace DeviceId {
+static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
+}
+
+namespace BlockAdditionalProperty {
+static constexpr char kClearBlockProperty[] { "ClearBlockDeviceInfo" };
+static constexpr char kAliasGroupName[] { "LocalDiskAlias" };
+static constexpr char kAliasItemName[] { "Items" };
+static constexpr char kAliasItemUUID[] { "uuid" };
+static constexpr char kAliasItemAlias[] { "alias" };
+}   // namespace BlockAdditionalProperty
+
+namespace ContextMenuActionTrs {
+extern QString trOpenInNewWin();
+extern QString trOpenInNewTab();
+extern QString trMount();
+extern QString trUnmount();
+extern QString trRename();
+extern QString trFormat();
+extern QString trEject();
+extern QString trLogoutAndClearSavedPasswd();
+extern QString trRemove();
+extern QString trSafelyRemove();
+extern QString trProperties();
+extern QString trOpen();
+}   // namespace ContextMenuActionTrs
+
 DPCOMPUTER_END_NAMESPACE
 #endif   // COMPUTERDATASTRUCT_H

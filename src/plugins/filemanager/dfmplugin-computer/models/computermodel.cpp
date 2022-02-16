@@ -24,10 +24,10 @@
 #include "views/computerview.h"
 #include "utils/computerutils.h"
 #include "controller/computercontroller.h"
+#include "fileentity/blockentryfileentity.h"
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/file/entry/entities/blockentryfileentity.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <QVector>
@@ -103,8 +103,8 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         if (item->info->targetUrl().isValid()) {
             auto properties = item->info->extraProperties();
             if (properties.value(DeviceProperty::kIsEncrypted).toBool()
-                && properties.contains(AdditionalProperty::kClearBlockProperty))
-                return properties.value(AdditionalProperty::kClearBlockProperty).toHash().value(DeviceProperty::kFileSystem).toString();
+                && properties.contains(BlockAdditionalProperty::kClearBlockProperty))
+                return properties.value(BlockAdditionalProperty::kClearBlockProperty).toHash().value(DeviceProperty::kFileSystem).toString();
             return item->info->extraProperty(DeviceProperty::kFileSystem).toString();
         }
         return "";
@@ -339,11 +339,11 @@ void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglon
     auto entryInfo = info.info;
 
     if (foundEncryptedDev) {
-        auto clearDevInfo = entryInfo->extraProperty(AdditionalProperty::kClearBlockProperty).toHash();
+        auto clearDevInfo = entryInfo->extraProperty(BlockAdditionalProperty::kClearBlockProperty).toHash();
         clearDevInfo[DeviceProperty::kSizeTotal] = total;
         clearDevInfo[DeviceProperty::kSizeFree] = free;
         clearDevInfo[DeviceProperty::kSizeUsed] = total - free;
-        entryInfo->setExtraProperty(AdditionalProperty::kClearBlockProperty, clearDevInfo);
+        entryInfo->setExtraProperty(BlockAdditionalProperty::kClearBlockProperty, clearDevInfo);
     } else {
         entryInfo->setExtraProperty(DeviceProperty::kSizeTotal, total);
         entryInfo->setExtraProperty(DeviceProperty::kSizeFree, free);
@@ -369,13 +369,13 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
     auto entryInfo = info.info;
 
     if (foundEncryptedDev) {
-        auto clearDevInfo = entryInfo->extraProperty(AdditionalProperty::kClearBlockProperty).toHash();
+        auto clearDevInfo = entryInfo->extraProperty(BlockAdditionalProperty::kClearBlockProperty).toHash();
         clearDevInfo[key] = val;
         if (key == DeviceProperty::kMountPoints) {
             auto mpts = val.toStringList();
             clearDevInfo[DeviceProperty::kMountPoint] = mpts.isEmpty() ? "" : mpts.first();
         }
-        entryInfo->setExtraProperty(AdditionalProperty::kClearBlockProperty, clearDevInfo);
+        entryInfo->setExtraProperty(BlockAdditionalProperty::kClearBlockProperty, clearDevInfo);
     } else {
         entryInfo->setExtraProperty(key, val);
         if (key == DeviceProperty::kMountPoints) {

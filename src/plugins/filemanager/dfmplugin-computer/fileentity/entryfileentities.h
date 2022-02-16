@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,11 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ENTRYENTITIES_H
-#define ENTRYENTITIES_H
+#ifndef ENTRYFILEENTITIES_H
+#define ENTRYFILEENTITIES_H
 
-#include "userentryfileentity.h"
+#include "appentryfileentity.h"
 #include "blockentryfileentity.h"
 #include "protocolentryfileentity.h"
+#include "stashedprotocolentryfileentity.h"
+#include "userentryfileentity.h"
 
-#endif   // ENTRYENTITIES_H
+#endif   // ENTRYFILEENTITIES_H

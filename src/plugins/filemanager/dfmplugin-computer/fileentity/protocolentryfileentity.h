@@ -20,26 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BLOCKENTRYFILEENTITY_H
-#define BLOCKENTRYFILEENTITY_H
+#ifndef PROTOCOLENTRYFILEENTITY_H
+#define PROTOCOLENTRYFILEENTITY_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "abstractentryfileentity.h"
+#include "dfmplugin_computer_global.h"
 
-namespace AdditionalProperty {
-extern const char *const kClearBlockProperty;
-extern const char *const kAliasGroupName;
-extern const char *const kAliasItemName;
-extern const char *const kAliasItemUUID;
-extern const char *const kAliasItemAlias;
-}   // namespace AdditionalProperty
+#include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DFMBASE_BEGIN_NAMESPACE
+DPCOMPUTER_BEGIN_NAMESPACE
 
-class BlockEntryFileEntity : public AbstractEntryFileEntity
+class ProtocolEntryFileEntity : public dfmbase::AbstractEntryFileEntity
 {
 public:
-    explicit BlockEntryFileEntity(const QUrl &url);
+    explicit ProtocolEntryFileEntity(const QUrl &url);
 
     // EntryFileEntity interface
     virtual QString displayName() const override;
@@ -49,24 +42,13 @@ public:
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
     virtual void onOpen() override;
-    virtual EntryFileInfo::EntryOrder order() const override;
-
+    virtual dfmbase::EntryFileInfo::EntryOrder order() const override;
     virtual qint64 sizeTotal() const override;
     virtual qint64 sizeUsage() const override;
     virtual void refresh() override;
-    virtual QMenu *createMenu() override;
     virtual QUrl targetUrl() const override;
-    virtual bool isAccessable() const override;
-    virtual bool renamable() const override;
-
-private:
-    QString getNameOrAlias() const;
-    QString getNameOfOptical() const;
-    QString getIdLabel() const;
-    QVariant getProperty(const char *const key) const;
-    bool showSizeAndProgress() const;
+    virtual QMenu *createMenu() override;
 };
 
-DFMBASE_END_NAMESPACE
-
-#endif   // BLOCKENTRYFILEENTITY_H
+DPCOMPUTER_END_NAMESPACE
+#endif   // PROTOCOLENTRYFILEENTITY_H

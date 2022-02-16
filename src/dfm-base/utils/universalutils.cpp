@@ -101,7 +101,6 @@ QString UniversalUtils::userLoginState()
  */
 [[gnu::hot]] int UniversalUtils::registerEventType() noexcept
 {
-    Q_ASSERT(inMainThread());
     static int type = GlobalEventType::kCustomBase;
     if (type > GlobalEventType::kMaxCustom)
         return -1;

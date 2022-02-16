@@ -21,13 +21,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "userentryfileentity.h"
-#include "file/entry/entryfileinfo.h"
-#include "base/standardpaths.h"
+#include "utils/computerdatastruct.h"
+
+#include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QDebug>
 #include <QMenu>
 
-DFMBASE_BEGIN_NAMESPACE
+DPCOMPUTER_USE_NAMESPACE
 
 /*!
  * \class UserEntryFileEntity
@@ -46,12 +48,12 @@ UserEntryFileEntity::UserEntryFileEntity(const QUrl &url)
 
 QString UserEntryFileEntity::displayName() const
 {
-    return StandardPaths::displayName(dirName);
+    return dfmbase::StandardPaths::displayName(dirName);
 }
 
 QIcon UserEntryFileEntity::icon() const
 {
-    return QIcon::fromTheme(StandardPaths::iconName(dirName));
+    return QIcon::fromTheme(dfmbase::StandardPaths::iconName(dirName));
 }
 
 bool UserEntryFileEntity::exists() const
@@ -78,14 +80,14 @@ void UserEntryFileEntity::onOpen()
 {
 }
 
-EntryFileInfo::EntryOrder UserEntryFileEntity::order() const
+dfmbase::EntryFileInfo::EntryOrder UserEntryFileEntity::order() const
 {
-    return EntryFileInfo::EntryOrder::kOrderUserDir;
+    return dfmbase::EntryFileInfo::EntryOrder::kOrderUserDir;
 }
 
 QUrl UserEntryFileEntity::targetUrl() const
 {
-    QString path = StandardPaths::location(dirName);
+    QString path = dfmbase::StandardPaths::location(dirName);
     if (path.isEmpty())
         return QUrl();
     QUrl targetUrl;
@@ -105,5 +107,3 @@ QMenu *UserEntryFileEntity::createMenu()
     menu->addAction(ContextMenuActionTrs::trProperties());
     return menu;
 }
-
-DFMBASE_END_NAMESPACE

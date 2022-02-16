@@ -24,6 +24,7 @@
 #include "events/computereventcaller.h"
 #include "fileentity/appentryfileentity.h"
 #include "fileentity/stashedprotocolentryfileentity.h"
+#include "fileentity/blockentryfileentity.h"
 #include "utils/computerutils.h"
 #include "utils/stashmountsutils.h"
 #include "watcher/computeritemwatcher.h"
@@ -34,7 +35,6 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/file/entry/entities/blockentryfileentity.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
@@ -97,7 +97,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
             mountDevice(winId, info);
         } else if (suffix == SuffixInfo::kProtocol) {
             // TODO(xust)
-        } else if (suffix == SuffixInfo::kStashedRemote) {
+        } else if (suffix == SuffixInfo::kStashedProtocol) {
             actMount(winId, info, true);
         } else if (suffix == SuffixInfo::kAppEntry) {
             QString cmd = info->extraProperty(ExtraPropertyName::kExecuteCommand).toString();
@@ -151,7 +151,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
         return;
     }
 
-    using namespace AdditionalProperty;
+    using namespace BlockAdditionalProperty;
     QString displayAlias = alias.trimmed();
     QString displayName = info->displayName();
     QVariantList list = Application::genericSetting()->value(kAliasGroupName, kAliasItemName).toList();
@@ -303,10 +303,16 @@ void ComputerController::actEject(const QUrl &url)
     QString id;
     if (url.path().endsWith(SuffixInfo::kBlock)) {
         id = ComputerUtils::getBlockDevIdByUrl(url);
-        DeviceManagerInstance.invokeDetachBlockDevice(id);
+        if (DeviceManagerInstance.isServiceDBusRunning())
+            DeviceManagerInstance.invokeDetachBlockDevice(id);
+        else
+            ComputerUtils::deviceServIns()->detachBlockDevice(id);
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
-        DeviceManagerInstance.invokeDetachProtocolDevice(id);
+        if (DeviceManagerInstance.isServiceDBusRunning())
+            DeviceManagerInstance.invokeDetachProtocolDevice(id);
+        else
+            ComputerUtils::deviceServIns()->detachProtocolDevice(id);
     } else {
         qDebug() << url << "is not support " << __FUNCTION__;
     }
@@ -343,7 +349,7 @@ static void onNetworkDeviceMountFinished(bool ok, dfmmount::DeviceError err, con
 void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, bool enterAfterMounted)
 {
     QString sfx = info->suffix();
-    if (sfx == SuffixInfo::kStashedRemote) {
+    if (sfx == SuffixInfo::kStashedProtocol) {
         QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->url());
         ComputerUtils::deviceServIns()->mountNetworkDevice(devId, [devId, enterAfterMounted, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
             onNetworkDeviceMountFinished(ok, err, mntPath, winId, enterAfterMounted);
@@ -440,7 +446,7 @@ void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)
 
 void ComputerController::actRemove(DFMEntryFileInfoPointer info)
 {
-    if (info->suffix() != SuffixInfo::kStashedRemote)
+    if (info->suffix() != SuffixInfo::kStashedProtocol)
         return;
     StashMountsUtils::removeStashedMount(info->url());
     Q_EMIT ComputerItemWatcherInstance->itemRemoved(info->url());

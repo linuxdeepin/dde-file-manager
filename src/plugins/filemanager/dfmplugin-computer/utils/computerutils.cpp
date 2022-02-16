@@ -21,8 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "computerutils.h"
-#include "fileentity/appentryfileentity.h"
-#include "fileentity/stashedprotocolentryfileentity.h"
+#include "fileentity/entryfileentities.h"
+#include "utils/computerdatastruct.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/base/urlroute.h"
@@ -117,7 +117,7 @@ QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
     QUrl devUrl;
     devUrl.setScheme(SchemeTypes::kEntry);
     auto path = id.toUtf8().toBase64();
-    QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kStashedRemote);
+    QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kStashedProtocol);
     devUrl.setPath(encodecPath);
     return devUrl;
 }
@@ -126,10 +126,10 @@ QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
 {
     if (url.scheme() != SchemeTypes::kEntry)
         return "";
-    if (!url.path().endsWith(SuffixInfo::kStashedRemote))
+    if (!url.path().endsWith(SuffixInfo::kStashedProtocol))
         return "";
 
-    QString suffix = QString(".%1").arg(SuffixInfo::kStashedRemote);
+    QString suffix = QString(".%1").arg(SuffixInfo::kStashedProtocol);
     QString encodecId = url.path().remove(suffix);
     QString id = QByteArray::fromBase64(encodecId.toUtf8());
     return id;
@@ -139,11 +139,11 @@ QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
 {
     if (stashedUrl.scheme() != SchemeTypes::kEntry)
         return {};
-    if (!stashedUrl.path().endsWith(SuffixInfo::kStashedRemote))
+    if (!stashedUrl.path().endsWith(SuffixInfo::kStashedProtocol))
         return {};
 
     QString path = stashedUrl.path();
-    path.replace(SuffixInfo::kStashedRemote, SuffixInfo::kProtocol);
+    path.replace(SuffixInfo::kStashedProtocol, SuffixInfo::kProtocol);
     QUrl ret;
     ret.setScheme(SchemeTypes::kEntry);
     ret.setPath(path);
@@ -158,7 +158,7 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
         return {};
 
     QString path = protocolDevUrl.path();
-    path.replace(SuffixInfo::kProtocol, SuffixInfo::kStashedRemote);
+    path.replace(SuffixInfo::kProtocol, SuffixInfo::kStashedProtocol);
     QUrl ret;
     ret.setScheme(SchemeTypes::kEntry);
     ret.setPath(path);
@@ -207,7 +207,7 @@ dfm_service_common::DialogService *ComputerUtils::dlgServIns()
 bool ComputerUtils::isPresetSuffix(const QString &suffix)
 {
     return suffix == SuffixInfo::kBlock || suffix == SuffixInfo::kProtocol || suffix == SuffixInfo::kUserDir
-            || suffix == SuffixInfo::kAppEntry || suffix == SuffixInfo::kStashedRemote;
+            || suffix == SuffixInfo::kAppEntry || suffix == SuffixInfo::kStashedProtocol;
 }
 
 dfm_service_common::PropertyDialogService *ComputerUtils::propertyDlgServIns()

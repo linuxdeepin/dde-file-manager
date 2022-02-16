@@ -181,8 +181,10 @@ bool StashMountsUtils::isStashedDevExist(const QUrl &stashedUrl)
 
 void StashMountsUtils::stashMountedMounts()
 {
-    QStringList ids = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
-    for (auto id: ids) {
+    QStringList ids = DeviceManagerInstance.isServiceDBusRunning()
+            ? DeviceManagerInstance.invokeProtolcolDevicesIdList({})
+            : ComputerUtils::deviceServIns()->protocolDevicesIdList();
+    for (auto id : ids) {
         if (id.startsWith("smb")) {
             DFMEntryFileInfoPointer info(new EntryFileInfo(ComputerUtils::makeProtocolDevUrl(id)));
             QString displayName = info->displayName();

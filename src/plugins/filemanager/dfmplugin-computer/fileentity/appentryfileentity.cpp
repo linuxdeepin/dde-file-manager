@@ -22,18 +22,14 @@
 */
 #include "appentryfileentity.h"
 #include "utils/computerutils.h"
+#include "utils/computerdatastruct.h"
 
 #include "dfm-base/utils/desktopfile.h"
 
 #include <QFile>
 #include <QMenu>
 
-DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
-
-namespace ExtraPropertyName {
-const char *const kExecuteCommand { "execute_command" };
-}   // namespace ExtraPropertyName
 
 /*!
  * \class AppEntryFileEntity
@@ -43,7 +39,7 @@ AppEntryFileEntity::AppEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     fileUrl = ComputerUtils::getAppEntryFileUrl(url);
-    desktopInfo.reset(new DesktopFile(fileUrl.path()));
+    desktopInfo.reset(new dfmbase::DesktopFile(fileUrl.path()));
 }
 
 QString AppEntryFileEntity::displayName() const
@@ -85,9 +81,9 @@ QString AppEntryFileEntity::description() const
     return tr("Double click to open it");
 }
 
-EntryFileInfo::EntryOrder AppEntryFileEntity::order() const
+dfmbase::EntryFileInfo::EntryOrder AppEntryFileEntity::order() const
 {
-    return EntryFileInfo::EntryOrder::kOrderApps;
+    return dfmbase::EntryFileInfo::EntryOrder::kOrderApps;
 }
 
 QVariantHash AppEntryFileEntity::extraProperties() const
@@ -125,8 +121,3 @@ QString AppEntryFileEntity::getFormattedExecCommand() const
 }
 
 DPCOMPUTER_END_NAMESPACE
-
-QString ContextMenuActionTrs::trOpen()
-{
-    return DPCOMPUTER_NAMESPACE::AppEntryFileEntity::tr("Open");
-}

@@ -21,15 +21,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "protocolentryfileentity.h"
-#include "file/entry/entryfileinfo.h"
-#include "dbusservice/global_server_defines.h"
-#include "base/urlroute.h"
-#include "utils/devicemanager.h"
-#include "utils/universalutils.h"
+#include "utils/computerdatastruct.h"
+#include "utils/computerutils.h"
+
+#include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QMenu>
 
-DFMBASE_USE_NAMESPACE
+DPCOMPUTER_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
 
@@ -99,24 +102,24 @@ void ProtocolEntryFileEntity::onOpen()
 {
 }
 
-EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
+dfmbase::EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
 {
     const QString &id = datas.value(DeviceProperty::kId).toString();
 
     if (id.startsWith(ProtocolName::kFtp)
         || id.startsWith(ProtocolName::kSFtp))
-        return EntryFileInfo::EntryOrder::kOrderFtp;
+        return dfmbase::EntryFileInfo::EntryOrder::kOrderFtp;
 
     if (id.startsWith(ProtocolName::kSmb))
-        return EntryFileInfo::EntryOrder::kOrderSmb;
+        return dfmbase::EntryFileInfo::EntryOrder::kOrderSmb;
 
     if (id.startsWith(ProtocolName::kMtp))
-        return EntryFileInfo::EntryOrder::kOrderMTP;
+        return dfmbase::EntryFileInfo::EntryOrder::kOrderMTP;
 
     if (id.startsWith(ProtocolName::kGPhoto2))
-        return EntryFileInfo::EntryOrder::kOrderGPhoto2;
+        return dfmbase::EntryFileInfo::EntryOrder::kOrderGPhoto2;
 
-    return EntryFileInfo::EntryOrder::kOrderFiles;
+    return dfmbase::EntryFileInfo::EntryOrder::kOrderFiles;
 }
 
 qint64 ProtocolEntryFileEntity::sizeTotal() const
@@ -134,7 +137,14 @@ void ProtocolEntryFileEntity::refresh()
     auto encodecId = entryUrl.path().remove("." + QString(SuffixInfo::kProtocol)).toUtf8();
     auto id = QString(QByteArray::fromBase64(encodecId));
 
-    datas = UniversalUtils::convertFromQMap(DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id));
+    auto queryInfo = [](const QString &id, bool detail) {
+        if (DeviceManagerInstance.isServiceDBusRunning())
+            return DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id, detail);
+        else
+            return ComputerUtils::deviceServIns()->protocolDeviceInfo(id, detail);
+    };
+
+    datas = dfmbase::UniversalUtils::convertFromQMap(queryInfo(id, true));
 }
 
 QUrl ProtocolEntryFileEntity::targetUrl() const

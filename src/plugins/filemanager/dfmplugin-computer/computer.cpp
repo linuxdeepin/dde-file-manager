@@ -23,8 +23,7 @@
 #include "computer.h"
 #include "utils/computerutils.h"
 #include "views/computerview.h"
-#include "fileentity/appentryfileentity.h"
-#include "fileentity/stashedprotocolentryfileentity.h"
+#include "fileentity/entryfileentities.h"
 #include "events/computerunicastreceiver.h"
 #include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"
@@ -36,7 +35,6 @@
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/entry/entities/entryentities.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/devicemanager.h"
 
@@ -65,7 +63,7 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<UserEntryFileEntity>(SuffixInfo::kUserDir);
     EntryEntityFactor::registCreator<BlockEntryFileEntity>(SuffixInfo::kBlock);
     EntryEntityFactor::registCreator<ProtocolEntryFileEntity>(SuffixInfo::kProtocol);
-    EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedRemote);
+    EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedProtocol);
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
 
     ComputerUnicastReceiver::instance()->connectService();

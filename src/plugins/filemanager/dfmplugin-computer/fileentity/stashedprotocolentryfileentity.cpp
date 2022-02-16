@@ -22,12 +22,13 @@
 */
 #include "stashedprotocolentryfileentity.h"
 #include "utils/stashmountsutils.h"
+#include "utils/computerdatastruct.h"
 
 #include "dfm-base/base/standardpaths.h"
 
 #include <QMenu>
 
-DFMBASE_USE_NAMESPACE
+DPCOMPUTER_USE_NAMESPACE
 
 /*!
  * \class StashedProtocolEntryFileEntity
@@ -40,7 +41,7 @@ StashedProtocolEntryFileEntity::StashedProtocolEntryFileEntity(const QUrl &url)
 
 QString StashedProtocolEntryFileEntity::displayName() const
 {
-    return DPCOMPUTER_NAMESPACE::StashMountsUtils::displayName(entryUrl);
+    return StashMountsUtils::displayName(entryUrl);
 }
 
 QIcon StashedProtocolEntryFileEntity::icon() const
@@ -50,7 +51,7 @@ QIcon StashedProtocolEntryFileEntity::icon() const
 
 bool StashedProtocolEntryFileEntity::exists() const
 {
-    return DPCOMPUTER_NAMESPACE::StashMountsUtils::isStashedDevExist(entryUrl);
+    return StashMountsUtils::isStashedDevExist(entryUrl);
 }
 
 bool StashedProtocolEntryFileEntity::showProgress() const
@@ -72,9 +73,9 @@ void StashedProtocolEntryFileEntity::onOpen()
 {
 }
 
-EntryFileInfo::EntryOrder StashedProtocolEntryFileEntity::order() const
+dfmbase::EntryFileInfo::EntryOrder StashedProtocolEntryFileEntity::order() const
 {
-    return EntryFileInfo::EntryOrder::kOrderStashedSmb;
+    return dfmbase::EntryFileInfo::EntryOrder::kOrderStashedSmb;
 }
 
 QMenu *StashedProtocolEntryFileEntity::createMenu()

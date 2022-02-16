@@ -31,30 +31,6 @@ class QMenu;
 
 DFMBASE_BEGIN_NAMESPACE
 
-namespace DeviceId {
-extern const char *const kBlockDeviceIdPrefix;
-}   // namespace DeviceId
-
-namespace SuffixInfo {
-extern const char *const kUserDir;
-extern const char *const kProtocol;
-extern const char *const kBlock;
-}   // namespace SuffixInfo
-
-namespace ContextMenuActionTrs {
-extern QString trOpenInNewWin();
-extern QString trOpenInNewTab();
-extern QString trMount();
-extern QString trUnmount();
-extern QString trRename();
-extern QString trFormat();
-extern QString trEject();
-extern QString trLogoutAndClearSavedPasswd();
-extern QString trRemove();
-extern QString trSafelyRemove();
-extern QString trProperties();
-}   // namespace ContextMenuActionTrs
-
 class EntryFileInfoPrivate;
 class EntryFileInfo : public AbstractFileInfo
 {

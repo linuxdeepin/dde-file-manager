@@ -20,18 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef PROTOCOLENTRYFILEENTITY_H
-#define PROTOCOLENTRYFILEENTITY_H
+#ifndef USERENTRYFILEENTITY_H
+#define USERENTRYFILEENTITY_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "abstractentryfileentity.h"
+#include "dfmplugin_computer_global.h"
 
-DFMBASE_BEGIN_NAMESPACE
+#include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-class ProtocolEntryFileEntity : public AbstractEntryFileEntity
+DPCOMPUTER_BEGIN_NAMESPACE
+
+class UserEntryFileEntity : public dfmbase::AbstractEntryFileEntity
 {
 public:
-    explicit ProtocolEntryFileEntity(const QUrl &url);
+    explicit UserEntryFileEntity(const QUrl &url);
 
     // EntryFileEntity interface
     virtual QString displayName() const override;
@@ -41,13 +42,13 @@ public:
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
     virtual void onOpen() override;
-    virtual EntryFileInfo::EntryOrder order() const override;
-    virtual qint64 sizeTotal() const override;
-    virtual qint64 sizeUsage() const override;
-    virtual void refresh() override;
+    virtual dfmbase::EntryFileInfo::EntryOrder order() const override;
     virtual QUrl targetUrl() const override;
     virtual QMenu *createMenu() override;
+
+private:
+    QString dirName;
 };
 
-DFMBASE_END_NAMESPACE
-#endif   // PROTOCOLENTRYFILEENTITY_H
+DPCOMPUTER_END_NAMESPACE
+#endif   // USERENTRYFILEENTITY_H

@@ -79,12 +79,28 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     void onDeviceAdded(const QUrl &devUrl, bool needSidebarItem = true);
-    void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QDBusVariant &var);
+    void onDevicePropertyChangedQVar(const QString &id, const QString &propertyName, const QVariant &var);
+    void onDevicePropertyChangedQDBusVar(const QString &id, const QString &propertyName, const QDBusVariant &var);
     void onAppAttributeChanged(Application::GenericAttribute ga, const QVariant &value);
+
+    void onBlockDeviceAdded(const QString &id);
+    void onBlockDeviceRemoved(const QString &id);
+    void onBlockDeviceMounted(const QString &id, const QString &mntPath);
+    void onUpdateBlockItem(const QString &id);
+    void onProtocolDeviceMounted(const QString &id, const QString &mntPath);
+    void onProtocolDeviceUnmounted(const QString &id);
+    void onDeviceSizeChanged(const QString &id, qlonglong total, qlonglong free);
+
+    void onDeviceServiceDBusRegistered();
+    void onDeviceServiceDBusUnregistered();
 
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);
     void initConn();
+    void initDeviceServiceDBusConn();
+    void disconnDeviceServiceDBus();
+    void initDeviceServiceConn();
+    void disconnDeviceService();
     void initAppWatcher();
 
     ComputerDataList getUserDirItems();
