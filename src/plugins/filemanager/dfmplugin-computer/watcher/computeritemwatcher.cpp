@@ -455,7 +455,7 @@ void ComputerItemWatcher::onDevicePropertyChanged(const QString &id, const QStri
             if (var.variant().toBool())
                 Q_EMIT itemRemoved(url);
             else
-                onDeviceAdded(id);
+                onDeviceAdded(url);
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             if (propertyName == DeviceProperty::kOptical)

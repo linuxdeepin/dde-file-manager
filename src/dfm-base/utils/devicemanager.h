@@ -41,6 +41,7 @@ public:
     QPointer<DeviceManagerInterface> getDeviceInterface();
     bool connectToServer();
     void initConnection();
+    bool isServiceDBusRunning();
 
     // TODO(xust) if launch in root mode, invoke service directly.
 

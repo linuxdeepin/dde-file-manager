@@ -86,6 +86,11 @@ void DeviceManager::initConnection()
     });
 }
 
+bool DeviceManager::isServiceDBusRunning()
+{
+    return deviceInterface && deviceInterface->isValid();
+}
+
 void DeviceManager::invokeDetachAllMountedDevices()
 {
     if (deviceInterface) {
