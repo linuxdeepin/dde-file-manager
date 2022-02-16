@@ -43,6 +43,7 @@ public:
 public slots:
     void handleTileBarSwitchModeTriggered(quint64 windowId, DFMBASE_NAMESPACE::Global::ViewMode mode);
     void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
+    void handleShowCustomTopWidget(quint64 windowId, const QString &cheme, bool visible);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

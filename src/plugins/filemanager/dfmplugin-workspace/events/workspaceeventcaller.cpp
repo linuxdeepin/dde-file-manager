@@ -125,3 +125,8 @@ void WorkspaceEventCaller::sendShowFilePropertyDialog(const QList<QUrl> &urls)
 {
     dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
 }
+
+void WorkspaceEventCaller::sendShowCustomTopWidget(const quint64 windowID, const QString &scheme, bool visible)
+{
+    dispatcher()->publish(DSB_FM_NAMESPACE::Workspace::EventType::kShowCustomTopWidget, windowID, scheme, visible);
+}

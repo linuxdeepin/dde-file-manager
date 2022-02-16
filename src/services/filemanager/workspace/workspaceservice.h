@@ -45,6 +45,7 @@ public:
     void addScheme(const QString &scheme);
     bool tabAddable(const quint64 windowID);
     void addCustomTopWidget(const Workspace::CustomTopWidgetInfo &info);
+    bool getCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);
 
 private:
     explicit WorkspaceService(QObject *parent = nullptr);

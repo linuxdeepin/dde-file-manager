@@ -65,6 +65,8 @@ public:
 
     void openNewTab(const QUrl &url);
     bool canAddNewTab();
+    void setCustomTopWidgetVisible(const QString &scheme, bool visible);
+    bool getCustomTopWidgetVisible(const QString &scheme);
 
 public slots:
     void onOpenUrlInNewTab(quint64 windowId, const QUrl &url);
@@ -86,6 +88,7 @@ private:
     void initViewLayout();
     void handleCtrlN();
     void initCustomTopWidgets(const QUrl &url);
+
     QUrl workspaceUrl;
     QFrame *topWidgetContainer { nullptr };
     QHBoxLayout *tabBarLayout { nullptr };

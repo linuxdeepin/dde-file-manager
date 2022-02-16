@@ -37,7 +37,7 @@ QT_BEGIN_NAMESPACE
 class QFrame;
 QT_END_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
-
+class CustomTopWidgetInterface;
 class WorkspaceWidget;
 class WorkspaceHelper : public QObject
 {
@@ -48,15 +48,18 @@ public:
         kOpenNewWindow,
         //kForceOpenNewWindow // Todo(yanghao): ???
     };
+
+    static WorkspaceHelper *instance();
+
     using KeyType = QString;
-    using TopWidgetCreator = std::function<QFrame *()>;
+    using TopWidgetCreator = std::function<CustomTopWidgetInterface *()>;
     using TopWidgetCreatorMap = QMap<KeyType, TopWidgetCreator>;
 
     void registerTopWidgetCreator(const KeyType &scheme, const TopWidgetCreator &creator);
     bool isRegistedTopWidget(const KeyType &scheme) const;
-    QFrame *createTopWidgetByUrl(const QUrl &url);
+    CustomTopWidgetInterface *createTopWidgetByUrl(const QUrl &url);
+    void setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible);
 
-    static WorkspaceHelper *instance();
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
     void removeWorkspace(quint64 windowId);
@@ -77,8 +80,8 @@ public:
     void actionRenameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl);
     void actionWriteToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
     void actionPasteFiles(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                         const QList<QUrl> &sourceUrls, const QUrl &target,
-                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+                          const QList<QUrl> &sourceUrls, const QUrl &target,
+                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);

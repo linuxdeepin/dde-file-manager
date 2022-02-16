@@ -165,7 +165,7 @@ QFrame *TrashManager::createEmptyTrashTopWidget()
     emptyTrashButton->setObjectName("EmptyTrashButton");
 
     emptyTrashButton->setText(tr("Empty"));
-    emptyTrashButton->setToolTip(QObject::tr("Empty Trash"));
+    emptyTrashButton->setToolTip(tr("Empty Trash"));
     emptyTrashButton->setFixedSize({ 86, 36 });
     DPalette pal = DApplicationHelper::instance()->palette(emptyTrashHolder);
     QPalette buttonPalette = emptyTrashButton->palette();

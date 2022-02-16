@@ -35,6 +35,7 @@ extern const int kTabAdded = DFMBASE_NAMESPACE::UniversalUtils::registerEventTyp
 extern const int kTabChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 extern const int kTabMoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 extern const int kTabRemoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+extern const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 }   // namespace Sidebar
@@ -82,4 +83,9 @@ bool WorkspaceService::tabAddable(const quint64 windowID)
 void WorkspaceService::addCustomTopWidget(const Workspace::CustomTopWidgetInfo &info)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, info);
+}
+
+bool WorkspaceService::getCustomTopWidgetVisible(const quint64 windowID, const QString &scheme)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, scheme).toBool();
 }

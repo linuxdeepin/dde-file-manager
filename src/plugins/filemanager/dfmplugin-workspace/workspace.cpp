@@ -23,7 +23,9 @@
 #include "workspace.h"
 #include "views/workspacewidget.h"
 #include "views/fileview.h"
+#include "views/renamebar.h"
 #include "utils/workspacehelper.h"
+#include "utils/customtopwidgetinterface.h"
 #include "events/workspaceeventreceiver.h"
 #include "events/workspaceunicastreceiver.h"
 
@@ -75,6 +77,26 @@ bool Workspace::start()
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
+
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::Workspace::EventType::kShowCustomTopWidget,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
+
+    const QString &scheme = SchemeTypes::kFile;
+
+    if (WorkspaceHelper::instance()->isRegistedTopWidget(scheme)) {
+        qWarning() << "custom top widget sechme " << scheme << "has been resigtered!";
+        return false;
+    }
+
+    WorkspaceHelper::instance()->registerTopWidgetCreator(scheme, []() {
+        CustomTopWidgetInterface *interface { new CustomTopWidgetInterface };
+        interface->registeCreateTopWidgetCallback([]() {
+            return new RenameBar();
+        });
+        interface->setKeepShow(false);
+        return interface;
+    });
+
     return true;
 }
 

@@ -49,3 +49,8 @@ void WorkspaceEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const Q
 {
     WorkspaceHelper::instance()->openUrlInNewTab(windowId, url);
 }
+
+void WorkspaceEventReceiver::handleShowCustomTopWidget(quint64 windowId, const QString &scheme, bool visible)
+{
+    WorkspaceHelper::instance()->setCustomTopWidgetVisible(windowId, scheme, visible);
+}

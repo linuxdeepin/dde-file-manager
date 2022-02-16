@@ -103,6 +103,7 @@ bool Trash::start()
 
     Workspace::CustomTopWidgetInfo info;
     info.scheme = TrashManager::scheme();
+    info.keepShow = true;
     info.createTopWidgetCb = TrashManager::createEmptyTrashTopWidget;
     GlobalPrivate::workspaceService->addCustomTopWidget(info);
 

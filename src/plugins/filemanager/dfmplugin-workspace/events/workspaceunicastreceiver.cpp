@@ -1,6 +1,7 @@
 #include "workspaceunicastreceiver.h"
 #include "views/workspacewidget.h"
 #include "utils/workspacehelper.h"
+#include "utils/customtopwidgetinterface.h"
 #include "services/filemanager/dfm_filemanager_service_global.h"
 
 #include <dfm-framework/framework.h>
@@ -31,6 +32,7 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::addScheme"), this, &WorkspaceUnicastReceiver::invokeAddScheme);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::tabAddable"), this, &WorkspaceUnicastReceiver::invokeTabAddable);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::addCustomTopWidget"), this, &WorkspaceUnicastReceiver::invokeAddCustomTopWidget);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::getCustomTopWidgetVisible"), this, &WorkspaceUnicastReceiver::invokeGetCustomTopWidgetVisible);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -54,9 +56,22 @@ bool WorkspaceUnicastReceiver::invokeAddCustomTopWidget(const dfm_service_filema
         return false;
     }
 
-    WorkspaceHelper::instance()->registerTopWidgetCreator(info.scheme, info.createTopWidgetCb);
-
+    WorkspaceHelper::instance()->registerTopWidgetCreator(info.scheme, [=]() {
+        CustomTopWidgetInterface *interface { new CustomTopWidgetInterface };
+        interface->setKeepShow(info.keepShow);
+        interface->registeCreateTopWidgetCallback(info.createTopWidgetCb);
+        return interface;
+    });
     return true;
+}
+
+bool WorkspaceUnicastReceiver::invokeGetCustomTopWidgetVisible(const quint64 windowID, const QString &scheme)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
+    if (workspaceWidget) {
+        return workspaceWidget->getCustomTopWidgetVisible(scheme);
+    }
+    return false;
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)

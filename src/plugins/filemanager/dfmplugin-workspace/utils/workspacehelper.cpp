@@ -21,8 +21,10 @@
 */
 #include "workspacehelper.h"
 #include "views/fileview.h"
+#include "views/workspacewidget.h"
 #include "events/workspaceeventcaller.h"
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
@@ -48,7 +50,7 @@ bool WorkspaceHelper::isRegistedTopWidget(const WorkspaceHelper::KeyType &scheme
     return topWidgetCreators.contains(scheme);
 }
 
-QFrame *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
+CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
 {
     const KeyType &theType = url.scheme();
     if (!topWidgetCreators.contains(theType)) {
@@ -56,6 +58,14 @@ QFrame *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
         return nullptr;
     }
     return topWidgetCreators.value(theType)();
+}
+
+void WorkspaceHelper::setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible)
+{
+    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowId);
+    if (workspaceWidget) {
+        workspaceWidget->setCustomTopWidgetVisible(scheme, visible);
+    }
 }
 
 WorkspaceHelper *WorkspaceHelper::instance()

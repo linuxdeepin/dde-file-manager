@@ -26,6 +26,7 @@
 #include "tab.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
+#include "utils/customtopwidgetinterface.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 
@@ -108,6 +109,21 @@ bool WorkspaceWidget::canAddNewTab()
     if (tabBar)
         return tabBar->tabAddable();
 
+    return false;
+}
+
+void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)
+{
+    if (topWidgets.contains(scheme)) {
+        topWidgets[scheme]->setVisible(visible);
+    }
+}
+
+bool WorkspaceWidget::getCustomTopWidgetVisible(const QString &scheme)
+{
+    if (topWidgets.contains(scheme)) {
+        return topWidgets[scheme]->isVisible();
+    }
     return false;
 }
 
@@ -242,7 +258,6 @@ void WorkspaceWidget::initViewLayout()
     topWidgetContainer->setLayout(layout);
 
     widgetLayout = new QVBoxLayout;
-    //    widgetLayout->addWidget(topWidgetContainer);
     widgetLayout->addWidget(tabTopLine);
     widgetLayout->addLayout(tabBarLayout);
     widgetLayout->addWidget(tabBottomLine);
@@ -266,22 +281,22 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
 {
     QString scheme { url.scheme() };
 
-    if (topWidgets.contains(scheme)) {
-        for (auto widget : topWidgets.values()) {
-            widget->hide();
-        }
-        topWidgets[scheme]->setHidden(false);
-    } else {
-        for (auto widget : topWidgets.values()) {
-            widget->hide();
-        }
+    for (auto widget : topWidgets.values()) {
+        widget->hide();
+    }
 
-        auto topWidget = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
-        if (topWidget) {
-            TopWidgetPtr topWidgetPtr = QSharedPointer<QFrame>(topWidget);
-            widgetLayout->insertWidget(0, topWidget);
-            topWidgets.insert(scheme, topWidgetPtr);
-            topWidgetPtr->setHidden(false);
+    auto interface = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
+    if (topWidgets.contains(scheme)) {
+
+        topWidgets[scheme]->setVisible(interface && interface->isKeepShow());
+    } else {
+        if (interface) {
+            TopWidgetPtr topWidgetPtr = QSharedPointer<QFrame>(interface->create());
+            if (topWidgetPtr) {
+                widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine), topWidgetPtr.get());
+                topWidgets.insert(scheme, topWidgetPtr);
+                topWidgetPtr->setVisible(interface->isKeepShow());
+            }
         }
     }
 }
