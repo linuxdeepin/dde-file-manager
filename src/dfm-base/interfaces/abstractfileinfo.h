@@ -206,6 +206,8 @@ public:
     virtual QDateTime fileTime(QFile::FileTime time) const;
     virtual int countChildFile() const;
     virtual QIcon fileIcon() const;
+    virtual QString iconName() const;
+    virtual QString genericIconName() const;
     virtual QMimeType fileMimeType() const;
     virtual QVariantHash extraProperties() const;
     virtual Type fileType() const;

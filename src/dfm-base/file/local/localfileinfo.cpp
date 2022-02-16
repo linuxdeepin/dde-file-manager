@@ -1219,6 +1219,28 @@ QIcon LocalFileInfo::fileIcon() const
     d->lock.unlock();
     return icon;
 }
+
+QString LocalFileInfo::iconName() const
+{
+    d->lock.lockForRead();
+    bool success = false;
+    QList<QString> data;
+    if (d->dfmFileInfo) {
+        data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIcon, &success).value<QList<QString>>();
+        if (!success)
+            qWarning() << "get dfm-io DFileInfo StandardIcon failed!";
+    }
+    d->lock.unlock();
+    if(!data.empty())
+        return data.first();
+
+    return genericIconName();
+}
+
+QString LocalFileInfo::genericIconName() const
+{
+    return QStringLiteral("application-default-icon");
+}
 /*!
  * \brief inode linux系统下的唯一表示符
  *

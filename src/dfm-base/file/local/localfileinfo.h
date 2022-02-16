@@ -91,6 +91,8 @@ public:
     virtual QDateTime fileTime(QFile::FileTime time) const override;
     virtual QVariantHash extraProperties() const override;
     virtual QIcon fileIcon() const override;
+    virtual QString iconName() const override;
+    virtual QString genericIconName() const override;
 
     virtual bool isBlockDev() const;
     virtual QString mountPath() const;

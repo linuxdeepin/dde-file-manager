@@ -1088,6 +1088,21 @@ QIcon dfmbase::AbstractFileInfo::fileIcon() const
 
     return QIcon();
 }
+
+QString dfmbase::AbstractFileInfo::iconName() const
+{
+    CALL_PROXY(iconName());
+
+    return QString();
+}
+
+QString dfmbase::AbstractFileInfo::genericIconName() const
+{
+    CALL_PROXY(genericIconName());
+
+    return QString();
+}
+
 /*!
  * \brief dfmbase::AbstractFileInfo::fileMimeType
  * \return
