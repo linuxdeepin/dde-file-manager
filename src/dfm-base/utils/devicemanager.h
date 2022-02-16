@@ -56,14 +56,6 @@ public:
     void invokeUnmountBlockDeviceForced(const QString &id);
     void invokeDetachProtocolDevice(const QString &id);
 
-    void invokeRenameBlockDevice(const QString &id, const QString &newName);
-    QString invokeUnlockBlockDevice(const QString &id, const QString &passwd);
-    void invokeUnmountBlockDevice(const QString &id);
-    void invokeUnmountProtocolDevice(const QString &id);
-
-    using HandleAfterUnlock = std::function<void(const QString &unlockResult)>;
-    void unlockAndDo(const QString &id, const QString &passwd, HandleAfterUnlock handler);
-
 signals:
     void serviceUnregistered(const QString &service);
     void serviceRegistered(const QString &service);

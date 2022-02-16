@@ -374,20 +374,24 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                     });
                 } else {
                     qInfo() << "unmount cleartext device failed: " << cleartextId << static_cast<int>(err);
+                    ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(err);
                 }
             });
         } else {
             ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
                 if (!ok) {
                     qInfo() << "unlock device failed: " << devId << static_cast<int>(err);
+                    ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(err);
                 }
             });
         }
     } else if (info->suffix() == SuffixInfo::kProtocol) {
         devId = ComputerUtils::getProtocolDevIdByUrl(info->url());
         ComputerUtils::deviceServIns()->unmountProtocolDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
-            if (!ok)
+            if (!ok) {
                 qWarning() << "unmount protocol device failed: " << devId << static_cast<int>(err);
+                ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(err);
+            }
         });
     } else {
         qDebug() << info->url() << "is not support " << __FUNCTION__;

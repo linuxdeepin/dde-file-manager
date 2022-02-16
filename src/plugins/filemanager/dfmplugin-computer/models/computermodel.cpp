@@ -100,8 +100,13 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
     case kFileSystemRole: {
         if (!item->info)
             return "";
-        if (item->info->targetUrl().isValid())
+        if (item->info->targetUrl().isValid()) {
+            auto properties = item->info->extraProperties();
+            if (properties.value(DeviceProperty::kIsEncrypted).toBool()
+                && properties.contains(AdditionalProperty::kClearBlockProperty))
+                return properties.value(AdditionalProperty::kClearBlockProperty).toHash().value(DeviceProperty::kFileSystem).toString();
             return item->info->extraProperty(DeviceProperty::kFileSystem).toString();
+        }
         return "";
     }
 

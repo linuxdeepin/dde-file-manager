@@ -32,7 +32,7 @@ class DeviceManagerDBus;
 class Interfaces : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "device.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "devices.json")
 
 public:
     virtual void initialize() override;

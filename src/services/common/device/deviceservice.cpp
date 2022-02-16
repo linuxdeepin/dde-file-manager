@@ -24,6 +24,7 @@
 #include "private/defendercontroller.h"
 #include "private/devicemonitorhandler.h"
 #include "dialog/mountpasswddialog/mountaskpassworddialog.h"
+#include "dialog/dialogservice.h"
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -586,6 +587,31 @@ DeviceService::~DeviceService()
 }
 
 /*!
+ * \brief DeviceService::askForStopScanning, before unmount device, check if need to stop scanning
+ * \param deviceId
+ * \return
+ */
+bool DeviceService::askForStopScanning(const QString &deviceId)
+{
+    if (isDefenderScanningDrive(deviceId)) {
+        DDialog *dlg = DialogService::showQueryScanningDialog(tr("Scanning the device, stop it?"));
+        dlg->setAttribute(Qt::WA_DeleteOnClose);
+        if (dlg->exec() == QDialog::Accepted) {
+            if (!stopDefenderScanDrive(deviceId)) {
+                qWarning() << "stop scanning device failed: " << deviceId;
+                DialogService::showErrorDialog(tr("Unmount failed"), tr("Cannot stop scanning device"));
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+/*!
  * \brief auto mount block devices and protocol devices
  * !!! Note: call once
  */
@@ -1064,6 +1090,9 @@ void DeviceService::unmountBlockDeviceAsync(const QString &deviceId, const QVari
         return;
     }
 
+    if (!askForStopScanning(deviceId))
+        return;
+
     QString errMsg;
     if (!DeviceServiceHelper::isUnmountableBlockDevice(ptr, &errMsg)) {
         qWarning() << "device is not unmountable: " << deviceId << errMsg;
@@ -1084,12 +1113,15 @@ bool DeviceService::unmountBlockDevice(const QString &deviceId, const QVariantMa
         return false;
     }
 
+    if (!askForStopScanning(deviceId))
+        return false;
+
     QString errMsg;
     if (!DeviceServiceHelper::isUnmountableBlockDevice(ptr, &errMsg)) {
         qWarning() << "device is unmountable: " << deviceId << errMsg;
         return false;
     } else {
-        ptr->unmount(opts);
+        return ptr->unmount(opts);
     }
 }
 

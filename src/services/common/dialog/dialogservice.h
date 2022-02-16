@@ -56,10 +56,11 @@ public:
         return "org.deepin.service.DialogService";
     }
 
-    DDialog *showQueryScanningDialog(const QString &title);
-    void showErrorDialog(const QString &title, const QString &message);
+    static DDialog *showQueryScanningDialog(const QString &title);
+    static void showErrorDialog(const QString &title, const QString &message);
     int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
     void showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError err);
+    void showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError err);
     void addTask(const JobHandlePointer &task);
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();

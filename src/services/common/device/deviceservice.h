@@ -129,6 +129,8 @@ private:
     explicit DeviceService(QObject *parent = nullptr);
     virtual ~DeviceService() override;
 
+    bool askForStopScanning(const QString &deviceId);
+
 private:
     QScopedPointer<DeviceMonitorHandler> monitorHandler;
 };

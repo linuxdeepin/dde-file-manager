@@ -28,7 +28,7 @@
 
 DFMBASE_BEGIN_NAMESPACE
 namespace SuffixInfo {
-const char *const kStashedRemote { "stashedprotodev" };
+const char *const kStashedRemote { "protodevstashed" };
 }   // namespace SuffixInfo
 
 class StashedProtocolEntryFileEntity : public AbstractEntryFileEntity

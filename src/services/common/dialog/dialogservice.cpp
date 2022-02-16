@@ -134,6 +134,18 @@ void DialogService::showErrorDialogWhenMountDeviceFailed(dfmmount::DeviceError e
     }
 }
 
+void DialogService::showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError err)
+{
+    switch (err) {
+    case dfmmount::DeviceError::UDisksErrorDeviceBusy:
+        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
+        break;
+    default:
+        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
+        break;
+    }
+}
+
 bool DialogService::askForFormat()
 {
     DDialog dlg;
