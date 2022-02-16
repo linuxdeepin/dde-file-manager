@@ -1,5 +1,5 @@
 {
-    "Name" : "ddplugin-devices",
+    "Name" : "ddplugin-dbusregister",
     "Version" : "1.0.0",
     "CompatVersion" : "1.0.0",
     "Vendor" : "The Uniontech Software Technology Co., Ltd.",

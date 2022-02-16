@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export INTERFACES_PATH=../../plugins/desktop/ddplugin-devices
+export INTERFACES_PATH=../../plugins/desktop/ddplugin-dbusregister
 
 echo "-->make adaptor and interface of DeviceManagerDBus"
 qdbusxml2cpp -i $INTERFACES_PATH/devicemanagerdbus.h -c DeviceManagerAdaptor -l DeviceManagerDBus -a $INTERFACES_PATH/dbus_adaptor/devicemanagerdbus_adaptor devicemanagerdbus.xml

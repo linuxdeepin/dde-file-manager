@@ -1,20 +1,20 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(ddplugin-devices)
+project(ddplugin-dbusregister)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(INTERFACES_H
-    devices.h
+    dbusregister.h
     devicemanagerdbus.h
     dbus_adaptor/devicemanagerdbus_adaptor.h
 )
 
 set(INTERFACES_CPP
-    devices.cpp
+    dbusregister.cpp
     devicemanagerdbus.cpp
     dbus_adaptor/devicemanagerdbus_adaptor.cpp
-    devices.json
+    dbusregister.json
 )
 
 add_library(${PROJECT_NAME}

@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "devices.h"
+#include "dbusregister.h"
 
 #include "services/common/device/deviceservice.h"
 #include "devicemanagerdbus.h"
@@ -34,7 +34,7 @@
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-void Interfaces::initialize()
+void DBusRegister::initialize()
 {
     QString errStr;
     auto &ctx = dpfInstance.serviceContext();
@@ -45,7 +45,7 @@ void Interfaces::initialize()
     UrlRoute::regScheme(SchemeTypes::kEntry, "/", QIcon(), true);
 }
 
-bool Interfaces::start()
+bool DBusRegister::start()
 {
     QDBusConnection connection = QDBusConnection::sessionBus();
     if (!connection.isConnected()) {
@@ -58,20 +58,20 @@ bool Interfaces::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Interfaces::stop()
+dpf::Plugin::ShutdownFlag DBusRegister::stop()
 {
     return kSync;
 }
 
-std::once_flag &Interfaces::onceFlag()
+std::once_flag &DBusRegister::onceFlag()
 {
     static std::once_flag flag;
     return flag;
 }
 
-void Interfaces::initServiceDBusInterfaces(QDBusConnection &connection)
+void DBusRegister::initServiceDBusInterfaces(QDBusConnection &connection)
 {
-    std::call_once(Interfaces::onceFlag(), [&connection, this]() {
+    std::call_once(DBusRegister::onceFlag(), [&connection, this]() {
         // add our D-Bus interface and connect to D-Bus
         if (!connection.registerService("com.deepin.filemanager.service")) {
             qWarning("Cannot register the \"com.deepin.filemanager.service\" service.\n");

@@ -29,10 +29,10 @@
 
 class QDBusConnection;
 class DeviceManagerDBus;
-class Interfaces : public dpf::Plugin
+class DBusRegister : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "devices.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "dbusregister.json")
 
 public:
     virtual void initialize() override;
