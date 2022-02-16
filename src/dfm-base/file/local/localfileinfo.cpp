@@ -161,7 +161,7 @@ QString LocalFileInfo::filePath() const
     if (d->dfmFileInfo) {
         filePath = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success).toString();
         if (!success)
-            qWarning() << "get dfm-io DFileInfo StandardFilePath failed! case : %1 " << d->dfmFileInfo->lastError().errorMsg();
+            qWarning() << "get dfm-io DFileInfo StandardFilePath failed! case : " << d->dfmFileInfo->lastError().errorMsg();
     }
 
     if (!success)
