@@ -55,7 +55,8 @@ public:
 private:
     QString getNameOrAlias() const;
     QString getNameOfOptical() const;
-    QString getIdLabel() const;
+    QString getNameOfEncrypted() const;
+    QString getDefaultLabel(const QString &label, qlonglong size) const;
     QVariant getProperty(const char *const key) const;
     bool showSizeAndProgress() const;
 };

@@ -67,27 +67,17 @@ BlockEntryFileEntity::BlockEntryFileEntity(const QUrl &url)
 
 QString BlockEntryFileEntity::displayName() const
 {
-    if (datas.value(DeviceProperty::kHintSystem).toBool()) {
-        return getNameOrAlias();
-    }
-
-    if (datas.value(DeviceProperty::kIsEncrypted).toBool()) {
-        if (datas.value(DeviceProperty::kCleartextDevice).toString().length() == 1) {
-            return tr("%1 Encrypted").arg(FileUtils::formatSize(datas.value(DeviceProperty::kSizeTotal).toLongLong()));
-        } else {
-            return datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap().value(DeviceProperty::kIdLabel).toString();
-        }
-    }
-
-    if (datas.value(DeviceProperty::kOpticalDrive).toBool())
-        return getNameOfOptical();
-
     QString label = datas.value(DeviceProperty::kIdLabel).toString();
-    if (label.isEmpty()) {
-        long size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
-        return tr("%1 Volume").arg(FileUtils::formatSize(size));
-    }
-    return label;
+    long size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
+
+    if (datas.value(DeviceProperty::kHintSystem).toBool())
+        return getNameOrAlias();
+    else if (datas.value(DeviceProperty::kIsEncrypted).toBool())
+        return getNameOfEncrypted();
+    else if (datas.value(DeviceProperty::kOpticalDrive).toBool())
+        return getNameOfOptical();
+    else
+        return getDefaultLabel(label, size);
 }
 
 QIcon BlockEntryFileEntity::icon() const
@@ -301,12 +291,15 @@ QString BlockEntryFileEntity::getNameOrAlias() const
         }
     }
 
+    QString label = datas.value(DeviceProperty::kIdLabel).toString();
+    qlonglong size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
+
     // get system disk name if there is no alias
     if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
         return tr("System Disk");
     if (datas.value(DeviceProperty::kIdLabel).toString() == "_dde_")
         return tr("Data Disk");
-    return getIdLabel();
+    return getDefaultLabel(label, size);
 }
 
 QString BlockEntryFileEntity::getNameOfOptical() const
@@ -339,12 +332,14 @@ QString BlockEntryFileEntity::getNameOfOptical() const
     static const QMap<QString, QString> discMapper(opticalMedias);
     static const QVector<std::pair<QString, QString>> discVector(opticalMedias);
 
+    qlonglong totalSize = datas.value(DeviceProperty::kSizeTotal).toLongLong();
+
     if (datas.value(DeviceProperty::kOptical).toBool()) {   // medium loaded
         if (datas.value(DeviceProperty::kOpticalBlank).toBool()) {   // show empty disc name
             QString mediaType = datas.value(DeviceProperty::kMedia).toString();
             return tr("Blank %1 Disc").arg(discMapper.value(mediaType, tr("Unknown")));
         } else {
-            return getIdLabel();
+            return getDefaultLabel(label, totalSize);
         }
     } else {   // show drive name, medium is not loaded
         auto medias = datas.value(DeviceProperty::kMediaCompatibility).toStringList();
@@ -355,16 +350,26 @@ QString BlockEntryFileEntity::getNameOfOptical() const
         }
     }
 
-    return getIdLabel();
+    return getDefaultLabel(label, totalSize);
 }
 
-QString BlockEntryFileEntity::getIdLabel() const
+QString BlockEntryFileEntity::getNameOfEncrypted() const
 {
-    QString label = datas.value(DeviceProperty::kIdLabel).toString();
-    if (label.isEmpty()) {
-        long size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
-        return tr("%1 Volume").arg(FileUtils::formatSize(size));
+    if (datas.value(DeviceProperty::kCleartextDevice).toString().length() > 1
+        && !datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap().isEmpty()) {
+        auto clearDevData = datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
+        QString clearDevLabel = clearDevData.value(DeviceProperty::kIdLabel).toString();
+        qlonglong clearDevSize = clearDevData.value(DeviceProperty::kSizeTotal).toLongLong();
+        return getDefaultLabel(clearDevLabel, clearDevSize);
+    } else {
+        return tr("%1 Encrypted").arg(FileUtils::formatSize(datas.value(DeviceProperty::kSizeTotal).toLongLong()));
     }
+}
+
+QString BlockEntryFileEntity::getDefaultLabel(const QString &label, qlonglong size) const
+{
+    if (label.isEmpty())
+        return tr("%1 Volume").arg(FileUtils::formatSize(size));
     return label;
 }
 

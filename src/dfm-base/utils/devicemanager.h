@@ -43,11 +43,9 @@ public:
     void initConnection();
     bool isServiceDBusRunning();
 
-    // TODO(xust) if launch in root mode, invoke service directly.
-
     void invokeDetachAllMountedDevices();
     void invokeDetachAllMountedDevicesForced();
-    bool invokeIsMonotorWorking();
+    bool invokeIsMonitorWorking();
     QStringList invokeBlockDevicesIdList(const QVariantMap &opt);
     QStringList invokeProtolcolDevicesIdList(const QVariantMap &opt);
     QVariantMap invokeQueryBlockDeviceInfo(const QString &id, bool detail = false);

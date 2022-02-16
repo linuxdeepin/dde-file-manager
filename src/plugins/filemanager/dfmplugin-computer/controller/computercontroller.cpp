@@ -80,7 +80,8 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         qDebug() << "cannot access device: " << url;
         bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
                 && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
-                && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool();
+                && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
+                && !info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
         if (needAskForFormat) {
             if (ComputerUtils::dlgServIns()->askForFormat())
                 actFormat(winId, info);
@@ -204,15 +205,21 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     bool isUnlocked = info->extraProperty(DeviceProperty::kCleartextDevice).toString().length() > 1;
     QString shellId = ComputerUtils::getBlockDevIdByUrl(info->url());
     bool hasFileSystem = info->extraProperty(DeviceProperty::kHasFileSystem).toBool();
+    bool isOpticalDrive = info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
 
     bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
             && !hasFileSystem
-            && !isEncrypted;
+            && !isEncrypted
+            && !isOpticalDrive;
     if (needAskForFormat) {
         if (ComputerUtils::dlgServIns()->askForFormat())
             actFormat(winId, info);
         return;
     }
+
+    bool isOptical = info->extraProperty(DeviceProperty::kOptical).toBool();
+    if (isOpticalDrive && !isOptical)
+        return;
 
     if (isEncrypted) {
         if (!isUnlocked) {

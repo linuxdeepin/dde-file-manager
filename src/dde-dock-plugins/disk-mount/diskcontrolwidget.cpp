@@ -58,7 +58,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 void DiskControlWidget::initListByMonitorState()
 {
-    if (DeviceManagerInstance.invokeIsMonotorWorking()) {
+    if (DeviceManagerInstance.invokeIsMonitorWorking()) {
         onDiskListChanged();
     } else {
         // if failed retry once after 3s

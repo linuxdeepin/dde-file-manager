@@ -385,7 +385,7 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
     }
     view->update(this->index(pos, 0));
 
-    if (key == DeviceProperty::kIdLabel)
+    if (key == DeviceProperty::kIdLabel && !val.toString().isEmpty())
         ComputerUtils::sbServIns()->updateItem(url, val.toString(), true);
 }
 

@@ -98,30 +98,31 @@ void DeviceMonitorHandler::startConnect()
  */
 void DeviceMonitorHandler::stopConnect()
 {
-    auto manager = DFMMOUNT::DFMDeviceManager::instance();
+    DFM_MOUNT_USE_NS
+    auto manager = DFMDeviceManager::instance();
 
     // disconnect block devices signal
-    auto blkMonitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).objectCast<DFMMOUNT::DFMBlockMonitor>();
+    auto blkMonitor = manager->getRegisteredMonitor(DeviceType::BlockDevice).objectCast<DFMBlockMonitor>();
     if (blkMonitor) {
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveAdded, this, &DeviceMonitorHandler::onBlockDriveAdded);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::driveRemoved, this, &DeviceMonitorHandler::onBlockDriveRemoved);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::fileSystemAdded, this, &DeviceMonitorHandler::onFilesystemAdded);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::fileSystemRemoved, this, &DeviceMonitorHandler::onFilesystemRemoved);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::deviceAdded, this, &DeviceMonitorHandler::onBlockDeviceAdded);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::deviceRemoved, this, &DeviceMonitorHandler::onBlockDeviceRemoved);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountAdded, this, &DeviceMonitorHandler::onBlockDeviceMounted);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::mountRemoved, this, &DeviceMonitorHandler::onBlockDeviceUnmounted);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::propertyChanged, this, &DeviceMonitorHandler::onBlockDevicePropertyChanged);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::blockUnlocked, this, &DeviceMonitorHandler::onBlockDeviceUnlocked);
-        disconnect(blkMonitor.data(), &DFMMOUNT::DFMBlockMonitor::blockLocked, this, &DeviceMonitorHandler::onBlockDeviceLocked);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::driveAdded, this, &DeviceMonitorHandler::onBlockDriveAdded);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::driveRemoved, this, &DeviceMonitorHandler::onBlockDriveRemoved);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::fileSystemAdded, this, &DeviceMonitorHandler::onFilesystemAdded);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::fileSystemRemoved, this, &DeviceMonitorHandler::onFilesystemRemoved);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::deviceAdded, this, &DeviceMonitorHandler::onBlockDeviceAdded);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::deviceRemoved, this, &DeviceMonitorHandler::onBlockDeviceRemoved);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::mountAdded, this, &DeviceMonitorHandler::onBlockDeviceMounted);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::mountRemoved, this, &DeviceMonitorHandler::onBlockDeviceUnmounted);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::propertyChanged, this, &DeviceMonitorHandler::onBlockDevicePropertyChanged);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::blockUnlocked, this, &DeviceMonitorHandler::onBlockDeviceUnlocked);
+        disconnect(blkMonitor.data(), &DFMBlockMonitor::blockLocked, this, &DeviceMonitorHandler::onBlockDeviceLocked);
     }
 
-    auto protoMonitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::ProtocolDevice).objectCast<DFMMOUNT::DFMProtocolMonitor>();
+    auto protoMonitor = manager->getRegisteredMonitor(DeviceType::ProtocolDevice).objectCast<DFMProtocolMonitor>();
     if (protoMonitor) {
-        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::deviceAdded, this, &DeviceMonitorHandler::onProtocolDeviceAdded);
-        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::deviceRemoved, this, &DeviceMonitorHandler::onProtocolDeviceRemoved);
-        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::mountAdded, this, &DeviceMonitorHandler::onProtocolDeviceMounted);
-        disconnect(protoMonitor.data(), &DFMMOUNT::DFMProtocolMonitor::mountRemoved, this, &DeviceMonitorHandler::onProtocolDeviceUnmounted);
+        disconnect(protoMonitor.data(), &DFMProtocolMonitor::deviceAdded, this, &DeviceMonitorHandler::onProtocolDeviceAdded);
+        disconnect(protoMonitor.data(), &DFMProtocolMonitor::deviceRemoved, this, &DeviceMonitorHandler::onProtocolDeviceRemoved);
+        disconnect(protoMonitor.data(), &DFMProtocolMonitor::mountAdded, this, &DeviceMonitorHandler::onProtocolDeviceMounted);
+        disconnect(protoMonitor.data(), &DFMProtocolMonitor::mountRemoved, this, &DeviceMonitorHandler::onProtocolDeviceUnmounted);
     }
 }
 
@@ -583,7 +584,7 @@ DeviceService::DeviceService(QObject *parent)
 
 DeviceService::~DeviceService()
 {
-    stopMonitor();
+    //    stopMonitor();   // DFMDeviceMonitor is released before this function invoked.
 }
 
 /*!

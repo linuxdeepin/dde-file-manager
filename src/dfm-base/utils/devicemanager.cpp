@@ -113,7 +113,7 @@ void DeviceManager::invokeDetachAllMountedDevicesForced()
     }
 }
 
-bool DeviceManager::invokeIsMonotorWorking()
+bool DeviceManager::invokeIsMonitorWorking()
 {
     bool ret = false;
     if (deviceInterface) {
