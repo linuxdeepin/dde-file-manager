@@ -23,9 +23,14 @@
 #include "utils/searchhelper.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/search/searchservice.h"
 
 DSB_FM_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
+
+namespace GlobalPrivate {
+static SearchService *searchServ { nullptr };
+}   // namespace GlobalPrivate
 
 dfmplugin_search::SearchEventReceiver *dfmplugin_search::SearchEventReceiver::instance()
 {
@@ -45,10 +50,25 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
     if (SearchHelper::isSearchFile(url)) {
         searchUrl = SearchHelper::setSearchKeyword(url, keyword);
     } else {
-        searchUrl = SearchHelper::fromSearchFile(url, keyword, QUrl());
+        searchUrl = SearchHelper::fromSearchFile(url, keyword, QString::number(winId), QUrl());
     }
 
     SearchEventCaller::sendDoSearch(winId, searchUrl);
+}
+
+void SearchEventReceiver::handleStopSearch(quint64 winId)
+{
+    if (!GlobalPrivate::searchServ) {
+        auto &ctx = dpfInstance.serviceContext();
+        GlobalPrivate::searchServ = ctx.service<SearchService>(SearchService::name());
+
+        if (!GlobalPrivate::searchServ) {
+            qCritical() << "get SearchService failed!";
+            abort();
+        }
+    }
+
+    GlobalPrivate::searchServ->stop(QString::number(winId));
 }
 
 SearchEventReceiver::SearchEventReceiver(QObject *parent)

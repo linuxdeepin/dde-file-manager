@@ -24,7 +24,9 @@
 #include "task/taskcommander.h"
 
 #include <QHash>
+#include <QFuture>
 
+class QFileSystemWatcher;
 class MainControllerPrivate;
 class MainController : public QObject
 {
@@ -35,7 +37,7 @@ class MainController : public QObject
 private:
     explicit MainController(QObject *parent = nullptr);
     ~MainController();
-    bool init();
+    void init();
 
     void stop(QString taskId);
     bool doSearchTask(QString taskId, const QUrl &url, const QString &keyword);
@@ -43,6 +45,7 @@ private:
 
 private slots:
     void onFinished(QString taskId);
+    void onFileChanged(const QString &path);
 
 signals:
     void matched(QString taskId);
@@ -50,6 +53,8 @@ signals:
 
 private:
     QHash<QString, TaskCommander *> taskManager;
+    QFileSystemWatcher *fileWatcher = nullptr;
+    QFuture<void> indexFuture;
 };
 
 #endif   // MAINCONTROLLER_H

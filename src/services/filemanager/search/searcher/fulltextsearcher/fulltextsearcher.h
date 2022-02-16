@@ -30,11 +30,12 @@ class FullTextSearcher : public AbstractSearcher
 {
     Q_OBJECT
     friend class TaskCommander;
+    friend class MainController;
     friend class FullTextSearcherPrivate;
 
 private:
     explicit FullTextSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
-    void initConfigMonitor();
+    bool createIndex(const QString &path);
     bool search() override;
     void stop() override;
     bool hasItem() const override;

@@ -19,13 +19,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "maincontroller.h"
+#include "search/searcher/fulltextsearcher/fulltextsearcher.h"
 
+#include "dfm-base/base/application/settings.h"
+
+#include <QFileSystemWatcher>
+#include <QApplication>
+#include <QtConcurrent>
 #include <QUrl>
+#include <QDir>
 #include <QDebug>
+
+DFMBASE_USE_NAMESPACE
 
 MainController::MainController(QObject *parent)
     : QObject(parent)
 {
+    init();
 }
 
 MainController::~MainController()
@@ -36,6 +46,14 @@ MainController::~MainController()
         task = nullptr;
     }
     taskManager.clear();
+}
+
+void MainController::init()
+{
+    fileWatcher = new QFileSystemWatcher(this);
+    auto configPath = QDir::home().absoluteFilePath(".config/deepin/dde-file-manager.json");
+    fileWatcher->addPath(configPath);
+    connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &MainController::onFileChanged);
 }
 
 void MainController::stop(QString taskId)
@@ -85,4 +103,18 @@ void MainController::onFinished(QString taskId)
         stop(taskId);
 
     emit searchCompleted(taskId);
+}
+
+void MainController::onFileChanged(const QString &path)
+{
+    Q_UNUSED(path);
+
+    Settings settings("deepin/dde-file-manager", Settings::GenericConfig);
+    bool value = settings.value("GenericAttribute", "IndexFullTextSearch", false).toBool();
+    if (value && !indexFuture.isRunning()) {
+        indexFuture = QtConcurrent::run([]() {
+            FullTextSearcher searcher(QUrl(), "");
+            searcher.createIndex("/");
+        });
+    }
 }

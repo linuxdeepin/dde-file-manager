@@ -23,6 +23,7 @@
 #include "chineseanalyzer.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/application/application.h"
 
 // Lucune++ headers
 #include <FileUtils.h>
@@ -33,8 +34,6 @@
 #include <QRegExp>
 #include <QDebug>
 #include <QFileInfo>
-#include <QStandardPaths>
-#include <QApplication>
 #include <QDateTime>
 #include <QMetaEnum>
 #include <QDir>
@@ -56,15 +55,11 @@ static int kEmitInterval = 50;   // 推送时间间隔
 using namespace Lucene;
 DFMBASE_USE_NAMESPACE
 
+bool FullTextSearcherPrivate::isIndexCreating = false;
 FullTextSearcherPrivate::FullTextSearcherPrivate(FullTextSearcher *parent)
     : QObject(parent),
       q(parent)
 {
-    indexStorePath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
-            + "/" + QApplication::organizationName()
-            + "/" + QApplication::applicationName()
-            + "/" + "index";
-    qInfo() << "index store path: " << indexStorePath;
 }
 
 FullTextSearcherPrivate::~FullTextSearcherPrivate()
@@ -73,7 +68,7 @@ FullTextSearcherPrivate::~FullTextSearcherPrivate()
 
 IndexWriterPtr FullTextSearcherPrivate::newIndexWriter(bool create)
 {
-    return newLucene<IndexWriter>(FSDirectory::open(indexStorePath.toStdWString()),
+    return newLucene<IndexWriter>(FSDirectory::open(indexStorePath().toStdWString()),
                                   newLucene<ChineseAnalyzer>(),
                                   create,
                                   IndexWriter::MaxFieldLengthLIMITED);
@@ -81,7 +76,7 @@ IndexWriterPtr FullTextSearcherPrivate::newIndexWriter(bool create)
 
 IndexReaderPtr FullTextSearcherPrivate::newIndexReader()
 {
-    return IndexReader::open(FSDirectory::open(indexStorePath.toStdWString()), true);
+    return IndexReader::open(FSDirectory::open(indexStorePath().toStdWString()), true);
 }
 
 void FullTextSearcherPrivate::doIndexTask(const IndexReaderPtr &reader, const IndexWriterPtr &writer, const QString &path, TaskType type)
@@ -271,9 +266,9 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
         return false;
     }
 
-    if (!dir.exists(indexStorePath)) {
-        if (!dir.mkpath(indexStorePath)) {
-            qWarning() << "Unable to create directory: " << indexStorePath;
+    if (!dir.exists(indexStorePath())) {
+        if (!dir.mkpath(indexStorePath())) {
+            qWarning() << "Unable to create directory: " << indexStorePath();
             status.storeRelease(AbstractSearcher::kCompleted);
             return false;
         }
@@ -284,7 +279,7 @@ bool FullTextSearcherPrivate::createIndex(const QString &path)
         QTime timer;
         timer.start();
         IndexWriterPtr writer = newIndexWriter(true);
-        qDebug() << "Indexing to directory: " << indexStorePath;
+        qDebug() << "Indexing to directory: " << indexStorePath();
         writer->deleteAll();
         doIndexTask(nullptr, writer, path, kCreate);
         writer->optimize();
@@ -453,10 +448,18 @@ FullTextSearcher::FullTextSearcher(const QUrl &url, const QString &key, QObject 
 {
 }
 
-void FullTextSearcher::initConfigMonitor()
+bool FullTextSearcher::createIndex(const QString &path)
 {
-    // TODO (liuzhangjian)
-    // 监控全文搜索选项配置，创建索引
+    // do not re-create index if index already exists
+    bool indexExists = IndexReader::indexExists(FSDirectory::open(d->indexStorePath().toStdWString()));
+    if (indexExists)
+        return true;
+
+    d->isIndexCreating = true;
+    bool res = d->createIndex(path);
+    d->isIndexCreating = false;
+
+    return res;
 }
 
 bool FullTextSearcher::isSupport(const QUrl &url)
@@ -464,13 +467,14 @@ bool FullTextSearcher::isSupport(const QUrl &url)
     if (!url.isValid() || UrlRoute::isVirtual(url))
         return false;
 
-    // TODO(liuzhangjian) 未勾选全文搜索
-
-    return false;
+    return Application::genericAttribute(Application::kIndexFullTextSearch).toBool();
 }
 
 bool FullTextSearcher::search()
 {
+    if (d->isIndexCreating)
+        return false;
+
     //准备状态切运行中，否则直接返回
     if (!d->status.testAndSetRelease(kReady, kRuning))
         return false;

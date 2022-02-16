@@ -38,6 +38,7 @@ public:
 
 public slots:
     void handleSearch(quint64 winId, const QString &keyword);
+    void handleStopSearch(quint64 winId);
 
 private:
     explicit SearchEventReceiver(QObject *parent = nullptr);

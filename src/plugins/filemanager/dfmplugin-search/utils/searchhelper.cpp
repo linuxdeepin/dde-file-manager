@@ -51,6 +51,12 @@ QString SearchHelper::searchKeyword(const QUrl &searchUrl)
     return query.queryItemValue("keyword", QUrl::FullyDecoded);
 }
 
+QString SearchHelper::searchTaskId(const QUrl &searchUrl)
+{
+    QUrlQuery query(searchUrl.query());
+    return query.queryItemValue("taskId", QUrl::FullyDecoded);
+}
+
 QUrl SearchHelper::setSearchedFileUrl(const QUrl &searchUrl, const QString &searchedFile)
 {
     QUrl url(searchUrl);
@@ -89,13 +95,14 @@ QUrl SearchHelper::fromSearchFile(const QString &filePath)
     return url;
 }
 
-QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QUrl &searchedFileUrl)
+QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId, const QUrl &searchedFileUrl)
 {
     QUrl url = fromSearchFile(QString());
     QUrlQuery query;
 
     query.addQueryItem("url", targetUrl.toString());
     query.addQueryItem("keyword", keyword);
+    query.addQueryItem("taskId", taskId);
     url.setQuery(query);
 
     if (searchedFileUrl.isValid())

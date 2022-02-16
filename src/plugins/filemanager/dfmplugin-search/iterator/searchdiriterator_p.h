@@ -42,7 +42,9 @@ public:
     explicit SearchDirIteratorPrivate(const QUrl &url, QObject *parent = nullptr);
     ~SearchDirIteratorPrivate();
 
-    void stop();
+    void loadSearchService();
+    void initConnect();
+    void doSearch();
 
 public slots:
     void onMatched(QString id);

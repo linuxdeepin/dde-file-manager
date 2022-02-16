@@ -25,6 +25,8 @@
 
 #include <lucene++/LuceneHeaders.h>
 
+#include <QStandardPaths>
+#include <QApplication>
 #include <QMutex>
 #include <QTime>
 
@@ -64,6 +66,14 @@ private:
     bool createIndex(const QString &path);
     bool updateIndex(const QString &path);
     bool doSearch(const QString &path, const QString &keyword);
+    inline static QString indexStorePath()
+    {
+        static QString path = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first()
+                + "/" + QApplication::organizationName()
+                + "/" + QApplication::applicationName()
+                + "/" + "index";
+        return path;
+    }
 
     Lucene::DocumentPtr fileDocument(const QString &file);
     QString dealKeyword(const QString &keyword);
@@ -72,11 +82,11 @@ private:
     bool checkUpdate(const Lucene::IndexReaderPtr &reader, const QString &file, IndexType &type);
     void tryNotify();
 
-    QString indexStorePath;
     bool isUpdated = false;
     QAtomicInt status = AbstractSearcher::kReady;
     QList<QUrl> allResults;
     mutable QMutex mutex;
+    static bool isIndexCreating;
 
     //计时
     QTime notifyTimer;

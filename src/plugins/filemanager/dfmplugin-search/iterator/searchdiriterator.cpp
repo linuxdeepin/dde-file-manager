@@ -39,6 +39,16 @@ SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, QObject *par
     : QObject(parent),
       fileUrl(url)
 {
+    loadSearchService();
+    doSearch();
+}
+
+SearchDirIteratorPrivate::~SearchDirIteratorPrivate()
+{
+}
+
+void SearchDirIteratorPrivate::loadSearchService()
+{
     if (!GlobalPrivate::searchService) {
         auto &ctx = dpfInstance.serviceContext();
         GlobalPrivate::searchService = ctx.service<SearchService>(SearchService::name());
@@ -48,26 +58,29 @@ SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, QObject *par
             abort();
         }
     }
+    initConnect();
+}
 
+void SearchDirIteratorPrivate::initConnect()
+{
     connect(GlobalPrivate::searchService, &SearchService::matched, this, &SearchDirIteratorPrivate::onMatched);
     connect(GlobalPrivate::searchService, &SearchService::searchCompleted, this, &SearchDirIteratorPrivate::onSearchCompleted);
+}
 
-    auto searchUrl = SearchHelper::searchTargetUrl(url);
+void SearchDirIteratorPrivate::doSearch()
+{
+    auto searchUrl = SearchHelper::searchTargetUrl(fileUrl);
     auto regInfos = GlobalPrivate::searchService->regInfos();
-    if (UrlRoute::isVirtual(searchUrl) && regInfos.contains(searchUrl.scheme()))
-        searchUrl = QUrl::fromLocalFile(regInfos[searchUrl.scheme()]);
+    if (UrlRoute::isVirtual(searchUrl) && regInfos.contains(searchUrl.scheme())) {
+        auto path = searchUrl.path();
+        auto regPath = regInfos[searchUrl.scheme()];
+        if (regPath.endsWith('/') && !path.isEmpty())
+            regPath = regPath.left(regPath.length() - 1);
+        searchUrl = QUrl::fromLocalFile(regPath + path);
+    }
 
-    taskId = QUuid::createUuid().toString(QUuid::WithoutBraces);
-    GlobalPrivate::searchService->search(taskId, searchUrl, SearchHelper::searchKeyword(url));
-}
-
-SearchDirIteratorPrivate::~SearchDirIteratorPrivate()
-{
-}
-
-void SearchDirIteratorPrivate::stop()
-{
-    GlobalPrivate::searchService->stop(taskId);
+    taskId = SearchHelper::searchTaskId(fileUrl);
+    GlobalPrivate::searchService->search(taskId, searchUrl, SearchHelper::searchKeyword(fileUrl));
 }
 
 void SearchDirIteratorPrivate::onMatched(QString id)
@@ -140,11 +153,6 @@ const AbstractFileInfoPointer SearchDirIterator::fileInfo() const
 QUrl SearchDirIterator::url() const
 {
     return SearchHelper::rootUrl();
-}
-
-void SearchDirIterator::close()
-{
-    d->stop();
 }
 
 DPSEARCH_END_NAMESPACE

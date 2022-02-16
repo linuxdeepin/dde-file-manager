@@ -40,13 +40,14 @@ public:
     static QUrl searchedFileUrl(const QUrl &searchUrl);
     static QUrl searchTargetUrl(const QUrl &searchUrl);
     static QString searchKeyword(const QUrl &searchUrl);
+    static QString searchTaskId(const QUrl &searchUrl);
 
     static QUrl setSearchedFileUrl(const QUrl &searchUrl, const QString &searchedFile);
     static QUrl setSearchKeyword(const QUrl &searchUrl, const QString &keyword);
     static QUrl setSearchTargetUrl(const QUrl &searchUrl, const QUrl &targetUrl);
 
     static QUrl fromSearchFile(const QString &filePath);
-    static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QUrl &searchedFileUrl);
+    static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId, const QUrl &searchedFileUrl);
 
 private:
     SearchHelper() = delete;
