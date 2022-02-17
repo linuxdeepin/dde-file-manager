@@ -25,6 +25,7 @@
 #define LOCALFILEHANDLER_H
 
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QString>
 #include <QFileDevice>
@@ -45,6 +46,9 @@ public:
     virtual bool mkdir(const QUrl &dir);
     virtual bool rmdir(const QUrl &url);
     virtual bool renameFile(const QUrl &url, const QUrl &newUrl);
+    virtual bool renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair);
+    virtual bool renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair);
+    virtual bool renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair);
     virtual bool openFile(const QUrl &file);
     virtual bool openFiles(const QList<QUrl> &files);
     virtual bool openFileByApp(const QUrl &file, const QString &appDesktop);
@@ -53,6 +57,7 @@ public:
     virtual bool setPermissions(const QUrl &url, QFileDevice::Permissions permissions);
     virtual bool deleteFile(const QUrl &file);
     virtual bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
+
     QString defaultTerminalPath();
     QString errorString();
 
@@ -67,6 +72,7 @@ private:
     QString getFileMimetypeFromGio(const QUrl &url);
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     QString getFileMimetype(const QString &path);
+    bool renameFilesBatch(const QMap<QUrl, QUrl> &urls);
 
 private:
     void setError(const QString &error);

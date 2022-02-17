@@ -118,6 +118,26 @@ public slots:
                                    const QUrl newUrl,
                                    const QVariant custom,
                                    DFMBASE_NAMESPACE::Global::OperaterCallback callback);
+
+    bool handleOperationRenameFiles(const quint64 windowId,
+                                    const QList<QUrl> urls,
+                                    const QPair<QString, QString> pair,
+                                    const bool replace);
+    void handleOperationRenameFiles(const quint64 windowId,
+                                    const QList<QUrl> urls,
+                                    const QPair<QString, QString> pair,
+                                    const bool replace,
+                                    const QVariant custom,
+                                    DFMBASE_NAMESPACE::Global::OperaterCallback callback);
+    bool handleOperationRenameFiles(const quint64 windowId,
+                                    const QList<QUrl> urls,
+                                    const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> pair);
+    void handleOperationRenameFiles(const quint64 windowId,
+                                    const QList<QUrl> urls,
+                                    const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> pair,
+                                    const QVariant custom,
+                                    DFMBASE_NAMESPACE::Global::OperaterCallback callback);
+
     QString handleOperationMkdir(const quint64 windowId,
                                  const QUrl url,
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType);

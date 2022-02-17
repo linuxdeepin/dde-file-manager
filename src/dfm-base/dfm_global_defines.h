@@ -61,6 +61,9 @@ enum CreateFileType : uint8_t {
     kCreateFileTypePowerpoint,
     kCreateFileTypeDefault = 0xff,
 };
+
+constexpr char kMimetypeAppDesktop[] { "application/x-desktop" };
+constexpr uint8_t kMaxFileNameCharCount { 255 };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

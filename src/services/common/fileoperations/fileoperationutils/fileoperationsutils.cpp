@@ -171,7 +171,7 @@ QSharedPointer<QList<QUrl>> FileOperationsUtils::getDirFiles(const QUrl &url)
     }
 
     QString urlPath = url.path();
-    if(!urlPath.endsWith("/"))
+    if (!urlPath.endsWith("/"))
         urlPath.append("/");
     QSharedPointer<QList<QUrl>> files(new QList<QUrl>());
     while ((ptr = readdir(dir)) != nullptr) {

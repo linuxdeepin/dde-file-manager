@@ -21,6 +21,7 @@
  */
 #include "utils/fileutils.h"
 #include "desktopfile.h"
+#include "dfm_global_defines.h"
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -32,13 +33,14 @@
 #include <QProcess>
 #include <QDebug>
 #include <QApplication>
+#include <QTextCodec>
 
 #include <unistd.h>
 
 DFMBASE_BEGIN_NAMESPACE
 
-static constexpr char DDE_TRASH_ID[] {"dde-trash"};
-static constexpr char DDE_COMPUTER_ID[] {"dde-computer"};
+static constexpr char DDE_TRASH_ID[] { "dde-trash" };
+static constexpr char DDE_COMPUTER_ID[] { "dde-computer" };
 
 /*!
  * \class FileUtils
@@ -228,7 +230,7 @@ int FileUtils::supportedMaxLength(const QString &fileSystem)
 
 bool FileUtils::isGvfsFile(const QUrl &url)
 {
-    if(!url.isValid())
+    if (!url.isValid())
         return false;
 
     const QString &path = url.toLocalFile();
@@ -259,6 +261,226 @@ bool FileUtils::isComputerDesktopFile(const QUrl &url)
         return df.getDeepinId() == DDE_COMPUTER_ID;
     }
     return false;
+}
+
+QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
+{
+    if (originUrls.isEmpty()) {
+        return QMap<QUrl, QUrl> {};
+    }
+
+    QMap<QUrl, QUrl> result;
+
+    for (auto url : originUrls) {
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+
+        if (!info)
+            continue;
+
+        bool isDeskTopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+
+        ///###: symlink is also processed here.
+        QString fileBaseName = isDeskTopApp ? info->fileDisplayName() : info->baseName();
+        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+        fileBaseName.replace(pair.first, pair.second);
+
+        if (fileBaseName.trimmed().isEmpty()) {
+            qWarning() << "replace fileBaseName(not include suffix) trimmed is empty string";
+            continue;
+        }
+
+        int max_length = Global::kMaxFileNameCharCount - suffix.toLocal8Bit().size();
+
+        if (fileBaseName.toLocal8Bit().size() > max_length) {
+            fileBaseName = cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
+        }
+
+        if (!isDeskTopApp) {
+            fileBaseName += suffix;
+        }
+        QUrl changedUrl { info->getUrlByNewFileName(fileBaseName) };
+
+        if (changedUrl != url)
+            result.insert(url, changedUrl);
+    }
+
+    return result;
+}
+
+QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair)
+{
+    if (originUrls.isEmpty()) {
+        return QMap<QUrl, QUrl> {};
+    }
+
+    QMap<QUrl, QUrl> result;
+
+    for (auto url : originUrls) {
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+
+        if (!info)
+            continue;
+
+        // debug case 25414: failure to rename desktop app name
+        bool isDeskTopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+
+        QString fileBaseName = isDeskTopApp ? info->fileDisplayName() : info->baseName();   //{ info->baseName() };
+        QString oldFileName = fileBaseName;
+
+        QString add_text = pair.first;
+        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+        int max_length = Global::kMaxFileNameCharCount - info->fileName().toLocal8Bit().size();
+
+        if (add_text.toLocal8Bit().size() > max_length) {
+            add_text = cutString(add_text, max_length, QTextCodec::codecForLocale());
+        }
+
+        if (pair.second == AbstractJobHandler::FileBatchAddTextFlags::kBefore) {
+            fileBaseName.insert(0, add_text);
+        } else {
+            fileBaseName.append(add_text);
+        }
+
+        if (!isDeskTopApp) {
+            fileBaseName += suffix;
+        }
+        QUrl changedUrl = { info->getUrlByNewFileName(fileBaseName) };
+
+        if (isDeskTopApp) {
+            qDebug() << "this is desktop app case,file name will be changed { " << oldFileName << " } to { " << fileBaseName << " } for path:" << info->url();
+        }
+
+        if (changedUrl != url)
+            result.insert(url, changedUrl);
+    }
+
+    return result;
+}
+
+QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
+{
+    if (originUrls.isEmpty() == true || pair.first.isEmpty() == true || pair.second.isEmpty() == true) {   //###: here, jundge whether there are fileUrls in originUrls.
+        return QMap<QUrl, QUrl> {};
+    }
+
+    unsigned long long SNNumber { pair.second.toULongLong() };
+    unsigned long long index { 0 };
+
+    if (SNNumber == ULONG_LONG_MAX) {   //##: Maybe, this value will be equal to the max value of the type of unsigned long long
+        index = SNNumber - originUrls.size();
+    } else {
+        index = SNNumber;
+    }
+
+    QMap<QUrl, QUrl> result;
+
+    QList<QUrl> modifyUrls;
+
+    bool needRecombination = false;
+    for (auto url : originUrls) {
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+
+        if (!info)
+            continue;
+
+        // debug case 25414: failure to rename desktop app name
+        bool isDeskTopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+
+        QString fileBaseName { pair.first };
+        const QString &index_string = QString::number(index);
+        const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
+        int max_length = Global::kMaxFileNameCharCount - index_string.toLocal8Bit().size() - suffix.toLocal8Bit().size();
+
+        if (fileBaseName.toLocal8Bit().size() > max_length) {
+            fileBaseName = cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
+        }
+
+        fileBaseName = isDeskTopApp ? (fileBaseName + index_string) : (fileBaseName + index_string + suffix);
+        QUrl beModifieddUrl = { info->getUrlByNewFileName(fileBaseName) };
+        result.insert(url, beModifieddUrl);
+
+        modifyUrls << beModifieddUrl;
+
+        // 如果源url包含了待修改的url 就需要重组结果
+        if (originUrls.contains(beModifieddUrl))
+            needRecombination = true;
+
+        if (isDeskTopApp) {
+            qDebug() << "this is desktop app case,file name will be changed as { " << fileBaseName << " } for path:" << info->url();
+        }
+
+        ++index;
+    }
+
+    // 重组map
+    if (needRecombination) {
+        QList<QUrl> originUrlsTemp = originUrls;
+
+        auto it = modifyUrls.begin();
+        while (it != modifyUrls.end()) {
+            QUrl url = *it;
+            if (originUrlsTemp.contains(url)) {
+                originUrlsTemp.removeOne(url);
+                it = modifyUrls.erase(it);
+                continue;
+            }
+            ++it;
+        }
+
+        if (originUrlsTemp.size() == modifyUrls.size()) {
+            result.clear();
+            for (int i = 0, end = originUrlsTemp.size(); i < end; ++i) {
+                result.insert(originUrlsTemp[i], modifyUrls[i]);
+            }
+        }
+    }
+
+    return result;
+}
+
+QString FileUtils::cutString(const QString &text, int dataByteSize, const QTextCodec *codec)
+{
+    QString newText;
+    int bytes = 0;
+
+    for (int i = 0; i < text.size(); ++i) {
+        const QChar &ch = text.at(i);
+        QByteArray data;
+        QString fullChar;
+
+        if (ch.isSurrogate()) {
+            if ((++i) >= text.size())
+                break;
+
+            const QChar &next_ch = text.at(i);
+
+            if (!ch.isHighSurrogate() || !next_ch.isLowSurrogate())
+                break;
+
+            data = codec->fromUnicode(text.data() + i - 1, 2);
+            fullChar.setUnicode(text.data() + i - 1, 2);
+        } else {
+            data = codec->fromUnicode(text.data() + i, 1);
+            fullChar.setUnicode(text.data() + i, 1);
+        }
+
+        if (codec->toUnicode(data) != fullChar) {
+            qWarning() << "Failed convert" << fullChar << "to" << codec->name() << "coding";
+            continue;
+        }
+
+        bytes += data.size();
+
+        if (bytes > dataByteSize)
+            break;
+
+        newText.append(ch);
+
+        if (ch.isSurrogate())
+            newText.append(text.at(i));
+    }
+
+    return newText;
 }
 
 DFMBASE_END_NAMESPACE

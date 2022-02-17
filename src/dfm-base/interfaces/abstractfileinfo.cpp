@@ -754,6 +754,13 @@ QString dfmbase::AbstractFileInfo::sizeFormat() const
     return QString();
 }
 
+QString dfmbase::AbstractFileInfo::fileDisplayName() const
+{
+    CALL_PROXY(fileDisplayName());
+
+    return QString();
+}
+
 QString dfmbase::AbstractFileInfo::sizeDisplayName() const
 {
     CALL_PROXY(sizeDisplayName());
@@ -1087,6 +1094,13 @@ QString dfmbase::AbstractFileInfo::emptyDirectoryTip() const
 QString dfmbase::AbstractFileInfo::loadingTip() const
 {
     return QObject::tr("Loading...");
+}
+
+QString dfmbase::AbstractFileInfo::mimeTypeName() const
+{
+    CALL_PROXY(mimeTypeName());
+
+    return QString();
 }
 /*!
  * \brief dfmbase::AbstractFileInfo::fileIcon

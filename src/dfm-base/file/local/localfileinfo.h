@@ -103,11 +103,12 @@ public:
     virtual Type fileType() const override;
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
-    virtual QString fileDisplayName() const;
+    virtual QString fileDisplayName() const override;
     virtual QString fileDisplayPinyinName() const;
     virtual QFileInfo toQFileInfo() const;
     virtual quint64 inode() const;
     virtual QMimeType fileMimeType() const override;
+    virtual QString mimeTypeName() const override;
 
     virtual QString emptyDirectoryTip() const override;
 

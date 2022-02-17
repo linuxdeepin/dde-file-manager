@@ -197,6 +197,7 @@ public:
     virtual QFile::Permissions permissions() const;
     virtual qint64 size() const;
     virtual QString sizeFormat() const;
+    virtual QString fileDisplayName() const;
     virtual QString sizeDisplayName() const;
     virtual QDateTime created() const;
     virtual QDateTime birthTime() const;
@@ -231,6 +232,7 @@ public:
     virtual Qt::DropActions supportedDropActions() const;
     virtual bool canDragCompress() const;
     virtual bool isDragCompressFileFormat() const;
+    virtual QString mimeTypeName() const;
 
     // property for view
     virtual QString emptyDirectoryTip() const;

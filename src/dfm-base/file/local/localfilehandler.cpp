@@ -28,7 +28,9 @@
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/desktopfile.h"
+#include "dfm-base/utils/fileutils.h"
 #include "utils/universalutils.h"
+#include "dfm_event_defines.h"
 
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/doperator.h>
@@ -203,6 +205,24 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     }
 
     return true;
+}
+
+bool LocalFileHandler::renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair)
+{
+    QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchReplaceText(urls, pair);
+    return renameFilesBatch(needDealUrls);
+}
+
+bool LocalFileHandler::renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> &pair)
+{
+    QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair);
+    return renameFilesBatch(needDealUrls);
+}
+
+bool LocalFileHandler::renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair)
+{
+    QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
+    return renameFilesBatch(needDealUrls);
 }
 /*!
  * \brief LocalFileHandler::openFile 打开文件
@@ -648,6 +668,30 @@ QString LocalFileHandler::getFileMimetype(const QString &path)
     g_object_unref(file);
 
     return result;
+}
+
+bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls)
+{
+    QMap<QUrl, QUrl> successMap;
+
+    QMap<QUrl, QUrl>::const_iterator beg = urls.constBegin();
+    QMap<QUrl, QUrl>::const_iterator end = urls.constEnd();
+
+    for (; beg != end; ++beg) {
+        QUrl currentName { beg.key() };
+        QUrl hopedName { beg.value() };
+
+        if (currentName == hopedName) {
+            continue;
+        }
+
+        ///###: just cache files that rename successfully.
+        if (renameFile(currentName, hopedName)) {
+            successMap[currentName] = hopedName;
+        }
+    }
+
+    return successMap.size() == urls.size();
 }
 /*!
  * \brief LocalFileHandler::errorString 获取错误信息

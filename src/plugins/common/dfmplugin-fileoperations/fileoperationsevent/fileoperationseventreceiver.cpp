@@ -517,6 +517,64 @@ void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
 }
 
+bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace)
+{
+    // TODO lanxs deal custom function
+    QString error;
+    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
+    bool ok = replace ? filehandler.renameFileBatchReplace(urls, pair) : filehandler.renameFileBatchCustom(urls, pair);
+    if (!ok && getDialogService()) {
+        error = filehandler.errorString();
+        dialogService->showErrorDialog("rename file error", error);
+    }
+    // TODO:: file renameFile finished need to send file renameFile finished event
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                          windowId, urls, ok, error);
+    return ok;
+}
+
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, OperaterCallback callback)
+{
+    bool ok = handleOperationRenameFiles(windowId, urls, pair, replace);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
+}
+
+bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> pair)
+{
+    // TODO lanxs deal custom function
+    QString error;
+    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
+    bool ok = filehandler.renameFileBatchAppend(urls, pair);
+    if (!ok && getDialogService()) {
+        error = filehandler.errorString();
+        dialogService->showErrorDialog("rename file error", error);
+    }
+    // TODO:: file renameFile finished need to send file renameFile finished event
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                          windowId, urls, ok, error);
+    return ok;
+}
+
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> pair, const QVariant custom, OperaterCallback callback)
+{
+    bool ok = handleOperationRenameFiles(windowId, urls, pair);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
+}
+
 QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                           const QUrl url,
                                                           const CreateFileType fileType)

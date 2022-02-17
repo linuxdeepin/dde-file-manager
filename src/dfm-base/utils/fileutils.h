@@ -24,6 +24,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -41,6 +42,11 @@ public:
     static bool isDesktopFile(const QUrl &url);
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
+
+    static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
+    static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair);
+    static QMap<QUrl, QUrl> fileBatchCustomText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
+    static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
 };
 
 DFMBASE_END_NAMESPACE
