@@ -43,6 +43,7 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     QVariantHash extraProperties;   // 扩展属性列表
     MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };   // 缓存文件的FileType
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
+    QMap<DFileInfo::AttributeID, QVariant> attributes;   // 缓存的fileinfo信息
     QReadWriteLock lock;
 
 public:
