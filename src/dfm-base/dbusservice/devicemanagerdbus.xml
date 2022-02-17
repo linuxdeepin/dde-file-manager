@@ -72,17 +72,22 @@
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="DetachBlockDevice">
+      <arg type="b" direction="out"/>
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="DetachBlockDeviceForced">
+      <arg type="b" direction="out"/>
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="DetachProtocolDevice">
+      <arg type="b" direction="out"/>
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="DetachAllMountedDevices">
+      <arg type="b" direction="out"/>
     </method>
     <method name="DetachAllMountedDevicesForced">
+      <arg type="b" direction="out"/>
     </method>
     <method name="MountBlockDevice">
       <arg type="s" direction="out"/>

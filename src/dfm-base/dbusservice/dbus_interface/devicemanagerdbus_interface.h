@@ -36,33 +36,33 @@ public:
     ~DeviceManagerInterface();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<> DetachAllMountedDevices()
+    inline QDBusPendingReply<bool> DetachAllMountedDevices()
     {
         QList<QVariant> argumentList;
         return asyncCallWithArgumentList(QStringLiteral("DetachAllMountedDevices"), argumentList);
     }
 
-    inline QDBusPendingReply<> DetachAllMountedDevicesForced()
+    inline QDBusPendingReply<bool> DetachAllMountedDevicesForced()
     {
         QList<QVariant> argumentList;
         return asyncCallWithArgumentList(QStringLiteral("DetachAllMountedDevicesForced"), argumentList);
     }
 
-    inline QDBusPendingReply<> DetachBlockDevice(const QString &id)
+    inline QDBusPendingReply<bool> DetachBlockDevice(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
         return asyncCallWithArgumentList(QStringLiteral("DetachBlockDevice"), argumentList);
     }
 
-    inline QDBusPendingReply<> DetachBlockDeviceForced(const QString &id)
+    inline QDBusPendingReply<bool> DetachBlockDeviceForced(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);
         return asyncCallWithArgumentList(QStringLiteral("DetachBlockDeviceForced"), argumentList);
     }
 
-    inline QDBusPendingReply<> DetachProtocolDevice(const QString &id)
+    inline QDBusPendingReply<bool> DetachProtocolDevice(const QString &id)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(id);

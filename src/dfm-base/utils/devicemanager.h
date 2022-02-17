@@ -50,10 +50,10 @@ public:
     QStringList invokeProtolcolDevicesIdList(const QVariantMap &opt);
     QVariantMap invokeQueryBlockDeviceInfo(const QString &id, bool detail = false);
     QVariantMap invokeQueryProtocolDeviceInfo(const QString &id, bool detail = false);
-    void invokeDetachBlockDevice(const QString &id);
-    void invokeDetachBlockDeviceForced(const QString &id);
+    bool invokeDetachBlockDevice(const QString &id);
+    bool invokeDetachBlockDeviceForced(const QString &id);
     void invokeUnmountBlockDeviceForced(const QString &id);
-    void invokeDetachProtocolDevice(const QString &id);
+    bool invokeDetachProtocolDevice(const QString &id);
 
 signals:
     void serviceUnregistered(const QString &service);

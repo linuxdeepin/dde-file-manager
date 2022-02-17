@@ -49,10 +49,10 @@ public:   // operations
     bool stopDefenderScanDrive(const QString &deviceId);
     bool stopDefenderScanAllDrives();
 
-    void detachBlockDevice(const QString &deviceId);
-    void detachProtocolDevice(const QString &deviceId);
-    void detachAllMountedBlockDevices();
-    void detachAllMountedProtocolDevices();
+    bool detachBlockDevice(const QString &deviceId);
+    bool detachProtocolDevice(const QString &deviceId);
+    bool detachAllMountedBlockDevices();
+    bool detachAllMountedProtocolDevices();
 
     void mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, dfmmount::DeviceOperateCallbackWithMessage callback = nullptr);
     QString mountBlockDevice(const QString &deviceId, const QVariantMap &opts = {});

@@ -33,34 +33,34 @@ DeviceManagerAdaptor::~DeviceManagerAdaptor()
     // destructor
 }
 
-void DeviceManagerAdaptor::DetachAllMountedDevices()
+bool DeviceManagerAdaptor::DetachAllMountedDevices()
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.DetachAllMountedDevices
-    parent()->DetachAllMountedDevices();
+    return parent()->DetachAllMountedDevices();
 }
 
-void DeviceManagerAdaptor::DetachAllMountedDevicesForced()
+bool DeviceManagerAdaptor::DetachAllMountedDevicesForced()
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.DetachAllMountedDevicesForced
-    parent()->DetachAllMountedDevicesForced();
+    return parent()->DetachAllMountedDevicesForced();
 }
 
-void DeviceManagerAdaptor::DetachBlockDevice(const QString &id)
+bool DeviceManagerAdaptor::DetachBlockDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.DetachBlockDevice
-    parent()->DetachBlockDevice(id);
+    return parent()->DetachBlockDevice(id);
 }
 
-void DeviceManagerAdaptor::DetachBlockDeviceForced(const QString &id)
+bool DeviceManagerAdaptor::DetachBlockDeviceForced(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.DetachBlockDeviceForced
-    parent()->DetachBlockDeviceForced(id);
+    return parent()->DetachBlockDeviceForced(id);
 }
 
-void DeviceManagerAdaptor::DetachProtocolDevice(const QString &id)
+bool DeviceManagerAdaptor::DetachProtocolDevice(const QString &id)
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.DetachProtocolDevice
-    parent()->DetachProtocolDevice(id);
+    return parent()->DetachProtocolDevice(id);
 }
 
 void DeviceManagerAdaptor::EjectBlockDevice(const QString &id)

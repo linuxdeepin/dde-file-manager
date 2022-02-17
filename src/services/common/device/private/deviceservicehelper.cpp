@@ -158,21 +158,8 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data, 
         return false;
     }
 
-    if (isMountedEncryptedDevice(data))
-        return true;
-
-    if (data.common.filesystem.isEmpty()) {
-        error = QString("Block Device: %1 haven't a filesystem!").arg(id);
-        return false;
-    }
-
-    if (data.mountpoints.isEmpty()) {
-        error = QString("Block Device: %1 not mounted!").arg(id);
-        return false;
-    }
-
-    if (data.hintIgnore) {
-        error = QString("Block Device: %1 hintIgnore!").arg(id);
+    if (data.hintSystem) {
+        error = QString("Block Device: %1 hintSystem!").arg(id);
         return false;
     }
 

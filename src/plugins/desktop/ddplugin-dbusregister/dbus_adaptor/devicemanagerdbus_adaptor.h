@@ -101,16 +101,23 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"DetachBlockDevice\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"DetachBlockDeviceForced\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"DetachProtocolDevice\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
-"    <method name=\"DetachAllMountedDevices\"/>\n"
-"    <method name=\"DetachAllMountedDevicesForced\"/>\n"
+"    <method name=\"DetachAllMountedDevices\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"    </method>\n"
+"    <method name=\"DetachAllMountedDevicesForced\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"    </method>\n"
 "    <method name=\"MountBlockDevice\">\n"
 "      <arg direction=\"out\" type=\"s\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
@@ -178,11 +185,11 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    void DetachAllMountedDevices();
-    void DetachAllMountedDevicesForced();
-    void DetachBlockDevice(const QString &id);
-    void DetachBlockDeviceForced(const QString &id);
-    void DetachProtocolDevice(const QString &id);
+    bool DetachAllMountedDevices();
+    bool DetachAllMountedDevicesForced();
+    bool DetachBlockDevice(const QString &id);
+    bool DetachBlockDeviceForced(const QString &id);
+    bool DetachProtocolDevice(const QString &id);
     void EjectBlockDevice(const QString &id);
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
     QStringList GetProtocolDevicesIdList();

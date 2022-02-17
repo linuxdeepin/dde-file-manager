@@ -68,11 +68,11 @@ signals:
 public slots:
     bool IsMonotorWorking();
     void SafelyRemoveBlockDevice(QString id);
-    void DetachBlockDevice(QString id);
-    void DetachBlockDeviceForced(QString id);
-    void DetachProtocolDevice(QString id);
-    void DetachAllMountedDevices();
-    void DetachAllMountedDevicesForced();
+    bool DetachBlockDevice(QString id);
+    bool DetachBlockDeviceForced(QString id);
+    bool DetachProtocolDevice(QString id);
+    bool DetachAllMountedDevices();
+    bool DetachAllMountedDevicesForced();
 
     QString MountBlockDevice(QString id);
     void UnmountBlockDevice(QString id);

@@ -308,21 +308,25 @@ void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 w
 void ComputerController::actEject(const QUrl &url)
 {
     QString id;
+    bool ok = true;
     if (url.path().endsWith(SuffixInfo::kBlock)) {
         id = ComputerUtils::getBlockDevIdByUrl(url);
         if (DeviceManagerInstance.isServiceDBusRunning())
-            DeviceManagerInstance.invokeDetachBlockDevice(id);
+            ok = DeviceManagerInstance.invokeDetachBlockDevice(id);
         else
-            ComputerUtils::deviceServIns()->detachBlockDevice(id);
+            ok = ComputerUtils::deviceServIns()->detachBlockDevice(id);
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
         if (DeviceManagerInstance.isServiceDBusRunning())
-            DeviceManagerInstance.invokeDetachProtocolDevice(id);
+            ok = DeviceManagerInstance.invokeDetachProtocolDevice(id);
         else
-            ComputerUtils::deviceServIns()->detachProtocolDevice(id);
+            ok = ComputerUtils::deviceServIns()->detachProtocolDevice(id);
     } else {
         qDebug() << url << "is not support " << __FUNCTION__;
     }
+
+    if (!ok)
+        ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError::UDisksErrorDeviceBusy);
 }
 
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)

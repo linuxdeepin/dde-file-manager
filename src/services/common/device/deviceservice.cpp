@@ -453,6 +453,21 @@ void DeviceMonitorHandler::onBlockDeviceMounted(const QString &deviceId, const Q
 {
     qInfo() << "A block device mounted: " << deviceId;
     emit service->blockDevMounted(deviceId, mountPoint);
+
+    // fix: if launch dfm without dbus service registered, the size cannot be updated in time when the device first mounted.
+    QtConcurrent::run([=] {
+        QMutexLocker guard(&mutexForBlock);
+        auto &&keys = allBlockDevData.keys();
+        if (keys.contains(deviceId)) {
+            qlonglong sizeTotal = allBlockDevData.value(deviceId).common.sizeTotal;
+            guard.unlock();
+
+            QStorageInfo info(mountPoint);
+            qlonglong sizeFree = info.bytesAvailable();
+
+            emit service->deviceSizeUsedChanged(deviceId, sizeTotal, sizeFree);
+        }
+    });
 }
 
 void DeviceMonitorHandler::onBlockDeviceUnmounted(const QString &deviceId)
@@ -992,50 +1007,66 @@ bool DeviceService::stopDefenderScanAllDrives()
  * \return device ejected or poweroffed
  */
 
-void DeviceService::detachBlockDevice(const QString &deviceId)
+bool DeviceService::detachBlockDevice(const QString &deviceId)
 {
     auto ptr = DeviceServiceHelper::createBlockDevice(deviceId);
     if (!ptr) {
         qWarning() << "Cannot create ptr for" << deviceId;
-        return;
+        return false;
     }
 
     if (!ptr->removable()) {
         qWarning() << "Not removable device: " << deviceId;
-        return;
+        return false;
     }
 
     // A block device may have more than one partition,
     // when detach a device, you need to unmount its partitions,
     // and then poweroff
+    bool isAllUnmounted = true;
     QStringList &&idList = DeviceServiceHelper::makeAllDevicesIdForDrive(ptr->drive());
-    std::for_each(idList.cbegin(), idList.cend(), [this](const QString &id) {
-        if (!unmountBlockDevice(id))
+    std::for_each(idList.cbegin(), idList.cend(), [this, &isAllUnmounted](const QString &id) {
+        if (!unmountBlockDevice(id)) {
             qWarning() << "Detach " << id << " abnormal, it's cannot unmount";
+            isAllUnmounted = false;
+        }
     });
+
+    if (!isAllUnmounted)
+        return false;
 
     if (ptr->mediaCompatibility().join(" ").contains("optical")) {
         if (ptr->optical())
             ejectBlockDeviceAsync(deviceId);
-    } else
+    } else {
         poweroffBlockDeviceAsync(deviceId);
+    }
+    return true;
 }
 
-void DeviceService::detachProtocolDevice(const QString &deviceId)
+bool DeviceService::detachProtocolDevice(const QString &deviceId)
 {
     // for protocol devices, there is no eject/poweroff, so just unmount them
     unmountProtocolDeviceAsync(deviceId);
+    return true;
 }
 
-void DeviceService::detachAllMountedBlockDevices()
+bool DeviceService::detachAllMountedBlockDevices()
 {
     QStringList &&list = blockDevicesIdList({ { ListOpt::kUnmountable, true } });
+    bool isAllDetached = true;
     for (const QString &id : list)
-        detachBlockDevice(id);
+        isAllDetached &= detachBlockDevice(id);
+    return isAllDetached;
 }
 
-void DeviceService::detachAllMountedProtocolDevices()
+bool DeviceService::detachAllMountedProtocolDevices()
 {
+    QStringList &&list = protocolDevicesIdList();
+    bool isAllDetached = true;
+    for (const QString &id : list)
+        isAllDetached &= detachProtocolDevice(id);
+    return isAllDetached;
 }
 
 void DeviceService::mountBlockDeviceAsync(const QString &deviceId, const QVariantMap &opts, dfmmount::DeviceOperateCallbackWithMessage callback)

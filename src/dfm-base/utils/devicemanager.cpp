@@ -198,26 +198,34 @@ QVariantMap DeviceManager::invokeQueryProtocolDeviceInfo(const QString &id, bool
     return ret;
 }
 
-void DeviceManager::invokeDetachBlockDevice(const QString &id)
+bool DeviceManager::invokeDetachBlockDevice(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachBlockDevice(id);
-        if (!reply.isValid())
+        if (!reply.isValid()) {
             qCritical() << "D-Bus reply is invalid " << reply.error();
+            return false;
+        }
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return reply.value();
     }
+    return false;
 }
 
-void DeviceManager::invokeDetachBlockDeviceForced(const QString &id)
+bool DeviceManager::invokeDetachBlockDeviceForced(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachBlockDeviceForced(id);
-        if (!reply.isValid())
+        if (!reply.isValid()) {
             qCritical() << "D-Bus reply is invalid " << reply.error();
+            return false;
+        }
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return reply.value();
     }
+    return false;
 }
 
 void DeviceManager::invokeUnmountBlockDeviceForced(const QString &id)
@@ -231,15 +239,19 @@ void DeviceManager::invokeUnmountBlockDeviceForced(const QString &id)
     }
 }
 
-void DeviceManager::invokeDetachProtocolDevice(const QString &id)
+bool DeviceManager::invokeDetachProtocolDevice(const QString &id)
 {
     if (deviceInterface) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachProtocolDevice(id);
-        if (!reply.isValid())
+        if (!reply.isValid()) {
             qCritical() << "D-Bus reply is invalid " << reply.error();
+            return false;
+        }
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+        return reply.value();
     }
+    return false;
 }
 
 DeviceManager::DeviceManager(QObject *parent)

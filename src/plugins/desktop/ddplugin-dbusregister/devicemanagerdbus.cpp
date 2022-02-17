@@ -58,28 +58,29 @@ void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
     });
 }
 
-void DeviceManagerDBus::DetachBlockDevice(QString id)
+bool DeviceManagerDBus::DetachBlockDevice(QString id)
 {
     if (deviceServ->isDefenderScanningDrive(id)) {
         // show query dialog
         emit AskStopScanningWhenDetach(id);
-        return;
+        return false;
     }
-    deviceServ->detachBlockDevice(id);
+    return deviceServ->detachBlockDevice(id);
 }
 
-void DeviceManagerDBus::DetachBlockDeviceForced(QString id)
+bool DeviceManagerDBus::DetachBlockDeviceForced(QString id)
 {
     if (deviceServ->stopDefenderScanDrive(id)) {
-        deviceServ->detachBlockDevice(id);
+        return deviceServ->detachBlockDevice(id);
     } else {
         emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
+        return false;
     }
 }
 
-void DeviceManagerDBus::DetachProtocolDevice(QString id)
+bool DeviceManagerDBus::DetachProtocolDevice(QString id)
 {
-    deviceServ->detachProtocolDevice(id);
+    return deviceServ->detachProtocolDevice(id);
 }
 
 void DeviceManagerDBus::initialize()
@@ -133,25 +134,26 @@ void DeviceManagerDBus::initConnection()
 /*!
  * \brief this is convience interface for `disk-mount` plugin
  */
-void DeviceManagerDBus::DetachAllMountedDevices()
+bool DeviceManagerDBus::DetachAllMountedDevices()
 {
     if (deviceServ->isDefenderScanningDrive()) {
         // show query dialog
         emit AskStopScanningWhenDetachAll();
-        return;
+        return false;
     }
 
-    deviceServ->detachAllMountedBlockDevices();
-    deviceServ->detachAllMountedProtocolDevices();
+    return deviceServ->detachAllMountedBlockDevices()
+            && deviceServ->detachAllMountedProtocolDevices();
 }
 
-void DeviceManagerDBus::DetachAllMountedDevicesForced()
+bool DeviceManagerDBus::DetachAllMountedDevicesForced()
 {
     if (deviceServ->stopDefenderScanAllDrives()) {
-        deviceServ->detachAllMountedBlockDevices();
-        deviceServ->detachAllMountedProtocolDevices();
+        return deviceServ->detachAllMountedBlockDevices()
+                && deviceServ->detachAllMountedProtocolDevices();
     } else {
         emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
+        return false;
     }
 }
 
