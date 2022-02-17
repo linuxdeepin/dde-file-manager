@@ -25,6 +25,7 @@
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "services/common/propertydialog/property_defines.h"
+#include "utils/filecalculationutils.h"
 
 #include <DArrowLineDrawer>
 
@@ -57,6 +58,7 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileCount { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *freeSize { nullptr };
     QFrame *deviceInfoFrame { nullptr };
+    FileCalculationUtils *fileCalculationUtils { nullptr };
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // DEVICEBASICWIDGET_H

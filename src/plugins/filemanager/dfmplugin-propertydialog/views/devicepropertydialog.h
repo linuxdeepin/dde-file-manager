@@ -75,6 +75,8 @@ protected:
 
     void closeEvent(QCloseEvent *event) override;
 
+    void keyPressEvent(QKeyEvent *event) override;
+
 private:
     DTK_WIDGET_NAMESPACE::DLabel *deviceName { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *deviceIcon { nullptr };

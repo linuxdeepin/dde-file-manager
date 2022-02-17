@@ -30,16 +30,23 @@ DeviceBasicWidget::DeviceBasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {
     initUI();
+    fileCalculationUtils = new FileCalculationUtils;
+    connect(fileCalculationUtils, &FileCalculationUtils::sigFileChange, this, &DeviceBasicWidget::slotFileDirSizeChange);
 }
 
 DeviceBasicWidget::~DeviceBasicWidget()
 {
+    fileCalculationUtils->deleteLater();
 }
 
 void DeviceBasicWidget::initUI()
 {
     setExpandedSeparatorVisible(false);
     setSeparatorVisible(false);
+
+    setTitle(QString(tr("BasicInfo")));
+
+    setExpand(true);
 
     deviceInfoFrame = new QFrame(this);
 
@@ -93,8 +100,11 @@ void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
     QString sizeFreeStr = UniversalUtils::sizeFormat(info.availableSpace, 1);
     freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
+
+    fileCalculationUtils->startThread(QList<QUrl>() << info.deviceUrl);
 }
 
 void DeviceBasicWidget::slotFileDirSizeChange(qint64 size)
 {
+    fileCount->setRightValue(QString::number(size) + tr("item"), Qt::ElideNone, Qt::AlignVCenter, false);
 }

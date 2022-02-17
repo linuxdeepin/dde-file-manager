@@ -80,6 +80,7 @@ protected:
     virtual void resizeEvent(QResizeEvent *event) override;
     virtual void showEvent(QShowEvent *event) override;
     virtual void closeEvent(QCloseEvent *event) override;
+    virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QScrollArea *scrollArea { nullptr };

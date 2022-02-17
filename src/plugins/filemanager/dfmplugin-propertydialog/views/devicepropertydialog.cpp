@@ -20,14 +20,13 @@
  */
 #include "devicepropertydialog.h"
 
-#include <QFormLayout>
-
 #include <DDrawer>
 #include <denhancedwidget.h>
 #include <DArrowLineDrawer>
 #include <DApplicationHelper>
 
-const static int kArrowExpandHight = 30;
+#include <QKeyEvent>
+
 const static int kArrowExpandSpacing = 10;
 
 DFMBASE_USE_NAMESPACE
@@ -127,6 +126,7 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DSC_NAMESPACE::DeviceInfo &
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));
     deviceName->setText(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
+    basicInfo->setLeftValue(info.deviceName, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignLeft, true);
     setProgressBar(info.totalCapacity, info.availableSpace);
     addExtendedControl(deviceBasicWidget);
 }
@@ -173,6 +173,8 @@ void DevicePropertyDialog::insertExtendedControl(int index, QWidget *widget)
     QRect rc = contentsRect();
     widget->setFixedWidth(rc.width() - cm.left() - cm.right());
     extendedControl.append(widget);
+    DEnhancedWidget *hanceedWidget = new DEnhancedWidget(widget, widget);
+    connect(hanceedWidget, &DEnhancedWidget::heightChanged, this, &DevicePropertyDialog::handleHeight);
 }
 
 void DevicePropertyDialog::addExtendedControl(QWidget *widget)
@@ -180,26 +182,6 @@ void DevicePropertyDialog::addExtendedControl(QWidget *widget)
     QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
     insertExtendedControl(vlayout->count() - 1, widget);
 }
-
-//void DevicePropertyDialog::insertExtendedControl(int index, ExtendedControlDrawerView *widget, bool expansion)
-//{
-//    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-//    widget->setSelectFileUrl(currentFileUrl);
-//    widget->setFixedHeight(kArrowExpandHight);
-//    widget->setExpand(expansion);
-//    QMargins cm = vlayout->contentsMargins();
-//    QRect rc = contentsRect();
-//    widget->setFixedWidth(rc.width() - cm.left() - cm.right());
-//    vlayout->insertWidget(index, widget, 0, Qt::AlignTop);
-//    extendedControl.append(widget);
-//    connect(widget, &ExtendedControlDrawerView::heightChanged, this, &DevicePropertyDialog::handleHeight);
-//}
-
-//void DevicePropertyDialog::addExtendedControl(ExtendedControlDrawerView *widget, bool expansion)
-//{
-//    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout *>(scrollArea->widget()->layout());
-//    insertExtendedControl(vlayout->count() - 1, widget, expansion);
-//}
 
 void DevicePropertyDialog::showEvent(QShowEvent *event)
 {
@@ -215,4 +197,12 @@ void DevicePropertyDialog::closeEvent(QCloseEvent *event)
 {
     DDialog::closeEvent(event);
     emit closed(currentFileUrl);
+}
+
+void DevicePropertyDialog::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+    }
+    DDialog::keyPressEvent(event);
 }

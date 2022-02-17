@@ -205,3 +205,11 @@ void FilePropertyDialog::closeEvent(QCloseEvent *event)
     closeDialog();
     DDialog::closeEvent(event);
 }
+
+void FilePropertyDialog::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+    }
+    DDialog::keyPressEvent(event);
+}
