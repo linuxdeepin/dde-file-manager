@@ -188,6 +188,7 @@ void FilePropertyDialogManager::showDevicePropertyDialog(const DeviceInfo &info)
         devicePropertyDialog->show();
         devicePropertyDialog->setSelectDeviceInfo(info);
         devicePropertyDialogs.insert(info.deviceUrl, devicePropertyDialog);
+        connect(devicePropertyDialog, &DevicePropertyDialog::closed, this, &FilePropertyDialogManager::closeDevicePropertyDialog);
     }
 }
 

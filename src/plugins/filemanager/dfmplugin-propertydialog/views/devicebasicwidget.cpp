@@ -67,11 +67,13 @@ void DeviceBasicWidget::initUI()
     freeSize->setLeftValue(tr("Free space"));
 
     QGridLayout *glayout = new QGridLayout;
+    glayout->setContentsMargins(15, 15, 5, 10);
+    glayout->setSpacing(16);
     glayout->addWidget(deviceType, 0, 0, 1, 6);
-    glayout->addWidget(deviceTotalSize, 0, 0, 1, 6);
-    glayout->addWidget(fileSystem, 0, 0, 1, 6);
-    glayout->addWidget(fileCount, 0, 0, 1, 6);
-    glayout->addWidget(freeSize, 0, 0, 1, 6);
+    glayout->addWidget(deviceTotalSize, 1, 0, 1, 6);
+    glayout->addWidget(fileSystem, 2, 0, 1, 6);
+    glayout->addWidget(fileCount, 3, 0, 1, 6);
+    glayout->addWidget(freeSize, 4, 0, 1, 6);
     glayout->setColumnStretch(0, 1);
     deviceInfoFrame->setLayout(glayout);
 

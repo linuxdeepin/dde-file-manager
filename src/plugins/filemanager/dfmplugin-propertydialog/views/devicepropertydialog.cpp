@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "devicepropertydialog.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <DDrawer>
 #include <denhancedwidget.h>
@@ -72,6 +73,7 @@ void DevicePropertyDialog::iniUI()
     vlayout1->setSpacing(0);
     vlayout1->addWidget(deviceIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout1->addWidget(deviceName, 0, Qt::AlignHCenter | Qt::AlignTop);
+    vlayout1->addWidget(basicInfoFrame);
 
     QFrame *frame = new QFrame(this);
     frame->setLayout(vlayout1);
@@ -116,6 +118,8 @@ int DevicePropertyDialog::contentHeight() const
     return (DIALOG_TITLEBAR_HEIGHT
             + deviceIcon->height()
             + deviceName->height()
+            + basicInfo->height()
+            + devicesProgressBar->height()
             + expandsHeight
             + 40);
 }
@@ -144,6 +148,9 @@ void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize)
     devicesProgressBar->setValue(totalSize == 0 ? 0 : static_cast<int>(freeSize / totalSize));
     devicesProgressBar->setMaximumHeight(8);
     devicesProgressBar->setTextVisible(false);
+    QString sizeTotalStr = UniversalUtils::sizeFormat(totalSize, 1);
+    QString sizeFreeStr = UniversalUtils::sizeFormat(totalSize - freeSize, 1);
+    basicInfo->setRightValue(sizeFreeStr + QString("/") + sizeTotalStr, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignRight, true);
 
     // fix bug#47111 在浅色模式下，手动设置进度条背景色
     if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {
@@ -195,8 +202,8 @@ void DevicePropertyDialog::showEvent(QShowEvent *event)
 
 void DevicePropertyDialog::closeEvent(QCloseEvent *event)
 {
-    DDialog::closeEvent(event);
     emit closed(currentFileUrl);
+    DDialog::closeEvent(event);
 }
 
 void DevicePropertyDialog::keyPressEvent(QKeyEvent *event)
