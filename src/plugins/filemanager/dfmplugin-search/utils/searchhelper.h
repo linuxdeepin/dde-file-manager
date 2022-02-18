@@ -36,6 +36,7 @@ public:
     }
 
     static QUrl rootUrl();
+    static bool isRootUrl(const QUrl &url);
     static bool isSearchFile(const QUrl &url);
     static QUrl searchedFileUrl(const QUrl &searchUrl);
     static QUrl searchTargetUrl(const QUrl &searchUrl);
@@ -45,6 +46,7 @@ public:
     static QUrl setSearchedFileUrl(const QUrl &searchUrl, const QString &searchedFile);
     static QUrl setSearchKeyword(const QUrl &searchUrl, const QString &keyword);
     static QUrl setSearchTargetUrl(const QUrl &searchUrl, const QUrl &targetUrl);
+    static QUrl setSearchTaskId(const QUrl &searchUrl, const QString &taskId);
 
     static QUrl fromSearchFile(const QString &filePath);
     static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId, const QUrl &searchedFileUrl);

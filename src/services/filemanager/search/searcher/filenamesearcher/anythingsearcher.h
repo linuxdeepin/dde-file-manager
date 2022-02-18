@@ -28,6 +28,9 @@
 #include <QMutex>
 
 class ComDeepinAnythingInterface;
+
+DSB_FM_BEGIN_NAMESPACE
+
 class AnythingSearcher : public AbstractSearcher
 {
     Q_OBJECT
@@ -56,5 +59,7 @@ private:
     QTime notifyTimer;
     int lastEmit = 0;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // ANYTHINGSEARCH_H

@@ -26,6 +26,8 @@
 
 #include <QFuture>
 
+DSB_FM_BEGIN_NAMESPACE
+
 class SearchServicePrivate : public QObject
 {
     Q_OBJECT
@@ -39,5 +41,7 @@ private:
     MainController *mainController = nullptr;
     QHash<QString, QString> registerInfos;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // SEARCHSERVICE_P_H

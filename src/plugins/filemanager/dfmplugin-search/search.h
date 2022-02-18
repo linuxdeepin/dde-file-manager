@@ -40,6 +40,7 @@ public:
 private slots:
     void onWindowOpened(quint64 windId);
     void regSearchCrumbToTitleBar();
+    void regSearchToWorkspaceService();
 };
 
 DPSEARCH_END_NAMESPACE

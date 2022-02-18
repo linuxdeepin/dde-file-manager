@@ -54,6 +54,7 @@ static int kEmitInterval = 50;   // 推送时间间隔
 
 using namespace Lucene;
 DFMBASE_USE_NAMESPACE
+DSB_FM_BEGIN_NAMESPACE
 
 bool FullTextSearcherPrivate::isIndexCreating = false;
 FullTextSearcherPrivate::FullTextSearcherPrivate(FullTextSearcher *parent)
@@ -515,3 +516,5 @@ QList<QUrl> FullTextSearcher::takeAll()
     QMutexLocker lk(&d->mutex);
     return std::move(d->allResults);
 }
+
+DSB_FM_END_NAMESPACE

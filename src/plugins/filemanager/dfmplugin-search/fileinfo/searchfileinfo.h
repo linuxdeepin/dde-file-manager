@@ -36,11 +36,16 @@ public:
     explicit SearchFileInfo(const QUrl &url);
     ~SearchFileInfo() override;
     virtual QString fileName() const override;
+    virtual QString filePath() const override;
+    virtual QIcon fileIcon() const override;
     virtual bool exists() const override;
     virtual bool isHidden() const override;
     virtual qint64 size() const override;
     virtual QString sizeFormat() const override;
     virtual QDateTime lastModified() const override;
+    virtual QDateTime lastRead() const override;
+    virtual QDateTime created() const override;
+    virtual QString fileTypeDisplayName() const override;
 
 private:
     SearchFileInfoPrivate *d;

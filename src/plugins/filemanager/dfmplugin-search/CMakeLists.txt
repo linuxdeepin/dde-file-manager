@@ -13,6 +13,10 @@ FILE(GLOB_RECURSE
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
+if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+    ADD_DEFINITIONS(-DARM_PROCESSOR)
+endif()
+
 find_package(Dtk REQUIRED Widget REQUIRED)
 
 add_library(${PROJECT_NAME}

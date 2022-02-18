@@ -20,9 +20,13 @@
  */
 #include "abstractsearcher.h"
 
+DSB_FM_BEGIN_NAMESPACE
+
 AbstractSearcher::AbstractSearcher(const QUrl &url, const QString &key, QObject *parent)
     : QObject(parent),
       searchUrl(url),
       keyword(key)
 {
 }
+
+DSB_FM_END_NAMESPACE

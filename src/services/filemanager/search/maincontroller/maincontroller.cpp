@@ -31,6 +31,7 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
+DSB_FM_BEGIN_NAMESPACE
 
 MainController::MainController(QObject *parent)
     : QObject(parent)
@@ -118,3 +119,5 @@ void MainController::onFileChanged(const QString &path)
         });
     }
 }
+
+DSB_FM_END_NAMESPACE

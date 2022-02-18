@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "anythingsearcher.h"
+#include "search/utils/regularexpression.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dbusservice/dbus_interface/anything_interface.h"
@@ -33,8 +34,10 @@ static qint64 kMaxTime = 500;   // 最大搜索时间（ms）
 }
 
 DFMBASE_USE_NAMESPACE
+DSB_FM_BEGIN_NAMESPACE
+
 AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, bool dataFlag, QObject *parent)
-    : AbstractSearcher(url, keyword, parent),
+    : AbstractSearcher(url, RegularExpression::checkWildcardAndToRegularExpression(keyword), parent),
       isPrependData(dataFlag)
 {
     anythingInterface = new ComDeepinAnythingInterface("com.deepin.anything",
@@ -178,3 +181,5 @@ bool AnythingSearcher::isSupported(const QUrl &url, bool &isPrependData)
 
     return true;
 }
+
+DSB_FM_END_NAMESPACE

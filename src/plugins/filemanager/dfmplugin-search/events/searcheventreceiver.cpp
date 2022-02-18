@@ -45,10 +45,12 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
     auto window = windowService->findWindowById(winId);
     Q_ASSERT(window);
 
-    auto url = window->currentUrl();
+    const auto &url = window->currentUrl();
     QUrl searchUrl;
     if (SearchHelper::isSearchFile(url)) {
         searchUrl = SearchHelper::setSearchKeyword(url, keyword);
+        if (SearchHelper::searchTaskId(searchUrl).isEmpty())
+            searchUrl = SearchHelper::setSearchTaskId(searchUrl, QString::number(winId));
     } else {
         searchUrl = SearchHelper::fromSearchFile(url, keyword, QString::number(winId), QUrl());
     }

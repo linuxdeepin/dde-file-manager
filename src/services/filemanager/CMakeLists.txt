@@ -73,6 +73,8 @@ FILE(GLOB SEARCH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/fulltextsearcher/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/filenamesearcher/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/filenamesearcher/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/utils/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/search/utils/*.cpp"
 )
 
 FILE(GLOB COMPUTER_FILES

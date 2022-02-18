@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "iteratorsearcher.h"
+#include "search/utils/regularexpression.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -29,8 +30,10 @@ static int kEmitInterval = 50;   // 推送时间间隔（ms）
 }
 
 DFMBASE_USE_NAMESPACE
-IteratorSearcher::IteratorSearcher(const QUrl &url, const QString &keyword, QObject *parent)
-    : AbstractSearcher(url, keyword, parent)
+DSB_FM_BEGIN_NAMESPACE
+
+IteratorSearcher::IteratorSearcher(const QUrl &url, const QString &key, QObject *parent)
+    : AbstractSearcher(url, RegularExpression::checkWildcardAndToRegularExpression(key), parent)
 {
     searchPathList << url;
     regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
@@ -128,3 +131,5 @@ void IteratorSearcher::doSearch()
         iterator.clear();
     }
 }
+
+DSB_FM_END_NAMESPACE

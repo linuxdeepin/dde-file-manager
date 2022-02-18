@@ -21,7 +21,11 @@
 #ifndef TASKCOMMANDER_H
 #define TASKCOMMANDER_H
 
+#include "dfm_filemanager_service_global.h"
+
 #include <QObject>
+
+DSB_FM_BEGIN_NAMESPACE
 
 class TaskCommanderPrivate;
 class TaskCommander : public QObject
@@ -45,5 +49,7 @@ signals:
 private:
     TaskCommanderPrivate *d;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // TASKCOMMANDER_H

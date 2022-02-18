@@ -26,6 +26,8 @@
 
 #include <QtConcurrent>
 
+DSB_FM_BEGIN_NAMESPACE
+
 TaskCommanderPrivate::TaskCommanderPrivate(TaskCommander *parent)
     : QObject(parent),
       q(parent)
@@ -163,3 +165,5 @@ void TaskCommander::createSearcher(const QUrl &url, const QString &keyword)
     connect(searcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
     d->allSearchers << searcher;
 }
+
+DSB_FM_END_NAMESPACE

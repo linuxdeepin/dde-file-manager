@@ -28,6 +28,8 @@
 #include <QUrl>
 #include <QReadWriteLock>
 
+DSB_FM_BEGIN_NAMESPACE
+
 class TaskCommanderPrivate : public QObject
 {
     Q_OBJECT
@@ -60,4 +62,7 @@ private:
     QFutureWatcher<void> futureWatcher;
     QList<AbstractSearcher *> allSearchers;
 };
+
+DSB_FM_END_NAMESPACE
+
 #endif   // TASKCOMMANDER_P_H

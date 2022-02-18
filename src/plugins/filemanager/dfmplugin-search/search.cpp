@@ -24,6 +24,7 @@
 #include "fileinfo/searchfileinfo.h"
 #include "iterator/searchdiriterator.h"
 #include "watcher/searchfilewatcher.h"
+#include "topwidget/advancesearchbar.h"
 
 #include "services/filemanager/search/searchservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
@@ -41,7 +42,7 @@ DPSEARCH_BEGIN_NAMESPACE
 
 namespace GlobalPrivate {
 static WindowsService *winServ { nullptr };
-static WorkspaceService *workspaceService { nullptr };
+static WorkspaceService *workspaceServ { nullptr };
 }   // namespace GlobalPrivate
 
 void Search::initialize()
@@ -53,7 +54,7 @@ void Search::initialize()
         abort();
     }
 
-    UrlRoute::regScheme(SearchHelper::scheme(), "/", {}, true, "");
+    UrlRoute::regScheme(SearchHelper::scheme(), "/", {}, true, tr("Search"));
     //注册Scheme为"search"的扩展的文件信息
     InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
@@ -69,16 +70,6 @@ bool Search::start()
     dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kDoSearch,
                                             SearchEventReceiverIns,
                                             &SearchEventReceiver::handleSearch);
-
-    auto &ctx = dpfInstance.serviceContext();
-    GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-
-    if (!GlobalPrivate::workspaceService) {
-        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-        abort();
-    }
-    GlobalPrivate::workspaceService->addScheme(SearchHelper::scheme());
-
     return true;
 }
 
@@ -91,6 +82,12 @@ void Search::onWindowOpened(quint64 windId)
 {
     auto window = GlobalPrivate::winServ->findWindowById(windId);
     Q_ASSERT_X(window, "Search", "Cannot find window by id");
+
+    if (window->workSpace())
+        regSearchToWorkspaceService();
+    else
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Search::regSearchToWorkspaceService, Qt::DirectConnection);
+
     if (window->titleBar())
         regSearchCrumbToTitleBar();
     else
@@ -111,6 +108,24 @@ void Search::regSearchCrumbToTitleBar()
             titleBarServ->addCustomCrumbar(info);
         }
     });
+}
+
+void Search::regSearchToWorkspaceService()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    GlobalPrivate::workspaceServ = ctx.service<WorkspaceService>(WorkspaceService::name());
+
+    if (!GlobalPrivate::workspaceServ) {
+        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
+        abort();
+    }
+    GlobalPrivate::workspaceServ->addScheme(SearchHelper::scheme());
+
+    Workspace::CustomTopWidgetInfo info;
+    info.scheme = SearchHelper::scheme();
+    info.keepShow = false;
+    info.createTopWidgetCb = []() { return new AdvanceSearchBar(); };
+    GlobalPrivate::workspaceServ->addCustomTopWidget(info);
 }
 
 DPSEARCH_END_NAMESPACE

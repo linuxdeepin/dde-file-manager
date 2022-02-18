@@ -19,12 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "searcheventcaller.h"
+#include "utils/searchhelper.h"
+
+#include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
 
-DFMBASE_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
 static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
@@ -34,7 +36,14 @@ static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
 
 void dfmplugin_search::SearchEventCaller::sendDoSearch(quint64 winId, const QUrl &url)
 {
+    DFMBASE_USE_NAMESPACE
     dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
+}
+
+void SearchEventCaller::sendShowAdvanceSearchBar(quint64 winId, bool visible)
+{
+    DSB_FM_USE_NAMESPACE
+    dispatcher()->publish(Workspace::EventType::kShowCustomTopWidget, winId, SearchHelper::scheme(), visible);
 }
 
 DPSEARCH_END_NAMESPACE

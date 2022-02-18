@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,40 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ABSTRACTSEARCHER_H
-#define ABSTRACTSEARCHER_H
+#ifndef REGULAREXPRESSION_H
+#define REGULAREXPRESSION_H
 
 #include "dfm_filemanager_service_global.h"
 
-#include <QObject>
-#include <QUrl>
+#include <QString>
 
 DSB_FM_BEGIN_NAMESPACE
 
-class AbstractSearcher : public QObject
+class RegularExpression
 {
-    Q_OBJECT
 public:
-    enum Status {
-        kReady,
-        kRuning,
-        kCompleted,
-        kTerminated
-    };
-
-    explicit AbstractSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
-    virtual bool search() = 0;
-    virtual void stop() = 0;
-    virtual bool hasItem() const = 0;
-    virtual QList<QUrl> takeAll() = 0;
-signals:
-    void unearthed(AbstractSearcher *searcher);
-
-protected:
-    QUrl searchUrl;
-    QString keyword;
+    static QString checkWildcardAndToRegularExpression(const QString &pattern);
+    static QString wildcardToRegularExpression(const QString &pattern);
+    static inline QString anchoredPattern(const QString &expression)
+    {
+        return QLatin1String("\\A(?:")
+                + expression
+                + QLatin1String(")\\z");
+    }
 };
 
 DSB_FM_END_NAMESPACE
 
-#endif   // ABSTRACTSEARCHER_H
+#endif   // REGULAREXPRESSION_H

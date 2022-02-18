@@ -26,6 +26,7 @@
 #include <QtConcurrent>
 
 DFMBASE_USE_NAMESPACE
+DSB_FM_BEGIN_NAMESPACE
 
 SearchServicePrivate::SearchServicePrivate(SearchService *parent)
     : QObject(parent)
@@ -69,7 +70,7 @@ QHash<QString, QString> SearchService::regInfos()
     return d->registerInfos;
 }
 
-bool SearchService::search(QString taskId, const QUrl &url, const QString &keyword)
+bool SearchService::search(const QString &taskId, const QUrl &url, const QString &keyword)
 {
     if (d->mainController)
         return d->mainController->doSearchTask(taskId, url, keyword);
@@ -77,7 +78,7 @@ bool SearchService::search(QString taskId, const QUrl &url, const QString &keywo
     return false;
 }
 
-QList<QUrl> SearchService::matchedResults(QString taskId)
+QList<QUrl> SearchService::matchedResults(const QString &taskId)
 {
     if (d->mainController)
         return d->mainController->getResults(taskId);
@@ -85,10 +86,12 @@ QList<QUrl> SearchService::matchedResults(QString taskId)
     return {};
 }
 
-void SearchService::stop(QString taskId)
+void SearchService::stop(const QString &taskId)
 {
     if (d->mainController)
         d->mainController->stop(taskId);
+
+    emit searchStoped(taskId);
 }
 
 SearchService::SearchService(QObject *parent)
@@ -112,3 +115,5 @@ void SearchService::init()
     connect(d->mainController, &MainController::matched, this, &SearchService::matched, Qt::DirectConnection);
     connect(d->mainController, &MainController::searchCompleted, this, &SearchService::searchCompleted, Qt::DirectConnection);
 }
+
+DSB_FM_END_NAMESPACE

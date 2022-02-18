@@ -26,7 +26,12 @@
 #include <QHash>
 #include <QFuture>
 
+QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
+QT_END_NAMESPACE
+
+DSB_FM_BEGIN_NAMESPACE
+
 class MainControllerPrivate;
 class MainController : public QObject
 {
@@ -56,5 +61,7 @@ private:
     QFileSystemWatcher *fileWatcher = nullptr;
     QFuture<void> indexFuture;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // MAINCONTROLLER_H

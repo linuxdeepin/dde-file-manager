@@ -44,7 +44,7 @@ SearchFileInfo::SearchFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new SearchFileInfoPrivate(this))
 {
     d = static_cast<SearchFileInfoPrivate *>(dptr.data());
-    if (SearchHelper::searchedFileUrl(url).isValid())
+    if (!SearchHelper::isRootUrl(url))
         d->setProxy(InfoFactory::create<AbstractFileInfo>(SearchHelper::searchedFileUrl(url)));
 }
 
@@ -56,6 +56,22 @@ QString SearchFileInfo::fileName() const
 {
     if (d->proxy)
         return d->proxy->fileName();
+
+    return {};
+}
+
+QString SearchFileInfo::filePath() const
+{
+    if (d->proxy)
+        return d->proxy->filePath();
+
+    return {};
+}
+
+QIcon SearchFileInfo::fileIcon() const
+{
+    if (d->proxy)
+        return d->proxy->fileIcon();
 
     return {};
 }
@@ -93,6 +109,30 @@ QDateTime SearchFileInfo::lastModified() const
 {
     if (d->proxy)
         return d->proxy->lastModified();
+
+    return {};
+}
+
+QDateTime SearchFileInfo::lastRead() const
+{
+    if (d->proxy)
+        return d->proxy->lastRead();
+
+    return {};
+}
+
+QDateTime SearchFileInfo::created() const
+{
+    if (d->proxy)
+        return d->proxy->created();
+
+    return {};
+}
+
+QString SearchFileInfo::fileTypeDisplayName() const
+{
+    if (d->proxy)
+        return d->proxy->fileTypeDisplayName();
 
     return {};
 }

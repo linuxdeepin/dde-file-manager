@@ -26,7 +26,12 @@ DPSEARCH_BEGIN_NAMESPACE
 
 QUrl SearchHelper::rootUrl()
 {
-    return fromSearchFile("");
+    return fromSearchFile("/");
+}
+
+bool SearchHelper::isRootUrl(const QUrl &url)
+{
+    return url.path() == rootUrl().path();
 }
 
 bool SearchHelper::isSearchFile(const QUrl &url)
@@ -86,6 +91,17 @@ QUrl SearchHelper::setSearchTargetUrl(const QUrl &searchUrl, const QUrl &targetU
     return url;
 }
 
+QUrl SearchHelper::setSearchTaskId(const QUrl &searchUrl, const QString &taskId)
+{
+    QUrl url(searchUrl);
+    QUrlQuery query(url.query());
+    query.removeQueryItem("taskId");
+    query.addQueryItem("taskId", taskId);
+    url.setQuery(query);
+
+    return url;
+}
+
 QUrl SearchHelper::fromSearchFile(const QString &filePath)
 {
     QUrl url;
@@ -97,7 +113,7 @@ QUrl SearchHelper::fromSearchFile(const QString &filePath)
 
 QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId, const QUrl &searchedFileUrl)
 {
-    QUrl url = fromSearchFile(QString());
+    QUrl url = rootUrl();
     QUrlQuery query;
 
     query.addQueryItem("url", targetUrl.toString());

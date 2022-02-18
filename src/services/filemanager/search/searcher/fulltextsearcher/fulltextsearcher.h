@@ -25,6 +25,8 @@
 
 #include <QObject>
 
+DSB_FM_BEGIN_NAMESPACE
+
 class FullTextSearcherPrivate;
 class FullTextSearcher : public AbstractSearcher
 {
@@ -45,5 +47,7 @@ private:
 private:
     FullTextSearcherPrivate *d = nullptr;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // FULLTEXTSEARCHER_H

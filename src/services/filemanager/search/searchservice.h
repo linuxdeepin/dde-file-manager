@@ -21,7 +21,11 @@
 #ifndef SEARCHSERVICE_H
 #define SEARCHSERVICE_H
 
+#include "dfm_filemanager_service_global.h"
+
 #include <dfm-framework/service/pluginservicecontext.h>
+
+DSB_FM_BEGIN_NAMESPACE
 
 class SearchServicePrivate;
 class SearchService final : public dpf::PluginService, dpf::AutoServiceRegister<SearchService>
@@ -38,13 +42,14 @@ public:
 
     bool regSearchPath(const QString &scheme, const QString &path, QString *errMsg = nullptr);
     QHash<QString, QString> regInfos();
-    bool search(QString taskId, const QUrl &url, const QString &keyword);
-    QList<QUrl> matchedResults(QString taskId);
-    void stop(QString taskId);
+    bool search(const QString &taskId, const QUrl &url, const QString &keyword);
+    QList<QUrl> matchedResults(const QString &taskId);
+    void stop(const QString &taskId);
 
 signals:
-    void matched(QString taskId);
-    void searchCompleted(QString taskId);
+    void matched(const QString &taskId);
+    void searchCompleted(const QString &taskId);
+    void searchStoped(const QString &taskId);
 
 private:
     explicit SearchService(QObject *parent = nullptr);
@@ -53,5 +58,7 @@ private:
 
     QScopedPointer<SearchServicePrivate> d;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // SEARCHSERVICE_H

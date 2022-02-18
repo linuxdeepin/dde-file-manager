@@ -18,49 +18,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHDIRITERATOR_P_H
-#define SEARCHDIRITERATOR_P_H
+#ifndef ADVANCESEARCHBAR_H
+#define ADVANCESEARCHBAR_H
 
 #include "dfmplugin_search_global.h"
 
-#include "interfaces/abstractfileinfo.h"
+#include <dboxwidget.h>
 
-#include <QObject>
-#include <QQueue>
-#include <QUrl>
-#include <QMutex>
+#include <QScrollArea>
 
 DPSEARCH_BEGIN_NAMESPACE
 
-class SearchDirIterator;
-class SearchDirIteratorPrivate : public QObject
+class AdvanceSearchBarPrivate;
+class AdvanceSearchBar : public QScrollArea
 {
     Q_OBJECT
-    friend class SearchDirIterator;
-
 public:
-    explicit SearchDirIteratorPrivate(const QUrl &url, QObject *parent = nullptr);
-    ~SearchDirIteratorPrivate();
-
-    void loadSearchService();
-    void initConnect();
-    void doSearch();
+    explicit AdvanceSearchBar(QWidget *parent = nullptr);
+    void resetForm();
+    void initService();
 
 public slots:
-    void onMatched(const QString &id);
-    void onSearchCompleted(const QString &id);
-    void onSearchStoped(const QString &id);
+    void onOptionChanged();
+    void onResetButtonPressed();
+
+protected:
+    void hideEvent(QHideEvent *event) override;
 
 private:
-    bool searchFinished = false;
-    bool searchStoped = false;
-    QUrl fileUrl;
-    QQueue<QUrl> childrens;
-    AbstractFileInfoPointer currentFileInfo;
-    QString taskId;
-    QMutex mutex;
+    AdvanceSearchBarPrivate *d;
 };
 
 DPSEARCH_END_NAMESPACE
 
-#endif   // SEARCHDIRITERATOR_P_H
+#endif   // ADVANCESEARCHBAR_H

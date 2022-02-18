@@ -30,6 +30,8 @@
 #include <QMutex>
 #include <QTime>
 
+DSB_FM_BEGIN_NAMESPACE
+
 class FullTextSearcher;
 class FullTextSearcherPrivate : public QObject
 {
@@ -94,5 +96,7 @@ private:
 
     FullTextSearcher *q = nullptr;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // FULLTEXTSEARCHER_P_H

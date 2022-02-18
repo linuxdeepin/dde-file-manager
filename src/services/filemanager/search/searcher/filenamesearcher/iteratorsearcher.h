@@ -27,6 +27,8 @@
 #include <QMutex>
 #include <QRegularExpression>
 
+DSB_FM_BEGIN_NAMESPACE
+
 class IteratorSearcher : public AbstractSearcher
 {
     Q_OBJECT
@@ -34,7 +36,7 @@ class IteratorSearcher : public AbstractSearcher
     friend class TaskCommanderPrivate;
 
 private:
-    explicit IteratorSearcher(const QUrl &url, const QString &keyword, QObject *parent = nullptr);
+    explicit IteratorSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
 
     bool search() override;
     void stop() override;
@@ -54,5 +56,7 @@ private:
     QTime notifyTimer;
     int lastEmit = 0;
 };
+
+DSB_FM_END_NAMESPACE
 
 #endif   // ITERATORSEARCHER_H
