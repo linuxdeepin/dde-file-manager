@@ -23,15 +23,12 @@
 
 #include <QItemSelectionModel>
 
+DPWORKSPACE_USE_NAMESPACE
+
 FileSelectionModelPrivate::FileSelectionModelPrivate(FileSelectionModel *qq)
     : QObject(qq),
       q(qq)
 {
     timer.setSingleShot(true);
-    QObject::connect(&timer, &QTimer::timeout, this, &FileSelectionModelPrivate::updateSelecteds);
-}
-
-void FileSelectionModelPrivate::updateSelecteds()
-{
-    q->select(selection, currentCommand);
+    QObject::connect(&timer, &QTimer::timeout, q, &FileSelectionModel::updateSelecteds);
 }

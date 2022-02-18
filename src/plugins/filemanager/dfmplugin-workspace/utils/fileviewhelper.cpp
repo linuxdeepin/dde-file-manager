@@ -57,7 +57,25 @@ FileView *FileViewHelper::parent() const
 
 bool FileViewHelper::isTransparent(const QModelIndex &index) const
 {
-    //Todo(yanghao):
+    // Todo(yanghao)
+    //  cutting
+    if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
+        AbstractFileInfoPointer file = fileInfo(parent()->proxyModel()->mapToSource(index));
+        if (!file.get())
+            return false;
+
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->url())) {
+            qDebug() << index << file->url();
+            return true;
+        }
+
+        // the linked file only judges the URL, not the inode,
+        // because the inode of the linked file is consistent with that of the source file
+        if (!file->isSymLink()) {
+            if (ClipBoard::instance()->clipboardFileInodeList().contains(file->inode()))
+                return true;
+        }
+    }
     return false;
 }
 
@@ -83,7 +101,7 @@ int FileViewHelper::selectedIndexsCount() const
 
 bool FileViewHelper::isSelected(const QModelIndex &index) const
 {
-    return parent()->selectionModel()->isSelected(index);
+    return parent()->isSelected(index);
 }
 
 bool FileViewHelper::isDropTarget(const QModelIndex &index) const
@@ -94,7 +112,6 @@ bool FileViewHelper::isDropTarget(const QModelIndex &index) const
 
 void FileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
 {
-
     if (isSelected(index) && index.flags().testFlag(Qt::ItemFlag::ItemIsSelectable)) {
         option->state |= QStyle::State_Selected;
     } else {
@@ -227,9 +244,25 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     WorkspaceHelper::instance()->actionRenameFile(windowID, oldUrl, newUrl);
 }
 
+void FileViewHelper::clipboardDataChanged()
+{
+    if (itemDelegate()) {
+        for (const QModelIndex &index : itemDelegate()->hasWidgetIndexs()) {
+            QWidget *item = indexWidget(index);
+
+            if (item) {
+                item->setProperty("opacity", isTransparent(index) ? 0.3 : 1);
+            }
+        }
+    }
+
+    parent()->update();
+}
+
 void FileViewHelper::init()
 {
     connect(qApp, &DApplication::iconThemeChanged, parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
+    connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &FileViewHelper::clipboardDataChanged);
     connect(parent(), &FileView::triggerEdit, this, &FileViewHelper::triggerEdit);
 
     QAction *copyAction = new QAction(parent());

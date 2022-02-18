@@ -34,6 +34,7 @@
 #include "utils/fileviewhelper.h"
 #include "utils/dragdrophelper.h"
 #include "utils/viewdrawhelper.h"
+#include "utils/selecthelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -214,11 +215,6 @@ int FileView::getHeaderViewWidth() const
         return d->headerView->sectionsTotalWidth();
 
     return 0;
-}
-
-int FileView::selectedIndexCount() const
-{
-    return selectionModel()->selectedIndexes().count();
 }
 
 void FileView::setAlwaysOpenInCurrentWindow(bool openInCurrentWindow)
@@ -446,12 +442,17 @@ int FileView::rowCount() const
 
 bool FileView::isSelected(const QModelIndex &index) const
 {
-    return selectionModel()->isSelected(index);
+    return static_cast<FileSelectionModel *>(selectionModel())->isSelected(index);
+}
+
+int FileView::selectedIndexCount() const
+{
+    return static_cast<FileSelectionModel *>(selectionModel())->selectedCount();
 }
 
 QModelIndex FileView::currentPressIndex() const
 {
-    return d->currentPressedIndex;
+    return d->selectHelper->getCurrentPressedIndex();
 }
 
 int FileView::itemCountForRow() const
@@ -504,59 +505,6 @@ bool FileView::isListViewMode() const
     return d->currentViewMode == Global::ViewMode::kListMode;
 }
 
-void FileView::caculateSelection(const QRect &rect, QItemSelection *selection)
-{
-    if (isIconViewMode()) {
-        caculateIconViewSelection(rect, selection);
-    } else if (isListViewMode()) {
-        caculateListViewSelection(rect, selection);
-    }
-}
-
-void FileView::caculateIconViewSelection(const QRect &rect, QItemSelection *selection)
-{
-    int itemCount = model()->rowCount();
-    QPoint offset(-horizontalOffset(), 0);
-    QRect actualRect(qMin(rect.left(), rect.right()),
-                     qMin(rect.top(), rect.bottom()) + verticalOffset(),
-                     abs(rect.width()),
-                     abs(rect.height()));
-
-    QVector<QModelIndex> selectItems;
-    for (int i = 0; i < itemCount; ++i) {
-        const QModelIndex &index = proxyModel()->index(i, 0);
-        const QRect &itemRect = rectForIndex(index);
-
-        QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
-        QRect realItemRect(itemRect.topLeft() + offset + iconOffset,
-                           itemRect.bottomRight() + offset - iconOffset);
-
-        if (!(actualRect.left() > realItemRect.right() - 3
-              || actualRect.top() > realItemRect.bottom() - 3
-              || realItemRect.left() + 3 > actualRect.right()
-              || realItemRect.top() + 3 > actualRect.bottom())) {
-            if (!selection->contains(index)) {
-                QItemSelectionRange selectionRange(index);
-                selection->push_back(selectionRange);
-            }
-        }
-    }
-}
-
-void FileView::caculateListViewSelection(const QRect &rect, QItemSelection *selection)
-{
-    QRect tmpRect = rect;
-
-    tmpRect.translate(horizontalOffset(), verticalOffset());
-    tmpRect.setCoords(qMin(tmpRect.left(), tmpRect.right()), qMin(tmpRect.top(), tmpRect.bottom()),
-                      qMax(tmpRect.left(), tmpRect.right()), qMax(tmpRect.top(), tmpRect.bottom()));
-
-    const RandeIndexList &list = visibleIndexes(tmpRect);
-    for (const RandeIndex &index : list) {
-        selection->append(QItemSelectionRange(proxyModel()->index(index.first, 0), proxyModel()->index(index.second, 0)));
-    }
-}
-
 void FileView::onRowCountChanged()
 {
     updateModelActiveIndex();
@@ -582,58 +530,7 @@ void FileView::resizeEvent(QResizeEvent *event)
 
 void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags flags)
 {
-    Q_UNUSED(flags)
-
-    if (flags == QItemSelectionModel::NoUpdate)
-        return;
-
-    // select with shift
-    if (WindowUtils::keyShiftIsPressed()) {
-        if (!d->currentPressedIndex.isValid()) {
-            QItemSelection oldSelection = d->currentSelection;
-            caculateSelection(rect, &oldSelection);
-            selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect);
-            return;
-        }
-
-        const QModelIndex &index = indexAt(rect.bottomRight());
-        if (!index.isValid())
-            return;
-
-        const QModelIndex &lastSelectedIndex = indexAt(rect.topLeft());
-        if (!lastSelectedIndex.isValid())
-            return;
-
-        selectionModel()->select(QItemSelection(lastSelectedIndex, index), QItemSelectionModel::ClearAndSelect);
-        return;
-    }
-
-    // select with ctrl
-    if (WindowUtils::keyCtrlIsPressed()) {
-        QItemSelection oldSelection = d->currentSelection;
-        selectionModel()->select(oldSelection, QItemSelectionModel::ClearAndSelect);
-
-        if (!d->currentPressedIndex.isValid()) {
-            QItemSelection newSelection;
-            caculateSelection(rect, &newSelection);
-
-            selectionModel()->select(newSelection, QItemSelectionModel::Toggle);
-            return;
-        }
-
-        const QModelIndex &lastSelectedIndex = indexAt(rect.topLeft());
-        if (!lastSelectedIndex.isValid())
-            return;
-
-        selectionModel()->select(lastSelectedIndex, QItemSelectionModel::Toggle);
-        return;
-    }
-
-    // normal select
-    QItemSelection newSelection;
-    caculateSelection(rect, &newSelection);
-
-    selectionModel()->select(newSelection, QItemSelectionModel::ClearAndSelect);
+    d->selectHelper->selection(rect, flags);
 }
 
 void FileView::mousePressEvent(QMouseEvent *event)
@@ -647,8 +544,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
         bool isEmptyArea = FileViewHelper::isEmptyArea(this, event->pos());
 
         QModelIndex index = indexAt(event->pos());
-        d->currentPressedIndex = isEmptyArea ? QModelIndex() : index;
-        d->currentSelection = selectionModel()->selection();
+        d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
+        d->selectHelper->setSelection(selectionModel()->selection());
 
         DListView::mousePressEvent(event);
         break;
@@ -665,11 +562,8 @@ void FileView::mouseMoveEvent(QMouseEvent *event)
 
 void FileView::mouseReleaseEvent(QMouseEvent *event)
 {
-    d->currentSelection = QItemSelection();
-    d->currentPressedIndex = QModelIndex();
-
-    if (!QScroller::hasScroller(this))
-        return DListView::mouseReleaseEvent(event);
+    d->selectHelper->release();
+    if (!QScroller::hasScroller(this)) return DListView::mouseReleaseEvent(event);
 }
 
 void FileView::dragEnterEvent(QDragEnterEvent *event)

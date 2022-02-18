@@ -75,6 +75,7 @@ public:
     virtual bool isSymLink() const override;
     virtual bool isRoot() const override;
     virtual bool isBundle() const override;
+    virtual quint64 inode() const override;
     virtual QString symLinkTarget() const override;
     virtual QString owner() const override;
     virtual uint ownerId() const override;
@@ -106,7 +107,6 @@ public:
     virtual QString fileDisplayName() const override;
     virtual QString fileDisplayPinyinName() const;
     virtual QFileInfo toQFileInfo() const;
-    virtual quint64 inode() const;
     virtual QMimeType fileMimeType() const override;
     virtual QString mimeTypeName() const override;
 

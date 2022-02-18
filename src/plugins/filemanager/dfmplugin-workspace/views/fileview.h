@@ -32,6 +32,7 @@
 DWIDGET_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class SelectHelper;
 class DragDropHelper;
 class ViewDrawHelper;
 class FileViewItem;
@@ -42,6 +43,7 @@ class FileSortFilterProxyModel;
 class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseView
 {
     Q_OBJECT
+    friend class SelectHelper;
     friend class DragDropHelper;
     friend class ViewDrawHelper;
     friend class FileViewPrivate;
@@ -76,6 +78,7 @@ public:
     FileSortFilterProxyModel *proxyModel() const;
     int getColumnWidth(const int &column) const;
     int getHeaderViewWidth() const;
+    bool isSelected(const QModelIndex &index) const;
     int selectedIndexCount() const;
 
     inline void setViewModeToList()
@@ -98,7 +101,6 @@ public:
         return index.row() / itemCountForRow();
     }
 
-    bool isSelected(const QModelIndex &index) const;
     QModelIndex currentPressIndex() const;
 
     using DListView::edit;
@@ -173,10 +175,6 @@ private:
 
     bool isIconViewMode() const;
     bool isListViewMode() const;
-
-    void caculateSelection(const QRect &rect, QItemSelection *selection);
-    void caculateIconViewSelection(const QRect &rect, QItemSelection *selection);
-    void caculateListViewSelection(const QRect &rect, QItemSelection *selection);
 };
 
 DPWORKSPACE_END_NAMESPACE

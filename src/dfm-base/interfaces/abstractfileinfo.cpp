@@ -606,6 +606,18 @@ bool AbstractFileInfo::isBundle() const
 
     return false;
 }
+
+/*!
+ * \brief inode linux系统下的唯一表示符
+ *
+ * \return quint64 文件的inode
+ */
+quint64 dfmbase::AbstractFileInfo::inode() const
+{
+    CALL_PROXY(inode());
+
+    return 0;
+}
 /*!
  * \brief isBundle 获取文件的链接目标文件
  *

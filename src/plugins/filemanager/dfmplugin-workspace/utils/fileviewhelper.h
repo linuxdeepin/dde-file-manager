@@ -62,6 +62,8 @@ public:
 public slots:
     void handleCommitData(QWidget *editor) const;
 
+private slots:
+    void clipboardDataChanged();
 signals:
     void triggerEdit(const QModelIndex &index);
 

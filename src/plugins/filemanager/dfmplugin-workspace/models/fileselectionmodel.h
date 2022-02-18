@@ -22,26 +22,38 @@
 #ifndef FILESELECTIONMODEL_H
 #define FILESELECTIONMODEL_H
 
+#include "dfmplugin_workspace_global.h"
+
 #include <QItemSelectionModel>
+
+DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileSelectionModelPrivate;
 class FileSelectionModel : public QItemSelectionModel
 {
     Q_OBJECT
-    friend class FileSelectionModelPrivate;
-    FileSelectionModelPrivate *const d;
 
 public:
     explicit FileSelectionModel(QAbstractItemModel *model = nullptr);
     explicit FileSelectionModel(QAbstractItemModel *model, QObject *parent);
+    ~FileSelectionModel() override;
 
     bool isSelected(const QModelIndex &index) const;
     int selectedCount() const;
     QModelIndexList selectedIndexes() const;
 
-protected:
+public slots:
+    void updateSelecteds();
+
+public:
     void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) override;
     void clear() override;
+
+private:
+    QScopedPointer<FileSelectionModelPrivate> d;
+    Q_DECLARE_PRIVATE_D(d, FileSelectionModel)
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILESELECTIONMODEL_H

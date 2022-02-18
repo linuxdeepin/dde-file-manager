@@ -29,6 +29,7 @@
 #include "utils/workspacehelper.h"
 #include "utils/dragdrophelper.h"
 #include "utils/viewdrawhelper.h"
+#include "utils/selecthelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
@@ -41,6 +42,7 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
 {
     dragDropHelper = new DragDropHelper(qq);
     viewDrawHelper = new ViewDrawHelper(qq);
+    selectHelper = new SelectHelper(qq);
 }
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const

@@ -66,8 +66,9 @@ void ListItemDelegate::paint(QPainter *painter,
                              const QStyleOptionViewItem &option,
                              const QModelIndex &index) const
 {
-    paintItemBackground(painter, option, index);
-
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+    painter->setFont(opt.font);
     static QFont oldFont = option.font;
 
     if (oldFont != option.font) {
@@ -82,9 +83,11 @@ void ListItemDelegate::paint(QPainter *painter,
 
     oldFont = option.font;
 
-    QRect iconRect = paintItemIcon(painter, option, index);
+    paintItemBackground(painter, opt, index);
 
-    paintItemColumn(painter, option, index, iconRect);
+    QRect iconRect = paintItemIcon(painter, opt, index);
+
+    paintItemColumn(painter, opt, index, iconRect);
 
     painter->setOpacity(1);
 }
@@ -409,7 +412,6 @@ QRect ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewI
 
     bool isEnabled = option.state & QStyle::State_Enabled;
     QStyleOptionViewItem opt = option;
-    initStyleOption(&opt, index);
 
     opt.rect += QMargins(-kListModeLeftMargin, 0, -kListModeRightMargin, 0);
 

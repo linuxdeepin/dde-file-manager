@@ -188,6 +188,7 @@ public:
     virtual bool isSymLink() const;
     virtual bool isRoot() const;
     virtual bool isBundle() const;
+    virtual quint64 inode() const;
     virtual QString symLinkTarget() const;
     virtual QString owner() const;
     virtual uint ownerId() const;

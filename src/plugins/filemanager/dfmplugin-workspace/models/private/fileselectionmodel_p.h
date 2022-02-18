@@ -26,6 +26,8 @@
 
 #include <QTimer>
 
+DPWORKSPACE_BEGIN_NAMESPACE
+
 class FileSelectionModelPrivate : public QObject
 {
     Q_OBJECT
@@ -34,9 +36,6 @@ class FileSelectionModelPrivate : public QObject
 
 public:
     explicit FileSelectionModelPrivate(FileSelectionModel *qq);
-
-    void updateSelecteds();
-
     mutable QModelIndexList selectedList;
     QItemSelection selection;
     QModelIndex firstSelectedIndex;
@@ -44,5 +43,7 @@ public:
     QItemSelectionModel::SelectionFlags currentCommand;
     QTimer timer;
 };
+
+DPWORKSPACE_END_NAMESPACE
 
 #endif   // FILESELECTIONMODEL_P_H

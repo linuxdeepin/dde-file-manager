@@ -22,6 +22,8 @@
 #include "fileselectionmodel.h"
 #include "private/fileselectionmodel_p.h"
 
+DPWORKSPACE_USE_NAMESPACE
+
 FileSelectionModel::FileSelectionModel(QAbstractItemModel *model)
     : QItemSelectionModel(model),
       d(new FileSelectionModelPrivate(this))
@@ -31,6 +33,10 @@ FileSelectionModel::FileSelectionModel(QAbstractItemModel *model)
 FileSelectionModel::FileSelectionModel(QAbstractItemModel *model, QObject *parent)
     : QItemSelectionModel(model, parent),
       d(new FileSelectionModelPrivate(this))
+{
+}
+
+FileSelectionModel::~FileSelectionModel()
 {
 }
 
@@ -69,9 +75,20 @@ QModelIndexList FileSelectionModel::selectedIndexes() const
                 d->selectedList << range.indexes();
             }
         }
-    }
+        auto isInVaildIndex = [=](const QModelIndex &index) {
+            return index.column() != 0;
+        };
 
+        d->selectedList.erase(std::remove_if(d->selectedList.begin(), d->selectedList.end(), isInVaildIndex),
+                              d->selectedList.end());
+        d->selectedList = d->selectedList.toSet().toList();
+    }
     return d->selectedList;
+}
+
+void FileSelectionModel::updateSelecteds()
+{
+    QItemSelectionModel::select(d->selection, d->currentCommand);
 }
 
 void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command)
@@ -82,7 +99,7 @@ void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionM
     if (command != QItemSelectionModel::SelectionFlags(Current | Rows | ClearAndSelect)) {
         if (d->timer.isActive()) {
             d->timer.stop();
-            d->updateSelecteds();
+            updateSelecteds();
         }
 
         d->currentCommand = command;

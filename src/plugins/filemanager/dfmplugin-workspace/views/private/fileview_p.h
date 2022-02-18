@@ -63,6 +63,8 @@ class FileViewPrivate
 
     DragDropHelper *dragDropHelper { nullptr };
     ViewDrawHelper *viewDrawHelper { nullptr };
+    SelectHelper *selectHelper { nullptr };
+    FileViewHelper *fileViewHelper { nullptr };
 
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int currentIconSizeLevel = 1;
@@ -72,10 +74,6 @@ class FileViewPrivate
     FileView::RandeIndex visibleIndexRande;
 
     bool isAlwaysOpenInCurrentWindow { false };
-
-    QItemSelection currentSelection;
-    QModelIndex currentPressedIndex;
-    FileViewHelper *fileViewHelper { nullptr };
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
