@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,13 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_RECENT_GLOBAL_H
-#define DFMPLUGIN_RECENT_GLOBAL_H
+#ifndef MASTEREDMEDIAFILEWATCHER_P_H
+#define MASTEREDMEDIAFILEWATCHER_P_H
 
-#define DPRECENT_NAMESPACE dfmplugin_recent
+#include "dfmplugin_optical_global.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-#define DPRECENT_BEGIN_NAMESPACE namespace DPRECENT_NAMESPACE {
-#define DPRECENT_END_NAMESPACE }
-#define DPRECENT_USE_NAMESPACE using namespace DPRECENT_NAMESPACE;
+#include <QPointer>
 
-#endif   // DFMPLUGIN_RECENT_GLOBAL_H
+DPOPTICAL_BEGIN_NAMESPACE
+
+class MasteredMediaFileWatcher;
+class MasteredMediaFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
+{
+    friend MasteredMediaFileWatcher;
+
+public:
+    explicit MasteredMediaFileWatcherPrivate(const QUrl &fileUrl, MasteredMediaFileWatcher *qq);
+
+public:
+    bool start() override;
+    bool stop() override;
+
+    AbstractFileWatcherPointer proxyStaging;
+    AbstractFileWatcherPointer proxyOnDisk;
+};
+
+DPOPTICAL_END_NAMESPACE
+
+#endif   // MASTEREDMEDIAFILEWATCHER_P_H

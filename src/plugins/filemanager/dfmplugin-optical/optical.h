@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,13 +20,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_RECENT_GLOBAL_H
-#define DFMPLUGIN_RECENT_GLOBAL_H
+#ifndef OPTICAL_H
+#define OPTICAL_H
 
-#define DPRECENT_NAMESPACE dfmplugin_recent
+#include "dfmplugin_optical_global.h"
 
-#define DPRECENT_BEGIN_NAMESPACE namespace DPRECENT_NAMESPACE {
-#define DPRECENT_END_NAMESPACE }
-#define DPRECENT_USE_NAMESPACE using namespace DPRECENT_NAMESPACE;
+#include <dfm-framework/framework.h>
 
-#endif   // DFMPLUGIN_RECENT_GLOBAL_H
+DPOPTICAL_BEGIN_NAMESPACE
+
+class Optical : public dpf::Plugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
+
+public:
+    virtual void initialize() override;
+    virtual bool start() override;
+    virtual ShutdownFlag stop() override;
+
+private:
+    void addOpticalCrumbToTitleBar();
+};
+
+DPOPTICAL_END_NAMESPACE
+
+#endif   // OPTICAL_H

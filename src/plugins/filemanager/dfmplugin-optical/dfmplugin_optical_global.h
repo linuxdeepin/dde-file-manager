@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,13 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_RECENT_GLOBAL_H
-#define DFMPLUGIN_RECENT_GLOBAL_H
+#ifndef DFMPLUGIN_OPTICAL_GLOBAL_H
+#define DFMPLUGIN_OPTICAL_GLOBAL_H
 
-#define DPRECENT_NAMESPACE dfmplugin_recent
+#define DPOPTICAL_NAMESPACE dfmplugin_optical
 
-#define DPRECENT_BEGIN_NAMESPACE namespace DPRECENT_NAMESPACE {
-#define DPRECENT_END_NAMESPACE }
-#define DPRECENT_USE_NAMESPACE using namespace DPRECENT_NAMESPACE;
+#define DPOPTICAL_BEGIN_NAMESPACE namespace DPOPTICAL_NAMESPACE {
+#define DPOPTICAL_END_NAMESPACE }
+#define DPOPTICAL_USE_NAMESPACE using namespace DPOPTICAL_NAMESPACE;
 
-#endif   // DFMPLUGIN_RECENT_GLOBAL_H
+#endif   // DFMPLUGIN_OPTICAL_GLOBAL_H

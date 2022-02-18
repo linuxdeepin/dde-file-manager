@@ -60,6 +60,7 @@ extern const char *const kEntry;
 extern const char *const kSmb;
 extern const char *const kFtp;
 extern const char *const kSFtp;
+extern const char *const kBurn;
 }   // namespace SchemeTypes
 
 class UrlRoute

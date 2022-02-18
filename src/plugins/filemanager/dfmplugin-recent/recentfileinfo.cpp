@@ -22,9 +22,10 @@
 #include "recentfileinfo.h"
 #include "utils/recentmanager.h"
 
-#include "interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
 
+DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
 class RecentFileInfoPrivate : public AbstractFileInfoPrivate

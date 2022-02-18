@@ -35,6 +35,7 @@ const char *const kEntry = "entry";
 const char *const kSmb = "smb";
 const char *const kFtp = "ftp";
 const char *const kSFtp = "sftp";
+const char *const kBurn = "burn";
 }   // namespace SchemeTypes
 
 QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};

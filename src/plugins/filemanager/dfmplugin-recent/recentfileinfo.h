@@ -23,13 +23,13 @@
 #define RECENTROOTFILEINFO_H
 
 #include "dfmplugin_recent_global.h"
+
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
 class RecentFileInfoPrivate;
-class RecentFileInfo : public AbstractFileInfo
+class RecentFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
     Q_GADGET
     friend class RecentFileInfoPrivate;

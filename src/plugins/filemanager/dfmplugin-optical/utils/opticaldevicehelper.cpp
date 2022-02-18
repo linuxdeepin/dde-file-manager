@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,13 +20,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_RECENT_GLOBAL_H
-#define DFMPLUGIN_RECENT_GLOBAL_H
+#include "opticaldevicehelper.h"
+#include "utils/opticalhelper.h"
 
-#define DPRECENT_NAMESPACE dfmplugin_recent
+#include "dfm-base/dbusservice/global_server_defines.h"
 
-#define DPRECENT_BEGIN_NAMESPACE namespace DPRECENT_NAMESPACE {
-#define DPRECENT_END_NAMESPACE }
-#define DPRECENT_USE_NAMESPACE using namespace DPRECENT_NAMESPACE;
+DPOPTICAL_USE_NAMESPACE
+using namespace GlobalServerDefines;
 
-#endif   // DFMPLUGIN_RECENT_GLOBAL_H
+static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
+
+QString OpticalDeviceHelper::deviceId(const QString &dev)
+{
+    return QString(kBlockDeviceIdPrefix) + dev;
+}
+
+QString OpticalDeviceHelper::firstMountPoint(const QString &dev)
+{
+    // TODO(zhangs): impl me!
+    return {};
+}
