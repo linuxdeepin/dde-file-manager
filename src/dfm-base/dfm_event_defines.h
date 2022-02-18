@@ -47,6 +47,7 @@ enum GlobalEventType {
     kOpenFiles,
     kOpenFilesByApp,
     kRenameFile,
+    kRenameFiles,
     kMkdir,
     kMkdirCallBack,
     kTouchFile,

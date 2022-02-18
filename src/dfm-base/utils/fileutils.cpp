@@ -27,6 +27,8 @@
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QFileInfo>
 #include <QTimer>
 #include <QDir>
@@ -263,6 +265,18 @@ bool FileUtils::isComputerDesktopFile(const QUrl &url)
     return false;
 }
 
+bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
+{
+    if (url1.scheme() != url2.scheme())
+        return false;
+
+    if (url1.isLocalFile()) {
+        return DFMIO::DFMUtils::devicePathFromUrl(url1) == DFMIO::DFMUtils::devicePathFromUrl(url2);
+    }
+
+    return url1.host() == url2.host() && url1.port() == url1.port();
+}
+
 QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
 {
     if (originUrls.isEmpty()) {
@@ -277,10 +291,10 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         if (!info)
             continue;
 
-        bool isDeskTopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+        bool isDesktopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
 
         ///###: symlink is also processed here.
-        QString fileBaseName = isDeskTopApp ? info->fileDisplayName() : info->baseName();
+        QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->baseName();
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
         fileBaseName.replace(pair.first, pair.second);
 
@@ -289,13 +303,13 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
             continue;
         }
 
-        int max_length = Global::kMaxFileNameCharCount - suffix.toLocal8Bit().size();
+        int maxLength = Global::kMaxFileNameCharCount - suffix.toLocal8Bit().size();
 
-        if (fileBaseName.toLocal8Bit().size() > max_length) {
-            fileBaseName = cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
+        if (fileBaseName.toLocal8Bit().size() > maxLength) {
+            fileBaseName = cutString(fileBaseName, maxLength, QTextCodec::codecForLocale());
         }
 
-        if (!isDeskTopApp) {
+        if (!isDesktopApp) {
             fileBaseName += suffix;
         }
         QUrl changedUrl { info->getUrlByNewFileName(fileBaseName) };
@@ -322,31 +336,31 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
             continue;
 
         // debug case 25414: failure to rename desktop app name
-        bool isDeskTopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+        bool isDesktopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
 
-        QString fileBaseName = isDeskTopApp ? info->fileDisplayName() : info->baseName();   //{ info->baseName() };
+        QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->baseName();   //{ info->baseName() };
         QString oldFileName = fileBaseName;
 
-        QString add_text = pair.first;
+        QString addText = pair.first;
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
-        int max_length = Global::kMaxFileNameCharCount - info->fileName().toLocal8Bit().size();
+        int maxLength = Global::kMaxFileNameCharCount - info->fileName().toLocal8Bit().size();
 
-        if (add_text.toLocal8Bit().size() > max_length) {
-            add_text = cutString(add_text, max_length, QTextCodec::codecForLocale());
+        if (addText.toLocal8Bit().size() > maxLength) {
+            addText = cutString(addText, maxLength, QTextCodec::codecForLocale());
         }
 
-        if (pair.second == AbstractJobHandler::FileBatchAddTextFlags::kBefore) {
-            fileBaseName.insert(0, add_text);
+        if (pair.second == AbstractJobHandler::FileBatchAddTextFlags::kPrefix) {
+            fileBaseName.insert(0, addText);
         } else {
-            fileBaseName.append(add_text);
+            fileBaseName.append(addText);
         }
 
-        if (!isDeskTopApp) {
+        if (!isDesktopApp) {
             fileBaseName += suffix;
         }
         QUrl changedUrl = { info->getUrlByNewFileName(fileBaseName) };
 
-        if (isDeskTopApp) {
+        if (isDesktopApp) {
             qDebug() << "this is desktop app case,file name will be changed { " << oldFileName << " } to { " << fileBaseName << " } for path:" << info->url();
         }
 
@@ -359,17 +373,17 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
 
 QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
 {
-    if (originUrls.isEmpty() == true || pair.first.isEmpty() == true || pair.second.isEmpty() == true) {   //###: here, jundge whether there are fileUrls in originUrls.
+    if (originUrls.isEmpty() || pair.first.isEmpty() || pair.second.isEmpty()) {   //###: here, jundge whether there are fileUrls in originUrls.
         return QMap<QUrl, QUrl> {};
     }
 
-    unsigned long long SNNumber { pair.second.toULongLong() };
+    unsigned long long serialNumber { pair.second.toULongLong() };
     unsigned long long index { 0 };
 
-    if (SNNumber == ULONG_LONG_MAX) {   //##: Maybe, this value will be equal to the max value of the type of unsigned long long
-        index = SNNumber - originUrls.size();
+    if (serialNumber == ULONG_LONG_MAX) {   //##: Maybe, this value will be equal to the max value of the type of unsigned long long
+        index = serialNumber - originUrls.size();
     } else {
-        index = SNNumber;
+        index = serialNumber;
     }
 
     QMap<QUrl, QUrl> result;
@@ -384,18 +398,18 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
             continue;
 
         // debug case 25414: failure to rename desktop app name
-        bool isDeskTopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+        bool isDesktopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
 
         QString fileBaseName { pair.first };
-        const QString &index_string = QString::number(index);
+        const QString &indexString = QString::number(index);
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
-        int max_length = Global::kMaxFileNameCharCount - index_string.toLocal8Bit().size() - suffix.toLocal8Bit().size();
+        int maxLength = Global::kMaxFileNameCharCount - indexString.toLocal8Bit().size() - suffix.toLocal8Bit().size();
 
-        if (fileBaseName.toLocal8Bit().size() > max_length) {
-            fileBaseName = cutString(fileBaseName, max_length, QTextCodec::codecForLocale());
+        if (fileBaseName.toLocal8Bit().size() > maxLength) {
+            fileBaseName = cutString(fileBaseName, maxLength, QTextCodec::codecForLocale());
         }
 
-        fileBaseName = isDeskTopApp ? (fileBaseName + index_string) : (fileBaseName + index_string + suffix);
+        fileBaseName = isDesktopApp ? (fileBaseName + indexString) : (fileBaseName + indexString + suffix);
         QUrl beModifieddUrl = { info->getUrlByNewFileName(fileBaseName) };
         result.insert(url, beModifieddUrl);
 
@@ -405,7 +419,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
         if (originUrls.contains(beModifieddUrl))
             needRecombination = true;
 
-        if (isDeskTopApp) {
+        if (isDesktopApp) {
             qDebug() << "this is desktop app case,file name will be changed as { " << fileBaseName << " } for path:" << info->url();
         }
 
@@ -452,9 +466,9 @@ QString FileUtils::cutString(const QString &text, int dataByteSize, const QTextC
             if ((++i) >= text.size())
                 break;
 
-            const QChar &next_ch = text.at(i);
+            const QChar &nextCh = text.at(i);
 
-            if (!ch.isHighSurrogate() || !next_ch.isLowSurrogate())
+            if (!ch.isHighSurrogate() || !nextCh.isLowSurrogate())
                 break;
 
             data = codec->fromUnicode(text.data() + i - 1, 2);

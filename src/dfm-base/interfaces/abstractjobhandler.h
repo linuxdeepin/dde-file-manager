@@ -154,8 +154,8 @@ public:
     };
     Q_ENUM(NotifyType)
     enum FileBatchAddTextFlags : uint8_t {
-        kBefore,
-        kAfter
+        kPrefix,
+        kSuffix
     };
     Q_ENUM(FileBatchAddTextFlags)
     explicit AbstractJobHandler(QObject *parent = nullptr);

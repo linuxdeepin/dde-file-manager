@@ -42,6 +42,7 @@ public:
     static bool isDesktopFile(const QUrl &url);
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
+    static bool isSameDevice(const QUrl &url1, const QUrl &url2);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
     static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair);

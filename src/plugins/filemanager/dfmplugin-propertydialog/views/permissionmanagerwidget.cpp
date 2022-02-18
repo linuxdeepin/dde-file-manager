@@ -118,7 +118,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     // 置灰：
     // 1. 本身用户无权限
     // 2. 所属文件系统无权限机制
-    if (info->ownerId() != getuid()/* || !canChmod(info) || fsType == "fuseblk"*/) {
+    if (info->ownerId() != getuid() /* || !canChmod(info) || fsType == "fuseblk"*/) {
         ownerComboBox->setDisabled(true);
         groupComboBox->setDisabled(true);
         otherComboBox->setDisabled(true);
@@ -213,11 +213,11 @@ void PermissionManagerWidget::setComboBoxByPermission(QComboBox *cb, int permiss
 void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(selectUrl);
-    LocalFileHandler filehandler;
+    LocalFileHandler fileHandler;
     if (isChecked) {
-        filehandler.setPermissions(selectUrl, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+        fileHandler.setPermissions(selectUrl, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
     } else {
-        filehandler.setPermissions(selectUrl, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
+        fileHandler.setPermissions(selectUrl, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
     }
 }
 
@@ -258,8 +258,8 @@ void PermissionManagerWidget::onComboBoxChanged()
     ownerFlags |= (permissions & QFile::ExeOwner);
     groupFlags |= (permissions & QFile::ExeGroup);
     otherFlags |= (permissions & QFile::ExeOther);
-    LocalFileHandler filehandler;
-    filehandler.setPermissions(selectUrl, QFileDevice::Permissions(ownerFlags) |
+    LocalFileHandler fileHandler;
+    fileHandler.setPermissions(selectUrl, QFileDevice::Permissions(ownerFlags) |
                                        /*(info->permissions() & 0x0700) |*/
                                        QFileDevice::Permissions(groupFlags) | QFileDevice::Permissions(otherFlags));
 

@@ -679,15 +679,15 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls)
 
     for (; beg != end; ++beg) {
         QUrl currentName { beg.key() };
-        QUrl hopedName { beg.value() };
+        QUrl expectedName { beg.value() };
 
-        if (currentName == hopedName) {
+        if (currentName == expectedName) {
             continue;
         }
 
         ///###: just cache files that rename successfully.
-        if (renameFile(currentName, hopedName)) {
-            successMap[currentName] = hopedName;
+        if (renameFile(currentName, expectedName)) {
+            successMap[currentName] = expectedName;
         }
     }
 

@@ -140,13 +140,13 @@ void FileOperations::initEventHandle()
                                                                                               const QVariant,
                                                                                               OperaterCallback)>(&FileOperationsEventReceiver::handleOperationRenameFile));
 
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFiles,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QList<QUrl>,
                                                                                               const QPair<QString, QString>,
                                                                                               const bool replace)>(&FileOperationsEventReceiver::handleOperationRenameFiles));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFiles,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QList<QUrl>,
@@ -155,12 +155,12 @@ void FileOperations::initEventHandle()
                                                                                               const QVariant,
                                                                                               OperaterCallback)>(&FileOperationsEventReceiver::handleOperationRenameFiles));
 
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFiles,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QList<QUrl>,
                                                                                               const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags>)>(&FileOperationsEventReceiver::handleOperationRenameFiles));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFiles,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QList<QUrl>,

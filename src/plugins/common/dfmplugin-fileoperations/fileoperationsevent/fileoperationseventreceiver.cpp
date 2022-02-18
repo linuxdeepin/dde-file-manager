@@ -381,10 +381,10 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
             return ok;
         }
     }
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    ok = filehandler.openFiles(urls);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    ok = fileHandler.openFiles(urls);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         dialogManager->showErrorDialog("open file error", error);
     }
     // TODO:: file Open finished need to send file Open finished event
@@ -448,14 +448,14 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
             return ok;
         }
     }
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     QString app;
     if (apps.count() == 1) {
         app = apps.at(0);
     }
-    ok = filehandler.openFilesByApp(urls, app);
+    ok = fileHandler.openFilesByApp(urls, app);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         dialogManager->showErrorDialog("open file by app error", error);
     }
     // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
@@ -488,10 +488,10 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
             return ok;
         }
     }
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    ok = filehandler.renameFile(oldUrl, newUrl);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    ok = fileHandler.renameFile(oldUrl, newUrl);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         dialogManager->showErrorDialog("rename file error", error);
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
@@ -521,10 +521,10 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 {
     // TODO lanxs deal custom function
     QString error;
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    bool ok = replace ? filehandler.renameFileBatchReplace(urls, pair) : filehandler.renameFileBatchCustom(urls, pair);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    bool ok = replace ? fileHandler.renameFileBatchReplace(urls, pair) : fileHandler.renameFileBatchCustom(urls, pair);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         DialogManagerInstance->showErrorDialog("rename file error", error);
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
@@ -550,10 +550,10 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 {
     // TODO lanxs deal custom function
     QString error;
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    bool ok = filehandler.renameFileBatchAppend(urls, pair);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    bool ok = fileHandler.renameFileBatchAppend(urls, pair);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         DialogManagerInstance->showErrorDialog("rename file error", error);
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
@@ -642,10 +642,10 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
             return ok;
         }
     }
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    ok = filehandler.mkdir(url);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    ok = fileHandler.mkdir(url);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         dialogManager->showErrorDialog("make dir error", error);
     }
     // TODO:: make dir finished need to send make dir finished event
@@ -677,10 +677,10 @@ bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
             return ok;
         }
     }
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    ok = filehandler.touchFile(url);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    ok = fileHandler.touchFile(url);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         dialogManager->showErrorDialog("touch file error", error);
     }
     // TODO:: touch file finished need to send touch file finished event
@@ -758,10 +758,10 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
         }
     }
 
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    ok = filehandler.createSystemLink(url, link);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    ok = fileHandler.createSystemLink(url, link);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         dialogManager->showErrorDialog("link file error", error);
     }
     // TODO:: link file finished need to send link file finished event
@@ -811,10 +811,10 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
             return ok;
         }
     }
-    DFMBASE_NAMESPACE::LocalFileHandler filehandler;
-    ok = filehandler.setPermissions(url, permissions);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    ok = fileHandler.setPermissions(url, permissions);
     if (!ok) {
-        error = filehandler.errorString();
+        error = fileHandler.errorString();
         dialogManager->showErrorDialog("set file permissions error", error);
     }
     // TODO:: set file permissions finished need to send set file permissions finished event
@@ -876,7 +876,7 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     QString error;
     bool ok = false;
     bool result = false;
-    QSharedPointer<LocalFileHandler> filehandler = nullptr;
+    QSharedPointer<LocalFileHandler> fileHandler = nullptr;
     if (urls.count() > 0 && !urls.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
@@ -902,9 +902,9 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
         QDir::setCurrent(url.toLocalFile());
         if (!url.isLocalFile()) {
         }
-        if (filehandler.isNull())
-            filehandler.reset(new LocalFileHandler());
-        ok = QProcess::startDetached(filehandler->defaultTerminalPath());
+        if (fileHandler.isNull())
+            fileHandler.reset(new LocalFileHandler());
+        ok = QProcess::startDetached(fileHandler->defaultTerminalPath());
         if (!result)
             result = ok;
         QDir::setCurrent(current_dir);
