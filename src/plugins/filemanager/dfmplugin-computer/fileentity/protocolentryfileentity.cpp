@@ -138,10 +138,7 @@ void ProtocolEntryFileEntity::refresh()
     auto id = QString(QByteArray::fromBase64(encodecId));
 
     auto queryInfo = [](const QString &id, bool detail) {
-        if (DeviceManagerInstance.isServiceDBusRunning())
-            return DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id, detail);
-        else
-            return ComputerUtils::deviceServIns()->protocolDeviceInfo(id, detail);
+        return DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id, detail);
     };
 
     datas = dfmbase::UniversalUtils::convertFromQMap(queryInfo(id, true));

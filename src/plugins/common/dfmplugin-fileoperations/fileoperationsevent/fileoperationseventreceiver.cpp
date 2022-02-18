@@ -523,9 +523,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     QString error;
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     bool ok = replace ? filehandler.renameFileBatchReplace(urls, pair) : filehandler.renameFileBatchCustom(urls, pair);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("rename file error", error);
+        DialogManagerInstance->showErrorDialog("rename file error", error);
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -552,9 +552,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     QString error;
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     bool ok = filehandler.renameFileBatchAppend(urls, pair);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("rename file error", error);
+        DialogManagerInstance->showErrorDialog("rename file error", error);
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,

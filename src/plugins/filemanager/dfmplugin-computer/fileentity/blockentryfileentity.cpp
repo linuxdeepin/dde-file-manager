@@ -203,10 +203,7 @@ void BlockEntryFileEntity::refresh()
             + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
 
     auto queryInfo = [](const QString &id, bool detail) {
-        if (DeviceManagerInstance.isServiceDBusRunning())
-            return DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, detail);
-        else
-            return ComputerUtils::deviceServIns()->blockDeviceInfo(id, detail);
+        return DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, detail);
     };
 
     datas = UniversalUtils::convertFromQMap(queryInfo(id, true));

@@ -91,16 +91,10 @@ protected Q_SLOTS:
     void onProtocolDeviceUnmounted(const QString &id);
     void onDeviceSizeChanged(const QString &id, qlonglong total, qlonglong free);
 
-    void onDeviceServiceDBusRegistered();
-    void onDeviceServiceDBusUnregistered();
-
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);
     void initConn();
-    void initDeviceServiceDBusConn();
-    void disconnDeviceServiceDBus();
-    void initDeviceServiceConn();
-    void disconnDeviceService();
+    void initDeviceConn();
     void initAppWatcher();
 
     ComputerDataList getUserDirItems();

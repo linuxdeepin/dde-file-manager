@@ -127,93 +127,24 @@ void ComputerItemWatcher::initConn()
 
     connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onAppAttributeChanged);
 
-    if (DeviceManagerInstance.isServiceDBusRunning())
-        initDeviceServiceDBusConn();
-    else
-        initDeviceServiceConn();
-
-    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, &ComputerItemWatcher::onDeviceServiceDBusRegistered);
-    connect(&DeviceManagerInstance, &DeviceManager::serviceUnregistered, this, &ComputerItemWatcher::onDeviceServiceDBusUnregistered);
+    initDeviceConn();
+    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, [this]() {
+        startQueryItems();
+    });
 }
 
-void ComputerItemWatcher::initDeviceServiceDBusConn()
+void ComputerItemWatcher::initDeviceConn()
 {
-    qInfo() << "connecting DBus signals...";
-
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQDBusVar);
-
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
-
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
-}
-
-void ComputerItemWatcher::disconnDeviceServiceDBus()
-{
-    qInfo() << "disconnecting DBus signals...";
-
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQDBusVar);
-
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
-
-    disconnect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
-}
-
-void ComputerItemWatcher::initDeviceServiceConn()
-{
-    qInfo() << "connecting service signals...";
-
-    DSC_USE_NAMESPACE;
-    auto deviceServ = ComputerUtils::deviceServIns();
-    deviceServ->startMonitor();
-
-    connect(deviceServ, &DeviceController::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
-    connect(deviceServ, &DeviceController::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
-    connect(deviceServ, &DeviceController::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    connect(deviceServ, &DeviceController::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(deviceServ, &DeviceController::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(deviceServ, &DeviceController::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(deviceServ, &DeviceController::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
-
-    connect(deviceServ, &DeviceController::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
-    connect(deviceServ, &DeviceController::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
-
-    connect(deviceServ, &DeviceController::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
-}
-
-void ComputerItemWatcher::disconnDeviceService()
-{
-    qInfo() << "disconnecting service signals...";
-
-    DSC_USE_NAMESPACE;
-    auto deviceServ = ComputerUtils::deviceServIns();
-    deviceServ->stopMonitor();
-
-    disconnect(deviceServ, &DeviceController::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
-    disconnect(deviceServ, &DeviceController::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
-    disconnect(deviceServ, &DeviceController::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    disconnect(deviceServ, &DeviceController::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(deviceServ, &DeviceController::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(deviceServ, &DeviceController::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(deviceServ, &DeviceController::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
-
-    disconnect(deviceServ, &DeviceController::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
-    disconnect(deviceServ, &DeviceController::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
-
-    disconnect(deviceServ, &DeviceController::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
+    connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
+    connect(&DeviceManagerInstance, &DeviceManager::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
+    connect(&DeviceManagerInstance, &DeviceManager::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
 }
 
 void ComputerItemWatcher::initAppWatcher()
@@ -256,10 +187,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
-    if (DeviceManagerInstance.isServiceDBusRunning())
-        devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
-    else
-        devs = ComputerUtils::deviceServIns()->blockDevicesIdList({});
+    devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
@@ -285,10 +213,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
-    if (DeviceManagerInstance.isServiceDBusRunning())
-        devs = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
-    else
-        devs = ComputerUtils::deviceServIns()->protocolDevicesIdList();
+    devs = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
@@ -578,9 +503,7 @@ void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QStri
 
 void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
 {
-    auto datas = DeviceManagerInstance.isServiceDBusRunning()
-            ? DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id)
-            : ComputerUtils::deviceServIns()->protocolDeviceInfo(id);
+    auto &&datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty()) {   // device have been removed
         Q_EMIT this->itemRemoved(devUrl);
@@ -597,27 +520,10 @@ void ComputerItemWatcher::onDeviceSizeChanged(const QString &id, qlonglong total
     Q_EMIT this->itemSizeChanged(devUrl, total, free);
 }
 
-void ComputerItemWatcher::onDeviceServiceDBusRegistered()
-{
-    qInfo() << "DBus is registered, switch to DBus signals";
-    startQueryItems();
-    initDeviceServiceDBusConn();
-    disconnDeviceService();
-}
-
-void ComputerItemWatcher::onDeviceServiceDBusUnregistered()
-{
-    qInfo() << "DBus is unregistered, switch to service signals";
-    initDeviceServiceConn();
-    disconnDeviceServiceDBus();
-}
-
 void ComputerItemWatcher::onBlockDeviceMounted(const QString &id, const QString &mntPath)
 {
     Q_UNUSED(mntPath);
-    auto datas = DeviceManagerInstance.isServiceDBusRunning()
-            ? DeviceManagerInstance.invokeQueryBlockDeviceInfo(id)
-            : ComputerUtils::deviceServIns()->blockDeviceInfo(id);
+    auto &&datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
     auto shellDevId = datas.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
     onUpdateBlockItem(shellDevId.length() > 1 ? shellDevId : id);
 }

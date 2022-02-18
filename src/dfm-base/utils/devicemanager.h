@@ -44,16 +44,19 @@ public:
     void initConnection();
     bool isServiceDBusRunning();
 
+    // only D-Bus supported
     void invokeDetachAllMountedDevices();
     void invokeDetachAllMountedDevicesForced();
     bool invokeIsMonitorWorking();
+    bool invokeDetachBlockDeviceForced(const QString &id);
+    void invokeUnmountBlockDeviceForced(const QString &id);
+
+    // Both D-Bus and native supported
     QStringList invokeBlockDevicesIdList(const QVariantMap &opt);
     QStringList invokeProtolcolDevicesIdList(const QVariantMap &opt);
     QVariantMap invokeQueryBlockDeviceInfo(const QString &id, bool detail = false);
     QVariantMap invokeQueryProtocolDeviceInfo(const QString &id, bool detail = false);
     bool invokeDetachBlockDevice(const QString &id);
-    bool invokeDetachBlockDeviceForced(const QString &id);
-    void invokeUnmountBlockDeviceForced(const QString &id);
     bool invokeDetachProtocolDevice(const QString &id);
 
 signals:
@@ -61,9 +64,26 @@ signals:
     void serviceRegistered(const QString &service);
     void askStopScanning(const QString &method, const QString &id);
 
+    // Both D-Bus and native supported
+    void deviceSizeUsedChanged(const QString &deviceId, qint64 total, qint64 free);
+    void blockDevAdded(const QString &deviceId);
+    void blockDevRemoved(const QString &deviceId);
+    void blockDevMounted(const QString &deviceId, const QString &mountPoint);
+    void blockDevUnmounted(const QString &deviceId);
+    void blockDevLocked(const QString &deviceId);
+    void blockDevUnlocked(const QString &deviceId, const QString &cleartextBlkId);
+    void blockDevicePropertyChanged(const QString &deviceId, const QString &property, const QVariant &val);
+    void protocolDevMounted(const QString &deviceId, const QString &mountpoint);
+    void protocolDevUnmounted(const QString &deviceId);
+
 private:
     explicit DeviceManager(QObject *parent = nullptr);
     ~DeviceManager();
+
+    void initDeviceServiceDBusConn();
+    void disconnDeviceServiceDBus();
+    void initDeviceServiceConn();
+    void disconnDeviceService();
 
 private:
     QScopedPointer<DeviceManagerInterface> deviceInterface { nullptr };

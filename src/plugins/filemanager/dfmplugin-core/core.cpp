@@ -24,14 +24,17 @@
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
+
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
@@ -75,6 +78,12 @@ bool Core::start()
     if (!GlobalPrivate::windowService) {
         qCritical() << "Failed, init window \"windowService\" is empty";
         abort();
+    }
+
+    // mount business
+    if (!DeviceManagerInstance.connectToServer()) {
+        qCritical() << "device manager cannot connect to server!";
+        DeviceController::instance()->startMonitor();
     }
 
     // show first window when all plugin initialized

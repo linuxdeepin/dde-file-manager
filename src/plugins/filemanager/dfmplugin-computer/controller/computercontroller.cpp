@@ -311,16 +311,10 @@ void ComputerController::actEject(const QUrl &url)
     bool ok = true;
     if (url.path().endsWith(SuffixInfo::kBlock)) {
         id = ComputerUtils::getBlockDevIdByUrl(url);
-        if (DeviceManagerInstance.isServiceDBusRunning())
-            ok = DeviceManagerInstance.invokeDetachBlockDevice(id);
-        else
-            ok = ComputerUtils::deviceServIns()->detachBlockDevice(id);
+        ok = DeviceManagerInstance.invokeDetachBlockDevice(id);
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
-        if (DeviceManagerInstance.isServiceDBusRunning())
-            ok = DeviceManagerInstance.invokeDetachProtocolDevice(id);
-        else
-            ok = ComputerUtils::deviceServIns()->detachProtocolDevice(id);
+        ok = DeviceManagerInstance.invokeDetachProtocolDevice(id);
     } else {
         qDebug() << url << "is not support " << __FUNCTION__;
     }

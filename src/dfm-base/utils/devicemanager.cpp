@@ -23,6 +23,8 @@
 #include "devicemanager.h"
 #include "global_server_defines.h"
 
+#include "dfm-base/base/device/devicecontroller.h"
+
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include <QFutureWatcher>
@@ -58,7 +60,7 @@ bool DeviceManager::connectToServer()
 
     initConnection();
 
-    qInfo() << "Finish initilize dbus: `DeviceManagerInterface`";
+    qInfo() << "Finish initilize dbus: `DeviceManagerInterface`" << isServiceDBusRunning();
     return true;
 }
 
@@ -83,6 +85,20 @@ void DeviceManager::initConnection()
     connect(watcher.data(), &QDBusServiceWatcher::serviceUnregistered, this, &DeviceManager::serviceUnregistered);
     connect(watcher.data(), &QDBusServiceWatcher::serviceRegistered, this, [this](const QString &service) {
         QTimer::singleShot(1000, this, [this, service] { emit this->serviceRegistered(service); });
+    });
+
+    // both status
+    if (isServiceDBusRunning())
+        initDeviceServiceDBusConn();
+    else
+        initDeviceServiceConn();
+    connect(this, &DeviceManager::serviceRegistered, this, [this]() {
+        initDeviceServiceDBusConn();
+        disconnDeviceService();
+    });
+    connect(this, &DeviceManager::serviceUnregistered, this, [this]() {
+        initDeviceServiceConn();
+        disconnDeviceServiceDBus();
     });
 }
 
@@ -133,7 +149,7 @@ QStringList DeviceManager::invokeBlockDevicesIdList(const QVariantMap &opt)
 {
     QStringList ret;
 
-    if (deviceInterface) {
+    if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto &&reply = deviceInterface->GetBlockDevicesIdList(opt);
         reply.waitForFinished();
@@ -142,6 +158,8 @@ QStringList DeviceManager::invokeBlockDevicesIdList(const QVariantMap &opt)
         else
             qCritical() << "D-Bus reply is invalid " << reply.error();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    } else {
+        ret = DeviceController::instance()->blockDevicesIdList(opt);
     }
 
     return ret;
@@ -149,10 +167,11 @@ QStringList DeviceManager::invokeBlockDevicesIdList(const QVariantMap &opt)
 
 QStringList DeviceManager::invokeProtolcolDevicesIdList(const QVariantMap &opt)
 {
+    Q_UNUSED(opt)
+
     QStringList ret;
 
-    // TODO(zhangs): opt
-    if (deviceInterface) {
+    if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
         auto &&reply = deviceInterface->GetProtocolDevicesIdList();
         reply.waitForFinished();
@@ -161,6 +180,8 @@ QStringList DeviceManager::invokeProtolcolDevicesIdList(const QVariantMap &opt)
         else
             qCritical() << "D-Bus reply is invalid " << reply.error();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    } else {
+        ret = DeviceController::instance()->protocolDevicesIdList();
     }
 
     return ret;
@@ -169,7 +190,7 @@ QStringList DeviceManager::invokeProtolcolDevicesIdList(const QVariantMap &opt)
 QVariantMap DeviceManager::invokeQueryBlockDeviceInfo(const QString &id, bool detail)
 {
     QVariantMap ret;
-    if (deviceInterface) {
+    if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id << detail;
         auto &&reply = deviceInterface->QueryBlockDeviceInfo(id, detail);
         reply.waitForFinished();
@@ -178,6 +199,8 @@ QVariantMap DeviceManager::invokeQueryBlockDeviceInfo(const QString &id, bool de
         else
             qCritical() << "D-Bus reply is invalid " << reply.error();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    } else {
+        ret = DeviceController::instance()->blockDeviceInfo(id, detail);
     }
     return ret;
 }
@@ -185,7 +208,7 @@ QVariantMap DeviceManager::invokeQueryBlockDeviceInfo(const QString &id, bool de
 QVariantMap DeviceManager::invokeQueryProtocolDeviceInfo(const QString &id, bool detail)
 {
     QVariantMap ret;
-    if (deviceInterface) {
+    if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id << detail;
         auto &&reply = deviceInterface->QueryProtocolDeviceInfo(id, detail);
         reply.waitForFinished();
@@ -194,13 +217,15 @@ QVariantMap DeviceManager::invokeQueryProtocolDeviceInfo(const QString &id, bool
         else
             qCritical() << "D-Bus reply is invalid " << reply.error();
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    } else {
+        ret = DeviceController::instance()->protocolDeviceInfo(id, detail);
     }
     return ret;
 }
 
 bool DeviceManager::invokeDetachBlockDevice(const QString &id)
 {
-    if (deviceInterface) {
+    if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachBlockDevice(id);
         if (!reply.isValid()) {
@@ -209,8 +234,9 @@ bool DeviceManager::invokeDetachBlockDevice(const QString &id)
         }
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
         return reply.value();
+    } else {
+        return DeviceController::instance()->detachBlockDevice(id);
     }
-    return false;
 }
 
 bool DeviceManager::invokeDetachBlockDeviceForced(const QString &id)
@@ -241,7 +267,7 @@ void DeviceManager::invokeUnmountBlockDeviceForced(const QString &id)
 
 bool DeviceManager::invokeDetachProtocolDevice(const QString &id)
 {
-    if (deviceInterface) {
+    if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachProtocolDevice(id);
         if (!reply.isValid()) {
@@ -250,8 +276,9 @@ bool DeviceManager::invokeDetachProtocolDevice(const QString &id)
         }
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
         return reply.value();
+    } else {
+        return DeviceController::instance()->detachProtocolDevice(id);
     }
-    return false;
 }
 
 DeviceManager::DeviceManager(QObject *parent)
@@ -261,4 +288,75 @@ DeviceManager::DeviceManager(QObject *parent)
 
 DeviceManager::~DeviceManager()
 {
+}
+
+void DeviceManager::initDeviceServiceDBusConn()
+{
+    qInfo() << "connecting DBus signals...";
+
+    connect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, &DeviceManager::blockDevAdded);
+    connect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, &DeviceManager::blockDevRemoved);
+    connect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DeviceManager::blockDevMounted);
+    connect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &DeviceManager::blockDevUnmounted);
+    connect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, &DeviceManager::blockDevLocked);
+    connect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, &DeviceManager::blockDevUnlocked);
+    connect(getDeviceInterface(), &DeviceManagerInterface::BlockDevicePropertyChanged, this, [this](const QString &id, const QString &property, const QDBusVariant &value) {
+        emit blockDevicePropertyChanged(id, property, value.variant());
+    });
+    connect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceManager::protocolDevMounted);
+    connect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceManager::protocolDevUnmounted);
+    connect(getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
+}
+
+void DeviceManager::disconnDeviceServiceDBus()
+{
+    qInfo() << "disconnecting DBus signals...";
+
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceAdded, this, &DeviceManager::blockDevAdded);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceRemoved, this, &DeviceManager::blockDevRemoved);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DeviceManager::blockDevMounted);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &DeviceManager::blockDevUnmounted);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceLocked, this, &DeviceManager::blockDevLocked);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnlocked, this, &DeviceManager::blockDevUnlocked);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceManager::protocolDevMounted);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceManager::protocolDevUnmounted);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
+}
+
+void DeviceManager::initDeviceServiceConn()
+{
+    qInfo() << "connecting controller signals...";
+
+    auto controller = DeviceController::instance();
+    controller->startMonitor();
+
+    connect(controller, &DeviceController::blockDevAdded, this, &DeviceManager::blockDevAdded);
+    connect(controller, &DeviceController::blockDevRemoved, this, &DeviceManager::blockDevRemoved);
+    connect(controller, &DeviceController::blockDevMounted, this, &DeviceManager::blockDevMounted);
+    connect(controller, &DeviceController::blockDevUnmounted, this, &DeviceManager::blockDevUnmounted);
+    connect(controller, &DeviceController::blockDevLocked, this, &DeviceManager::blockDevLocked);
+    connect(controller, &DeviceController::blockDevUnlocked, this, &DeviceManager::blockDevUnlocked);
+    connect(controller, &DeviceController::blockDevicePropertyChanged, this, &DeviceManager::blockDevicePropertyChanged);
+    connect(controller, &DeviceController::protocolDevMounted, this, &DeviceManager::protocolDevMounted);
+    connect(controller, &DeviceController::protocolDevUnmounted, this, &DeviceManager::protocolDevUnmounted);
+    connect(controller, &DeviceController::deviceSizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
+}
+
+void DeviceManager::disconnDeviceService()
+{
+    qInfo() << "disconnecting controller signals...";
+
+    auto controller = DeviceController::instance();
+    controller->stopMonitor();
+
+    disconnect(controller, &DeviceController::blockDevAdded, this, &DeviceManager::blockDevAdded);
+    disconnect(controller, &DeviceController::blockDevRemoved, this, &DeviceManager::blockDevRemoved);
+    disconnect(controller, &DeviceController::blockDevMounted, this, &DeviceManager::blockDevMounted);
+    disconnect(controller, &DeviceController::blockDevUnmounted, this, &DeviceManager::blockDevUnmounted);
+    disconnect(controller, &DeviceController::blockDevLocked, this, &DeviceManager::blockDevLocked);
+    disconnect(controller, &DeviceController::blockDevUnlocked, this, &DeviceManager::blockDevUnlocked);
+    disconnect(controller, &DeviceController::blockDevicePropertyChanged, this, &DeviceManager::blockDevicePropertyChanged);
+    disconnect(controller, &DeviceController::protocolDevMounted, this, &DeviceManager::protocolDevMounted);
+    disconnect(controller, &DeviceController::protocolDevUnmounted, this, &DeviceManager::protocolDevUnmounted);
+    disconnect(controller, &DeviceController::deviceSizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
 }

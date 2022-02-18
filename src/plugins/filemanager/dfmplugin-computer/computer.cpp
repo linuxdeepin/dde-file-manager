@@ -67,9 +67,6 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
 
     ComputerUnicastReceiver::instance()->connectService();
-    bool ret = DeviceManagerInstance.connectToServer();
-    if (!ret)
-        qCritical() << "device manager cannot connect to server!";
 
     auto &ctx = dpfInstance.serviceContext();
     DSB_FM_USE_NAMESPACE
