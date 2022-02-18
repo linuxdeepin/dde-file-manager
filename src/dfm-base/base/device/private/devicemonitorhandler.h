@@ -23,32 +23,32 @@
 #ifndef DEVICEMONITORHANDLER_H
 #define DEVICEMONITORHANDLER_H
 
-#include "dfm_common_service_global.h"
-#include "deviceservicehelper.h"
+#include "dfm-base/dfm_base_global.h"
+#include "devicecontrollerhelper.h"
 
 #include <QObject>
 #include <QPointer>
 #include <QTimer>
 #include <QMutex>
 
-DSC_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
-class DeviceService;
+class DeviceController;
 class DeviceMonitorHandler : public QObject
 {
-    friend class DeviceService;
+    friend class DeviceController;
     Q_OBJECT
 
 private:
-    explicit DeviceMonitorHandler(DeviceService *serv);
+    explicit DeviceMonitorHandler(DeviceController *serv);
     void startMaintaining();
     void startConnect();
     void stopConnect();
 
     void initBlockDevicesData();
     void initProtocolDevicesData();
-    bool insertNewBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr);
-    bool insertNewProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr);
+    bool insertNewBlockDeviceData(const DeviceControllerHelper::BlockDevPtr &ptr);
+    bool insertNewProtocolDeviceData(const DeviceControllerHelper::ProtocolDevPtr &ptr);
     void removeBlockDeviceData(const QString &deviceId);
     void removeProtocolDeviceData(const QString &deviceId);
     void updateDataWithOpticalInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
@@ -80,13 +80,13 @@ private:
     static constexpr int kSizeUpdateInterval = 10000;   // timer interval: 10s
 
     QTimer sizeUpdateTimer;
-    QPointer<DeviceService> service;
+    QPointer<DeviceController> service;
     QMutex mutexForBlock;
     QMutex mutexForProtocol;
     QHash<QString, BlockDeviceData> allBlockDevData;
     QHash<QString, ProtocolDeviceData> allProtocolDevData;
 };
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
 #endif   // DEVICEMONITORHANDLER_H

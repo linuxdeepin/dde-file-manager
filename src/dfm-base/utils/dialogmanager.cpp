@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,17 +20,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "dialogservice.h"
-#include "taskdialog/taskdialog.h"
-#include "settingsdialog/settingdialog.h"
-#include "mountpasswddialog/mountsecretdiskaskpassworddialog.h"
-#include "mountpasswddialog/mountaskpassworddialog.h"
+#include "dialogmanager.h"
 
-#include "global_server_defines.h"
+#include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
+#include "dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.h"
+#include "dfm-base/dialogs/settingsdialog/settingdialog.h"
+#include "dfm-base/dialogs/taskdialog/taskdialog.h"
 
-DSC_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
-DDialog *DialogService::showQueryScanningDialog(const QString &title)
+DialogManager *DialogManager::instance()
+{
+    static DialogManager ins;
+    return &ins;
+}
+
+DDialog *DialogManager::showQueryScanningDialog(const QString &title)
 {
     DDialog *d = new DDialog;
     d->setTitle(title);
@@ -45,7 +50,7 @@ DDialog *DialogService::showQueryScanningDialog(const QString &title)
     return d;
 }
 
-void DialogService::showErrorDialog(const QString &title, const QString &message)
+void DialogManager::showErrorDialog(const QString &title, const QString &message)
 {
     DDialog d(title, message);
     Qt::WindowFlags flags = d.windowFlags();
@@ -57,7 +62,7 @@ void DialogService::showErrorDialog(const QString &title, const QString &message
     d.exec();
 }
 
-int DialogService::showMessageDialog(DialogService::MessageType messageLevel, const QString &title, const QString &message, QString btnTxt)
+int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, const QString &title, const QString &message, QString btnTxt)
 {
     DDialog d(title, message);
     d.moveToCenter();
@@ -73,8 +78,37 @@ int DialogService::showMessageDialog(DialogService::MessageType messageLevel, co
         d.setIcon(QIcon::fromTheme("dialog-information"));
     }
     int code = d.exec();
-    qDebug() << code;
     return code;
+}
+
+void DialogManager::showErrorDialogWhenMountDeviceFailed(dfmmount::DeviceError err)
+{
+    switch (err) {
+    case dfmmount::DeviceError::UserErrorNetworkAnonymousNotAllowed:
+        showErrorDialog(tr("Mount error"), tr("Anonymous mount is not allowed"));
+        break;
+    case dfmmount::DeviceError::UserErrorNetworkWrongPasswd:
+        showErrorDialog(tr("Mount error"), tr("Wrong password is inputed"));
+        break;
+    case dfmmount::DeviceError::UserErrorUserCancelled:
+        break;
+    default:
+        showErrorDialog(tr("Mount error"), tr("Error occured while mounting device"));
+        qWarning() << "mount device failed: " << static_cast<int>(err);
+        break;
+    }
+}
+
+void DialogManager::showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError err)
+{
+    switch (err) {
+    case dfmmount::DeviceError::UDisksErrorDeviceBusy:
+        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
+        break;
+    default:
+        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
+        break;
+    }
 }
 
 /*!
@@ -82,7 +116,7 @@ int DialogService::showMessageDialog(DialogService::MessageType messageLevel, co
  *
  * \param task 文件操作任务的处理器
  */
-void DialogService::addTask(const JobHandlePointer &task)
+void DialogManager::addTask(const JobHandlePointer &task)
 {
     if (!taskdailog)
         taskdailog = new TaskDialog();
@@ -90,7 +124,7 @@ void DialogService::addTask(const JobHandlePointer &task)
     taskdailog->addTask(task);
 }
 
-void DialogService::showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window)
+void DialogManager::showSetingsDialog(FileManagerWindow *window)
 {
     Q_ASSERT(window);
 
@@ -110,43 +144,13 @@ void DialogService::showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *wind
  * \brief DialogService::askPasswordForLockedDevice
  * \return the password user inputed.
  */
-QString DialogService::askPasswordForLockedDevice()
+QString DialogManager::askPasswordForLockedDevice()
 {
     MountSecretDiskAskPasswordDialog dialog(tr("Need password to unlock device"));
     return dialog.exec() == QDialog::Accepted ? dialog.getUerInputedPassword() : "";
 }
 
-void DialogService::showErrorDialogWhenMountDeviceFailed(dfmmount::DeviceError err)
-{
-    switch (err) {
-    case dfmmount::DeviceError::UserErrorNetworkAnonymousNotAllowed:
-        showErrorDialog(tr("Mount error"), tr("Anonymous mount is not allowed"));
-        break;
-    case dfmmount::DeviceError::UserErrorNetworkWrongPasswd:
-        showErrorDialog(tr("Mount error"), tr("Wrong password is inputed"));
-        break;
-    case dfmmount::DeviceError::UserErrorUserCancelled:
-        break;
-    default:
-        showErrorDialog(tr("Mount error"), tr("Error occured while mounting device"));
-        qWarning() << "mount device failed: " << static_cast<int>(err);
-        break;
-    }
-}
-
-void DialogService::showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError err)
-{
-    switch (err) {
-    case dfmmount::DeviceError::UDisksErrorDeviceBusy:
-        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
-        break;
-    default:
-        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
-        break;
-    }
-}
-
-bool DialogService::askForFormat()
+bool DialogManager::askForFormat()
 {
     DDialog dlg;
     dlg.setIcon(QIcon::fromTheme("dialog-warning"));
@@ -156,12 +160,7 @@ bool DialogService::askForFormat()
     return dlg.exec() == QDialog::Accepted;
 }
 
-DialogService::DialogService(QObject *parent)
-    : dpf::PluginService(parent),
-      dpf::AutoServiceRegister<DialogService>()
-{
-}
-
-dfm_service_common::DialogService::~DialogService()
+DialogManager::DialogManager(QObject *parent)
+    : QObject(parent)
 {
 }

@@ -23,14 +23,11 @@
 #ifndef DEVICEMANAGERDBUS_H
 #define DEVICEMANAGERDBUS_H
 
+#include "dfm-base/base/device/devicecontroller.h"
+
 #include <QDBusVariant>
 #include <QVariantMap>
 #include <QObject>
-
-namespace dfm_service_common {
-class DialogService;
-class DeviceService;
-}
 
 class DeviceManagerDBus : public QObject
 {
@@ -95,7 +92,7 @@ private:
     void initConnection();
 
 private:
-    dfm_service_common::DeviceService *deviceServ { nullptr };
+    DFMBASE_NAMESPACE::DeviceController *deviceServ;
 };
 
 #endif   // DEVICEMANAGERDBUS_H

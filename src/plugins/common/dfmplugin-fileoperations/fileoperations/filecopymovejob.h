@@ -24,9 +24,10 @@
 #define FILECOPYMOVEJOB_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "dfm-base/interfaces/abstractjobhandler.h"
-#include "services/common/dialog/dialogservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+
+#include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <QObject>
 #include <QPointer>
@@ -67,7 +68,7 @@ private:
     QSharedPointer<QMutex> copyMoveTaskMutex { nullptr };
     QSharedPointer<QMutex> getOperationsAndDialogServiceMutex { nullptr };
     QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
-    QPointer<DSC_NAMESPACE::DialogService> dialogService { nullptr };
+    DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
 };
 
 DPFILEOPERATIONS_END_NAMESPACE

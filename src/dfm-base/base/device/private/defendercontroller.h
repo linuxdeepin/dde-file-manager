@@ -23,7 +23,7 @@
 #ifndef DEFENDERHELPER_H
 #define DEFENDERHELPER_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
 #include <QUrl>
@@ -31,11 +31,11 @@
 
 #include <mutex>
 
-DSC_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 class DefenderController : public QObject
 {
-    friend class DeviceService;
+    friend class DeviceController;
     Q_OBJECT
     Q_DISABLE_COPY(DefenderController)
 
@@ -63,7 +63,7 @@ private:
     QList<QUrl> scanningPaths;
 };
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
 #define DefenderInstance DefenderController::instance()
 

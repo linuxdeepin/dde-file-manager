@@ -29,10 +29,10 @@
 #include "utils/stashmountsutils.h"
 #include "watcher/computeritemwatcher.h"
 
-#include "services/common/dialog/dialogservice.h"
 #include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -83,7 +83,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
                 && !info->extraProperty(DeviceProperty::kIsEncrypted).toBool()
                 && !info->extraProperty(DeviceProperty::kOpticalDrive).toBool();
         if (needAskForFormat) {
-            if (ComputerUtils::dlgServIns()->askForFormat())
+            if (DialogManagerInstance->askForFormat())
                 actFormat(winId, info);
         }
         setCursorStatus();
@@ -212,7 +212,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
             && !isEncrypted
             && !isOpticalDrive;
     if (needAskForFormat) {
-        if (ComputerUtils::dlgServIns()->askForFormat())
+        if (DialogManagerInstance->askForFormat())
             actFormat(winId, info);
         return;
     }
@@ -224,7 +224,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
     if (isEncrypted) {
         if (!isUnlocked) {
             setCursorStatus();
-            QString passwd = ComputerUtils::dlgServIns()->askPasswordForLockedDevice();
+            QString passwd = DialogManagerInstance->askPasswordForLockedDevice();
             if (passwd.isEmpty()) {
                 setCursorStatus();
                 return;
@@ -237,7 +237,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                 if (ok) {
                     this->mountDevice(winId, newId, act);
                 } else {
-                    ComputerUtils::dlgServIns()->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
+                    DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
                     qInfo() << "unlock device failed: " << shellId << static_cast<int>(err);
                 }
             });
@@ -264,7 +264,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAft
                 ComputerEventCaller::sendEnterInNewTab(winId, u);
         } else {
             qDebug() << "mount device failed: " << id << static_cast<int>(err);
-            ComputerUtils::dlgServIns()->showErrorDialogWhenMountDeviceFailed(err);
+            DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         }
         setCursorStatus();
     });
@@ -326,7 +326,7 @@ void ComputerController::actEject(const QUrl &url)
     }
 
     if (!ok)
-        ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError::UDisksErrorDeviceBusy);
+        DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError::UDisksErrorDeviceBusy);
 }
 
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
@@ -353,7 +353,7 @@ static void onNetworkDeviceMountFinished(bool ok, dfmmount::DeviceError err, con
         if (enterAfterMounted)
             ComputerEventCaller::cdTo(winId, mntPath);
     } else {
-        ComputerUtils::dlgServIns()->showErrorDialogWhenMountDeviceFailed(err);
+        DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
     }
 }
 
@@ -391,14 +391,14 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                     });
                 } else {
                     qInfo() << "unmount cleartext device failed: " << cleartextId << static_cast<int>(err);
-                    ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(err);
+                    DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
                 }
             });
         } else {
             ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
                 if (!ok) {
                     qInfo() << "unlock device failed: " << devId << static_cast<int>(err);
-                    ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(err);
+                    DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
                 }
             });
         }
@@ -407,7 +407,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         ComputerUtils::deviceServIns()->unmountProtocolDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
             if (!ok) {
                 qWarning() << "unmount protocol device failed: " << devId << static_cast<int>(err);
-                ComputerUtils::dlgServIns()->showErrorDialogWhenUnmountDeviceFailed(err);
+                DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
             }
         });
     } else {

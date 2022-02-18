@@ -28,14 +28,14 @@
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/dialog/dialogservice.h"
-#include "services/common/device/deviceservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <dfm-framework/framework.h>
 
@@ -44,20 +44,6 @@
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-
-static DSC_NAMESPACE::DialogService *dlgServ()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    auto dlgServ = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-    return dlgServ;
-}
-
-static DSC_NAMESPACE::DeviceService *deviceServ()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    auto dlgServ = ctx.service<DSC_NAMESPACE::DeviceService>(DSC_NAMESPACE::DeviceService::name());
-    return dlgServ;
-}
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
 
@@ -225,13 +211,13 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
         return false;
 
     if (url.host().isEmpty()) {
-        dlgServ()->showErrorDialog("", QObject::tr("Mounting device error"));
+        DialogManagerInstance->showErrorDialog("", QObject::tr("Mounting device error"));
         return true;
     }
 
-    deviceServ()->mountNetworkDevice(url.toString(), [sender](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+    DeviceController::instance()->mountNetworkDevice(url.toString(), [sender](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
         if (!ok) {
-            dlgServ()->showErrorDialogWhenMountDeviceFailed(err);
+            DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {
             QUrl u;
             u.setScheme(SchemeTypes::kFile);
@@ -245,7 +231,6 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
 
 void TitleBarHelper::showSettingsDialog(quint64 windowId)
 {
-    DSC_USE_NAMESPACE
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     auto window = windowService->findWindowById(windowId);
@@ -255,8 +240,7 @@ void TitleBarHelper::showSettingsDialog(quint64 windowId)
         return;
     }
 
-    auto dialogService = ctx.service<DialogService>(DialogService::name());
-    dialogService->showSetingsDialog(window);
+    DialogManagerInstance->showSetingsDialog(window);
 }
 
 void TitleBarHelper::showConnectToServerDialog(quint64 windowId)

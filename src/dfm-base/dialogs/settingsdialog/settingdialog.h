@@ -24,7 +24,7 @@
 #ifndef DFMSETTINGDIALOG_H
 #define DFMSETTINGDIALOG_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include <DSettingsDialog>
 
@@ -37,7 +37,7 @@ DCORE_END_NAMESPACE
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
-DSC_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 class SettingDialog : public DSettingsDialog
 {
 public:
@@ -54,5 +54,5 @@ private:
     static QPointer<QCheckBox> kAutoMountOpenCheckBox;
     QPointer<DSettings> dtkSettings;
 };
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 #endif   // DFMSETTINGDIALOG_H

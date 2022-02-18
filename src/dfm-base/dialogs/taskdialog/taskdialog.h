@@ -23,7 +23,7 @@
 #ifndef TASKDIALOG_H
 #define TASKDIALOG_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <DDialog>
@@ -35,13 +35,15 @@
 class QListWidget;
 class QListWidgetItem;
 class QMutex;
+
 DWIDGET_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 class TaskWidget;
 class TaskDialog : public DAbstractDialog
 {
     Q_OBJECT
-    friend class DialogService;
+
+public:
     explicit TaskDialog(QObject *parent = nullptr);
     ~TaskDialog();
     void addTask(const JobHandlePointer &taskHandler);
@@ -72,5 +74,6 @@ private:
     static int kMaxHeight;
 };
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
+
 #endif   // TASKDIALOG_H

@@ -22,8 +22,6 @@
  */
 #include "filecopymovejob.h"
 
-#include <dfm-framework/framework.h>
-
 #include <QUrl>
 
 /*!
@@ -33,7 +31,8 @@
 DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
 FileCopyMoveJob::FileCopyMoveJob(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      dialogManager(DialogManagerInstance)
 {
     copyMoveTaskMutex.reset(new QMutex);
     getOperationsAndDialogServiceMutex.reset(new QMutex);
@@ -54,19 +53,8 @@ bool FileCopyMoveJob::getOperationsAndDialogService()
             operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
         }
     }
-    if (dialogService.isNull()) {
-        auto &ctx = DPF_NAMESPACE::Framework::instance().serviceContext();
-        dialogService = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-        if (!dialogService) {
-            QString errStr;
-            if (!ctx.load(DSC_NAMESPACE::DialogService::name(), &errStr)) {
-                qCritical() << errStr;
-                abort();
-            }
-            dialogService = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-        }
-    }
-    return operationsService && dialogService;
+
+    return operationsService && dialogManager;
 }
 
 void FileCopyMoveJob::onHandleAddTask()
@@ -79,7 +67,7 @@ void FileCopyMoveJob::onHandleAddTask()
         qCritical() << "get service fialed !!!!!!!!!!!!!!!!!!!";
         return;
     }
-    dialogService->addTask(jobHandler);
+    dialogManager->addTask(jobHandler);
     jobHandler->disconnect(jobHandler.data(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
 }
 
@@ -94,7 +82,7 @@ void FileCopyMoveJob::onHandleAddTaskWithArgs(const JobInfoPointer info)
     }
 
     copyMoveTask.value(jobHandler)->stop();
-    dialogService->addTask(jobHandler);
+    dialogManager->addTask(jobHandler);
 }
 
 void FileCopyMoveJob::onHandleTaskFinished(const JobInfoPointer info)

@@ -22,18 +22,16 @@
 */
 #include "devicemanagerdbus.h"
 
-#include "services/common/device/deviceservice.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
-#include <dfm-framework/framework.h>
-
-DSC_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
 
 DeviceManagerDBus::DeviceManagerDBus(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      deviceServ(DeviceController::instance())
 {
     initialize();
     initConnection();
@@ -52,7 +50,7 @@ void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
 {
     DetachBlockDevice(id);
     // only optical eject
-    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this, id](const QString &deviceId, bool success) {
+    connect(deviceServ, &DeviceController::blockDevAsyncEjected, this, [this, id](const QString &deviceId, bool success) {
         if (deviceId == id && success)
             deviceServ->poweroffBlockDeviceAsync(id);
     });
@@ -85,9 +83,6 @@ bool DeviceManagerDBus::DetachProtocolDevice(QString id)
 
 void DeviceManagerDBus::initialize()
 {
-    auto &&ctx = dpfInstance.serviceContext();
-    deviceServ = ctx.service<DeviceService>(DeviceService::name());
-    Q_ASSERT(deviceServ);
     deviceServ->startMonitor();
     deviceServ->startAutoMount();
 }
@@ -97,38 +92,38 @@ void DeviceManagerDBus::initialize()
  */
 void DeviceManagerDBus::initConnection()
 {
-    connect(deviceServ, &DeviceService::blockDevicePropertyChanged, this, [this](const QString &deviceId, const QString &property, const QVariant &val) {
+    connect(deviceServ, &DeviceController::blockDevicePropertyChanged, this, [this](const QString &deviceId, const QString &property, const QVariant &val) {
         emit BlockDevicePropertyChanged(deviceId, property, QDBusVariant(val));
     });
-    connect(deviceServ, &DeviceService::blockDevAsyncUnmounted, this, [this](const QString &deviceId, bool success) {
+    connect(deviceServ, &DeviceController::blockDevAsyncUnmounted, this, [this](const QString &deviceId, bool success) {
         if (!deviceId.isEmpty() && !success)
             emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
     });
-    connect(deviceServ, &DeviceService::blockDevAsyncEjected, this, [this](const QString &deviceId, bool success) {
+    connect(deviceServ, &DeviceController::blockDevAsyncEjected, this, [this](const QString &deviceId, bool success) {
         if (!deviceId.isEmpty() && !success)
             emit NotifyDeviceBusy(DeviceBusyAction::kEject);
     });
-    connect(deviceServ, &DeviceService::blockDevAsyncPoweroffed, this, [this](const QString &deviceId, bool success) {
+    connect(deviceServ, &DeviceController::blockDevAsyncPoweroffed, this, [this](const QString &deviceId, bool success) {
         if (!deviceId.isEmpty() && !success)
             emit NotifyDeviceBusy(DeviceBusyAction::kRemove);
     });
 
-    connect(deviceServ, &DeviceService::deviceSizeUsedChanged, this, &DeviceManagerDBus::SizeUsedChanged);
-    connect(deviceServ, &DeviceService::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
-    connect(deviceServ, &DeviceService::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
-    connect(deviceServ, &DeviceService::blockDevAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
-    connect(deviceServ, &DeviceService::blockDevRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
-    connect(deviceServ, &DeviceService::blockDevFilesystemAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
-    connect(deviceServ, &DeviceService::blockDevFilesystemRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
-    connect(deviceServ, &DeviceService::blockDevMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
-    connect(deviceServ, &DeviceService::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
-    connect(deviceServ, &DeviceService::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
-    connect(deviceServ, &DeviceService::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
+    connect(deviceServ, &DeviceController::deviceSizeUsedChanged, this, &DeviceManagerDBus::SizeUsedChanged);
+    connect(deviceServ, &DeviceController::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
+    connect(deviceServ, &DeviceController::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
+    connect(deviceServ, &DeviceController::blockDevAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
+    connect(deviceServ, &DeviceController::blockDevRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
+    connect(deviceServ, &DeviceController::blockDevFilesystemAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
+    connect(deviceServ, &DeviceController::blockDevFilesystemRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
+    connect(deviceServ, &DeviceController::blockDevMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
+    connect(deviceServ, &DeviceController::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
+    connect(deviceServ, &DeviceController::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
+    connect(deviceServ, &DeviceController::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
 
-    connect(deviceServ, &DeviceService::protocolDevMounted, this, &DeviceManagerDBus::ProtocolDeviceMounted);
-    connect(deviceServ, &DeviceService::protocolDevUnmounted, this, &DeviceManagerDBus::ProtocolDeviceUnmounted);
-    connect(deviceServ, &DeviceService::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
-    connect(deviceServ, &DeviceService::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
+    connect(deviceServ, &DeviceController::protocolDevMounted, this, &DeviceManagerDBus::ProtocolDeviceMounted);
+    connect(deviceServ, &DeviceController::protocolDevUnmounted, this, &DeviceManagerDBus::ProtocolDeviceUnmounted);
+    connect(deviceServ, &DeviceController::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
+    connect(deviceServ, &DeviceController::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
 }
 
 /*!

@@ -40,7 +40,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
+
 static const int kMsgLabelWidth = 350;
 static const int kSpeedLabelWidth = 100;
 static const char *const kBtnPropertyActionName = "btnType";

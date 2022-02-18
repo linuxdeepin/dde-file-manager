@@ -192,18 +192,6 @@ dfm_service_filemanager::SideBarService *ComputerUtils::sbServIns()
     return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
 }
 
-dfm_service_common::DialogService *ComputerUtils::dlgServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::DialogService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-}
-
 bool ComputerUtils::isPresetSuffix(const QString &suffix)
 {
     return suffix == SuffixInfo::kBlock || suffix == SuffixInfo::kProtocol || suffix == SuffixInfo::kUserDir
@@ -222,16 +210,9 @@ dfm_service_common::PropertyDialogService *ComputerUtils::propertyDlgServIns()
     return ctx.service<DSC_NAMESPACE::PropertyDialogService>(DSC_NAMESPACE::PropertyDialogService::name());
 }
 
-dfm_service_common::DeviceService *ComputerUtils::deviceServIns()
+DeviceController *ComputerUtils::deviceServIns()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::DeviceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::DeviceService>(DSC_NAMESPACE::DeviceService::name());
+    return DeviceController::instance();
 }
 
 bool ComputerUtils::shouldSystemPartitionHide()

@@ -24,6 +24,8 @@
 #ifndef MOUNTSECRETDISKASKPASSWORDDIALOG_H
 #define MOUNTSECRETDISKASKPASSWORDDIALOG_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <DDialog>
 
 class QLineEdit;
@@ -33,8 +35,8 @@ DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
 DWIDGET_END_NAMESPACE
 
-DWIDGET_USE_NAMESPACE
-class MountSecretDiskAskPasswordDialog : public DDialog
+DFMBASE_BEGIN_NAMESPACE
+class MountSecretDiskAskPasswordDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
@@ -55,8 +57,9 @@ private:
     QString descriptionMessage = "";
     QLabel *titleLabel = nullptr;
     QLabel *descriptionLabel = nullptr;
-    DPasswordEdit *passwordLineEdit = nullptr;
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordLineEdit = nullptr;
     QString password = "";
 };
+DFMBASE_END_NAMESPACE
 
 #endif   // MOUNTSECRETDISKASKPASSWORDDIALOG_H

@@ -35,6 +35,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <QDebug>
@@ -179,18 +180,18 @@ void ComputerItemWatcher::initDeviceServiceConn()
     auto deviceServ = ComputerUtils::deviceServIns();
     deviceServ->startMonitor();
 
-    connect(deviceServ, &DeviceService::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
-    connect(deviceServ, &DeviceService::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
-    connect(deviceServ, &DeviceService::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    connect(deviceServ, &DeviceService::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(deviceServ, &DeviceService::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(deviceServ, &DeviceService::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(deviceServ, &DeviceService::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
+    connect(deviceServ, &DeviceController::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
+    connect(deviceServ, &DeviceController::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
+    connect(deviceServ, &DeviceController::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
+    connect(deviceServ, &DeviceController::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(deviceServ, &DeviceController::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(deviceServ, &DeviceController::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(deviceServ, &DeviceController::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
 
-    connect(deviceServ, &DeviceService::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
-    connect(deviceServ, &DeviceService::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
+    connect(deviceServ, &DeviceController::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
+    connect(deviceServ, &DeviceController::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
 
-    connect(deviceServ, &DeviceService::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
+    connect(deviceServ, &DeviceController::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
 }
 
 void ComputerItemWatcher::disconnDeviceService()
@@ -201,18 +202,18 @@ void ComputerItemWatcher::disconnDeviceService()
     auto deviceServ = ComputerUtils::deviceServIns();
     deviceServ->stopMonitor();
 
-    disconnect(deviceServ, &DeviceService::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
-    disconnect(deviceServ, &DeviceService::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
-    disconnect(deviceServ, &DeviceService::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    disconnect(deviceServ, &DeviceService::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(deviceServ, &DeviceService::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(deviceServ, &DeviceService::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    disconnect(deviceServ, &DeviceService::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
+    disconnect(deviceServ, &DeviceController::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
+    disconnect(deviceServ, &DeviceController::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
+    disconnect(deviceServ, &DeviceController::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
+    disconnect(deviceServ, &DeviceController::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
+    disconnect(deviceServ, &DeviceController::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    disconnect(deviceServ, &DeviceController::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    disconnect(deviceServ, &DeviceController::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
 
-    disconnect(deviceServ, &DeviceService::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
-    disconnect(deviceServ, &DeviceService::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
+    disconnect(deviceServ, &DeviceController::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
+    disconnect(deviceServ, &DeviceController::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
 
-    disconnect(deviceServ, &DeviceService::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
+    disconnect(deviceServ, &DeviceController::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
 }
 
 void ComputerItemWatcher::initAppWatcher()

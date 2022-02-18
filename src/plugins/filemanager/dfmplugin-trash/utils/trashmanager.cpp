@@ -28,10 +28,10 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/dialog/dialogservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <DHorizontalLine>
 #include <DApplicationHelper>
@@ -106,13 +106,6 @@ void TrashManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const Q
 bool TrashManager::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
 {
     Q_UNUSED(error)
-    auto &ctx = dpfInstance.serviceContext();
-    QString errStr;
-    if (!ctx.load(DialogService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-    DialogService *service = ctx.service<DialogService>(DialogService::name());
 
     bool isOpenFile = false;
     QList<QUrl> redirectedFileUrls;
@@ -131,7 +124,7 @@ bool TrashManager::openFilesHandle(quint64 windowId, const QList<QUrl> urls, con
     // Todo(yanghao)
     if (isOpenFile) {
         QString strMsg = tr("Unable to open items in the trash, please restore it first");
-        service->showMessageDialog(DialogService::kMsgWarn, strMsg);
+        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, strMsg);
     }
     return true;
 }

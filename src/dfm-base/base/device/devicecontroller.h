@@ -20,27 +20,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DEVICESERVICE_H
-#define DEVICESERVICE_H
+#ifndef DEVICECONTROLLER_H
+#define DEVICECONTROLLER_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
-#include <dfm-framework/service/pluginservicecontext.h>
 #include <dfm-mount/base/dfmmount_global.h>
 
-DSC_BEGIN_NAMESPACE
+#include <QObject>
+#include <QVariantMap>
+
+DFMBASE_BEGIN_NAMESPACE
 class DeviceMonitorHandler;
-class DeviceService final : public dpf::PluginService, dpf::AutoServiceRegister<DeviceService>
+class DeviceController final : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(DeviceService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
+    Q_DISABLE_COPY(DeviceController)
 
 public:
-    static QString name()
-    {
-        return "org.deepin.service.DeviceService";
-    }
+    static DeviceController *instance();
 
 public:   // operations
     void startAutoMount();
@@ -126,8 +124,8 @@ signals:
     void protocolDevAsyncUnmounted(const QString &deviceId, bool success);
 
 private:
-    explicit DeviceService(QObject *parent = nullptr);
-    virtual ~DeviceService() override;
+    explicit DeviceController(QObject *parent = nullptr);
+    virtual ~DeviceController() override;
 
     bool askForStopScanning(const QString &deviceId);
 
@@ -135,6 +133,6 @@ private:
     QScopedPointer<DeviceMonitorHandler> monitorHandler;
 };
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // DEVICESERVICE_H
+#endif   // DEVICECONTROLLER_H

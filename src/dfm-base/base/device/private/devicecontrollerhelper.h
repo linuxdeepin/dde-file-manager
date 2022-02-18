@@ -20,10 +20,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DEVICESERVICEHELPER_H
-#define DEVICESERVICEHELPER_H
+#ifndef DEVICECONTROLLERHELPER_H
+#define DEVICECONTROLLERHELPER_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/fileutils.h"
@@ -34,7 +34,7 @@
 
 #include <mutex>
 
-DSC_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 struct DeviceData
 {
@@ -84,9 +84,9 @@ struct ProtocolDeviceData
     QStringList deviceIcons;
 };
 
-class DeviceServiceHelper
+class DeviceControllerHelper
 {
-    friend class DeviceService;
+    friend class DeviceController;
     friend class DeviceMonitorHandler;
 
     using DevPtr = QSharedPointer<DFMMOUNT::DFMDevice>;
@@ -136,6 +136,6 @@ private:
     static DevPtrList createAllDevices(DFMMOUNT::DeviceType type);
 };
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // DEVICESERVICEHELPER_H
+#endif   // DEVICECONTROLLERHELPER_H

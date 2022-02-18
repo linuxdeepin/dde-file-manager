@@ -53,6 +53,10 @@ FILE (GLOB BASE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/device/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/device/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/device/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/device/private/*.cpp"
 )
 
 FILE (GLOB ALL_FILES
@@ -91,6 +95,15 @@ FILE (GLOB WIDGETS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/action/*.cpp"
 )
 
+FILE (GLOB DIALOGS_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/mountpasswddialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/mountpasswddialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/settingsdialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/settingsdialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/taskdialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/taskdialog/*.cpp"
+    )
+
 FILE (GLOB DBUSSERVER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/*.cpp"
@@ -119,9 +132,21 @@ find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
 find_package(PkgConfig REQUIRED)
 
-pkg_search_module(util-dfm
+pkg_search_module(dfm-io
     REQUIRED
     dfm-io dfm-mount
+    IMPORTED_TARGET
+)
+
+pkg_search_module(dfm-mount
+    REQUIRED
+    dfm-mount
+    IMPORTED_TARGET
+)
+
+pkg_search_module(gsettings
+    REQUIRED
+    gsettings-qt
     IMPORTED_TARGET
 )
 
@@ -135,6 +160,7 @@ add_library(${PROJECT_NAME}
     ${BASE_FILES}
     ${ALL_FILES}
     ${WIDGETS_FILES}
+    ${DIALOGS_FILES}
     ${DBUSSERVER_FILES}
     ${SHORTCUT_FILES}
 )
@@ -149,7 +175,9 @@ target_link_libraries( ${PROJECT_NAME}
     Qt5::Concurrent
     Qt5::DBus
     Qt5::X11Extras
-    PkgConfig::util-dfm
+    PkgConfig::dfm-mount
+    PkgConfig::dfm-io
+    PkgConfig::gsettings
     ${DtkWidget_LIBRARIES}
 )
 

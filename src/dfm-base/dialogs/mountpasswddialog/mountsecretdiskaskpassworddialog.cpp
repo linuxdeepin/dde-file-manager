@@ -29,6 +29,9 @@
 #include <QLabel>
 #include <DPasswordEdit>
 
+DFMBASE_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+
 MountSecretDiskAskPasswordDialog::MountSecretDiskAskPasswordDialog(const QString &tipMessage, QWidget *parent)
     : DDialog(parent),
       descriptionMessage(tipMessage)

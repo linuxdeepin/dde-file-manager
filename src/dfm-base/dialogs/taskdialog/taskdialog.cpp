@@ -31,7 +31,6 @@
 #include <QDesktopWidget>
 #include <QMutex>
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 static const int kDefaultWidth { 700 };

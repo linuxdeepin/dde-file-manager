@@ -67,13 +67,6 @@ FILE(GLOB MENU_FILES
 #    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.cpp"
 )
 
-FILE(GLOB DEVICESERVICE_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/device/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/device/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/device/*/*.cpp"
-)
-
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -81,7 +74,6 @@ add_library(${PROJECT_NAME}
     ${DIALOG_FILES}
     ${MENU_FILES}
     ${PROPERTYDIALOG_FILES}
-    ${DEVICESERVICE_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

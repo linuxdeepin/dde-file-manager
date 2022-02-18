@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "deviceservicehelper.h"
+#include "devicecontrollerhelper.h"
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -28,7 +28,7 @@
 
 #include <dfm-mount/dfmblockmonitor.h>
 #include <QDebug>
-#include <QGSettings>
+#include <QGSettings/QGSettings>
 #include <QStorageInfo>
 #include <QStandardPaths>
 #include <QProcess>
@@ -38,17 +38,17 @@
 Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
 
 DWIDGET_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 using dfmbase::FinallyUtil;
 using namespace GlobalServerDefines;
 
-dfmbase::Settings *DeviceServiceHelper::getGsGlobal()
+dfmbase::Settings *DeviceControllerHelper::getGsGlobal()
 {
     return gsGlobal;
 }
 
-void DeviceServiceHelper::openFileManagerToDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+void DeviceControllerHelper::openFileManagerToDevice(const DeviceControllerHelper::BlockDevPtr &blkDev)
 {
     if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
         QString root { dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::kEntry) };
@@ -63,17 +63,17 @@ void DeviceServiceHelper::openFileManagerToDevice(const DeviceServiceHelper::Blo
     DDesktopServices::showFolder(QUrl::fromLocalFile(mp));
 }
 
-std::once_flag &DeviceServiceHelper::autoMountOnceFlag()
+std::once_flag &DeviceControllerHelper::autoMountOnceFlag()
 {
     static std::once_flag flag;
     return flag;
 }
 
-QList<QUrl> DeviceServiceHelper::makeMountpointsForDrive(const QString &driveName)
+QList<QUrl> DeviceControllerHelper::makeMountpointsForDrive(const QString &driveName)
 {
     QList<QUrl> urls;
 
-    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
+    auto blkDevcies = DeviceControllerHelper::createAllBlockDevices();
 
     for (const auto &device : blkDevcies) {
         if (device->drive() == driveName) {
@@ -86,10 +86,10 @@ QList<QUrl> DeviceServiceHelper::makeMountpointsForDrive(const QString &driveNam
     return urls;
 }
 
-QList<QUrl> DeviceServiceHelper::makeMountpointsForAllDrive()
+QList<QUrl> DeviceControllerHelper::makeMountpointsForAllDrive()
 {
     QList<QUrl> urls;
-    auto blkDevcies = DeviceServiceHelper::createAllBlockDevices();
+    auto blkDevcies = DeviceControllerHelper::createAllBlockDevices();
 
     for (const auto &device : blkDevcies) {
         QUrl &&url = makeMountpointForBlock(device);
@@ -99,7 +99,7 @@ QList<QUrl> DeviceServiceHelper::makeMountpointsForAllDrive()
     return urls;
 }
 
-QUrl DeviceServiceHelper::makeMountpointForBlock(const BlockDevPtr &blkDev)
+QUrl DeviceControllerHelper::makeMountpointForBlock(const BlockDevPtr &blkDev)
 {
     if (!blkDev)
         return QUrl();
@@ -109,7 +109,7 @@ QUrl DeviceServiceHelper::makeMountpointForBlock(const BlockDevPtr &blkDev)
     return QUrl::fromLocalFile(blkDev->mountPoint());
 }
 
-QStringList DeviceServiceHelper::makeAllDevicesIdForDrive(const QString &driveName)
+QStringList DeviceControllerHelper::makeAllDevicesIdForDrive(const QString &driveName)
 {
     QStringList idList;
 
@@ -120,7 +120,7 @@ QStringList DeviceServiceHelper::makeAllDevicesIdForDrive(const QString &driveNa
     return idList;
 }
 
-bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev, QString *errMsg)
+bool DeviceControllerHelper::isUnmountableBlockDevice(const DeviceControllerHelper::BlockDevPtr &blkDev, QString *errMsg)
 {
     if (!blkDev || blkDev.isNull()) {
         if (errMsg)
@@ -129,11 +129,11 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::Bl
     }
 
     BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    DeviceControllerHelper::makeBlockDeviceData(blkDev, &data);
 
     bool ret { false };
     QString error;
-    if (DeviceServiceHelper::isUnmountableBlockDevice(data, &error))
+    if (DeviceControllerHelper::isUnmountableBlockDevice(data, &error))
         ret = true;
 
     if (errMsg)
@@ -142,7 +142,7 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const DeviceServiceHelper::Bl
     return ret;
 }
 
-bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data, QString *errMsg)
+bool DeviceControllerHelper::isUnmountableBlockDevice(const BlockDeviceData &data, QString *errMsg)
 {
     QString error;
     FinallyUtil finally([&]() { if (errMsg) *errMsg = error; });
@@ -167,7 +167,7 @@ bool DeviceServiceHelper::isUnmountableBlockDevice(const BlockDeviceData &data, 
     return true;
 }
 
-bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+bool DeviceControllerHelper::isEjectableBlockDevice(const DeviceControllerHelper::BlockDevPtr &blkDev)
 {
     if (!blkDev || blkDev.isNull()) {
         qWarning() << "Cannot create block device ptr";
@@ -175,15 +175,15 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const DeviceServiceHelper::Bloc
     }
 
     BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    DeviceControllerHelper::makeBlockDeviceData(blkDev, &data);
 
-    if (DeviceServiceHelper::isEjectableBlockDevice(data))
+    if (DeviceControllerHelper::isEjectableBlockDevice(data))
         return true;
 
     return false;
 }
 
-bool DeviceServiceHelper::isMountableBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev, QString *errMsg)
+bool DeviceControllerHelper::isMountableBlockDevice(const DeviceControllerHelper::BlockDevPtr &blkDev, QString *errMsg)
 {
     if (!blkDev || blkDev.isNull()) {
         if (errMsg)
@@ -192,11 +192,11 @@ bool DeviceServiceHelper::isMountableBlockDevice(const DeviceServiceHelper::Bloc
     }
 
     BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    DeviceControllerHelper::makeBlockDeviceData(blkDev, &data);
 
     bool ret { false };
     QString error;
-    if (DeviceServiceHelper::isMountableBlockDevice(data, &error))
+    if (DeviceControllerHelper::isMountableBlockDevice(data, &error))
         ret = true;
 
     if (errMsg)
@@ -205,7 +205,7 @@ bool DeviceServiceHelper::isMountableBlockDevice(const DeviceServiceHelper::Bloc
     return ret;
 }
 
-bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data, QString *errMsg)
+bool DeviceControllerHelper::isMountableBlockDevice(const BlockDeviceData &data, QString *errMsg)
 {
     QString error;
     FinallyUtil finally([&]() { if (errMsg) *errMsg = error; });
@@ -245,7 +245,7 @@ bool DeviceServiceHelper::isMountableBlockDevice(const BlockDeviceData &data, QS
     return true;
 }
 
-bool DeviceServiceHelper::isEjectableBlockDevice(const BlockDeviceData &data)
+bool DeviceControllerHelper::isEjectableBlockDevice(const BlockDeviceData &data)
 {
     bool removable = data.removable;
     bool optical = data.optical;
@@ -263,7 +263,7 @@ bool DeviceServiceHelper::isEjectableBlockDevice(const BlockDeviceData &data)
     return false;
 }
 
-bool DeviceServiceHelper::isCanPoweroffBlockDevice(const DeviceServiceHelper::BlockDevPtr &blkDev)
+bool DeviceControllerHelper::isCanPoweroffBlockDevice(const DeviceControllerHelper::BlockDevPtr &blkDev)
 {
     if (!blkDev || blkDev.isNull()) {
         qWarning() << "Cannot create block device ptr";
@@ -271,15 +271,15 @@ bool DeviceServiceHelper::isCanPoweroffBlockDevice(const DeviceServiceHelper::Bl
     }
 
     BlockDeviceData data;
-    DeviceServiceHelper::makeBlockDeviceData(blkDev, &data);
+    DeviceControllerHelper::makeBlockDeviceData(blkDev, &data);
 
-    if (DeviceServiceHelper::isCanPoweroffBlockDevice(data))
+    if (DeviceControllerHelper::isCanPoweroffBlockDevice(data))
         return true;
 
     return false;
 }
 
-bool DeviceServiceHelper::isCanPoweroffBlockDevice(const BlockDeviceData &data)
+bool DeviceControllerHelper::isCanPoweroffBlockDevice(const BlockDeviceData &data)
 {
     const QStringList &mpts = data.mountpoints;
     bool canPowerOff = data.canPowerOff;
@@ -292,7 +292,7 @@ bool DeviceServiceHelper::isCanPoweroffBlockDevice(const BlockDeviceData &data)
     return true;
 }
 
-bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
+bool DeviceControllerHelper::isProtectedBlocDevice(const BlockDeviceData &data)
 {
     QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
 
@@ -318,7 +318,7 @@ bool DeviceServiceHelper::isProtectedBlocDevice(const BlockDeviceData &data)
     return false;
 }
 
-bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data, QString *errMsg)
+bool DeviceControllerHelper::isIgnorableBlockDevice(const BlockDeviceData &data, QString *errMsg)
 {
     QString error;
     FinallyUtil finally([&]() { if (errMsg) *errMsg = error; });
@@ -360,7 +360,7 @@ bool DeviceServiceHelper::isIgnorableBlockDevice(const BlockDeviceData &data, QS
     return false;
 }
 
-bool DeviceServiceHelper::isMountedEncryptedDevice(const BlockDeviceData &data)
+bool DeviceControllerHelper::isMountedEncryptedDevice(const BlockDeviceData &data)
 {
     if (!data.isEncrypted || data.cleartextDevice.length() == 1)
         return false;
@@ -376,19 +376,19 @@ bool DeviceServiceHelper::isMountedEncryptedDevice(const BlockDeviceData &data)
     return !clearBlkData.mountpoints.isEmpty();
 }
 
-DeviceServiceHelper::BlockDevPtr DeviceServiceHelper::createBlockDevice(const QString &devId)
+DeviceControllerHelper::BlockDevPtr DeviceControllerHelper::createBlockDevice(const QString &devId)
 {
     auto devPtr = createDevice(devId, DFMMOUNT::DeviceType::BlockDevice);
     return qobject_cast<BlockDevPtr>(devPtr);
 }
 
-DeviceServiceHelper::ProtocolDevPtr DeviceServiceHelper::createProtocolDevice(const QString &devId)
+DeviceControllerHelper::ProtocolDevPtr DeviceControllerHelper::createProtocolDevice(const QString &devId)
 {
     auto devPtr = createDevice(devId, DFMMOUNT::DeviceType::ProtocolDevice);
     return qobject_cast<ProtocolDevPtr>(devPtr);
 }
 
-DeviceServiceHelper::DevPtr DeviceServiceHelper::createDevice(const QString &devId, DFMMOUNT::DeviceType type)
+DeviceControllerHelper::DevPtr DeviceControllerHelper::createDevice(const QString &devId, DFMMOUNT::DeviceType type)
 {
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
     auto monitor = manager->getRegisteredMonitor(type);
@@ -396,7 +396,7 @@ DeviceServiceHelper::DevPtr DeviceServiceHelper::createDevice(const QString &dev
     return monitor->createDeviceById(devId);
 }
 
-DeviceServiceHelper::DevPtrList DeviceServiceHelper::createAllDevices(dfmmount::DeviceType type)
+DeviceControllerHelper::DevPtrList DeviceControllerHelper::createAllDevices(dfmmount::DeviceType type)
 {
     DevPtrList list;
     auto manager = DFMMOUNT::DFMDeviceManager::instance();
@@ -410,10 +410,10 @@ DeviceServiceHelper::DevPtrList DeviceServiceHelper::createAllDevices(dfmmount::
     return list;
 }
 
-DeviceServiceHelper::BlockDevPtrList DeviceServiceHelper::createAllBlockDevices()
+DeviceControllerHelper::BlockDevPtrList DeviceControllerHelper::createAllBlockDevices()
 {
     BlockDevPtrList list;
-    auto &&devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::BlockDevice);
+    auto &&devList = DeviceControllerHelper::createAllDevices(DFMMOUNT::DeviceType::BlockDevice);
     for (auto dev : devList) {
         auto blkDev = dev.staticCast<DFMMOUNT::DFMBlockDevice>();
         if (blkDev)
@@ -422,10 +422,10 @@ DeviceServiceHelper::BlockDevPtrList DeviceServiceHelper::createAllBlockDevices(
     return list;
 }
 
-DeviceServiceHelper::ProtocolDevPtrList DeviceServiceHelper::createAllProtocolDevices()
+DeviceControllerHelper::ProtocolDevPtrList DeviceControllerHelper::createAllProtocolDevices()
 {
     ProtocolDevPtrList list;
-    auto &&devList = DeviceServiceHelper::createAllDevices(DFMMOUNT::DeviceType::ProtocolDevice);
+    auto &&devList = DeviceControllerHelper::createAllDevices(DFMMOUNT::DeviceType::ProtocolDevice);
     for (auto dev : devList) {
         auto protocolDev = dev.staticCast<DFMMOUNT::DFMProtocolDevice>();
         if (protocolDev)
@@ -434,7 +434,7 @@ DeviceServiceHelper::ProtocolDevPtrList DeviceServiceHelper::createAllProtocolDe
     return list;
 }
 
-void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDevPtr &ptr, BlockDeviceData *data)
+void DeviceControllerHelper::makeBlockDeviceData(const DeviceControllerHelper::BlockDevPtr &ptr, BlockDeviceData *data)
 {
     Q_ASSERT_X(data, "DeviceServiceHelper", "Data is NULL");
 
@@ -486,7 +486,7 @@ void DeviceServiceHelper::makeBlockDeviceData(const DeviceServiceHelper::BlockDe
     data->cleartextDevice = ptr->getProperty(DFMMOUNT::Property::EncryptedCleartextDevice).toString();
 }
 
-void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail)
+void DeviceControllerHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVariantMap *map, bool detail)
 {
     Q_ASSERT_X(map, "DeviceServiceHelper", "Map is NULL");
 
@@ -530,7 +530,7 @@ void DeviceServiceHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVaria
         map->insert(DeviceProperty::kCleartextDevice, data.cleartextDevice);
     }
 }
-void DeviceServiceHelper::updateBlockDeviceSizeUsed(BlockDeviceData *data, qint64 total, qint64 free)
+void DeviceControllerHelper::updateBlockDeviceSizeUsed(BlockDeviceData *data, qint64 total, qint64 free)
 {
     if (data) {
         static QMutex mutex;
@@ -541,7 +541,7 @@ void DeviceServiceHelper::updateBlockDeviceSizeUsed(BlockDeviceData *data, qint6
     }
 }
 
-void DeviceServiceHelper::makeProtocolDeviceData(const DeviceServiceHelper::ProtocolDevPtr &ptr, ProtocolDeviceData *data)
+void DeviceControllerHelper::makeProtocolDeviceData(const DeviceControllerHelper::ProtocolDevPtr &ptr, ProtocolDeviceData *data)
 {
     Q_ASSERT_X(data, "DeviceServiceHelper", "Data is NULL");
     if (!ptr)
@@ -557,7 +557,7 @@ void DeviceServiceHelper::makeProtocolDeviceData(const DeviceServiceHelper::Prot
     data->deviceIcons = ptr->deviceIcons();
 }
 
-void DeviceServiceHelper::makeProtocolDeviceMap(const ProtocolDeviceData &data, QVariantMap *map, bool detail)
+void DeviceControllerHelper::makeProtocolDeviceMap(const ProtocolDeviceData &data, QVariantMap *map, bool detail)
 {
     Q_ASSERT_X(map, "DeviceServiceHelper", "Map is NULL");
     Q_UNUSED(detail);
@@ -573,7 +573,7 @@ void DeviceServiceHelper::makeProtocolDeviceMap(const ProtocolDeviceData &data, 
     map->insert(DeviceProperty::kDeviceIcon, data.deviceIcons);
 }
 
-void DeviceServiceHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *data, qint64 total, qint64 free, qint64 used)
+void DeviceControllerHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *data, qint64 total, qint64 free, qint64 used)
 {
     if (data) {
         static QMutex mutex;
@@ -583,5 +583,3 @@ void DeviceServiceHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *data,
         data->common.sizeUsed = used;
     }
 }
-
-DSC_END_NAMESPACE

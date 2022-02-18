@@ -27,9 +27,9 @@
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/common/dialog/dialogservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/device/deviceservice.h"
+
+#include "dfm-base/base/device/devicecontroller.h"
 
 #include <QString>
 #include <QIcon>
@@ -74,9 +74,8 @@ public:
     static quint64 getWinId(QWidget *widget);
 
     static DSB_FM_NAMESPACE::SideBarService *sbServIns();
-    static DSC_NAMESPACE::DialogService *dlgServIns();
     static DSC_NAMESPACE::PropertyDialogService *propertyDlgServIns();
-    static DSC_NAMESPACE::DeviceService *deviceServIns();
+    static DFMBASE_NAMESPACE::DeviceController *deviceServIns();
 
     static bool isPresetSuffix(const QString &suffix);
 

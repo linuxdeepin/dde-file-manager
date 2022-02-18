@@ -22,7 +22,6 @@
 */
 #include "dbusregister.h"
 
-#include "services/common/device/deviceservice.h"
 #include "devicemanagerdbus.h"
 #include "dbus_adaptor/devicemanagerdbus_adaptor.h"
 #include "dbus_adaptor/operationsstackmanagerdbus_adaptor.h"
@@ -32,17 +31,11 @@
 #include <dfm-framework/framework.h>
 #include <QDBusConnection>
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void DBusRegister::initialize()
 {
     QString errStr;
-    auto &ctx = dpfInstance.serviceContext();
-    if (!ctx.load(DeviceService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
     UrlRoute::regScheme(SchemeTypes::kEntry, "/", QIcon(), true);
 }
 

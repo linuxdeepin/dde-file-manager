@@ -36,6 +36,7 @@ class DeviceManager : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(DeviceManager)
+
 public:
     static DeviceManager &instance();
     QPointer<DeviceManagerInterface> getDeviceInterface();

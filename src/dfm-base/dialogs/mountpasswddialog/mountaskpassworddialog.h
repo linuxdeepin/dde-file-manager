@@ -24,6 +24,8 @@
 #ifndef MOUNTASKPASSWORDDIALOG_H
 #define MOUNTASKPASSWORDDIALOG_H
 
+#include "dfm-base/dfm_base_global.h"
+
 #include <QDialog>
 #include <QLabel>
 #include <QRadioButton>
@@ -36,9 +38,9 @@
 #include <DPasswordEdit>
 #include <DButtonBox>
 
-DWIDGET_USE_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
-class MountAskPasswordDialog : public DDialog
+class MountAskPasswordDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
@@ -71,16 +73,18 @@ private:
     QFrame *passwordFrame { nullptr };
     QLineEdit *usernameLineEdit { nullptr };
     QLineEdit *domainLineEdit { nullptr };
-    DPasswordEdit *passwordLineEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DPasswordEdit *passwordLineEdit { nullptr };
     QCheckBox *passwordCheckBox { nullptr };
 
     QButtonGroup *passwordButtonGroup { nullptr };
-    DButtonBoxButton *anonymousButton { nullptr };
-    DButtonBoxButton *registerButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DButtonBoxButton *anonymousButton { nullptr };
+    DTK_WIDGET_NAMESPACE::DButtonBoxButton *registerButton { nullptr };
 
     QJsonObject loginObj;
 
     bool domainLineVisible { true };
 };
+
+DFMBASE_END_NAMESPACE
 
 #endif   // MOUNTASKPASSWORDDIALOG_H

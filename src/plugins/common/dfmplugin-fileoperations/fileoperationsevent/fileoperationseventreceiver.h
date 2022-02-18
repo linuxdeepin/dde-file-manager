@@ -24,13 +24,14 @@
 #define FILEOPERATIONSEVENTRECEIVER_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "dbus_interface/operationsstackmanagerdbus_interface.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
+#include "services/common/fileoperations/fileoperations_defines.h"
+
+#include "dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
-#include "services/common/dialog/dialogservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/fileoperations/fileoperations_defines.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <QObject>
 #include <QPointer>
@@ -181,7 +182,6 @@ private slots:
 private:
     explicit FileOperationsEventReceiver(QObject *parent = nullptr);
     bool initService();
-    bool getDialogService();
     QString newDocmentName(const QString targetdir,
                            const QString suffix,
                            const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
@@ -196,7 +196,7 @@ private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };
     QSharedPointer<QMutex> getServiceMutex { nullptr };
     QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
-    QPointer<DSC_NAMESPACE::DialogService> dialogService { nullptr };
+    DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
     QMap<QString, FileOperationsFunctions> functions;
     QSharedPointer<QMutex> functionsMutex { nullptr };
     QSharedPointer<OperationsStackManagerInterface> operationsStackDbus;

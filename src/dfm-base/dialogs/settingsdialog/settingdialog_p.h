@@ -24,7 +24,7 @@
 #ifndef DFMSETTINGDIALOG_P_H
 #define DFMSETTINGDIALOG_P_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/base/application/application.h"
 
 #include <dsettingsbackend.h>
@@ -35,7 +35,7 @@
 DCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-DSC_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 template<typename Key, typename T>
 class BidirectionHash
 {
@@ -136,5 +136,5 @@ private:
         { "advance.other.show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
     };
 };
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 #endif   // DFMSETTINGDIALOG_P_H

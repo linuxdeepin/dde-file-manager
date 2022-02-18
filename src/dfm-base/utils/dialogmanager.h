@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,30 +20,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DIALOGSERVICE_H
-#define DIALOGSERVICE_H
+#ifndef DIALOGMANAGER_H
+#define DIALOGMANAGER_H
 
-#include "dfm_common_service_global.h"
-
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
-#include "dfm-base/utils/devicemanager.h"
 
-#include <dfm-framework/service/pluginservicecontext.h>
 #include <dfm-mount/base/dfmmount_global.h>
 
+#include <QObject>
 #include <DDialog>
 
 using namespace DTK_NAMESPACE::Widget;
-DSC_BEGIN_NAMESPACE
+
+DFMBASE_BEGIN_NAMESPACE
+
 class TaskDialog;
 class ComputerPropertyDialog;
 class TrashPropertyDialog;
-class DialogService final : public dpf::PluginService, dpf::AutoServiceRegister<DialogService>
+class DialogManager : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(DialogService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
+    Q_DISABLE_COPY(DialogManager)
+
+public:
+    static DialogManager *instance();
 
 public:
     enum MessageType {
@@ -51,13 +53,9 @@ public:
         kMsgWarn = 2,
         kMsgErr = 3
     };
-    static QString name()
-    {
-        return "org.deepin.service.DialogService";
-    }
 
-    static DDialog *showQueryScanningDialog(const QString &title);
-    static void showErrorDialog(const QString &title, const QString &message);
+    DDialog *showQueryScanningDialog(const QString &title);
+    void showErrorDialog(const QString &title, const QString &message);
     int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
     void showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError err);
     void showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError err);
@@ -67,11 +65,12 @@ public:
     bool askForFormat();
 
 private:
-    explicit DialogService(QObject *parent = nullptr);
-    virtual ~DialogService() override;
+    explicit DialogManager(QObject *parent = nullptr);
     TaskDialog *taskdailog = nullptr;   // 文件任务进度和错误处理弹窗
 };
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // DIALOGSERVICE_H
+#define DialogManagerInstance DFMBASE_NAMESPACE::DialogManager::instance()
+
+#endif   // DIALOGMANAGER_H

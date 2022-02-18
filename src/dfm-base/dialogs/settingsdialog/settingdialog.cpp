@@ -47,8 +47,6 @@
 
 DFMBASE_USE_NAMESPACE
 
-DSC_BEGIN_NAMESPACE
-
 #ifdef DISABLE_QUICK_SEARCH
 namespace {
 const char *const kGroupsName { "groups" };
@@ -383,5 +381,3 @@ void SettingDialog::autoMountCheckBoxChangedHandle(DSettingsOption *option, int 
         option->setValue(true);
     }
 }
-
-DSC_END_NAMESPACE

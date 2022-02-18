@@ -27,8 +27,6 @@
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
-
 #include <QDebug>
 #include <QUrl>
 
@@ -37,7 +35,7 @@ DFMBASE_USE_NAMESPACE
 DPFILEOPERATIONS_USE_NAMESPACE
 
 FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
-    : QObject(parent)
+    : QObject(parent), dialogManager(DialogManagerInstance)
 {
     getServiceMutex.reset(new QMutex);
     functionsMutex.reset(new QMutex);
@@ -60,37 +58,8 @@ bool FileOperationsEventReceiver::initService()
             operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
         }
     }
-    if (dialogService.isNull()) {
-        auto &ctx = DPF_NAMESPACE::Framework::instance().serviceContext();
-        dialogService = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-        if (!dialogService) {
-            QString errStr;
-            if (!ctx.load(DSC_NAMESPACE::DialogService::name(), &errStr)) {
-                qCritical() << errStr;
-                abort();
-            }
-            dialogService = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-        }
-    }
-    return operationsService && dialogService;
-}
 
-bool FileOperationsEventReceiver::getDialogService()
-{
-    QMutexLocker lk(getServiceMutex.data());
-    if (dialogService.isNull()) {
-        auto &ctx = DPF_NAMESPACE::Framework::instance().serviceContext();
-        dialogService = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-        if (!dialogService) {
-            QString errStr;
-            if (!ctx.load(DSC_NAMESPACE::DialogService::name(), &errStr)) {
-                qCritical() << errStr;
-                abort();
-            }
-            dialogService = ctx.service<DSC_NAMESPACE::DialogService>(DSC_NAMESPACE::DialogService::name());
-        }
-    }
-    return dialogService;
+    return operationsService && dialogManager;
 }
 
 QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
@@ -404,8 +373,8 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         }
         if (function && function->openFiles) {
             ok = function->openFiles(windowId, urls, &error);
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("open file error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("open file error", error);
             }
             // TODO:: file Open finished need to send file Open finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
@@ -414,9 +383,9 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
     }
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     ok = filehandler.openFiles(urls);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("open file error", error);
+        dialogManager->showErrorDialog("open file error", error);
     }
     // TODO:: file Open finished need to send file Open finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
@@ -471,8 +440,8 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
         }
         if (function && function->openFilesByApp) {
             ok = function->openFilesByApp(windowId, urls, apps, &error);
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("open file by app error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("open file by app error", error);
             }
             // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
@@ -485,9 +454,9 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
         app = apps.at(0);
     }
     ok = filehandler.openFilesByApp(urls, app);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("open file by app error", error);
+        dialogManager->showErrorDialog("open file by app error", error);
     }
     // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
@@ -510,8 +479,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         if (function && function->renameFile) {
 
             ok = function->renameFile(windowId, oldUrl, newUrl, &error);
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("rename file error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("rename file error", error);
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -521,9 +490,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     ok = filehandler.renameFile(oldUrl, newUrl);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("rename file error", error);
+        dialogManager->showErrorDialog("rename file error", error);
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -606,8 +575,8 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
         }
         if (function && function->makedir) {
             ok = function->makedir(windowId, url, &error);
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("make dir error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("make dir error", error);
             }
             // TODO:: make dir finished need to send make dir finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
@@ -617,9 +586,9 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
     }
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     ok = filehandler.mkdir(url);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("make dir error", error);
+        dialogManager->showErrorDialog("make dir error", error);
     }
     // TODO:: make dir finished need to send make dir finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
@@ -641,8 +610,8 @@ bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
         }
         if (function && function->touchFile) {
             ok = function->touchFile(windowId, url, &error);
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("touch file error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("touch file error", error);
             }
             // TODO:: touch file finished need to send touch file finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
@@ -652,9 +621,9 @@ bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
     }
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     ok = filehandler.touchFile(url);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("touch file error", error);
+        dialogManager->showErrorDialog("touch file error", error);
     }
     // TODO:: touch file finished need to send touch file finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
@@ -721,8 +690,8 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
         }
         if (function && function->linkFile) {
             ok = function->linkFile(windowId, url, link, &error);
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("link file error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("link file error", error);
             }
             // TODO:: link file finished need to send link file finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
@@ -733,9 +702,9 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
 
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     ok = filehandler.createSystemLink(url, link);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("link file error", error);
+        dialogManager->showErrorDialog("link file error", error);
     }
     // TODO:: link file finished need to send link file finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
@@ -775,8 +744,8 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
         }
         if (function && function->setPermission) {
             ok = function->setPermission(windowId, url, permissions, &error);
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("set file permissions error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("set file permissions error", error);
             }
             // TODO:: set file permissions finished need to send set file permissions finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
@@ -786,9 +755,9 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     }
     DFMBASE_NAMESPACE::LocalFileHandler filehandler;
     ok = filehandler.setPermissions(url, permissions);
-    if (!ok && getDialogService()) {
+    if (!ok) {
         error = filehandler.errorString();
-        dialogService->showErrorDialog("set file permissions error", error);
+        dialogManager->showErrorDialog("set file permissions error", error);
     }
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
@@ -860,8 +829,8 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
             ok = function->openInTerminal(windowId, urls, &error);
             if (!result)
                 result = ok;
-            if (!ok && getDialogService()) {
-                dialogService->showErrorDialog("open file in terminal error", error);
+            if (!ok) {
+                dialogManager->showErrorDialog("open file in terminal error", error);
             }
             // TODO:: open file in terminal finished need to send open file in terminal finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,

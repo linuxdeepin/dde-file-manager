@@ -23,7 +23,7 @@
 #ifndef TASKWIDGET_H
 #define TASKWIDGET_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <DWaterProgress>
@@ -35,9 +35,9 @@
 class QPushButton;
 class QCheckBox;
 class QVBoxLayout;
-DWIDGET_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
-DFMBASE_USE_NAMESPACE
+
+DFMBASE_BEGIN_NAMESPACE
+
 class ElidedLable : public QLabel
 {
     friend class TaskWidget;
@@ -82,7 +82,7 @@ protected:
     virtual void paintEvent(QPaintEvent *event);
 
 private:
-    DWaterProgress *progress { nullptr };   // 左侧水球动画
+    DTK_WIDGET_NAMESPACE::DWaterProgress *progress { nullptr };   // 左侧水球动画
     ElidedLable *lbSrcPath { nullptr };   // 左第一个label
     ElidedLable *lbDstPath { nullptr };   // 左第二个label
     QLabel *lbSpeed { nullptr };   // 右第一个label
@@ -100,8 +100,8 @@ private:
     QWidget *widButton { nullptr };   // 按钮界面
 
     QCheckBox *chkboxNotAskAgain { nullptr };   // 不在询问按钮
-    DIconButton *btnStop { nullptr };   // 停止按钮
-    DIconButton *btnPause { nullptr };   // 暂停按钮
+    DTK_WIDGET_NAMESPACE::DIconButton *btnStop { nullptr };   // 停止按钮
+    DTK_WIDGET_NAMESPACE::DIconButton *btnPause { nullptr };   // 暂停按钮
     QPushButton *btnCoexist { nullptr };   // 共存按钮
     QPushButton *btnSkip { nullptr };   // 跳过按钮
     QPushButton *btnReplace { nullptr };   // 替换、合并按钮
@@ -112,5 +112,6 @@ private:
     QAtomicInteger<bool> isPauseState { false };   // 是否是暂停状态
 };
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
+
 #endif   // TASKWIDGET_H
