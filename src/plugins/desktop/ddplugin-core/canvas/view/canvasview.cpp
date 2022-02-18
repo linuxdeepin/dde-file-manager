@@ -426,32 +426,6 @@ void CanvasView::refresh()
     d->flicker = false;
 }
 
-bool CanvasView::isEmptyArea(const QPoint &pos)
-{
-    const QModelIndex &index = this->indexAt(pos);
-
-    if (index.isValid() && this->selectionModel()->isSelected(index)) {
-        return false;
-    } else {
-        const QRect &rect = this->visualRect(index);
-
-        if (!rect.contains(pos)) {
-            return true;
-        }
-
-        QStyleOptionViewItem option = this->viewOptions();
-        option.rect = rect;
-        const QList<QRect> &geometry_list = itemDelegate()->paintGeomertys(option, index);
-        auto ret = std::any_of(geometry_list.begin(), geometry_list.end(), [pos](const QRect &rect) {
-            return rect.contains(pos);
-        });
-        if (ret)
-            return false;
-    }
-
-    return index.isValid();
-}
-
 QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
 {
     Q_UNUSED(index)

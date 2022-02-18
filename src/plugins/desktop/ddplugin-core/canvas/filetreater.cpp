@@ -25,11 +25,14 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "dfm-base/base/urlroute.h"
+#include "base/application/application.h"
+#include "base/application/settings.h"
 
 #include <QDir>
 #include <QtConcurrent>
 #include <QStandardPaths>
 
+DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -352,9 +355,7 @@ void FileTreater::init()
     }
 
     d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
-
-    // todo(wangcl):by DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowedHiddenFiles).toBool()
-    d->whetherShowHiddenFile = false;
+    d->whetherShowHiddenFile = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
     if (d->whetherShowHiddenFile)
         d->filters |= QDir::Hidden;
     else

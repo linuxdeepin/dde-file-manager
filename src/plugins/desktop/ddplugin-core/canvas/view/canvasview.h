@@ -75,7 +75,6 @@ public:
     void updateGrid();
 
 public:
-    bool isEmptyArea(const QPoint &pos);
     QList<QIcon> additionalIcon(const QModelIndex &index) const;
 public Q_SLOTS:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;

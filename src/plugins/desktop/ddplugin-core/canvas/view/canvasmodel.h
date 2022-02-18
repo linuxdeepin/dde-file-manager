@@ -76,8 +76,8 @@ public:
     int sortRole() const;
     void setSortRole(dfmbase::AbstractFileInfo::SortKey role, Qt::SortOrder order = Qt::AscendingOrder);
 
-    bool whetherShowHiddenFiles() const;
-    void setWhetherShowHiddenFiles(const bool isShow);
+    bool showHiddenFiles() const;
+    void setShowHiddenFiles(const bool isShow);
 signals:
     void fileCreated(const QUrl &url);
     void fileDeleted(const QUrl &url);

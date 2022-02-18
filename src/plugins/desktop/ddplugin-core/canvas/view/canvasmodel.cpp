@@ -115,7 +115,7 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
     case FileTreater::kFileDisplayNameRole:
         return indexFileInfo->fileDisplayName();
     case FileTreater::kFilePinyinName:
-        return indexFileInfo->fileDisplayName(); //todo call fileDisplayPinyinName();
+        return indexFileInfo->fileDisplayPinyinName();
     case FileTreater::kFileLastModifiedRole:
         return indexFileInfo->lastModified().toString();    // todo by file info: lastModifiedDisplayName
     case FileTreater::kFileSizeRole:
@@ -124,6 +124,8 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
         return indexFileInfo->fileMimeType().name();    // todo by file info: mimeTypeDisplayName
     case FileTreater::kExtraProperties:
         return indexFileInfo->extraProperties();
+    case FileTreater::kFileBaseNameRole:
+        return indexFileInfo->baseName();
     case FileTreater::kFileSuffixRole:
         return indexFileInfo->suffix();
     case FileTreater::kFileNameOfRenameRole:
@@ -319,12 +321,12 @@ void CanvasModel::setSortRole(dfmbase::AbstractFileInfo::SortKey role, Qt::SortO
     FileTreaterCt->setSortRole(role, order);
 }
 
-bool CanvasModel::whetherShowHiddenFiles() const
+bool CanvasModel::showHiddenFiles() const
 {
     return FileTreaterCt->whetherShowHiddenFiles();
 }
 
-void CanvasModel::setWhetherShowHiddenFiles(const bool isShow)
+void CanvasModel::setShowHiddenFiles(const bool isShow)
 {
     FileTreaterCt->setWhetherShowHiddenFiles(isShow);
 }

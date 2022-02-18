@@ -22,6 +22,8 @@
 #include "canvas/view/canvasview.h"
 #include "canvas/view/operator/fileoperaterproxy.h"
 #include "canvas/canvasmanager.h"
+#include "displayconfig.h"
+#include "grid/canvasgrid.h"
 
 #include "dfm-base/dfm_actiontype_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -46,6 +48,23 @@ CanvasMenu::CanvasMenu()
     // 获取扩展菜单服务
     auto &ctx = dpfInstance.serviceContext();
     extensionMenuServer = ctx.service<MenuService>(MenuService::name());
+
+    // regist desktop aciton
+    QPair<int, ActionDataContainer> customAct = ActionTypeManager::instance().registerActionType(tr("Display Settings"));
+    customAction.insert(DesktopCustomAction::kDisplaySettings, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kDisplaySettings);
+
+    customAct = ActionTypeManager::instance().registerActionType(tr("Wallpaper and Screensaver"));
+    customAction.insert(DesktopCustomAction::kWallpaperSettings, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kWallpaperSettings);
+
+    customAct = ActionTypeManager::instance().registerActionType(tr("Icon size"));
+    customAction.insert(DesktopCustomAction::kIconSize, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kIconSize);
+
+    customAct = ActionTypeManager::instance().registerActionType(tr("Auto arrange"));
+    customAction.insert(DesktopCustomAction::kAutoSort, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kAutoSort);
 }
 
 QMenu *CanvasMenu::build(QWidget *parent,
@@ -96,27 +115,19 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
     tempLst = tempActionInfo->menuActionList(AbtMenuType::kSpaceArea);
 
     // 根据actiontype获取到action信息
-    auto tempActTextLst = ActionTypeManager::instance().actionNameListByTypes(tempLst);
+    QVector<ActionDataContainer> tempActTextLst = ActionTypeManager::instance().actionNameListByTypes(tempLst);
 
     // 增加桌面场景自定义的菜单
-    // todo: registerActionType 返回键值对
-    auto customAct = ActionTypeManager::instance().registerActionType(tr("Display Settings"));
-    customActionType.insert(customAct.first, DesktopCustomAction::kDisplaySettings);
-    tempActTextLst << customAct.second;
-
-    customAct = ActionTypeManager::instance().registerActionType(tr("Wallpaper and Screensaver"));
-    customActionType.insert(customAct.first, DesktopCustomAction::kWallpaperSettings);
-    tempActTextLst << customAct.second;
-
-    customAct = ActionTypeManager::instance().registerActionType(tr("Icon size"));
-    customActionType.insert(customAct.first, DesktopCustomAction::kIconSize);
-    tempActTextLst << customAct.second;
+    tempActTextLst << customAction.value(DesktopCustomAction::kDisplaySettings);
+    tempActTextLst << customAction.value(DesktopCustomAction::kWallpaperSettings);
+    tempActTextLst << customAction.value(DesktopCustomAction::kIconSize);
+    tempActTextLst << customAction.value(DesktopCustomAction::kAutoSort);
 
     if (tempActTextLst.isEmpty())
         return;
 
     // add action to menu
-    for (auto &tempAct : tempActTextLst) {
+    for (const ActionDataContainer &tempAct : tempActTextLst) {
 
         // Separator
         if (tempAct.actionType() == ActionType::kActSeparator) {
@@ -133,6 +144,12 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
         if (!tempAct.icon().isNull())
             act->setIcon(tempAct.icon());
         menu->addAction(act);
+
+        if (tempAct.actionType() == customActionType.key(DesktopCustomAction::kAutoSort)) {
+            act->setCheckable(true);
+            auto align = DispalyIns->autoAlign();
+            act->setChecked(align);
+        }
     }
 }
 
@@ -222,6 +239,17 @@ void CanvasMenu::acitonBusiness(QAction *act)
         case DesktopCustomAction::kWallpaperSettings: {
             qDebug() << "desktop menu -> Wallpaper and Screensaver!";
             CanvasIns->onWallperSetting(view);
+            return;
+        }
+        case DesktopCustomAction::kAutoSort: {
+            bool align = act->isChecked();
+            qDebug() << "desktop menu -> kAutoSort!" << align;
+            DispalyIns->setAutoAlign(align);
+            GridIns->setMode(align ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
+            if (align) {
+                GridIns->arrange();
+                CanvasIns->update();
+            }
             return;
         }
         default:

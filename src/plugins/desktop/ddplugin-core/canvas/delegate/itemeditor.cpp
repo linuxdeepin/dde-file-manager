@@ -21,6 +21,8 @@
 #include "itemeditor.h"
 #include "canvasitemdelegate.h"
 
+#include "dfm-base/utils/fileutils.h"
+
 #include <DArrowRectangle>
 
 #include <QApplication>
@@ -256,9 +258,7 @@ void ItemEditor::textChanged()
         return;
     }
 
-    // todo process name
-    QString dstText = curText;//DFMGlobal::preprocessingFileName(srcText);
-
+    QString dstText = DFMBASE_NAMESPACE::FileUtils::preprocessingFileName(curText);
     bool hasInvalidChar = dstText.size() != curText.size();
     int endPos = textEditor->textCursor().position() + (dstText.length() - curText.length());
 
@@ -393,6 +393,20 @@ void RenameEdit::keyPressEvent(QKeyEvent *e)
         redo();
         e->accept();
         return;
+    }
+
+    // key to commit
+    // it can edit next or previous item if ingore Qt::Key_Tab or Qt::Key_Backtab.
+    switch (e->key()) {
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+    case Qt::Key_Tab:
+    case Qt::Key_Backtab:
+        e->accept();
+        QMetaObject::invokeMethod(parent(), "inputFocusOut", Qt::QueuedConnection);
+        return;
+    default:
+        break;
     }
 
     DTextEdit::keyPressEvent(e);

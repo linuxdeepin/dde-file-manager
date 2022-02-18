@@ -141,7 +141,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             CanvasIns->onChangeIconLevel(true);
             return true;
         case Qt::Key_H:
-            // todo swich hidden
+            swichHidden();
             return true;
         case Qt::Key_I:
             //todo show property dialog
@@ -308,4 +308,14 @@ void ShortcutOper::clearClipBoard()
         if (itemInfo && (itemInfo->absolutePath() == homePath.toLocalFile()))
             ClipBoard::instance()->clearClipboard();
     }
+}
+
+void ShortcutOper::swichHidden()
+{
+    auto model = view->model();
+    Q_ASSERT(model);
+
+    bool show = model->showHiddenFiles();
+    model->setShowHiddenFiles(!show);
+    model->fetchMore(QModelIndex());
 }

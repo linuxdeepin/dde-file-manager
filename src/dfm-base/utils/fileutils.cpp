@@ -26,6 +26,8 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -240,6 +242,17 @@ bool FileUtils::isGvfsFile(const QUrl &url)
     QRegExp reg(QString("/run/user/%1/.?gvfs/.+").arg(getuid()));
 
     return -1 != reg.indexIn(path);
+}
+
+QString FileUtils::preprocessingFileName(QString name)
+{
+    // eg: [\\:*\"?<>|\r\n]
+    const QString &value = Application::genericObtuselySetting()->value("FileName", "non-allowableCharacters").toString();
+
+    if (value.isEmpty())
+        return name;
+
+    return name.remove(QRegularExpression(value));
 }
 
 bool FileUtils::isDesktopFile(const QUrl &url)

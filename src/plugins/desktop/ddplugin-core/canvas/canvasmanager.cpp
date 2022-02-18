@@ -229,7 +229,7 @@ void CanvasManager::reloadItem()
     // rearrange
     if (DispalyIns->autoAlign()) {
         GridIns->setMode(CanvasGrid::Mode::Align);
-        GridIns->setItems(GridIns->items());
+        GridIns->arrange();
     }
 
     update();
@@ -337,7 +337,7 @@ void CanvasManagerPrivate::onFileDeleted(const QUrl &url)
         // todo:当选中的文件中有文件被移除时就清空所有选中项
 
         if (CanvasGrid::Mode::Align == GridIns->mode()) {
-            GridIns->setItems(GridIns->items());
+            GridIns->arrange();
         } else {
             GridIns->popOverload();
         }

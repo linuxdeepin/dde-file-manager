@@ -26,6 +26,7 @@
 #include "services/common/menu/menuservice.h"
 
 #include "dfm-framework/framework.h"
+#include "dfm-base/widgets/action/actiondatacontainer.h"
 
 #include <QVariant>
 
@@ -77,7 +78,8 @@ private:
 
 private:
     DSC_NAMESPACE::MenuService *extensionMenuServer { nullptr };
-    QMap<int, int> customActionType;
+    QMap<DesktopCustomAction, dfmbase::ActionDataContainer> customAction;
+    QMap<int, DesktopCustomAction> customActionType;
     QWidget *parentWidget { nullptr };
     QVariant cusData;
 };

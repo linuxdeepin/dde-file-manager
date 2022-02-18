@@ -50,6 +50,8 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
 
+#define EDITOR_SHOW_SUFFIX "_d_whether_show_suffix"
+
 const int CanvasItemDelegate::kTextPadding = 4;
 const int CanvasItemDelegate::kIconSpacing =  5;
 const int CanvasItemDelegate::kTconBackRadius = 18;
@@ -71,7 +73,10 @@ CanvasItemDelegatePrivate::~CanvasItemDelegatePrivate()
 
 ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &index, const QPainter *painter) const
 {
-    ElideTextLayout *layout = new ElideTextLayout(index.data(FileTreater::kFileDisplayNameRole).toString());
+    bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
+    QString name = showSuffix ? index.data(FileTreater::kFileDisplayNameRole).toString()
+                              : index.data(FileTreater::kFileBaseNameRole).toString();
+    ElideTextLayout *layout = new ElideTextLayout(name);
 
     // tag rect
     q->initTextLayout(index, layout);
@@ -233,49 +238,52 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     if (!itemEditor)
         return;
 
-    //todo 是否显示判断后缀
-    QString name = index.data(Qt::DisplayRole).toString();
+    // 是否显示判断后缀
+    bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
-    itemEditor->setMaximumLength(255);
-    itemEditor->setText(name);
+    QString suffix = index.data(FileTreater::kFileSuffixRole).toString(); //todo kFileSuffixOfRenameRole
+    qDebug() << "sssssssss Display" << index.data(FileTreater::kFileDisplayNameRole)
+             << "FileName" << index.data(FileTreater::kFileNameRole)
+             << "BaseName" << index.data(FileTreater::kFileBaseNameRole)
+             << "suffix" << suffix;
+    if (showSuffix) {
+        QString name = index.data(FileTreater::kFileDisplayNameRole).toString(); // todo kFileNameOfRenameRole
+        itemEditor->setMaximumLength(255);
+        itemEditor->setText(name);
+        itemEditor->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
+    } else {
+        itemEditor->setProperty(EDITOR_SHOW_SUFFIX, suffix);
+        itemEditor->setMaximumLength(255 - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
 
-    // todo FileBaseNameOfRenameRole
-    itemEditor->select(name.left(name.indexOf('.')));
+        QString name = index.data(FileTreater::kFileDisplayNameRole).toString(); //todo kFileBaseNameOfRenameRole
+        //remove shuffix
+        name = name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1));
+        itemEditor->setText(name);
+        itemEditor->select(name);
+    }
 }
 
 void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
     ItemEditor *itemEditor = qobject_cast<ItemEditor *>(editor);
-    qDebug() << __FUNCTION__ << index << itemEditor->text();
-
-    //todo(wangcl): rename file
-
-    QString newName = itemEditor->text();
-    if (newName.isEmpty()) {
+    if (!itemEditor)
         return;
-    }
 
-    // todo(wangcl):editor->setProperty
-    QString suffix { editor->property("_d_whether_show_suffix").toString() };
+    qDebug() << __FUNCTION__ << index << itemEditor->text();
+    QString newName = itemEditor->text();
+    if (newName.isEmpty())
+        return;
 
-    if (!suffix.isEmpty()) {
+    QString suffix = editor->property(EDITOR_SHOW_SUFFIX).toString();
+    if (!suffix.isEmpty())
         newName += QStringLiteral("." ) + suffix;
-    } else if (dfmbase::Application::genericObtuselySetting()->value("FileName", "non-allowableEmptyCharactersOfEnd").toBool()) {
-        // todo(wangcl):空后缀处理
-        // retain space symbols in file names
-//        if (newName.isEmpty()) {
-//            return;
-//        }
-    }
 
     CanvasModel *canvasModel = qobject_cast<CanvasModel *>(model);
-    if (Q_UNLIKELY(!canvasModel))
-        return;
+    Q_ASSERT(canvasModel);
 
     const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index);
-    if (fileInfo->fileName() == newName) {
+    if (!fileInfo.get() || fileInfo->fileName() == newName)
         return;
-    }
 
     QUrl oldUrl = fileInfo->url();
     QUrl newUrl = fileInfo->getUrlByNewFileName(newName);

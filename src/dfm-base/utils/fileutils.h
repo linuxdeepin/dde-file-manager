@@ -37,6 +37,7 @@ public:
     static QMap<QString, QString> getKernelParameters();
     static int supportedMaxLength(const QString &fileSystem);
     static bool isGvfsFile(const QUrl &url);
+    static QString preprocessingFileName(QString name);
 
     //check if is trash/computer desktop file containing Deepin_id of dde-trash/dde-computer
     static bool isDesktopFile(const QUrl &url);

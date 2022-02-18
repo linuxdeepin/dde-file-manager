@@ -25,6 +25,7 @@
 #include "view/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "canvasmanager.h"
+#include "displayconfig.h"
 
 #include "base/schemefactory.h"
 
@@ -336,6 +337,9 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
     } else {
         qWarning() << "can not find drop item.";
     }
+
+    if (DispalyIns->autoAlign())
+        GridIns->arrange();
 
     event->setDropAction(Qt::MoveAction);
     event->accept();

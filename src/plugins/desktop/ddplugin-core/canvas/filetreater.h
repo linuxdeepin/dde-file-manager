@@ -51,7 +51,7 @@ public:
         kFileDisplayNameRole = Qt::UserRole + 9,
         kFilePinyinName = Qt::UserRole + 10,
         kExtraProperties = Qt::UserRole + 11,
-//        kFileBaseNameRole = Qt::UserRole + 12,
+        kFileBaseNameRole = Qt::UserRole + 12,
         kFileSuffixRole = Qt::UserRole + 13,
         kFileNameOfRenameRole = Qt::UserRole + 14,
         kFileBaseNameOfRenameRole = Qt::UserRole + 15,

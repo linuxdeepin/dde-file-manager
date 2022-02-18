@@ -312,6 +312,11 @@ void CanvasGrid::popOverload()
     }
 }
 
+void CanvasGrid::arrange()
+{
+    d->sequence(items());
+}
+
 CanvasGridPrivate::CanvasGridPrivate(CanvasGrid *qq)
     : QObject(qq)
     , q(qq)

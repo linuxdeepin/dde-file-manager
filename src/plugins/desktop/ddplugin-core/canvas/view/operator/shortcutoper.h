@@ -48,6 +48,7 @@ protected slots:
     void tabToFirst();
     void showMenu();
     void clearClipBoard();
+    void swichHidden();
 protected:
     CanvasView *view;
 };

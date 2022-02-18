@@ -63,6 +63,7 @@ public:
     void append(QStringList items);
     void tryAppendAfter(const QStringList &items, int index, const QPoint &begin);
     void popOverload();
+    void arrange();
 signals:
 
 public slots:

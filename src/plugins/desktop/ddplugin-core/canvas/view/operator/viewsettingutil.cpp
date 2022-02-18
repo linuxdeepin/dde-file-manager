@@ -27,6 +27,7 @@
 
 #include <QMouseEvent>
 
+//DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
@@ -34,6 +35,7 @@ ViewSettingUtil::ViewSettingUtil(QObject *parent) : QObject(parent)
 {
     touchDragTimer.setSingleShot(true);
     touchDragTimer.setTimerType(Qt::PreciseTimer);
+
 }
 
 void ViewSettingUtil::checkTouchDrag(QMouseEvent *event)

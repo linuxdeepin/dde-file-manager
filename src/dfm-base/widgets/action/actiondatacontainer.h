@@ -37,7 +37,7 @@ public:
     ActionDataContainer();
     ActionDataContainer(int type, const QString &name);
     ActionDataContainer(const ActionDataContainer &other);
-    int actionType();
+    int actionType() const;
     QString name() const;
     void setName(const QString &name);
     QIcon icon() const;

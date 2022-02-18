@@ -36,7 +36,7 @@ ActionDataContainer::ActionDataContainer(const ActionDataContainer &other)
 {
 }
 
-int ActionDataContainer::actionType()
+int ActionDataContainer::actionType() const
 {
     return actType;
 }
