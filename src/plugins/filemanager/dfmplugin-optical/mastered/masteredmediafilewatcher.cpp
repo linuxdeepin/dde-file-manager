@@ -25,9 +25,13 @@
 #include "utils/opticalhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
 DPOPTICAL_USE_NAMESPACE
+
+using namespace GlobalServerDefines;
 
 MasteredMediaFileWatcherPrivate::MasteredMediaFileWatcherPrivate(const QUrl &fileUrl, MasteredMediaFileWatcher *qq)
     : AbstractFileWatcherPrivate(fileUrl, qq)
@@ -63,8 +67,18 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
             this, &MasteredMediaFileWatcher::onSubfileCreated);
 
     dptr->proxyOnDisk.clear();
+    QString devFile { OpticalHelper::burnDestDevice(url) };
+    QString id { OpticalHelper::deviceId(devFile) };
+    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    QString mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
+    dptr->proxyOnDisk = WacherFactory::create<AbstractFileWatcher>(mntPoint);
 
-    // TODO(zhangs): proxyOnDisk wathcer
+    // TODO(zhangs):
+    /*
+     * blank disc doesn't mount
+     * ejecting disc by pressing the eject button doesn't properly remove the mount point
+     * therefore this is always needed as a "last resort".
+     */
 }
 
 void MasteredMediaFileWatcher::onFileDeleted(const QUrl &url)

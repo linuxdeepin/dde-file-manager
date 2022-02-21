@@ -73,7 +73,12 @@ void Optical::addOpticalCrumbToTitleBar()
                 auto info = InfoFactory::create<AbstractFileInfo>(curUrl);
                 if (!info)
                     break;
-                // TODO(zhangs):
+                QString displayText = info->fileDisplayName();
+                ret.push_front(TitleBar::CrumbData(curUrl, displayText));
+                if (info->parentUrl() == QUrl::fromLocalFile(QDir::homePath())) {
+                    ret.front().iconName = "media-optical-symbolic";
+                    break;
+                }
                 curUrl = info->parentUrl();
             }
             return ret;

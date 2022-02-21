@@ -45,7 +45,6 @@ public:
     explicit AbstractFileInfoPrivate(AbstractFileInfo *qq);
     virtual ~AbstractFileInfoPrivate();
 
-protected:
     AbstractFileInfo *const q;   // DAbstractFileInfo实例对象
     AbstractFileInfoPointer proxy { nullptr };
 };

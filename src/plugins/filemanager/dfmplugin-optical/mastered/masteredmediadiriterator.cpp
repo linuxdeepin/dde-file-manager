@@ -21,12 +21,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "masteredmediadiriterator.h"
+#include "masteredmediafileinfo.h"
 
 #include "utils/opticalhelper.h"
-#include "utils/opticaldevicehelper.h"
+
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
 DPOPTICAL_USE_NAMESPACE
+
+using namespace GlobalServerDefines;
 
 MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
                                                    const QStringList &nameFilters,
@@ -34,56 +39,88 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
                                                    QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags)
 {
-    QString device { OpticalHelper::burnDestDevice(url) };
-    mntPoint = OpticalDeviceHelper::firstMountPoint(device.remove("/dev/"));
-    while (*mntPoint.rbegin() == '/')
-        mntPoint.chop(1);
+    devFile = OpticalHelper::burnDestDevice(url);
+    QString id { OpticalHelper::deviceId(devFile) };
+    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
+
+    QString stagingPath { OpticalHelper::localStagingFile(url).path() };
+    stagingIterator = QSharedPointer<QDirIterator>(
+            new QDirIterator(stagingPath, nameFilters, filters, flags));
+
+    bool opticalBlank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
+    if (opticalBlank) {
+        discIterator.clear();
+        return;
+    }
+
+    QString realpath { mntPoint + OpticalHelper::burnFilePath(url) };
+    discIterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filters, flags));
 }
 
 QUrl MasteredMediaDirIterator::next()
 {
-    // TODO(zhangs): impl me!
-    return {};
+    if (discIterator && discIterator->hasNext()) {
+        return changeSchemeUpdate(discIterator->next());
+    } else {
+        discIterator = nullptr;
+        return changeSchemeUpdate(stagingIterator->next());
+    }
 }
 
 bool MasteredMediaDirIterator::hasNext() const
 {
-    // TODO(zhangs): impl me!
-    return {};
+    return (discIterator && discIterator->hasNext()) || (stagingIterator && stagingIterator->hasNext());
 }
 
 QString MasteredMediaDirIterator::fileName() const
 {
-    // TODO(zhangs): impl me!
-    return {};
+    return discIterator ? discIterator->fileName() : stagingIterator->fileName();
 }
 
 QUrl MasteredMediaDirIterator::fileUrl() const
 {
-    // TODO(zhangs): impl me!
-    return {};
+    return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->filePath() : stagingIterator->filePath()));
 }
 
 const AbstractFileInfoPointer MasteredMediaDirIterator::fileInfo() const
 {
-    // TODO(zhangs): impl me!
-    return {};
+    AbstractFileInfoPointer fileinfo = AbstractFileInfoPointer(new MasteredMediaFileInfo(fileUrl()));
+    return fileinfo->exists() ? fileinfo : AbstractFileInfoPointer();   //bug 64941, DVD+RW 只擦除文件系统部分信息，而未擦除全部，有垃圾数据，所以需要判断文件的有效性
 }
 
 QUrl MasteredMediaDirIterator::url() const
 {
-    // TODO(zhangs): impl me!
-    return {};
+    return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->path() : stagingIterator->path()));
 }
 
 QUrl MasteredMediaDirIterator::changeScheme(const QUrl &in) const
 {
-    // TODO(zhangs): impl me!
-    return {};
+    QUrl burntmp = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                                       + "/" + qApp->organizationName() + "/" + QString(kDiscburnStaging) + "/");
+    QString stagingroot = burntmp.path() + QString(devFile).replace('/', '_');
+    QUrl ret;
+    QString path = in.path();
+    if (burntmp.isParentOf(in)) {
+        path.replace(stagingroot, devFile + "/" + kBurnSegStaging);
+    } else {
+        path.replace(mntPoint, devFile + "/" + kBurnSegOndisc);
+    }
+    ret.setScheme(SchemeTypes::kBurn);
+    ret.setPath(path);
+    if (skip.contains(ret)) {
+        ret.setFragment("dup");
+    }
+    return ret;
 }
 
 QUrl MasteredMediaDirIterator::changeSchemeUpdate(const QUrl &in)
 {
-    // TODO(zhangs): impl me!
-    return {};
+    QUrl ret = changeScheme(in);
+    if (seen.contains(OpticalHelper::burnFilePath(ret))) {
+        skip.insert(ret);
+        return QUrl();
+    }
+    seen.insert(OpticalHelper::burnFilePath(ret));
+    return ret;
 }

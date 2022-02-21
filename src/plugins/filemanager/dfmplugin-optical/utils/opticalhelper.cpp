@@ -38,6 +38,8 @@ DPOPTICAL_USE_NAMESPACE
 #define BURN_SEG_ONDISC "disc_files"
 #define BURN_SEG_STAGING "staging_files"
 
+static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
+
 QIcon OpticalHelper::icon()
 {
     return QIcon::fromTheme(iconString());
@@ -59,7 +61,7 @@ QUrl OpticalHelper::localStagingFile(const QUrl &dest)
                                + burnFilePath(dest));
 }
 
-QUrl OpticalHelper::localStatgingFile(QString dev)
+QUrl OpticalHelper::localStagingFile(QString dev)
 {
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)   // ~/.cache
                                + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"   // ~/.cache/deepin/discburn/
@@ -80,6 +82,15 @@ QString OpticalHelper::burnFilePath(const QUrl &url)
     if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(burnRxp(), &m))
         return {};
     return m.captured(3);
+}
+
+bool OpticalHelper::burnIsOnDisc(const QUrl &url)
+{
+    QRegularExpressionMatch m;
+    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(burnRxp(), &m)) {
+        return false;
+    }
+    return m.captured(2) == BURN_SEG_ONDISC;
 }
 
 QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
@@ -103,6 +114,14 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
     url.setPath(filePath);
 
     return url;
+}
+
+QString OpticalHelper::deviceId(const QString &device)
+{
+    QString dev { device };
+    if (dev.startsWith("/dev/"))
+        dev = dev.remove("/dev/");
+    return QString(kBlockDeviceIdPrefix) + dev;
 }
 
 DSB_FM_NAMESPACE::WindowsService *OpticalHelper::winServIns()

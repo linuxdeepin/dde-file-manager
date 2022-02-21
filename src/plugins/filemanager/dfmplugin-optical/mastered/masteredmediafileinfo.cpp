@@ -22,11 +22,18 @@
 */
 #include "masteredmediafileinfo.h"
 
+#include "utils/opticalhelper.h"
+
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
 
 DPOPTICAL_BEGIN_NAMESPACE
+
+using namespace GlobalServerDefines;
 
 class MasteredMediaFileInfoPrivate : public AbstractFileInfoPrivate
 {
@@ -45,6 +52,152 @@ MasteredMediaFileInfoPrivate::~MasteredMediaFileInfoPrivate()
 MasteredMediaFileInfo::MasteredMediaFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new MasteredMediaFileInfoPrivate(this))
 {
+    backupInfo(url);
+}
+
+bool MasteredMediaFileInfo::exists() const
+{
+    if (url().isEmpty() || !backerUrl.isValid() || backerUrl.isEmpty()) {
+        return false;
+    }
+    if (url().fragment() == "dup") {
+        return false;
+    }
+
+    return dptr->proxy && dptr->proxy->exists();
+}
+
+bool MasteredMediaFileInfo::isReadable() const
+{
+    if (!dptr->proxy)
+        return true;
+
+    return dptr->proxy->isReadable();
+}
+
+bool MasteredMediaFileInfo::isWritable() const
+{
+    if (!OpticalHelper::burnIsOnDisc(backerUrl))
+        return true;
+    // TODO(zhangs): avail
+    return true;
+}
+
+bool MasteredMediaFileInfo::isDir() const
+{
+    return !dptr->proxy || dptr->proxy->isDir();
+}
+
+QString MasteredMediaFileInfo::fileDisplayName() const
+{
+    if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
+        QString id { OpticalHelper::deviceId(OpticalHelper::burnDestDevice(url())) };
+        auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+        QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
+        return idLabel;
+    }
+
+    if (!dptr->proxy)
+        return "";
+    return dptr->proxy->fileDisplayName();
+}
+
+QVariantHash MasteredMediaFileInfo::extraProperties() const
+{
+    QVariantHash ret;
+    if (dptr->proxy) {
+        ret = dptr->proxy->extraProperties();
+    }
+    ret["mm_backer"] = backerUrl.path();
+    return ret;
+}
+
+QVector<ActionType> MasteredMediaFileInfo::menuActionList(AbstractMenu::MenuType type) const
+{
+    // TODO(zhangs):
+    return {};
+}
+
+bool MasteredMediaFileInfo::canRedirectionFileUrl() const
+{
+    if (isDir())
+        return isSymLink();   // fix bug 202007010021 当光驱刻录的文件夹中存在文件夹的链接时，要跳转到链接对应的目标文件夹
+    return !isDir();
+}
+
+QUrl MasteredMediaFileInfo::redirectedFileUrl() const
+{
+    if (dptr->proxy) {
+        return dptr->proxy->url();
+    }
+
+    return AbstractFileInfo::url();
+}
+
+QUrl MasteredMediaFileInfo::parentUrl() const
+{
+    if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
+        return QUrl::fromLocalFile(QDir::homePath());
+    }
+    return AbstractFileInfo::parentUrl();
+}
+
+bool MasteredMediaFileInfo::canDrop() const
+{
+    return isWritable();
+}
+
+bool MasteredMediaFileInfo::canRename() const
+{
+    return false;
+}
+
+QSet<ActionType> MasteredMediaFileInfo::disableMenuActionList() const
+{
+    // TODO(zhangs):
+    return {};
+}
+
+void MasteredMediaFileInfo::refresh()
+{
+    AbstractFileInfo::refresh();
+    if (dptr->proxy) {
+        return;
+    }
+
+    backupInfo(url());
+}
+
+bool MasteredMediaFileInfo::canDragCompress() const
+{
+    return false;
+}
+
+QString MasteredMediaFileInfo::emptyDirectoryTip() const
+{
+    return QObject::tr("Folder is empty");
+}
+
+void MasteredMediaFileInfo::backupInfo(const QUrl &url)
+{
+    if (OpticalHelper::burnDestDevice(url).length() == 0)
+        return;
+
+    if (OpticalHelper::burnIsOnDisc(url)) {
+        QString id { OpticalHelper::deviceId(OpticalHelper::burnDestDevice(url)) };
+        auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+        bool opticalBlank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
+        if (opticalBlank)
+            return;
+        QString mnt { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
+        if (mnt.isEmpty())
+            backerUrl = QUrl();
+        else
+            backerUrl = QUrl::fromLocalFile(mnt + OpticalHelper::burnFilePath(url));
+    } else {
+        backerUrl = OpticalHelper::localStagingFile(url);
+    }
+    setProxy(InfoFactory::create<AbstractFileInfo>(backerUrl));
 }
 
 DPOPTICAL_END_NAMESPACE

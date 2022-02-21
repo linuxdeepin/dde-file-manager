@@ -36,6 +36,29 @@ class MasteredMediaFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 
 public:
     explicit MasteredMediaFileInfo(const QUrl &url);
+
+    bool exists() const override;
+    bool isReadable() const override;
+    bool isWritable() const override;
+    bool isDir() const override;
+    QString fileDisplayName() const override;
+    QVariantHash extraProperties() const override;
+    QVector<DFMBASE_NAMESPACE::ActionType> menuActionList(DFMBASE_NAMESPACE::AbstractMenu::MenuType type) const override;
+    bool canRedirectionFileUrl() const override;
+    QUrl redirectedFileUrl() const override;
+    QUrl parentUrl() const override;
+    bool canDrop() const override;
+    bool canRename() const override;
+    QSet<DFMBASE_NAMESPACE::ActionType> disableMenuActionList() const override;
+    void refresh() override;
+    bool canDragCompress() const override;
+    virtual QString emptyDirectoryTip() const override;
+
+private:
+    void backupInfo(const QUrl &url);
+
+private:
+    QUrl backerUrl;
 };
 
 DPOPTICAL_END_NAMESPACE

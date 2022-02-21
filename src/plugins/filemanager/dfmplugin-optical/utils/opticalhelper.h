@@ -32,6 +32,10 @@
 #include <QIcon>
 #include <QRegularExpression>
 
+static constexpr char kDiscburnStaging[] { "discburn" };
+static constexpr char kBurnSegOndisc[] { "disc_files" };
+static constexpr char kBurnSegStaging[] { "staging_files" };
+
 DPOPTICAL_BEGIN_NAMESPACE
 
 class OpticalHelper
@@ -40,10 +44,12 @@ public:
     static QIcon icon();
     static QString iconString();
     static QUrl localStagingFile(const QUrl &dest);
-    static QUrl localStatgingFile(QString dev);
+    static QUrl localStagingFile(QString dev);
     static QString burnDestDevice(const QUrl &url);
     static QString burnFilePath(const QUrl &url);
+    static bool burnIsOnDisc(const QUrl &url);
     static QUrl tansToBurnFile(const QUrl &in);
+    static QString deviceId(const QString &device);
 
     static DSB_FM_NAMESPACE::WindowsService *winServIns();
     static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
