@@ -57,7 +57,8 @@ QRect CanvasView::visualRect(const QModelIndex &index) const
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
 {
     Q_UNUSED(index)
-    Q_UNUSED(hint)
+    Q_UNUSED(hint);
+    // todo:
 }
 
 QModelIndex CanvasView::indexAt(const QPoint &point) const
@@ -793,7 +794,7 @@ QModelIndex CanvasViewPrivate::findIndex(const QString &key, bool matchStart, co
         const QString &pinyinName = q->model()->data(index, CanvasModel::kFilePinyinName).toString();
 
         if (matchStart ? pinyinName.startsWith(key, Qt::CaseInsensitive)
-                : pinyinName.contains(key, Qt::CaseInsensitive)) {
+                       : pinyinName.contains(key, Qt::CaseInsensitive)) {
             return index;
         }
     }

@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ACTIONTYPEMANAGER_H
-#define ACTIONTYPEMANAGER_H
+#ifndef DEFAULTACTIONDATA_H
+#define DEFAULTACTIONDATA_H
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/dfm_actiontype_defines.h"
@@ -30,30 +30,26 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-class ActionDataContainer;
-class ActionTypeManagerPrivate;
-class ActionTypeManager : public QObject
+class DefaultActionDataPrivate;
+class DefaultActionData : public QObject
 {
     Q_OBJECT
 public:
-    static ActionTypeManager &instance();
-    QPair<int, ActionDataContainer> registerActionType(const QString &actPredicate, const QString &actionText);
-    bool addSubActionType(ActionType parentType, const ActionDataContainer &actionData);
-
+    explicit DefaultActionData(QObject *parent = nullptr);
+    ~DefaultActionData();
     ActionDataContainer actionDataContainerByType(const int actType,
                                                   const ActionDataContainer &defaultAct = ActionDataContainer());
-    void recycleActionType(int actType);
-    void actionGlobleEventBind(ActionType actType, GlobalEventType eventType);
-    void actionGlobleEventUnBind(ActionType actType);
-    GlobalEventType actionGlobalEvent(ActionType actType);
+    bool addSubActionType(ActionType parentType, const ActionDataContainer &actionData);
+    bool contains(ActionType type);
 
 private:
-    explicit ActionTypeManager(QObject *parent = nullptr);
-    ~ActionTypeManager();
+    void initDefaultActionData();
+    void initDefaultActionEvent();
+    ActionDataContainer addDefaultActionType(ActionType type, const QString &actPredicate, const QString &actionText);
 
 private:
-    QScopedPointer<ActionTypeManagerPrivate> d;
+    QScopedPointer<DefaultActionDataPrivate> d;
 };
 
 DFMBASE_END_NAMESPACE
-#endif   // ACTIONTYPEMANAGER_H
+#endif   // DEFAULTACTIONDATA_H

@@ -32,7 +32,14 @@ ActionDataContainer::ActionDataContainer(int type, const QString &name)
 }
 
 ActionDataContainer::ActionDataContainer(const ActionDataContainer &other)
-    : actType(other.actType), actionName(other.actionName), actionIcon(other.actionIcon), actionCommand(other.actionCommand), actionData(other.actionData), actionTriggeredFunc(other.actionTriggeredFunc), actionDestroyedFunc(other.actionDestroyedFunc)
+    : actType(other.actType),
+      actionName(other.actionName),
+      actionIcon(other.actionIcon),
+      actionCommand(other.actionCommand),
+      actionData(other.actionData),
+      subActionsData(other.subActionsData),
+      actionTriggeredFunc(other.actionTriggeredFunc),
+      actionDestroyedFunc(other.actionDestroyedFunc)
 {
 }
 
@@ -66,9 +73,24 @@ QVariant ActionDataContainer::data()
     return actionData;
 }
 
+QVector<ActionDataContainer> ActionDataContainer::childrenActionsData() const
+{
+    return subActionsData;
+}
+
 void ActionDataContainer::setData(const QVariant &var)
 {
     actionData = var;
+}
+
+void ActionDataContainer::addChildrenActionsData(const ActionDataContainer &actData)
+{
+    subActionsData.append(actData);
+}
+
+void ActionDataContainer::setChildrenActionsData(const QVector<ActionDataContainer> &actDataLst)
+{
+    subActionsData = std::move(actDataLst);
 }
 
 TriggeredFunc ActionDataContainer::triggeredFunc()

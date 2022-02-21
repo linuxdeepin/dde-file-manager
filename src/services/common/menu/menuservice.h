@@ -66,6 +66,7 @@ public:
                       const QUrl &rootUrl,
                       const QUrl &foucsUrl,
                       const QList<QUrl> selected,
+                      bool onDesktop = false,
                       ExtensionFlags flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,
                       QVariant customData = QVariant());
 

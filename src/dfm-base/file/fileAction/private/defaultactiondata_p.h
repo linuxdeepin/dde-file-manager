@@ -18,46 +18,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ACTIONTYPEMANAGER_P_H
-#define ACTIONTYPEMANAGER_P_H
+#ifndef DEFAULTACTIONDATA_P_H
+#define DEFAULTACTIONDATA_P_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-base/utils/actiontypemanager.h"
+#include "dfm-base/file/fileAction/defaultactiondata.h"
 
 #include <QMap>
 #include <QAction>
 
 DFMBASE_BEGIN_NAMESPACE
 
-class DefaultActionData;
 class ActionDataContainer;
-class ActionTypeManager;
-class ActionTypeManagerPrivate
+class DefaultActionData;
+class DefaultActionDataPrivate
 {
-    friend class ActionTypeManager;
-    Q_DISABLE_COPY(ActionTypeManagerPrivate)
+    friend class DefaultActionData;
+    Q_DISABLE_COPY(DefaultActionDataPrivate)
 public:
-    explicit ActionTypeManagerPrivate(ActionTypeManager *qq = nullptr);
-    virtual ~ActionTypeManagerPrivate();
+    explicit DefaultActionDataPrivate(DefaultActionData *qq = nullptr);
+    virtual ~DefaultActionDataPrivate();
 
 private:
-    ActionTypeManager *q { nullptr };
+    DefaultActionData *q { nullptr };
 
+    // actionType---actionData
     using actionTypeData = QMap<int, ActionDataContainer>;
-    actionTypeData actionTypes;
+    actionTypeData allActionTypeToData;
 
+    // actionPredicate---actionText
     using actionPredicateToText = QMap<QString, QString>;
-    actionPredicateToText allActionText;
+    actionPredicateToText allActionPredicateToText;
 
+    // actionPredicate--actionType
     using actionPredicateToTypes = QMap<QString, int>;
-    actionPredicateToTypes allActionTypes;
+    actionPredicateToTypes allActionPredicateToTypes;
 
     QHash<ActionType, GlobalEventType> actionTypeToEventType;
-
-    int tempactType { ActionType::kActCustomBase };
-
-    DefaultActionData *defaultActions;
 };
 
 DFMBASE_END_NAMESPACE
-#endif   // ACTIONTYPEMANAGER_P_H
+
+#endif   // DEFAULTACTIONDATA_P_H

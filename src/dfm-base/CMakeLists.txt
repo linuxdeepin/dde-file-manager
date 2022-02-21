@@ -72,6 +72,8 @@ FILE (GLOB ALL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/private/*.cpp"
 )
 
 FILE (GLOB WIDGETS_FILES

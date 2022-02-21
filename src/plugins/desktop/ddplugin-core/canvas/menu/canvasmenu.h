@@ -23,6 +23,8 @@
 
 #include "dfm_desktop_service_global.h"
 #include "dfm-base/interfaces/abstractmenu.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
+
 #include "services/common/menu/menuservice.h"
 
 #include "dfm-framework/framework.h"
@@ -38,16 +40,16 @@ namespace MenuScene {
 extern const char *const kDesktopMenu;
 }   // namespace MenuScene
 
+class CanvasView;
 class CanvasMenu : public dfmbase::AbstractMenu
 {
     enum DesktopCustomAction {
-        kDisplaySettings = 1,
+        kDisplaySettings = dfmbase::ActionType::kActMaxCustom,
         kCornerSettings,
         kWallpaperSettings,
         kFileManagerProperty,
         kAutoMerge,
-        kAutoSort,
-
+        kAutoArrange,
         kIconSize,
         kIconSize0 = kIconSize,
         kIconSize1 = kIconSize + 1,
@@ -59,6 +61,7 @@ class CanvasMenu : public dfmbase::AbstractMenu
 
 public:
     CanvasMenu();
+    ~CanvasMenu();
     virtual QMenu *build(QWidget *parent,
                          MenuMode mode,
                          const QUrl &rootUrl,
@@ -75,13 +78,21 @@ private:
                     const QList<QUrl> &selected = {});
 
     void acitonBusiness(QAction *act);
+    void registDesktopCustomActions();
+    void registDesktopCustomSubActions();
+    void columnRolesAssociateActionType();
+    void creatMenuByDataLst(QMenu *menu, const QVector<dfmbase::ActionDataContainer> &lst);
+    void setActionSpecialHandling(QMenu *menu);
 
 private:
     DSC_NAMESPACE::MenuService *extensionMenuServer { nullptr };
     QMap<DesktopCustomAction, dfmbase::ActionDataContainer> customAction;
     QMap<int, DesktopCustomAction> customActionType;
-    QWidget *parentWidget { nullptr };
+    CanvasView *view { nullptr };
     QVariant cusData;
+    QMap<dfmbase::AbstractFileInfo::SortKey, dfmbase::ActionType> userColumnRoles;
+    bool actionTypesInitialized { false };
+    dfmbase::ActionDataContainer *sortByActionData { nullptr };
 };
 
 DSB_D_END_NAMESPACE

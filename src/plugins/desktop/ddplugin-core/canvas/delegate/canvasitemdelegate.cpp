@@ -52,8 +52,8 @@ DSB_D_BEGIN_NAMESPACE
 #define EDITOR_SHOW_SUFFIX "_d_whether_show_suffix"
 
 const int CanvasItemDelegate::kTextPadding = 4;
-const int CanvasItemDelegate::kIconSpacing =  5;
-const int CanvasItemDelegate::kTconBackRadius = 18;
+const int CanvasItemDelegate::kIconSpacing = 5;
+const int CanvasItemDelegate::kIconBackRadius = 18;
 const int CanvasItemDelegate::kIconRectRadius = 4;
 
 int CanvasItemDelegatePrivate::textObjectType = QTextFormat::UserObject + 1;
@@ -62,12 +62,10 @@ FileTagObjectInterface *CanvasItemDelegatePrivate::textObjectInterface = new Fil
 CanvasItemDelegatePrivate::CanvasItemDelegatePrivate(CanvasItemDelegate *qq)
     : q(qq)
 {
-
 }
 
 CanvasItemDelegatePrivate::~CanvasItemDelegatePrivate()
 {
-
 }
 
 ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &index, const QPainter *painter) const
@@ -117,28 +115,26 @@ bool CanvasItemDelegatePrivate::needExpend(const QStyleOptionViewItem &option, c
 
             // the height is INT_MAX.
             // using this rect to call textPaintRect to get right height.
-            *needLabel = newlabelRect; // output label rect.
+            *needLabel = newlabelRect;   // output label rect.
         }
         return true;
     } else {
         if (needLabel)
-            *needLabel = paintRect; // output text rect that is really used to draw.
+            *needLabel = paintRect;   // output text rect that is really used to draw.
         return false;
     }
 }
 
 CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
-    : QStyledItemDelegate(parentPtr)
-    , d(new CanvasItemDelegatePrivate(this))
+    : QStyledItemDelegate(parentPtr), d(new CanvasItemDelegatePrivate(this))
 {
     // 初始化图标等级、大小信息
     d->iconSizes << 32 << 48 << 64 << 96 << 128;
     d->iconLevelDescriptions << tr("Tiny")
-                         << tr("Small")
-                         << tr("Medium")
-                         << tr("Large")
-                         << tr("Super large");
-
+                             << tr("Small")
+                             << tr("Medium")
+                             << tr("Large")
+                             << tr("Super large");
 
     // 初始化默认图标为小
     const int iconLevel = 1;
@@ -151,7 +147,6 @@ CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
 
 CanvasItemDelegate::~CanvasItemDelegate()
 {
-
 }
 
 QSize CanvasItemDelegate::sizeHint(const QStyleOptionViewItem &opt, const QModelIndex &index) const
@@ -181,7 +176,7 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         // draw icon
         const QRect rIcon = iconRect(option.rect);
         paintIcon(painter, indexOption.icon, rIcon, Qt::AlignCenter,
-                  (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled); //why Enabled?
+                  (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   //why Enabled?
 
         // todo(zy) 绘制角标
 
@@ -213,14 +208,14 @@ void CanvasItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptio
 
     // option.rect is view->visualRect;
     auto geo = option.rect;
-    auto margins = QMargins(0 , CanvasViewPrivate::gridMarginsHelper(parent()).top(), 0 , 0);
+    auto margins = QMargins(0, CanvasViewPrivate::gridMarginsHelper(parent()).top(), 0, 0);
     {
         auto gridTop = geo;
-        gridTop.setTop(margins.top()); //remove top magrin to adjust visualRect to itemRect.
+        gridTop.setTop(margins.top());   //remove top magrin to adjust visualRect to itemRect.
         auto icon = iconRect(gridTop);
         auto label = labelRect(gridTop, icon);
         auto text = d->availableTextRect(label);
-        margins.setTop(text.top()); // get text rect top
+        margins.setTop(text.top());   // get text rect top
     }
     // grid top + icon height +kIconSpacing + kTextPadding is the text begin pos.
     //margins.setTop(margins.top() + parent()->iconSize().height() + kIconSpacing + kTextPadding);
@@ -238,13 +233,13 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     // 是否显示判断后缀
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
-    QString suffix = index.data(CanvasModel::kFileSuffixRole).toString(); //todo kFileSuffixOfRenameRole
+    QString suffix = index.data(CanvasModel::kFileSuffixRole).toString();   //todo kFileSuffixOfRenameRole
     qDebug() << "Display" << index.data(CanvasModel::kFileDisplayNameRole)
              << "FileName" << index.data(CanvasModel::kFileNameRole)
              << "BaseName" << index.data(CanvasModel::kFileBaseNameRole)
              << "suffix" << suffix;
     if (showSuffix) {
-        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString(); // todo kFileNameOfRenameRole
+        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString();   // todo kFileNameOfRenameRole
         itemEditor->setMaximumLength(255);
         itemEditor->setText(name);
         itemEditor->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
@@ -252,7 +247,8 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
         itemEditor->setProperty(EDITOR_SHOW_SUFFIX, suffix);
         itemEditor->setMaximumLength(255 - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
 
-        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString(); //todo kFileBaseNameOfRenameRole
+        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString();   //todo kFileBaseNameOfRenameRole
+
         //remove shuffix
         name = name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1));
         itemEditor->setText(name);
@@ -273,7 +269,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
 
     QString suffix = editor->property(EDITOR_SHOW_SUFFIX).toString();
     if (!suffix.isEmpty())
-        newName += QStringLiteral("." ) + suffix;
+        newName += QStringLiteral(".") + suffix;
 
     CanvasModel *canvasModel = qobject_cast<CanvasModel *>(model);
     Q_ASSERT(canvasModel);
@@ -412,7 +408,7 @@ QList<QRectF> CanvasItemDelegate::elideTextRect(const QModelIndex &index, const 
 bool CanvasItemDelegate::isTransparent(const QModelIndex &index) const
 {
     // in cutting
-    if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction ) {
+    if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
         DFMLocalFileInfoPointer file = parent()->model()->fileInfo(index);
         if (!file.get())
             return false;
@@ -634,6 +630,14 @@ int CanvasItemDelegate::maximumIconLevel() const
     return d->iconSizes.count() - 1;
 }
 
+QString CanvasItemDelegate::iconSizeLevelDescription(int i) const
+{
+    bool validIndex = (i <= maximumIconLevel()) && (i >= minimumIconLevel());
+    if (validIndex)
+        return d->iconLevelDescriptions.at(i);
+    return QString();
+}
+
 QRect CanvasItemDelegate::iconRect(const QRect &paintRect) const
 {
     QRect rIcon = paintRect;
@@ -671,7 +675,6 @@ QRect CanvasItemDelegate::textPaintRect(const QStyleOptionViewItem &option, cons
     rect = boundingRect(lines).toRect();
     return rect;
 }
-
 
 void CanvasItemDelegate::updateItemSizeHint() const
 {
@@ -751,7 +754,7 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
 
     // selected
     if (model->isSelected(index)) {
-         // set seleted state. it didn't be seted in QStyledItemDelegate::initStyleOption.
+        // set seleted state. it didn't be seted in QStyledItemDelegate::initStyleOption.
         option->state |= QStyle::State_Selected;
     } else {
         option->state &= QStyle::StateFlag(~QStyle::State_Selected);
@@ -762,7 +765,7 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
         QPalette::ColorGroup cg;
         if (view->model()->flags(index) & Qt::ItemIsEnabled) {
             cg = QPalette::Normal;
-        } else { // item is not enable.
+        } else {   // item is not enable.
             option->state &= ~QStyle::State_Enabled;
             cg = QPalette::Disabled;
         }
@@ -786,7 +789,7 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
     if ((option->state & QStyle::State_HasFocus) && option->showDecorationSelected && model->selectedIndexes().size() > 1) {
         option->palette.setColor(QPalette::Background, QColor("#0076F9"));
         option->backgroundBrush = QColor("#0076F9");
-    } else { // normal
+    } else {   // normal
         option->palette.setColor(QPalette::Background, QColor("#2da6f7"));
         option->backgroundBrush = QColor("#2da6f7");
     }
@@ -812,8 +815,8 @@ void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QMo
  * \param state: The state for which a pixmap is intended to be used. (On, Off)
  */
 QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
-                                   const QRectF &rect, Qt::Alignment alignment,
-                                   QIcon::Mode mode, QIcon::State state)
+                                    const QRectF &rect, Qt::Alignment alignment,
+                                    QIcon::Mode mode, QIcon::State state)
 {
     // Copy of QStyle::alignedRect
     alignment = visualAlignment(painter->layoutDirection(), alignment);
@@ -848,7 +851,5 @@ void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewIte
     }
     painter->restore();
 }
-
-
 
 DSB_D_END_NAMESPACE

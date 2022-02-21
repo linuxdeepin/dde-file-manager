@@ -81,6 +81,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
                                            view->model()->rootUrl(),
                                            QUrl(),
                                            {},
+                                           true,
                                            kAllExtensionAction,
                                            QVariant::fromValue(gridPos));
 
@@ -102,6 +103,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
                                                   QUrl(),
                                                   tgUrl,
                                                   selectUrls,
+                                                  true,
                                                   kAllExtensionAction,
                                                   QVariant::fromValue(gridPos));
 

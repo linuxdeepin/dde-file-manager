@@ -83,7 +83,9 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
                        << ActionType::kActSeparator;
 
         } else {
-            // todo(lee or lym): MenuAction::OpenWith
+            // todo(lee or lym): judge MenuAction::OpenWith
+            actionKeys << ActionType::kActOpenWith;
+
             if (fileInfo->isDir()) {
                 actionKeys << ActionType::kActOpenInNewWindow
                            << ActionType::kActOpenInNewTab

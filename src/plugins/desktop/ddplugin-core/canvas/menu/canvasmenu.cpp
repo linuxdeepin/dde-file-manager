@@ -24,20 +24,25 @@
 #include "canvas/canvasmanager.h"
 #include "displayconfig.h"
 #include "grid/canvasgrid.h"
+#include "canvas/delegate/canvasitemdelegate.h"
+#include "canvas/model/canvasmodel.h"
 
 #include "dfm-base/dfm_actiontype_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
-#include "dfm-base/widgets/action/actiondatacontainer.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/actiontypemanager.h"
+#include "dfm-base/utils/clipboard.h"
 #include "dfm-base/file/fileAction/desktopfileactions.h"
 
+#include <QDBusInterface>
+#include <QDBusPendingCall>
 #include <QMenu>
 
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
+DSB_D_USE_NAMESPACE
 
 namespace MenuScene {
 extern const char *const kDesktopMenu = "desktop-menu";
@@ -49,22 +54,19 @@ CanvasMenu::CanvasMenu()
     auto &ctx = dpfInstance.serviceContext();
     extensionMenuServer = ctx.service<MenuService>(MenuService::name());
 
-    // regist desktop aciton
-    QPair<int, ActionDataContainer> customAct = ActionTypeManager::instance().registerActionType(tr("Display Settings"));
-    customAction.insert(DesktopCustomAction::kDisplaySettings, customAct.second);
-    customActionType.insert(customAct.first, DesktopCustomAction::kDisplaySettings);
+    // regist desktop aciton type
+    this->registDesktopCustomActions();
 
-    customAct = ActionTypeManager::instance().registerActionType(tr("Wallpaper and Screensaver"));
-    customAction.insert(DesktopCustomAction::kWallpaperSettings, customAct.second);
-    customActionType.insert(customAct.first, DesktopCustomAction::kWallpaperSettings);
+    // associate user column Roles associate ActionType for desktop
+    this->columnRolesAssociateActionType();
+}
 
-    customAct = ActionTypeManager::instance().registerActionType(tr("Icon size"));
-    customAction.insert(DesktopCustomAction::kIconSize, customAct.second);
-    customActionType.insert(customAct.first, DesktopCustomAction::kIconSize);
-
-    customAct = ActionTypeManager::instance().registerActionType(tr("Auto arrange"));
-    customAction.insert(DesktopCustomAction::kAutoSort, customAct.second);
-    customActionType.insert(customAct.first, DesktopCustomAction::kAutoSort);
+CanvasMenu::~CanvasMenu()
+{
+    if (sortByActionData) {
+        delete sortByActionData;
+        sortByActionData = nullptr;
+    }
 }
 
 QMenu *CanvasMenu::build(QWidget *parent,
@@ -75,12 +77,9 @@ QMenu *CanvasMenu::build(QWidget *parent,
                          QVariant customData)
 {
     cusData = std::move(customData);
-    parentWidget = parent;
+    view = qobject_cast<CanvasView *>(parent);
     QMenu *menu = new QMenu(parent);
     if (AbstractMenu::MenuMode::kEmpty == mode) {
-
-        Q_UNUSED(foucsUrl)
-        Q_UNUSED(selected)
         emptyAreaMenu(menu, rootUrl);
     }
 
@@ -105,52 +104,36 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
         qInfo() << "create LocalFileInfo error: " << errString;
         return;
     }
-    QVector<ActionType> tempLst;
 
-    // 获取对应Scheme对应的菜单列表
-    auto baseDec = QSharedPointer<AbstractFileInfo>(new AbstractFileActions(tempInfo));
-    auto tempActionInfo = new DesktopFileActions(baseDec);
-
-    // 使用tempActionInfo通过tempFileInfo获取对应的action信息
-    tempLst = tempActionInfo->menuActionList(AbtMenuType::kSpaceArea);
-
-    // 根据actiontype获取到action信息
-    QVector<ActionDataContainer> tempActTextLst = ActionTypeManager::instance().actionNameListByTypes(tempLst);
-
-    // 增加桌面场景自定义的菜单
-    tempActTextLst << customAction.value(DesktopCustomAction::kDisplaySettings);
-    tempActTextLst << customAction.value(DesktopCustomAction::kWallpaperSettings);
-    tempActTextLst << customAction.value(DesktopCustomAction::kIconSize);
-    tempActTextLst << customAction.value(DesktopCustomAction::kAutoSort);
-
-    if (tempActTextLst.isEmpty())
+    QVector<ActionDataContainer> tempActTextLst;
+    if (!view)
         return;
 
-    // add action to menu
-    for (const ActionDataContainer &tempAct : tempActTextLst) {
-
-        // Separator
-        if (tempAct.actionType() == ActionType::kActSeparator) {
-            menu->addSeparator();
-            continue;
-        }
-
-        if (tempAct.name().isEmpty() || (-1 == tempAct.actionType()))
-            continue;
-
-        QAction *act = new QAction(menu);
-        act->setData(tempAct.actionType());
-        act->setText(tempAct.name());
-        if (!tempAct.icon().isNull())
-            act->setIcon(tempAct.icon());
-        menu->addAction(act);
-
-        if (tempAct.actionType() == customActionType.key(DesktopCustomAction::kAutoSort)) {
-            act->setCheckable(true);
-            auto align = DispalyIns->autoAlign();
-            act->setChecked(align);
-        }
+    // regest IconSize sub actions
+    if (!actionTypesInitialized) {
+        registDesktopCustomSubActions();
+        actionTypesInitialized = true;
     }
+
+    // Prepare the type of menu item to display
+
+    tempActTextLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActNewFolder)
+                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActNewDocument)
+                   << *sortByActionData
+                   << customAction.value(DesktopCustomAction::kIconSize)
+                   << customAction.value(DesktopCustomAction::kAutoArrange)
+                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActPaste)
+                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSelectAll)
+                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActOpenInTerminal)
+                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActRefreshView)
+                   << customAction.value(DesktopCustomAction::kDisplaySettings)
+                   << customAction.value(DesktopCustomAction::kWallpaperSettings);
+
+    // add action to menu
+    this->creatMenuByDataLst(menu, tempActTextLst);
+
+    // Action special handling
+    this->setActionSpecialHandling(menu);
 }
 
 void CanvasMenu::normalMenu(QMenu *menu,
@@ -159,7 +142,7 @@ void CanvasMenu::normalMenu(QMenu *menu,
                             const QList<QUrl> &selected)
 {
     Q_UNUSED(rootUrl)
-
+    // TODO(Lee) 以下为测试代码
     QString errString;
     auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(foucsUrl, true, &errString);
     if (!tempInfo) {
@@ -174,9 +157,14 @@ void CanvasMenu::normalMenu(QMenu *menu,
     auto tempActionInfo = new DesktopFileActions(baseDec);
 
     // 使用tempActionInfo通过tempFileInfo获取对应的action信息
+    QSet<int> unUsedActions;
     if (selected.size() == 1) {
         tempLst = tempActionInfo->menuActionList(AbtMenuType::kSingleFile);
+        unUsedActions << ActionType::kActOpenInNewWindow
+                      << ActionType::kActOpenInNewTab;
+        // TODO(Lee) ActionType::kActAddToBookMark
     } else {
+
         bool isSystemPathIncluded = false;
         for (auto &temp : selected) {
             if (SystemPathUtil::instance()->isSystemPath(temp.url())) {
@@ -191,28 +179,32 @@ void CanvasMenu::normalMenu(QMenu *menu,
         }
     }
 
-    // 根据actiontype获取到action信息
-    auto tempActTextLst = ActionTypeManager::instance().actionNameListByTypes(tempLst);
-    if (tempActTextLst.isEmpty())
+    unUsedActions << ActionType::kActSendToDesktop;
+
+    if (tempLst.isEmpty())
         return;
 
     // add action to menu
-    for (auto &tempAct : tempActTextLst) {
+    for (ActionType tempActType : tempLst) {
+        auto tempActData = ActionTypeManager::instance().actionDataContainerByType(tempActType);
 
         // Separator
-        if (tempAct.actionType() == ActionType::kActSeparator) {
+        if (tempActData.actionType() == ActionType::kActSeparator) {
             menu->addSeparator();
             continue;
         }
 
-        if (tempAct.name().isEmpty() || (-1 == tempAct.actionType()))
+        if (tempActData.name().isEmpty() || (-1 == tempActData.actionType()))
+            continue;
+
+        if (unUsedActions.contains(tempActData.actionType()))
             continue;
 
         QAction *act = new QAction(menu);
-        act->setData(tempAct.actionType());
-        act->setText(tempAct.name());
-        if (!tempAct.icon().isNull())
-            act->setIcon(tempAct.icon());
+        act->setData(tempActData.actionType());
+        act->setText(tempActData.name());
+        if (!tempActData.icon().isNull())
+            act->setIcon(tempActData.icon());
         menu->addAction(act);
     }
 
@@ -222,57 +214,233 @@ void CanvasMenu::normalMenu(QMenu *menu,
 void CanvasMenu::acitonBusiness(QAction *act)
 {
     auto actType = act->data().toInt();
-    CanvasView *view = qobject_cast<CanvasView *>(parentWidget);
+    if (customActionType.contains(actType))
+        actType = customActionType.value(actType);
 
-    {
-        // 自定义业务
-        int customType = customActionType.value(actType);
-        switch (customType) {
-        case DesktopCustomAction::kIconSize: {
-            qDebug() << "desktop menu -> DisplaySettings!";
-            return;
+    switch (actType) {
+    // 自定义和非事件
+    case DesktopCustomAction::kIconSize0:
+    case DesktopCustomAction::kIconSize1:
+    case DesktopCustomAction::kIconSize2:
+    case DesktopCustomAction::kIconSize3:
+    case DesktopCustomAction::kIconSize4: {
+        int lv = actType - kIconSize;
+        view->itemDelegate()->setIconLevel(lv);
+        view->updateGrid();
+        DispalyIns->setIconLevel(lv);
+        return;
+    }
+    case ActionType::kActRefreshView: {
+        view->refresh();
+        return;
+    }
+    case ActionType::kActSelectAll: {
+        // todo
+        view->QAbstractItemView::selectAll();
+        return;
+    }
+    case DesktopCustomAction::kDisplaySettings: {
+        QDBusInterface interface("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter", "com.deepin.dde.ControlCenter");
+        interface.asyncCall("ShowModule", QVariant::fromValue(QString("display")));
+        return;
+    }
+    case DesktopCustomAction::kWallpaperSettings: {
+        CanvasIns->onWallperSetting(view);
+        return;
+    }
+    case DesktopCustomAction::kAutoArrange: {
+        bool align = act->isChecked();
+        DispalyIns->setAutoAlign(align);
+        GridIns->setMode(align ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
+        if (align) {
+            GridIns->arrange();
+            CanvasIns->update();
         }
-        case DesktopCustomAction::kDisplaySettings: {
-            qDebug() << "desktop menu -> Icon size!";
-            return;
-        }
-        case DesktopCustomAction::kWallpaperSettings: {
-            qDebug() << "desktop menu -> Wallpaper and Screensaver!";
-            CanvasIns->onWallperSetting(view);
-            return;
-        }
-        case DesktopCustomAction::kAutoSort: {
-            bool align = act->isChecked();
-            qDebug() << "desktop menu -> kAutoSort!" << align;
-            DispalyIns->setAutoAlign(align);
-            GridIns->setMode(align ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
-            if (align) {
-                GridIns->arrange();
-                CanvasIns->update();
-            }
-            return;
-        }
-        default:
-            break;
-        }
+        return;
+    }
+    case ActionType::kActName:
+    case ActionType::kActSize:
+    case ActionType::kActType:
+    case ActionType::kActLastModifiedDate: {
+        auto sortByRole = [=](const dfmbase::AbstractFileInfo::SortKey role) -> bool {
+            Qt::SortOrder order = view->model()->sortOrder();
+            if (role == view->model()->sortRole())
+                order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+            view->model()->setSortRole(role, order);
+            view->model()->sort();
+
+            // save config
+            DispalyIns->setSortMethod(role, order);
+            return true;
+        };
+
+        // sort
+        auto sortRole = userColumnRoles.key(dfmbase::ActionType(actType));
+        sortByRole(sortRole);
+        return;
     }
 
-    {
-        // todo(lee):
-        // 菜单事件(一些非事件的自定义业务处理直接在之前返回)
+        // 事件
+    case kActNewFolder: {
+        FileOperaterProxyIns->touchFolder(view, cusData.toPoint());
+        return;
+    }
+    case kActNewText: {
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypeText);
+        return;
+    }
+    case kActNewWord: {
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypeWord);
+        return;
+    }
+    case kActNewExcel: {
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypeExcel);
+        return;
+    }
+    case kActNewPowerpoint: {
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypePowerpoint);
+        return;
+    }
+    case kActPaste: {
+        FileOperaterProxyIns->pasteFiles(view, cusData.toPoint());
+        return;
+    }
+    case kActDelete: {
+        FileOperaterProxyIns->moveToTrash(view);
+        return;
+    }
+    case ActionType::kActOpenInTerminal: {
+        QList<QUrl> urls;
+        urls.append(view->model()->rootUrl());
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, view->winId(), urls);
+        return;
+    }
+    default:
+        break;
+    }
+}
 
-        qDebug() << "eventDispatcher -> action: " << act->text();
-        switch (actType) {
-        case kActNewFolder: {
-            FileOperaterProxyIns->touchFolder(view, cusData.toPoint());
-            return;
+void CanvasMenu::registDesktopCustomActions()
+{
+    // regist desktop aciton type
+    QPair<int, ActionDataContainer> customAct = ActionTypeManager::instance().registerActionType("DisplaySettings", tr("Display Settings"));
+    customAction.insert(DesktopCustomAction::kDisplaySettings, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kDisplaySettings);
+
+    customAct = ActionTypeManager::instance().registerActionType("WallpaperSettings", tr("Wallpaper and Screensaver"));
+    customAction.insert(DesktopCustomAction::kWallpaperSettings, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kWallpaperSettings);
+
+    customAct = ActionTypeManager::instance().registerActionType("IconSize", tr("Icon size"));
+    customAction.insert(DesktopCustomAction::kIconSize, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kIconSize);
+
+    customAct = ActionTypeManager::instance().registerActionType("AutoArrange", tr("Auto arrange"));
+    customAction.insert(DesktopCustomAction::kAutoArrange, customAct.second);
+    customActionType.insert(customAct.first, DesktopCustomAction::kAutoArrange);
+}
+
+/*!
+ * \brief CanvasMenu::registDesktopCustomSubActions
+ *
+ */
+void CanvasMenu::registDesktopCustomSubActions()
+{
+    if (!view)
+        return;
+
+    // 特殊处理 kActIconSize
+    int mininum = view->itemDelegate()->minimumIconLevel();
+    int maxinum = view->itemDelegate()->maximumIconLevel();
+    for (int i = mininum; i <= maxinum; ++i) {
+        auto actionData = ActionTypeManager::instance().registerActionType(QString("IconSize0%1").arg(i),
+                                                                           view->itemDelegate()->iconSizeLevelDescription(i));
+
+        customAction[DesktopCustomAction::kIconSize].addChildrenActionsData(actionData.second);
+        customActionType.insert(actionData.first, DesktopCustomAction(DesktopCustomAction::kIconSize + i));
+    }
+
+    // 特殊处理 kActSortBy
+    auto tempActionData = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSortBy);
+    sortByActionData = new ActionDataContainer(tempActionData);
+    QVector<ActionDataContainer> tempActionDataLst;
+    for (auto roleType : userColumnRoles.values())
+        tempActionDataLst << ActionTypeManager::instance().actionDataContainerByType(roleType);
+    sortByActionData->setChildrenActionsData(tempActionDataLst);
+}
+
+void CanvasMenu::columnRolesAssociateActionType()
+{
+    // associate user column Roles associate ActionType for desktop
+    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByFileName, dfmbase::ActionType::kActName);
+    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByModified, dfmbase::ActionType::kActLastModifiedDate);
+    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByFileSize, dfmbase::ActionType::kActSize);
+    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByFileMimeType, dfmbase::ActionType::kActType);
+}
+
+void CanvasMenu::creatMenuByDataLst(QMenu *menu, const QVector<ActionDataContainer> &lst)
+{
+    // 根据actionData获取到action信息;
+    if (lst.isEmpty())
+        return;
+
+    // add action to menu
+    for (auto &tempActData : lst) {
+        if (tempActData.name().isEmpty() || (-1 == tempActData.actionType()))
+            continue;
+
+        // Separator
+        if (tempActData.actionType() == ActionType::kActSeparator) {
+            menu->addSeparator();
+            continue;
         }
-        case kActDelete: {
-            FileOperaterProxyIns->moveToTrash(view);
-            return;
+
+        QAction *act = new QAction(menu);
+        act->setData(tempActData.actionType());
+        act->setText(tempActData.name());
+        if (!tempActData.icon().isNull())
+            act->setIcon(tempActData.icon());
+
+        // add sub action
+        auto subLst = tempActData.childrenActionsData();
+        if (subLst.size() > 0) {
+            QMenu *subMenu = new QMenu(menu);
+            creatMenuByDataLst(subMenu, subLst);
+            act->setMenu(subMenu);
         }
-        default:
-            break;
+
+        menu->addAction(act);
+    }
+}
+
+void CanvasMenu::setActionSpecialHandling(QMenu *menu)
+{
+    QList<QAction *> actions = menu->actions();
+    for (QAction *act : actions) {
+
+        int tempType = act->data().toInt();
+
+        // IconSize checked
+        if (tempType == customActionType.key(DesktopCustomAction::kIconSize)) {
+            QList<QAction *> subActLst = act->menu()->actions();
+            int i = 0;
+            for (QAction *tempAct : subActLst) {
+                tempAct->setCheckable(true);
+                tempAct->setChecked(i == view->itemDelegate()->iconLevel());
+                i++;
+            }
+        }
+
+        // paste enable
+        bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknowAction;
+        if (tempType == kActPaste)
+            act->setEnabled(clipBoardUnknow ? false : true);
+
+        // auto arrange checked
+        if (tempType == customActionType.key(DesktopCustomAction::kAutoArrange)) {
+            act->setCheckable(true);
+            auto align = DispalyIns->autoAlign();
+            act->setChecked(align);
         }
     }
 }

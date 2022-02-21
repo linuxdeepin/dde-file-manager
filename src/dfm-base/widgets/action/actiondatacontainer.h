@@ -43,7 +43,10 @@ public:
     QIcon icon() const;
     void setIcon(const QIcon &icon);
     QVariant data();
+    QVector<ActionDataContainer> childrenActionsData() const;
     void setData(const QVariant &var);
+    void addChildrenActionsData(const ActionDataContainer &actData);
+    void setChildrenActionsData(const QVector<ActionDataContainer> &actDataLst);
     TriggeredFunc triggeredFunc();
     void registerTriggeredFunc(TriggeredFunc func);
     DestroyedFunc destroyedFunc();
@@ -55,6 +58,7 @@ private:
     QIcon actionIcon;
     QString actionCommand;
     QVariant actionData;
+    QVector<ActionDataContainer> subActionsData;
     TriggeredFunc actionTriggeredFunc;
     DestroyedFunc actionDestroyedFunc;
     //    HoveredFunc hoveredFunc; // todo

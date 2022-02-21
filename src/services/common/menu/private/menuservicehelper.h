@@ -39,7 +39,8 @@ public:
     static void extendCustomMenu(QMenu *menu, bool isNormal,
                                  const QUrl &dir,
                                  const QUrl &focusFile,
-                                 const QList<QUrl> &selected = {});
+                                 const QList<QUrl> &selected = {},
+                                 bool onDesktop = false);
 
     static void extensionPluginCustomMenu(QMenu *menu, bool isNormal,
                                           const QUrl &currentUrl,

@@ -54,17 +54,8 @@ FILE(GLOB PROPERTYDIALOG_FILES
 FILE(GLOB MENU_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/core/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/core/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/core/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/core/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/customization/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/menu/customization/*.cpp"
-
-# todo:
-#    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/private/*.h"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.h"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*/*.cpp"
 )
 
 FILE(GLOB BLUETOOTH_FILES

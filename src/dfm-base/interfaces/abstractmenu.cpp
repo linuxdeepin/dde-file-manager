@@ -23,6 +23,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QDebug>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -89,6 +90,13 @@ QMenu *AbstractMenu::build(QWidget *parent,
     }
 
     return nullptr;
+}
+
+void AbstractMenu::acitonBusiness(QAction *act)
+{
+    Q_UNUSED(act)
+    // TODO :default action business
+    qDebug() << "default action business: " << act->data().toString();
 }
 
 DFMBASE_END_NAMESPACE

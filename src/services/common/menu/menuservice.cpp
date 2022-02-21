@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "menuservice.h"
-#include "core/menuservicehelper.h"
+#include "private/menuservicehelper.h"
 
 DSC_BEGIN_NAMESPACE
 
@@ -45,6 +45,7 @@ QMenu *MenuService::createMenu(QWidget *parent,
                                const QUrl &rootUrl,
                                const QUrl &foucsUrl,
                                const QList<QUrl> selected,
+                               bool onDesktop,
                                ExtensionFlags flags,
                                QVariant customData)
 {
