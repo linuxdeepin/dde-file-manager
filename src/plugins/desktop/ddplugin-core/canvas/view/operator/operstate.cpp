@@ -20,7 +20,7 @@
  */
 #include "operstate.h"
 #include "view/canvasview.h"
-#include "view/canvasselectionmodel.h"
+#include "model/canvasselectionmodel.h"
 
 DSB_D_USE_NAMESPACE
 

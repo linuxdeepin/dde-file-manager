@@ -23,8 +23,8 @@
 #include "canvas/canvasmanager.h"
 #include "canvas/grid/canvasgrid.h"
 #include "canvas/view/canvasview.h"
-#include "canvas/view/canvasmodel.h"
-#include "canvas/view/canvasselectionmodel.h"
+#include "canvas/model/canvasmodel.h"
+#include "canvas/model/canvasselectionmodel.h"
 #include "canvas/view/operator/fileoperaterproxy.h"
 #include "canvas/menu/canvasmenu.h"
 

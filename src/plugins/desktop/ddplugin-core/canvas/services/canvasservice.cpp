@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasservice.h"
-#include "filetreater.h"
 #include "canvasmanager.h"
 
 DSB_D_BEGIN_NAMESPACE
@@ -38,8 +37,6 @@ CanvasService::~CanvasService()
 
 void CanvasService::init()
 {
-    FileTreaterCt->init();
-
     canvasMgrProxy = CanvasIns->instance();
     canvasMgrProxy->init();
 

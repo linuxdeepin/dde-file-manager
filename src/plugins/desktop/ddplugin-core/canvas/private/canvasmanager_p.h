@@ -51,13 +51,12 @@ public:
     }
 
 public slots:
-    void onFileCreated(const QUrl &url);
-    void onFileDeleted(const QUrl &url);
     void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-
-    void onFileRefreshed();
+    void onFileInserted(const QModelIndex &parent, int first, int last);
+    void onFileRemoved(const QModelIndex &parent, int first, int last);
+    void onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles );
+    void onFileModelReset();
     void onFileSorted();
-    void onEnableSortChanged(bool enableSort);
 
 protected slots:
     void backgroundDeleted();

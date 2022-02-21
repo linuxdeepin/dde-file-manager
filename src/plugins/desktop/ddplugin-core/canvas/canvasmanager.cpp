@@ -248,6 +248,8 @@ CanvasManagerPrivate::~CanvasManagerPrivate()
 void CanvasManagerPrivate::initModel()
 {
     canvasModel = new CanvasModel(q);
+    // use default root url
+    canvasModel->setRootUrl(QUrl());
     // sort
     {
         Qt::SortOrder sortOrder;
@@ -266,11 +268,12 @@ void CanvasManagerPrivate::initModel()
     }
 
     selectionModel = new CanvasSelectionModel(canvasModel, q);
-    connect(canvasModel, &CanvasModel::fileCreated, this, &CanvasManagerPrivate::onFileCreated, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::fileDeleted, this, &CanvasManagerPrivate::onFileDeleted, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::rowsInserted, this, &CanvasManagerPrivate::onFileInserted, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::rowsAboutToBeRemoved, this, &CanvasManagerPrivate::onFileRemoved, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::dataChanged, this, &CanvasManagerPrivate::onFileDataChanged, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::modelReset, this, &CanvasManagerPrivate::onFileModelReset, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
     connect(canvasModel, &CanvasModel::fileRenamed, this, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::fileSorted, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::fileRefreshed, this, &CanvasManagerPrivate::onFileRefreshed, Qt::QueuedConnection);
 }
 
 CanvasViewPointer CanvasManagerPrivate::createView(const ScreenPointer &sp, int index)
@@ -312,47 +315,73 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, const Scree
     view->setGeometry(avRect);
 }
 
-void CanvasManagerPrivate::onFileCreated(const QUrl &url)
-{
-    // todo:判断文件是否为隐藏文件，当前若不显示隐藏文件，则跳过
-    QString path = url.toString();
-    QPair<int, QPoint> pos;
-    if (GridIns->point(path, pos)) {
-        // already hand by call back
-        qDebug() << "item:" << path << " existed:" << pos.first << pos.second;
-    } else {
-        GridIns->append(path);
-    }
-
-    q->update();
-}
-
-void CanvasManagerPrivate::onFileDeleted(const QUrl &url)
-{
-    QString path = url.toString();
-    QPair<int, QPoint> pos;
-    if (GridIns->point(path, pos)) {
-        GridIns->remove(pos.first, path);
-
-        // todo:当选中的文件中有文件被移除时就清空所有选中项
-
-        if (CanvasGrid::Mode::Align == GridIns->mode()) {
-            GridIns->arrange();
-        } else {
-            GridIns->popOverload();
-        }
-
-        q->update();
-    }
-}
-
 void CanvasManagerPrivate::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     if (GridIns->replace(oldUrl.toString(), newUrl.toString()))
         q->update();
 }
 
-void CanvasManagerPrivate::onFileRefreshed()
+void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, int last)
+{
+    for (int i = first; i <= last; i++) {
+        QModelIndex index = canvasModel->index(i, 0, parent);
+        if (Q_UNLIKELY(!index.isValid()))
+            continue;
+        QUrl url = canvasModel->url(index);
+
+        // todo:判断文件是否为隐藏文件，当前若不显示隐藏文件，则跳过
+        QString path = url.toString();
+        QPair<int, QPoint> pos;
+        if (GridIns->point(path, pos)) {
+            // already hand by call back
+            qDebug() << "item:" << path << " existed:" << pos.first << pos.second;
+        } else {
+            GridIns->append(path);
+        }
+    }
+
+    q->update();
+}
+
+void CanvasManagerPrivate::onFileRemoved(const QModelIndex &parent, int first, int last)
+{
+    for (int i = first; i <= last; i++) {
+        QModelIndex index = canvasModel->index(i, 0, parent);
+        if (Q_UNLIKELY(!index.isValid()))
+            continue;
+        QUrl url = canvasModel->url(index);
+
+        QString path = url.toString();
+        QPair<int, QPoint> pos;
+        if (GridIns->point(path, pos)) {
+            GridIns->remove(pos.first, path);
+            if (CanvasGrid::Mode::Align == GridIns->mode()) {
+                GridIns->arrange();
+            } else {
+                GridIns->popOverload();
+            }
+        }
+    }
+    q->update();
+}
+
+void CanvasManagerPrivate::onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    Q_UNUSED(roles)
+
+    if (Q_UNLIKELY(!topLeft.isValid() || !bottomRight.isValid()))
+        return;
+    for (int i = topLeft.row(); i <= bottomRight.row(); i++) {
+        QModelIndex index = canvasModel->index(i);
+        if (Q_LIKELY(index.isValid())) {
+            // update all.
+            q->update();
+            break;
+        }
+    }
+}
+
+void CanvasManagerPrivate::onFileModelReset()
 {
     q->reloadItem();
 }

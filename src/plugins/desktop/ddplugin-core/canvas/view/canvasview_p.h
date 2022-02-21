@@ -24,8 +24,8 @@
 
 #include "canvasview.h"
 #include "watermask/watermaskframe.h"
-#include "view/canvasmodel.h"
-#include "view/canvasselectionmodel.h"
+#include "model/canvasmodel.h"
+#include "model/canvasselectionmodel.h"
 #include "operator/clickselecter.h"
 #include "operator/keyselecter.h"
 #include "operator/operstate.h"

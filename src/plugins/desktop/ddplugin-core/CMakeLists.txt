@@ -52,8 +52,6 @@ set(core_cxx_cpp
     background/backgrounddefault.cpp
     canvas/canvasmanager.cpp
     canvas/view/canvasview.cpp
-    canvas/view/canvasmodel.cpp
-    canvas/view/canvasselectionmodel.cpp
     canvas/view/gridcoordinate.cpp
     canvas/view/operator/boxselecter.cpp
     canvas/view/operator/clickselecter.cpp
@@ -65,6 +63,9 @@ set(core_cxx_cpp
     canvas/view/operator/canvasviewmenuproxy.cpp
     canvas/view/operator/fileoperaterproxy.cpp
     canvas/view/operator/viewsettingutil.cpp
+    canvas/model/canvasmodel.cpp
+    canvas/model/filetreater.cpp
+    canvas/model/canvasselectionmodel.cpp
     canvas/delegate/canvasitemdelegate.cpp
     canvas/delegate/elidetextlayout.cpp
     canvas/delegate/itemeditor.cpp
@@ -72,7 +73,6 @@ set(core_cxx_cpp
     canvas/delegate/filetagobjectinterface.cpp
     canvas/grid/canvasgrid.cpp
     canvas/grid/gridcore.cpp
-    canvas/filetreater.cpp
     canvas/displayconfig.cpp
     canvas/menu/canvasmenu.cpp
     watermask/watermaskframe.cpp
@@ -104,13 +104,10 @@ set(core_cxx_h
     background/backgroundmanager_p.h
     background/backgrounddefault.h
     canvas/private/canvasmanager_p.h
-    canvas/private/filetreater_p.h
     canvas//canvasmanager.h
     canvas/view/canvasview_p.h
     canvas/view/canvasview.h
-    canvas/view/canvasmodel.h
     canvas/view/gridcoordinate.h
-    canvas/view/canvasselectionmodel.h
     canvas/view/operator/boxselecter.h
     canvas/view/operator/clickselecter.h
     canvas/view/operator/viewpainter.h
@@ -122,6 +119,10 @@ set(core_cxx_h
     canvas/view/operator/fileoperaterproxy_p.h
     canvas/view/operator/fileoperaterproxy.h
     canvas/view/operator/viewsettingutil.h
+    canvas/model/canvasmodel.h
+    canvas/model/canvasmodel_p.h
+    canvas/model/filetreater.h
+    canvas/model/canvasselectionmodel.h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h
     canvas/delegate/elidetextlayout.h
@@ -132,7 +133,6 @@ set(core_cxx_h
     canvas/grid/canvasgrid_p.h
     canvas/grid/canvasgridspecialist.h
     canvas/grid/gridcore.h
-    canvas/filetreater.h
     canvas/displayconfig.h
     canvas/menu/canvasmenu.h
     watermask/watermaskframe.h

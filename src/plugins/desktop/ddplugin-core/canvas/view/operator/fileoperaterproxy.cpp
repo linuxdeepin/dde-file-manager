@@ -22,9 +22,9 @@
 #include "fileoperaterproxy_p.h"
 #include "canvasmanager.h"
 #include "canvas/view/canvasview.h"
-#include "canvas/view/canvasmodel.h"
+#include "canvas/model/canvasmodel.h"
 #include "canvas/grid/canvasgrid.h"
-#include "canvas/view/canvasselectionmodel.h"
+#include "canvas/model/canvasselectionmodel.h"
 #include "dfm-framework/framework.h"
 
 #include "dfm-base/dfm_event_defines.h"

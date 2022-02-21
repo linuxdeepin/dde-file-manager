@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dragdropoper.h"
-#include "view/canvasmodel.h"
+#include "model/canvasmodel.h"
 #include "utils/desktoputils.h"
 #include "grid/canvasgrid.h"
-#include "view/canvasselectionmodel.h"
+#include "model/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "canvasmanager.h"
 #include "displayconfig.h"

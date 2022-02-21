@@ -20,11 +20,10 @@
  */
 #include "canvasitemdelegate_p.h"
 #include "elidetextlayout.h"
-#include "filetreater.h"
 #include "itemeditor.h"
 #include "view/canvasview.h"
-#include "view/canvasmodel.h"
-#include "view/canvasselectionmodel.h"
+#include "model/canvasmodel.h"
+#include "model/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "view/operator/fileoperaterproxy.h"
 
@@ -74,8 +73,8 @@ CanvasItemDelegatePrivate::~CanvasItemDelegatePrivate()
 ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &index, const QPainter *painter) const
 {
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
-    QString name = showSuffix ? index.data(FileTreater::kFileDisplayNameRole).toString()
-                              : index.data(FileTreater::kFileBaseNameRole).toString();
+    QString name = showSuffix ? index.data(CanvasModel::kFileDisplayNameRole).toString()
+                              : index.data(CanvasModel::kFileBaseNameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
 
     // tag rect
@@ -241,13 +240,13 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     // 是否显示判断后缀
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
-    QString suffix = index.data(FileTreater::kFileSuffixRole).toString(); //todo kFileSuffixOfRenameRole
-    qDebug() << "sssssssss Display" << index.data(FileTreater::kFileDisplayNameRole)
-             << "FileName" << index.data(FileTreater::kFileNameRole)
-             << "BaseName" << index.data(FileTreater::kFileBaseNameRole)
+    QString suffix = index.data(CanvasModel::kFileSuffixRole).toString(); //todo kFileSuffixOfRenameRole
+    qDebug() << "Display" << index.data(CanvasModel::kFileDisplayNameRole)
+             << "FileName" << index.data(CanvasModel::kFileNameRole)
+             << "BaseName" << index.data(CanvasModel::kFileBaseNameRole)
              << "suffix" << suffix;
     if (showSuffix) {
-        QString name = index.data(FileTreater::kFileDisplayNameRole).toString(); // todo kFileNameOfRenameRole
+        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString(); // todo kFileNameOfRenameRole
         itemEditor->setMaximumLength(255);
         itemEditor->setText(name);
         itemEditor->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
@@ -255,7 +254,7 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
         itemEditor->setProperty(EDITOR_SHOW_SUFFIX, suffix);
         itemEditor->setMaximumLength(255 - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
 
-        QString name = index.data(FileTreater::kFileDisplayNameRole).toString(); //todo kFileBaseNameOfRenameRole
+        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString(); //todo kFileBaseNameOfRenameRole
         //remove shuffix
         name = name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1));
         itemEditor->setText(name);
@@ -724,7 +723,7 @@ void CanvasItemDelegate::clipboardDataChanged()
 void CanvasItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
 {
     // todo(zy) 注释
-    const QVariantHash &ep = index.data(FileTreater::kExtraProperties).toHash();
+    const QVariantHash &ep = index.data(CanvasModel::kExtraProperties).toHash();
     const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
 
     if (!colors.isEmpty()) {

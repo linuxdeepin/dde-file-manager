@@ -20,8 +20,8 @@
  */
 #include "shortcutoper.h"
 #include "view/canvasview.h"
-#include "view/canvasmodel.h"
-#include "view/canvasselectionmodel.h"
+#include "model/canvasmodel.h"
+#include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
 #include "view/canvasview_p.h"
 #include "fileoperaterproxy.h"

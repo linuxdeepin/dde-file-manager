@@ -21,7 +21,7 @@
 #include "boxselecter.h"
 #include "canvasmanager.h"
 #include "view/canvasview_p.h"
-#include "view/canvasselectionmodel.h"
+#include "model/canvasselectionmodel.h"
 #include "utils/desktoputils.h"
 
 #include <QItemSelection>

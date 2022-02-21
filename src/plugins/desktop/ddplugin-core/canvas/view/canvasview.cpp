@@ -31,7 +31,6 @@
 #include "operator/canvasviewmenuproxy.h"
 #include "operator/fileoperaterproxy.h"
 #include "utils/desktoputils.h"
-#include "filetreater.h"
 
 #include <QGSettings>
 #include <QPainter>
@@ -577,6 +576,7 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 
 void CanvasView::initUI()
 {
+    setRootIndex(model()->rootIndex());
     setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAttribute(Qt::WA_TranslucentBackground);
     viewport()->setAutoFillBackground(false);
@@ -783,7 +783,7 @@ QModelIndex CanvasViewPrivate::findIndex(const QString &key, bool matchStart, co
         if (!index.isValid())
             continue;
 
-        const QString &pinyinName = q->model()->data(index, FileTreater::kFilePinyinName).toString();
+        const QString &pinyinName = q->model()->data(index, CanvasModel::kFilePinyinName).toString();
 
         if (matchStart ? pinyinName.startsWith(key, Qt::CaseInsensitive)
                 : pinyinName.contains(key, Qt::CaseInsensitive)) {
