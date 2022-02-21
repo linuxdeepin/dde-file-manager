@@ -61,6 +61,7 @@ public:
     void setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
+    void closeTab(const QString &path);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
     void removeWorkspace(quint64 windowId);
     quint64 windowId(QWidget *sender);

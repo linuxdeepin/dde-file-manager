@@ -54,3 +54,8 @@ void WorkspaceEventReceiver::handleShowCustomTopWidget(quint64 windowId, const Q
 {
     WorkspaceHelper::instance()->setCustomTopWidgetVisible(windowId, scheme, visible);
 }
+
+void WorkspaceEventReceiver::handleCloseTabs(const QString &path)
+{
+    WorkspaceHelper::instance()->closeTab(path);
+}

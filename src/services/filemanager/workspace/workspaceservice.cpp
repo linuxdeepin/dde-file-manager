@@ -35,6 +35,7 @@ extern const int kTabAdded = DFMBASE_NAMESPACE::UniversalUtils::registerEventTyp
 extern const int kTabChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 extern const int kTabMoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 extern const int kTabRemoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+extern const int kCloseTabs = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 extern const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 

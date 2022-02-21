@@ -42,6 +42,7 @@ extern const int kTabAdded;
 extern const int kTabChanged;
 extern const int kTabMoved;
 extern const int kTabRemoved;
+extern const int kCloseTabs;
 extern const int kShowCustomTopWidget;
 };   // namespace EventType
 using createTopWidgetCallback = std::function<QFrame *()>;

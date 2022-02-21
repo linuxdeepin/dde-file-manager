@@ -23,6 +23,7 @@
 #include "universalutils.h"
 #include "dfm_event_defines.h"
 
+#include <QUrl>
 #include <DDBusSender>
 #include <QCoreApplication>
 #include <QApplication>
@@ -281,6 +282,11 @@ QVariantHash UniversalUtils::convertFromQMap(const QVariantMap map)
         iter += 1;
     }
     return ret;
+}
+
+bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
+{
+    return url1 == url2 || (url1.scheme() == url2.scheme() && url1.path() == url2.path());
 }
 
 DFMBASE_END_NAMESPACE

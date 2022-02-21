@@ -112,6 +112,12 @@ bool WorkspaceWidget::canAddNewTab()
     return false;
 }
 
+void WorkspaceWidget::closeTab(quint64 winId, const QString &path)
+{
+    if (tabBar)
+        tabBar->closeTab(winId, path);
+}
+
 void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)
 {
     if (topWidgets.contains(scheme)) {

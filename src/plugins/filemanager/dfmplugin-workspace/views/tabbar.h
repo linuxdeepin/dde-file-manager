@@ -51,6 +51,7 @@ public:
     void setCurrentIndex(const int index);
     void setCurrentUrl(const QUrl &url);
     void setCurrentView(DFMBASE_NAMESPACE::AbstractBaseView *view);
+    void closeTab(quint64 winId, const QString &path);
 
 public slots:
     void onTabCloseButtonHovered(int closingIndex);
@@ -90,6 +91,7 @@ private:
     void setTabText(const int &index, const QString &text);
     int count() const;
     void handleTabAnimationFinished(const int index);
+    bool isMountedDevPath(const QString &path);
 
     QGraphicsScene *scene = nullptr;
     QList<Tab *> tabList;
@@ -105,6 +107,8 @@ private:
     int trackingIndex = 0;
     int currentIndex = -1;
     int historyWidth = 0;
+
+    QHash<QString, QString> allMntedDevs;
 };
 
 DPWORKSPACE_END_NAMESPACE

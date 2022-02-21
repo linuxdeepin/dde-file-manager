@@ -24,7 +24,6 @@
 #define UNIVERSALUTILS_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 
 #include <QString>
 #include <QtDBus/QDBusReply>
@@ -51,6 +50,8 @@ public:
     static int dockHeight();
 
     static QVariantHash convertFromQMap(const QVariantMap map);
+
+    static bool urlEquals(const QUrl &url1, const QUrl &url2);
 };
 
 DFMBASE_END_NAMESPACE

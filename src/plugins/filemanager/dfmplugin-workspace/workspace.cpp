@@ -80,6 +80,8 @@ bool Workspace::start()
 
     dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::Workspace::EventType::kShowCustomTopWidget,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
 
     const QString &scheme = SchemeTypes::kFile;
 

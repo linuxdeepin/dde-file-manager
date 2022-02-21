@@ -25,6 +25,14 @@
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 
+#include "global_server_defines.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/devicemanager.h"
+
+#include <dfm-framework/framework.h>
+
 #include <QUrl>
 #include <QEvent>
 #include <QMouseEvent>
@@ -174,6 +182,38 @@ void TabBar::setCurrentView(AbstractBaseView *view)
         createTab(view);
 
     tab->setFileView(view);
+}
+
+void TabBar::closeTab(quint64 winId, const QString &path)
+{
+    auto isParentPath = [](const QString &deletedPath, const QString &tabPath) {
+        return tabPath.startsWith(deletedPath);
+    };
+
+    for (int i = count() - 1; i >= 0; --i) {
+        Tab *tab = tabAt(i);
+        if (tab && isParentPath(path, tab->getCurrentUrl().path())) {
+            if (count() == 1) {
+                QUrl redirectToWhenDelete;
+                if (isMountedDevPath(path)) {
+                    redirectToWhenDelete.setScheme(SchemeTypes::kComputer);
+                    redirectToWhenDelete.setPath("/");
+                } else {   // redirect to upper directory
+                    QString localPath = path;
+                    do {
+                        QStringList pathFragment = localPath.split("/");
+                        pathFragment.removeLast();
+                        localPath = pathFragment.join("/");
+                    } while (!QDir(localPath).exists());
+                    redirectToWhenDelete.setScheme(SchemeTypes::kFile);
+                    redirectToWhenDelete.setPath(localPath);
+                }
+                dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
+            } else {
+                removeTab(i);
+            }
+        }
+    }
 }
 
 void TabBar::onTabCloseButtonHovered(int closingIndex)
@@ -427,6 +467,34 @@ void TabBar::initializeConnections()
     QObject::connect(tabCloseButton, &TabCloseButton::hovered, this, &TabBar::onTabCloseButtonHovered);
     QObject::connect(tabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
     QObject::connect(tabCloseButton, &TabCloseButton::clicked, this, &TabBar::onTabCloseButtonClicked);
+
+    auto cacheMnt = [this](const QString &id, const QString &mntPath) {
+        allMntedDevs.insert(id, mntPath);
+    };
+    auto closeTabAndRemoveCachedMnts = [this](const QString &id) {
+        if (!allMntedDevs.contains(id))
+            return;
+        this->closeTab(WorkspaceHelper::instance()->windowId(this), allMntedDevs.value(id));
+        allMntedDevs.remove(id);
+    };
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevMounted, this, cacheMnt);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, cacheMnt);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, closeTabAndRemoveCachedMnts);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevRemoved, this, closeTabAndRemoveCachedMnts);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevUnmounted, this, closeTabAndRemoveCachedMnts);
+
+    for (auto id : DeviceManagerInstance.invokeBlockDevicesIdList({})) {
+        auto datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+        const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+        if (!mntPath.isEmpty())
+            allMntedDevs.insert(id, mntPath);
+    }
+    for (auto id : DeviceManagerInstance.invokeProtolcolDevicesIdList({})) {
+        auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
+        const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+        if (!mntPath.isEmpty())
+            allMntedDevs.insert(id, mntPath);
+    }
 }
 
 void TabBar::updateScreen()
@@ -493,4 +561,13 @@ void TabBar::handleTabAnimationFinished(const int index)
         && lastDeleteState) {
         lastDeleteState = false;
     }
+}
+
+bool TabBar::isMountedDevPath(const QString &path)
+{
+    for (auto iter = allMntedDevs.cbegin(); iter != allMntedDevs.cend(); ++iter) {
+        if (iter.value() == path)
+            return true;
+    }
+    return false;
 }

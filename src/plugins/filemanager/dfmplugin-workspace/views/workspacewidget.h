@@ -65,6 +65,7 @@ public:
 
     void openNewTab(const QUrl &url);
     bool canAddNewTab();
+    void closeTab(quint64 winId, const QString &path);
     void setCustomTopWidgetVisible(const QString &scheme, bool visible);
     bool getCustomTopWidgetVisible(const QString &scheme);
 

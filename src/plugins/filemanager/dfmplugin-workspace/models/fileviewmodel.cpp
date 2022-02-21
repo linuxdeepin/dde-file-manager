@@ -24,7 +24,11 @@
 #include "private/fileviewmodel_p.h"
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
+#include "workspace/workspace_defines.h"
+
 #include "dfm-base/utils/fileutils.h"
+
+#include <dfm-framework/framework.h>
 
 #include <QApplication>
 #include <QPointer>
@@ -124,6 +128,7 @@ void FileViewModelPrivate::doWatcherEvent()
             nodeManager->insertChild(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
+            dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs, fileUrl.path());
         }
     }
     processFileEventRuning = false;
