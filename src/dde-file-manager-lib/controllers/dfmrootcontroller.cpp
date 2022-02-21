@@ -83,14 +83,15 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
         return true;
     }
 
-    if (!blk->hasFileSystem() && !drv->mediaCompatibility().join(" ").contains("optical") && !blk->isEncrypted()) {
+    bool isOptical = drv->mediaCompatibility().join(",").contains("optical");
+    if (!blk->hasFileSystem() && !isOptical && !blk->isEncrypted()) {
         if (!drv->removable()){ // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
             qWarning()  << "block device is ignored by wrong removeable set for system disk:"  << blkPath;
             return true;
         }
     }
 
-    if (!blk->hasFileSystem() && blk->size() < 1024) { // a super block is at least 1024 bytes, a full filesystem always have a superblock.
+    if (!blk->hasFileSystem() && blk->size() < 1024 && !isOptical) {   // a super block is at least 1024 bytes, a full filesystem always have a superblock.
         qWarning() << "block device is ignored cause it's size is less than 1024";
         return true;
     }
