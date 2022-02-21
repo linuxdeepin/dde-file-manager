@@ -76,7 +76,7 @@ public:
         qint64 totalSize { 0 };
         quint16 dirSize { 0 };
         quint32 fileCount { 0 };
-        QSharedPointer<QList<QUrl>> allFiles { nullptr };
+        QList<QUrl> allFiles;
     };
 
 private:
@@ -86,7 +86,7 @@ private:
     static void statisticFilesSize(const QUrl &url, QSharedPointer<FilesSizeInfo> &sizeInfo, const bool &isRecordUrl = false);
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
     static bool isFileOnDisk(const QUrl &url);
-    static QSharedPointer<QList<QUrl>> getDirFiles(const QUrl &url);
+    static void getDirFiles(const QUrl &url, QList<QUrl> &files);
 };
 typedef QSharedPointer<FileOperationsUtils::FilesSizeInfo> SizeInfoPoiter;
 DSC_END_NAMESPACE

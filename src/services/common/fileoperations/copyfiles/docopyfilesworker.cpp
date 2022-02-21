@@ -101,15 +101,6 @@ bool DoCopyFilesWorker::initArgs()
 {
     time.start();
 
-    if (!handlingErrorCondition)
-        handlingErrorCondition.reset(new QWaitCondition);
-
-    if (!errorThreadIdQueueMutex)
-        errorThreadIdQueueMutex.reset(new QMutex);
-
-    if (!errorCondition)
-        errorCondition.reset(new QWaitCondition);
-
     AbstractWorker::initArgs();
 
     if (sourceUrls.count() <= 0) {
@@ -256,8 +247,8 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
     }
 
     if (targetInfo == toInfo && !oldExist && newTargetInfo->exists()) {
-        completeFiles->append(fromInfo->url());
-        completeTargetFiles->append(newTargetInfo->url());
+        completeFiles.append(fromInfo->url());
+        completeTargetFiles.append(newTargetInfo->url());
     }
 
     return reslut;
@@ -1033,37 +1024,34 @@ AbstractJobHandler::SupportAction DoCopyFilesWorker::doHandleErrorAndWait(const 
     // 判断是否有线程在处理错误,1.无，当前线程加入到处理队列，阻塞其他线程的错误处理，发送错误信号，阻塞自己。收到错误处理，恢复自己。
     // 判读是否有retry操作,当前错误处理线程就切换（错误处理线程不出队列），继续处理，外部判读处理完成就切换处理线程
     // 当前处理线程为队列的第一个对象
-    errorThreadIdQueueMutex->lock();
+    errorThreadIdQueueMutex.lock();
 
     if (from == to) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
         setStat(AbstractJobHandler::JobState::kRunningState);
-        errorThreadIdQueueMutex->unlock();
+        errorThreadIdQueueMutex.unlock();
         return currentAction;
     }
 
-    if (!errorThreadIdQueue)
-        errorThreadIdQueue.reset(new QQueue<Qt::HANDLE>);
-    if (errorThreadIdQueue->count() <= 0 || errorThreadIdQueue->first() != QThread::currentThreadId()) {
-        errorThreadIdQueue->enqueue(QThread::currentThreadId());
-    }
+    errorThreadIdQueue.clear();
+    errorThreadIdQueue.enqueue(QThread::currentThreadId());
 
     // 阻塞其他线程 当前不是停止状态，并且当前线程不是处理错误线程
-    while (!isStopped() && errorThreadIdQueue->first() != QThread::currentThreadId()) {
-        errorThreadIdQueueMutex->unlock();
+    while (!isStopped() && errorThreadIdQueue.first() != QThread::currentThreadId()) {
+        errorThreadIdQueueMutex.unlock();
         QMutex lock;
-        errorCondition->wait(&lock);
+        errorCondition.wait(&lock);
         lock.unlock();
-        errorThreadIdQueueMutex->lock();
+        errorThreadIdQueueMutex.lock();
     }
 
-    errorThreadIdQueueMutex->unlock();
+    errorThreadIdQueueMutex.unlock();
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
     // 发送错误处理 阻塞自己
     emitErrorNotify(from, to, error, AbstractJobHandler::errorToString(error) + errorMsg);
     QMutex lock;
-    handlingErrorCondition->wait(&lock);
+    handlingErrorCondition.wait(&lock);
     lock.unlock();
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
@@ -1229,19 +1217,16 @@ void DoCopyFilesWorker::readAheadSourceFile(const AbstractFileInfoPointer &fileI
 void DoCopyFilesWorker::cancelThreadProcessingError()
 {
     // 当前错误线程处理结束
-    if (!errorThreadIdQueue)
+    if (errorThreadIdQueue.isEmpty())
         return;
 
-    if (!errorThreadIdQueueMutex)
-        errorThreadIdQueueMutex.reset(new QMutex);
-    QMutexLocker lk(errorThreadIdQueueMutex.data());
+    QMutexLocker lk(&errorThreadIdQueueMutex);
 
-    errorThreadIdQueue->removeOne(QThread::currentThreadId());
-    if (errorThreadIdQueue->count() <= 0)
+    errorThreadIdQueue.removeOne(QThread::currentThreadId());
+    if (errorThreadIdQueue.count() <= 0)
         resume();
 
-    if (errorCondition)
-        errorCondition->wakeAll();
+    errorCondition.wakeAll();
 }
 /*!
  * \brief DoCopyFilesWorker::onUpdateProccess update proccess and speed slot

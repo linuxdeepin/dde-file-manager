@@ -181,14 +181,9 @@ AbstractJobHandler::SupportAction DoCutFilesWorker::doHandleErrorAndWait(const Q
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, to, error, errorMsg);
 
-    if (!handlingErrorQMutex)
-        handlingErrorQMutex.reset(new QMutex);
-
-    handlingErrorQMutex->lock();
-    if (handlingErrorCondition.isNull())
-        handlingErrorCondition.reset(new QWaitCondition);
-    handlingErrorCondition->wait(handlingErrorQMutex.data());
-    handlingErrorQMutex->unlock();
+    handlingErrorQMutex.lock();
+    handlingErrorCondition.wait(&handlingErrorQMutex);
+    handlingErrorQMutex.unlock();
 
     return currentAction;
 }
@@ -224,8 +219,8 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             if (newTargetInfo->exists()) {
 
                 if (!isConvert && targetInfo == this->targetInfo) {
-                    completeFiles->append(sourceUrl);
-                    completeTargetFiles->append(newTargetInfo->url());
+                    completeFiles.append(sourceUrl);
+                    completeTargetFiles.append(newTargetInfo->url());
                 }
                 bool succ = deleteFile(sourceUrl, targetUrl, sourceInfo, &result);
                 if (!succ) {
@@ -247,8 +242,8 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             }
 
             if (!isConvert && targetInfo == this->targetInfo) {
-                completeFiles->append(sourceUrl);
-                completeTargetFiles->append(newTargetInfo->url());
+                completeFiles.append(sourceUrl);
+                completeTargetFiles.append(newTargetInfo->url());
             }
             // remove old link file
             if (!deleteFile(sourceUrl, targetUrl, sourceInfo, &result))
@@ -260,11 +255,6 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             if (!renameFileByHandler(sourceInfo, newTargetInfo))
                 // pause and emit error msg
                 return false;
-
-            // TODO(lanxs) need update progress
-            if (Q_UNLIKELY(!stateCheck())) {
-                return false;
-            }
             return true;
         }
     }

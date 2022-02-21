@@ -45,7 +45,7 @@ void DoStatisticsFilesWorker::doWork()
     QSharedPointer<FileOperationsUtils::FilesSizeInfo> filesSizeInfo(new FileOperationsUtils::FilesSizeInfo);
     qint64 total = 0;
     if (isRecordAll)
-        filesSizeInfo->allFiles.reset(new QList<QUrl>());
+        filesSizeInfo->allFiles.clear();
     for (auto url : files) {
         // 停止就退出
         if (isStoped) {
@@ -72,7 +72,7 @@ void DoStatisticsFilesWorker::doWork()
             }
             unsigned short flag = ent->fts_info;
             if (isRecordAll)
-                filesSizeInfo->allFiles->append(QUrl::fromLocalFile(ent->fts_path));
+                filesSizeInfo->allFiles.append(QUrl::fromLocalFile(ent->fts_path));
             if (flag != FTS_DP)
                 total += ent->fts_statp->st_size <= 0 ? FileOperationsUtils::getMemoryPageSize() : ent->fts_statp->st_size;
             if (filesSizeInfo->dirSize == 0 && flag == FTS_D)

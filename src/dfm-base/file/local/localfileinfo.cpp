@@ -923,11 +923,10 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
     d->lock.lockForRead();
     QFileDevice::Permissions ps;
 
-    bool success = false;
     if (d->dfmFileInfo) {
         ps = static_cast<QFileDevice::Permissions>(static_cast<uint16_t>(d->dfmFileInfo->permissions()));
     }
-    if (!success)
+    if (ps == 0x0000)
         ps = QFileInfo(d->url.path()).permissions();
 
     d->lock.unlock();

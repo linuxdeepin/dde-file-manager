@@ -266,8 +266,8 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
     }
 
     if (!isConvert) {
-        completeFiles->append(fileInfo->url());
-        completeFiles->append(QUrl::fromLocalFile(targetPath));
+        completeFiles.append(fileInfo->url());
+        completeFiles.append(QUrl::fromLocalFile(targetPath));
     }
 
     handler->deleteFile(fileInfo->url());
@@ -313,8 +313,8 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
         completeFilesCount++;
 
         if (!isConvert && action == AbstractJobHandler::SupportAction::kNoAction) {
-            completeFiles->append(fileInfo->url());
-            completeFiles->append(QUrl::fromLocalFile(targetPath));
+            completeFiles.append(fileInfo->url());
+            completeFiles.append(QUrl::fromLocalFile(targetPath));
         }
 
         if (action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kNoAction)

@@ -72,7 +72,7 @@ bool DoRestoreTrashFilesWorker::initArgs()
     trashStorageInfo.reset(new QStorageInfo(StandardPaths::location(StandardPaths::kTrashFilesPath)));
     trashInfoPath = StandardPaths::location(StandardPaths::kTrashInfosPath);
     trashInfoPath = trashInfoPath.endsWith("/") ? trashInfoPath : trashInfoPath + "/";
-    completeTargetFiles.reset(new QList<QUrl>);
+    completeTargetFiles.clear();
     return AbstractWorker::initArgs();
 }
 /*!
@@ -144,10 +144,10 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             return false;
 
         if (!isConvert) {
-            if (!completeFiles->contains(url))
-                completeFiles->append(url);
-            if (!completeTargetFiles->contains(restoreInfo->url()))
-                completeTargetFiles->append(restoreInfo->url());
+            if (!completeFiles.contains(url))
+                completeFiles.append(url);
+            if (!completeTargetFiles.contains(restoreInfo->url()))
+                completeTargetFiles.append(restoreInfo->url());
         }
     }
     return true;

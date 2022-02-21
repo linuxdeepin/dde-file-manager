@@ -67,11 +67,11 @@ bool DoCleanTrashFilesWorker::statisticsFilesSize()
     }
 
     QString path = sourceUrls.first().path();
-    if(path.endsWith("/"))
+    if (path.endsWith("/"))
         path.chop(1);
 
     if (sourceUrls.count() == 1 && path == StandardPaths::location(StandardPaths::kTrashFilesPath))
-        allFilesList = FileOperationsUtils::getDirFiles(sourceUrls.first());
+        FileOperationsUtils::getDirFiles(sourceUrls.first(), allFilesList);
 
     return true;
 }
@@ -103,9 +103,9 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
 {
     QList<QUrl>::iterator it = sourceUrls.begin();
     QList<QUrl>::iterator itend = sourceUrls.end();
-    if (!allFilesList.isNull()) {
-        it = allFilesList->begin();
-        itend = allFilesList->end();
+    if (!allFilesList.isEmpty()) {
+        it = allFilesList.begin();
+        itend = allFilesList.end();
     }
     while (it != itend) {
         if (!stateCheck())
@@ -180,14 +180,9 @@ AbstractJobHandler::SupportAction DoCleanTrashFilesWorker::doHandleErrorAndWait(
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, QUrl(), error, errorMsg);
 
-    if (!handlingErrorQMutex)
-        handlingErrorQMutex.reset(new QMutex);
-
-    handlingErrorQMutex->lock();
-    if (handlingErrorCondition.isNull())
-        handlingErrorCondition.reset(new QWaitCondition);
-    handlingErrorCondition->wait(handlingErrorQMutex.data());
-    handlingErrorQMutex->unlock();
+    handlingErrorQMutex.lock();
+    handlingErrorCondition.wait(&handlingErrorQMutex);
+    handlingErrorQMutex.unlock();
 
     return currentAction;
 }

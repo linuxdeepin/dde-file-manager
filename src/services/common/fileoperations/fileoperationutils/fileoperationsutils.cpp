@@ -56,9 +56,6 @@ QSharedPointer<FileOperationsUtils::FilesSizeInfo> FileOperationsUtils::statisti
 {
     QSharedPointer<FileOperationsUtils::FilesSizeInfo> filesSizeInfo(new FilesSizeInfo);
 
-    if (isRecordUrl)
-        filesSizeInfo->allFiles.reset(new QList<QUrl>());
-
     for (auto url : files) {
         statisticFilesSize(url, filesSizeInfo, isRecordUrl);
     }
@@ -131,7 +128,7 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
         }
         unsigned short flag = ent->fts_info;
         if (isRecordUrl && flag != FTS_DP)
-            sizeInfo->allFiles->append(QUrl::fromLocalFile(ent->fts_path));
+            sizeInfo->allFiles.append(QUrl::fromLocalFile(ent->fts_path));
         if (flag != FTS_DP)
             sizeInfo->totalSize += ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : ent->fts_statp->st_size;
         if (sizeInfo->dirSize == 0 && flag == FTS_D)
@@ -161,26 +158,24 @@ bool FileOperationsUtils::isFileOnDisk(const QUrl &url)
     return true;
 }
 
-QSharedPointer<QList<QUrl>> FileOperationsUtils::getDirFiles(const QUrl &url)
+void FileOperationsUtils::getDirFiles(const QUrl &url, QList<QUrl> &files)
 {
     DIR *dir = nullptr;
     struct dirent *ptr = nullptr;
     if ((dir = opendir(url.path().toStdString().data())) == nullptr) {
         qCritical() << "Open dir error by system c opendir function";
-        return nullptr;
+        return;
     }
 
     QString urlPath = url.path();
     if (!urlPath.endsWith("/"))
         urlPath.append("/");
-    QSharedPointer<QList<QUrl>> files(new QList<QUrl>());
+    files.clear();
     while ((ptr = readdir(dir)) != nullptr) {
         if (strcmp(ptr->d_name, ".") == 0 || strcmp(ptr->d_name, "..") == 0) {
             continue;
         } else if (ptr->d_type == 4 || ptr->d_type == 8 || ptr->d_type == 10) {
-            files->append(QUrl::fromLocalFile(urlPath + ptr->d_name));
+            files.append(QUrl::fromLocalFile(urlPath + ptr->d_name));
         }
     }
-
-    return files;
 }

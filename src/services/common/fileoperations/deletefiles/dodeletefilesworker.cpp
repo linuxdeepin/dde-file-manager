@@ -81,7 +81,7 @@ bool DoDeleteFilesWorker::deleteAllFiles()
 {
     // sources file list is checked
     // delete files on can't remove device
-    if (isSourceFileLocal && allFilesList) {
+    if (isSourceFileLocal) {
         return deleteFilesOnCanNotRemoveDevice();
     }
     return deleteFilesOnOtherDevice();
@@ -93,7 +93,7 @@ bool DoDeleteFilesWorker::deleteAllFiles()
 bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 {
     AbstractJobHandler::SupportAction action { AbstractJobHandler::SupportAction::kNoAction };
-    for (QList<QUrl>::iterator it = --allFilesList->end(); it != --allFilesList->begin(); --it) {
+    for (QList<QUrl>::iterator it = --allFilesList.end(); it != --allFilesList.begin(); --it) {
         if (!stateCheck())
             return false;
         const QUrl &url = *it;
@@ -106,7 +106,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 
         if (sourceUrls.contains(url)) {
             if (action != AbstractJobHandler::SupportAction::kNoAction)
-                completeFiles->append(url);
+                completeFiles.append(url);
             deleteFilesCount++;
         }
 
@@ -145,7 +145,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
         if (!ok)
             return false;
 
-        completeFiles->append(url);
+        completeFiles.append(url);
     }
     return true;
 }
@@ -243,14 +243,9 @@ AbstractJobHandler::SupportAction DoDeleteFilesWorker::doHandleErrorAndWait(cons
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(from, QUrl(), error, errorMsg);
 
-    if (!handlingErrorQMutex)
-        handlingErrorQMutex.reset(new QMutex);
-
-    handlingErrorQMutex->lock();
-    if (handlingErrorCondition.isNull())
-        handlingErrorCondition.reset(new QWaitCondition);
-    handlingErrorCondition->wait(handlingErrorQMutex.data());
-    handlingErrorQMutex->unlock();
+    handlingErrorQMutex.lock();
+    handlingErrorCondition.wait(&handlingErrorQMutex);
+    handlingErrorQMutex.unlock();
 
     return currentAction;
 }

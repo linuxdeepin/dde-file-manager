@@ -68,13 +68,9 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     setStat(AbstractJobHandler::JobState::kPauseState);
     emitErrorNotify(fromUrl, toUrl, error, errorUrl.toString() + errorMsg);
 
-    if (handlingErrorQMutex.isNull())
-        handlingErrorQMutex.reset(new QMutex);
-    if (handlingErrorCondition.isNull())
-        handlingErrorCondition.reset(new QWaitCondition);
-    handlingErrorQMutex->lock();
-    handlingErrorCondition->wait(handlingErrorQMutex.data());
-    handlingErrorQMutex->unlock();
+    handlingErrorQMutex.lock();
+    handlingErrorCondition.wait(&handlingErrorQMutex);
+    handlingErrorQMutex.unlock();
 
     return currentAction;
 }
@@ -543,8 +539,8 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     }
 
     if (!isConvert && !oldExist && newTargetInfo->exists() && targetInfo == toInfo) {
-        completeFiles->append(fromInfo->url());
-        completeFiles->append(newTargetInfo->url());
+        completeFiles.append(fromInfo->url());
+        completeFiles.append(newTargetInfo->url());
     }
 
     return ok;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liyigang<liyigang@uniontech.com>
  *
@@ -24,22 +24,24 @@
 #define ABSTRACTWORKER_H
 
 #include "dfm_common_service_global.h"
+#include "fileoperationsutils.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
-#include "fileoperationsutils.h"
 
 #include <QObject>
 #include <QUrl>
+#include <QQueue>
+#include <QWaitCondition>
+#include <QMutex>
 #include <QSharedPointer>
 
-Q_DECLARE_METATYPE(QSharedPointer<QList<QUrl>>);
-class QWaitCondition;
-class QMutex;
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
 class StatisticsFilesSize;
 class UpdateProccessTimer;
+
 class AbstractWorker : public QObject
 {
     friend class AbstractJob;
@@ -144,33 +146,38 @@ public:
     virtual ~AbstractWorker();
 
 public:
-    JobHandlePointer handle { nullptr };   // handle
-    AbstractJobHandler::JobType jobType { AbstractJobHandler::JobType::kUnknow };   // current task type
-    QSharedPointer<StatisticsFilesSize> statisticsFilesSizeJob { nullptr };   // 异步文件大小统计
-    QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // 源文件的总大小
-    QAtomicInteger<qint64> sourceFilesCount { 0 };   // source files count
-    quint16 dirSize { 0 };   // 目录大小
-    QList<QUrl> sourceUrls;   // 源文件
-    QUrl targetUrl;   // 目标目录
-    AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // 任务标志
-    AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // 当前的操作
-    QSharedPointer<QWaitCondition> handlingErrorCondition { nullptr };
-    QSharedPointer<QMutex> handlingErrorQMutex { nullptr };
-    AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
-    bool isSourceFileLocal { false };   // 源文件是否在本地设备上
-    bool isTargetFileLocal { false };   // 目标文件是否在本地设备上
-    bool isConvert { false };   // is convert operation
-    QSharedPointer<QWaitCondition> waitCondition { nullptr };   // 线程等待
-    QSharedPointer<QMutex> conditionMutex { nullptr };   // 线程等待锁
-    QSharedPointer<QList<QUrl>> allFilesList { nullptr };   // 所有源文件的统计文件
-    QSharedPointer<LocalFileHandler> handler { nullptr };   // file base operations handler
-    QSharedPointer<QQueue<Qt::HANDLE>> errorThreadIdQueue { nullptr };   // Thread queue for processing errors
-    QSharedPointer<QWaitCondition> errorCondition { nullptr };   //  Condition variables that block other bad threads
-    QSharedPointer<QMutex> errorThreadIdQueueMutex { nullptr };   // Condition variables that block other bad threads mutex
-    QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
+    QSharedPointer<StatisticsFilesSize> statisticsFilesSizeJob { nullptr };   // statistics file info async
     QSharedPointer<QThread> updateProccessThread { nullptr };   // update proccess timer thread
-    QSharedPointer<QList<QUrl>> completeFiles { nullptr };   // List of all copied files
-    QSharedPointer<QList<QUrl>> completeTargetFiles { nullptr };   // List of all complete target files
+    QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
+
+    JobHandlePointer handle { nullptr };   // handle
+    QSharedPointer<LocalFileHandler> handler { nullptr };   // file base operations handler
+
+    AbstractJobHandler::JobType jobType { AbstractJobHandler::JobType::kUnknow };   // current task type
+    AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // job flag
+    AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // current action
+    AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
+
+    QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // total size of all source files
+    QAtomicInteger<qint64> sourceFilesCount { 0 };   // source files count
+    quint16 dirSize { 0 };   // size of dir
+
+    QList<QUrl> sourceUrls;   // source urls
+    QUrl targetUrl;   // target dir url
+    QList<QUrl> allFilesList;   // all files(contains children)
+    QQueue<Qt::HANDLE> errorThreadIdQueue;   // Thread queue for processing errors
+    QList<QUrl> completeFiles;   // List of all copied files
+    QList<QUrl> completeTargetFiles;   // List of all complete target files
+    bool isSourceFileLocal { false };   // source file on local device
+    bool isTargetFileLocal { false };   // target file on local device
+    bool isConvert { false };   // is convert operation
+
+    QWaitCondition handlingErrorCondition;
+    QMutex handlingErrorQMutex;
+    QWaitCondition waitCondition;
+    QMutex conditionMutex;
+    QWaitCondition errorCondition;   //  Condition variables that block other bad threads
+    QMutex errorThreadIdQueueMutex;   // Condition variables that block other bad threads mutex
 };
 
 DSC_END_NAMESPACE

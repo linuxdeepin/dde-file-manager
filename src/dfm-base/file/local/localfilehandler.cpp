@@ -180,8 +180,17 @@ bool LocalFileHandler::rmdir(const QUrl &url)
  */
 bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
 {
+    if (!url.isLocalFile() || !newUrl.isLocalFile())
+        return false;
+
     if (url.scheme() != newUrl.scheme())
         return false;
+
+    const QByteArray &sourceFile = url.toLocalFile().toLocal8Bit();
+    const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
+
+    if (::rename(sourceFile.constData(), targetFile.constData()) == 0)
+        return true;
 
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {

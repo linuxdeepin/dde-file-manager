@@ -22,6 +22,7 @@
  */
 #include "abstractworker.h"
 #include "statisticsfilessize.h"
+
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -29,12 +30,12 @@
 #include <dfm-framework/framework.h>
 
 #include <QUrl>
-#include <QDebug>
 #include <QWaitCondition>
 #include <QMutex>
 #include <QApplication>
 #include <QStorageInfo>
 #include <QRegularExpression>
+#include <QDebug>
 
 DSC_USE_NAMESPACE
 /*!
@@ -87,8 +88,7 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
             currentAction = AbstractJobHandler::SupportAction::kNoAction;
         }
 
-        if (handlingErrorCondition)
-            handlingErrorCondition->wakeAll();
+        handlingErrorCondition.wakeAll();
     }
 }
 
@@ -101,21 +101,16 @@ void AbstractWorker::stop()
     if (statisticsFilesSizeJob)
         statisticsFilesSizeJob->stop();
     // clean error info queue
-    if (errorThreadIdQueue) {
-        if (!errorThreadIdQueueMutex)
-            errorThreadIdQueueMutex.reset(new QMutex);
-        QMutexLocker lk(errorThreadIdQueueMutex.data());
+    {
+        QMutexLocker lk(&errorThreadIdQueueMutex);
         errorThreadIdQueue.clear();
     }
 
-    if (waitCondition)
-        waitCondition->wakeAll();
+    waitCondition.wakeAll();
 
-    if (handlingErrorCondition)
-        handlingErrorCondition->wakeAll();
+    handlingErrorCondition.wakeAll();
 
-    if (errorCondition)
-        errorCondition->wakeAll();
+    errorCondition.wakeAll();
 
     if (updateProccessTimer)
         updateProccessTimer->stopTimer();
@@ -141,13 +136,9 @@ void AbstractWorker::resume()
 {
     setStat(AbstractJobHandler::JobState::kRunningState);
 
-    if (!waitCondition)
-        waitCondition.reset(new QWaitCondition);
+    waitCondition.wakeAll();
 
-    waitCondition->wakeAll();
-
-    if (errorCondition)
-        errorCondition->wakeAll();
+    errorCondition.wakeAll();
 }
 /*!
  * \brief AbstractWorker::startCountProccess start update proccess timer
@@ -178,8 +169,7 @@ bool AbstractWorker::statisticsFilesSize()
     isSourceFileLocal = FileOperationsUtils::isFileOnDisk(sourceUrls.at(0));
 
     if (isSourceFileLocal) {
-        const QSharedPointer<FileOperationsUtils::FilesSizeInfo> &fileSizeInfo =
-                FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
+        const QSharedPointer<FileOperationsUtils::FilesSizeInfo> &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         dirSize = fileSizeInfo->dirSize;
@@ -198,13 +188,9 @@ bool AbstractWorker::statisticsFilesSize()
  */
 bool AbstractWorker::workerWait()
 {
-    if (!conditionMutex)
-        conditionMutex.reset(new QMutex);
-    conditionMutex->lock();
-    if (!waitCondition)
-        waitCondition.reset(new QWaitCondition);
-    waitCondition->wait(conditionMutex.data());
-    conditionMutex->unlock();
+    conditionMutex.lock();
+    waitCondition.wait(&conditionMutex);
+    conditionMutex.unlock();
 
     return currentState == AbstractJobHandler::JobState::kRunningState;
 }
@@ -231,11 +217,8 @@ bool AbstractWorker::initArgs()
     setStat(AbstractJobHandler::JobState::kRunningState);
     if (!handler)
         handler.reset(new LocalFileHandler);
-
-    if (!errorThreadIdQueueMutex)
-        errorThreadIdQueueMutex.reset(new QMutex);
-
-    completeFiles.reset(new QList<QUrl>);
+    completeFiles.clear();
+    completeTargetFiles.clear();
 
     return true;
 }
@@ -483,7 +466,7 @@ QString AbstractWorker::getNonExistFileName(const AbstractFileInfoPointer fromIn
 
 void AbstractWorker::saveOperations()
 {
-    if (!isConvert && !completeTargetFiles->isEmpty()) {
+    if (!isConvert && !completeTargetFiles.isEmpty()) {
         // send saveoperator event
         if (jobType == AbstractJobHandler::JobType::kCopyType || jobType == AbstractJobHandler::JobType::kCutType
             || jobType == AbstractJobHandler::JobType::kMoveToTrashType || jobType == AbstractJobHandler::JobType::kRestoreType) {
@@ -492,11 +475,11 @@ void AbstractWorker::saveOperations()
             switch (jobType) {
             case AbstractJobHandler::JobType::kCopyType:
                 operatorType = kDeleteFiles;
-                targetUrl = UrlRoute::urlParent(completeFiles->first());
+                targetUrl = UrlRoute::urlParent(completeFiles.first());
                 break;
             case AbstractJobHandler::JobType::kCutType:
                 operatorType = kCutFile;
-                targetUrl = UrlRoute::urlParent(completeFiles->first());
+                targetUrl = UrlRoute::urlParent(completeFiles.first());
                 break;
             case AbstractJobHandler::JobType::kMoveToTrashType:
                 operatorType = kRestoreFromTrash;
