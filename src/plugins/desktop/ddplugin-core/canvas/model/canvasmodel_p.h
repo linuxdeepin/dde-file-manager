@@ -48,6 +48,10 @@ public:
     void doFileCreated(const QUrl &url);
     void doFileRename(const QUrl &oldUrl, const QUrl &newUrl);
     void doFileUpdated(const QUrl &url);
+    bool fileDeletedFilter(const QUrl &url);
+    bool fileCreatedFilter(const QUrl &url);
+    bool fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl);
+    bool fileUpdatedFilter(const QUrl &url);
 
     Q_INVOKABLE void doWatcherEvent();
 

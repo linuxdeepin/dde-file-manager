@@ -27,8 +27,11 @@
 #include "canvas/model/canvasselectionmodel.h"
 #include "dfm-framework/framework.h"
 
+#include "services/common/propertydialog/property_defines.h"
+
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
+
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -205,6 +208,12 @@ void FileOperaterProxy::deleteFiles(const CanvasView *view)
                                           , view->winId()
                                           , view->selectionModel()->selectedUrls()
                                           , AbstractJobHandler::JobFlag::kNoHint);
+}
+
+void FileOperaterProxy::showFilesProperty(const CanvasView *view)
+{
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty,
+                                          view->selectionModel()->selectedUrls());
 }
 
 void FileOperaterProxy::dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)

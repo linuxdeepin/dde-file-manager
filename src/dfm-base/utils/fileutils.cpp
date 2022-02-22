@@ -28,6 +28,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -508,6 +509,24 @@ QString FileUtils::cutString(const QString &text, int dataByteSize, const QTextC
     }
 
     return newText;
+}
+
+QUrl DesktopAppUrl::trashDesktopFileUrl()
+{
+    static QUrl trash = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-trash.desktop");
+    return trash;
+}
+
+QUrl DesktopAppUrl::computerDesktopFileUrl()
+{
+    static QUrl computer = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-computer.desktop");
+    return computer;
+}
+
+QUrl DesktopAppUrl::homeDesktopFileUrl()
+{
+    static QUrl home = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-home.desktop");
+    return home;
 }
 
 DFMBASE_END_NAMESPACE

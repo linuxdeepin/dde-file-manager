@@ -147,8 +147,6 @@ CanvasItemDelegate::CanvasItemDelegate(QAbstractItemView *parentPtr)
     d->textLineHeight = parent()->fontMetrics().height();
 
     connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &CanvasItemDelegate::clipboardDataChanged);
-
-    // TODO:  model rowsInserted and iconSizeChanged etc
 }
 
 CanvasItemDelegate::~CanvasItemDelegate()
@@ -475,7 +473,8 @@ void CanvasItemDelegate::drawHighlightText(QPainter *painter, const QStyleOption
                                            const QModelIndex &index, const QRect &rLabel) const
 {
     // single item selected and not in drag will to expand.
-    if (mayExpand()) {
+    bool isDrag = painter->device() != parent()->viewport();
+    if (mayExpand() && !isDrag) {
         QRect needRect;
         if (d->needExpend(option, index, rLabel, &needRect)) {
             drawExpandText(painter, option, index, d->availableTextRect(needRect));
@@ -676,7 +675,6 @@ QRect CanvasItemDelegate::textPaintRect(const QStyleOptionViewItem &option, cons
 
 void CanvasItemDelegate::updateItemSizeHint() const
 {
-    // TODO (LQ) why--> 17 10
     int width = parent()->iconSize().width() * 17 / 10;
     int height = parent()->iconSize().height()
             + 10 + 2 * d->textLineHeight;

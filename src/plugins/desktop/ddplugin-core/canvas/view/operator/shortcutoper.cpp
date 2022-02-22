@@ -144,7 +144,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             swichHidden();
             return true;
         case Qt::Key_I:
-            //todo show property dialog
+            showProperty();
             return true;
         default:
             break;
@@ -317,5 +317,10 @@ void ShortcutOper::swichHidden()
 
     bool show = model->showHiddenFiles();
     model->setShowHiddenFiles(!show);
-    model->fetchMore(QModelIndex());
+    model->fetchMore(model->rootIndex());
+}
+
+void ShortcutOper::showProperty()
+{
+    FileOperaterProxyIns->showFilesProperty(view);
 }

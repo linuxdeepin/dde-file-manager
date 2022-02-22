@@ -98,6 +98,35 @@ void CanvasModelPrivate::doFileUpdated(const QUrl &url)
     metaObject()->invokeMethod(this, "doWatcherEvent", Qt::QueuedConnection);
 }
 
+bool CanvasModelPrivate::fileDeletedFilter(const QUrl &url)
+{
+    return false;
+}
+
+bool CanvasModelPrivate::fileCreatedFilter(const QUrl &url)
+{
+    return false;
+}
+
+bool CanvasModelPrivate::fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    return false;
+}
+
+bool CanvasModelPrivate::fileUpdatedFilter(const QUrl &url)
+{
+    // the filemanager hidden attr changed.
+    // get file that removed form .hidden if do not show hidden file.
+    if (!(filters & QDir::Hidden) && url.fileName() == ".hidden") {
+        qDebug() << "refresh by hidden changed.";
+        //todo delay refresh , 快速切换会出现无响应问题
+        q->fetchMore(q->rootIndex());
+        return true;
+    }
+
+    return false;
+}
+
 void CanvasModelPrivate::doWatcherEvent()
 {
     if (processFileEventRuning)
@@ -121,18 +150,22 @@ void CanvasModelPrivate::doWatcherEvent()
 
         if (kAddFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            fileTreater->insertChild(url);
+            if (!fileCreatedFilter(url))
+                fileTreater->insertChild(url);
         } else if (kRmFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            fileTreater->removeChild(url);
+            if (!fileDeletedFilter(url))
+                fileTreater->removeChild(url);
         } else if (kReFile == eventType) {
             const QPair<QUrl, QUrl> urls = eventData.second.value<QPair<QUrl, QUrl>>();
             const QUrl &oldUrl = urls.first;
             const QUrl &newUrl = urls.second;
-            fileTreater->renameChild(oldUrl, newUrl);
+            if (!fileRenameFilter(oldUrl, newUrl))
+                fileTreater->renameChild(oldUrl, newUrl);
         } else if (kUpdateFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            fileTreater->updateChild(url);
+            if (!fileUpdatedFilter(url))
+                fileTreater->updateChild(url);
         }
     }
     processFileEventRuning = false;
@@ -205,7 +238,7 @@ QModelIndexList CanvasModel::indexs() const
 
 QModelIndex CanvasModel::parent(const QModelIndex &child) const
 {
-    if (child.isValid())
+    if (child != rootIndex() && child.isValid())
         return rootIndex();
 
     return QModelIndex();
@@ -221,15 +254,21 @@ int CanvasModel::rowCount(const QModelIndex &parent) const
 
 int CanvasModel::columnCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
-    return 1;
+    if (parent == rootIndex())
+        return 1;
+
+    return 0;
+}
+
+QModelIndex CanvasModel::rootIndex() const
+{
+    return createIndex((quintptr)this, 0, (void*)this);
 }
 
 QVariant CanvasModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.model() != this) {
+    if (!index.isValid() || index.model() != this || index == rootIndex())
         return QVariant();
-    }
 
     auto indexFileInfo = static_cast<LocalFileInfo *>(index.internalPointer());
     if (!indexFileInfo) {
@@ -286,14 +325,16 @@ Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
 
 bool CanvasModel::canFetchMore(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
+    if (parent != rootIndex())
+        return false;
 
     return d->canFetchMoreFlag;
 }
 
 void CanvasModel::fetchMore(const QModelIndex &parent)
 {
-    Q_UNUSED(parent)
+    if (parent != rootIndex())
+        return;
 
     d->isUpdatedChildren = false;
     if (!d->traversalThread.isNull()) {
@@ -366,11 +407,13 @@ QUrl CanvasModel::rootUrl() const
 
 QUrl CanvasModel::url(const QModelIndex &index) const
 {
-    if (!index.isValid())
+    if (index == rootIndex())
         return d->rootUrl;
 
-    if (auto info = d->fileTreater->fileInfo(index.row())) {
-        return info->url();
+    if (index.isValid()) {
+        if (auto info = d->fileTreater->fileInfo(index.row())) {
+            return info->url();
+        }
     }
 
     return QUrl();
@@ -378,6 +421,9 @@ QUrl CanvasModel::url(const QModelIndex &index) const
 
 DFMLocalFileInfoPointer CanvasModel::fileInfo(const QModelIndex &index) const
 {
+    if (index == rootIndex())
+        return dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(d->rootUrl);
+
     if (!index.isValid())
         return nullptr;
 
@@ -411,7 +457,7 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
         return false;
 
     QUrl targetFileUrl;
-    if (!parent.isValid()) {
+    if (!parent.isValid() || parent == rootIndex()) {
         // drop file to desktop
         targetFileUrl = rootUrl();
         qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action ;
@@ -521,11 +567,6 @@ void CanvasModel::setShowHiddenFiles(const bool isShow)
         d->filters |= QDir::Hidden;
     else
         d->filters &= ~QDir::Hidden;
-}
-
-QModelIndex CanvasModel::createIndex(int arow, int acolumn, void *adata) const
-{
-    return QAbstractItemModel::createIndex(arow, acolumn, adata);
 }
 
 DSB_D_END_NAMESPACE

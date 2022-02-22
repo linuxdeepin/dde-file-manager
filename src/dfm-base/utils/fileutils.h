@@ -51,6 +51,14 @@ public:
     static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
 };
 
+class DesktopAppUrl
+{
+public:
+    static QUrl trashDesktopFileUrl();
+    static QUrl computerDesktopFileUrl();
+    static QUrl homeDesktopFileUrl();
+};
+
 DFMBASE_END_NAMESPACE
 
 #endif   // FILEUTILS_H

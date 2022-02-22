@@ -47,6 +47,7 @@ protected:
     void updateTarget(const QMimeData *data, const QUrl &url);
     bool checkXdndDirectSave(QDragEnterEvent *event) const;
     void selectItems(const QList<QUrl> &fileUrl) const;
+    virtual bool dropFilter(QDropEvent *event);
     bool dropClientDownload(QDropEvent *event) const;
     bool dropBetweenView(QDropEvent *event) const;
     bool dropDirectSaveMode(QDropEvent *event) const;

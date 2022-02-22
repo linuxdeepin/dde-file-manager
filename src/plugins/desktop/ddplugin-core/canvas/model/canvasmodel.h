@@ -78,9 +78,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    inline QModelIndex rootIndex() const {
-        return createIndex((quintptr)this, 0, (void*)this);
-    }
+    QModelIndex rootIndex() const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
@@ -111,9 +109,6 @@ public:
 
     bool showHiddenFiles() const;
     void setShowHiddenFiles(const bool isShow);
-
-    inline QModelIndex createIndex(int arow, int acolumn, void *adata) const;
-
 signals:
     void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 

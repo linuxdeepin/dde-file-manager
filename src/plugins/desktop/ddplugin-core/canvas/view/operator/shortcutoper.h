@@ -49,6 +49,7 @@ protected slots:
     void showMenu();
     void clearClipBoard();
     void swichHidden();
+    void showProperty();
 protected:
     CanvasView *view;
 };

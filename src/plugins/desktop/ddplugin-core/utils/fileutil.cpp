@@ -19,3 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileutil.h"
+
+DFMBASE_USE_NAMESPACE
+DSB_D_USE_NAMESPACE
+
+

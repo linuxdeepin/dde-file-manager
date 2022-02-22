@@ -73,10 +73,8 @@ public:
     CanvasSelectionModel *selectionModel() const;
     void setGeometry(const QRect &rect);
     void updateGrid();
-
-public:
-    QList<QIcon> additionalIcon(const QModelIndex &index) const;
 public Q_SLOTS:
+    void reset() override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
     void refresh();
     void selectAll() override;

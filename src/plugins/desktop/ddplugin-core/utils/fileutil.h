@@ -42,6 +42,7 @@ static inline QUrl covertFileUrlToDesktop(const QUrl &fileUrl){
     return desktopUrl;
 }
 #endif
+
 DSB_D_END_NAMESPACE
 
 #endif // FILEUTIL_H

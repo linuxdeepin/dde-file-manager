@@ -416,7 +416,7 @@ void CanvasView::updateGrid()
 
 void CanvasView::refresh()
 {
-    model()->fetchMore(QModelIndex());
+    model()->fetchMore(rootIndex());
 
     // flicker
     d->flicker = true;
@@ -425,13 +425,13 @@ void CanvasView::refresh()
     d->flicker = false;
 }
 
-QList<QIcon> CanvasView::additionalIcon(const QModelIndex &index) const
+void CanvasView::reset()
 {
-    Q_UNUSED(index)
-    QList<QIcon> list;
-    // TODO(LIQIANG)： get additional Icon
-
-    return list;
+    QAbstractItemView::reset();
+    // the reset wiill be called on model()->endResetModel().
+    // all data and state will be cleared in QAbstractItemView::reset.
+    // it need to reset root index there.
+    setRootIndex(model()->rootIndex());
 }
 
 bool CanvasView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
