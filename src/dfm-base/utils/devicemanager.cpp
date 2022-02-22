@@ -306,6 +306,8 @@ void DeviceManager::initDeviceServiceDBusConn()
     connect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceManager::protocolDevMounted);
     connect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceManager::protocolDevUnmounted);
     connect(getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
+    connect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceAdded, this, &DeviceManager::protocolDevAdded);
+    connect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DeviceManager::protocolDevRemoved);
 }
 
 void DeviceManager::disconnDeviceServiceDBus()
@@ -321,6 +323,8 @@ void DeviceManager::disconnDeviceServiceDBus()
     disconnect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceManager::protocolDevMounted);
     disconnect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceManager::protocolDevUnmounted);
     disconnect(getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceAdded, this, &DeviceManager::protocolDevAdded);
+    disconnect(getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DeviceManager::protocolDevRemoved);
 }
 
 void DeviceManager::initDeviceServiceConn()
@@ -340,6 +344,8 @@ void DeviceManager::initDeviceServiceConn()
     connect(controller, &DeviceController::protocolDevMounted, this, &DeviceManager::protocolDevMounted);
     connect(controller, &DeviceController::protocolDevUnmounted, this, &DeviceManager::protocolDevUnmounted);
     connect(controller, &DeviceController::deviceSizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
+    connect(controller, &DeviceController::protocolDevAdded, this, &DeviceManager::protocolDevAdded);
+    connect(controller, &DeviceController::protocolDevRemoved, this, &DeviceManager::protocolDevRemoved);
 }
 
 void DeviceManager::disconnDeviceService()
@@ -359,4 +365,6 @@ void DeviceManager::disconnDeviceService()
     disconnect(controller, &DeviceController::protocolDevMounted, this, &DeviceManager::protocolDevMounted);
     disconnect(controller, &DeviceController::protocolDevUnmounted, this, &DeviceManager::protocolDevUnmounted);
     disconnect(controller, &DeviceController::deviceSizeUsedChanged, this, &DeviceManager::deviceSizeUsedChanged);
+    disconnect(controller, &DeviceController::protocolDevAdded, this, &DeviceManager::protocolDevAdded);
+    disconnect(controller, &DeviceController::protocolDevRemoved, this, &DeviceManager::protocolDevRemoved);
 }

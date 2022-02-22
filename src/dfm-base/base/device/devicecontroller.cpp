@@ -553,6 +553,8 @@ void DeviceMonitorHandler::onProtocolDeviceRemoved(const QString &deviceId)
 {
     qInfo() << "A new protocol device is removed: " << deviceId;
     removeProtocolDeviceData(deviceId);
+
+    emit service->protocolDevRemoved(deviceId);
 }
 
 void DeviceMonitorHandler::onProtocolDeviceMounted(const QString &deviceId, const QString &mountPoint)

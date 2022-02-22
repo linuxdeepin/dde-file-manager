@@ -90,6 +90,7 @@ protected Q_SLOTS:
     void onProtocolDeviceMounted(const QString &id, const QString &mntPath);
     void onProtocolDeviceUnmounted(const QString &id);
     void onDeviceSizeChanged(const QString &id, qlonglong total, qlonglong free);
+    void onProtocolDeviceRemoved(const QString &id);
 
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);

@@ -145,6 +145,8 @@ void ComputerItemWatcher::initDeviceConn()
     connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
     connect(&DeviceManagerInstance, &DeviceManager::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
     connect(&DeviceManagerInstance, &DeviceManager::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
+    //    connect(&DeviceManagerInstance, &DeviceManager::protocolDevAdded, this, &ComputerItemWatcher::); // TODO(xust) seems not needed for now.
+    connect(&DeviceManagerInstance, &DeviceManager::protocolDevRemoved, this, &ComputerItemWatcher::onProtocolDeviceRemoved);
 }
 
 void ComputerItemWatcher::initAppWatcher()
@@ -518,6 +520,12 @@ void ComputerItemWatcher::onDeviceSizeChanged(const QString &id, qlonglong total
 {
     QUrl devUrl = id.startsWith(DeviceId::kBlockDeviceIdPrefix) ? ComputerUtils::makeBlockDevUrl(id) : ComputerUtils::makeProtocolDevUrl(id);
     Q_EMIT this->itemSizeChanged(devUrl, total, free);
+}
+
+void ComputerItemWatcher::onProtocolDeviceRemoved(const QString &id)
+{
+    auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
+    Q_EMIT itemRemoved(devUrl);
 }
 
 void ComputerItemWatcher::onBlockDeviceMounted(const QString &id, const QString &mntPath)

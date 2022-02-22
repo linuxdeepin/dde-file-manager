@@ -75,6 +75,8 @@ signals:
     void blockDevicePropertyChanged(const QString &deviceId, const QString &property, const QVariant &val);
     void protocolDevMounted(const QString &deviceId, const QString &mountpoint);
     void protocolDevUnmounted(const QString &deviceId);
+    void protocolDevAdded(const QString &deviceId);
+    void protocolDevRemoved(const QString &deviceId);
 
 private:
     explicit DeviceManager(QObject *parent = nullptr);
