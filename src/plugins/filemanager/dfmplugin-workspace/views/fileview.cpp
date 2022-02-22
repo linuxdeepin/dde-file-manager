@@ -127,10 +127,11 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 
 bool FileView::setRootUrl(const QUrl &url)
 {
+    proxyModel()->resetFilter();
+
     model()->setRootUrl(url);
 
     loadViewState(url);
-
     delayUpdateStatusBar();
     setDefaultViewMode();
 
@@ -510,6 +511,24 @@ void FileView::onRowCountChanged()
     updateModelActiveIndex();
 }
 
+void FileView::setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data)
+{
+    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
+    if (thisWindId == windowID && url == rootUrl() && isVisible()) {
+        proxyModel()->setFilterData(data);
+        update();
+    }
+}
+
+void FileView::setFilterCallback(const quint64 windowID, const QUrl &url, const FileViewFilterCallback callback)
+{
+    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
+    if (thisWindId == windowID && url == rootUrl() && isVisible()) {
+        proxyModel()->setFilterCallBack(callback);
+        update();
+    }
+}
+
 bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return DListView::edit(index, trigger, event);
@@ -541,7 +560,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
             setDragDropMode(DragDrop);
         }
 
-        bool isEmptyArea = FileViewHelper::isEmptyArea(this, event->pos());
+        bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
 
         QModelIndex index = indexAt(event->pos());
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
@@ -759,6 +778,8 @@ void FileView::initializeConnect()
 
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterData, this, &FileView::setFilterData);
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);

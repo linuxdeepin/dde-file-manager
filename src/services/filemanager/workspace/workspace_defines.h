@@ -24,14 +24,21 @@
 #define WORKSPACE_DEFINES_H
 
 #include "dfm_filemanager_service_global.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
+#include <QVariant>
 
 #include <functional>
 
 QT_BEGIN_NAMESPACE
 class QWidget;
 QT_END_NAMESPACE
+
+DFMBASE_BEGIN_NAMESPACE
+class AbstractFileInfo;
+DFMBASE_END_NAMESPACE
+
 DSB_FM_BEGIN_NAMESPACE
 
 namespace Workspace {
@@ -45,8 +52,10 @@ extern const int kTabRemoved;
 extern const int kCloseTabs;
 extern const int kShowCustomTopWidget;
 };   // namespace EventType
+
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(const QUrl &)>;
+using FileViewFilterCallback = std::function<bool(DFMBASE_NAMESPACE::AbstractFileInfo *, QVariant)>;
 
 struct CustomTopWidgetInfo
 {
@@ -63,5 +72,6 @@ DSB_FM_END_NAMESPACE
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback);
 //Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback);
 
 #endif   // WORKSPACE_DEFINES_H

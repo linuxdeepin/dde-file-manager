@@ -34,6 +34,22 @@ FileSortFilterProxyModel::~FileSortFilterProxyModel()
 {
 }
 
+void FileSortFilterProxyModel::setFilterData(const QVariant &data)
+{
+    filterData = data;
+}
+
+void FileSortFilterProxyModel::setFilterCallBack(const FileViewFilterCallback callback)
+{
+    filterCallback = callback;
+}
+
+void FileSortFilterProxyModel::resetFilter()
+{
+    filterData = QVariant();
+    filterCallback = nullptr;
+}
+
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     if (!left.isValid())
@@ -102,6 +118,9 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     QModelIndex rowIndex = sourceModel()->index(sourceRow, 0, sourceParent);
 
     AbstractFileInfoPointer fileInfo = fileModel->itemFromIndex(rowIndex)->fileInfo();
+
+    if (filterCallback)
+        return filterCallback(fileInfo.data(), filterData);
 
     return fileInfo && !fileInfo->isHidden();
 }

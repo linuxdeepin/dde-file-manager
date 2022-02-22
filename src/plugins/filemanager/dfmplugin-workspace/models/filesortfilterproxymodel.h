@@ -23,9 +23,12 @@
 #define FILESORTFILTERPROXYMODEL_H
 
 #include "dfmplugin_workspace_global.h"
+#include "workspace/workspace_defines.h"
 
 #include <QSortFilterProxyModel>
 
+DSB_FM_USE_NAMESPACE
+using namespace Workspace;
 DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileSortFilterProxyModel : public QSortFilterProxyModel
@@ -35,9 +38,17 @@ public:
     explicit FileSortFilterProxyModel(QObject *parent = nullptr);
     virtual ~FileSortFilterProxyModel() override;
 
+    void setFilterData(const QVariant &data);
+    void setFilterCallBack(const FileViewFilterCallback callback);
+    void resetFilter();
+
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
     virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+
+private:
+    QVariant filterData;
+    FileViewFilterCallback filterCallback;
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -26,6 +26,7 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "workspace/workspace_defines.h"
 
 #include <QMap>
 #include <QMutex>
@@ -59,6 +60,8 @@ public:
     bool isRegistedTopWidget(const KeyType &scheme) const;
     CustomTopWidgetInterface *createTopWidgetByUrl(const QUrl &url);
     void setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible);
+    void setFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
+    void setFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QString &path);
@@ -87,6 +90,8 @@ public:
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);
+    void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
+    void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);

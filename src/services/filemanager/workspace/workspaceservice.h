@@ -46,6 +46,8 @@ public:
     bool tabAddable(const quint64 windowID);
     void addCustomTopWidget(const Workspace::CustomTopWidgetInfo &info);
     bool getCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);
+    void setFileViewFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
+    void setFileViewFilterCallback(const quint64 windowID, const QUrl &url, const Workspace::FileViewFilterCallback callback);
 
 private:
     explicit WorkspaceService(QObject *parent = nullptr);

@@ -68,6 +68,16 @@ void WorkspaceHelper::setCustomTopWidgetVisible(quint64 windowId, const QString 
     }
 }
 
+void WorkspaceHelper::setFilterData(quint64 windowId, const QUrl &url, const QVariant &data)
+{
+    emit requestSetViewFilterData(windowId, url, data);
+}
+
+void WorkspaceHelper::setFilterCallback(quint64 windowId, const QUrl &url, const Workspace::FileViewFilterCallback callback)
+{
+    emit requestSetViewFilterCallback(windowId, url, callback);
+}
+
 WorkspaceHelper *WorkspaceHelper::instance()
 {
     static WorkspaceHelper helper;

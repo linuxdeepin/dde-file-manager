@@ -90,3 +90,13 @@ bool WorkspaceService::getCustomTopWidgetVisible(const quint64 windowID, const Q
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, scheme).toBool();
 }
+
+void WorkspaceService::setFileViewFilterData(const quint64 windowID, const QUrl &url, const QVariant &data)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, url, data);
+}
+
+void WorkspaceService::setFileViewFilterCallback(const quint64 windowID, const QUrl &url, const Workspace::FileViewFilterCallback callback)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, url, callback);
+}

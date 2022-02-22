@@ -158,9 +158,9 @@ void FileViewHelper::updateGeometries()
     parent()->updateGeometry();
 }
 
-bool FileViewHelper::isEmptyArea(const FileView *view, const QPoint &pos)
+bool FileViewHelper::isEmptyArea(const QPoint &pos)
 {
-    const QModelIndex &index = view->indexAt(pos);
+    const QModelIndex &index = parent()->indexAt(pos);
 
     return !index.isValid();
 }

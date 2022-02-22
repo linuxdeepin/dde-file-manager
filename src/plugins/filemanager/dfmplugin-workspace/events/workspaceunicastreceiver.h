@@ -22,6 +22,9 @@ public slots:
     bool invokeTabAddable(const quint64 windowID);
     bool invokeAddCustomTopWidget(const DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo &info);
     bool invokeGetCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);
+    void invokeSetFileViewFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
+    void invokeSetFileViewFilterCallback(const quint64 windowID, const QUrl &url,
+                                         const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
 
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);

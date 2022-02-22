@@ -33,6 +33,8 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::tabAddable"), this, &WorkspaceUnicastReceiver::invokeTabAddable);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::addCustomTopWidget"), this, &WorkspaceUnicastReceiver::invokeAddCustomTopWidget);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getCustomTopWidgetVisible"), this, &WorkspaceUnicastReceiver::invokeGetCustomTopWidgetVisible);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::setFileViewFilterData"), this, &WorkspaceUnicastReceiver::invokeSetFileViewFilterData);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::setFileViewFilterCallback"), this, &WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -49,7 +51,7 @@ bool WorkspaceUnicastReceiver::invokeTabAddable(const quint64 windowID)
     return widget->canAddNewTab();
 }
 
-bool WorkspaceUnicastReceiver::invokeAddCustomTopWidget(const dfm_service_filemanager::Workspace::CustomTopWidgetInfo &info)
+bool WorkspaceUnicastReceiver::invokeAddCustomTopWidget(const DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo &info)
 {
     if (WorkspaceHelper::instance()->isRegistedTopWidget(info.scheme)) {
         qWarning() << "custom top widget sechme " << info.scheme << "has been resigtered!";
@@ -73,6 +75,16 @@ bool WorkspaceUnicastReceiver::invokeGetCustomTopWidgetVisible(const quint64 win
         return workspaceWidget->getCustomTopWidgetVisible(scheme);
     }
     return false;
+}
+
+void WorkspaceUnicastReceiver::invokeSetFileViewFilterData(const quint64 windowID, const QUrl &url, const QVariant &data)
+{
+    WorkspaceHelper::instance()->setFilterData(windowID, url, data);
+}
+
+void WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback)
+{
+    WorkspaceHelper::instance()->setFilterCallback(windowID, url, callback);
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)

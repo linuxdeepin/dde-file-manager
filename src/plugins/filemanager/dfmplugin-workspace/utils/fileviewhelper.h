@@ -55,7 +55,7 @@ public:
 
     void updateGeometries();
 
-    static bool isEmptyArea(const FileView *view, const QPoint &pos);
+    bool isEmptyArea(const QPoint &pos);
     static int caculateListItemIndex(const QSize &itemSize, const QPoint &pos);
     static int caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos);
 
