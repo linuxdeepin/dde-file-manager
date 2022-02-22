@@ -28,6 +28,7 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
 
 #include <QIcon>
 #include <QRegularExpression>
@@ -51,9 +52,11 @@ public:
     static QUrl tansToBurnFile(const QUrl &in);
     static QString deviceId(const QString &device);
 
+    // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();
     static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
+    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 
 private:
     static QRegularExpression burnRxp();

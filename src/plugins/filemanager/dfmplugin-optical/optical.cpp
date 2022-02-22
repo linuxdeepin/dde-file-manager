@@ -22,9 +22,11 @@
 */
 #include "optical.h"
 #include "utils/opticalhelper.h"
+#include "utils/opticalfileshelper.h"
 #include "mastered/masteredmediafileinfo.h"
 #include "mastered/masteredmediafilewatcher.h"
 #include "mastered/masteredmediadiriterator.h"
+#include "views/opticalmediawidget.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -32,6 +34,7 @@
 DPOPTICAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 void Optical::initialize()
 {
@@ -49,7 +52,8 @@ void Optical::initialize()
 
 bool Optical::start()
 {
-    OpticalHelper::workspaceServIns()->addScheme(SchemeTypes::kBurn);
+    addFileOperations();
+    addCustomTopWidget();
 
     return true;
 }
@@ -85,4 +89,29 @@ void Optical::addOpticalCrumbToTitleBar()
         };
         OpticalHelper::titleServIns()->addCustomCrumbar(info);
     });
+}
+
+void Optical::addFileOperations()
+{
+    OpticalHelper::workspaceServIns()->addScheme(SchemeTypes::kBurn);
+    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;
+    OpticalHelper::fileOperationsServIns()->registerOperations(SchemeTypes::kBurn, fileOpeationsHandle);
+}
+
+void Optical::addCustomTopWidget()
+{
+    Workspace::CustomTopWidgetInfo info;
+    info.scheme = SchemeTypes::kBurn;
+    info.keepShow = true;
+    info.createTopWidgetCb = []() {
+        QFrame *frame = new QFrame;
+        QVBoxLayout *mainLayout = new QVBoxLayout;
+        OpticalMediaWidget *w = new OpticalMediaWidget;
+        mainLayout->addWidget(w);
+        frame->setLayout(mainLayout);
+        return frame;
+    };
+
+    OpticalHelper::workspaceServIns()->addCustomTopWidget(info);
 }

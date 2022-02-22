@@ -78,12 +78,6 @@ void Recent::initialize()
     Q_ASSERT(GlobalPrivate::winServ);
     connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
 
-    GlobalPrivate::fileOperationsService = ctx.service<FileOperationsService>(FileOperationsService::name());
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &RecentManager::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &RecentManager::writeToClipBoardHandle;
-    GlobalPrivate::fileOperationsService->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
-
     RecentManager::instance();
 }
 
@@ -109,8 +103,14 @@ bool Recent::start()
         abort();
     }
     GlobalPrivate::workspaceService->addScheme(RecentManager::scheme());
-
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
+
+    GlobalPrivate::fileOperationsService = ctx.service<FileOperationsService>(FileOperationsService::name());
+    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = &RecentManager::openFilesHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &RecentManager::writeToClipBoardHandle;
+    GlobalPrivate::fileOperationsService->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
+
     return true;
 }
 

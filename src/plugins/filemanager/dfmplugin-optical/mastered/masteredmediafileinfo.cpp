@@ -136,10 +136,11 @@ QUrl MasteredMediaFileInfo::redirectedFileUrl() const
 
 QUrl MasteredMediaFileInfo::parentUrl() const
 {
-    if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
+    QString burnPath { OpticalHelper::burnFilePath(url()) };
+    if (burnPath.contains(QRegularExpression("^(/*)$"))) {
         return QUrl::fromLocalFile(QDir::homePath());
     }
-    return AbstractFileInfo::parentUrl();
+    return UrlRoute::urlParent(url());
 }
 
 bool MasteredMediaFileInfo::canDrop() const

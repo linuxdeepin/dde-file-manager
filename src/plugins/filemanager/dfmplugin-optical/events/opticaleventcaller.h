@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +19,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef GLOBALDEFINITIONS_H
-#define GLOBALDEFINITIONS_H
+*/
+#ifndef OPTICALEVENTCALLER_H
+#define OPTICALEVENTCALLER_H
 
-#define DSC_NAMESPACE dfm_service_common
+#include "dfmplugin_optical_global.h"
 
-#define DSC_BEGIN_NAMESPACE namespace DSC_NAMESPACE {
-#define DSC_END_NAMESPACE }
-#define DSC_USE_NAMESPACE using namespace DSC_NAMESPACE;
+#include <QUrl>
 
-#endif   //GLOBALDEFINITIONS_H
+DPOPTICAL_BEGIN_NAMESPACE
+
+class OpticalEventCaller
+{
+    OpticalEventCaller() = delete;
+
+public:
+    static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
+};
+
+DPOPTICAL_END_NAMESPACE
+
+#endif   // OPTICALEVENTCALLER_H

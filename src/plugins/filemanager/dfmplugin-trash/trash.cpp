@@ -28,7 +28,6 @@
 #include "dfm-base/base/schemefactory.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"

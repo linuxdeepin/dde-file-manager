@@ -12,9 +12,15 @@ FILE(GLOB OPTICAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/mastered/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/mastered/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
     )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(Qt5 COMPONENTS Svg REQUIRED)
+
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -26,9 +32,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${DtkWidget_INCLUDE_DIRS}
+        ${Qt5Svg_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
+    Qt5::Svg
     DFM::base
     DFM::framework
     DFMSERVICE::common

@@ -20,31 +20,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPTICAL_H
-#define OPTICAL_H
+#ifndef OPTICALMEDIAWIDGET_H
+#define OPTICALMEDIAWIDGET_H
 
 #include "dfmplugin_optical_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QSvgWidget>
+#include <DPushButton>
 
 DPOPTICAL_BEGIN_NAMESPACE
 
-class Optical : public dpf::Plugin
+class OpticalMediaWidget : public QWidget
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit OpticalMediaWidget(QWidget *parent = nullptr);
 
 private:
-    void addOpticalCrumbToTitleBar();
-    void addFileOperations();
-    void addCustomTopWidget();
+    void initializeUi();
+    void initConnect();
+
+private:
+    QHBoxLayout *layout { nullptr };
+    QLabel *lbMediatype { nullptr };
+    QLabel *lbAvailable { nullptr };
+    QLabel *lbUdsupport { nullptr };
+    DTK_WIDGET_NAMESPACE::DPushButton *pbBurn { nullptr };
+    QSvgWidget *iconCaution { nullptr };
 };
 
 DPOPTICAL_END_NAMESPACE
 
-#endif   // OPTICAL_H
+#endif   // OPTICALMEDIAWIDGET_H

@@ -20,31 +20,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPTICAL_H
-#define OPTICAL_H
+#include "opticaleventcaller.h"
 
-#include "dfmplugin_optical_global.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
 
-DPOPTICAL_BEGIN_NAMESPACE
+DPOPTICAL_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
-class Optical : public dpf::Plugin
+static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
+    return &dpfInstance.eventDispatcher();
+}
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-private:
-    void addOpticalCrumbToTitleBar();
-    void addFileOperations();
-    void addCustomTopWidget();
-};
-
-DPOPTICAL_END_NAMESPACE
-
-#endif   // OPTICAL_H
+void OpticalEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
+{
+    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+}

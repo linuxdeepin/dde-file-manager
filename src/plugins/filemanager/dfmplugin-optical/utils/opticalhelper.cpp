@@ -160,6 +160,18 @@ DSB_FM_NAMESPACE::WorkspaceService *OpticalHelper::workspaceServIns()
     return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }
 
+dfm_service_common::FileOperationsService *OpticalHelper::fileOperationsServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}
+
 QRegularExpression OpticalHelper::burnRxp()
 {
     static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };

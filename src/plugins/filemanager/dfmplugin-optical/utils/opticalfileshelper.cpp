@@ -20,31 +20,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPTICAL_H
-#define OPTICAL_H
+#include "opticalfileshelper.h"
 
-#include "dfmplugin_optical_global.h"
+#include "mastered/masteredmediafileinfo.h"
+#include "events/opticaleventcaller.h"
 
-#include <dfm-framework/framework.h>
+DPOPTICAL_USE_NAMESPACE
 
-DPOPTICAL_BEGIN_NAMESPACE
-
-class Optical : public dpf::Plugin
+bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-private:
-    void addOpticalCrumbToTitleBar();
-    void addFileOperations();
-    void addCustomTopWidget();
-};
-
-DPOPTICAL_END_NAMESPACE
-
-#endif   // OPTICAL_H
+    Q_UNUSED(error)
+    QList<QUrl> redirectedFileUrls;
+    for (const QUrl &url : urls) {
+        redirectedFileUrls << QUrl::fromLocalFile(MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString());
+    }
+    OpticalEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
+    return true;
+}
