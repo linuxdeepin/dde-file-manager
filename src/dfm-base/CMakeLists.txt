@@ -132,9 +132,15 @@ find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
 find_package(PkgConfig REQUIRED)
 
+pkg_search_module(dfm-burn
+    REQUIRED
+    dfm-burn
+    IMPORTED_TARGET
+)
+
 pkg_search_module(dfm-io
     REQUIRED
-    dfm-io dfm-mount
+    dfm-io
     IMPORTED_TARGET
 )
 
@@ -175,8 +181,9 @@ target_link_libraries( ${PROJECT_NAME}
     Qt5::Concurrent
     Qt5::DBus
     Qt5::X11Extras
-    PkgConfig::dfm-mount
+    PkgConfig::dfm-burn
     PkgConfig::dfm-io
+    PkgConfig::dfm-mount
     PkgConfig::gsettings
     ${DtkWidget_LIBRARIES}
 )

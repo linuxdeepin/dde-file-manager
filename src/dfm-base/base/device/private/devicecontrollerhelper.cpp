@@ -22,11 +22,14 @@
 */
 #include "devicecontrollerhelper.h"
 
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-mount/dfmblockmonitor.h>
+
 #include <QDebug>
 #include <QGSettings/QGSettings>
 #include <QStorageInfo>
@@ -36,6 +39,10 @@
 #include <DDesktopServices>
 
 Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
+
+static constexpr char kBurnCapacityAttribute[] { "BurnCapacityAttribute" };
+static constexpr char kBurnCapacityTotalSize[] { "BurnCapacityTotalSize" };
+static constexpr char kBurnCapacityUsedSize[] { "BurnCapacityUsedSize" };
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -468,6 +475,12 @@ void DeviceControllerHelper::makeBlockDeviceData(const DeviceControllerHelper::B
     data->hasPartitionTable = ptr->hasPartitionTable();
     data->hasPartition = ptr->hasPartition();
 
+    // We cannot acqurie optical capacity by udisks2
+    if (data->optical && !data->mountpoints.isEmpty()) {
+        DeviceControllerHelper::readOpticalCapacity(data->device, &data->common.sizeTotal, &data->common.sizeUsed);
+        data->common.sizeFree = data->common.sizeTotal - data->common.sizeUsed;
+    }
+
     /*!
      * brief Extended partition with CHS addressing.
      * It must reside within the first physical 8 GB of disk,
@@ -581,5 +594,34 @@ void DeviceControllerHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *da
         data->common.sizeTotal = total;
         data->common.sizeFree = free;
         data->common.sizeUsed = used;
+    }
+}
+
+void DeviceControllerHelper::writeOpticalCapacity(const QString &device, qint64 total, qint64 used)
+{
+    Q_ASSERT(device.startsWith("/dev"));
+
+    QMap<QString, QVariant> capacityInfo;
+    QString tag { device.mid(5) };
+
+    capacityInfo[kBurnCapacityTotalSize] = total;
+    capacityInfo[kBurnCapacityUsedSize] = used;
+
+    Application::genericSetting()->setValue(kBurnCapacityAttribute, tag, capacityInfo);
+    Application::genericSetting()->sync();
+}
+
+void DeviceControllerHelper::readOpticalCapacity(const QString &device, qint64 *total, qint64 *used)
+{
+    Q_ASSERT(device.startsWith("/dev"));
+    Q_ASSERT(total);
+    Q_ASSERT(used);
+
+    Application::genericSetting()->reload();
+    QString tag { device.mid(5) };
+    if (Application::genericSetting()->keys(kBurnCapacityAttribute).contains(tag)) {
+        const QMap<QString, QVariant> &info = Application::genericSetting()->value(kBurnCapacityAttribute, tag).toMap();
+        *total = static_cast<qint64>(info.value(kBurnCapacityTotalSize).toLongLong());
+        *used = static_cast<qint64>(info.value(kBurnCapacityUsedSize).toLongLong());
     }
 }

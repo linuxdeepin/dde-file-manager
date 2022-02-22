@@ -131,6 +131,9 @@ private:
     static void makeProtocolDeviceMap(const ProtocolDeviceData &data, QVariantMap *map, bool detail = false);
     static void updateProtocolDeviceSizeUsed(ProtocolDeviceData *data, qint64 total, qint64 free, qint64 used);
 
+    static void writeOpticalCapacity(const QString &device, qint64 total, qint64 used);
+    static void readOpticalCapacity(const QString &device, qint64 *total, qint64 *used);
+
 private:
     static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);
     static DevPtrList createAllDevices(DFMMOUNT::DeviceType type);

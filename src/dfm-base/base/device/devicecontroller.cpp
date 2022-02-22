@@ -31,6 +31,8 @@
 
 #include <dfm-mount/base/dfmmountutils.h>
 #include <dfm-mount/dfmblockmonitor.h>
+#include <dfm-burn/opticaldiscmanager.h>
+#include <dfm-burn/opticaldiscinfo.h>
 
 #include <QtConcurrent>
 #include <DDesktopServices>
@@ -369,6 +371,32 @@ void DeviceMonitorHandler::handleProtolDevicesSizeUsedChanged()
     }
 }
 
+void DeviceMonitorHandler::handleOpticalDeviceSizeUsedChanged(const QString &deviceId)
+{
+    QMutexLocker guard(&mutexForBlock);
+    bool sizeChanged { false };
+    auto block = DeviceControllerHelper::createBlockDevice(deviceId);
+
+    // Note: allBlockDevData is empty if D-Bus not used
+    BlockDeviceData data;
+    DeviceControllerHelper::makeBlockDeviceData(block, &data);
+
+    QString dev { data.device };
+    QScopedPointer<DFMBURN::OpticalDiscInfo> info { DFMBURN::OpticalDiscManager::createOpticalInfo(dev) };
+    if (info && !data.common.id.isEmpty()) {
+        sizeChanged = true;
+        data.common.sizeTotal = static_cast<qint64>(info->totalSize());
+        data.common.sizeUsed = static_cast<qint64>(info->usedSize());
+        data.common.sizeFree = data.common.sizeTotal - data.common.sizeUsed;
+        allBlockDevData[deviceId] = data;
+    }
+    guard.unlock();
+    if (sizeChanged) {
+        DeviceControllerHelper::writeOpticalCapacity(data.device, data.common.sizeTotal, data.common.sizeUsed);
+        emit service->deviceSizeUsedChanged(data.common.id, data.common.sizeTotal, data.common.sizeFree);
+    }
+}
+
 void DeviceMonitorHandler::onBlockDriveAdded(const QString &drvObjPath)
 {
     qInfo() << "A block dirve added: " << drvObjPath;
@@ -459,11 +487,20 @@ void DeviceMonitorHandler::onBlockDeviceMounted(const QString &deviceId, const Q
         QMutexLocker guard(&mutexForBlock);
         auto &&keys = allBlockDevData.keys();
         if (keys.contains(deviceId)) {
-            qlonglong sizeTotal = allBlockDevData.value(deviceId).common.sizeTotal;
+            qlonglong sizeTotal { allBlockDevData.value(deviceId).common.sizeTotal };
+            bool optical { allBlockDevData.value(deviceId).optical };
+            QString device { allBlockDevData.value(deviceId).device };
             guard.unlock();
 
-            QStorageInfo info(mountPoint);
-            qlonglong sizeFree = info.bytesAvailable();
+            qlonglong sizeFree {};
+            if (optical) {
+                qint64 used { 0 };
+                DeviceControllerHelper::readOpticalCapacity(device, &sizeTotal, &used);
+                sizeFree = sizeTotal - used;
+            } else {
+                QStorageInfo info(mountPoint);
+                sizeFree = info.bytesAvailable();
+            }
 
             emit service->deviceSizeUsedChanged(deviceId, sizeTotal, sizeFree);
         }
@@ -1090,7 +1127,19 @@ void DeviceController::mountBlockDeviceAsync(const QString &deviceId, const QVar
 
     QString errMsg;
     if (DeviceControllerHelper::isMountableBlockDevice(ptr, &errMsg)) {
-        ptr->mountAsync(opts, callback);
+        if (ptr->optical()) {
+            QFutureWatcher<void> *fw(new QFutureWatcher<void>);
+            connect(fw, &QFutureWatcher<void>::finished, this, [=]() {
+                ptr->mountAsync(opts, callback);
+                if (fw)
+                    delete fw;
+            });
+            fw->setFuture(QtConcurrent::run([=] {
+                monitorHandler->handleOpticalDeviceSizeUsedChanged(deviceId);
+            }));
+        } else {
+            ptr->mountAsync(opts, callback);
+        }
     } else {
         qWarning() << "device is not mountable: " << deviceId << errMsg;
         if (callback)
@@ -1109,11 +1158,14 @@ QString DeviceController::mountBlockDevice(const QString &deviceId, const QVaria
     }
 
     QString errMsg;
-    if (DeviceControllerHelper::isMountableBlockDevice(ptr, &errMsg))
+    if (DeviceControllerHelper::isMountableBlockDevice(ptr, &errMsg)) {
+        // Note: Blocking main thread!
+        if (ptr->optical())
+            monitorHandler->handleOpticalDeviceSizeUsedChanged(deviceId);
         return ptr->mount(opts);
-    else
+    } else {
         qWarning() << "Not mountable device: " << errMsg;
-
+    }
     return "";
 }
 

@@ -21,6 +21,7 @@ Build-Depends:
  libgio-qt-dev,
  libdfm-io-dev,
  libdfm-mount-dev,
+ libdfm-burn-dev,
  libgtest-dev,
  libgmock-dev,
  libgsettings-qt-dev,

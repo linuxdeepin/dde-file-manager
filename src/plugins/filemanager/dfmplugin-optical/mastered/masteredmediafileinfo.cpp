@@ -79,8 +79,10 @@ bool MasteredMediaFileInfo::isWritable() const
 {
     if (!OpticalHelper::burnIsOnDisc(backerUrl))
         return true;
-    // TODO(zhangs): avail
-    return true;
+    QString id { OpticalHelper::deviceId(OpticalHelper::burnDestDevice(url())) };
+    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    quint64 avil { qvariant_cast<quint64>(map[DeviceProperty::kSizeFree]) };
+    return avil > 0;
 }
 
 bool MasteredMediaFileInfo::isDir() const
