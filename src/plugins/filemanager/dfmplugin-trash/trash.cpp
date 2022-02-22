@@ -22,94 +22,33 @@
 #include "trashfileinfo.h"
 #include "trashdiriterator.h"
 #include "trashfilewatcher.h"
-#include "utils/trashmanager.h"
+#include "utils/trashhelper.h"
+#include "utils/trashfilehelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-
 #include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
-DPTRASH_USE_NAMESPACE
-
-namespace GlobalPrivate {
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-static WindowsService *winServ { nullptr };
-static SideBarService *sideBarService { nullptr };
-static WorkspaceService *workspaceService { nullptr };
-static FileOperationsService *fileOperationsService { nullptr };
-}   // namespace GlobalPrivate
+DPTRASH_USE_NAMESPACE
 
 void Trash::initialize()
 {
-    DSB_FM_USE_NAMESPACE
-    DFMBASE_USE_NAMESPACE
-    auto &ctx = dpfInstance.serviceContext();
-    QString errStr;
-    if (!ctx.load(SideBarService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-    if (!ctx.load(WorkspaceService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(FileOperationsService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    UrlRoute::regScheme(TrashManager::scheme(), "/", TrashManager::icon(), true, tr("Trash"));
-    InfoFactory::regClass<TrashFileInfo>(TrashManager::scheme());
-    WacherFactory::regClass<TrashFileWatcher>(TrashManager::scheme());
-    DirIteratorFactory::regClass<TrashDirIterator>(TrashManager::scheme());
-
-    GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
-    Q_ASSERT(GlobalPrivate::winServ);
-    connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
-
-    GlobalPrivate::fileOperationsService = ctx.service<FileOperationsService>(FileOperationsService::name());
+    UrlRoute::regScheme(TrashHelper::scheme(), "/", TrashHelper::icon(), true, tr("Trash"));
+    InfoFactory::regClass<TrashFileInfo>(TrashHelper::scheme());
+    WacherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
+    DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
+    connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Trash::start()
 {
-    DSB_FM_USE_NAMESPACE
-    DFMBASE_USE_NAMESPACE
-    auto &ctx = dpfInstance.serviceContext();
-    GlobalPrivate::sideBarService = ctx.service<SideBarService>(SideBarService::name());
-    if (!GlobalPrivate::sideBarService) {
-        qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
-        abort();
-    }
-
     installToSideBar();
-
-    GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-
-    if (!GlobalPrivate::workspaceService) {
-        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-        abort();
-    }
-    GlobalPrivate::workspaceService->addScheme(TrashManager::scheme());
-
-    Workspace::CustomTopWidgetInfo info;
-    info.scheme = TrashManager::scheme();
-    info.keepShow = true;
-    info.createTopWidgetCb = TrashManager::createEmptyTrashTopWidget;
-    GlobalPrivate::workspaceService->addCustomTopWidget(info);
-
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &TrashManager::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &TrashManager::writeToClipBoardHandle;
-    GlobalPrivate::fileOperationsService->registerOperations(TrashManager::scheme(), fileOpeationsHandle);
+    addCustomTopWidget();
+    addFileOperations();
 
     return true;
 }
@@ -121,9 +60,7 @@ dpf::Plugin::ShutdownFlag Trash::stop()
 
 void Trash::onWindowOpened(quint64 windId)
 {
-    DSB_FM_USE_NAMESPACE
-    DFMBASE_USE_NAMESPACE
-    auto window = GlobalPrivate::winServ->findWindowById(windId);
+    auto window = TrashHelper::winServIns()->findWindowById(windId);
     Q_ASSERT_X(window, "Trash", "Cannot find window by id");
     if (window->titleBar())
         regTrashCrumbToTitleBar();
@@ -133,32 +70,41 @@ void Trash::onWindowOpened(quint64 windId)
 
 void Trash::regTrashCrumbToTitleBar()
 {
-    DSB_FM_USE_NAMESPACE
-    DFMBASE_USE_NAMESPACE
     static std::once_flag flag;
     std::call_once(flag, []() {
-        auto &ctx = dpfInstance.serviceContext();
-        if (ctx.load(TitleBarService::name())) {
-            auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
-            TitleBar::CustomCrumbInfo info;
-            info.scheme = TrashManager::scheme();
-            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TrashManager::scheme(); };
-            titleBarServ->addCustomCrumbar(info);
-        }
+        TitleBar::CustomCrumbInfo info;
+        info.scheme = TrashHelper::scheme();
+        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TrashHelper::scheme(); };
+        TrashHelper::titleServIns()->addCustomCrumbar(info);
     });
 }
 
 void Trash::installToSideBar()
 {
-    DSB_FM_USE_NAMESPACE
-    DFMBASE_USE_NAMESPACE
     SideBar::ItemInfo item;
     item.group = SideBar::DefaultGroup::kCommon;
-    item.url = TrashManager::rootUrl();
-    item.iconName = TrashManager::icon().name();
+    item.url = TrashHelper::rootUrl();
+    item.iconName = TrashHelper::icon().name();
     item.text = tr("Trash");
     item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    item.contextMenuCb = TrashManager::contenxtMenuHandle;
+    item.contextMenuCb = TrashHelper::contenxtMenuHandle;
+    TrashHelper::sideBarServIns()->addItem(item);
+}
 
-    GlobalPrivate::sideBarService->addItem(item);
+void Trash::addFileOperations()
+{
+    TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
+    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &TrashFileHelper::writeToClipBoardHandle;
+    TrashHelper::fileOperationsServIns()->registerOperations(TrashHelper::scheme(), fileOpeationsHandle);
+}
+
+void Trash::addCustomTopWidget()
+{
+    Workspace::CustomTopWidgetInfo info;
+    info.scheme = TrashHelper::scheme();
+    info.createTopWidgetCb = TrashHelper::createEmptyTrashTopWidget;
+    info.showTopWidgetCb = TrashHelper::showTopWidget;
+    TrashHelper::workspaceServIns()->addCustomTopWidget(info);
 }

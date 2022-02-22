@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     yanghao<yanghao@uniontech.com>
@@ -18,34 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef TRASHPLUGIN_H
-#define TRASHPLUGIN_H
+#ifndef EMPTYTRASHWIDGET_H
+#define EMPTYTRASHWIDGET_H
 
 #include "dfmplugin_trash_global.h"
-
-#include <dfm-framework/framework.h>
+#include <QFrame>
 
 DPTRASH_BEGIN_NAMESPACE
-class Trash : public dpf::Plugin
+
+class EmptyTrashWidget : public QFrame
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "trash.json")
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-private slots:
-    void onTrashDisplayChanged(bool enabled);
-    void onWindowOpened(quint64 windId);
-    void regTrashCrumbToTitleBar();
-
-private:
-    void installToSideBar();
-    void addFileOperations();
-    void addCustomTopWidget();
+    explicit EmptyTrashWidget(QWidget *parrent = nullptr);
+signals:
+    void emptyTrash();
 };
 
 DPTRASH_END_NAMESPACE
-#endif   // TRASHPLUGIN_H
+
+#endif   // EMPTYTRASHWIDGET_H

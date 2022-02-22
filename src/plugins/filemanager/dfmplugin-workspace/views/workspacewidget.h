@@ -41,7 +41,6 @@ class DHorizontalLine;
 DWIDGET_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
-class QFrame;
 class QHBoxLayout;
 class QVBoxLayout;
 class QStackedLayout;
@@ -55,7 +54,7 @@ class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
     using ViewPtr = QSharedPointer<DFMBASE_NAMESPACE::AbstractBaseView>;
-    using TopWidgetPtr = QSharedPointer<QFrame>;
+    using TopWidgetPtr = QSharedPointer<QWidget>;
 
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);

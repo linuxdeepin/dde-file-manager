@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trashfilewatcher.h"
-#include "utils/trashmanager.h"
+#include "utils/trashhelper.h"
 #include "private/trashfilewatcher_p.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -55,7 +55,7 @@ bool TrashFileWatcherPrivate::stop()
 
 void TrashFileWatcherPrivate::initFileWatcher()
 {
-    const QUrl &watchUrl = QUrl::fromLocalFile(TrashManager::toLocalFile(path).path());
+    const QUrl &watchUrl = QUrl::fromLocalFile(TrashHelper::toLocalFile(path).path());
 
     proxy = WacherFactory::create<AbstractFileWatcher>(watchUrl);
     if (!proxy) {
@@ -86,7 +86,7 @@ TrashFileWatcher::~TrashFileWatcher()
 void TrashFileWatcher::onFileDeleted(const QUrl &url)
 {
     QUrl newUrl = url;
-    newUrl.setScheme(TrashManager::scheme());
+    newUrl.setScheme(TrashHelper::scheme());
 
     emit fileDeleted(newUrl);
 }
@@ -94,7 +94,7 @@ void TrashFileWatcher::onFileDeleted(const QUrl &url)
 void TrashFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
     QUrl newUrl = url;
-    newUrl.setScheme(TrashManager::scheme());
+    newUrl.setScheme(TrashHelper::scheme());
 
     emit fileAttributeChanged(newUrl);
 }
@@ -102,7 +102,7 @@ void TrashFileWatcher::onFileAttributeChanged(const QUrl &url)
 void TrashFileWatcher::onSubfileCreated(const QUrl &url)
 {
     QUrl newUrl = url;
-    newUrl.setScheme(TrashManager::scheme());
+    newUrl.setScheme(TrashHelper::scheme());
 
     emit subfileCreated(newUrl);
 }

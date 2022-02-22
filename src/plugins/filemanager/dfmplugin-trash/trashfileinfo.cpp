@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trashfileinfo.h"
-#include "utils/trashmanager.h"
+#include "utils/trashhelper.h"
 
 #include "interfaces/private/abstractfileinfo_p.h"
 #include "dfm-base/base/schemefactory.h"
@@ -68,7 +68,7 @@ QString TrashFileInfo::fileName() const
 
 bool TrashFileInfo::exists() const
 {
-    return AbstractFileInfo::exists() || url() == TrashManager::fromTrashFile("/");
+    return AbstractFileInfo::exists() || url() == TrashHelper::fromTrashFile("/");
 }
 
 bool TrashFileInfo::canRename() const
@@ -100,7 +100,7 @@ bool TrashFileInfo::isWritable() const
 
 bool TrashFileInfo::isDir() const
 {
-    if (url() == TrashManager::fromTrashFile("/")) {
+    if (url() == TrashHelper::fromTrashFile("/")) {
         return true;
     }
 

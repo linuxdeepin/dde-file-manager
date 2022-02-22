@@ -60,6 +60,7 @@ bool WorkspaceUnicastReceiver::invokeAddCustomTopWidget(const dfm_service_filema
         CustomTopWidgetInterface *interface { new CustomTopWidgetInterface };
         interface->setKeepShow(info.keepShow);
         interface->registeCreateTopWidgetCallback(info.createTopWidgetCb);
+        interface->registeCreateTopWidgetCallback(info.showTopWidgetCb);
         return interface;
     });
     return true;

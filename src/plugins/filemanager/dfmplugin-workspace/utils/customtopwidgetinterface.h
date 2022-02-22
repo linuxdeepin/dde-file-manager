@@ -29,12 +29,13 @@
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
-class QFrame;
+class QWidget;
 QT_END_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
-using DSB_FM_NAMESPACE::Workspace::createTopWidgetCallback;
+using DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback;
+using DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback;
 
 class CustomTopWidgetInterface : public QObject
 {
@@ -42,14 +43,17 @@ class CustomTopWidgetInterface : public QObject
 public:
     explicit CustomTopWidgetInterface(QObject *parent = nullptr);
 
-    QFrame *create();
+    QWidget *create();
+    bool isShowFromUrl(const QUrl &url);
     void setKeepShow(bool keep);
     bool isKeepShow() const;
-    void registeCreateTopWidgetCallback(const createTopWidgetCallback &func);
+    void registeCreateTopWidgetCallback(const CreateTopWidgetCallback &func);
+    void registeCreateTopWidgetCallback(const ShowTopWidgetCallback &func);
 
 private:
     bool keepShow { false };
-    createTopWidgetCallback createTopWidgetFunc;
+    CreateTopWidgetCallback createTopWidgetFunc;
+    ShowTopWidgetCallback showTopWidgetFunc;
 };
 
 DPWORKSPACE_END_NAMESPACE

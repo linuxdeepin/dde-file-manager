@@ -11,6 +11,8 @@ FILE(GLOB RECENT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"

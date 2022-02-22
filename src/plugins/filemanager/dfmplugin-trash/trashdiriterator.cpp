@@ -21,7 +21,7 @@
 
 #include "trashdiriterator.h"
 #include "trashfileinfo.h"
-#include "utils/trashmanager.h"
+#include "utils/trashhelper.h"
 #include "private/trashdiriterator_p.h"
 
 #include "dfm-base/base/schemefactory.h"
@@ -62,7 +62,7 @@ TrashDirIterator::~TrashDirIterator()
 QUrl TrashDirIterator::next()
 {
     // Todo(yanghao): cache
-    return TrashManager::fromTrashFile(d->iterator->next().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+    return TrashHelper::fromTrashFile(d->iterator->next().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
 }
 
 bool TrashDirIterator::hasNext() const
@@ -78,7 +78,7 @@ QString TrashDirIterator::fileName() const
 
 QUrl TrashDirIterator::fileUrl() const
 {
-    return TrashManager::fromTrashFile(d->iterator->filePath().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+    return TrashHelper::fromTrashFile(d->iterator->filePath().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
 }
 
 const AbstractFileInfoPointer TrashDirIterator::fileInfo() const
@@ -88,5 +88,5 @@ const AbstractFileInfoPointer TrashDirIterator::fileInfo() const
 
 QUrl TrashDirIterator::url() const
 {
-    return TrashManager::rootUrl();
+    return TrashHelper::rootUrl();
 }

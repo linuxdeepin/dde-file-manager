@@ -27,11 +27,16 @@ CustomTopWidgetInterface::CustomTopWidgetInterface(QObject *parent)
 {
 }
 
-QFrame *CustomTopWidgetInterface::create()
+QWidget *CustomTopWidgetInterface::create()
 {
     if (createTopWidgetFunc)
         return createTopWidgetFunc();
     return nullptr;
+}
+
+bool CustomTopWidgetInterface::isShowFromUrl(const QUrl &url)
+{
+    return showTopWidgetFunc && showTopWidgetFunc(url);
 }
 
 void dfmplugin_workspace::CustomTopWidgetInterface::setKeepShow(bool keep)
@@ -44,7 +49,12 @@ bool CustomTopWidgetInterface::isKeepShow() const
     return keepShow;
 }
 
-void dfmplugin_workspace::CustomTopWidgetInterface::registeCreateTopWidgetCallback(const createTopWidgetCallback &func)
+void CustomTopWidgetInterface::registeCreateTopWidgetCallback(const ShowTopWidgetCallback &func)
+{
+    showTopWidgetFunc = func;
+}
+
+void dfmplugin_workspace::CustomTopWidgetInterface::registeCreateTopWidgetCallback(const CreateTopWidgetCallback &func)
 {
     createTopWidgetFunc = func;
 }

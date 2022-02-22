@@ -30,7 +30,7 @@
 #include <functional>
 
 QT_BEGIN_NAMESPACE
-class QFrame;
+class QWidget;
 QT_END_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
@@ -45,13 +45,15 @@ extern const int kTabRemoved;
 extern const int kCloseTabs;
 extern const int kShowCustomTopWidget;
 };   // namespace EventType
-using createTopWidgetCallback = std::function<QFrame *()>;
+using CreateTopWidgetCallback = std::function<QWidget *()>;
+using ShowTopWidgetCallback = std::function<bool(const QUrl &)>;
 
 struct CustomTopWidgetInfo
 {
     QString scheme;
-    bool keepShow;
-    createTopWidgetCallback createTopWidgetCb { nullptr };
+    bool keepShow { false };   // always show
+    CreateTopWidgetCallback createTopWidgetCb { nullptr };
+    ShowTopWidgetCallback showTopWidgetCb { nullptr };
 };
 
 }   // namespace Workspace
@@ -59,6 +61,7 @@ struct CustomTopWidgetInfo
 DSB_FM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo);
-Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::createTopWidgetCallback);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback);
+//Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback);
 
 #endif   // WORKSPACE_DEFINES_H

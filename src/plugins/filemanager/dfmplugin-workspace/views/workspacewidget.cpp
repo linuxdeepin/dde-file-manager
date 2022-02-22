@@ -293,15 +293,16 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
 
     auto interface = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
     if (topWidgets.contains(scheme)) {
-
-        topWidgets[scheme]->setVisible(interface && interface->isKeepShow());
+        qDebug() << interface->isKeepShow() << interface->isShowFromUrl(url);
+        topWidgets[scheme]->setVisible(interface && (interface->isKeepShow() || interface->isShowFromUrl(url)));
+        qDebug() << topWidgets[scheme]->contentsMargins();
     } else {
         if (interface) {
-            TopWidgetPtr topWidgetPtr = QSharedPointer<QFrame>(interface->create());
+            TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
             if (topWidgetPtr) {
-                widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine), topWidgetPtr.get());
+                widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine) + 1, topWidgetPtr.get());
                 topWidgets.insert(scheme, topWidgetPtr);
-                topWidgetPtr->setVisible(interface->isKeepShow());
+                topWidgetPtr->setVisible(interface->isKeepShow() || interface->isShowFromUrl(url));
             }
         }
     }
