@@ -132,7 +132,8 @@ bool DoCutFilesWorker::cutFiles()
 bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo)
 {
     // try rename
-    if (doRenameFile(fromInfo, toInfo)) {
+    bool ok = false;
+    if (doRenameFile(fromInfo, toInfo, &ok) || ok) {
         return true;
     }
 
@@ -198,7 +199,7 @@ bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &source
     return false;
 }
 
-bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
+bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo, bool *ok)
 {
     QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
     sourceStorageInfo.reset(new QStorageInfo(sourceInfo->url().path()));
@@ -207,11 +208,10 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
     const QUrl &targetUrl = targetInfo->url();
 
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
-        bool result = false;
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
         AbstractFileInfoPointer newTargetInfo(nullptr);
-        if (!doCheckFile(sourceInfo, targetInfo, newTargetInfo, &result))
-            return result;
+        if (!doCheckFile(sourceInfo, targetInfo, newTargetInfo, ok))
+            return *ok;
 
         if (sourceInfo->isSymLink()) {
             // TODO(lanxs)
@@ -222,9 +222,9 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                     completeFiles.append(sourceUrl);
                     completeTargetFiles.append(newTargetInfo->url());
                 }
-                bool succ = deleteFile(sourceUrl, targetUrl, sourceInfo, &result);
+                bool succ = deleteFile(sourceUrl, targetUrl, sourceInfo, ok);
                 if (!succ) {
-                    return result;
+                    return *ok;
                 }
             }
 
@@ -246,16 +246,14 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                 completeTargetFiles.append(newTargetInfo->url());
             }
             // remove old link file
-            if (!deleteFile(sourceUrl, targetUrl, sourceInfo, &result))
-                return result;
+            if (!deleteFile(sourceUrl, targetUrl, sourceInfo, ok))
+                return *ok;
 
             return true;
 
         } else {
-            if (!renameFileByHandler(sourceInfo, newTargetInfo))
-                // pause and emit error msg
-                return false;
-            return true;
+            *ok = renameFileByHandler(sourceInfo, newTargetInfo);
+            return *ok;
         }
     }
 

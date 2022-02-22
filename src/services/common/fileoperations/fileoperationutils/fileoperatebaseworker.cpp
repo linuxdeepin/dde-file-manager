@@ -697,8 +697,11 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
 
                 return false;
             }
-        case AbstractJobHandler::SupportAction::kSkipAction:
-            return true;
+        case AbstractJobHandler::SupportAction::kNoAction:
+        case AbstractJobHandler::SupportAction::kSkipAction: {
+            *result = true;
+            return false;
+        }
         case AbstractJobHandler::SupportAction::kCoexistAction: {
             fileNewName = getNonExistFileName(fromInfo, toInfo);
 

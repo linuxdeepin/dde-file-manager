@@ -52,7 +52,7 @@ protected:
 
     bool cutFiles();
     bool doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
-    bool doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
+    bool doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo, bool *ok = nullptr);
     bool renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
