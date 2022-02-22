@@ -67,6 +67,13 @@ FILE(GLOB MENU_FILES
 #    "${CMAKE_CURRENT_SOURCE_DIR}/menu/menucore/*.cpp"
 )
 
+FILE(GLOB BLUETOOTH_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/private/*.cpp"
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -74,11 +81,15 @@ add_library(${PROJECT_NAME}
     ${DIALOG_FILES}
     ${MENU_FILES}
     ${PROPERTYDIALOG_FILES}
+    ${BLUETOOTH_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(Qt5 COMPONENTS DBus REQUIRED)
+find_package(Qt5 COMPONENTS Svg REQUIRED)
+
 
 pkg_search_module(gsettings
     REQUIRED
@@ -113,6 +124,8 @@ target_link_libraries(
     PkgConfig::gsettings
     PkgConfig::dfm-mount
     ${DtkWidget_LIBRARIES}
+    Qt5::DBus
+    Qt5::Svg
 )
 
 #install library file
