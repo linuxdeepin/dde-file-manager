@@ -98,29 +98,29 @@ DesktopFile::DesktopFile(const QString &fileName)
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getFileName() const
+QString DesktopFile::desktopFileName() const
 {
     return fileName;
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getPureFileName() const
+QString DesktopFile::desktopPureFileName() const
 {
     return fileName.split("/").last().remove(".desktop");
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getName() const
+QString DesktopFile::desktopName() const
 {
     return name;
 }
 
-QString DesktopFile::getLocalName() const
+QString DesktopFile::desktopLocalName() const
 {
     return localName;
 }
 
-QString DesktopFile::getDisplayName() const
+QString DesktopFile::desktopDisplayName() const
 {
     if (deepinVendor == QStringLiteral("deepin") && !genericName.isEmpty()) {
         return genericName;
@@ -129,47 +129,47 @@ QString DesktopFile::getDisplayName() const
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getExec() const
+QString DesktopFile::desktopExec() const
 {
     return exec;
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getIcon() const
+QString DesktopFile::desktopIcon() const
 {
     return icon;
 }
 //---------------------------------------------------------------------------
 
-QString DesktopFile::getType() const
+QString DesktopFile::desktopType() const
 {
     return type;
 }
 
-QString DesktopFile::getDeepinId() const
+QString DesktopFile::desktopDeepinId() const
 {
     return deepinId;
 }
 
-QString DesktopFile::getDeepinVendor() const
+QString DesktopFile::desktopDeepinVendor() const
 {
     return deepinVendor;
 }
 
-bool DesktopFile::getNoShow() const
+bool DesktopFile::isNoShow() const
 {
     return noDisplay || hidden;
 }
 
 //---------------------------------------------------------------------------
 
-QStringList DesktopFile::getCategories() const
+QStringList DesktopFile::desktopCategories() const
 {
     return categories;
 }
 //---------------------------------------------------------------------------
 
-QStringList DesktopFile::getMimeType() const
+QStringList DesktopFile::desktopMimeType() const
 {
     return mimeType;
 }

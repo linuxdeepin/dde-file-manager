@@ -579,7 +579,7 @@ bool LocalFileHandler::isFileManagerSelf(const QString &desktopFile)
      *  return true if exec field contains dde-file-manager/file-manager.sh of dde-file-manager desktopFile
     */
     DesktopFile d(desktopFile);
-    return d.getExec().contains("dde-file-manager") || d.getExec().contains("file-manager.sh");
+    return d.desktopExec().contains("dde-file-manager") || d.desktopExec().contains("file-manager.sh");
 }
 
 bool LocalFileHandler::isSmbUnmountedFile(const QUrl &url)
@@ -642,8 +642,8 @@ void LocalFileHandler::addRecentFile(const QString &filePath, const DesktopFile 
         return;
     }
     DTK_CORE_NAMESPACE::DRecentData recentData;
-    recentData.appName = desktopFile.getName();
-    recentData.appExec = desktopFile.getExec();
+    recentData.appName = desktopFile.desktopName();
+    recentData.appExec = desktopFile.desktopExec();
     recentData.mimeType = mimetype;
     DTK_CORE_NAMESPACE::DRecentManager::removeItem(filePath);
     DTK_CORE_NAMESPACE::DRecentManager::addItem(filePath, recentData);

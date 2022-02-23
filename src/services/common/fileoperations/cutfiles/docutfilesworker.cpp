@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lanxuesong<liyigang@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
- *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify

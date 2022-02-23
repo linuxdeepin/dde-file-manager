@@ -170,6 +170,8 @@ public:
     virtual QString baseName() const;
     virtual QString completeBaseName() const;
     virtual QString fileNameOfRename() const;
+    virtual QString baseNameOfRename() const;
+    virtual QString suffixOfRename() const;
     virtual QString suffix() const;
     virtual QString completeSuffix();
     virtual QString path() const;
@@ -188,6 +190,7 @@ public:
     virtual bool isSymLink() const;
     virtual bool isRoot() const;
     virtual bool isBundle() const;
+    virtual bool isShared() const;
     virtual quint64 inode() const;
     virtual QString symLinkTarget() const;
     virtual QString owner() const;
@@ -209,6 +212,7 @@ public:
     virtual QDateTime fileTime(QFile::FileTime time) const;
     virtual int countChildFile() const;
     virtual QIcon fileIcon() const;
+    virtual QList<QIcon> additionalIcon() const;
     virtual QString iconName() const;
     virtual QString genericIconName() const;
     virtual QMimeType fileMimeType() const;
@@ -229,6 +233,7 @@ public:
     virtual QUrl redirectedFileUrl() const;
     virtual bool canMoveOrCopy() const;
     virtual bool canDrop() const;
+    virtual bool canTag() const;
     virtual QUrl parentUrl() const;
     virtual Qt::DropActions supportedDragActions() const;
     virtual Qt::DropActions supportedDropActions() const;

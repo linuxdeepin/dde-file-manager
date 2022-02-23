@@ -308,6 +308,20 @@ QString dfmbase::AbstractFileInfo::fileNameOfRename() const
 
     return fileName();
 }
+
+QString AbstractFileInfo::baseNameOfRename() const
+{
+    CALL_PROXY(baseNameOfRename());
+
+    return fileName();
+}
+
+QString AbstractFileInfo::suffixOfRename() const
+{
+    CALL_PROXY(suffixOfRename());
+
+    return suffix();
+}
 /*!
  * \brief suffix 文件的suffix
  *
@@ -604,6 +618,13 @@ bool AbstractFileInfo::isRoot() const
 bool AbstractFileInfo::isBundle() const
 {
     CALL_PROXY(isBundle());
+
+    return false;
+}
+
+bool AbstractFileInfo::isShared() const
+{
+    CALL_PROXY(isShared());
 
     return false;
 }
@@ -1052,6 +1073,13 @@ bool dfmbase::AbstractFileInfo::canDrop() const
 
     return true;
 }
+
+bool AbstractFileInfo::canTag() const
+{
+    CALL_PROXY(canTag());
+
+    return false;
+}
 /*!
  * \brief dfmbase::AbstractFileInfo::parentUrl
  * \return
@@ -1136,6 +1164,45 @@ QIcon dfmbase::AbstractFileInfo::fileIcon() const
     CALL_PROXY(fileIcon());
 
     return QIcon();
+}
+
+QList<QIcon> AbstractFileInfo::additionalIcon() const
+{
+    CALL_PROXY(additionalIcon());
+
+    QList<QIcon> icons;
+
+    static QIcon linkIcon(QIcon::fromTheme("emblem-symbolic-link"));
+    static QIcon lockIcon(QIcon::fromTheme("emblem-locked"));
+    static QIcon unreadableIcon(QIcon::fromTheme("emblem-unreadable"));
+    static QIcon shareIcon(QIcon::fromTheme("emblem-shared"));
+
+    if (isSymLink()) {
+        icons << QIcon::fromTheme("emblem-symbolic-link", linkIcon);
+    }
+
+    if (!isWritable()) {
+        icons << QIcon::fromTheme("emblem-readonly", lockIcon);
+    }
+
+    if (!isReadable()) {
+        icons << QIcon::fromTheme("emblem-unreadable", unreadableIcon);
+    }
+
+    if (isShared()) {
+        icons << QIcon::fromTheme("emblem-shared", shareIcon);
+    }
+
+    // TODO lanxs
+    /*
+#ifdef SW_LABEL
+    QString labelIconPath = getLabelIcon();
+    if (!labelIconPath.isEmpty()) {
+        icons << QIcon(labelIconPath);
+    }
+#endif*/
+
+    return icons;
 }
 
 QString dfmbase::AbstractFileInfo::iconName() const

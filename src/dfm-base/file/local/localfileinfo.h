@@ -30,6 +30,7 @@
 #include <QPointF>
 
 DFMBASE_BEGIN_NAMESPACE
+
 class LocalFileInfoPrivate;
 class LocalFileInfo : public AbstractFileInfo
 {
@@ -66,6 +67,7 @@ public:
     virtual QDir absoluteDir() const override;
     virtual QUrl url() const override;
     virtual bool canRename() const override;
+    virtual bool canTag() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
     virtual bool isExecutable() const override;
@@ -75,6 +77,7 @@ public:
     virtual bool isSymLink() const override;
     virtual bool isRoot() const override;
     virtual bool isBundle() const override;
+    virtual bool isShared() const override;
     virtual quint64 inode() const override;
     virtual QString symLinkTarget() const override;
     virtual QString owner() const override;

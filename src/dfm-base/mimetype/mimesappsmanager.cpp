@@ -332,7 +332,7 @@ QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
                         const DesktopFile &appDesktop = MimesAppsManager::DesktopObjs.value(app);
                         const DesktopFile &otherDesktop = MimesAppsManager::DesktopObjs.value(other);
 
-                        if (appDesktop.getExec() == otherDesktop.getExec() && appDesktop.getLocalName() == otherDesktop.getLocalName()) {
+                        if (appDesktop.desktopExec() == otherDesktop.desktopExec() && appDesktop.desktopLocalName() == otherDesktop.desktopLocalName()) {
                             appExist = true;
                             break;
                         }
@@ -508,7 +508,7 @@ void MimesAppsManager::initMimeTypeApps()
             DesktopFile desktopFile(filePath);
             DesktopFiles.append(filePath);
             DesktopObjs.insert(filePath, desktopFile);
-            QStringList mimeTypes = desktopFile.getMimeType();
+            QStringList mimeTypes = desktopFile.desktopMimeType();
             QString fileName = QFileInfo(filePath).fileName();
             if (DDE_MimeTypes.contains(fileName)) {
                 mimeTypes.append(DDE_MimeTypes.value(fileName));
@@ -687,7 +687,7 @@ bool MimesAppsManager::removeOneDupFromList(QStringList &list, const QString des
     while (iter.hasNext()) {
         const DesktopFile source(iter.next());
 
-        if (source.getExec() == target.getExec() && source.getLocalName() == target.getLocalName()) {
+        if (source.desktopExec() == target.desktopExec() && source.desktopLocalName() == target.desktopLocalName()) {
             iter.remove();
             return true;
         }

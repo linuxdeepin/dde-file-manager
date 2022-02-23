@@ -39,19 +39,19 @@ class DesktopFile
 {
 public:
     explicit DesktopFile(const QString &fileName = "");
-    QString getFileName() const;
-    QString getPureFileName() const;
-    QString getName() const;
-    QString getLocalName() const;
-    QString getDisplayName() const;
-    QString getExec() const;
-    QString getIcon() const;
-    QString getType() const;
-    QString getDeepinId() const;
-    QString getDeepinVendor() const;
-    bool getNoShow() const;
-    QStringList getCategories() const;
-    QStringList getMimeType() const;
+    QString desktopFileName() const;
+    QString desktopPureFileName() const;
+    QString desktopName() const;
+    QString desktopLocalName() const;
+    QString desktopDisplayName() const;
+    QString desktopExec() const;
+    QString desktopIcon() const;
+    QString desktopType() const;
+    QString desktopDeepinId() const;
+    QString desktopDeepinVendor() const;
+    bool isNoShow() const;
+    QStringList desktopCategories() const;
+    QStringList desktopMimeType() const;
 
 private:
     QString fileName;

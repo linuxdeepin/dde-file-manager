@@ -270,7 +270,7 @@ bool FileUtils::isTrashDesktopFile(const QUrl &url)
 {
     if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
-        return df.getDeepinId() == DDE_TRASH_ID;
+        return df.desktopDeepinId() == DDE_TRASH_ID;
     }
     return false;
 }
@@ -279,7 +279,7 @@ bool FileUtils::isComputerDesktopFile(const QUrl &url)
 {
     if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
-        return df.getDeepinId() == DDE_COMPUTER_ID;
+        return df.desktopDeepinId() == DDE_COMPUTER_ID;
     }
     return false;
 }

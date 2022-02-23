@@ -491,6 +491,12 @@ bool LocalFileInfo::canRename() const
         return false;
     return isWritable();
 }
+
+bool LocalFileInfo::canTag() const
+{
+    // todo lanxs
+    return false;
+}
 /*!
  * \brief isReadable 获取文件是否可读
  *
@@ -740,6 +746,12 @@ bool LocalFileInfo::isBundle() const
     bool isBundle = QFileInfo(d->url.path()).isBundle();
     d->lock.unlock();
     return isBundle;
+}
+
+bool LocalFileInfo::isShared() const
+{
+    // todo lanxs
+    return false;
 }
 /*!
  * \brief isBundle 获取文件的链接目标文件

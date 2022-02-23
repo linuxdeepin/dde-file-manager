@@ -44,12 +44,12 @@ AppEntryFileEntity::AppEntryFileEntity(const QUrl &url)
 
 QString AppEntryFileEntity::displayName() const
 {
-    return desktopInfo->getDisplayName();
+    return desktopInfo->desktopDisplayName();
 }
 
 QIcon AppEntryFileEntity::icon() const
 {
-    return QIcon::fromTheme(desktopInfo->getIcon());
+    return QIcon::fromTheme(desktopInfo->desktopIcon());
 }
 
 bool AppEntryFileEntity::exists() const
@@ -114,7 +114,7 @@ QString AppEntryFileEntity::getFormattedExecCommand() const
         "%F",   // A list of files
         "%f"   // A file
     };
-    auto cmd = desktopInfo->getExec();
+    auto cmd = desktopInfo->desktopExec();
     for (const auto &param : unsupportedParams)
         cmd.remove(param);
     return cmd.remove("\"").remove("'");
