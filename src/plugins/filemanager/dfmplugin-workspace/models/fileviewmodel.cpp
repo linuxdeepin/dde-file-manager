@@ -24,6 +24,7 @@
 #include "private/fileviewmodel_p.h"
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
+#include "utils/fileoperaterhelper.h"
 #include "workspace/workspace_defines.h"
 
 #include "dfm-base/utils/fileutils.h"
@@ -441,16 +442,14 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         if (dropUrls.count() > 0) {
             // call copy
             FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
-            quint64 windowID = WorkspaceHelper::instance()->windowId(view);
-            WorkspaceHelper::instance()->actionPasteFiles(windowID, ClipBoard::kCopyAction, dropUrls, targetUrl);
+            FileOperaterHelperIns->dropFiles(view, Qt::CopyAction, targetUrl, dropUrls);
         }
         break;
     case Qt::MoveAction:
         if (dropUrls.count() > 0) {
             // call move
             FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
-            quint64 windowID = WorkspaceHelper::instance()->windowId(view);
-            WorkspaceHelper::instance()->actionPasteFiles(windowID, ClipBoard::kCutAction, dropUrls, targetUrl);
+            FileOperaterHelperIns->dropFiles(view, Qt::MoveAction, targetUrl, dropUrls);
         }
         break;
     default:

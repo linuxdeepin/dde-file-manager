@@ -199,6 +199,7 @@ public:
     virtual qint64 size() const;
     virtual QString sizeFormat() const;
     virtual QString fileDisplayName() const;
+    virtual QString fileDisplayPinyinName() const;
     virtual QString sizeDisplayName() const;
     virtual QDateTime created() const;
     virtual QDateTime birthTime() const;

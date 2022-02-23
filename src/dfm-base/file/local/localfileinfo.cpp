@@ -1309,17 +1309,6 @@ QString LocalFileInfo::fileDisplayName() const
 }
 
 /*!
- * \brief fileDisplayPinyinName 文件的拼音名称，一般为文件的显示名称转为拼音
- *
- * \return QString 文件的拼音名称
- */
-QString LocalFileInfo::fileDisplayPinyinName() const
-{
-    const QString &displayName = fileDisplayName();
-
-    return Pinyin::Chinese2Pinyin(displayName);
-}
-/*!
  * \brief toQFileInfo 获取他的QFileInfo实例对象
  *
  * \return QFileInfo 文件的QFileInfo实例

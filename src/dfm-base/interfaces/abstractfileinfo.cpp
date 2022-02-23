@@ -21,6 +21,7 @@
  */
 #include "private/abstractfileinfo_p.h"
 #include "abstractfileinfo.h"
+#include "utils/chinese2pinyin.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/fileutils.h"
 
@@ -771,6 +772,18 @@ QString dfmbase::AbstractFileInfo::fileDisplayName() const
     CALL_PROXY(fileDisplayName());
 
     return QString();
+}
+
+/*!
+ * \brief fileDisplayPinyinName 文件的拼音名称，一般为文件的显示名称转为拼音
+ *
+ * \return QString 文件的拼音名称
+ */
+QString dfmbase::AbstractFileInfo::fileDisplayPinyinName() const
+{
+    const QString &displayName = fileDisplayName();
+
+    return Pinyin::Chinese2Pinyin(displayName);
 }
 
 QString dfmbase::AbstractFileInfo::sizeDisplayName() const

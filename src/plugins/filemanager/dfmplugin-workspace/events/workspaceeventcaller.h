@@ -45,16 +45,6 @@ public:
     static void sendTabChanged(const quint64 windowID, const int index);
     static void sendTabMoved(const quint64 windowID, const int from, const int to);
     static void sendTabRemoved(const quint64 windowID, const int index);
-    static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
-    static void sendMoveToTrash(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
-    static void sendNewFolder(quint64 windowID, const QUrl &url);
-    static void sendDeletes(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags = AbstractJobHandler::JobFlag::kNoHint);
-    static void sendRenameFile(quint64 windowID, const QUrl &oldUrl, const QUrl &newUrl);
-    static void sendWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
-    static void sendCopyFiles(const quint64 windowId, const QList<QUrl> &sourceUrls, const QUrl &target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    static void sendCutFiles(const quint64 windowId, const QList<QUrl> &sourceUrls, const QUrl &target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    static void sendOpenInTerminal(const quint64 windowId, const QList<QUrl> &urls);
-    static void sendShowFilePropertyDialog(const QList<QUrl> &urls);
     static void sendShowCustomTopWidget(const quint64 windowId, const QString &scheme, bool visible);
 };
 

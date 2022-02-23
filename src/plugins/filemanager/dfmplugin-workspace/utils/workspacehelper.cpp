@@ -114,7 +114,7 @@ void WorkspaceHelper::removeWorkspace(quint64 windowId)
         kWorkspaceMap.remove(windowId);
 }
 
-quint64 WorkspaceHelper::windowId(QWidget *sender)
+quint64 WorkspaceHelper::windowId(const QWidget *sender)
 {
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
@@ -136,11 +136,6 @@ void WorkspaceHelper::openUrlInNewTab(quint64 windowId, const QUrl &url)
     emit openNewTab(windowId, url);
 }
 
-void WorkspaceHelper::actionShowFilePreviewDialog(const QList<QUrl> &urls)
-{
-    //Todo(yanghao):
-}
-
 void WorkspaceHelper::actionNewWindow(const QList<QUrl> &urls)
 {
     WorkspaceEventCaller::sendOpenWindow(urls);
@@ -149,70 +144,6 @@ void WorkspaceHelper::actionNewWindow(const QList<QUrl> &urls)
 void WorkspaceHelper::actionNewTab(quint64 windowId, const QUrl &url)
 {
     openUrlInNewTab(windowId, url);
-}
-
-void WorkspaceHelper::actionHiddenFiles(quint64 windowId, const QUrl &url)
-{
-    //Todo(yanghao):
-}
-
-void WorkspaceHelper::actionOpen(quint64 windowId, const QList<QUrl> &urls, const DirOpenMode openMode)
-{
-    for (const QUrl &url : urls) {
-        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(url);
-        if (fileInfoPtr && fileInfoPtr->isDir()) {
-            if (openMode == DirOpenMode::kOpenNewWindow) {
-                WorkspaceEventCaller::sendOpenWindow({ url });
-            } else {
-                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
-            }
-        } else {
-            WorkspaceEventCaller::sendOpenFiles(windowId, { url });
-        }
-    }
-}
-
-void WorkspaceHelper::actionProperty(quint64 windowId, const QList<QUrl> &urls)
-{
-    Q_UNUSED(windowId)
-    WorkspaceEventCaller::sendShowFilePropertyDialog(urls);
-}
-
-void WorkspaceHelper::actionDeleteFiles(quint64 windowId, const QList<QUrl> &urls)
-{
-    WorkspaceEventCaller::sendDeletes(windowId, urls);
-}
-
-void WorkspaceHelper::actionOpenInTerminal(quint64 windowId, const QList<QUrl> &urls)
-{
-    WorkspaceEventCaller::sendOpenInTerminal(windowId, urls);
-}
-
-void WorkspaceHelper::actionNewFolder(quint64 windowId, const QUrl &url)
-{
-    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
-    if (fileInfo) {
-        WorkspaceEventCaller::sendNewFolder(windowId, url);
-    }
-}
-
-void WorkspaceHelper::actionRenameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl)
-{
-    WorkspaceEventCaller::sendRenameFile(windowId, oldUrl, newUrl);
-}
-
-void WorkspaceHelper::actionWriteToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls)
-{
-    WorkspaceEventCaller::sendWriteToClipboard(windowId, action, urls);
-}
-
-void WorkspaceHelper::actionPasteFiles(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
-{
-    if (action == ClipBoard::kCopyAction) {
-        WorkspaceEventCaller::sendCopyFiles(windowId, sourceUrls, target, flags);
-    } else if (action == ClipBoard::kCutAction) {
-        WorkspaceEventCaller::sendCutFiles(windowId, sourceUrls, target, flags);
-    }
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)

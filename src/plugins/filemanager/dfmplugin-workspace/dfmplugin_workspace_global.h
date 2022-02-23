@@ -31,6 +31,11 @@
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+enum class DirOpenMode : uint8_t {
+    kOpenInCurrentWindow,
+    kOpenNewWindow,
+    //kForceOpenNewWindow // Todo(yanghao): ???
+};
 // view defines
 const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
 const int kIconViewSpacing = 5;

@@ -52,9 +52,8 @@ public:
     bool isSelected(const QModelIndex &index) const;
     bool isDropTarget(const QModelIndex &index) const;
     void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const;
-
     void updateGeometries();
-
+    void keyboardSearch(const QString &search);
     bool isEmptyArea(const QPoint &pos);
     static int caculateListItemIndex(const QSize &itemSize, const QPoint &pos);
     static int caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos);
@@ -64,6 +63,8 @@ public slots:
 
 private slots:
     void clipboardDataChanged();
+    void clearSearchKey();
+
 signals:
     void triggerEdit(const QModelIndex &index);
 
@@ -71,6 +72,11 @@ private:
     void init();
     FileViewModel *model() const;
     BaseItemDelegate *itemDelegate() const;
+    QModelIndex findIndex(const QByteArray &keys, bool matchStart,
+                          int current, bool reverseOrder, bool excludeCurrent) const;
+
+    QByteArray keyboardSearchKeys;
+    QTimer *keyboardSearchTimer;
 };
 
 DPWORKSPACE_END_NAMESPACE

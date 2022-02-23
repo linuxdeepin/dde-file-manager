@@ -35,6 +35,7 @@
 #include "utils/dragdrophelper.h"
 #include "utils/viewdrawhelper.h"
 #include "utils/selecthelper.h"
+#include "utils/shortcuthelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -288,7 +289,7 @@ void FileView::wheelEvent(QWheelEvent *event)
 void FileView::keyPressEvent(QKeyEvent *event)
 {
     // TODO(zhangs): impl me
-    if (!d->processKeyPressEvent(event))
+    if (!d->shortcutHelper->processKeyPressEvent(event))
         return DListView::keyPressEvent(event);
 }
 
@@ -506,6 +507,34 @@ bool FileView::isListViewMode() const
     return d->currentViewMode == Global::ViewMode::kListMode;
 }
 
+bool FileView::cdUp()
+{
+    // Todo(yanghao):
+    const QUrl &oldCurrentUrl = rootUrl();
+    QUrl parentUrl = UrlRoute::urlParent(oldCurrentUrl);
+
+    if (parentUrl.isValid()) {
+        emit reqOpenAction({ parentUrl });
+        return true;
+    }
+    return false;
+}
+
+DirOpenMode FileView::currentDirOpenMode() const
+{
+    DirOpenMode mode;
+
+    if (d->isAlwaysOpenInCurrentWindow) {
+        mode = DirOpenMode::kOpenNewWindow;
+    } else {
+        if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
+            mode = DirOpenMode::kOpenNewWindow;
+        } else {
+            mode = DirOpenMode::kOpenInCurrentWindow;
+        }
+    }
+    return mode;
+}
 void FileView::onRowCountChanged()
 {
     updateModelActiveIndex();
@@ -728,6 +757,11 @@ void FileView::showEvent(QShowEvent *event)
     setFocus();
 }
 
+void FileView::keyboardSearch(const QString &search)
+{
+    d->fileViewHelper->keyboardSearch(search);
+}
+
 void FileView::initializeModel()
 {
     FileViewModel *model = new FileViewModel(this);
@@ -893,9 +927,8 @@ void FileView::openIndex(const QModelIndex &index)
     if (!item)
         return;
 
-    auto mode = d->currentDirOpenMode();
-    auto windowID = WorkspaceHelper::instance()->windowId(this);
-    WorkspaceHelper::instance()->actionOpen(windowID, { item->url() }, mode);
+    auto mode = currentDirOpenMode();
+    emit reqOpenAction({ item->url() }, mode);
 }
 
 /**

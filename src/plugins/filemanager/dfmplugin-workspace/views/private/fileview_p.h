@@ -41,6 +41,7 @@ const int kListViewIconSize { 24 };
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class ShortcutHelper;
 class FileViewHelper;
 class FileViewStatusBar;
 class HeaderView;
@@ -61,6 +62,7 @@ class FileViewPrivate
     QTimer *sortTimer { nullptr };
     QUrl url;
 
+    ShortcutHelper *shortcutHelper { nullptr };
     DragDropHelper *dragDropHelper { nullptr };
     ViewDrawHelper *viewDrawHelper { nullptr };
     SelectHelper *selectHelper { nullptr };
@@ -84,12 +86,7 @@ class FileViewPrivate
 
     void updateListModeColumnWidth();
 
-    bool processKeyPressEvent(QKeyEvent *event);
-    bool normalKeyPressEventHandle(const QKeyEvent *event);
     QModelIndexList selectedDraggableIndexes();
-
-    bool cdUp();
-    WorkspaceHelper::DirOpenMode currentDirOpenMode() const;
 
     void initContentLabel();
 };

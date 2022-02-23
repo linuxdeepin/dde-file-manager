@@ -74,6 +74,9 @@ FileViewItem &FileViewItem::operator=(const FileViewItem &other)
     setData(other.data(kItemColumListRole), kItemColumListRole);
     setData(other.data(kItemColumWidthScaleListRole), kItemColumWidthScaleListRole);
     setData(other.data(kItemFileNameOfRenameRole), kItemFileNameOfRenameRole);
+    setData(other.data(kItemExtraProperties), kItemExtraProperties);
+    setData(other.data(kItemFileIconModelToolTipRole), kItemFileIconModelToolTipRole);
+    setData(other.data(kItemFilePinyinNameRole), kItemFilePinyinNameRole);
 
     return *this;
 }
@@ -221,6 +224,8 @@ QVariant FileViewItem::data(int role) const
         return QSize(-1, 26);
     case kItemFileNameOfRenameRole:
         return d->fileinfo->fileNameOfRename();
+    case kItemFilePinyinNameRole:
+        return d->fileinfo->fileDisplayPinyinName();
     default:
         return QVariant();
     }

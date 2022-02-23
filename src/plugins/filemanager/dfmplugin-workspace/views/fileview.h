@@ -48,6 +48,7 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class DragDropHelper;
     friend class ViewDrawHelper;
     friend class FileViewPrivate;
+    friend class ShortcutHelper;
     QSharedPointer<FileViewPrivate> d;
     using RandeIndex = QPair<int, int>;
     using RandeIndexList = QList<RandeIndex>;
@@ -139,10 +140,12 @@ protected:
     void startDrag(Qt::DropActions supportedActions) override;
     QModelIndexList selectedIndexes() const override;
     void showEvent(QShowEvent *event) override;
+    void keyboardSearch(const QString &search) override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
     void viewStateChanged();
+    void reqOpenAction(const QList<QUrl> &urls, const DirOpenMode openMode = DirOpenMode::kOpenInCurrentWindow);
 
 private slots:
     void loadViewState(const QUrl &url);
@@ -178,6 +181,9 @@ private:
 
     bool isIconViewMode() const;
     bool isListViewMode() const;
+
+    bool cdUp();
+    DirOpenMode currentDirOpenMode() const;
 };
 
 DPWORKSPACE_END_NAMESPACE

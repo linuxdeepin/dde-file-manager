@@ -44,12 +44,6 @@ class WorkspaceHelper : public QObject
 {
     Q_OBJECT
 public:
-    enum class DirOpenMode {
-        kOpenInCurrentWindow,
-        kOpenNewWindow,
-        //kForceOpenNewWindow // Todo(yanghao): ???
-    };
-
     static WorkspaceHelper *instance();
 
     using KeyType = QString;
@@ -67,25 +61,12 @@ public:
     void closeTab(const QString &path);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
     void removeWorkspace(quint64 windowId);
-    quint64 windowId(QWidget *sender);
+    quint64 windowId(const QWidget *sender);
     void switchViewMode(quint64 windowId, int viewMode);
     void addScheme(const QString &scheme);
     void openUrlInNewTab(quint64 windowId, const QUrl &viewMode);
-
-    void actionShowFilePreviewDialog(const QList<QUrl> &urls);
     void actionNewWindow(const QList<QUrl> &urls);
     void actionNewTab(quint64 windowId, const QUrl &url);
-    void actionHiddenFiles(quint64 windowId, const QUrl &url);
-    void actionOpen(quint64 windowId, const QList<QUrl> &urls, const DirOpenMode openMode = DirOpenMode::kOpenInCurrentWindow);
-    void actionProperty(quint64 windowId, const QList<QUrl> &urls);
-    void actionDeleteFiles(quint64 windowId, const QList<QUrl> &urls);
-    void actionOpenInTerminal(quint64 windowId, const QList<QUrl> &urls);
-    void actionNewFolder(quint64 windowId, const QUrl &url);
-    void actionRenameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl);
-    void actionWriteToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action, const QList<QUrl> &urls);
-    void actionPasteFiles(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                          const QList<QUrl> &sourceUrls, const QUrl &target,
-                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);

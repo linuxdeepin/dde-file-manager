@@ -76,56 +76,6 @@ void WorkspaceEventCaller::sendTabRemoved(const quint64 windowID, const int inde
     dispatcher()->publish(Workspace::EventType::kTabRemoved, windowID, index);
 }
 
-void WorkspaceEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
-{
-    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
-}
-
-void WorkspaceEventCaller::sendMoveToTrash(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags)
-{
-    dispatcher()->publish(GlobalEventType::kMoveToTrash, windowID, urls, flags);
-}
-
-void WorkspaceEventCaller::sendNewFolder(quint64 windowID, const QUrl &url)
-{
-    dispatcher()->publish(GlobalEventType::kMkdir, windowID, url, CreateFileType::kCreateFileTypeFolder);
-}
-
-void WorkspaceEventCaller::sendDeletes(quint64 windowID, const QList<QUrl> &urls, const AbstractJobHandler::JobFlags flags)
-{
-    dispatcher()->publish(GlobalEventType::kDeleteFiles, windowID, urls, flags);
-}
-
-void WorkspaceEventCaller::sendRenameFile(quint64 windowID, const QUrl &oldUrl, const QUrl &newUrl)
-{
-    dispatcher()->publish(GlobalEventType::kRenameFile, windowID, oldUrl, newUrl);
-}
-
-void WorkspaceEventCaller::sendWriteToClipboard(const quint64 windowID, const ClipBoard::ClipboardAction action, const QList<QUrl> &urls)
-{
-    dispatcher()->publish(GlobalEventType::kWriteUrlsToClipboard, windowID, action, urls);
-}
-
-void WorkspaceEventCaller::sendCopyFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
-{
-    dispatcher()->publish(GlobalEventType::kCopy, windowID, sourceUrls, target, flags);
-}
-
-void WorkspaceEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
-{
-    dispatcher()->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags);
-}
-
-void WorkspaceEventCaller::sendOpenInTerminal(const quint64 windowID, const QList<QUrl> &urls)
-{
-    dispatcher()->publish(GlobalEventType::kOpenInTerminal, windowID, urls);
-}
-
-void WorkspaceEventCaller::sendShowFilePropertyDialog(const QList<QUrl> &urls)
-{
-    dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
-}
-
 void WorkspaceEventCaller::sendShowCustomTopWidget(const quint64 windowID, const QString &scheme, bool visible)
 {
     dispatcher()->publish(DSB_FM_NAMESPACE::Workspace::EventType::kShowCustomTopWidget, windowID, scheme, visible);

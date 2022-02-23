@@ -105,7 +105,6 @@ public:
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const override;
-    virtual QString fileDisplayPinyinName() const;
     virtual QFileInfo toQFileInfo() const;
     virtual QMimeType fileMimeType() const override;
     virtual QString mimeTypeName() const override;

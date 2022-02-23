@@ -89,6 +89,7 @@ public:
         kItemFileNameOfRenameRole = Qt::UserRole + 14,
         kItemExtraProperties = Qt::UserRole + 15,
         kItemFileIconModelToolTipRole = Qt::UserRole + 16,   // 用于返回图标视图下的tooltip
+        kItemFilePinyinNameRole = Qt::UserRole + 17,
     };
 
     enum CornerMark {

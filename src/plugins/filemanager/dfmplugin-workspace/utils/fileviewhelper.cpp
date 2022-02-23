@@ -26,15 +26,19 @@
 #include "views/baseitemdelegate.h"
 #include "views/iconitemeditor.h"
 #include "utils/workspacehelper.h"
+#include "utils/fileoperaterhelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/windowutils.h"
+
+#include <DApplication>
 
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QAbstractItemView>
-#include <DApplication>
+#include <QTimer>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -158,6 +162,52 @@ void FileViewHelper::updateGeometries()
     parent()->updateGeometry();
 }
 
+void FileViewHelper::keyboardSearch(const QString &search)
+{
+    if (search.isEmpty())
+        return;
+    auto key = search.toLocal8Bit().at(0);
+
+    keyboardSearchKeys.append(key);
+    bool reverseOrder = WindowUtils::keyShiftIsPressed();
+    const QModelIndex &currentIndex = parent()->currentIndex();
+
+    QModelIndex index = findIndex(keyboardSearchKeys, true, currentIndex.row(), reverseOrder, !keyboardSearchTimer->isActive());
+
+    if (index.isValid()) {
+        parent()->setCurrentIndex(index);
+        parent()->scrollTo(index, reverseOrder ? QAbstractItemView::PositionAtBottom : QAbstractItemView::PositionAtTop);
+    }
+    keyboardSearchTimer->start();
+}
+
+QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, int current, bool reverseOrder, bool excludeCurrent) const
+{
+    int rowCount = parent()->proxyModel()->rowCount(parent()->rootIndex());
+
+    if (rowCount == 0)
+        return QModelIndex();
+
+    for (int i = excludeCurrent ? 1 : 0; i <= rowCount; ++i) {
+        int row = reverseOrder ? rowCount + current - i : current + i;
+
+        row = row % rowCount;
+
+        if (excludeCurrent && row == current) {
+            continue;
+        }
+
+        const QModelIndex &index = parent()->proxyModel()->index(row, 0, parent()->rootIndex());
+        const QString &pinyinName = parent()->proxyModel()->data(index, FileViewItem::kItemFilePinyinNameRole).toString();
+        if (matchStart ? pinyinName.startsWith(keys, Qt::CaseInsensitive)
+                       : pinyinName.contains(keys, Qt::CaseInsensitive)) {
+            return index;
+        }
+    }
+
+    return QModelIndex();
+}
+
 bool FileViewHelper::isEmptyArea(const QPoint &pos)
 {
     const QModelIndex &index = parent()->indexAt(pos);
@@ -240,8 +290,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
 
     QUrl oldUrl = fileInfo->url();
     QUrl newUrl = fileInfo->getUrlByNewFileName(newFileName);
-    auto windowID = WorkspaceHelper::instance()->windowId(this->parent());
-    WorkspaceHelper::instance()->actionRenameFile(windowID, oldUrl, newUrl);
+    FileOperaterHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
 
 void FileViewHelper::clipboardDataChanged()
@@ -259,60 +308,21 @@ void FileViewHelper::clipboardDataChanged()
     parent()->update();
 }
 
+void FileViewHelper::clearSearchKey()
+{
+    keyboardSearchKeys.clear();
+}
+
 void FileViewHelper::init()
 {
+    keyboardSearchTimer = new QTimer(this);
+    keyboardSearchTimer->setSingleShot(true);
+    keyboardSearchTimer->setInterval(200);
+    connect(keyboardSearchTimer, &QTimer::timeout, this, &FileViewHelper::clearSearchKey);
+
     connect(qApp, &DApplication::iconThemeChanged, parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &FileViewHelper::clipboardDataChanged);
     connect(parent(), &FileView::triggerEdit, this, &FileViewHelper::triggerEdit);
-
-    QAction *copyAction = new QAction(parent());
-
-    copyAction->setAutoRepeat(false);
-    copyAction->setShortcut(QKeySequence::Copy);
-    QObject::connect(copyAction, &QAction::triggered, this, [this] {
-        QList<QUrl> selectedUrls = parent()->selectedUrlList();
-        if (selectedUrls.size() == 1) {
-            const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(selectedUrls.first());
-            if (!fileInfo || !fileInfo->isReadable())
-                return;
-        }
-        qInfo() << "copy shortcut key to clipboard, selected urls: " << selectedUrls
-                << " currentUrl: " << parent()->rootUrl();
-        auto windowId = WorkspaceHelper::instance()->windowId(parent());
-        WorkspaceHelper::instance()->actionWriteToClipboard(windowId, ClipBoard::ClipboardAction::kCopyAction, selectedUrls);
-    });
-
-    QAction *cutAction = new QAction(parent());
-    cutAction->setAutoRepeat(false);
-    cutAction->setShortcut(QKeySequence::Cut);
-
-    QObject::connect(cutAction, &QAction::triggered, this, [this] {
-        // Todo(yanghao): 只支持回收站根目录下的文件执行剪切
-        qInfo() << "cut shortcut key to clipboard";
-        const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(parent()->rootUrl());
-        if (!fileInfo || !fileInfo->isWritable())
-            return;
-        QList<QUrl> selectedUrls = parent()->selectedUrlList();
-        qInfo() << "selected urls: " << selectedUrls
-                << " currentUrl: " << parent()->rootUrl();
-        auto windowId = WorkspaceHelper::instance()->windowId(parent());
-        WorkspaceHelper::instance()->actionWriteToClipboard(windowId, ClipBoard::ClipboardAction::kCutAction, selectedUrls);
-    });
-
-    QAction *pasteAction = new QAction(parent());
-    pasteAction->setShortcut(QKeySequence::Paste);
-
-    QObject::connect(pasteAction, &QAction::triggered, this, [this] {
-        qInfo() << " paste file by clipboard and currentUrl: " << parent()->rootUrl();
-        auto action = ClipBoard::instance()->clipboardAction();
-        auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
-        auto windowId = WorkspaceHelper::instance()->windowId(parent());
-        WorkspaceHelper::instance()->actionPasteFiles(windowId, action, sourceUrls, parent()->rootUrl());
-    });
-
-    parent()->addAction(copyAction);
-    parent()->addAction(cutAction);
-    parent()->addAction(pasteAction);
 }
 
 FileViewModel *FileViewHelper::model() const
