@@ -60,6 +60,8 @@ QMutex *getOpticalDriveMutex();
 // begin file item global define
 #define TEXT_PADDING 4
 #define ICON_MODE_ICON_SPACING 5
+#define ICON_TOP_SPACE_DESKTOP 6
+#define ICON_BOTTOM_SPACING_DESKTOP 2
 #define COLUMU_PADDING 10
 #define LEFT_PADDING 10
 #define RIGHT_PADDING 10

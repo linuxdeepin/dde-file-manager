@@ -108,6 +108,11 @@ FileIconItem::~FileIconItem()
 
 }
 
+void FileIconItem::setMaxHeight(int h)
+{
+    m_maxHeight = h;
+}
+
 qreal FileIconItem::opacity() const
 {
     if (opacityEffect)
@@ -145,7 +150,7 @@ int FileIconItem::maxCharSize()
 
 QSize FileIconItem::sizeHint() const
 {
-    return QSize(width(), icon->height() + edit->height());
+    return QSize(width(), icon->height() + ICON_MODE_ICON_SPACING + edit->height());
 }
 
 void FileIconItem::popupEditContentMenu()
@@ -383,7 +388,19 @@ void FileIconItem::updateEditorGeometry()
             edit->setFixedHeight(text_height);
         }
     } else {
-        edit->setFixedHeight(qMin(fontMetrics().height() * 3 + TEXT_PADDING * 2, text_height));
+        // max height 减去 edit的起始位置,注:不可直接使用edit->pos().y(),因为其是变量不是固定的高度值
+        auto maxTextHeight = m_maxHeight - (contentsMargins().top() + icon->height() + ICON_MODE_ICON_SPACING);
+        if (maxTextHeight < 0) {
+            // 之前的处理方式,最多显示3行.
+            edit->setFixedHeight(qMin(fontMetrics().height() * 3 + TEXT_PADDING * 2, text_height));
+        } else {
+            int minHeight = fontMetrics().height() * 1 + TEXT_PADDING * 2;
+            // 可用空间不够,强制显示一行
+            if (maxTextHeight < minHeight)
+                edit->setFixedHeight(minHeight);
+            else
+                edit->setFixedHeight(qMin(maxTextHeight, text_height));
+        }
     }
 }
 

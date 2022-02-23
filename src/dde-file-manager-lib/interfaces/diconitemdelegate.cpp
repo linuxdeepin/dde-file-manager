@@ -334,13 +334,23 @@ public:
 
         const QMargins &margins = contentsMargins();
 
-        QRect label_rect(TEXT_PADDING + margins.left(),
-                         margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING,
-                         width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
-                         INT_MAX);
+        bool isCanvas = property("isCanvas").toBool();
+        QRect labelRect;
+        if (isCanvas) {
+            labelRect = QRect(TEXT_PADDING + margins.left(),
+                             margins.top() + iconHeight + ICON_BOTTOM_SPACING_DESKTOP + TEXT_PADDING, //for desktop
+                             width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
+                             INT_MAX);
+        } else {
+            labelRect = QRect(TEXT_PADDING + margins.left(),
+                             margins.top() + iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING, //for dfm
+                             width() - TEXT_PADDING * 2 - margins.left() - margins.right(),
+                             INT_MAX);
+        }
+
 
         QString str = delegate->displayFileName(index);
-        const QList<QRectF> &lines = delegate->drawText(index, &pa, str, label_rect, ICON_MODE_RECT_RADIUS,
+        const QList<QRectF> &lines = delegate->drawText(index, &pa, str, labelRect, ICON_MODE_RECT_RADIUS,
                                                         option.palette.brush(QPalette::Normal, QPalette::Highlight),
                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                         option.textElideMode, Qt::AlignCenter);
@@ -397,14 +407,22 @@ public:
                 width = this->width();
 
             width -= (margins.left() + margins.right());
-
-            QRect label_rect(TEXT_PADDING + margins.left(),
-                             iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(),
-                             width - TEXT_PADDING * 2,
-                             INT_MAX);
+            bool isCanvas = property("isCanvas").toBool();
+            QRect labelRect;
+            if (isCanvas) {
+                labelRect = QRect(TEXT_PADDING + margins.left(),
+                                 margins.top() + ICON_BOTTOM_SPACING_DESKTOP + iconHeight + TEXT_PADDING, //for desktop
+                                 width - TEXT_PADDING * 2,
+                                 INT_MAX);
+            } else {
+                labelRect = QRect(TEXT_PADDING + margins.left(),
+                                 iconHeight + TEXT_PADDING + ICON_MODE_ICON_SPACING + margins.top(), //for dfm
+                                 width - TEXT_PADDING * 2,
+                                 INT_MAX);
+            }
 
             QString str = delegate->displayFileName(index);
-            const QList<QRectF> &lines = delegate->drawText(index, nullptr, str, label_rect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
+            const QList<QRectF> &lines = delegate->drawText(index, nullptr, str, labelRect, ICON_MODE_RECT_RADIUS, Qt::NoBrush,
                                                             QTextOption::WrapAtWordBoundaryOrAnywhere, option.textElideMode, Qt::AlignCenter);
 
             textBounding = boundingRect(lines);
@@ -512,6 +530,7 @@ DIconItemDelegate::DIconItemDelegate(DFileViewHelper *parent)
     Q_D(DIconItemDelegate);
 
     d->expandedItem = new ExpandedItem(this, parent->parent()->viewport());
+    d->expandedItem->setProperty("isCanvas", parent->property("isCanvasViewHelper").toBool());
     d->expandedItem->setAttribute(Qt::WA_TransparentForMouseEvents);
     d->expandedItem->canDeferredDelete = false;
     d->expandedItem->setContentsMargins(0, 0, 0, 0);
@@ -703,11 +722,13 @@ void DIconItemDelegate::paint(QPainter *painter,
 
     /// init file name geometry
     QRectF label_rect = opt.rect;
-    label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
+
     if (isCanvas) {
+        label_rect.setTop(icon_rect.bottom() + ICON_BOTTOM_SPACING_DESKTOP + TEXT_PADDING);
         label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING);
         label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
     } else {
+        label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
         label_rect.setWidth(opt.rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
         label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
     }
@@ -979,6 +1000,7 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
+    bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
 
     if (editor == d->expandedItem) {
         //重置textBounding，使其在adjustSize重新计算，否则在调整图标大小时使用旧的textBounding计算导致显示不全
@@ -986,6 +1008,7 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
         editor->setFixedWidth(option.rect.width());
         d->expandedItem->iconHeight = icon_size.height();
+
         editor->adjustSize();
         return;
     }
@@ -997,11 +1020,16 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     if (!item)
         return;
 
-    QLabel *icon = item->icon;
+    if (isCanvas) {
+        item->setMaxHeight(parent()->parent()->height() - item->pos().y());
+    } else {
+        // todo(yh) dfm
+        item->setMaxHeight(INT_MAX);
+    }
 
+    QLabel *icon = item->icon;
     if (icon_size.height() != icon->size().height()) {
-        bool isCanvas = parent()->property("isCanvasViewHelper").toBool();
-        int topoffset =  isCanvas ? 0 : (opt.rect.height() - icon_size.height()) / 3;//update edit pos
+        int topoffset = isCanvas ? 0 : (opt.rect.height() - icon_size.height()) / 3;//update edit pos
         icon->setFixedHeight(icon_size.height() + topoffset);
     }
 }
@@ -1101,15 +1129,12 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
     if (index == d->expandedIndex) {
         QRect geometry = d->expandedItem->iconGeometry().toRect();
-
         geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
 
         geometries << geometry;
 
         geometry = d->expandedItem->textGeometry().toRect();
         geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
-        geometry.setTop(geometries.first().bottom());
-
         geometries << geometry;
 
         return geometries;
@@ -1139,11 +1164,13 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     if (isCanvas) {
         label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING);
         label_rect.moveLeft(label_rect.left() + TEXT_PADDING);
+        label_rect.setTop(icon_rect.bottom() + ICON_BOTTOM_SPACING_DESKTOP + TEXT_PADDING);
     } else {
         label_rect.setWidth(label_rect.width() - 2 * TEXT_PADDING - 2 * backgroundMargin - ICON_MODE_BACK_RADIUS);
         label_rect.moveLeft(label_rect.left() + TEXT_PADDING + backgroundMargin + ICON_MODE_BACK_RADIUS / 2);
+        label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
     }
-    label_rect.setTop(icon_rect.bottom() + TEXT_PADDING + ICON_MODE_ICON_SPACING);
+
 
     QStyleOptionViewItem opt = option;
     //    initStyleOption(&opt, index);
@@ -1158,15 +1185,28 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
     text_layout.setText(str);
 
     bool elide = (!isSelected || !singleSelected);
+    QList<QRectF> lines;
+    if (isCanvas) {
+        if (!elide)
+            label_rect.setBottom(INT_MAX);
 
-    //此处慎重更改 auto lines会同步document属性,更改后导致行数的计算错误影响绘制
-    auto lines = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
-                          ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
-                          QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
-                          Qt::AlignCenter);
+        //此处慎重更改 auto lines会同步document属性,更改后导致行数的计算错误影响绘制
+        lines = drawText(index, nullptr, str, label_rect,
+                              ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
+                              QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
+                              Qt::AlignCenter);
 
-    label_rect = boundingRect(lines).toRect();
-    label_rect.setTop(icon_rect.bottom());
+        label_rect = boundingRect(lines).toRect();
+    } else {
+        //此处慎重更改 auto lines会同步document属性,更改后导致行数的计算错误影响绘制
+        lines = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
+                              ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
+                              QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
+                              Qt::AlignCenter);
+
+        label_rect = boundingRect(lines).toRect();
+        label_rect.setTop(icon_rect.bottom());
+    }
 
     geometries << label_rect;
 

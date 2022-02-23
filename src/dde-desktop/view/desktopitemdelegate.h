@@ -34,6 +34,7 @@ public:
     virtual ~DesktopItemDelegate() override;
 
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &, const QModelIndex &index) const override;
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QString iconSizeLevelDescription(int i) const;
     int iconSizeLevel() const override;
     int minimumIconSizeLevel() const override;
@@ -48,7 +49,10 @@ public:
     void hideAllIIndexWidget() override;
 private:
     QStringList iconSizeDescriptions;
+    QList<int> charOfLine;
     QList<int> iconSizes;
+    int textFontWidth = 0;
+
     // default icon size is 48px.
     int currentIconSizeIndex = -1;
 };

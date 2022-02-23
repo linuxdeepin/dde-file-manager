@@ -23,6 +23,8 @@
 
 #pragma once
 
+#include "app/define.h"
+
 #include <QtGlobal>
 #include <QModelIndex>
 #include <QSize>
@@ -84,9 +86,10 @@ public:
     void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
     {
         qInfo() << "screen size" << szSceeen << "canvas" << szCanvas << "item size" << szItem;
-        QMargins miniMargin = QMargins(2, 2, 2, 2);
+        // top margin is for icon top spacing
+        QMargins miniMargin = QMargins(0, ICON_TOP_SPACE_DESKTOP, 0, 0);
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
-        colCount = (szSceeen.width() - dockReserveArea.width()) / miniCellWidth;
+        colCount = szSceeen.width() / miniCellWidth;
 
         if (colCount < 1) {
             qCritical() << "!!!!! colCount is 0!!! set it 1 and set cellWidth to " << szCanvas.width();
@@ -99,7 +102,7 @@ public:
             cellWidth = 1;
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
-        rowCount = (szSceeen.height() - dockReserveArea.height()) / miniCellHeigh;
+        rowCount = szSceeen.height() / miniCellHeigh;
         if (rowCount < 1) {
             qCritical() << "!!!!! rowCount is 0!!! set it and set cellHeight to" << szCanvas.height();
             cellHeight = szCanvas.height();
@@ -145,7 +148,6 @@ public:
 //    }
 
 public:
-    QRect    dockReserveArea = QRect(0, 0, 80, 80);
     QMargins viewMargins;
     QMargins cellMargins = QMargins(2, 2, 2, 2);
 

@@ -1324,11 +1324,6 @@ void CanvasGridView::dragMoveEvent(QDragMoveEvent *event)
                 event->setDropAction(Qt::MoveAction);
             }
 
-            bool canDrop = fileInfo->canDrop();
-            canDrop = fileInfo->isDir() && !fileInfo->isWritable();
-            canDrop = fileInfo->supportedDropActions().testFlag(event->dropAction());
-            //解决未使用警告，不清楚是否能直接删除上方canDrop相关，故采用宏
-            Q_UNUSED(canDrop)
             if (!fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
                     !fileInfo->supportedDropActions().testFlag(event->dropAction())) {
                 // not support drag
@@ -1632,23 +1627,22 @@ void CanvasGridView::paintEvent(QPaintEvent *event)
                 auto y = pos.y() * d->cellHeight + d->viewMargins.top();
 
                 auto rect =  QRect(x, y, d->cellWidth, d->cellHeight);
-
                 int rowMode = pos.x() % 2;
                 int colMode = pos.y() % 2;
                 auto color = (colMode == rowMode) ? QColor(0, 0, 255, 32) : QColor(255, 0, 0, 32);
+                painter.setPen(Qt::darkGray);
+                painter.drawRect(rect);
                 painter.fillRect(rect, color);
+
+                auto itemSize = rect.marginsRemoved(d->cellMargins);
+                painter.setPen(QPen(Qt::blue, 1, Qt::DashLine));
+                painter.drawRect(itemSize);
 
                 if (pos == d->dragTargetGrid) {
                     painter.fillRect(rect, Qt::green);
                 }
                 painter.setPen(QPen(Qt::red, 2));
                 painter.drawText(rect, QString("%1-%2").arg(pos.x()).arg(pos.y()));
-
-                //为测试开启debug模式下鼠标框选热区
-                QMargins margins(10, 10, 10, 10);
-                rect = rect.marginsRemoved(margins);
-                painter.setPen(Qt::red);
-                painter.drawRect(rect);
             }
         }
         painter.restore();
@@ -2945,20 +2939,12 @@ void CanvasGridView::initConnection()
 
 void CanvasGridView::updateCanvas()
 {
-    //todo计算margin
     itemDelegate()->updateItemSizeHint();
     auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
     QMargins geometryMargins = QMargins(0, 0, 0, 0);
     d->updateCanvasSize(this->geometry().size(), this->geometry().size(), geometryMargins, itemSize);
 
     GridManager::instance()->updateGridSize(m_screenNum, d->colCount, d->rowCount);
-
-    auto expandedWidget = reinterpret_cast<QWidget *>(itemDelegate()->expandedIndexWidget());
-    if (expandedWidget) {
-        int offset = -1 * ((d->cellWidth - itemSize.width()) % 2);
-        QMargins margins(offset, d->cellMargins.top(), 0, 0);
-        expandedWidget->setContentsMargins(margins);
-    }
 
     //需在expandedWidget->setContentsMargins(margins)之后在更新，否则在计算时没有将Margins纳入计算，导致显示错误
     updateEditorGeometries();

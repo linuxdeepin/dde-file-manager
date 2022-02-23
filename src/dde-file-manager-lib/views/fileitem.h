@@ -45,7 +45,7 @@ class FileIconItem : public QFrame
 public:
     explicit FileIconItem(QWidget *parent = nullptr);
     ~FileIconItem() override;
-
+    void setMaxHeight(int h);
     qreal opacity() const;
     void setOpacity(qreal opacity);
     void setMaxCharSize(int maxSize);
@@ -98,7 +98,7 @@ private:
     QStack<QString> editTextStack;
     QGraphicsOpacityEffect *opacityEffect = Q_NULLPTR;
     int m_maxCharSize = INT_MAX;
-
+    int m_maxHeight = -1;
     friend class DIconItemDelegate;
     friend class DFileView;
     friend class DFileViewHelper;

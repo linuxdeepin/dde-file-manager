@@ -20,7 +20,7 @@
  */
 
 #include "desktopitemdelegate.h"
-
+#include "app/define.h"
 #include <QAbstractItemView>
 #include <dfileviewhelper.h>
 
@@ -34,6 +34,8 @@ DesktopItemDelegate::DesktopItemDelegate(DFileViewHelper *parent) :
     DIconItemDelegate(parent)
 {
     iconSizes << 32 << 48 << 64 << 96 << 128;
+    // word number of per line
+    charOfLine << 9 << 9 << 9 << 12 << 12;
     iconSizeDescriptions << tr("Tiny")
                          << tr("Small")
                          << tr("Medium")
@@ -51,12 +53,20 @@ QWidget *DesktopItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     auto widget = DIconItemDelegate::createEditor(parent, opt, index);
     FileIconItem *item = static_cast<FileIconItem *>(widget);
     connect(item, &FileIconItem::inputFocusOut, this, &DesktopItemDelegate::commitDataAndCloseActiveEditor);
-    auto helper = qobject_cast<CanvasViewHelper *>(this->parent());
-    auto itemSize = sizeHint(QStyleOptionViewItem(), QModelIndex());
-    auto cellSize = helper->parent()->cellSize();
-    int offset = -1 * ((cellSize.width() - itemSize.width()) % 2);
-    widget->setContentsMargins(offset, helper->parent()->cellMargins().top(), 0, 0);
+    item->setContentsMargins(0, 0, 0, 0); // no margins
     return widget;
+}
+
+void DesktopItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QStyleOptionViewItem opt = option;
+    auto view = dynamic_cast<CanvasGridView *>(parent()->parent());
+    Q_ASSERT(view);
+
+    // get the cell rect
+    opt.rect = view->visualRect(index).marginsRemoved(view->cellMargins());
+
+    DIconItemDelegate::updateEditorGeometry(editor, opt, index);
 }
 
 QString DesktopItemDelegate::iconSizeLevelDescription(int i) const
@@ -116,10 +126,25 @@ QSize DesktopItemDelegate::iconSizeByIconSizeLevel() const
 void DesktopItemDelegate::updateItemSizeHint()
 {
     DIconItemDelegate::updateItemSizeHint();
-    int width = parent()->parent()->iconSize().width() * 17 / 10;
-    int height = parent()->parent()->iconSize().height()
-                 + 10 + 2 * d_ptr->textLineHeight;
+    // update word width
+    textFontWidth = parent()->parent()->fontMetrics().width("中");
+    auto iconSize = parent()->parent()->iconSize();
 
+    int width;
+    {
+        // defalut word num
+        const int minWidth = iconSize.width() + ICON_TOP_SPACE_DESKTOP * 2;
+        int num = 9;
+        int index = iconSizes.indexOf(iconSize.width());
+        if (index >= 0 && index < charOfLine.size())
+            num = charOfLine.at(index);
+
+        width = TEXT_PADDING + num * textFontWidth + TEXT_PADDING;
+        if (Q_UNLIKELY(width < minWidth))
+            width = minWidth;
+    }
+
+    int height = iconSize.height() + ICON_BOTTOM_SPACING_DESKTOP + TEXT_PADDING + 2 * d_ptr->textLineHeight + TEXT_PADDING;
     d_ptr->itemSizeHint = QSize(width, height);
 }
 

@@ -47,7 +47,6 @@ public:
     virtual bool isSelected(const QModelIndex &index) const override;
     virtual void viewFlicker() override;
     bool isPaintFile() const;
-
 public slots:
     void edit(const DFMEvent &event);
     void onRequestSelectFiles(const QList<DUrl> &urls);
