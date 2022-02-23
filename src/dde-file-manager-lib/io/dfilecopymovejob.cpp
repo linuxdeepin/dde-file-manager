@@ -1594,7 +1594,7 @@ open_file: {
             switch (setAndhandleError(errortype, fromInfo, toInfo, errorstr)) {
             case DFileCopyMoveJob::RetryAction: {
                 //处理网络文件是否是可以访问的
-                DFileCopyMoveJob::GvfsRetryType retryType = gvfsFileRetry(data, isErrorOccur, current_pos, fromInfo, toInfo, fromDevice, toDevice, false);
+                DFileCopyMoveJob::GvfsRetryType retryType = gvfsFileRetry(data, isErrorOccur, current_pos, fromInfo, toInfo, fromDevice, toDevice);
                 if (DFileCopyMoveJob::GvfsRetrySkipAction == retryType) {
                     return true;
                 } else if (DFileCopyMoveJob::GvfsRetryCancelAction == retryType) {
@@ -1643,7 +1643,7 @@ open_file: {
                                       qApp->translate("DFileCopyMoveJob", "Failed to write the file, cause: %1").arg(toDevice->errorString()))) {
             case DFileCopyMoveJob::RetryAction: {
                 //处理网络文件是否是可以访问的
-                DFileCopyMoveJob::GvfsRetryType retryType = gvfsFileRetry(data, isErrorOccur, current_pos, fromInfo, toInfo, fromDevice, toDevice, true);
+                DFileCopyMoveJob::GvfsRetryType retryType = gvfsFileRetry(data, isErrorOccur, current_pos, fromInfo, toInfo, fromDevice, toDevice);
                 if (DFileCopyMoveJob::GvfsRetrySkipAction == retryType) {
                     return true;
                 } else if (DFileCopyMoveJob::GvfsRetryCancelAction == retryType) {
@@ -3742,40 +3742,33 @@ DFileCopyMoveJob::Action DFileCopyMoveJobPrivate::getLastErrorAction()
  * \return qint64 返回当前文件拷贝到的位置
  */
 qint64 DFileCopyMoveJobPrivate::reopenGvfsFiles(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, QSharedPointer<DFileDevice> &fromDevice,
-                                               QSharedPointer<DFileDevice> &toDevice, const bool &isWriteError)
+                                               QSharedPointer<DFileDevice> &toDevice)
 {
     DFileCopyMoveJob::Action action = DFileCopyMoveJob::NoAction;
-    if (isWriteError) {
-        toInfo->refresh(true);
-        toDevice->close();
-        action = openGvfsFile(toInfo, toDevice, (QIODevice::WriteOnly | QIODevice::Truncate));
-    } else {
-        fromInfo->refresh(true);
-        toInfo->refresh(true);
-        fromDevice->close();
-        action = openGvfsFile(fromInfo, fromDevice, QIODevice::ReadOnly);
-    }
-
-    if (action == DFileCopyMoveJob::SkipAction) {
-        return -1;
-    } else if (action != DFileCopyMoveJob::NoAction) {
-        return -2;
-    }
     fromInfo->refresh(true);
     toInfo->refresh(true);
-    m_gvfsFileInnvliadProgress = const_cast<DFileCopyMoveJobPrivate*>(this)->getCompletedDataSize();
-    qint64 currentPos = 0;
-    if (isWriteError) {
-        action = seekFile(fromInfo, fromDevice, currentPos);
-    } else {
-        action = seekFile(toInfo, toDevice, currentPos);
-    }
+
+    toDevice->close();
+    action = openGvfsFile(toInfo, toDevice, (QIODevice::WriteOnly | QIODevice::Truncate));
 
     if (action == DFileCopyMoveJob::SkipAction) {
         return -1;
     } else if (action != DFileCopyMoveJob::NoAction) {
         return -2;
     }
+
+    fromDevice->close();
+    action = openGvfsFile(fromInfo, fromDevice, QIODevice::ReadOnly);
+
+
+    if (action == DFileCopyMoveJob::SkipAction) {
+        return -1;
+    } else if (action != DFileCopyMoveJob::NoAction) {
+        return -2;
+    }
+
+    m_gvfsFileInnvliadProgress = const_cast<DFileCopyMoveJobPrivate*>(this)->getCompletedDataSize();
+    qint64 currentPos = 0;
 
     return currentPos;
 }
@@ -3899,11 +3892,21 @@ void DFileCopyMoveJobPrivate::cleanCopySources(char *data, const QSharedPointer<
  * \param isWriteError 是写遇到错误重试
  * \return DFileCopyMoveJob::GvfsRetryType 网络文件重试的操作
  */
-DFileCopyMoveJob::GvfsRetryType DFileCopyMoveJobPrivate::gvfsFileRetry(char *data, bool &isErrorOccur, qint64 &currentPos, const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice, const bool &isWriteError)
+DFileCopyMoveJob::GvfsRetryType DFileCopyMoveJobPrivate::gvfsFileRetry(char *data, bool &isErrorOccur, qint64 &currentPos, const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice)
 {
-    if (fromInfo->isGvfsMountFile()
-            && !DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)) {
-        currentPos = reopenGvfsFiles(fromInfo, toInfo, fromDevice, toDevice, isWriteError);
+    DUrl fromurl = fromInfo->fileUrl();
+    DUrl tourl = toInfo->fileUrl();
+    {
+        QMutexLocker lk(&m_emitUrlMutex);
+        m_emitUrl.clear();
+        m_emitUrl.append(QPair<DUrl, DUrl>(fromurl,tourl));
+        Q_EMIT q_ptr->currentJobChanged(m_emitUrl.last().first, m_emitUrl.last().second, false);
+    }
+
+    if ((fromInfo->isGvfsMountFile() || toInfo->isGvfsMountFile())
+            && !DFileService::instance()->checkGvfsMountfileBusy(toInfo->fileUrl(), false)
+            && !DFileService::instance()->checkGvfsMountfileBusy(fromInfo->fileUrl(), false)) {
+        currentPos = reopenGvfsFiles(fromInfo, toInfo, fromDevice, toDevice);
         if (currentPos == -1) {
             cleanCopySources(data, fromDevice, toDevice, isErrorOccur);
             return DFileCopyMoveJob::GvfsRetrySkipAction;
@@ -3911,13 +3914,6 @@ DFileCopyMoveJob::GvfsRetryType DFileCopyMoveJobPrivate::gvfsFileRetry(char *dat
             cleanCopySources(data, fromDevice, toDevice, isErrorOccur);
             return DFileCopyMoveJob::GvfsRetryCancelAction;
         } else {
-            DUrl fromurl = fromInfo->fileUrl();
-            DUrl tourl = toInfo->fileUrl();
-            {
-                QMutexLocker lk(&m_emitUrlMutex);
-                m_emitUrl.insert(fromurl,tourl);
-                Q_EMIT q_ptr->currentJobChanged(m_emitUrl.lastKey(), m_emitUrl.last(), false);
-            }
             return DFileCopyMoveJob::GvfsRetryNoAction;
         }
     }
@@ -3990,8 +3986,9 @@ void DFileCopyMoveJobPrivate::sendCopyInfo(const DAbstractFileInfoPointer &fromI
         DUrl fromurl = fromInfo ? fromInfo->fileUrl() : DUrl();
         DUrl tourl = toInfo ? toInfo->fileUrl() : DUrl();
         QMutexLocker lk(&m_emitUrlMutex);
-        m_emitUrl.insert(fromurl,tourl);
-        Q_EMIT q_ptr->currentJobChanged(m_emitUrl.lastKey(), m_emitUrl.last(), false);
+        m_emitUrl.clear();
+        m_emitUrl.append(QPair<DUrl, DUrl>(fromurl,tourl));
+        Q_EMIT q_ptr->currentJobChanged(m_emitUrl.last().first, m_emitUrl.last().second, false);
     }
 }
 

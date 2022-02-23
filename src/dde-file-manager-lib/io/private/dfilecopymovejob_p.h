@@ -231,8 +231,7 @@ public:
     void setLastErrorAction(const DFileCopyMoveJob::Action &action);
     DFileCopyMoveJob::Action getLastErrorAction();
     qint64 reopenGvfsFiles(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo,
-                          QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice,
-                          const bool &isWriteError = true);
+                          QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice);
     DFileCopyMoveJob::Action seekFile(const DAbstractFileInfoPointer &fileInfo,
                                           QSharedPointer<DFileDevice> &device, const qint64 &pos);
     DFileCopyMoveJob::Action openGvfsFile(const DAbstractFileInfoPointer &fileInfo,
@@ -241,8 +240,7 @@ public:
     void cleanCopySources(char *data, const QSharedPointer<DFileDevice> &fromDevice,
                           const QSharedPointer<DFileDevice> &toDevice, bool &isError);
     DFileCopyMoveJob::GvfsRetryType gvfsFileRetry(char * data, bool &isErrorOccur, qint64 &currentPos, const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo,
-                                                  QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice,
-                                                  const bool &isWriteError = true);
+                                                  QSharedPointer<DFileDevice> &fromDevice, QSharedPointer<DFileDevice> &toDevice);
     void readAheadSourceFile(const DAbstractFileInfoPointer &fromInfo);
     bool handleUnknowUrlError(const DAbstractFileInfoPointer &fromInfo,const DAbstractFileInfoPointer &toInfo);
     bool handleUnknowError(const DAbstractFileInfoPointer &fromInfo, const DAbstractFileInfoPointer &toInfo, const QString &errorStr);
@@ -379,7 +377,7 @@ public:
     QMutex m_clearThreadPoolMutex;
     QQueue<QSharedPointer<ThreadCopyInfo>> m_threadInfos;
     QMutex m_threadMutex;
-    QMap<DUrl,DUrl> m_emitUrl;
+    QList<QPair<DUrl,DUrl>> m_emitUrl;
     QMutex m_emitUrlMutex;
 
     //打开写入文件的fd
