@@ -292,8 +292,10 @@ QModelIndex DFileViewHelperPrivate::findIndex(const QByteArray &keys, bool match
     Q_Q(const DFileViewHelper);
 
     int row_count = q->parent()->model()->rowCount(q->parent()->rootIndex());
+    if (row_count == 0)
+        return QModelIndex();
 
-    for (int i = excludeCurrent ? 1 : 0; i < row_count; ++i) {
+    for (int i = excludeCurrent ? 1 : 0; i <= row_count; ++i) {
         int row = reverse_order ? row_count + current - i : current + i;
 
         row = row % row_count;
