@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "computereventcaller.h"
+#include "utils/computerutils.h"
 
 #include "services/filemanager/computer/computer_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
@@ -106,7 +107,7 @@ void ComputerEventCaller::sendOpenItem(const QUrl &url)
 
 void ComputerEventCaller::sendShowFilePropertyDialog(const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, url);
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, QList<QUrl>() << url);
 }
 
 void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info)
@@ -115,7 +116,7 @@ void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPoi
     devInfo.icon = info->fileIcon();
     devInfo.deviceUrl = info->url();
     devInfo.deviceName = info->displayName();
-    devInfo.deviceType = "test";   // TODO(xust) complete the device type here.
+    devInfo.deviceType = ComputerUtils::deviceTypeInfo(info);
     devInfo.fileSystem = info->extraProperty(GlobalServerDefines::DeviceProperty::kFileSystem).toString();
     devInfo.totalCapacity = info->sizeTotal();
     devInfo.availableSpace = info->sizeFree();

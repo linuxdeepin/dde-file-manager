@@ -225,19 +225,23 @@ QMenu *BlockEntryFileEntity::createMenu()
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
         menu->addAction(ContextMenuActionTrs::trRename());
     } else {
-        bool isOptical = datas.value(DeviceProperty::kOpticalDrive).toBool();
+        bool isOpticalDrive = datas.value(DeviceProperty::kOpticalDrive).toBool();
         if (targetUrl().isValid()) {
             menu->addAction(ContextMenuActionTrs::trUnmount());
         } else {
             menu->addAction(ContextMenuActionTrs::trMount());
-            if (!isOptical) {   // optical drive cannot be renamed and formated
+            if (!isOpticalDrive) {   // optical drive cannot be renamed and formated
                 menu->addAction(ContextMenuActionTrs::trRename());
                 menu->addAction(ContextMenuActionTrs::trFormat());
             }
         }
 
-        if (isOptical)
+        if (isOpticalDrive) {
+            if (datas.value(DeviceProperty::kOptical).toBool()
+                && datas.value(DeviceProperty::kMedia).toString().contains(QRegularExpression("_r(w|e)")))
+                menu->addAction(ContextMenuActionTrs::trErase());
             menu->addAction(ContextMenuActionTrs::trEject());
+        }
 
         menu->addAction(ContextMenuActionTrs::trSafelyRemove());
     }

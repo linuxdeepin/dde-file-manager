@@ -303,6 +303,8 @@ void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 w
         actRemove(info);
     else if (actionText == ContextMenuActionTrs::trLogoutAndClearSavedPasswd())
         actLogoutAndForgetPasswd(info);
+    else if (actionText == ContextMenuActionTrs::trErase())
+        actErase(info);
 }
 
 void ComputerController::actEject(const QUrl &url)
@@ -474,6 +476,11 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
 void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
 {
     // TODO(xust);
+}
+
+void ComputerController::actErase(DFMEntryFileInfoPointer info)
+{
+    // TODO(xust); erase discs
 }
 
 ComputerController::ComputerController(QObject *parent)

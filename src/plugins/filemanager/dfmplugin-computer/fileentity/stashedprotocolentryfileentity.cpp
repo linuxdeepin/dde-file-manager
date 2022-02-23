@@ -83,6 +83,8 @@ QMenu *StashedProtocolEntryFileEntity::createMenu()
     QMenu *menu = new QMenu();
     menu->addAction(ContextMenuActionTrs::trMount());
     menu->addAction(ContextMenuActionTrs::trRemove());
+    menu->addSeparator();
+    menu->addAction(ContextMenuActionTrs::trProperties());
     return menu;
 }
 

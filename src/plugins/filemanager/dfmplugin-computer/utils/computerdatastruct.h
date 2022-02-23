@@ -83,6 +83,7 @@ extern QString trMount();
 extern QString trUnmount();
 extern QString trRename();
 extern QString trFormat();
+extern QString trErase();
 extern QString trEject();
 extern QString trLogoutAndClearSavedPasswd();
 extern QString trRemove();

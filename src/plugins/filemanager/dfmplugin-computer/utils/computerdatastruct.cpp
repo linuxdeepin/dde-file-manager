@@ -73,5 +73,10 @@ QString trOpen()
 {
     return QObject::tr("Open");
 }
+QString trErase()
+{
+    return QObject::tr("Erase");
+}
+
 }   // namespace ContextMenuActionTrs
 DPCOMPUTER_END_NAMESPACE

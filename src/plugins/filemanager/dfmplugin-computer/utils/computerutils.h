@@ -30,6 +30,7 @@
 #include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
 
 #include <QString>
 #include <QIcon>
@@ -57,6 +58,11 @@ public:
         u.setPath("/");
         return u;
     }
+    static quint64 getWinId(QWidget *widget);
+
+    static DSB_FM_NAMESPACE::SideBarService *sbServIns();
+    static DSC_NAMESPACE::PropertyDialogService *propertyDlgServIns();
+    static DFMBASE_NAMESPACE::DeviceController *deviceServIns();
 
     static QUrl makeBlockDevUrl(const QString &id);
     static QString getBlockDevIdByUrl(const QUrl &url);
@@ -68,18 +74,12 @@ public:
     static QString getProtocolDevIdByStashedUrl(const QUrl &url);
     static QUrl convertToProtocolDevUrlFrom(const QUrl &stashedUrl);
     static QUrl convertToStashedUrlFrom(const QUrl &protocolDevUrl);
-
     static QUrl makeLocalUrl(const QString &path);
 
-    static quint64 getWinId(QWidget *widget);
-
-    static DSB_FM_NAMESPACE::SideBarService *sbServIns();
-    static DSC_NAMESPACE::PropertyDialogService *propertyDlgServIns();
-    static DFMBASE_NAMESPACE::DeviceController *deviceServIns();
-
     static bool isPresetSuffix(const QString &suffix);
-
     static bool shouldSystemPartitionHide();
+
+    static QString deviceTypeInfo(DFMEntryFileInfoPointer info);
 };
 
 DPCOMPUTER_END_NAMESPACE

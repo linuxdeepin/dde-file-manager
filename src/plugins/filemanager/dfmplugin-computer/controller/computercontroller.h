@@ -67,6 +67,7 @@ public:
     void actRemove(DFMEntryFileInfoPointer info);
     void actProperties(quint64 winId, DFMEntryFileInfoPointer info);
     void actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info);
+    void actErase(DFMEntryFileInfoPointer info);
 
 Q_SIGNALS:
     void requestRename(quint64 winId, const QUrl &url);

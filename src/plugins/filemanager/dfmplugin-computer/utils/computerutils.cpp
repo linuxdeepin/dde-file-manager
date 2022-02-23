@@ -219,3 +219,35 @@ bool ComputerUtils::shouldSystemPartitionHide()
 {
     return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();
 }
+
+QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
+{
+    DFMBASE_USE_NAMESPACE
+    switch (info->order()) {
+    case EntryFileInfo::kOrderUserDir:
+        return QObject::tr("User directory");
+    case EntryFileInfo::kOrderSysDiskRoot:
+    case EntryFileInfo::kOrderSysDiskData:
+    case EntryFileInfo::kOrderSysDisks:
+        return QObject::tr("Local disk");
+    case EntryFileInfo::kOrderRemovableDisks:
+        return QObject::tr("Removable disk");
+    case EntryFileInfo::kOrderOptical:
+        return QObject::tr("DVD");
+    case EntryFileInfo::kOrderSmb:
+    case EntryFileInfo::kOrderFtp:
+        if (info->suffix() == SuffixInfo::kStashedProtocol)
+            return QObject::tr("Unconnected network shared directory");
+        return QObject::tr("Network shared directory");
+    case EntryFileInfo::kOrderMTP:
+        return QObject::tr("Android mobile device");
+    case EntryFileInfo::kOrderGPhoto2:
+        if (getProtocolDevIdByUrl(info->url()).contains("Apple_Inc"))
+            return QObject::tr("Apple mobile device");
+        return QObject::tr("Android mobile device");
+    case EntryFileInfo::kOrderFiles:
+        //        return QObject::tr("");
+    default:
+        return QObject::tr("Unknown device");
+    }
+}
