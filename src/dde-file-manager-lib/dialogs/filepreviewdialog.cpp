@@ -384,25 +384,23 @@ void FilePreviewDialog::initUI()
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
-    } else {
-        m_closeButton = new DWindowCloseButton(this);
-        m_closeButton->setObjectName("CloseButton");
-        m_closeButton->setFocusPolicy(Qt::NoFocus);
-        m_closeButton->setIconSize({50, 50});
-        m_closeButton->setFixedSize({50, 50});
-        QColor base_color = palette().base().color();
-        DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
-        if (ct == DGuiApplicationHelper::LightType) {
-            m_closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
-        } else {
-            m_closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
-        }
-
-        DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
-        connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
     }
 
+    m_closeButton = new DWindowCloseButton(this);
+    m_closeButton->setObjectName("CloseButton");
+    m_closeButton->setFocusPolicy(Qt::NoFocus);
+    m_closeButton->setIconSize({50, 50});
+    m_closeButton->setFixedSize({50, 50});
+    QColor base_color = palette().base().color();
+    DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
+    if (ct == DGuiApplicationHelper::LightType) {
+        m_closeButton->setStyleSheet("background-color:rgba(255, 255, 255, 25);");
+    } else {
+        m_closeButton->setStyleSheet("background-color:rgba(0, 0, 0, 25);");
+    }
 
+    DAnchorsBase::setAnchor(m_closeButton, Qt::AnchorRight, this, Qt::AnchorRight);
+    connect(m_closeButton, &QPushButton::clicked, this, &FilePreviewDialog::close);
 
     m_separator = new DHorizontalLine(this);
     m_separator->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
