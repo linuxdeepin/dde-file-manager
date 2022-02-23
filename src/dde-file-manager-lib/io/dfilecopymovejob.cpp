@@ -3433,10 +3433,11 @@ write_data: {
                 info->buffer = nullptr;
             }
         }
-        //异步执行同步
-        syncfs(toFd);
         //关闭文件并加权
         if (info->closeflag) {
+            //异步执行同步
+            syncfs(toFd);
+
             close(toFd);
             m_writeOpenFd.remove(info->toinfo->fileUrl());
             QSharedPointer<DFileHandler> handler = info->handler ? info->handler :
