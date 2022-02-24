@@ -22,6 +22,8 @@
 #include "filetreater.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include "filefilter.h"
+
 #include <QApplication>
 
 DSB_D_BEGIN_NAMESPACE
@@ -31,6 +33,9 @@ FileTreater::FileTreater(CanvasModel *parent)
     : QObject (parent)
 {
     qRegisterMetaType<QList<QUrl>>();
+
+    fileFilters << QSharedPointer<FileFilter>(new CustomHiddenFilter(parent));
+    fileFilters << QSharedPointer<FileFilter>(new InnerDesktopAppController(parent));
 }
 
 FileTreater::~FileTreater()
@@ -66,6 +71,9 @@ dfm_service_desktop::CanvasModel *FileTreater::model() const
 
 void FileTreater::insertChild(const QUrl &url)
 {
+    if (insertChildFilter(url))
+        return;
+
     int row = -1;
     {
         QMutexLocker lk(&childrenMutex);
@@ -91,6 +99,9 @@ void FileTreater::insertChild(const QUrl &url)
 
 void FileTreater::removeChild(const QUrl &url)
 {
+    if (removeChildFilter(url))
+        return;
+
     if (Q_UNLIKELY(!fileList.contains(url))) {
         qInfo() << "file dose not exists:" << url;
         return;
@@ -108,6 +119,9 @@ void FileTreater::removeChild(const QUrl &url)
 
 void FileTreater::renameChild(const QUrl &oldUrl, const QUrl &newUrl)
 {
+    if (renameChildFilter(oldUrl, newUrl))
+        return;
+
     if (Q_UNLIKELY(!fileList.contains(oldUrl)) || Q_UNLIKELY(fileList.contains(newUrl))) {
         qWarning() << "unknow error in rename file:" << fileList.contains(oldUrl) << oldUrl << fileList.contains(newUrl) << newUrl;
         return;
@@ -140,6 +154,9 @@ void FileTreater::renameChild(const QUrl &oldUrl, const QUrl &newUrl)
 
 void FileTreater::updateChild(const QUrl &url)
 {
+    if (updateChildFilter(url))
+        return;
+
     if (Q_UNLIKELY(!fileList.contains(url)))
         return;
 
@@ -148,6 +165,51 @@ void FileTreater::updateChild(const QUrl &url)
         return;
 
     model()->dataChanged(index, index);
+}
+
+bool FileTreater::removeChildFilter(const QUrl &url)
+{
+    for (const auto &filter : fileFilters)
+        if (filter->fileDeletedFilter(url))
+            return true;
+
+    return false;
+}
+
+bool FileTreater::insertChildFilter(const QUrl &url)
+{
+    for (const auto &filter : fileFilters)
+        if (filter->fileCreatedFilter(url))
+            return true;
+
+    return false;
+}
+
+bool FileTreater::renameChildFilter(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    for (const auto &filter : fileFilters)
+        if (filter->fileRenameFilter(oldUrl, newUrl))
+            return true;
+
+    return false;
+}
+
+bool FileTreater::updateChildFilter(const QUrl &url)
+{
+    for (const auto &filter : fileFilters)
+        if (filter->fileUpdatedFilter(url))
+            return true;
+
+    return false;
+}
+
+bool FileTreater::traversalFilter(const QUrl &url)
+{
+    for (const auto &filter : fileFilters)
+        if (filter->fileTraversalFilter(url))
+            return true;
+
+    return false;
 }
 
 DFMLocalFileInfoPointer FileTreater::fileInfo(const QUrl &url)
@@ -285,6 +347,9 @@ void FileTreater::onUpdateChildren(const QList<QUrl> &children)
     QList<DFMLocalFileInfoPointer> files;
     QString errString;
     for (auto children : children) {
+        if (traversalFilter(children))
+            continue;
+
         auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(children, true, &errString);
         if (Q_UNLIKELY(!itemInfo)) {
             qInfo() << "create LocalFileInfo error: " << errString;

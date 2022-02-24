@@ -28,7 +28,7 @@
 #include <QUrl>
 
 DSB_D_BEGIN_NAMESPACE
-
+class FileFilter;
 class FileTreater : public QObject
 {
     Q_OBJECT
@@ -57,7 +57,12 @@ public:
 public slots:
     void onUpdateChildren(const QList<QUrl> &children);
     void onTraversalFinished();
-
+protected:
+    bool removeChildFilter(const QUrl &url);
+    bool insertChildFilter(const QUrl &url);
+    bool renameChildFilter(const QUrl &oldUrl, const QUrl &newUrl);
+    bool updateChildFilter(const QUrl &url);
+    bool traversalFilter(const QUrl &url);
 private:
     bool doSort(QList<DFMLocalFileInfoPointer> &files) const;
     void specialSort(QList<DFMLocalFileInfoPointer> &files) const;
@@ -67,6 +72,7 @@ private:
     QList<QUrl> fileList;
     QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
     QMutex childrenMutex;
+    QList<QSharedPointer<FileFilter>> fileFilters;
 
     dfmbase::AbstractFileInfo::SortKey fileSortRole = dfmbase::AbstractFileInfo::kSortByFileName;
     Qt::SortOrder fileSortOrder = Qt::AscendingOrder;

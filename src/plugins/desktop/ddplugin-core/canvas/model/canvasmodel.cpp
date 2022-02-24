@@ -49,7 +49,7 @@ CanvasModelPrivate::~CanvasModelPrivate()
 
 }
 
-void CanvasModelPrivate::doFileDeleted(const QUrl &url)
+void CanvasModelPrivate::onFileDeleted(const QUrl &url)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
@@ -61,7 +61,7 @@ void CanvasModelPrivate::doFileDeleted(const QUrl &url)
     metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
 }
 
-void CanvasModelPrivate::doFileCreated(const QUrl &url)
+void CanvasModelPrivate::onFileCreated(const QUrl &url)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
@@ -73,7 +73,7 @@ void CanvasModelPrivate::doFileCreated(const QUrl &url)
     metaObject()->invokeMethod(this, "doWatcherEvent", Qt::QueuedConnection);
 }
 
-void CanvasModelPrivate::doFileRename(const QUrl &oldUrl, const QUrl &newUrl)
+void CanvasModelPrivate::onFileRename(const QUrl &oldUrl, const QUrl &newUrl)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
@@ -84,10 +84,10 @@ void CanvasModelPrivate::doFileRename(const QUrl &oldUrl, const QUrl &newUrl)
         watcherEvent.enqueue(data);
     }
 
-    metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
+    metaObject()->invokeMethod(this, "doWatcherEvent", Qt::QueuedConnection);
 }
 
-void CanvasModelPrivate::doFileUpdated(const QUrl &url)
+void CanvasModelPrivate::onFileUpdated(const QUrl &url)
 {
     {
         QMutexLocker lk(&watcherEventMutex);
@@ -97,41 +97,6 @@ void CanvasModelPrivate::doFileUpdated(const QUrl &url)
     }
 
     metaObject()->invokeMethod(this, "doWatcherEvent", Qt::QueuedConnection);
-}
-
-bool CanvasModelPrivate::fileDeletedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-
-    return false;
-}
-
-bool CanvasModelPrivate::fileCreatedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-
-    return false;
-}
-
-bool CanvasModelPrivate::fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl)
-{
-    Q_UNUSED(oldUrl)
-    Q_UNUSED(newUrl)
-
-    return false;
-}
-
-bool CanvasModelPrivate::fileUpdatedFilter(const QUrl &url)
-{
-    // the filemanager hidden attr changed.
-    // get file that removed form .hidden if do not show hidden file.
-    if (!(filters & QDir::Hidden) && url.fileName() == ".hidden") {
-        qDebug() << "refresh by hidden changed.";
-        delayRefresh();
-        return true;
-    }
-
-    return false;
 }
 
 void CanvasModelPrivate::doWatcherEvent()
@@ -157,21 +122,17 @@ void CanvasModelPrivate::doWatcherEvent()
 
         if (kAddFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            if (!fileCreatedFilter(url))
                 fileTreater->insertChild(url);
         } else if (kRmFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            if (!fileDeletedFilter(url))
                 fileTreater->removeChild(url);
         } else if (kReFile == eventType) {
             const QPair<QUrl, QUrl> urls = eventData.second.value<QPair<QUrl, QUrl>>();
             const QUrl &oldUrl = urls.first;
             const QUrl &newUrl = urls.second;
-            if (!fileRenameFilter(oldUrl, newUrl))
                 fileTreater->renameChild(oldUrl, newUrl);
         } else if (kUpdateFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            if (!fileUpdatedFilter(url))
                 fileTreater->updateChild(url);
         }
     }
@@ -180,14 +141,17 @@ void CanvasModelPrivate::doWatcherEvent()
 
 void CanvasModelPrivate::delayRefresh(int ms)
 {
-    if (nullptr != refreshTimer.get()) {
+    if (nullptr != refreshTimer.get())
         refreshTimer->stop();
-        refreshTimer->disconnect();
-    }
 
-    refreshTimer.reset(new QTimer);
-    connect(refreshTimer.get(), &QTimer::timeout, this, &CanvasModelPrivate::doRefresh);
-    refreshTimer->start(ms);
+    if (ms < 1)
+        doRefresh();
+    else {
+        refreshTimer.reset(new QTimer);
+        refreshTimer->setSingleShot(true);
+        connect(refreshTimer.get(), &QTimer::timeout, this, &CanvasModelPrivate::doRefresh);
+        refreshTimer->start(ms);
+    }
 }
 
 void CanvasModelPrivate::onTraversalFinished()
@@ -388,19 +352,19 @@ QModelIndex CanvasModel::setRootUrl(QUrl url)
 
     d->rootUrl = url;
     if (!d->watcher.isNull()) {
-        disconnect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &CanvasModelPrivate::doFileDeleted);
-        disconnect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &CanvasModelPrivate::doFileCreated);
-        disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &CanvasModelPrivate::doFileRename);
-        disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &CanvasModelPrivate::doFileUpdated);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &CanvasModelPrivate::onFileDeleted);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &CanvasModelPrivate::onFileCreated);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &CanvasModelPrivate::onFileRename);
+        disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &CanvasModelPrivate::onFileUpdated);
 
     }
 
     d->watcher = WacherFactory::create<AbstractFileWatcher>(d->rootUrl);
     if (Q_LIKELY(!d->watcher.isNull())) {
-        connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &CanvasModelPrivate::doFileDeleted);
-        connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &CanvasModelPrivate::doFileCreated);
-        connect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &CanvasModelPrivate::doFileRename);
-        connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &CanvasModelPrivate::doFileUpdated);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &CanvasModelPrivate::onFileDeleted);
+        connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &CanvasModelPrivate::onFileCreated);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &CanvasModelPrivate::onFileRename);
+        connect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &CanvasModelPrivate::onFileUpdated);
         d->watcher->startWatcher();
     }
 

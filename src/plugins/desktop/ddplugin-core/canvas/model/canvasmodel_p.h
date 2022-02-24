@@ -43,16 +43,6 @@ public:
 
     explicit CanvasModelPrivate(CanvasModel *qq);
     virtual ~CanvasModelPrivate();
-
-    void doFileDeleted(const QUrl &url);
-    void doFileCreated(const QUrl &url);
-    void doFileRename(const QUrl &oldUrl, const QUrl &newUrl);
-    void doFileUpdated(const QUrl &url);
-    bool fileDeletedFilter(const QUrl &url);
-    bool fileCreatedFilter(const QUrl &url);
-    bool fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl);
-    bool fileUpdatedFilter(const QUrl &url);
-
     Q_INVOKABLE void doWatcherEvent();
 
     void delayRefresh(int ms = 50);
@@ -60,7 +50,10 @@ public:
 
 public slots:
     void onTraversalFinished();
-
+    void onFileDeleted(const QUrl &url);
+    void onFileCreated(const QUrl &url);
+    void onFileRename(const QUrl &oldUrl, const QUrl &newUrl);
+    void onFileUpdated(const QUrl &url);
 private:
     bool checkFileEventQueue();
 

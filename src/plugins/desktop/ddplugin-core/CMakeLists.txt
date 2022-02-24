@@ -65,6 +65,7 @@ set(core_cxx_cpp
     canvas/view/operator/viewsettingutil.cpp
     canvas/model/canvasmodel.cpp
     canvas/model/filetreater.cpp
+    canvas/model/filefilter.cpp
     canvas/model/canvasselectionmodel.cpp
     canvas/delegate/canvasitemdelegate.cpp
     canvas/delegate/elidetextlayout.cpp
@@ -122,6 +123,7 @@ set(core_cxx_h
     canvas/model/canvasmodel.h
     canvas/model/canvasmodel_p.h
     canvas/model/filetreater.h
+    canvas/model/filefilter.h
     canvas/model/canvasselectionmodel.h
     canvas/delegate/canvasitemdelegate_p.h
     canvas/delegate/canvasitemdelegate.h
