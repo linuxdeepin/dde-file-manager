@@ -31,6 +31,7 @@
 #include <dfm-mount/dfmdevicemanager.h>
 #include <dfm-mount/dfmblockdevice.h>
 #include <dfm-mount/dfmprotocoldevice.h>
+#include <dfm-burn/dfmburn_global.h>
 
 #include <mutex>
 
@@ -63,6 +64,8 @@ struct BlockDeviceData
     bool optical;
     bool opticalDrive;
     bool opticalBlank;
+    DFMBURN::MediaType opticalMediaType;
+    QStringList opticalWriteSpeed;
     bool mediaAvailable;
     bool canPowerOff;
     bool ejectable;
@@ -131,8 +134,8 @@ private:
     static void makeProtocolDeviceMap(const ProtocolDeviceData &data, QVariantMap *map, bool detail = false);
     static void updateProtocolDeviceSizeUsed(ProtocolDeviceData *data, qint64 total, qint64 free, qint64 used);
 
-    static void writeOpticalCapacity(const QString &device, qint64 total, qint64 used);
-    static void readOpticalCapacity(const QString &device, qint64 *total, qint64 *used);
+    static void writeOpticalProperty(const BlockDeviceData &data);
+    static void readOpticalProperty(const QString &device, BlockDeviceData *data);
 
 private:
     static DevPtr createDevice(const QString &devId, DFMMOUNT::DeviceType type);

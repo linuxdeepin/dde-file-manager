@@ -44,7 +44,7 @@ public:
     explicit CustomTopWidgetInterface(QObject *parent = nullptr);
 
     QWidget *create();
-    bool isShowFromUrl(const QUrl &url);
+    bool isShowFromUrl(QWidget *w, const QUrl &url);
     void setKeepShow(bool keep);
     bool isKeepShow() const;
     void registeCreateTopWidgetCallback(const CreateTopWidgetCallback &func);

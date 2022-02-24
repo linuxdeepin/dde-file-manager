@@ -105,12 +105,14 @@ void Optical::addCustomTopWidget()
     info.scheme = SchemeTypes::kBurn;
     info.keepShow = true;
     info.createTopWidgetCb = []() {
-        QFrame *frame = new QFrame;
-        QVBoxLayout *mainLayout = new QVBoxLayout;
-        OpticalMediaWidget *w = new OpticalMediaWidget;
-        mainLayout->addWidget(w);
-        frame->setLayout(mainLayout);
-        return frame;
+        return new OpticalMediaWidget;
+    };
+    info.showTopWidgetCb = [](QWidget *w, const QUrl &url) {
+        OpticalMediaWidget *mediaWidget = qobject_cast<OpticalMediaWidget *>(w);
+        if (mediaWidget)
+            mediaWidget->updateDiscInfo(url);
+
+        return true;
     };
 
     OpticalHelper::workspaceServIns()->addCustomTopWidget(info);

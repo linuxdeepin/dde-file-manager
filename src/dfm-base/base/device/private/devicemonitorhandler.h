@@ -56,7 +56,7 @@ private:
     void updateDataWithOtherInfo(BlockDeviceData *data, const QMap<DFMMOUNT::Property, QVariant> &changes);
     void handleBlockDevicesSizeUsedChanged();
     void handleProtolDevicesSizeUsedChanged();
-    void handleOpticalDeviceSizeUsedChanged(const QString &deviceId);
+    void handleOpticalDeviceChanged(const QString &deviceId);
 
 private slots:
     void onBlockDriveAdded(const QString &drvObjPath);

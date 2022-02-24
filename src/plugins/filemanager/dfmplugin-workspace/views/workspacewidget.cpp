@@ -288,13 +288,15 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
     QString scheme { url.scheme() };
 
     for (auto widget : topWidgets.values()) {
-        widget->hide();
+        if (topWidgets.value(scheme) != widget)
+            widget->hide();
     }
 
     auto interface = WorkspaceHelper::instance()->createTopWidgetByUrl(url);
     if (topWidgets.contains(scheme)) {
-        qDebug() << interface->isKeepShow() << interface->isShowFromUrl(url);
-        topWidgets[scheme]->setVisible(interface && (interface->isKeepShow() || interface->isShowFromUrl(url)));
+        bool showUrl { interface->isShowFromUrl(topWidgets[scheme].data(), url) };
+        qDebug() << interface->isKeepShow() << showUrl;
+        topWidgets[scheme]->setVisible(interface && (showUrl || interface->isKeepShow()));
         qDebug() << topWidgets[scheme]->contentsMargins();
     } else {
         if (interface) {
@@ -302,7 +304,7 @@ void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
             if (topWidgetPtr) {
                 widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine) + 1, topWidgetPtr.get());
                 topWidgets.insert(scheme, topWidgetPtr);
-                topWidgetPtr->setVisible(interface->isKeepShow() || interface->isShowFromUrl(url));
+                topWidgetPtr->setVisible(interface->isShowFromUrl(topWidgets[scheme].data(), url) || interface->isKeepShow());
             }
         }
     }

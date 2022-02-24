@@ -54,7 +54,7 @@ extern const int kShowCustomTopWidget;
 };   // namespace EventType
 
 using CreateTopWidgetCallback = std::function<QWidget *()>;
-using ShowTopWidgetCallback = std::function<bool(const QUrl &)>;
+using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using FileViewFilterCallback = std::function<bool(DFMBASE_NAMESPACE::AbstractFileInfo *, QVariant)>;
 
 struct CustomTopWidgetInfo

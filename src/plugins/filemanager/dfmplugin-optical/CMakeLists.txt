@@ -21,7 +21,6 @@ FILE(GLOB OPTICAL_FILES
 find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(Qt5 COMPONENTS Svg REQUIRED)
 
-
 add_library(${PROJECT_NAME}
     SHARED
     ${OPTICAL_FILES}

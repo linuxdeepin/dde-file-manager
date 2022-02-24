@@ -120,8 +120,10 @@ QFrame *TrashHelper::createEmptyTrashTopWidget()
     return emptyTrashWidget;
 }
 
-bool TrashHelper::showTopWidget(const QUrl &url)
+bool TrashHelper::showTopWidget(QWidget *w, const QUrl &url)
 {
+    Q_UNUSED(w)
+
     if (url == TrashHelper::fromTrashFile("/") && !TrashHelper::isEmpty()) {
         return true;
     } else {

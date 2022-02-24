@@ -74,6 +74,8 @@ constexpr char kMediaRemovable[] { "MediaRemovable" };
 constexpr char kOptical[] { "Optical" };
 constexpr char kOpticalDrive[] { "OpticalDrive" };
 constexpr char kOpticalBlank[] { "OpticalBlank" };
+constexpr char kOpticalMediaType[] { "OpticalMediaType" };
+constexpr char kOpticalWriteSpeed[] { "OpticalWriteSpeed" };
 constexpr char kMediaAvailable[] { "MediaAvailable" };
 constexpr char kCanPowerOff[] { "CanPowerOff" };
 constexpr char kEjectable[] { "Ejectable" };

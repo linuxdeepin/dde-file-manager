@@ -100,6 +100,8 @@ public:
     static Settings *genericObtuselySetting();
     static Settings *appObtuselySetting();
 
+    static Settings *dataPersistence();
+
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
     void genericAttributeChanged(GenericAttribute ga, const QVariant &value);

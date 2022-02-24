@@ -40,9 +40,11 @@
 
 Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
 
-static constexpr char kBurnCapacityAttribute[] { "BurnCapacityAttribute" };
-static constexpr char kBurnCapacityTotalSize[] { "BurnCapacityTotalSize" };
-static constexpr char kBurnCapacityUsedSize[] { "BurnCapacityUsedSize" };
+static constexpr char kBurnAttribute[] { "BurnAttribute" };
+static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
+static constexpr char kBurnUsedSize[] { "BurnUsedSize" };
+static constexpr char kBurnMediaType[] { "BurnMediaType" };
+static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeede" };
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -472,8 +474,13 @@ void DeviceControllerHelper::makeBlockDeviceData(const DeviceControllerHelper::B
 
     // We cannot acqurie optical capacity by udisks2
     if (data->optical && !data->mountpoints.isEmpty()) {
-        DeviceControllerHelper::readOpticalCapacity(data->device, &data->common.sizeTotal, &data->common.sizeUsed);
+        BlockDeviceData buf;
+        DeviceControllerHelper::readOpticalProperty(data->device, &buf);
+        data->common.sizeTotal = buf.common.sizeTotal;
+        data->common.sizeUsed = buf.common.sizeUsed;
         data->common.sizeFree = data->common.sizeTotal - data->common.sizeUsed;
+        data->opticalMediaType = buf.opticalMediaType;
+        data->opticalWriteSpeed = buf.opticalWriteSpeed;
     }
 
     /*!
@@ -536,6 +543,10 @@ void DeviceControllerHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVa
         map->insert(DeviceProperty::kMountPoints, data.mountpoints);
         map->insert(DeviceProperty::kMediaCompatibility, data.mediaCompatibility);
         map->insert(DeviceProperty::kCleartextDevice, data.cleartextDevice);
+        if (data.optical) {
+            map->insert(DeviceProperty::kOpticalMediaType, int(data.opticalMediaType));
+            map->insert(DeviceProperty::kOpticalWriteSpeed, data.opticalWriteSpeed);
+        }
     }
 }
 void DeviceControllerHelper::updateBlockDeviceSizeUsed(BlockDeviceData *data, qint64 total, qint64 free)
@@ -592,31 +603,35 @@ void DeviceControllerHelper::updateProtocolDeviceSizeUsed(ProtocolDeviceData *da
     }
 }
 
-void DeviceControllerHelper::writeOpticalCapacity(const QString &device, qint64 total, qint64 used)
+void DeviceControllerHelper::writeOpticalProperty(const BlockDeviceData &data)
 {
-    Q_ASSERT(device.startsWith("/dev"));
+    Q_ASSERT(data.device.startsWith("/dev"));
 
-    QMap<QString, QVariant> capacityInfo;
-    QString tag { device.mid(5) };
+    QMap<QString, QVariant> info;
+    QString tag { data.device.mid(5) };
 
-    capacityInfo[kBurnCapacityTotalSize] = total;
-    capacityInfo[kBurnCapacityUsedSize] = used;
+    info[kBurnTotalSize] = data.common.sizeTotal;
+    info[kBurnUsedSize] = data.common.sizeUsed;
+    info[kBurnMediaType] = int(data.opticalMediaType);
+    info[kBurnWriteSpeed] = data.opticalWriteSpeed;
 
-    Application::genericSetting()->setValue(kBurnCapacityAttribute, tag, capacityInfo);
-    Application::genericSetting()->sync();
+    Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
+    Application::dataPersistence()->sync();
 }
 
-void DeviceControllerHelper::readOpticalCapacity(const QString &device, qint64 *total, qint64 *used)
+void DeviceControllerHelper::readOpticalProperty(const QString &device, BlockDeviceData *data)
 {
     Q_ASSERT(device.startsWith("/dev"));
-    Q_ASSERT(total);
-    Q_ASSERT(used);
+    Q_ASSERT(data);
 
-    Application::genericSetting()->reload();
+    Application::dataPersistence()->reload();
     QString tag { device.mid(5) };
-    if (Application::genericSetting()->keys(kBurnCapacityAttribute).contains(tag)) {
-        const QMap<QString, QVariant> &info = Application::genericSetting()->value(kBurnCapacityAttribute, tag).toMap();
-        *total = static_cast<qint64>(info.value(kBurnCapacityTotalSize).toLongLong());
-        *used = static_cast<qint64>(info.value(kBurnCapacityUsedSize).toLongLong());
+
+    if (Application::dataPersistence()->keys(kBurnAttribute).contains(tag)) {
+        const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnAttribute, tag).toMap();
+        data->common.sizeTotal = static_cast<qint64>(info.value(kBurnTotalSize).toLongLong());
+        data->common.sizeUsed = static_cast<qint64>(info.value(kBurnUsedSize).toLongLong());
+        data->opticalMediaType = static_cast<DFMBURN::MediaType>(info.value(kBurnMediaType).toInt());
+        data->opticalWriteSpeed = info.value(kBurnWriteSpeed).toStringList();
     }
 }

@@ -34,9 +34,9 @@ QWidget *CustomTopWidgetInterface::create()
     return nullptr;
 }
 
-bool CustomTopWidgetInterface::isShowFromUrl(const QUrl &url)
+bool CustomTopWidgetInterface::isShowFromUrl(QWidget *w, const QUrl &url)
 {
-    return showTopWidgetFunc && showTopWidgetFunc(url);
+    return showTopWidgetFunc && showTopWidgetFunc(w, url);
 }
 
 void dfmplugin_workspace::CustomTopWidgetInterface::setKeepShow(bool keep)

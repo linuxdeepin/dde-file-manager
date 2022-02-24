@@ -371,10 +371,10 @@ void DeviceMonitorHandler::handleProtolDevicesSizeUsedChanged()
     }
 }
 
-void DeviceMonitorHandler::handleOpticalDeviceSizeUsedChanged(const QString &deviceId)
+void DeviceMonitorHandler::handleOpticalDeviceChanged(const QString &deviceId)
 {
     QMutexLocker guard(&mutexForBlock);
-    bool sizeChanged { false };
+    bool devChanged { false };
     auto block = DeviceControllerHelper::createBlockDevice(deviceId);
 
     // Note: allBlockDevData is empty if D-Bus not used
@@ -384,15 +384,17 @@ void DeviceMonitorHandler::handleOpticalDeviceSizeUsedChanged(const QString &dev
     QString dev { data.device };
     QScopedPointer<DFMBURN::OpticalDiscInfo> info { DFMBURN::OpticalDiscManager::createOpticalInfo(dev) };
     if (info && !data.common.id.isEmpty()) {
-        sizeChanged = true;
+        devChanged = true;
         data.common.sizeTotal = static_cast<qint64>(info->totalSize());
         data.common.sizeUsed = static_cast<qint64>(info->usedSize());
         data.common.sizeFree = data.common.sizeTotal - data.common.sizeUsed;
+        data.opticalMediaType = info->mediaType();
+        data.opticalWriteSpeed = info->writeSpeed();
         allBlockDevData[deviceId] = data;
     }
     guard.unlock();
-    if (sizeChanged) {
-        DeviceControllerHelper::writeOpticalCapacity(data.device, data.common.sizeTotal, data.common.sizeUsed);
+    if (devChanged) {
+        DeviceControllerHelper::writeOpticalProperty(data);
         emit service->deviceSizeUsedChanged(data.common.id, data.common.sizeTotal, data.common.sizeFree);
     }
 }
@@ -495,7 +497,10 @@ void DeviceMonitorHandler::onBlockDeviceMounted(const QString &deviceId, const Q
             qlonglong sizeFree {};
             if (optical) {
                 qint64 used { 0 };
-                DeviceControllerHelper::readOpticalCapacity(device, &sizeTotal, &used);
+                BlockDeviceData data;
+                DeviceControllerHelper::readOpticalProperty(device, &data);
+                sizeTotal = data.common.sizeTotal;
+                used = data.common.sizeUsed;
                 sizeFree = sizeTotal - used;
             } else {
                 QStorageInfo info(mountPoint);
@@ -1135,7 +1140,7 @@ void DeviceController::mountBlockDeviceAsync(const QString &deviceId, const QVar
                     delete fw;
             });
             fw->setFuture(QtConcurrent::run([=] {
-                monitorHandler->handleOpticalDeviceSizeUsedChanged(deviceId);
+                monitorHandler->handleOpticalDeviceChanged(deviceId);
             }));
         } else {
             ptr->mountAsync(opts, callback);
@@ -1161,7 +1166,7 @@ QString DeviceController::mountBlockDevice(const QString &deviceId, const QVaria
     if (DeviceControllerHelper::isMountableBlockDevice(ptr, &errMsg)) {
         // Note: Blocking main thread!
         if (ptr->optical())
-            monitorHandler->handleOpticalDeviceSizeUsedChanged(deviceId);
+            monitorHandler->handleOpticalDeviceChanged(deviceId);
         return ptr->mount(opts);
     } else {
         qWarning() << "Not mountable device: " << errMsg;

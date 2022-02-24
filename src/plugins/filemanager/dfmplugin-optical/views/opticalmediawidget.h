@@ -25,6 +25,8 @@
 
 #include "dfmplugin_optical_global.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -39,10 +41,13 @@ class OpticalMediaWidget : public QWidget
 
 public:
     explicit OpticalMediaWidget(QWidget *parent = nullptr);
+    void updateDiscInfo(const QUrl &url);
 
 private:
     void initializeUi();
     void initConnect();
+    void updateUi();
+    void handleErrorMount();
 
 private:
     QHBoxLayout *layout { nullptr };
@@ -51,6 +56,15 @@ private:
     QLabel *lbUdsupport { nullptr };
     DTK_WIDGET_NAMESPACE::DPushButton *pbBurn { nullptr };
     QSvgWidget *iconCaution { nullptr };
+
+    QString curFS;
+    QString curFSVersion;
+    QString curDev;
+    QString curMnt;
+    QString curDiscName;
+    qint64 curAvial;
+    QString curMediaType;
+    QStringList curMediaWriteSpeeed;
 };
 
 DPOPTICAL_END_NAMESPACE

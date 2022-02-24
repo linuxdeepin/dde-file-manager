@@ -64,7 +64,7 @@ public:
     static quint64 windowId(QWidget *sender);
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static QFrame *createEmptyTrashTopWidget();
-    static bool showTopWidget(const QUrl &url);
+    static bool showTopWidget(QWidget *w, const QUrl &url);
     static QUrl fromTrashFile(const QString &filePath);
     static QUrl toLocalFile(const QUrl &url);
     static bool isEmpty();
