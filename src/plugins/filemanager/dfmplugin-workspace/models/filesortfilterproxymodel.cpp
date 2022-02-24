@@ -22,32 +22,62 @@
 #include "filesortfilterproxymodel.h"
 #include "fileviewmodel.h"
 
+#include "dfm-base/base/application/application.h"
+
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
+    resetFilter();
 }
 
 FileSortFilterProxyModel::~FileSortFilterProxyModel()
 {
 }
 
+QDir::Filters FileSortFilterProxyModel::getFilters() const
+{
+    return filters;
+}
+
+void FileSortFilterProxyModel::setFilters(const QDir::Filters &filters)
+{
+    this->filters = filters;
+    invalidateFilter();
+}
+
 void FileSortFilterProxyModel::setFilterData(const QVariant &data)
 {
     filterData = data;
+    invalidateFilter();
 }
 
 void FileSortFilterProxyModel::setFilterCallBack(const FileViewFilterCallback callback)
 {
     filterCallback = callback;
+    invalidateFilter();
 }
 
 void FileSortFilterProxyModel::resetFilter()
 {
     filterData = QVariant();
     filterCallback = nullptr;
+    filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
+    bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
+    if (isShowedHiddenFiles) {
+        filters |= QDir::Hidden;
+    } else {
+        filters &= ~QDir::Hidden;
+    }
+    invalidateFilter();
+}
+
+void FileSortFilterProxyModel::toggleHiddenFiles()
+{
+    filters = ~(filters ^ QDir::Filter(~QDir::Hidden));
+    setFilters(filters);
 }
 
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -119,8 +149,41 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
 
     AbstractFileInfoPointer fileInfo = fileModel->itemFromIndex(rowIndex)->fileInfo();
 
-    if (filterCallback)
-        return filterCallback(fileInfo.data(), filterData);
+    return passFileFilters(fileInfo);
+}
 
-    return fileInfo && !fileInfo->isHidden();
+bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fileInfo) const
+{
+    if (!fileInfo)
+        return false;
+
+    if (filterCallback && !filterCallback(fileInfo.data(), filterData))
+        return false;
+
+    if (filters == QDir::NoFilter)
+        return true;
+
+    if (!(filters & (QDir::Dirs | QDir::AllDirs)) && fileInfo->isDir())
+        return false;
+
+    if (!(filters & QDir::Files) && fileInfo->isFile())
+        return false;
+
+    if ((filters & QDir::NoSymLinks) && fileInfo->isSymLink())
+        return false;
+
+    if (!(filters & QDir::Hidden) && fileInfo->isHidden())
+        return false;
+
+    if ((filters & QDir::Readable) && !fileInfo->isReadable())
+        return false;
+
+    if ((filters & QDir::Writable) && !fileInfo->isWritable())
+        return false;
+
+    if ((filters & QDir::Executable) && !fileInfo->isExecutable())
+        return false;
+
+    //Todo(yanghao):
+    return true;
 }

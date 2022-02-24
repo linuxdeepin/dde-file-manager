@@ -47,9 +47,11 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class SelectHelper;
     friend class DragDropHelper;
     friend class ViewDrawHelper;
-    friend class FileViewPrivate;
     friend class ShortcutHelper;
+    friend class FileViewPrivate;
+
     QSharedPointer<FileViewPrivate> d;
+
     using RandeIndex = QPair<int, int>;
     using RandeIndexList = QList<RandeIndex>;
 
@@ -152,6 +154,8 @@ private slots:
     void saveViewModeState();
     void delaySort();
     void onModelStateChanged();
+    void setIconSizeBySizeIndex(const int sizeIndex);
+    void onShowHiddenFileChanged(bool isShow);
 
 private:
     void initializeModel();
@@ -177,7 +181,6 @@ private:
 
     void increaseIcon();
     void decreaseIcon();
-    void setIconSizeBySizeIndex(const int sizeIndex);
 
     bool isIconViewMode() const;
     bool isListViewMode() const;

@@ -176,6 +176,7 @@ QList<QUrl> FileView::selectedUrlList() const
 void FileView::refresh()
 {
     // TODO(zhangs): model()->refresh();
+    proxyModel()->fetchMore(rootIndex());
 }
 
 FileViewModel *FileView::model() const
@@ -497,6 +498,18 @@ void FileView::setIconSizeBySizeIndex(const int sizeIndex)
     itemDelegate()->setIconSizeByIconSizeLevel(sizeIndex);
 }
 
+void FileView::onShowHiddenFileChanged(bool isShow)
+{
+    auto filters = proxyModel()->getFilters();
+    if (isShow) {
+        filters |= QDir::Hidden;
+    } else {
+        filters &= ~QDir::Hidden;
+    }
+
+    proxyModel()->setFilters(filters);
+}
+
 bool FileView::isIconViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kIconMode;
@@ -815,6 +828,7 @@ void FileView::initializeConnect()
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterData, this, &FileView::setFilterData);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
+    connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
 }

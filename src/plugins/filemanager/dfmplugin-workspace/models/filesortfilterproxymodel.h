@@ -25,9 +25,13 @@
 #include "dfmplugin_workspace_global.h"
 #include "workspace/workspace_defines.h"
 
+#include "dfm-base/interfaces/abstractfileinfo.h"
+
 #include <QSortFilterProxyModel>
+#include <QDir>
 
 DSB_FM_USE_NAMESPACE
+
 using namespace Workspace;
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -38,17 +42,24 @@ public:
     explicit FileSortFilterProxyModel(QObject *parent = nullptr);
     virtual ~FileSortFilterProxyModel() override;
 
+    QDir::Filters getFilters() const;
+    void setFilters(const QDir::Filters &filters);
     void setFilterData(const QVariant &data);
     void setFilterCallBack(const FileViewFilterCallback callback);
     void resetFilter();
+    void toggleHiddenFiles();
 
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
     virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
 
 private:
+    bool passFileFilters(const AbstractFileInfoPointer &info) const;
+
+private:
     QVariant filterData;
     FileViewFilterCallback filterCallback;
+    QDir::Filters filters = QDir::NoFilter;
 };
 
 DPWORKSPACE_END_NAMESPACE

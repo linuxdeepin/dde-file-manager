@@ -23,6 +23,7 @@
 #include "fileoperaterhelper.h"
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
+#include "views/baseitemdelegate.h"
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "events/workspaceeventcaller.h"
@@ -119,7 +120,7 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
     case Qt::ControlModifier:
         switch (event->key()) {
         case Qt::Key_H: {
-            hiddenFiles();
+            toggleHiddenFiles();
             return true;
         }
         case Qt::Key_I: {
@@ -243,15 +244,14 @@ void ShortcutHelper::touchFolder()
     FileOperaterHelperIns->touchFolder(view);
 }
 
-void ShortcutHelper::hiddenFiles()
+void ShortcutHelper::toggleHiddenFiles()
 {
     //Todo(yanghao)
     // Todo(yanghao): preSelectionUrls
     // d->preSelectionUrls = urls;
-    // q->itemDelegate()->hideAllIIndexWidget();
-    //    view->clearSelection();
-    //    auto windowID = WorkspaceHelper::instance()->windowId(q);
-    //    WorkspaceHelper::instance()->actionHiddenFiles(windowID, q->rootUrl());
+    view->itemDelegate()->hideAllIIndexWidget();
+    view->clearSelection();
+    view->proxyModel()->toggleHiddenFiles();
 }
 
 void ShortcutHelper::showFilesProperty()
