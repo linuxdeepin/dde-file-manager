@@ -30,7 +30,7 @@ DPPROPERTYDIALOG_BEGIN_NAMESPACE
 class PropertyDialog : public dpf::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "propertydialog.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "propertydialog.json")
 
 public:
     virtual void initialize() override;
