@@ -55,6 +55,9 @@ public:
 
     Q_INVOKABLE void doWatcherEvent();
 
+    void delayRefresh(int ms = 50);
+    void doRefresh();
+
 public slots:
     void onTraversalFinished();
 
@@ -66,13 +69,13 @@ public:
     QUrl rootUrl;
     QSharedPointer<FileTreater> fileTreater;
 
+    QSharedPointer<QTimer> refreshTimer;
     QSharedPointer<dfmbase::TraversalDirThread> traversalThread;
     AbstractFileWatcherPointer watcher;
     QMutex watcherEventMutex;
     QQueue<QVariant> watcherEvent;
     QDir::Filters filters = QDir::NoFilter;
 
-    QAtomicInteger<bool> canFetchMoreFlag = true;
     QAtomicInteger<bool> isUpdatedChildren = false;
     QAtomicInteger<bool> processFileEventRuning = false;
     QAtomicInteger<bool> whetherShowHiddenFile = false;

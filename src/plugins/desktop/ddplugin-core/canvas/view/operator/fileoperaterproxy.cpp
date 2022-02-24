@@ -69,16 +69,15 @@ void FileOperaterProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
         // move it
         bool moved = GridIns->move(screenNum, pos, path, {path});
         qDebug() << "item:" << path << " move:" << moved << " ori:" << oriPoint.first << oriPoint.second << "   target:" << screenNum << pos;
-        if (moved)
-            CanvasIns->update();
-        return;
+    } else {
+        if (CanvasGrid::Mode::Align == GridIns->mode())
+            GridIns->append(path);
+        else
+            GridIns->tryAppendAfter({path}, screenNum, pos);
     }
-
-    if (CanvasGrid::Mode::Align == GridIns->mode())
-        GridIns->append(path);
-    else
-        GridIns->tryAppendAfter({path}, screenNum, pos);
     CanvasIns->update();
+    // need open editor,only by call back(by menu create file)
+    CanvasIns->openEditor(target);
 }
 
 FileOperaterProxy::FileOperaterProxy(QObject *parent)

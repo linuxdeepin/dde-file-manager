@@ -53,7 +53,7 @@ public:
 public slots:
     void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
     void onFileInserted(const QModelIndex &parent, int first, int last);
-    void onFileRemoved(const QModelIndex &parent, int first, int last);
+    void onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last);
     void onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles );
     void onFileModelReset();
     void onFileSorted();

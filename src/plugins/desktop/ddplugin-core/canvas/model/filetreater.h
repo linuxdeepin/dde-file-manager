@@ -42,7 +42,7 @@ public:
     void renameChild(const QUrl &oldUrl, const QUrl &newUrl);
     void updateChild(const QUrl &url);
 
-    DFMLocalFileInfoPointer fileInfo(const QString &url);
+    DFMLocalFileInfoPointer fileInfo(const QUrl &url);
     DFMLocalFileInfoPointer fileInfo(int index);
     int childrenCount() const;
     QList<QUrl> files() const;

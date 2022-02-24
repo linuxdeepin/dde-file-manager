@@ -83,7 +83,7 @@ void FileTreater::insertChild(const QUrl &url)
         return;
     }
 
-    model()->beginInsertRows(QModelIndex(), row, row);
+    model()->beginInsertRows(model()->rootIndex(), row, row);
     fileList.append(url);
     fileMap.insert(url, itemInfo);
     model()->endInsertRows();
@@ -97,7 +97,7 @@ void FileTreater::removeChild(const QUrl &url)
     }
 
     int position = fileList.indexOf(url);
-    model()->beginRemoveRows(QModelIndex(), position, position);
+    model()->beginRemoveRows(model()->rootIndex(), position, position);
     {
         QMutexLocker lk(&childrenMutex);
         fileList.removeAt(position);
@@ -150,7 +150,7 @@ void FileTreater::updateChild(const QUrl &url)
     model()->dataChanged(index, index);
 }
 
-DFMLocalFileInfoPointer FileTreater::fileInfo(const QString &url)
+DFMLocalFileInfoPointer FileTreater::fileInfo(const QUrl &url)
 {
     return fileMap.value(url);
 }

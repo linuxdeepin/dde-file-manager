@@ -317,7 +317,7 @@ void ShortcutOper::swichHidden()
 
     bool show = model->showHiddenFiles();
     model->setShowHiddenFiles(!show);
-    model->fetchMore(model->rootIndex());
+    model->refresh(model->rootIndex());
 }
 
 void ShortcutOper::showProperty()

@@ -40,6 +40,7 @@ public:
     static CanvasManager *instance();
     void init();
     void update();
+    void openEditor(const QUrl &url);
     CanvasModel *model() const;
     CanvasSelectionModel *selectionModel() const;
     QList<QSharedPointer<CanvasView> > views() const;

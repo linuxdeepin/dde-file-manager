@@ -79,6 +79,28 @@ void CanvasManager::update()
     }
 }
 
+void CanvasManager::openEditor(const QUrl &url)
+{
+    QString path = url.toString();
+    QPair<int, QPoint> pos;
+    if (!GridIns->point(path, pos)) {
+        qDebug() << "can not editor,file does not exist:" << url;
+        return;
+    }
+
+    QModelIndex index = d->canvasModel->index(url);
+    if (!index.isValid())
+        return;
+
+    d->selectionModel->select(index, QItemSelectionModel::Select);
+    for (auto view : d->viewMap.values()) {
+        view->setCurrentIndex(index);
+        if (pos.first == view->screenNum()) {
+            view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+        }
+    }
+}
+
 CanvasModel *CanvasManager::model() const
 {
     return d->canvasModel;
@@ -269,7 +291,7 @@ void CanvasManagerPrivate::initModel()
 
     selectionModel = new CanvasSelectionModel(canvasModel, q);
     connect(canvasModel, &CanvasModel::rowsInserted, this, &CanvasManagerPrivate::onFileInserted, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::rowsAboutToBeRemoved, this, &CanvasManagerPrivate::onFileRemoved, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasModel::rowsAboutToBeRemoved, this, &CanvasManagerPrivate::onFileAboutToBeRemoved, Qt::DirectConnection);
     connect(canvasModel, &CanvasModel::dataChanged, this, &CanvasManagerPrivate::onFileDataChanged, Qt::QueuedConnection);
     connect(canvasModel, &CanvasModel::modelReset, this, &CanvasManagerPrivate::onFileModelReset, Qt::QueuedConnection);
     connect(canvasModel, &CanvasModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
@@ -317,8 +339,13 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, const Scree
 
 void CanvasManagerPrivate::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    if (GridIns->replace(oldUrl.toString(), newUrl.toString()))
+    if (GridIns->replace(oldUrl.toString(), newUrl.toString())) {
+        QModelIndex index = canvasModel->index(newUrl);
+        if (!index.isValid())
+            return;
+
         q->update();
+    }
 }
 
 void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, int last)
@@ -333,8 +360,9 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
         QString path = url.toString();
         QPair<int, QPoint> pos;
         if (GridIns->point(path, pos)) {
-            // already hand by call back
             qDebug() << "item:" << path << " existed:" << pos.first << pos.second;
+            // already hand by call back,but at that time,the index mybe is invalid.
+            q->openEditor(url);
         } else {
             GridIns->append(path);
         }
@@ -343,7 +371,7 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
     q->update();
 }
 
-void CanvasManagerPrivate::onFileRemoved(const QModelIndex &parent, int first, int last)
+void CanvasManagerPrivate::onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last)
 {
     for (int i = first; i <= last; i++) {
         QModelIndex index = canvasModel->index(i, 0, parent);

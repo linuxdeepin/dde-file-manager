@@ -24,6 +24,7 @@
 #include "filetreater.h"
 #include "view/operator/fileoperaterproxy.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/base/standardpaths.h"
 #include "base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "base/application/application.h"
@@ -31,7 +32,7 @@
 
 #include <QDateTime>
 #include <QMimeData>
-#include <QStandardPaths>
+#include <QTimer>
 
 DFMBASE_USE_NAMESPACE
 DSB_D_BEGIN_NAMESPACE
@@ -100,16 +101,23 @@ void CanvasModelPrivate::doFileUpdated(const QUrl &url)
 
 bool CanvasModelPrivate::fileDeletedFilter(const QUrl &url)
 {
+    Q_UNUSED(url)
+
     return false;
 }
 
 bool CanvasModelPrivate::fileCreatedFilter(const QUrl &url)
 {
+    Q_UNUSED(url)
+
     return false;
 }
 
 bool CanvasModelPrivate::fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 {
+    Q_UNUSED(oldUrl)
+    Q_UNUSED(newUrl)
+
     return false;
 }
 
@@ -119,8 +127,7 @@ bool CanvasModelPrivate::fileUpdatedFilter(const QUrl &url)
     // get file that removed form .hidden if do not show hidden file.
     if (!(filters & QDir::Hidden) && url.fileName() == ".hidden") {
         qDebug() << "refresh by hidden changed.";
-        //todo delay refresh , 快速切换会出现无响应问题
-        q->fetchMore(q->rootIndex());
+        delayRefresh();
         return true;
     }
 
@@ -171,6 +178,18 @@ void CanvasModelPrivate::doWatcherEvent()
     processFileEventRuning = false;
 }
 
+void CanvasModelPrivate::delayRefresh(int ms)
+{
+    if (nullptr != refreshTimer.get()) {
+        refreshTimer->stop();
+        refreshTimer->disconnect();
+    }
+
+    refreshTimer.reset(new QTimer);
+    connect(refreshTimer.get(), &QTimer::timeout, this, &CanvasModelPrivate::doRefresh);
+    refreshTimer->start(ms);
+}
+
 void CanvasModelPrivate::onTraversalFinished()
 {
     isUpdatedChildren = true;
@@ -184,6 +203,26 @@ bool CanvasModelPrivate::checkFileEventQueue()
     return !isEmptyQueue;
 }
 
+void CanvasModelPrivate::doRefresh()
+{
+    isUpdatedChildren = false;
+    if (!traversalThread.isNull()) {
+        traversalThread->disconnect();
+        traversalThread->stopAndDeleteLater();
+    }
+
+    traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags));
+    if (Q_UNLIKELY(traversalThread.isNull())) {
+        isUpdatedChildren = true;
+        return;
+    }
+
+    connect(traversalThread.data(), &TraversalDirThread::updateChildren, fileTreater.data(), &FileTreater::onUpdateChildren);
+    connect(traversalThread.data(), &TraversalDirThread::finished, this, &CanvasModelPrivate::onTraversalFinished);
+
+    traversalThread->start();
+}
+
 CanvasModel::CanvasModel(QObject *parent)
     : QAbstractItemModel(parent)
     , d(new CanvasModelPrivate(this))
@@ -193,7 +232,6 @@ CanvasModel::CanvasModel(QObject *parent)
 
 QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
     if (row < 0 || column < 0 || d->fileTreater->childrenCount() <= row) {
         return QModelIndex();
     }
@@ -202,15 +240,18 @@ QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) c
         return QModelIndex();
     }
 
+    if (!parent.isValid())
+        return rootIndex();
+
     return createIndex(row, column, fileInfo.data());
 }
 
-QModelIndex CanvasModel::index(const QString &fileUrl, int column)
+QModelIndex CanvasModel::index(const QUrl &fileUrl, int column)
 {
     if (fileUrl.isEmpty())
         return QModelIndex();
 
-    if (fileUrl == rootUrl().toString())
+    if (fileUrl == rootUrl())
         return rootIndex();
 
     auto fileInfo = d->fileTreater->fileInfo(fileUrl);
@@ -323,38 +364,12 @@ Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
     return flags;
 }
 
-bool CanvasModel::canFetchMore(const QModelIndex &parent) const
-{
-    if (parent != rootIndex())
-        return false;
-
-    return d->canFetchMoreFlag;
-}
-
-void CanvasModel::fetchMore(const QModelIndex &parent)
+void CanvasModel::refresh(const QModelIndex &parent)
 {
     if (parent != rootIndex())
         return;
 
-    d->isUpdatedChildren = false;
-    if (!d->traversalThread.isNull()) {
-        d->traversalThread->disconnect();
-        d->traversalThread->stopAndDeleteLater();
-    }
-
-    d->traversalThread.reset(new TraversalDirThread(d->rootUrl, QStringList(), d->filters, QDirIterator::NoIteratorFlags));
-    if (Q_UNLIKELY(d->traversalThread.isNull())) {
-        d->isUpdatedChildren = true;
-        return;
-    }
-
-    connect(d->traversalThread.data(), &TraversalDirThread::updateChildren, d->fileTreater.data(), &FileTreater::onUpdateChildren);
-    connect(d->traversalThread.data(), &TraversalDirThread::finished, d.data(), &CanvasModelPrivate::onTraversalFinished);
-
-    if (d->canFetchMoreFlag) {
-        d->canFetchMoreFlag = false;
-        d->traversalThread->start();
-    }
+    d->delayRefresh();
 }
 
 bool CanvasModel::isRefreshed() const
@@ -365,7 +380,7 @@ bool CanvasModel::isRefreshed() const
 QModelIndex CanvasModel::setRootUrl(QUrl url)
 {
     if (url.isEmpty())
-        url = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
+        url = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath));
     if (Q_UNLIKELY(!url.isValid())) {
         qWarning() << "root url is invalid:" << url;
         return rootIndex();
@@ -396,7 +411,9 @@ QModelIndex CanvasModel::setRootUrl(QUrl url)
     else
         d->filters &= ~QDir::Hidden;
 
-    d->canFetchMoreFlag = true;
+    // root url changed,refresh data as soon as
+    d->doRefresh();
+
     return rootIndex();
 }
 

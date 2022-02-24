@@ -70,7 +70,7 @@ public:
 
     QModelIndex index(int row, int column = 0,
                       const QModelIndex &parent = QModelIndex()) const override;
-    QModelIndex index(const QString &fileUrl, int column = 0);
+    QModelIndex index(const QUrl &fileUrl, int column = 0);
     QModelIndex index(const DFMLocalFileInfoPointer &fileInfo, int column = 0) const;
     QModelIndexList indexs() const;
     QModelIndex parent(const QModelIndex &child) const override;
@@ -82,8 +82,7 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    bool canFetchMore(const QModelIndex &parent) const override;
-    void fetchMore(const QModelIndex &parent) override;
+    void refresh(const QModelIndex &parent);
     bool isRefreshed() const;
 
     QModelIndex setRootUrl(QUrl url);
