@@ -201,7 +201,7 @@ void ShortcutHelper::acitonTriggered()
 
 void ShortcutHelper::copyFiles()
 {
-    FileOperaterHelperIns->cutFiles(view);
+    FileOperaterHelperIns->copyFiles(view);
 }
 
 void ShortcutHelper::cutFiles()

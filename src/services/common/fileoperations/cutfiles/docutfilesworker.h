@@ -60,6 +60,7 @@ protected:
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
+    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
 
 private:
     QSharedPointer<QStorageInfo> targetStorageInfo { nullptr };   // target file's device infor
