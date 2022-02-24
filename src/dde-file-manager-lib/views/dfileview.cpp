@@ -93,6 +93,7 @@ DWIDGET_USE_NAMESPACE
 #define LIST_VIEW_MINIMUM_WIDTH 80
 
 #define DEFAULT_HEADER_SECTION_WIDTH 140
+#define NAME_SECTION_MIN_WIDTH 300
 
 #define LOOPNUM             10      // 判断文件是否存在的循环次数
 #define WAITTIME            10     // 判断没有文件是否存在的间隔时间
@@ -3723,13 +3724,13 @@ void DFileViewPrivate::doFileNameColResize()
         }
 
         int targetWidth = q->width() - columnWidthSumOmitFileName;
-        if (targetWidth >= headerView->minimumSectionSize()) {
+        if (targetWidth >= NAME_SECTION_MIN_WIDTH) {
             headerView->resizeSection(fileNameColRole, q->width() - columnWidthSumOmitFileName);
         } else {
             // fix bug#39026 文件管理器列表视图的窗口拖至最窄，点击最大化，点击还原，文管窗口未自适应大小
             // 当文管窗口拖至最窄时，targetWidth的值小于headerView->minimumSectionSize()（80），
             // 所以不会走上面的if，导致还原时显示的还是最大化时候的值
-            headerView->resizeSection(fileNameColRole, headerView->minimumSectionSize());
+            headerView->resizeSection(fileNameColRole, NAME_SECTION_MIN_WIDTH);
         }
     }
 }
