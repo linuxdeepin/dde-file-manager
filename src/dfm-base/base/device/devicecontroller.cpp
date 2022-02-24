@@ -1212,6 +1212,13 @@ bool DeviceController::unmountBlockDevice(const QString &deviceId, const QVarian
         qWarning() << "device is unmountable: " << deviceId << errMsg;
         return false;
     } else {
+        if (ptr->isEncrypted())
+            return unmountBlockDevice(ptr->getProperty(dfmmount::Property::EncryptedCleartextDevice).toString(), opts)
+                    && ptr->lock();
+        if (!ptr->hasFileSystem())
+            return true;
+        if (ptr->mountPoints().isEmpty())
+            return true;
         return ptr->unmount(opts);
     }
 }

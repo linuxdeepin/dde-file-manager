@@ -220,17 +220,22 @@ QMap<QString, QString> FileUtils::getKernelParameters()
 
 int FileUtils::supportedMaxLength(const QString &fileSystem)
 {
-    static QMap<QString, int> datas {
-        std::pair<QString, int>("VFAT", 11),
-        std::pair<QString, int>("EXFAT", 11),
-        std::pair<QString, int>("EXT2", 16),
-        std::pair<QString, int>("EXT3", 16),
-        std::pair<QString, int>("EXT4", 16),
-        std::pair<QString, int>("NTFS", 40),   // can be more than 40
+#define pair(key, val) std::pair<QString, int>(key, val)
+    const static QMap<QString, int> datas {
+        pair("vfat", 11),   // man 8 mkfs.fat
+        pair("ext2", 16),   // man 8 mke2fs
+        pair("ext3", 16),   // man 8 mke2fs
+        pair("ext4", 16),   // man 8 mke2fs
+        pair("btrfs", 255),   // https://btrfs.wiki.kernel.org/index.php/Manpage/btrfs-filesystem
+        pair("f2fs", 512),   // https://www.kernel.org/doc/Documentation/filesystems/f2fs.txt    https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/tree/mkfs/f2fs_format_main.c
+        pair("jfs", 16),   // jfsutils/mkfs/mkfs.c:730
+        pair("exfat", 15),   // man 8 mkexfatfs
+        pair("nilfs2", 80),   // man 8 mkfs.nilfs2
+        pair("ntfs", 32),   // https://docs.microsoft.com/en-us/dotnet/api/system.io.driveinfo.volumelabel?view=netframework-4.8
+        pair("reiserfs", 15),   // man 8 mkreiserfs said its max length is 16, but after tested, only 15 chars are accepted.
+        pair("xfs", 12)   // https://github.com/edward6/reiser4progs/blob/master/include/reiser4/types.h fs_hint_t
     };
-
-    const int DefaultLength = 11;
-    return datas.value(fileSystem.toUpper(), DefaultLength);
+    return datas.value(fileSystem.toLower(), 11);
 }
 
 bool FileUtils::isGvfsFile(const QUrl &url)

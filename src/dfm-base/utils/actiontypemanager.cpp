@@ -217,6 +217,9 @@ void ActionTypeManager::initDefaultActionData()
     ActionDataContainer sendToDesktopAct(ActionType::kActSendToDesktop, tr("Send to desktop"));
     d->actionTypes[ActionType::kActSendToDesktop] = sendToDesktopAct;
 
+    ActionDataContainer sendToBluetooth(ActionType::kActSendToDesktop, tr("Bluetooth"));
+    d->actionTypes[ActionType::kActSendToBluetooth] = sendToBluetooth;
+
     ActionDataContainer propertyAct(ActionType::kActProperty, tr("Properties"));
     d->actionTypes[ActionType::kActProperty] = propertyAct;
 

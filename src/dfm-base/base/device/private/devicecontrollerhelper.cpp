@@ -165,11 +165,6 @@ bool DeviceControllerHelper::isUnmountableBlockDevice(const BlockDeviceData &dat
         return false;
     }
 
-    if (data.hintSystem) {
-        error = QString("Block Device: %1 hintSystem!").arg(id);
-        return false;
-    }
-
     finally.dismiss();
     return true;
 }

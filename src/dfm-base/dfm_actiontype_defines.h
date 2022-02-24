@@ -53,6 +53,7 @@ enum ActionType {
     kActCompress,
     kActCreateSymlink,
     kActSendToDesktop,
+    kActSendToBluetooth,
 
     // first user actiontype id, use registerActionType create custom event type
     kActCustomBase = 1000,   // first user actiontype id
