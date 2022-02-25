@@ -80,6 +80,20 @@ void FileSortFilterProxyModel::toggleHiddenFiles()
     setFilters(filters);
 }
 
+QList<QUrl> FileSortFilterProxyModel::getCurrentDirFileUrls()
+{
+    QList<QUrl> urls;
+    FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
+    int count = rowCount();
+    for (int i = 0; i < count; ++i) {
+        QModelIndex modelIndex = index(i, 0);
+        QModelIndex index = mapToSource(modelIndex);
+        urls << fileModel->getUrlByIndex(index);
+    }
+
+    return urls;
+}
+
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
 {
     if (!left.isValid())

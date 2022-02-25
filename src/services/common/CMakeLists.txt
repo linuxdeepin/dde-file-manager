@@ -75,7 +75,12 @@ FILE(GLOB USERSHARE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/usershare/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/usershare/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/usershare/private/*.cpp"
-)
+    )
+
+FILE(GLOB PREVIEW_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
+    )
 
 FILE(GLOB BURN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/burn/*.h"
@@ -93,6 +98,7 @@ add_library(${PROJECT_NAME}
     ${DELEGATE_FILES}
     ${USERSHARE_FILES}
     ${BURN_FILES}
+    ${PREVIEW_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

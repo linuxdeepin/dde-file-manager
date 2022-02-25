@@ -9,6 +9,8 @@ Build-Depends:
  dh-systemd,
  qtbase5-dev,
  qtbase5-private-dev,
+ qtmultimedia5-dev,
+ libffmpegthumbnailer-dev,
  libqt5svg5-dev,
  libdtkwidget-dev,
  libdtkgui-dev,
@@ -17,6 +19,10 @@ Build-Depends:
  qttools5-dev-tools,
  dde-dock-dev(>=4.8.4.1),
  libdframeworkdbus-dev,
+ libtag1-dev,
+ libdmr-dev,
+ libicu-dev,
+ libdeepin-pdfium-dev,
  libqt5xdg-dev,
  libgio-qt-dev,
  libdfm-io-dev,
@@ -78,7 +84,7 @@ Description: plugin of dde-dock
 
 Package: dfm-plugins
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdeepin-pdfium
 Description: File manager plugins
  File manager plugins of Deepin OS
 

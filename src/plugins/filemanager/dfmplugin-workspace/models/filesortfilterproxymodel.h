@@ -48,6 +48,7 @@ public:
     void setFilterCallBack(const FileViewFilterCallback callback);
     void resetFilter();
     void toggleHiddenFiles();
+    QList<QUrl> getCurrentDirFileUrls();
 
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;

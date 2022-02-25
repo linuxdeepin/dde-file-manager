@@ -46,8 +46,8 @@ public:
     static void sendTabMoved(const quint64 windowID, const int from, const int to);
     static void sendTabRemoved(const quint64 windowID, const int index);
     static void sendShowCustomTopWidget(const quint64 windowId, const QString &scheme, bool visible);
-    static void sendShowPreviewDialog(const quint64 windowId, const QList<QUrl> &urls, const QList<QUrl> currentDirUrls);
     static void sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url);
+    static void sendShowPreviewDialog(const quint64 windowId, const QList<QUrl> &urls, const QList<QUrl> currentDirUrls);
 };
 
 DPWORKSPACE_END_NAMESPACE
