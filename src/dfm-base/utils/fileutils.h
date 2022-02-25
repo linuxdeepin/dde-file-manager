@@ -31,6 +31,15 @@ DFMBASE_BEGIN_NAMESPACE
 class FileUtils
 {
 public:
+    struct FilesSizeInfo
+    {
+        qint64 totalSize { 0 };
+        quint16 dirSize { 0 };
+        quint32 fileCount { 0 };
+        QList<QUrl> allFiles;
+    };
+
+public:
     static bool mkdir(const QUrl &url, const QString &dirName, QString *errorString = nullptr);
     static bool touch(const QUrl &url, const QString &fileName, QString *errorString = nullptr);
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
@@ -49,6 +58,8 @@ public:
     static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair);
     static QMap<QUrl, QUrl> fileBatchCustomText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
     static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
+
+    static quint16 getMemoryPageSize();
 };
 
 class DesktopAppUrl
@@ -60,5 +71,7 @@ public:
 };
 
 DFMBASE_END_NAMESPACE
+
+typedef QSharedPointer<DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo> SizeInfoPointer;
 
 #endif   // FILEUTILS_H

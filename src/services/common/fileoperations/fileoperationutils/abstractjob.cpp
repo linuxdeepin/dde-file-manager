@@ -22,7 +22,6 @@
  */
 #include "abstractjob.h"
 #include "abstractworker.h"
-#include "fileoperations/fileoperationutils/statisticsfilessize.h"
 
 #include <QDebug>
 #include <QUrl>

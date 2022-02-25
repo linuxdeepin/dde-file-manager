@@ -23,8 +23,6 @@
 
 #include "cutfiles.h"
 #include "docutfilesworker.h"
-#include "fileoperations/fileoperationutils/statisticsfilessize.h"
-
 DSC_USE_NAMESPACE
 
 CutFiles::CutFiles(QObject *parent)

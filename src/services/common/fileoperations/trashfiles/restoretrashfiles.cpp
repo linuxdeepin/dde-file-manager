@@ -22,7 +22,6 @@
  */
 #include "restoretrashfiles.h"
 #include "dorestoretrashfilesworker.h"
-#include "fileoperations/fileoperationutils/statisticsfilessize.h"
 
 DSC_USE_NAMESPACE
 RestoreTrashFiles::RestoreTrashFiles(QObject *parent)

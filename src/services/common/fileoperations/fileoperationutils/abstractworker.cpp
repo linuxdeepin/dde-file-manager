@@ -21,7 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractworker.h"
-#include "statisticsfilessize.h"
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -169,7 +168,12 @@ bool AbstractWorker::statisticsFilesSize()
     isSourceFileLocal = FileOperationsUtils::isFileOnDisk(sourceUrls.at(0));
 
     if (isSourceFileLocal) {
-        const QSharedPointer<FileOperationsUtils::FilesSizeInfo> &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
+        QStorageInfo soureStorageInfo(sourceUrls.first().path().toStdString().data());
+        isSourceFileLocal = soureStorageInfo.fileSystemType().startsWith("ext");
+    }
+
+    if (isSourceFileLocal) {
+        const SizeInfoPointer &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         dirSize = fileSizeInfo->dirSize;
@@ -177,9 +181,9 @@ bool AbstractWorker::statisticsFilesSize()
         return true;
     }
 
-    statisticsFilesSizeJob.reset(new StatisticsFilesSize(sourceUrls));
-    connect(statisticsFilesSizeJob.data(), &StatisticsFilesSize::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish);
-    statisticsFilesSizeJob->start();
+    statisticsFilesSizeJob.reset(new dfmbase::FileStatisticsJob());
+    connect(statisticsFilesSizeJob.data(), &dfmbase::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish);
+    statisticsFilesSizeJob->start(sourceUrls);
     return true;
 }
 /*!
@@ -188,9 +192,9 @@ bool AbstractWorker::statisticsFilesSize()
  */
 bool AbstractWorker::workerWait()
 {
-    conditionMutex.lock();
-    waitCondition.wait(&conditionMutex);
-    conditionMutex.unlock();
+    QMutex lock;
+    waitCondition.wait(&lock);
+    lock.unlock();
 
     return currentState == AbstractJobHandler::JobState::kRunningState;
 }
@@ -384,9 +388,10 @@ bool AbstractWorker::stateCheck()
  * and the slot at the end of the thread
  * \param sizeInfo All file size information
  */
-void AbstractWorker::onStatisticsFilesSizeFinish(const SizeInfoPoiter sizeInfo)
+void AbstractWorker::onStatisticsFilesSizeFinish()
 {
     statisticsFilesSizeJob->stop();
+    const SizeInfoPointer &sizeInfo = statisticsFilesSizeJob->getFileSizeInfo();
     sourceFilesTotalSize = sizeInfo->totalSize;
     dirSize = sizeInfo->dirSize;
     sourceFilesCount = sizeInfo->fileCount;

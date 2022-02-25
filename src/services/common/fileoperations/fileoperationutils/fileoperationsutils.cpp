@@ -22,6 +22,7 @@
  */
 #include "fileoperationsutils.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QDirIterator>
 #include <QUrl>
@@ -39,8 +40,6 @@ extern "C" {
 #include <unistd.h>
 #include <sys/utsname.h>
 
-const static int kDefaultMemoryPageSize = 4096;
-
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -52,15 +51,15 @@ DFMBASE_USE_NAMESPACE
  * \param isRecordUrl 是否统计所有的文件及子目录路径
  * \return QSharedPointer<FileOperationsUtils::FilesSizeInfo> 文件大小信息
  */
-QSharedPointer<FileOperationsUtils::FilesSizeInfo> FileOperationsUtils::statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl)
+SizeInfoPointer FileOperationsUtils::statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl)
 {
-    QSharedPointer<FileOperationsUtils::FilesSizeInfo> filesSizeInfo(new FilesSizeInfo);
+    SizeInfoPointer filesSizeInfo(new dfmbase::FileUtils::FilesSizeInfo);
 
     for (auto url : files) {
         statisticFilesSize(url, filesSizeInfo, isRecordUrl);
     }
 
-    filesSizeInfo->dirSize = filesSizeInfo->dirSize <= 0 ? getMemoryPageSize() : filesSizeInfo->dirSize;
+    filesSizeInfo->dirSize = filesSizeInfo->dirSize <= 0 ? FileUtils::getMemoryPageSize() : filesSizeInfo->dirSize;
     return filesSizeInfo;
 }
 
@@ -86,7 +85,7 @@ bool FileOperationsUtils::isFilesSizeOutLimit(const QUrl &url, const qint64 limi
         unsigned short flag = ent->fts_info;
 
         if (flag != FTS_DP)
-            totalSize += ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : ent->fts_statp->st_size;
+            totalSize += ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
 
         if (totalSize > limitSize)
             break;
@@ -96,18 +95,9 @@ bool FileOperationsUtils::isFilesSizeOutLimit(const QUrl &url, const qint64 limi
 
     return totalSize > limitSize;
 }
-/*!
- * \brief FileOperationsUtils::getMemoryPageSize 获取当前內存页大小
- * \return 返回内存页大小
- */
-quint16 FileOperationsUtils::getMemoryPageSize()
-{
-    static const quint16 memoryPageSize = static_cast<quint16>(getpagesize());
-    return memoryPageSize > 0 ? memoryPageSize : kDefaultMemoryPageSize;
-}
 
 void FileOperationsUtils::statisticFilesSize(const QUrl &url,
-                                             QSharedPointer<FileOperationsUtils::FilesSizeInfo> &sizeInfo,
+                                             SizeInfoPointer &sizeInfo,
                                              const bool &isRecordUrl)
 {
     char *paths[2] = { nullptr, nullptr };
@@ -130,9 +120,9 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
         if (isRecordUrl && flag != FTS_DP)
             sizeInfo->allFiles.append(QUrl::fromLocalFile(ent->fts_path));
         if (flag != FTS_DP)
-            sizeInfo->totalSize += ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : ent->fts_statp->st_size;
+            sizeInfo->totalSize += ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
         if (sizeInfo->dirSize == 0 && flag == FTS_D)
-            sizeInfo->dirSize = ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : static_cast<quint16>(ent->fts_statp->st_size);
+            sizeInfo->dirSize = ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : static_cast<quint16>(ent->fts_statp->st_size);
         if (flag == FTS_F)
             sizeInfo->fileCount++;
     }

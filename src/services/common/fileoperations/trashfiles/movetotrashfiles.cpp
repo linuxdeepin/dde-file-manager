@@ -22,7 +22,6 @@
  */
 #include "movetotrashfiles.h"
 #include "domovetotrashfilesworker.h"
-#include "fileoperations/fileoperationutils/statisticsfilessize.h"
 
 DSC_USE_NAMESPACE
 MoveToTrashFiles::MoveToTrashFiles(QObject *parent)

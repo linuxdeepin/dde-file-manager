@@ -22,7 +22,6 @@
  */
 #include "docopyfilesworker.h"
 #include "storageinfo.h"
-#include "fileoperations/fileoperationutils/statisticsfilessize.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 

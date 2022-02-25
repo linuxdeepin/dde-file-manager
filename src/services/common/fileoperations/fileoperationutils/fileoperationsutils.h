@@ -24,6 +24,7 @@
 #define FILEOPERATIONSUTILS_H
 
 #include "dfm_common_service_global.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QSharedPointer>
 #include <QThread>
@@ -70,26 +71,15 @@ class FileOperationsUtils
     friend class DoRestoreTrashFilesWorker;
     friend class FileOperateBaseWorker;
 
-public:
-    struct FilesSizeInfo
-    {
-        qint64 totalSize { 0 };
-        quint16 dirSize { 0 };
-        quint32 fileCount { 0 };
-        QList<QUrl> allFiles;
-    };
-
 private:
-    static QSharedPointer<FilesSizeInfo> statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl = false);
+    static SizeInfoPointer statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl = false);
     static bool isFilesSizeOutLimit(const QUrl &url, const qint64 limitSize);
-    static quint16 getMemoryPageSize();
-    static void statisticFilesSize(const QUrl &url, QSharedPointer<FilesSizeInfo> &sizeInfo, const bool &isRecordUrl = false);
+    static void statisticFilesSize(const QUrl &url, SizeInfoPointer &sizeInfo, const bool &isRecordUrl = false);
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
     static bool isFileOnDisk(const QUrl &url);
     static void getDirFiles(const QUrl &url, QList<QUrl> &files);
 };
-typedef QSharedPointer<FileOperationsUtils::FilesSizeInfo> SizeInfoPoiter;
+
 DSC_END_NAMESPACE
-Q_DECLARE_METATYPE(DSC_NAMESPACE::SizeInfoPoiter)
 
 #endif   // FILEOPERATIONSUTILS_H

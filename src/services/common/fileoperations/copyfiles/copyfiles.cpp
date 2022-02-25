@@ -22,7 +22,6 @@
  */
 #include "copyfiles.h"
 #include "docopyfilesworker.h"
-#include "fileoperations/fileoperationutils/statisticsfilessize.h"
 
 #include <QDebug>
 

@@ -46,6 +46,7 @@ DFMBASE_BEGIN_NAMESPACE
 
 static constexpr char DDE_TRASH_ID[] { "dde-trash" };
 static constexpr char DDE_COMPUTER_ID[] { "dde-computer" };
+const static int kDefaultMemoryPageSize = 4096;
 
 /*!
  * \class FileUtils
@@ -514,6 +515,16 @@ QString FileUtils::cutString(const QString &text, int dataByteSize, const QTextC
     }
 
     return newText;
+}
+
+/*!
+ * \brief FileUtils::getMemoryPageSize 获取当前內存页大小
+ * \return 返回内存页大小
+ */
+quint16 FileUtils::getMemoryPageSize()
+{
+    static const quint16 memoryPageSize = static_cast<quint16>(getpagesize());
+    return memoryPageSize > 0 ? memoryPageSize : kDefaultMemoryPageSize;
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

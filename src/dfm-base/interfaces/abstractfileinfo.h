@@ -22,6 +22,10 @@
 #ifndef ABSTRACTFILEINFO_H
 #define ABSTRACTFILEINFO_H
 
+#define private public
+#include <QSharedPointer>
+#undef private
+
 #include "abstractmenu.h"
 
 #include "dfm-base/base/urlroute.h"

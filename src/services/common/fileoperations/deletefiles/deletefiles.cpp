@@ -22,7 +22,6 @@
  */
 #include "deletefiles.h"
 #include "dodeletefilesworker.h"
-#include "fileoperations/fileoperationutils/statisticsfilessize.h"
 
 DSC_USE_NAMESPACE
 DeleteFiles::DeleteFiles(QObject *parent)

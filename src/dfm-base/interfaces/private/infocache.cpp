@@ -23,8 +23,6 @@
 #include "interfaces/private/infocache_p.h"
 #include "base/schemefactory.h"
 
-#include <QSharedPointer>
-
 #include <dfm-io/core/dfileinfo.h>
 
 // 更新间隔时间
@@ -359,9 +357,9 @@ void InfoCache::timeNeedRemoveCache()
             continue;
         }
         //插入待移除队列并移除时间排序的url
-        if (info->ref == 1) {
-            itr = d->sortByTimeCacheUrl.erase(itr);
+        if (info.d->strongref == 2) {
             d->needRemoveCacheList.push_back(*itr);
+            itr = d->sortByTimeCacheUrl.erase(itr);
             continue;
         }
         itr = itr.operator++();

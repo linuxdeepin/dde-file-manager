@@ -28,6 +28,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/utils/filestatisticsjob.h"
 
 #include <QObject>
 #include <QUrl>
@@ -39,7 +40,6 @@
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-class StatisticsFilesSize;
 class UpdateProccessTimer;
 
 class AbstractWorker : public QObject
@@ -133,7 +133,7 @@ protected:
 protected slots:
     virtual bool doWork();
     virtual void onUpdateProccess() {}
-    virtual void onStatisticsFilesSizeFinish(const SizeInfoPoiter sizeInfo);
+    virtual void onStatisticsFilesSizeFinish();
 
 protected:
     void initHandleConnects(const JobHandlePointer &handle);
@@ -146,7 +146,7 @@ public:
     virtual ~AbstractWorker();
 
 public:
-    QSharedPointer<StatisticsFilesSize> statisticsFilesSizeJob { nullptr };   // statistics file info async
+    QSharedPointer<dfmbase::FileStatisticsJob> statisticsFilesSizeJob { nullptr };   // statistics file info async
     QSharedPointer<QThread> updateProccessThread { nullptr };   // update proccess timer thread
     QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
 
@@ -175,7 +175,6 @@ public:
     QWaitCondition handlingErrorCondition;
     QMutex handlingErrorQMutex;
     QWaitCondition waitCondition;
-    QMutex conditionMutex;
     QWaitCondition errorCondition;   //  Condition variables that block other bad threads
     QMutex errorThreadIdQueueMutex;   // Condition variables that block other bad threads mutex
 };

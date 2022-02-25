@@ -32,7 +32,6 @@
 DFMBASE_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
 class DoCopyFilesWorker;
-class StatisticsFilesSize;
 class CopyFiles : public AbstractJob
 {
     Q_OBJECT

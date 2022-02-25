@@ -34,8 +34,6 @@
 DFMBASE_USE_NAMESPACE
 DSC_BEGIN_NAMESPACE
 class AbstractWorker;
-class StatisticsFilesSize;
-
 class AbstractJob : public QObject
 {
     Q_OBJECT
@@ -63,7 +61,6 @@ public:
 protected:
     QSharedPointer<AbstractWorker> doWorker { nullptr };   // 线程执行函数
     QThread thread;   // 线程
-    QSharedPointer<StatisticsFilesSize> statisticsThread { nullptr };   // 统计文件大小线程
 };
 
 DSC_END_NAMESPACE
