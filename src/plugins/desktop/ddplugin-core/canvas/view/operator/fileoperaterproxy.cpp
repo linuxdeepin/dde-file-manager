@@ -160,6 +160,10 @@ void FileOperaterProxy::pasteFiles(const CanvasView *view, const QPoint pos)
                                               , urls
                                               , view->model()->rootUrl()
                                               , AbstractJobHandler::JobFlag::kNoHint);
+        //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
+
+        // clear clipboard after cutting files from clipboard
+        ClipBoard::instance()->clearClipboard();
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << urls;
     }

@@ -33,6 +33,7 @@
 #include <QUrl>
 #include <QFile>
 #include <QtGlobal>
+#include <QDBusInterface>
 
 #include <iostream>
 #include <algorithm>
@@ -101,12 +102,31 @@ static bool pluginsLoad()
     return true;
 }
 
+void registerDdeSession()
+{
+    const char *envName = "DDE_SESSION_PROCESS_COOKIE_ID";
+    QByteArray cookie = qgetenv(envName);
+    qunsetenv(envName);
+
+    if (!cookie.isEmpty()) {
+        QDBusInterface iface("com.deepin.SessionManager",
+                             "/com/deepin/SessionManager",
+                             "com.deepin.SessionManager",
+                             QDBusConnection::sessionBus());
+        iface.call("Register", QString(cookie));
+    }
+}
+
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
 
     dpfInstance.initialize();
+
+    // Notify dde-desktop start up
+    // if (!fileDialogOnly)
+    registerDdeSession();
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";

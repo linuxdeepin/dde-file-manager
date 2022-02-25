@@ -40,11 +40,6 @@ DGUI_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
-static QUrl rootUrl() {
-    static QUrl root = QUrl::fromLocalFile(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first());
-    return root;
-}
-
 DragDropOper::DragDropOper(CanvasView *parent)
     : QObject(parent)
     , view(parent)
@@ -71,7 +66,7 @@ bool DragDropOper::enter(QDragEnterEvent *event)
     if (checkXdndDirectSave(event))
         return false;
 
-    preproccessDropEvent(event, event->mimeData()->urls(), rootUrl());
+    preproccessDropEvent(event, event->mimeData()->urls(), view->model()->rootUrl());
     return true;
 }
 
@@ -85,7 +80,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
 {
     auto pos = event->pos();
     auto hoverIndex = view->indexAt(pos);
-    QUrl curUrl = hoverIndex.isValid() ? view->model()->url(hoverIndex) : rootUrl();
+    QUrl curUrl = hoverIndex.isValid() ? view->model()->url(hoverIndex) : view->model()->rootUrl();
     if (hoverIndex.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
             bool canDrop = !fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
@@ -424,9 +419,11 @@ bool DragDropOper::dropMimeData(QDropEvent *event) const
 {
     auto model = view->model();
     auto targetIndex = view->indexAt(event->pos());
-    bool enableDrop = targetIndex.isValid() ? model->flags(targetIndex) & Qt::ItemIsDropEnabled : true;
+    bool enableDrop = targetIndex.isValid() ? model->flags(targetIndex) & Qt::ItemIsDropEnabled :
+                                              model->flags(model->rootIndex()) & Qt::ItemIsDropEnabled;
     if (model->supportedDropActions() & event->dropAction() && enableDrop) {
-        preproccessDropEvent(event, event->mimeData()->urls(), targetIndex.isValid() ? view->model()->url(targetIndex) : rootUrl());
+        preproccessDropEvent(event, event->mimeData()->urls(), targetIndex.isValid() ? model->url(targetIndex)
+                                                                                     : model->rootUrl());
         const Qt::DropAction action = event->dropAction();
         if (model->dropMimeData(event->mimeData(), action, targetIndex.row(), targetIndex.column(), targetIndex)) {
             if (action != event->dropAction()) {

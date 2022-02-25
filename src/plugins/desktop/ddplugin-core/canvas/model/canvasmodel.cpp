@@ -196,27 +196,20 @@ CanvasModel::CanvasModel(QObject *parent)
 
 QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if (row < 0 || column < 0 || d->fileTreater->childrenCount() <= row) {
+    Q_UNUSED(parent)
+    if (row < 0 || column < 0 || d->fileTreater->childrenCount() <= row)
         return QModelIndex();
-    }
-    auto fileInfo = d->fileTreater->fileInfo(row);
-    if (!fileInfo) {
-        return QModelIndex();
-    }
 
-    if (!parent.isValid())
-        return rootIndex();
+    if (auto fileInfo = d->fileTreater->fileInfo(row))
+        return createIndex(row, column, fileInfo.data());
 
-    return createIndex(row, column, fileInfo.data());
+    return QModelIndex();
 }
 
 QModelIndex CanvasModel::index(const QUrl &fileUrl, int column)
 {
     if (fileUrl.isEmpty())
         return QModelIndex();
-
-    if (fileUrl == rootUrl())
-        return rootIndex();
 
     auto fileInfo = d->fileTreater->fileInfo(fileUrl);
     return index(fileInfo, column);
@@ -315,16 +308,25 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
 {
-    if (index == rootIndex())
-        return Qt::ItemIsSelectable|Qt::ItemIsEnabled;
-
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     if (!index.isValid())
         return flags;
 
     flags |= Qt::ItemIsDragEnabled;
-    flags |= Qt::ItemIsDropEnabled; // todo
-    flags |= Qt::ItemIsEditable;
+
+    if (auto file = fileInfo(index)) {
+        if (file->canRename())
+            flags |= Qt::ItemIsEditable;
+
+        if (file->isWritable())
+            flags |= Qt::ItemIsDropEnabled;
+        else
+            flags |= Qt::ItemNeverHasChildren;
+
+        // todo
+        //flags &= ~file->fileItemDisableFlags();
+    }
+
     return flags;
 }
 

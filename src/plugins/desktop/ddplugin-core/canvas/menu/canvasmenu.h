@@ -69,7 +69,7 @@ public:
                          const QList<QUrl> &selected = {},
                          QVariant customData = QVariant());
 
-private:
+protected:
     void emptyAreaMenu(QMenu *menu, const QUrl &rootUrl);
 
     void normalMenu(QMenu *menu,
@@ -83,7 +83,7 @@ private:
     void columnRolesAssociateActionType();
     void creatMenuByDataLst(QMenu *menu, const QVector<dfmbase::ActionDataContainer> &lst);
     void setActionSpecialHandling(QMenu *menu);
-
+    bool isRefreshOn() const;
 private:
     DSC_NAMESPACE::MenuService *extensionMenuServer { nullptr };
     QMap<DesktopCustomAction, dfmbase::ActionDataContainer> customAction;

@@ -73,7 +73,6 @@ bool CustomHiddenFilter::fileUpdatedFilter(const QUrl &url)
     // get file that removed form .hidden if do not show hidden file.
     if (canvasmodel && !canvasmodel->showHiddenFiles() && url.fileName() == ".hidden") {
         qDebug() << "refresh by hidden changed.";
-        //todo delay refresh , 快速切换会出现无响应问题
         canvasmodel->refresh(canvasmodel->rootIndex());
         return true;
     }

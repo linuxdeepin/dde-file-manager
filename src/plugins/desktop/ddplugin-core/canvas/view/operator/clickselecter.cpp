@@ -38,13 +38,14 @@ void ClickSelecter::click(const QModelIndex &index)
     bool ctrl = isCtrlPressed();
     bool shift = isShiftPressed();
     lastPressedIndex = index;
+    toggleIndex = QModelIndex();
 
     if (!index.isValid()) {
         if (!ctrl && !shift)
             clear();
     } else {
         if (ctrl)
-            toggleSelect(index);
+            expandSelect(index);
         else if (shift)
             continuesSelect(index);
         else
@@ -59,12 +60,18 @@ void ClickSelecter::release(const QModelIndex &index)
     if (!index.isValid())
         return;
 
-    //! if pressed on selected item, clear other selected items when mouse release.
     bool isSeleted = view->selectionModel()->isSelected(index);
-    if (isSeleted && index == lastPressedIndex && !isCtrlOrShiftPressed()) {
-        view->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-        //Q_ASSERT(lastPressedIndex == view->d->operState().getFocus());//检查有不同的情况。todo delete
-        view->d->operState().setCurrent(lastPressedIndex);
+    if (isSeleted && index == lastPressedIndex) {
+        if (isCtrlPressed() && index == toggleIndex) {
+            //! To deselect selected item if pressed on it with ctrl
+            view->selectionModel()->select(index, QItemSelectionModel::Toggle);
+            view->d->operState().setCurrent(QModelIndex());
+        } else if (!isCtrlOrShiftPressed()) {
+            //! if pressed on selected item, clear other selected items when mouse release.
+            view->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+            //Q_ASSERT(lastPressedIndex == view->d->operState().getFocus());//检查有不同的情况。todo delete
+            view->d->operState().setCurrent(lastPressedIndex);
+        }
     }
 
     view->update();
@@ -116,14 +123,16 @@ void ClickSelecter::clear()
     state.setContBegin(QModelIndex());
 }
 
-void ClickSelecter::toggleSelect(const QModelIndex &index)
+void ClickSelecter::expandSelect(const QModelIndex &index)
 {
-    bool isSeleted = view->selectionModel()->isSelected(index);
-    view->selectionModel()->select(index, QItemSelectionModel::Toggle);
+    if (view->selectionModel()->isSelected(index))
+        toggleIndex = index; // to deselect it after mouse release
+    else
+        view->selectionModel()->select(index, QItemSelectionModel::Select);
 
     {
         OperState &state = view->d->operState();
-        QModelIndex cur = isSeleted ? QModelIndex() : index;
+        QModelIndex cur = index;
         state.setContBegin(cur);
         state.setCurrent(cur);
     }

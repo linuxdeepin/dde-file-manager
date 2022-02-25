@@ -41,7 +41,7 @@ protected:
     static void order(const QPoint &p1, const QPoint &p2, QPoint &from, QPoint &to);
     static QList<QPoint> horizontalTraversal(const QPoint &from, const QPoint &to, const QSize &size);
     void clear();
-    void toggleSelect(const QModelIndex &index);
+    void expandSelect(const QModelIndex &index);
     void continuesSelect(const QModelIndex &index);
     void traverseSelect(const QModelIndex &from, const QModelIndex &to);
     void traverseSelect(const QPoint &p1, const QPoint &p2);
@@ -50,6 +50,7 @@ private:
 protected:
     CanvasView *view;
     QPersistentModelIndex lastPressedIndex; // todo using url
+    QPersistentModelIndex toggleIndex;
 };
 DSB_D_END_NAMESPACE
 #endif // CLICKSELECTER_H

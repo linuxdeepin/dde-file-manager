@@ -35,6 +35,8 @@
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/file/fileAction/desktopfileactions.h"
 
+#include <QGSettings>
+
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 #include <QMenu>
@@ -124,9 +126,10 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
                    << customAction.value(DesktopCustomAction::kAutoArrange)
                    << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActPaste)
                    << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSelectAll)
-                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActOpenInTerminal)
-                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActRefreshView)
-                   << customAction.value(DesktopCustomAction::kDisplaySettings)
+                   << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActOpenInTerminal);
+    if (isRefreshOn())
+        tempActTextLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActRefreshView);
+    tempActTextLst  << customAction.value(DesktopCustomAction::kDisplaySettings)
                    << customAction.value(DesktopCustomAction::kWallpaperSettings);
 
     // add action to menu
@@ -209,6 +212,7 @@ void CanvasMenu::normalMenu(QMenu *menu,
     }
 
     // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
+    // add menu filter
 }
 
 void CanvasMenu::acitonBusiness(QAction *act)
@@ -225,8 +229,11 @@ void CanvasMenu::acitonBusiness(QAction *act)
     case DesktopCustomAction::kIconSize3:
     case DesktopCustomAction::kIconSize4: {
         int lv = actType - kIconSize;
-        view->itemDelegate()->setIconLevel(lv);
-        view->updateGrid();
+        for (auto v : CanvasIns->views()) {
+            v->itemDelegate()->setIconLevel(lv);
+            v->updateGrid();
+        }
+
         DispalyIns->setIconLevel(lv);
         return;
     }
@@ -235,8 +242,7 @@ void CanvasMenu::acitonBusiness(QAction *act)
         return;
     }
     case ActionType::kActSelectAll: {
-        // todo
-        view->QAbstractItemView::selectAll();
+        view->selectAll();
         return;
     }
     case DesktopCustomAction::kDisplaySettings: {
@@ -443,6 +449,22 @@ void CanvasMenu::setActionSpecialHandling(QMenu *menu)
             act->setChecked(align);
         }
     }
+}
+
+bool CanvasMenu::isRefreshOn() const
+{
+    // the gsetting control for refresh action
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
+        static const QGSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
+                                         "/com/deepin/dde/filemanager/contextmenu/");
+        if (menuSwitch.keys().contains("refresh")) {
+            auto showRefreh = menuSwitch.get("refresh");
+            if (showRefreh.isValid())
+                return showRefreh.toBool();
+        }
+    }
+
+    return false;
 }
 
 DSB_D_END_NAMESPACE
