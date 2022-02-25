@@ -1229,17 +1229,17 @@
         <translation>文件內容寫入失敗，原因：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3799"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3800"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>指針定位失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
         <source>Syncing data</source>
         <translation>數據同步中</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
         <source>Please wait</source>
         <translation>請稍候</translation>
     </message>
@@ -1253,7 +1253,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3848"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3849"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>文件打開失敗，原因：%1</translation>
     </message>
@@ -1261,7 +1261,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3844"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>文件打開失敗，原因：權限不足</translation>
     </message>
@@ -1354,12 +1354,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1305"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1299"/>
         <source>Trash</source>
         <translation>回收站</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1314"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1308"/>
         <source>Empty</source>
         <translation>清空</translation>
     </message>
@@ -1367,44 +1367,44 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1600"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1604"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>名稱</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1602"/>
-        <location filename="../models/searchfileinfo.cpp" line="130"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
+        <location filename="../models/searchfileinfo.cpp" line="146"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1604"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1608"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1610"/>
         <source>Type</source>
         <translation>類型</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1608"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1612"/>
         <source>Time created</source>
         <translation>創建時間</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1610"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1614"/>
         <source>Last access</source>
         <translation>最近訪問時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1612"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
-        <location filename="../models/searchfileinfo.cpp" line="128"/>
-        <location filename="../models/searchfileinfo.cpp" line="133"/>
+        <location filename="../models/searchfileinfo.cpp" line="144"/>
+        <location filename="../models/searchfileinfo.cpp" line="149"/>
         <source>Path</source>
         <translation>路徑</translation>
     </message>
@@ -1412,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2811"/>
+        <location filename="../views/dfileview.cpp" line="2819"/>
         <source>Disc mount error</source>
         <translation>光盤掛載錯誤</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2811"/>
+        <location filename="../views/dfileview.cpp" line="2819"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>當前光驅設備正在佔用，請關閉佔用進程再重新掛載</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2824"/>
+        <location filename="../views/dfileview.cpp" line="2832"/>
         <source>Mounting failed</source>
         <translation>掛載失敗</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3560"/>
+        <location filename="../views/dfileview.cpp" line="3568"/>
         <source>(Reverse)</source>
         <translation>（反序）</translation>
     </message>
@@ -1435,7 +1435,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="668"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="670"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>添加標記“%1”</translation>
     </message>
@@ -1946,7 +1946,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
@@ -2506,9 +2505,16 @@
         <translation>隱藏系統盤</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="300"/>
-        <location filename="../configure/global-setting-template-pro.js" line="300"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="293"/>
+        <location filename="../configure/global-setting-template-pro.js" line="293"/>
         <location filename="../configure/global-setting-template.js" line="299"/>
+        <source>Hide loop partitions</source>
+        <translation>隱藏迴環分區</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="306"/>
+        <location filename="../configure/global-setting-template-pro.js" line="306"/>
+        <location filename="../configure/global-setting-template.js" line="305"/>
         <source>Show file system on disk icon</source>
         <translation>在磁盤圖標上顯示文件系統標籤</translation>
     </message>
@@ -3382,7 +3388,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1315"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1309"/>
         <source>Empty Trash</source>
         <translation>清空回收站</translation>
     </message>
@@ -3760,12 +3766,12 @@
         <translation>文件夾為空</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="322"/>
+        <location filename="../models/searchfileinfo.cpp" line="371"/>
         <source>Searching...</source>
         <translation>正在搜索...</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="327"/>
+        <location filename="../models/searchfileinfo.cpp" line="376"/>
         <source>No results</source>
         <translation>無搜索結果</translation>
     </message>
@@ -4108,7 +4114,7 @@
         <translation>不得含有%1</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1566"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
         <location filename="../../usershare/usersharemanager.cpp" line="549"/>
         <source>Failed to start Samba services</source>
         <translation>Samba服務啟動失敗</translation>
@@ -4433,7 +4439,7 @@
         <translation>新建文件夾</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="338"/>
+        <location filename="../models/searchfileinfo.cpp" line="387"/>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Search</source>
         <translation>搜索</translation>

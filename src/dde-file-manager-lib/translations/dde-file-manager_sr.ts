@@ -1229,17 +1229,17 @@
         <translation>Неуспешно уписивање датотеке, узрок: </translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3799"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3800"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
         <source>Syncing data</source>
         <translation>Синхронизовање података</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4474"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
         <source>Please wait</source>
         <translation>Молимо сачекајте</translation>
     </message>
@@ -1253,7 +1253,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3848"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3849"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Неуспешно отварање датотеке, узрок: %1</translation>
     </message>
@@ -1261,7 +1261,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3844"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Неуспешно отварање датотеке, узрок: Забрањен приступ</translation>
     </message>
@@ -1354,12 +1354,12 @@
 <context>
     <name>DFileManagerWindow</name>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1305"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1299"/>
         <source>Trash</source>
         <translation>Смеће</translation>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1314"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1308"/>
         <source>Empty</source>
         <translation>Испразни</translation>
     </message>
@@ -1367,44 +1367,44 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1600"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1604"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Име</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1602"/>
-        <location filename="../models/searchfileinfo.cpp" line="130"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
+        <location filename="../models/searchfileinfo.cpp" line="146"/>
         <source>Time modified</source>
         <translation>Измењено</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1604"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1608"/>
         <source>Size</source>
         <translation>Величина</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1610"/>
         <source>Type</source>
         <translation>Врста</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1608"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1612"/>
         <source>Time created</source>
         <translation>Настало</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1610"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1614"/>
         <source>Last access</source>
         <translation>Последњи приступ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1612"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
-        <location filename="../models/searchfileinfo.cpp" line="128"/>
-        <location filename="../models/searchfileinfo.cpp" line="133"/>
+        <location filename="../models/searchfileinfo.cpp" line="144"/>
+        <location filename="../models/searchfileinfo.cpp" line="149"/>
         <source>Path</source>
         <translation>Путања</translation>
     </message>
@@ -1412,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2811"/>
+        <location filename="../views/dfileview.cpp" line="2819"/>
         <source>Disc mount error</source>
         <translation>Грешка при монтирању диска</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2811"/>
+        <location filename="../views/dfileview.cpp" line="2819"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Диск се користи, окончајте покренуте процесе и поново монтирајте диск.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2824"/>
+        <location filename="../views/dfileview.cpp" line="2832"/>
         <source>Mounting failed</source>
         <translation>Неуспешно монтирање</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3560"/>
+        <location filename="../views/dfileview.cpp" line="3568"/>
         <source>(Reverse)</source>
         <translation>(Поништи)</translation>
     </message>
@@ -1435,7 +1435,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="668"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="670"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Додај ознаку &quot;%1&quot;</translation>
     </message>
@@ -1946,7 +1946,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
-        <location filename="../dialogs/dialogmanager.h" line="153"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Потврди</translation>
@@ -2506,9 +2505,16 @@
         <translation>Сакриј системски диск</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="300"/>
-        <location filename="../configure/global-setting-template-pro.js" line="300"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="293"/>
+        <location filename="../configure/global-setting-template-pro.js" line="293"/>
         <location filename="../configure/global-setting-template.js" line="299"/>
+        <source>Hide loop partitions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="306"/>
+        <location filename="../configure/global-setting-template-pro.js" line="306"/>
+        <location filename="../configure/global-setting-template.js" line="305"/>
         <source>Show file system on disk icon</source>
         <translation>Прикажи систем датотека на диску</translation>
     </message>
@@ -3382,7 +3388,7 @@
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1315"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1309"/>
         <source>Empty Trash</source>
         <translation>Испразни смеће</translation>
     </message>
@@ -3760,12 +3766,12 @@
         <translation>Фасцикла је празна</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="322"/>
+        <location filename="../models/searchfileinfo.cpp" line="371"/>
         <source>Searching...</source>
         <translation>Претрага...</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="327"/>
+        <location filename="../models/searchfileinfo.cpp" line="376"/>
         <source>No results</source>
         <translation>Нема резултата</translation>
     </message>
@@ -4108,7 +4114,7 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfilemanagerwindow.cpp" line="1566"/>
+        <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
         <location filename="../../usershare/usersharemanager.cpp" line="549"/>
         <source>Failed to start Samba services</source>
         <translation type="unfinished"/>
@@ -4433,7 +4439,7 @@
         <translation>Нова фасцикла</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="338"/>
+        <location filename="../models/searchfileinfo.cpp" line="387"/>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Search</source>
         <translation>Претражи</translation>

@@ -79,7 +79,7 @@
     </message>
     <message>
         <source>Eject all</source>
-        <translation>Wyrzuć wszystko</translation>
+        <translation>Usuń wszystko</translation>
     </message>
 </context>
 <context>

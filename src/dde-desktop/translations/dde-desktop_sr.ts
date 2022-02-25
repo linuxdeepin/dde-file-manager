@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3371"/>
+        <location filename="../view/canvasgridview.cpp" line="3384"/>
         <source>Icon size</source>
         <translation>Величина иконица</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3379"/>
+        <location filename="../view/canvasgridview.cpp" line="3392"/>
         <source>Auto merge</source>
         <translation>Аутоматски сврстај</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3391"/>
+        <location filename="../view/canvasgridview.cpp" line="3404"/>
         <source>Auto arrange</source>
         <translation>Аутоматски сложи</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3428"/>
+        <location filename="../view/canvasgridview.cpp" line="3441"/>
         <source>Corner Settings</source>
         <translation>Подешавање углова</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3437"/>
-        <location filename="../view/canvasgridview.cpp" line="3442"/>
+        <location filename="../view/canvasgridview.cpp" line="3450"/>
+        <location filename="../view/canvasgridview.cpp" line="3455"/>
         <source>Set Wallpaper</source>
         <translation>Постави позадину</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3440"/>
+        <location filename="../view/canvasgridview.cpp" line="3453"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Позадина и чувар екрана</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3618"/>
+        <location filename="../view/canvasgridview.cpp" line="3632"/>
         <source>Properties</source>
         <translation>Својства</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3419"/>
+        <location filename="../view/canvasgridview.cpp" line="3432"/>
         <source>Display Settings</source>
         <translation>Подешавање приказа</translation>
     </message>
@@ -74,7 +74,7 @@
 <context>
     <name>DesktopMain</name>
     <message>
-        <location filename="../main.cpp" line="166"/>
+        <location filename="../main.cpp" line="169"/>
         <source>Desktop</source>
         <translation>Радна површина </translation>
     </message>
