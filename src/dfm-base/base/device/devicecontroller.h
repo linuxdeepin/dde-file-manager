@@ -93,6 +93,9 @@ public:   // status
     QStringList protocolDevicesIdList() const;
     QVariantMap protocolDeviceInfo(const QString &deviceId, bool detail = false) const;
 
+public:   // special
+    void ghostBlockDevMounted(const QString &deviceId, const QString &mountPoint);
+
 signals:
     void deviceSizeUsedChanged(const QString &deviceId, qint64 total, qint64 free);
     void blockDevicePropertyChanged(const QString &deviceId, const QString &property, const QVariant &val);

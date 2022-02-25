@@ -145,5 +145,9 @@
       <arg name="id" type="s" direction="in"/>
       <arg name="detail" type="b" direction="in"/>
     </method>
+    <method name="GhostBlockDevMounted">
+      <arg name="deviceId" type="s" direction="in"/>
+      <arg name="mountPoint" type="s" direction="in"/>
+    </method>
   </interface>
 </node>

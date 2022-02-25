@@ -81,6 +81,12 @@ QStringList DeviceManagerAdaptor::GetProtocolDevicesIdList()
     return parent()->GetProtocolDevicesIdList();
 }
 
+void DeviceManagerAdaptor::GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint)
+{
+    // handle method call com.deepin.filemanager.service.DeviceManager.GhostBlockDevMounted
+    parent()->GhostBlockDevMounted(deviceId, mountPoint);
+}
+
 bool DeviceManagerAdaptor::IsMonotorWorking()
 {
     // handle method call com.deepin.filemanager.service.DeviceManager.IsMonotorWorking

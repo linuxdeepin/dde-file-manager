@@ -50,6 +50,7 @@ public:
     bool invokeIsMonitorWorking();
     bool invokeDetachBlockDeviceForced(const QString &id);
     void invokeUnmountBlockDeviceForced(const QString &id);
+    void invokeGhostBlockDevMounted(const QString &id, const QString &mountPoint);
 
     // Both D-Bus and native supported
     QStringList invokeBlockDevicesIdList(const QVariantMap &opt);

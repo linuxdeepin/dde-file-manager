@@ -51,6 +51,8 @@ public:
     static bool burnIsOnDisc(const QUrl &url);
     static QUrl tansToBurnFile(const QUrl &in);
     static QString deviceId(const QString &device);
+    static bool isSupportedUDFVersion(const QString &version);
+    static bool isSupportedUDFMedium(int type);
 
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();

@@ -57,6 +57,7 @@ private:
     void handleBlockDevicesSizeUsedChanged();
     void handleProtolDevicesSizeUsedChanged();
     void handleOpticalDeviceChanged(const QString &deviceId);
+    void notifyDeviceSizeUsedChanged(const QString &deviceId, const QString &mountPoint);
 
 private slots:
     void onBlockDriveAdded(const QString &drvObjPath);

@@ -45,7 +45,7 @@ class OperationsStackManagerAdaptor: public QDBusAbstractAdaptor
 "  </interface>\n"
         "")
 public:
-    explicit OperationsStackManagerAdaptor(OperationsStackManagerDbus *parent);
+    OperationsStackManagerAdaptor(OperationsStackManagerDbus *parent);
     virtual ~OperationsStackManagerAdaptor();
 
     inline OperationsStackManagerDbus *parent() const

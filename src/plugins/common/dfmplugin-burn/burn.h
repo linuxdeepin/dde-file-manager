@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     xushitong<xushitong@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_COMPUTER_GLOBAL_H
-#define DFMPLUGIN_COMPUTER_GLOBAL_H
+#ifndef BURN_H
+#define BURN_H
 
-#define DPCOMPUTER_NAMESPACE dfmplugin_computer
+#include "dfmplugin_burn_global.h"
 
-#define DPCOMPUTER_BEGIN_NAMESPACE namespace DPCOMPUTER_NAMESPACE {
-#define DPCOMPUTER_END_NAMESPACE }
-#define DPCOMPUTER_USE_NAMESPACE using namespace DPCOMPUTER_NAMESPACE;
+#include <dfm-framework/framework.h>
 
-#endif   // DFMPLUGIN_COMPUTER_GLOBAL_H
+DPBURN_BEGIN_NAMESPACE
+
+class burn : public dpf::Plugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
+
+public:
+    virtual void initialize() override;
+    virtual bool start() override;
+    virtual ShutdownFlag stop() override;
+};
+
+DPBURN_END_NAMESPACE
+
+#endif   // BURN_H

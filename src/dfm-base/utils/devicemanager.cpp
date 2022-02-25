@@ -265,6 +265,17 @@ void DeviceManager::invokeUnmountBlockDeviceForced(const QString &id)
     }
 }
 
+void DeviceManager::invokeGhostBlockDevMounted(const QString &id, const QString &mountPoint)
+{
+    if (deviceInterface) {
+        qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
+        auto &&reply = deviceInterface->GhostBlockDevMounted(id, mountPoint);
+        if (!reply.isValid())
+            qCritical() << "D-Bus reply is invalid " << reply.error();
+        qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
+    }
+}
+
 bool DeviceManager::invokeDetachProtocolDevice(const QString &id)
 {
     if (Q_LIKELY(isServiceDBusRunning())) {

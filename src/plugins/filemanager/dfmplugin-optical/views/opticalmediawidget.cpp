@@ -26,13 +26,17 @@
 
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-burn/dfmburn_global.h>
 
+#include <DSysInfo>
+
 DPOPTICAL_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFM_BURN_USE_NS
 
@@ -45,7 +49,7 @@ OpticalMediaWidget::OpticalMediaWidget(QWidget *parent)
     initConnect();
 }
 
-void OpticalMediaWidget::updateDiscInfo(const QUrl &url)
+void OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
 {
     QString dev { OpticalHelper::burnDestDevice(url) };
     QString devId { OpticalHelper::deviceId(dev) };
@@ -63,14 +67,26 @@ void OpticalMediaWidget::updateDiscInfo(const QUrl &url)
         handleErrorMount();
         return;
     }
+
+    // Acquire blank disc info
+    curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
+    if (!retry && blank && curAvial == 0) {
+        DeviceController::instance()->mountBlockDeviceAsync(devId, {}, [this, url, devId](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+            Q_UNUSED(ok)
+            Q_UNUSED(err)
+            Q_UNUSED(mpt)
+            DeviceManagerInstance.invokeGhostBlockDevMounted(devId, "");
+            this->updateDiscInfo(url, true);
+        });
+    }
+
     curMnt = mnt;
     curFS = qvariant_cast<QString>(map[DeviceProperty::kFileSystem]);
     curFSVersion = qvariant_cast<QString>(map[DeviceProperty::kFsVersion]);
     curDiscName = qvariant_cast<QString>(map[DeviceProperty::kIdLabel]);
-    curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
-    curMediaWriteSpeeed = qvariant_cast<QStringList>(map[DeviceProperty::kOpticalWriteSpeed]);
 
     auto type = static_cast<MediaType>(map[DeviceProperty::kOpticalMediaType].toInt());
+    curMediaType = int(type);
     const static QMap<MediaType, QString> rtypemap = {
         { MediaType::kCD_ROM, "CD-ROM" },
         { MediaType::kCD_R, "CD-R" },
@@ -86,7 +102,7 @@ void OpticalMediaWidget::updateDiscInfo(const QUrl &url)
         { MediaType::kBD_R, "BD-R" },
         { MediaType::kBD_RE, "BD-RE" }
     };
-    curMediaType = rtypemap[type];
+    curMediaTypeStr = rtypemap[type];
 
     updateUi();
 }
@@ -97,11 +113,11 @@ void OpticalMediaWidget::initializeUi()
     setLayout(layout);
     layout->addWidget(lbMediatype = new QLabel("<Media Type>"));
     layout->addWidget(lbAvailable = new QLabel("<Space Available>"));
-    layout->addWidget(lbUdsupport = new QLabel(tr("It does not support burning UDF discs")));
+    layout->addWidget(lbUDFSupport = new QLabel(tr("It does not support burning UDF discs")));
     layout->addWidget(pbBurn = new DPushButton());
     layout->addWidget(iconCaution = new QSvgWidget());
     pbBurn->setText(QObject::tr("Burn"));
-    lbUdsupport->setVisible(false);
+    lbUDFSupport->setVisible(false);
     iconCaution->setVisible(false);
 
     pbBurn->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -112,13 +128,45 @@ void OpticalMediaWidget::initializeUi()
 
 void OpticalMediaWidget::initConnect()
 {
-    // TODO(zhangs): impl me!
+    // TODO(zhangs): wait DFileStatisticsJob impl!
 }
 
 void OpticalMediaWidget::updateUi()
 {
-    lbMediatype->setText(curMediaType);
+    lbMediatype->setText(curMediaTypeStr);
     lbAvailable->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(curAvial)));
+
+    auto isSupportedUDF = [this] {
+        if (!(DSysInfo::deepinType() == DSysInfo::DeepinProfessional))
+            return false;
+        if (!OpticalHelper::isSupportedUDFVersion(curFSVersion))
+            return false;
+        if (OpticalHelper::isSupportedUDFMedium(curMediaType))
+            return true;
+        return false;
+    };
+
+    if (curFS.toLower() == "udf") {
+        if (DSysInfo::deepinType() == DSysInfo::DeepinProfessional && !isSupportedUDF()) {   // for other version, show normal unsupported writtings
+            lbUDFSupport->setText(tr("%1 burning is not supported").arg("UDF"));
+            iconCaution->setVisible(true);
+            iconCaution->load(QString(":/dark/icons/caution.svg"));
+            iconCaution->setFixedSize(14, 14);
+            iconCaution->setToolTip(tr("1. It is not %1 disc;\n2. The version of this file system does not support adding files yet.")
+                                            .arg("DVD+R, DVD-R, CD-R, CD-RW"));
+        }
+        lbUDFSupport->setVisible(true);
+        pbBurn->setEnabled(false);
+    } else {
+        lbUDFSupport->setVisible(false);
+        iconCaution->setVisible(false);
+        pbBurn->setEnabled(true);
+    }
+
+    if (curAvial == 0) {
+        lbUDFSupport->setVisible(false);
+        iconCaution->setVisible(false);
+    }
 }
 
 void OpticalMediaWidget::handleErrorMount()

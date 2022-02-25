@@ -87,6 +87,8 @@ public slots:
     QStringList GetProtocolDevicesIdList();
     QVariantMap QueryProtocolDeviceInfo(QString id, bool detail);
 
+    void GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint);
+
 private:
     void initialize();
     void initConnection();

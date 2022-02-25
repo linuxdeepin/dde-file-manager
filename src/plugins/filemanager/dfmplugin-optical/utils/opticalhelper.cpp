@@ -24,11 +24,13 @@
 
 #include "dfm-base/base/urlroute.h"
 
+#include <dfm-framework/framework.h>
+
+#include <dfm-burn/dfmburn_global.h>
+
 #include <QCoreApplication>
 #include <QRegularExpressionMatch>
 #include <QStandardPaths>
-
-#include <dfm-framework/framework.h>
 
 DFMBASE_USE_NAMESPACE
 DPOPTICAL_USE_NAMESPACE
@@ -122,6 +124,25 @@ QString OpticalHelper::deviceId(const QString &device)
     if (dev.startsWith("/dev/"))
         dev = dev.remove("/dev/");
     return QString(kBlockDeviceIdPrefix) + dev;
+}
+
+bool OpticalHelper::isSupportedUDFVersion(const QString &version)
+{
+    static const QStringList &&supported = {
+        "1.02"
+    };
+    return supported.contains(version);
+}
+
+bool OpticalHelper::isSupportedUDFMedium(int type)
+{
+    static const QList<DFMBURN::MediaType> &&supportedMedium = {
+        DFMBURN::MediaType::kDVD_R,
+        DFMBURN::MediaType::kDVD_PLUS_R,
+        DFMBURN::MediaType::kCD_R,
+        DFMBURN::MediaType::kCD_RW
+    };
+    return supportedMedium.contains(DFMBURN::MediaType(type));
 }
 
 DSB_FM_NAMESPACE::WindowsService *OpticalHelper::winServIns()

@@ -89,6 +89,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("GetProtocolDevicesIdList"), argumentList);
     }
 
+    inline QDBusPendingReply<> GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(deviceId) << QVariant::fromValue(mountPoint);
+        return asyncCallWithArgumentList(QStringLiteral("GhostBlockDevMounted"), argumentList);
+    }
+
     inline QDBusPendingReply<bool> IsMonotorWorking()
     {
         QList<QVariant> argumentList;

@@ -41,7 +41,7 @@ class OpticalMediaWidget : public QWidget
 
 public:
     explicit OpticalMediaWidget(QWidget *parent = nullptr);
-    void updateDiscInfo(const QUrl &url);
+    void updateDiscInfo(const QUrl &url, bool retry = false);
 
 private:
     void initializeUi();
@@ -53,7 +53,7 @@ private:
     QHBoxLayout *layout { nullptr };
     QLabel *lbMediatype { nullptr };
     QLabel *lbAvailable { nullptr };
-    QLabel *lbUdsupport { nullptr };
+    QLabel *lbUDFSupport { nullptr };
     DTK_WIDGET_NAMESPACE::DPushButton *pbBurn { nullptr };
     QSvgWidget *iconCaution { nullptr };
 
@@ -63,8 +63,8 @@ private:
     QString curMnt;
     QString curDiscName;
     qint64 curAvial;
-    QString curMediaType;
-    QStringList curMediaWriteSpeeed;
+    int curMediaType;
+    QString curMediaTypeStr;
 };
 
 DPOPTICAL_END_NAMESPACE

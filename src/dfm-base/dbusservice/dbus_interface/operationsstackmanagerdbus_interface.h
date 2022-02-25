@@ -31,7 +31,7 @@ public:
     { return "com.deepin.filemanager.service.OperationsStackManager"; }
 
 public:
-    explicit OperationsStackManagerInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
+    OperationsStackManagerInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~OperationsStackManagerInterface();
 

@@ -174,6 +174,10 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "      <arg direction=\"in\" type=\"b\" name=\"detail\"/>\n"
 "    </method>\n"
+"    <method name=\"GhostBlockDevMounted\">\n"
+"      <arg direction=\"in\" type=\"s\" name=\"deviceId\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"mountPoint\"/>\n"
+"    </method>\n"
 "  </interface>\n"
         "")
 public:
@@ -193,6 +197,7 @@ public Q_SLOTS: // METHODS
     void EjectBlockDevice(const QString &id);
     QStringList GetBlockDevicesIdList(const QVariantMap &opts);
     QStringList GetProtocolDevicesIdList();
+    void GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint);
     bool IsMonotorWorking();
     void LockBlockDevice(const QString &id);
     QString MountBlockDevice(const QString &id);

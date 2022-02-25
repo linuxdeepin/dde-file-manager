@@ -237,3 +237,8 @@ QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id, bool detail)
 {
     return deviceServ->protocolDeviceInfo(id, detail);
 }
+
+void DeviceManagerDBus::GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint)
+{
+    return deviceServ->ghostBlockDevMounted(deviceId, mountPoint);
+}
