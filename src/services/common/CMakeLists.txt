@@ -65,6 +65,12 @@ FILE(GLOB BLUETOOTH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/private/*.cpp"
 )
 
+FILE(GLOB DELEGATE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/delegate/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/delegate/*.cpp"
+)
+
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -73,6 +79,7 @@ add_library(${PROJECT_NAME}
     ${MENU_FILES}
     ${PROPERTYDIALOG_FILES}
     ${BLUETOOTH_FILES}
+    ${DELEGATE_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

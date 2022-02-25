@@ -61,12 +61,12 @@ FileView *FileViewHelper::parent() const
 
 bool FileViewHelper::isTransparent(const QModelIndex &index) const
 {
-    // Todo(yanghao)
+    AbstractFileInfoPointer file = fileInfo(parent()->proxyModel()->mapToSource(index));
+    if (!file.get())
+        return false;
+
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
-        AbstractFileInfoPointer file = fileInfo(parent()->proxyModel()->mapToSource(index));
-        if (!file.get())
-            return false;
 
         if (ClipBoard::instance()->clipboardFileUrlList().contains(file->url())) {
             qDebug() << index << file->url();
@@ -80,6 +80,12 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
                 return true;
         }
     }
+
+    if (WorkspaceHelper::delegateServIns()->isTransparent(file->url()))
+        return true;
+
+    // Todo(yanghao)
+
     return false;
 }
 
