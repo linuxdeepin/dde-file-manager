@@ -58,7 +58,7 @@ public:
                          const QUrl &foucsUrl,
                          const QList<QUrl> &selected = {},
                          QVariant customData = QVariant());
-    virtual void acitonBusiness(QAction *act);
+    virtual void actionBusiness(QAction *act);
 };
 
 DFMBASE_END_NAMESPACE

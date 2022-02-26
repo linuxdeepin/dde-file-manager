@@ -28,10 +28,12 @@
 #include "utils/customtopwidgetinterface.h"
 #include "events/workspaceeventreceiver.h"
 #include "events/workspaceunicastreceiver.h"
+#include "menus/workspacemenu.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/common/propertydialog/propertydialogservice.h"
+#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
@@ -67,6 +69,8 @@ void Workspace::initialize()
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
     WorkspaceUnicastReceiver::instance()->connectService();
+
+    MenuService::regClass<WorkspaceMenu>(MenuScene::kWorkspaceMenu);
 }
 
 bool Workspace::start()

@@ -85,10 +85,10 @@ QMenu *MenuService::createMenu(QWidget *parent,
 
     // Action业务
     auto triggeredFunc = [topClass](QAction *action) {
-        topClass->acitonBusiness(action);
+        topClass->actionBusiness(action);
     };
 
-    connect(tempMenu, &QMenu::triggered, this, triggeredFunc, Qt::QueuedConnection);
+    connect(tempMenu, &QMenu::triggered, topClass, triggeredFunc, Qt::QueuedConnection);
 
     return tempMenu;
 }

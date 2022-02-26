@@ -23,6 +23,7 @@
 #define FILEOPERATERHELPER_H
 
 #include "dfmplugin_workspace_global.h"
+#include "dfm_global_defines.h"
 
 #include <QObject>
 
@@ -36,6 +37,7 @@ class FileOperaterHelper : public QObject
 public:
     static FileOperaterHelper *instance();
     void touchFolder(const FileView *view);
+    void touchFiles(const FileView *view, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString suffix = "");
     void openFiles(const FileView *view);
     void openFiles(const FileView *view, const QList<QUrl> &urls);
     void openFilesByApp(const FileView *view);

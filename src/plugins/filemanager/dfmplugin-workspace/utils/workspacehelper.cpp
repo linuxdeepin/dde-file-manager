@@ -78,6 +78,11 @@ void WorkspaceHelper::setFilterCallback(quint64 windowId, const QUrl &url, const
     emit requestSetViewFilterCallback(windowId, url, callback);
 }
 
+void WorkspaceHelper::setWorkspaceMenuScene(quint64 windowID, const QUrl &url, const QString &scene)
+{
+    emit requestSetWorkspaceMenuScene(windowID, url, scene);
+}
+
 WorkspaceHelper *WorkspaceHelper::instance()
 {
     static WorkspaceHelper helper;

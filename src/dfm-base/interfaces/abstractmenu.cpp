@@ -53,7 +53,7 @@ QMenu *AbstractMenu::build(QWidget *parent,
     return nullptr;
 }
 
-void AbstractMenu::acitonBusiness(QAction *act)
+void AbstractMenu::actionBusiness(QAction *act)
 {
     Q_UNUSED(act)
     // TODO :default action business

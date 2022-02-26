@@ -57,6 +57,7 @@ public:
     void setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible);
     void setFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void setFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void setWorkspaceMenuScene(quint64 windowID, const QUrl &url, const QString &scene);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QString &path);
@@ -77,6 +78,7 @@ signals:
     void openNewTab(quint64 windowId, const QUrl &url);
     void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void requestSetWorkspaceMenuScene(quint64 windowID, const QUrl &url, const QString &scene);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);

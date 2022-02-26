@@ -36,6 +36,7 @@ DPWORKSPACE_BEGIN_NAMESPACE
 class SelectHelper;
 class DragDropHelper;
 class ViewDrawHelper;
+class FileViewMenuHelper;
 class FileViewItem;
 class FileViewModel;
 class FileViewPrivate;
@@ -47,6 +48,7 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class SelectHelper;
     friend class DragDropHelper;
     friend class ViewDrawHelper;
+    friend class FileViewMenuHelper;
     friend class ShortcutHelper;
     friend class FileViewPrivate;
 
@@ -123,6 +125,7 @@ public slots:
     void onRowCountChanged();
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void setMenuScene(const quint64 windowID, const QUrl &url, const QString &scene);
 
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
@@ -145,6 +148,7 @@ protected:
     QModelIndexList selectedIndexes() const override;
     void showEvent(QShowEvent *event) override;
     void keyboardSearch(const QString &search) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);

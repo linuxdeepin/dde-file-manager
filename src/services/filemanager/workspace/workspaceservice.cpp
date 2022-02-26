@@ -100,3 +100,8 @@ void WorkspaceService::setFileViewFilterCallback(const quint64 windowID, const Q
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, url, callback);
 }
+
+void WorkspaceService::setWorkspaceMenuScene(const quint64 windowID, const QUrl &url, const QString &scene)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, url, scene);
+}

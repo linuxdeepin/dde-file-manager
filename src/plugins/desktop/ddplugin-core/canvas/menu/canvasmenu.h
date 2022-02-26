@@ -77,8 +77,7 @@ protected:
                     const QUrl &foucsUrl,
                     const QList<QUrl> &selected = {});
 
-    void acitonBusiness(QAction *act);
-
+    void actionBusiness(QAction *act);
     void registDesktopCustomActions();
     void registDesktopCustomSubActions();
     void columnRolesAssociateActionType();

@@ -188,7 +188,7 @@ void CanvasMenu::normalMenu(QMenu *menu,
     // add menu filter
 }
 
-void CanvasMenu::acitonBusiness(QAction *act)
+void CanvasMenu::actionBusiness(QAction *act)
 {
     auto actType = act->data().toInt();
     if (customActionType.contains(actType))
@@ -320,7 +320,7 @@ void CanvasMenu::acitonBusiness(QAction *act)
     default:
         break;
     }
-    AbstractMenu::acitonBusiness(act);
+    AbstractMenu::actionBusiness(act);
 }
 
 void CanvasMenu::registDesktopCustomActions()

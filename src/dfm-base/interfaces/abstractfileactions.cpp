@@ -51,6 +51,7 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
         actionKeys << ActionType::kActNewFolder
                    << ActionType::kActNewDocument
                    << ActionType::kActSeparator
+                   << ActionType::kActDisplayAs
                    << ActionType::kActSortBy
                    << ActionType::kActOpenAsAdmin
                    << ActionType::kActOpenInTerminal

@@ -23,7 +23,6 @@
 #include "workspacehelper.h"
 #include "views/fileview.h"
 #include "dfm-framework/framework.h"
-#include "dfm_global_defines.h"
 
 #include "services/common/propertydialog/property_defines.h"
 
@@ -47,6 +46,18 @@ void FileOperaterHelper::touchFolder(const FileView *view)
                                           windowId,
                                           view->rootUrl(),
                                           kCreateFileTypeFolder);
+}
+
+void FileOperaterHelper::touchFiles(const FileView *view, const CreateFileType type, QString suffix)
+{
+    const quint64 windowId = WorkspaceHelper::instance()->windowId(view);
+    const QUrl &url = view->rootUrl();
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFile,
+                                          windowId,
+                                          url,
+                                          type,
+                                          suffix);
 }
 
 void FileOperaterHelper::openFiles(const FileView *view)
@@ -166,15 +177,21 @@ void FileOperaterHelper::deleteFiles(const FileView *view)
 void FileOperaterHelper::openInTerminal(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
+    QList<QUrl> urls = view->selectedUrlList();
+    if (urls.isEmpty())
+        urls.append(view->rootUrl());
     dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal,
                                           windowId,
-                                          view->selectedUrlList());
+                                          urls);
 }
 
 void FileOperaterHelper::showFilesProperty(const FileView *view)
 {
+    QList<QUrl> urls = view->selectedUrlList();
+    if (urls.isEmpty())
+        urls.append(view->rootUrl());
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty,
-                                          view->selectedUrlList());
+                                          urls);
 }
 
 void FileOperaterHelper::previewFiles(const FileView *view)

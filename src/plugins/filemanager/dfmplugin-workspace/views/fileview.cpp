@@ -36,6 +36,7 @@
 #include "utils/viewdrawhelper.h"
 #include "utils/selecthelper.h"
 #include "utils/shortcuthelper.h"
+#include "utils/fileviewmenuhelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -571,6 +572,13 @@ void FileView::setFilterCallback(const quint64 windowID, const QUrl &url, const 
     }
 }
 
+void FileView::setMenuScene(const quint64 windowID, const QUrl &url, const QString &scene)
+{
+    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
+    if (thisWindId == windowID && url == rootUrl() && isVisible())
+        d->viewMenuHelper->setMenuScene(scene);
+}
+
 bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return DListView::edit(index, trigger, event);
@@ -616,6 +624,8 @@ void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
 
 void FileView::mousePressEvent(QMouseEvent *event)
 {
+    bool isLeftBottonPressed = event->buttons().testFlag(Qt::LeftButton);
+
     switch (event->button()) {
     case Qt::LeftButton: {
         if (dragDropMode() != NoDragDrop) {
@@ -629,6 +639,11 @@ void FileView::mousePressEvent(QMouseEvent *event)
         d->selectHelper->setSelection(selectionModel()->selection());
 
         DListView::mousePressEvent(event);
+        break;
+    }
+    case Qt::RightButton: {
+        if (isLeftBottonPressed)
+            DListView::mousePressEvent(event);
         break;
     }
     default:
@@ -795,6 +810,32 @@ void FileView::keyboardSearch(const QString &search)
     d->fileViewHelper->keyboardSearch(search);
 }
 
+void FileView::contextMenuEvent(QContextMenuEvent *event)
+{
+    const QModelIndex &index = indexAt(event->pos());
+
+    if (d->fileViewHelper->isEmptyArea(event->pos())) {
+        itemDelegate()->hideNotEditingIndexWidget();
+        clearSelection();
+
+        d->viewMenuHelper->showEmptyAreaMenu();
+    } else {
+        if (!isSelected(index)) {
+            itemDelegate()->hideNotEditingIndexWidget();
+            clearSelection();
+
+            if (!index.isValid()) {
+                d->viewMenuHelper->showEmptyAreaMenu();
+                return;
+            }
+
+            d->selectHelper->click(index);
+        }
+
+        d->viewMenuHelper->showNormalMenu(proxyModel()->mapToSource(index), model()->flags(proxyModel()->mapToSource(index)));
+    }
+}
+
 void FileView::initializeModel()
 {
     FileViewModel *model = new FileViewModel(this);
@@ -849,6 +890,7 @@ void FileView::initializeConnect()
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterData, this, &FileView::setFilterData);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetWorkspaceMenuScene, this, &FileView::setMenuScene);
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
 

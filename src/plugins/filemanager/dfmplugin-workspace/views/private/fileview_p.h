@@ -66,6 +66,7 @@ class FileViewPrivate
     DragDropHelper *dragDropHelper { nullptr };
     ViewDrawHelper *viewDrawHelper { nullptr };
     SelectHelper *selectHelper { nullptr };
+    FileViewMenuHelper *viewMenuHelper { nullptr };
     FileViewHelper *fileViewHelper { nullptr };
 
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;

@@ -32,6 +32,7 @@
 #include "utils/selecthelper.h"
 #include "utils/shortcuthelper.h"
 #include "utils/fileoperaterhelper.h"
+#include "utils/fileviewmenuhelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
@@ -46,6 +47,7 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
     viewDrawHelper = new ViewDrawHelper(qq);
     selectHelper = new SelectHelper(qq);
     shortcutHelper = new ShortcutHelper(qq);
+    viewMenuHelper = new FileViewMenuHelper(qq);
 }
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const

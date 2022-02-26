@@ -41,6 +41,8 @@ enum ActionType {
     kActOpenInNewWindow,
     kActOpenInNewTab,
     kActDisplayAs,
+    kActDisplayAsList,
+    kActDisplayAsIcon,
     kActSortBy,
     kActOpenWith,
     kActOpenAsAdmin,

@@ -35,6 +35,7 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getCustomTopWidgetVisible"), this, &WorkspaceUnicastReceiver::invokeGetCustomTopWidgetVisible);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::setFileViewFilterData"), this, &WorkspaceUnicastReceiver::invokeSetFileViewFilterData);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::setFileViewFilterCallback"), this, &WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::setWorkspaceMenuScene"), this, &WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -85,6 +86,11 @@ void WorkspaceUnicastReceiver::invokeSetFileViewFilterData(const quint64 windowI
 void WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback)
 {
     WorkspaceHelper::instance()->setFilterCallback(windowID, url, callback);
+}
+
+void WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene(const quint64 windowID, const QUrl &url, const QString &scene)
+{
+    WorkspaceHelper::instance()->setWorkspaceMenuScene(windowID, url, scene);
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)
