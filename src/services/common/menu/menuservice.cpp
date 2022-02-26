@@ -49,6 +49,8 @@ QMenu *MenuService::createMenu(QWidget *parent,
                                ExtensionFlags flags,
                                QVariant customData)
 {
+    Q_UNUSED(onDesktop);   // 扩展预留
+
     auto topClass = DFMBASE_NAMESPACE::MenuFactory::create(scene);
     if (!topClass)
         return nullptr;
@@ -65,18 +67,28 @@ QMenu *MenuService::createMenu(QWidget *parent,
 
     // 添加oem菜单
     if (flags.testFlag(DFMBASE_NAMESPACE::kDesktopAction)) {
-        MenuServiceHelper::desktopFileMenu(tempMenu);
+        // TODO(Lee):
+        // MenuServiceHelper::desktopFileMenu(tempMenu);
     }
 
     // 添加conf菜单
     if (flags.testFlag(DFMBASE_NAMESPACE::kConfAction)) {
-        MenuServiceHelper::extendCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
+        // TODO(Lee):
+        // MenuServiceHelper::extendCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
     }
 
     // 添加第三方扩展so菜单
     if (flags.testFlag(DFMBASE_NAMESPACE::kSoAction)) {
-        MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
+        // TODO(Lee):
+        // MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
     }
+
+    // Action业务
+    auto triggeredFunc = [topClass](QAction *action) {
+        topClass->acitonBusiness(action);
+    };
+
+    connect(tempMenu, &QMenu::triggered, this, triggeredFunc, Qt::QueuedConnection);
 
     return tempMenu;
 }

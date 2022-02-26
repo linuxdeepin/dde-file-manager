@@ -35,22 +35,6 @@ QT_END_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
 class AbstractMenuPrivate;
-
-namespace FileMenuTypes {
-extern const QString kCreateNewDir;
-extern const QString kCreateNewDoc;
-extern const QString kViewModeSwitch;
-extern const QString kViewSortSwitch;
-extern const QString kOpenAsAdmin;
-extern const QString kOpenInTerminal;
-extern const QString kSelectAll;
-extern const QString kProperty;
-extern const QString kCut;
-extern const QString kCopy;
-extern const QString kPaste;
-extern const QString kRename;
-}   // namesapce FileMenuTypes
-
 class AbstractMenu : public QObject
 {
     Q_OBJECT

@@ -112,8 +112,7 @@ void DefaultActionData::initDefaultActionData()
     this->addDefaultActionType(kActCreatedDate, "CreatedDate", tr("Time created"));
     this->addDefaultActionType(kActLastModifiedDate, "LastModifiedDate", tr("Time modified"));
     this->addDefaultActionType(kActProperty, "Property", tr("Properties"));
-    this->addDefaultActionType(kActSeparator, "Separator", tr("Open"));
-    this->addDefaultActionType(kActOpen, "Open", tr(""));
+    this->addDefaultActionType(kActSeparator, "Separator", tr(""));
 
     // TODO(Lee): icon init
 }

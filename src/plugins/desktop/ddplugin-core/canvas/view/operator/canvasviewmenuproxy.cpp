@@ -95,6 +95,8 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
 
+    // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
+
     auto selectUrls = view->selectionModel()->selectedUrls();
     auto tgUrl = view->model()->url(index);
     QMenu *menu = extensionMenuServer->createMenu(view,
@@ -116,4 +118,3 @@ void CanvasViewMenuProxy::changeIconLevel(bool increase)
 {
     CanvasIns->onChangeIconLevel(increase);
 }
-

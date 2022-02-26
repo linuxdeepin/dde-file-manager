@@ -88,18 +88,14 @@ QMenu *CanvasMenu::build(QWidget *parent,
     if (AbstractMenu::MenuMode::kNormal == mode) {
         normalMenu(menu, rootUrl, foucsUrl, selected);
     }
-
-    // Action业务
-    connect(menu, &QMenu::triggered, this, [this](QAction *action) {
-        qDebug() << "desktop menu trigered!";
-        this->acitonBusiness(action);
-    },
-            Qt::QueuedConnection);
     return menu;
 }
 
 void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
 {
+    if (!view)
+        return;
+
     QString errString;
     auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
     if (!tempInfo) {
@@ -107,9 +103,7 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
         return;
     }
 
-    QVector<ActionDataContainer> tempActTextLst;
-    if (!view)
-        return;
+    QVector<ActionDataContainer> tempActDataLst;
 
     // regest IconSize sub actions
     if (!actionTypesInitialized) {
@@ -119,7 +113,7 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
 
     // Prepare the type of menu item to display
 
-    tempActTextLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActNewFolder)
+    tempActDataLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActNewFolder)
                    << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActNewDocument)
                    << *sortByActionData
                    << customAction.value(DesktopCustomAction::kIconSize)
@@ -128,12 +122,12 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
                    << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSelectAll)
                    << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActOpenInTerminal);
     if (isRefreshOn())
-        tempActTextLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActRefreshView);
-    tempActTextLst  << customAction.value(DesktopCustomAction::kDisplaySettings)
+        tempActDataLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActRefreshView);
+    tempActDataLst << customAction.value(DesktopCustomAction::kDisplaySettings)
                    << customAction.value(DesktopCustomAction::kWallpaperSettings);
 
     // add action to menu
-    this->creatMenuByDataLst(menu, tempActTextLst);
+    this->creatMenuByDataLst(menu, tempActDataLst);
 
     // Action special handling
     this->setActionSpecialHandling(menu);
@@ -145,27 +139,29 @@ void CanvasMenu::normalMenu(QMenu *menu,
                             const QList<QUrl> &selected)
 {
     Q_UNUSED(rootUrl)
-    // TODO(Lee) 以下为测试代码
+
+    if (!view)
+        return;
+
     QString errString;
     auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(foucsUrl, true, &errString);
     if (!tempInfo) {
         qInfo() << "create LocalFileInfo error: " << errString;
         return;
     }
-
-    QVector<ActionType> tempLst;
-
+    QVector<ActionDataContainer> tempActDataLst;
     // 获取对应Scheme对应的菜单列表
     auto baseDec = QSharedPointer<AbstractFileInfo>(new AbstractFileActions(tempInfo));
-    auto tempActionInfo = new DesktopFileActions(baseDec);
-
-    // 使用tempActionInfo通过tempFileInfo获取对应的action信息
-    QSet<int> unUsedActions;
+    // 加上桌面场景过滤后的文件菜单列表
+    AbstractFileActions *tempfileActions = new DesktopFileActions(baseDec);
+    QVector<ActionType> tempActTypeList;
+    // 过滤场景内enable 和 display 的action
+    QSet<ActionType> unUsedActions { ActionType::kActSendToDesktop };
     if (selected.size() == 1) {
-        tempLst = tempActionInfo->menuActionList(AbtMenuType::kSingleFile);
+        tempActTypeList = tempfileActions->menuActionList(AbtMenuType::kSingleFile);
         unUsedActions << ActionType::kActOpenInNewWindow
                       << ActionType::kActOpenInNewTab;
-        // TODO(Lee) ActionType::kActAddToBookMark
+        // TODO(Lee) ActionType::kActAddToBookMark // 功能缺失
     } else {
 
         bool isSystemPathIncluded = false;
@@ -176,42 +172,19 @@ void CanvasMenu::normalMenu(QMenu *menu,
             }
         }
         if (isSystemPathIncluded) {
-            tempLst = tempActionInfo->menuActionList(AbtMenuType::kMultiFilesSystemPathIncluded);
+            tempActTypeList = tempfileActions->menuActionList(AbtMenuType::kMultiFilesSystemPathIncluded);
         } else {
-            tempLst = tempActionInfo->menuActionList(AbtMenuType::kMultiFiles);
+            tempActTypeList = tempfileActions->menuActionList(AbtMenuType::kMultiFiles);
         }
     }
 
-    unUsedActions << ActionType::kActSendToDesktop;
-
-    if (tempLst.isEmpty())
+    if (tempActTypeList.isEmpty())
         return;
 
+    getActionDataByTypes(tempActDataLst, tempActTypeList, unUsedActions);
+
     // add action to menu
-    for (ActionType tempActType : tempLst) {
-        auto tempActData = ActionTypeManager::instance().actionDataContainerByType(tempActType);
-
-        // Separator
-        if (tempActData.actionType() == ActionType::kActSeparator) {
-            menu->addSeparator();
-            continue;
-        }
-
-        if (tempActData.name().isEmpty() || (-1 == tempActData.actionType()))
-            continue;
-
-        if (unUsedActions.contains(tempActData.actionType()))
-            continue;
-
-        QAction *act = new QAction(menu);
-        act->setData(tempActData.actionType());
-        act->setText(tempActData.name());
-        if (!tempActData.icon().isNull())
-            act->setIcon(tempActData.icon());
-        menu->addAction(act);
-    }
-
-    // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
+    this->creatMenuByDataLst(menu, tempActDataLst);
     // add menu filter
 }
 
@@ -222,7 +195,6 @@ void CanvasMenu::acitonBusiness(QAction *act)
         actType = customActionType.value(actType);
 
     switch (actType) {
-    // 自定义和非事件
     case DesktopCustomAction::kIconSize0:
     case DesktopCustomAction::kIconSize1:
     case DesktopCustomAction::kIconSize2:
@@ -285,8 +257,6 @@ void CanvasMenu::acitonBusiness(QAction *act)
         sortByRole(sortRole);
         return;
     }
-
-        // 事件
     case kActNewFolder: {
         FileOperaterProxyIns->touchFolder(view, cusData.toPoint());
         return;
@@ -307,10 +277,14 @@ void CanvasMenu::acitonBusiness(QAction *act)
         FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypePowerpoint);
         return;
     }
-    case kActPaste: {
-        FileOperaterProxyIns->pasteFiles(view, cusData.toPoint());
+        // TODO: 常规菜单中大部分直接使用基础默认的响应，不做特殊处理，
+        //       这里是暂时接入桌面业务,后续待dde-file-manager接入进来后调整清理.
+    case kActOpen: {
+        FileOperaterProxyIns->openFiles(view);
         return;
     }
+        //    case kActOpenWith:
+        //    case kActOpenAsAdmin:
     case kActDelete: {
         FileOperaterProxyIns->moveToTrash(view);
         return;
@@ -321,9 +295,32 @@ void CanvasMenu::acitonBusiness(QAction *act)
         dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, view->winId(), urls);
         return;
     }
+    case kActPaste: {
+        FileOperaterProxyIns->pasteFiles(view, cusData.toPoint());
+        return;
+    }
+    case kActCopy: {
+        FileOperaterProxyIns->copyFiles(view);
+        return;
+    }
+    case kActRename: {
+        // TODO:
+        return;
+    }
+    case kActCreateSymlink: {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
+                                              view->winId(),
+                                              view->model()->url(view->currentIndex()));
+        return;
+    }
+    case kActProperty: {
+        FileOperaterProxyIns->showFilesProperty(view);
+        return;
+    }
     default:
         break;
     }
+    AbstractMenu::acitonBusiness(act);
 }
 
 void CanvasMenu::registDesktopCustomActions()
@@ -419,6 +416,17 @@ void CanvasMenu::creatMenuByDataLst(QMenu *menu, const QVector<ActionDataContain
     }
 }
 
+void CanvasMenu::getActionDataByTypes(QVector<dfmbase::ActionDataContainer> &lst,
+                                      const QVector<ActionType> &types,
+                                      const QSet<ActionType> &unUsedTypes)
+{
+    for (dfmbase::ActionType type : types) {
+        if (unUsedTypes.contains(type))
+            continue;
+        lst << ActionTypeManager::instance().actionDataContainerByType(type);
+    }
+}
+
 void CanvasMenu::setActionSpecialHandling(QMenu *menu)
 {
     QList<QAction *> actions = menu->actions();
@@ -456,7 +464,7 @@ bool CanvasMenu::isRefreshOn() const
     // the gsetting control for refresh action
     if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
         static const QGSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
-                                         "/com/deepin/dde/filemanager/contextmenu/");
+                                           "/com/deepin/dde/filemanager/contextmenu/");
         if (menuSwitch.keys().contains("refresh")) {
             auto showRefreh = menuSwitch.get("refresh");
             if (showRefreh.isValid())

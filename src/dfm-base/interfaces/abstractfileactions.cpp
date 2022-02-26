@@ -138,9 +138,7 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
 
         // todo(lee or lym): SendToRemovableDisk, StageFileForBurning, CompleteDeletion
 
-        actionKeys << ActionType::kActDelete
-                   << ActionType::kActSeparator
-                   << ActionType::kActProperty;
+        actionKeys << ActionType::kActDelete;
 
         // todo(lee or lym): tag protocol --> TagInfo, TagFilesUseColor
     } else if (type == AbtMenuType::kMultiFilesSystemPathIncluded) {
@@ -153,6 +151,10 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
 
         // todo(lee or lym): tag protocol --> TagInfo, TagFilesUseColor
     }
+
+    if (actionKeys.last() != ActionType::kActSeparator)
+        actionKeys << ActionType::kActSeparator;
+    actionKeys << ActionType::kActProperty;
     auto bLst = fileInfo->menuActionList(type);
     actionKeys = bLst + actionKeys;
     return actionKeys;

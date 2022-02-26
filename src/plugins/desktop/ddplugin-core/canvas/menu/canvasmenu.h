@@ -78,10 +78,14 @@ protected:
                     const QList<QUrl> &selected = {});
 
     void acitonBusiness(QAction *act);
+
     void registDesktopCustomActions();
     void registDesktopCustomSubActions();
     void columnRolesAssociateActionType();
     void creatMenuByDataLst(QMenu *menu, const QVector<dfmbase::ActionDataContainer> &lst);
+    void getActionDataByTypes(QVector<dfmbase::ActionDataContainer> &lst,
+                              const QVector<dfmbase::ActionType> &types,
+                              const QSet<dfmbase::ActionType> &unUsedTypes);
     void setActionSpecialHandling(QMenu *menu);
     bool isRefreshOn() const;
 private:

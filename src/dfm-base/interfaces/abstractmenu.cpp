@@ -27,21 +27,6 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-namespace FileMenuTypes {
-const QString kCreateNewDir { QObject::tr("Create New Dir") };
-const QString kCreateNewDoc { QObject::tr("Create New Doc") };
-const QString kViewModeSwitch { QObject::tr("Switch View Mode") };
-const QString kViewSortSwitch { QObject::tr("Switch View Sort") };
-const QString kOpenAsAdmin { QObject::tr("Open As Admin") };
-const QString kOpenInTerminal { QObject::tr("Open In Terminal") };
-const QString kSelectAll { QObject::tr("Select All") };
-const QString kProperty { QObject::tr("Property") };
-const QString kCut { QObject::tr("Cut") };
-const QString kCopy { QObject::tr("Copy") };
-const QString kPaste { QObject::tr("Paste") };
-const QString kRename { QObject::tr("Rename") };
-}   // namespace FileMenuTypes
-
 AbstractMenu::AbstractMenu(QObject *parent)
     : QObject(parent)
 {
@@ -58,36 +43,12 @@ QMenu *AbstractMenu::build(QWidget *parent,
                            const QList<QUrl> &selected,
                            QVariant customData)
 {
+    Q_UNUSED(parent)
+    Q_UNUSED(mode)
     Q_UNUSED(rootUrl)
     Q_UNUSED(foucsUrl)
     Q_UNUSED(selected)
     Q_UNUSED(customData)
-
-    QMenu *menu = new QMenu(parent);
-    if (AbstractMenu::MenuMode::kEmpty == mode) {
-
-        menu->addAction(FileMenuTypes::kCreateNewDir);
-        menu->addAction(FileMenuTypes::kCreateNewDoc);
-        menu->addAction(FileMenuTypes::kViewModeSwitch);
-        menu->addAction(FileMenuTypes::kViewSortSwitch);
-        menu->addAction(FileMenuTypes::kOpenAsAdmin);
-        menu->addAction(FileMenuTypes::kOpenInTerminal);
-        menu->addAction(FileMenuTypes::kSelectAll);
-        menu->addAction(FileMenuTypes::kProperty);
-        return menu;
-    }
-
-    if (AbstractMenu::MenuMode::kNormal == mode) {
-        menu->addAction(FileMenuTypes::kCreateNewDir);
-        menu->addAction(FileMenuTypes::kCreateNewDoc);
-        menu->addAction(FileMenuTypes::kViewModeSwitch);
-        menu->addAction(FileMenuTypes::kViewSortSwitch);
-        menu->addAction(FileMenuTypes::kOpenAsAdmin);
-        menu->addAction(FileMenuTypes::kOpenInTerminal);
-        menu->addAction(FileMenuTypes::kSelectAll);
-        menu->addAction(FileMenuTypes::kProperty);
-        return menu;
-    }
 
     return nullptr;
 }
