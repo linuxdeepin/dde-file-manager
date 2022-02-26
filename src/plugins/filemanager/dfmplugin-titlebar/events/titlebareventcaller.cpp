@@ -22,6 +22,7 @@
 */
 #include "titlebareventcaller.h"
 #include "utils/titlebarhelper.h"
+#include "services/filemanager/detailspace/detailspace_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -42,7 +43,7 @@ void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kShowDetailView, id, checked);
+    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView, id, checked);
 }
 
 void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)

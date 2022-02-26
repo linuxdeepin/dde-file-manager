@@ -25,9 +25,6 @@
 #include "events/detailspaceeventreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
-
-#include <dfm-framework/framework.h>
 
 DPDETAILSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -44,8 +41,7 @@ void DetailSpace::initialize()
 
 bool DetailSpace::start()
 {
-    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kShowDetailView,
-                                            DetailSpaceEventReceiver::instance(), &DetailSpaceEventReceiver::handleTileBarShowDetailView);
+    DetailSpaceEventReceiver::instance()->connectService();
     return true;
 }
 

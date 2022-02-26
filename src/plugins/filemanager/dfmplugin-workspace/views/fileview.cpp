@@ -576,6 +576,26 @@ bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tri
     return DListView::edit(index, trigger, event);
 }
 
+void FileView::setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    static QModelIndex current;
+    if (!deselected.indexes().isEmpty()) {
+        QModelIndex index = deselected.first().topLeft();
+        if (current != index) {
+            current = proxyModel()->mapToSource(index);
+            QUrl url = model()->getUrlByIndex(current);
+            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), url);
+        }
+    } else if (!selected.indexes().isEmpty()) {
+        QModelIndex index = selected.first().topLeft();
+        if (current != index) {
+            current = proxyModel()->mapToSource(index);
+            QUrl url = model()->getUrlByIndex(current);
+            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), url);
+        }
+    }
+}
+
 void FileView::resizeEvent(QResizeEvent *event)
 {
     DListView::resizeEvent(event);
@@ -779,11 +799,13 @@ void FileView::initializeModel()
 {
     FileViewModel *model = new FileViewModel(this);
     FileSortFilterProxyModel *proxyModel = new FileSortFilterProxyModel(this);
+
     proxyModel->setSourceModel(model);
     setModel(proxyModel);
 
     FileSelectionModel *selectionModel = new FileSelectionModel(proxyModel, this);
     setSelectionModel(selectionModel);
+    connect(selectionModel, &FileSelectionModel::selectionChanged, this, &FileView::setDetailFileUrl);
 
     d->sortTimer = new QTimer(this);
     d->sortTimer->setInterval(20);

@@ -34,7 +34,6 @@ namespace TitleBar {
 namespace EventType {
 const int kSwitchMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSettingsMenuTriggered = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kShowDetailView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kDoSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 

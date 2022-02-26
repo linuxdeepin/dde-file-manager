@@ -22,6 +22,14 @@
 */
 #include "detailspaceservice.h"
 #include "private/detailspaceservice_p.h"
+#include "dfm-base/utils/universalutils.h"
+
+DSB_FM_BEGIN_NAMESPACE
+namespace DetailEventType {
+const int kShowDetailView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetDetailViewSelectFileUrl = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+}
+DSB_FM_END_NAMESPACE
 
 DSB_FM_USE_NAMESPACE
 

@@ -24,6 +24,8 @@
 
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "services/common/propertydialog/property_defines.h"
+//#include "services/common/preview/preview_defines.h"
+#include "services/filemanager/detailspace/detailspace_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm_global_defines.h"
@@ -35,7 +37,8 @@ DSB_FM_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
+static DPF_NAMESPACE::EventDispatcherManager *
+dispatcher()
 {
     return &dpfInstance.eventDispatcher();
 }
@@ -79,4 +82,14 @@ void WorkspaceEventCaller::sendTabRemoved(const quint64 windowID, const int inde
 void WorkspaceEventCaller::sendShowCustomTopWidget(const quint64 windowID, const QString &scheme, bool visible)
 {
     dispatcher()->publish(DSB_FM_NAMESPACE::Workspace::EventType::kShowCustomTopWidget, windowID, scheme, visible);
+}
+
+void WorkspaceEventCaller::sendShowPreviewDialog(const quint64 windowId, const QList<QUrl> &urls, const QList<QUrl> currentDirUrls)
+{
+    //    dispatcher()->publish(DSC_NAMESPACE::PreviewEventType::kShowPreviewEvent, windowId, urls, currentDirUrls);
+}
+
+void WorkspaceEventCaller::sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url)
+{
+    dispatcher()->publish(DSB_FM_NAMESPACE::DetailEventType::kSetDetailViewSelectFileUrl, windowId, url);
 }

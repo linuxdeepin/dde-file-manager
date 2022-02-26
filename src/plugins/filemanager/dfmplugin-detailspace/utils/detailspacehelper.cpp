@@ -71,6 +71,13 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
     w->setVisible(checked);
 }
 
+void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url)
+{
+    DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
+    if (w)
+        w->setCurrentUrl(url);
+}
+
 QMutex &DetailSpaceHelper::mutex()
 {
     static QMutex m;

@@ -39,8 +39,12 @@ class DetailSpaceEventReceiver final : public QObject
 public:
     static DetailSpaceEventReceiver *instance();
 
+    void connectService();
+
 public slots:
     void handleTileBarShowDetailView(quint64 windowId, bool checked);
+
+    void setSelect(quint64 windowId, const QUrl &url);
 
 private:
     explicit DetailSpaceEventReceiver(QObject *parent = nullptr);

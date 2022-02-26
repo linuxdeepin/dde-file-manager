@@ -126,6 +126,8 @@ public slots:
 
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
+    void setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected);
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;

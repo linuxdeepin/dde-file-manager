@@ -26,6 +26,12 @@
 #include "dfm_filemanager_service_global.h"
 
 DSB_FM_BEGIN_NAMESPACE
+
+namespace DetailEventType {
+extern const int kShowDetailView;
+extern const int kSetDetailViewSelectFileUrl;
+}
+
 DSB_FM_END_NAMESPACE
 
 #endif   // DETAILSPACE_DEFINES_H

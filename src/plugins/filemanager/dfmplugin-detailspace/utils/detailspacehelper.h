@@ -26,6 +26,7 @@
 #include "dfmplugin_detailspace_global.h"
 
 #include <QMap>
+#include <QUrl>
 #include <QMutex>
 DPDETAILSPACE_BEGIN_NAMESPACE
 
@@ -37,6 +38,7 @@ public:
     static void addDetailSpace(quint64 windowId, DetailSpaceWidget *titleBar);
     static void removeDetailSpace(quint64 windowId);
     static void showDetailView(quint64 windowId, bool checked);
+    static void setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url);
 
 private:
     static QMutex &mutex();
