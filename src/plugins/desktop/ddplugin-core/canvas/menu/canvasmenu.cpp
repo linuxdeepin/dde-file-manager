@@ -22,6 +22,9 @@
 #include "canvas/view/canvasview.h"
 #include "canvas/view/operator/fileoperaterproxy.h"
 #include "canvas/canvasmanager.h"
+#include "canvas/model/canvasmodel.h"
+#include "canvas/model/canvasselectionmodel.h"
+#include "utils/renamedialog.h"
 #include "displayconfig.h"
 #include "grid/canvasgrid.h"
 #include "canvas/delegate/canvasitemdelegate.h"
@@ -47,7 +50,7 @@ DSB_D_BEGIN_NAMESPACE
 DSB_D_USE_NAMESPACE
 
 namespace MenuScene {
-extern const char *const kDesktopMenu = "desktop-menu";
+const char *const kDesktopMenu = "desktop-menu";
 }   // namespace MenuScene
 
 CanvasMenu::CanvasMenu()
@@ -304,7 +307,33 @@ void CanvasMenu::actionBusiness(QAction *act)
         return;
     }
     case kActRename: {
-        // TODO:
+        auto selected = view->selectionModel()->selectedUrls();
+        if (selected.isEmpty())
+            return;
+        if (1 == selected.size()) {
+            auto index = view->model()->index(selected.first());
+            if (Q_UNLIKELY(!index.isValid()))
+                return;
+            view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+        } else {
+            RenameDialog renameDlg(selected.count());
+            renameDlg.moveToCenter();
+
+            // see DDialog::exec,it will return the index of buttons
+            if (1 == renameDlg.exec()) {
+                RenameDialog::ModifyMode mode = renameDlg.modifyMode();
+                if (RenameDialog::kReplace == mode) {
+                    auto content = renameDlg.getReplaceContent();
+                    FileOperaterProxyIns->renameFiles(view, selected, content, true);
+                } else if (RenameDialog::kAdd == mode) {
+                    auto content = renameDlg.getAddContent();
+                    FileOperaterProxyIns->renameFiles(view, selected, content);
+                } else if (RenameDialog::kCustom == mode) {
+                    auto content = renameDlg.getCustomContent();
+                    FileOperaterProxyIns->renameFiles(view, selected, content, false);
+                }
+            }
+        }
         return;
     }
     case kActCreateSymlink: {

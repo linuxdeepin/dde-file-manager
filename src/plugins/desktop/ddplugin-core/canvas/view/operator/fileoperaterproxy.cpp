@@ -183,12 +183,29 @@ void FileOperaterProxy::openFiles(const CanvasView *view, const QList<QUrl> &url
                                           , urls);
 }
 
-void FileOperaterProxy::renameFiles(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl)
+void FileOperaterProxy::renameFile(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl)
 {
     dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile
                                           , view->winId()
                                           , oldUrl
                                           , newUrl);
+}
+
+void FileOperaterProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace)
+{
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles
+                                          , view->winId()
+                                          , urls
+                                          , pair
+                                          , replace);
+}
+
+void FileOperaterProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> pair)
+{
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles
+                                          , view->winId()
+                                          , urls
+                                          , pair);
 }
 
 void FileOperaterProxy::openFilesByApp(const CanvasView *view)

@@ -43,7 +43,9 @@ public:
     void pasteFiles(const CanvasView *view, const QPoint pos = QPoint(0, 0));
     void openFiles(const CanvasView *view);
     void openFiles(const CanvasView *view, const QList<QUrl> &urls);
-    void renameFiles(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl);
+    void renameFile(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl);
+    void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace);
+    void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> pair);
     void openFilesByApp(const CanvasView *view);
     void moveToTrash(const CanvasView *view);
     void deleteFiles(const CanvasView *view);

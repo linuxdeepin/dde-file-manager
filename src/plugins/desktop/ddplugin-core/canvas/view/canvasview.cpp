@@ -767,11 +767,6 @@ bool CanvasViewPrivate::isWaterMaskOn()
     return true;
 }
 
-QList<QUrl> CanvasViewPrivate::selectedUrls() const
-{
-    return q->selectionModel()->selectedUrls();
-}
-
 QModelIndex CanvasViewPrivate::findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const
 {
     int start = 0;

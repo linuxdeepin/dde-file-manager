@@ -75,7 +75,6 @@ public:
     QString visualItem(const QPoint &gridPos) const;
     bool isEmptyArea(const QPoint &pos) const;
     bool isWaterMaskOn();
-    QList<QUrl> selectedUrls() const;
 public:
     QModelIndex findIndex(const QString &key, bool matchStart, const QModelIndex &current, bool reverseOrder, bool excludeCurrent) const;
     QModelIndex firstIndex() const;

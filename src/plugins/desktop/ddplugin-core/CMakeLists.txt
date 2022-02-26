@@ -88,6 +88,7 @@ set(core_cxx_cpp
     wallpaper/dbus/screensaver_interface.cpp
     utils/desktoputils.cpp
     utils/fileutil.cpp
+    utils/renamedialog.cpp
     screen/screenqt.cpp
     screen/screenproxyqt.cpp
     screen/screendbus.cpp
@@ -151,6 +152,8 @@ set(core_cxx_h
     wallpaper/dbus/screensaver_interface.h
     utils/desktoputils.h
     utils/fileutil.h
+    utils/renamedialog.h
+    utils/private/renamedialog_p.h
     screen/screenqt.h
     screen/screenproxyqt.h
     screen/screendbus.h

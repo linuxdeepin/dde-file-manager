@@ -281,7 +281,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     QUrl oldUrl = fileInfo->url();
     QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
 
-    FileOperaterProxyIns->renameFiles(parent(), oldUrl, newUrl);
+    FileOperaterProxyIns->renameFile(parent(), oldUrl, newUrl);
 }
 
 bool CanvasItemDelegate::mayExpand(QModelIndex *who) const
