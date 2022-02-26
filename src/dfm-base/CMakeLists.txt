@@ -82,6 +82,8 @@ FILE (GLOB ALL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/creator/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file/creator/*.cpp"
 )
 
 FILE (GLOB WIDGETS_FILES

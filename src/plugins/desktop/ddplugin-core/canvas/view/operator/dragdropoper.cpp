@@ -160,11 +160,9 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
     } else if (urls.isEmpty()) {
         return;
     } else {
-        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(targetFileUrl);
-        if (!itemInfo) {
-            qWarning() << "can not get file info" << targetFileUrl;
+        auto itemInfo = FileCreator->createFileInfo(targetFileUrl);
+        if (Q_UNLIKELY(!itemInfo))
             return;
-        }
 
         Qt::DropAction defaultAction = Qt::CopyAction;
         const QUrl from = urls.first();
@@ -273,7 +271,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
         QModelIndex index =  view->indexAt(event->pos());
         if (index.isValid()) {
             QUrl targetItem = view->model()->url(index);
-            auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(targetItem);
+            auto itemInfo = FileCreator->createFileInfo(targetItem);
             if (itemInfo && (itemInfo->isDir() ||
                              itemInfo->url() == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();

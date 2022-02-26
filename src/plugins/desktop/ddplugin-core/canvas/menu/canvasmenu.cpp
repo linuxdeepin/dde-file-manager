@@ -27,6 +27,7 @@
 #include "utils/renamedialog.h"
 #include "displayconfig.h"
 #include "grid/canvasgrid.h"
+#include "utils/fileutil.h"
 #include "canvas/delegate/canvasitemdelegate.h"
 #include "canvas/model/canvasmodel.h"
 
@@ -99,12 +100,13 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
     if (!view)
         return;
 
-    QString errString;
-    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
-    if (!tempInfo) {
-        qInfo() << "create LocalFileInfo error: " << errString;
-        return;
-    }
+    //! todo(lq) unused.
+//    QString errString;
+//    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
+//    if (!tempInfo) {
+//        qInfo() << "create LocalFileInfo error: " << errString;
+//        return;
+//    }
 
     QVector<ActionDataContainer> tempActDataLst;
 
@@ -146,13 +148,19 @@ void CanvasMenu::normalMenu(QMenu *menu,
 
     if (!view)
         return;
-
+// using coverted file info
+#if 0
     QString errString;
     auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(foucsUrl, true, &errString);
     if (!tempInfo) {
         qInfo() << "create LocalFileInfo error: " << errString;
         return;
     }
+#else
+    auto tempInfo = FileCreator->createFileInfo(foucsUrl);
+    if (Q_UNLIKELY(!tempInfo))
+        return;
+#endif
     QVector<ActionDataContainer> tempActDataLst;
     // 获取对应Scheme对应的菜单列表
     auto baseDec = QSharedPointer<AbstractFileInfo>(new AbstractFileActions(tempInfo));

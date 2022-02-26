@@ -22,6 +22,7 @@
 #include "core.h"
 #include "screenproxydbus.h"
 #include "screenproxyqt.h"
+#include "utils/fileutil.h"
 
 #include "services/common/menu/menuservice.h"
 
@@ -38,6 +39,7 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/file/local/localmenu.h"
 
@@ -80,10 +82,12 @@ void registerAllService()
 void registerFileSystem()
 {
     UrlRoute::regScheme(SchemeTypes::kFile, "/");
-
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
     WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
+
+    // initialize file creator
+    DesktopFileCreator::instance();
 
     // 初始化剪切板
     ClipBoard::instance();

@@ -296,11 +296,11 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
     case kFileSuffixRole:
         return indexFileInfo->suffix();
     case kFileNameOfRenameRole:
-        return "";  // todo by file info: fileNameOfRename
+        return indexFileInfo->fileNameOfRename();
     case kFileBaseNameOfRenameRole:
-        return "";  // todo by file info: baseNameOfRename
+        return indexFileInfo->baseNameOfRename();
     case kFileSuffixOfRenameRole:
-        return "";  // todo by file info: suffixOfRename
+        return indexFileInfo->suffixOfRename();
     default:
         return QString();
     }
@@ -405,7 +405,7 @@ QUrl CanvasModel::url(const QModelIndex &index) const
 DFMLocalFileInfoPointer CanvasModel::fileInfo(const QModelIndex &index) const
 {
     if (index == rootIndex())
-        return dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(d->rootUrl);
+        return FileCreator->createFileInfo(d->rootUrl);
 
     if (!index.isValid())
         return nullptr;
@@ -449,11 +449,9 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
         qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
     }
 
-    auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(targetFileUrl);
-    if (!itemInfo) {
-        qWarning() << "can not get file info" << targetFileUrl;
+    auto itemInfo = FileCreator->createFileInfo(targetFileUrl);
+    if (Q_UNLIKELY(!itemInfo))
         return false;
-    }
 
     if (itemInfo->isSymLink()) {
         targetFileUrl = itemInfo->symLinkTarget();

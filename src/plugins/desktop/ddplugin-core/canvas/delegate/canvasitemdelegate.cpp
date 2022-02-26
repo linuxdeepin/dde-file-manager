@@ -233,13 +233,16 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     // 是否显示判断后缀
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
-    QString suffix = index.data(CanvasModel::kFileSuffixRole).toString();   //todo kFileSuffixOfRenameRole
-    qDebug() << "Display" << index.data(CanvasModel::kFileDisplayNameRole)
-             << "FileName" << index.data(CanvasModel::kFileNameRole)
-             << "BaseName" << index.data(CanvasModel::kFileBaseNameRole)
-             << "suffix" << suffix;
+    QString suffix = index.data(CanvasModel::kFileSuffixOfRenameRole).toString();
+    qDebug() << "Display" << index.data(CanvasModel::kFileDisplayNameRole).toString()
+             << "FileName" << index.data(CanvasModel::kFileNameRole).toString()
+             << "FileNameofrenmae" << index.data(CanvasModel::kFileNameOfRenameRole).toString()
+             << "BaseName" << index.data(CanvasModel::kFileBaseNameRole).toString()
+             << "BaseNameofrename" << index.data(CanvasModel::kFileBaseNameOfRenameRole).toString()
+             << "suffix" << index.data(CanvasModel::kFileSuffixRole).toString()
+             << "suffixofrename" << suffix;
     if (showSuffix) {
-        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString();   // todo kFileNameOfRenameRole
+        QString name = index.data(CanvasModel::kFileNameOfRenameRole).toString();
         itemEditor->setMaximumLength(255);
         itemEditor->setText(name);
         itemEditor->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
@@ -247,7 +250,7 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
         itemEditor->setProperty(EDITOR_SHOW_SUFFIX, suffix);
         itemEditor->setMaximumLength(255 - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
 
-        QString name = index.data(CanvasModel::kFileDisplayNameRole).toString();   //todo kFileBaseNameOfRenameRole
+        QString name = index.data(CanvasModel::kFileBaseNameOfRenameRole).toString();
 
         //remove shuffix
         name = name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1));
@@ -271,17 +274,17 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     if (!suffix.isEmpty())
         newName += QStringLiteral(".") + suffix;
 
+    if (index.data(CanvasModel::kFileNameOfRenameRole) == newName)
+        return;
+
     CanvasModel *canvasModel = qobject_cast<CanvasModel *>(model);
     Q_ASSERT(canvasModel);
 
-    const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index);
-    if (!fileInfo.get() || fileInfo->fileName() == newName)
-        return;
-
-    QUrl oldUrl = fileInfo->url();
-    QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
-
-    FileOperaterProxyIns->renameFile(parent(), oldUrl, newUrl);
+    if (const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
+        QUrl oldUrl = fileInfo->url();
+        QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
+        FileOperaterProxyIns->renameFile(parent(), oldUrl, newUrl);
+    }
 }
 
 bool CanvasItemDelegate::mayExpand(QModelIndex *who) const

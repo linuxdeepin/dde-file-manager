@@ -20,11 +20,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filetreater.h"
-#include "dfm-base/base/schemefactory.h"
+#include "utils/fileutil.h"
 
 #include "filefilter.h"
 
 #include <QApplication>
+#include <QDebug>
 
 DSB_D_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -84,10 +85,8 @@ void FileTreater::insertChild(const QUrl &url)
         row = fileList.count();
     }
 
-    QString errString;
-    auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(url, true, &errString);
+    auto itemInfo = FileCreator->createFileInfo(url);
     if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create LocalFileInfo error: " << errString << url;
         return;
     }
 
@@ -127,14 +126,7 @@ void FileTreater::renameChild(const QUrl &oldUrl, const QUrl &newUrl)
         return;
     }
 
-    QString errString;
-    auto info = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(newUrl, true, &errString);
-    if (Q_UNLIKELY(!info)) {
-        qInfo() << "create LocalFileInfo error: " << errString << newUrl;
-        return;
-    }
-
-    {
+    if (auto info = FileCreator->createFileInfo(newUrl)) {
         QMutexLocker lk(&childrenMutex);
         int position = fileList.indexOf(oldUrl);
         if (Q_LIKELY(-1 != position))
@@ -157,8 +149,14 @@ void FileTreater::updateChild(const QUrl &url)
     if (updateChildFilter(url))
         return;
 
-    if (Q_UNLIKELY(!fileList.contains(url)))
+    if (Q_UNLIKELY(!fileMap.contains(url)))
         return;
+
+    // Although the files cached in InfoCache will be refreshed automatically,
+    // a redundant refresh is still required here, because the current variant of LocalFileInfo
+    // (like DesktopFileInfo created from DesktopFileCreator) is not in InfoCache and will not be refreshed automatically.
+    if (auto info = fileMap.value(url))
+        info->refresh();
 
     const QModelIndex &index = model()->index(url.toString());
     if (Q_UNLIKELY(!index.isValid()))
@@ -345,18 +343,12 @@ void FileTreater::sortMainDesktopFile(QList<DFMLocalFileInfoPointer> &files, Qt:
 void FileTreater::onUpdateChildren(const QList<QUrl> &children)
 {
     QList<DFMLocalFileInfoPointer> files;
-    QString errString;
-    for (auto children : children) {
-        if (traversalFilter(children))
+    for (const QUrl &child : children) {
+        if (traversalFilter(child))
             continue;
 
-        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(children, true, &errString);
-        if (Q_UNLIKELY(!itemInfo)) {
-            qInfo() << "create LocalFileInfo error: " << errString;
-            continue;
-        }
-
-        files.append(itemInfo);
+        if (auto itemInfo = FileCreator->createFileInfo(child))
+            files.append(itemInfo);
     }
 
     // defalut sort
@@ -366,9 +358,6 @@ void FileTreater::onUpdateChildren(const QList<QUrl> &children)
         QList<QUrl> fileUrls;
         QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
         for (auto itemInfo : files) {
-            if (Q_UNLIKELY(!itemInfo))
-                continue;
-
             fileUrls.append(itemInfo->url());
             fileMaps.insert(itemInfo->url(), itemInfo);
         }

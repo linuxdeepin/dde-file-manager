@@ -78,6 +78,23 @@ public:
     template<class CT = T>
     bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
+        CreateFunc foo = [=](const QUrl &url) {
+            return QSharedPointer<T>(new CT(url));
+        };
+        return regCreator(scheme, foo, errorString);
+    }
+
+    /*!
+     * \method regCreator
+     * \brief 注册Class创建器与Scheme的关联
+     * \param scheme 传递scheme进行类构造绑定
+     * \param creator 创建函数
+     * \param errorString 错误信息赋值的字符串
+     * \return bool 注册结果，如果当前已存在scheme的关联，则返回false
+     *  否则返回true
+     */
+    bool regCreator(const QString &scheme, CreateFunc creator, QString *errorString = nullptr)
+    {
         QString error;
         FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
@@ -87,10 +104,7 @@ public:
             return false;
         }
 
-        CreateFunc foo = [=](const QUrl &url) {
-            return QSharedPointer<T>(new CT(url));
-        };
-        constructList.insert(scheme, foo);
+        constructList.insert(scheme, creator);
         finally.dismiss();
         return true;
     }
@@ -141,6 +155,11 @@ public:
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
         return instance().SchemeFactory<AbstractFileInfo>::regClass<CT>(scheme, errorString);
+    }
+
+    static bool regCreator(const QString &scheme, CreateFunc creator, QString *errorString = nullptr)
+    {
+        return instance().SchemeFactory<AbstractFileInfo>::regCreator(scheme, creator, errorString);
     }
 
     // 提供任意子类的转换方法模板，仅限DAbstractFileInfo树族，

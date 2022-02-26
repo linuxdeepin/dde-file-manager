@@ -64,9 +64,11 @@ public:
         deepinID = map.value("DeepinID").toString();
         deepinVendor = map.value("DeepinVendor").toString();
         // Fix categories
-        if (categories.first().compare("") == 0) {
+        if (!categories.isEmpty() && categories.first().compare("") == 0) {
             categories.removeFirst();
         }
+
+        icon = QIcon();
     }
 
 public:
@@ -179,6 +181,9 @@ QIcon DesktopFileInfo::fileIcon() const
             d->icon = QIcon();
     }
 
+    // 临时代码
+    d->icon = QIcon::fromTheme(iconName); // todo(lxs) LocalFileInfo::fileIcon() 统一处理
+
     if (d->icon.isNull())
         return LocalFileInfo::fileIcon();
 
@@ -271,6 +276,12 @@ bool DesktopFileInfo::canMoveOrCopy() const
         return false;
 
     return true;
+}
+
+bool DesktopFileInfo::canRename() const
+{
+    // todo(lxs) wait for rename func for desktop file.
+    return false;
 }
 
 QMap<QString, QVariant> DesktopFileInfo::desktopFileInfo(const QUrl &fileUrl)

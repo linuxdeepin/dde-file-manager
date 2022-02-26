@@ -18,37 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fileutil.h"
-
-#include "base/schemefactory.h"
-#include "file/local/desktopfileinfo.h"
-
-#include <QReadWriteLock>
+#include "abstractfileinfocreator.h"
 
 DFMBASE_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 
-class DesktopFileCreatorGlogal : public DesktopFileCreator{};
-Q_GLOBAL_STATIC(DesktopFileCreatorGlogal, desktopFileCreatorGlogal)
-
-DesktopFileCreator *DesktopFileCreator::instance()
+AbstractFileInfoCreator::AbstractFileInfoCreator()
 {
-    return desktopFileCreatorGlogal;
-}
 
-DFMLocalFileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, bool cache)
-{
-    QString errString;
-    auto itemInfo = createLocalFileInfo(url, cache, &errString);
-    if (Q_UNLIKELY(!itemInfo)) {
-        qInfo() << "create LocalFileInfo error: " << errString << url;
-        return nullptr;
-    }
-
-    return itemInfo;
-}
-
-DesktopFileCreator::DesktopFileCreator()
-{
-    registerConvertor(&LocalFileInfoCreator::tryCovertDesktopFileInfo, nullptr);
 }

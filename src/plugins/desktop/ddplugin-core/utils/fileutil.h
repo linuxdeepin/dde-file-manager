@@ -24,6 +24,8 @@
 #include "dfm_desktop_service_global.h"
 
 #include "base/urlroute.h"
+#include "file/local/localfileinfo.h"
+#include "file/creator/localfileinfocreator.h"
 
 #include <QUrl>
 
@@ -43,6 +45,15 @@ static inline QUrl covertFileUrlToDesktop(const QUrl &fileUrl){
 }
 #endif
 
-DSB_D_END_NAMESPACE
+class DesktopFileCreator : protected DFMBASE_NAMESPACE::LocalFileInfoCreator
+{
+public:
+    static DesktopFileCreator *instance();
+    DFMLocalFileInfoPointer createFileInfo(const QUrl &url, bool cache = true);
+protected:
+    explicit DesktopFileCreator();
+};
 
+DSB_D_END_NAMESPACE
+#define FileCreator DSB_D_NAMESPACE::DesktopFileCreator::instance()
 #endif // FILEUTIL_H

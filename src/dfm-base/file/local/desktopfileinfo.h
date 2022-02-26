@@ -63,6 +63,7 @@ public:
     bool canDrop() const override;
     bool canTag() const override;
     bool canMoveOrCopy() const override;
+    bool canRename() const override;
 
     static QMap<QString, QVariant> desktopFileInfo(const QUrl &fileUrl);
 

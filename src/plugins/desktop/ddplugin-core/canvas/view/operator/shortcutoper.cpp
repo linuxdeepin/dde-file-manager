@@ -304,7 +304,7 @@ void ShortcutOper::clearClipBoard()
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     auto homePath = view->model()->rootUrl();
     if (!urls.isEmpty()) {
-        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(urls.first(), false, nullptr);
+        auto itemInfo = FileCreator->createFileInfo(urls.first(), false);
         if (itemInfo && (itemInfo->absolutePath() == homePath.toLocalFile()))
             ClipBoard::instance()->clearClipboard();
     }
