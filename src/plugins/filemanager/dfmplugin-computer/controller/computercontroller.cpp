@@ -76,7 +76,8 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
         return;
     }
 
-    if (!info->isAccessable()) {
+    bool isOptical = info->extraProperty(DeviceProperty::kOptical).toBool();
+    if (!info->isAccessable() && !isOptical) {
         qDebug() << "cannot access device: " << url;
         bool needAskForFormat = info->suffix() == SuffixInfo::kBlock
                 && !info->extraProperty(DeviceProperty::kHasFileSystem).toBool()
@@ -92,6 +93,8 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
 
     auto target = info->targetUrl();
     if (target.isValid()) {
+        if (isOptical)
+            target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(url));
         ComputerEventCaller::cdTo(winId, target);
     } else {
         if (suffix == SuffixInfo::kBlock) {
@@ -254,10 +257,12 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAft
 {
     setCursorStatus(true);
     ComputerUtils::deviceServIns()->mountBlockDeviceAsync(id, {}, [=](bool ok, dfmmount::DeviceError err, const QString &mpt) {
-        if (ok) {
-            QUrl u = ComputerUtils::makeLocalUrl(mpt);
+        bool isOpticalDevice = id.contains(QRegularExpression("/sr[0-9]*"));
+        if (ok || isOpticalDevice) {
+            QUrl u = isOpticalDevice ? ComputerUtils::makeBurnUrl(id) : ComputerUtils::makeLocalUrl(mpt);
+
             if (act == kEnterDirectory)
-                ComputerEventCaller::cdTo(winId, mpt);
+                ComputerEventCaller::cdTo(winId, u);
             else if (act == kEnterInNewWindow)
                 ComputerEventCaller::sendEnterInNewWindow(u);
             else if (act == kEnterInNewTab)
@@ -328,19 +333,25 @@ void ComputerController::actEject(const QUrl &url)
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
 {
     auto target = info->targetUrl();
-    if (target.isValid())
+    if (target.isValid()) {
+        if (info->extraProperty(DeviceProperty::kOptical).toBool())
+            target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->url()));
         ComputerEventCaller::sendEnterInNewWindow(target);
-    else
+    } else {
         mountDevice(winId, info, kEnterInNewWindow);
+    }
 }
 
 void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info)
 {
     auto target = info->targetUrl();
-    if (target.isValid())
+    if (target.isValid()) {
+        if (info->extraProperty(DeviceProperty::kOptical).toBool())
+            target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->url()));
         ComputerEventCaller::sendEnterInNewTab(winId, target);
-    else
+    } else {
         mountDevice(winId, info, kEnterInNewTab);
+    }
 }
 
 static void onNetworkDeviceMountFinished(bool ok, dfmmount::DeviceError err, const QString &mntPath, quint64 winId, bool enterAfterMounted)

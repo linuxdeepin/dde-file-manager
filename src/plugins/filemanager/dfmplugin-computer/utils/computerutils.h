@@ -75,6 +75,7 @@ public:
     static QUrl convertToProtocolDevUrlFrom(const QUrl &stashedUrl);
     static QUrl convertToStashedUrlFrom(const QUrl &protocolDevUrl);
     static QUrl makeLocalUrl(const QString &path);
+    static QUrl makeBurnUrl(const QString &id);   // device id
 
     static bool isPresetSuffix(const QString &suffix);
     static bool shouldSystemPartitionHide();

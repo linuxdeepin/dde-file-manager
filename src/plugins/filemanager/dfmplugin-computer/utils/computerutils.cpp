@@ -173,6 +173,16 @@ QUrl ComputerUtils::makeLocalUrl(const QString &path)
     return u;
 }
 
+QUrl ComputerUtils::makeBurnUrl(const QString &id)
+{
+    QString dev = id.mid(id.lastIndexOf("/") + 1);
+    QUrl u;
+    u.setScheme(SchemeTypes::kBurn);
+    // burn:///dev/sr0/disc_files/
+    u.setPath(QString("/dev/%1/disc_files/").arg(dev));
+    return u;
+}
+
 quint64 ComputerUtils::getWinId(QWidget *widget)
 {
     auto &ctx = dpfInstance.serviceContext();
