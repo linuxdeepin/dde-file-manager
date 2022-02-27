@@ -53,6 +53,10 @@ extern const int kCloseTabs;
 extern const int kShowCustomTopWidget;
 };   // namespace EventType
 
+namespace MenuScene {
+extern const char *const kWorkspaceMenu;
+}   // namespace MenuScene
+
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using FileViewFilterCallback = std::function<bool(DFMBASE_NAMESPACE::AbstractFileInfo *, QVariant)>;

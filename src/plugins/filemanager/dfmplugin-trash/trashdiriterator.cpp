@@ -62,7 +62,7 @@ TrashDirIterator::~TrashDirIterator()
 QUrl TrashDirIterator::next()
 {
     // Todo(yanghao): cache
-    return TrashHelper::fromTrashFile(d->iterator->next().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+    return TrashHelper::fromLocalFile(d->iterator->next());
 }
 
 bool TrashDirIterator::hasNext() const
@@ -78,7 +78,7 @@ QString TrashDirIterator::fileName() const
 
 QUrl TrashDirIterator::fileUrl() const
 {
-    return TrashHelper::fromTrashFile(d->iterator->filePath().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+    return TrashHelper::fromLocalFile(d->iterator->filePath());
 }
 
 const AbstractFileInfoPointer TrashDirIterator::fileInfo() const

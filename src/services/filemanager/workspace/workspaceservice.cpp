@@ -39,6 +39,10 @@ extern const int kCloseTabs = DFMBASE_NAMESPACE::UniversalUtils::registerEventTy
 extern const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
+namespace MenuScene {
+extern const char *const kWorkspaceMenu = "workspace-menu";
+};   // namespace MenuScene
+
 }   // namespace Sidebar
 
 DSB_FM_END_NAMESPACE
@@ -104,4 +108,17 @@ void WorkspaceService::setFileViewFilterCallback(const quint64 windowID, const Q
 void WorkspaceService::setWorkspaceMenuScene(const QString &scheme, const QString &scene)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, scene);
+}
+
+WorkspaceService *WorkspaceService::instance()
+{
+    dpfInstance.initialize();
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }

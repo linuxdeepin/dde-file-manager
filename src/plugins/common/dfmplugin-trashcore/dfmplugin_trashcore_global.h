@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: huangyu<huangyub@uniontech.com>
+ *             liuyangming<liuyangming@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef GLOBALDEFINITIONS_H
-#define GLOBALDEFINITIONS_H
+*/
+#ifndef DFMPLUGIN_TRASH_CORE_GLOBAL_H
+#define DFMPLUGIN_TRASH_CORE_GLOBAL_H
 
-#define DSC_NAMESPACE dfm_service_common
+#define DPTRASHCORE_BEGIN_NAMESPACE namespace dfmplugin_trashcore {
+#define DPTRASHCORE_END_NAMESPACE }
+#define DPTRASHCORE_USE_NAMESPACE using namespace dfmplugin_trashcore;
+#define DPTRASHCORE_NAMESPACE dfmplugin_trashcore
 
-#define DSC_BEGIN_NAMESPACE namespace DSC_NAMESPACE {
-#define DSC_END_NAMESPACE }
-#define DSC_USE_NAMESPACE using namespace DSC_NAMESPACE;
-
-#define DSC_FUNC_NAME (QString(metaObject()->className()) + "::" + QString(__FUNCTION__))
-
-#endif   //GLOBALDEFINITIONS_H
+#endif   // DFMPLUGIN_TRASH_CORE_GLOBAL_H

@@ -46,6 +46,8 @@ public:
     TransparentHandleMap getTransparentHandles();
     bool isTransparent(const QUrl &url);
 
+    static DelegateService *instance();
+
 private:
     explicit DelegateService(QObject *parent = nullptr);
     virtual ~DelegateService() = default;
@@ -55,4 +57,6 @@ private:
 };
 
 DSC_END_NAMESPACE
+
+#define delegateServIns ::dfm_service_common::DelegateService::instance()
 #endif   // DELEGATESERVICE_H

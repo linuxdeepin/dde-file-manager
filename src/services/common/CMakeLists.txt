@@ -87,6 +87,11 @@ FILE(GLOB BURN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/burn/*.cpp"
 )
 
+FILE(GLOB TRASH_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/trash/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/trash/*.cpp"
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -99,6 +104,7 @@ add_library(${PROJECT_NAME}
     ${USERSHARE_FILES}
     ${BURN_FILES}
     ${PREVIEW_FILES}
+    ${TRASH_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

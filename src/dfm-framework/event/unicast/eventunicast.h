@@ -133,6 +133,14 @@ public:
         return QVariant();
     }
 
+    inline QVariant push(const QString &topic)
+    {
+        if (Q_LIKELY(unicastMap.contains(topic)))
+            return unicastMap[topic]->send();
+
+        return QVariant();
+    }
+
     template<class T, class... Args>
     inline EventUnicastFuture post(const QString &topic, T param, Args &&... args)
     {

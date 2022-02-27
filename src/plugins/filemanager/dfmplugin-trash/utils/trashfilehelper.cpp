@@ -24,6 +24,9 @@
 #include "trashhelper.h"
 #include "events/trasheventcaller.h"
 
+#include "dfm-framework/framework.h"
+
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
 
@@ -45,7 +48,7 @@ bool TrashFileHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, 
             isOpenFile = true;
             continue;
         }
-        redirectedFileUrls << url;
+        redirectedFileUrls << redirectedFileUrl;
     }
     if (!redirectedFileUrls.isEmpty())
         TrashEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
@@ -60,11 +63,60 @@ bool TrashFileHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, 
 
 bool TrashFileHelper::writeToClipBoardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
 {
+
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
-        url.setScheme(SchemeTypes::kFile);
-        redirectedFileUrls << url;
+        redirectedFileUrls << TrashHelper::toLocalFile(url);
     }
-    // Todo(yanghao)
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+
     return true;
+}
+
+JobHandlePointer TrashFileHelper::moveToTrashHandle(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    // Todo(yanghao&lxs):回收站彻底删除
+    Q_UNUSED(flags)
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : sources) {
+        redirectedFileUrls << TrashHelper::toLocalFile(url);
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
+                                          windowId,
+                                          redirectedFileUrls);
+    return {};
+}
+
+JobHandlePointer TrashFileHelper::deletesHandle(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    // Todo(yanghao&lxs):回收站彻底删除
+    Q_UNUSED(flags)
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : sources) {
+        redirectedFileUrls << TrashHelper::toLocalFile(url);
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
+                                          windowId,
+                                          redirectedFileUrls);
+    return {};
+}
+
+JobHandlePointer TrashFileHelper::copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
+                                          windowId,
+                                          sources);
+    return {};
+}
+
+JobHandlePointer TrashFileHelper::cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
+                                          windowId,
+                                          sources);
+    return {};
 }

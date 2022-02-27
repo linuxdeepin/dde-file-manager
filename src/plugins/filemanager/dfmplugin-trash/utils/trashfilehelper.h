@@ -24,6 +24,8 @@
 
 #include "dfmplugin_trash_global.h"
 
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
 
 DPTRASH_BEGIN_NAMESPACE
@@ -36,6 +38,24 @@ public:
     static bool writeToClipBoardHandle(const quint64 windowId,
                                        const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                                        const QList<QUrl> urls);
+
+    static JobHandlePointer moveToTrashHandle(const quint64 windowId,
+                                              const QList<QUrl> sources,
+                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
+    static JobHandlePointer deletesHandle(const quint64 windowId,
+                                          const QList<QUrl> sources,
+                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
+    static JobHandlePointer copyHandle(const quint64 windowId,
+                                       const QList<QUrl> sources,
+                                       const QUrl target,
+                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static JobHandlePointer cutHandle(const quint64 windowId,
+                                      const QList<QUrl> sources,
+                                      const QUrl target,
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
     // Todo(yanghao)
 };
 

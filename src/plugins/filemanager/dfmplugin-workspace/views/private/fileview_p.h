@@ -77,6 +77,8 @@ class FileViewPrivate
     FileView::RandeIndex visibleIndexRande;
 
     bool isAlwaysOpenInCurrentWindow { false };
+    // move cursor later selecte index when pressed key shift
+    QModelIndex lastCursorIndex;
 
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;

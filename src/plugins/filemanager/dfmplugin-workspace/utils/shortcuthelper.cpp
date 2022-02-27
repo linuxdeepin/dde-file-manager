@@ -225,7 +225,7 @@ void ShortcutHelper::deleteFiles()
 {
     if (view->selectedUrlList().isEmpty())
         return;
-    // ToDo(yanghao):only support trash on root url
+    // Todo(yanghao):only support trash on root url
     // 共享文件夹不用弹出彻底删除对话框
     // 网络邻居目录不用弹出彻底删除对话框
     // 最近使用目录不用弹出彻底删除对话框

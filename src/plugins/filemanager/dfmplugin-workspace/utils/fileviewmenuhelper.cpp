@@ -25,6 +25,7 @@
 #include "menus/workspacemenu.h"
 #include "utils/workspacehelper.h"
 
+#include "services/filemanager/workspace/workspace_defines.h"
 #include "services/common/menu/menuservice.h"
 #include "dfm-framework/framework.h"
 
@@ -88,5 +89,5 @@ MenuService *FileViewMenuHelper::menuServer()
 QString FileViewMenuHelper::currentMenuScene() const
 {
     QString scene = WorkspaceHelper::instance()->findMenuScene(view->rootUrl().scheme());
-    return scene.isEmpty() ? MenuScene::kWorkspaceMenu : scene;
+    return scene.isEmpty() ? DSB_FM_NAMESPACE::Workspace::MenuScene::kWorkspaceMenu : scene;
 }

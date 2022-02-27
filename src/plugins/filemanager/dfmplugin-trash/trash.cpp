@@ -24,7 +24,10 @@
 #include "trashfilewatcher.h"
 #include "utils/trashhelper.h"
 #include "utils/trashfilehelper.h"
+#include "menus/trashmenu.h"
 
+#include "services/filemanager/workspace/workspaceservice.h"
+#include "services/common/menu/menuservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -41,6 +44,7 @@ void Trash::initialize()
     InfoFactory::regClass<TrashFileInfo>(TrashHelper::scheme());
     WacherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
+    MenuService::regClass<TrashMenu>(TrashScene::kTrashMenu);
     connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
     connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Trash::onAllPluginsInitialized, Qt::DirectConnection);
 }
@@ -102,9 +106,14 @@ void Trash::installToSideBar()
 void Trash::addFileOperations()
 {
     TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
+    WorkspaceService::instance()->setWorkspaceMenuScene(TrashHelper::scheme(), TrashScene::kTrashMenu);
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &TrashFileHelper::writeToClipBoardHandle;
+    fileOpeationsHandle->moveToTash = &TrashFileHelper::moveToTrashHandle;
+    fileOpeationsHandle->deletes = &TrashFileHelper::deletesHandle;
+    fileOpeationsHandle->copy = &TrashFileHelper::copyHandle;
+    fileOpeationsHandle->cut = &TrashFileHelper::cutHandle;
     TrashHelper::fileOperationsServIns()->registerOperations(TrashHelper::scheme(), fileOpeationsHandle);
 }
 

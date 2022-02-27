@@ -160,18 +160,6 @@ QString WorkspaceHelper::findMenuScene(const QString &scheme)
     return QString();
 }
 
-DSC_NAMESPACE::DelegateService *WorkspaceHelper::delegateServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::DelegateService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::DelegateService>(DSC_NAMESPACE::DelegateService::name());
-}
-
 WorkspaceHelper::WorkspaceHelper(QObject *parent)
     : QObject(parent)
 {

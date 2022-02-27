@@ -70,7 +70,7 @@ void Workspace::initialize()
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
     WorkspaceUnicastReceiver::instance()->connectService();
 
-    MenuService::regClass<WorkspaceMenu>(MenuScene::kWorkspaceMenu);
+    MenuService::regClass<WorkspaceMenu>(DSB_FM_NAMESPACE::Workspace::MenuScene::kWorkspaceMenu);
 }
 
 bool Workspace::start()

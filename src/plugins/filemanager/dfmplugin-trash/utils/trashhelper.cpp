@@ -29,10 +29,14 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
+#include "services/common/trash/trashservice.h"
+
+#include "dfm-framework/framework.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <DHorizontalLine>
 #include <DApplicationHelper>
@@ -70,7 +74,7 @@ quint64 TrashHelper::windowId(QWidget *sender)
     return windowService->findWindowId(sender);
 }
 
-void TrashHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QMenu *menu = new QMenu;
     menu->addAction(QObject::tr("Open in new window"), [url]() {
@@ -114,8 +118,7 @@ QFrame *TrashHelper::createEmptyTrashTopWidget()
 
                      TrashHelper::instance(), [emptyTrashWidget] {
                          auto windId = TrashHelper::instance()->windowId(emptyTrashWidget);
-                         QUrl url = TrashHelper::toLocalFile(TrashHelper::rootUrl());
-                         TrashEventCaller::sendEmptyTrash(windId, { url });
+                         TrashHelper::emptyTrash(windId);
                      });
     return emptyTrashWidget;
 }
@@ -141,6 +144,12 @@ QUrl TrashHelper::fromTrashFile(const QString &filePath)
     return url;
 }
 
+QUrl TrashHelper::fromLocalFile(const QString &filePath)
+{
+    QString path = filePath;
+    return TrashHelper::fromTrashFile(path.remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+}
+
 QUrl TrashHelper::toLocalFile(const QUrl &url)
 {
     return QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path());
@@ -158,6 +167,11 @@ bool TrashHelper::isEmpty()
     QDirIterator iterator(dir);
 
     return !iterator.hasNext();
+}
+
+void TrashHelper::emptyTrash(const quint64 windowId)
+{
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Trash::EventType::kEmptyTrash, windowId);
 }
 
 DSB_FM_NAMESPACE::WindowsService *TrashHelper::winServIns()

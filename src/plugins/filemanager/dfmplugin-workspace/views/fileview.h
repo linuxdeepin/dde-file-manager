@@ -148,6 +148,8 @@ protected:
     void showEvent(QShowEvent *event) override;
     void keyboardSearch(const QString &search) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
+    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;
+    bool event(QEvent *e) override;
 
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);

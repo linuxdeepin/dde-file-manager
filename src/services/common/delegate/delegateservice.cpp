@@ -18,8 +18,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "delegategservice.h"
+#include "delegateservice.h"
 #include "dfm-base/utils/universalutils.h"
+
+#include <dfm-framework/framework.h>
 
 #include <QUrl>
 
@@ -51,6 +53,19 @@ bool DelegateService::isTransparent(const QUrl &url)
         return false;
 
     return transparentHandles.value(scheme)(url);
+}
+
+DelegateService *DelegateService::instance()
+{
+    dpfInstance.initialize();
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::DelegateService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::DelegateService>(DSC_NAMESPACE::DelegateService::name());
 }
 
 DelegateService::DelegateService(QObject *parent)

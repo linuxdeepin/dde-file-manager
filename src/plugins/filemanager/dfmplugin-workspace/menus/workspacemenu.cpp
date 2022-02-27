@@ -33,12 +33,6 @@
 
 #include <QMenu>
 
-DPWORKSPACE_BEGIN_NAMESPACE
-namespace MenuScene {
-extern const char *const kWorkspaceMenu = "workspace-menu";
-}   // namespace MenuScene
-DPWORKSPACE_END_NAMESPACE
-
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE

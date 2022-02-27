@@ -62,12 +62,14 @@ public:
 
     static QUrl rootUrl();
     static quint64 windowId(QWidget *sender);
-    static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+    static void contenxtMenuHandle(const quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static QFrame *createEmptyTrashTopWidget();
     static bool showTopWidget(QWidget *w, const QUrl &url);
     static QUrl fromTrashFile(const QString &filePath);
+    static QUrl fromLocalFile(const QString &filePath);
     static QUrl toLocalFile(const QUrl &url);
     static bool isEmpty();
+    static void emptyTrash(const quint64 windowId = 0);
 
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();

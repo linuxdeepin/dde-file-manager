@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: huangyu<huangyub@uniontech.com>
+ *             liuyangming<liuyangming@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef GLOBALDEFINITIONS_H
-#define GLOBALDEFINITIONS_H
+*/
+#ifndef TRASH_DEFINE_H
+#define TRASH_DEFINE_H
 
-#define DSC_NAMESPACE dfm_service_common
+#include "dfm_common_service_global.h"
 
-#define DSC_BEGIN_NAMESPACE namespace DSC_NAMESPACE {
-#define DSC_END_NAMESPACE }
-#define DSC_USE_NAMESPACE using namespace DSC_NAMESPACE;
+#include <QObject>
 
-#define DSC_FUNC_NAME (QString(metaObject()->className()) + "::" + QString(__FUNCTION__))
+#include <functional>
 
-#endif   //GLOBALDEFINITIONS_H
+DSC_BEGIN_NAMESPACE
+
+namespace Trash {
+namespace EventType {
+extern const int kEmptyTrash;
+}
+}
+DSC_END_NAMESPACE
+
+#endif   //TRASH_DEFINE_H

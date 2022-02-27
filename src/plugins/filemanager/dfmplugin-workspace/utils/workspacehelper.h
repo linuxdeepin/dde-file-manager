@@ -27,7 +27,6 @@
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "workspace/workspace_defines.h"
-#include "services/common/delegate/delegategservice.h"
 
 #include <QMap>
 #include <QMutex>
@@ -71,9 +70,6 @@ public:
     void actionNewWindow(const QList<QUrl> &urls);
     void actionNewTab(quint64 windowId, const QUrl &url);
     QString findMenuScene(const QString &scheme);
-
-    // services instance
-    static DSC_NAMESPACE::DelegateService *delegateServIns();
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);

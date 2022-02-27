@@ -30,10 +30,6 @@ DFMBASE_USE_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
-namespace MenuScene {
-extern const char *const kWorkspaceMenu;
-}   // namespace MenuScene
-
 class FileView;
 class WorkspaceMenu : public AbstractMenu
 {

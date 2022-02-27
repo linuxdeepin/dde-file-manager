@@ -840,6 +840,137 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
     }
 }
 
+QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
+{
+    QModelIndex current = currentIndex();
+
+    if (!current.isValid()) {
+        d->lastCursorIndex = DListView::moveCursor(cursorAction, modifiers);
+
+        return d->lastCursorIndex;
+    }
+
+    if (rectForIndex(current).isEmpty()) {
+        d->lastCursorIndex = proxyModel()->index(0, 0, rootIndex());
+
+        return d->lastCursorIndex;
+    }
+
+    QModelIndex index;
+
+    switch (cursorAction) {
+    case MoveLeft:
+        if (WindowUtils::keyShiftIsPressed()) {
+            index = DListView::moveCursor(cursorAction, modifiers);
+
+            if (index == d->lastCursorIndex) {
+                index = index.sibling(index.row() - 1, index.column());
+            }
+        } else {
+            index = current.sibling(current.row() - 1, current.column());
+        }
+
+        // rekols: Loop to find the next file item that can be selected.
+        while (index.model() && !(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
+            index = index.sibling(index.row() - 1, index.column());
+        }
+
+        break;
+
+    case MoveRight:
+        if (WindowUtils::keyShiftIsPressed()) {
+            index = DListView::moveCursor(cursorAction, modifiers);
+
+            if (index == d->lastCursorIndex) {
+                index = index.sibling(index.row() + 1, index.column());
+            }
+        } else {
+            index = current.sibling(current.row() + 1, current.column());
+        }
+
+        while (index.model() && !(index.flags() & Qt::ItemIsSelectable) && index.isValid()) {
+            index = index.sibling(index.row() + 1, index.column());
+        }
+
+        break;
+
+    default:
+        index = DListView::moveCursor(cursorAction, modifiers);
+        break;
+    }
+
+    if (index.isValid()) {
+        if (viewMode() == IconMode) {
+            bool last_row = indexOfRow(index) == rowCount() - 1;
+
+            if (!last_row
+                && current == index
+                && (cursorAction == MoveDown
+                    || cursorAction == MovePageDown
+                    || cursorAction == MoveNext)) {
+                // 当下一个位置没有元素时，QListView不会自动换一列选择，应该直接选中最后一个
+                index = model()->index(count() - 1, 0);
+                last_row = true;
+            }
+
+            if (last_row) {
+                // call later
+                //QTimer::singleShot(0, this, [this, index, d] {//this index unused,改成如下
+                QTimer::singleShot(0, this, [this] {
+                    // scroll to end
+                    verticalScrollBar()->setValue(verticalScrollBar()->maximum());
+                });
+            }
+        }
+
+        d->lastCursorIndex = index;
+
+        return index;
+    }
+
+    d->lastCursorIndex = current;
+
+    return current;
+}
+
+bool FileView::event(QEvent *e)
+{
+    switch (e->type()) {
+    case QEvent::KeyPress: {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+        if (keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab) {
+            if (keyEvent->modifiers() == Qt::ControlModifier || keyEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+                return DListView::event(e);
+            e->accept();
+
+            if (keyEvent->modifiers() == Qt::ShiftModifier) {
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Left, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            } else {
+                QKeyEvent nkeyEvent(keyEvent->type(), Qt::Key_Right, Qt::NoModifier);
+                keyPressEvent(&nkeyEvent);
+            }
+
+            return true;
+        }
+    } break;
+    case QEvent::Resize:
+        //Todo(yanghao):
+        break;
+    case QEvent::ParentChange:
+        window()->installEventFilter(this);
+        break;
+    case QEvent::FontChange:
+        // blumia: to trigger DIconItemDelegate::updateItemSizeHint() to update its `d->itemSizeHint` ...
+        emit iconSizeChanged(iconSize());
+        break;
+    default:
+        break;
+    }
+
+    return DListView::event(e);
+}
+
 void FileView::initializeModel()
 {
     FileViewModel *model = new FileViewModel(this);

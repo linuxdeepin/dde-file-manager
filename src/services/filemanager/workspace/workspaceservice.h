@@ -50,6 +50,8 @@ public:
     void setFileViewFilterCallback(const quint64 windowID, const QUrl &url, const Workspace::FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
 
+    static WorkspaceService *instance();
+
 private:
     explicit WorkspaceService(QObject *parent = nullptr);
     virtual ~WorkspaceService() override;
@@ -59,4 +61,5 @@ private:
 
 DSB_FM_END_NAMESPACE
 
+//#define workspaceServIns dfm_service_filemanager::WorkspaceService::instance()
 #endif   // WORKSPACESERVICE_H
