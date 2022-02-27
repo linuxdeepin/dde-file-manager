@@ -70,6 +70,12 @@ FILE(GLOB DELEGATE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/delegate/*.cpp"
 )
 
+FILE(GLOB USERSHARE_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/private/*.cpp"
+)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -80,6 +86,7 @@ add_library(${PROJECT_NAME}
     ${PROPERTYDIALOG_FILES}
     ${BLUETOOTH_FILES}
     ${DELEGATE_FILES}
+    ${USERSHARE_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)
