@@ -25,19 +25,54 @@
 
 #include "dfmplugin_burn_global.h"
 
+#include <DDialog>
+#include <DLineEdit>
+#include <DCommandLinkButton>
+#include <QUrl>
 #include <QWidget>
+#include <QComboBox>
+#include <QCheckBox>
 
 DPBURN_BEGIN_NAMESPACE
 
-class BurnOptDialog : public QWidget
+class BurnOptDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
 public:
-    explicit BurnOptDialog(QWidget *parent = nullptr);
+    explicit BurnOptDialog(const QString &dev, QWidget *parent = nullptr);
 
-signals:
+    void setUDFSupported(bool supported, bool disableISOOpts);
+    void setISOImage(const QUrl &image);
+    void setDefaultVolName(const QString &volName);
+    void setWriteSpeedInfo(const QStringList &writespeed);
 
-public slots:
+private:
+    void initializeUi();
+    void initConnect();
+
+private slots:
+    void onIndexChanged(int index);
+
+private:
+    QString curDev;
+    QHash<QString, int> speedmap;
+    QUrl image_file;
+    bool isSupportedUDF { false };
+    QString lastVolName;
+
+    DTK_WIDGET_NAMESPACE::DCommandLinkButton *advanceBtn { nullptr };
+    QWidget *advancedSettings { nullptr };
+    QWidget *content { nullptr };
+    QLabel *volnameLabel { nullptr };
+    QLineEdit *volnameEdit { nullptr };
+    QLabel *writespeedLabel { nullptr };
+    QComboBox *writespeedComb { nullptr };
+    QLabel *fsLabel { nullptr };
+    QComboBox *fsComb { nullptr };
+    QCheckBox *donotcloseComb { nullptr };
+    QLabel *postburnLabel { nullptr };
+    QCheckBox *checkdiscCheckbox { nullptr };
+    QCheckBox *ejectCheckbox { nullptr };
 };
 
 DPBURN_END_NAMESPACE

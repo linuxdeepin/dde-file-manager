@@ -22,6 +22,7 @@
 */
 #include "opticaleventcaller.h"
 
+#include "services/common/burn/burn_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -37,4 +38,9 @@ static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
 void OpticalEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
 {
     dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+}
+
+void OpticalEventCaller::sendOpenBurnDlg(const QString &dev, const QString &devId, bool isSupportedUDF)
+{
+    dispatcher()->publish(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg, dev, devId, isSupportedUDF);
 }

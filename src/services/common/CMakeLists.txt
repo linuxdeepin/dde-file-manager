@@ -77,6 +77,11 @@ FILE(GLOB USERSHARE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/usershare/private/*.cpp"
 )
 
+FILE(GLOB BURN_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/burn/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/burn/*.cpp"
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -87,6 +92,7 @@ add_library(${PROJECT_NAME}
     ${BLUETOOTH_FILES}
     ${DELEGATE_FILES}
     ${USERSHARE_FILES}
+    ${BURN_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

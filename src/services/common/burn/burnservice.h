@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,13 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_CORE_GLOBAL_H
-#define DFMPLUGIN_CORE_GLOBAL_H
+#ifndef BURNSERVICE_H
+#define BURNSERVICE_H
 
-#define DPCORE_NAMESPACE dfmplugin_core
+#include "burn_defines.h"
 
-#define DPCORE_BEGIN_NAMESPACE namespace DPCORE_NAMESPACE {
-#define DPCORE_END_NAMESPACE }
-#define DPCORE_USE_NAMESPACE using namespace DPCORE_NAMESPACE;
+#include <QObject>
 
-#endif   // DFMPLUGIN_CORE_GLOBAL_H
+#include <dfm-framework/framework.h>
+
+DSC_BEGIN_NAMESPACE
+
+class BurnService final : public dpf::PluginService, dpf::AutoServiceRegister<BurnService>
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(BurnService)
+    friend class dpf::QtClassFactory<dpf::PluginService>;
+
+public:
+    static QString name()
+    {
+        return "org.deepin.service.BurnService";
+    }
+
+private:
+    explicit BurnService(QObject *parent = nullptr);
+};
+
+DSC_END_NAMESPACE
+
+#endif   // BURNSERVICE_H

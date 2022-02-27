@@ -35,6 +35,7 @@ class OpticalEventCaller
 
 public:
     static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
+    static void sendOpenBurnDlg(const QString &dev, const QString &devId, bool isSupportedUDF);
 };
 
 DPOPTICAL_END_NAMESPACE

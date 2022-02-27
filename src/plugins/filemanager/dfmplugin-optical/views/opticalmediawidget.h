@@ -48,6 +48,7 @@ private:
     void initConnect();
     void updateUi();
     void handleErrorMount();
+    bool isSupportedUDF();
 
 private:
     QHBoxLayout *layout { nullptr };
@@ -57,6 +58,7 @@ private:
     DTK_WIDGET_NAMESPACE::DPushButton *pbBurn { nullptr };
     QSvgWidget *iconCaution { nullptr };
 
+    QString devId;
     QString curFS;
     QString curFSVersion;
     QString curDev;

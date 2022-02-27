@@ -96,6 +96,8 @@ void Optical::addFileOperations()
     OpticalHelper::workspaceServIns()->addScheme(SchemeTypes::kBurn);
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;
+    fileOpeationsHandle->copy = &OpticalFilesHelper::pasteFilesHandle;
+    fileOpeationsHandle->cut = &OpticalFilesHelper::pasteFilesHandle;
     OpticalHelper::fileOperationsServIns()->registerOperations(SchemeTypes::kBurn, fileOpeationsHandle);
 }
 

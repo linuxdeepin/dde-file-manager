@@ -37,3 +37,8 @@ bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> url
     OpticalEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
     return true;
 }
+
+JobHandlePointer OpticalFilesHelper::pasteFilesHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const dfmbase::AbstractJobHandler::JobFlags flags)
+{
+    return {};
+}

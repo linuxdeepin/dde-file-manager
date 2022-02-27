@@ -22,6 +22,8 @@
 */
 #include "burn.h"
 
+#include "events/burneventreceiver.h"
+
 DPBURN_USE_NAMESPACE
 
 void burn::initialize()
@@ -30,6 +32,11 @@ void burn::initialize()
 
 bool burn::start()
 {
+    DSC_USE_NAMESPACE
+
+    dpfInstance.eventDispatcher().subscribe(Burn::EventType::kShowBurnDlg,
+                                            BurnEventReceiver::instance(),
+                                            &BurnEventReceiver::handleShowBurnDlg);
     return true;
 }
 

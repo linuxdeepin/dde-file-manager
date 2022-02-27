@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,13 +20,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_CORE_GLOBAL_H
-#define DFMPLUGIN_CORE_GLOBAL_H
+#ifndef BURN_DEFINES_H
+#define BURN_DEFINES_H
 
-#define DPCORE_NAMESPACE dfmplugin_core
+#include "dfm_common_service_global.h"
 
-#define DPCORE_BEGIN_NAMESPACE namespace DPCORE_NAMESPACE {
-#define DPCORE_END_NAMESPACE }
-#define DPCORE_USE_NAMESPACE using namespace DPCORE_NAMESPACE;
+DSC_BEGIN_NAMESPACE
 
-#endif   // DFMPLUGIN_CORE_GLOBAL_H
+namespace Burn {
+namespace EventType {
+extern const int kShowBurnDlg;
+}
+}
+
+DSC_END_NAMESPACE
+
+#endif   // BURN_DEFINES_H

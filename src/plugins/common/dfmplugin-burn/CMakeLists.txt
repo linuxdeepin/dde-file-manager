@@ -9,6 +9,8 @@ FILE(GLOB BURN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 find_package(Dtk REQUIRED Widget REQUIRED)

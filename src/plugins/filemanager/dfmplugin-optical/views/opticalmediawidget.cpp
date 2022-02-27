@@ -23,6 +23,7 @@
 #include "opticalmediawidget.h"
 
 #include "utils/opticalhelper.h"
+#include "events/opticaleventcaller.h"
 
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -52,7 +53,7 @@ OpticalMediaWidget::OpticalMediaWidget(QWidget *parent)
 void OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
 {
     QString dev { OpticalHelper::burnDestDevice(url) };
-    QString devId { OpticalHelper::deviceId(dev) };
+    devId = { OpticalHelper::deviceId(dev) };
     auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
     QString &&mnt = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
     bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
@@ -71,7 +72,7 @@ void OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     // Acquire blank disc info
     curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
     if (!retry && blank && curAvial == 0) {
-        DeviceController::instance()->mountBlockDeviceAsync(devId, {}, [this, url, devId](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+        DeviceController::instance()->mountBlockDeviceAsync(devId, {}, [this, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
             Q_UNUSED(ok)
             Q_UNUSED(err)
             Q_UNUSED(mpt)
@@ -129,22 +130,17 @@ void OpticalMediaWidget::initializeUi()
 void OpticalMediaWidget::initConnect()
 {
     // TODO(zhangs): wait DFileStatisticsJob impl!
+
+    // TODO(zhangs): temp code
+    connect(pbBurn, &QPushButton::clicked, this, [this]() {
+        OpticalEventCaller::sendOpenBurnDlg(curDev, devId, isSupportedUDF());
+    });
 }
 
 void OpticalMediaWidget::updateUi()
 {
     lbMediatype->setText(curMediaTypeStr);
     lbAvailable->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(curAvial)));
-
-    auto isSupportedUDF = [this] {
-        if (!(DSysInfo::deepinType() == DSysInfo::DeepinProfessional))
-            return false;
-        if (!OpticalHelper::isSupportedUDFVersion(curFSVersion))
-            return false;
-        if (OpticalHelper::isSupportedUDFMedium(curMediaType))
-            return true;
-        return false;
-    };
 
     if (curFS.toLower() == "udf") {
         if (DSysInfo::deepinType() == DSysInfo::DeepinProfessional && !isSupportedUDF()) {   // for other version, show normal unsupported writtings
@@ -178,4 +174,15 @@ void OpticalMediaWidget::handleErrorMount()
         window->cd(jumpUrl);
     }
     DialogManagerInstance->showErrorDialog(tr("Mounting failed"), {});
+}
+
+bool OpticalMediaWidget::isSupportedUDF()
+{
+    if (!(DSysInfo::deepinType() == DSysInfo::DeepinProfessional))
+        return false;
+    if (!OpticalHelper::isSupportedUDFVersion(curFSVersion))
+        return false;
+    if (OpticalHelper::isSupportedUDFMedium(curMediaType))
+        return true;
+    return false;
 }

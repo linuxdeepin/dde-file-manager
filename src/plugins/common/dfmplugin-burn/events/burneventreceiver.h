@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,13 +20,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_CORE_GLOBAL_H
-#define DFMPLUGIN_CORE_GLOBAL_H
+#ifndef BURNEVENTRECEIVER_H
+#define BURNEVENTRECEIVER_H
 
-#define DPCORE_NAMESPACE dfmplugin_core
+#include "dfmplugin_burn_global.h"
 
-#define DPCORE_BEGIN_NAMESPACE namespace DPCORE_NAMESPACE {
-#define DPCORE_END_NAMESPACE }
-#define DPCORE_USE_NAMESPACE using namespace DPCORE_NAMESPACE;
+#include "services/common/burn/burn_defines.h"
 
-#endif   // DFMPLUGIN_CORE_GLOBAL_H
+#include <QObject>
+
+DPBURN_BEGIN_NAMESPACE
+
+class BurnEventReceiver : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(BurnEventReceiver)
+
+public:
+    static BurnEventReceiver *instance();
+
+public slots:
+    void handleShowBurnDlg(const QString &dev, const QString &devId, bool isSupportedUDF);
+
+private:
+    explicit BurnEventReceiver(QObject *parent = nullptr);
+};
+
+DPBURN_END_NAMESPACE
+
+#endif   // BURNEVENTRECEIVER_H
