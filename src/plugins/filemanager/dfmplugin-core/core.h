@@ -44,6 +44,7 @@ public:
 
 private slots:
     void onAllPluginsInitialized();
+    void onAllPluginsStarted();
 };
 DPCORE_END_NAMESPACE
 

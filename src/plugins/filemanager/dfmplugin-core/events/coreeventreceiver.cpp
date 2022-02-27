@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "coreeventreceiver.h"
-#include "corehelper.h"
+#include "utils/corehelper.h"
 
 #include "dfm-base/base/urlroute.h"
 

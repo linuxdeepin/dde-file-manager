@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef RECENTROOTFILEINFO_H
-#define RECENTROOTFILEINFO_H
+#ifndef RECENTFILEINFO_H
+#define RECENTFILEINFO_H
 
 #include "dfmplugin_recent_global.h"
 
@@ -50,4 +50,4 @@ private:
 using RecentFileInfoPointer = QSharedPointer<RecentFileInfo>;
 DPRECENT_END_NAMESPACE
 
-#endif   // RECENTROOTFILEINFO_H
+#endif   // RECENTFILEINFO_H

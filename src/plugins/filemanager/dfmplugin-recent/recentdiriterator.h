@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,11 +27,10 @@
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
 class RecentDirIteratorPrivate;
-class RecentDirIterator : public AbstractDirIterator
+class RecentDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 {
     Q_OBJECT
     friend class RecentDirIteratorPrivate;

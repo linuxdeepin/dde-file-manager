@@ -25,6 +25,12 @@
 #include "dfmplugin_recent_global.h"
 #include "recentfileinfo.h"
 
+#include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/titlebar/titlebarservice.h"
+#include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
+
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
@@ -87,6 +93,14 @@ private slots:
     void updateRecent();
     void onUpdateRecentFileInfo(const QUrl &url, qint64 readTime);
     void onDeleteExistRecentUrls(QList<QUrl> &urls);
+
+public:
+    // services instance
+    static DSB_FM_NAMESPACE::WindowsService *winServIns();
+    static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
+    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
+    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
+    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 
 private:
     QTimer updateRecentTimer;

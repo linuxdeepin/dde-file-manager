@@ -206,3 +206,63 @@ void RecentManager::onDeleteExistRecentUrls(QList<QUrl> &urls)
         }
     }
 }
+
+DSB_FM_NAMESPACE::WindowsService *RecentManager::winServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
+}
+
+DSB_FM_NAMESPACE::TitleBarService *RecentManager::titleServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
+}
+
+SideBarService *RecentManager::sideBarServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
+}
+
+DSB_FM_NAMESPACE::WorkspaceService *RecentManager::workspaceServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
+}
+
+dfm_service_common::FileOperationsService *RecentManager::fileOperationsServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}

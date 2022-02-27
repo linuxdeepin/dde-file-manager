@@ -3,7 +3,8 @@
  *
  * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +26,10 @@
 #include "dfmplugin_recent_global.h"
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
 class RecentFileWatcher;
-class RecentFileWatcherPrivate : public AbstractFileWatcherPrivate
+class RecentFileWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
 {
     friend RecentFileWatcher;
 

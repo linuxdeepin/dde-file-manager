@@ -3,7 +3,8 @@
  *
  * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

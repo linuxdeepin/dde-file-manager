@@ -24,6 +24,8 @@
 #include "config.h"   //cmake
 
 #include <dfm-framework/framework.h>
+#include "utils/windowutils.h"
+#include "services/filemanager/command/commandservice.h"
 
 #include <DApplication>
 #include <DMainWindow>
@@ -41,6 +43,8 @@
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 #ifdef DFM_ORGANIZATION_NAME
 #    define ORGANIZATION_NAME DFM_ORGANIZATION_NAME
@@ -101,10 +105,57 @@ int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
-
+    a.setProductIcon(QIcon::fromTheme("dde-file-manager"));
+    a.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
+    a.setApplicationDescription(a.translate("Application", "File Manager is a powerful and "
+                                                           "easy-to-use file management tool, "
+                                                           "featured with searching, copying, "
+                                                           "trash, compression/decompression, file property "
+                                                           "and other useful functions."));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     dpfInstance.initialize();
+
+    auto &ctx = dpfInstance.serviceContext();
+    Q_ASSERT_X(ctx.loaded(CommandService::name()), "main.cpp", "CommandService not loaded");
+
+    QString errStr;
+    if (!ctx.load(CommandService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+
+    auto commandService = ctx.service<CommandService>(CommandService::name());
+    commandService->process();
+
+    // working dir
+    if (commandService->isSet("w")) {
+        QDir::setCurrent(commandService->value("w"));
+    }
+
+    // open as root
+    if (commandService->isSet("r")) {
+        if (WindowUtils ::isWayLand()) {
+            QString cmd = "xhost";
+            QStringList args;
+            args << "+";
+            QProcess p;
+            p.start(cmd, args);
+            p.waitForFinished();
+        }
+
+        QStringList args = a.arguments().mid(1);
+        args.removeAll(QStringLiteral("-r"));
+        args.removeAll(QStringLiteral("--root"));
+        args.removeAll(QStringLiteral("-w"));
+        args.removeAll(QStringLiteral("--working-dir"));
+        QProcess::startDetached("dde-file-manager-pkexec", args, QDir::currentPath());
+        return 0;
+    }
+
+    if (commandService->isSet("h") || commandService->isSet("v")) {
+        return a.exec();
+    }
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";

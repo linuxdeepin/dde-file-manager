@@ -42,14 +42,11 @@ void Trash::initialize()
     WacherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
     connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
+    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Trash::onAllPluginsInitialized, Qt::DirectConnection);
 }
 
 bool Trash::start()
 {
-    installToSideBar();
-    addCustomTopWidget();
-    addFileOperations();
-
     return true;
 }
 
@@ -66,6 +63,11 @@ void Trash::onWindowOpened(quint64 windId)
         regTrashCrumbToTitleBar();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Trash::regTrashCrumbToTitleBar, Qt::DirectConnection);
+
+    if (window->sideBar())
+        installToSideBar();
+    else
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
 }
 
 void Trash::regTrashCrumbToTitleBar()
@@ -77,6 +79,12 @@ void Trash::regTrashCrumbToTitleBar()
         info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TrashHelper::scheme(); };
         TrashHelper::titleServIns()->addCustomCrumbar(info);
     });
+}
+
+void Trash::onAllPluginsInitialized()
+{
+    addCustomTopWidget();
+    addFileOperations();
 }
 
 void Trash::installToSideBar()

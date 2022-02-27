@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef COREPLUGIN_H
-#define COREPLUGIN_H
+#ifndef RECENTPLUGIN_H
+#define RECENTPLUGIN_H
 
 #include "dfmplugin_recent_global.h"
 
@@ -41,11 +41,14 @@ private slots:
     void onRecentDisplayChanged(bool enabled);
     void onWindowOpened(quint64 windId);
     void regRecentCrumbToTitleBar();
+    void onAllPluginsInitialized();
 
 private:
+    void installToSideBar();
+    void addFileOperations();
     void addRecentItem();
     void removeRecentItem();
 };
 
 DPRECENT_END_NAMESPACE
-#endif   // COREPLUGIN_H
+#endif   // RECENTPLUGIN_H

@@ -38,8 +38,9 @@ public:
 
 private slots:
     void onTrashDisplayChanged(bool enabled);
-    void onWindowOpened(quint64 windId);
     void regTrashCrumbToTitleBar();
+    void onAllPluginsInitialized();
+    void onWindowOpened(quint64 windId);
 
 private:
     void installToSideBar();

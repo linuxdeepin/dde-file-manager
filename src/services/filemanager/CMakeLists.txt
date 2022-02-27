@@ -84,6 +84,13 @@ FILE(GLOB COMPUTER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/computer/private/*.cpp"
 )
 
+FILE(GLOB COMMAND_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/command/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/command/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/command/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/command/private/*.cpp"
+)
+
 
 add_library(
     ${PROJECT_NAME}
@@ -97,6 +104,7 @@ add_library(
     ${DETAILSPACE_FILES}
     ${SEARCH_FILES}
     ${COMPUTER_FILES}
+    ${COMMAND_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

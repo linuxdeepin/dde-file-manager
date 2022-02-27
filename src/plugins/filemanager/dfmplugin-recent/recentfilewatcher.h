@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,19 +19,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef LOCALFILEWATCHER_H
-#define LOCALFILEWATCHER_H
+#ifndef RECENTFILEWATCHER_H
+#define RECENTFILEWATCHER_H
 
 #include "dfmplugin_recent_global.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
-class QUrl;
-
-DFMBASE_USE_NAMESPACE
 DPRECENT_BEGIN_NAMESPACE
 
 class RecentFileWatcherPrivate;
-class RecentFileWatcher : public AbstractFileWatcher
+class RecentFileWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
 {
     Q_OBJECT
 public:
@@ -51,4 +48,4 @@ private:
 };
 DPRECENT_END_NAMESPACE
 
-#endif   // LOCALFILEWATCHER_H
+#endif   // RECENTFILEWATCHER_H

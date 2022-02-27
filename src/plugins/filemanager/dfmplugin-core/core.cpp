@@ -20,9 +20,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "core.h"
-#include "coreeventreceiver.h"
+#include "events/coreeventreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/command/commandservice.h"
 #include "services/common/menu/menuservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
@@ -89,6 +90,8 @@ bool Core::start()
     // show first window when all plugin initialized
     connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
 
+    connect(&dpfInstance.listener(), &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
+
     return true;
 }
 
@@ -99,16 +102,17 @@ dpf::Plugin::ShutdownFlag Core::stop()
 
 void Core::onAllPluginsInitialized()
 {
-    QString error;
-    FileManagerWindow *window = GlobalPrivate::windowService->showWindow(QUrl(), true, &error);
-    if (!window) {
-        qWarning() << "Cannot show window: " << error;
-        abort();
-    }
-
     // subscribe events
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kChangeCurrentUrl,
                                             CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewWindow,
                                             CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
+}
+
+void Core::onAllPluginsStarted()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    qInfo() << "import service list" << ctx.services();
+    auto commandService = ctx.service<CommandService>(CommandService::name());
+    commandService->processCommand();
 }

@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-
 #include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
@@ -43,73 +37,23 @@ DFMBASE_USE_NAMESPACE
 
 DPRECENT_BEGIN_NAMESPACE
 
-namespace GlobalPrivate {
-static WindowsService *winServ { nullptr };
-static SideBarService *sideBarService { nullptr };
-static WorkspaceService *workspaceService { nullptr };
-static FileOperationsService *fileOperationsService { nullptr };
-}   // namespace GlobalPrivate
-
 void Recent::initialize()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    QString errStr;
-    if (!ctx.load(SideBarService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-    if (!ctx.load(WorkspaceService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(FileOperationsService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
     UrlRoute::regScheme(RecentManager::scheme(), "/", RecentManager::icon(), true, tr("Recent"));
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
     WacherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
 
-    GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
-    Q_ASSERT(GlobalPrivate::winServ);
-    connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
+    connect(RecentManager::winServIns(), &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
+    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Recent::onAllPluginsInitialized, Qt::DirectConnection);
+    connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
     RecentManager::instance();
 }
 
 bool Recent::start()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    GlobalPrivate::sideBarService = ctx.service<SideBarService>(SideBarService::name());
-    if (!GlobalPrivate::sideBarService) {
-        qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
-        abort();
-    }
-
-    bool showRecentEnabled = Application::instance()->genericAttribute(Application::kShowRecentFileEntry).toBool();
-
-    if (showRecentEnabled) {
-        addRecentItem();
-    }
-
-    GlobalPrivate::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-
-    if (!GlobalPrivate::workspaceService) {
-        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-        abort();
-    }
-    GlobalPrivate::workspaceService->addScheme(RecentManager::scheme());
-    connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
-
-    GlobalPrivate::fileOperationsService = ctx.service<FileOperationsService>(FileOperationsService::name());
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &RecentManager::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &RecentManager::writeToClipBoardHandle;
-    GlobalPrivate::fileOperationsService->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
 
     return true;
 }
@@ -130,12 +74,16 @@ void Recent::onRecentDisplayChanged(bool enabled)
 
 void Recent::onWindowOpened(quint64 windId)
 {
-    auto window = GlobalPrivate::winServ->findWindowById(windId);
+    auto window = RecentManager::winServIns()->findWindowById(windId);
     Q_ASSERT_X(window, "Recent", "Cannot find window by id");
     if (window->titleBar())
         regRecentCrumbToTitleBar();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Recent::regRecentCrumbToTitleBar, Qt::DirectConnection);
+    if (window->sideBar())
+        installToSideBar();
+    else
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { installToSideBar(); }, Qt::DirectConnection);
 }
 
 void Recent::addRecentItem()
@@ -148,12 +96,12 @@ void Recent::addRecentItem()
     item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     item.contextMenuCb = RecentManager::contenxtMenuHandle;
 
-    GlobalPrivate::sideBarService->insertItem(0, item);
+    RecentManager::sideBarServIns()->insertItem(0, item);
 }
 
 void Recent::removeRecentItem()
 {
-    GlobalPrivate::sideBarService->removeItem(RecentManager::rootUrl());
+    RecentManager::sideBarServIns()->removeItem(RecentManager::rootUrl());
 }
 
 void Recent::regRecentCrumbToTitleBar()
@@ -174,5 +122,25 @@ void Recent::regRecentCrumbToTitleBar()
         }
     });
 }
+void Recent::onAllPluginsInitialized()
+{
+    addFileOperations();
+}
 
+void Recent::installToSideBar()
+{
+    bool showRecentEnabled = Application::instance()->genericAttribute(Application::kShowRecentFileEntry).toBool();
+    if (showRecentEnabled) {
+        addRecentItem();
+    }
+}
+
+void Recent::addFileOperations()
+{
+    RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
+    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = &RecentManager::openFilesHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &RecentManager::writeToClipBoardHandle;
+    RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
+}
 DPRECENT_END_NAMESPACE

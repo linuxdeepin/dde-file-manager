@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     yanghao<yanghao@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuyangming<liuyangming@uniontech.com>
+ *             gongheng<gongheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,17 +24,7 @@
 #include "private/recentfilewatcher_p.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include "base/urlroute.h"
-
-#include <dfm-io/core/dwatcher.h>
-#include <dfmio_global.h>
-#include <dfmio_register.h>
-#include <dfm-io/core/diofactory.h>
-
-#include <QEvent>
-#include <QDir>
-#include <QDebug>
-#include <QApplication>
+DFMBASE_USE_NAMESPACE
 
 DPRECENT_BEGIN_NAMESPACE
 
