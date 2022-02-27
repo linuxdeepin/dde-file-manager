@@ -33,7 +33,7 @@ DFMBASE_BEGIN_NAMESPACE
  * \brief The PublicEventType enum define Event type
  * that can be used in multiple plugins
  */
-enum GlobalEventType {
+enum GlobalEventType : uint16_t {
     kUnknowType = 0,
 
     kChangeCurrentUrl = 1,

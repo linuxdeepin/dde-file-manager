@@ -51,6 +51,7 @@ void ShortcutHelper::registerShortcut()
     registerAction(QKeySequence::Copy, false);
     registerAction(QKeySequence::Cut, false);
     registerAction(QKeySequence::Paste);
+    registerAction(QKeySequence::Undo);
 }
 
 void ShortcutHelper::registerAction(QKeySequence::StandardKey shortcut, bool autoRepeat)
@@ -193,7 +194,7 @@ void ShortcutHelper::acitonTriggered()
         pasteFiles();
         break;
     case QKeySequence::Undo:
-        qDebug() << "Undo";
+        undoFile();
         break;
     default:
         break;
@@ -213,6 +214,11 @@ void ShortcutHelper::cutFiles()
 void ShortcutHelper::pasteFiles()
 {
     FileOperaterHelperIns->pasteFiles(view);
+}
+
+void ShortcutHelper::undoFile()
+{
+    FileOperaterHelperIns->undoFiles(view);
 }
 
 void ShortcutHelper::deleteFiles()

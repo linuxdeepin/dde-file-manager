@@ -468,8 +468,10 @@ void AbstractWorker::saveOperations()
 {
     if (!isConvert && !completeTargetFiles.isEmpty()) {
         // send saveoperator event
-        if (jobType == AbstractJobHandler::JobType::kCopyType || jobType == AbstractJobHandler::JobType::kCutType
-            || jobType == AbstractJobHandler::JobType::kMoveToTrashType || jobType == AbstractJobHandler::JobType::kRestoreType) {
+        if (jobType == AbstractJobHandler::JobType::kCopyType
+            || jobType == AbstractJobHandler::JobType::kCutType
+            || jobType == AbstractJobHandler::JobType::kMoveToTrashType
+            || jobType == AbstractJobHandler::JobType::kRestoreType) {
             GlobalEventType operatorType = kDeleteFiles;
             QUrl targetUrl;
             switch (jobType) {
@@ -492,9 +494,13 @@ void AbstractWorker::saveOperations()
                 break;
             }
             QVariantMap values;
-            values.insert("event", QVariant::fromValue(operatorType));
-            values.insert("sources", QVariant::fromValue(completeTargetFiles));
-            values.insert("target", QVariant::fromValue(targetUrl));
+            values.insert("event", QVariant::fromValue(static_cast<uint16_t>(operatorType)));
+            QStringList listUrls;
+            for (const auto &url : completeTargetFiles) {
+                listUrls.append(url.toString());
+            }
+            values.insert("sources", QVariant::fromValue(listUrls));
+            values.insert("target", targetUrl.toString());
             dpfInstance.eventDispatcher().publish(kSaveOperator, values);
         }
     }

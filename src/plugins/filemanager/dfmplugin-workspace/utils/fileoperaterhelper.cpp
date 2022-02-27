@@ -136,6 +136,15 @@ void FileOperaterHelper::pasteFiles(const FileView *view)
     }
 }
 
+void FileOperaterHelper::undoFiles(const FileView *view)
+{
+    qInfo() << " undoFiles file, currentUrl: " << view->rootUrl();
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRevocation,
+                                          windowId);
+}
+
 void FileOperaterHelper::moveToTrash(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);

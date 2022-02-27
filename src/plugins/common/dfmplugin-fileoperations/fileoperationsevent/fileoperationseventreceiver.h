@@ -191,8 +191,8 @@ public slots:
                                              QMimeData *data);
     bool handleOperationOpenInTerminal(const quint64 windowId,
                                        const QList<QUrl> urls);
-    bool handleOperationSaveOperations(const quint64 windowId, QVariantMap values);
-    bool handleOperationCleanSaveOperationsStack(const quint64 windowId);
+    bool handleOperationSaveOperations(const QVariantMap values);
+    bool handleOperationCleanSaveOperationsStack();
     bool handleOperationRevocation(const quint64 windowId);
 
 private slots:

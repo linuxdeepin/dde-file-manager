@@ -199,8 +199,6 @@ void DoCopyFilesWorker::determineCountProcessType()
 
 bool DoCopyFilesWorker::copyFiles()
 {
-    bool reslut = false;
-
     for (const QUrl &url : sourceUrls) {
         if (!stateCheck()) {
             return false;
@@ -226,7 +224,7 @@ bool DoCopyFilesWorker::copyFiles()
             return false;
         }
     }
-    return reslut;
+    return true;
 }
 
 bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo)
@@ -236,22 +234,24 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
     if (!doCheckFile(fromInfo, toInfo, newTargetInfo, result))
         return result;
 
-    bool reslut = false;
+    result = false;
     bool oldExist = newTargetInfo->exists();
     if (fromInfo->isSymLink()) {
-        reslut = creatSystemLink(fromInfo, newTargetInfo);
+        result = creatSystemLink(fromInfo, newTargetInfo);
     } else if (fromInfo->isDir()) {
-        reslut = checkAndcopyDir(fromInfo, newTargetInfo);
+        result = checkAndcopyDir(fromInfo, newTargetInfo);
     } else {
-        reslut = checkAndCopyFile(fromInfo, newTargetInfo);
+        result = checkAndCopyFile(fromInfo, newTargetInfo);
     }
 
-    if (targetInfo == toInfo && !oldExist && newTargetInfo->exists()) {
+    // todo newTargetInfo->exists() 需要重新确认，由于内部可能是异步复制，这里直接判断存在可能是false
+    // if (targetInfo == toInfo && !oldExist && newTargetInfo->exists()) {
+    if (targetInfo == toInfo && !oldExist) {
         completeFiles.append(fromInfo->url());
         completeTargetFiles.append(newTargetInfo->url());
     }
 
-    return reslut;
+    return result;
 }
 
 bool DoCopyFilesWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, bool &result)

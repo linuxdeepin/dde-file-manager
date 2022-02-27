@@ -28,7 +28,6 @@
 #include "dfm-base/dfm_event_defines.h"
 
 #include <QDebug>
-#include <QUrl>
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -40,6 +39,7 @@ FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     getServiceMutex.reset(new QMutex);
     functionsMutex.reset(new QMutex);
     copyMoveJob.reset(new FileCopyMoveJob);
+    initDBus();
     initService();
 }
 
@@ -128,7 +128,8 @@ void FileOperationsEventReceiver::initDBus()
     // Note: the plugin depends on `dde-file-manager-server`!
     // the plugin will not work if `dde-file-manager-server` not run.
     static const QString OperationsStackService = "com.deepin.filemanager.service";
-    static const QString OperationsStackPath = "com/deepin/filemanager/service/OperationsStackManager";
+    static const QString OperationsStackPath = "/com/deepin/filemanager/service/OperationsStackManager";
+
     operationsStackDbus.reset(new OperationsStackManagerInterface(OperationsStackService,
                                                                   OperationsStackPath,
                                                                   QDBusConnection::sessionBus(),
@@ -140,21 +141,25 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
 {
     if (!ret.contains("event") || !ret.contains("sources") || !ret.contains("target"))
         return false;
-    GlobalEventType eventType = ret.value("event").value<GlobalEventType>();
-    QSharedPointer<QList<QUrl>> sources /*= ret.value("sources").value<QSharedPointer<QList<QUrl>>>()*/;
-    QUrl target = ret.value("sources").value<QUrl>();
+    GlobalEventType eventType = static_cast<GlobalEventType>(ret.value("event").value<uint16_t>());
+    QList<QUrl> sources;
+    QStringList listUrls = ret.value("sources").value<QStringList>();
+    for (const auto &url : listUrls)
+        sources.append(QUrl(url));
+
+    QUrl target = QUrl(ret.value("target").value<QString>());
     switch (eventType) {
     case kCutFile:
-        handleOperationCut(windowId, *sources, target, AbstractJobHandler::JobFlag::kRevocation);
+        handleOperationCut(windowId, sources, target, AbstractJobHandler::JobFlag::kRevocation);
         break;
     case kDeleteFiles:
-        handleOperationDeletes(windowId, *sources, AbstractJobHandler::JobFlag::kRevocation);
+        handleOperationDeletes(windowId, sources, AbstractJobHandler::JobFlag::kRevocation);
         break;
     case kMoveToTrash:
-        handleOperationMoveToTrash(windowId, *sources, AbstractJobHandler::JobFlag::kRevocation);
+        handleOperationMoveToTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation);
         break;
     case kRestoreFromTrash:
-        handleOperationRestoreFromTrash(windowId, *sources, AbstractJobHandler::JobFlag::kRevocation);
+        handleOperationRestoreFromTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation);
         break;
     default:
         return false;
@@ -917,18 +922,23 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     return ok;
 }
 
-bool FileOperationsEventReceiver::handleOperationSaveOperations(const quint64 windowId, QVariantMap values)
+bool FileOperationsEventReceiver::handleOperationSaveOperations(const QVariantMap values)
 {
     if (operationsStackDbus) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;
-        operationsStackDbus->SaveOperations(values);
+        auto &&reply = operationsStackDbus->SaveOperations(values);
+        reply.waitForFinished();
+        if (!reply.isValid()) {
+            qCritical() << "D-Bus reply is invalid " << reply.error();
+            return false;
+        }
         qInfo() << "End call dbus: " << __PRETTY_FUNCTION__;
         return true;
     }
     return false;
 }
 
-bool FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack(const quint64 windowId)
+bool FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack()
 {
     if (operationsStackDbus) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__;

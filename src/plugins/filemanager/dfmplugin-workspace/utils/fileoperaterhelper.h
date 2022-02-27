@@ -43,6 +43,7 @@ public:
     void copyFiles(const FileView *view);
     void cutFiles(const FileView *view);
     void pasteFiles(const FileView *view);
+    void undoFiles(const FileView *view);
     void moveToTrash(const FileView *view);
     void deleteFiles(const FileView *view);
     void openInTerminal(const FileView *view);

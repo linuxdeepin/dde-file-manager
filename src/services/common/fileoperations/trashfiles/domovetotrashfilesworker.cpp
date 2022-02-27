@@ -314,7 +314,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
         if (!isConvert && action == AbstractJobHandler::SupportAction::kNoAction) {
             completeFiles.append(fileInfo->url());
-            completeFiles.append(QUrl::fromLocalFile(targetPath));
+            completeTargetFiles.append(QUrl::fromLocalFile(targetPath));
         }
 
         if (action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kNoAction)
