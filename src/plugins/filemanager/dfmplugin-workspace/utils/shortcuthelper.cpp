@@ -194,7 +194,7 @@ void ShortcutHelper::acitonTriggered()
         pasteFiles();
         break;
     case QKeySequence::Undo:
-        undoFile();
+        undoFiles();
         break;
     default:
         break;
@@ -216,7 +216,7 @@ void ShortcutHelper::pasteFiles()
     FileOperaterHelperIns->pasteFiles(view);
 }
 
-void ShortcutHelper::undoFile()
+void ShortcutHelper::undoFiles()
 {
     FileOperaterHelperIns->undoFiles(view);
 }

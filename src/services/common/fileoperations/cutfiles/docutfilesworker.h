@@ -61,6 +61,7 @@ protected:
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
     AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
+    void doOperateWork(AbstractJobHandler::SupportActions actions) override;
 
 private:
     QSharedPointer<QStorageInfo> targetStorageInfo { nullptr };   // target file's device infor

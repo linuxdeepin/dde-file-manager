@@ -227,6 +227,12 @@ AbstractJobHandler::SupportActions DoCutFilesWorker::supportActions(const Abstra
     return support;
 }
 
+void DoCutFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
+{
+    AbstractWorker::doOperateWork(actions);
+    resume();
+}
+
 bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
 {
     if (handler) {

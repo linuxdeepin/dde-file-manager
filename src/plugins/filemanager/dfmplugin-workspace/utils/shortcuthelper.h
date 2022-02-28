@@ -43,7 +43,7 @@ protected slots:
     void copyFiles();
     void cutFiles();
     void pasteFiles();
-    void undoFile();
+    void undoFiles();
     void deleteFiles();
     void moveToTrash();
     void touchFolder();

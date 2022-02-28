@@ -134,7 +134,7 @@ protected:
                      const char *data,
                      const qint64 &readSize,
                      bool &result);
-    bool checkAndcopyDir(const AbstractFileInfoPointer &fromInfo,
+    bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo,
                          const AbstractFileInfoPointer &toInfo);
     void setTargetPermissions(const AbstractFileInfoPointer &fromInfo,
                               const AbstractFileInfoPointer &toInfo);

@@ -239,7 +239,7 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
     if (fromInfo->isSymLink()) {
         result = creatSystemLink(fromInfo, newTargetInfo);
     } else if (fromInfo->isDir()) {
-        result = checkAndcopyDir(fromInfo, newTargetInfo);
+        result = checkAndCopyDir(fromInfo, newTargetInfo);
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo);
     }
@@ -440,7 +440,7 @@ bool DoCopyFilesWorker::creatSystemLink(const AbstractFileInfoPointer &fromInfo,
             if (fromInfo->isFile()) {
                 return checkAndCopyFile(fromInfo, toInfo);
             } else {
-                return checkAndcopyDir(fromInfo, toInfo);
+                return checkAndCopyDir(fromInfo, toInfo);
             }
         }
     }
@@ -811,7 +811,7 @@ bool DoCopyFilesWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, con
     return true;
 }
 
-bool DoCopyFilesWorker::checkAndcopyDir(const AbstractFileInfoPointer &fromInfo,
+bool DoCopyFilesWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromInfo,
                                         const AbstractFileInfoPointer &toInfo)
 {
     emitCurrentTaskNotify(fromInfo->url(), toInfo->url());
