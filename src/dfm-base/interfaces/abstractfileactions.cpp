@@ -68,7 +68,8 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
         if (fileInfo->isDir() && SystemPathUtil::instance()->isSystemPath(fileInfo->filePath())) {
             actionKeys << ActionType::kActOpenInNewWindow
                        << ActionType::kActOpenInNewTab
-                       << ActionType::kActOpenAsAdmin
+                       // TODO(lym or lee): 功能未实现，后续开放
+                       // << ActionType::kActOpenAsAdmin
                        << ActionType::kActSeparator
                        << ActionType::kActCopy
                        << ActionType::kActSeparator
@@ -77,20 +78,22 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
 
             // todo (lee or lym): share or unshare
 
-            actionKeys << ActionType::kActCreateSymlink
-                       << ActionType::kActSendToDesktop
-                       << ActionType::kActSeparator
-                       << ActionType::kActOpenInTerminal
-                       << ActionType::kActSeparator;
+            // TODO(lee or lym) 创建链接后续功能还未完善，屏蔽，完善后开放
+            actionKeys /*<< ActionType::kActCreateSymlink*/
+                    << ActionType::kActSendToDesktop
+                    << ActionType::kActSeparator
+                    << ActionType::kActOpenInTerminal
+                    << ActionType::kActSeparator;
 
         } else {
-            // todo(lee or lym): judge MenuAction::OpenWith
-            actionKeys << ActionType::kActOpenWith;
+            // TODO(lym or lee): kActOpenWith功能未实现，后续开放
+            // actionKeys << ActionType::kActOpenWith;
 
             if (fileInfo->isDir()) {
                 actionKeys << ActionType::kActOpenInNewWindow
-                           << ActionType::kActOpenInNewTab
-                           << ActionType::kActOpenAsAdmin;
+                           << ActionType::kActOpenInNewTab;
+                //  TODO(lym or lee): 功能未实现，后续开放
+                // << ActionType::kActOpenAsAdmin;
             }
 
             // todo(lee or lym): MenuAction::MountImage
@@ -107,8 +110,9 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
             // todo(lee or lym): 1. dir --> Share or UnShare
             // todo(lee or lym): 2. isArchive file --> Compress action
 
-            actionKeys << ActionType::kActCreateSymlink
-                       << ActionType::kActSendToDesktop;
+            // TODO(Lee): kActCreateSymlink后续功能完善后开放
+            actionKeys /*<< ActionType::kActCreateSymlink*/
+                    << ActionType::kActSendToDesktop;
 
             /* todo(lee or lym): ActionType::kActSendToRemovableDisk,
              * ActionType::kActStageFileForBurning,
@@ -129,7 +133,8 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
 
     } else if (type == AbtMenuType::kMultiFiles) {
         actionKeys << ActionType::kActOpen
-                   << ActionType::kActOpenWith
+                   // TODO(lym or lee)kActOpenWith功能未实现，后续开放
+                   // << ActionType::kActOpenWith
                    << ActionType::kActSeparator
                    << ActionType::kActCut
                    << ActionType::kActCopy

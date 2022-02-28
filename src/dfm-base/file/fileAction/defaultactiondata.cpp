@@ -112,6 +112,7 @@ void DefaultActionData::initDefaultActionData()
     this->addDefaultActionType(kActCreatedDate, "CreatedDate", tr("Time created"));
     this->addDefaultActionType(kActLastModifiedDate, "LastModifiedDate", tr("Time modified"));
     this->addDefaultActionType(kActProperty, "Property", tr("Properties"));
+    this->addDefaultActionType(kActClearTrash, "ClearTrash", tr("Empty Trash"));
     this->addDefaultActionType(kActSeparator, "Separator", tr(""));
     this->addDefaultActionType(kActDisplayAsList, "List", tr("List"));
     this->addDefaultActionType(kActDisplayAsIcon, "Icon", tr("Icon"));

@@ -126,7 +126,8 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
                    << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActOpenInTerminal);
     if (isRefreshOn())
         tempActDataLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActRefreshView);
-    tempActDataLst << customAction.value(DesktopCustomAction::kDisplaySettings)
+    tempActDataLst << ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSeparator)
+                   << customAction.value(DesktopCustomAction::kDisplaySettings)
                    << customAction.value(DesktopCustomAction::kWallpaperSettings);
 
     // add action to menu
@@ -336,6 +337,10 @@ void CanvasMenu::actionBusiness(QAction *act)
         }
         return;
     }
+    case kActClearTrash: {
+        // TODO(lee):
+        return;
+    }
     case kActCreateSymlink: {
         dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
                                               view->winId(),
@@ -418,14 +423,14 @@ void CanvasMenu::creatMenuByDataLst(QMenu *menu, const QVector<ActionDataContain
 
     // add action to menu
     for (auto &tempActData : lst) {
-        if (tempActData.name().isEmpty() || (-1 == tempActData.actionType()))
-            continue;
-
         // Separator
         if (tempActData.actionType() == ActionType::kActSeparator) {
             menu->addSeparator();
             continue;
         }
+
+        if (tempActData.name().isEmpty() || (-1 == tempActData.actionType()))
+            continue;
 
         QAction *act = new QAction(menu);
         act->setData(tempActData.actionType());

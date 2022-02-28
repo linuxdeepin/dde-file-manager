@@ -56,6 +56,7 @@ enum ActionType {
     kActCompleteDeletion,
     kActRename,
     kActRefreshView,
+    kActClearTrash,
     kActSeparator,
     kActCompress,
     kActCreateSymlink,

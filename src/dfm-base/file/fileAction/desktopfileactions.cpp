@@ -48,12 +48,13 @@ QVector<ActionType> DesktopFileActions::menuActionList(AbstractMenu::MenuType ty
                 << ActionType::kActSeparator;
 
         if (deepinID == "dde-trash") {
+            // TODO(lee): 暂未有清空回收站弹框功能，屏蔽掉，待功能齐全后开放
             actions /*<< ActionType::kActClearTrash*/
                     << ActionType::kActSeparator;
         }
-
-        if (type == AbtMenuType::kSingleFile)
-            actions << ActionType::kActCreateSymlink;
+        // TODO(lee) 创建链接后续功能还未完善，屏蔽，完善后开放
+        //        if (type == AbtMenuType::kSingleFile)
+        //            actions << ActionType::kActCreateSymlink;
 
         actions << ActionType::kActProperty;
 
