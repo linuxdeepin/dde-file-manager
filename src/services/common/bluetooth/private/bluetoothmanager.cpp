@@ -403,6 +403,7 @@ void BluetoothManager::refresh()
         }
         watcher->deleteLater();
     });
+    //    watcher->waitForFinished();
 }
 
 bool BluetoothManager::hasAdapter()

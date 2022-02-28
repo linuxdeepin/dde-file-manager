@@ -50,6 +50,7 @@ public:
     void deleteFiles(const FileView *view);
     void openInTerminal(const FileView *view);
     void showFilesProperty(const FileView *view);
+    void sendBluetoothFiles(const FileView *view);
     void previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls);
     void dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
     // Todo(yanghao)

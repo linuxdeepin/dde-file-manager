@@ -50,10 +50,13 @@ private:
     void addActionsToMenu(QMenu *menu, const QVector<ActionDataContainer> &dataList);
     void transTypesToActionsData(const QVector<ActionType> &typeList, QVector<ActionDataContainer> &dataList);
     void assemblesSubActions(QVector<ActionDataContainer> &dataList);
+    ActionDataContainer getSendToActions(bool hasFolder);
 
     int getRoleByActionType(const ActionType type) const;
 
     FileView *view { nullptr };
+
+    QMap<int, QUrl> sendToRemovabalDiskActs;
 };
 
 DPWORKSPACE_END_NAMESPACE

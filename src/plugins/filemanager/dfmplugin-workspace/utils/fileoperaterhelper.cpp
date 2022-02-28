@@ -27,6 +27,7 @@
 
 #include "services/common/propertydialog/property_defines.h"
 #include "services/common/preview/preview_defines.h"
+#include "services/common/bluetooth/bluetooth_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
@@ -194,6 +195,13 @@ void FileOperaterHelper::showFilesProperty(const FileView *view)
         urls.append(view->rootUrl());
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty,
                                           urls);
+}
+
+void FileOperaterHelper::sendBluetoothFiles(const FileView *view)
+{
+    QList<QUrl> urls = view->selectedUrlList();
+    if (!urls.isEmpty())
+        dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::EventType::kSendFiles, urls);
 }
 
 void FileOperaterHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)

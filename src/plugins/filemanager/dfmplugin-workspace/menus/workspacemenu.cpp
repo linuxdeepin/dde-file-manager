@@ -25,10 +25,13 @@
 #include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperaterhelper.h"
 
+#include "services/common/bluetooth/bluetoothservice.h"
 #include "dfm-base/dfm_actiontype_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfileactions.h"
 #include "dfm-base/utils/actiontypemanager.h"
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-framework/framework.h"
 
 #include <QMenu>
@@ -130,8 +133,17 @@ void WorkspaceMenu::actionBusiness(QAction *act)
     case ActionType::kActProperty:
         FileOperaterHelperIns->showFilesProperty(view);
         break;
+    case ActionType::kActSendToBluetooth:
+        FileOperaterHelperIns->sendBluetoothFiles(view);
+        break;
     default:
         break;
+    }
+
+    if (sendToRemovabalDiskActs.contains(actType)) {
+        const QUrl &target = sendToRemovabalDiskActs.value(actType);
+        // TODO(xust): publish copy event.
+        qDebug() << "send files to: " << target;
     }
 }
 
@@ -180,6 +192,19 @@ void WorkspaceMenu::assemblesNormalActions(QMenu *menu, const QUrl &rootUrl, con
 
     transTypesToActionsData(typeList, dataList);
     assemblesSubActions(dataList);
+
+    bool hasFolder = actionInfo->isDir();
+    if (!hasFolder) {
+        for (const QUrl &url : selectList) {
+            auto info = dfmbase::InfoFactory::create<AbstractFileInfo>(url, true);
+            hasFolder = info && info->isDir();
+            if (hasFolder)
+                break;
+        }
+    }
+    auto sendToActs = getSendToActions(hasFolder);
+    if (!sendToActs.childrenActionsData().isEmpty())
+        dataList.append(sendToActs);
 
     addActionsToMenu(menu, dataList);
 }
@@ -241,6 +266,47 @@ void WorkspaceMenu::assemblesSubActions(QVector<ActionDataContainer> &dataList)
             data.addChildrenActionsData(ActionTypeManager::instance().actionDataContainerByType(ActionType::kActType));
         }
     }
+}
+
+ActionDataContainer WorkspaceMenu::getSendToActions(bool hasFolder)
+{
+    ActionDataContainer actSendTo = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendTo);
+    QVector<ActionDataContainer> subActs;
+
+    DSC_USE_NAMESPACE
+    if (BluetoothService::service() && BluetoothService::service()->bluetoothEnable()) {
+        auto act = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendToBluetooth);
+        if (hasFolder) {
+            // TODO(xust) disable the action
+        }
+        subActs << act;
+    }
+
+    // TODO(xust) optimize
+    QStringList blks = DeviceManagerInstance.invokeBlockDevicesIdList({});
+    sendToRemovabalDiskActs.clear();
+    for (const QString &id : blks) {
+
+        auto info = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+        QString mpt = info.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+        bool optical = info.value(GlobalServerDefines::DeviceProperty::kOptical).toBool();
+        QString label = info.value(GlobalServerDefines::DeviceProperty::kIdLabel).toString();
+        bool removable = info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool();
+        if (!mpt.isEmpty() && removable) {
+            QUrl targetUrl;
+            if (optical) {
+                // TODO(xust): converted burn url
+            } else {
+                targetUrl = UrlRoute::pathToReal(mpt);
+            }
+            auto container = ActionTypeManager::instance().registerActionType("SendTo", label);
+            subActs.append(container.second);
+            sendToRemovabalDiskActs.insert(container.first, targetUrl);
+        }
+    }
+
+    actSendTo.setChildrenActionsData(subActs);
+    return actSendTo;
 }
 
 int WorkspaceMenu::getRoleByActionType(const ActionType type) const

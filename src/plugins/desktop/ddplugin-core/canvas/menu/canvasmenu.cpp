@@ -31,13 +31,17 @@
 #include "canvas/delegate/canvasitemdelegate.h"
 #include "canvas/model/canvasmodel.h"
 
+#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_actiontype_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/actiontypemanager.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/fileAction/desktopfileactions.h"
+
+#include "services/common/bluetooth/bluetoothservice.h"
 
 #include <QGSettings>
 
@@ -101,12 +105,12 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
         return;
 
     //! todo(lq) unused.
-//    QString errString;
-//    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
-//    if (!tempInfo) {
-//        qInfo() << "create LocalFileInfo error: " << errString;
-//        return;
-//    }
+    //    QString errString;
+    //    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
+    //    if (!tempInfo) {
+    //        qInfo() << "create LocalFileInfo error: " << errString;
+    //        return;
+    //    }
 
     QVector<ActionDataContainer> tempActDataLst;
 
@@ -137,6 +141,45 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
 
     // Action special handling
     this->setActionSpecialHandling(menu);
+}
+
+ActionDataContainer CanvasMenu::getSendToMenu(bool hasFolder)
+{
+    ActionDataContainer actSendTo = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendTo);
+    QVector<ActionDataContainer> subActs;
+
+    if (BluetoothService::service() && BluetoothService::service()->bluetoothEnable()) {
+        auto act = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendToBluetooth);
+        if (hasFolder)
+            ;   // TODO(xust) disable the act
+        subActs << act;
+    }
+
+    // TODO(xust) optimize
+    QStringList blks = DeviceManagerInstance.invokeBlockDevicesIdList({});
+    sendToRemovabalDiskActs.clear();
+    for (const QString &id : blks) {
+
+        auto info = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+        QString mpt = info.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
+        bool optical = info.value(GlobalServerDefines::DeviceProperty::kOptical).toBool();
+        QString label = info.value(GlobalServerDefines::DeviceProperty::kIdLabel).toString();
+        bool removable = info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool();
+        if (!mpt.isEmpty() && removable) {
+            QUrl targetUrl;
+            if (optical) {
+                // TODO(xust): converted burn url
+            } else {
+                targetUrl = UrlRoute::pathToReal(mpt);
+            }
+            auto container = ActionTypeManager::instance().registerActionType("SendTo", label);
+            subActs.append(container.second);
+            sendToRemovabalDiskActs.insert(container.first, targetUrl);
+        }
+    }
+
+    actSendTo.setChildrenActionsData(subActs);
+    return actSendTo;
 }
 
 void CanvasMenu::normalMenu(QMenu *menu,
@@ -194,6 +237,11 @@ void CanvasMenu::normalMenu(QMenu *menu,
         return;
 
     getActionDataByTypes(tempActDataLst, tempActTypeList, unUsedActions);
+
+    // TODO(xust) adjust the order
+    const auto &&sendTo = getSendToMenu(false);
+    if (sendTo.childrenActionsData().count() > 0)
+        tempActDataLst << sendTo;
 
     // add action to menu
     this->creatMenuByDataLst(menu, tempActDataLst);
@@ -359,9 +407,20 @@ void CanvasMenu::actionBusiness(QAction *act)
         FileOperaterProxyIns->showFilesProperty(view);
         return;
     }
+    case kActSendToBluetooth: {
+        FileOperaterProxyIns->sendFilesToBluetooth(view);
+        return;
+    }
     default:
         break;
     }
+
+    if (sendToRemovabalDiskActs.contains(actType)) {
+        const QUrl &target = sendToRemovabalDiskActs.value(actType);
+        // TODO(xust): publish copy event.
+        qDebug() << "send files to: " << target;
+    }
+
     AbstractMenu::actionBusiness(act);
 }
 

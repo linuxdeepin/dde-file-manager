@@ -42,7 +42,12 @@ public:
         return "org.deepin.service.BluetoothService";
     }
 
+    static BluetoothService *service();
+
     bool bluetoothEnable();
+
+public slots:
+    void sendFiles(const QList<QUrl> &urls);
     void sendFiles(const QStringList &paths, BluetoothTransDialog::TransferMode mode = BluetoothTransDialog::kSelectDeviceToSend, const QString &deviceId = {});
 
 private:

@@ -105,7 +105,6 @@ void DefaultActionData::initDefaultActionData()
     this->addDefaultActionType(kActCompress, "Compress", tr("Compress"));
     this->addDefaultActionType(kActCreateSymlink, "CreateSymlink", tr("Create link"));
     this->addDefaultActionType(kActSendToDesktop, "SendToDesktop", tr("Send to desktop"));
-    this->addDefaultActionType(kActSendToBluetooth, "SendToBluetooth", tr("Bluetooth"));
     this->addDefaultActionType(kActName, "Name", tr("Name"));
     this->addDefaultActionType(kActSize, "Size", tr("Size"));
     this->addDefaultActionType(kActType, "Type", tr("Type"));
@@ -116,6 +115,9 @@ void DefaultActionData::initDefaultActionData()
     this->addDefaultActionType(kActSeparator, "Separator", tr(""));
     this->addDefaultActionType(kActDisplayAsList, "List", tr("List"));
     this->addDefaultActionType(kActDisplayAsIcon, "Icon", tr("Icon"));
+
+    this->addDefaultActionType(kActSendTo, "SendTo", tr("Send to"));
+    this->addDefaultActionType(kActSendToBluetooth, "SendToBluetooth", tr("Bluetooth"));
 
     // TODO(Lee): icon init
 }

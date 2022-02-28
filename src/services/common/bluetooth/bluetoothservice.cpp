@@ -21,15 +21,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "bluetoothservice.h"
+#include "bluetooth_defines.h"
 #include "private/bluetoothmanager.h"
 
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/universalutils.h"
+
+#include <dfm-framework/framework.h>
 
 DSC_BEGIN_NAMESPACE
+
+namespace EventType {
+const int kSendFiles = dfmbase::UniversalUtils::registerEventType();
+}   // namespace EventType
+
+BluetoothService *BluetoothService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(name()))
+            abort();
+    });
+
+    return ctx.service<BluetoothService>(name());
+}
 
 bool BluetoothService::bluetoothEnable()
 {
     return Q_LIKELY(BluetoothManager::instance()->bluetoothSendEnable()) && BluetoothManager::instance()->hasAdapter();
+}
+
+void BluetoothService::sendFiles(const QList<QUrl> &urls)
+{
+    QStringList paths;
+    for (const QUrl &url : urls)
+        paths << url.path();
+    sendFiles(paths);
 }
 
 void BluetoothService::sendFiles(const QStringList &paths, BluetoothTransDialog::TransferMode mode, const QString &deviceId)
@@ -52,6 +80,7 @@ void BluetoothService::sendFiles(const QStringList &paths, BluetoothTransDialog:
 BluetoothService::BluetoothService(QObject *parent)
     : dpf::PluginService(parent), dpf::AutoServiceRegister<BluetoothService>()
 {
+    dpfInstance.eventDispatcher().subscribe(EventType::kSendFiles, this, static_cast<void (BluetoothService::*)(const QList<QUrl> &)>(&BluetoothService::sendFiles));
 }
 
 BluetoothService::~BluetoothService()

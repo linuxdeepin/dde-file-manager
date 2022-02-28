@@ -28,6 +28,7 @@
 #include "dfm-framework/framework.h"
 
 #include "services/common/propertydialog/property_defines.h"
+#include "services/common/bluetooth/bluetooth_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
@@ -186,6 +187,13 @@ void FileOperaterProxy::showFilesProperty(const CanvasView *view)
 {
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty,
                                           view->selectionModel()->selectedUrls());
+}
+
+void FileOperaterProxy::sendFilesToBluetooth(const CanvasView *view)
+{
+    QList<QUrl> urls = view->selectionModel()->selectedUrls();
+    if (!urls.isEmpty())
+        dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::EventType::kSendFiles, view->selectionModel()->selectedUrls());
 }
 
 void FileOperaterProxy::dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)

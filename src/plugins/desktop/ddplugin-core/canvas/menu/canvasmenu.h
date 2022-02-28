@@ -87,10 +87,14 @@ protected:
                               const QSet<dfmbase::ActionType> &unUsedTypes);
     void setActionSpecialHandling(QMenu *menu);
     bool isRefreshOn() const;
+
+    dfmbase::ActionDataContainer getSendToMenu(bool hasFolder);
+
 private:
     DSC_NAMESPACE::MenuService *extensionMenuServer { nullptr };
     QMap<DesktopCustomAction, dfmbase::ActionDataContainer> customAction;
     QMap<int, DesktopCustomAction> customActionType;
+    QMap<int, QUrl> sendToRemovabalDiskActs;
     CanvasView *view { nullptr };
     QVariant cusData;
     QMap<dfmbase::AbstractFileInfo::SortKey, dfmbase::ActionType> userColumnRoles;
