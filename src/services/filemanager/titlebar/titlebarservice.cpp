@@ -35,6 +35,10 @@ namespace EventType {
 const int kSwitchMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSettingsMenuTriggered = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kDoSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kStopSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kShowFilterView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kStartSpinner = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kStopSpinner = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 }   // namespace TitleBar

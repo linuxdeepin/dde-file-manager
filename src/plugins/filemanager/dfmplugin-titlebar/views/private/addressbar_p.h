@@ -28,6 +28,10 @@
 
 #include "dfm-base/base/urlroute.h"
 
+#include <DSpinner>
+#include <DAnchors>
+#include <DIconButton>
+
 #include <QFileInfo>
 #include <QDir>
 #include <QEvent>
@@ -40,9 +44,6 @@
 #include <QVariantAnimation>
 #include <QPalette>
 #include <QAction>
-
-#include <DSpinner>
-#include <DAnchors>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -57,6 +58,7 @@ class AddressBarPrivate : public QObject
     QStringList historyList;
     QTimer timer;
     DSpinner spinner;
+    DIconButton *pauseButton;
     QVariantAnimation animation;
     QString placeholderText { tr("Search or enter address") };
     QAction indicatorAction;

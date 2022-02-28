@@ -21,12 +21,8 @@
  */
 #include "base/application/application.h"
 #include "private/application_p.h"
-#if QT_HAS_INCLUDE("anything_interface.h")
-#    include "anything_interface.h"
-#else
-#    ifndef DISABLE_QUICK_SEARCH
-#        define DISABLE_QUICK_SEARCH
-#    endif
+#ifdef ENABLE_QUICK_SEARCH
+#include "dbusservice/dbus_interface/anything_interface.h"
 #endif
 
 #include "base/application/settings.h"
@@ -175,7 +171,7 @@ bool Application::syncAppAttribute()
     return appSetting()->sync();
 }
 
-#ifndef DISABLE_QUICK_SEARCH
+#ifdef ENABLE_QUICK_SEARCH
 static ComDeepinAnythingInterface *getAnythingInterface()
 {
     static ComDeepinAnythingInterface *interface = new ComDeepinAnythingInterface("com.deepin.anything", "/com/deepin/anything", QDBusConnection::systemBus());
@@ -187,11 +183,11 @@ static ComDeepinAnythingInterface *getAnythingInterface()
 QVariant Application::genericAttribute(Application::GenericAttribute ga)
 {
     if (ga == kIndexInternal) {
-#ifndef DISABLE_QUICK_SEARCH
+#ifdef ENABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexInternal();
 #endif
     } else if (ga == kIndexExternal) {
-#ifndef DISABLE_QUICK_SEARCH
+#ifdef ENABLE_QUICK_SEARCH
         return getAnythingInterface()->autoIndexExternal();
 #endif
     }
@@ -206,11 +202,11 @@ QVariant Application::genericAttribute(Application::GenericAttribute ga)
 void Application::setGenericAttribute(Application::GenericAttribute ga, const QVariant &value)
 {
     if (ga == kIndexInternal) {
-#ifndef DISABLE_QUICK_SEARCH
+#ifdef ENABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexInternal(value.toBool());
 #endif
     } else if (ga == kIndexExternal) {
-#ifndef DISABLE_QUICK_SEARCH
+#ifdef ENABLE_QUICK_SEARCH
         return getAnythingInterface()->setAutoIndexExternal(value.toBool());
 #endif
     }

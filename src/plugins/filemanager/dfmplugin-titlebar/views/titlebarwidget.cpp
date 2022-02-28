@@ -26,6 +26,8 @@
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+
 #include <QHBoxLayout>
 
 DPTITLEBAR_USE_NAMESPACE
@@ -52,6 +54,16 @@ QUrl TitleBarWidget::currentUrl() const
 NavWidget *TitleBarWidget::navWidget() const
 {
     return curNavWidget;
+}
+
+void TitleBarWidget::startSpinner()
+{
+    addressBar->startSpinner();
+}
+
+void TitleBarWidget::stopSpinner()
+{
+    addressBar->stopSpinner();
 }
 
 void TitleBarWidget::handleHotkeyCtrlF()
@@ -102,7 +114,7 @@ void TitleBarWidget::initializeUi()
     searchFilterButton = new QToolButton;
     searchFilterButton->setFixedSize({ 36, 36 });
     searchFilterButton->setFocusPolicy(Qt::NoFocus);
-    searchFilterButton->setIcon(QIcon::fromTheme("dfview_filter"));
+    searchFilterButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
     searchFilterButton->setIconSize({ 16, 16 });
     titleBarLayout->addWidget(searchFilterButton);
 
@@ -152,7 +164,9 @@ void TitleBarWidget::initConnect()
     });
 
     connect(addressBar, &AddressBar::urlChanged, this, &TitleBarWidget::onAddressBarJump);
-    // TODO(zhangs): addressbar pause
+    connect(addressBar, &AddressBar::pauseButtonClicked, this, [this]() {
+        TitleBarEventCaller::sendStopSearch(this);
+    });
 }
 
 void TitleBarWidget::showAddrsssBar(const QUrl &url)
@@ -212,15 +226,16 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
 void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
 {
     if (switchBtn) {
-        searchButton->setHidden(true);
+        //        searchButton->setHidden(true);
         searchButton->setObjectName("filterButton");
         searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
         searchButton->style()->unpolish(searchButton);
         searchButton->style()->polish(searchButton);
         searchButton->setFlat(true);
+        searchButton->setProperty("showFilterView", false);
         searchButtonSwitchState = true;
     } else {
-        searchButton->setHidden(false);
+        //        searchButton->setHidden(false);
         searchButton->style()->unpolish(searchButton);
         searchButton->style()->polish(searchButton);
         searchButton->setIcon(QIcon::fromTheme("search"));
@@ -235,7 +250,10 @@ void TitleBarWidget::onSearchButtonClicked()
     if (!searchButtonSwitchState) {
         showAddrsssBar(QUrl());
     } else {
-        // TODO(zhangs): toggle asb visible
+        bool oldState = searchButton->property("showFilterView").toBool();
+        searchButton->setDown(!oldState);
+        searchButton->setProperty("showFilterView", !oldState);
+        TitleBarEventCaller::sendShowFilterView(this, !oldState);
     }
 }
 

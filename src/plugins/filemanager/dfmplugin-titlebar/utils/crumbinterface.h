@@ -46,8 +46,7 @@ public:
     enum ActionType {
         kEscKeyPressed,
         kClearButtonPressed,
-        kAddressBarLostFocus,
-        kPauseButtonClicked
+        kAddressBarLostFocus
     };
 
     explicit CrumbInterface(QObject *parent = nullptr);

@@ -88,3 +88,17 @@ void TitleBarEventCaller::sendSearch(QWidget *sender, const QString &keyword)
     Q_ASSERT(id > 0);
     dpfInstance.eventDispatcher().publish(TitleBar::EventType::kDoSearch, id, keyword);
 }
+
+void TitleBarEventCaller::sendStopSearch(QWidget *sender)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kStopSearch, id);
+}
+
+void TitleBarEventCaller::sendShowFilterView(QWidget *sender, bool visible)
+{
+    quint64 id = TitleBarHelper::windowId(sender);
+    Q_ASSERT(id > 0);
+    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kShowFilterView, id, visible);
+}

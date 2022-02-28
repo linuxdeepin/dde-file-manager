@@ -47,6 +47,10 @@ public:
     virtual QDateTime created() const override;
     virtual QString fileTypeDisplayName() const override;
 
+    // property for view
+    virtual QString emptyDirectoryTip() const override;
+    virtual QString loadingTip() const override;
+
 private:
     SearchFileInfoPrivate *d;
 };

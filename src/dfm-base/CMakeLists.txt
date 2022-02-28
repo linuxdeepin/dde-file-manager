@@ -10,6 +10,14 @@ if (NOT PROJECT_VERSION_MAJOR)
     set(PROJECT_VERSION_MAJOR 0)
 endif()
 
+if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" OR
+    ${CMAKE_SYSTEM_PROCESSOR} MATCHES "i386" OR
+    ${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
+    message(${CMAKE_SYSTEM_PROCESSOR} ": using deepin-anything.")
+    ADD_DEFINITIONS(-DENABLE_QUICK_SEARCH)
+endif()
+
+
 # qrc
 set(QRC_FILE
     qrc/skin/skin.qrc

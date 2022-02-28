@@ -67,15 +67,26 @@ void Search::initialize()
 
 bool Search::start()
 {
-    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kDoSearch,
-                                            SearchEventReceiverIns,
-                                            &SearchEventReceiver::handleSearch);
+    subscribeEvent();
     return true;
 }
 
 dpf::Plugin::ShutdownFlag Search::stop()
 {
     return kSync;
+}
+
+void Search::subscribeEvent()
+{
+    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kDoSearch,
+                                            SearchEventReceiverIns,
+                                            &SearchEventReceiver::handleSearch);
+    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kStopSearch,
+                                            SearchEventReceiverIns,
+                                            &SearchEventReceiver::handleStopSearch);
+    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kShowFilterView,
+                                            SearchEventReceiverIns,
+                                            &SearchEventReceiver::handleShowAdvanceSearchBar);
 }
 
 void Search::onWindowOpened(quint64 windId)

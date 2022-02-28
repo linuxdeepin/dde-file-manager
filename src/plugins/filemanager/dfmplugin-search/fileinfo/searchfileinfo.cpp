@@ -137,4 +137,14 @@ QString SearchFileInfo::fileTypeDisplayName() const
     return {};
 }
 
+QString SearchFileInfo::emptyDirectoryTip() const
+{
+    return QObject::tr("No results");
+}
+
+QString SearchFileInfo::loadingTip() const
+{
+    return QObject::tr("Searching...");
+}
+
 DPSEARCH_END_NAMESPACE

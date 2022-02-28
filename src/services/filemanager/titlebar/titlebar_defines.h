@@ -65,6 +65,10 @@ struct CustomCrumbInfo
 namespace EventType {
 extern const int kSwitchMode;
 extern const int kDoSearch;
+extern const int kStopSearch;
+extern const int kShowFilterView;
+extern const int kStartSpinner;
+extern const int kStopSpinner;
 };   // namespace EventType
 
 // setting menu action list

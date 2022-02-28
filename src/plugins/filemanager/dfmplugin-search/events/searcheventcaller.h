@@ -32,6 +32,8 @@ class SearchEventCaller
 public:
     static void sendDoSearch(quint64 winId, const QUrl &url);
     static void sendShowAdvanceSearchBar(quint64 winId, bool visible);
+    static void sendStartSpinner(quint64 winId);
+    static void sendStopSpinner(quint64 winId);
 
 private:
     SearchEventCaller() = delete;

@@ -22,6 +22,7 @@
 #include "utils/searchhelper.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
+#include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 
@@ -44,6 +45,18 @@ void SearchEventCaller::sendShowAdvanceSearchBar(quint64 winId, bool visible)
 {
     DSB_FM_USE_NAMESPACE
     dispatcher()->publish(Workspace::EventType::kShowCustomTopWidget, winId, SearchHelper::scheme(), visible);
+}
+
+void SearchEventCaller::sendStartSpinner(quint64 winId)
+{
+    DSB_FM_USE_NAMESPACE
+    dispatcher()->publish(TitleBar::EventType::kStartSpinner, winId);
+}
+
+void SearchEventCaller::sendStopSpinner(quint64 winId)
+{
+    DSB_FM_USE_NAMESPACE
+    dispatcher()->publish(TitleBar::EventType::kStopSpinner, winId);
 }
 
 DPSEARCH_END_NAMESPACE

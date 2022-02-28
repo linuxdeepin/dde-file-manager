@@ -42,6 +42,8 @@ public slots:
     void handleTabChanged(quint64 windowId, int index);
     void handleTabMoved(quint64 windowId, int from, int to);
     void handleTabRemovd(quint64 windowId, int index);
+    void handleStartSpinner(quint64 windowId);
+    void handleStopSpinner(quint64 windowId);
 
 private:
     explicit TitleBarEventReceiver(QObject *parent = nullptr);

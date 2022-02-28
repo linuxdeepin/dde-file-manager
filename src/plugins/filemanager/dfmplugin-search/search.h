@@ -36,6 +36,7 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+    void subscribeEvent();
 
 private slots:
     void onWindowOpened(quint64 windId);

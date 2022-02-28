@@ -21,6 +21,7 @@
 #include "searchdiriterator.h"
 #include "searchdiriterator_p.h"
 #include "utils/searchhelper.h"
+#include "events/searcheventcaller.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "services/filemanager/search/searchservice.h"
@@ -139,11 +140,16 @@ QUrl SearchDirIterator::next()
 
 bool SearchDirIterator::hasNext() const
 {
-    if (d->searchStoped)
+    if (d->searchStoped) {
+        SearchEventCaller::sendStopSpinner(d->taskId.toULongLong());
         return false;
+    }
 
     QMutexLocker lk(&d->mutex);
-    return !(d->childrens.isEmpty() && d->searchFinished);
+    bool hasNext = !(d->childrens.isEmpty() && d->searchFinished);
+    if (!hasNext)
+        SearchEventCaller::sendStopSpinner(d->taskId.toULongLong());
+    return hasNext;
 }
 
 QString SearchDirIterator::fileName() const

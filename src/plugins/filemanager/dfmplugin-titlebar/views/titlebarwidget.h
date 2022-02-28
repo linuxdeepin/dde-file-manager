@@ -46,6 +46,9 @@ public:
     QUrl currentUrl() const override;
     NavWidget *navWidget() const;
 
+    void startSpinner();
+    void stopSpinner();
+
 public slots:
     void handleHotkeyCtrlF();
     void handleHotkeyCtrlL();

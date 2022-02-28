@@ -65,6 +65,22 @@ void TitleBarEventReceiver::handleTabRemovd(quint64 windowId, int index)
     w->navWidget()->removeNavStackAt(index);
 }
 
+void TitleBarEventReceiver::handleStartSpinner(quint64 windowId)
+{
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+    w->startSpinner();
+}
+
+void TitleBarEventReceiver::handleStopSpinner(quint64 windowId)
+{
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+    w->stopSpinner();
+}
+
 TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
     : QObject(parent)
 {

@@ -56,6 +56,7 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
     }
 
     SearchEventCaller::sendDoSearch(winId, searchUrl);
+    SearchEventCaller::sendStartSpinner(winId);
 }
 
 void SearchEventReceiver::handleStopSearch(quint64 winId)
@@ -71,6 +72,11 @@ void SearchEventReceiver::handleStopSearch(quint64 winId)
     }
 
     GlobalPrivate::searchServ->stop(QString::number(winId));
+}
+
+void SearchEventReceiver::handleShowAdvanceSearchBar(quint64 winId, bool visible)
+{
+    SearchEventCaller::sendShowAdvanceSearchBar(winId, visible);
 }
 
 SearchEventReceiver::SearchEventReceiver(QObject *parent)

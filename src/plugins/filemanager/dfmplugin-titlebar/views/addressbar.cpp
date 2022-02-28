@@ -49,6 +49,16 @@ AddressBarPrivate::AddressBarPrivate(AddressBar *qq)
 
 void AddressBarPrivate::initializeUi()
 {
+    // pause button
+    pauseButton = new DIconButton(q);
+    pauseButton->setIcon(QIcon::fromTheme("dfm_search_pause"));
+    pauseButton->setFocusPolicy(Qt::NoFocus);
+    pauseButton->setCursor({ Qt::ArrowCursor });
+    pauseButton->setFixedSize(24, 24);
+    pauseButton->setIconSize({ 24, 24 });
+    pauseButton->setFlat(true);
+    pauseButton->setVisible(false);
+
     // 左侧Action按钮 设置
     q->addAction(&indicatorAction, QLineEdit::LeadingPosition);
 
@@ -109,6 +119,8 @@ void AddressBarPrivate::initConnect()
         selectPosStart = posStart < posEnd ? posStart : posEnd;
         selectLength = q->selectionLength();
     });
+
+    connect(pauseButton, &DIconButton::clicked, q, &AddressBar::pauseButtonClicked);
 }
 
 void AddressBarPrivate::initData()
@@ -414,6 +426,10 @@ bool AddressBarPrivate::eventFilterResize(AddressBar *addressbar, QResizeEvent *
                         (event->size().height() - spinner.size().height()) / 2,
                         spinner.size().width(), spinner.size().height());
 
+    pauseButton->setGeometry(event->size().width() - pauseButton->size().width() - 45,
+                             (event->size().height() - pauseButton->size().height()) / 2,
+                             pauseButton->size().width(), pauseButton->size().height());
+
     return false;
 }
 
@@ -649,7 +665,7 @@ void AddressBar::enterEvent(QEvent *e)
 
     if (d->indicatorType == AddressBar::Search && d->spinner.isPlaying()) {
         d->spinner.hide();
-        // TODO(zhangs): pauseButton->setVisible(true);
+        d->pauseButton->setVisible(true);
     }
 
     QLineEdit::enterEvent(e);
@@ -658,7 +674,7 @@ void AddressBar::enterEvent(QEvent *e)
 void AddressBar::leaveEvent(QEvent *e)
 {
     if (d->indicatorType == AddressBar::Search && d->spinner.isPlaying()) {
-        // TODO(zhangs): pauseButton->setVisible(false);
+        d->pauseButton->setVisible(false);
         d->spinner.show();
     }
 
@@ -672,5 +688,6 @@ void AddressBar::startSpinner()
 
 void AddressBar::stopSpinner()
 {
+    d->pauseButton->setVisible(false);
     d->stopSpinner();
 }

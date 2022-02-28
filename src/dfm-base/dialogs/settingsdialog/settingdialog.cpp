@@ -39,15 +39,15 @@
 #include <QCheckBox>
 #include <QDebug>
 
-#ifdef DISABLE_QUICK_SEARCH
-#    include <QJsonObject>
-#    include <QJsonArray>
-#    include <QJsonDocument>
+#ifndef ENABLE_QUICK_SEARCH
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonDocument>
 #endif
 
 DFMBASE_USE_NAMESPACE
 
-#ifdef DISABLE_QUICK_SEARCH
+#ifndef ENABLE_QUICK_SEARCH
 namespace {
 const char *const kGroupsName { "groups" };
 const char *const kOptionsName { "options" };
@@ -118,7 +118,7 @@ void SettingBackend::onValueChanged(int attribute, const QVariant &value)
     emit optionChanged(key, value);
 }
 
-#ifdef DISABLE_QUICK_SEARCH
+#ifndef ENABLE_QUICK_SEARCH
 static QByteArray removeQuickSearchIndex(const QByteArray &data)
 {
     auto const &jdoc = QJsonDocument::fromJson(data);
@@ -255,7 +255,7 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
             break;
         }
     }
-#ifdef DISABLE_QUICK_SEARCH
+#ifndef ENABLE_QUICK_SEARCH
     auto const &byteArray = removeQuickSearchIndex(data);
     return DSettings::fromJson(byteArray);
 #else

@@ -44,6 +44,8 @@ public:
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendSearch(QWidget *sender, const QString &keyword);
+    static void sendStopSearch(QWidget *sender);
+    static void sendShowFilterView(QWidget *sender, bool visible);
 };
 
 DPTITLEBAR_END_NAMESPACE

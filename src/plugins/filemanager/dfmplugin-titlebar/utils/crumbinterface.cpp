@@ -49,9 +49,6 @@ void CrumbInterface::processAction(CrumbInterface::ActionType type)
         if (!keepAddr)
             emit hideAddressBar(keepAddr);
         break;
-    case kPauseButtonClicked:
-        emit pauseSearch();
-        break;
     }
 }
 

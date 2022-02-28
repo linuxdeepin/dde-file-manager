@@ -28,6 +28,7 @@
 #include "events/titlebarunicastreceiver.h"
 #include "events/titlebareventreceiver.h"
 
+#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
@@ -83,6 +84,10 @@ bool TitleBar::start()
                                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabMoved);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabRemoved,
                                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabRemovd);
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kStartSpinner,
+                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStartSpinner);
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kStopSpinner,
+                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStopSpinner);
     return true;
 }
 
