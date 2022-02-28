@@ -48,10 +48,10 @@ public:
 
 private:
     DSC_NAMESPACE::MenuService *menuServer();
+    QString currentMenuScene() const;
 
     FileView *view { nullptr };
     DSC_NAMESPACE::MenuService *server { nullptr };
-    QString menuScene;
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -23,6 +23,7 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 #include "menus/workspacemenu.h"
+#include "utils/workspacehelper.h"
 
 #include "services/common/menu/menuservice.h"
 #include "dfm-framework/framework.h"
@@ -35,7 +36,6 @@ FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
     : QObject(parent),
       view(parent)
 {
-    menuScene = MenuScene::kWorkspaceMenu;
 }
 
 void FileViewMenuHelper::showEmptyAreaMenu()
@@ -43,7 +43,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
     const QUrl &url = view->rootUrl();
 
     QMenu *menu = menuServer()->createMenu(view,
-                                           menuScene,
+                                           currentMenuScene(),
                                            AbstractMenu::kEmpty,
                                            url, QUrl(), {}, ExtensionType::kNoExtensionAction);
 
@@ -55,12 +55,14 @@ void FileViewMenuHelper::showEmptyAreaMenu()
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
+    Q_UNUSED(indexFlags)
+
     const QUrl &rootUrl = view->rootUrl();
     QList<QUrl> selectUrls = view->selectedUrlList();
     const QUrl foucsUrl = view->model()->fileInfo(index)->url();
 
     QMenu *menu = menuServer()->createMenu(view,
-                                           menuScene,
+                                           currentMenuScene(),
                                            AbstractMenu::MenuMode::kNormal,
                                            rootUrl,
                                            foucsUrl,
@@ -73,11 +75,6 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     }
 }
 
-void FileViewMenuHelper::setMenuScene(const QString &scene)
-{
-    menuScene = scene;
-}
-
 MenuService *FileViewMenuHelper::menuServer()
 {
     if (!server) {
@@ -86,4 +83,10 @@ MenuService *FileViewMenuHelper::menuServer()
     }
 
     return server;
+}
+
+QString FileViewMenuHelper::currentMenuScene() const
+{
+    QString scene = WorkspaceHelper::instance()->findMenuScene(view->rootUrl().scheme());
+    return scene.isEmpty() ? MenuScene::kWorkspaceMenu : scene;
 }

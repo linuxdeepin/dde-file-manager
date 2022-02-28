@@ -82,6 +82,9 @@ QWidget *FileView::widget() const
 
 void FileView::setViewMode(Global::ViewMode mode)
 {
+    if (itemDelegate())
+        itemDelegate()->hideAllIIndexWidget();
+
     setItemDelegate(d->delegates[static_cast<int>(mode)]);
 
     switch (mode) {
@@ -580,13 +583,6 @@ void FileView::setFilterCallback(const quint64 windowID, const QUrl &url, const 
     }
 }
 
-void FileView::setMenuScene(const quint64 windowID, const QUrl &url, const QString &scene)
-{
-    auto thisWindId = WorkspaceHelper::instance()->windowId(this);
-    if (thisWindId == windowID && url == rootUrl() && isVisible())
-        d->viewMenuHelper->setMenuScene(scene);
-}
-
 bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return DListView::edit(index, trigger, event);
@@ -898,7 +894,6 @@ void FileView::initializeConnect()
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterData, this, &FileView::setFilterData);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
-    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetWorkspaceMenuScene, this, &FileView::setMenuScene);
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
 

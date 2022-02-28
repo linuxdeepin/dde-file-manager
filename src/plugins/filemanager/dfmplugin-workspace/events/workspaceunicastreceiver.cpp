@@ -88,9 +88,9 @@ void WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback(const quint64 win
     WorkspaceHelper::instance()->setFilterCallback(windowID, url, callback);
 }
 
-void WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene(const quint64 windowID, const QUrl &url, const QString &scene)
+void WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene)
 {
-    WorkspaceHelper::instance()->setWorkspaceMenuScene(windowID, url, scene);
+    WorkspaceHelper::instance()->setWorkspaceMenuScene(scheme, scene);
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)

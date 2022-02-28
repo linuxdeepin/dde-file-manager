@@ -78,9 +78,10 @@ void WorkspaceHelper::setFilterCallback(quint64 windowId, const QUrl &url, const
     emit requestSetViewFilterCallback(windowId, url, callback);
 }
 
-void WorkspaceHelper::setWorkspaceMenuScene(quint64 windowID, const QUrl &url, const QString &scene)
+void WorkspaceHelper::setWorkspaceMenuScene(const QString &scheme, const QString &scene)
 {
-    emit requestSetWorkspaceMenuScene(windowID, url, scene);
+    if (!scheme.isEmpty() && !scene.isEmpty())
+        menuSceneMap[scheme] = scene;
 }
 
 WorkspaceHelper *WorkspaceHelper::instance()
@@ -149,6 +150,14 @@ void WorkspaceHelper::actionNewWindow(const QList<QUrl> &urls)
 void WorkspaceHelper::actionNewTab(quint64 windowId, const QUrl &url)
 {
     openUrlInNewTab(windowId, url);
+}
+
+QString WorkspaceHelper::findMenuScene(const QString &scheme)
+{
+    if (menuSceneMap.contains(scheme))
+        return menuSceneMap[scheme];
+
+    return QString();
 }
 
 DSC_NAMESPACE::DelegateService *WorkspaceHelper::delegateServIns()

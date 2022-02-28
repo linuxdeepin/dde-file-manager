@@ -78,6 +78,9 @@ void WorkspaceMenu::actionBusiness(QAction *act)
     auto actType = act->data().toInt();
 
     switch (actType) {
+    case ActionType::kActOpen:
+        FileOperaterHelperIns->openFiles(view);
+        break;
     case ActionType::kActSelectAll:
         view->selectAll();
         break;

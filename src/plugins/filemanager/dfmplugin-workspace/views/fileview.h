@@ -125,7 +125,6 @@ public slots:
     void onRowCountChanged();
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
-    void setMenuScene(const quint64 windowID, const QUrl &url, const QString &scene);
 
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 

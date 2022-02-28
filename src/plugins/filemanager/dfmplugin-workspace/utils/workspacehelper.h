@@ -50,6 +50,7 @@ public:
     using KeyType = QString;
     using TopWidgetCreator = std::function<CustomTopWidgetInterface *()>;
     using TopWidgetCreatorMap = QMap<KeyType, TopWidgetCreator>;
+    using MenuSceneMap = QMap<QString, QString>;
 
     void registerTopWidgetCreator(const KeyType &scheme, const TopWidgetCreator &creator);
     bool isRegistedTopWidget(const KeyType &scheme) const;
@@ -57,7 +58,7 @@ public:
     void setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible);
     void setFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void setFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
-    void setWorkspaceMenuScene(quint64 windowID, const QUrl &url, const QString &scene);
+    void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QString &path);
@@ -69,6 +70,7 @@ public:
     void openUrlInNewTab(quint64 windowId, const QUrl &viewMode);
     void actionNewWindow(const QList<QUrl> &urls);
     void actionNewTab(quint64 windowId, const QUrl &url);
+    QString findMenuScene(const QString &scheme);
 
     // services instance
     static DSC_NAMESPACE::DelegateService *delegateServIns();
@@ -78,7 +80,6 @@ signals:
     void openNewTab(quint64 windowId, const QUrl &url);
     void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
-    void requestSetWorkspaceMenuScene(quint64 windowID, const QUrl &url, const QString &scene);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
@@ -87,6 +88,7 @@ private:
 
 private:
     TopWidgetCreatorMap topWidgetCreators;
+    MenuSceneMap menuSceneMap;
     Q_DISABLE_COPY(WorkspaceHelper)
 };
 

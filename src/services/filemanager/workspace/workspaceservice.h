@@ -48,7 +48,7 @@ public:
     bool getCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);
     void setFileViewFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFileViewFilterCallback(const quint64 windowID, const QUrl &url, const Workspace::FileViewFilterCallback callback);
-    void setWorkspaceMenuScene(const quint64 windowID, const QUrl &url, const QString &scene);
+    void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
 
 private:
     explicit WorkspaceService(QObject *parent = nullptr);

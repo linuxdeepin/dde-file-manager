@@ -25,7 +25,7 @@ public slots:
     void invokeSetFileViewFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void invokeSetFileViewFilterCallback(const quint64 windowID, const QUrl &url,
                                          const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
-    void invokeSetWorkspaceMenuScene(const quint64 windowID, const QUrl &url, const QString &scene);
+    void invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene);
 
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);
