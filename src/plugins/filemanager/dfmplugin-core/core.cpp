@@ -111,8 +111,5 @@ void Core::onAllPluginsInitialized()
 
 void Core::onAllPluginsStarted()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    qInfo() << "import service list" << ctx.services();
-    auto commandService = ctx.service<CommandService>(CommandService::name());
-    commandService->processCommand();
+    commandServIns->processCommand();
 }

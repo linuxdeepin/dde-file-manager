@@ -22,10 +22,11 @@
  */
 
 #include "config.h"   //cmake
+#include "utils/windowutils.h"
+
+#include "services/filemanager/command/commandservice.h"
 
 #include <dfm-framework/framework.h>
-#include "utils/windowutils.h"
-#include "services/filemanager/command/commandservice.h"
 
 #include <DApplication>
 #include <DMainWindow>
@@ -114,27 +115,15 @@ int main(int argc, char *argv[])
                                                            "and other useful functions."));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    dpfInstance.initialize();
-
-    auto &ctx = dpfInstance.serviceContext();
-    Q_ASSERT_X(ctx.loaded(CommandService::name()), "main.cpp", "CommandService not loaded");
-
-    QString errStr;
-    if (!ctx.load(CommandService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    auto commandService = ctx.service<CommandService>(CommandService::name());
-    commandService->process();
+    commandServIns->process();
 
     // working dir
-    if (commandService->isSet("w")) {
-        QDir::setCurrent(commandService->value("w"));
+    if (commandServIns->isSet("w")) {
+        QDir::setCurrent(commandServIns->value("w"));
     }
 
     // open as root
-    if (commandService->isSet("r")) {
+    if (commandServIns->isSet("r")) {
         if (WindowUtils ::isWayLand()) {
             QString cmd = "xhost";
             QStringList args;
@@ -153,7 +142,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (commandService->isSet("h") || commandService->isSet("v")) {
+    if (commandServIns->isSet("h") || commandServIns->isSet("v")) {
         return a.exec();
     }
 

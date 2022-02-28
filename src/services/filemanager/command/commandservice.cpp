@@ -50,6 +50,19 @@ CommandService::~CommandService()
 {
 }
 
+CommandService *CommandService::instance()
+{
+    dpfInstance.initialize();
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::CommandService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::CommandService>(DSB_FM_NAMESPACE::CommandService::name());
+}
+
 void CommandService::process()
 {
     return process(qApp->arguments());

@@ -50,6 +50,7 @@ public:
 
     explicit CommandService(QObject *parent = nullptr);
     virtual ~CommandService() override;
+    static CommandService *instance();
 
     void process();
     bool isSet(const QString &name) const;
@@ -73,4 +74,6 @@ private:
 };
 
 DSB_FM_END_NAMESPACE
+
+#define commandServIns ::dfm_service_filemanager::CommandService::instance()
 #endif   // COMMADNSERVICE_H
