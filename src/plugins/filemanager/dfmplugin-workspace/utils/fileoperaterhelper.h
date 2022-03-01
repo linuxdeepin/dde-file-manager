@@ -48,6 +48,7 @@ public:
     void undoFiles(const FileView *view);
     void moveToTrash(const FileView *view);
     void deleteFiles(const FileView *view);
+    void createSymlink(const FileView *view, QUrl targetParent = QUrl());
     void openInTerminal(const FileView *view);
     void showFilesProperty(const FileView *view);
     void sendBluetoothFiles(const FileView *view);

@@ -55,6 +55,7 @@ public:
     void updateGeometries();
     void keyboardSearch(const QString &search);
     bool isEmptyArea(const QPoint &pos);
+
     static int caculateListItemIndex(const QSize &itemSize, const QPoint &pos);
     static int caculateIconItemIndex(const FileView *view, const QSize &itemSize, const QPoint &pos);
 

@@ -95,9 +95,11 @@ public:
 
     State state() const;
     void setState(FileViewModel::State state);
+    void childrenUpdated();
 signals:
     void requestSort();
     void stateChanged();
+    void modelChildrenUpdated();
 };
 
 DPWORKSPACE_END_NAMESPACE

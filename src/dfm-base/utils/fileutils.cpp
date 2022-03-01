@@ -41,6 +41,7 @@
 #include <QTextCodec>
 
 #include <unistd.h>
+#include <sys/stat.h>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -537,6 +538,63 @@ QString FileUtils::cutString(const QString &text, int dataByteSize, const QTextC
     }
 
     return newText;
+}
+
+QString FileUtils::getSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)
+{
+    const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
+
+    if (info && info->exists()) {
+        QString baseName = info->fileDisplayName() == info->fileName() ? info->baseName() : info->fileDisplayName();
+        QString shortcut = QObject::tr("Shortcut");
+        QString linkBaseName;
+
+        int number = 1;
+
+        forever {
+            if (info->isFile()) {
+                if (info->suffix().isEmpty()) {
+                    if (number == 1) {
+
+                        linkBaseName = QString("%1 %2").arg(baseName, shortcut);
+                    } else {
+                        linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
+                    }
+                } else {
+                    if (number == 1) {
+                        linkBaseName = QString("%1 %2.%3").arg(baseName, shortcut, info->suffix());
+                    } else {
+                        linkBaseName = QString("%1 %2%3.%4").arg(baseName, shortcut, QString::number(number), info->suffix());
+                    }
+                }
+            } else if (info->isDir()) {
+                if (number == 1) {
+                    linkBaseName = QString("%1 %2").arg(baseName, shortcut);
+                } else {
+                    linkBaseName = QString("%1 %2%3").arg(baseName, shortcut, QString::number(number));
+                }
+            } else if (info->isSymLink()) {
+                return QString();
+            }
+
+            if (parentUrl.isEmpty()) {
+                return linkBaseName;
+            }
+
+            QDir parentDir = QDir(parentUrl.path());
+            if (parentDir.exists(linkBaseName)) {
+                ++number;
+            } else {
+                //链接文件失效后exists会返回false，通过lstat再次判断链接文件本身是否存在
+                auto strLinkPath = parentDir.filePath(linkBaseName).toStdString();
+                struct stat st;
+                if ((lstat(strLinkPath.c_str(), &st) == 0) && S_ISLNK(st.st_mode))
+                    ++number;
+                else
+                    return linkBaseName;
+            }
+        }
+    }
 }
 
 /*!

@@ -31,6 +31,7 @@
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
 
 DFMGLOBAL_USE_NAMESPACE
@@ -175,6 +176,27 @@ void FileOperaterHelper::deleteFiles(const FileView *view)
                                           windowId,
                                           view->selectedUrlList(),
                                           AbstractJobHandler::JobFlag::kNoHint);
+}
+
+void FileOperaterHelper::createSymlink(const FileView *view, QUrl targetParent)
+{
+    if (targetParent.isEmpty())
+        targetParent = view->rootUrl();
+
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+
+    for (const QUrl &fileUrl : view->selectedUrlList()) {
+        QString linkName = FileUtils::getSymlinkFileName(fileUrl);
+        QUrl linkUrl;
+        linkUrl.setScheme(targetParent.scheme());
+        linkUrl.setPath(targetParent.path() + "/" + linkName);
+
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
+                                              windowId,
+                                              fileUrl,
+                                              linkUrl,
+                                              AbstractJobHandler::JobFlag::kNoHint);
+    }
 }
 
 void FileOperaterHelper::openInTerminal(const FileView *view)

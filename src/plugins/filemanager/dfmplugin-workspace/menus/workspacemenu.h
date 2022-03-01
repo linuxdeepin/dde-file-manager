@@ -57,6 +57,8 @@ private:
     FileView *view { nullptr };
 
     QMap<int, QUrl> sendToRemovabalDiskActs;
+    QList<QUrl> selectUrls;
+    QUrl curUrl;
 };
 
 DPWORKSPACE_END_NAMESPACE

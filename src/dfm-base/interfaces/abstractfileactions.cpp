@@ -79,11 +79,11 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
             // todo (lee or lym): share or unshare
 
             // TODO(lee or lym) 创建链接后续功能还未完善，屏蔽，完善后开放
-            actionKeys /*<< ActionType::kActCreateSymlink*/
-                    << ActionType::kActSendToDesktop
-                    << ActionType::kActSeparator
-                    << ActionType::kActOpenInTerminal
-                    << ActionType::kActSeparator;
+            actionKeys << ActionType::kActCreateSymlink
+                       << ActionType::kActSendToDesktop
+                       << ActionType::kActSeparator
+                       << ActionType::kActOpenInTerminal
+                       << ActionType::kActSeparator;
 
         } else {
             // TODO(lym or lee): kActOpenWith功能未实现，后续开放
@@ -111,8 +111,8 @@ QVector<ActionType> AbstractFileActions::menuActionList(AbstractMenu::MenuType t
             // todo(lee or lym): 2. isArchive file --> Compress action
 
             // TODO(Lee): kActCreateSymlink后续功能完善后开放
-            actionKeys /*<< ActionType::kActCreateSymlink*/
-                    << ActionType::kActSendToDesktop;
+            actionKeys << ActionType::kActCreateSymlink
+                       << ActionType::kActSendToDesktop;
 
             /* todo(lee or lym): ActionType::kActSendToRemovableDisk,
              * ActionType::kActStageFileForBurning,

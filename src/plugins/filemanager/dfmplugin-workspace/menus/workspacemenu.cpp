@@ -24,8 +24,11 @@
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperaterhelper.h"
+#include "events/workspaceeventcaller.h"
+#include "utils/workspacehelper.h"
 
 #include "services/common/bluetooth/bluetoothservice.h"
+#include "dfm-base/base/standardpaths.h"
 #include "dfm-base/dfm_actiontype_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfileactions.h"
@@ -55,6 +58,8 @@ QMenu *WorkspaceMenu::build(QWidget *parent,
     Q_UNUSED(customData)
 
     view = qobject_cast<FileView *>(parent);
+    selectUrls = selected;
+    curUrl = foucsUrl;
 
     QMenu *menu = new QMenu(parent);
 
@@ -75,22 +80,30 @@ void WorkspaceMenu::actionBusiness(QAction *act)
     auto actType = act->data().toInt();
 
     switch (actType) {
-    case ActionType::kActOpen:
+    case kActOpen:
         FileOperaterHelperIns->openFiles(view);
         break;
-    case ActionType::kActSelectAll:
+    case kActOpenInNewWindow:
+        WorkspaceEventCaller::sendOpenWindow(view->selectedUrlList());
+        break;
+    case kActOpenInNewTab: {
+        const quint64 winID = WorkspaceHelper::instance()->windowId(view);
+        WorkspaceHelper::instance()->actionNewTab(winID, curUrl);
+        break;
+    }
+    case kActSelectAll:
         view->selectAll();
         break;
-    case ActionType::kActDisplayAsIcon:
+    case kActDisplayAsIcon:
         view->setViewMode(Global::ViewMode::kIconMode);
         break;
-    case ActionType::kActDisplayAsList:
+    case kActDisplayAsList:
         view->setViewMode(Global::ViewMode::kListMode);
         break;
-    case ActionType::kActName:
-    case ActionType::kActSize:
-    case ActionType::kActType:
-    case ActionType::kActLastModifiedDate: {
+    case kActName:
+    case kActSize:
+    case kActType:
+    case kActLastModifiedDate: {
         FileViewItem::Roles role = static_cast<FileViewItem::Roles>(getRoleByActionType(static_cast<ActionType>(actType)));
         Qt::SortOrder order = view->proxyModel()->sortOrder();
         int column = view->model()->getColumnByRole(role);
@@ -127,10 +140,28 @@ void WorkspaceMenu::actionBusiness(QAction *act)
     case kActDelete:
         FileOperaterHelperIns->deleteFiles(view);
         break;
-    case ActionType::kActOpenInTerminal:
+    case kActRename:
+        if (selectUrls.count() > 1) {
+            const quint64 winID = WorkspaceHelper::instance()->windowId(view);
+            WorkspaceEventCaller::sendShowCustomTopWidget(winID, SchemeTypes::kFile, true);
+        } else {
+            const QModelIndex &index = view->selectionModel()->currentIndex();
+            if (index.isValid())
+                view->edit(index);
+        }
+        break;
+    case kActSendToDesktop: {
+        QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
+        FileOperaterHelperIns->createSymlink(view, StandardPaths::toStandardUrl(desktopPath));
+        break;
+    }
+    case kActCreateSymlink:
+        FileOperaterHelperIns->createSymlink(view);
+        break;
+    case kActOpenInTerminal:
         FileOperaterHelperIns->openInTerminal(view);
         break;
-    case ActionType::kActProperty:
+    case kActProperty:
         FileOperaterHelperIns->showFilesProperty(view);
         break;
     case ActionType::kActSendToBluetooth:

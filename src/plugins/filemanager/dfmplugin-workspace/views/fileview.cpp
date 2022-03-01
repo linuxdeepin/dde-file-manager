@@ -133,6 +133,7 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 bool FileView::setRootUrl(const QUrl &url)
 {
     proxyModel()->resetFilter();
+    clearSelection();
 
     model()->setRootUrl(url);
 
@@ -557,6 +558,15 @@ void FileView::onRowCountChanged()
     updateModelActiveIndex();
 }
 
+void FileView::onChildrenChanged()
+{
+    // TODO(liuyangming): temp code. should select added files.
+    selectionModel()->clear();
+
+    updateContentLabel();
+    delayUpdateStatusBar();
+}
+
 void FileView::setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data)
 {
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
@@ -620,8 +630,6 @@ void FileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFla
 
 void FileView::mousePressEvent(QMouseEvent *event)
 {
-    bool isLeftBottonPressed = event->buttons().testFlag(Qt::LeftButton);
-
     switch (event->button()) {
     case Qt::LeftButton: {
         if (dragDropMode() != NoDragDrop) {
@@ -638,8 +646,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::RightButton: {
-        if (isLeftBottonPressed)
-            DListView::mousePressEvent(event);
+        DListView::mousePressEvent(event);
         break;
     }
     default:
@@ -1021,6 +1028,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
+    connect(model(), &FileViewModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
 }
 
 void FileView::updateStatusBar()

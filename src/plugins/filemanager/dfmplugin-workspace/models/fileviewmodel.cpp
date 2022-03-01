@@ -133,6 +133,7 @@ void FileViewModelPrivate::doWatcherEvent()
             dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs, fileUrl.path());
         }
     }
+    q->childrenUpdated();
     processFileEventRuning = false;
 }
 
@@ -571,6 +572,11 @@ void FileViewModel::setState(FileViewModel::State state)
     d->currentState = state;
 
     emit stateChanged();
+}
+
+void FileViewModel::childrenUpdated()
+{
+    emit modelChildrenUpdated();
 }
 
 int FileViewModel::getColumnWidth(const int &column) const

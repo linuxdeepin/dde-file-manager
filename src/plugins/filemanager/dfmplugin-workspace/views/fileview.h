@@ -123,6 +123,7 @@ public slots:
     void delayUpdateStatusBar();
     void viewModeChanged(quint64 windowId, int viewMode);
     void onRowCountChanged();
+    void onChildrenChanged();
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
 
