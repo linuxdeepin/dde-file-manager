@@ -46,7 +46,7 @@ class TaskDialog : public DAbstractDialog
 public:
     explicit TaskDialog(QObject *parent = nullptr);
     ~TaskDialog();
-    void addTask(const JobHandlePointer &taskHandler);
+    void addTask(const JobHandlePointer taskHandler);
     void initUI();
     void blockShutdown();
     void addTaskWidget(const JobHandlePointer &taskHandler, TaskWidget *wid);

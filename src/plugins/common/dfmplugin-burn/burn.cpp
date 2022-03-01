@@ -24,6 +24,8 @@
 
 #include "events/burneventreceiver.h"
 
+#include <QWidget>
+
 DPBURN_USE_NAMESPACE
 
 void burn::initialize()
@@ -37,6 +39,9 @@ bool burn::start()
     dpfInstance.eventDispatcher().subscribe(Burn::EventType::kShowBurnDlg,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handleShowBurnDlg);
+    dpfInstance.eventDispatcher().subscribe(Burn::EventType::kErase,
+                                            BurnEventReceiver::instance(),
+                                            &BurnEventReceiver::handleErase);
     return true;
 }
 

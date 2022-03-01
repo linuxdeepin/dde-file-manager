@@ -28,6 +28,7 @@ DSC_BEGIN_NAMESPACE
 namespace Burn {
 namespace EventType {
 const int kShowBurnDlg = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kErase = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
 }
 

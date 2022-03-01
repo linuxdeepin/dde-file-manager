@@ -53,7 +53,7 @@ OpticalMediaWidget::OpticalMediaWidget(QWidget *parent)
 void OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
 {
     QString dev { OpticalHelper::burnDestDevice(url) };
-    devId = { OpticalHelper::deviceId(dev) };
+    devId = { DeviceManager::blockDeviceId(dev) };
     auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
     QString &&mnt = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
     bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
@@ -133,7 +133,9 @@ void OpticalMediaWidget::initConnect()
 
     // TODO(zhangs): temp code
     connect(pbBurn, &QPushButton::clicked, this, [this]() {
-        OpticalEventCaller::sendOpenBurnDlg(curDev, devId, isSupportedUDF());
+        auto id = OpticalHelper::winServIns()->findWindowId(this);
+        auto window = OpticalHelper::winServIns()->findWindowById(id);
+        OpticalEventCaller::sendOpenBurnDlg(curDev, isSupportedUDF(), window);
     });
 }
 

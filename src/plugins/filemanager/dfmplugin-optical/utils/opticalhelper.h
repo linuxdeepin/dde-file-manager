@@ -50,7 +50,6 @@ public:
     static QString burnFilePath(const QUrl &url);
     static bool burnIsOnDisc(const QUrl &url);
     static QUrl tansToBurnFile(const QUrl &in);
-    static QString deviceId(const QString &device);
     static bool isSupportedUDFVersion(const QString &version);
     static bool isSupportedUDFMedium(int type);
 

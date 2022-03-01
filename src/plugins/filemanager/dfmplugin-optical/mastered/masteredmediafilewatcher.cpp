@@ -68,7 +68,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
 
     dptr->proxyOnDisk.clear();
     QString devFile { OpticalHelper::burnDestDevice(url) };
-    QString id { OpticalHelper::deviceId(devFile) };
+    QString id { DeviceManager::blockDeviceId(devFile) };
     auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
     QString mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
     dptr->proxyOnDisk = WacherFactory::create<AbstractFileWatcher>(mntPoint);

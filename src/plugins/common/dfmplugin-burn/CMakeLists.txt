@@ -11,6 +11,8 @@ FILE(GLOB BURN_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/events/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/events/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 find_package(Dtk REQUIRED Widget REQUIRED)
@@ -31,7 +33,6 @@ target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     DFMSERVICE::common
-    DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
 )
 

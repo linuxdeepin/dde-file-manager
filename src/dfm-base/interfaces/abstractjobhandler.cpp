@@ -100,7 +100,7 @@ void AbstractJobHandler::onProccessChanged(const JobInfoPointer jobInfo)
     //TODO:: do save something to use
     {
         QMutexLocker lk(&taskInfoMutex);
-        taskInfo.insert(kNotifyProccessChangedKey, jobInfo);
+        taskInfo.insert(NotifyType::kNotifyProccessChangedKey, jobInfo);
     }
     if (isSignalConnectOver)
         emit proccessChangedNotify(jobInfo);
@@ -111,7 +111,7 @@ void AbstractJobHandler::onStateChanged(const JobInfoPointer jobInfo)
     //TODO:: do save something to use
     {
         QMutexLocker lk(&taskInfoMutex);
-        taskInfo.insert(kNotifyStateChangedKey, jobInfo);
+        taskInfo.insert(NotifyType::kNotifyStateChangedKey, jobInfo);
     }
     if (isSignalConnectOver)
         emit stateChangedNotify(jobInfo);
@@ -122,7 +122,7 @@ void AbstractJobHandler::onCurrentTask(const JobInfoPointer jobInfo)
     //TODO:: do save something to use
     {
         QMutexLocker lk(&taskInfoMutex);
-        taskInfo.insert(kNotifyCurrentTaskKey, jobInfo);
+        taskInfo.insert(NotifyType::kNotifyCurrentTaskKey, jobInfo);
     }
     if (isSignalConnectOver)
         emit currentTaskNotify(jobInfo);
@@ -135,8 +135,8 @@ void AbstractJobHandler::onError(const JobInfoPointer jobInfo)
         QMutexLocker lk(&taskInfoMutex);
         JobInfoPointer tempInfo(new QMap<quint8, QVariant>);
         *tempInfo = *jobInfo;
-        tempInfo->remove(kJobHandlePointer);
-        taskInfo.insert(kNotifyErrorTaskKey, tempInfo);
+        tempInfo->remove(int(NotifyInfoKey::kJobHandlePointer));
+        taskInfo.insert(NotifyType::kNotifyErrorTaskKey, tempInfo);
     }
     emit errorNotify(jobInfo);
 }
@@ -147,8 +147,8 @@ void AbstractJobHandler::onFinished(const JobInfoPointer jobInfo)
         QMutexLocker lk(&taskInfoMutex);
         JobInfoPointer tempInfo(new QMap<quint8, QVariant>);
         *tempInfo = *jobInfo;
-        tempInfo->remove(kJobHandlePointer);
-        taskInfo.insert(kNotifyFinishedKey, tempInfo);
+        tempInfo->remove(int(NotifyInfoKey::kJobHandlePointer));
+        taskInfo.insert(NotifyType::kNotifyFinishedKey, tempInfo);
     }
 
     emit finishedNotify(jobInfo);
@@ -159,7 +159,7 @@ void AbstractJobHandler::onSpeedUpdated(const JobInfoPointer jobInfo)
     //TODO:: do save something to use
     {
         QMutexLocker lk(&taskInfoMutex);
-        taskInfo.insert(kNotifySpeedUpdatedTaskKey, jobInfo);
+        taskInfo.insert(NotifyType::kNotifySpeedUpdatedTaskKey, jobInfo);
     }
     if (isSignalConnectOver)
         emit speedUpdatedNotify(jobInfo);
@@ -167,7 +167,7 @@ void AbstractJobHandler::onSpeedUpdated(const JobInfoPointer jobInfo)
 
 void AbstractJobHandler::start()
 {
-    operateTaskJob(kStartAction);
+    operateTaskJob(SupportAction::kStartAction);
 }
 
 QString AbstractJobHandler::errorToString(const AbstractJobHandler::JobErrorType &error)

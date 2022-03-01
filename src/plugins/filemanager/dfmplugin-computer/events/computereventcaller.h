@@ -48,6 +48,7 @@ public:
     static void sendOpenItem(const QUrl &url);
     static void sendShowFilePropertyDialog(const QUrl &url);
     static void sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info);
+    static void sendErase(const QString &dev);
 };
 
 DPCOMPUTER_END_NAMESPACE

@@ -107,6 +107,17 @@ bool DeviceManager::isServiceDBusRunning()
     return deviceInterface && deviceInterface->isValid();
 }
 
+QString DeviceManager::blockDeviceId(const QString &device)
+{
+    static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
+
+    QString dev { device };
+    if (dev.startsWith("/dev/"))
+        dev = dev.remove("/dev/");
+
+    return QString(kBlockDeviceIdPrefix) + dev;
+}
+
 void DeviceManager::invokeDetachAllMountedDevices()
 {
     if (deviceInterface) {

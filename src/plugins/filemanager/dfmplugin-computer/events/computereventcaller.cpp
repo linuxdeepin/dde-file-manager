@@ -26,6 +26,8 @@
 #include "services/filemanager/computer/computer_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/propertydialog/property_defines.h"
+#include "services/common/burn/burn_defines.h"
+
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
@@ -124,6 +126,11 @@ void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPoi
     devInfo.availableSpace = info->sizeFree();
 
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultDeviceProperty, devInfo);
+}
+
+void ComputerEventCaller::sendErase(const QString &dev)
+{
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Burn::EventType::kErase, dev);
 }
 
 DPCOMPUTER_END_NAMESPACE

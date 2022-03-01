@@ -59,14 +59,15 @@ public:
     int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
     void showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError err);
     void showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError err);
-    void addTask(const JobHandlePointer &task);
+    void addTask(const JobHandlePointer task);
     void showSetingsDialog(DFMBASE_NAMESPACE::FileManagerWindow *window);
     QString askPasswordForLockedDevice();
     bool askForFormat();
 
 private:
     explicit DialogManager(QObject *parent = nullptr);
-    TaskDialog *taskdailog = nullptr;   // 文件任务进度和错误处理弹窗
+    ~DialogManager();
+    TaskDialog *taskdailog { nullptr };   // 文件任务进度和错误处理弹窗
 };
 
 DFMBASE_END_NAMESPACE

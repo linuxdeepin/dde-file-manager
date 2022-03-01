@@ -40,8 +40,6 @@ DPOPTICAL_USE_NAMESPACE
 #define BURN_SEG_ONDISC "disc_files"
 #define BURN_SEG_STAGING "staging_files"
 
-static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
-
 QIcon OpticalHelper::icon()
 {
     return QIcon::fromTheme(iconString());
@@ -116,14 +114,6 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
     url.setPath(filePath);
 
     return url;
-}
-
-QString OpticalHelper::deviceId(const QString &device)
-{
-    QString dev { device };
-    if (dev.startsWith("/dev/"))
-        dev = dev.remove("/dev/");
-    return QString(kBlockDeviceIdPrefix) + dev;
 }
 
 bool OpticalHelper::isSupportedUDFVersion(const QString &version)

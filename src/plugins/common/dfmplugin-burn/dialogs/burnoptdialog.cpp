@@ -21,8 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "burnoptdialog.h"
+#include "utils/burnjob.h"
+#include "utils/burnhelper.h"
 
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <dfm-burn/opticaldiscmanager.h>
 #include <dfm-burn/opticaldiscinfo.h>
@@ -30,6 +33,8 @@
 #include <DSysInfo>
 #include <QWindow>
 #include <QLabel>
+#include <QFile>
+#include <QtConcurrent>
 
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -67,7 +72,7 @@ void BurnOptDialog::setISOImage(const QUrl &image)
 {
     DFM_BURN_USE_NS
 
-    image_file = image;
+    imageFile = image;
     donotcloseComb->hide();
 
     fsLabel->hide();
@@ -75,7 +80,7 @@ void BurnOptDialog::setISOImage(const QUrl &image)
 
     volnameEdit->setEnabled(false);
 
-    //we are seemingly abusing dfm-burn here. However that's actually not the case.
+    // we are seemingly abusing dfm-burn here. However that's actually not the case.
     QScopedPointer<DFMBURN::OpticalDiscInfo> info { DFMBURN::OpticalDiscManager::createOpticalInfo(QString("stdio:") + image.toLocalFile()) };
     if (info)
         volnameEdit->setText(info->volumeName());
@@ -97,7 +102,7 @@ void BurnOptDialog::setWriteSpeedInfo(const QStringList &writespeed)
         int speedk;
         QByteArray iBytes(i.toUtf8());
         sscanf(iBytes.data(), "%d%*c\t%lf", &speedk, &speed);
-        speedmap[QString::number(speed, 'f', 1) + 'x'] = speedk;
+        speedMap[QString::number(speed, 'f', 1) + 'x'] = speedk;
         writespeedComb->addItem(QString::number(speed, 'f', 1) + 'x');
     }
 }
@@ -203,7 +208,7 @@ void BurnOptDialog::initializeUi()
     writespeedComb = new QComboBox();
     writespeedComb->addItem(QObject::tr("Maximum"));
     vLay->addWidget(writespeedComb, 0, Qt::AlignTop);
-    speedmap[QObject::tr("Maximum")] = 0;
+    speedMap[QObject::tr("Maximum")] = 0;
     writespeedLabel->setFont(f13);
     writespeedComb->setFont(f14);
 
@@ -234,17 +239,88 @@ void BurnOptDialog::initializeUi()
 
 void BurnOptDialog::initConnect()
 {
-    QObject::connect(volnameEdit, &QLineEdit::textChanged, [this] {
+    connect(volnameEdit, &QLineEdit::textChanged, [this] {
         while (volnameEdit->text().toUtf8().length() > kMaxLabelLen) {
             volnameEdit->setText(volnameEdit->text().chopped(1));
         }
     });
 
-    QObject::connect(advanceBtn, &DCommandLinkButton::clicked, this, [=] {
+    connect(advanceBtn, &DCommandLinkButton::clicked, this, [=] {
         advancedSettings->setHidden(!advancedSettings->isHidden());
     });
 
-    QObject::connect(fsComb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BurnOptDialog::onIndexChanged);
+    connect(fsComb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &BurnOptDialog::onIndexChanged);
+    connect(this, &BurnOptDialog::buttonClicked, this, &BurnOptDialog::onButnBtnClicked);
+}
+
+DFMBURN::BurnOptions BurnOptDialog::currentBurnOptions()
+{
+    DFMBURN::BurnOptions opts;
+
+    if (checkdiscCheckbox->isChecked())
+        opts |= DFMBURN::BurnOption::kVerifyDatas;
+    if (ejectCheckbox->isChecked())
+        opts |= DFMBURN::BurnOption::kEjectDisc;
+    if (donotcloseComb->isChecked())
+        opts |= DFMBURN::BurnOption::kKeepAppendable;
+
+    // 文件系统
+    int fsIndex { fsComb->currentIndex() };
+    if (fsIndex == 0)
+        opts |= DFMBURN::BurnOption::kISO9660Only;
+    else if (fsIndex == 1)
+        opts |= DFMBURN::BurnOption::kJolietSupport;
+    else if (fsIndex == 2)
+        opts |= DFMBURN::BurnOption::kRockRidgeSupport;
+    else if (fsIndex == 3)
+        opts |= DFMBURN::BurnOption::kUDF102Supported;
+    else
+        opts |= DFMBURN::BurnOption::kJolietAndRockRidge;   // not used yet
+
+    return opts;
+}
+
+void BurnOptDialog::startDataBurn()
+{
+    qInfo() << "Start Burn files";
+    const QString &volName = volnameEdit->text().trimmed().isEmpty()
+            ? lastVolName
+            : volnameEdit->text().trimmed();
+
+    bool isUDFBurn = fsComb->currentIndex() == 3;
+    JobHandlePointer jobHandler { new AbstractJobHandler };
+    BurnJob::BurnConfig conf;
+    conf.speeds = speedMap[writespeedComb->currentText()];
+    conf.opts = currentBurnOptions();
+    conf.volName = volName;
+    DialogManagerInstance->addTask(jobHandler);
+
+    QtConcurrent::run([=] {
+        BurnJob job;
+        QString dev { curDev };
+        QUrl stagingUrl { BurnHelper::localStagingFile(dev) };
+        if (isUDFBurn)
+            job.doUDFDataBurn(dev, stagingUrl, conf, jobHandler);
+        else
+            job.doISODataBurn(dev, stagingUrl, conf, jobHandler);
+    });
+}
+
+void BurnOptDialog::startImageBurn()
+{
+    qInfo() << "Start burn image";
+    JobHandlePointer jobHandler { new AbstractJobHandler };
+    BurnJob::BurnConfig conf;
+    conf.speeds = speedMap[writespeedComb->currentText()];
+    conf.opts = currentBurnOptions();
+    DialogManagerInstance->addTask(jobHandler);
+
+    QtConcurrent::run([=] {
+        BurnJob job;
+        QString dev { curDev };
+        QUrl url { imageFile };
+        job.doISOImageBurn(dev, url, conf, jobHandler);
+    });
 }
 
 void BurnOptDialog::onIndexChanged(int index)
@@ -260,5 +336,23 @@ void BurnOptDialog::onIndexChanged(int index)
         checkdiscCheckbox->setEnabled(true);
         donotcloseComb->setEnabled(true);
         writespeedComb->setEnabled(true);
+    }
+}
+
+void BurnOptDialog::onButnBtnClicked(int index, const QString &text)
+{
+    Q_UNUSED(text);
+    QFile opticalDevice(curDev);
+    if (!opticalDevice.exists()) {
+        DialogManagerInstance->showErrorDialog(tr("Device error"), tr("Optical device %1 doesn't exist").arg(curDev));
+        return;
+    }
+
+    if (index == 1) {
+        bool isDataBurn { imageFile.path().length() == 0 };
+        if (isDataBurn)
+            startDataBurn();
+        else
+            startImageBurn();
     }
 }

@@ -39,6 +39,8 @@ class DeviceManager : public QObject
 
 public:
     static DeviceManager &instance();
+    static QString blockDeviceId(const QString &device);
+
     QPointer<DeviceManagerInterface> getDeviceInterface();
     bool connectToServer();
     void initConnection();

@@ -30,6 +30,7 @@ DSC_BEGIN_NAMESPACE
 namespace Burn {
 namespace EventType {
 extern const int kShowBurnDlg;
+extern const int kErase;
 }
 }
 

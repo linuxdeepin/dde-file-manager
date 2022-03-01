@@ -40,7 +40,8 @@ public:
     static BurnEventReceiver *instance();
 
 public slots:
-    void handleShowBurnDlg(const QString &dev, const QString &devId, bool isSupportedUDF);
+    void handleShowBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent);
+    void handleErase(const QString &dev);
 
 private:
     explicit BurnEventReceiver(QObject *parent = nullptr);

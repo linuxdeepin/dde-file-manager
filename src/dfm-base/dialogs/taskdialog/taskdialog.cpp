@@ -48,7 +48,7 @@ TaskDialog::TaskDialog(QObject *parent)
  * \brief TaskDialog::addTask 添加一个任务显示，立即显示，绑定所有taskHandler的信号，在listview中添加一个taskwidget
  * \param taskHandler 任务的控制处理器
  */
-void TaskDialog::addTask(const JobHandlePointer &taskHandler)
+void TaskDialog::addTask(const JobHandlePointer taskHandler)
 {
 
     QMutexLocker lk(addTaskMutex);

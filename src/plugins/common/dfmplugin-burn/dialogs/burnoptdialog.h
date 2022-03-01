@@ -25,6 +25,8 @@
 
 #include "dfmplugin_burn_global.h"
 
+#include <dfm-burn/dfmburn_global.h>
+
 #include <DDialog>
 #include <DLineEdit>
 #include <DCommandLinkButton>
@@ -49,14 +51,18 @@ public:
 private:
     void initializeUi();
     void initConnect();
+    DFMBURN::BurnOptions currentBurnOptions();
+    void startDataBurn();
+    void startImageBurn();
 
 private slots:
     void onIndexChanged(int index);
+    void onButnBtnClicked(int index, const QString &text);
 
 private:
     QString curDev;
-    QHash<QString, int> speedmap;
-    QUrl image_file;
+    QHash<QString, int> speedMap;
+    QUrl imageFile;
     bool isSupportedUDF { false };
     QString lastVolName;
 

@@ -116,7 +116,7 @@ void DialogManager::showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError
  *
  * \param task 文件操作任务的处理器
  */
-void DialogManager::addTask(const JobHandlePointer &task)
+void DialogManager::addTask(const JobHandlePointer task)
 {
     if (!taskdailog)
         taskdailog = new TaskDialog();
@@ -162,5 +162,9 @@ bool DialogManager::askForFormat()
 
 DialogManager::DialogManager(QObject *parent)
     : QObject(parent)
+{
+}
+
+DialogManager::~DialogManager()
 {
 }

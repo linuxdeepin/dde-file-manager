@@ -40,7 +40,7 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     : AbstractDirIterator(url, nameFilters, filters, flags)
 {
     devFile = OpticalHelper::burnDestDevice(url);
-    QString id { OpticalHelper::deviceId(devFile) };
+    QString id { DeviceManager::blockDeviceId(devFile) };
     auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
     mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
 

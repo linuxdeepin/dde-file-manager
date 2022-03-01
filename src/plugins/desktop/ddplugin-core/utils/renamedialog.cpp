@@ -286,8 +286,7 @@ void RenameDialogPrivate::setRenameButtonStatus(const bool &enabled)
 }
 
 RenameDialog::RenameDialog(int fileCount, QWidget *parent)
-    : DDialog(parent)
-    , d(new RenameDialogPrivate(this))
+    : DDialog(parent), d(new RenameDialogPrivate(this))
 {
     d->titleLabel->setText(tr("Rename %1 Files").arg(QString::number(fileCount)));
 
@@ -301,35 +300,35 @@ RenameDialog::ModifyMode RenameDialog::modifyMode() const
 
 QPair<QString, QString> RenameDialog::getReplaceContent() const
 {
-    QString findStr{ std::get<1>(d->replaceForFinding)->text() };
-    QString replaceStr{ std::get<1>(d->replaceForReplacing)->text() };
+    QString findStr { std::get<1>(d->replaceForFinding)->text() };
+    QString replaceStr { std::get<1>(d->replaceForReplacing)->text() };
 
     return QPair<QString, QString> { findStr, replaceStr };
 }
 
 QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> RenameDialog::getAddContent() const
 {
-    QString addStr{ std::get<1>(d->addForAdding)->text() };
+    QString addStr { std::get<1>(d->addForAdding)->text() };
     AbstractJobHandler::FileBatchAddTextFlags flag;
     if (0 == std::get<1>(d->addForLocating)->currentIndex())
-        flag = AbstractJobHandler::kPrefix;
+        flag = AbstractJobHandler::FileBatchAddTextFlags::kPrefix;
     else
-        flag = AbstractJobHandler::kSuffix;
+        flag = AbstractJobHandler::FileBatchAddTextFlags::kSuffix;
 
     return QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> { addStr, flag };
 }
 
 QPair<QString, QString> RenameDialog::getCustomContent() const
 {
-    QString fileName{ std::get<1>(d->customForName)->text() };
-    QString numberStr{ std::get<1>(d->customForNumber)->text() };
+    QString fileName { std::get<1>(d->customForName)->text() };
+    QString numberStr { std::get<1>(d->customForNumber)->text() };
 
     // if the number is empty should set one default value
     if (numberStr.isEmpty()) {
-        numberStr = QString{"1"};
+        numberStr = QString { "1" };
     }
 
-    return QPair<QString, QString> { fileName, numberStr};
+    return QPair<QString, QString> { fileName, numberStr };
 }
 
 void RenameDialog::initUi()
@@ -343,6 +342,6 @@ void RenameDialog::initUi()
     }
 
     this->addContent(d->mainFrame, Qt::AlignCenter);
-    this->addButton(QObject::tr("Cancel","button"));
-    this->addButton(QObject::tr("Rename","button"), true, ButtonRecommend);
+    this->addButton(QObject::tr("Cancel", "button"));
+    this->addButton(QObject::tr("Rename", "button"), true, ButtonRecommend);
 }

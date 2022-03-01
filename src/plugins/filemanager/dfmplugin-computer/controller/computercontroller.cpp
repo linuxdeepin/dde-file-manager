@@ -491,7 +491,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
 
 void ComputerController::actErase(DFMEntryFileInfoPointer info)
 {
-    // TODO(xust); erase discs
+    ComputerEventCaller::sendErase(info->extraProperty(DeviceProperty::kDevice).toString());
 }
 
 ComputerController::ComputerController(QObject *parent)

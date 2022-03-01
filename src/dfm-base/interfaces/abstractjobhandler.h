@@ -109,7 +109,7 @@ public:
         kUnknow
     };
     Q_ENUM(JobType)
-    enum SupportAction {
+    enum class SupportAction {
         kNoAction = 0x00,   // 没有操作
         kRetryAction = 0x01,   // 重试
         kReplaceAction = 0x02,   // 替换
@@ -144,7 +144,7 @@ public:
         kJobHandlePointer,
     };
     Q_ENUM(NotifyInfoKey)
-    enum NotifyType : uint8_t {
+    enum class NotifyType : uint8_t {
         kNotifyProccessChangedKey,
         kNotifyStateChangedKey,
         kNotifyCurrentTaskKey,
@@ -153,7 +153,7 @@ public:
         kNotifyErrorTaskKey,
     };
     Q_ENUM(NotifyType)
-    enum FileBatchAddTextFlags : uint8_t {
+    enum class FileBatchAddTextFlags : uint8_t {
         kPrefix,
         kSuffix
     };
@@ -197,6 +197,7 @@ signals:   // 发送给任务调用者使用的信号
     void currentTaskNotify(const JobInfoPointer jobInfo);
     /*!
      * \brief finishedNotify 任务完成
+     * \param jobInfo
      */
     void finishedNotify(const JobInfoPointer jobInfo);
     /*!

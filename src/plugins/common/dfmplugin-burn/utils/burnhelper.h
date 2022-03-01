@@ -20,27 +20,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "opticaleventcaller.h"
+#ifndef BURNHELPER_H
+#define BURNHELPER_H
 
-#include "services/common/burn/burn_defines.h"
-#include "dfm-base/dfm_event_defines.h"
+#include "dfmplugin_burn_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QUrl>
 
-DPOPTICAL_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+DPBURN_BEGIN_NAMESPACE
 
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
+class BurnHelper
 {
-    return &dpfInstance.eventDispatcher();
-}
+public:
+    static int showOpticalBlankConfirmationDialog();
+    static QUrl localStagingFile(QString dev);
+};
 
-void OpticalEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
-{
-    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
-}
+DPBURN_END_NAMESPACE
 
-void OpticalEventCaller::sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
-{
-    dispatcher()->publish(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg, dev, isSupportedUDF, parent);
-}
+#endif   // BURNHELPER_H

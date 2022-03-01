@@ -79,7 +79,7 @@ bool MasteredMediaFileInfo::isWritable() const
 {
     if (!OpticalHelper::burnIsOnDisc(backerUrl))
         return true;
-    QString id { OpticalHelper::deviceId(OpticalHelper::burnDestDevice(url())) };
+    QString id { DeviceManager::blockDeviceId(OpticalHelper::burnDestDevice(url())) };
     auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
     quint64 avil { qvariant_cast<quint64>(map[DeviceProperty::kSizeFree]) };
     return avil > 0;
@@ -93,7 +93,7 @@ bool MasteredMediaFileInfo::isDir() const
 QString MasteredMediaFileInfo::fileDisplayName() const
 {
     if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
-        QString id { OpticalHelper::deviceId(OpticalHelper::burnDestDevice(url())) };
+        QString id { DeviceManager::blockDeviceId(OpticalHelper::burnDestDevice(url())) };
         auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
         QString idLabel { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
         return idLabel;
@@ -187,7 +187,7 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
         return;
 
     if (OpticalHelper::burnIsOnDisc(url)) {
-        QString id { OpticalHelper::deviceId(OpticalHelper::burnDestDevice(url)) };
+        QString id { DeviceManager::blockDeviceId(OpticalHelper::burnDestDevice(url)) };
         auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
         bool opticalBlank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
         if (opticalBlank)

@@ -22,9 +22,15 @@
 */
 #include "burneventreceiver.h"
 #include "dialogs/burnoptdialog.h"
+#include "utils/burnhelper.h"
+#include "utils/burnjob.h"
 
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+
+#include <DDialog>
+#include <QtConcurrent>
 
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -41,8 +47,9 @@ BurnEventReceiver *BurnEventReceiver::instance()
     return &receiver;
 }
 
-void BurnEventReceiver::handleShowBurnDlg(const QString &dev, const QString &devId, bool isSupportedUDF)
+void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
 {
+    QString devId { DeviceManager::blockDeviceId(dev) };
     auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
 
     QString defaultDiscName { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
@@ -55,9 +62,23 @@ void BurnEventReceiver::handleShowBurnDlg(const QString &dev, const QString &dev
         disableISOOpts = false;
     }
 
-    BurnOptDialog dlg(dev);
-    dlg.setDefaultVolName(defaultDiscName);
-    dlg.setUDFSupported(isSupportedUDF, disableISOOpts);
-    dlg.setWriteSpeedInfo(speed);
-    dlg.exec();
+    QScopedPointer<BurnOptDialog> dlg(new BurnOptDialog(dev, parent));
+    dlg->setDefaultVolName(defaultDiscName);
+    dlg->setUDFSupported(isSupportedUDF, disableISOOpts);
+    dlg->setWriteSpeedInfo(speed);
+    dlg->exec();
+}
+
+void BurnEventReceiver::handleErase(const QString &dev)
+{
+    DWIDGET_USE_NAMESPACE
+
+    if (BurnHelper::showOpticalBlankConfirmationDialog() == DDialog::Accepted) {
+        JobHandlePointer jobHandler { new AbstractJobHandler };
+        DialogManagerInstance->addTask(jobHandler);
+        QtConcurrent::run([=] {
+            BurnJob job;
+            job.doOpticalDiskBlank(dev, jobHandler);
+        });
+    }
 }
