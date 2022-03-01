@@ -57,7 +57,6 @@ bool DelegateService::isTransparent(const QUrl &url)
 
 DelegateService *DelegateService::instance()
 {
-    dpfInstance.initialize();
     auto &ctx = dpfInstance.serviceContext();
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&ctx]() {

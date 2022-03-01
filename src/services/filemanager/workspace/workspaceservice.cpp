@@ -112,7 +112,6 @@ void WorkspaceService::setWorkspaceMenuScene(const QString &scheme, const QStrin
 
 WorkspaceService *WorkspaceService::instance()
 {
-    dpfInstance.initialize();
     auto &ctx = dpfInstance.serviceContext();
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&ctx]() {

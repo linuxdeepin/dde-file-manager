@@ -115,6 +115,8 @@ int main(int argc, char *argv[])
                                                            "and other useful functions."));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
+    dpfInstance.initialize();
+
     commandServIns->process();
 
     // working dir
