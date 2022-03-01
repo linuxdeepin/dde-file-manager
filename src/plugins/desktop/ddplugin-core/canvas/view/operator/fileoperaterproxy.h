@@ -45,7 +45,7 @@ public:
     void openFiles(const CanvasView *view, const QList<QUrl> &urls);
     void renameFile(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl);
     void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace);
-    void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> pair);
+    void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, dfmbase::AbstractJobHandler::FileNameAddFlag> pair);
     void openFilesByApp(const CanvasView *view);
     void moveToTrash(const CanvasView *view);
     void deleteFiles(const CanvasView *view);
@@ -69,4 +69,4 @@ private:
 
 DSB_D_END_NAMESPACE
 
-#endif // EVENTPROXY_H
+#endif   // EVENTPROXY_H

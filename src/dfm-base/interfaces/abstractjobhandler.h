@@ -153,11 +153,12 @@ public:
         kNotifyErrorTaskKey,
     };
     Q_ENUM(NotifyType)
-    enum class FileBatchAddTextFlags : uint8_t {
+    enum FileNameAddFlag : uint8_t {
         kPrefix,
         kSuffix
     };
-    Q_ENUM(FileBatchAddTextFlags)
+    Q_ENUM(FileNameAddFlag)
+
     explicit AbstractJobHandler(QObject *parent = nullptr);
     virtual ~AbstractJobHandler();
     virtual qreal currentJobProcess() const;

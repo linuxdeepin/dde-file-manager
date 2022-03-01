@@ -21,6 +21,7 @@
  */
 #include "trashmenu.h"
 #include "utils/trashhelper.h"
+#include "utils/trashfilehelper.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -207,12 +208,12 @@ void TrashMenu::emptyTrash()
 
 void TrashMenu::restore()
 {
-    // Todo(yanghao):
+    TrashFileHelper::restoreFromTrashHandle(0, this->selectedUrls, AbstractJobHandler::JobFlag::kRevocation);
 }
 
 void TrashMenu::restoreAll()
 {
-    // Todo(yanghao):
+    TrashFileHelper::restoreFromTrashHandle(0, { this->rootUrl }, AbstractJobHandler::JobFlag::kRevocation);
 }
 
 QAction *TrashMenu::createAction(const TrashMenu::TrashActionType type, const QString &text, bool isDisabled)

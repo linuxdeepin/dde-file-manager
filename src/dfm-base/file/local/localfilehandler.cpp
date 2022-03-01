@@ -222,7 +222,7 @@ bool LocalFileHandler::renameFileBatchReplace(const QList<QUrl> &urls, const QPa
     return renameFilesBatch(needDealUrls);
 }
 
-bool LocalFileHandler::renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> &pair)
+bool LocalFileHandler::renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair)
 {
     QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair);
     return renameFilesBatch(needDealUrls);
@@ -253,7 +253,8 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &urls)
 
     bool ret = false;
     for (const QUrl &url : urls) {
-        if (QFileInfo(url.path()).suffix() == "desktop") {
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info->suffix() == "desktop") {
             ret = launchApp(url.path()) || ret;   //有一个成功就成功
             resourceUrls.removeOne(url);
             continue;

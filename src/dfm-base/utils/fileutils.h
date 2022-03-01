@@ -22,6 +22,7 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
+#include "dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -53,9 +54,10 @@ public:
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
+    static bool isSmbPath(const QUrl &url);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
-    static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair);
+    static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair);
     static QMap<QUrl, QUrl> fileBatchCustomText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
     static QString cutString(const QString &text, int dataByteSize, const QTextCodec *codec);
 

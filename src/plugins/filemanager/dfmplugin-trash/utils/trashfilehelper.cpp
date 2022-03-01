@@ -120,3 +120,18 @@ JobHandlePointer TrashFileHelper::cutHandle(const quint64 windowId, const QList<
                                           sources);
     return {};
 }
+
+JobHandlePointer TrashFileHelper::restoreFromTrashHandle(const quint64 windowId, const QList<QUrl> urls, const AbstractJobHandler::JobFlags flags)
+{
+    QList<QUrl> urlsLocal;
+    for (const auto &url : urls) {
+        if (url.scheme() == TrashHelper::scheme())
+            urlsLocal.append(TrashHelper::toLocalFile(url));
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRestoreFromTrash,
+                                          windowId,
+                                          urlsLocal,
+                                          flags);
+    return {};
+}

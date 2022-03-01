@@ -297,6 +297,28 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
     return url1.host() == url2.host() && url1.port() == url1.port();
 }
 
+bool FileUtils::isSmbPath(const QUrl &url)
+{
+    const QString &&strUrl = url.toString();
+
+    // like file:///run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path
+    QRegExp reg("/run/user/.+gvfs/smb-share:.*server.+share.+");
+    int idx = reg.indexIn(strUrl);
+
+    if (-1 == idx) {
+        // 传进来的可能是加密的路径
+        idx = reg.indexIn(QUrl::fromPercentEncoding(strUrl.toLocal8Bit()));
+    }
+
+    if (-1 == idx) {
+        // like smb://ttt;uos:1@xx.xx.xx.xx/io/path
+        // maybe access by mapping addr, like smb://xxx.com/io
+        reg.setPattern("smb://.+");
+        idx = reg.indexIn(strUrl);
+    }
+    return -1 != idx;
+}
+
 QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
 {
     if (originUrls.isEmpty()) {
@@ -341,7 +363,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
     return result;
 }
 
-QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair)
+QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair)
 {
     if (originUrls.isEmpty()) {
         return QMap<QUrl, QUrl> {};
@@ -369,7 +391,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
             addText = cutString(addText, maxLength, QTextCodec::codecForLocale());
         }
 
-        if (pair.second == AbstractJobHandler::FileBatchAddTextFlags::kPrefix) {
+        if (pair.second == AbstractJobHandler::FileNameAddFlag::kPrefix) {
             fileBaseName.insert(0, addText);
         } else {
             fileBaseName.append(addText);

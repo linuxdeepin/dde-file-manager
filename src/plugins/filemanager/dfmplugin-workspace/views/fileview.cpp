@@ -893,19 +893,19 @@ QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Q
 
     if (index.isValid()) {
         if (viewMode() == IconMode) {
-            bool last_row = indexOfRow(index) == rowCount() - 1;
+            bool lastRow = indexOfRow(index) == rowCount() - 1;
 
-            if (!last_row
+            if (!lastRow
                 && current == index
                 && (cursorAction == MoveDown
                     || cursorAction == MovePageDown
                     || cursorAction == MoveNext)) {
                 // 当下一个位置没有元素时，QListView不会自动换一列选择，应该直接选中最后一个
                 index = model()->index(count() - 1, 0);
-                last_row = true;
+                lastRow = true;
             }
 
-            if (last_row) {
+            if (lastRow) {
                 // call later
                 //QTimer::singleShot(0, this, [this, index, d] {//this index unused,改成如下
                 QTimer::singleShot(0, this, [this] {

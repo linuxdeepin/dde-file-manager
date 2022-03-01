@@ -55,6 +55,9 @@ public:
                                       const QList<QUrl> sources,
                                       const QUrl target,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static JobHandlePointer restoreFromTrashHandle(const quint64 windowId,
+                                                   const QList<QUrl> urls,
+                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
     // Todo(yanghao)
 };

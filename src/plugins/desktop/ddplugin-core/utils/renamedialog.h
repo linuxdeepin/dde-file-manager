@@ -23,6 +23,7 @@
 
 #include "dfm_desktop_service_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm_global_defines.h"
 
 #include <QSharedPointer>
 #include <DDialog>
@@ -45,7 +46,7 @@ public:
 
     ModifyMode modifyMode() const;
     QPair<QString, QString> getReplaceContent() const;
-    QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> getAddContent() const;
+    QPair<QString, dfmbase::AbstractJobHandler::FileNameAddFlag> getAddContent() const;
     QPair<QString, QString> getCustomContent() const;
 
 private:
@@ -60,4 +61,4 @@ private:
 };
 
 DSB_D_END_NAMESPACE
-#endif // RENAMEDIALOG_H
+#endif   // RENAMEDIALOG_H

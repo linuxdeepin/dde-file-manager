@@ -63,6 +63,9 @@ enum GlobalEventType : uint16_t {
     kOpenInTerminal,
     kCleanTrash,
     kWriteCustomToClipboard,
+
+    kOperationResultStart = 1000,
+
     kOpenFilesResult,
     kOpenFilesByAppResult,
     kRenameFileResult,
@@ -73,7 +76,7 @@ enum GlobalEventType : uint16_t {
     kOpenInTerminalResult,
 
     // first user event id, use UniversalUtils::registerEventType crreate custom event type
-    kCustomBase = 1000,   // first user event id
+    kCustomBase = 10000,   // first user event id
     kMaxCustom = 65535   // last user event id
 };
 DFMBASE_END_NAMESPACE

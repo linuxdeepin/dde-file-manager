@@ -26,6 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm_global_defines.h"
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -159,12 +160,12 @@ void FileOperations::initEventHandle()
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QList<QUrl>,
-                                                                                              const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags>)>(&FileOperationsEventReceiver::handleOperationRenameFiles));
+                                                                                              const QPair<QString, AbstractJobHandler::FileNameAddFlag>)>(&FileOperationsEventReceiver::handleOperationRenameFiles));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFiles,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QList<QUrl>,
-                                                                                              const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags>,
+                                                                                              const QPair<QString, AbstractJobHandler::FileNameAddFlag>,
                                                                                               const QVariant,
                                                                                               OperaterCallback)>(&FileOperationsEventReceiver::handleOperationRenameFiles));
 

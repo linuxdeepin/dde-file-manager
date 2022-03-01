@@ -26,6 +26,10 @@
 #include "dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.h"
 #include "dfm-base/dialogs/settingsdialog/settingdialog.h"
 #include "dfm-base/dialogs/taskdialog/taskdialog.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm_global_defines.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 DFMBASE_USE_NAMESPACE
 
@@ -36,7 +40,7 @@ DialogManager *DialogManager::instance()
 }
 
 DDialog *DialogManager::showQueryScanningDialog(const QString &title)
-{
+{   // stop scan device
     DDialog *d = new DDialog;
     d->setTitle(title);
     d->setAttribute(Qt::WA_DeleteOnClose);
@@ -111,6 +115,72 @@ void DialogManager::showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError
     }
 }
 
+void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
+{
+    qDebug() << urls << "no perssion";
+    if (urls.isEmpty()) {
+        return;
+    }
+
+    QFont f;
+    f.setPixelSize(16);
+    QFontMetrics fm(f);
+
+    DDialog d;
+
+    QIcon icon = QIcon::fromTheme("dialog-warning");
+    if (urls.count() == 1) {
+
+        d.setTitle(tr("You do not have permission to operate file/folder!"));
+        QString message = urls.at(0).toLocalFile();
+
+        if (fm.width(message) > Global::kMaxFileNameCharCount) {
+            message = fm.elidedText(message, Qt::ElideMiddle, Global::kMaxFileNameCharCount);
+        }
+
+        d.setMessage(message);
+        d.setIcon(icon);
+    } else {
+
+        QFrame *contentFrame = new QFrame;
+
+        QLabel *iconLabel = new QLabel;
+        iconLabel->setPixmap(icon.pixmap(64, 64));
+
+        QLabel *titleLabel = new QLabel;
+        titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/folder(s)!").arg(QString::number(urls.count())));
+
+        QLabel *messageLabel = new QLabel;
+        messageLabel->setScaledContents(true);
+
+        QString message;
+        for (int i = 0; i < urls.count(); i++) {
+            if (i >= 10) {
+                break;
+            }
+            QString s = QString("%1.%2").arg(QString::number(i + 1), urls.at(i).toLocalFile());
+            if (fm.width(s) > Global::kMaxFileNameCharCount) {
+                s = fm.elidedText(s, Qt::ElideMiddle, Global::kMaxFileNameCharCount);
+            }
+            message += s + "\n";
+        }
+        messageLabel->setText(message);
+
+        QVBoxLayout *contentLayout = new QVBoxLayout;
+        contentLayout->addWidget(iconLabel, 0, Qt::AlignCenter);
+        contentLayout->addWidget(titleLabel, 0, Qt::AlignCenter);
+        contentLayout->addWidget(messageLabel, 0, Qt::AlignCenter);
+        contentLayout->setContentsMargins(0, 0, 0, 0);
+        contentLayout->setSpacing(10);
+        contentFrame->setLayout(contentLayout);
+
+        d.addContent(contentFrame, Qt::AlignCenter);
+    }
+
+    d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
+
 /*!
  * \brief DialogService::addTask 添加一个文件操作任务，当收到这个任务的线程结束时，自己移除掉这个任务
  *
@@ -118,10 +188,10 @@ void DialogManager::showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError
  */
 void DialogManager::addTask(const JobHandlePointer task)
 {
-    if (!taskdailog)
-        taskdailog = new TaskDialog();
+    if (!taskdialog)
+        taskdialog = new TaskDialog();
 
-    taskdailog->addTask(task);
+    taskdialog->addTask(task);
 }
 
 void DialogManager::showSetingsDialog(FileManagerWindow *window)
@@ -158,6 +228,58 @@ bool DialogManager::askForFormat()
     dlg.addButton(tr("Format", "button"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
     return dlg.exec() == QDialog::Accepted;
+}
+
+int DialogManager::showRunExcutableScriptDialog(const QUrl &url)
+{
+    DDialog d;
+    const int maxDisplayNameLength = 250;
+
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+
+    const QString &fileDisplayName = info->fileDisplayName();
+    const QString &fileDisplayNameNew = d.fontMetrics().elidedText(fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
+    const QString &message = tr("Do you want to run %1 or display its content?").arg(fileDisplayNameNew);
+    const QString &tipMessage = tr("It is an executable text file.");
+    QStringList buttonTexts;
+
+    buttonTexts.append(tr("Cancel", "button"));
+    buttonTexts.append(tr("Run", "button"));
+    buttonTexts.append(tr("Run in terminal", "button"));
+    buttonTexts.append(tr("Display", "button"));
+
+    d.setIcon(QIcon::fromTheme("application-x-shellscript"));
+    d.setTitle(message);
+    d.setMessage(tipMessage);
+    d.addButton(buttonTexts[0], true);
+    d.addButton(buttonTexts[1], false);
+    d.addButton(buttonTexts[2], false);
+    d.addButton(buttonTexts[3], false, DDialog::ButtonRecommend);
+    d.setDefaultButton(3);
+    d.setFixedWidth(480);
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showRunExcutableFileDialog(const QUrl &url)
+{
+    DDialog d;
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+
+    const int maxDisplayNameLength = 200;
+    const QString &fileDisplayName = info->fileDisplayName();
+    const QString &fileDisplayNameNew = d.fontMetrics().elidedText(fileDisplayName, Qt::ElideRight, maxDisplayNameLength);
+    const QString &message = tr("Do you want to run %1?").arg(fileDisplayNameNew);
+    const QString &tipMessage = tr("It is an executable file.");
+
+    d.addButton(tr("Cancel", "button"));
+    d.addButton(tr("Run in terminal", "button"));
+    d.addButton(tr("Run", "button"), true, DDialog::ButtonRecommend);
+    d.setTitle(message);
+    d.setMessage(tipMessage);
+    d.setIcon(info->fileIcon());
+    int code = d.exec();
+    return code;
 }
 
 DialogManager::DialogManager(QObject *parent)

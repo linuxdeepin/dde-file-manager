@@ -25,6 +25,7 @@
 #include "trashfilewatcher.h"
 #include "events/trasheventcaller.h"
 #include "views/emptyTrashWidget.h"
+#include "dfm_event_defines.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"

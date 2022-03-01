@@ -32,7 +32,6 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
 
-
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
@@ -40,14 +39,14 @@ DSB_D_USE_NAMESPACE
 #define KEY_SCREENNUMBER "screenNumber"
 #define KEY_POINT "point"
 
-class FileBusinessGlobal : public FileOperaterProxy {};
+class FileBusinessGlobal : public FileOperaterProxy
+{
+};
 Q_GLOBAL_STATIC(FileBusinessGlobal, fileBusinessGlobal)
 
 FileOperaterProxyPrivate::FileOperaterProxyPrivate(FileOperaterProxy *q_ptr)
-    : QObject (q_ptr)
-    , q(q_ptr)
+    : QObject(q_ptr), q(q_ptr)
 {
-
 }
 
 void FileOperaterProxyPrivate::callBackTouchFile(const QUrl &target, const QVariantMap &customData)
@@ -67,13 +66,13 @@ void FileOperaterProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
             return;
 
         // move it
-        bool moved = GridIns->move(screenNum, pos, path, {path});
+        bool moved = GridIns->move(screenNum, pos, path, { path });
         qDebug() << "item:" << path << " move:" << moved << " ori:" << oriPoint.first << oriPoint.second << "   target:" << screenNum << pos;
     } else {
         if (CanvasGrid::Mode::Align == GridIns->mode())
             GridIns->append(path);
         else
-            GridIns->tryAppendAfter({path}, screenNum, pos);
+            GridIns->tryAppendAfter({ path }, screenNum, pos);
     }
     CanvasIns->update();
     // need open editor,only by call back(by menu create file)
@@ -81,10 +80,8 @@ void FileOperaterProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
 }
 
 FileOperaterProxy::FileOperaterProxy(QObject *parent)
-    : QObject (parent)
-    , d(new FileOperaterProxyPrivate(this))
+    : QObject(parent), d(new FileOperaterProxyPrivate(this))
 {
-
 }
 
 FileOperaterProxy *FileOperaterProxy::instance()
@@ -100,13 +97,7 @@ void FileOperaterProxy::touchFile(const CanvasView *view, const QPoint pos, cons
     QPair<FileOperaterProxyPrivate::CallBackFunc, QVariant> funcData(FileOperaterProxyPrivate::kCallBackTouchFile, data);
     QVariant custom = QVariant::fromValue(funcData);
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFileCallBack
-                                          , view->winId()
-                                          , view->model()->rootUrl()
-                                          , type
-                                          , suffix
-                                          , custom
-                                          , &FileOperaterProxy::callBackFunction);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFileCallBack, view->winId(), view->model()->rootUrl(), type, suffix, custom, &FileOperaterProxy::callBackFunction);
 }
 
 void FileOperaterProxy::touchFolder(const CanvasView *view, const QPoint pos)
@@ -117,28 +108,17 @@ void FileOperaterProxy::touchFolder(const CanvasView *view, const QPoint pos)
     QPair<FileOperaterProxyPrivate::CallBackFunc, QVariant> funcData(FileOperaterProxyPrivate::kCallBackTouchFolder, data);
     QVariant custom = QVariant::fromValue(funcData);
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdirCallBack
-                                          , view->winId()
-                                          , view->model()->rootUrl()
-                                          , kCreateFileTypeFolder
-                                          , custom
-                                          , &FileOperaterProxy::callBackFunction);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdirCallBack, view->winId(), view->model()->rootUrl(), kCreateFileTypeFolder, custom, &FileOperaterProxy::callBackFunction);
 }
 
 void FileOperaterProxy::copyFiles(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard
-                                          , view->winId()
-                                          , ClipBoard::ClipboardAction::kCopyAction
-                                          , view->selectionModel()->selectedUrls());
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCopyAction, view->selectionModel()->selectedUrls());
 }
 
 void FileOperaterProxy::cutFiles(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard
-                                          , view->winId()
-                                          , ClipBoard::ClipboardAction::kCutAction
-                                          , view->selectionModel()->selectedUrls());
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, view->winId(), ClipBoard::ClipboardAction::kCutAction, view->selectionModel()->selectedUrls());
 }
 
 void FileOperaterProxy::pasteFiles(const CanvasView *view, const QPoint pos)
@@ -149,17 +129,9 @@ void FileOperaterProxy::pasteFiles(const CanvasView *view, const QPoint pos)
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
     if (ClipBoard::kCopyAction == action) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy
-                                              , view->winId()
-                                              , urls
-                                              , view->model()->rootUrl()
-                                              , AbstractJobHandler::JobFlag::kNoHint);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint);
     } else if (ClipBoard::kCutAction == action) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile
-                                              , view->winId()
-                                              , urls
-                                              , view->model()->rootUrl()
-                                              , AbstractJobHandler::JobFlag::kNoHint);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint);
         //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
 
         // clear clipboard after cutting files from clipboard
@@ -171,41 +143,27 @@ void FileOperaterProxy::pasteFiles(const CanvasView *view, const QPoint pos)
 
 void FileOperaterProxy::openFiles(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles
-                                          , view->winId()
-                                          , view->selectionModel()->selectedUrls());
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, view->winId(), view->selectionModel()->selectedUrls());
 }
 
 void FileOperaterProxy::openFiles(const CanvasView *view, const QList<QUrl> &urls)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles
-                                          , view->winId()
-                                          , urls);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, view->winId(), urls);
 }
 
 void FileOperaterProxy::renameFile(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile
-                                          , view->winId()
-                                          , oldUrl
-                                          , newUrl);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, view->winId(), oldUrl, newUrl);
 }
 
 void FileOperaterProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles
-                                          , view->winId()
-                                          , urls
-                                          , pair
-                                          , replace);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles, view->winId(), urls, pair, replace);
 }
 
-void FileOperaterProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> pair)
+void FileOperaterProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles
-                                          , view->winId()
-                                          , urls
-                                          , pair);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles, view->winId(), urls, pair);
 }
 
 void FileOperaterProxy::openFilesByApp(const CanvasView *view)
@@ -216,18 +174,12 @@ void FileOperaterProxy::openFilesByApp(const CanvasView *view)
 
 void FileOperaterProxy::moveToTrash(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash
-                                          , view->winId()
-                                          , view->selectionModel()->selectedUrls()
-                                          , AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, view->winId(), view->selectionModel()->selectedUrls(), AbstractJobHandler::JobFlag::kNoHint);
 }
 
 void FileOperaterProxy::deleteFiles(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles
-                                          , view->winId()
-                                          , view->selectionModel()->selectedUrls()
-                                          , AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, view->winId(), view->selectionModel()->selectedUrls(), AbstractJobHandler::JobFlag::kNoHint);
 }
 
 void FileOperaterProxy::showFilesProperty(const CanvasView *view)
@@ -241,38 +193,24 @@ void FileOperaterProxy::dropFiles(const Qt::DropAction &action, const QUrl &targ
     // drop files from other app will auto append,independent of the view
     auto view = CanvasIns->views().first();
     if (action == Qt::MoveAction) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile
-                                              , view->winId()
-                                              , urls
-                                              , targetUrl
-                                              , AbstractJobHandler::JobFlag::kNoHint);
-    } else{
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint);
+    } else {
         // default is copy file
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy
-                                              , view->winId()
-                                              , urls
-                                              , targetUrl
-                                              , AbstractJobHandler::JobFlag::kNoHint);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint);
     }
 }
 
 void FileOperaterProxy::dropToTrash(const QList<QUrl> &urls)
 {
     auto view = CanvasIns->views().first();
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash
-                                          , view->winId()
-                                          , urls
-                                          , AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint);
 }
 
 void FileOperaterProxy::dropToApp(const QList<QUrl> &urls, const QString &app)
 {
     auto view = CanvasIns->views().first();
     QList<QString> apps { app };
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp
-                                          , view->winId()
-                                          , urls
-                                          , apps);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, view->winId(), urls, apps);
 }
 
 void FileOperaterProxy::callBackFunction(const CallbackArgus args)
@@ -287,8 +225,8 @@ void FileOperaterProxy::callBackFunction(const CallbackArgus args)
     }
 
     switch (funcKey) {
-    case FileOperaterProxyPrivate::CallBackFunc::kCallBackTouchFile :
-    case FileOperaterProxyPrivate::CallBackFunc::kCallBackTouchFolder : {
+    case FileOperaterProxyPrivate::CallBackFunc::kCallBackTouchFile:
+    case FileOperaterProxyPrivate::CallBackFunc::kCallBackTouchFolder: {
         // Folder also belong to files
 
         auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
@@ -298,10 +236,8 @@ void FileOperaterProxy::callBackFunction(const CallbackArgus args)
         }
 
         FileOperaterProxyPrivate::callBackTouchFile(targets.first(), custom.second.toMap());
-    }
-        break;
+    } break;
     default:
         break;
     }
 }
-

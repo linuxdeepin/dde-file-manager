@@ -131,10 +131,10 @@ public slots:
                                     DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationRenameFiles(const quint64 windowId,
                                     const QList<QUrl> urls,
-                                    const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> pair);
+                                    const QPair<QString, dfmbase::AbstractJobHandler::FileNameAddFlag> pair);
     void handleOperationRenameFiles(const quint64 windowId,
                                     const QList<QUrl> urls,
-                                    const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> pair,
+                                    const QPair<QString, dfmbase::AbstractJobHandler::FileNameAddFlag> pair,
                                     const QVariant custom,
                                     DFMBASE_NAMESPACE::Global::OperaterCallback callback);
 

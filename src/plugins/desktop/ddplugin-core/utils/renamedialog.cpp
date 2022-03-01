@@ -306,16 +306,16 @@ QPair<QString, QString> RenameDialog::getReplaceContent() const
     return QPair<QString, QString> { findStr, replaceStr };
 }
 
-QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> RenameDialog::getAddContent() const
+QPair<QString, AbstractJobHandler::FileNameAddFlag> RenameDialog::getAddContent() const
 {
     QString addStr { std::get<1>(d->addForAdding)->text() };
-    AbstractJobHandler::FileBatchAddTextFlags flag;
+    AbstractJobHandler::FileNameAddFlag flag;
     if (0 == std::get<1>(d->addForLocating)->currentIndex())
-        flag = AbstractJobHandler::FileBatchAddTextFlags::kPrefix;
+        flag = AbstractJobHandler::FileNameAddFlag::kPrefix;
     else
-        flag = AbstractJobHandler::FileBatchAddTextFlags::kSuffix;
+        flag = AbstractJobHandler::FileNameAddFlag::kSuffix;
 
-    return QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> { addStr, flag };
+    return QPair<QString, AbstractJobHandler::FileNameAddFlag> { addStr, flag };
 }
 
 QPair<QString, QString> RenameDialog::getCustomContent() const

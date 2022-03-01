@@ -186,11 +186,11 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationCopy(const quint64 
                                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
-    if (!sources.isEmpty() && !sources.first().isLocalFile()) {
+    if (!sources.isEmpty() && !target.isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
             QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
+            function = this->functions.value(target.scheme());
         }
         if (function && function->copy) {
             return function->copy(windowId, sources, target, flags);
@@ -202,11 +202,11 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationCopy(const quint64 
 JobHandlePointer FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
-    if (!sources.isEmpty() && !sources.first().isLocalFile()) {
+    if (!sources.isEmpty() && !target.isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
             QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
+            function = this->functions.value(target.scheme());
         }
         if (function && function->cut) {
             return function->cut(windowId, sources, target, flags);
@@ -551,7 +551,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     }
 }
 
-bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> pair)
+bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
     // TODO lanxs deal custom function
     QString error;
@@ -567,7 +567,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     return ok;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileBatchAddTextFlags> pair, const QVariant custom, OperaterCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, OperaterCallback callback)
 {
     bool ok = handleOperationRenameFiles(windowId, urls, pair);
     if (callback) {

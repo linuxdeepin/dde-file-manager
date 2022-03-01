@@ -31,16 +31,16 @@ namespace Workspace {
 
 // custom event type
 namespace EventType {
-extern const int kTabAdded = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-extern const int kTabChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-extern const int kTabMoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-extern const int kTabRemoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-extern const int kCloseTabs = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-extern const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kTabAdded = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kTabChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kTabMoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kTabRemoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kCloseTabs = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 namespace MenuScene {
-extern const char *const kWorkspaceMenu = "workspace-menu";
+const char *const kWorkspaceMenu = "workspace-menu";
 };   // namespace MenuScene
 
 }   // namespace Sidebar

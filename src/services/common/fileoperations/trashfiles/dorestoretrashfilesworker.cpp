@@ -64,6 +64,21 @@ bool DoRestoreTrashFilesWorker::doWork()
 bool DoRestoreTrashFilesWorker::statisticsFilesSize()
 {
     sourceFilesCount = sourceUrls.size();
+
+    if (sourceUrls.count() == 0) {
+        qWarning() << "sources files list is empty!";
+        return false;
+    }
+
+    QString path = sourceUrls.first().path();
+    if (path.endsWith("/"))
+        path.chop(1);
+
+    if (sourceUrls.count() == 1 && path == StandardPaths::location(StandardPaths::kTrashFilesPath)) {
+        FileOperationsUtils::getDirFiles(sourceUrls.first(), allFilesList);
+        sourceFilesCount = allFilesList.size();
+    }
+
     return true;
 }
 
@@ -84,7 +99,10 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
     //获取当前的
     bool result = false;
     // 总大小使用源文件个数
-    for (const auto &url : sourceUrls) {
+    QList<QUrl> urlsSource = sourceUrls;
+    if (!allFilesList.empty())
+        urlsSource = allFilesList;
+    for (const auto &url : urlsSource) {
         if (!stateCheck())
             return false;
 

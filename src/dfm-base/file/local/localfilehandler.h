@@ -25,6 +25,7 @@
 #define LOCALFILEHANDLER_H
 
 #include "dfm-base/dfm_base_global.h"
+#include "dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QString>
@@ -47,7 +48,7 @@ public:
     virtual bool rmdir(const QUrl &url);
     virtual bool renameFile(const QUrl &url, const QUrl &newUrl);
     virtual bool renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair);
-    virtual bool renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, dfmbase::AbstractJobHandler::FileBatchAddTextFlags> &pair);
+    virtual bool renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair);
     virtual bool renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair);
     virtual bool openFile(const QUrl &file);
     virtual bool openFiles(const QList<QUrl> &files);
