@@ -43,6 +43,7 @@ public:
         : myList(new QList<T>) {}
     ~DThreadList()
     {
+        QMutexLocker lk(&mutex);
         myList->clear();
         delete myList;
         myList = nullptr;
@@ -56,6 +57,10 @@ public:
      */
     inline void push_back(const T &t)
     {
+        myList->push_back(t);
+    }
+    inline void push_backByLock(const T &t)
+    {
         QMutexLocker lk(&mutex);
         myList->push_back(t);
     }
@@ -66,7 +71,7 @@ public:
      *
      * \return
      */
-    inline void insert(const T &t)
+    inline void insertByLock(const T &t)
     {
         QMutexLocker lk(&mutex);
         myList->insert(0, t);
@@ -102,9 +107,13 @@ public:
      *
      * \return
      */
-    inline void removeAll(const T &t)
+    inline void removeAllByLock(const T &t)
     {
         QMutexLocker lk(&mutex);
+        myList->removeAll(t);
+    }
+    inline void removeAll(const T &t)
+    {
         myList->removeAll(t);
     }
     /*!
@@ -114,7 +123,7 @@ public:
      *
      * \return
      */
-    inline void removeOne(const T &t)
+    inline void removeOneByLock(const T &t)
     {
         QMutexLocker lk(&mutex);
         myList->removeOne(t);
@@ -129,6 +138,10 @@ public:
      */
     inline bool contains(const T &t)
     {
+        return myList->contains(t);
+    }
+    inline bool containsByLock(const T &t)
+    {
         QMutexLocker lk(&mutex);
         return myList->contains(t);
     }
@@ -139,7 +152,7 @@ public:
      *
      * \return bool 是否包含模板
      */
-    inline void clear()
+    inline void clearByLock()
     {
         QMutexLocker lk(&mutex);
         return myList->clear();
@@ -151,7 +164,7 @@ public:
      *
      * \return bool 是否包含模板
      */
-    inline void append(const T &t)
+    inline void appendByLock(const T &t)
     {
         QMutexLocker lk(&mutex);
         return myList->append(t);
@@ -185,7 +198,6 @@ public:
      */
     inline typename QList<T>::iterator begin()
     {
-        QMutexLocker lk(&mutex);
         return myList->begin();
     }
     /*!
@@ -197,7 +209,6 @@ public:
      */
     inline typename QList<T>::iterator end()
     {
-        QMutexLocker lk(&mutex);
         return myList->end();
     }
     /*!
@@ -209,7 +220,6 @@ public:
      */
     inline typename QList<T>::iterator erase(typename QList<T>::iterator it)
     {
-        QMutexLocker lk(&mutex);
         return myList->erase(it);
     }
     /*!
@@ -252,7 +262,12 @@ public:
         QMutexLocker lk(&mutex);
         return myList->indexOf(t, from);
     }
-
+    void lock(){
+        mutex.lock();
+    }
+    void unlock(){
+        mutex.unlock();
+    }
 private:
     QList<T> *myList;   // 当前的QList
     QMutex mutex;   // 当前的锁

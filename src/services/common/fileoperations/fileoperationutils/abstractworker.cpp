@@ -439,7 +439,7 @@ QString AbstractWorker::getNonExistFileName(const AbstractFileInfoPointer fromIn
                                                            "Extra name added to new file name when used for file name.");
 
     AbstractFileInfoPointer targetFileInfo { nullptr };
-    QString fileBaseName = fromInfo->baseName();
+    QString fileBaseName = fromInfo->completeBaseName();
     QString suffix = fromInfo->suffix();
     QString fileName = fromInfo->fileName();
     //在7z分卷压缩后的名称特殊处理7z.003

@@ -233,7 +233,6 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
     if (!doCheckFile(fromInfo, toInfo, newTargetInfo, result))
         return result;
 
-    result = false;
     bool oldExist = newTargetInfo->exists();
     if (fromInfo->isSymLink()) {
         result = creatSystemLink(fromInfo, newTargetInfo);
@@ -835,7 +834,7 @@ bool DoCopyFilesWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromInfo,
             QSharedPointer<DirSetPermissonInfo> dirinfo(new DirSetPermissonInfo);
             dirinfo->target = toInfo->url();
             dirinfo->permission = permissions;
-            dirPermissonList.append(dirinfo);
+            dirPermissonList.appendByLock(dirinfo);
             return true;
         }
     }
@@ -869,7 +868,7 @@ bool DoCopyFilesWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromInfo,
         QSharedPointer<DirSetPermissonInfo> dirinfo(new DirSetPermissonInfo);
         dirinfo->target = toInfo->url();
         dirinfo->permission = permissions;
-        dirPermissonList.append(dirinfo);
+        dirPermissonList.appendByLock(dirinfo);
     } else {
         handler->setPermissions(toInfo->url(), permissions);
     }

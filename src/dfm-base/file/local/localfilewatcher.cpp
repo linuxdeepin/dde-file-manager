@@ -56,7 +56,7 @@ bool LocalFileWatcherPrivate::start()
         return false;
     started = watcher->start(0);
     if (started)
-        watcherPath.append(path);
+        watcherPath.appendByLock(path);
     return started;
 }
 /*!
@@ -72,7 +72,7 @@ bool LocalFileWatcherPrivate::stop()
         return false;
     started = watcher->stop();
     if (started)
-        watcherPath.removeOne(path);
+        watcherPath.removeOneByLock(path);
     return started;
 }
 

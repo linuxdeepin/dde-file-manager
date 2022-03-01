@@ -188,9 +188,9 @@ InfoCachePrivate::~InfoCachePrivate()
  */
 void InfoCachePrivate::updateSortByTimeCacheUrlList(const QUrl &url)
 {
-    if (sortByTimeCacheUrl.contains(url))
-        sortByTimeCacheUrl.removeAll(url);
-    sortByTimeCacheUrl.push_back(url);
+    if (sortByTimeCacheUrl.containsByLock(url))
+        sortByTimeCacheUrl.removeAllByLock(url);
+    sortByTimeCacheUrl.push_backByLock(url);
 }
 
 InfoCache::InfoCache(QObject *parent)
@@ -233,8 +233,8 @@ AbstractFileInfoPointer InfoCache::getCacheInfo(const QUrl &url)
     Q_D(InfoCache);
     if (d->fileInfos.contains(url)) {
         d->updateSortByTimeCacheUrlList(url);
-        if (d->needRemoveCacheList.contains(url)) {
-            d->removedCacheList.push_back(url);
+        if (d->needRemoveCacheList.containsByLock(url)) {
+            d->removedCacheList.push_backByLock(url);
         }
     }
     return d->fileInfos.value(url);
@@ -278,11 +278,11 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
         QUrl removeUrl = d->sortByTimeCacheUrl.first() == nullptr ? QUrl() : *(d->sortByTimeCacheUrl.first());
         removeCacheInfo(removeUrl);
         //已加入到待remove的链表，加入到m_removedCacheList链表
-        if (d->needRemoveCacheList.contains(removeUrl))
-            d->removedCacheList.push_back(removeUrl);
+        if (d->needRemoveCacheList.containsByLock(removeUrl))
+            d->removedCacheList.push_backByLock(removeUrl);
         //还没加入待remove的链表，加入到m_removedSortByTimeCacheList
-        if (d->sortByTimeCacheUrl.contains(removeUrl))
-            d->removedSortByTimeCacheList.push_back(removeUrl);
+        if (d->sortByTimeCacheUrl.containsByLock(removeUrl))
+            d->removedSortByTimeCacheList.push_backByLock(removeUrl);
     }
 }
 /*!
@@ -341,29 +341,32 @@ void InfoCache::refreshFileInfo(const QUrl &url)
 void InfoCache::timeNeedRemoveCache()
 {
     Q_D(InfoCache);
+    d->sortByTimeCacheUrl.lock();
     QList<QUrl>::iterator itr = d->sortByTimeCacheUrl.begin();
     QList<QUrl>::iterator itrEnd = d->sortByTimeCacheUrl.end();
     while (itr != itrEnd) {
         //移除的直接移除当前的url和移除移除的url
-        if (d->removedSortByTimeCacheList.contains(*itr)) {
+        QUrl url = *itr;
+        if (d->removedSortByTimeCacheList.containsByLock(url)) {
+            d->removedSortByTimeCacheList.removeAllByLock(url);
             itr = d->sortByTimeCacheUrl.erase(itr);
-            d->removedSortByTimeCacheList.removeAll(*itr);
             continue;
         }
         //如果文件缓存中没有当前url的直接移除当前的url，和按时间排序的url
-        AbstractFileInfoPointer info = d->fileInfos.value((*itr));
+        AbstractFileInfoPointer info = d->fileInfos.value(url);
         if (!info) {
             itr = d->sortByTimeCacheUrl.erase(itr);
             continue;
         }
         //插入待移除队列并移除时间排序的url
         if (info.d->strongref == 2) {
-            d->needRemoveCacheList.push_back(*itr);
+            d->needRemoveCacheList.push_backByLock(url);
             itr = d->sortByTimeCacheUrl.erase(itr);
             continue;
         }
         itr = itr.operator++();
     }
+    d->sortByTimeCacheUrl.unlock();
 }
 /*!
  * \brief timeNeedRemoveCache 将待移除文件列表的文件移除caches
@@ -375,20 +378,23 @@ void InfoCache::timeNeedRemoveCache()
 void InfoCache::timeRemoveCache()
 {
     Q_D(InfoCache);
+    d->needRemoveCacheList.lock();
     QList<QUrl>::iterator itr = d->needRemoveCacheList.begin();
     QList<QUrl>::iterator itrEnd = d->needRemoveCacheList.end();
     while (itr != itrEnd) {
         //已被析构了的info，直接移除和从移除的列表中移除
-        if (d->removedCacheList.contains(*itr)) {
+        QUrl url = *itr;
+        if (d->removedCacheList.containsByLock(url)) {
+            d->removedCacheList.removeAllByLock(url);
             itr = d->needRemoveCacheList.erase(itr);
-            d->removedCacheList.removeAll(*itr);
             continue;
         }
         // 移除文件信息缓存
-        removeCacheInfo(*itr);
+        removeCacheInfo(url);
         // 移除当前需要移除缓存列表
         itr = d->needRemoveCacheList.erase(itr);
     }
+    d->needRemoveCacheList.unlock();
 }
 
 DFMBASE_END_NAMESPACE

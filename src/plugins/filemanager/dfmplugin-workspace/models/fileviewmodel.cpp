@@ -79,8 +79,8 @@ void FileViewModelPrivate::dofileCreated(const QUrl &url)
 void FileViewModelPrivate::doFileUpdated(const QUrl &url)
 {
     // Todo(yanghao): filter .hidden file update
-    if (!updateurlList.contains(url))
-        updateurlList.append(url);
+    if (!updateurlList.containsByLock(url))
+        updateurlList.appendByLock(url);
 
     if (!updateTimer.isActive())
         updateTimer.start();
