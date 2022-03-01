@@ -72,7 +72,7 @@ ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &
 {
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
     QString name = showSuffix ? index.data(CanvasModel::kFileDisplayNameRole).toString()
-                              : index.data(CanvasModel::kFileBaseNameRole).toString();
+                              : index.data(CanvasModel::kFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
 
     // tag rect
@@ -243,12 +243,12 @@ void CanvasItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index
              << "suffixofrename" << suffix;
     if (showSuffix) {
         QString name = index.data(CanvasModel::kFileNameOfRenameRole).toString();
-        itemEditor->setMaximumLength(255);
+        itemEditor->setMaximumLength(NAME_MAX);
         itemEditor->setText(name);
         itemEditor->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
     } else {
         itemEditor->setProperty(EDITOR_SHOW_SUFFIX, suffix);
-        itemEditor->setMaximumLength(255 - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
+        itemEditor->setMaximumLength(NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
 
         QString name = index.data(CanvasModel::kFileBaseNameOfRenameRole).toString();
 

@@ -313,7 +313,7 @@ QString AbstractFileInfo::baseNameOfRename() const
 {
     CALL_PROXY(baseNameOfRename());
 
-    return fileName();
+    return baseName();
 }
 
 QString AbstractFileInfo::suffixOfRename() const

@@ -117,6 +117,10 @@ void registerDdeSession()
     }
 }
 
+#define DesktopServiceName          "com.deepin.dde.desktop"
+#define DesktopServicePath          "/com/deepin/dde/desktop"
+#define DesktopServiceInterface     "com.deepin.dde.desktop"
+
 int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
@@ -126,7 +130,22 @@ int main(int argc, char *argv[])
 
     // Notify dde-desktop start up
     // if (!fileDialogOnly)
-    registerDdeSession();
+    if (true) {
+        QDBusConnection conn = QDBusConnection::sessionBus();
+
+        if (!conn.registerService(DesktopServiceName)) {
+            qCritical() << "registerService Failed, maybe service exist" << conn.lastError();
+            exit(0x0002);
+        }
+
+//        auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
+//        if (!conn.registerObject(DesktopServicePath, Desktop::instance(), registerOptions)) {
+//            qCritical() << "registerObject Failed" << conn.lastError();
+//            exit(0x0003);
+//        }
+
+        registerDdeSession();
+    }
 
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";
