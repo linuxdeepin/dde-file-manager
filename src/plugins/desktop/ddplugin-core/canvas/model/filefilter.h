@@ -47,6 +47,8 @@ class CustomHiddenFilter : public FileFilter
 {
 public:
     using FileFilter::FileFilter;
+    bool fileDeletedFilter(const QUrl &url) override;
+    bool fileCreatedFilter(const QUrl &url) override;
     bool fileUpdatedFilter(const QUrl &url) override;
 };
 

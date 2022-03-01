@@ -121,12 +121,37 @@ void FileTreater::renameChild(const QUrl &oldUrl, const QUrl &newUrl)
     if (renameChildFilter(oldUrl, newUrl))
         return;
 
+    auto oldInfo = FileCreator->createFileInfo(oldUrl);
+    auto newInfo = FileCreator->createFileInfo(newUrl);
+    if (Q_UNLIKELY(!oldInfo || !newInfo)) {
+        qInfo() << "create old file info:" << oldInfo << oldUrl;
+        qInfo() << "create new file info:" << newInfo << newUrl;
+        return;
+    }
+
+    if (!model()->showHiddenFiles()) {
+        if (oldInfo->isHidden() && newInfo->isHidden())
+        {
+            // hidden to hidden,don't care
+            return;
+        } else if (oldInfo->isHidden() && !newInfo->isHidden()) {
+            // hidden to don't hidden,create new file
+            insertChild(newUrl);
+            return;
+        } else if (!oldInfo->isHidden() && newInfo->isHidden()) {
+            // not hidden to hidden,delete old file
+            removeChild(oldUrl);
+            return;
+        }
+    }
+
+    // rename file
     if (Q_UNLIKELY(!fileList.contains(oldUrl)) || Q_UNLIKELY(fileList.contains(newUrl))) {
         qWarning() << "unknow error in rename file:" << fileList.contains(oldUrl) << oldUrl << fileList.contains(newUrl) << newUrl;
         return;
     }
 
-    if (auto info = FileCreator->createFileInfo(newUrl)) {
+    {
         QMutexLocker lk(&childrenMutex);
         int position = fileList.indexOf(oldUrl);
         if (Q_LIKELY(-1 != position))
@@ -135,7 +160,7 @@ void FileTreater::renameChild(const QUrl &oldUrl, const QUrl &newUrl)
             fileList.append(newUrl);
 
         fileMap.remove(oldUrl);
-        fileMap.insert(newUrl, info);
+        fileMap.insert(newUrl, newInfo);
 
         const QModelIndex &index = model()->index(newUrl.toString());
         model()->dataChanged(index, index);

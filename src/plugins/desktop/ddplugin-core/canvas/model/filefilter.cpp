@@ -43,26 +43,50 @@ bool FileFilter::fileTraversalFilter(const QUrl &url)
 
 bool FileFilter::fileDeletedFilter(const QUrl &url)
 {
-    Q_UNUSED(url);
+    Q_UNUSED(url)
     return false;
 }
 
 bool FileFilter::fileCreatedFilter(const QUrl &url)
 {
-    Q_UNUSED(url);
+    Q_UNUSED(url)
     return false;
 }
 
 bool FileFilter::fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    Q_UNUSED(oldUrl);
-    Q_UNUSED(newUrl);
+    Q_UNUSED(oldUrl)
+    Q_UNUSED(newUrl)
     return false;
 }
 
 bool FileFilter::fileUpdatedFilter(const QUrl &url)
 {
-    Q_UNUSED(url);
+    Q_UNUSED(url)
+    return false;
+}
+
+bool CustomHiddenFilter::fileDeletedFilter(const QUrl &url)
+{
+    auto info = FileCreator->createFileInfo(url);
+    if (info && info->isHidden()) {
+        CanvasModel *canvasmodel = qobject_cast<CanvasModel *>(model);
+        if (canvasmodel && !canvasmodel->showHiddenFiles())
+            return true;
+    }
+
+    return false;
+}
+
+bool CustomHiddenFilter::fileCreatedFilter(const QUrl &url)
+{
+    auto info = FileCreator->createFileInfo(url);
+    if (info && info->isHidden()) {
+        CanvasModel *canvasmodel = qobject_cast<CanvasModel *>(model);
+        if (canvasmodel && !canvasmodel->showHiddenFiles())
+            return true;
+    }
+
     return false;
 }
 
