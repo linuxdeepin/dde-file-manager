@@ -242,11 +242,9 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
         result = checkAndCopyFile(fromInfo, newTargetInfo);
     }
 
-    // todo newTargetInfo->exists() 需要重新确认，由于内部可能是异步复制，这里直接判断存在可能是false
-    // if (targetInfo == toInfo && !oldExist && newTargetInfo->exists()) {
     if (targetInfo == toInfo && !oldExist) {
         completeFiles.append(fromInfo->url());
-        completeTargetFiles.append(newTargetInfo->url());
+        precompleteTargetFileInfo.append(newTargetInfo);
     }
 
     return result;
@@ -983,6 +981,13 @@ void DoCopyFilesWorker::endWork()
             QThread::msleep(100);
         }
     }
+
+    // deal target files
+    for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
+        if (info->exists())
+            completeTargetFiles.append(info->url());
+    }
+    precompleteTargetFileInfo.clear();
 
     // set dirs permissions
     setAllDirPermisson();

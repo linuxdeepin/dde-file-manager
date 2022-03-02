@@ -168,6 +168,7 @@ public:
     QQueue<Qt::HANDLE> errorThreadIdQueue;   // Thread queue for processing errors
     QList<QUrl> completeFiles;   // List of all copied files
     QList<QUrl> completeTargetFiles;   // List of all complete target files
+    QList<AbstractFileInfoPointer> precompleteTargetFileInfo;   // list prepare complete target file info
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
     bool isConvert { false };   // is convert operation
