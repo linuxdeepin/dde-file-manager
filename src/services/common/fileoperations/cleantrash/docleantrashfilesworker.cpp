@@ -24,6 +24,9 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 
+#include "dfm-io/core/denumerator.h"
+#include "dfm-io/core/diofactory.h"
+
 #include <QUrl>
 #include <QDebug>
 #include <QWaitCondition>
@@ -154,8 +157,14 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
     bool resultFile = false;
     bool resultInfo = false;
     do {
-        if (!resultFile)
-            resultFile = handler->deleteFile(trashInfo->url());
+        if (!resultFile) {
+            if (trashInfo->isFile() || trashInfo->isSymLink()) {
+                resultFile = handler->deleteFile(trashInfo->url());
+            } else {
+                // dir
+                resultFile = deleteDir(trashInfo->url());
+            }
+        }
         if (!resultInfo)
             resultInfo = handler->deleteFile(QUrl::fromLocalFile(location));
         if (!resultInfo || !resultFile)
@@ -185,4 +194,32 @@ AbstractJobHandler::SupportAction DoCleanTrashFilesWorker::doHandleErrorAndWait(
     handlingErrorQMutex.unlock();
 
     return currentAction;
+}
+
+bool DoCleanTrashFilesWorker::deleteDir(const QUrl &url) const
+{
+    QSharedPointer<dfmio::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory) {
+        return false;
+    }
+
+    QSharedPointer<dfmio::DEnumerator> enumerator = factory->createEnumerator();
+    if (!enumerator) {
+        return false;
+    }
+
+    bool succ = false;
+    while (enumerator->hasNext()) {
+        const QString &path = enumerator->next();
+
+        const QUrl &urlNext = QUrl::fromLocalFile(path);
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlNext);
+        if (info->isDir()) {
+            succ = deleteDir(urlNext);
+        } else {
+            succ = handler->deleteFile(urlNext);
+        }
+    }
+    succ = handler->deleteFile(url);
+    return succ;
 }
