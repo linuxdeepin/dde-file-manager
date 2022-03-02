@@ -80,6 +80,7 @@ class FileViewPrivate
     // move cursor later selecte index when pressed key shift
     QModelIndex lastCursorIndex;
 
+    int horizontalOffset { 0 };
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;

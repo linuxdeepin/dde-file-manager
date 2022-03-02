@@ -380,6 +380,10 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
             }
         }
     }
+    painter->restore();   // 恢复之前的绘制，防止在此逻辑前的绘制丢失
+
+    //列表拖拽时要绘制活动色
+    bool drawBackground = /* !isDragMode &&*/ (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
             ? QPalette::Normal
             : QPalette::Disabled;
@@ -387,18 +391,32 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
         cg = QPalette::Inactive;
 
     bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    bool isDropTarget = parent()->isDropTarget(index);
+
     QPalette::ColorRole colorRole = QPalette::Background;
-    if (isSelected) {
+
+    if ((isSelected || isDropTarget)) {
         colorRole = QPalette::Highlight;
+    }
+    QRectF rect = option.rect;
+    rect += QMargins(-kListModeLeftMargin, 0, -kListModeRightMargin, 0);
+    if (drawBackground) {
         QPainterPath path;
-        path.addRoundedRect(dstRect, kListModeRectRadius, kListModeRectRadius);
+
+        path.addRoundedRect(rect, kListModeRectRadius, kListModeRectRadius);
         painter->save();
         painter->setOpacity(1);
         painter->setRenderHint(QPainter::Antialiasing);
         painter->fillPath(path, option.palette.color(cg, colorRole));
         painter->restore();
+    } else if (isDropTarget) {
+        QPainterPath path;
+        rect += QMarginsF(-0.5, -0.5, -0.5, -0.5);
+        path.addRoundedRect(rect, kListModeRectRadius, kListModeRectRadius);
+        painter->setRenderHint(QPainter::Antialiasing, true);
+        painter->fillPath(path, option.palette.color(cg, colorRole));
+        painter->setRenderHint(QPainter::Antialiasing, false);
     }
-    painter->restore();   // 恢复之前的绘制，防止在此逻辑前的绘制丢失
 }
 /*!
  * \brief paintItemIcon 绘制listviewitemd的icon

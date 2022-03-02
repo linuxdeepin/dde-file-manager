@@ -267,7 +267,8 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
                                                               const QModelIndex &index, int backgroundMargin) const
 {
     Q_UNUSED(index);
-    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
+    bool isSelected = !isDragMode && (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     bool isDropTarget = parent()->isDropTarget(index);
 
     DPalette pl(DApplicationHelper::instance()->palette(option.widget));
@@ -305,8 +306,6 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
     QPainterPath path;
     backgroundRect.moveTopLeft(QPointF(0.5, 0.5) + backgroundRect.topLeft());
     path.addRoundedRect(backgroundRect, kIconModeBackRadius, kIconModeBackRadius);
-
-    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
 
     if (!isDragMode) {   // 拖拽的图标不画背景
         painter->setRenderHint(QPainter::Antialiasing, true);
@@ -370,7 +369,8 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     if (index == d->editingIndex)
         return;   // 正在编辑的item，不重绘text
 
-    if (index == d->expandedIndex
+    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
+    if (index == d->expandedIndex && !isDragMode
         && d->expandedItem && d->expandedItem->getIndex() == index
         && d->expandedItem->getOption().rect == opt.rect) {
         // fixbug65053 屏幕数据变化后，桌面展开图标的文本位置错误
@@ -386,7 +386,6 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
     labelRect.setBottom(path.boundingRect().toRect().bottom());
 
-    bool isDragMode = (static_cast<QPaintDevice *>(parent()->parent()->viewport()) != painter->device());
     //文管窗口拖拽时的字体保持白色
     if (isDragMode) {
         painter->setPen(opt.palette.color(QPalette::BrightText));
@@ -398,7 +397,7 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 
     // if has selected show all file name else show elide file name.
     bool singleSelected = parent()->parent()->selectedIndexCount() < 2;
-    bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
+    bool isSelected = !isDragMode && (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
 
     if (isSelected && singleSelected) {
         const_cast<IconItemDelegate *>(this)->hideNotEditingIndexWidget();

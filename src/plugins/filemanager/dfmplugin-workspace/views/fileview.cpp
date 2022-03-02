@@ -135,6 +135,9 @@ bool FileView::setRootUrl(const QUrl &url)
     proxyModel()->resetFilter();
     clearSelection();
 
+    //Todo(yanghao&lzj):!url.isSearchFile()
+    setFocus();
+
     model()->setRootUrl(url);
 
     loadViewState(url);
@@ -322,6 +325,8 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
             setViewModeToList();
         }
     }
+
+    setFocus();
 
     saveViewModeState();
 }
@@ -515,6 +520,19 @@ void FileView::onShowHiddenFileChanged(bool isShow)
     proxyModel()->setFilters(filters);
 }
 
+void FileView::updateHorizontalOffset()
+{
+    if (isIconViewMode()) {
+        int contentWidth = maximumViewportSize().width();
+        int itemWidth = itemSizeHint().width() + spacing() * 2;
+        int itemColumn = d->iconModeColumnCount(itemWidth);
+
+        d->horizontalOffset = -(contentWidth - itemWidth * itemColumn) / 2;
+    } else {
+        d->horizontalOffset = 0;
+    }
+}
+
 bool FileView::isIconViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kIconMode;
@@ -620,6 +638,12 @@ void FileView::resizeEvent(QResizeEvent *event)
 
         d->updateListModeColumnWidth();
     }
+
+    updateHorizontalOffset();
+
+    if (itemDelegate()->editingIndex().isValid())
+        doItemsLayout();
+
     updateModelActiveIndex();
 }
 
@@ -748,6 +772,19 @@ QRect FileView::visualRect(const QModelIndex &index) const
     rect.moveTop(rect.top() - verticalOffset());
 
     return rect;
+}
+
+void FileView::setIconSize(const QSize &size)
+{
+    DListView::setIconSize(size);
+
+    updateHorizontalOffset();
+    updateGeometries();
+}
+
+int FileView::horizontalOffset() const
+{
+    return d->horizontalOffset;
 }
 
 void FileView::updateGeometries()
@@ -1019,6 +1056,7 @@ void FileView::initializeConnect()
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
     connect(this, &DListView::clicked, this, &FileView::onClicked);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
+    connect(this, &DListView::iconSizeChanged, this, &FileView::updateHorizontalOffset, Qt::QueuedConnection);
 
     connect(this, &FileView::viewStateChanged, this, &FileView::saveViewModeState);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::viewModeChanged, this, &FileView::viewModeChanged);

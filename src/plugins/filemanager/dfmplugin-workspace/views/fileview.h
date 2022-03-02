@@ -80,6 +80,8 @@ public:
 
     QModelIndex indexAt(const QPoint &pos) const override;
     virtual QRect visualRect(const QModelIndex &index) const override;
+    void setIconSize(const QSize &size);
+    int horizontalOffset() const override;
 
     FileSortFilterProxyModel *proxyModel() const;
     int getColumnWidth(const int &column) const;
@@ -164,6 +166,7 @@ private slots:
     void onModelStateChanged();
     void setIconSizeBySizeIndex(const int sizeIndex);
     void onShowHiddenFileChanged(bool isShow);
+    void updateHorizontalOffset();
 
 private:
     void initializeModel();
