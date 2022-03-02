@@ -21,8 +21,8 @@
  */
 
 #include "recentdiriterator.h"
-#include "recentfileinfo.h"
-#include "recentiterateworker.h"
+#include "files/recentfileinfo.h"
+#include "files/recentiterateworker.h"
 #include "utils/recentmanager.h"
 #include "private/recentdiriterator_p.h"
 

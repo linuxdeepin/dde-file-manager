@@ -22,7 +22,7 @@
 
 #include "recentiterateworker.h"
 #include "utils/recentmanager.h"
-#include "recentfileinfo.h"
+#include "files/recentfileinfo.h"
 
 #include "dfm-base/base/schemefactory.h"
 

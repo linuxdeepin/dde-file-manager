@@ -21,9 +21,9 @@
  */
 
 #include "recentmanager.h"
-#include "recentfileinfo.h"
-#include "recentiterateworker.h"
-#include "recentfilewatcher.h"
+#include "files/recentfileinfo.h"
+#include "files/recentiterateworker.h"
+#include "files/recentfilewatcher.h"
 #include "events/recenteventcaller.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"

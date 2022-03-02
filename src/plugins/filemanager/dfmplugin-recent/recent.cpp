@@ -20,10 +20,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "recent.h"
-#include "recentfileinfo.h"
-#include "recentdiriterator.h"
-#include "recentfilewatcher.h"
+#include "files/recentfileinfo.h"
+#include "files/recentdiriterator.h"
+#include "files/recentfilewatcher.h"
 #include "utils/recentmanager.h"
+#include "menus/recentmenu.h"
+
+#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -44,6 +47,7 @@ void Recent::initialize()
     InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
     WacherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
+    MenuService::regClass<RecentMenu>(RecentScene::kRecentMenu);
 
     connect(RecentManager::winServIns(), &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
     connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Recent::onAllPluginsInitialized, Qt::DirectConnection);
@@ -138,6 +142,7 @@ void Recent::installToSideBar()
 void Recent::addFileOperations()
 {
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
+    WorkspaceService::instance()->setWorkspaceMenuScene(RecentManager::scheme(), RecentScene::kRecentMenu);
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &RecentManager::openFilesHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &RecentManager::writeToClipBoardHandle;

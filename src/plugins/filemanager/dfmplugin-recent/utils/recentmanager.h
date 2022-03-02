@@ -23,7 +23,7 @@
 #define RECENTMANAGER_H
 
 #include "dfmplugin_recent_global.h"
-#include "recentfileinfo.h"
+#include "files/recentfileinfo.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
