@@ -39,6 +39,10 @@ FILE (GLOB INTERFACES_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/screen/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/screen/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/background/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/background/*.cpp"
 )
 
 FILE (GLOB UTILS_FILES

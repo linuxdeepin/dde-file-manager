@@ -22,8 +22,12 @@
 #ifndef COREPLUGIN_H
 #define COREPLUGIN_H
 
+#include "ddplugin_core_global.h"
+
 #include <dfm-framework/framework.h>
 
+DDPCORE_BEGIN_NAMESPACE
+class WindowFrame;
 class Core : public dpf::Plugin
 {
     Q_OBJECT
@@ -32,6 +36,11 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual dpf::Plugin::ShutdownFlag stop() override;
+protected:
+    void onStart();
+    WindowFrame *frame = nullptr;
 };
+
+DDPCORE_END_NAMESPACE
 
 #endif // COREPLUGIN_H

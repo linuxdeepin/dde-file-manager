@@ -19,110 +19,76 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #include "core.h"
-#include "screenproxydbus.h"
-#include "screenproxyqt.h"
-#include "utils/fileutil.h"
+#include "frame/windowframe.h"
 
-#include "services/common/menu/menuservice.h"
+#include <services/desktop/frame/frameservice.h>
+#include <services/desktop/screen/screenservice.h>
 
-#include "wallpaperservice.h"
-#include "screenservice.h"
-#include "backgroundservice.h"
-#include "canvasservice.h"
-#include "menu/canvasmenu.h"
-#include "services/common/menu/menuservice.h"
-
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/file/local/localfileinfo.h"
-#include "dfm-base/file/local/localdiriterator.h"
-#include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/file/local/desktopfileinfo.h"
-#include "dfm-base/utils/clipboard.h"
-#include "dfm-base/file/local/localmenu.h"
-
-#include <dfm-framework/framework.h>
+#include <base/standardpaths.h>
+#include <base/schemefactory.h>
+#include <file/local/localfileinfo.h>
+#include <file/local/localdiriterator.h>
+#include <file/local/localfilewatcher.h>
 
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
-void registerAllService()
-{
-    QString errStr;
-    auto &ctx = dpfInstance.serviceContext();
-    if (!ctx.load(ScreenService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(BackgroundService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(CanvasService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(WallpaperService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(MenuService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-}
-
-void registerFileSystem()
+static void registerFileSystem()
 {
     UrlRoute::regScheme(SchemeTypes::kFile, "/");
     InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
     WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
-
-    // initialize file creator
-    DesktopFileCreator::instance();
-
-    // 初始化剪切板
-    ClipBoard::instance();
-
-    MenuService::regClass<CanvasMenu>(MenuScene::kDesktopMenu);
 }
 
-void Core::initialize()
+void ddplugin_core::Core::initialize()
 {
     registerFileSystem();
-    registerAllService();
-
-    auto &ctx = dpfInstance.serviceContext();
-    ScreenService *screenService = ctx.service<ScreenService>(ScreenService::name());
-    screenService->init();
-
-    BackgroundService *backgroundService = ctx.service<BackgroundService>(BackgroundService::name());
-    backgroundService->init();
-
-    CanvasService *canvasService = ctx.service<CanvasService>(CanvasService::name());
-    canvasService->init();
-
-    WallpaperService *wallpaperService = ctx.service<WallpaperService>(WallpaperService::name());
-    wallpaperService->init();
+    auto &listen = dpfInstance.listener();
+    connect(&listen, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Core::onStart);
 }
 
-bool Core::start()
+bool ddplugin_core::Core::start()
 {
-    // qInfo() << PlatformTypes::XCB << ScreenService::instance()->allScreen(PlatformTypes::XCB);
-    // qInfo() << PlatformTypes::WAYLAND << ScreenService::instance()->allScreen(PlatformTypes::WAYLAND);
+    auto &ctx = dpfInstance.serviceContext();
+
+    {
+        QString error;
+        Q_ASSERT_X(ctx.load(FrameService::name(), &error), "Core", error.toStdString().c_str());
+    }
+
+    auto service = ctx.service<FrameService>(FrameService::name());
+    Q_ASSERT_X(service, "Core", "FrameService not found");
+
+    // find serviceprivate
+    auto ptr = service->findChild<QObject *>("dfm_service_desktop::FrameServicePrivate");
+    if (!ptr) {
+        qCritical() << "can not find dfm_service_desktop::FrameServicePrivate.";
+        abort();
+        return false;
+    }
+
+    frame = new WindowFrame();
+    QMetaObject::invokeMethod(ptr, "setProxy", Qt::DirectConnection, Q_ARG(QObject *, frame));
 
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Core::stop()
+dpf::Plugin::ShutdownFlag ddplugin_core::Core::stop()
 {
+    delete frame;
+    frame = nullptr;
     return kSync;
 }
+
+void ddplugin_core::Core::onStart()
+{
+    bool ret = frame->init();
+    Q_ASSERT_X(ret, "Core", "Fail to init WindowsFrame");
+
+    // create desktop frame windows.
+    frame->buildBaseWindow();
+}
+

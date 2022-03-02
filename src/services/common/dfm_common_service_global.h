@@ -24,7 +24,7 @@
 
 #define DSC_NAMESPACE dfm_service_common
 
-#define DSC_BEGIN_NAMESPACE namespace DSC_NAMESPACE {
+#define DSC_BEGIN_NAMESPACE namespace DSC_NAMESPACE{
 #define DSC_END_NAMESPACE }
 #define DSC_USE_NAMESPACE using namespace DSC_NAMESPACE;
 

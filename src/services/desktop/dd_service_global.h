@@ -19,12 +19,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef GLOBALDEFINITIONS_H
-#define GLOBALDEFINITIONS_H
+#ifndef DD_SERVICE_GLOBAL_H
+#define DD_SERVICE_GLOBAL_H
 
-#define DDS_BEGIN_NAMESPACE namespace dfm_service_desktop {
-#define DDS_END_NAMESPACE }
-#define DDS_NAMESPACE dfm_service_desktop
-#define DDS_USE_NAMESPACE using namespace dfm_service_desktop;
+// "dpf service Business desktop == DSB_D"
+#define DSB_D_BEGIN_NAMESPACE namespace dfm_service_desktop{
+#define DSB_D_END_NAMESPACE }
+#define DSB_D_NAMESPACE dfm_service_desktop
+#define DSB_D_USE_NAMESPACE using namespace dfm_service_desktop;
 
-#endif   //GLOBALDEFINITIONS_H
+
+#endif   //DD_SERVICE_GLOBAL_H
