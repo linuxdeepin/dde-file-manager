@@ -277,17 +277,17 @@ QString LocalFileInfo::completeBaseName() const
     d->lock.lockForRead();
     QString completeBaseName;
 
-    if (d->attributes.count(DFileInfo::AttributeID::StandardBaseName) == 0) {
+    if (d->attributes.count(DFileInfo::AttributeID::StandardCompleteBaseName) == 0) {
         bool success = false;
         if (d->dfmFileInfo) {
-            completeBaseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardBaseName, &success).toString();
+            completeBaseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardCompleteBaseName, &success).toString();
         }
         if (!success)
             completeBaseName = QFileInfo(d->url.path()).completeBaseName();
 
-        d->attributes.insert(DFileInfo::AttributeID::StandardBaseName, completeBaseName);
+        d->attributes.insert(DFileInfo::AttributeID::StandardCompleteBaseName, completeBaseName);
     } else {
-        completeBaseName = d->attributes.value(DFileInfo::AttributeID::StandardBaseName).toString();
+        completeBaseName = d->attributes.value(DFileInfo::AttributeID::StandardCompleteBaseName).toString();
     }
 
     d->lock.unlock();
