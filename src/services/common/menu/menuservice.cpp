@@ -80,7 +80,7 @@ QMenu *MenuService::createMenu(QWidget *parent,
     // 添加第三方扩展so菜单
     if (flags.testFlag(DFMBASE_NAMESPACE::kSoAction)) {
         // TODO(Lee):
-        // MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
+         MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
     }
 
     // Action业务
@@ -91,6 +91,11 @@ QMenu *MenuService::createMenu(QWidget *parent,
     connect(tempMenu, &QMenu::triggered, topClass, triggeredFunc, Qt::QueuedConnection);
 
     return tempMenu;
+}
+
+void MenuService::regAction(ActionInfo &info)
+{
+    MenuServiceHelper::regAction(info);
 }
 
 MenuService::MenuService(QObject *parent)

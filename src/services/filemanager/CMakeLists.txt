@@ -91,6 +91,12 @@ FILE(GLOB COMMAND_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/command/private/*.cpp"
 )
 
+FILE (GLOB BOOKMARK_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/bookmark/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bookmark/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bookmark/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bookmark/private/*.cpp"
+    )
 
 add_library(
     ${PROJECT_NAME}
@@ -105,6 +111,7 @@ add_library(
     ${SEARCH_FILES}
     ${COMPUTER_FILES}
     ${COMMAND_FILES}
+    ${BOOKMARK_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

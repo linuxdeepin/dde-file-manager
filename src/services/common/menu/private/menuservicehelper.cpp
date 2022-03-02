@@ -207,12 +207,47 @@ void MenuServiceHelper::extensionPluginCustomMenu(QMenu *menu,
                                                   const QList<QUrl> &selected)
 {
     // TODO(Lee):
-    Q_UNUSED(menu)
-    Q_UNUSED(isNormal)
-    Q_UNUSED(currentUrl)
-    Q_UNUSED(focusFile)
-    Q_UNUSED(selected)
-    menu->addAction("extension action one");
+    if (extActionEnable()) {
+        for (const ActionInfo &info : actionInfos()) {
+            if (info.type != DFMBASE_NAMESPACE::ExtensionType::kSoAction)
+                continue;
+
+            if (!info.createCb) {
+                qCritical() << "action create callback not set";
+            }
+
+            QString name = info.createCb(isNormal, currentUrl, focusFile, selected);
+            if (name.isEmpty())
+                continue;
+
+            if (!info.clickedCb) {
+                qCritical() << "action cliecked callback not set";
+                abort();
+            }
+            QAction *action = menu->addAction(name);
+            QObject::connect(action, &QAction::triggered, [&info, isNormal, currentUrl, focusFile, selected](){
+                info.clickedCb(isNormal, currentUrl, focusFile, selected);
+            });
+        }
+    }
+}
+
+void MenuServiceHelper::regAction(ActionInfo &info)
+{
+    extActionEnable() = true;
+    actionInfos() << info;
+}
+
+bool &MenuServiceHelper::extActionEnable()
+{
+    static bool hasAction { false };
+    return hasAction;
+}
+
+QList<ActionInfo> &MenuServiceHelper::actionInfos()
+{
+    static QList<ActionInfo> infos;
+    return infos;
 }
 
 DSC_END_NAMESPACE

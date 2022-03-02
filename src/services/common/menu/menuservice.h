@@ -40,6 +40,16 @@
 
 DSC_BEGIN_NAMESPACE
 
+using ActionCreateCb = std::function<QString(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)>;
+using ActionClickedCb = std::function<void(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)>;
+
+struct ActionInfo
+{
+    DFMBASE_NAMESPACE::ExtensionType type;
+    ActionCreateCb createCb { nullptr };
+    ActionClickedCb clickedCb { nullptr };
+};
+
 class MenuService final : public dpf::PluginService, dpf::AutoServiceRegister<MenuService>
 {
     Q_OBJECT
@@ -69,6 +79,8 @@ public:
                       bool onDesktop = false,
                       ExtensionFlags flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,
                       QVariant customData = QVariant());
+
+    static void regAction(ActionInfo &info);
 
 private:
     explicit MenuService(QObject *parent = nullptr);

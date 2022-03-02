@@ -22,6 +22,7 @@
 #define MENUSERVICEHELPER_H
 
 #include "dfm_common_service_global.h"
+#include "menu/menuservice.h"
 
 #include <QMenu>
 
@@ -46,6 +47,11 @@ public:
                                           const QUrl &currentUrl,
                                           const QUrl &focusFile,
                                           const QList<QUrl> &selected = {});
+
+    static void regAction(ActionInfo &info);
+
+    static bool &extActionEnable();
+    static QList<ActionInfo> &actionInfos();
 };
 
 DSC_END_NAMESPACE
