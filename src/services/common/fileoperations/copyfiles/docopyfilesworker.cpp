@@ -954,7 +954,7 @@ bool DoCopyFilesWorker::verifyFileIntegrity(const qint64 &blockSize,
 
 void DoCopyFilesWorker::setAllDirPermisson()
 {
-    for (auto info : dirPermissonList) {
+    for (auto info : dirPermissonList.list()) {
         handler->setPermissions(info->target, info->permission);
     }
 }

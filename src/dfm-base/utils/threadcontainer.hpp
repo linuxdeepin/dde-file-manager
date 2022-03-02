@@ -97,6 +97,10 @@ public:
      */
     inline const QList<T> &list()
     {
+        return *myList;
+    }
+    inline const QList<T> &listByLock()
+    {
         QMutexLocker lk(&mutex);
         return *myList;
     }
@@ -190,39 +194,6 @@ public:
         return myList->at(i);
     }
     /*!
-     * \brief begin 当前链表的开始迭代器
-     *
-     * \param null
-     *
-     * \return QList<T>::iterator 当前链表的开始迭代器
-     */
-    inline typename QList<T>::iterator begin()
-    {
-        return myList->begin();
-    }
-    /*!
-     * \brief begin 当前链表的结束迭代器
-     *
-     * \param null
-     *
-     * \return QList<T>::iterator 当前链表的结束迭代器
-     */
-    inline typename QList<T>::iterator end()
-    {
-        return myList->end();
-    }
-    /*!
-     * \brief erase 去掉链表中当前的迭代器
-     *
-     * \param QList<T>::iterator 链表的迭代器
-     *
-     * \return QList<T>::iterator 当前迭代器的下一个迭代器
-     */
-    inline typename QList<T>::iterator erase(typename QList<T>::iterator it)
-    {
-        return myList->erase(it);
-    }
-    /*!
      * \brief first 如果链表为空，返回一个nullptr，否则返回第一个的地址
      *
      * \param
@@ -262,12 +233,15 @@ public:
         QMutexLocker lk(&mutex);
         return myList->indexOf(t, from);
     }
-    void lock(){
+    void lock()
+    {
         mutex.lock();
     }
-    void unlock(){
+    void unlock()
+    {
         mutex.unlock();
     }
+
 private:
     QList<T> *myList;   // 当前的QList
     QMutex mutex;   // 当前的锁

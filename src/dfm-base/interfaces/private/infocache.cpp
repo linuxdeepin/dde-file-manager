@@ -342,30 +342,32 @@ void InfoCache::timeNeedRemoveCache()
 {
     Q_D(InfoCache);
     d->sortByTimeCacheUrl.lock();
-    QList<QUrl>::iterator itr = d->sortByTimeCacheUrl.begin();
-    QList<QUrl>::iterator itrEnd = d->sortByTimeCacheUrl.end();
-    while (itr != itrEnd) {
-        //移除的直接移除当前的url和移除移除的url
-        QUrl url = *itr;
+    QList<QUrl> allUrl = d->sortByTimeCacheUrl.list();
+    QList<QUrl> removeUrl;
+    for (const auto &url : allUrl) {
         if (d->removedSortByTimeCacheList.containsByLock(url)) {
             d->removedSortByTimeCacheList.removeAllByLock(url);
-            itr = d->sortByTimeCacheUrl.erase(itr);
+            removeUrl << url;
             continue;
         }
         //如果文件缓存中没有当前url的直接移除当前的url，和按时间排序的url
         AbstractFileInfoPointer info = d->fileInfos.value(url);
         if (!info) {
-            itr = d->sortByTimeCacheUrl.erase(itr);
+            removeUrl << url;
             continue;
         }
         //插入待移除队列并移除时间排序的url
         if (info.d->strongref == 2) {
             d->needRemoveCacheList.push_backByLock(url);
-            itr = d->sortByTimeCacheUrl.erase(itr);
+            removeUrl << url;
             continue;
         }
-        itr = itr.operator++();
     }
+
+    for (const auto &url : removeUrl) {
+        d->sortByTimeCacheUrl.removeAll(url);
+    }
+
     d->sortByTimeCacheUrl.unlock();
 }
 /*!
@@ -379,21 +381,24 @@ void InfoCache::timeRemoveCache()
 {
     Q_D(InfoCache);
     d->needRemoveCacheList.lock();
-    QList<QUrl>::iterator itr = d->needRemoveCacheList.begin();
-    QList<QUrl>::iterator itrEnd = d->needRemoveCacheList.end();
-    while (itr != itrEnd) {
-        //已被析构了的info，直接移除和从移除的列表中移除
-        QUrl url = *itr;
+    QList<QUrl> allUrl = d->needRemoveCacheList.list();
+    QList<QUrl> removeUrl;
+    for (const auto &url : allUrl) {
         if (d->removedCacheList.containsByLock(url)) {
             d->removedCacheList.removeAllByLock(url);
-            itr = d->needRemoveCacheList.erase(itr);
-            continue;
+        } else {
+            // 移除文件信息缓存
+            removeCacheInfo(url);
         }
-        // 移除文件信息缓存
-        removeCacheInfo(url);
+
         // 移除当前需要移除缓存列表
-        itr = d->needRemoveCacheList.erase(itr);
+        removeUrl << url;
     }
+
+    for (const auto &url : removeUrl) {
+        d->needRemoveCacheList.removeAll(url);
+    }
+
     d->needRemoveCacheList.unlock();
 }
 
