@@ -263,10 +263,25 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
             items.append(data);
             endInsertRows();
         } else {
-            int i = 7;   // where the disk begin.
-            for (; i < items.count(); i++)
-                if (ComputerItemWatcher::typeCompare(data, items.at(i)))
+            int i = 0;
+            for (; i < items.count(); i++) {
+                const auto &item = items.at(i);
+                if (item.groupId != data.groupId)
+                    continue;
+
+                if (ComputerItemWatcher::typeCompare(data, item))
                     break;
+
+                int next = i + 1;
+                if (next >= items.count())
+                    break;
+                const auto &nextItem = items.at(next);
+                if (nextItem.groupId != data.groupId) {
+                    i = next;
+                    break;
+                }
+            }
+
             beginInsertRows(QModelIndex(), i, i);
             items.insert(i, data);
             endInsertRows();

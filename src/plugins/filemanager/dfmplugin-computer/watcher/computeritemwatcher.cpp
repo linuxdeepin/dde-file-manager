@@ -116,7 +116,7 @@ void ComputerItemWatcher::initConn()
         auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
         if (!appUrl.isValid())
             return;
-        this->onDeviceAdded(appUrl, false);
+        this->onDeviceAdded(appUrl, getGroupId(diskGroup()), false);
     });
     connect(appEntryWatcher.data(), &LocalFileWatcher::fileDeleted, this, [this](const QUrl &url) {
         auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
@@ -177,6 +177,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
         data.url = url;
         data.shape = ComputerItemData::kSmallItem;
         data.info = info;
+        data.groupId = getGroupId(userDirGroup());
         ret.push_back(data);
         userDirAdded = true;
     }
@@ -202,6 +203,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         data.url = devUrl;
         data.shape = ComputerItemData::kLargeItem;
         data.info = info;
+        data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
         hasNewItem = true;
 
@@ -228,6 +230,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
         data.url = devUrl;
         data.shape = ComputerItemData::kLargeItem;
         data.info = info;
+        data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
         hasNewItem = true;
 
@@ -263,6 +266,7 @@ ComputerDataList ComputerItemWatcher::getStashedProtocolItems(bool &hasNewItem, 
         data.url = stashedUrl;
         data.shape = ComputerItemData::kLargeItem;
         data.info = info;
+        data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
 
         addSidebarItem(info);
@@ -303,6 +307,7 @@ ComputerDataList ComputerItemWatcher::getAppEntryItems(bool &hasNewItem)
         data.url = entryUrl;
         data.shape = ComputerItemData::kLargeItem;
         data.info = info;
+        data.groupId = getGroupId(diskGroup());
         ret.push_back(data);
         hasNewItem = true;
     }
@@ -321,13 +326,36 @@ ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType ty
     splitter.shape = ComputerItemData::kSplitterItem;
     switch (type) {
     case kGroupDirs:
-        splitter.groupName = tr("My Directories");
+        splitter.groupName = userDirGroup();
         break;
     case kGroupDisks:
-        splitter.groupName = tr("Disks");
+        splitter.groupName = diskGroup();
         break;
     }
+
+    splitter.groupId = getGroupId(splitter.groupName);
+
     return splitter;
+}
+
+QString ComputerItemWatcher::userDirGroup()
+{
+    return tr("My Directories");
+}
+
+QString ComputerItemWatcher::diskGroup()
+{
+    return tr("Disks");
+}
+
+int ComputerItemWatcher::getGroupId(const QString &groupName)
+{
+    if (groupIds.contains(groupName))
+        return groupIds.value(groupName);
+
+    int id = ComputerUtils::getUniqueInteger();
+    groupIds.insert(groupName, id);
+    return id;
 }
 
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
@@ -373,8 +401,8 @@ void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newN
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)
 {
-    addGroup(groupName);
-    onDeviceAdded(url, false);
+    int groupId = addGroup(groupName);
+    onDeviceAdded(url, groupId, false);
 }
 
 void ComputerItemWatcher::removeDevice(const QUrl &url)
@@ -393,16 +421,19 @@ void ComputerItemWatcher::startQueryItems()
 /*!
  * \brief ComputerItemWatcher::addGroup, add and emit itemAdded signal
  * \param name
+ * \return a unique group id
  */
-void ComputerItemWatcher::addGroup(const QString &name)
+int ComputerItemWatcher::addGroup(const QString &name)
 {
     ComputerItemData data;
     data.shape = ComputerItemData::kSplitterItem;
     data.groupName = name;
+    data.groupId = getGroupId(name);
     emit itemAdded(data);
+    return data.groupId;
 }
 
-void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, bool needSidebarItem)
+void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, bool needSidebarItem)
 {
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     if (!info->exists()) return;
@@ -411,6 +442,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, bool needSidebarItem
     data.url = devUrl;
     data.shape = ComputerItemData::kLargeItem;
     data.info = info;
+    data.groupId = groupId;
     Q_EMIT this->itemAdded(data);
 
     if (info->suffix() == SuffixInfo::kProtocol) {
@@ -439,7 +471,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
             if (var.variant().toBool())
                 Q_EMIT itemRemoved(url);
             else
-                onDeviceAdded(url);
+                onDeviceAdded(url, getGroupId(diskGroup()));
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             if (propertyName == DeviceProperty::kOptical)
@@ -482,7 +514,7 @@ void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga
 void ComputerItemWatcher::onBlockDeviceAdded(const QString &id)
 {
     QUrl url = ComputerUtils::makeBlockDevUrl(id);
-    onDeviceAdded(url);
+    onDeviceAdded(url, getGroupId(diskGroup()));
 }
 
 void ComputerItemWatcher::onBlockDeviceRemoved(const QString &id)
@@ -500,7 +532,7 @@ void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
 void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QString &mntPath)
 {
     auto url = ComputerUtils::makeProtocolDevUrl(id);
-    this->onDeviceAdded(url);
+    this->onDeviceAdded(url, getGroupId(diskGroup()));
 }
 
 void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
@@ -510,7 +542,7 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
     if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty()) {   // device have been removed
         Q_EMIT this->itemRemoved(devUrl);
         if (id.startsWith("smb"))
-            onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id));
+            onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
     } else {
         Q_EMIT this->itemUpdated(devUrl);
     }

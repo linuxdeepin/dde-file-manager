@@ -230,6 +230,12 @@ bool ComputerUtils::shouldSystemPartitionHide()
     return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();
 }
 
+int ComputerUtils::getUniqueInteger()
+{
+    static int idx = 0;
+    return ++idx;
+}
+
 QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
 {
     DFMBASE_USE_NAMESPACE

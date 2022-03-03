@@ -78,7 +78,7 @@ Q_SIGNALS:
     void hideNativeDisks(bool hide);
 
 protected Q_SLOTS:
-    void onDeviceAdded(const QUrl &devUrl, bool needSidebarItem = true);
+    void onDeviceAdded(const QUrl &devUrl, int groupId, bool needSidebarItem = true);
     void onDevicePropertyChangedQVar(const QString &id, const QString &propertyName, const QVariant &var);
     void onDevicePropertyChangedQDBusVar(const QString &id, const QString &propertyName, const QDBusVariant &var);
     void onAppAttributeChanged(Application::GenericAttribute ga, const QVariant &value);
@@ -104,12 +104,17 @@ private:
     ComputerDataList getStashedProtocolItems(bool &hasNewItem, const ComputerDataList &protocolDevs);
     ComputerDataList getAppEntryItems(bool &hasNewItem);
 
-    void addGroup(const QString &name);
+    int addGroup(const QString &name);
     ComputerItemData getGroup(GroupType type);
+
+    static QString userDirGroup();
+    static QString diskGroup();
+    int getGroupId(const QString &groupName);
 
 private:
     ComputerDataList initedDatas;
     QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };
+    QMap<QString, int> groupIds;
 };
 DPCOMPUTER_END_NAMESPACE
 #endif   // COMPUTERITEMWATCHER_H

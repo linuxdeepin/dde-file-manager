@@ -51,6 +51,7 @@ struct ComputerItemData
     QUrl url;   // entry://desktop.userdir
     ShapeType shape;
     QString groupName;
+    int groupId;
     QWidget *widget { nullptr };
     bool isEditing = false;
     DFMEntryFileInfoPointer info { nullptr };

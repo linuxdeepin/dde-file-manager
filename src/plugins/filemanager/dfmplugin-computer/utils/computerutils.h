@@ -80,6 +80,8 @@ public:
     static bool isPresetSuffix(const QString &suffix);
     static bool shouldSystemPartitionHide();
 
+    static int getUniqueInteger();
+
     static QString deviceTypeInfo(DFMEntryFileInfoPointer info);
 };
 
