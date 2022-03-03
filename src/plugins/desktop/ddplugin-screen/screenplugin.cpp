@@ -47,7 +47,8 @@ bool ScreenPlugin::start()
     // start screen service.
     {
         QString error;
-        Q_ASSERT_X(ctx.load(ScreenService::name(), &error), "ScreenPlugin", error.toStdString().c_str());
+        bool ret = ctx.load(ScreenService::name(), &error);
+        Q_ASSERT_X(ret, "ScreenPlugin", error.toStdString().c_str());
     }
 
     auto service = ctx.service<ScreenService>(ScreenService::name());

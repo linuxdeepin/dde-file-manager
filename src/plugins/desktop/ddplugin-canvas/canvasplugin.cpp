@@ -45,8 +45,10 @@ bool CanvasPlugin::start()
     // start screen service.
     {
         QString error;
-        Q_ASSERT_X(ctx.load(CanvasService::name(), &error), "CanvasPlugin", error.toStdString().c_str());
-        Q_ASSERT_X(ctx.load(MenuService::name(), &error), "CanvasPlugin", error.toStdString().c_str());
+        bool ret = ctx.load(CanvasService::name(), &error);
+        Q_ASSERT_X(ret, "CanvasPlugin", error.toStdString().c_str());
+        ret = ctx.load(MenuService::name(), &error);
+        Q_ASSERT_X(ret, "CanvasPlugin", error.toStdString().c_str());
     }
 
     auto service = ctx.service<CanvasService>(CanvasService::name());

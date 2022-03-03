@@ -38,7 +38,8 @@ bool BackgroundPlugin::start()
     auto &ctx = dpfInstance.serviceContext();
     // start background service.
     QString error;
-    Q_ASSERT_X(ctx.load(BackgroundService::name(), &error), "BackgroundPlugin", error.toStdString().c_str());
+    bool ret = ctx.load(BackgroundService::name(), &error);
+    Q_ASSERT_X(ret, "BackgroundPlugin", error.toStdString().c_str());
 
     backgroundManager = new BackgroundManager;
     backgroundManager->init();

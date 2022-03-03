@@ -44,7 +44,8 @@ bool WlSetPlugin::start()
     // start service.
     {
         QString error;
-        Q_ASSERT_X(ctx.load(WallpaperService::name(), &error), "WallpaperSettingPlugin", error.toStdString().c_str());
+        bool ret = ctx.load(WallpaperService::name(), &error);
+        Q_ASSERT_X(ret, "WallpaperSettingPlugin", error.toStdString().c_str());
     }
 
     auto service = ctx.service<WallpaperService>(WallpaperService::name());

@@ -56,7 +56,8 @@ bool ddplugin_core::Core::start()
 
     {
         QString error;
-        Q_ASSERT_X(ctx.load(FrameService::name(), &error), "Core", error.toStdString().c_str());
+        bool ret = ctx.load(FrameService::name(), &error);
+        Q_ASSERT_X(ret, "Core", error.toStdString().c_str());
     }
 
     auto service = ctx.service<FrameService>(FrameService::name());
