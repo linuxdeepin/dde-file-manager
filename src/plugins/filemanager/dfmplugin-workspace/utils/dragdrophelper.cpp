@@ -125,7 +125,7 @@ bool DragDropHelper::drop(QDropEvent *event)
             return true;
 
         if (!hoverIndex.isValid())
-            hoverIndex = view->rootIndex();
+            hoverIndex = view->model()->rootIndex();
         else
             hoverIndex = view->proxyModel()->mapToSource(hoverIndex);
 
@@ -179,8 +179,12 @@ void DragDropHelper::handleDropEvent(QDropEvent *event)
             return;
 
         Qt::DropAction defaultAction = Qt::CopyAction;
-        if (WindowUtils::keyAltIsPressed())
+        if (WindowUtils::keyAltIsPressed()) {
             defaultAction = Qt::MoveAction;
+        } else if (!WindowUtils::keyCtrlIsPressed()) {
+            // TODO(liuyangming): check same device
+            defaultAction = Qt::MoveAction;
+        }
 
         if (event->possibleActions().testFlag(defaultAction))
             event->setDropAction(defaultAction);
@@ -206,6 +210,6 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
     if (srcIndex.isValid()) {
         return view->model()->itemFromIndex(srcIndex)->fileInfo();
     } else {
-        return InfoFactory::create<AbstractFileInfo>(view->rootUrl());
+        return view->model()->rootItem()->fileInfo();
     }
 }

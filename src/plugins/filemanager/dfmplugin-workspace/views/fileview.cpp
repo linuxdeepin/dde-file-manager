@@ -37,6 +37,7 @@
 #include "utils/selecthelper.h"
 #include "utils/shortcuthelper.h"
 #include "utils/fileviewmenuhelper.h"
+#include "utils/fileoperaterhelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -139,7 +140,10 @@ bool FileView::setRootUrl(const QUrl &url)
     setFocus();
 
     model()->setRootUrl(url);
+    QModelIndex rootIndex = model()->setRootUrl(url);
+    setRootIndex(rootIndex);
 
+    qInfo() << QListView::rootIndex();
     loadViewState(url);
     delayUpdateStatusBar();
     setDefaultViewMode();
@@ -550,7 +554,7 @@ bool FileView::cdUp()
     QUrl parentUrl = UrlRoute::urlParent(oldCurrentUrl);
 
     if (parentUrl.isValid()) {
-        emit reqOpenAction({ parentUrl });
+        FileOperaterHelperIns->openFiles(this, { parentUrl });
         return true;
     }
     return false;
@@ -1090,7 +1094,7 @@ void FileView::updateLoadingIndicator()
     if (state == FileViewModel::Busy) {
         QString tip;
 
-        AbstractFileInfoPointer fileInfo = model()->itemFromIndex(rootIndex())->fileInfo();
+        AbstractFileInfoPointer fileInfo = model()->rootItem()->fileInfo();
         if (fileInfo)
             tip = fileInfo->loadingTip();
 
@@ -1107,14 +1111,14 @@ void FileView::updateContentLabel()
 {
     d->initContentLabel();
     if (model()->state() == FileViewModel::Busy
-        || model()->canFetchMore(rootIndex())) {
+        || model()->canFetchMore(model()->rootIndex())) {
         d->contentLabel->setText(QString());
         return;
     }
 
     if (count() <= 0) {
         // set custom empty tips
-        AbstractFileInfoPointer fileInfo = model()->itemFromIndex(rootIndex())->fileInfo();
+        AbstractFileInfoPointer fileInfo = model()->rootItem()->fileInfo();
         if (fileInfo) {
             d->contentLabel->setText(fileInfo->emptyDirectoryTip());
             d->contentLabel->adjustSize();
@@ -1177,8 +1181,7 @@ void FileView::openIndex(const QModelIndex &index)
     if (!item)
         return;
 
-    auto mode = currentDirOpenMode();
-    emit reqOpenAction({ item->url() }, mode);
+    FileOperaterHelperIns->openFiles(this, { item->url() });
 }
 
 /**

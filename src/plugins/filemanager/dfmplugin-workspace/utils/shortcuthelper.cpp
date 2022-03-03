@@ -42,7 +42,6 @@ ShortcutHelper::ShortcutHelper(FileView *parent)
     : QObject(parent),
       view(parent)
 {
-    connect(view, &FileView::reqOpenAction, this, &ShortcutHelper::openAction);
     registerShortcut();
 }
 
@@ -70,8 +69,17 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter: {
         // Todo(yanghao):editingIndex handle
-        const auto mode = view->currentDirOpenMode();
         const auto &urls = view->selectedUrlList();
+        int dirCount = 0;
+        for (const QUrl &url : urls) {
+            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            if (info->isDir())
+                ++dirCount;
+            if (dirCount > 1)
+                break;
+        }
+
+        const auto mode = dirCount > 1 ? DirOpenMode::kOpenNewWindow : view->currentDirOpenMode();
         openAction(urls, mode);
         return true;
     }
@@ -283,20 +291,7 @@ void ShortcutHelper::previewFiles()
 
 void ShortcutHelper::openAction(const QList<QUrl> &urls, const DirOpenMode openMode)
 {
-    auto windowId = WorkspaceHelper::instance()->windowId(view);
-
-    for (const QUrl &url : urls) {
-        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(url);
-        if (fileInfoPtr && fileInfoPtr->isDir()) {
-            if (openMode == DirOpenMode::kOpenNewWindow) {
-                WorkspaceEventCaller::sendOpenWindow({ url });
-            } else {
-                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
-            }
-        } else {
-            FileOperaterHelperIns->openFiles(view, { url });
-        }
-    }
+    FileOperaterHelperIns->openFilesByMode(view, urls, openMode);
 }
 
 void ShortcutHelper::openInTerminal()

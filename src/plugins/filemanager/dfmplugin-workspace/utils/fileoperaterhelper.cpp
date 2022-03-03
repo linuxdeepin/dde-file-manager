@@ -21,6 +21,7 @@
 */
 #include "fileoperaterhelper.h"
 #include "workspacehelper.h"
+#include "events/workspaceeventcaller.h"
 #include "views/fileview.h"
 #include "models/filesortfilterproxymodel.h"
 #include "dfm-framework/framework.h"
@@ -71,10 +72,29 @@ void FileOperaterHelper::openFiles(const FileView *view)
 
 void FileOperaterHelper::openFiles(const FileView *view, const QList<QUrl> &urls)
 {
+    DirOpenMode openMode = view->currentDirOpenMode();
+
+    openFilesByMode(view, urls, openMode);
+}
+
+void FileOperaterHelper::openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode)
+{
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles,
-                                          windowId,
-                                          urls);
+
+    for (const QUrl &url : urls) {
+        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(url);
+        if (fileInfoPtr && fileInfoPtr->isDir()) {
+            if (mode == DirOpenMode::kOpenNewWindow) {
+                WorkspaceEventCaller::sendOpenWindow({ url });
+            } else {
+                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
+            }
+        } else {
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles,
+                                                  windowId,
+                                                  url);
+        }
+    }
 }
 
 void FileOperaterHelper::openFilesByApp(const FileView *view)

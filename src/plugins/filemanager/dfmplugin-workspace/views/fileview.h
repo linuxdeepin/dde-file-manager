@@ -132,6 +132,7 @@ public slots:
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
     void setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected);
+    DirOpenMode currentDirOpenMode() const;
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -157,7 +158,6 @@ protected:
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
     void viewStateChanged();
-    void reqOpenAction(const QList<QUrl> &urls, const DirOpenMode openMode = DirOpenMode::kOpenInCurrentWindow);
 
 private slots:
     void loadViewState(const QUrl &url);
@@ -197,7 +197,6 @@ private:
     bool isListViewMode() const;
 
     bool cdUp();
-    DirOpenMode currentDirOpenMode() const;
 };
 
 DPWORKSPACE_END_NAMESPACE

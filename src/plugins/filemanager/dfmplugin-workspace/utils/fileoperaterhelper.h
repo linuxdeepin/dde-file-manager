@@ -40,6 +40,7 @@ public:
     void touchFiles(const FileView *view, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString suffix = "");
     void openFiles(const FileView *view);
     void openFiles(const FileView *view, const QList<QUrl> &urls);
+    void openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode = DirOpenMode::kOpenInCurrentWindow);
     void openFilesByApp(const FileView *view);
     void renameFile(const FileView *view, const QUrl &oldUrl, const QUrl &newUrl);
     void copyFiles(const FileView *view);

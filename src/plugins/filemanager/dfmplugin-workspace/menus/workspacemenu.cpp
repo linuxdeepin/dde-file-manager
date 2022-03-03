@@ -138,7 +138,7 @@ void WorkspaceMenu::actionBusiness(QAction *act)
         FileOperaterHelperIns->pasteFiles(view);
         break;
     case kActDelete:
-        FileOperaterHelperIns->deleteFiles(view);
+        FileOperaterHelperIns->moveToTrash(view);
         break;
     case kActRename:
         if (selectUrls.count() > 1) {

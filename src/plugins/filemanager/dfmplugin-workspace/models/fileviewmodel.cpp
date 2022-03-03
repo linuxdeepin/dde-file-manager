@@ -181,7 +181,7 @@ QModelIndex FileViewModel::index(int row, int column, const QModelIndex &parent)
 
 const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 {
-    if (-1 == index.row())
+    if (index.internalPointer() == d->root.data())
         return d->root.data();
 
     if (0 > index.row() || index.row() >= d->nodeManager->childrenCount())
@@ -200,7 +200,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
     if (!d->root.isNull() && d->root->url() == url) {
         QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
-        QModelIndex root = createIndex(-1, 0, &d->root);
+        QModelIndex root = createIndex(0, 0, d->root.data());
 
         d->canFetchMoreFlag = true;
         fetchMore(root);
@@ -208,7 +208,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         return root;
     }
 
-    QModelIndex root = createIndex(-1, 0, &d->root);
+    QModelIndex root = createIndex(0, 0, d->root.data());
 
     if (!url.isValid())
         return root;
@@ -250,6 +250,16 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 QUrl FileViewModel::rootUrl() const
 {
     return d->root->fileInfo()->url();
+}
+
+QModelIndex FileViewModel::rootIndex() const
+{
+    return createIndex(0, 0, d->root.data());
+}
+
+const FileViewItem *FileViewModel::rootItem() const
+{
+    return d->root.data();
 }
 
 AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
