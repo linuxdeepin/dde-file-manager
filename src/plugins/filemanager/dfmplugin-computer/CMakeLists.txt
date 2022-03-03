@@ -12,6 +12,8 @@ FILE(GLOB COMPUTER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(Secret REQUIRED libsecret-1)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -23,6 +25,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         ${DtkWidget_INCLUDE_DIRS}
+        ${Secret_INCLUDE_DIRS}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -31,6 +34,7 @@ target_link_libraries(${PROJECT_NAME}
     DFMSERVICE::common
     DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
+    ${Secret_LIBRARIES}
 )
 
 #install library file

@@ -37,6 +37,7 @@ Build-Depends:
  liblucene++-dev,
  libdocparser-dev,
  libboost-filesystem-dev,
+ libsecret-1-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org

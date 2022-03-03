@@ -27,6 +27,7 @@
 #include "fileentity/blockentryfileentity.h"
 #include "utils/computerutils.h"
 #include "utils/stashmountsutils.h"
+#include "utils/remotepasswdmanager.h"
 #include "watcher/computeritemwatcher.h"
 
 #include "services/common/propertydialog/property_defines.h"
@@ -486,7 +487,17 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
 
 void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
 {
-    // TODO(xust);
+    // 1. forget passwd
+    QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
+    RemotePasswdManagerInstance->clearPasswd(id);
+
+    // 2. unmount
+    actUnmount(info);
+
+    // 3. remove stashed entry
+    QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(id);
+    StashMountsUtils::removeStashedMount(stashedUrl);
+    Q_EMIT ComputerItemWatcherInstance->itemRemoved(info->url());
 }
 
 void ComputerController::actErase(DFMEntryFileInfoPointer info)
