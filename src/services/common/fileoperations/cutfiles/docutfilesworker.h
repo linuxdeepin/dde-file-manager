@@ -57,9 +57,6 @@ protected:
     bool renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
-    AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from, const QUrl &to,
-                                                           const AbstractJobHandler::JobErrorType &error,
-                                                           const QString &errorMsg = QString());
     AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
     void doOperateWork(AbstractJobHandler::SupportActions actions) override;
 

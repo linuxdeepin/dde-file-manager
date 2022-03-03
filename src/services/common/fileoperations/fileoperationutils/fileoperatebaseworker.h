@@ -85,8 +85,8 @@ public:
                                  const QUrl &toUrl,
                                  QSharedPointer<QStorageInfo> targetStorageInfo,
                                  bool *result);
-    bool deleteFile(const QUrl &fromUrl,
-                    const QUrl &toUrl, const AbstractFileInfoPointer &fileInfo, bool *result);
+    bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result);
+    bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result);
     bool copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
     bool copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);

@@ -296,7 +296,10 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
     if (checkFileOutOfLimit(fileInfo)) {
         completeFilesCount++;
         // ToDo::大于1G，执行彻底删除代码
-        return deleteFile(sourceUrl, QUrl(), fileInfo, &result);
+        if (fileInfo->isFile() || fileInfo->isSymLink())
+            return deleteFile(sourceUrl, QUrl(), &result);
+        else
+            return deleteDir(sourceUrl, QUrl(), &result);
     }
 
     // ToDo::判断是否同盘，是就直接rename

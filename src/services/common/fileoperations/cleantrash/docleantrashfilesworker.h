@@ -27,12 +27,13 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "fileoperations/fileoperationutils/abstractworker.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "fileoperations/fileoperationutils/fileoperatebaseworker.h"
 
 #include <QObject>
 
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
-class DoCleanTrashFilesWorker : public AbstractWorker
+class DoCleanTrashFilesWorker : public FileOperateBaseWorker
 {
     friend class CleanTrashFiles;
     Q_OBJECT
@@ -55,9 +56,6 @@ protected:
     AbstractJobHandler::SupportAction doHandleErrorAndWait(const QUrl &from,
                                                            const AbstractJobHandler::JobErrorType &error,
                                                            const QString &errorMsg = QString());
-
-private:
-    bool deleteDir(const QUrl &url) const;
 
 private:
     QAtomicInteger<qint64> cleanTrashFilesCount { 0 };

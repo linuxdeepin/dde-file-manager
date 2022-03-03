@@ -80,24 +80,24 @@ bool DoCutFilesWorker::initArgs()
 
     if (sourceUrls.count() <= 0) {
         // pause and emit error msg
-        doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(QUrl(), QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     if (!targetUrl.isValid()) {
         // pause and emit error msg
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     if (!targetInfo) {
         // pause and emit error msg
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
 
     if (!targetInfo->exists()) {
         // pause and emit error msg
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kNonexistenceError);
         return false;
     }
 
@@ -115,7 +115,7 @@ bool DoCutFilesWorker::cutFiles()
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
+            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
                 continue;
@@ -175,18 +175,6 @@ void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey, QVariant::fromValue(writCount));
 
     emit stateChangedNotify(info);
-}
-
-AbstractJobHandler::SupportAction DoCutFilesWorker::doHandleErrorAndWait(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error, const QString &errorMsg)
-{
-    setStat(AbstractJobHandler::JobState::kPauseState);
-    emitErrorNotify(from, to, error, errorMsg);
-
-    handlingErrorQMutex.lock();
-    handlingErrorCondition.wait(&handlingErrorQMutex);
-    handlingErrorQMutex.unlock();
-
-    return currentAction;
 }
 
 AbstractJobHandler::SupportActions DoCutFilesWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
@@ -266,7 +254,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                     completeFiles.append(sourceUrl);
                     completeTargetFiles.append(newTargetInfo->url());
                 }
-                bool succ = deleteFile(sourceUrl, targetUrl, sourceInfo, ok);
+                bool succ = deleteFile(sourceUrl, targetUrl, ok);
                 if (!succ) {
                     return *ok;
                 }
@@ -277,7 +265,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             do {
                 if (!handler->createSystemLink(sourceUrl, newTargetInfo->url()))
                     // pause and emit error msg
-                    action = doHandleErrorAndWait(sourceUrl, targetUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
+                    action = doHandleErrorAndWait(sourceUrl, targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kSymlinkError);
 
             } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -290,7 +278,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                 completeTargetFiles.append(newTargetInfo->url());
             }
             // remove old link file
-            if (!deleteFile(sourceUrl, targetUrl, sourceInfo, ok))
+            if (!deleteFile(sourceUrl, targetUrl, ok))
                 return *ok;
 
             return true;

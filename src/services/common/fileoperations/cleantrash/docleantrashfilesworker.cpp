@@ -34,7 +34,7 @@
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DoCleanTrashFilesWorker::DoCleanTrashFilesWorker(QObject *parent)
-    : AbstractWorker(parent)
+    : FileOperateBaseWorker(parent)
 {
     jobType = AbstractJobHandler::JobType::kCleanTrashType;
 }
@@ -159,10 +159,10 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
     do {
         if (!resultFile) {
             if (trashInfo->isFile() || trashInfo->isSymLink()) {
-                resultFile = handler->deleteFile(trashInfo->url());
+                deleteFile(trashInfo->url(), QUrl(), &resultFile);
             } else {
                 // dir
-                resultFile = deleteDir(trashInfo->url());
+                deleteDir(trashInfo->url(), QUrl(), &resultFile);
             }
         }
         if (!resultInfo)
@@ -194,32 +194,4 @@ AbstractJobHandler::SupportAction DoCleanTrashFilesWorker::doHandleErrorAndWait(
     handlingErrorQMutex.unlock();
 
     return currentAction;
-}
-
-bool DoCleanTrashFilesWorker::deleteDir(const QUrl &url) const
-{
-    QSharedPointer<dfmio::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        return false;
-    }
-
-    QSharedPointer<dfmio::DEnumerator> enumerator = factory->createEnumerator();
-    if (!enumerator) {
-        return false;
-    }
-
-    bool succ = false;
-    while (enumerator->hasNext()) {
-        const QString &path = enumerator->next();
-
-        const QUrl &urlNext = QUrl::fromLocalFile(path);
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlNext);
-        if (info->isDir()) {
-            succ = deleteDir(urlNext);
-        } else {
-            succ = handler->deleteFile(urlNext);
-        }
-    }
-    succ = handler->deleteFile(url);
-    return succ;
 }
