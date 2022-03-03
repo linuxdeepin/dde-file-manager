@@ -446,8 +446,6 @@ bool PluginManagerPrivate::loadPlugins()
                                                     });
     mapController.waitForFinished();
 
-    dpfDebug() << loadQueue;
-
     dpfCheckTimeEnd();
     return ret;
 }

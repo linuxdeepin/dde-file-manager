@@ -110,6 +110,7 @@ private:
     QVBoxLayout *mainLayout { nullptr };
 
     QAtomicInteger<bool> isPauseState { false };   // 是否是暂停状态
+    QAtomicInteger<bool> isBtnHidden { false };   // 暂停、停止按钮隐藏
 };
 
 DFMBASE_END_NAMESPACE

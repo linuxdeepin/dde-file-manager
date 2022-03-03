@@ -131,6 +131,7 @@ public:
         kCurrentProccessKey,
         kTotalSizeKey,
         kJobStateKey,
+        kJobStateHideKey,
         kSourceUrlKey,
         kTargetUrlKey,
         kErrorTypeKey,
@@ -172,9 +173,9 @@ signals:   // 发送给任务调用者使用的信号
     /*!
      * @brief proccessChanged 当前任务的进度变化信号，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
-     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有kJobtypeKey（任务类型，类型JobType）,kCurrentProccessKey（当前任务执行的进度，类型qint64），
+     * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有 kJobtypeKey （任务类型，类型JobType）,kCurrentProccessKey（当前任务执行的进度，类型qint64），
      * kTotalSizeKey（当前任务文件的总大小，如果统计文件数量没有完成，值为-1,类型qint64）三个字段
-     * 在我们自己提供的dailog服务中，这个VarintMap必须有kCurrentProccessKey（当前任务执行的进度，类型qint64）和
+     * 在我们自己提供的dailog服务中，这个VarintMap必须有 kCurrentProccessKey （当前任务执行的进度，类型qint64）和
      * kTotalSizeKey（当前任务文件的总大小，如果统计文件数量没有完成，值为-1，类型qint64）值来做文件进度的展示
      */
     void proccessChangedNotify(const JobInfoPointer jobInfo);
@@ -182,7 +183,8 @@ signals:   // 发送给任务调用者使用的信号
      * @brief stateChanged 任务状态发生改变，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
      * 在我们自己提供的fileoperations服务中，这个VarintMap里面会有kJobStateKey（当前任务执行的状态,类型：JobState）和存在kJobtypeKey（任务类型，类型JobType）
-     * 在我们自己提供的dailog服务中，这个VarintMap必须存在kJobStateKey（当前任务执行的状态，类型：JobState）用来展示暂停和开始按钮状态
+     * 在我们自己提供的dailog服务中，这个VarintMap必须存在 kJobStateKey （当前任务执行的状态，类型：JobState）用来展示暂停和开始按钮状态
+     * kJobStateHideKey 隐藏暂停、停止按钮
      */
     void stateChangedNotify(const JobInfoPointer jobInfo);
     /*!
@@ -198,7 +200,7 @@ signals:   // 发送给任务调用者使用的信号
     void currentTaskNotify(const JobInfoPointer jobInfo);
     /*!
      * \brief finishedNotify 任务完成
-     * \param jobInfo
+     * \param jobInfo 必须填写 NotifyInfoKey::kJobHandlePointer
      */
     void finishedNotify(const JobInfoPointer jobInfo);
     /*!

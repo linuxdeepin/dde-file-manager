@@ -23,10 +23,9 @@
 #include "burneventreceiver.h"
 #include "dialogs/burnoptdialog.h"
 #include "utils/burnhelper.h"
-#include "utils/burnjob.h"
+#include "utils/burnjobmanager.h"
 
 #include "dfm-base/utils/devicemanager.h"
-#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <DDialog>
@@ -73,12 +72,6 @@ void BurnEventReceiver::handleErase(const QString &dev)
 {
     DWIDGET_USE_NAMESPACE
 
-    if (BurnHelper::showOpticalBlankConfirmationDialog() == DDialog::Accepted) {
-        JobHandlePointer jobHandler { new AbstractJobHandler };
-        DialogManagerInstance->addTask(jobHandler);
-        QtConcurrent::run([=] {
-            BurnJob job;
-            job.doOpticalDiskBlank(dev, jobHandler);
-        });
-    }
+    if (BurnHelper::showOpticalBlankConfirmationDialog() == DDialog::Accepted)
+        BurnJobManager::instance()->startEraseDisc(dev);
 }

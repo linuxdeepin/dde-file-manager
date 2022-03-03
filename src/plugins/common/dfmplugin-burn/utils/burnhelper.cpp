@@ -27,6 +27,7 @@
 #include <QCoreApplication>
 #include <QPushButton>
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 DPBURN_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -64,4 +65,32 @@ QUrl BurnHelper::localStagingFile(QString dev)
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)   // ~/.cache
                                + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"   // ~/.cache/deepin/discburn/
                                + dev.replace('/', '_'));
+}
+
+QString BurnHelper::parseXorrisoErrorMessage(const QStringList &msg)
+{
+    QRegularExpression ovrex("While grafting '(.*)'");
+    for (auto &msgs : msg) {
+        auto ovrxm = ovrex.match(msgs);
+        if (msgs.contains("file object exists and may not be overwritten") && ovrxm.hasMatch()) {
+            return QObject::tr("%1 is a duplicate file.").arg(ovrxm.captured(1));
+        }
+        if (msgs.contains(QRegularExpression("Image size [0-9s]* exceeds free space on media [0-9s]*"))) {
+            return QObject::tr("Insufficient disc space.");
+        }
+        if (msgs.contains("Lost connection to drive")) {
+            return QObject::tr("Lost connection to drive.");
+        }
+        if (msgs.contains("servo failure")) {
+            return QObject::tr("The CD/DVD drive is not ready. Try another disc.");
+        }
+        if (msgs.contains("Device or resource busy")) {
+            return QObject::tr("The CD/DVD drive is busy. Exit the program using the drive, and insert the drive again.");
+        }
+        if (msgs.contains("-volid: Text too long")) {
+            //something is wrong if the following return statement is reached.
+            return QString("invalid volume name");
+        }
+    }
+    return QObject::tr("Unknown error");
 }

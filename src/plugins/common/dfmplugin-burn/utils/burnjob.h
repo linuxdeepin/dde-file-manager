@@ -28,45 +28,126 @@
 
 #include <dfm-burn/opticaldiscmanager.h>
 
-#include <QObject>
+#include <QThread>
 
 DPBURN_BEGIN_NAMESPACE
 
-class BurnJob : public QObject
+class AbstractBurnJob : public QThread
 {
     Q_OBJECT
 
 public:
-    struct BurnConfig
-    {
-        QString volName;
-        int speeds;
-        DFMBURN::BurnOptions opts;
+    enum JobType {
+        kOpticalBurn,
+        kOpticalBlank,
+        kOpticalImageBurn,
+        kOpticalCheck
     };
 
-    using WorkFunc = std::function<void(int, int)>;
+    enum PropertyType {
+        KStagingUrl,
+        kImageUrl,
+        kVolumeName,
+        kSpeeds,
+        kBurnOpts
+    };
+
+    using ProperyMap = QMap<PropertyType, QVariant>;
 
 public:
-    explicit BurnJob(QObject *parent = nullptr);
+    explicit AbstractBurnJob(const QString &dev, const JobHandlePointer handler);
+    virtual ~AbstractBurnJob() override {}
 
-    void doOpticalDiskBlank(const QString &dev, const JobHandlePointer handler);
-    void doUDFDataBurn(const QString &dev, const QUrl &url, const BurnConfig &conf, const JobHandlePointer handler);
-    void doISODataBurn(const QString &dev, const QUrl &url, const BurnConfig &conf, const JobHandlePointer handler);
-    void doISOImageBurn(const QString &dev, const QUrl &imageUrl, const BurnConfig &conf, const JobHandlePointer handler);
+    void setProperty(PropertyType type, const QVariant &val);
 
-    // TODO(zhangs): connect signals
+protected:
+    virtual void updateMessage(JobInfoPointer ptr);
+    virtual void readFunc(int progressFd, int checkFd);
+    virtual void writeFunc(int progressFd, int checkFd);
+    virtual void work() = 0;
+
+    void run() override;
+    bool readyToBurn();
+    void workingInSubProcess();
+    DFMBURN::OpticalDiscManager *createManager(int fd);
+    QByteArray updatedInSubProcess(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
+    void comfort();
+    void deleteStagingFiles();
+
 signals:
-    void reqShowErrorMessage(const QString &title, const QString &message);
+    void requestErrorMessageDialog(const QString &title, const QString &message);
+    void requestFailureDialog(int type, const QString &err, const QStringList &details);
+    void requestCompletionDialog(const QString &msg, const QString &icon);
 
-private slots:
+public slots:
     void onJobUpdated(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
-    void workInProcess(const WorkFunc &writeFunc, const WorkFunc &readFunc);
 
-private:
-    void initConnect();
-    bool prepare(const QString &devId);
+protected:
+    QString curDev;
+    QString curDevId;
+    JobHandlePointer jobHandlePtr {};
+    ProperyMap curProperty;
+    JobType curJobType;
+    int lastProgress {};
+    QString lastError;
+    QStringList lastSrcMessages;
+    DFMBURN::JobStatus lastStatus;
+    bool jobSuccess {};   // delete staging files if sucess
+};
+
+class EraseJob : public AbstractBurnJob
+{
+    Q_OBJECT
+
+public:
+    explicit EraseJob(const QString &dev, const JobHandlePointer handler);
+    virtual ~EraseJob() override {}
+
+protected:
+    virtual void updateMessage(JobInfoPointer ptr) override;
+    virtual void work() override;
+};
+
+class BurnISOFilesJob : public AbstractBurnJob
+{
+    Q_OBJECT
+
+public:
+    explicit BurnISOFilesJob(const QString &dev, const JobHandlePointer handler);
+    virtual ~BurnISOFilesJob() override {}
+
+protected:
+    virtual void writeFunc(int progressFd, int checkFd) override;
+    virtual void work() override;
+};
+
+class BurnISOImageJob : public AbstractBurnJob
+{
+    Q_OBJECT
+
+public:
+    explicit BurnISOImageJob(const QString &dev, const JobHandlePointer handler);
+    virtual ~BurnISOImageJob() override {}
+
+protected:
+    virtual void writeFunc(int progressFd, int checkFd) override;
+    virtual void work() override;
+};
+
+class BurnUDFFilesJob : public AbstractBurnJob
+{
+    Q_OBJECT
+
+public:
+    explicit BurnUDFFilesJob(const QString &dev, const JobHandlePointer handler);
+    virtual ~BurnUDFFilesJob() override {}
+
+protected:
+    virtual void writeFunc(int progressFd, int checkFd) override;
+    virtual void work() override;
 };
 
 DPBURN_END_NAMESPACE
+Q_DECLARE_METATYPE(DFMBURN::BurnOptions)
 
 #endif   // BURNJOB_H

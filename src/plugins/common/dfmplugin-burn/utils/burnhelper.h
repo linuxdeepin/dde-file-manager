@@ -34,6 +34,7 @@ class BurnHelper
 public:
     static int showOpticalBlankConfirmationDialog();
     static QUrl localStagingFile(QString dev);
+    static QString parseXorrisoErrorMessage(const QStringList &msg);
 };
 
 DPBURN_END_NAMESPACE

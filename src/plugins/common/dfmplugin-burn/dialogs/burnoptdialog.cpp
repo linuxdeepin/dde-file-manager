@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "burnoptdialog.h"
-#include "utils/burnjob.h"
+#include "utils/burnjobmanager.h"
 #include "utils/burnhelper.h"
 
 #include "dfm-base/utils/windowutils.h"
@@ -288,39 +288,25 @@ void BurnOptDialog::startDataBurn()
             : volnameEdit->text().trimmed();
 
     bool isUDFBurn = fsComb->currentIndex() == 3;
-    JobHandlePointer jobHandler { new AbstractJobHandler };
-    BurnJob::BurnConfig conf;
+    BurnJobManager::Config conf;
     conf.speeds = speedMap[writespeedComb->currentText()];
     conf.opts = currentBurnOptions();
     conf.volName = volName;
-    DialogManagerInstance->addTask(jobHandler);
 
-    QtConcurrent::run([=] {
-        BurnJob job;
-        QString dev { curDev };
-        QUrl stagingUrl { BurnHelper::localStagingFile(dev) };
-        if (isUDFBurn)
-            job.doUDFDataBurn(dev, stagingUrl, conf, jobHandler);
-        else
-            job.doISODataBurn(dev, stagingUrl, conf, jobHandler);
-    });
+    if (isUDFBurn)
+        BurnJobManager::instance()->startBurnUDFFiles(curDev, BurnHelper::localStagingFile(curDev), conf);
+    else
+        BurnJobManager::instance()->startBurnISOFiles(curDev, BurnHelper::localStagingFile(curDev), conf);
 }
 
 void BurnOptDialog::startImageBurn()
 {
     qInfo() << "Start burn image";
-    JobHandlePointer jobHandler { new AbstractJobHandler };
-    BurnJob::BurnConfig conf;
+    BurnJobManager::Config conf;
     conf.speeds = speedMap[writespeedComb->currentText()];
     conf.opts = currentBurnOptions();
-    DialogManagerInstance->addTask(jobHandler);
 
-    QtConcurrent::run([=] {
-        BurnJob job;
-        QString dev { curDev };
-        QUrl url { imageFile };
-        job.doISOImageBurn(dev, url, conf, jobHandler);
-    });
+    BurnJobManager::instance()->startBurnISOImage(curDev, imageFile, conf);
 }
 
 void BurnOptDialog::onIndexChanged(int index)

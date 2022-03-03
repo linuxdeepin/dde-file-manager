@@ -144,8 +144,8 @@ void OpticalMediaWidget::updateUi()
     lbMediatype->setText(curMediaTypeStr);
     lbAvailable->setText(QObject::tr("Free Space %1").arg(FileUtils::formatSize(curAvial)));
 
-    if (curFS.toLower() == "udf") {
-        if (DSysInfo::deepinType() == DSysInfo::DeepinProfessional && !isSupportedUDF()) {   // for other version, show normal unsupported writtings
+    if (curFS.toLower() == "udf" && !isSupportedUDF()) {
+        if (DSysInfo::deepinType() == DSysInfo::DeepinProfessional) {   // for other version, show normal unsupported writtings
             lbUDFSupport->setText(tr("%1 burning is not supported").arg("UDF"));
             iconCaution->setVisible(true);
             iconCaution->load(QString(":/dark/icons/caution.svg"));

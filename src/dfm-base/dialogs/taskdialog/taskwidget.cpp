@@ -254,11 +254,16 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
 /*!
  * \brief TaskWidget::onHandlerTaskStateChange 处理和显示当前拷贝任务的状态变化
  * \param info 这个Varint信息map
- * 在我们自己提供的dailog服务中，这个VarintMap必须存在kJobStateKey（当前任务执行的状态，类型：JobState）用来展示暂停和开始按钮状态
+ * 在我们自己提供的dailog服务中，这个VarintMap必须存在 kJobStateKey （当前任务执行的状态，类型：JobState）用来展示暂停和开始按钮状态
  */
 void TaskWidget::onHandlerTaskStateChange(const JobInfoPointer JobInfo)
 {
-    AbstractJobHandler::JobState state = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).value<AbstractJobHandler::JobState>();
+    bool hide = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kJobStateHideKey).value<bool>();
+
+    if (hide)
+        isBtnHidden = true;
+
+    AbstractJobHandler::JobState state = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kJobStateKey).value<AbstractJobHandler::JobState>();
     bool isCurPaused = kPausedState == state;
     if (isCurPaused == isPauseState) {
         return;
@@ -597,8 +602,13 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
 
 void TaskWidget::onMouseHover(const bool hover)
 {
-    btnPause->setVisible(hover);
-    btnStop->setVisible(hover);
+    if (isBtnHidden) {
+        btnPause->setVisible(false);
+        btnStop->setVisible(false);
+    } else {
+        btnPause->setVisible(hover);
+        btnStop->setVisible(hover);
+    }
 
     lbSpeed->setHidden(hover);
     lbRmTime->setHidden(hover);
