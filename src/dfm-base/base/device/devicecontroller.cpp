@@ -38,6 +38,7 @@
 #include <DDesktopServices>
 
 #include <algorithm>
+#include <functional>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -1001,12 +1002,15 @@ void DeviceController::unmountProtocolDeviceAsync(const QString &deviceId, const
     ptr->unmountAsync(opts, callback);
 }
 
-static dfmmount::MountPassInfo askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault, const QString &domainDefault)
+static dfmmount::MountPassInfo askForPasswdWhenMountNetworkDevice(const QString &message, const QString &userDefault, const QString &domainDefault, const QString &uri)
 {
     MountAskPasswordDialog dlg;
     dlg.setTitle(message);
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);
+
+    if (uri.startsWith("ftp") || uri.startsWith("sftp"))
+        dlg.setDomainLineVisible(false);
 
     dfmmount::MountPassInfo info;
     if (dlg.exec() == QDialog::Accepted) {
@@ -1032,7 +1036,10 @@ void DeviceController::mountNetworkDevice(const QString &address, dfmmount::Devi
 {
     Q_ASSERT_X(!address.isEmpty(), "DeviceService", "address is emtpy");
 
-    dfmmount::DFMProtocolDevice::mountNetworkDevice(address, askForPasswdWhenMountNetworkDevice, callback);
+    using namespace std::placeholders;
+    auto func = std::bind(askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
+
+    dfmmount::DFMProtocolDevice::mountNetworkDevice(address, func, callback);
 }
 
 bool DeviceController::stopDefenderScanDrive(const QString &deviceId)
