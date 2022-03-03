@@ -27,7 +27,7 @@ void VaultEventReceiver::connectEvent()
     dpfInstance.eventDispatcher().subscribe(EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
 }
 
-void VaultEventReceiver::computerOpenItem(const QUrl &url)
+void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
 {
     if (url.path().contains("vault")) {
         switch (VaultHelper::state(VaultHelper::vaultLockPath())) {

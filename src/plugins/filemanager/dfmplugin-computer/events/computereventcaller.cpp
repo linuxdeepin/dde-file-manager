@@ -95,15 +95,15 @@ void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
     dpfInstance.eventDispatcher().publish(dfmbase::GlobalEventType::kOpenNewTab, winId, url);
 }
 
-void ComputerEventCaller::sendContextActionTriggered(const QUrl &url, const QString &action)
+void ComputerEventCaller::sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kContextActionTriggered, url, action);
+    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kContextActionTriggered, winId, url, action);
     qDebug() << "action triggered: " << url << action;
 }
 
-void ComputerEventCaller::sendOpenItem(const QUrl &url)
+void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, url);
+    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, winId, url);
     qDebug() << "send open item: " << url;
 }
 

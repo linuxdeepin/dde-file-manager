@@ -44,8 +44,8 @@ public:
     static void sendEnterInNewWindow(const QUrl &url);
     static void sendEnterInNewTab(quint64 winId, const QUrl &url);
 
-    static void sendContextActionTriggered(const QUrl &url, const QString &action);
-    static void sendOpenItem(const QUrl &url);
+    static void sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action);
+    static void sendOpenItem(quint64 winId, const QUrl &url);
     static void sendShowFilePropertyDialog(const QUrl &url);
     static void sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info);
     static void sendErase(const QString &dev);

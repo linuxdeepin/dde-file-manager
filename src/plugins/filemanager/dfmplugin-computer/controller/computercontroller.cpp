@@ -73,7 +73,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     DFMBASE_USE_NAMESPACE;
     QString suffix = info->suffix();
     if (!ComputerUtils::isPresetSuffix(suffix)) {
-        ComputerEventCaller::sendOpenItem(info->url());
+        ComputerEventCaller::sendOpenItem(winId, info->url());
         return;
     }
 
@@ -281,7 +281,7 @@ void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 w
     // if not original supported suffix, publish event to notify subscribers to handle
     QString sfx = info->suffix();
     if (!ComputerUtils::isPresetSuffix(sfx)) {
-        ComputerEventCaller::sendContextActionTriggered(info->url(), actionText);
+        ComputerEventCaller::sendContextActionTriggered(winId, info->url(), actionText);
         return;
     }
 

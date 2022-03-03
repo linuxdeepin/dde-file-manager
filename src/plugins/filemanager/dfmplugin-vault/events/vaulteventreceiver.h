@@ -17,7 +17,7 @@ public:
     void connectEvent();
 
 public slots:
-    void computerOpenItem(const QUrl &url);
+    void computerOpenItem(quint64 winId, const QUrl &url);
 };
 DPVAULT_END_NAMESPACE
 #endif   // VAULTEVENTRECEIVER_H
