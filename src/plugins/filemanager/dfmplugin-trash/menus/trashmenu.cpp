@@ -31,6 +31,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfileactions.h"
 #include "dfm-base/utils/actiontypemanager.h"
+#include "dfm-base/utils/universalutils.h"
+
 #include "dfm-framework/framework.h"
 
 #include <QMenu>
@@ -42,6 +44,7 @@ extern const char *const kTrashMenu = "trash-menu";
 }   // namespace MenuScene
 DPTRASH_END_NAMESPACE
 
+DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPTRASH_USE_NAMESPACE
@@ -107,10 +110,11 @@ void TrashMenu::actionBusiness(QAction *act)
 void TrashMenu::assemblesEmptyAreaActions(QMenu *menu)
 {
     filterEmptyActions(menu);
-    auto isDisabled = rootUrl != TrashHelper::rootUrl();
-    QAction *restoreAllAct = createAction(TrashActionType::kRestoreAll, QObject::tr("Restore all"), isDisabled);
+    auto isDisabled = !UniversalUtils::urlEquals(rootUrl, TrashHelper::rootUrl());
 
+    QAction *restoreAllAct = createAction(TrashActionType::kRestoreAll, QObject::tr("Restore all"), isDisabled);
     QAction *emptyTrashAct = createAction(TrashActionType::kEmptyTrash, QObject::tr("Empty trash"), isDisabled);
+
     menu->insertSeparator(menu->actions().first());
     menu->insertAction(menu->actions().first(), emptyTrashAct);
     menu->insertAction(menu->actions().first(), restoreAllAct);

@@ -75,7 +75,8 @@ public:
         kShowRecentFileEntry,   // show "Recent Documents" entry in the sidebar
         kShowCsdCrumbBarClickableArea,   // eave an area in the breadcrumb bar that can be clicked on to go to the edit state of the address bar
         kShowFileSystemTagOnDiskIcon,   // display file system information on the disk icon
-        kShowDeleteConfirmDialog   // display the delete confirmation dialog
+        kShowDeleteConfirmDialog,   // display the delete confirmation dialog
+        kHideLoopPartitions,   // hide loop partitions
     };
 
     Q_ENUM(GenericAttribute)
@@ -110,6 +111,7 @@ Q_SIGNALS:
     void iconSizeLevelChanged(int level);
     void viewModeChanged(int mode);
     void previewCompressFileChanged(bool enable);
+    void showedFileSuffixChanged(bool enable);
     void previewAttributeChanged(GenericAttribute ga, bool enable);
     void showedHiddenFilesChanged(bool enable);
     void recentDisplayChanged(bool enable);

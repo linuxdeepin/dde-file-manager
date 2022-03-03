@@ -114,7 +114,7 @@ private:
     };
     BidirectionHash<QString, Application::GenericAttribute> keyToGA {
         { "base.hidden_files.show_hidden", Application::kShowedHiddenFiles },
-        { "base.hidden_files.hide_suffix", Application::kShowedFileSuffix },
+        { "base.hidden_files.show_suffix", Application::kShowedFileSuffix },
         { "base.hidden_files.show_recent", Application::kShowRecentFileEntry },
         { "advance.index.index_internal", Application::kIndexInternal },
         { "advance.index.index_external", Application::kIndexExternal },
@@ -132,6 +132,7 @@ private:
         { "advance.dialog.default_chooser_dialog", Application::kOverrideFileChooserDialog },
         { "advance.dialog.delete_confirmation_dialog", Application::kShowDeleteConfirmDialog },
         { "advance.other.hide_system_partition", Application::kHiddenSystemPartition },
+        { "advance.other.hide_loop_partitions", Application::kHideLoopPartitions },
         { "advance.other.show_crumbbar_clickable_area", Application::kShowCsdCrumbBarClickableArea },
         { "advance.other.show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
     };

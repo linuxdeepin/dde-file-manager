@@ -22,7 +22,7 @@
 #include "base/application/application.h"
 #include "private/application_p.h"
 #ifdef ENABLE_QUICK_SEARCH
-#include "dbusservice/dbus_interface/anything_interface.h"
+#    include "dbusservice/dbus_interface/anything_interface.h"
 #endif
 
 #include "base/application/settings.h"
@@ -88,6 +88,9 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
             break;
         case Application::kShowedHiddenFiles:
             Q_EMIT self->showedHiddenFilesChanged(value.toBool());
+            break;
+        case Application::kShowedFileSuffix:
+            Q_EMIT self->showedFileSuffixChanged(value.toBool());
             break;
         case Application::kShowRecentFileEntry:
             Q_EMIT self->recentDisplayChanged(value.toBool());

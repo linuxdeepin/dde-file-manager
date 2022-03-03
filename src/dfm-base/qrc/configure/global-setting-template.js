@@ -135,8 +135,8 @@
                             "default": false
                         },
                         {
-                            "key": "hide_suffix",
-                            "text": qsTranslate("GenerateSettingTranslate", "Hide file extension when rename"),
+                            "key": "show_suffix",
+                            "text": qsTranslate("GenerateSettingTranslate", "Show file extensions"),
                             "type": "checkbox",
                             "default": true
                         },
@@ -295,6 +295,12 @@
                             "hide": true
                         },
                         {
+                            "key": "hide_loop_partitions",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide loop partitions"),
+                            "type": "checkbox",
+                            "default": true
+                        },
+                        {
                             "key": "show_filesystemtag_on_diskicon",
                             "text": qsTranslate("GenerateSettingTranslate", "Show file system on disk icon"),
                             "type": "checkbox",
@@ -305,5 +311,5 @@
             ]
         }
 
-      ]
+    ]
 }

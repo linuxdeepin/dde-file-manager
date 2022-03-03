@@ -25,10 +25,11 @@
         "ShowedHiddenOnSearch": true,
         "ShowedHiddenFiles": false,
         "ShowRecentFileEntry": true,
-        "ShowedFileSuffixOnRename": true,
+        "ShowedFileSuffix": true,
         "DisableNonRemovableDeviceUnmount": false,
         "HiddenSystemPartition": false,
-        "AlwaysShowOfflineRemoteConnections": true
+        "AlwaysShowOfflineRemoteConnections": true,
+        "HideLoopPartitions": true
     },
     "AnythingMonitorFilterPath": {
         "WhiteList":[

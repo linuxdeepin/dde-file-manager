@@ -28,6 +28,6 @@
     },
     "FileName": {
         "non-allowableCharacters": "(^\\s+|[/\\\\:*\"'?<>|\r\n\t])",
-        "non-allowableEmptyCharactersOfEnd": true
+        "non-allowableEmptyCharactersOfEnd": false
     }
 }
