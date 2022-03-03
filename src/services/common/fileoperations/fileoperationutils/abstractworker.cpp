@@ -239,9 +239,9 @@ void AbstractWorker::endWork()
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey, QVariant::fromValue(completeFiles));
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
 
-    emit finishedNotify(info);
-
     saveOperations();
+
+    emit finishedNotify(info);
 }
 /*!
  * \brief AbstractWorker::emitStateChangedNotify send state changed signal
