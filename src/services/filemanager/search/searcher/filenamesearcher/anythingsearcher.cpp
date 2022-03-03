@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "anythingsearcher.h"
-#include "search/utils/regularexpression.h"
+#include "search/utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dbusservice/dbus_interface/anything_interface.h"
@@ -75,6 +75,7 @@ bool AnythingSearcher::search()
 
     uint32_t startOffset = 0;
     uint32_t endOffset = 0;
+    QHash<QString, QSet<QString>> hiddenFileHash;
     while (!searchDirList.isEmpty()) {
         //中断
         if (status.loadAcquire() != kRuning)
@@ -94,28 +95,27 @@ bool AnythingSearcher::search()
         startOffset = reply.argumentAt<1>();
         endOffset = reply.argumentAt<2>();
 
-        // 当前目录已经搜索到了结尾
-        if (startOffset >= endOffset) {
-            startOffset = endOffset = 0;
-            searchDirList.removeAt(0);
-        }
-
         for (auto &item : results) {
             // 中断
             if (status.loadAcquire() != kRuning)
                 return false;
 
-            // 去除掉添加的data前缀
-            if (isPrependData && item.startsWith("/data"))
-                item = item.mid(5);
-
-            {
+            if (!SearchHelper::isHiddenFile(item, hiddenFileHash, searchDirList.first())) {
+                // 去除掉添加的data前缀
+                if (isPrependData && item.startsWith("/data"))
+                    item = item.mid(5);
                 QMutexLocker lk(&mutex);
                 allResults << QUrl::fromLocalFile(item);
             }
 
             // 推送
             tryNotify();
+        }
+
+        // 当前目录已经搜索到了结尾
+        if (startOffset >= endOffset) {
+            startOffset = endOffset = 0;
+            searchDirList.removeAt(0);
         }
     }
 

@@ -40,6 +40,8 @@ public:
         return "org.deepin.service.SearchService";
     }
 
+    static SearchService *service();
+
     bool regSearchPath(const QString &scheme, const QString &path, QString *errMsg = nullptr);
     QHash<QString, QString> regInfos();
     bool search(const QString &taskId, const QUrl &url, const QString &keyword);

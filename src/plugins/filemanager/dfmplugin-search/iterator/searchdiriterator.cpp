@@ -33,15 +33,11 @@
 DSB_FM_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
-namespace GlobalPrivate {
-static SearchService *searchServ { nullptr };
-}   // namespace GlobalPrivate
-
 SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, QObject *parent)
     : QObject(parent),
       fileUrl(url)
 {
-    loadSearchService();
+    initConnect();
     doSearch();
 }
 
@@ -49,31 +45,17 @@ SearchDirIteratorPrivate::~SearchDirIteratorPrivate()
 {
 }
 
-void SearchDirIteratorPrivate::loadSearchService()
-{
-    if (!GlobalPrivate::searchServ) {
-        auto &ctx = dpfInstance.serviceContext();
-        GlobalPrivate::searchServ = ctx.service<SearchService>(SearchService::name());
-
-        if (!GlobalPrivate::searchServ) {
-            qCritical() << "get SearchService failed!";
-            abort();
-        }
-    }
-    initConnect();
-}
-
 void SearchDirIteratorPrivate::initConnect()
 {
-    connect(GlobalPrivate::searchServ, &SearchService::matched, this, &SearchDirIteratorPrivate::onMatched);
-    connect(GlobalPrivate::searchServ, &SearchService::searchCompleted, this, &SearchDirIteratorPrivate::onSearchCompleted);
-    connect(GlobalPrivate::searchServ, &SearchService::searchStoped, this, &SearchDirIteratorPrivate::onSearchStoped);
+    connect(SearchService::service(), &SearchService::matched, this, &SearchDirIteratorPrivate::onMatched);
+    connect(SearchService::service(), &SearchService::searchCompleted, this, &SearchDirIteratorPrivate::onSearchCompleted);
+    connect(SearchService::service(), &SearchService::searchStoped, this, &SearchDirIteratorPrivate::onSearchStoped);
 }
 
 void SearchDirIteratorPrivate::doSearch()
 {
     auto searchUrl = SearchHelper::searchTargetUrl(fileUrl);
-    auto regInfos = GlobalPrivate::searchServ->regInfos();
+    auto regInfos = SearchService::service()->regInfos();
     if (UrlRoute::isVirtual(searchUrl) && regInfos.contains(searchUrl.scheme())) {
         auto path = searchUrl.path();
         auto regPath = regInfos[searchUrl.scheme()];
@@ -83,13 +65,13 @@ void SearchDirIteratorPrivate::doSearch()
     }
 
     taskId = SearchHelper::searchTaskId(fileUrl);
-    GlobalPrivate::searchServ->search(taskId, searchUrl, SearchHelper::searchKeyword(fileUrl));
+    SearchService::service()->search(taskId, searchUrl, SearchHelper::searchKeyword(fileUrl));
 }
 
 void SearchDirIteratorPrivate::onMatched(const QString &id)
 {
     if (taskId == id) {
-        auto results = GlobalPrivate::searchServ->matchedResults(taskId);
+        auto results = SearchService::service()->matchedResults(taskId);
         for (const auto &result : results) {
             QUrl url = SearchHelper::setSearchedFileUrl(fileUrl, result.toString());
             QMutexLocker lk(&mutex);
@@ -129,10 +111,8 @@ QUrl SearchDirIterator::next()
 {
     if (!d->childrens.isEmpty()) {
         QMutexLocker lk(&d->mutex);
-        const auto &url = d->childrens.dequeue();
-        lk.unlock();
-        d->currentFileInfo = InfoFactory::create<AbstractFileInfo>(url);
-        return url;
+        d->currentFileUrl = d->childrens.dequeue();
+        return d->currentFileUrl;
     }
 
     return {};
@@ -154,17 +134,17 @@ bool SearchDirIterator::hasNext() const
 
 QString SearchDirIterator::fileName() const
 {
-    return d->currentFileInfo->fileName();
+    return fileInfo()->fileName();
 }
 
 QUrl SearchDirIterator::fileUrl() const
 {
-    return d->currentFileInfo->url();
+    return d->currentFileUrl;
 }
 
 const AbstractFileInfoPointer SearchDirIterator::fileInfo() const
 {
-    return d->currentFileInfo;
+    return InfoFactory::create<AbstractFileInfo>(d->currentFileUrl);
 }
 
 QUrl SearchDirIterator::url() const

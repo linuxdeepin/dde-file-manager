@@ -40,6 +40,9 @@ public:
     virtual QIcon fileIcon() const override;
     virtual bool exists() const override;
     virtual bool isHidden() const override;
+    virtual bool isReadable() const override;
+    virtual bool isWritable() const override;
+    virtual bool isDir() const override;
     virtual qint64 size() const override;
     virtual QString sizeFormat() const override;
     virtual QDateTime lastModified() const override;

@@ -18,9 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "regularexpression.h"
+#include "searchhelper.h"
 
 #include <QRegularExpression>
+#include <QFileInfo>
+#include <QSet>
 
 DSB_FM_BEGIN_NAMESPACE
 
@@ -107,6 +109,44 @@ QString RegularExpression::wildcardToRegularExpression(const QString &pattern)
         }
     }
     return anchoredPattern(rx);
+}
+
+bool SearchHelper::isHiddenFile(const QString &fileName, QHash<QString, QSet<QString>> &filters, const QString &searchPath)
+{
+    if (!fileName.startsWith(searchPath) || fileName == searchPath)
+        return false;
+
+    QFileInfo fileInfo(fileName);
+    if (fileInfo.isHidden())
+        return true;
+
+    const auto &fileParentPath = fileInfo.absolutePath();
+    const auto &hiddenFileConfig = fileParentPath + "/.hidden";
+
+    // 判断.hidden文件是否存在，不存在说明该路径下没有隐藏文件
+    if (!QFile::exists(hiddenFileConfig))
+        return isHiddenFile(fileParentPath, filters, searchPath);
+
+    if (filters[fileParentPath].isEmpty()) {
+        QFile file(hiddenFileConfig);
+        // 判断.hidden文件中的内容是否为空，空则表示该路径下没有隐藏文件
+        if (file.isReadable() && file.size() > 0) {
+            if (!file.open(QFile::ReadOnly))
+                return false;
+
+            QByteArray data = file.readAll();
+            file.close();
+
+            const auto &hiddenFiles = QSet<QString>::fromList(QString(data).split('\n', QString::SkipEmptyParts));
+            filters[fileParentPath] = hiddenFiles;
+        } else {
+            return isHiddenFile(fileParentPath, filters, searchPath);
+        }
+    }
+
+    return filters[fileParentPath].contains(fileInfo.fileName())
+            ? true
+            : isHiddenFile(fileParentPath, filters, searchPath);
 }
 
 DSB_FM_END_NAMESPACE

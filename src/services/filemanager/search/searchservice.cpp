@@ -23,6 +23,8 @@
 
 #include "dfm-base/base/urlroute.h"
 
+#include <dfm-framework/framework.h>
+
 #include <QtConcurrent>
 
 DFMBASE_USE_NAMESPACE
@@ -39,6 +41,18 @@ SearchServicePrivate::~SearchServicePrivate()
         delete mainController;
         mainController = nullptr;
     }
+}
+
+SearchService *SearchService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::SearchService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::SearchService>(DSB_FM_NAMESPACE::SearchService::name());
 }
 
 bool SearchService::regSearchPath(const QString &scheme, const QString &path, QString *errMsg)

@@ -19,14 +19,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "iteratorsearcher.h"
-#include "search/utils/regularexpression.h"
+#include "search/utils/searchhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
 
 #include <QDebug>
 
 namespace {
-static int kEmitInterval = 50;   // 推送时间间隔（ms）
+static int kEmitInterval = 50;   // 推送时间间隔（ms
+const char *const kFilterFolders = "^/(dev|proc|sys|run|tmpfs).*$";
 }
 
 DFMBASE_USE_NAMESPACE
@@ -96,6 +97,15 @@ void IteratorSearcher::doSearch()
         auto iterator = DirIteratorFactory::create(url, QStringList(), QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
         if (!iterator)
             continue;
+
+        // 仅在过滤目录下进行搜索时，过滤目录下的内容才能被检索
+        if (url.isLocalFile()) {
+            QRegExp reg(kFilterFolders);
+            const auto &searchRootPath = searchUrl.toLocalFile();
+            const auto &filePath = url.toLocalFile();
+            if (!reg.exactMatch(searchRootPath) && reg.exactMatch(filePath))
+                continue;
+        }
 
         while (iterator->hasNext()) {
             //中断

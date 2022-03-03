@@ -21,6 +21,7 @@
 #include "fulltextsearcher.h"
 #include "fulltextsearcher_p.h"
 #include "chineseanalyzer.h"
+#include "search/utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
@@ -358,6 +359,7 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
         TopDocsPtr topDocs = searcher->search(query, filter, kMaxResultNum);
         Collection<ScoreDocPtr> scoreDocs = topDocs->scoreDocs;
 
+        QHash<QString, QSet<QString>> hiddenFileHash;
         for (auto scoreDoc : scoreDocs) {
             //中断
             if (status.loadAcquire() != AbstractSearcher::kRuning)
@@ -379,9 +381,9 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                 if (modifyTime.toStdWString() != storeTime) {
                     continue;
                 } else {
-                    if (isDelDataPrefix)
-                        resultPath.insert(0, L"/data");
-                    {
+                    if (!SearchHelper::isHiddenFile(StringUtils::toUTF8(resultPath).c_str(), hiddenFileHash, searchPath)) {
+                        if (isDelDataPrefix)
+                            resultPath.insert(0, L"/data");
                         QMutexLocker lk(&mutex);
                         allResults.append(QUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str()));
                     }

@@ -35,17 +35,12 @@ SearchFileInfoPrivate::~SearchFileInfoPrivate()
 {
 }
 
-void SearchFileInfoPrivate::setProxy(const AbstractFileInfoPointer &aproxy)
-{
-    proxy = aproxy;
-}
-
 SearchFileInfo::SearchFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new SearchFileInfoPrivate(this))
 {
     d = static_cast<SearchFileInfoPrivate *>(dptr.data());
     if (!SearchHelper::isRootUrl(url))
-        d->setProxy(InfoFactory::create<AbstractFileInfo>(SearchHelper::searchedFileUrl(url)));
+        setProxy(InfoFactory::create<AbstractFileInfo>(SearchHelper::searchedFileUrl(url)));
 }
 
 SearchFileInfo::~SearchFileInfo()
@@ -78,15 +73,42 @@ QIcon SearchFileInfo::fileIcon() const
 
 bool SearchFileInfo::exists() const
 {
-    if (url() == SearchHelper::rootUrl())
+    if (!d->proxy)
         return true;
 
-    return d->proxy && d->proxy->exists();
+    return d->proxy->exists();
 }
 
 bool SearchFileInfo::isHidden() const
 {
-    return d->proxy && d->proxy->isHidden();
+    if (!d->proxy)
+        return false;
+
+    return d->proxy->isHidden();
+}
+
+bool SearchFileInfo::isReadable() const
+{
+    if (!d->proxy)
+        return true;
+
+    return d->proxy->isReadable();
+}
+
+bool SearchFileInfo::isWritable() const
+{
+    if (!d->proxy)
+        return true;
+
+    return d->proxy->isWritable();
+}
+
+bool SearchFileInfo::isDir() const
+{
+    if (!d->proxy)
+        return true;
+
+    return d->proxy->isDir();
 }
 
 qint64 SearchFileInfo::size() const

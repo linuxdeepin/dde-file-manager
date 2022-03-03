@@ -25,44 +25,37 @@
 #include "iterator/searchdiriterator.h"
 #include "watcher/searchfilewatcher.h"
 #include "topwidget/advancesearchbar.h"
+#include "menus/searchmenu.h"
+#include "utils/searchfileoperations.h"
 
-#include "services/filemanager/search/searchservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
+#include "services/filemanager/titlebar/titlebarservice.h"
+#include "services/filemanager/search/searchservice.h"
+#include "services/common/menu/menuservice.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
 
+DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
-namespace GlobalPrivate {
-static WindowsService *winServ { nullptr };
-static WorkspaceService *workspaceServ { nullptr };
-}   // namespace GlobalPrivate
-
 void Search::initialize()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    QString errStr;
-    if (!ctx.load(SearchService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
     UrlRoute::regScheme(SearchHelper::scheme(), "/", {}, true, tr("Search"));
     //注册Scheme为"search"的扩展的文件信息
     InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
     WacherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
+    MenuService::regClass<SearchMenu>(SearchScene::kSearchMenu);
 
-    GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
-    Q_ASSERT(GlobalPrivate::winServ);
-    connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
+    connect(WindowsService::service(), &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Search::start()
@@ -91,13 +84,13 @@ void Search::subscribeEvent()
 
 void Search::onWindowOpened(quint64 windId)
 {
-    auto window = GlobalPrivate::winServ->findWindowById(windId);
+    auto window = WindowsService::service()->findWindowById(windId);
     Q_ASSERT_X(window, "Search", "Cannot find window by id");
 
     if (window->workSpace())
-        regSearchToWorkspaceService();
+        regSearchPlugin();
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Search::regSearchToWorkspaceService, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Search::regSearchPlugin, Qt::DirectConnection);
 
     if (window->titleBar())
         regSearchCrumbToTitleBar();
@@ -109,34 +102,46 @@ void Search::regSearchCrumbToTitleBar()
 {
     static std::once_flag flag;
     std::call_once(flag, []() {
-        auto &ctx = dpfInstance.serviceContext();
-        if (ctx.load(TitleBarService::name())) {
-            auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
-            TitleBar::CustomCrumbInfo info;
-            info.scheme = SearchHelper::scheme();
-            info.keepAddressBar = true;
-            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == SearchHelper::scheme(); };
-            titleBarServ->addCustomCrumbar(info);
-        }
+        TitleBar::CustomCrumbInfo info;
+        info.scheme = SearchHelper::scheme();
+        info.keepAddressBar = true;
+        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == SearchHelper::scheme(); };
+        TitleBarService::service()->addCustomCrumbar(info);
+    });
+}
+
+void Search::regSearchPlugin()
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        regSearchToWorkspaceService();
+        regSearchFileOperations();
     });
 }
 
 void Search::regSearchToWorkspaceService()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    GlobalPrivate::workspaceServ = ctx.service<WorkspaceService>(WorkspaceService::name());
-
-    if (!GlobalPrivate::workspaceServ) {
-        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-        abort();
-    }
-    GlobalPrivate::workspaceServ->addScheme(SearchHelper::scheme());
+    WorkspaceService::service()->addScheme(SearchHelper::scheme());
+    WorkspaceService::service()->setWorkspaceMenuScene(SearchHelper::scheme(), SearchScene::kSearchMenu);
 
     Workspace::CustomTopWidgetInfo info;
     info.scheme = SearchHelper::scheme();
     info.keepShow = false;
     info.createTopWidgetCb = []() { return new AdvanceSearchBar(); };
-    GlobalPrivate::workspaceServ->addCustomTopWidget(info);
+    WorkspaceService::service()->addCustomTopWidget(info);
+}
+
+void Search::regSearchFileOperations()
+{
+    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = &SearchFileOperations::openFilesHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &SearchFileOperations::writeToClipBoardHandle;
+    fileOpeationsHandle->moveToTash = &SearchFileOperations::moveToTrashHandle;
+    fileOpeationsHandle->deletes = &SearchFileOperations::deleteFilesHandle;
+    fileOpeationsHandle->renameFile = &SearchFileOperations::renameFileHandle;
+    fileOpeationsHandle->openInTerminal = &SearchFileOperations::openInTerminalHandle;
+
+    FileOperationsService::service()->registerOperations(SearchHelper::scheme(), fileOpeationsHandle);
 }
 
 DPSEARCH_END_NAMESPACE

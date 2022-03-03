@@ -70,10 +70,8 @@ private:
     bool doSearch(const QString &path, const QString &keyword);
     inline static QString indexStorePath()
     {
-        static QString path = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first()
-                + "/" + QApplication::organizationName()
-                + "/" + QApplication::applicationName()
-                + "/" + "index";
+        static QString path = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()
+                + "/deepin/dde-file-manager/index";
         return path;
     }
 

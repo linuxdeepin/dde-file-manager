@@ -42,7 +42,6 @@
 DSB_FM_USE_NAMESPACE
 namespace GlobalPrivate {
 static WindowsService *winServ { nullptr };
-static SearchService *searchServ { nullptr };
 }   // namespace GlobalPrivate
 
 DPCOMPUTER_BEGIN_NAMESPACE
@@ -170,10 +169,7 @@ void Computer::regComputerToSearch()
 {
     static std::once_flag flag;
     std::call_once(flag, []() {
-        auto &ctx = dpfInstance.serviceContext();
-        Q_ASSERT_X(ctx.loaded(SearchService::name()), "Search", "SearchService not loaded");
-        GlobalPrivate::searchServ = ctx.service<SearchService>(SearchService::name());
-        GlobalPrivate::searchServ->regSearchPath(ComputerUtils::scheme(), "/");
+        SearchService::service()->regSearchPath(ComputerUtils::scheme(), "/");
     });
 }
 

@@ -42,7 +42,6 @@ public:
     explicit SearchDirIteratorPrivate(const QUrl &url, QObject *parent = nullptr);
     ~SearchDirIteratorPrivate();
 
-    void loadSearchService();
     void initConnect();
     void doSearch();
 
@@ -56,7 +55,7 @@ private:
     bool searchStoped = false;
     QUrl fileUrl;
     QQueue<QUrl> childrens;
-    AbstractFileInfoPointer currentFileInfo;
+    QUrl currentFileUrl;
     QString taskId;
     QMutex mutex;
 };

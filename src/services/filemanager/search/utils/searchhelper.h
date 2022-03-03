@@ -40,6 +40,12 @@ public:
     }
 };
 
+class SearchHelper
+{
+public:
+    static bool isHiddenFile(const QString &fileName, QHash<QString, QSet<QString>> &filters, const QString &searchPath);
+};
+
 DSB_FM_END_NAMESPACE
 
 #endif   // REGULAREXPRESSION_H

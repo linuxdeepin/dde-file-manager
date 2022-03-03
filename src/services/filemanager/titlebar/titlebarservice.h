@@ -43,6 +43,7 @@ public:
         return "org.deepin.service.TitleBarService";
     }
 
+    static TitleBarService *service();
     bool addCustomCrumbar(const TitleBar::CustomCrumbInfo &info);
 
 private:

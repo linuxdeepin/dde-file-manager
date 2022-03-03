@@ -33,10 +33,6 @@ class SearchFileInfoPrivate : public AbstractFileInfoPrivate
 public:
     explicit SearchFileInfoPrivate(AbstractFileInfo *qq);
     virtual ~SearchFileInfoPrivate();
-    void setProxy(const AbstractFileInfoPointer &aproxy);
-
-public:
-    AbstractFileInfoPointer proxy;
 };
 
 DPSEARCH_END_NAMESPACE

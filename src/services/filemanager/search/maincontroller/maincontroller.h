@@ -32,7 +32,6 @@ QT_END_NAMESPACE
 
 DSB_FM_BEGIN_NAMESPACE
 
-class MainControllerPrivate;
 class MainController : public QObject
 {
     Q_OBJECT
