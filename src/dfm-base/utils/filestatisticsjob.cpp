@@ -446,7 +446,7 @@ void FileStatisticsJob::statistcsOtherFileSystem()
     while (!directory_queue.isEmpty()) {
         const QUrl &directory_url = directory_queue.dequeue();
         const AbstractDirIteratorPointer &iterator = DirIteratorFactory::create<AbstractDirIterator>(directory_url, QStringList(),
-                                                                                                     QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+                                                                                                     dfmio::DEnumerator::DirFilter::AllEntries | dfmio::DEnumerator::DirFilter::Hidden | dfmio::DEnumerator::DirFilter::System | dfmio::DEnumerator::DirFilter::NoDotAndDotDot);
 
         if (!iterator) {
             qWarning() << "Failed on create dir iterator, for url:" << directory_url;

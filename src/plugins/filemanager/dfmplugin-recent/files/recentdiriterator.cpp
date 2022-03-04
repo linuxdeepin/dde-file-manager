@@ -44,8 +44,8 @@ RecentDirIteratorPrivate::~RecentDirIteratorPrivate()
 
 RecentDirIterator::RecentDirIterator(const QUrl &url,
                                      const QStringList &nameFilters,
-                                     QDir::Filters filters,
-                                     QDirIterator::IteratorFlags flags)
+                                     dfmio::DEnumerator::DirFilters filters,
+                                     dfmio::DEnumerator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags),
       d(new RecentDirIteratorPrivate(this))
 {

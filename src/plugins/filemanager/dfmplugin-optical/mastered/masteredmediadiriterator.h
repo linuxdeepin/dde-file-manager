@@ -24,7 +24,7 @@
 #define MASTEREDMEDIADIRITERATOR_H
 
 #include "dfmplugin_optical_global.h"
-
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
 #include <QSet>
@@ -36,8 +36,8 @@ class MasteredMediaDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 public:
     explicit MasteredMediaDirIterator(const QUrl &url,
                                       const QStringList &nameFilters,
-                                      QDir::Filters filters,
-                                      QDirIterator::IteratorFlags flags);
+                                      dfmio::DEnumerator::DirFilters filters,
+                                      dfmio::DEnumerator::IteratorFlags flags);
 
     QUrl next() override;
     bool hasNext() const override;
@@ -47,8 +47,9 @@ public:
     QUrl url() const override;
 
 private:
-    QSharedPointer<QDirIterator> discIterator;
-    QSharedPointer<QDirIterator> stagingIterator;
+    QSharedPointer<dfmio::DEnumerator> discIterator;
+    QSharedPointer<dfmio::DEnumerator> stagingIterator;
+    AbstractFileInfoPointer fileInfoIterator = nullptr;
     QString mntPoint;
     QString devFile;
     QSet<QString> seen;

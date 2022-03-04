@@ -114,8 +114,8 @@ void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
 
 SearchDirIterator::SearchDirIterator(const QUrl &url,
                                      const QStringList &nameFilters,
-                                     QDir::Filters filters,
-                                     QDirIterator::IteratorFlags flags)
+                                     dfmio::DEnumerator::DirFilters filters,
+                                     dfmio::DEnumerator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags),
       d(new SearchDirIteratorPrivate(url, this))
 {

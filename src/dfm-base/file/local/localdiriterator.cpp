@@ -33,8 +33,8 @@ DFMBASE_USE_NAMESPACE
 
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  const QStringList &nameFilters,
-                                                 QDir::Filters filters,
-                                                 QDirIterator::IteratorFlags flags,
+                                                 dfmio::DEnumerator::DirFilters filters,
+                                                 dfmio::DEnumerator::IteratorFlags flags,
                                                  LocalDirIterator *q)
     : q(q), curFilters(filters)
 {
@@ -62,8 +62,8 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
  */
 LocalDirIterator::LocalDirIterator(const QUrl &url,
                                    const QStringList &nameFilters,
-                                   QDir::Filters filters,
-                                   QDirIterator::IteratorFlags flags)
+                                   dfmio::DEnumerator::DirFilters filters,
+                                   dfmio::DEnumerator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags), d(new LocalDirIteratorPrivate(url, nameFilters, filters, flags, this))
 {
 }

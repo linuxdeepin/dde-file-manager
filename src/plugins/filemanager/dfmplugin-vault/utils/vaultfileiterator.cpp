@@ -26,7 +26,7 @@
 DFMBASE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 
-VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
+VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFilters, dfmio::DEnumerator::DirFilters filters, dfmio::DEnumerator::IteratorFlags flags)
     : LocalDirIterator(QUrl::fromLocalFile(url.path().contains(VaultHelper::rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url)), nameFilters, filters, flags)
 {
 }

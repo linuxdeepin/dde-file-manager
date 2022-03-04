@@ -38,8 +38,8 @@ class RecentDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 public:
     explicit RecentDirIterator(const QUrl &url,
                                const QStringList &nameFilters = QStringList(),
-                               QDir::Filters filters = QDir::NoFilter,
-                               QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+                               dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
+                               dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags);
 
     ~RecentDirIterator() override;
 

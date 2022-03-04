@@ -56,6 +56,7 @@ public slots:
     void onFileCreated(const QUrl &url);
     void onFileRename(const QUrl &oldUrl, const QUrl &newUrl);
     void onFileUpdated(const QUrl &url);
+
 private:
     bool checkFileEventQueue();
 
@@ -69,7 +70,7 @@ public:
     AbstractFileWatcherPointer watcher;
     QMutex watcherEventMutex;
     QQueue<QVariant> watcherEvent;
-    QDir::Filters filters = QDir::NoFilter;
+    dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter;
 
     QAtomicInteger<bool> isUpdatedChildren = false;
     QAtomicInteger<bool> processFileEventRuning = false;
@@ -79,4 +80,4 @@ DDP_CANVAS_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DDP_CANVAS_NAMESPACE::CanvasModelPrivate::EventType);
 
-#endif // CANVASMODELPRIVATE_H
+#endif   // CANVASMODELPRIVATE_H

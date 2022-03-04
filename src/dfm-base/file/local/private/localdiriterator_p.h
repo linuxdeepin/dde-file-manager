@@ -44,14 +44,14 @@ class LocalDirIteratorPrivate
 public:
     explicit LocalDirIteratorPrivate(const QUrl &url,
                                      const QStringList &nameFilters,
-                                     QDir::Filters filters,
-                                     QDirIterator::IteratorFlags flags,
+                                     dfmio::DEnumerator::DirFilters filters,
+                                     dfmio::DEnumerator::IteratorFlags flags,
                                      LocalDirIterator *q);
 
 private:
     QSharedPointer<dfmio::DEnumerator> dfmioDirIterator = nullptr;   // dfmio的文件迭代器
     QUrl currentUrl;   // 当前迭代器所在位置文件的url
-    QDir::Filters curFilters;   // 文件的当前的过滤flags
+    dfmio::DEnumerator::DirFilters curFilters;   // 文件的当前的过滤flags
     bool isCurrent = false;   // 用来判断当前是否使用了一次next
 };
 DFMBASE_END_NAMESPACE
