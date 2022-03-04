@@ -202,6 +202,18 @@ void WindowsServicePrivate::onShowHotkeyHelp(FileManagerWindow *window)
  * \brief manage all windows for filemanager
  */
 
+WindowsService *WindowsService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(name()))
+            abort();
+    });
+
+    return ctx.service<WindowsService>(name());
+}
+
 WindowsService::WindowsService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<WindowsService>(),

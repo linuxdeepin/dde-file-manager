@@ -26,15 +26,14 @@
 
 #include "dfm-base/utils/universalutils.h"
 
+#include <dfm-framework/framework.h>
+
 #include <QFile>
+#include <QFutureWatcher>
 
 DSC_BEGIN_NAMESPACE
 
 namespace EventType {
-const int kSharingFolder = dfmbase::UniversalUtils::registerEventType();
-const int kStopSharingFolder = dfmbase::UniversalUtils::registerEventType();
-const int kSetSambaPasswd = dfmbase::UniversalUtils::registerEventType();
-const int kRemoveShare = dfmbase::UniversalUtils::registerEventType();
 }
 
 UserShareService::UserShareService(QObject *parent)
@@ -48,6 +47,78 @@ UserShareService::UserShareService(QObject *parent)
 
 UserShareService::~UserShareService()
 {
+}
+
+UserShareService *UserShareService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(name()))
+            abort();
+    });
+
+    return ctx.service<UserShareService>(name());
+}
+
+void UserShareService::startSambaService(StartSambaFinished onFinished)
+{
+    UserShareHelperInstance->startSambaServiceAsync(onFinished);
+}
+
+bool UserShareService::isSambaServiceRunning()
+{
+    return UserShareHelperInstance->isSambaServiceRunning();
+}
+
+void UserShareService::setSharePassword(const QString &userName, const QString &passwd)
+{
+    UserShareHelperInstance->setSambaPasswd(userName, passwd);
+}
+
+bool UserShareService::addShare(const ShareInfo &share)
+{
+    return UserShareHelperInstance->share(share);
+}
+
+void UserShareService::removeShare(const QString &path)
+{
+    UserShareHelperInstance->removeShareByPath(path);
+}
+
+bool UserShareService::isSharedPath(const QString &path)
+{
+    return UserShareHelperInstance->isShared(path);
+}
+
+ShareInfoList UserShareService::shareInfos()
+{
+    return UserShareHelperInstance->shareInfos();
+}
+
+ShareInfo UserShareService::getInfoByPath(const QString &path)
+{
+    return UserShareHelperInstance->getShareInfoByPath(path);
+}
+
+ShareInfo UserShareService::getInfoByName(const QString &shareName)
+{
+    return UserShareHelperInstance->getShareInfoByShareName(shareName);
+}
+
+QString UserShareService::getShareNameByPath(const QString &path)
+{
+    return UserShareHelperInstance->getShareNameByPath(path);
+}
+
+QString UserShareService::getCurrentUserName()
+{
+    return UserShareHelperInstance->getCurrentUserName();
+}
+
+uint UserShareService::getUidByShareName(const QString &name)
+{
+    return UserShareHelperInstance->getUidByShareName(name);
 }
 
 void ShareInfo::setShareName(const QString &value)

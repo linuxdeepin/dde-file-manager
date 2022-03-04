@@ -44,6 +44,8 @@ public:
         return "org.deepin.service.WindowService";
     }
 
+    static WindowsService *service();
+
     explicit WindowsService(QObject *parent = nullptr);
     virtual ~WindowsService() override;
 

@@ -27,13 +27,12 @@
 
 #include <QString>
 
+#include <functional>
+
 DSC_BEGIN_NAMESPACE
 
 namespace EventType {
-extern const int kSharingFolder;
-extern const int kStopSharingFolder;
-extern const int kSetSambaPasswd;
-extern const int kRemoveShare;
+
 }
 
 class ShareInfo
@@ -79,6 +78,8 @@ typedef QList<ShareInfo> ShareInfoList;
 
 QDebug
 operator<<(QDebug dbg, const ShareInfo &obj);
+
+using StartSambaFinished = std::function<void(bool, const QString &)>;
 
 DSC_END_NAMESPACE
 

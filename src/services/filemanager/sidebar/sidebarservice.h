@@ -42,6 +42,8 @@ public:
         return "org.deepin.service.SideBarService";
     }
 
+    static SideBarService *service();
+
     void addItem(const SideBar::ItemInfo &info);
     void removeItem(const QUrl &url);
     void insertItem(int index, const SideBar::ItemInfo &info);

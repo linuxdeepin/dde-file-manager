@@ -24,6 +24,7 @@
 #define USERSHARESERVICE_H
 
 #include "dfm_common_service_global.h"
+#include "usershare_defines.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -40,6 +41,23 @@ public:
     {
         return "org.deepin.service.UserShareService";
     }
+
+    static UserShareService *service();
+
+    void startSambaService(StartSambaFinished onFinished);
+    bool isSambaServiceRunning();
+    void setSharePassword(const QString &userName, const QString &passwd);
+
+    bool addShare(const ShareInfo &share);
+    void removeShare(const QString &path);
+    bool isSharedPath(const QString &path);
+
+    ShareInfoList shareInfos();
+    ShareInfo getInfoByPath(const QString &path);
+    ShareInfo getInfoByName(const QString &shareName);
+    QString getShareNameByPath(const QString &path);
+    QString getCurrentUserName();
+    uint getUidByShareName(const QString &name);
 
 Q_SIGNALS:
     void shareCountChanged(int count);

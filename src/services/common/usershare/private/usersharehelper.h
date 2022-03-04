@@ -30,6 +30,7 @@
 #include <QTimer>
 #include <QSharedPointer>
 #include <QMap>
+#include <QFuture>
 
 class QDBusInterface;
 DSC_BEGIN_NAMESPACE
@@ -41,6 +42,7 @@ class UserShareHelper : public QObject
 
 public:
     static UserShareHelper *instance();
+
     bool share(const ShareInfo &info);
     void setSambaPasswd(const QString &userName, const QString &passwd);
     void removeShareByPath(const QString &path);
@@ -52,8 +54,8 @@ public:
     bool isShared(const QString &path) const;
     QString getCurrentUserName() const;
 
-public Q_SLOTS:
-    void readShareInfos(bool sendSignal = true);
+    bool isSambaServiceRunning();
+    void startSambaServiceAsync(StartSambaFinished onFinished);
 
 Q_SIGNALS:
     void shareCountChanged(int count);
@@ -61,11 +63,13 @@ Q_SIGNALS:
     void shareRemoved(const QString &path);
     void shareRemoveFailed(const QString &path);
 
+protected Q_SLOTS:
+    void readShareInfos(bool sendSignal = true);
+
 private:
     explicit UserShareHelper(QObject *parent = nullptr);
 
     void initConnect();
-    void startSambaServiceAsync();
     void removeShareByShareName(const QString &name);
     void removeShareWhenShareFolderDeleted(const QString &deletedPath);
 
@@ -73,6 +77,9 @@ private:
     void handleErrorWhenShareFailed(int code, const QString &err) const;
     ShareInfo makeInfoByFileContent(const QMap<QString, QString> &contents);
     int validShareInfoCount() const;
+
+    QPair<bool, QString> startSmbService();
+    bool setSmbdAutoStart();
 
 private:
     QTimer *pollingSharesTimer;

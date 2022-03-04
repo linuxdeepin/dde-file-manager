@@ -22,6 +22,8 @@
 #include "menuservice.h"
 #include "private/menuservicehelper.h"
 
+#include <dfm-framework/framework.h>
+
 DSC_BEGIN_NAMESPACE
 
 DFMBASE_USE_NAMESPACE
@@ -39,6 +41,18 @@ DFMBASE_USE_NAMESPACE
  * \param customData: some custom data when creating the menu (if needed).
  * \return Return menu
  */
+MenuService *MenuService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(name()))
+            abort();
+    });
+
+    return ctx.service<MenuService>(name());
+}
+
 QMenu *MenuService::createMenu(QWidget *parent,
                                const QString &scene,
                                DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
@@ -80,7 +94,7 @@ QMenu *MenuService::createMenu(QWidget *parent,
     // 添加第三方扩展so菜单
     if (flags.testFlag(DFMBASE_NAMESPACE::kSoAction)) {
         // TODO(Lee):
-         MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
+        MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
     }
 
     // Action业务

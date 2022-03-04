@@ -34,11 +34,15 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
+#include <QtConcurrent>
+
+#include <pwd.h>
+#include <unistd.h>
 
 DSC_BEGIN_NAMESPACE
 
 // this maybe changed later.
-namespace DBusInterfaceInfo {
+namespace DaemonServiceIFace {
 static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
 static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
 static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon" };
@@ -56,6 +60,18 @@ static constexpr char kShareComment[] { "comment" };
 static constexpr char kGuestOk[] { "guest_ok" };
 }   // namespace ShareConfig
 
+namespace SambaServiceIFace {
+static constexpr char kService[] { "org.freedesktop.systemd1" };
+static constexpr char kPath[] { "/org/freedesktop/systemd1/unit/smbd_2eservice" };
+static constexpr char kInterface[] { "org.freedesktop.systemd1.Unit" };
+
+static constexpr char kPropertySubState[] { "SubState" };
+static constexpr char kExpectedSubState[] { "running" };
+
+static constexpr char kFuncStart[] { "Start" };
+static constexpr char kParamReplace[] { "replace" };
+}
+
 UserShareHelper *UserShareHelper::instance()
 {
     static UserShareHelper helper;
@@ -64,7 +80,15 @@ UserShareHelper *UserShareHelper::instance()
 
 bool UserShareHelper::share(const ShareInfo &info)
 {
-    // TODO(xust) check if sambad is running
+    if (!isSambaServiceRunning()) {
+        startSambaServiceAsync([this, info](bool ret, const QString &errMsg) {
+            if (ret)
+                share(info);
+            else
+                qWarning() << "start samba service failed: " << errMsg;
+        });
+        return false;
+    }
 
     // check if `net` is installed.
     QString sambaNetPath = QStandardPaths::findExecutable("net");
@@ -105,13 +129,82 @@ bool UserShareHelper::share(const ShareInfo &info)
 
 void UserShareHelper::setSambaPasswd(const QString &userName, const QString &passwd)
 {
-    userShareInter->asyncCall(DBusInterfaceInfo::kFuncSetPasswd, userName, passwd);
+    userShareInter->asyncCall(DaemonServiceIFace::kFuncSetPasswd, userName, passwd);
+}
+
+void UserShareHelper::removeShareByPath(const QString &path)
+{
+    const QString &&shareName = getShareNameByPath(path);
+    if (!shareName.isEmpty())
+        removeShareByShareName(shareName);
+}
+
+ShareInfoList UserShareHelper::shareInfos() const
+{
+    return sharedInfos.values();
+}
+
+ShareInfo UserShareHelper::getShareInfoByPath(const QString &path) const
+{
+    const QString &&shareName = getShareNameByPath(path);
+    return getShareInfoByShareName(shareName);
+}
+
+ShareInfo UserShareHelper::getShareInfoByShareName(const QString &name) const
+{
+    if (!name.isEmpty() && sharedInfos.contains(name))
+        return sharedInfos.value(name);
+    return ShareInfo();
+}
+
+QString UserShareHelper::getShareNameByPath(const QString &path) const
+{
+    if (sharePathToShareName.contains(path)) {
+        const auto &&names = sharePathToShareName.value(path);
+        if (names.count() > 0)
+            return names.last();
+    }
+    return "";
 }
 
 uint UserShareHelper::getUidByShareName(const QString &name) const
 {
     QFileInfo info(QString("%1/%2").arg(ShareConfig::kShareConfigPath).arg(name));
     return info.ownerId();
+}
+
+bool UserShareHelper::isShared(const QString &path) const
+{
+    return sharePathToShareName.contains(path);
+}
+
+QString UserShareHelper::getCurrentUserName() const
+{
+    return getpwuid(getuid())->pw_name;
+}
+
+bool UserShareHelper::isSambaServiceRunning()
+{
+    QDBusInterface iface(SambaServiceIFace::kService, SambaServiceIFace::kPath, SambaServiceIFace::kInterface, QDBusConnection::systemBus());
+
+    if (iface.isValid()) {
+        const QVariant &variantStatus = iface.property(SambaServiceIFace::kPropertySubState);   // 获取属性 SubState，等同于 systemctl status smbd 结果 Active 值
+        if (variantStatus.isValid())
+            return SambaServiceIFace::kExpectedSubState == variantStatus.toString();
+    }
+    return false;
+}
+
+void UserShareHelper::startSambaServiceAsync(StartSambaFinished onFinished)
+{
+    auto watcher = new QFutureWatcher<QPair<bool, QString>>();
+    connect(watcher, &QFutureWatcher<QPair<bool, QString>>::finished, this, [onFinished, watcher]() {
+        auto result = watcher->result();
+        if (onFinished)
+            onFinished(result.first, result.second);
+        watcher->deleteLater();
+    });
+    watcher->setFuture(QtConcurrent::run([this] { return startSmbService(); }));
 }
 
 void UserShareHelper::readShareInfos(bool sendSignal)
@@ -199,7 +292,7 @@ void UserShareHelper::initConnect()
 
 void UserShareHelper::removeShareByShareName(const QString &name)
 {
-    QDBusReply<bool> reply = userShareInter->asyncCall(DBusInterfaceInfo::kFuncCloseShare, name, true);
+    QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, true);
     if (reply.isValid() && reply.value()) {
         qDebug() << "share closed: " << name;
     } else {
@@ -209,6 +302,15 @@ void UserShareHelper::removeShareByShareName(const QString &name)
 
     runNetCmd(QStringList() << "usershare"
                             << "delete" << name);
+}
+
+void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPath)
+{
+    const QString &&shareName = getShareNameByPath(deletedPath);
+    if (shareName.isEmpty())
+        return;
+
+    removeShareByShareName(shareName);
 }
 
 int UserShareHelper::runNetCmd(const QStringList &args, int wait, QString *err)
@@ -294,10 +396,33 @@ int UserShareHelper::validShareInfoCount() const
     return count;
 }
 
+QPair<bool, QString> UserShareHelper::startSmbService()
+{
+    QDBusInterface iface(SambaServiceIFace::kService, SambaServiceIFace::kPath, SambaServiceIFace::kInterface, QDBusConnection::systemBus());
+    QDBusPendingReply<QString> reply = iface.asyncCall(SambaServiceIFace::kFuncStart, SambaServiceIFace::kParamReplace);
+    reply.waitForFinished();
+    if (reply.isValid()) {
+        const QString &errMsg = reply.error().message();
+        if (errMsg.isEmpty()) {
+            if (!setSmbdAutoStart())
+                qWarning() << "auto start smbd failed.";
+            return { true, "" };
+        }
+        return { false, errMsg };
+    }
+    return { false, "restart smbd failed" };
+}
+
+bool UserShareHelper::setSmbdAutoStart()
+{
+    // TODO(xust): invoke daemon method `createShareLinkFile` to auto start;
+    return true;
+}
+
 UserShareHelper::UserShareHelper(QObject *parent)
     : QObject(parent)
 {
-    userShareInter.reset(new QDBusInterface(DBusInterfaceInfo::kInterfaceService, DBusInterfaceInfo::kInterfacePath, DBusInterfaceInfo::kInterfaceInterface, QDBusConnection::systemBus(), this));
+    userShareInter.reset(new QDBusInterface(DaemonServiceIFace::kInterfaceService, DaemonServiceIFace::kInterfacePath, DaemonServiceIFace::kInterfaceInterface, QDBusConnection::systemBus(), this));
 
     initConnect();
 }

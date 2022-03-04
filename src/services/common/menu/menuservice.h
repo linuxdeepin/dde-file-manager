@@ -64,6 +64,8 @@ public:
         return "org.deepin.service.MenuService";
     }
 
+    static MenuService *service();
+
     template<class T>
     static bool regClass(const QString &name, QString *errorString = nullptr)
     {
