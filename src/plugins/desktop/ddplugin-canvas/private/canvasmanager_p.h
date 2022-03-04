@@ -40,6 +40,7 @@ public:
     explicit CanvasManagerPrivate(CanvasManager *qq);
     ~CanvasManagerPrivate();
     void initModel();
+    void initSetting();
     CanvasViewPointer createView(QWidget *root, int index);
     void updateView(const CanvasViewPointer &, QWidget *root, int index);
 public:

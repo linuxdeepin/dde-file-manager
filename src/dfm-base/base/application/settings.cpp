@@ -21,6 +21,7 @@
  */
 #include "base/application/settings.h"
 #include "base/standardpaths.h"
+#include "base/schemefactory.h"
 
 #include <QCoreApplication>
 #include <QStandardPaths>
@@ -49,6 +50,7 @@ public:
     QTimer *syncTimer = nullptr;   // synchronization Timer
     QString fallbackFile;   // backup settings file path
     QString settingFile;   // set the file path
+    AbstractFileWatcherPointer settingWatcher; // watch file changed
     Settings *q;
 
     struct Data
@@ -906,8 +908,34 @@ void Settings::onFileChanged(const QUrl &url)
     d->_q_onFileChanged(url);
 }
 
-void Settings::setWatchChanges(bool watchChanges) {
-    Q_UNUSED(watchChanges)
+void Settings::setWatchChanges(bool watchChanges)
+{
+    if (d->watchChanges == watchChanges)
+        return;
+
+    d->watchChanges = watchChanges;
+
+    if (watchChanges) {
+        {
+            QFileInfo info(d->settingFile);
+            if (!info.exists()) {
+                if (info.absoluteDir().mkpath(info.absolutePath())) {
+                    QFile file(d->settingFile);
+                    file.open(QFile::WriteOnly);
+                }
+            }
+        }
+        d->settingWatcher = WacherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(d->settingFile));
+        Q_ASSERT(d->settingWatcher);
+
+        d->settingWatcher->moveToThread(thread());
+        connect(d->settingWatcher.get(), &AbstractFileWatcher::fileAttributeChanged, this, &Settings::onFileChanged);
+
+        d->settingWatcher->startWatcher();
+    } else if (d->settingWatcher) {
+        d->settingWatcher.reset();
+    }
 }
+
 
 DFMBASE_END_NAMESPACE

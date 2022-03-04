@@ -82,8 +82,6 @@ public:
     QModelIndex rootIndex() const;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
-
-    void refresh(const QModelIndex &parent);
     bool isRefreshed() const;
 
     QModelIndex setRootUrl(QUrl url);
@@ -99,8 +97,6 @@ public:
     Qt::DropActions supportedDropActions() const override;
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
-    bool sort();
-
     Qt::SortOrder sortOrder() const;
     void setSortOrder(const Qt::SortOrder &order);
 
@@ -108,10 +104,13 @@ public:
     void setSortRole(dfmbase::AbstractFileInfo::SortKey role, Qt::SortOrder order = Qt::AscendingOrder);
 
     bool showHiddenFiles() const;
-    void setShowHiddenFiles(const bool isShow);
 signals:
     void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-
+public slots:
+    bool sort();
+    void setShowHiddenFiles(const bool isShow);
+    void update();
+    void refresh(const QModelIndex &parent);
 private:
     QSharedPointer<CanvasModelPrivate> d;
 };

@@ -32,6 +32,7 @@
 
 #include <dfm-framework/framework.h>
 #include <base/schemefactory.h>
+#include <base/application/application.h>
 
 DFMBASE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
@@ -88,6 +89,7 @@ void CanvasManager::init()
     connect(d->frameService, &FrameService::windowBuilded, this, &CanvasManager::onCanvasBuild);
 
     d->initModel();
+    d->initSetting();
 }
 
 void CanvasManager::update()
@@ -336,6 +338,14 @@ void CanvasManagerPrivate::initModel()
     connect(canvasModel, &CanvasModel::modelReset, this, &CanvasManagerPrivate::onFileModelReset, Qt::QueuedConnection);
     connect(canvasModel, &CanvasModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
     connect(canvasModel, &CanvasModel::fileRenamed, this, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
+}
+
+void CanvasManagerPrivate::initSetting()
+{
+    // setting changed.
+    connect(Application::instance(), &Application::showedHiddenFilesChanged, canvasModel, &CanvasModel::setShowHiddenFiles);
+    connect(Application::instance(), &Application::previewAttributeChanged, canvasModel, &CanvasModel::update);
+    connect(Application::instance(), &Application::showedFileSuffixChanged, canvasModel, &CanvasModel::update);
 }
 
 CanvasViewPointer CanvasManagerPrivate::createView(QWidget *root, int index)

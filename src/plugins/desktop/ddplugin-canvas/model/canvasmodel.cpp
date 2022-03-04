@@ -545,3 +545,12 @@ void CanvasModel::setShowHiddenFiles(const bool isShow)
     else
         d->filters &= ~static_cast<uint16_t>(dfmio::DEnumerator::DirFilter::Hidden);
 }
+
+void CanvasModel::update()
+{
+    for (const QUrl &url : d->fileTreater->files())
+        if (auto file = d->fileTreater->fileInfo(url))
+            file->refresh();
+
+    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
+}

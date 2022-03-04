@@ -125,6 +125,9 @@ int main(int argc, char *argv[])
 {
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
+    a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
+    //a.setApplicationVersion(DApplication::buildVersion((GIT_VERSION))); //todo(zs)
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     dpfInstance.initialize();
 
