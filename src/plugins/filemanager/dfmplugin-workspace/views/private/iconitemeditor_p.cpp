@@ -75,4 +75,5 @@ void IconItemEditorPrivate::init()
     q->setFocusProxy(edit);
 
     QObject::connect(edit, &QTextEdit::customContextMenuRequested, q, &IconItemEditor::popupEditContentMenu);
+    QObject::connect(edit, &QTextEdit::textChanged, q, &IconItemEditor::onEditTextChanged, Qt::UniqueConnection);
 }

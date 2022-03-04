@@ -51,7 +51,6 @@ public:
 
     DArrowRectangle *tooltip { nullptr };
     QString validText;
-
     IconItemEditor *q_ptr;
     Q_DECLARE_PUBLIC(IconItemEditor)
 };

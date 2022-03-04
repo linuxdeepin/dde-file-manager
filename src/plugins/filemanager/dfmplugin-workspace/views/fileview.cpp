@@ -521,6 +521,12 @@ void FileView::onShowHiddenFileChanged(bool isShow)
     proxyModel()->setFilters(filters);
 }
 
+void FileView::onShowFileSuffixChanged(bool isShow)
+{
+    Q_UNUSED(isShow);
+    update();
+}
+
 void FileView::updateHorizontalOffset()
 {
     if (isIconViewMode()) {
@@ -1065,6 +1071,7 @@ void FileView::initializeConnect()
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSetViewFilterCallback, this, &FileView::setFilterCallback);
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
+    connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
 
     connect(model(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(model(), &FileViewModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);

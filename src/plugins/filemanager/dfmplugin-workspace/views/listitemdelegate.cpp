@@ -24,11 +24,13 @@
 #include "listitemdelegate.h"
 #include "fileview.h"
 #include "fileviewitem.h"
+#include "listitemeditor.h"
 #include "models/fileviewmodel.h"
 #include "dfm-base/dfm_base_global.h"
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
 
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 
 #include <DListView>
@@ -112,7 +114,7 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     Q_UNUSED(option);
 
     d->editingIndex = index;
-    d->editor = new QLineEdit(parent);
+    d->editor = new ListItemEditor(parent);
 
     const AbstractFileInfoPointer &fileInfo = this->parent()->fileInfo(index);
 
@@ -121,17 +123,11 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     } else {
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight);
     }
-    d->editor->setObjectName("DListItemDelegate_Editor");
 
     connect(d->editor, &QLineEdit::destroyed, this, [=] {
         d->editingIndex = QModelIndex();
         d->editor = nullptr;
     });
-    connect(d->editor, &QLineEdit::textChanged, this, &ListItemDelegate::onEditorTextChanged);
-
-    d->editor->setFrame(false);
-    d->editor->setAttribute(Qt::WA_TranslucentBackground);
-    d->editor->setContentsMargins(0, 0, 0, 0);
 
     return d->editor;
 }
@@ -171,27 +167,17 @@ void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 
 void ListItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    // TODO(li):目前这块代码是不需要的，后面调整需要新添加这个逻辑
-    QLineEdit *edit = qobject_cast<QLineEdit *>(editor);
-
-    if (!edit) {
-        return;
-    }
-
-    bool isNotShowSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
-    QString text = index.data(FileViewItem::kItemFileNameOfRenameRole).toString();
-
-    if (isNotShowSuffix) {
-        edit->setProperty("_d_whether_show_suffix", index.data(FileViewItem::kItemFileSuffixRole));
-        text = index.data(FileViewItem::kItemFileNameOfRenameRole).toString();
-    }
-
-    edit->setText(text);
+    // 这里设置了光标选中位置后最终还是会被全选，移到eventFilter中处理
+    return QStyledItemDelegate::setEditorData(editor, index);
 }
 
 bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
 {
-    if (event->type() == QEvent::KeyPress) {
+    if (event->type() == QEvent::Show) {
+        //在此处处理的逻辑是因为默认QAbstractItemView的QLineEdit重命名会被SelectAll
+        if (!setEditorData(qobject_cast<ListItemEditor *>(object)))
+            return false;
+    } else if (event->type() == QEvent::KeyPress) {
         QKeyEvent *e = static_cast<QKeyEvent *>(event);
         if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
             e->accept();
@@ -249,71 +235,6 @@ void ListItemDelegate::updateItemSizeHint()
     d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.1), d->textLineHeight));
 }
 
-void ListItemDelegate::onEditorTextChanged(const QString &text)
-{
-    if (!d->editor)
-        return;
-
-    // 得到处理之后的文件名称
-    QString dstText = GlobalPrivate::replaceFileName(text);
-
-    // 超出长度将不再被支持输入获取当前
-    bool isNotShowSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
-
-    // 获取当前编辑框支持的最大文字长度
-    int textMaxLen = INT_MAX;
-    if (isNotShowSuffix) {
-        const QString &suffix = d->editingIndex.data(FileViewItem::kItemFileSuffixRole).toString();
-        d->editor->setProperty("_d_whether_show_suffix", suffix);
-        textMaxLen = NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1);
-    } else {
-        textMaxLen = NAME_MAX;
-    }
-
-    // 如果存在非法字符且更改了当前的文本文件
-    if (text != dstText) {
-        int currPos = d->editor->cursorPosition();
-        // 气泡提示
-        if (!this->parent()) {
-            return;
-        }
-
-        auto view = this->parent()->parent();
-
-        if (!view)
-            return;
-
-        auto showPoint = view->mapToGlobal(QPoint(d->editor->pos().x() + d->editor->width() / 2,
-                                                  d->editor->pos().y() + d->editor->height() * 2));
-        // 背板主题一致
-        auto color = view->palette().background().color();
-
-        GlobalPrivate::showAlertMessage(showPoint,
-                                        color,
-                                        QObject::tr("\"\'/\\[]:|<>+=;,?* are not allowed"));
-
-        currPos += dstText.length() - text.length();
-        QSignalBlocker blocker(d->editor);
-        d->editor->setText(dstText);
-        d->editor->setCursorPosition(currPos);
-    }
-
-    int textCurrLen = dstText.toLocal8Bit().size();
-    int textRangeOutLen = textCurrLen - textMaxLen;
-    // 最大输入框字符控制逻辑
-    if (textRangeOutLen > 0) {
-        // fix bug 69627
-        QVector<uint> list = dstText.toUcs4();
-        int cursor_pos = d->editor->cursorPosition();
-        while (dstText.toLocal8Bit().size() > textMaxLen && cursor_pos > 0) {
-            list.removeAt(--cursor_pos);
-            dstText = QString::fromUcs4(list.data(), list.size());
-        }
-        QSignalBlocker blocker(d->editor);
-        d->editor->setText(dstText);
-        d->editor->setCursorPosition(cursor_pos);
-    }
-}
 /*!
  * \brief paintItemBackground 绘制listviewitemd的交替绘制和选中时的高亮绘制
  *
@@ -461,7 +382,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     QStyleOptionViewItem opt = option;
     painter->setFont(opt.font);
 
-    int column_x = iconRect.right() + kListModeIconSpacing;
+    int columnX = iconRect.right() + kListModeIconSpacing;
 
     bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     if (isSelected)
@@ -479,14 +400,14 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         }
 
         QRect columnRect = opt.rect;
-        columnRect.setLeft(column_x);
+        columnRect.setLeft(columnX);
 
         if (columnRect.left() >= columnRect.right()) {
             break;
         }
 
-        column_x += columnWidth;
-        columnRect.setRight(qMin(column_x - kListModeRightPadding, opt.rect.right() - kListModeRightPadding));
+        columnX += columnWidth;
+        columnRect.setRight(qMin(columnX - kListModeRightPadding, opt.rect.right() - kListModeRightPadding));
         int rol = columnRoleList.at(i).first;
         const QVariant &data = index.data(rol);
 
@@ -496,17 +417,95 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
             cGroup = QPalette::Active;
             elideMode = Qt::ElideMiddle;
         }
+        if (rol == FileViewItem::kItemNameRole || rol == FileViewItem::kItemFileDisplayNameRole) {
+            //Todo(liuyangming):绘制标记
+            paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight);
+        } else {
+            if (!isSelected)
+                painter->setPen(opt.palette.color(cGroup, QPalette::Text));
 
-        if (!isSelected)
-            painter->setPen(opt.palette.color(cGroup, QPalette::Text));
+            if (data.canConvert<QString>()) {
+                QString displayString = ItemDelegateHelper::elideText(index.data(rol).toString().remove('\n'), columnRect.size(),
+                                                                      QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                                      option.font, elideMode,
+                                                                      d->textLineHeight);
 
-        if (data.canConvert<QString>()) {
-            QString displayString = ItemDelegateHelper::elideText(index.data(rol).toString().remove('\n'), columnRect.size(),
-                                                                  QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                                  option.font, elideMode,
-                                                                  d->textLineHeight);
-
-            painter->drawText(columnRect, index.data(Qt::TextAlignmentRole).toInt(), displayString);
+                painter->drawText(columnRect, index.data(Qt::TextAlignmentRole).toInt(), displayString);
+            }
         }
     }
+}
+
+void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRect &rect, const int &textLineHeight) const
+{
+    bool drawBackground = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    const QVariant &data = index.data(role);
+    painter->setPen(option.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
+    if (data.canConvert<QString>()) {
+        QString fileName;
+
+        do {
+            if (role != FileViewItem::kItemNameRole && role != FileViewItem::kItemFileDisplayNameRole)
+                break;
+
+            if (role == FileViewItem::kItemFileDisplayNameRole) {
+                const auto fileName = index.data(FileViewItem::kItemNameRole);
+                const auto fileDisplayName = index.data(FileViewItem::kItemFileDisplayNameRole);
+
+                if (fileName != fileDisplayName)
+                    break;
+            }
+
+            const QString &suffix = "." + index.data(FileViewItem::kItemFileSuffixRole).toString();
+            if (suffix == ".")
+                break;
+            fileName = ItemDelegateHelper::elideText(index.data(FileViewItem::kItemFileBaseNameRole).toString().remove('\n'),
+                                                     QSize(rect.width() - option.fontMetrics.width(suffix), rect.height()),
+                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                     option.font, Qt::ElideRight,
+                                                     d->textLineHeight);
+
+            bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
+            if (showSuffix)
+                fileName.append(suffix);
+        } while (false);
+
+        if (fileName.isEmpty()) {
+            fileName = ItemDelegateHelper::elideText(index.data(role).toString().remove('\n'),
+                                                     rect.size(), QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                     option.font, Qt::ElideRight,
+                                                     textLineHeight);
+        }
+
+        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), fileName);
+    } else {
+        //Todo(yanghao&liuyangming)???
+        //        drawNotStringData(option, textLineHeight, rect, data, drawBackground, painter, 0);
+    }
+}
+
+bool ListItemDelegate::setEditorData(ListItemEditor *editor)
+{
+    if (!editor)
+        return false;
+
+    bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
+
+    const QString &suffix = d->editingIndex.data(FileViewItem::kItemFileSuffixOfRenameRole).toString();
+
+    if (showSuffix) {
+        QString name = d->editingIndex.data(FileViewItem::kItemFileNameOfRenameRole).toString();
+        name = FileUtils::preprocessingFileName(name);
+        editor->setMaxCharSize(NAME_MAX);
+        editor->setText(name);
+        editor->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
+    } else {
+        editor->setProperty(kEidtorShowSuffix, suffix);
+        editor->setMaxCharSize(NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
+        QString name = d->editingIndex.data(FileViewItem::kItemFileBaseNameOfRenameRole).toString();
+        name = FileUtils::preprocessingFileName(name);
+        editor->setText(name);
+        editor->select(name);
+    }
+    return true;
 }

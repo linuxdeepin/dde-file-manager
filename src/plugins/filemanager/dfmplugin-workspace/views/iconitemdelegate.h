@@ -80,8 +80,9 @@ private:
 
     void paintItemFileName(QPainter *painter, QRectF iconRect, QPainterPath path, int backgroundMargin, const QStyleOptionViewItem &option,
                            const QModelIndex &index) const;
-    void editTextChangedHandle(IconItemEditor *editor);
+
     QSize iconSizeByIconSizeLevel() const;
+
     Q_DECLARE_PRIVATE_D(d, IconItemDelegate)
 };
 

@@ -24,6 +24,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
+#include <DArrowRectangle>
+
 #include <QLabel>
 #include <QStack>
 #include <QScopedPointer>
@@ -47,24 +49,21 @@ public:
     explicit IconItemEditor(QWidget *parent = nullptr);
     ~IconItemEditor() override;
 
+    QString text() const;
+    void setText(const QString &text);
+    void select(const QString &part);
+
     qreal opacity() const;
     void setOpacity(qreal opacity);
     void setMaxCharSize(int maxSize);
     int maxCharSize() const;
 
     QSize sizeHint() const override;
-
     QLabel *getIconLabel() const;
-
     QTextEdit *getTextEdit() const;
+    bool isEditReadOnly() const;
 
 public slots:
-
-    /**
-     * @brief showAlertMessage 显示提示信息
-     * @param text 提示内容
-     * @param duration 显示时间，默认3秒
-     */
     void showAlertMessage(const QString &text, int duration = 3000);
 
 signals:
@@ -74,7 +73,7 @@ private slots:
     void popupEditContentMenu();
     void editUndo();
     void editRedo();
-    void doLineEditTextChanged();
+    void onEditTextChanged();
     void resizeFromEditTextChanged();
 
 protected:
@@ -84,11 +83,12 @@ protected:
 
 private:
     void updateStyleSheet();
-
     QString editTextStackCurrentItem() const;
     QString editTextStackBack();
     QString editTextStackAdvance();
     void pushItemToEditTextStack(const QString &item);
+    static DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
+    bool processLength(QString &text, int &pos);
 
     friend class IconItemDelegate;
     friend class FileView;

@@ -23,10 +23,13 @@
 #include "private/iconitemeditor_p.h"
 #include "utils/itemdelegatehelper.h"
 
+#include "dfm-base/utils/fileutils.h"
+
 #include <DTextEdit>
 #include <QMenu>
 #include <QApplication>
 
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 IconItemEditor::IconItemEditor(QWidget *parent)
@@ -38,6 +41,45 @@ IconItemEditor::IconItemEditor(QWidget *parent)
 
 IconItemEditor::~IconItemEditor()
 {
+    Q_D(IconItemEditor);
+
+    if (d->tooltip) {
+        d->tooltip->hide();
+        d->tooltip->deleteLater();
+        d->tooltip = nullptr;
+    }
+}
+
+QString IconItemEditor::text() const
+{
+    Q_D(const IconItemEditor);
+    return d->edit->toPlainText();
+}
+
+void IconItemEditor::setText(const QString &text)
+{
+    Q_D(const IconItemEditor);
+    d->edit->setPlainText(text);
+    d->edit->setAlignment(Qt::AlignHCenter);
+}
+
+void IconItemEditor::select(const QString &part)
+{
+    Q_D(const IconItemEditor);
+    QString org = text();
+    if (org.contains(part)) {
+        int start = org.indexOf(org);
+        if (Q_UNLIKELY(start < 0))
+            start = 0;
+        int end = start + part.size();
+        if (Q_UNLIKELY(end > org.size()))
+            end = org.size();
+
+        QTextCursor cursor = d->edit->textCursor();
+        cursor.setPosition(start);
+        cursor.setPosition(end, QTextCursor::KeepAnchor);
+        d->edit->setTextCursor(cursor);
+    }
 }
 
 qreal IconItemEditor::opacity() const
@@ -98,40 +140,34 @@ QTextEdit *IconItemEditor::getTextEdit() const
     return d->edit;
 }
 
+bool IconItemEditor::isEditReadOnly() const
+{
+    Q_D(const IconItemEditor);
+    return d->edit->isReadOnly();
+}
+
 void IconItemEditor::showAlertMessage(const QString &text, int duration)
 {
     Q_D(IconItemEditor);
 
     if (!d->tooltip) {
-        d->tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, this);
-        d->tooltip->setObjectName("AlertTooltip");
-
-        QLabel *label = new QLabel(d->tooltip);
-
-        label->setWordWrap(true);
-        label->setMaximumWidth(500);
-        d->tooltip->setContent(label);
+        d->tooltip = createTooltip();
         d->tooltip->setBackgroundColor(palette().color(backgroundRole()));
-        d->tooltip->setArrowX(15);
-        d->tooltip->setArrowHeight(5);
-
-        QTimer::singleShot(duration, d->tooltip, [d] {
-            d->tooltip->deleteLater();
-            d->tooltip = Q_NULLPTR;
+        QTimer::singleShot(duration, this, [d] {
+            if (d->tooltip) {
+                d->tooltip->hide();
+                d->tooltip->deleteLater();
+                d->tooltip = nullptr;
+            }
         });
     }
 
-    QLabel *label = qobject_cast<QLabel *>(d->tooltip->getContent());
-
-    if (!label) {
-        return;
+    if (QLabel *label = qobject_cast<QLabel *>(d->tooltip->getContent())) {
+        label->setText(text);
+        label->adjustSize();
     }
 
-    label->setText(text);
-    label->adjustSize();
-
-    const QPoint &pos = d->edit->mapToGlobal(QPoint(d->edit->width() / 2, d->edit->height()));
-
+    QPoint pos = this->mapToGlobal(QPoint(this->width() / 2, this->height()));
     d->tooltip->show(pos.x(), pos.y());
 }
 
@@ -180,68 +216,56 @@ void IconItemEditor::editRedo()
     d->edit->setTextCursor(cursor);
 }
 
-void IconItemEditor::doLineEditTextChanged()
+void IconItemEditor::onEditTextChanged()
 {
     Q_D(IconItemEditor);
+
+    if (sender() != d->edit)
+        return;
+
+    if (!d->edit || isEditReadOnly())
+        return;
+
     QSignalBlocker blocker(d->edit);
-    Q_UNUSED(blocker)
 
-    const QString srcText = d->edit->toPlainText();
-    // Todo(yanghao):preprocessingFileName
-    QString dstText = srcText /* DFMGlobal::preprocessingFileName(srcText)*/;
-
-    if (srcText != dstText) {
-        // 修改文件的命名规则
-        showAlertMessage(QObject::tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
-        d->edit->setPlainText(dstText);
-    } else {
+    QString currentText = text();
+    if (currentText.isEmpty()) {
+        resizeFromEditTextChanged();
+        blocker.unblock();
         return;
     }
 
-    QVector<uint> list = dstText.toUcs4();
-    int cursorPos = d->edit->textCursor().position() - srcText.length() + dstText.length();
+    QString dstText = FileUtils::preprocessingFileName(currentText);
 
-    while (dstText.toLocal8Bit().size() > d->maxCharSize) {
-        list.removeAt(--cursorPos);
+    bool hasInvalidChar = currentText != dstText;
 
-        dstText = QString::fromUcs4(list.data(), list.size());
+    int endPos = getTextEdit()->textCursor().position() + (dstText.length() - currentText.length());
+
+    processLength(dstText, endPos);
+
+    if (currentText != dstText) {
+        d->edit->setPlainText(dstText);
+        QTextCursor cursor = d->edit->textCursor();
+        cursor.setPosition(endPos);
+        d->edit->setTextCursor(cursor);
+        d->edit->setAlignment(Qt::AlignHCenter);
     }
 
-    while (dstText.toLocal8Bit().size() > d->maxCharSize) {
-        dstText.chop(1);
+    resizeFromEditTextChanged();
+
+    if (editTextStackCurrentItem() != text()) {
+        pushItemToEditTextStack(text());
     }
 
-    if (editTextStackCurrentItem() != dstText) {
-        pushItemToEditTextStack(dstText);
-    }
-
-    QTextCursor cursor = d->edit->textCursor();
-
-    cursor.movePosition(QTextCursor::Start);
-
-    do {
-        QTextBlockFormat format = cursor.blockFormat();
-
-        format.setLineHeight(fontMetrics().height(), QTextBlockFormat::FixedHeight);
-        cursor.setBlockFormat(format);
-    } while (cursor.movePosition(QTextCursor::NextBlock));
-
-    cursor.setPosition(cursorPos);
-
-    d->edit->setTextCursor(cursor);
-    d->edit->setAlignment(Qt::AlignHCenter);
-
-    if (d->edit->isVisible()) {
-        updateEditorGeometry();
+    if (hasInvalidChar) {
+        showAlertMessage(tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
     }
 }
 
 void IconItemEditor::resizeFromEditTextChanged()
 {
     Q_D(IconItemEditor);
-    //根据字符串的长度调整大小调整(之前的逻辑)
     updateEditorGeometry();
-    //调整大小后，重新设置水平居中，否则会左对齐。
     if (d->edit) {
         d->edit->setAlignment(Qt::AlignHCenter);
     }
@@ -393,4 +417,39 @@ void IconItemEditor::pushItemToEditTextStack(const QString &item)
     d->editTextStack.remove(d->editTextStackCurrentIndex + 1, d->editTextStack.count() - d->editTextStackCurrentIndex - 1);
     d->editTextStack.push(item);
     ++d->editTextStackCurrentIndex;
+}
+
+DArrowRectangle *IconItemEditor::createTooltip()
+{
+    auto tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop);
+    tooltip->setObjectName("AlertTooltip");
+
+    QLabel *label = new QLabel(tooltip);
+
+    label->setWordWrap(true);
+    label->setMaximumWidth(500);
+    tooltip->setContent(label);
+    tooltip->setArrowX(15);
+    tooltip->setArrowHeight(5);
+    return tooltip;
+}
+
+bool IconItemEditor::processLength(QString &text, int &pos)
+{
+    const QString srcText = text;
+    int srcPos = pos;
+    int editTextCurrLen = srcText.toLocal8Bit().size();
+    int editTextRangeOutLen = editTextCurrLen - maxCharSize();
+    if (editTextRangeOutLen > 0 && maxCharSize() != INT_MAX) {
+        QVector<uint> list = srcText.toUcs4();
+        QString tmp = srcText;
+        while (tmp.toLocal8Bit().size() > maxCharSize() && srcPos > 0) {
+            list.removeAt(--srcPos);
+            tmp = QString::fromUcs4(list.data(), list.size());
+        }
+        text = tmp;
+        pos = srcPos;
+        return srcText.size() != text.size();
+    }
+    return false;
 }

@@ -32,6 +32,7 @@ class QStyleOptionViewItem;
 QT_END_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
+extern const char *const kEidtorShowSuffix;
 class BaseItemDelegate;
 class FileViewModel;
 class FileView;

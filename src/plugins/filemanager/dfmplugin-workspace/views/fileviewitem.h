@@ -77,19 +77,25 @@ public:
         kItemFileLastModifiedRole = Qt::UserRole + 2,
         kItemFileSizeRole = Qt::UserRole + 3,
         kItemFileMimeTypeRole = Qt::UserRole + 4,
-        kItemFileSuffixRole = Qt::UserRole + 5,
-        kItemFilePathRole = Qt::UserRole + 6,
-        kItemColumListRole = Qt::UserRole + 7,
-        kItemColumWidthScaleListRole = Qt::UserRole + 8,
-        kItemCornerMarkTLRole = Qt::UserRole + 9,
-        kItemCornerMarkTRRole = Qt::UserRole + 10,
-        kItemCornerMarkBLRole = Qt::UserRole + 11,
-        kItemCornerMarkBRRole = Qt::UserRole + 12,
-        kItemIconLayersRole = Qt::UserRole + 13,
-        kItemFileNameOfRenameRole = Qt::UserRole + 14,
-        kItemExtraProperties = Qt::UserRole + 15,
-        kItemFileIconModelToolTipRole = Qt::UserRole + 16,   // 用于返回图标视图下的tooltip
-        kItemFilePinyinNameRole = Qt::UserRole + 17,
+        kItemFilePathRole = Qt::UserRole + 5,
+        kItemColumListRole = Qt::UserRole + 6,
+        kItemColumWidthScaleListRole = Qt::UserRole + 7,
+        kItemCornerMarkTLRole = Qt::UserRole + 8,
+        kItemCornerMarkTRRole = Qt::UserRole + 9,
+        kItemCornerMarkBLRole = Qt::UserRole + 10,
+        kItemCornerMarkBRRole = Qt::UserRole + 11,
+        kItemIconLayersRole = Qt::UserRole + 12,
+        kItemFileDisplayNameRole = Qt::UserRole + 13,
+        kItemFilePinyinNameRole = Qt::UserRole + 14,
+        kItemFileBaseNameRole = Qt::UserRole + 15,
+        kItemFileSuffixRole = Qt::UserRole + 16,
+        kItemFileNameOfRenameRole = Qt::UserRole + 17,
+        kItemFileBaseNameOfRenameRole = Qt::UserRole + 18,
+        kItemFileSuffixOfRenameRole = Qt::UserRole + 19,
+        kItemExtraProperties = Qt::UserRole + 20,
+        kItemFileIconModelToolTipRole = Qt::UserRole + 21,   // 用于返回图标视图下的tooltip
+
+        kItemUnknowRole = Qt::UserRole + 999
     };
 
     enum CornerMark {

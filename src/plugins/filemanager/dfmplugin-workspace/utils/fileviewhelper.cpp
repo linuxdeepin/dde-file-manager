@@ -25,6 +25,7 @@
 #include "views/fileview.h"
 #include "views/baseitemdelegate.h"
 #include "views/iconitemeditor.h"
+#include "views/listitemeditor.h"
 #include "utils/workspacehelper.h"
 #include "utils/fileoperaterhelper.h"
 
@@ -37,10 +38,13 @@
 
 #include <DApplication>
 
-#include <QLineEdit>
 #include <QTextEdit>
 #include <QAbstractItemView>
 #include <QTimer>
+
+DPWORKSPACE_BEGIN_NAMESPACE
+const char *const kEidtorShowSuffix = "_d_whether_show_suffix";
+DPWORKSPACE_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -259,6 +263,7 @@ int FileViewHelper::caculateIconItemIndex(const FileView *view, const QSize &ite
 
 void FileViewHelper::handleCommitData(QWidget *editor) const
 {
+
     if (!editor) {
         return;
     }
@@ -270,7 +275,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         return;
     }
 
-    QLineEdit *lineEdit = qobject_cast<QLineEdit *>(editor);
+    ListItemEditor *lineEdit = qobject_cast<ListItemEditor *>(editor);
     IconItemEditor *iconEdit = qobject_cast<IconItemEditor *>(editor);
 
     QString newFileName = lineEdit ? lineEdit->text() : iconEdit ? iconEdit->getTextEdit()->toPlainText() : "";
@@ -279,14 +284,13 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         return;
     }
 
-    QString suffix { editor->property("_d_whether_show_suffix").toString() };
+    QString suffix { editor->property(kEidtorShowSuffix).toString() };
 
     if (!suffix.isEmpty()) {
-        newFileName += QString { "." };
+        newFileName += QStringLiteral(".");
         newFileName += suffix;
     } else if (Application::genericObtuselySetting()->value("FileName", "non-allowableEmptyCharactersOfEnd").toBool()) {
-        //保留文件名称中的空格符号
-        //newFileName = newFileName.trimmed();
+        newFileName = newFileName.trimmed();
         if (newFileName.isEmpty()) {
             return;
         }
@@ -298,6 +302,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
 
     QUrl oldUrl = fileInfo->url();
     QUrl newUrl = fileInfo->getUrlByNewFileName(newFileName);
+    //Todo(yanghao): tag
     FileOperaterHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
 

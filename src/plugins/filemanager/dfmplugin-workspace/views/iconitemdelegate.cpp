@@ -30,6 +30,7 @@
 #include "fileview.h"
 #include "iconitemeditor.h"
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 
 #include <DApplicationHelper>
@@ -50,6 +51,8 @@
 #include <QPainterPath>
 #include <QToolTip>
 #include <QtMath>
+
+#include <linux/limits.h>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -240,7 +243,13 @@ void IconItemDelegate::hideNotEditingIndexWidget()
 
 QString IconItemDelegate::displayFileName(const QModelIndex &index) const
 {
-    QString str = index.data(FileViewItem::kItemFileNameOfRenameRole).toString();
+    bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
+    QString str = index.data(FileViewItem::kItemFileDisplayNameRole).toString();
+    const QString &suffix = "." + index.data(FileViewItem::kItemFileSuffixRole).toString();
+
+    if (!showSuffix && str.endsWith(suffix) && suffix != ".")
+        str = str.mid(0, str.length() - suffix.length());
+
     return str;
 }
 
@@ -440,86 +449,6 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
              QTextOption::WrapAtWordBoundaryOrAnywhere, opt.textElideMode, Qt::AlignCenter);
 }
 
-void IconItemDelegate::editTextChangedHandle(IconItemEditor *editor)
-{
-
-    // ToDo(yanghao): 代码调整
-    if (!editor->getTextEdit() || editor->getTextEdit()->isReadOnly())
-        return;
-
-    //获取之前的文件名称
-    QString srcText = editor->getTextEdit()->toPlainText();
-
-    //清空了当前所有文本
-    if (srcText.isEmpty()) {
-        //根据文本调整edit高度
-        editor->resizeFromEditTextChanged();
-        return;
-    }
-
-    //得到处理之后的文件名称
-    QString dstText = srcText; /*DFMGlobal::preprocessingFileName(srcText)*/
-
-    //如果存在非法字符且更改了当前的文本文件
-    if (srcText != dstText) {
-
-        // 修改文件的命名规则 弹出提示框(气泡提示)
-        if (!this->parent() || !this->parent()->parent()) {
-            qInfo() << "parent is nullptr";
-            return;
-        }
-
-        auto view = this->parent()->parent();
-        auto showPoint = view->mapToGlobal(QPoint(editor->pos().x() + editor->width() / 2,
-                                                  editor->pos().y() + editor->height() - kIconModeRectRadius));
-        //背板主题一致
-        auto color = view->palette().background().color();
-        // ToDo(yanghao):showAlertMessage
-        // 弹窗
-        //        DFMGlobal::showAlertMessage(showPoint,
-        //                                    color,
-        //                                    QObject::tr("%1 are not allowed").arg("|/\\*:\"'?<>"));
-        //之前的光标Pos
-        int srcCursorPos = editor->getTextEdit()->textCursor().position();
-        QSignalBlocker blocker(editor->getTextEdit());
-        editor->getTextEdit()->setPlainText(dstText);
-        int endPos = srcCursorPos + (dstText.length() - srcText.length());
-        //此处调整光标位置
-        QTextCursor cursor = editor->getTextEdit()->textCursor();
-        cursor.setPosition(endPos);
-        editor->getTextEdit()->setTextCursor(cursor);
-        editor->getTextEdit()->setAlignment(Qt::AlignHCenter);
-    }
-
-    //编辑字符的长度控制
-    int editTextMaxLen = editor->maxCharSize();
-    int editTextCurrLen = dstText.toLocal8Bit().size();
-    int editTextRangeOutLen = editTextCurrLen - editTextMaxLen;
-    if (editTextRangeOutLen > 0 && editTextMaxLen != INT_MAX) {
-        // fix bug 69627
-        QVector<uint> list = dstText.toUcs4();
-        int cursor_pos = editor->getTextEdit()->textCursor().position();
-        while (dstText.toLocal8Bit().size() > editTextMaxLen && cursor_pos > 0) {
-            list.removeAt(--cursor_pos);
-            dstText = QString::fromUcs4(list.data(), list.size());
-        }
-        QSignalBlocker blocker(editor->getTextEdit());
-        editor->getTextEdit()->setPlainText(dstText);
-        QTextCursor cursor = editor->getTextEdit()->textCursor();
-        cursor.setPosition(cursor_pos);
-        editor->getTextEdit()->setTextCursor(cursor);
-        editor->getTextEdit()->setAlignment(Qt::AlignHCenter);
-    }
-
-    //根据文本调整edit高度
-    editor->resizeFromEditTextChanged();
-
-    //添加到stack中
-    if (editor->editTextStackCurrentItem() != editor->getTextEdit()->toPlainText()) {
-        editor->pushItemToEditTextStack(editor->getTextEdit()->toPlainText());
-    }
-}
-
 QSize IconItemDelegate::iconSizeByIconSizeLevel() const
 {
     Q_D(const IconItemDelegate);
@@ -565,16 +494,6 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
             d->editingIndex = QModelIndex();
         }
     });
-
-    //编辑框的字符变更处理
-    connect(editor->getTextEdit(), &QTextEdit::textChanged, this, [=] {
-        //阻塞信号等待当前函数
-        const QSignalBlocker blocker(sender());
-        // Todo(yanghao):
-        auto that = const_cast<IconItemDelegate *>(this);
-        that->editTextChangedHandle(editor);
-    },
-            Qt::UniqueConnection);
 
     //设置字体居中
     //注: 此处经过查阅发现FileItem中editUndo中没有相关设置
@@ -639,22 +558,36 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
     IconItemEditor *item = qobject_cast<IconItemEditor *>(editor);
 
-    if (!item || !item->getTextEdit())
+    if (!item)
         return;
-    // ToDo(yanghao): showSuffix
-    // preprocessingFileName
-    QTextEdit *edit = item->getTextEdit();
 
-    QString displayName = displayFileName(index);
-    int baseNameLength = displayName.length();
-    edit->setText(displayName);
+    bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
-    QTextCursor cursor = edit->textCursor();
-    cursor.setPosition(0);
-    cursor.setPosition(baseNameLength, QTextCursor::KeepAnchor);
-    edit->setTextCursor(cursor);
+    QString suffix = index.data(FileViewItem::kItemFileSuffixOfRenameRole).toString();
+    qDebug() << "Display" << index.data(FileViewItem::kItemFileDisplayNameRole).toString()
+             << "FileName" << index.data(FileViewItem::kItemNameRole).toString()
+             << "FileNameofrenmae" << index.data(FileViewItem::kItemFileNameOfRenameRole).toString()
+             << "BaseName" << index.data(FileViewItem::kItemFileBaseNameRole).toString()
+             << "BaseNameofrename" << index.data(FileViewItem::kItemFileBaseNameOfRenameRole).toString()
+             << "suffix" << index.data(FileViewItem::kItemFileSuffixRole).toString()
+             << "suffixofrename" << suffix;
+    if (showSuffix) {
+        QString name = index.data(FileViewItem::kItemFileNameOfRenameRole).toString();
+        name = FileUtils::preprocessingFileName(name);
 
-    edit->setAlignment(Qt::AlignHCenter);
+        item->setMaxCharSize(NAME_MAX);
+        item->setText(name);
+        item->select(name.left(name.size() - suffix.size() - (suffix.isEmpty() ? 0 : 1)));
+    } else {
+        item->setProperty(kEidtorShowSuffix, suffix);
+        item->setMaxCharSize(NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
+
+        QString name = index.data(FileViewItem::kItemFileBaseNameOfRenameRole).toString();
+        name = FileUtils::preprocessingFileName(name);
+
+        item->setText(name);
+        item->select(name);
+    }
 }
 
 bool IconItemDelegate::eventFilter(QObject *object, QEvent *event)

@@ -69,15 +69,22 @@ FileViewItem &FileViewItem::operator=(const FileViewItem &other)
     setData(other.data(kItemFileLastModifiedRole), kItemFileLastModifiedRole);
     setData(other.data(kItemFileSizeRole), kItemFileSizeRole);
     setData(other.data(kItemFileMimeTypeRole), kItemFileMimeTypeRole);
-    setData(other.data(kItemFileSuffixRole), kItemFileSuffixRole);
     setData(other.data(kItemFilePathRole), kItemFilePathRole);
     setData(other.data(kItemColumListRole), kItemColumListRole);
     setData(other.data(kItemColumWidthScaleListRole), kItemColumWidthScaleListRole);
+    setData(other.data(kItemCornerMarkTLRole), kItemCornerMarkTLRole);
+    setData(other.data(kItemCornerMarkTLRole), kItemCornerMarkTLRole);
+    setData(other.data(kItemCornerMarkBLRole), kItemCornerMarkBLRole);
+    setData(other.data(kItemCornerMarkBRRole), kItemCornerMarkBRRole);
+    setData(other.data(kItemIconLayersRole), kItemIconLayersRole);
+    setData(other.data(kItemFilePinyinNameRole), kItemFilePinyinNameRole);
+    setData(other.data(kItemFileBaseNameRole), kItemFileBaseNameRole);
+    setData(other.data(kItemFileSuffixRole), kItemFileSuffixRole);
     setData(other.data(kItemFileNameOfRenameRole), kItemFileNameOfRenameRole);
+    setData(other.data(kItemFileBaseNameOfRenameRole), kItemFileBaseNameOfRenameRole);
+    setData(other.data(kItemFileSuffixOfRenameRole), kItemFileSuffixOfRenameRole);
     setData(other.data(kItemExtraProperties), kItemExtraProperties);
     setData(other.data(kItemFileIconModelToolTipRole), kItemFileIconModelToolTipRole);
-    setData(other.data(kItemFilePinyinNameRole), kItemFilePinyinNameRole);
-
     return *this;
 }
 
@@ -216,16 +223,25 @@ QVariant FileViewItem::data(int role) const
 
         return QVariant::fromValue<QList<QPair<int, int>>>(columrollist);
     }
-    case kItemFileSuffixRole:
-        return d->fileinfo->completeSuffix();
-    case kItemNameRole:
-        return d->fileinfo->fileName();
     case kItemSizeHintRole:
         return QSize(-1, 26);
-    case kItemFileNameOfRenameRole:
-        return d->fileinfo->fileNameOfRename();
+    case kItemNameRole:
+        return d->fileinfo->fileName();
+    case kItemFileDisplayNameRole:
+        return d->fileinfo->fileDisplayName();
     case kItemFilePinyinNameRole:
         return d->fileinfo->fileDisplayPinyinName();
+    case kItemFileBaseNameRole:
+        return d->fileinfo->baseName();
+    case kItemFileSuffixRole:
+        return d->fileinfo->suffix();
+    case kItemFileNameOfRenameRole:
+        return d->fileinfo->fileNameOfRename();
+    case kItemFileBaseNameOfRenameRole:
+        return d->fileinfo->baseNameOfRename();
+    case kItemFileSuffixOfRenameRole:
+        return d->fileinfo->suffixOfRename();
+
     default:
         return QVariant();
     }

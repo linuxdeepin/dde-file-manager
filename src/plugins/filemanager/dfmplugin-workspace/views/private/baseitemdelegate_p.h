@@ -27,7 +27,9 @@
 #include <QModelIndex>
 #include <QtGlobal>
 
+QT_BEGIN_NAMESPACE
 class QLineEdit;
+QT_END_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
 

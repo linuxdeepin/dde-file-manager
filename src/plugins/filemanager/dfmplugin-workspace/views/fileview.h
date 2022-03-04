@@ -166,6 +166,7 @@ private slots:
     void onModelStateChanged();
     void setIconSizeBySizeIndex(const int sizeIndex);
     void onShowHiddenFileChanged(bool isShow);
+    void onShowFileSuffixChanged(bool isShow);
     void updateHorizontalOffset();
 
 private:

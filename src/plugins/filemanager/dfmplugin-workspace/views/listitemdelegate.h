@@ -28,6 +28,7 @@
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class ListItemEditor;
 class ListItemDelegatePrivate;
 class ListItemDelegate : public BaseItemDelegate
 {
@@ -43,9 +44,6 @@ public:
     QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const override;
     void updateItemSizeHint() override;
 
-public slots:
-    void onEditorTextChanged(const QString &text);
-
 protected:
     bool eventFilter(QObject *object, QEvent *event) override;
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
@@ -57,7 +55,9 @@ private:
                         const QModelIndex &index) const;
     void paintItemColumn(QPainter *painter, const QStyleOptionViewItem &option,
                          const QModelIndex &index, const QRect &iconRect) const;
+    void paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRect &rect, const int &textLineHeight) const;
 
+    bool setEditorData(ListItemEditor *editor);
     Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };
 
