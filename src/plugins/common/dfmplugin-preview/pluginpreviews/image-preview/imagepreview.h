@@ -35,8 +35,7 @@ PREVIEW_BEGIN_NAMESPACE
 class ImageView;
 class ImagePreview : public DFMBASE_NAMESPACE::AbstractBasePreview
 {
-    //    Q_PLUGIN_METADATA(IID PreviewInterface_iid FILE "dde-image-preview-plugin.json")
-    Q_INTERFACES(PreviewInterface)
+    Q_OBJECT
 public:
     explicit ImagePreview(QObject *parent = nullptr);
     ~ImagePreview() override;

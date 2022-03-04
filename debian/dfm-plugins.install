@@ -1,1 +1,2 @@
 usr/lib/*/dde-file-manager/plugins/*.so
+usr/lib/*/dde-file-manager/plugins/previews/*.so

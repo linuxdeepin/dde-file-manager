@@ -163,12 +163,6 @@ QList<int> PreviewPluginLoader::getAllIndexByKey(const QString &needle) const
 
 void PreviewPluginLoader::update()
 {
-    // Disable plugins on root user
-    //    if (DFMGlobal::isRootUser()) {
-    //        qWarning() << "Disable plugins for root user";
-
-    //        return;
-    //    }
 
 #ifdef QT_SHARED
     qInfo() << "checking directory path";
@@ -179,10 +173,9 @@ void PreviewPluginLoader::update()
         if (!dptr->loadedPaths.contains(pluginDir))
             dptr->loadedPaths << pluginDir;
 
-        QString path = pluginDir + dptr->suffix;
+        QString path = pluginDir;
 
-        if (dfm_debug_component())
-            qInfo() << "checking directory path" << path << "...";
+        qInfo() << "checking directory path" << path << "...";
 
         if (!QDir(path).exists(QLatin1String(".")))
             continue;
