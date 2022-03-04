@@ -37,6 +37,8 @@
 #include <QDebug>
 
 #include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 DSC_USE_NAMESPACE
 
@@ -112,6 +114,16 @@ bool DoCutFilesWorker::cutFiles()
         if (!stateCheck()) {
             return false;
         }
+
+        bool ok = false;
+        if (!canCutFile(url, &ok)) {
+            if (ok) {
+                continue;
+            }
+
+            return false;
+        }
+
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
@@ -219,6 +231,29 @@ void DoCutFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
 {
     AbstractWorker::doOperateWork(actions);
     resume();
+}
+
+bool DoCutFilesWorker::canCutFile(const QUrl &url, bool *ok)
+{
+    AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
+
+    if (Q_UNLIKELY(!stateCheck())) {
+        return false;
+    }
+
+    do {
+        if (!canWriteFile(url))
+            // pause and emit error msg
+            action = doHandleErrorAndWait(url, targetUrl, url, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
+
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+
+    if (action != AbstractJobHandler::SupportAction::kNoAction) {
+        *ok = action == AbstractJobHandler::SupportAction::kSkipAction;
+        return false;
+    }
+
+    return true;
 }
 
 bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)

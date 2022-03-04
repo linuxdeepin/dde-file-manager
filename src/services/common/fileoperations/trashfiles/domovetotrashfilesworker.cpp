@@ -163,42 +163,6 @@ bool DoMoveToTrashFilesWorker::checkTrashDirIsReady()
     return true;
 }
 /*!
- * \brief DoMoveToTrashFilesWorker::canMoveToTrash check the source file can move to trash
- * \param filePath the source file path
- * \return can move to trash
- */
-bool DoMoveToTrashFilesWorker::canMoveToTrash(const QString &filePath)
-{
-    // 如果是root，则拥有权限
-    if (getuid() == 0)
-        return true;
-
-    QFileInfo file_info(filePath);
-    QString folderPath = file_info.dir().absolutePath();
-    QFileInfo dir_info(folderPath);
-
-    bool isFolderWritable = false;
-
-    QFileInfo folderinfo(folderPath);   // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
-
-    isFolderWritable = folderinfo.isWritable();
-
-    if (!isFolderWritable)
-        return false;
-
-#ifdef Q_OS_LINUX
-    struct stat statBuffer;
-    if (::lstat(dir_info.absoluteFilePath().toUtf8().constData(), &statBuffer) == 0) {
-        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-        if ((statBuffer.st_mode & S_ISVTX) && file_info.ownerId() != getuid()) {
-            return false;
-        }
-    }
-#endif
-
-    return true;
-}
-/*!
  * \brief DoMoveToTrashFilesWorker::isCanMoveToTrash loop to check the source file can move to trash
  * \param url the source file url
  * \param result Output parameters, is skip this file
@@ -213,7 +177,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     }
 
     do {
-        if (!canMoveToTrash(url.path()))
+        if (!canWriteFile(url))
             // pause and emit error msg
             action = doHandleErrorAndWait(url, targetUrl, url, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
 

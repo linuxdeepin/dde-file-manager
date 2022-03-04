@@ -100,6 +100,7 @@ public:
                         AbstractFileInfoPointer &newTargetInfo,
                         QString &fileNewName,
                         bool *result);
+    bool canWriteFile(const QUrl &url) const;
 
 protected:
     AbstractFileInfoPointer targetInfo { nullptr };   // target file infor pointer

@@ -52,7 +52,6 @@ protected:
 protected:
     bool doMoveToTrash();
     bool checkTrashDirIsReady();
-    bool canMoveToTrash(const QString &filePath);
     bool isCanMoveToTrash(const QUrl &url, bool *result);
     bool handleSymlinkFile(const AbstractFileInfoPointer &fileInfo);
     bool handleMoveToTrash(const AbstractFileInfoPointer &fileInfo);

@@ -746,3 +746,37 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
 
     return true;
 }
+
+bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
+{
+    // root user return true direct
+    if (getuid() == 0)
+        return true;
+
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    if (!info)
+        return false;
+
+    AbstractFileInfoPointer parentInfo = InfoFactory::create<AbstractFileInfo>(info->parentUrl());
+    if (!parentInfo)
+        return false;
+
+    bool isFolderWritable = parentInfo->isWritable();
+    if (!isFolderWritable)
+        return false;
+
+#ifdef Q_OS_LINUX
+    struct stat statBuffer;
+    if (::lstat(parentInfo->path().toLocal8Bit().data(), &statBuffer) == 0) {
+        // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
+        const auto &fileOwnerId = info->ownerId();
+        const auto &uid = info->ownerId();
+        const bool hasTRight = (statBuffer.st_mode & S_ISVTX) == S_ISVTX;
+        if (hasTRight && fileOwnerId != uid) {
+            return false;
+        }
+    }
+#endif
+
+    return true;
+}
