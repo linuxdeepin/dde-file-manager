@@ -38,13 +38,13 @@ WindowFramePrivate::WindowFramePrivate(WindowFrame *parent)
 void WindowFramePrivate::updateProperty(BaseWindowPointer win, ScreenPointer screen, bool primary)
 {
     if (win && screen) {
-        win->setProperty(kPropScreenName, screen->name());
-        win->setProperty(kPropIsPrimary, primary);
-        win->setProperty(kPropScreenGeometry, screen->geometry());
-        win->setProperty(kPropScreenAvailableGeometry, screen->availableGeometry());
-        win->setProperty(kPropScreenHandleGeometry, screen->handleGeometry());
-        win->setProperty(kPropWidgetName, "root");
-        win->setProperty(kPropWidgetLevel, "0.0");
+        win->setProperty(FrameProperty::kPropScreenName, screen->name());
+        win->setProperty(FrameProperty::kPropIsPrimary, primary);
+        win->setProperty(FrameProperty::kPropScreenGeometry, screen->geometry());
+        win->setProperty(FrameProperty::kPropScreenAvailableGeometry, screen->availableGeometry());
+        win->setProperty(FrameProperty::kPropScreenHandleGeometry, screen->handleGeometry());
+        win->setProperty(FrameProperty::kPropWidgetName, "root");
+        win->setProperty(FrameProperty::kPropWidgetLevel, "0.0");
     }
 }
 
@@ -204,7 +204,7 @@ void WindowFrame::onAvailableGeometryChanged()
         auto win = d->windows.value(sp->name());
         qDebug() << "screen available geometry change:" << sp.get() << win.get();
         if (win.get() != nullptr) {
-            if (win->property(kPropScreenAvailableGeometry).toRect() == sp->availableGeometry())
+            if (win->property(FrameProperty::kPropScreenAvailableGeometry).toRect() == sp->availableGeometry())
                 continue;
             d->updateProperty(win, sp, (sp == primary));
             changed = true;

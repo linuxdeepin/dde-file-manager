@@ -56,7 +56,7 @@ bool WlSetPlugin::start()
 
     // register slots
     {
-        auto eslots = handle->eventSlots();
+        auto eslots = handle->query(EventType::kEventSlot);
         int showWallpaper = EventHelperFunc::getEventID(eslots, kEventWallpaperSetting);
         if (showWallpaper > 0)
             dpfInstance.eventDispatcher().subscribe(showWallpaper,
@@ -91,17 +91,17 @@ EventHandle::EventHandle(QObject *parent)
     eSlots.insert(kEventWallpaperSetting,
                     DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
     eSlots.insert(kEventScreenSaverSetting,
-                    DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
+                  DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
 }
 
-QVariantHash EventHandle::eventSignals() const
+QVariantHash EventHandle::query(int type) const
 {
-    return eSignals;
-}
+    if (type == EventType::kEventSignal)
+        return eSignals;
+    else if (type == EventType::kEventSlot)
+        return eSlots;
 
-QVariantHash EventHandle::eventSlots() const
-{
-    return eSlots;
+    return {};
 }
 
 void EventHandle::wallpaperSetting(QString name)

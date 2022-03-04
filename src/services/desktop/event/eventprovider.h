@@ -24,17 +24,31 @@
 #include "services/desktop/dd_service_global.h"
 
 #include <QVariantHash>
+#include <QReadWriteLock>
 
 DSB_D_BEGIN_NAMESPACE
+
+namespace EventType {
+static constexpr int kEventSignal = 0x1;
+static constexpr int kEventSlot = 0x2;
+}
 
 class EventProvider
 {
 public:
-    virtual QVariantHash eventSignals() const;
-    virtual QVariantHash eventSlots() const;
+    typedef void (*EventChanged)(int eventType, QStringList eventKeys, void *);
+public:
+    virtual QVariantHash query(int type) const;
+    virtual bool monitor(EventChanged func, void *data);
+    virtual void unmonitor(EventChanged func);
+protected:
+    virtual void notify(int eventType, const QStringList &eventKeys) const;
 protected:
     explicit EventProvider();
     virtual ~EventProvider();
+protected:
+    QMap<EventChanged, void *> monitors;
+    mutable QReadWriteLock locker;
 };
 
 DSB_D_END_NAMESPACE

@@ -39,7 +39,7 @@ DSB_D_USE_NAMESPACE
 
 static QString getScreenName(QWidget *win)
 {
-    return win->property(kPropScreenName).toString();
+    return win->property(FrameProperty::kPropScreenName).toString();
 }
 
 static QMap<QString, QWidget *> rootMap(FrameService *srv)
@@ -128,7 +128,7 @@ void BackgroundDefault::updateDisplay()
             return;
         }
 
-        QSize trueSize = win->property(kPropScreenHandleGeometry).toRect().size(); // 使用屏幕缩放前的分辨率
+        QSize trueSize = win->property(FrameProperty::kPropScreenHandleGeometry).toRect().size(); // 使用屏幕缩放前的分辨率
         if (backgroundPixmap.isNull()) {
             qCritical() << "screen " << screen << "backfround path" << filePath
                         << "can not read!";

@@ -22,14 +22,40 @@
 
 DSB_D_USE_NAMESPACE
 
-QVariantHash EventProvider::eventSignals() const
+QVariantHash EventProvider::query(int type) const
 {
+    Q_UNUSED(type);
     return {};
 }
 
-QVariantHash EventProvider::eventSlots() const
+bool EventProvider::monitor(EventChanged func, void *data)
 {
-    return {};
+    if (!func)
+        return false;
+
+    QWriteLocker lk(&locker);
+    if (monitors.contains(func))
+        return true;
+
+    monitors.insert(func, data);
+    return true;
+}
+
+void EventProvider::unmonitor(EventChanged func)
+{
+    QWriteLocker lk(&locker);
+    monitors.remove(func);
+}
+
+void EventProvider::notify(int eventType, const QStringList &eventKeys) const
+{
+    // to prevent deadlock caused by calling EventProvider's function in callback function
+    QReadLocker lk(&locker);
+    auto list = monitors;
+    lk.unlock();
+
+    for (auto itor = list.begin(); itor != list.end(); ++itor)
+        itor.key()(eventType, eventKeys, itor.value());
 }
 
 EventProvider::EventProvider()

@@ -34,7 +34,7 @@ DSB_D_USE_NAMESPACE
 
 static QString getScreenName(QWidget *win)
 {
-    return win->property(kPropScreenName).toString();
+    return win->property(FrameProperty::kPropScreenName).toString();
 }
 
 static QMap<QString, QWidget *> rootMap(FrameService *srv)
@@ -359,9 +359,9 @@ void BackgroundManager::onGeometryChanged()
             QRect geometry = d->relativeGeometry(win->geometry()); // scaled area
             if (bw->geometry() == geometry) {
                 qDebug() << "background geometry is equal to root widget geometry,and discard changes" << bw->geometry()
-                         << win->geometry() << win->property(kPropScreenName).toString()
-                         << win->property(kPropScreenGeometry).toRect() << win->property(kPropScreenHandleGeometry).toRect()
-                         << win->property(kPropScreenAvailableGeometry);
+                         << win->geometry() << win->property(FrameProperty::kPropScreenName).toString()
+                         << win->property(FrameProperty::kPropScreenGeometry).toRect() << win->property(FrameProperty::kPropScreenHandleGeometry).toRect()
+                         << win->property(FrameProperty::kPropScreenAvailableGeometry);
                 continue;
             }
             qInfo() << "background geometry change from" << bw->geometry() << "to" << geometry
@@ -503,9 +503,9 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
     const QString screenName = getScreenName(root);
     BackgroundWidgetPointer bwp(new BackgroundDefault(screenName, root));
     bwp->setParent(root);
-    bwp->setProperty(kPropScreenName, getScreenName(root));
-    bwp->setProperty(kPropWidgetName, "background");
-    bwp->setProperty(kPropWidgetLevel, 5.0);
+    bwp->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
+    bwp->setProperty(FrameProperty::kPropWidgetName, "background");
+    bwp->setProperty(FrameProperty::kPropWidgetLevel, 5.0);
     bwp->lower();
 
     QRect geometry = d->relativeGeometry(root->geometry()); // scaled area

@@ -28,8 +28,7 @@
 class Core;
 
 DSB_D_BEGIN_NAMESPACE
-
-
+namespace FrameProperty {
 // property for window
 static constexpr char kPropScreenName[] = "ScreenName";
 static constexpr char kPropIsPrimary[] = "IsPrimary";
@@ -40,6 +39,7 @@ static constexpr char kPropScreenHandleGeometry[] = "ScreenHandleGeometry";
 // property for window and all sub widgets
 static constexpr char kPropWidgetName[] = "WidgetName";
 static constexpr char kPropWidgetLevel[] = "WidgetLevel";
+}
 
 class FrameServicePrivate;
 class FrameService : public dpf::PluginService, dpf::AutoServiceRegister<FrameService>

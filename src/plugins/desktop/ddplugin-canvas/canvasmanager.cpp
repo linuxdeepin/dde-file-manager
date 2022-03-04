@@ -54,7 +54,7 @@ CanvasManager *CanvasManager::instance()
 }
 
 static QString getScreenName(QWidget *win) {
-    return win->property(kPropScreenName).toString();
+    return win->property(FrameProperty::kPropScreenName).toString();
 }
 
 static QMap<QString, QWidget *> rootMap(FrameService *srv) {
@@ -237,8 +237,8 @@ void CanvasManager::onGeometryChanged()
         }
 
         // calc current geometry.
-        QRect avRect = d->relativeRect(win->property(kPropScreenAvailableGeometry).toRect(),
-                                   win->property(kPropScreenGeometry).toRect());
+        QRect avRect = d->relativeRect(win->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
+                                   win->property(FrameProperty::kPropScreenGeometry).toRect());
 
         // no need to update.
         if (view->geometry() == avRect) {
@@ -268,7 +268,7 @@ void CanvasManager::onWallperSetting(CanvasView *view)
     // get wallpaper service
     auto &ctx = dpfInstance.serviceContext();
     if (auto wallpaperService = ctx.service<WallpaperService>(WallpaperService::name())) {
-        int id = EventHelperFunc::getEventID(wallpaperService->eventSlots(), "WallpaperSetting");
+        int id = EventHelperFunc::getEventID(wallpaperService->query(EventType::kEventSlot), "WallpaperSetting");
         if (id > 0) {
             dpfInstance.eventDispatcher().publish(id, screen);
         } else {
@@ -362,11 +362,11 @@ CanvasViewPointer CanvasManagerPrivate::createView(QWidget *root, int index)
     view->initUI();
 
     view->setScreenNum(index);
-    auto avRect = relativeRect(root->property(kPropScreenAvailableGeometry).toRect(),
-                               root->property(kPropScreenGeometry).toRect());
-    view->setProperty(kPropScreenName, getScreenName(root));
-    view->setProperty(kPropWidgetName, "canvas");
-    view->setProperty(kPropWidgetLevel, 10.0);
+    auto avRect = relativeRect(root->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
+                               root->property(FrameProperty::kPropScreenGeometry).toRect());
+    view->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
+    view->setProperty(FrameProperty::kPropWidgetName, "canvas");
+    view->setProperty(FrameProperty::kPropWidgetLevel, 10.0);
     view->setGeometry(avRect);
     view->raise();
     return view;
@@ -381,9 +381,9 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, QWidget *ro
     view->setScreenNum(index);
     view->setParent(root);
     view->raise();
-    view->setProperty(kPropScreenName, getScreenName(root));
-    auto avRect = relativeRect(root->property(kPropScreenAvailableGeometry).toRect(),
-                               root->property(kPropScreenGeometry).toRect());
+    view->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
+    auto avRect = relativeRect(root->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
+                               root->property(FrameProperty::kPropScreenGeometry).toRect());
     view->setGeometry(avRect);
 }
 

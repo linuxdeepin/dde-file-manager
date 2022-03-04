@@ -22,24 +22,30 @@
 
 DSB_D_USE_NAMESPACE
 
-QVariantHash EventInformant::eventSignals() const
+#define notiyAll(type, provider) {\
+    auto es = provider->query(type).keys(); \
+    if (!es.isEmpty()) \
+        notify(type, es);}
+
+// receive the notification sended by provider.
+static void eventChangedCallback(int eventType, QStringList event, void *ptr)
 {
-    QVariantHash events;
-    QReadLocker lk(&locker);
-    for (auto e : providers) {
-        auto ed = e->eventSignals();
-        for (auto itor = ed.begin(); itor != ed.end(); ++itor)
-            events.insert(itor.key(), itor.value());
-    }
-    return events;
+    class HookClass : public EventInformant
+    {
+    public:
+        using EventInformant::onEventChanged;
+    };
+
+    if (HookClass *self = static_cast<HookClass *>(ptr))
+        self->onEventChanged(eventType, event);
 }
 
-QVariantHash EventInformant::eventSlots() const
+QVariantHash EventInformant::query(int type) const
 {
     QVariantHash events;
     QReadLocker lk(&locker);
     for (auto e : providers) {
-        auto ed = e->eventSlots();
+        auto ed = e->query(type);
         for (auto itor = ed.begin(); itor != ed.end(); ++itor)
             events.insert(itor.key(), itor.value());
     }
@@ -51,17 +57,47 @@ bool EventInformant::registerEvent(EventProvider *e)
     if (!e)
         return false;
 
-    QWriteLocker lk(&locker);
-    if (providers.contains(e))
-        return true;
+    {
+        QWriteLocker lk(&locker);
+        if (providers.contains(e))
+            return true;
 
-    providers.append(e);
+        providers.append(e);
+    }
+
+    e->monitor(&eventChangedCallback, this);
+
+    notiyAll(EventType::kEventSignal, e);
+    notiyAll(EventType::kEventSlot, e);
     return true;
 }
 
 void EventInformant::unRegisterEvent(EventProvider *e)
 {
-    QWriteLocker lk(&locker);
-    providers.removeAll(e);
+    {
+        QWriteLocker lk(&locker);
+        providers.removeAll(e);
+    }
+
+    e->unmonitor(&eventChangedCallback);
+
+    notiyAll(EventType::kEventSignal, e);
+    notiyAll(EventType::kEventSlot, e);
+}
+
+EventInformant::~EventInformant()
+{
+    QReadLocker lk(&locker);
+    QList<EventProvider *> list = std::move(providers);
+    lk.unlock();
+
+    for (auto e : list)
+        e->unmonitor(&eventChangedCallback);
+}
+
+void EventInformant::onEventChanged(int eventType, const QStringList &event)
+{
+    if (!event.isEmpty())
+        notify(eventType, event);
 }
 

@@ -39,8 +39,7 @@ class EventHandle : public QObject, public DSB_D_NAMESPACE::EventProvider
     Q_OBJECT
 public:
     explicit EventHandle(QObject *parent = nullptr);
-    QVariantHash eventSignals() const override;
-    QVariantHash eventSlots() const override;
+    QVariantHash query(int type) const override;
 public slots:
     void wallpaperSetting(QString name);
     void screenSaverSetting(QString name);

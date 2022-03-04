@@ -32,10 +32,12 @@ DSB_D_BEGIN_NAMESPACE
 class EventInformant : public EventProvider
 {
 public:
-    QVariantHash eventSignals() const override;
-    QVariantHash eventSlots() const override;
+    QVariantHash query(int type) const override;
     virtual bool registerEvent(EventProvider *);
     virtual void unRegisterEvent(EventProvider *);
+protected:
+    ~EventInformant();
+    virtual void onEventChanged(int eventType, const QStringList &event);
 protected:
     QList<EventProvider *> providers;
     mutable QReadWriteLock locker;
