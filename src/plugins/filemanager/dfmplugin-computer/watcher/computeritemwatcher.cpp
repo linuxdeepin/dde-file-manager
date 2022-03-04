@@ -544,7 +544,7 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
         if (id.startsWith("smb"))
             onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
     } else {
-        Q_EMIT this->itemUpdated(devUrl);
+        Q_EMIT this->itemRemoved(devUrl);
     }
 }
 

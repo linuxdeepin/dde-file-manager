@@ -80,7 +80,7 @@ QIcon ProtocolEntryFileEntity::icon() const
 
 bool ProtocolEntryFileEntity::exists() const
 {
-    return true;
+    return !datas.value(DeviceProperty::kMountPoint).toString().isEmpty();
 }
 
 bool ProtocolEntryFileEntity::showProgress() const
