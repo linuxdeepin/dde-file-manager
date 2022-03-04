@@ -140,10 +140,7 @@ bool FileView::setRootUrl(const QUrl &url)
     setFocus();
 
     model()->setRootUrl(url);
-    QModelIndex rootIndex = model()->setRootUrl(url);
-    setRootIndex(rootIndex);
 
-    qInfo() << QListView::rootIndex();
     loadViewState(url);
     delayUpdateStatusBar();
     setDefaultViewMode();
