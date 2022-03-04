@@ -285,6 +285,7 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QList<QUrl> sources,
                                                       const QUrl target,
                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                      const QVariant custom,
                                                       DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
@@ -292,6 +293,7 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -300,6 +302,7 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
                                                      const QList<QUrl> sources,
                                                      const QUrl target,
                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                     const QVariant custom,
                                                      DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
@@ -307,6 +310,7 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -314,6 +318,7 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
 void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId,
                                                              const QList<QUrl> sources,
                                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                             const QVariant custom,
                                                              DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->moveToTrash(sources, flags);
@@ -321,6 +326,7 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -328,6 +334,7 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
 void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId,
                                                                   const QList<QUrl> sources,
                                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                                  const QVariant custom,
                                                                   DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
@@ -335,6 +342,7 @@ void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
 }
@@ -342,6 +350,7 @@ void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                         const QVariant custom,
                                                          DFMBASE_NAMESPACE::Global::OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
@@ -349,17 +358,19 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
 }
 
-void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, OperaterCallback callback)
+void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, const QVariant custom, OperaterCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->deletes(sources);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kJobHandle, QVariant::fromValue(handle));
+        args->insert(CallbackKey::kCustom, custom);
         callback(args);
     }
 }

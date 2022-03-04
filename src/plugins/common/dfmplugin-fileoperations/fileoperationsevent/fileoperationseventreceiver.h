@@ -75,26 +75,32 @@ public slots:
                              const QList<QUrl> sources,
                              const QUrl target,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                             const QVariant custom,
                              DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationCut(const quint64 windowId,
                             const QList<QUrl> sources,
                             const QUrl target,
                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                            const QVariant custom,
                             DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationMoveToTrash(const quint64 windowId,
                                     const QList<QUrl> sources,
                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                    const QVariant custom,
                                     DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationRestoreFromTrash(const quint64 windowId,
                                          const QList<QUrl> sources,
                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                         const QVariant custom,
                                          DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                const QVariant custom,
                                 DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationCleanTrash(const quint64 windowId,
                                    const QList<QUrl> sources,
+                                   const QVariant custom,
                                    DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationOpenFiles(const quint64 windowId,
                                   const QList<QUrl> urls);
