@@ -57,7 +57,7 @@ public:
     void dropToApp(const QList<QUrl> &urls, const QString &app);
 
 public:
-    static void callBackFunction(const dfmbase::Global::CallbackArgus args);
+    void callBackFunction(const dfmbase::Global::CallbackArgus args);
 
 protected:
     explicit FileOperaterProxy(QObject *parent = nullptr);

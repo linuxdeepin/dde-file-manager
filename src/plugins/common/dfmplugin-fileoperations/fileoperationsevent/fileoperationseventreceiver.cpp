@@ -556,6 +556,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
+        // TODO lanxs insert kTargets
         args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
         args->insert(CallbackKey::kCustom, custom);
         callback(args);
@@ -585,6 +586,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
+        // TODO lanxs insert kTargets
         args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
         args->insert(CallbackKey::kCustom, custom);
         callback(args);

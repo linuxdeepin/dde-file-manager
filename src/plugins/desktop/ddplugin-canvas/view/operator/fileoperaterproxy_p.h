@@ -23,6 +23,8 @@
 
 #include "fileoperaterproxy.h"
 
+#include <QTimer>
+
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class FileOperaterProxyPrivate : public QObject
@@ -45,10 +47,17 @@ public:
 
     explicit FileOperaterProxyPrivate(FileOperaterProxy *q_ptr);
 
-    static void callBackTouchFile(const QUrl &target, const QVariantMap &customData);
+    void callBackTouchFile(const QUrl &target, const QVariantMap &customData);
+    void callBackPasteFiles(const JobInfoPointer info);
+    void callBackRenameFiles(const QList<QUrl> &targets);
+
+    void delaySelectUrls(const QList<QUrl> &urls, int ms = 10);
+    void doSelectUrls(const QList<QUrl> &urls);
 
 public:
     FileOperaterProxy *const q;
+    QSharedPointer<QTimer> selectTimer;
+    DFMGLOBAL_NAMESPACE::OperaterCallback callBack;
 };
 
 DDP_CANVAS_END_NAMESPACE

@@ -143,9 +143,9 @@ void CanvasModelPrivate::delayRefresh(int ms)
     if (nullptr != refreshTimer.get())
         refreshTimer->stop();
 
-    if (ms < 1)
+    if (ms < 1) {
         doRefresh();
-    else {
+    } else {
         refreshTimer.reset(new QTimer);
         refreshTimer->setSingleShot(true);
         connect(refreshTimer.get(), &QTimer::timeout, this, &CanvasModelPrivate::doRefresh);

@@ -50,7 +50,7 @@ enum class CallbackKey : uint8_t {
     kCustom,   // QVariant
 };
 using CallbackArgus = QSharedPointer<QMap<CallbackKey, QVariant>>;
-using OperaterCallback = void (*)(const CallbackArgus args);
+using OperaterCallback = std::function<void(const CallbackArgus args)>;
 
 enum CreateFileType : uint8_t {
     kCreateFileTypeUnknow = 0,

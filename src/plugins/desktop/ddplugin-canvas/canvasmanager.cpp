@@ -95,7 +95,7 @@ void CanvasManager::init()
 void CanvasManager::update()
 {
     for (auto itor = d->viewMap.begin(); itor != d->viewMap.end(); ++itor) {
-        itor.value()->repaint();
+        itor.value()->update();
     }
 }
 
@@ -406,7 +406,6 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
             continue;
         QUrl url = canvasModel->url(index);
 
-        // todo:判断文件是否为隐藏文件，当前若不显示隐藏文件，则跳过
         QString path = url.toString();
         QPair<int, QPoint> pos;
         if (GridIns->point(path, pos)) {

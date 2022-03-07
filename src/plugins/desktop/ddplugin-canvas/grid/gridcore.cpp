@@ -103,7 +103,7 @@ bool GridCore::findVoidPos(GridPos &pos) const
 
         // no void pos
         if (isFull(idx))
-            break;
+            continue;
 
         // find first void pos.
         for (int x = 0; x < size.width(); ++x)
