@@ -22,6 +22,8 @@
 */
 #include "burnhelper.h"
 
+#include "dfm-base/base/urlroute.h"
+
 #include <DDialog>
 #include <QObject>
 #include <QCoreApplication>
@@ -31,6 +33,11 @@
 
 DPBURN_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+// TODO(zhangs): replace it
+#define BURN_SEG_ONDISC "disc_files"
+#define BURN_SEG_STAGING "staging_files"
 
 int BurnHelper::showOpticalBlankConfirmationDialog()
 {
@@ -58,9 +65,34 @@ int BurnHelper::showOpticalBlankConfirmationDialog()
     return code;
 }
 
+int BurnHelper::showOpticalImageOpSelectionDialog()
+{
+    QString EraseDisk = QObject::tr("How do you want to use this disc?");
+    QStringList buttonTexts;
+    buttonTexts.append(QObject::tr("Cancel", "button"));
+    buttonTexts.append(QObject::tr("Burn image", "button"));
+    buttonTexts.append(QObject::tr("Burn files", "button"));
+    DDialog d;
+
+    if (!d.parentWidget())
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+
+    d.setTitle(EraseDisk);
+    d.setIcon(QIcon::fromTheme("media-optical").pixmap(64, 64));
+    d.addButton(buttonTexts[0], false, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[2], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(2);
+    d.getButton(2)->setFocus();
+    d.moveToCenter();
+
+    int code = d.exec();
+    return code;
+}
+
+// TODO(zhangs): replace it
 QUrl BurnHelper::localStagingFile(QString dev)
 {
-    // TODO(zhangs): replace it
 #define DISCBURN_STAGING "discburn"
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)   // ~/.cache
                                + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"   // ~/.cache/deepin/discburn/
@@ -93,4 +125,15 @@ QString BurnHelper::parseXorrisoErrorMessage(const QStringList &msg)
         }
     }
     return QObject::tr("Unknown error");
+}
+
+// TODO(zhangs): repalce it
+QString BurnHelper::burnDestDevice(const QUrl &url)
+{
+    static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
+
+    QRegularExpressionMatch m;
+    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(rxp, &m))
+        return {};
+    return m.captured(1);
 }

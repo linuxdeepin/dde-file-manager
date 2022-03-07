@@ -125,18 +125,14 @@ void OpticalMediaWidget::initializeUi()
     lbAvailable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     lbMediatype->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     lbAvailable->setAlignment(Qt::AlignCenter);
+
+    statisticWorker = new FileStatisticsJob(this);
 }
 
 void OpticalMediaWidget::initConnect()
 {
-    // TODO(zhangs): wait DFileStatisticsJob impl!
-
-    // TODO(zhangs): temp code
-    connect(pbBurn, &QPushButton::clicked, this, [this]() {
-        auto id = OpticalHelper::winServIns()->findWindowId(this);
-        auto window = OpticalHelper::winServIns()->findWindowById(id);
-        OpticalEventCaller::sendOpenBurnDlg(curDev, isSupportedUDF(), window);
-    });
+    connect(pbBurn, &QPushButton::clicked, this, &OpticalMediaWidget::onBurnButtonClicked);
+    connect(statisticWorker, &FileStatisticsJob::finished, this, &OpticalMediaWidget::onStagingFileStatisticsFinished);
 }
 
 void OpticalMediaWidget::updateUi()
@@ -187,4 +183,77 @@ bool OpticalMediaWidget::isSupportedUDF()
     if (OpticalHelper::isSupportedUDFMedium(curMediaType))
         return true;
     return false;
+}
+
+void OpticalMediaWidget::onBurnButtonClicked()
+{
+    if (statisticWorker->isRunning()) {
+        qWarning() << "statisticWorker is running";
+        return;
+    }
+
+    // not mount point
+    QDir dirMnt(curMnt);
+    if (!dirMnt.exists()) {
+        qWarning() << "Mount points doesn't exist: " << curMnt;
+        return;
+    }
+
+    // not stage files foldder
+    QUrl urlOfStage { OpticalHelper::localStagingFile(curDev) };
+    QDir dirStage(urlOfStage.path());
+    if (!dirStage.exists()) {
+        qWarning() << "Staging files not exist: " << dirStage;
+        return;
+    }
+
+    // empty stage files folder
+    QString errTitle(tr("No files to burn"));
+    QDir::Filters filter { QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden };
+    QFileInfoList listFilesInStage = dirStage.entryInfoList(filter);
+    if (listFilesInStage.count() == 0) {
+        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, errTitle);
+        return;
+    }
+
+    // If there are files or folders with the same name in the root directory
+    // of the disc and the root directory of the staging area,
+    // remove the relevant files or folders from the staging area
+    QFileInfoList &&listFilesOnDisc = curMnt.isEmpty() ? QFileInfoList() : dirMnt.entryInfoList(filter);
+    for (const auto &discFileInfo : listFilesOnDisc) {
+        for (const auto &stageInfo : listFilesInStage) {
+            if (stageInfo.fileName() != discFileInfo.fileName())
+                continue;
+            qInfo() << "Remove file: " << stageInfo.fileName();
+            if (stageInfo.isFile() || stageInfo.isSymLink()) {
+                dirStage.remove(stageInfo.fileName());
+            } else {
+                QDir(stageInfo.absoluteFilePath()).removeRecursively();
+            }
+        }
+    }
+
+    // empty stage files folder
+    listFilesInStage = dirStage.entryInfoList(filter);
+    if (listFilesInStage.count() == 0) {
+        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, errTitle);
+        return;
+    }
+
+    statisticWorker->start({ urlOfStage });
+}
+
+void OpticalMediaWidget::onStagingFileStatisticsFinished()
+{
+    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
+    qint64 avil { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
+    qint64 total { statisticWorker->totalSize() };
+    if (avil == 0 || total > avil) {
+        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, tr("Unable to burn. Not enough free space on the target disk."));
+        return;
+    }
+
+    auto id = OpticalHelper::winServIns()->findWindowId(this);
+    auto window = OpticalHelper::winServIns()->findWindowById(id);
+    OpticalEventCaller::sendOpenBurnDlg(curDev, isSupportedUDF(), window);
 }

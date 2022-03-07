@@ -112,20 +112,20 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
 {
     DDialog d;
     d.setIcon(QIcon::fromTheme("dialog-error"));
-    QString failure_type;
+    QString failureType;
     switch (type) {
     case AbstractBurnJob::kOpticalBlank:
-        failure_type = tr("Disc erase failed");
+        failureType = tr("Disc erase failed");
         break;
     case AbstractBurnJob::kOpticalBurn:
     case AbstractBurnJob::kOpticalImageBurn:
-        failure_type = tr("Burn process failed");
+        failureType = tr("Burn process failed");
         break;
     case AbstractBurnJob::kOpticalCheck:
-        failure_type = tr("Data verification failed");
+        failureType = tr("Data verification failed");
         break;
     }
-    QString failure_str = QString(tr("%1: %2")).arg(failure_type).arg(err);
+    QString failure_str = QString(tr("%1: %2")).arg(failureType).arg(err);
     d.setTitle(failure_str);
     QWidget *detailsw = new QWidget(&d);
     detailsw->setLayout(new QVBoxLayout());

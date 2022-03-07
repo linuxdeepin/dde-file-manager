@@ -29,6 +29,7 @@ namespace Burn {
 namespace EventType {
 const int kShowBurnDlg = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kErase = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kPasteTo = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
 }
 

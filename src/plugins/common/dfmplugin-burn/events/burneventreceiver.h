@@ -42,6 +42,7 @@ public:
 public slots:
     void handleShowBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent);
     void handleErase(const QString &dev);
+    void handlePasteTo(const QList<QUrl> &urls, const QUrl &dest, bool isCopy);
 
 private:
     explicit BurnEventReceiver(QObject *parent = nullptr);

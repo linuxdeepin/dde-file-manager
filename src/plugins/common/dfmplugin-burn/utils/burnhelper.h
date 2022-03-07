@@ -33,8 +33,10 @@ class BurnHelper
 {
 public:
     static int showOpticalBlankConfirmationDialog();
+    static int showOpticalImageOpSelectionDialog();
     static QUrl localStagingFile(QString dev);
     static QString parseXorrisoErrorMessage(const QStringList &msg);
+    static QString burnDestDevice(const QUrl &url);
 };
 
 DPBURN_END_NAMESPACE

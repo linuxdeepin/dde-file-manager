@@ -31,6 +31,7 @@ namespace Burn {
 namespace EventType {
 extern const int kShowBurnDlg;
 extern const int kErase;
+extern const int kPasteTo;
 }
 }
 

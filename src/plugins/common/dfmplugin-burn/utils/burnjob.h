@@ -52,6 +52,12 @@ public:
         kBurnOpts
     };
 
+    enum JobPhase {
+        kReady,
+        kWriteData,
+        kCheckData
+    };
+
     using ProperyMap = QMap<PropertyType, QVariant>;
 
 public:
@@ -89,6 +95,7 @@ protected:
     ProperyMap curProperty;
     JobType curJobType;
     int lastProgress {};
+    int curPhase {};
     QString lastError;
     QStringList lastSrcMessages;
     DFMBURN::JobStatus lastStatus;

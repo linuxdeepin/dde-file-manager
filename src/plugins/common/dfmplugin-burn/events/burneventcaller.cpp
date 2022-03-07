@@ -20,22 +20,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "opticaleventcaller.h"
+#include "burneventcaller.h"
 
-#include "services/common/burn/burn_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <dfm-framework/framework.h>
 
-DPOPTICAL_USE_NAMESPACE
+DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
+void BurnEventCaller::sendDeleteFiles(const QList<QUrl> &files)
 {
-    return &dpfInstance.eventDispatcher();
+    qInfo() << "Delete disc cache: " << files;
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, 0, files, AbstractJobHandler::JobFlag::kNoHint);
 }
 
-void OpticalEventCaller::sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
+void BurnEventCaller::sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, bool isCopy)
 {
-    dispatcher()->publish(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg, dev, isSupportedUDF, parent);
+    if (isCopy)
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint);
+    else
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint);
 }

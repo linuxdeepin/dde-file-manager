@@ -63,6 +63,9 @@ enum CreateFileType : uint8_t {
 };
 
 constexpr char kMimetypeAppDesktop[] { "application/x-desktop" };
+constexpr char kMineTypeCdImage[] { "application/x-cd-image" };
+constexpr char kMineTypeISO9660Image[] { "application/x-iso9660-image" };
+
 constexpr uint8_t kMaxFileNameCharCount { 255 };
 }   //namespace Global
 

@@ -35,7 +35,6 @@ class OpticalEventCaller
     OpticalEventCaller() = delete;
 
 public:
-    static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
     static void sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent);
 };
 

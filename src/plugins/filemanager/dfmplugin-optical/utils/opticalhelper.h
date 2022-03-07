@@ -44,6 +44,7 @@ class OpticalHelper
 public:
     static QIcon icon();
     static QString iconString();
+    static QUrl localStagingParent();
     static QUrl localStagingFile(const QUrl &dest);
     static QUrl localStagingFile(QString dev);
     static QString burnDestDevice(const QUrl &url);

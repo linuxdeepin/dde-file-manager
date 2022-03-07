@@ -50,6 +50,12 @@ QString OpticalHelper::iconString()
     return "media-optical-symbolic";
 }
 
+QUrl OpticalHelper::localStagingParent()
+{
+    return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                               + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/");
+}
+
 QUrl OpticalHelper::localStagingFile(const QUrl &dest)
 {
     if (burnDestDevice(dest).length() == 0)

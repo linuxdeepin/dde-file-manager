@@ -42,6 +42,10 @@ bool burn::start()
     dpfInstance.eventDispatcher().subscribe(Burn::EventType::kErase,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handleErase);
+
+    dpfInstance.eventDispatcher().subscribe(Burn::EventType::kPasteTo,
+                                            BurnEventReceiver::instance(),
+                                            &BurnEventReceiver::handlePasteTo);
     return true;
 }
 

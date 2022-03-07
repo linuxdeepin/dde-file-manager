@@ -26,8 +26,10 @@
 #include "dfmplugin_optical_global.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <QUrl>
+#include <QMimeData>
 
 DPOPTICAL_BEGIN_NAMESPACE
 
@@ -35,10 +37,18 @@ class OpticalFilesHelper
 {
 public:
     static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
-    static JobHandlePointer pasteFilesHandle(const quint64 windowId,
-                                             const QList<QUrl> sources,
-                                             const QUrl target,
-                                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static void pasteFilesHandle(const QList<QUrl> sources,
+                                 const QUrl target,
+                                 bool isCopy = true);
+    static bool writeUrlToClipboardHandle(const quint64 windowId,
+                                          const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                                          const QList<QUrl> urls);
+    static bool openInTerminalHandle(const quint64 windowId,
+                                     const QList<QUrl> urls,
+                                     QString *error);
+    static JobHandlePointer deleteFilesHandle(const quint64 windowId,
+                                              const QList<QUrl> sources,
+                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     // TODO(zhangs): impl other interfaces
 };
 

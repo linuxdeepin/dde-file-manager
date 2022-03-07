@@ -26,6 +26,7 @@
 #include "dfmplugin_optical_global.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/utils/filestatisticsjob.h"
 
 #include <QWidget>
 #include <QHBoxLayout>
@@ -50,6 +51,10 @@ private:
     void handleErrorMount();
     bool isSupportedUDF();
 
+private slots:
+    void onBurnButtonClicked();
+    void onStagingFileStatisticsFinished();
+
 private:
     QHBoxLayout *layout { nullptr };
     QLabel *lbMediatype { nullptr };
@@ -67,6 +72,8 @@ private:
     qint64 curAvial;
     int curMediaType;
     QString curMediaTypeStr;
+
+    DFMBASE_NAMESPACE::FileStatisticsJob *statisticWorker { nullptr };
 };
 
 DPOPTICAL_END_NAMESPACE

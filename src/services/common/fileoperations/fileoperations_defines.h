@@ -110,7 +110,7 @@ struct FileOperationsInfo
     HandleOperationWriteUrlsToClipboard writeUrlsToClipboard { nullptr };
     HandleOperationOpenInTerminal openInTerminal { nullptr };
     HandleOperationCleanTrash cleanTrash { nullptr };
-    HandleOperationWriteDataToClipboard writeDataToClipboard { nullptr };
+    HandleOperationWriteDataToClipboard writeDataToClipboard { nullptr };   // TODO(lanxuesong): impl me!
 };
 
 };   // namespace FileOperationsSpace

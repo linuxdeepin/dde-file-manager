@@ -664,32 +664,33 @@ void PluginManagerPrivate::doUnloadPlugin(PluginMetaObjectPointer &pointer)
     dpfDebug() << "shutdown" << pointer->d->loader->fileName();
 }
 
+// TODO(zhangs): fix me!
 bool PluginManagerPrivate::doDependSort(PluginMetaObjectPointer after, PluginMetaObjectPointer befor)
 {
-    dpfDebug() << after->d->name << befor->d->name;
-    if (after->depends().isEmpty()) {
-        //前节点没有依赖则保持顺序
-        return true;
-    } else {   //前节点存在依赖
-        if (befor->depends().isEmpty()) {
-            //后节点为空则调整顺序
-            return false;
-        } else {   //后节点存在依赖
-            //遍历后节点依赖
-            for (auto depend : befor->d->depends) {
-                //后节点依赖存在前节点
-                if (depend.name() == after->name())
-                    return true;
-            }
-            //遍历前节点依赖
-            for (auto depend : after->d->depends) {
-                //前节点依赖存在后节点
-                if (depend.name() == befor->name())
-                    return false;
-            }
-        }
-    }
-    dpfDebug() << "Unknown Error from" << Q_FUNC_INFO;
+    //    dpfDebug() << after->d->name << befor->d->name;
+    //    if (after->depends().isEmpty()) {
+    //        //前节点没有依赖则保持顺序
+    //        return true;
+    //    } else {   //前节点存在依赖
+    //        if (befor->depends().isEmpty()) {
+    //            //后节点为空则调整顺序
+    //            return false;
+    //        } else {   //后节点存在依赖
+    //            //遍历后节点依赖
+    //            for (auto depend : befor->d->depends) {
+    //                //后节点依赖存在前节点
+    //                if (depend.name() == after->name())
+    //                    return true;
+    //            }
+    //            //遍历前节点依赖
+    //            for (auto depend : after->d->depends) {
+    //                //前节点依赖存在后节点
+    //                if (depend.name() == befor->name())
+    //                    return false;
+    //            }
+    //        }
+    //    }
+    //    dpfDebug() << "Unknown Error from" << Q_FUNC_INFO;
     return false;
 }
 

@@ -21,11 +21,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "opticalfileshelper.h"
-
+#include "utils/opticalhelper.h"
 #include "mastered/masteredmediafileinfo.h"
 #include "events/opticaleventcaller.h"
 
+#include "services/common/burn/burn_defines.h"
+
+#include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/framework.h>
+
+#include <QDir>
+
 DPOPTICAL_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
 {
@@ -34,11 +43,60 @@ bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> url
     for (const QUrl &url : urls) {
         redirectedFileUrls << QUrl::fromLocalFile(MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString());
     }
-    OpticalEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, windowId, urls);
     return true;
 }
 
-JobHandlePointer OpticalFilesHelper::pasteFilesHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const dfmbase::AbstractJobHandler::JobFlags flags)
+void OpticalFilesHelper::pasteFilesHandle(const QList<QUrl> sources, const QUrl target, bool isCopy)
 {
+    DSC_USE_NAMESPACE
+    dpfInstance.eventDispatcher().publish(Burn::EventType::kPasteTo, sources, target, isCopy);
+}
+
+bool OpticalFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
+{
+    // only write file on disc
+    QList<QUrl> redirectedFileUrls;
+    for (const QUrl &url : urls) {
+        MasteredMediaFileInfo info(url);
+        QUrl backerUrl { QUrl::fromLocalFile(info.extraProperties()["mm_backer"].toString()) };
+        if (!OpticalHelper::localStagingParent().isParentOf(backerUrl))
+            redirectedFileUrls.push_back(backerUrl);
+    }
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+    return !redirectedFileUrls.isEmpty();
+}
+
+bool OpticalFilesHelper::openInTerminalHandle(const quint64 windowId, const QList<QUrl> urls, QString *error)
+{
+    Q_UNUSED(error)
+
+    const QString &currentDir = QDir::currentPath();
+
+    QList<QUrl> redirectedFileUrls;
+    for (const QUrl &url : urls) {
+        QString backer { MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString() };
+        if (backer.isEmpty())
+            return false;
+        redirectedFileUrls << QUrl::fromLocalFile(backer);
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, windowId, urls);
+    QDir::setCurrent(currentDir);
+    return true;
+}
+
+JobHandlePointer OpticalFilesHelper::deleteFilesHandle(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    QList<QUrl> redirectedFileUrls;
+    for (const QUrl &url : sources) {
+        QString backer { MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString() };
+        if (backer.isEmpty())
+            continue;
+        if (!OpticalHelper::burnIsOnDisc(url))
+            redirectedFileUrls.push_back(backer);
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, windowId, redirectedFileUrls, flags);
     return {};
 }

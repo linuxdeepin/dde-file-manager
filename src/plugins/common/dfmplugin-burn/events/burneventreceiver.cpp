@@ -24,12 +24,20 @@
 #include "dialogs/burnoptdialog.h"
 #include "utils/burnhelper.h"
 #include "utils/burnjobmanager.h"
+#include "events/burneventcaller.h"
 
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+
+#include <dfm-framework/framework.h>
 
 #include <DDialog>
 #include <QtConcurrent>
+#include <QDir>
 
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -61,7 +69,7 @@ void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUD
         disableISOOpts = false;
     }
 
-    QScopedPointer<BurnOptDialog> dlg(new BurnOptDialog(dev, parent));
+    QScopedPointer<BurnOptDialog> dlg { new BurnOptDialog(dev, parent) };
     dlg->setDefaultVolName(defaultDiscName);
     dlg->setUDFSupported(isSupportedUDF, disableISOOpts);
     dlg->setWriteSpeedInfo(speed);
@@ -74,4 +82,47 @@ void BurnEventReceiver::handleErase(const QString &dev)
 
     if (BurnHelper::showOpticalBlankConfirmationDialog() == DDialog::Accepted)
         BurnJobManager::instance()->startEraseDisc(dev);
+}
+
+void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest, bool isCopy)
+{
+    Q_ASSERT(QThread::currentThread() == qApp->thread());
+
+    QString dev { BurnHelper::burnDestDevice(dest) };
+    if (urls.size() == 1) {
+        QDir destDir { BurnHelper::localStagingFile(dev).path() };
+        destDir.setFilter(QDir::Filter::AllEntries | QDir::Filter::NoDotAndDotDot);
+        QString devId { DeviceManager::blockDeviceId(dev) };
+        auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
+        bool isBlank { map[DeviceProperty::kOpticalBlank].toBool() };
+        auto fi { InfoFactory::create<AbstractFileInfo>(urls.front()) };
+        static const QSet<QString> imageTypes { Global::kMineTypeCdImage, Global::kMineTypeISO9660Image };
+
+        if (isBlank && fi && imageTypes.contains(fi->mimeTypeName()) && destDir.count() == 0) {
+            int r { BurnHelper::showOpticalImageOpSelectionDialog() };
+            if (r == 1) {
+                qint64 srcSize { fi->size() };
+                qint64 avil { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
+                if (avil == 0 || srcSize > avil) {
+                    DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn,
+                                                             tr("Unable to burn. Not enough free space on the target disk."));
+                } else {
+                    QScopedPointer<BurnOptDialog> dlg { new BurnOptDialog(dev) };
+                    dlg->setISOImage(urls.front());
+                    dlg->exec();
+                }
+            }
+
+            if (r == 0 || r == 1)
+                return;
+        }
+    }
+
+    QUrl tmpDest { BurnHelper::localStagingFile(dev) };
+    QFileInfo fileInfo(tmpDest.path());
+    if (fileInfo.isFile())
+        tmpDest = UrlRoute::urlParent(tmpDest);
+    QDir().mkpath(tmpDest.toLocalFile());
+
+    BurnEventCaller::sendPasteFiles(urls, tmpDest, isCopy);
 }

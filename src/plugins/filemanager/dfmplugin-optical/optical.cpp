@@ -96,8 +96,28 @@ void Optical::addFileOperations()
     OpticalHelper::workspaceServIns()->addScheme(SchemeTypes::kBurn);
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;
-    fileOpeationsHandle->copy = &OpticalFilesHelper::pasteFilesHandle;
-    fileOpeationsHandle->cut = &OpticalFilesHelper::pasteFilesHandle;
+    fileOpeationsHandle->copy = [](const quint64 windowId,
+                                   const QList<QUrl> sources,
+                                   const QUrl target,
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags) -> JobHandlePointer {
+        Q_UNUSED(windowId)
+        Q_UNUSED(flags)
+        OpticalFilesHelper::pasteFilesHandle(sources, target);
+        return {};
+    };
+    fileOpeationsHandle->cut = [](const quint64 windowId,
+                                  const QList<QUrl> sources,
+                                  const QUrl target,
+                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags) -> JobHandlePointer {
+        Q_UNUSED(windowId)
+        Q_UNUSED(flags)
+        OpticalFilesHelper::pasteFilesHandle(sources, target, false);
+        return {};
+    };
+    fileOpeationsHandle->writeUrlsToClipboard = &OpticalFilesHelper::writeUrlToClipboardHandle;
+    fileOpeationsHandle->openInTerminal = &OpticalFilesHelper::openInTerminalHandle;
+    fileOpeationsHandle->deletes = &OpticalFilesHelper::deleteFilesHandle;
+    fileOpeationsHandle->moveToTash = &OpticalFilesHelper::deleteFilesHandle;
     OpticalHelper::fileOperationsServIns()->registerOperations(SchemeTypes::kBurn, fileOpeationsHandle);
 }
 

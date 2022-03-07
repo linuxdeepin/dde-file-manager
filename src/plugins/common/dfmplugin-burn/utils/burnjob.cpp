@@ -22,6 +22,7 @@
 */
 #include "burnjob.h"
 #include "utils/burnhelper.h"
+#include "events/burneventcaller.h"
 
 #include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/utils/devicemanager.h"
@@ -44,6 +45,7 @@ static constexpr char kMapKeyStatus[] { "status" };
 static constexpr char kMapKeyProgress[] { "progress" };
 static constexpr char kMapKeySpeed[] { "speed" };
 static constexpr char kMapKeyMsg[] { "msg" };
+static constexpr char kMapKeyPhase[] { "phase" };
 
 AbstractBurnJob::AbstractBurnJob(const QString &dev, const JobHandlePointer handler)
     : curDev(dev), jobHandlePtr(handler)
@@ -84,12 +86,19 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
             QByteArray bufByes(buf);
             qDebug() << "burn files, read bytes json:" << bufByes;
             QJsonParseError jsonError;
-            QJsonObject obj = QJsonDocument::fromJson(bufByes, &jsonError).object();
+            QJsonObject obj { QJsonDocument::fromJson(bufByes, &jsonError).object() };
             if (jsonError.error == QJsonParseError::NoError) {
-                int stat = obj["status"].toInt();
-                int progress = obj["progress"].toInt();
-                QString speed = obj["speed"].toString();
-                QJsonArray jsonArray = obj["msg"].toArray();
+                int stat { obj[kMapKeyStatus].toInt() };
+                int progress { obj[kMapKeyProgress].toInt() };
+                QString &&speed = obj[kMapKeySpeed].toString();
+                QJsonArray &&jsonArray = obj[kMapKeyMsg].toArray();
+                int phase { obj[kMapKeyPhase].toInt() };
+                if (phase != curPhase) {
+                    curPhase = phase;
+                    lastProgress = 0;
+                    if (curPhase == JobPhase::kCheckData)
+                        curJobType = JobType::kOpticalCheck;
+                }
                 QStringList msgList;
                 for (int i = 0; i < jsonArray.size(); i++)
                     msgList.append(jsonArray[i].toString());
@@ -233,6 +242,7 @@ QByteArray AbstractBurnJob::updatedInSubProcess(JobStatus status, int progress, 
     obj[kMapKeyProgress] = progress;
     obj[kMapKeySpeed] = speed;
     obj[kMapKeyMsg] = QJsonArray::fromStringList(message);
+    obj[kMapKeyPhase] = curPhase;
     return QJsonDocument(obj).toJson();
 }
 
@@ -251,8 +261,8 @@ void AbstractBurnJob::comfort()
 
 void AbstractBurnJob::deleteStagingFiles()
 {
-    auto url { curProperty[PropertyType::KStagingUrl].toUrl() };
-    // TODO(zhangs): delete files
+    QUrl url { curProperty[PropertyType::KStagingUrl].toUrl() };
+    BurnEventCaller::sendDeleteFiles({ url });
 }
 
 void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString &speed, const QStringList &message)
@@ -321,7 +331,7 @@ void EraseJob::work()
         qWarning() << "Erase Failed: " << manager->lastError();
     qInfo() << "End erase device: " << curDev;
 
-    // TODO(zhangs): must show %100
+    comfort();
 
     // TODO(zhangs): rescan
 }
@@ -341,11 +351,13 @@ void BurnISOFilesJob::writeFunc(int progressFd, int checkFd)
     QString localPath { url.toLocalFile() };
     auto manager = createManager(progressFd);
     manager->setStageFile(localPath);
+    curPhase = kWriteData;
     bool isSuccess { manager->commit(opts, speeds, volName) };
     qInfo() << "Burn ret: " << isSuccess << manager->lastError() << localPath;
     auto check { opts.testFlag(BurnOption::kVerifyDatas) };
     if (check && isSuccess) {
         double gud, slo, bad;
+        curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);
         write(checkFd, &bad, sizeof(bad));
     }
@@ -377,12 +389,14 @@ void BurnISOImageJob::writeFunc(int progressFd, int checkFd)
 
     QString imgPath { url.toLocalFile() };
     auto manager = createManager(progressFd);
+    curPhase = kWriteData;
     bool isSuccess { manager->writeISO(imgPath, speeds) };
     qInfo() << "Burn ISO ret: " << isSuccess << manager->lastError() << imgPath;
 
     auto check { opts.testFlag(BurnOption::kVerifyDatas) };
     if (check && isSuccess) {
         double gud, slo, bad;
+        curPhase = kCheckData;
         manager->checkmedia(&gud, &slo, &bad);
         write(checkFd, &bad, sizeof(bad));
     }
@@ -415,6 +429,7 @@ void BurnUDFFilesJob::writeFunc(int progressFd, int checkFd)
     QString localPath { url.toLocalFile() };
     auto manager = createManager(progressFd);
     manager->setStageFile(localPath);
+    curPhase = kWriteData;
     bool isSuccess { manager->commit(opts, speeds, volName) };
     qInfo() << "Burn UDF ret: " << isSuccess << manager->lastError() << localPath;
 }
