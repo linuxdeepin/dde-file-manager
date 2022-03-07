@@ -42,11 +42,11 @@ public:
 
     virtual ~FilePropertyDialogManager() override;
 
-signals:
-
 public slots:
 
-    void showFilePropertyDialog(const QList<QUrl> &urls);
+    void showPropertyDialog(const QList<QUrl> &urls, int widgetFilter = 0);
+
+    void showFilePropertyDialog(const QList<QUrl> &urls, int widgetFilter);
 
     void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget);
 
@@ -59,11 +59,8 @@ public slots:
     void createControlView(const QUrl &url);
 
 public slots:
-    void showTrashPropertyDialog();
 
-    void showComputerPropertyDialog();
-
-    void showDevicePropertyDialog(const DSC_NAMESPACE::DeviceInfo &info);
+    void showDevicePropertyDialog(const DSC_NAMESPACE::Property::DeviceInfo &info);
 
     void insertExtendedControlDeviceProperty(const QUrl &url, int index, QWidget *widget);
 
@@ -81,12 +78,12 @@ private:
      * \note: ***Used only by the createView property dialog plugin.***
      * \brief Used to create extended control objects.
      */
-    QMap<int, QWidget *> createView(const QUrl &url)
-    {
-        return DSC_NAMESPACE::RegisterCreateMethod::ins()->createView(url);
-    }
+    QMap<int, QWidget *> createView(const QUrl &url);
+
+    QWidget *createCustomizeView(const QUrl &url);
 
     QPoint getPropertyPos(int dialogWidth, int dialogHeight);
+
     QPoint getPerportyPos(int dialogWidth, int dialogHeight, int count, int index);
 
 private:
@@ -94,8 +91,6 @@ private:
     CloseAllDialog *closeAllDialog { nullptr };
     QTimer *closeIndicatorTimer { nullptr };
 
-    TrashPropertyDialog *trashPropertyDialog { nullptr };
-    ComputerPropertyDialog *computerPropertyDialog { nullptr };
     QMap<QUrl, DevicePropertyDialog *> devicePropertyDialogs;
 };
 DPPROPERTYDIALOG_END_NAMESPACE

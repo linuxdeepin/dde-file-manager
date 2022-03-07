@@ -24,6 +24,7 @@
 #include "utils/vaulthelper.h"
 #include "services/filemanager/vault/vaultservice.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <DLabel>
 #include <DDialog>
@@ -145,6 +146,8 @@ void VaultActiveFinishedView::slotEncryptComplete(int nState)
         repaint();
         timer->setSingleShot(true);
         timer->start(500);
+        Settings setting(kVaultTimeConfigFile);
+        setting.setValue(QString("VaultTime"), QString("CreateTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }

@@ -20,11 +20,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "trashcorehelper.h"
+#include "views/trashpropertydialog.h"
 
 #include "dfm-framework/framework.h"
 
 #include "dfm-base/base/standardpaths.h"
 
+DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPTRASHCORE_USE_NAMESPACE
 
@@ -53,4 +55,22 @@ QUrl TrashCoreHelper::rootUrl()
 QUrl TrashCoreHelper::toLocalFile(const QUrl &url)
 {
     return QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path());
+}
+
+QString TrashCoreHelper::scheme()
+{
+    return "trash";
+}
+
+QWidget *TrashCoreHelper::createTrashPropertyDialog(const QUrl &url)
+{
+    static TrashPropertyDialog *trashPropertyDialog = nullptr;
+    if (UrlRoute::isRootUrl(url)) {
+        if (!trashPropertyDialog) {
+            trashPropertyDialog = new TrashPropertyDialog();
+            return trashPropertyDialog;
+        }
+        return trashPropertyDialog;
+    }
+    return nullptr;
 }

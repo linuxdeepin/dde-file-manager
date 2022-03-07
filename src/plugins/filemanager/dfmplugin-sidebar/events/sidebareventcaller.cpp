@@ -29,6 +29,7 @@
 #include <dfm-framework/framework.h>
 #include <QUrl>
 
+DSC_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -63,5 +64,5 @@ void SideBarEventCaller::sendShowFilePropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
+    dispatcher()->publish(Property::EventType::kEvokePropertyDialog, urls);
 }

@@ -57,5 +57,5 @@ void TrashEventCaller::sendEmptyTrash(const quint64 windowID, const QList<QUrl> 
 
 void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)
 {
-    dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeTrashProperty, url);
+    dispatcher()->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, QList<QUrl>() << url);
 }

@@ -30,12 +30,15 @@
 
 DSC_BEGIN_NAMESPACE
 
-namespace PropertyEventType {
-extern const int  kEvokeTrashProperty;
-extern const int  kEvokeComputerProperty;
-extern const int  kEvokeDefaultFileProperty;
-extern const int  kEvokeDefaultDeviceProperty;
-extern const int  kEvokeCustomizeProperty;
+namespace Property {
+namespace EventType {
+extern const int kEvokePropertyDialog;
+}
+
+namespace EventFilePropertyControlFilter {
+extern const int kIconTitle;
+extern const int kBasisInfo;
+extern const int kPermission;
 }
 
 struct DeviceInfo
@@ -64,14 +67,15 @@ public:
 
 public:
     //! 定义创建控件函数类型
-    typedef std::function<QWidget *(const QUrl &url)> createControlView;
+    typedef std::function<QWidget *(const QUrl &url)> createControlViewFunc;
 
 protected:
     //创建函数列表
-    QHash<int, createControlView> constructList {};
+    QHash<int, createControlViewFunc> constructList {};
+    QHash<QString, createControlViewFunc> viewCreateFunctionHash {};
 
 public:
-    bool registerFunction(createControlView view, int index = -1, QString *errorString = nullptr)
+    bool registerFunction(createControlViewFunc view, int index = -1, QString *errorString = nullptr)
     {
         QString error;
         DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
@@ -88,7 +92,24 @@ public:
         return true;
     }
 
-    QMap<int, QWidget *> createView(const QUrl &url)
+    bool registerViewCreateFunction(createControlViewFunc view, QString scheme)
+    {
+        if (!viewCreateFunctionHash.contains(scheme)) {
+            viewCreateFunctionHash.insert(scheme, view);
+        }
+        return true;
+    }
+
+    QWidget *createWidget(const QUrl &url)
+    {
+        if (viewCreateFunctionHash.contains(url.scheme())) {
+            createControlViewFunc func = viewCreateFunctionHash.value(url.scheme());
+            return func(url);
+        }
+        return nullptr;
+    }
+
+    QMap<int, QWidget *> createControlView(const QUrl &url)
     {
         QMap<int, QWidget *> temp {};
         for (int i = 0; i < constructList.count(); ++i) {
@@ -99,6 +120,7 @@ public:
         return temp;
     }
 };
+}
 DSC_END_NAMESPACE
-Q_DECLARE_METATYPE(DSC_NAMESPACE::DeviceInfo)
+Q_DECLARE_METATYPE(DSC_NAMESPACE::Property::DeviceInfo)
 #endif   //PROPERTY_DEFINE_H

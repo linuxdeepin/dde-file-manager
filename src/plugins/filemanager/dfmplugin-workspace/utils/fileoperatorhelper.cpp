@@ -240,7 +240,7 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
         urls.append(view->rootUrl());
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty,
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
                                           urls);
 }
 

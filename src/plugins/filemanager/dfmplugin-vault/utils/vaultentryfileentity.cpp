@@ -28,6 +28,7 @@ VaultEntryFileEntity::VaultEntryFileEntity(const QUrl &url)
 {
     fileCalculationUtils = new FileStatisticsJob;
     connect(fileCalculationUtils, &FileStatisticsJob::sizeChanged, this, &VaultEntryFileEntity::slotFileDirSizeChange);
+    connect(fileCalculationUtils, &FileStatisticsJob::finished, this, &VaultEntryFileEntity::slotFinishedThread);
 }
 
 VaultEntryFileEntity::~VaultEntryFileEntity()
@@ -59,6 +60,7 @@ bool VaultEntryFileEntity::showProgress() const
 bool VaultEntryFileEntity::showTotalSize() const
 {
     if (VaultHelper::state(VaultHelper::vaultLockPath()) == VaultState::kUnlocked) {
+        showSizeState = true;
         fileCalculationUtils->start(QList<QUrl>() << VaultHelper::rootUrl());
         return true;
     }
@@ -91,7 +93,10 @@ void VaultEntryFileEntity::refresh()
 
 qint64 VaultEntryFileEntity::sizeTotal() const
 {
-    return vaultTotal;
+    if (vaultTotal > 0)
+        return vaultTotal;
+    else
+        return totalchange;
 }
 
 QUrl VaultEntryFileEntity::targetUrl() const
@@ -105,5 +110,15 @@ QUrl VaultEntryFileEntity::targetUrl() const
 
 void VaultEntryFileEntity::slotFileDirSizeChange(qint64 size)
 {
-    vaultTotal = size;
+    if (showSizeState) {
+        totalchange = size;
+        if (vaultTotal > 0 && totalchange > vaultTotal)
+            vaultTotal = totalchange;
+    }
+}
+
+void VaultEntryFileEntity::slotFinishedThread()
+{
+    showSizeState = false;
+    vaultTotal = totalchange;
 }

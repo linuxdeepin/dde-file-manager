@@ -46,7 +46,7 @@ void BookMarkEventCaller::sendShowBookMarkPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dispatcher()->publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
+    dispatcher()->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 
 void BookMarkEventCaller::sendOpenBookMarkInWindow(quint64 windowId, const QUrl &url)

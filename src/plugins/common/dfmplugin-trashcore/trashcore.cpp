@@ -20,8 +20,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "trashcore.h"
+#include "utils/trashcorehelper.h"
 #include "events/trashcoreunicastreceiver.h"
 #include "events/trashcoreeventreceiver.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "services/common/trash/trash_defines.h"
 
@@ -38,6 +40,8 @@ bool TrashCore::start()
     dpfInstance.eventDispatcher().subscribe(Trash::EventType::kEmptyTrash,
                                             TrashCoreEventReceiver::instance(),
                                             &TrashCoreEventReceiver::handleEmptyTrash);
+    propertyServIns->registerMethod(TrashCoreHelper::createTrashPropertyDialog, TrashCoreHelper::scheme());
+
     return true;
 }
 

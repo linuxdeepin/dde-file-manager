@@ -111,12 +111,12 @@ void ComputerEventCaller::sendShowFilePropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty, urls);
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 
 void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info)
 {
-    DSC_NAMESPACE::DeviceInfo devInfo;
+    DSC_NAMESPACE::Property::DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
     devInfo.deviceUrl = info->url();
     devInfo.deviceName = info->displayName();
@@ -125,7 +125,7 @@ void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPoi
     devInfo.totalCapacity = info->sizeTotal();
     devInfo.availableSpace = info->sizeFree();
 
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultDeviceProperty, devInfo);
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, devInfo);
 }
 
 void ComputerEventCaller::sendErase(const QString &dev)

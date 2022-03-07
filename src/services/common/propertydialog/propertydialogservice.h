@@ -40,45 +40,12 @@ public:
         return "org.deepin.service.PropertyDialogService";
     }
 
-    /*!
-     * \brief Used to register functions for creating extended control objects.
-     * \param[in] view A function to create an extended control object.(The function returns the object type, see class in extendedcontrolview.h.)
-     * \param[in] index control insert subscript
-     * \param[out] error error get error message
-     * \return true if the registration is successful, otherwise it fails.
-     * \example:
-     * class A :public QWidget
-     * {
-     *      Q_OBJECT
-     *      Q_DISABLE_COPY(A)
-     *  public:
-     *      explicit A(QWidget *parent = nullptr):QWidget(parent){}
-     * }
-     *
-     * A * fun(const QUrl &url)
-     * {
-     *      根据url判断是否创建控件对象
-     *      创建
-     *      A *a = new A();
-     *      return a;
-     *      不创建
-     *      return nullptr;
-     * }
-     *
-     * QString errStr;
-     * auto &ctx = dpfInstance.serviceContext();
-     * if (!ctx.load(WindowsService::name(), &errStr)) {
-     * qCritical() << errStr;
-     * abort();
-     * }
-     * PropertyDialogService *service = ctx.service<PropertyDialogService>(PropertyDialogService::name());
-     * QString error;
-     * bool flg = service->registerMethod(fun, 1, &error);
-     */
-    bool registerMethod(RegisterCreateMethod::createControlView view, int index = -1, QString *error = nullptr)
-    {
-        return RegisterCreateMethod::ins()->registerFunction(view, index, error);
-    }
+    static PropertyDialogService *instance();
+
+    bool registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, int index = -1, QString *error = nullptr);
+
+    bool registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, QString scheme);
 };
 DSC_END_NAMESPACE
+#define propertyServIns ::DSC_NAMESPACE::PropertyDialogService::instance()
 #endif   // PROPERTYDIALOGSERVICE_H

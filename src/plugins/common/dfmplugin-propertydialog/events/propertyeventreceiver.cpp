@@ -44,36 +44,20 @@ PropertyEventReceiver *PropertyEventReceiver::instance()
 
 void PropertyEventReceiver::connectService()
 {
-    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeDefaultFileProperty, this, &PropertyEventReceiver::showFilePropertyControl);
-    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeDefaultDeviceProperty, this, &PropertyEventReceiver::showDeviceProperty);
-    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeTrashProperty, this, &PropertyEventReceiver::showTrashProperty);
-    dpfInstance.eventDispatcher().subscribe(PropertyEventType::kEvokeComputerProperty, this, &PropertyEventReceiver::showComputerProperty);
+    dpfInstance.eventDispatcher().subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showFilePropertyControl);
+    dpfInstance.eventDispatcher().subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showDeviceProperty);
 }
 
 void PropertyEventReceiver::showFilePropertyControl(const QList<QUrl> &url)
 {
     FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
-    fileDialogManager->showFilePropertyDialog(url);
+    fileDialogManager->showPropertyDialog(url);
 }
 
-void PropertyEventReceiver::showDeviceProperty(const DeviceInfo &info)
+void PropertyEventReceiver::showDeviceProperty(const Property::DeviceInfo &info)
 {
-    FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
-    fileDialogManager->showDevicePropertyDialog(info);
-}
-
-void PropertyEventReceiver::showTrashProperty(const QUrl &url)
-{
-    FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
-    fileDialogManager->showTrashPropertyDialog();
-}
-
-void PropertyEventReceiver::showComputerProperty(const QUrl &url)
-{
-    FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
-    fileDialogManager->showComputerPropertyDialog();
-}
-
-void PropertyEventReceiver::showCustomizeProperty(const QUrl &url)
-{
+    if (!info.deviceUrl.isEmpty()) {
+        FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
+        fileDialogManager->showDevicePropertyDialog(info);
+    }
 }

@@ -25,6 +25,7 @@
 #include "views/vaultactiveview.h"
 #include "views/vaultunlockpages.h"
 #include "views/vaultremovepages.h"
+#include "views/vaultpropertydialog.h"
 #include "utils/encryption/vaultconfig.h"
 #include "events/vaulteventcaller.h"
 
@@ -235,7 +236,11 @@ QMenu *VaultHelper::createMenu()
         menu->addAction(QObject::tr("Delete Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
 
         menu->addAction(QObject::tr("Property"), []() {
-
+            QUrl url;
+            url.setScheme(scheme());
+            url.setPath("/");
+            url.setHost("");
+            VaultEventCaller::sendVaultProperty(url);
         });
     } break;
     case VaultState::kUnderProcess:
@@ -245,6 +250,22 @@ QMenu *VaultHelper::createMenu()
     }
 
     return menu;
+}
+
+QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
+{
+    static VaultPropertyDialog *vaultDialog = nullptr;
+    QUrl rUrl = rootUrl();
+    bool flg = rUrl == url;
+    if ((UrlRoute::isRootUrl(url) || flg) && !vaultDialog) {
+        vaultDialog = new VaultPropertyDialog();
+        vaultDialog->selectFileUrl(url);
+        return vaultDialog;
+    } else if ((UrlRoute::isRootUrl(url) || flg) && vaultDialog) {
+        return vaultDialog;
+    } else {
+        return nullptr;
+    }
 }
 
 void VaultHelper::createVault(QString &password)
@@ -302,6 +323,11 @@ void VaultHelper::openWindow()
     url.setPath("/");
     url.setHost("");
     defaultCdAction(rootUrl());
+}
+
+void VaultHelper::openWidWindow(quint64 winID, const QUrl &url)
+{
+    VaultEventCaller::sendItemActived(winID, url);
 }
 
 void VaultHelper::newOpenWindow()

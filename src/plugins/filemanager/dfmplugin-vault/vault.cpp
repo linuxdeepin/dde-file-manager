@@ -33,6 +33,7 @@
 #include "services/filemanager/computer/computerservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -41,6 +42,7 @@
 
 #include <dfm-framework/framework.h>
 
+DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -78,6 +80,11 @@ void Vault::initialize()
     }
 
     if (!ctx.load(WindowsService::name(), &errStr)) {
+        qCritical() << errStr;
+        abort();
+    }
+
+    if (!ctx.load(PropertyDialogService::name(), &errStr)) {
         qCritical() << errStr;
         abort();
     }
@@ -131,6 +138,8 @@ bool Vault::start()
     GlobalPrivateService::workspaceService->addScheme(VaultHelper::scheme());
     connect(GlobalPrivateService::windowsService, &WindowsService::windowOpened, this, &Vault::onWindowOpened, Qt::DirectConnection);
     VaultEventReceiver::instance()->connectEvent();
+
+    propertyServIns->registerMethod(VaultHelper::createVaultPropertyDialog, VaultHelper::scheme());
     return true;
 }
 

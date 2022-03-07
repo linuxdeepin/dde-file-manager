@@ -48,18 +48,24 @@ FilePropertyDialogManager::~FilePropertyDialogManager()
         closeAllDialog->deleteLater();
     }
 
-    if (trashPropertyDialog) {
-        trashPropertyDialog->deleteLater();
-    }
-
-    if (computerPropertyDialog) {
-        computerPropertyDialog->deleteLater();
-    }
-
     devicePropertyDialogs.clear();
 }
 
-void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls)
+void FilePropertyDialogManager::showPropertyDialog(const QList<QUrl> &urls, int widgetFilter)
+{
+    for (const QUrl &url : urls) {
+        QWidget *widget = createCustomizeView(url);
+        if (widget) {
+            widget->show();
+            widget->activateWindow();
+        } else {
+            showFilePropertyDialog(urls, widgetFilter);
+            break;
+        }
+    }
+}
+
+void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls, int widgetFilter)
 {
     int count = urls.count();
     if (count < kMaxPropertyDialogNumber) {
@@ -67,7 +73,7 @@ void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls)
             int index = urls.indexOf(url);
             if (!filePropertyDialogs.contains(url)) {
                 FilePropertyDialog *dialog = new FilePropertyDialog();
-                dialog->setSelectFileUrl(url);
+                dialog->selectFileUrl(url, widgetFilter);
                 filePropertyDialogs.insert(url, dialog);
                 createControlView(url);
                 connect(dialog, &FilePropertyDialog::closed, this, &FilePropertyDialogManager::closeFilePropertyDialog);
@@ -164,27 +170,7 @@ void FilePropertyDialogManager::createControlView(const QUrl &url)
     }
 }
 
-void FilePropertyDialogManager::showTrashPropertyDialog()
-{
-    if (trashPropertyDialog == nullptr) {
-        trashPropertyDialog = new TrashPropertyDialog;
-        trashPropertyDialog->show();
-    }
-    trashPropertyDialog->show();
-    trashPropertyDialog->activateWindow();
-}
-
-void FilePropertyDialogManager::showComputerPropertyDialog()
-{
-    if (computerPropertyDialog == nullptr) {
-        computerPropertyDialog = new ComputerPropertyDialog;
-        computerPropertyDialog->show();
-    }
-    computerPropertyDialog->show();
-    computerPropertyDialog->activateWindow();
-}
-
-void FilePropertyDialogManager::showDevicePropertyDialog(const DeviceInfo &info)
+void FilePropertyDialogManager::showDevicePropertyDialog(const Property::DeviceInfo &info)
 {
     if (devicePropertyDialogs.contains(info.deviceUrl)) {
         devicePropertyDialogs.value(info.deviceUrl)->show();
@@ -246,6 +232,16 @@ FilePropertyDialogManager *FilePropertyDialogManager::instance()
 {
     static FilePropertyDialogManager propertyManager;
     return &propertyManager;
+}
+
+QMap<int, QWidget *> FilePropertyDialogManager::createView(const QUrl &url)
+{
+    return Property::RegisterCreateMethod::ins()->createControlView(url);
+}
+
+QWidget *FilePropertyDialogManager::createCustomizeView(const QUrl &url)
+{
+    return Property::RegisterCreateMethod::ins()->createWidget(url);
 }
 
 QPoint FilePropertyDialogManager::getPropertyPos(int dialogWidth, int dialogHeight)

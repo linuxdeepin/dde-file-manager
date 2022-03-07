@@ -268,7 +268,7 @@ void FileOperaterProxy::deleteFiles(const CanvasView *view)
 
 void FileOperaterProxy::showFilesProperty(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::PropertyEventType::kEvokeDefaultFileProperty,
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
                                           view->selectionModel()->selectedUrls());
 }
 

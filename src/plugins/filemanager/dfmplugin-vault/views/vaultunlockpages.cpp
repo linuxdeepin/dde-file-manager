@@ -23,12 +23,13 @@
 
 #include "vaultunlockpages.h"
 #include "vaultretrievepassword.h"
+#include "vaultretrievepassword.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaultglobaldefine.h"
-#include "vaultretrievepassword.h"
 #include "utils/vaulthelper.h"
 #include "services/filemanager/vault/vaultservice.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <DPushButton>
 #include <DPasswordEdit>
@@ -259,10 +260,9 @@ void VaultUnlockPages::onVaultUlocked(int state)
     if (unlockByPwd) {
         if (state == 0) {
             UrlRoute::regScheme(VaultHelper::scheme(), VaultHelper::rootUrl().path(), VaultHelper::icon(), false, tr("My Vault"));
-            QUrl url;
-            url.setScheme(VaultHelper::scheme());
-            url.setPath("/");
-            VaultHelper::defaultCdAction(url);
+            VaultHelper::defaultCdAction(VaultHelper::rootUrl());
+            Settings setting(kVaultTimeConfigFile);
+            setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
             close();
         } else if (state == 1) {   //! cryfs没有成功卸载挂载目录
             //! 解决sp3bug-38885:注销系统时，cryfs卸载挂载目录会概率性失败

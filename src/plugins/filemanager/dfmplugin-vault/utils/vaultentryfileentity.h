@@ -52,10 +52,13 @@ public:
 public slots:
     void slotFileDirSizeChange(qint64 size);
 
+    void slotFinishedThread();
+
 private:
     qint64 vaultTotal { 0 };
+    qint64 totalchange { 0 };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
-    bool showSizeState { false };
+    mutable bool showSizeState { false };
 };
 DPVAULT_END_NAMESPACE
 #endif   // VAULTENTRYFILEENTITY_H

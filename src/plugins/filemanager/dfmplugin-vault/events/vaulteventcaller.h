@@ -34,6 +34,7 @@ public:
     static void sendItemActived(quint64 windowId, const QUrl &url);
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
+    static void sendVaultProperty(const QUrl &url);
 };
 DPVAULT_END_NAMESPACE
 #endif   //VAULTEVENTCALLER_H

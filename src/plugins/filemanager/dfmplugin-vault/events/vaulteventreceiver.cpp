@@ -32,7 +32,7 @@ void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
     if (url.path().contains("vault")) {
         switch (VaultHelper::state(VaultHelper::vaultLockPath())) {
         case VaultState::kUnlocked: {
-            VaultHelper::instance()->openWindow();
+            VaultHelper::instance()->openWidWindow(winId, VaultHelper::rootUrl());
         } break;
         case VaultState::kEncrypted: {
             VaultHelper::instance()->unlockVaultDialog();

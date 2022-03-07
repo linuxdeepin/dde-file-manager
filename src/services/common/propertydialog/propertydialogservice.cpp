@@ -22,12 +22,15 @@
 #include "dfm-base/utils/universalutils.h"
 
 DSC_BEGIN_NAMESPACE
-namespace PropertyEventType {
-const int  kEvokeTrashProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int  kEvokeComputerProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int  kEvokeDefaultFileProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int  kEvokeDefaultDeviceProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int  kEvokeCustomizeProperty = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+namespace Property {
+namespace EventType {
+const int kEvokePropertyDialog = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+}
+namespace EventFilePropertyControlFilter {
+const int kIconTitle { 0x40000 };
+const int kBasisInfo { 0x20000 };
+const int kPermission { 0x10000 };
+}
 }
 DSC_END_NAMESPACE
 
@@ -38,4 +41,96 @@ PropertyDialogService::PropertyDialogService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<PropertyDialogService>()
 {
+}
+
+PropertyDialogService *PropertyDialogService::instance()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::PropertyDialogService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::PropertyDialogService>(DSC_NAMESPACE::PropertyDialogService::name());
+}
+
+/*!
+ * \brief Used to register functions for creating extended control objects.
+ * \param[in] view A function to create an extended control object.(The function returns the object type, see class in extendedcontrolview.h.)
+ * \param[in] index control insert subscript
+ * \param[out] error error get error message
+ * \return true if the registration is successful, otherwise it fails.
+ * \example:
+ * class A :public QWidget
+ * {
+ *      Q_OBJECT
+ *      Q_DISABLE_COPY(A)
+ *  public:
+ *      explicit A(QWidget *parent = nullptr):QWidget(parent){}
+ * }
+ *
+ * QWidget * fun(const QUrl &url)
+ * {
+ *      根据url判断是否创建控件对象
+ *      创建
+ *      A *a = new A();
+ *      return a;
+ *      不创建
+ *      return nullptr;
+ * }
+ *
+ * QString errStr;
+ * auto &ctx = dpfInstance.serviceContext();
+ * if (!ctx.load(WindowsService::name(), &errStr)) {
+ * qCritical() << errStr;
+ * abort();
+ * }
+ * PropertyDialogService *service = ctx.service<PropertyDialogService>(PropertyDialogService::name());
+ * QString error;
+ * bool flg = service->registerMethod(fun, 1, &error);
+ */
+bool PropertyDialogService::registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, int index, QString *error)
+{
+    return Property::RegisterCreateMethod::ins()->registerFunction(view, index, error);
+}
+
+/*!
+ * \brief Registers functions for creating custom properties dialog objects.
+ * \param[in] view  Create custom properties dialog function.
+ * \param[in] scheme corresponding to the creation function.
+ * \return true if the registration is successful, otherwise it fails.
+ * \example:
+ * class A :public QWidget
+ * {
+ *      Q_OBJECT
+ *      Q_DISABLE_COPY(A)
+ *  public:
+ *      explicit A(QWidget *parent = nullptr):QWidget(parent){}
+ * }
+ *
+ * QWidget * fun(const QUrl &url)
+ * {
+ *      根据url判断是否创建控件对象
+ *      创建
+ *      A *a = new A();
+ *      return a;
+ *      不创建
+ *      return nullptr;
+ * }
+ *
+ * QString errStr;
+ * auto &ctx = dpfInstance.serviceContext();
+ * if (!ctx.load(WindowsService::name(), &errStr)) {
+ * qCritical() << errStr;
+ * abort();
+ * }
+ * PropertyDialogService *service = ctx.service<PropertyDialogService>(PropertyDialogService::name());
+ * QString error;
+ *
+ * bool flg = service->registerMethod(fun, scheme);
+ */
+bool PropertyDialogService::registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, QString scheme)
+{
+    return Property::RegisterCreateMethod::ins()->registerViewCreateFunction(view, scheme);
 }

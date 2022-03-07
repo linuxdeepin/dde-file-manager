@@ -17,25 +17,26 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef DEVICEBASICWIDGET_H
-#define DEVICEBASICWIDGET_H
+ */
+#ifndef BASICWIDGET_H
+#define BASICWIDGET_H
 
-#include "dfmplugin_propertydialog_global.h"
+#include "dfmplugin_vault_global.h"
+
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
-#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DArrowLineDrawer>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
-class DeviceBasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
+#include <QCheckBox>
+
+DPVAULT_BEGIN_NAMESPACE
+class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
 public:
-    explicit DeviceBasicWidget(QWidget *parent = nullptr);
-    virtual ~DeviceBasicWidget() override;
+    explicit BasicWidget(QWidget *parent = nullptr);
+    virtual ~BasicWidget() override;
 
 private:
     void initUI();
@@ -43,22 +44,28 @@ private:
 public:
     void selectFileUrl(const QUrl &url);
 
-    void selectFileInfo(const DSC_NAMESPACE::Property::DeviceInfo &info);
+    qint64 getFileSize();
+
+    int getFileCount();
 
 public slots:
-    void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);
 
-signals:
-    void heightChanged(int height);
+    void slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount);
+
+protected:
+    virtual void closeEvent(QCloseEvent *event) override;
 
 private:
-    DFMBASE_NAMESPACE::KeyValueLabel *deviceType { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *deviceTotalSize { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileSystem { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileSize { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileCount { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *freeSize { nullptr };
-    QFrame *deviceInfoFrame { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileType { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *filePosition { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileCreated { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileModified { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
+    int fSize { 0 };
+    int fCount { 0 };
 };
-DPPROPERTYDIALOG_END_NAMESPACE
-#endif   // DEVICEBASICWIDGET_H
+DPVAULT_END_NAMESPACE
+#endif   // BASICWIDGET_H

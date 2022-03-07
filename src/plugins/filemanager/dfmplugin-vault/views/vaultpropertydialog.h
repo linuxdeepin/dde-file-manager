@@ -1,0 +1,52 @@
+#ifndef VAULTPROPERTYDIALOG_H
+#define VAULTPROPERTYDIALOG_H
+
+#include "dfmplugin_vault_global.h"
+#include "basicwidget.h"
+
+#include <DDialog>
+#include <DPlatformWindowHandle>
+
+#include <QScrollArea>
+
+DPVAULT_BEGIN_NAMESPACE
+class VaultPropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
+{
+    Q_OBJECT
+public:
+    explicit VaultPropertyDialog(QWidget *parent = nullptr);
+    virtual ~VaultPropertyDialog() override;
+
+private:
+    void initInfoUI();
+
+    void createHeadUI(const QUrl &url);
+
+    void createBasicWidget(const QUrl &url);
+
+    int contentHeight();
+
+    void insertExtendedControl(int index, QWidget *widget);
+
+    void addExtendedControl(QWidget *widget);
+
+private slots:
+    void processHeight(int height);
+
+public:
+    void selectFileUrl(const QUrl &url);
+
+protected:
+    virtual void showEvent(QShowEvent *event) override;
+
+private:
+    BasicWidget *basicWidget { nullptr };
+    QLabel *fileIconLabel { nullptr };
+    QLabel *fileNameLabel { nullptr };
+    QScrollArea *scrollArea { nullptr };
+    QList<QWidget *> extendedControl {};
+    int extendedHeight { 0 };
+    DTK_WIDGET_NAMESPACE::DPlatformWindowHandle *platformWindowHandle { nullptr };
+};
+DPVAULT_END_NAMESPACE
+#endif   // VAULTPROPERTYDIALOG_H

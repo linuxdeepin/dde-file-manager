@@ -43,13 +43,7 @@ signals:
 public slots:
     void showFilePropertyControl(const QList<QUrl> &url);
 
-    void showDeviceProperty(const DSC_NAMESPACE::DeviceInfo &info);
-
-    void showTrashProperty(const QUrl &url);
-
-    void showComputerProperty(const QUrl &url);
-
-    void showCustomizeProperty(const QUrl &url);
+    void showDeviceProperty(const DSC_NAMESPACE::Property::DeviceInfo &info);
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // PROPERTYDIALOGEVENTRECEIVER_H

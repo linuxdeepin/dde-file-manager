@@ -49,14 +49,18 @@ public:
     virtual ~FilePropertyDialog() override;
 
 private:
-    QWidget *CreateHeadUI();
-
     void initInfoUI();
+
+    void createHeadUI(const QUrl &url, int widgetFilter);
+
+    void createBasicWidget(const QUrl &url, int widgetFilter);
+
+    void createPermissionManagerWidget(const QUrl &url, int widgetFilter);
 
     int contentHeight();
 
 public:
-    void setSelectFileUrl(const QUrl &url);
+    void selectFileUrl(const QUrl &url, int widgetFilter);
 
     qint64 getFileSize();
 

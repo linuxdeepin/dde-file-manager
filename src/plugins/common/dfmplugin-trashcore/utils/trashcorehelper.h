@@ -23,6 +23,7 @@
 #define TRASHCOREHELPER_H
 
 #include "dfmplugin_trashcore_global.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include <QObject>
 
@@ -34,6 +35,8 @@ public:
     static bool isEmpty();
     static QUrl rootUrl();
     static QUrl toLocalFile(const QUrl &url);
+    static QString scheme();
+    static QWidget *createTrashPropertyDialog(const QUrl &url);
 };
 
 DPTRASHCORE_END_NAMESPACE

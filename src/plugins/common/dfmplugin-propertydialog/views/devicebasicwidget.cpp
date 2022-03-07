@@ -88,7 +88,7 @@ void DeviceBasicWidget::selectFileUrl(const QUrl &url)
     fileCount->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 }
 
-void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
+void DeviceBasicWidget::selectFileInfo(const Property::DeviceInfo &info)
 {
     deviceType->setRightValue(info.deviceType);
     deviceType->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
