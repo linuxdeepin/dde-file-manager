@@ -26,13 +26,14 @@ DPVAULT_USE_NAMESPACE
 VaultEntryFileEntity::VaultEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
-    vaultCalculationUtils = new VaultCalculationUtils;
-    connect(vaultCalculationUtils, &VaultCalculationUtils::sigTotalChange, this, &VaultEntryFileEntity::slotFileDirSizeChange);
+    fileCalculationUtils = new FileStatisticsJob;
+    connect(fileCalculationUtils, &FileStatisticsJob::sizeChanged, this, &VaultEntryFileEntity::slotFileDirSizeChange);
 }
 
 VaultEntryFileEntity::~VaultEntryFileEntity()
 {
-    vaultCalculationUtils->deleteLater();
+    fileCalculationUtils->stop();
+    fileCalculationUtils->deleteLater();
 }
 
 QString VaultEntryFileEntity::displayName() const
@@ -58,7 +59,7 @@ bool VaultEntryFileEntity::showProgress() const
 bool VaultEntryFileEntity::showTotalSize() const
 {
     if (VaultHelper::state(VaultHelper::vaultLockPath()) == VaultState::kUnlocked) {
-        vaultCalculationUtils->startThread(QList<QUrl>() << VaultHelper::rootUrl());
+        fileCalculationUtils->start(QList<QUrl>() << VaultHelper::rootUrl());
         return true;
     }
     return false;

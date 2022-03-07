@@ -31,13 +31,14 @@ DFMBASE_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
 TrashPropertyDialog::TrashPropertyDialog(QWidget *parent)
     : DDialog(parent),
-      fileCalculationUtils(new FileCalculationUtils())
+      fileCalculationUtils(new FileStatisticsJob())
 {
     initUI();
 }
 
 TrashPropertyDialog::~TrashPropertyDialog()
 {
+    fileCalculationUtils->stop();
     fileCalculationUtils->deleteLater();
 }
 
@@ -94,8 +95,8 @@ void TrashPropertyDialog::initUI()
 
     addContent(contenFrame);
 
-    connect(fileCalculationUtils, &FileCalculationUtils::sigFileChange, this, &TrashPropertyDialog::slotTrashDirSizeChange);
-    fileCalculationUtils->startThread(QList<QUrl>() << url);
+    connect(fileCalculationUtils, &FileStatisticsJob::sizeChanged, this, &TrashPropertyDialog::slotTrashDirSizeChange);
+    fileCalculationUtils->start(QList<QUrl>() << url);
 }
 
 void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size)
@@ -107,6 +108,6 @@ void TrashPropertyDialog::showEvent(QShowEvent *event)
 {
     QString path = StandardPaths::location(StandardPaths::kTrashFilesPath);
     QUrl url(QUrl::fromLocalFile(path));
-    fileCalculationUtils->startThread(QList<QUrl>() << url);
+    fileCalculationUtils->start(QList<QUrl>() << url);
     DDialog::showEvent(event);
 }

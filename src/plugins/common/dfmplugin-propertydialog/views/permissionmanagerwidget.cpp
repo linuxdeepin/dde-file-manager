@@ -19,11 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "permissionmanagerwidget.h"
+#include "events/propertyeventcall.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
 #include <DLabel>
 
+#include <QApplication>
 #include <QStorageInfo>
 #include <QComboBox>
 #include <QCheckBox>
@@ -49,7 +51,7 @@ PermissionManagerWidget::~PermissionManagerWidget()
 
 void PermissionManagerWidget::selectFileUrl(const QUrl &url)
 {
-    selectUrl = url;
+    selectUrl = QUrl::fromLocalFile(url.path());
 
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(selectUrl);
 
@@ -96,19 +98,11 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
         }
 
         QString filePath = info->path();
-        if (/*VaultController::ins()->isVaultFile(info->path())*/ false) {   // Vault file need to use stat function to read file permission.
-            QString localFile = info->absolutePath();
-            struct stat buf;
-            std::string stdStr = localFile.toStdString();
-            stat(stdStr.c_str(), &buf);
-            if ((buf.st_mode & S_IXUSR) || (buf.st_mode & S_IXGRP) || (buf.st_mode & S_IXOTH)) {
-                executableCheckBox->setChecked(true);
-            }
-        } else {
-            if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
-                executableCheckBox->setChecked(true);
-            }
+
+        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
+            executableCheckBox->setChecked(true);
         }
+
         // 一些文件系统不支持修改可执行权限
         if (!canChmod(info) || canChmodFileType.contains(fsType)) {
             executableCheckBox->setDisabled(true);
@@ -118,7 +112,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     // 置灰：
     // 1. 本身用户无权限
     // 2. 所属文件系统无权限机制
-    if (info->ownerId() != getuid() /* || !canChmod(info) || fsType == "fuseblk"*/) {
+    if (info->ownerId() != getuid() || !canChmod(info) || fsType == "fuseblk") {
         ownerComboBox->setDisabled(true);
         groupComboBox->setDisabled(true);
         otherComboBox->setDisabled(true);
@@ -132,6 +126,10 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
             ownerComboBox->setDisabled(true);
         }
     }
+
+    connect(ownerComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
+    connect(groupComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
+    connect(otherComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
 }
 
 void PermissionManagerWidget::initUI()
@@ -181,10 +179,6 @@ void PermissionManagerWidget::initUI()
 
     frame->setLayout(layout);
     setContent(frame);
-
-    connect(ownerComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
-    connect(groupComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
-    connect(otherComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
 }
 
 QString PermissionManagerWidget::getPermissionString(int enumFlag)
@@ -213,11 +207,10 @@ void PermissionManagerWidget::setComboBoxByPermission(QComboBox *cb, int permiss
 void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(selectUrl);
-    LocalFileHandler fileHandler;
     if (isChecked) {
-        fileHandler.setPermissions(selectUrl, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
+        PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
     } else {
-        fileHandler.setPermissions(selectUrl, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
+        PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, info->permissions() & ~(QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther));
     }
 }
 
@@ -258,10 +251,7 @@ void PermissionManagerWidget::onComboBoxChanged()
     ownerFlags |= (permissions & QFile::ExeOwner);
     groupFlags |= (permissions & QFile::ExeGroup);
     otherFlags |= (permissions & QFile::ExeOther);
-    LocalFileHandler fileHandler;
-    fileHandler.setPermissions(selectUrl, QFileDevice::Permissions(ownerFlags) |
-                                       /*(info->permissions() & 0x0700) |*/
-                                       QFileDevice::Permissions(groupFlags) | QFileDevice::Permissions(otherFlags));
+    PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, QFileDevice::Permissions(ownerFlags) | QFileDevice::Permissions(groupFlags) | QFileDevice::Permissions(otherFlags));
 
     infoBytes = info->absoluteFilePath().toUtf8();
     stat(infoBytes.data(), &fileStat);

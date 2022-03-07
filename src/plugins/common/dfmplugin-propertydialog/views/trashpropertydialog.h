@@ -24,7 +24,7 @@
 
 #include "dfmplugin_propertydialog_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
-#include "utils/filecalculationutils.h"
+#include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DDialog>
 
@@ -49,7 +49,7 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *trashNameLabel { nullptr };
     DTK_WIDGET_NAMESPACE::DLabel *trashIconLabel { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileCountAndFileSize { nullptr };
-    FileCalculationUtils *fileCalculationUtils { nullptr };
+    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // TRASHPROPERTYDIALOG_H

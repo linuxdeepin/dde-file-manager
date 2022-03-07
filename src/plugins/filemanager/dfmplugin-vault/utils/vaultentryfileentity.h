@@ -24,7 +24,7 @@
 #include "dfmplugin_vault_global.h"
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
-#include "vaultcalculationutils.h"
+#include "dfm-base/utils/filestatisticsjob.h"
 
 DPVAULT_BEGIN_NAMESPACE
 class VaultEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
@@ -54,7 +54,7 @@ public slots:
 
 private:
     qint64 vaultTotal { 0 };
-    VaultCalculationUtils *vaultCalculationUtils { nullptr };
+    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
     bool showSizeState { false };
 };
 DPVAULT_END_NAMESPACE

@@ -578,6 +578,7 @@ DirOpenMode FileView::currentDirOpenMode() const
     }
     return mode;
 }
+
 void FileView::onRowCountChanged()
 {
     updateModelActiveIndex();
@@ -617,19 +618,20 @@ bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger tri
 
 void FileView::setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected)
 {
-    static QModelIndex current;
-    if (!deselected.indexes().isEmpty()) {
-        QModelIndex index = deselected.first().topLeft();
-        if (current != index) {
-            current = proxyModel()->mapToSource(index);
-            QUrl url = model()->getUrlByIndex(current);
-            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), url);
+    static QUrl current;
+    if (selected.indexes().isEmpty() && (!deselected.indexes().isEmpty())) {
+        QList<QUrl> urls = selectedUrlList();
+        if (!urls.isEmpty())
+            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), urls.back());
+        else {
+            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), rootUrl());
         }
     } else if (!selected.indexes().isEmpty()) {
         QModelIndex index = selected.first().topLeft();
-        if (current != index) {
-            current = proxyModel()->mapToSource(index);
-            QUrl url = model()->getUrlByIndex(current);
+        index = proxyModel()->mapToSource(index);
+        QUrl url = model()->getUrlByIndex(index);
+        if (current != url) {
+            current = url;
             WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), url);
         }
     }

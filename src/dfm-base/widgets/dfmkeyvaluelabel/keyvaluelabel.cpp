@@ -80,7 +80,8 @@ void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt
     QString elideNote = value;
     rightValueLabel->setAlignment(aligment);
     QFontMetrics fontWidth(rightValueLabel->font());
-    elideNote = fontWidth.elidedText(value, elideMode, rightValueLabel->width());
+    int fontW = rightValueLabel->width() + 50;
+    elideNote = fontWidth.elidedText(value, elideMode, fontW);
     rightValueLabel->setText(elideNote);
     if (toolTipVisibility)
         rightValueLabel->setToolTip(value);

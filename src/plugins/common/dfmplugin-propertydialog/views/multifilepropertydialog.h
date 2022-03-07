@@ -17,55 +17,58 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef BASICWIDGET_H
-#define BASICWIDGET_H
+*/
+#ifndef MULTIFILEPROPERTYDIALOG_H
+#define MULTIFILEPROPERTYDIALOG_H
 
 #include "dfmplugin_propertydialog_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
-#include <DArrowLineDrawer>
+#include <DDialog>
 
-#include <QCheckBox>
+#include <QUrl>
+#include <QList>
+#include <QFrame>
+#include <QPainter>
+#include <QSharedPointer>
+#include <QGraphicsItem>
+
+#include <tuple>
+#include <memory>
+
+class QWidget;
+class QLabel;
+class QVBoxLayout;
+class QGridLayout;
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
-class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
+class MultiFilePropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
-public:
-    explicit BasicWidget(QWidget *parent = nullptr);
-    virtual ~BasicWidget() override;
-
-private:
-    void initUI();
 
 public:
-    void selectFileUrl(const QUrl &url);
-
-    qint64 getFileSize();
-
-    int getFileCount();
-
-public slots:
-
-    void slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount);
-
-protected:
-    virtual void closeEvent(QCloseEvent *event) override;
+    explicit MultiFilePropertyDialog(const QList<QUrl> &urls, QWidget *const parent = nullptr);
+    virtual ~MultiFilePropertyDialog() override;
 
 private:
-    DFMBASE_NAMESPACE::KeyValueLabel *fileSize { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileCount { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileType { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *filePosition { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileCreated { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileModified { nullptr };
-    DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
-    QCheckBox *hideFile { nullptr };
+    void initHeadUi();
+
+    void initInfoUi();
+
+    void calculateFileCount();
+
+private slots:
+    void updateFolderSizeLabel(qint64 size);
+
+private:
+    QList<QUrl> urlList {};   //###: this list contains all the urls which are selected!
+    QLabel *iconLabel { nullptr };
+    QLabel *multiFileLable { nullptr };
+    QLabel *basicInfoLabel { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *totalSizeLabel { nullptr };
+    DFMBASE_NAMESPACE::KeyValueLabel *fileCountLabel { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
-    int fSize { 0 };
-    int fCount { 0 };
 };
 DPPROPERTYDIALOG_END_NAMESPACE
-#endif   // BASICWIDGET_H
+#endif   // MULTIFILEPROPERTYDIALOG_H

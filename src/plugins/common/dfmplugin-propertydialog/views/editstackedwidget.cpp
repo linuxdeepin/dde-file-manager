@@ -274,8 +274,8 @@ void EditStackedWidget::showTextShowFrame()
     if (fileNameEdit->isCanceled())
         initTextShowFrame(newName);
     else {
-        QUrl oldUrl = filerUrl;
-        QUrl newUrl = QFileInfo(filerUrl.path()).absolutePath() + "/" + newName;
+        QUrl oldUrl = QUrl::fromLocalFile(filerUrl.path());
+        QUrl newUrl = QUrl::fromLocalFile(QFileInfo(filerUrl.path()).absolutePath() + "/" + newName);
 
         if (oldUrl == newUrl) {
             this->setCurrentIndex(1);
@@ -284,7 +284,7 @@ void EditStackedWidget::showTextShowFrame()
 
         initTextShowFrame(newName);
         dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile,
-                                              static_cast<QWidget *>(this->parent())->winId(),
+                                              this->topLevelWidget()->winId(),
                                               oldUrl, newUrl);
     }
 }
@@ -331,9 +331,6 @@ void EditStackedWidget::elideText(QTextLayout *layout, const QSizeF &size,
     if (painter) {
         text_option.setTextDirection(painter->layoutDirection());
         layout->setFont(painter->font());
-    } else {
-        // dont paint
-        //        layout->engine()->ignoreBidi = true;
     }
 
     auto naturalTextRect = [&](const QRectF rect) {
@@ -362,14 +359,8 @@ void EditStackedWidget::elideText(QTextLayout *layout, const QSizeF &size,
     while (line.isValid()) {
         height += lineHeight;
         if (height + lineHeight > size.height()) {
-            //            const QString &end_str = layout->engine()->elidedText(mode, qRound(size.width()), flags, line.textStart());
-
             layout->endLayout();
             layout->setText(text);
-
-            //            if (layout->engine()->block.docHandle()) {
-            //                const_cast<QTextDocument *>(layout->engine()->block.document())->setPlainText(end_str);
-            //            }
 
             text_option.setWrapMode(QTextOption::NoWrap);
             layout->beginLayout();
@@ -454,12 +445,12 @@ void EditStackedWidget::elideText(QTextLayout *layout, const QSizeF &size,
 
         offset.setY(offset.y() + lineHeight);
 
-        //        // find '\n'
-        //        int text_length_line = line.textLength();
-        //        for (int start = line.textStart(); start < line.textStart() + text_length_line; ++start) {
-        //            if (text.at(start) == '\n')
-        //                height += lineHeight;
-        //        }
+        // find '\n'
+        int textLengthLine = line.textLength();
+        for (int start = line.textStart(); start < line.textStart() + textLengthLine; ++start) {
+            if (text.at(start) == '\n')
+                height += lineHeight;
+        }
 
         if (lines) {
             lines->append(text.mid(line.textStart(), line.textLength()));

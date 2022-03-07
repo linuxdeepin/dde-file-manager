@@ -17,49 +17,24 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef FILECALCULATIONUTILS_H
-#define FILECALCULATIONUTILS_H
+*/
+#ifndef PROPERTYEVENTCALL_H
+#define PROPERTYEVENTCALL_H
 
 #include "dfmplugin_propertydialog_global.h"
 
-#include <QObject>
-#include <QList>
+#include <QFileDevice>
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
-class FileCalculationUtils : public QObject
+class PropertyEventCall
 {
-    Q_OBJECT
 public:
-    struct FileStatisticInfo
-    {
-        qint64 totalSize { 0 };
-        qint32 fileCount { 0 };
-    };
+    PropertyEventCall() = delete;
 
-    explicit FileCalculationUtils(QObject *parent = nullptr);
-
-    virtual ~FileCalculationUtils() override;
-
-    void startThread(const QList<QUrl> &files);
-
-signals:
-    void sigFileChange(qint32 count);
-
-    void sigTotalChange(qint64 totalSize);
-
-    void sigStartRun(const QList<QUrl> &files);
-
-public slots:
-    void statisticsFileInfo(const QList<QUrl> &files);
-
-private:
-    quint16 getMemoryPageSize();
-    void statisticFilesSize(const QUrl &url, FileStatisticInfo *&sizeInfo);
-
-private:
-    QThread *thread { nullptr };
-    FileStatisticInfo *info { nullptr };
+public:
+    static void sendSetPermissionManager(quint64 winID, const QUrl &url, const QFileDevice::Permissions permissions);
 };
 DPPROPERTYDIALOG_END_NAMESPACE
-#endif   // FILECALCULATIONUTILS_H
+
+Q_DECLARE_METATYPE(QFileDevice::Permissions)
+#endif   // PROPERTYEVENTCALL_H

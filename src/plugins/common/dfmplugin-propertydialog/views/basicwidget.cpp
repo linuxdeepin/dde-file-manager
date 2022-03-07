@@ -34,7 +34,7 @@ BasicWidget::BasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {
     initUI();
-    fileCalculationUtils = new FileCalculationUtils;
+    fileCalculationUtils = new FileStatisticsJob;
 }
 
 BasicWidget::~BasicWidget()
@@ -139,58 +139,64 @@ void BasicWidget::selectFileUrl(const QUrl &url)
     MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
     switch (static_cast<int>(type)) {
     case MimeDatabase::FileType::kDirectory:
-        fileType->setRightValue(tr("Directory") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fileCount->setVisible(true);
         fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
-        fileCalculationUtils->startThread(QList<QUrl>() << url);
-        connect(fileCalculationUtils, &FileCalculationUtils::sigTotalChange, this, &BasicWidget::slotFileDirSizeChange);
-        connect(fileCalculationUtils, &FileCalculationUtils::sigFileChange, this, &BasicWidget::slotFileCountChange);
+        fileCalculationUtils->start(QList<QUrl>() << url);
+        connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
         break;
     case MimeDatabase::FileType::kDocuments: {
-        fileType->setRightValue(tr("Documents") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Documents") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
     } break;
     case MimeDatabase::FileType::kVideos: {
-        fileType->setRightValue(tr("Videos") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Videos") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
     } break;
     case MimeDatabase::FileType::kImages: {
-        fileType->setRightValue(tr("Images") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Images") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
     } break;
     case MimeDatabase::FileType::kAudios: {
-        fileType->setRightValue(tr("Audios") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Audios") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
     } break;
     case MimeDatabase::FileType::kExecutable:
-        fileType->setRightValue(tr("Executable") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Executable") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
         break;
     case MimeDatabase::FileType::kArchives:
-        fileType->setRightValue(tr("Archives") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Archives") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
+        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileSize->setVisible(true);
+        fSize += info->size();
+        fCount += 1;
+        break;
+    case MimeDatabase::FileType::kDesktopApplication:
+        fileType->setRightValue(tr("application") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
         break;
     case MimeDatabase::FileType::kUnknown:
-        fileType->setRightValue(tr("Unknown") + mimeType.name(), Qt::ElideNone, Qt::AlignVCenter, true);
+        fileType->setRightValue(tr("Unknown") + "(" + mimeType.name() + ")", Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
@@ -209,16 +215,13 @@ int BasicWidget::getFileCount()
     return fCount;
 }
 
-void BasicWidget::slotFileDirSizeChange(qint64 size)
+void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount)
 {
     fSize += size;
     fileSize->setRightValue(FileUtils::formatSize(size));
-}
 
-void BasicWidget::slotFileCountChange(qint64 size)
-{
-    fCount += size;
-    fileCount->setRightValue(QString::number(size));
+    fCount += filesCount + directoryCount;
+    fileCount->setRightValue(QString::number(fCount));
 }
 
 void BasicWidget::closeEvent(QCloseEvent *event)

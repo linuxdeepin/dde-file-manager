@@ -30,12 +30,13 @@ DeviceBasicWidget::DeviceBasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {
     initUI();
-    fileCalculationUtils = new FileCalculationUtils;
-    connect(fileCalculationUtils, &FileCalculationUtils::sigFileChange, this, &DeviceBasicWidget::slotFileDirSizeChange);
+    fileCalculationUtils = new FileStatisticsJob;
+    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &DeviceBasicWidget::slotFileDirSizeChange);
 }
 
 DeviceBasicWidget::~DeviceBasicWidget()
 {
+    fileCalculationUtils->stop();
     fileCalculationUtils->deleteLater();
 }
 
@@ -103,10 +104,11 @@ void DeviceBasicWidget::selectFileInfo(const DeviceInfo &info)
     freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
-    fileCalculationUtils->startThread(QList<QUrl>() << info.deviceUrl);
+    fileCalculationUtils->start(QList<QUrl>() << info.deviceUrl);
 }
 
-void DeviceBasicWidget::slotFileDirSizeChange(qint64 size)
+void DeviceBasicWidget::slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount)
 {
-    fileCount->setRightValue(QString::number(size) + tr("item"), Qt::ElideNone, Qt::AlignVCenter, false);
+    Q_UNUSED(size)
+    fileCount->setRightValue(QString::number(filesCount + directoryCount) + tr("item"), Qt::ElideNone, Qt::AlignVCenter, false);
 }

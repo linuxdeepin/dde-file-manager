@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "filepropertydialogmanager.h"
+#include "views/multifilepropertydialog.h"
 
 #include <QApplication>
 #include <QScreen>
@@ -81,11 +82,16 @@ void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls)
             }
             filePropertyDialogs.value(url)->show();
         }
-    }
 
-    if (urls.count() >= 2) {
-        closeAllDialog->show();
-        closeIndicatorTimer->start();
+        if (urls.count() >= 2) {
+            closeAllDialog->show();
+            closeIndicatorTimer->start();
+        }
+    } else {
+        MultiFilePropertyDialog *multiFilePropertyDialog = new MultiFilePropertyDialog(urls);
+        multiFilePropertyDialog->show();
+        multiFilePropertyDialog->moveToCenter();
+        multiFilePropertyDialog->raise();
     }
 }
 

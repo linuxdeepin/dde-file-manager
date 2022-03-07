@@ -25,7 +25,7 @@
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "services/common/propertydialog/property_defines.h"
-#include "utils/filecalculationutils.h"
+#include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DArrowLineDrawer>
 
@@ -46,7 +46,7 @@ public:
     void selectFileInfo(const DSC_NAMESPACE::DeviceInfo &info);
 
 public slots:
-    void slotFileDirSizeChange(qint64 size);
+    void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);
 
 signals:
     void heightChanged(int height);
@@ -58,7 +58,7 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileCount { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *freeSize { nullptr };
     QFrame *deviceInfoFrame { nullptr };
-    FileCalculationUtils *fileCalculationUtils { nullptr };
+    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // DEVICEBASICWIDGET_H
