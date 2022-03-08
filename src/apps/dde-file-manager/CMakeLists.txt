@@ -10,6 +10,8 @@ configure_file(
 
 set(SRCS
     main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/singleapplication.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/singleapplication.cpp
 )
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
@@ -35,5 +37,9 @@ install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
 # desktop
 install(FILES dde-file-manager.desktop DESTINATION share/applications)
+
+# pkexec
+install(FILES pkexec/com.deepin.pkexec.dde-file-manager.policy DESTINATION share/polkit-1/actions/)
+install(FILES pkexec/dde-file-manager-pkexec DESTINATION bin)
 
 # TODO(zhangs): translation

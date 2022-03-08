@@ -56,12 +56,13 @@ public:
     bool isSet(const QString &name) const;
     QString value(const QString &name) const;
     void processCommand();
+    void process(const QStringList &arguments);
 
 private:
     void init();
     void initOptions();
     void addOption(const QCommandLineOption &option);
-    void process(const QStringList &arguments);
+
     QStringList positionalArguments() const;
     QStringList unknownOptionNames() const;
     void showPropertyDialog();

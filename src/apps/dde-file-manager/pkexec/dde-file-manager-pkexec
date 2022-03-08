@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function run_pkexec() {
+        xhost +SI:localuser:root
+        echo "run in pkexec: $@"
+        pkexec --disable-internal-agent "$@" `id -u`
+        xhost -SI:localuser:root
+        xhost
+}
+
+function run_app() {
+        echo "param in run_app: $@"
+        uid=$2
+        echo "runner uid: $uid"
+        export XDG_RUNTIME_DIR=/run/user/$uid
+        export WAYLAND_DISPLAY=wayland-0
+        export DISPLAY=:0
+        export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
+        export XDG_SESSION_TYPE=wayland
+        export QT_QPA_PLATFORM=
+        export GDK_BACKEND=x11
+        export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus
+
+        dde-file-manager $1 -w `pwd`
+}
+
+echo "run dde-file-manager in $XDG_SESSION_TYPE"
+if [ "$XDG_SESSION_TYPE" == "x11" ];then
+        pkexec dde-file-manager "$@" -w `pwd`
+else
+        echo "current file: $0"
+        if [ x`id -u` != "x0" ];then
+                run_pkexec $0 $@
+                exit 0
+        fi
+
+        echo "run app: $@"
+        run_app $@
+fi

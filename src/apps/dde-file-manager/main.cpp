@@ -22,25 +22,16 @@
  */
 
 #include "config.h"   //cmake
-#include "utils/windowutils.h"
+#include "singleapplication.h"
 
 #include "services/filemanager/command/commandservice.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
-#include <DApplication>
-#include <DMainWindow>
+#include <QIcon>
 
-#include <QApplication>
-#include <QMainWindow>
-#include <QWidget>
-#include <QDir>
-#include <QUrl>
-#include <QFile>
-#include <QtGlobal>
-
-#include <iostream>
-#include <algorithm>
+#include <signal.h>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -102,10 +93,39 @@ static bool pluginsLoad()
     return true;
 }
 
+void handleSIGTERM(int sig)
+{
+    qCritical() << "break with !SIGTERM! " << sig;
+
+    if (qApp) {
+        qApp->quit();
+    }
+}
+
+void handleSIGPIPE(int sig)
+{
+    qCritical() << "ignore !SIGPIPE! " << sig;
+}
+
 int main(int argc, char *argv[])
 {
-    DApplication a(argc, argv);
+    //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
+    if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
+        qputenv("XDG_CURRENT_DESKTOP", "Deepin");
+    }
+
+    if (qEnvironmentVariable("CLUTTER_IM_MODULE") == QStringLiteral("fcitx")) {
+        setenv("QT_IM_MODULE", "fcitx", 1);
+    }
+
+    // Fixed the locale codec to utf-8
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+
+    SingleApplication a(argc, argv);
+
     a.setOrganizationName(ORGANIZATION_NAME);
+    a.loadTranslator();
+    a.setApplicationDisplayName(a.translate("Application", "File Manager"));
     a.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     a.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     a.setApplicationDescription(a.translate("Application", "File Manager is a powerful and "
@@ -126,21 +146,7 @@ int main(int argc, char *argv[])
 
     // open as root
     if (commandServIns->isSet("r")) {
-        if (WindowUtils ::isWayLand()) {
-            QString cmd = "xhost";
-            QStringList args;
-            args << "+";
-            QProcess p;
-            p.start(cmd, args);
-            p.waitForFinished();
-        }
-
-        QStringList args = a.arguments().mid(1);
-        args.removeAll(QStringLiteral("-r"));
-        args.removeAll(QStringLiteral("--root"));
-        args.removeAll(QStringLiteral("-w"));
-        args.removeAll(QStringLiteral("--working-dir"));
-        QProcess::startDetached("dde-file-manager-pkexec", args, QDir::currentPath());
+        a.openAsAdmin();
         return 0;
     }
 
@@ -148,9 +154,24 @@ int main(int argc, char *argv[])
         return a.exec();
     }
 
-    if (!pluginsLoad()) {
-        qCritical() << "Load pugin failed!";
-        abort();
+    const QString &uniqueKey = a.applicationName();
+
+    bool isSingleInstance = true;
+
+    if (!SysInfoUtils::isOpenAsAdmin())
+        isSingleInstance = a.setSingleInstance(uniqueKey);
+
+    if (isSingleInstance) {
+        if (!pluginsLoad()) {
+            qCritical() << "Load pugin failed!";
+            abort();
+        }
+        signal(SIGTERM, handleSIGTERM);
+        signal(SIGPIPE, handleSIGPIPE);
+
+    } else {
+        a.handleNewClient(uniqueKey);
+        return 0;
     }
 
     return a.exec();
