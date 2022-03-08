@@ -56,22 +56,14 @@ public:
 
     explicit FileViewModel(QAbstractItemView *parent = nullptr);
     virtual ~FileViewModel() override;
+
     virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
-    virtual const FileViewItem *itemFromIndex(const QModelIndex &index) const;
-    virtual QModelIndex setRootUrl(const QUrl &url);
-    virtual QUrl rootUrl() const;
-    virtual QModelIndex rootIndex() const;
-    virtual const FileViewItem *rootItem() const;
-    virtual AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
     virtual QModelIndex parent(const QModelIndex &child) const override;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
-    virtual void clear();
-    virtual int rowCountMaxShow();
     virtual void fetchMore(const QModelIndex &parent) override;
     virtual bool canFetchMore(const QModelIndex &parent) const override;
-    virtual QVariant headerData(int column, Qt::Orientation, int role) const override;
     virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
     virtual QStringList mimeTypes() const override;
     virtual QMimeData *mimeData(const QModelIndexList &indexes) const override;
@@ -80,26 +72,30 @@ public:
     virtual Qt::DropActions supportedDragActions() const override;
     virtual Qt::DropActions supportedDropActions() const override;
 
-    virtual void updateViewItem(const QModelIndex &index);
+    QModelIndex setRootUrl(const QUrl &url);
+    void clear();
+    int rowCountMaxShow();
 
-    int getColumnWidth(const int &column) const;
-    FileViewItem::Roles getRoleByColumn(const int &column) const;
-    int getColumnByRole(const FileViewItem::Roles role) const;
     AbstractFileWatcherPointer fileWatcher() const;
-    QUrl getUrlByIndex(const QModelIndex &index) const;
+    const FileViewItem *itemFromIndex(const QModelIndex &index) const;
+    AbstractFileInfoPointer fileInfo(const QModelIndex &index) const;
+
+    QUrl rootUrl() const;
+    QModelIndex rootIndex() const;
+    const FileViewItem *rootItem() const;
+
     void beginInsertRows(const QModelIndex &parent, int first, int last);
     void endInsertRows();
     void beginRemoveRows(const QModelIndex &parent, int first, int last);
     void endRemoveRows();
     void beginResetModel();
     void endResetModel();
-    inline QModelIndex createIndex(int arow, int acolumn, void *adata) const;
 
     State state() const;
     void setState(FileViewModel::State state);
     void childrenUpdated();
+
 signals:
-    void requestSort();
     void stateChanged();
     void modelChildrenUpdated();
 };

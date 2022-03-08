@@ -24,6 +24,7 @@
 
 #include "dfmplugin_workspace_global.h"
 #include "workspace/workspace_defines.h"
+#include "views/fileviewitem.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
@@ -35,6 +36,7 @@ DSB_FM_USE_NAMESPACE
 using namespace Workspace;
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class FileViewModel;
 class FileSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -42,13 +44,35 @@ public:
     explicit FileSortFilterProxyModel(QObject *parent = nullptr);
     virtual ~FileSortFilterProxyModel() override;
 
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+    QVariant headerData(int column, Qt::Orientation, int role) const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action,
+                      int row, int column, const QModelIndex &parent) override;
+
+    QModelIndex setRootUrl(const QUrl &url);
+
+    QUrl rootUrl() const;
+    QModelIndex rootIndex() const;
+    const FileViewItem *rootItem() const;
+
+    const FileViewItem *itemFromIndex(const QModelIndex &index) const;
+    AbstractFileInfoPointer itemFileInfo(const QModelIndex &index) const;
+
+    QUrl getUrlByIndex(const QModelIndex &index) const;
+    QList<QUrl> getCurrentDirFileUrls() const;
+
+    int getColumnWidth(const int &column) const;
+    FileViewItem::Roles getRoleByColumn(const int &column) const;
+    int getColumnByRole(const FileViewItem::Roles role) const;
+
+    // Filter
     QDir::Filters getFilters() const;
     void setFilters(const QDir::Filters &filters);
     void setFilterData(const QVariant &data);
     void setFilterCallBack(const FileViewFilterCallback callback);
     void resetFilter();
     void toggleHiddenFiles();
-    QList<QUrl> getCurrentDirFileUrls();
 
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;
@@ -56,6 +80,9 @@ protected:
 
 private:
     bool passFileFilters(const AbstractFileInfoPointer &info) const;
+    FileViewModel *viewModel() const;
+
+    QString roleDisplayString(int role) const;
 
 private:
     QVariant filterData;

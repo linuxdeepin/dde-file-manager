@@ -127,7 +127,7 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
 
     QVector<QModelIndex> selectItems;
     for (int i = 0; i < itemCount; ++i) {
-        const QModelIndex &index = view->proxyModel()->index(i, 0);
+        const QModelIndex &index = view->model()->index(i, 0);
         const QRect &itemRect = view->rectForIndex(index);
 
         QPoint iconOffset = QPoint(kIconModeColumnPadding, kIconModeColumnPadding);
@@ -159,6 +159,6 @@ void SelectHelper::caculateListViewSelection(const QRect &rect, QItemSelection *
 
     const RandeIndexList &list = view->visibleIndexes(tmpRect);
     for (const RandeIndex &index : list) {
-        selection->append(QItemSelectionRange(view->proxyModel()->index(index.first, 0), view->proxyModel()->index(index.second, 0)));
+        selection->append(QItemSelectionRange(view->model()->index(index.first, 0), view->model()->index(index.second, 0)));
     }
 }

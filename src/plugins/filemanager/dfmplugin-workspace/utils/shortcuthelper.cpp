@@ -94,8 +94,8 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     case Qt::Key_End: {
         const auto &urls = view->selectedUrlList();
         if (urls.isEmpty()) {
-            int rowCount = view->proxyModel()->rowCount(view->rootIndex());
-            auto index = view->proxyModel()->index(rowCount - 1, 0);
+            int rowCount = view->model()->rowCount(view->rootIndex());
+            auto index = view->model()->index(rowCount - 1, 0);
             view->setCurrentIndex(index);
             return true;
         }
@@ -265,7 +265,7 @@ void ShortcutHelper::toggleHiddenFiles()
     // d->preSelectionUrls = urls;
     view->itemDelegate()->hideAllIIndexWidget();
     view->clearSelection();
-    view->proxyModel()->toggleHiddenFiles();
+    view->model()->toggleHiddenFiles();
 }
 
 void ShortcutHelper::showFilesProperty()
@@ -281,7 +281,7 @@ void ShortcutHelper::previewFiles()
     for (QUrl &url : Urls) {
         selectUrls.append(UrlRoute::fromLocalFile(url.path()));
     }
-    Urls = view->proxyModel()->getCurrentDirFileUrls();
+    Urls = view->model()->getCurrentDirFileUrls();
     QList<QUrl> currentDirUrls;
     for (QUrl &url : Urls) {
         currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));

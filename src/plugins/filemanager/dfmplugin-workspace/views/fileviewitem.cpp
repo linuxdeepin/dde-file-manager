@@ -33,8 +33,16 @@ FileViewItem::FileViewItem()
     qRegisterMetaType<FileViewItem>("FileViewItem");
 }
 
-FileViewItem::FileViewItem(const QUrl &url)
-    : d(new FileViewItemPrivate(this))
+FileViewItem::FileViewItem(FileViewItem *parent)
+    : d(new FileViewItemPrivate(this)),
+      parent(parent)
+{
+    qRegisterMetaType<FileViewItem>("FileViewItem");
+}
+
+FileViewItem::FileViewItem(FileViewItem *parent, const QUrl &url)
+    : d(new FileViewItemPrivate(this)),
+      parent(parent)
 {
     qRegisterMetaType<FileViewItem>("FileViewItem");
     setUrl(url);
@@ -241,7 +249,8 @@ QVariant FileViewItem::data(int role) const
         return d->fileinfo->baseNameOfRename();
     case kItemFileSuffixOfRenameRole:
         return d->fileinfo->suffixOfRename();
-
+    case kItemUrlRole:
+        return d->fileinfo->url();
     default:
         return QVariant();
     }

@@ -72,7 +72,6 @@ signals:
 
 private:
     void init();
-    FileViewModel *model() const;
     BaseItemDelegate *itemDelegate() const;
     QModelIndex findIndex(const QByteArray &keys, bool matchStart,
                           int current, bool reverseOrder, bool excludeCurrent) const;

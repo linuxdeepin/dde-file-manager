@@ -21,7 +21,7 @@
  */
 #include "fileviewmenuhelper.h"
 #include "views/fileview.h"
-#include "models/fileviewmodel.h"
+#include "models/filesortfilterproxymodel.h"
 #include "menus/workspacemenu.h"
 #include "utils/workspacehelper.h"
 
@@ -60,7 +60,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
 
     const QUrl &rootUrl = view->rootUrl();
     QList<QUrl> selectUrls = view->selectedUrlList();
-    const QUrl focusUrl = view->model()->fileInfo(index)->url();
+    const QUrl focusUrl = view->model()->itemFileInfo(index)->url();
 
     QMenu *menu = menuServer()->createMenu(view,
                                            currentMenuScene(),

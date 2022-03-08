@@ -105,11 +105,11 @@ void WorkspaceMenu::actionBusiness(QAction *act)
     case kActType:
     case kActLastModifiedDate: {
         FileViewItem::Roles role = static_cast<FileViewItem::Roles>(getRoleByActionType(static_cast<ActionType>(actType)));
-        Qt::SortOrder order = view->proxyModel()->sortOrder();
+        Qt::SortOrder order = view->model()->sortOrder();
         int column = view->model()->getColumnByRole(role);
 
-        view->proxyModel()->setSortRole(role);
-        view->proxyModel()->sort(column, order);
+        view->model()->setSortRole(role);
+        view->model()->sort(column, order);
 
         break;
     }

@@ -48,11 +48,12 @@ public:
     void removeFile(const QUrl &url);
     inline void setRootNode(const FileNodePointer &node)
     {
-        rootNode = node;
+        root = node;
     }
     void stop();
     void clearChildren();
 
+    FileNodePointer rootNode() const;
     void insertChild(const QUrl &url);
     bool insertChildren(QList<QUrl> &urls);
     void insertAllChildren(const QList<QUrl> &urls);
@@ -74,7 +75,7 @@ private:
 
 private:
     QQueue<QUrl> fileQueue;
-    FileNodePointer rootNode;
+    FileNodePointer root;
     QMutex childrenMutex;
     bool cacheChildren = false;
     QList<FileNodePointer> visibleChildren;
@@ -145,7 +146,7 @@ private Q_SLOTS:
 
 private:
     bool checkFileEventQueue();
-    QString roleDisplayString(int role);
+    //    QString roleDisplayString(int role);
 };
 
 DPWORKSPACE_END_NAMESPACE

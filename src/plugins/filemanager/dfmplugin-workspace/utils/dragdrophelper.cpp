@@ -88,6 +88,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         } else {
             event->ignore();
         }
+
         return true;
     }
 
@@ -126,8 +127,6 @@ bool DragDropHelper::drop(QDropEvent *event)
 
         if (!hoverIndex.isValid())
             hoverIndex = view->model()->rootIndex();
-        else
-            hoverIndex = view->proxyModel()->mapToSource(hoverIndex);
 
         if (!hoverIndex.isValid())
             return true;
@@ -206,9 +205,9 @@ void DragDropHelper::handleDropEvent(QDropEvent *event)
 
 QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos)
 {
-    const QModelIndex &srcIndex = view->proxyModel()->mapToSource(view->indexAt(pos));
-    if (srcIndex.isValid()) {
-        return view->model()->itemFromIndex(srcIndex)->fileInfo();
+    const QModelIndex &index = view->indexAt(pos);
+    if (index.isValid()) {
+        return view->model()->itemFromIndex(index)->fileInfo();
     } else {
         return view->model()->rootItem()->fileInfo();
     }

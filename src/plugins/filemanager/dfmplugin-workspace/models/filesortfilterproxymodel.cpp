@@ -37,6 +37,121 @@ FileSortFilterProxyModel::~FileSortFilterProxyModel()
 {
 }
 
+int FileSortFilterProxyModel::rowCount(const QModelIndex &parent) const
+{
+    return viewModel()->rowCount(parent);
+}
+
+int FileSortFilterProxyModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent)
+    // TODO():
+    return 4;
+}
+
+QVariant FileSortFilterProxyModel::headerData(int column, Qt::Orientation, int role) const
+{
+    if (role == Qt::DisplayRole) {
+        int column_role = getRoleByColumn(column);
+        return roleDisplayString(column_role);
+    }
+
+    return QVariant();
+}
+
+bool FileSortFilterProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    const QModelIndex &sourceIndex = mapToSource(parent);
+    return viewModel()->dropMimeData(data, action, sourceIndex.row(), sourceIndex.column(), sourceIndex);
+}
+
+QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
+{
+    QModelIndex rootIndex = viewModel()->setRootUrl(url);
+    return createIndex(0, 0, rootIndex.internalPointer());
+}
+
+QUrl FileSortFilterProxyModel::rootUrl() const
+{
+    return viewModel()->rootUrl();
+}
+
+QModelIndex FileSortFilterProxyModel::rootIndex() const
+{
+    const QModelIndex &sourceRootIndex = viewModel()->rootIndex();
+    return createIndex(sourceRootIndex.row(), sourceRootIndex.column(), sourceRootIndex.internalPointer());
+}
+
+const FileViewItem *FileSortFilterProxyModel::rootItem() const
+{
+    return viewModel()->rootItem();
+}
+
+const FileViewItem *FileSortFilterProxyModel::itemFromIndex(const QModelIndex &index) const
+{
+    const QModelIndex &sourceIndex = mapToSource(index);
+    return viewModel()->itemFromIndex(sourceIndex);
+}
+
+AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex &index) const
+{
+    const QModelIndex &sourceIndex = mapToSource(index);
+    return viewModel()->fileInfo(sourceIndex);
+}
+
+QUrl FileSortFilterProxyModel::getUrlByIndex(const QModelIndex &index) const
+{
+    const QModelIndex &sourceIndex = mapToSource(index);
+    return sourceIndex.data(FileViewItem::kItemUrlRole).toUrl();
+}
+
+QList<QUrl> FileSortFilterProxyModel::getCurrentDirFileUrls() const
+{
+    QList<QUrl> urls {};
+    int count = rowCount();
+    for (int i = 0; i < count; ++i) {
+        const QModelIndex &proxyIndex = index(i, 0);
+        urls << getUrlByIndex(proxyIndex);
+    }
+
+    return urls;
+}
+
+int FileSortFilterProxyModel::getColumnWidth(const int &column) const
+{
+    // TODO(liuyangming): get column width from config
+    static QList<int> columnWidthList = QList<int>() << 120 << 120 << 120 << 120;
+
+    if (columnWidthList.length() > column)
+        return columnWidthList.at(column);
+
+    return 120;
+}
+
+FileViewItem::Roles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
+{
+    // TODO(liuyangming): get role list from config
+    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
+                                                                                    << FileViewItem::kItemFileLastModifiedRole
+                                                                                    << FileViewItem::kItemFileSizeRole
+                                                                                    << FileViewItem::kItemFileMimeTypeRole;
+
+    if (columnRoleList.length() > column)
+        return columnRoleList.at(column);
+
+    return FileViewItem::kItemNameRole;
+}
+
+int FileSortFilterProxyModel::getColumnByRole(const FileViewItem::Roles role) const
+{
+    // TODO(liuyangming): get role list from config
+    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
+                                                                                    << FileViewItem::kItemFileLastModifiedRole
+                                                                                    << FileViewItem::kItemFileSizeRole
+                                                                                    << FileViewItem::kItemFileMimeTypeRole;
+    return columnRoleList.indexOf(role) < 0 ? 0 : columnRoleList.indexOf(role);
+}
+
 QDir::Filters FileSortFilterProxyModel::getFilters() const
 {
     return filters;
@@ -78,20 +193,6 @@ void FileSortFilterProxyModel::toggleHiddenFiles()
 {
     filters = ~(filters ^ QDir::Filter(~QDir::Hidden));
     setFilters(filters);
-}
-
-QList<QUrl> FileSortFilterProxyModel::getCurrentDirFileUrls()
-{
-    QList<QUrl> urls;
-    FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
-    int count = rowCount();
-    for (int i = 0; i < count; ++i) {
-        QModelIndex modelIndex = index(i, 0);
-        QModelIndex index = mapToSource(modelIndex);
-        urls << fileModel->getUrlByIndex(index);
-    }
-
-    return urls;
 }
 
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -200,4 +301,25 @@ bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fi
 
     //Todo(yanghao):
     return true;
+}
+
+FileViewModel *FileSortFilterProxyModel::viewModel() const
+{
+    return qobject_cast<FileViewModel *>(sourceModel());
+}
+
+QString FileSortFilterProxyModel::roleDisplayString(int role) const
+{
+    switch (role) {
+    case FileViewItem::kItemNameRole:
+        return tr("Name");
+    case FileViewItem::kItemFileLastModifiedRole:
+        return tr("Time modified");
+    case FileViewItem::kItemFileSizeRole:
+        return tr("Size");
+    case FileViewItem::kItemFileMimeTypeRole:
+        return tr("Type");
+    default:
+        return QString();
+    }
 }

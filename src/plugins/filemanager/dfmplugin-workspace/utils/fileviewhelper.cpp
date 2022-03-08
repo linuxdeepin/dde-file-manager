@@ -67,7 +67,7 @@ FileView *FileViewHelper::parent() const
 
 bool FileViewHelper::isTransparent(const QModelIndex &index) const
 {
-    AbstractFileInfoPointer file = fileInfo(parent()->proxyModel()->mapToSource(index));
+    AbstractFileInfoPointer file = fileInfo(index);
     if (!file.get())
         return false;
 
@@ -97,7 +97,7 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
 const AbstractFileInfoPointer FileViewHelper::fileInfo(const QModelIndex &index) const
 {
-    return parent()->model()->fileInfo(index);
+    return parent()->model()->itemFileInfo(index);
 }
 
 QMargins FileViewHelper::fileViewViewportMargins() const
@@ -122,8 +122,7 @@ bool FileViewHelper::isSelected(const QModelIndex &index) const
 
 bool FileViewHelper::isDropTarget(const QModelIndex &index) const
 {
-    // Todo(yanghao): isDropTarget
-    return false;
+    return parent()->isDragTarget(index);
 }
 
 void FileViewHelper::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const
@@ -195,7 +194,7 @@ void FileViewHelper::keyboardSearch(const QString &search)
 
 QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, int current, bool reverseOrder, bool excludeCurrent) const
 {
-    int rowCount = parent()->proxyModel()->rowCount(parent()->rootIndex());
+    int rowCount = parent()->model()->rowCount(parent()->rootIndex());
 
     if (rowCount == 0)
         return QModelIndex();
@@ -209,8 +208,8 @@ QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, i
             continue;
         }
 
-        const QModelIndex &index = parent()->proxyModel()->index(row, 0, parent()->rootIndex());
-        const QString &pinyinName = parent()->proxyModel()->data(index, FileViewItem::kItemFilePinyinNameRole).toString();
+        const QModelIndex &index = parent()->model()->index(row, 0);
+        const QString &pinyinName = parent()->model()->data(index, FileViewItem::kItemFilePinyinNameRole).toString();
         if (matchStart ? pinyinName.startsWith(keys, Qt::CaseInsensitive)
                        : pinyinName.contains(keys, Qt::CaseInsensitive)) {
             return index;
@@ -268,8 +267,8 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         return;
     }
 
-    const auto &index = parent()->proxyModel()->mapToSource(itemDelegate()->editingIndex());
-    const AbstractFileInfoPointer &fileInfo = model()->fileInfo(index);
+    const auto &index = itemDelegate()->editingIndex();
+    const AbstractFileInfoPointer &fileInfo = parent()->model()->itemFileInfo(index);
 
     if (!fileInfo) {
         return;
@@ -336,11 +335,6 @@ void FileViewHelper::init()
     connect(qApp, &DApplication::iconThemeChanged, parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &FileViewHelper::clipboardDataChanged);
     connect(parent(), &FileView::triggerEdit, this, &FileViewHelper::triggerEdit);
-}
-
-FileViewModel *FileViewHelper::model() const
-{
-    return parent()->model();
 }
 
 BaseItemDelegate *FileViewHelper::itemDelegate() const

@@ -106,7 +106,8 @@ public:
     };
 
     explicit FileViewItem();
-    explicit FileViewItem(const QUrl &url);
+    explicit FileViewItem(FileViewItem *parent);
+    explicit FileViewItem(FileViewItem *parent, const QUrl &url);
     explicit FileViewItem(const FileViewItem &other);
     virtual ~FileViewItem() override;
     FileViewItem &operator=(const FileViewItem &other);
@@ -130,6 +131,9 @@ public:
     {
         return "yyyy/MM/dd HH:mm:ss";
     }
+
+public:
+    FileViewItem *parent { nullptr };
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -75,7 +75,7 @@ public:
 
     void setViewMode(DFMBASE_NAMESPACE::Global::ViewMode mode);
     void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
-    FileViewModel *model() const;
+    FileSortFilterProxyModel *model() const;
     void setModel(QAbstractItemModel *model) override;
 
     QModelIndex indexAt(const QPoint &pos) const override;
@@ -83,7 +83,7 @@ public:
     void setIconSize(const QSize &size);
     int horizontalOffset() const override;
 
-    FileSortFilterProxyModel *proxyModel() const;
+    FileViewModel *sourceModel() const;
     int getColumnWidth(const int &column) const;
     int getHeaderViewWidth() const;
     bool isSelected(const QModelIndex &index) const;
@@ -110,6 +110,8 @@ public:
     }
 
     QModelIndex currentPressIndex() const;
+
+    bool isDragTarget(const QModelIndex &index) const;
 
     using DListView::edit;
     using DListView::updateGeometries;
@@ -181,7 +183,6 @@ private:
     void setDefaultViewMode();
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);
-    const FileViewItem *sourceItem(const QModelIndex &index) const;
 
     QVariant fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue);
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);

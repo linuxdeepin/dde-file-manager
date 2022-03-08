@@ -66,11 +66,6 @@ QPixmap ViewDrawHelper::renderDragPixmap(QModelIndexList indexes) const
     return pixmap;
 }
 
-FileViewModel *ViewDrawHelper::viewModel() const
-{
-    return view->model();
-}
-
 void ViewDrawHelper::drawDragIcons(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QModelIndexList &indexes, const QModelIndex &topIndex) const
 {
     using namespace GlobalPrivate;

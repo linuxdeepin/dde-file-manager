@@ -485,6 +485,14 @@ QUrl LocalFileInfo::url() const
     return tmp;
 }
 
+bool LocalFileInfo::canDrop() const
+{
+    if (!isSymLink())
+        return isDir();
+
+    return false;
+}
+
 bool LocalFileInfo::canRename() const
 {
     if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))

@@ -51,7 +51,6 @@ public:
     QPixmap renderDragPixmap(QModelIndexList indexes) const;
 
 private:
-    FileViewModel *viewModel() const;
     void drawDragIcons(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QModelIndexList &indexes, const QModelIndex &topIndex) const;
     void drawDragCount(QPainter *painter, const QModelIndex &topIndex, const QStyleOptionViewItem &option, int count) const;
 

@@ -144,22 +144,6 @@ bool FileViewModelPrivate::checkFileEventQueue()
     return !isEmptyQueue;
 }
 
-QString FileViewModelPrivate::roleDisplayString(int role)
-{
-    switch (role) {
-    case FileViewItem::kItemNameRole:
-        return tr("Name");
-    case FileViewItem::kItemFileLastModifiedRole:
-        return tr("Time modified");
-    case FileViewItem::kItemFileSizeRole:
-        return tr("Size");
-    case FileViewItem::kItemFileMimeTypeRole:
-        return tr("Type");
-    default:
-        return QString();
-    }
-}
-
 FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel(parent), d(new FileViewModelPrivate(this))
 {
@@ -208,13 +192,13 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         return root;
     }
 
-    QModelIndex root = createIndex(0, 0, d->root.data());
-
     if (!url.isValid())
-        return root;
+        return QModelIndex();
 
-    d->root.reset(new FileViewItem(url));
+    d->root.reset(new FileViewItem(nullptr, url));
     d->nodeManager->setRootNode(d->root);
+
+    QModelIndex root = createIndex(0, 0, d->root.data());
 
     if (d->column == 0)
         d->column = 4;
@@ -276,8 +260,11 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 
 QModelIndex FileViewModel::parent(const QModelIndex &child) const
 {
-    Q_UNUSED(child)
-    return QModelIndex();
+    FileViewItem *parentItem = static_cast<FileViewItem *>(child.internalPointer());
+    if (!parentItem || parentItem == d->nodeManager->rootNode().data())
+        return QModelIndex();
+
+    return createIndex(0, 0, parentItem);
 }
 
 int FileViewModel::rowCount(const QModelIndex &parent) const
@@ -365,16 +352,6 @@ bool FileViewModel::canFetchMore(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return d->canFetchMoreFlag;
-}
-
-QVariant FileViewModel::headerData(int column, Qt::Orientation, int role) const
-{
-    if (role == Qt::DisplayRole) {
-        int column_role = getRoleByColumn(column);
-        return d->roleDisplayString(column_role);
-    }
-
-    return QVariant();
 }
 
 Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
@@ -487,51 +464,9 @@ Qt::DropActions FileViewModel::supportedDropActions() const
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 
-void FileViewModel::updateViewItem(const QModelIndex &index)
-{
-    FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
-    if (view) {
-        view->update(index);
-    }
-}
-
-FileViewItem::Roles FileViewModel::getRoleByColumn(const int &column) const
-{
-    // TODO(liuyangming): get role list from config
-    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
-                                                                                    << FileViewItem::kItemFileLastModifiedRole
-                                                                                    << FileViewItem::kItemFileSizeRole
-                                                                                    << FileViewItem::kItemFileMimeTypeRole;
-
-    if (columnRoleList.length() > column)
-        return columnRoleList.at(column);
-
-    return FileViewItem::kItemNameRole;
-}
-
-int FileViewModel::getColumnByRole(const FileViewItem::Roles role) const
-{
-    // TODO(liuyangming): get role list from config
-    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
-                                                                                    << FileViewItem::kItemFileLastModifiedRole
-                                                                                    << FileViewItem::kItemFileSizeRole
-                                                                                    << FileViewItem::kItemFileMimeTypeRole;
-    return columnRoleList.indexOf(role) < 0 ? 0 : columnRoleList.indexOf(role);
-}
-
 AbstractFileWatcherPointer FileViewModel::fileWatcher() const
 {
     return d->watcher;
-}
-
-QUrl FileViewModel::getUrlByIndex(const QModelIndex &index) const
-{
-    const AbstractFileInfoPointer &info = fileInfo(index);
-    if (!info) {
-        return QUrl();
-    }
-
-    return info->url();
 }
 
 void FileViewModel::beginInsertRows(const QModelIndex &parent, int first, int last)
@@ -564,11 +499,6 @@ void FileViewModel::endResetModel()
     QAbstractItemModel::endResetModel();
 }
 
-QModelIndex FileViewModel::createIndex(int arow, int acolumn, void *adata) const
-{
-    return QAbstractItemModel::createIndex(arow, acolumn, adata);
-}
-
 FileViewModel::State FileViewModel::state() const
 {
     return d->currentState;
@@ -587,17 +517,6 @@ void FileViewModel::setState(FileViewModel::State state)
 void FileViewModel::childrenUpdated()
 {
     emit modelChildrenUpdated();
-}
-
-int FileViewModel::getColumnWidth(const int &column) const
-{
-    // TODO(liuyangming): get column width from config
-    static QList<int> columnWidthList = QList<int>() << 120 << 120 << 120 << 120;
-
-    if (columnWidthList.length() > column)
-        return columnWidthList.at(column);
-
-    return 120;
 }
 
 FileNodeManagerThread::FileNodeManagerThread(FileViewModel *parent)
@@ -660,6 +579,11 @@ void FileNodeManagerThread::clearChildren()
     childrenMutex.unlock();
 }
 
+FileNodePointer FileNodeManagerThread::rootNode() const
+{
+    return root;
+}
+
 void FileNodeManagerThread::insertChild(const QUrl &url)
 {
     int row = -1;
@@ -670,7 +594,7 @@ void FileNodeManagerThread::insertChild(const QUrl &url)
         row = children.count();
     }
     model()->beginInsertRows(QModelIndex(), row, row);
-    FileNodePointer item(new FileViewItem(url));
+    FileNodePointer item(new FileViewItem(root.data(), url));
     {
         QMutexLocker lk(&childrenMutex);
         if (cacheChildren)
@@ -695,7 +619,7 @@ bool FileNodeManagerThread::insertChildren(QList<QUrl> &urls)
     for (const auto &url : urls) {
         if (stoped)
             return false;
-        FileNodePointer needNode(new FileViewItem(url));
+        FileNodePointer needNode(new FileViewItem(root.data(), url));
         const AbstractFileInfoPointer &needNodeInfo = needNode->fileInfo();
         if (needNodeInfo.isNull())
             continue;
@@ -738,7 +662,7 @@ void FileNodeManagerThread::insertAllChildren(const QList<QUrl> &urls)
     for (const auto &url : urls) {
         if (tempChildren.contains(url))
             continue;
-        FileNodePointer needNode(new FileViewItem(url));
+        FileNodePointer needNode(new FileViewItem(root.data(), url));
         const AbstractFileInfoPointer &needNodeInfo = needNode->fileInfo();
         if (needNodeInfo.isNull())
             continue;
