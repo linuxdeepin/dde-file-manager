@@ -75,6 +75,18 @@ WorkspaceService::~WorkspaceService()
 {
 }
 
+WorkspaceService *WorkspaceService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(name()))
+            abort();
+    });
+
+    return ctx.service<WorkspaceService>(name());
+}
+
 void WorkspaceService::addScheme(const QString &scheme)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme);

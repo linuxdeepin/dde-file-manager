@@ -22,12 +22,19 @@
 */
 #include "shareiterator.h"
 #include "private/shareiterator_p.h"
+#include "utils/shareutils.h"
+#include "fileinfo/sharefileinfo.h"
+
+#include "services/common/usershare/usershareservice.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
 
 DPSHARES_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 ShareIterator::ShareIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
-    : AbstractDirIterator(url, nameFilters, filters, flags)
+    : AbstractDirIterator(url, nameFilters, filters, flags),
+      d(new ShareIteratorPrivate(this))
 {
 }
 
@@ -37,30 +44,44 @@ ShareIterator::~ShareIterator()
 
 QUrl ShareIterator::next()
 {
-    return {};
+    if (d->shares.isEmpty())
+        return {};
+    d->currentInfo = d->shares.takeFirst();
+    return ShareUtils::makeShareUrl(d->currentInfo.getPath());
 }
 
 bool ShareIterator::hasNext() const
 {
-    return false;
+    return !d->shares.isEmpty();
 }
 
 QString ShareIterator::fileName() const
 {
-    return "";
+    return d->currentInfo.getShareName();
 }
 
 QUrl ShareIterator::fileUrl() const
 {
-    return {};
+    return ShareUtils::makeShareUrl(d->currentInfo.getPath());
 }
 
 const AbstractFileInfoPointer ShareIterator::fileInfo() const
 {
-    return nullptr;
+    return InfoFactory::create<AbstractFileInfo>(fileUrl());
 }
 
 QUrl ShareIterator::url() const
 {
-    return {};
+    return ShareUtils::rootUrl();
+}
+
+ShareIteratorPrivate::ShareIteratorPrivate(ShareIterator *qq)
+    : q(qq)
+{
+    DSC_USE_NAMESPACE
+    shares = UserShareService::service()->shareInfos();
+}
+
+ShareIteratorPrivate::~ShareIteratorPrivate()
+{
 }

@@ -68,6 +68,9 @@ Q_SIGNALS:
 private:
     explicit UserShareService(QObject *parent = nullptr);
     virtual ~UserShareService() override;
+
+    void initConnect();
+    void initEventHandlers();
 };
 
 DSC_END_NAMESPACE

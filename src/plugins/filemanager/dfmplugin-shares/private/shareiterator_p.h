@@ -24,6 +24,9 @@
 #define SHAREITERATOR_P_H
 
 #include "dfmplugin_shares_global.h"
+#include "services/common/usershare/usershare_defines.h"
+
+#include <QList>
 
 DPSHARES_BEGIN_NAMESPACE
 
@@ -35,6 +38,11 @@ class ShareIteratorPrivate
 public:
     explicit ShareIteratorPrivate(ShareIterator *qq);
     ~ShareIteratorPrivate();
+
+private:
+    ShareIterator *q { nullptr };
+    ShareInfoList shares;
+    DSC_NAMESPACE::ShareInfo currentInfo;
 };
 
 DPSHARES_END_NAMESPACE

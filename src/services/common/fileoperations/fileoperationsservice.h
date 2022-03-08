@@ -39,6 +39,8 @@ class FileOperationsService final : public dpf::PluginService,
 public:
     static QString name() { return "org.deepin.service.FileOperationsService"; }
 
+    static FileOperationsService *service();
+
     JobHandlePointer copy(const QList<QUrl> &sources,
                           const QUrl &target,
                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);

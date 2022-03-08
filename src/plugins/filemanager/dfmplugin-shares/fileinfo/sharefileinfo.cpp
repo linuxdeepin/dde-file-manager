@@ -23,12 +23,46 @@
 #include "sharefileinfo.h"
 #include "private/sharefileinfo_p.h"
 
+#include "dfm-base/base/schemefactory.h"
+
 DFMBASE_USE_NAMESPACE
 DPSHARES_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)
-    : AbstractFileInfo(url, new ShareFileInfoPrivate(this))
+    : AbstractFileInfo(url, new ShareFileInfoPrivate(url, this))
 {
+    QString path = url.path();
+    setProxy(InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(path)));
+}
+
+ShareFileInfo::~ShareFileInfo()
+{
+}
+
+QUrl ShareFileInfo::redirectedFileUrl() const
+{
+    const QString &path = dptr->url.path();
+    return QUrl::fromLocalFile(path);
+}
+
+QString ShareFileInfo::fileDisplayName() const
+{
+    return fileName();
+}
+
+QString ShareFileInfo::fileName() const
+{
+    auto d = dynamic_cast<ShareFileInfoPrivate *>(dptr.data());
+    return d->info.getShareName();
+}
+
+ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
+    : AbstractFileInfoPrivate(qq)
+{
+    this->url = url;
+    if (url.path() != "/")
+        info = UserShareService::service()->getInfoByPath(url.path());
 }
 
 ShareFileInfoPrivate::~ShareFileInfoPrivate()

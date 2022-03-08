@@ -32,6 +32,13 @@ class ShareFileInfo : public dfmbase::AbstractFileInfo
 {
 public:
     explicit ShareFileInfo(const QUrl &url);
+    virtual ~ShareFileInfo() override;
+
+    // AbstractFileInfo interface
+public:
+    virtual QUrl redirectedFileUrl() const override;
+    virtual QString fileDisplayName() const override;
+    virtual QString fileName() const override;
 };
 
 DPSHARES_END_NAMESPACE

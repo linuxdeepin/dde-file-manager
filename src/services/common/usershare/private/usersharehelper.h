@@ -35,6 +35,7 @@
 class QDBusInterface;
 DSC_BEGIN_NAMESPACE
 
+class ShareWatcherManager;
 class UserShareHelper : public QObject
 {
     Q_OBJECT
@@ -57,6 +58,9 @@ public:
     bool isSambaServiceRunning();
     void startSambaServiceAsync(StartSambaFinished onFinished);
 
+    ~UserShareHelper();
+    explicit UserShareHelper(QObject *parent = nullptr);
+
 Q_SIGNALS:
     void shareCountChanged(int count);
     void shareAdded(const QString &path);
@@ -65,13 +69,17 @@ Q_SIGNALS:
 
 protected Q_SLOTS:
     void readShareInfos(bool sendSignal = true);
+    void onShareChanged(const QString &path);
+    void onShareFileDeleted(const QString &path);
+    void onShareMoved(const QString &from, const QString &to);
 
 private:
-    explicit UserShareHelper(QObject *parent = nullptr);
-
     void initConnect();
+    void initMonitorPath();
+
     void removeShareByShareName(const QString &name);
     void removeShareWhenShareFolderDeleted(const QString &deletedPath);
+    ShareInfo getOldShareByNewShare(const ShareInfo &newShare);
 
     int runNetCmd(const QStringList &args, int wait = 30000, QString *err = nullptr);
     void handleErrorWhenShareFailed(int code, const QString &err) const;
@@ -87,6 +95,8 @@ private:
 
     QMap<QString, ShareInfo> sharedInfos {};
     QMap<QString, QStringList> sharePathToShareName {};
+
+    ShareWatcherManager *watcherManager { nullptr };
 };
 DSC_END_NAMESPACE
 

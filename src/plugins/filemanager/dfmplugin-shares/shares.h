@@ -45,6 +45,7 @@ protected Q_SLOTS:
 
 private:
     void addToSidebar();
+    void addFileOperation();
 };
 
 DPSHARES_END_NAMESPACE

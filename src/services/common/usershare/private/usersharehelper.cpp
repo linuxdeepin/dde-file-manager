@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "usersharehelper.h"
+#include "sharewatchermanager.h"
 
 #include "dfm-base/utils/dialogmanager.h"
 
@@ -97,7 +98,9 @@ bool UserShareHelper::share(const ShareInfo &info)
         return false;
     }
 
-    // TODO(xust) get old info and remove it when new share is established.
+    ShareInfo oldShare = getOldShareByNewShare(info);
+    qDebug() << "OldShare: " << oldShare << "\nNewShare: " << info;
+
     if (info.isValid()) {
         if (info.getShareName().startsWith("-") || info.getShareName().endsWith(" ")) {
             DialogManagerInstance->showErrorDialog(tr("The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.").arg("%<>*?|/\\+=;:,\""), "");
@@ -122,7 +125,9 @@ bool UserShareHelper::share(const ShareInfo &info)
             return false;
         }
     }
-    // TODO(xust) if old info is valid, then remove the old info's share.
+
+    if (oldShare.isValid())
+        removeShareByPath(oldShare.getPath());
 
     return true;
 }
@@ -207,6 +212,10 @@ void UserShareHelper::startSambaServiceAsync(StartSambaFinished onFinished)
     watcher->setFuture(QtConcurrent::run([this] { return startSmbService(); }));
 }
 
+UserShareHelper::~UserShareHelper()
+{
+}
+
 void UserShareHelper::readShareInfos(bool sendSignal)
 {
     QStringList oldSharedInfoKeys = sharedInfos.keys();
@@ -262,13 +271,13 @@ void UserShareHelper::readShareInfos(bool sendSignal)
     for (const QString &shareName : oldSharedInfoKeys) {
         const QString &filePath = shareInfoCache.value(shareName).getPath();
         Q_EMIT shareRemoved(filePath);
-        // monitor remove path
+        watcherManager->remove(filePath);
     }
 
     // broadcast new shares
     for (const ShareInfo &info : newShares) {
         Q_EMIT shareAdded(info.getPath());
-        // monitor watch path
+        watcherManager->add(info.getPath());
     }
 
     if (!sendSignal)
@@ -281,6 +290,29 @@ void UserShareHelper::readShareInfos(bool sendSignal)
     Q_EMIT shareCountChanged(count);
 }
 
+void UserShareHelper::onShareChanged(const QString &path)
+{
+    if (path.contains(":tmp"))
+        return;
+
+    pollingSharesTimer->start();
+    QTimer::singleShot(1000, this, [=] { /*TODO(xust) TODO(liuyangming) request to refresh file view*/ });
+}
+
+void UserShareHelper::onShareFileDeleted(const QString &path)
+{
+    if (path.contains(ShareConfig::kShareConfigPath))
+        onShareChanged(path);
+    else
+        removeShareWhenShareFolderDeleted(path);
+}
+
+void UserShareHelper::onShareMoved(const QString &from, const QString &to)
+{
+    onShareFileDeleted(from);
+    onShareChanged(to);
+}
+
 void UserShareHelper::initConnect()
 {
     pollingSharesTimer = new QTimer(this);
@@ -288,6 +320,17 @@ void UserShareHelper::initConnect()
     pollingSharesTimer->setSingleShot(true);
 
     connect(pollingSharesTimer, &QTimer::timeout, this, [this] { this->readShareInfos(); });
+
+    connect(watcherManager, &ShareWatcherManager::fileMoved, this, &UserShareHelper::onShareMoved);
+    connect(watcherManager, &ShareWatcherManager::fileDeleted, this, &UserShareHelper::onShareFileDeleted);
+    connect(watcherManager, &ShareWatcherManager::subfileCreated, this, &UserShareHelper::onShareChanged);
+}
+
+void UserShareHelper::initMonitorPath()
+{
+    const auto lst = shareInfos();
+    for (auto info : lst)
+        watcherManager->add(info.getPath());
 }
 
 void UserShareHelper::removeShareByShareName(const QString &name)
@@ -311,6 +354,15 @@ void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPa
         return;
 
     removeShareByShareName(shareName);
+}
+
+ShareInfo UserShareHelper::getOldShareByNewShare(const ShareInfo &newShare)
+{
+    QStringList shareNames = sharePathToShareName.value(newShare.getPath());
+    shareNames.removeOne(newShare.getShareName());
+    if (shareNames.count() > 0)
+        return getShareInfoByShareName(shareNames.last());
+    return ShareInfo();
 }
 
 int UserShareHelper::runNetCmd(const QStringList &args, int wait, QString *err)
@@ -374,7 +426,7 @@ ShareInfo UserShareHelper::makeInfoByFileContent(const QMap<QString, QString> &c
     ShareInfo info;
     if (!shareName.isEmpty() && !sharePath.isEmpty()
         && QFile(sharePath).exists() && !shareAcl.isEmpty()) {
-        info.setShareName(shareName);
+        info.setShareName(shareName.toLower());
         info.setPath(sharePath);
         info.setComment(contents.value(ShareConfig::kShareComment));
         info.setGuestEnable(contents.value(ShareConfig::kGuestOk));
@@ -424,7 +476,13 @@ UserShareHelper::UserShareHelper(QObject *parent)
 {
     userShareInter.reset(new QDBusInterface(DaemonServiceIFace::kInterfaceService, DaemonServiceIFace::kInterfacePath, DaemonServiceIFace::kInterfaceInterface, QDBusConnection::systemBus(), this));
 
+    watcherManager = new ShareWatcherManager(this);
+    watcherManager->add(ShareConfig::kShareConfigPath);
+
     initConnect();
+    readShareInfos();
+
+    initMonitorPath();
 }
 
 DSC_END_NAMESPACE

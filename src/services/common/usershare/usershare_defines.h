@@ -32,7 +32,7 @@
 DSC_BEGIN_NAMESPACE
 
 namespace EventType {
-
+extern const int kRemoveShare;
 }
 
 class ShareInfo
@@ -74,13 +74,13 @@ private:
     bool anonymous = false;
 };
 
-typedef QList<ShareInfo> ShareInfoList;
-
 QDebug
 operator<<(QDebug dbg, const ShareInfo &obj);
 
 using StartSambaFinished = std::function<void(bool, const QString &)>;
 
 DSC_END_NAMESPACE
+
+typedef QList<DSC_NAMESPACE::ShareInfo> ShareInfoList;
 
 #endif   // NETANDSHARE_DEFINES_H

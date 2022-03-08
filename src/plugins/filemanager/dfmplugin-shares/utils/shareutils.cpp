@@ -22,6 +22,10 @@
 */
 #include "shareutils.h"
 
+#include "dfm-base/base/urlroute.h"
+
+#include <QDebug>
+
 DPSHARES_USE_NAMESPACE
 
 QString ShareUtils::scheme()
@@ -45,4 +49,27 @@ QUrl ShareUtils::rootUrl()
     u.setScheme(scheme());
     u.setPath("/");
     return u;
+}
+
+QUrl ShareUtils::makeShareUrl(const QString &path)
+{
+    QUrl u;
+    u.setScheme(scheme());
+    u.setPath(path);
+    return u;
+}
+
+QUrl ShareUtils::convertToLocalUrl(const QUrl &shareUrl)
+{
+    if (shareUrl.scheme() != scheme())
+        return {};
+    QUrl u = shareUrl;
+    u.setScheme(dfmbase::SchemeTypes::kFile);
+    return u;
+}
+
+bool ShareUtils::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
+{
+    qDebug() << "Hello";
+    return true;
 }

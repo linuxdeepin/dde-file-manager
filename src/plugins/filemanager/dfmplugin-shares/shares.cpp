@@ -29,10 +29,14 @@
 #include "watcher/sharewatcher.h"
 #include "menu/sharemenu.h"
 
+#include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/menu/menuservice.h"
+#include "services/common/usershare/usershareservice.h"
+#include "services/common/fileoperations/fileoperations_defines.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -41,21 +45,30 @@ DPSHARES_USE_NAMESPACE
 void Shares::initialize()
 {
     DFMBASE_USE_NAMESPACE
+    DSC_USE_NAMESPACE
     UrlRoute::regScheme(ShareUtils::scheme(), "/", ShareUtils::icon(), true, tr("My Shares"));
 
     InfoFactory::regClass<ShareFileInfo>(ShareUtils::scheme());
     DirIteratorFactory::regClass<ShareIterator>(ShareUtils::scheme());
     WacherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
-    DSC_NAMESPACE::MenuService::regClass<ShareMenu>(ShareScene::kShareScene);
+    MenuService::regClass<ShareMenu>(ShareScene::kShareScene);
 
     DSB_FM_USE_NAMESPACE
     connect(WindowsService::service(), &WindowsService::windowCreated, this, &Shares::onWindowCreated, Qt::DirectConnection);
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &Shares::onWindowOpened, Qt::DirectConnection);
     connect(WindowsService::service(), &WindowsService::windowClosed, this, &Shares::onWindowClosed, Qt::DirectConnection);
+
+    UserShareService::service();   // for loading shares.
+
+    addFileOperation();
 }
 
 bool Shares::start()
 {
+    DSB_FM_USE_NAMESPACE
+
+    WorkspaceService::service()->addScheme(ShareUtils::scheme());
+    WorkspaceService::service()->setWorkspaceMenuScene(ShareUtils::scheme(), ShareScene::kShareScene);
     return true;
 }
 
@@ -96,4 +109,12 @@ void Shares::addToSidebar()
     shareEntry.url = ShareUtils::rootUrl();
     shareEntry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     SideBarService::service()->addItem(shareEntry);
+}
+
+void Shares::addFileOperation()
+{
+    DSC_USE_NAMESPACE
+    FileOperationsFunctions funcs(new FileOperationsSpace::FileOperationsInfo);
+    funcs->openFiles = &ShareUtils::openFilesHandle;
+    FileOperationsService::service()->registerOperations(ShareUtils::scheme(), funcs);
 }

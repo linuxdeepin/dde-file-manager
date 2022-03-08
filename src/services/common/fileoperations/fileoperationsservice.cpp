@@ -42,6 +42,19 @@ FileOperationsService::FileOperationsService(QObject *parent)
 }
 
 FileOperationsService::~FileOperationsService() {}
+
+FileOperationsService *FileOperationsService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}
+
 /*!
  * \brief FileOperationsService::copy 拷贝文件有UI界面
  *  这个接口只能拷贝源文件在同一目录的文件，也就是源文件都是同一个设备上的文件。拷贝根据源文件的scheme来进行创建不同的file

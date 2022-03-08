@@ -42,8 +42,25 @@ class ShareMenu : public DFMBASE_NAMESPACE::AbstractMenu
 public:
     explicit ShareMenu(QObject *parent = nullptr);
 
-    virtual QMenu *build(QWidget *parent, MenuMode mode, const QUrl &rootUrl, const QUrl &foucsUrl, const QList<QUrl> &selected, QVariant customData) override;
+    virtual QMenu *build(QWidget *parent, MenuMode mode, const QUrl &rootUrl, const QUrl &focusedUrl, const QList<QUrl> &selected, QVariant customData) override;
     virtual void actionBusiness(QAction *act) override;
+
+private:
+    QMenu *buildEmptyMenu(QWidget *parent = nullptr);
+    QMenu *buildFileMenu(const QList<QUrl> &selected, QWidget *parent = nullptr);
+    QMenu *createMenuByContainer(const QVector<dfmbase::ActionDataContainer> &containers, QWidget *parent = nullptr);
+    void initShareActions();
+
+private:
+    enum ShareAction {
+        kActCancelShare = dfmbase::ActionType::kActMaxCustom,
+    };
+
+    QMap<int, int> actionMap;
+    QMap<int, dfmbase::ActionDataContainer> actContainers;
+
+    QList<QUrl> selectedUrls;
+    quint64 winId;
 };
 
 DPSHARES_END_NAMESPACE

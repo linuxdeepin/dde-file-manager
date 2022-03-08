@@ -20,39 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREITERATOR_H
-#define SHAREITERATOR_H
+#ifndef SHAREEVENTSCALLER_H
+#define SHAREEVENTSCALLER_H
 
 #include "dfmplugin_shares_global.h"
 
-#include "dfm-base/interfaces/abstractdiriterator.h"
+#include "dfm-base/dfm_global_defines.h"
+
+#include <QObject>
 
 DPSHARES_BEGIN_NAMESPACE
 
-class ShareIteratorPrivate;
-class ShareIterator : public dfmbase::AbstractDirIterator
+class ShareEventsCaller
 {
-    Q_OBJECT
-    friend class ShareIteratorPrivate;
+    ShareEventsCaller() = delete;
 
 public:
-    explicit ShareIterator(const QUrl &url,
-                           const QStringList &nameFilters = QStringList(),
-                           QDir::Filters filters = QDir::NoFilter,
-                           QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
-    virtual ~ShareIterator() override;
-
-    virtual QUrl next() override;
-    virtual bool hasNext() const override;
-    virtual QString fileName() const override;
-    virtual QUrl fileUrl() const override;
-    virtual const AbstractFileInfoPointer fileInfo() const override;
-    virtual QUrl url() const override;
-
-private:
-    QScopedPointer<ShareIteratorPrivate> d;
+    enum OpenMode {
+        kOpenInCurrentWindow,
+        kOpenInNewWindow,
+        kOpenInNewTab,
+    };
+    static void sendOpenDirs(quint64 winId, const QList<QUrl> &urls, OpenMode mode);
+    static void sendCancelSharing(const QUrl &url);
+    static void sendShowProperty(const QList<QUrl> &urls);
+    static void sendSwitchDisplayMode(quint64 winId, dfmbase::Global::ViewMode mode);
 };
 
 DPSHARES_END_NAMESPACE
 
-#endif   // SHAREITERATOR_H
+#endif   // SHAREEVENTSCALLER_H

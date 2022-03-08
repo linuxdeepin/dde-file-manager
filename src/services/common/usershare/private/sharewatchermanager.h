@@ -20,27 +20,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREWATCHER_P_H
-#define SHAREWATCHER_P_H
+#ifndef SHAREWATCHERMANAGER_H
+#define SHAREWATCHERMANAGER_H
 
-#include "dfmplugin_shares_global.h"
+#include "dfm_common_service_global.h"
 
-#include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
+#include "dfm-base/dfm_base_global.h"
 
-DPSHARES_BEGIN_NAMESPACE
+#include <QObject>
+#include <QMap>
 
-class ShareWatcher;
-class ShareWatcherPrivate : public dfmbase::AbstractFileWatcherPrivate
+DFMBASE_BEGIN_NAMESPACE
+class LocalFileWatcher;
+DFMBASE_END_NAMESPACE
+
+DSC_BEGIN_NAMESPACE
+
+class ShareWatcherManager : public QObject
 {
-    friend class ShareWatcher;
+    Q_OBJECT
 
 public:
-    ShareWatcherPrivate(const QUrl &fileUrl, ShareWatcher *qq);
+    explicit ShareWatcherManager(QObject *parent = nullptr);
+    ~ShareWatcherManager();
 
-    virtual bool start() override;
-    virtual bool stop() override;
+    dfmbase::LocalFileWatcher *add(const QString &path);
+    void remove(const QString &path);
+
+Q_SIGNALS:
+    void fileDeleted(const QString &filePath);
+    void fileAttributeChanged(const QString &filePath);
+    void fileMoved(const QString &fromFilePath, const QString &toFilePath);
+    void subfileCreated(const QString &filePath);
+
+private:
+    QMap<QString, dfmbase::LocalFileWatcher *> watchers;
 };
 
-DPSHARES_END_NAMESPACE
+DSC_END_NAMESPACE
 
-#endif   // SHAREWATCHER_P_H
+#endif   // SHAREWATCHERMANAGER_H

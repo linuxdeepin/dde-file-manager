@@ -33,11 +33,24 @@
 
 DSC_BEGIN_NAMESPACE
 
+#define dispatcher dpfInstance.eventDispatcher()
+
 namespace EventType {
+const int kRemoveShare = dfmbase::UniversalUtils::registerEventType();
 }
 
 UserShareService::UserShareService(QObject *parent)
     : dpf::PluginService(parent), dpf::AutoServiceRegister<UserShareService>()
+{
+    initConnect();
+    initEventHandlers();
+}
+
+UserShareService::~UserShareService()
+{
+}
+
+void UserShareService::initConnect()
 {
     connect(UserShareHelperInstance, &UserShareHelper::shareAdded, this, &UserShareService::shareAdded);
     connect(UserShareHelperInstance, &UserShareHelper::shareRemoved, this, &UserShareService::shareRemoved);
@@ -45,8 +58,9 @@ UserShareService::UserShareService(QObject *parent)
     connect(UserShareHelperInstance, &UserShareHelper::shareRemoveFailed, this, &UserShareService::shareRemoveFailed);
 }
 
-UserShareService::~UserShareService()
+void UserShareService::initEventHandlers()
 {
+    dispatcher.subscribe(EventType::kRemoveShare, UserShareHelperInstance, &UserShareHelper::removeShareByPath);
 }
 
 UserShareService *UserShareService::service()

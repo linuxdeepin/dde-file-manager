@@ -38,6 +38,10 @@ public:
     static QIcon icon();
     static QString displayName();
     static QUrl rootUrl();
+    static QUrl makeShareUrl(const QString &path);
+    static QUrl convertToLocalUrl(const QUrl &shareUrl);
+
+    static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
 };
 
 DPSHARES_END_NAMESPACE

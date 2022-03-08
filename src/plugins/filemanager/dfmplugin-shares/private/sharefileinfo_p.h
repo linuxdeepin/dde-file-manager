@@ -25,6 +25,8 @@
 
 #include "dfmplugin_shares_global.h"
 
+#include "services/common/usershare/usershare_defines.h"
+#include "services/common/usershare/usershareservice.h"
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
 DPSHARES_BEGIN_NAMESPACE
@@ -35,12 +37,12 @@ class ShareFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
     friend class ShareFileInfo;
 
 public:
-    explicit ShareFileInfoPrivate(dfmbase::AbstractFileInfo *qq)
-        : AbstractFileInfoPrivate(qq)
-    {
-    }
+    explicit ShareFileInfoPrivate(const QUrl &url, dfmbase::AbstractFileInfo *qq);
 
     virtual ~ShareFileInfoPrivate();
+
+private:
+    DSC_NAMESPACE::ShareInfo info;
 };
 
 DPSHARES_END_NAMESPACE
