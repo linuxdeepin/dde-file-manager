@@ -568,6 +568,7 @@ bool DoCopyFilesWorker::doCopyOneFile(const AbstractFileInfoPointer fromInfo, co
     char *data = new char[blockSize + 1];
     uLong sourceCheckSum = adler32(0L, nullptr, 0);
     qint64 sizeRead = 0;
+
     do {
         if (!doReadFile(fromInfo, toInfo, fromDevice, data, blockSize, sizeRead, reslut)) {
             delete[] data;
@@ -584,7 +585,7 @@ bool DoCopyFilesWorker::doCopyOneFile(const AbstractFileInfoPointer fromInfo, co
         if (Q_LIKELY(jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))) {
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
-    } while (toInfo->size() != fromInfo->size());
+    } while (fromDevice->pos() != fromInfo->size() && toInfo->size() != fromInfo->size());
 
     delete[] data;
     data = nullptr;
@@ -720,7 +721,10 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
         }
 
         if (Q_UNLIKELY(readSize <= 0)) {
-            if (readSize == 0 && fromInfo->size() == toInfo->size()) {
+            const auto &fromInfoSize = fromInfo->size();
+            const auto &toInfoSize = toInfo->size();
+            const auto &fromDevicePos = fromDevice->pos();
+            if (readSize == 0 && (fromInfoSize == toInfoSize || fromInfoSize == fromDevicePos)) {
                 return true;
             }
             fromInfo->refresh();

@@ -513,9 +513,9 @@ void FileStatisticsJob::statistcsExtFileSystem()
             }
         }
         setSizeInfo();
-        d->setState(kStoppedState);
         fts_close(fts);
     }
+    d->setState(kStoppedState);
 }
 
 DFMBASE_END_NAMESPACE
