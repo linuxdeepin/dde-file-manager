@@ -33,8 +33,8 @@ DFMBASE_USE_NAMESPACE
 
 LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
                                                  const QStringList &nameFilters,
-                                                 dfmio::DEnumerator::DirFilters filters,
-                                                 dfmio::DEnumerator::IteratorFlags flags,
+                                                 QDir::Filters filters,
+                                                 QDirIterator::IteratorFlags flags,
                                                  LocalDirIterator *q)
     : q(q), curFilters(filters)
 {
@@ -47,8 +47,8 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
     }
 
     dfmioDirIterator = factory->createEnumerator(nameFilters,
-                                                 static_cast<DEnumerator::DirFilter>(static_cast<qint64>(filters)),
-                                                 static_cast<DEnumerator::IteratorFlag>(static_cast<qint8>(flags)));
+                                                 static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                                 static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags)));
     if (!dfmioDirIterator) {
         qWarning("Failed dfm-io use factory create enumerator");
         abort();
@@ -62,8 +62,8 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
  */
 LocalDirIterator::LocalDirIterator(const QUrl &url,
                                    const QStringList &nameFilters,
-                                   dfmio::DEnumerator::DirFilters filters,
-                                   dfmio::DEnumerator::IteratorFlags flags)
+                                   QDir::Filters filters,
+                                   QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags), d(new LocalDirIteratorPrivate(url, nameFilters, filters, flags, this))
 {
 }

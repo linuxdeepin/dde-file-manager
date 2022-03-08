@@ -39,13 +39,15 @@ DFMBASE_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
 CanvasModelPrivate::CanvasModelPrivate(CanvasModel *qq)
-    : QObject(qq), q(qq)
+    : QObject (qq)
+    , q(qq)
 {
     fileTreater.reset(new FileTreater(qq));
 }
 
 CanvasModelPrivate::~CanvasModelPrivate()
 {
+
 }
 
 void CanvasModelPrivate::onFileDeleted(const QUrl &url)
@@ -121,18 +123,18 @@ void CanvasModelPrivate::doWatcherEvent()
 
         if (kAddFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            fileTreater->insertChild(url);
+                fileTreater->insertChild(url);
         } else if (kRmFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            fileTreater->removeChild(url);
+                fileTreater->removeChild(url);
         } else if (kReFile == eventType) {
             const QPair<QUrl, QUrl> urls = eventData.second.value<QPair<QUrl, QUrl>>();
             const QUrl &oldUrl = urls.first;
             const QUrl &newUrl = urls.second;
-            fileTreater->renameChild(oldUrl, newUrl);
+                fileTreater->renameChild(oldUrl, newUrl);
         } else if (kUpdateFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-            fileTreater->updateChild(url);
+                fileTreater->updateChild(url);
         }
     }
     processFileEventRuning = false;
@@ -174,7 +176,7 @@ void CanvasModelPrivate::doRefresh()
         traversalThread->stopAndDeleteLater();
     }
 
-    traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, dfmio::DEnumerator::IteratorFlag::NoIteratorFlags));
+    traversalThread.reset(new TraversalDirThread(rootUrl, QStringList(), filters, QDirIterator::NoIteratorFlags));
     if (Q_UNLIKELY(traversalThread.isNull())) {
         isUpdatedChildren = true;
         return;
@@ -187,8 +189,10 @@ void CanvasModelPrivate::doRefresh()
 }
 
 CanvasModel::CanvasModel(QObject *parent)
-    : QAbstractItemModel(parent), d(new CanvasModelPrivate(this))
+    : QAbstractItemModel(parent)
+    , d(new CanvasModelPrivate(this))
 {
+
 }
 
 QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) const
@@ -257,7 +261,7 @@ int CanvasModel::columnCount(const QModelIndex &parent) const
 
 QModelIndex CanvasModel::rootIndex() const
 {
-    return createIndex((quintptr)this, 0, (void *)this);
+    return createIndex((quintptr)this, 0, (void*)this);
 }
 
 QVariant CanvasModel::data(const QModelIndex &index, int role) const
@@ -281,11 +285,11 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
     case kFilePinyinName:
         return indexFileInfo->fileDisplayPinyinName();
     case kFileLastModifiedRole:
-        return indexFileInfo->lastModified().toString();   // todo by file info: lastModifiedDisplayName
+        return indexFileInfo->lastModified().toString();    // todo by file info: lastModifiedDisplayName
     case kFileSizeRole:
         return indexFileInfo->size();   // todo by file info: sizeDisplayName
     case kFileMimeTypeRole:
-        return indexFileInfo->fileMimeType().name();   // todo by file info: mimeTypeDisplayName
+        return indexFileInfo->fileMimeType().name();    // todo by file info: mimeTypeDisplayName
     case kExtraProperties:
         return indexFileInfo->extraProperties();
     case kFileBaseNameRole:
@@ -355,6 +359,7 @@ QModelIndex CanvasModel::setRootUrl(QUrl url)
         disconnect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &CanvasModelPrivate::onFileCreated);
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &CanvasModelPrivate::onFileRename);
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &CanvasModelPrivate::onFileUpdated);
+
     }
 
     d->watcher = WacherFactory::create<AbstractFileWatcher>(d->rootUrl);
@@ -366,12 +371,12 @@ QModelIndex CanvasModel::setRootUrl(QUrl url)
         d->watcher->startWatcher();
     }
 
-    d->filters = dfmio::DEnumerator::DirFilter::AllEntries | dfmio::DEnumerator::DirFilter::NoDotAndDotDot | dfmio::DEnumerator::DirFilter::System;
+    d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     d->whetherShowHiddenFile = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
     if (d->whetherShowHiddenFile)
-        d->filters |= dfmio::DEnumerator::DirFilter::Hidden;
+        d->filters |= QDir::Hidden;
     else
-        d->filters &= ~static_cast<uint16_t>(dfmio::DEnumerator::DirFilter::Hidden);
+        d->filters &= ~QDir::Hidden;
 
     // root url changed,refresh data as soon as
     d->doRefresh();
@@ -439,7 +444,7 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
     if (!parent.isValid() || parent == rootIndex()) {
         // drop file to desktop
         targetFileUrl = rootUrl();
-        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
+        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action ;
     } else {
         targetFileUrl = url(parent);
         qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
@@ -481,7 +486,7 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
 
 QStringList CanvasModel::mimeTypes() const
 {
-    static QStringList types { QLatin1String("text/uri-list") };
+    static QStringList types {QLatin1String("text/uri-list")};
     return types;
 }
 
@@ -541,9 +546,9 @@ void CanvasModel::setShowHiddenFiles(const bool isShow)
         return;
     d->whetherShowHiddenFile = isShow;
     if (d->whetherShowHiddenFile)
-        d->filters |= dfmio::DEnumerator::DirFilter::Hidden;
+        d->filters |= QDir::Hidden;
     else
-        d->filters &= ~static_cast<uint16_t>(dfmio::DEnumerator::DirFilter::Hidden);
+        d->filters &= ~QDir::Hidden;
 }
 
 void CanvasModel::update()

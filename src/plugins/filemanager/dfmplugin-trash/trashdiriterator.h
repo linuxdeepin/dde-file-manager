@@ -37,8 +37,8 @@ class TrashDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 public:
     explicit TrashDirIterator(const QUrl &url,
                               const QStringList &nameFilters = QStringList(),
-                              dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
-                              dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags);
+                              QDir::Filters filters = QDir::NoFilter,
+                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
 
     ~TrashDirIterator() override;
 
@@ -56,7 +56,6 @@ public:
 
 private:
     QScopedPointer<TrashDirIteratorPrivate> d;
-    AbstractFileInfoPointer fileInfoIterator = nullptr;
 };
 
 DPTRASH_END_NAMESPACE

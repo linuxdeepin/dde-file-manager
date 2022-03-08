@@ -41,15 +41,13 @@ TrashDirIteratorPrivate::~TrashDirIteratorPrivate()
 
 TrashDirIterator::TrashDirIterator(const QUrl &url,
                                    const QStringList &nameFilters,
-                                   dfmio::DEnumerator::DirFilters filters,
-                                   dfmio::DEnumerator::IteratorFlags flags)
+                                   QDir::Filters filters,
+                                   QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags),
       d(new TrashDirIteratorPrivate(this))
 {
     QString path = StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path();
-    d->iterator = new dfmio::DEnumerator(path, nameFilters, filters, flags);
-
-    fileInfoIterator = InfoFactory::create<AbstractFileInfo>(url);
+    d->iterator = new QDirIterator(path, nameFilters, filters, flags);
 }
 
 TrashDirIterator::~TrashDirIterator()
@@ -75,18 +73,12 @@ bool TrashDirIterator::hasNext() const
 
 QString TrashDirIterator::fileName() const
 {
-    if (fileInfoIterator)
-        return fileInfoIterator->fileName();
-    return QString();
-    //return d->iterator->fileName();
+    return d->iterator->fileName();
 }
 
 QUrl TrashDirIterator::fileUrl() const
 {
-    if (fileInfoIterator)
-        return QUrl::fromLocalFile(fileInfoIterator->filePath());
-    return QUrl();
-    //return TrashHelper::fromLocalFile(d->iterator->filePath());
+    return TrashHelper::fromLocalFile(d->iterator->filePath());
 }
 
 const AbstractFileInfoPointer TrashDirIterator::fileInfo() const

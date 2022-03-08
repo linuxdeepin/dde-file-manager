@@ -25,8 +25,6 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-#include <dfm-io/core/denumerator.h>
-
 #include <QDir>
 #include <QDirIterator>
 /*!
@@ -44,8 +42,8 @@ public:
 
     explicit AbstractDirIterator(const QUrl &url,
                                  const QStringList &nameFilters = QStringList(),
-                                 dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
-                                 dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags)
+                                 QDir::Filters filters = QDir::NoFilter,
+                                 QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags)
     {
         Q_UNUSED(url)
         Q_UNUSED(nameFilters)

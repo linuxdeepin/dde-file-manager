@@ -40,7 +40,7 @@ public:
     ~TrashDirIteratorPrivate();
 
 private:
-    dfmio::DEnumerator *iterator { nullptr };
+    QDirIterator *iterator { nullptr };
     TrashDirIterator *q { nullptr };
 };
 

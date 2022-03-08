@@ -93,7 +93,7 @@ void IteratorSearcher::doSearch()
             return;
 
         const auto &url = searchPathList.takeAt(0);
-        auto iterator = DirIteratorFactory::create(url, QStringList(), dfmio::DEnumerator::DirFilter::NoDotAndDotDot | dfmio::DEnumerator::DirFilter::Dirs | dfmio::DEnumerator::DirFilter::Files);
+        auto iterator = DirIteratorFactory::create(url, QStringList(), QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
         if (!iterator)
             continue;
 

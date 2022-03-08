@@ -337,8 +337,8 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
 
     d->traversalThread = new TraversalDirThread(
             d->root->url(), QStringList(),
-            dfmio::DEnumerator::DirFilter::AllEntries | dfmio::DEnumerator::DirFilter::NoDotAndDotDot | dfmio::DEnumerator::DirFilter::System | dfmio::DEnumerator::DirFilter::Hidden,
-            dfmio::DEnumerator::IteratorFlag::NoIteratorFlags);
+            QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
+            QDirIterator::NoIteratorFlags);
 
     d->traversalThread->setParent(this);
 

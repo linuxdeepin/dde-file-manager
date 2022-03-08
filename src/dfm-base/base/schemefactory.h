@@ -244,7 +244,7 @@ class DirIteratorFactoryT1 : public SchemeFactory<T>
 
     // 定义多参数构造函数类型
     typedef std::function<QSharedPointer<T>(const QUrl &url, const QStringList &nameFilters,
-                                            dfmio::DEnumerator::DirFilters filters, dfmio::DEnumerator::IteratorFlags flags)>
+                                            QDir::Filters filters, QDirIterator::IteratorFlags flags)>
             CreateFuncAgu;
 
     // 构造函数列表
@@ -275,8 +275,8 @@ public:
 
         CreateFuncAgu foo = [=](const QUrl &url,
                                 const QStringList &nameFilters = QStringList(),
-                                dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
-                                dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags) {
+                                QDir::Filters filters = QDir::NoFilter,
+                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags) {
             return QSharedPointer<T>(new CT(url, nameFilters, filters, flags));
         };
         constructAguList.insert(scheme, foo);
@@ -298,8 +298,8 @@ public:
     template<class RT>
     QSharedPointer<RT> create(const QUrl &url,
                               const QStringList &nameFilters = QStringList(),
-                              dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
-                              dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags,
+                              QDir::Filters filters = QDir::NoFilter,
+                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                               QString *errorString = nullptr)
     {
         if (!UrlRoute::hasScheme(url.scheme())) {
@@ -331,8 +331,8 @@ public:
     template<class RT>
     QSharedPointer<RT> create(const QUrl &url, QString *errorString = nullptr)
     {
-        return create<RT>(url, {}, dfmio::DEnumerator::DirFilter::NoFilter,
-                          dfmio::DEnumerator::IteratorFlag::NoIteratorFlags,
+        return create<RT>(url, {}, QDir::NoFilter,
+                          QDirIterator::NoIteratorFlags,
                           errorString);
     }
 };
@@ -382,8 +382,8 @@ public:
     template<class RT = AbstractDirIterator>
     static QSharedPointer<RT> create(const QUrl &url,
                                      const QStringList &nameFilters = QStringList(),
-                                     dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
-                                     dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags,
+                                     QDir::Filters filters = QDir::NoFilter,
+                                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                                      QString *errorString = nullptr)
     {
         return instance().DirIteratorFactoryT1<AbstractDirIterator>::create<RT>(url, nameFilters, filters, flags, errorString);

@@ -37,8 +37,8 @@ class SearchDirIterator : public AbstractDirIterator
 public:
     explicit SearchDirIterator(const QUrl &url,
                                const QStringList &nameFilters = QStringList(),
-                               dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
-                               dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags);
+                               QDir::Filters filters = QDir::NoFilter,
+                               QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
     ~SearchDirIterator() override;
     virtual QUrl next() override;
     virtual bool hasNext() const override;

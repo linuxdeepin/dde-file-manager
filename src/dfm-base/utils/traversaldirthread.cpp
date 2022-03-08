@@ -29,8 +29,8 @@ DFMBASE_USE_NAMESPACE
 
 TraversalDirThread::TraversalDirThread(const QUrl &url,
                                        const QStringList &nameFilters,
-                                       dfmio::DEnumerator::DirFilters filters,
-                                       dfmio::DEnumerator::IteratorFlags flags,
+                                       QDir::Filters filters,
+                                       QDirIterator::IteratorFlags flags,
                                        QObject *parent)
     : QThread(parent), dirUrl(url)
 {

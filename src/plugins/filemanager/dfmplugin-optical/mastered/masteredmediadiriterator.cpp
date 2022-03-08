@@ -27,7 +27,6 @@
 
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/base/schemefactory.h"
 
 DFMBASE_USE_NAMESPACE
 DPOPTICAL_USE_NAMESPACE
@@ -36,8 +35,8 @@ using namespace GlobalServerDefines;
 
 MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
                                                    const QStringList &nameFilters,
-                                                   dfmio::DEnumerator::DirFilters filters,
-                                                   dfmio::DEnumerator::IteratorFlags flags)
+                                                   QDir::Filters filters,
+                                                   QDirIterator::IteratorFlags flags)
     : AbstractDirIterator(url, nameFilters, filters, flags)
 {
     devFile = OpticalHelper::burnDestDevice(url);
@@ -46,8 +45,8 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
 
     QString stagingPath { OpticalHelper::localStagingFile(url).path() };
-    stagingIterator = QSharedPointer<dfmio::DEnumerator>(
-            new dfmio::DEnumerator(stagingPath, nameFilters, filters, flags));
+    stagingIterator = QSharedPointer<QDirIterator>(
+            new QDirIterator(stagingPath, nameFilters, filters, flags));
 
     bool opticalBlank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
     if (opticalBlank) {
@@ -56,9 +55,7 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     }
 
     QString realpath { mntPoint + OpticalHelper::burnFilePath(url) };
-    discIterator = QSharedPointer<dfmio::DEnumerator>(new dfmio::DEnumerator(realpath, nameFilters, filters, flags));
-
-    fileInfoIterator = InfoFactory::create<AbstractFileInfo>(url);
+    discIterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filters, flags));
 }
 
 QUrl MasteredMediaDirIterator::next()
@@ -78,18 +75,12 @@ bool MasteredMediaDirIterator::hasNext() const
 
 QString MasteredMediaDirIterator::fileName() const
 {
-    if (fileInfoIterator)
-        return fileInfoIterator->fileName();
-    return QString();
-    //return discIterator ? discIterator->fileName() : stagingIterator->fileName();
+    return discIterator ? discIterator->fileName() : stagingIterator->fileName();
 }
 
 QUrl MasteredMediaDirIterator::fileUrl() const
 {
-    if (fileInfoIterator)
-        return QUrl::fromLocalFile(fileInfoIterator->filePath());
-    return QUrl();
-    //return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->filePath() : stagingIterator->filePath()));
+    return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->filePath() : stagingIterator->filePath()));
 }
 
 const AbstractFileInfoPointer MasteredMediaDirIterator::fileInfo() const
@@ -100,10 +91,7 @@ const AbstractFileInfoPointer MasteredMediaDirIterator::fileInfo() const
 
 QUrl MasteredMediaDirIterator::url() const
 {
-    if (fileInfoIterator)
-        return QUrl::fromLocalFile(fileInfoIterator->path());
-    return QUrl();
-    //return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->path() : stagingIterator->path()));
+    return changeScheme(QUrl::fromLocalFile(discIterator ? discIterator->path() : stagingIterator->path()));
 }
 
 QUrl MasteredMediaDirIterator::changeScheme(const QUrl &in) const

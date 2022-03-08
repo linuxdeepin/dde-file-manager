@@ -43,8 +43,8 @@ class TraversalDirThread : public QThread
 
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
-                                dfmio::DEnumerator::DirFilters filters = dfmio::DEnumerator::DirFilter::NoFilter,
-                                dfmio::DEnumerator::IteratorFlags flags = dfmio::DEnumerator::IteratorFlag::NoIteratorFlags,
+                                QDir::Filters filters = QDir::NoFilter,
+                                QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags,
                                 QObject *parent = nullptr);
     virtual ~TraversalDirThread() override;
     void stop();
