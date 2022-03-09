@@ -73,11 +73,7 @@ public:
 
     static void clearRecent();
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
-    static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
 
-    static bool writeToClipBoardHandle(const quint64 windowId,
-                                       const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                                       const QList<QUrl> urls);
     QMap<QUrl, AbstractFileInfoPointer> getRecentNodes() const;
     bool removeRecentFile(const QUrl &url);
 

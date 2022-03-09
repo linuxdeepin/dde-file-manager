@@ -21,6 +21,7 @@
  */
 #include "recentmenu.h"
 #include "utils/recentmanager.h"
+#include "utils/recentfileshelper.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -89,29 +90,7 @@ QMenu *RecentMenu::build(QWidget *parent,
 
 void RecentMenu::removeRecent()
 {
-    DDialog dlg;
-    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
-    dlg.addButton(tr("Cancel", "button"));
-    dlg.addButton(tr("Remove", "button"), true, DDialog::ButtonRecommend);
-
-    if (selectedUrls.size() == 1)
-        dlg.setTitle(tr("Do you want to remove this item?"));
-    else
-        dlg.setTitle(tr("Do yout want to remove %1 items?").arg(selectedUrls.size()));
-    dlg.setMessage(tr("It does not delete the original files"));
-
-    int code = dlg.exec();
-    if (code == 1) {
-        QStringList list;
-        for (QUrl &url : selectedUrls) {
-            //list << DUrl::fromLocalFile(url.path()).toString();
-            //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
-            url.setScheme(SchemeTypes::kFile);
-            list << url.toString();
-        }
-
-        DRecentManager::removeItems(list);
-    }
+    RecentFilesHelper::removeRecent(selectedUrls);
 }
 
 void RecentMenu::actionBusiness(QAction *act)

@@ -97,30 +97,6 @@ void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const 
     delete menu;
 }
 
-bool RecentManager::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
-{
-    Q_UNUSED(error)
-
-    QList<QUrl> redirectedFileUrls;
-    for (QUrl url : urls) {
-        url.setScheme(SchemeTypes::kFile);
-        redirectedFileUrls << url;
-    }
-    RecentEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
-    return true;
-}
-
-bool RecentManager::writeToClipBoardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
-{
-    QList<QUrl> redirectedFileUrls;
-    for (QUrl url : urls) {
-        url.setScheme(SchemeTypes::kFile);
-        redirectedFileUrls << url;
-    }
-    RecentEventCaller::sendWriteToClipboard(windowId, action, redirectedFileUrls);
-    return true;
-}
-
 QMap<QUrl, AbstractFileInfoPointer> RecentManager::getRecentNodes() const
 {
     return recentNodes;

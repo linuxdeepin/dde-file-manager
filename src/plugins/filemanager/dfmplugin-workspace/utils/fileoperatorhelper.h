@@ -29,13 +29,13 @@
 
 DPWORKSPACE_BEGIN_NAMESPACE
 class FileView;
-class FileOperaterHelper : public QObject
+class FileOperatorHelper : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(FileOperaterHelper)
+    Q_DISABLE_COPY(FileOperatorHelper)
 
 public:
-    static FileOperaterHelper *instance();
+    static FileOperatorHelper *instance();
     void touchFolder(const FileView *view);
     void touchFiles(const FileView *view, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString suffix = "");
     void openFiles(const FileView *view);
@@ -58,9 +58,9 @@ public:
     // Todo(yanghao)
 
 private:
-    explicit FileOperaterHelper(QObject *parent = nullptr);
+    explicit FileOperatorHelper(QObject *parent = nullptr);
 };
 
-#define FileOperaterHelperIns DPWORKSPACE_USE_NAMESPACE::FileOperaterHelper::instance()
+#define FileOperatorHelperIns DPWORKSPACE_USE_NAMESPACE::FileOperatorHelper::instance()
 DPWORKSPACE_END_NAMESPACE
 #endif   // FILEOPERATERHELPER_H

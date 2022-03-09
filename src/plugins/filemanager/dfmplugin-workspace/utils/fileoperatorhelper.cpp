@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "fileoperaterhelper.h"
+#include "fileoperatorhelper.h"
 #include "workspacehelper.h"
 #include "events/workspaceeventcaller.h"
 #include "views/fileview.h"
@@ -38,13 +38,13 @@
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
-FileOperaterHelper *FileOperaterHelper::instance()
+FileOperatorHelper *FileOperatorHelper::instance()
 {
-    static FileOperaterHelper helper;
+    static FileOperatorHelper helper;
     return &helper;
 }
 
-void FileOperaterHelper::touchFolder(const FileView *view)
+void FileOperatorHelper::touchFolder(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
@@ -53,7 +53,7 @@ void FileOperaterHelper::touchFolder(const FileView *view)
                                           kCreateFileTypeFolder);
 }
 
-void FileOperaterHelper::touchFiles(const FileView *view, const CreateFileType type, QString suffix)
+void FileOperatorHelper::touchFiles(const FileView *view, const CreateFileType type, QString suffix)
 {
     const quint64 windowId = WorkspaceHelper::instance()->windowId(view);
     const QUrl &url = view->rootUrl();
@@ -65,19 +65,19 @@ void FileOperaterHelper::touchFiles(const FileView *view, const CreateFileType t
                                           suffix);
 }
 
-void FileOperaterHelper::openFiles(const FileView *view)
+void FileOperatorHelper::openFiles(const FileView *view)
 {
     openFiles(view, view->selectedUrlList());
 }
 
-void FileOperaterHelper::openFiles(const FileView *view, const QList<QUrl> &urls)
+void FileOperatorHelper::openFiles(const FileView *view, const QList<QUrl> &urls)
 {
     DirOpenMode openMode = view->currentDirOpenMode();
 
     openFilesByMode(view, urls, openMode);
 }
 
-void FileOperaterHelper::openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode)
+void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
@@ -90,19 +90,20 @@ void FileOperaterHelper::openFilesByMode(const FileView *view, const QList<QUrl>
                 WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
             }
         } else {
+            const QList<QUrl> &openUrls = { url };
             dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles,
                                                   windowId,
-                                                  url);
+                                                  openUrls);
         }
     }
 }
 
-void FileOperaterHelper::openFilesByApp(const FileView *view)
+void FileOperatorHelper::openFilesByApp(const FileView *view)
 {
     // Todo(yanghao)
 }
 
-void FileOperaterHelper::renameFile(const FileView *view, const QUrl &oldUrl, const QUrl &newUrl)
+void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, const QUrl &newUrl)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile,
@@ -111,7 +112,7 @@ void FileOperaterHelper::renameFile(const FileView *view, const QUrl &oldUrl, co
                                           newUrl);
 }
 
-void FileOperaterHelper::copyFiles(const FileView *view)
+void FileOperatorHelper::copyFiles(const FileView *view)
 {
 
     QList<QUrl> selectedUrls = view->selectedUrlList();
@@ -130,7 +131,7 @@ void FileOperaterHelper::copyFiles(const FileView *view)
                                           selectedUrls);
 }
 
-void FileOperaterHelper::cutFiles(const FileView *view)
+void FileOperatorHelper::cutFiles(const FileView *view)
 {
     // Todo(yanghao): 只支持回收站根目录下的文件执行剪切
     qInfo() << "cut shortcut key to clipboard";
@@ -147,7 +148,7 @@ void FileOperaterHelper::cutFiles(const FileView *view)
                                           selectedUrls);
 }
 
-void FileOperaterHelper::pasteFiles(const FileView *view)
+void FileOperatorHelper::pasteFiles(const FileView *view)
 {
     qInfo() << " paste file by clipboard and currentUrl: " << view->rootUrl();
     auto action = ClipBoard::instance()->clipboardAction();
@@ -161,17 +162,21 @@ void FileOperaterHelper::pasteFiles(const FileView *view)
                                               view->rootUrl(),
                                               AbstractJobHandler::JobFlag::kNoHint);
     } else if (ClipBoard::kCutAction == action) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile,
-                                              windowId,
-                                              sourceUrls,
-                                              view->rootUrl(),
-                                              AbstractJobHandler::JobFlag::kNoHint);
+
+        if (ClipBoard::supportCut()) {
+            ClipBoard::clearClipboard();
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile,
+                                                  windowId,
+                                                  sourceUrls,
+                                                  view->rootUrl(),
+                                                  AbstractJobHandler::JobFlag::kNoHint);
+        }
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << sourceUrls;
     }
 }
 
-void FileOperaterHelper::undoFiles(const FileView *view)
+void FileOperatorHelper::undoFiles(const FileView *view)
 {
     qInfo() << " undoFiles file, currentUrl: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
@@ -180,7 +185,7 @@ void FileOperaterHelper::undoFiles(const FileView *view)
                                           windowId);
 }
 
-void FileOperaterHelper::moveToTrash(const FileView *view)
+void FileOperatorHelper::moveToTrash(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
@@ -189,7 +194,7 @@ void FileOperaterHelper::moveToTrash(const FileView *view)
                                           AbstractJobHandler::JobFlag::kNoHint);
 }
 
-void FileOperaterHelper::deleteFiles(const FileView *view)
+void FileOperatorHelper::deleteFiles(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
@@ -198,7 +203,7 @@ void FileOperaterHelper::deleteFiles(const FileView *view)
                                           AbstractJobHandler::JobFlag::kNoHint);
 }
 
-void FileOperaterHelper::createSymlink(const FileView *view, QUrl targetParent)
+void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
 {
     if (targetParent.isEmpty())
         targetParent = view->rootUrl();
@@ -219,7 +224,7 @@ void FileOperaterHelper::createSymlink(const FileView *view, QUrl targetParent)
     }
 }
 
-void FileOperaterHelper::openInTerminal(const FileView *view)
+void FileOperatorHelper::openInTerminal(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     QList<QUrl> urls = view->selectedUrlList();
@@ -230,7 +235,7 @@ void FileOperaterHelper::openInTerminal(const FileView *view)
                                           urls);
 }
 
-void FileOperaterHelper::showFilesProperty(const FileView *view)
+void FileOperatorHelper::showFilesProperty(const FileView *view)
 {
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
@@ -239,20 +244,20 @@ void FileOperaterHelper::showFilesProperty(const FileView *view)
                                           urls);
 }
 
-void FileOperaterHelper::sendBluetoothFiles(const FileView *view)
+void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 {
     QList<QUrl> urls = view->selectedUrlList();
     if (!urls.isEmpty())
         dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::EventType::kSendFiles, urls);
 }
 
-void FileOperaterHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
+void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
 {
     quint64 winID = WorkspaceHelper::instance()->windowId(view);
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, winID, selectUrls, currentDirUrls);
 }
 
-void FileOperaterHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
+void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     if (action == Qt::MoveAction) {
@@ -271,7 +276,7 @@ void FileOperaterHelper::dropFiles(const FileView *view, const Qt::DropAction &a
     }
 }
 
-FileOperaterHelper::FileOperaterHelper(QObject *parent)
+FileOperatorHelper::FileOperatorHelper(QObject *parent)
     : QObject(parent)
 {
 }

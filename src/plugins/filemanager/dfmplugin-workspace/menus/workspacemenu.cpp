@@ -23,7 +23,7 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
-#include "utils/fileoperaterhelper.h"
+#include "utils/fileoperatorhelper.h"
 #include "events/workspaceeventcaller.h"
 #include "utils/workspacehelper.h"
 
@@ -81,7 +81,7 @@ void WorkspaceMenu::actionBusiness(QAction *act)
 
     switch (actType) {
     case kActOpen:
-        FileOperaterHelperIns->openFiles(view);
+        FileOperatorHelperIns->openFiles(view);
         break;
     case kActOpenInNewWindow:
         WorkspaceEventCaller::sendOpenWindow(view->selectedUrlList());
@@ -114,31 +114,31 @@ void WorkspaceMenu::actionBusiness(QAction *act)
         break;
     }
     case kActNewFolder:
-        FileOperaterHelperIns->touchFolder(view);
+        FileOperatorHelperIns->touchFolder(view);
         break;
     case kActNewText:
-        FileOperaterHelperIns->touchFiles(view, CreateFileType::kCreateFileTypeText);
+        FileOperatorHelperIns->touchFiles(view, CreateFileType::kCreateFileTypeText);
         break;
     case kActNewWord:
-        FileOperaterHelperIns->touchFiles(view, CreateFileType::kCreateFileTypeWord);
+        FileOperatorHelperIns->touchFiles(view, CreateFileType::kCreateFileTypeWord);
         break;
     case kActNewExcel:
-        FileOperaterHelperIns->touchFiles(view, CreateFileType::kCreateFileTypeExcel);
+        FileOperatorHelperIns->touchFiles(view, CreateFileType::kCreateFileTypeExcel);
         break;
     case kActNewPowerpoint:
-        FileOperaterHelperIns->touchFiles(view, CreateFileType::kCreateFileTypePowerpoint);
+        FileOperatorHelperIns->touchFiles(view, CreateFileType::kCreateFileTypePowerpoint);
         break;
     case kActCut:
-        FileOperaterHelperIns->cutFiles(view);
+        FileOperatorHelperIns->cutFiles(view);
         break;
     case kActCopy:
-        FileOperaterHelperIns->copyFiles(view);
+        FileOperatorHelperIns->copyFiles(view);
         break;
     case kActPaste:
-        FileOperaterHelperIns->pasteFiles(view);
+        FileOperatorHelperIns->pasteFiles(view);
         break;
     case kActDelete:
-        FileOperaterHelperIns->moveToTrash(view);
+        FileOperatorHelperIns->moveToTrash(view);
         break;
     case kActRename:
         if (selectUrls.count() > 1) {
@@ -152,20 +152,20 @@ void WorkspaceMenu::actionBusiness(QAction *act)
         break;
     case kActSendToDesktop: {
         QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
-        FileOperaterHelperIns->createSymlink(view, StandardPaths::toStandardUrl(desktopPath));
+        FileOperatorHelperIns->createSymlink(view, StandardPaths::toStandardUrl(desktopPath));
         break;
     }
     case kActCreateSymlink:
-        FileOperaterHelperIns->createSymlink(view);
+        FileOperatorHelperIns->createSymlink(view);
         break;
     case kActOpenInTerminal:
-        FileOperaterHelperIns->openInTerminal(view);
+        FileOperatorHelperIns->openInTerminal(view);
         break;
     case kActProperty:
-        FileOperaterHelperIns->showFilesProperty(view);
+        FileOperatorHelperIns->showFilesProperty(view);
         break;
     case ActionType::kActSendToBluetooth:
-        FileOperaterHelperIns->sendBluetoothFiles(view);
+        FileOperatorHelperIns->sendBluetoothFiles(view);
         break;
     default:
         break;

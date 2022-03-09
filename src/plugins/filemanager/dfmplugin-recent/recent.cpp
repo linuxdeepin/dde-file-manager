@@ -24,6 +24,7 @@
 #include "files/recentdiriterator.h"
 #include "files/recentfilewatcher.h"
 #include "utils/recentmanager.h"
+#include "utils/recentfileshelper.h"
 #include "menus/recentmenu.h"
 
 #include "services/common/menu/menuservice.h"
@@ -110,22 +111,16 @@ void Recent::removeRecentItem()
 
 void Recent::regRecentCrumbToTitleBar()
 {
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        auto &ctx = dpfInstance.serviceContext();
-        if (ctx.load(TitleBarService::name())) {
-            auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
-            TitleBar::CustomCrumbInfo info;
-            info.scheme = RecentManager::scheme();
-            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == RecentManager::scheme(); };
-            info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-                Q_UNUSED(url);
-                return { TitleBar::CrumbData(RecentManager::rootUrl(), tr("Recent"), RecentManager::icon().name()) };
-            };
-            titleBarServ->addCustomCrumbar(info);
-        }
-    });
+    TitleBar::CustomCrumbInfo info;
+    info.scheme = RecentManager::scheme();
+    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == RecentManager::scheme(); };
+    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
+        Q_UNUSED(url);
+        return { TitleBar::CrumbData(RecentManager::rootUrl(), tr("Recent"), RecentManager::icon().name()) };
+    };
+    RecentManager::titleServIns()->addCustomCrumbar(info);
 }
+
 void Recent::onAllPluginsInitialized()
 {
     addFileOperations();
@@ -144,8 +139,30 @@ void Recent::addFileOperations()
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
     WorkspaceService::instance()->setWorkspaceMenuScene(RecentManager::scheme(), RecentScene::kRecentMenu);
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &RecentManager::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &RecentManager::writeToClipBoardHandle;
+    fileOpeationsHandle->copy = [](const quint64,
+                                   const QList<QUrl>,
+                                   const QUrl,
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags) -> JobHandlePointer {
+        return {};
+    };
+    fileOpeationsHandle->cut = [](const quint64,
+                                  const QList<QUrl>,
+                                  const QUrl,
+                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags) -> JobHandlePointer {
+        return {};
+    };
+
+    fileOpeationsHandle->openInTerminal = [](const quint64,
+                                             const QList<QUrl>,
+                                             QString *) -> bool {
+        return true;
+    };
+
+    fileOpeationsHandle->deletes = &RecentFilesHelper::deleteFilesHandle;
+    fileOpeationsHandle->moveToTash = &RecentFilesHelper::deleteFilesHandle;
+    fileOpeationsHandle->openFiles = &RecentFilesHelper::openFilesHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &RecentFilesHelper::writeUrlToClipboardHandle;
+
     RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
 }
 DPRECENT_END_NAMESPACE

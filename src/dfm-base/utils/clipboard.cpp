@@ -43,6 +43,10 @@ static QList<quint64> clipbordFileinode;
 static QAtomicInt remoteCurrentCount = 0;
 static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknowAction;
 
+static constexpr char kUserIdKey[] = "userId";
+static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
+static constexpr char kGnomeCopyKey[] = "x-special/gnome-copied-files";
+
 void onClipboardDataChanged()
 {
     {
@@ -55,13 +59,13 @@ void onClipboardDataChanged()
         qWarning() << "get null mimeData from QClipBoard or remote formats is null!";
         return;
     }
-    if (mimeData->hasFormat("uos/remote-copy")) {
+    if (mimeData->hasFormat(kRemoteCopyKey)) {
         qInfo() << "clipboard use other !";
         clipboardAction = ClipBoard::kRemoteAction;
         remoteCurrentCount++;
         return;
     }
-    const QByteArray &data = mimeData->data("x-special/gnome-copied-files");
+    const QByteArray &data = mimeData->data(kGnomeCopyKey);
 
     if (data.startsWith("cut")) {
         clipboardAction = ClipBoard::kCutAction;
@@ -185,7 +189,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
     if (ClipBoard::kCutAction == action) {
         QByteArray userId;
         userId.append(QString::number(getuid()));
-        mimeData->setData("userId", userId);
+        mimeData->setData(GlobalData::kUserIdKey, userId);
     }
 
     qApp->clipboard()->setMimeData(mimeData);
@@ -203,6 +207,19 @@ void ClipBoard::setDataToClipboard(QMimeData *mimeData)
 
     qApp->clipboard()->setMimeData(mimeData);
 }
+
+/*!
+ * \brief ClipBoard::supportCut support cut, Prohibit boasting of user cut operations
+ * \return bool
+ */
+bool ClipBoard::supportCut()
+{
+    Q_ASSERT(qApp);
+
+    QByteArray userId = qApp->clipboard()->mimeData()->data(GlobalData::kUserIdKey);
+    return !userId.isEmpty() && (userId.toInt() == static_cast<int>(getuid()));
+}
+
 /*!
  * \brief ClipBoard::clearClipboard  Clean the shear plate
  */

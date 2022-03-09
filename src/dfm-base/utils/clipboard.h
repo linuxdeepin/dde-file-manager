@@ -50,6 +50,8 @@ public:
     static void setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::ClipboardAction action, QMimeData *mimeData = nullptr);
     static void setDataToClipboard(QMimeData *mimeData);
 
+    static bool supportCut();
+
 private:
     explicit ClipBoard(QObject *parent = nullptr);
     static QList<QUrl> getUrlsByX11();

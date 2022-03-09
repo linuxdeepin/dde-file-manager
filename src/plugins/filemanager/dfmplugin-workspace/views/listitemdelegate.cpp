@@ -85,6 +85,10 @@ void ListItemDelegate::paint(QPainter *painter,
 
     oldFont = option.font;
 
+    if (parent()->isTransparent(index)) {
+        painter->setOpacity(0.3);
+    }
+
     paintItemBackground(painter, opt, index);
 
     QRect iconRect = paintItemIcon(painter, opt, index);

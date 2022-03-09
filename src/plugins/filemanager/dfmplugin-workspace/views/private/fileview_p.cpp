@@ -31,7 +31,7 @@
 #include "utils/viewdrawhelper.h"
 #include "utils/selecthelper.h"
 #include "utils/shortcuthelper.h"
-#include "utils/fileoperaterhelper.h"
+#include "utils/fileoperatorhelper.h"
 #include "utils/fileviewmenuhelper.h"
 
 #include "dfm-base/base/application/application.h"

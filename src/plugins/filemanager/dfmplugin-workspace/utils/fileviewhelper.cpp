@@ -27,7 +27,7 @@
 #include "views/iconitemeditor.h"
 #include "views/listitemeditor.h"
 #include "utils/workspacehelper.h"
-#include "utils/fileoperaterhelper.h"
+#include "utils/fileoperatorhelper.h"
 
 #include "services/common/delegate/delegateservice.h"
 
@@ -303,7 +303,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     QUrl oldUrl = QUrl::fromLocalFile(fileInfo->url().path());
     QUrl newUrl = fileInfo->getUrlByNewFileName(newFileName);
     //Todo(yanghao): tag
-    FileOperaterHelperIns->renameFile(this->parent(), oldUrl, newUrl);
+    FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
 
 void FileViewHelper::clipboardDataChanged()

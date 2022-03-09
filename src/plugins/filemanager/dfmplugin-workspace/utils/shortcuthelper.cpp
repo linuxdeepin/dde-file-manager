@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "shortcuthelper.h"
-#include "fileoperaterhelper.h"
+#include "fileoperatorhelper.h"
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
 #include "views/baseitemdelegate.h"
@@ -211,22 +211,22 @@ void ShortcutHelper::acitonTriggered()
 
 void ShortcutHelper::copyFiles()
 {
-    FileOperaterHelperIns->copyFiles(view);
+    FileOperatorHelperIns->copyFiles(view);
 }
 
 void ShortcutHelper::cutFiles()
 {
-    FileOperaterHelperIns->cutFiles(view);
+    FileOperatorHelperIns->cutFiles(view);
 }
 
 void ShortcutHelper::pasteFiles()
 {
-    FileOperaterHelperIns->pasteFiles(view);
+    FileOperatorHelperIns->pasteFiles(view);
 }
 
 void ShortcutHelper::undoFiles()
 {
-    FileOperaterHelperIns->undoFiles(view);
+    FileOperatorHelperIns->undoFiles(view);
 }
 
 void ShortcutHelper::deleteFiles()
@@ -237,7 +237,7 @@ void ShortcutHelper::deleteFiles()
     // 共享文件夹不用弹出彻底删除对话框
     // 网络邻居目录不用弹出彻底删除对话框
     // 最近使用目录不用弹出彻底删除对话框
-    FileOperaterHelperIns->deleteFiles(view);
+    FileOperatorHelperIns->deleteFiles(view);
 }
 
 void ShortcutHelper::moveToTrash()
@@ -247,7 +247,7 @@ void ShortcutHelper::moveToTrash()
     // only support trash on root url
     const QList<QUrl> &urls = view->selectedUrlList();
     if (!urls.isEmpty()) {
-        FileOperaterHelperIns->moveToTrash(view);
+        FileOperatorHelperIns->moveToTrash(view);
     }
 }
 
@@ -255,7 +255,7 @@ void ShortcutHelper::touchFolder()
 {
     // Todo(yanghao):editingIndex handle
     view->clearSelection();
-    FileOperaterHelperIns->touchFolder(view);
+    FileOperatorHelperIns->touchFolder(view);
 }
 
 void ShortcutHelper::toggleHiddenFiles()
@@ -271,7 +271,7 @@ void ShortcutHelper::toggleHiddenFiles()
 void ShortcutHelper::showFilesProperty()
 {
     // ToDo(yanghao): network not support
-    FileOperaterHelperIns->showFilesProperty(view);
+    FileOperatorHelperIns->showFilesProperty(view);
 }
 
 void ShortcutHelper::previewFiles()
@@ -286,17 +286,17 @@ void ShortcutHelper::previewFiles()
     for (QUrl &url : Urls) {
         currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
     }
-    FileOperaterHelperIns->previewFiles(view, selectUrls, currentDirUrls);
+    FileOperatorHelperIns->previewFiles(view, selectUrls, currentDirUrls);
 }
 
 void ShortcutHelper::openAction(const QList<QUrl> &urls, const DirOpenMode openMode)
 {
-    FileOperaterHelperIns->openFilesByMode(view, urls, openMode);
+    FileOperatorHelperIns->openFilesByMode(view, urls, openMode);
 }
 
 void ShortcutHelper::openInTerminal()
 {
-    FileOperaterHelperIns->openInTerminal(view);
+    FileOperatorHelperIns->openInTerminal(view);
 }
 
 void ShortcutHelper::cdUp()

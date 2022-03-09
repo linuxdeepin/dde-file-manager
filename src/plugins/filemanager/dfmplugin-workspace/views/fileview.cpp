@@ -37,7 +37,7 @@
 #include "utils/selecthelper.h"
 #include "utils/shortcuthelper.h"
 #include "utils/fileviewmenuhelper.h"
-#include "utils/fileoperaterhelper.h"
+#include "utils/fileoperatorhelper.h"
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -557,7 +557,7 @@ bool FileView::cdUp()
     QUrl parentUrl = UrlRoute::urlParent(oldCurrentUrl);
 
     if (parentUrl.isValid()) {
-        FileOperaterHelperIns->openFiles(this, { parentUrl });
+        FileOperatorHelperIns->openFiles(this, { parentUrl });
         return true;
     }
     return false;
@@ -1187,7 +1187,7 @@ void FileView::openIndex(const QModelIndex &index)
     if (!item)
         return;
 
-    FileOperaterHelperIns->openFiles(this, { item->url() });
+    FileOperatorHelperIns->openFiles(this, { item->url() });
 }
 
 /**
