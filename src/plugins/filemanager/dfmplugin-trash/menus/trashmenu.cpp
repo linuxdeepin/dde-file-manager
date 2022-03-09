@@ -23,7 +23,6 @@
 #include "utils/trashhelper.h"
 #include "utils/trashfilehelper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/menu/menuservice.h"
 
@@ -57,19 +56,19 @@ TrashMenu::TrashMenu(QObject *parent)
 QMenu *TrashMenu::build(QWidget *parent,
                         AbstractMenu::MenuMode mode,
                         const QUrl &rootUrl,
-                        const QUrl &foucsUrl,
+                        const QUrl &focusUrl,
                         const QList<QUrl> &selected,
                         QVariant customData)
 {
     Q_UNUSED(customData)
     this->rootUrl = rootUrl;
-    this->foucsUrl = foucsUrl;
+    this->focusUrl = focusUrl;
     this->selectedUrls = selected;
     QMenu *menu = createMenu(parent,
                              Workspace::MenuScene::kWorkspaceMenu,
                              mode,
                              rootUrl,
-                             foucsUrl,
+                             focusUrl,
                              selected,
                              false,
                              ExtensionType::kNoExtensionAction,
@@ -161,7 +160,7 @@ void TrashMenu::filterNormalActions(QMenu *menu)
     QVector<ActionType> typeList;
     bool isMultipleSelected = selectedUrls.count() > 1;
 
-    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(foucsUrl);
+    const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(focusUrl);
     bool isFoucsDir = fileInfo && fileInfo->isDir();
     bool isMultipleFileSelected = false;
     if (isMultipleSelected) {
@@ -230,7 +229,7 @@ QAction *TrashMenu::createAction(const TrashMenu::TrashActionType type, const QS
     return action;
 }
 
-QMenu *TrashMenu::createMenu(QWidget *parent, const QString &scene, AbstractMenu::MenuMode mode, const QUrl &rootUrl, const QUrl &foucsUrl, const QList<QUrl> selected, bool onDesktop, ExtensionType flags, QVariant customData)
+QMenu *TrashMenu::createMenu(QWidget *parent, const QString &scene, AbstractMenu::MenuMode mode, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> selected, bool onDesktop, ExtensionType flags, QVariant customData)
 {
 
     auto &ctx = dpfInstance.serviceContext();
@@ -246,7 +245,7 @@ QMenu *TrashMenu::createMenu(QWidget *parent, const QString &scene, AbstractMenu
                                    scene,
                                    mode,
                                    rootUrl,
-                                   foucsUrl,
+                                   focusUrl,
                                    selected,
                                    onDesktop,
                                    flags,

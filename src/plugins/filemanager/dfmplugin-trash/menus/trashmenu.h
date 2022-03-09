@@ -23,6 +23,7 @@
 #define TRASHMENU_H
 
 #include "dfmplugin_trash_global.h"
+
 #include "dfm-base/interfaces/abstractmenu.h"
 #include "dfm-base/widgets/action/actiondatacontainer.h"
 #include "dfm-base/dfm_actiontype_defines.h"
@@ -42,7 +43,7 @@ public:
     QMenu *build(QWidget *parent,
                  MenuMode mode,
                  const QUrl &rootUrl,
-                 const QUrl &foucsUrl,
+                 const QUrl &focusUrl,
                  const QList<QUrl> &selected = {},
                  QVariant customData = QVariant()) override;
 
@@ -50,8 +51,7 @@ private:
     enum TrashActionType {
         kRestore = DFMBASE_NAMESPACE::ActionType::kActCustomBase + 1,
         kRestoreAll,
-        kEmptyTrash,
-
+        kEmptyTrash
     };
 
     void actionBusiness(QAction *act) override;
@@ -71,7 +71,7 @@ private:
                       const QString &scene,
                       DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
                       const QUrl &rootUrl,
-                      const QUrl &foucsUrl,
+                      const QUrl &focusUrl,
                       const QList<QUrl> selected,
                       bool onDesktop = false,
                       DFMBASE_NAMESPACE::ExtensionType flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,
@@ -79,7 +79,7 @@ private:
 
 private:
     QUrl rootUrl;
-    QUrl foucsUrl;
+    QUrl focusUrl;
     QList<QUrl> selectedUrls;
 };
 

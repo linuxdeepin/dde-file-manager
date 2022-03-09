@@ -66,7 +66,7 @@ public:
     virtual QMenu *build(QWidget *parent,
                          MenuMode mode,
                          const QUrl &rootUrl,
-                         const QUrl &foucsUrl,
+                         const QUrl &focusUrl,
                          const QList<QUrl> &selected = {},
                          QVariant customData = QVariant());
 
@@ -75,7 +75,7 @@ protected:
 
     void normalMenu(QMenu *menu,
                     const QUrl &rootUrl,
-                    const QUrl &foucsUrl,
+                    const QUrl &focusUrl,
                     const QList<QUrl> &selected = {});
 
     void actionBusiness(QAction *act);

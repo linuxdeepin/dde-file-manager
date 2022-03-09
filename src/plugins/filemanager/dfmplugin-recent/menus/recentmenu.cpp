@@ -58,19 +58,19 @@ RecentMenu::RecentMenu(QObject *parent)
 QMenu *RecentMenu::build(QWidget *parent,
                          AbstractMenu::MenuMode mode,
                          const QUrl &rootUrl,
-                         const QUrl &foucsUrl,
+                         const QUrl &focusUrl,
                          const QList<QUrl> &selected,
                          QVariant customData)
 {
     Q_UNUSED(customData)
     this->rootUrl = rootUrl;
-    this->foucsUrl = foucsUrl;
+    this->focusUrl = focusUrl;
     this->selectedUrls = selected;
     QMenu *menu = createMenu(parent,
                              Workspace::MenuScene::kWorkspaceMenu,
                              mode,
                              rootUrl,
-                             foucsUrl,
+                             focusUrl,
                              selected,
                              false,
                              ExtensionType::kNoExtensionAction,
@@ -172,7 +172,7 @@ QAction *RecentMenu::createAction(const RecentMenu::RecentActionType type, const
     return action;
 }
 
-QMenu *RecentMenu::createMenu(QWidget *parent, const QString &scene, AbstractMenu::MenuMode mode, const QUrl &rootUrl, const QUrl &foucsUrl, const QList<QUrl> selected, bool onDesktop, ExtensionType flags, QVariant customData)
+QMenu *RecentMenu::createMenu(QWidget *parent, const QString &scene, AbstractMenu::MenuMode mode, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> selected, bool onDesktop, ExtensionType flags, QVariant customData)
 {
 
     auto &ctx = dpfInstance.serviceContext();
@@ -188,7 +188,7 @@ QMenu *RecentMenu::createMenu(QWidget *parent, const QString &scene, AbstractMen
                                    scene,
                                    mode,
                                    rootUrl,
-                                   foucsUrl,
+                                   focusUrl,
                                    selected,
                                    onDesktop,
                                    flags,

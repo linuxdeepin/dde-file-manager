@@ -38,7 +38,7 @@ public:
     QMenu *build(QWidget *parent,
                  MenuMode mode,
                  const QUrl &rootUrl,
-                 const QUrl &foucsUrl,
+                 const QUrl &focusUrl,
                  const QList<QUrl> &selected = {},
                  QVariant customData = QVariant()) override;
 
@@ -46,7 +46,7 @@ private:
     void actionBusiness(QAction *act) override;
 
     void assemblesEmptyAreaActions(QMenu *menu, const QUrl &rootUrl);
-    void assemblesNormalActions(QMenu *menu, const QUrl &rootUrl, const QUrl &foucsUrl, const QList<QUrl> &selectList);
+    void assemblesNormalActions(QMenu *menu, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> &selectList);
     void addActionsToMenu(QMenu *menu, const QVector<ActionDataContainer> &dataList);
     void transTypesToActionsData(const QVector<ActionType> &typeList, QVector<ActionDataContainer> &dataList);
     void assemblesSubActions(QVector<ActionDataContainer> &dataList);

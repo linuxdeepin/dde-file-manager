@@ -20,32 +20,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPTICAL_H
-#define OPTICAL_H
+#ifndef OPTICALMENU_H
+#define OPTICALMENU_H
 
 #include "dfmplugin_optical_global.h"
 
-#include <dfm-framework/framework.h>
+#include "dfm-base/interfaces/abstractmenu.h"
+#include "dfm-base/widgets/action/actiondatacontainer.h"
+#include "dfm-base/dfm_actiontype_defines.h"
+
+#include <QUrl>
 
 DPOPTICAL_BEGIN_NAMESPACE
 
-class Optical : public dpf::Plugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
+namespace OpticalScene {
+extern const char *const kOpticalMenu;
+}   // namespace OpticalScene
 
+class OpticalMenu : public DFMBASE_NAMESPACE::AbstractMenu
+{
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit OpticalMenu(QObject *parent = nullptr);
+    QMenu *build(QWidget *parent,
+                 MenuMode mode,
+                 const QUrl &rootUrl,
+                 const QUrl &focusUrl,
+                 const QList<QUrl> &selected = {},
+                 QVariant customData = QVariant()) override;
 
 private:
-    void addOpticalCrumbToTitleBar();
-    void addFileOperations();
-    void addCustomTopWidget();
-    void addDelegateSettings();
+    void assemblesEmptyAreaActions(QMenu *menu);
+    void assemblesNormalActions(QMenu *menu);
+    void filterActions(QMenu *menu, const QVector<DFMBASE_NAMESPACE::ActionType> &typeList, bool reverse = false);
+
+private:
+    QUrl curFocusUrl;
+    QList<QUrl> curSelectedUrls;
 };
 
 DPOPTICAL_END_NAMESPACE
 
-#endif   // OPTICAL_H
+#endif   // OPTICALMENU_H

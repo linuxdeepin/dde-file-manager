@@ -81,7 +81,7 @@ CanvasMenu::~CanvasMenu()
 QMenu *CanvasMenu::build(QWidget *parent,
                          AbstractMenu::MenuMode mode,
                          const QUrl &rootUrl,
-                         const QUrl &foucsUrl,
+                         const QUrl &focusUrl,
                          const QList<QUrl> &selected,
                          QVariant customData)
 {
@@ -93,7 +93,7 @@ QMenu *CanvasMenu::build(QWidget *parent,
     }
 
     if (AbstractMenu::MenuMode::kNormal == mode) {
-        normalMenu(menu, rootUrl, foucsUrl, selected);
+        normalMenu(menu, rootUrl, focusUrl, selected);
     }
     return menu;
 }
@@ -144,7 +144,7 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
 
 ActionDataContainer CanvasMenu::getSendToMenu(bool hasFolder)
 {
-    ActionDataContainer actSendTo = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendTo);
+    ActionDataContainer actSendTo = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendToRemovableDisk);
     QVector<ActionDataContainer> subActs;
 
     if (BluetoothService::service() && BluetoothService::service()->bluetoothEnable()) {
@@ -183,7 +183,7 @@ ActionDataContainer CanvasMenu::getSendToMenu(bool hasFolder)
 
 void CanvasMenu::normalMenu(QMenu *menu,
                             const QUrl &rootUrl,
-                            const QUrl &foucsUrl,
+                            const QUrl &focusUrl,
                             const QList<QUrl> &selected)
 {
     Q_UNUSED(rootUrl)
@@ -193,13 +193,13 @@ void CanvasMenu::normalMenu(QMenu *menu,
 // using coverted file info
 #if 0
     QString errString;
-    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(foucsUrl, true, &errString);
+    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(focusUrl, true, &errString);
     if (!tempInfo) {
         qInfo() << "create LocalFileInfo error: " << errString;
         return;
     }
 #else
-    auto tempInfo = FileCreator->createFileInfo(foucsUrl);
+    auto tempInfo = FileCreator->createFileInfo(focusUrl);
     if (Q_UNLIKELY(!tempInfo))
         return;
 #endif
@@ -574,4 +574,3 @@ bool CanvasMenu::isRefreshOn() const
 
     return false;
 }
-

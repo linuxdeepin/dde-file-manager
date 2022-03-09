@@ -41,7 +41,7 @@ public:
     QMenu *build(QWidget *parent,
                  MenuMode mode,
                  const QUrl &rootUrl,
-                 const QUrl &foucsUrl,
+                 const QUrl &focusUrl,
                  const QList<QUrl> &selected = {},
                  QVariant customData = QVariant()) override;
 
@@ -64,7 +64,7 @@ private:
                       const QString &scene,
                       DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
                       const QUrl &rootUrl,
-                      const QUrl &foucsUrl,
+                      const QUrl &focusUrl,
                       const QList<QUrl> selected,
                       bool onDesktop = false,
                       DFMBASE_NAMESPACE::ExtensionType flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,
@@ -72,7 +72,7 @@ private:
 
 private:
     QUrl rootUrl;
-    QUrl foucsUrl;
+    QUrl focusUrl;
     QList<QUrl> selectedUrls;
 };
 

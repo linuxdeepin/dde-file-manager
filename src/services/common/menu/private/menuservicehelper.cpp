@@ -28,7 +28,7 @@
 #include <QAction>
 
 namespace MenuData {
-static CustomActionParser *customMenuParser = nullptr;
+static CustomActionParser *kCustomMenuParser = nullptr;
 }
 
 DSC_BEGIN_NAMESPACE
@@ -36,6 +36,8 @@ DFMBASE_USE_NAMESPACE
 
 void MenuServiceHelper::templateMenu(QMenu *menu)
 {
+    Q_ASSERT(menu);
+
     QList<ActionDataContainer> actDataLst = TemplateAction::instance().getTemplateFileList();
     if (actDataLst.isEmpty())
         return;
@@ -84,11 +86,11 @@ void MenuServiceHelper::extendCustomMenu(QMenu *menu,
                                          const QList<QUrl> &selected,
                                          bool onDesktop)
 {
-    if (!MenuData::customMenuParser) {
-        MenuData::customMenuParser = new CustomActionParser;
+    if (!MenuData::kCustomMenuParser) {
+        MenuData::kCustomMenuParser = new CustomActionParser;
     }
 
-    const QList<CustomActionEntry> &rootEntry = MenuData::customMenuParser->getActionFiles(onDesktop);
+    const QList<CustomActionEntry> &rootEntry = MenuData::kCustomMenuParser->getActionFiles(onDesktop);
     if (menu == nullptr || rootEntry.isEmpty())
         return;
 
@@ -225,7 +227,7 @@ void MenuServiceHelper::extensionPluginCustomMenu(QMenu *menu,
                 abort();
             }
             QAction *action = menu->addAction(name);
-            QObject::connect(action, &QAction::triggered, [&info, isNormal, currentUrl, focusFile, selected](){
+            QObject::connect(action, &QAction::triggered, [&info, isNormal, currentUrl, focusFile, selected]() {
                 info.clickedCb(isNormal, currentUrl, focusFile, selected);
             });
         }

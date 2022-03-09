@@ -27,6 +27,9 @@
 #include "mastered/masteredmediafilewatcher.h"
 #include "mastered/masteredmediadiriterator.h"
 #include "views/opticalmediawidget.h"
+#include "menus/opticalmenu.h"
+
+#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -42,6 +45,7 @@ void Optical::initialize()
     InfoFactory::regClass<MasteredMediaFileInfo>(SchemeTypes::kBurn);
     WacherFactory::regClass<MasteredMediaFileWatcher>(SchemeTypes::kBurn);
     DirIteratorFactory::regClass<MasteredMediaDirIterator>(SchemeTypes::kBurn);
+    MenuService::regClass<OpticalMenu>(OpticalScene::kOpticalMenu);
 
     connect(OpticalHelper::winServIns(), &WindowsService::windowCreated, this,
             [this]() {
@@ -54,6 +58,7 @@ bool Optical::start()
 {
     addFileOperations();
     addCustomTopWidget();
+    addDelegateSettings();
 
     return true;
 }
@@ -94,6 +99,8 @@ void Optical::addOpticalCrumbToTitleBar()
 void Optical::addFileOperations()
 {
     OpticalHelper::workspaceServIns()->addScheme(SchemeTypes::kBurn);
+    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(SchemeTypes::kBurn, OpticalScene::kOpticalMenu);
+
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;
     fileOpeationsHandle->copy = [](const quint64 windowId,
@@ -138,4 +145,11 @@ void Optical::addCustomTopWidget()
     };
 
     OpticalHelper::workspaceServIns()->addCustomTopWidget(info);
+}
+
+void Optical::addDelegateSettings()
+{
+    OpticalHelper::dlgateServIns()->registerTransparentHandle(SchemeTypes::kBurn, [](const QUrl &url) -> bool {
+        return !OpticalHelper::burnIsOnDisc(url);
+    });
 }

@@ -55,6 +55,8 @@ void OpticalFilesHelper::pasteFilesHandle(const QList<QUrl> sources, const QUrl 
 
 bool OpticalFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
 {
+    if (action != ClipBoard::ClipboardAction::kCopyAction)
+        return false;
     // only write file on disc
     QList<QUrl> redirectedFileUrls;
     for (const QUrl &url : urls) {
@@ -81,7 +83,7 @@ bool OpticalFilesHelper::openInTerminalHandle(const quint64 windowId, const QLis
         redirectedFileUrls << QUrl::fromLocalFile(backer);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, windowId, urls);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, windowId, redirectedFileUrls);
     QDir::setCurrent(currentDir);
     return true;
 }

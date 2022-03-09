@@ -29,6 +29,8 @@
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+#include "services/common/delegate/delegateservice.h"
+#include "services/common/menu/menuservice.h"
 
 #include <QIcon>
 #include <QRegularExpression>
@@ -53,12 +55,15 @@ public:
     static QUrl tansToBurnFile(const QUrl &in);
     static bool isSupportedUDFVersion(const QString &version);
     static bool isSupportedUDFMedium(int type);
+    static void createStagingFolder(const QString &path);
 
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();
     static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
+    static DSC_NAMESPACE::DelegateService *dlgateServIns();
+    static DSC_NAMESPACE::MenuService *menuServIns();
 
 private:
     static QRegularExpression burnRxp();

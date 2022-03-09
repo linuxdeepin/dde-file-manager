@@ -43,14 +43,14 @@ public:
 private:
     ActionTypeManager *q { nullptr };
 
-    using actionTypeData = QMap<int, ActionDataContainer>;
-    actionTypeData actionTypes;
+    using ActionTypeData = QMap<int, ActionDataContainer>;
+    ActionTypeData actionTypes;
 
-    using actionPredicateToText = QMap<QString, QString>;
-    actionPredicateToText allActionText;
+    using ActionPredicateToText = QMap<QString, QString>;
+    ActionPredicateToText allActionText;
 
-    using actionPredicateToTypes = QMap<QString, int>;
-    actionPredicateToTypes allActionTypes;
+    using ActionPredicateToTypes = QMap<QString, int>;
+    ActionPredicateToTypes allActionTypes;
 
     QHash<ActionType, GlobalEventType> actionTypeToEventType;
 

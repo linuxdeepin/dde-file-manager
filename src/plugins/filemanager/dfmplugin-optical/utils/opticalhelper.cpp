@@ -141,6 +141,14 @@ bool OpticalHelper::isSupportedUDFMedium(int type)
     return supportedMedium.contains(DFMBURN::MediaType(type));
 }
 
+void OpticalHelper::createStagingFolder(const QString &path)
+{
+    // Make sure the staging folder exists. Otherwise the staging watcher won't work.
+    QFileInfo fileInfo(path);
+    if (!fileInfo.exists())
+        QDir().mkpath(path);
+}
+
 DSB_FM_NAMESPACE::WindowsService *OpticalHelper::winServIns()
 {
     auto &ctx = dpfInstance.serviceContext();
@@ -177,7 +185,7 @@ DSB_FM_NAMESPACE::WorkspaceService *OpticalHelper::workspaceServIns()
     return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }
 
-dfm_service_common::FileOperationsService *OpticalHelper::fileOperationsServIns()
+DSC_NAMESPACE::FileOperationsService *OpticalHelper::fileOperationsServIns()
 {
     auto &ctx = dpfInstance.serviceContext();
     static std::once_flag onceFlag;
@@ -187,6 +195,23 @@ dfm_service_common::FileOperationsService *OpticalHelper::fileOperationsServIns(
     });
 
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}
+
+DSC_NAMESPACE::DelegateService *OpticalHelper::dlgateServIns()
+{
+    return delegateServIns;
+}
+
+DSC_NAMESPACE::MenuService *OpticalHelper::menuServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::MenuService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::MenuService>(DSC_NAMESPACE::MenuService::name());
 }
 
 QRegularExpression OpticalHelper::burnRxp()

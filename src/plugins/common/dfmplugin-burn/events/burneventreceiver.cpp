@@ -118,7 +118,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
         }
     }
 
-    QUrl tmpDest { BurnHelper::localStagingFile(dev) };
+    QUrl tmpDest { BurnHelper::localStagingFile(dest) };
     QFileInfo fileInfo(tmpDest.path());
     if (fileInfo.isFile())
         tmpDest = UrlRoute::urlParent(tmpDest);

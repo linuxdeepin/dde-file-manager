@@ -34,13 +34,13 @@ LocalMenu::LocalMenu(QObject *parent)
 }
 
 QMenu *LocalMenu::build(QWidget *parent, AbstractMenu::MenuMode mode,
-                        const QUrl &rootUrl, const QUrl &foucsUrl,
+                        const QUrl &rootUrl, const QUrl &focusUrl,
                         const QList<QUrl> &selected, QVariant customData)
 {
     QString path = UrlRoute::urlToPath(rootUrl);
     if (!QDir(path).exists())
         return nullptr;
-    return AbstractMenu::build(parent, mode, rootUrl, foucsUrl, selected, customData);
+    return AbstractMenu::build(parent, mode, rootUrl, focusUrl, selected, customData);
 }
 
 DFMBASE_END_NAMESPACE

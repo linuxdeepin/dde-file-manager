@@ -67,8 +67,9 @@ enum ActionType {
     kActCreatedDate,
     kActLastModifiedDate,
     kActLastRead,
-    kActSendTo,
+    kActSendToRemovableDisk,
     kActSendToBluetooth,
+    kActStageFileForBurning,
 
     // first user actiontype id, use registerActionType create custom event type
     kActCustomBase = 1000,   // first user actiontype id

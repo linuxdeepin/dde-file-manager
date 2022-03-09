@@ -76,7 +76,7 @@ public:
                       const QString &scene,
                       DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
                       const QUrl &rootUrl,
-                      const QUrl &foucsUrl,
+                      const QUrl &focusUrl,
                       const QList<QUrl> selected,
                       bool onDesktop = false,
                       ExtensionFlags flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,

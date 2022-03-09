@@ -39,14 +39,14 @@ AbstractMenu::~AbstractMenu()
 QMenu *AbstractMenu::build(QWidget *parent,
                            AbstractMenu::MenuMode mode,
                            const QUrl &rootUrl,
-                           const QUrl &foucsUrl,
+                           const QUrl &focusUrl,
                            const QList<QUrl> &selected,
                            QVariant customData)
 {
     Q_UNUSED(parent)
     Q_UNUSED(mode)
     Q_UNUSED(rootUrl)
-    Q_UNUSED(foucsUrl)
+    Q_UNUSED(focusUrl)
     Q_UNUSED(selected)
     Q_UNUSED(customData)
 

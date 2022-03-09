@@ -34,7 +34,7 @@ DFMBASE_USE_NAMESPACE
  * \param scene: The name of the scene where the menu needs to be created.
  * \param mode: Create a blank area or normal menu.
  * \param rootUrl: The root URL of the current scene
- * \param foucsUrl: The URL of the focus file where the mouse is when the right-click menu is located.
+ * \param focusUrl: The URL of the focus file where the mouse is when the right-click menu is located.
  * \param selected: The list of file urls selected when the right-click menu is displayed.
  * \param flags: Right-click menu selection mode (eg: single file, single folder,
  *               multiple files, multiple folders, files and folders, etc.)
@@ -57,7 +57,7 @@ QMenu *MenuService::createMenu(QWidget *parent,
                                const QString &scene,
                                DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
                                const QUrl &rootUrl,
-                               const QUrl &foucsUrl,
+                               const QUrl &focusUrl,
                                const QList<QUrl> selected,
                                bool onDesktop,
                                ExtensionFlags flags,
@@ -70,7 +70,7 @@ QMenu *MenuService::createMenu(QWidget *parent,
         return nullptr;
 
     // 获取场景对应前置菜单
-    auto tempMenu = topClass->build(parent, mode, rootUrl, foucsUrl, selected, customData);
+    auto tempMenu = topClass->build(parent, mode, rootUrl, focusUrl, selected, customData);
 
     // TODO: 暂时直接从menu获取再排序，后续再考虑actions
 
@@ -88,13 +88,13 @@ QMenu *MenuService::createMenu(QWidget *parent,
     // 添加conf菜单
     if (flags.testFlag(DFMBASE_NAMESPACE::kConfAction)) {
         // TODO(Lee):
-        // MenuServiceHelper::extendCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
+        // MenuServiceHelper::extendCustomMenu(tempMenu, mode, rootUrl, focusUrl, selected);
     }
 
     // 添加第三方扩展so菜单
     if (flags.testFlag(DFMBASE_NAMESPACE::kSoAction)) {
         // TODO(Lee):
-        MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, foucsUrl, selected);
+        MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, focusUrl, selected);
     }
 
     // Action业务

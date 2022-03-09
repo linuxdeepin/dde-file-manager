@@ -60,13 +60,13 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
 
     const QUrl &rootUrl = view->rootUrl();
     QList<QUrl> selectUrls = view->selectedUrlList();
-    const QUrl foucsUrl = view->model()->fileInfo(index)->url();
+    const QUrl focusUrl = view->model()->fileInfo(index)->url();
 
     QMenu *menu = menuServer()->createMenu(view,
                                            currentMenuScene(),
                                            AbstractMenu::MenuMode::kNormal,
                                            rootUrl,
-                                           foucsUrl,
+                                           focusUrl,
                                            selectUrls,
                                            ExtensionType::kNoExtensionAction);
 

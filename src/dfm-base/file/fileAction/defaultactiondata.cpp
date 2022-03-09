@@ -116,8 +116,9 @@ void DefaultActionData::initDefaultActionData()
     this->addDefaultActionType(kActDisplayAsList, "List", tr("List"));
     this->addDefaultActionType(kActDisplayAsIcon, "Icon", tr("Icon"));
 
-    this->addDefaultActionType(kActSendTo, "SendTo", tr("Send to"));
+    this->addDefaultActionType(kActSendToRemovableDisk, "SendTo", tr("Send to"));
     this->addDefaultActionType(kActSendToBluetooth, "SendToBluetooth", tr("Bluetooth"));
+    this->addDefaultActionType(kActStageFileForBurning, "AddToDisc", tr("Add to disc"));
 
     // TODO(Lee): icon init
 }

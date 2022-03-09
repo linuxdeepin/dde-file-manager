@@ -51,7 +51,7 @@ WorkspaceMenu::WorkspaceMenu(QObject *parent)
 QMenu *WorkspaceMenu::build(QWidget *parent,
                             AbstractMenu::MenuMode mode,
                             const QUrl &rootUrl,
-                            const QUrl &foucsUrl,
+                            const QUrl &focusUrl,
                             const QList<QUrl> &selected,
                             QVariant customData)
 {
@@ -59,7 +59,7 @@ QMenu *WorkspaceMenu::build(QWidget *parent,
 
     view = qobject_cast<FileView *>(parent);
     selectUrls = selected;
-    curUrl = foucsUrl;
+    curUrl = focusUrl;
 
     QMenu *menu = new QMenu(parent);
 
@@ -68,7 +68,7 @@ QMenu *WorkspaceMenu::build(QWidget *parent,
         assemblesEmptyAreaActions(menu, rootUrl);
         break;
     case AbstractMenu::MenuMode::kNormal:
-        assemblesNormalActions(menu, rootUrl, foucsUrl, selected);
+        assemblesNormalActions(menu, rootUrl, focusUrl, selected);
         break;
     }
 
@@ -200,10 +200,10 @@ void WorkspaceMenu::assemblesEmptyAreaActions(QMenu *menu, const QUrl &rootUrl)
     addActionsToMenu(menu, dataList);
 }
 
-void WorkspaceMenu::assemblesNormalActions(QMenu *menu, const QUrl &rootUrl, const QUrl &foucsUrl, const QList<QUrl> &selectList)
+void WorkspaceMenu::assemblesNormalActions(QMenu *menu, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> &selectList)
 {
     QString errString;
-    AbstractFileInfoPointer fileInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(foucsUrl, true, &errString);
+    AbstractFileInfoPointer fileInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(focusUrl, true, &errString);
     if (!fileInfo) {
         qWarning() << "create LocalFileInfo error: " << errString;
         return;
@@ -301,7 +301,7 @@ void WorkspaceMenu::assemblesSubActions(QVector<ActionDataContainer> &dataList)
 
 ActionDataContainer WorkspaceMenu::getSendToActions(bool hasFolder)
 {
-    ActionDataContainer actSendTo = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendTo);
+    ActionDataContainer actSendTo = ActionTypeManager::instance().actionDataContainerByType(ActionType::kActSendToRemovableDisk);
     QVector<ActionDataContainer> subActs;
 
     DSC_USE_NAMESPACE

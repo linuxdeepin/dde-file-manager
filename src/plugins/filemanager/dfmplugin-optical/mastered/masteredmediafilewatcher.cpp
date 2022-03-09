@@ -56,6 +56,8 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     if (!urlStaging.isValid() || urlStaging.isEmpty())
         return;
 
+    OpticalHelper::createStagingFolder(urlStaging.toLocalFile());
+
     dptr->proxyStaging = WacherFactory::create<AbstractFileWatcher>(urlStaging);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileAttributeChanged,
             this, &MasteredMediaFileWatcher::onFileAttributeChanged);

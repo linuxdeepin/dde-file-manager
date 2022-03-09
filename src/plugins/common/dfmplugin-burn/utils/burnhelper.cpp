@@ -99,6 +99,18 @@ QUrl BurnHelper::localStagingFile(QString dev)
                                + dev.replace('/', '_'));
 }
 
+// TODO(zhangs): repalce it
+QUrl BurnHelper::localStagingFile(const QUrl &dest)
+{
+    if (burnDestDevice(dest).length() == 0)
+        return {};
+
+    return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+                               + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
+                               + burnDestDevice(dest).replace('/', '_')
+                               + burnFilePath(dest));
+}
+
 QString BurnHelper::parseXorrisoErrorMessage(const QStringList &msg)
 {
     QRegularExpression ovrex("While grafting '(.*)'");
@@ -136,4 +148,15 @@ QString BurnHelper::burnDestDevice(const QUrl &url)
     if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(1);
+}
+
+// TODO(zhangs): repalce it
+QString BurnHelper::burnFilePath(const QUrl &url)
+{
+    static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
+
+    QRegularExpressionMatch m;
+    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(rxp, &m))
+        return {};
+    return m.captured(3);
 }
