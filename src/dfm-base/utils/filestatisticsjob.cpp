@@ -485,8 +485,8 @@ void FileStatisticsJob::statistcsExtFileSystem()
             // 停止就退出
             if (!d->stateCheck()) {
                 d->setState(kStoppedState);
-                fts_close(fts);
                 setSizeInfo();
+                break;
             }
 
             FTSENT *ent = fts_read(fts);
