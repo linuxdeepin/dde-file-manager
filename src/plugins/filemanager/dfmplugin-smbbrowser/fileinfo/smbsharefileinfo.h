@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,12 +20,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
-#define DFMPLUGIN_MYSHARES_GLOBAL_H
+#ifndef SMBSHAREFILEINFO_H
+#define SMBSHAREFILEINFO_H
 
-#define DPMYSHARES_NAMESPACE dfmplugin_myshares
-#define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
-#define DPMYSHARES_END_NAMESPACE }
-#define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
+#include "dfmplugin_smbbrowser_global.h"
 
-#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
+#include "dfm-base/interfaces/abstractfileinfo.h"
+
+DPSMBBROWSER_BEGIN_NAMESPACE
+
+class SmbShareFileInfo : public dfmbase::AbstractFileInfo
+{
+public:
+    explicit SmbShareFileInfo(const QUrl &url);
+    virtual ~SmbShareFileInfo() override;
+
+    virtual QString fileName() const override;
+    virtual QString fileDisplayName() const override;
+    virtual QIcon fileIcon() const override;
+    virtual bool isDir() const override;
+};
+
+DPSMBBROWSER_END_NAMESPACE
+
+#endif   // SMBSHAREFILEINFO_H

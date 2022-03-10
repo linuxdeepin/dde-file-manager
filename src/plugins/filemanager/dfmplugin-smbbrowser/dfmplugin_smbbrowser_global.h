@@ -20,12 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
-#define DFMPLUGIN_MYSHARES_GLOBAL_H
+#ifndef DFMPLUGIN_SMBBROWSER_GLOBAL_H
+#define DFMPLUGIN_SMBBROWSER_GLOBAL_H
 
-#define DPMYSHARES_NAMESPACE dfmplugin_myshares
-#define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
-#define DPMYSHARES_END_NAMESPACE }
-#define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
+#include <QString>
+#include <QDebug>
 
-#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
+#define DPSMBBROWSER_NAMESPACE dfmplugin_smbbrowser
+#define DPSMBBROWSER_BEGIN_NAMESPACE namespace DPSMBBROWSER_NAMESPACE {
+#define DPSMBBROWSER_END_NAMESPACE }
+#define DPSMBBROWSER_USE_NAMESPACE using namespace DPSMBBROWSER_NAMESPACE;
+
+DPSMBBROWSER_BEGIN_NAMESPACE
+
+struct SmbShareNode
+{
+    QString url;
+    QString displayName;
+    QString iconType;
+};
+
+DPSMBBROWSER_END_NAMESPACE
+
+QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node);
+
+typedef QList<DPSMBBROWSER_NAMESPACE::SmbShareNode> SmbShareNodes;
+
+#endif   // DFMPLUGIN_SMBBROWSER_GLOBAL_H

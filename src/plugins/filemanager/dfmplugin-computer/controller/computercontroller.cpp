@@ -134,7 +134,7 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     if (removable && info->suffix() == SuffixInfo::kBlock) {
         setCursorStatus(true);
         QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
-        ComputerUtils::deviceServIns()->renameBlockDeviceAsync(devId, name, {}, [=](bool ok, dfmmount::DeviceError err) {
+        ComputerUtils::deviceServIns()->renameBlockDeviceAsync(devId, name, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             setCursorStatus();
             if (!ok) {
                 qInfo() << "rename block device failed: " << devId << static_cast<int>(err);
@@ -235,7 +235,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
             }
             setCursorStatus(true);
 
-            ComputerUtils::deviceServIns()->unlockBlockDeviceAsync(passwd, shellId, {}, [=](bool ok, dfmmount::DeviceError err, const QString &newId) {
+            ComputerUtils::deviceServIns()->unlockBlockDeviceAsync(passwd, shellId, {}, [=](bool ok, DFMMOUNT::DeviceError err, const QString &newId) {
                 setCursorStatus();
 
                 if (ok) {
@@ -257,7 +257,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
 void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAfterMount act)
 {
     setCursorStatus(true);
-    ComputerUtils::deviceServIns()->mountBlockDeviceAsync(id, {}, [=](bool ok, dfmmount::DeviceError err, const QString &mpt) {
+    ComputerUtils::deviceServIns()->mountBlockDeviceAsync(id, {}, [=](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         bool isOpticalDevice = id.contains(QRegularExpression("/sr[0-9]*"));
         if (ok || isOpticalDevice) {
             QUrl u = isOpticalDevice ? ComputerUtils::makeBurnUrl(id) : ComputerUtils::makeLocalUrl(mpt);
@@ -328,7 +328,7 @@ void ComputerController::actEject(const QUrl &url)
     }
 
     if (!ok)
-        DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(dfmmount::DeviceError::UDisksErrorDeviceBusy);
+        DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError::UDisksErrorDeviceBusy);
 }
 
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
@@ -355,7 +355,7 @@ void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer 
     }
 }
 
-static void onNetworkDeviceMountFinished(bool ok, dfmmount::DeviceError err, const QString &mntPath, quint64 winId, bool enterAfterMounted)
+static void onNetworkDeviceMountFinished(bool ok, DFMMOUNT::DeviceError err, const QString &mntPath, quint64 winId, bool enterAfterMounted)
 {
     if (ok) {
         if (enterAfterMounted)
@@ -370,7 +370,7 @@ void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, b
     QString sfx = info->suffix();
     if (sfx == SuffixInfo::kStashedProtocol) {
         QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->url());
-        ComputerUtils::deviceServIns()->mountNetworkDevice(devId, [devId, enterAfterMounted, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+        ComputerUtils::deviceServIns()->mountNetworkDevice(devId, [devId, enterAfterMounted, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
             onNetworkDeviceMountFinished(ok, err, mntPath, winId, enterAfterMounted);
         });
         return;
@@ -390,9 +390,9 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         devId = ComputerUtils::getBlockDevIdByUrl(info->url());
         if (info->extraProperty(DeviceProperty::kIsEncrypted).toBool()) {
             QString cleartextId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
-            ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(cleartextId, {}, [=](bool ok, dfmmount::DeviceError err) {
+            ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(cleartextId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                 if (ok) {
-                    ComputerUtils::deviceServIns()->lockBlockDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
+                    ComputerUtils::deviceServIns()->lockBlockDeviceAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                         if (!ok) {
                             qInfo() << "lock device failed: " << devId << static_cast<int>(err);
                         }
@@ -403,7 +403,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                 }
             });
         } else {
-            ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
+            ComputerUtils::deviceServIns()->unmountBlockDeviceAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                 if (!ok) {
                     qInfo() << "unlock device failed: " << devId << static_cast<int>(err);
                     DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
@@ -412,7 +412,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         }
     } else if (info->suffix() == SuffixInfo::kProtocol) {
         devId = ComputerUtils::getProtocolDevIdByUrl(info->url());
-        ComputerUtils::deviceServIns()->unmountProtocolDeviceAsync(devId, {}, [=](bool ok, dfmmount::DeviceError err) {
+        ComputerUtils::deviceServIns()->unmountProtocolDeviceAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok) {
                 qWarning() << "unmount protocol device failed: " << devId << static_cast<int>(err);
                 DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);

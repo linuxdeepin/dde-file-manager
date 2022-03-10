@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,12 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
-#define DFMPLUGIN_MYSHARES_GLOBAL_H
+#ifndef SMBSHAREFILEMENU_H
+#define SMBSHAREFILEMENU_H
 
-#define DPMYSHARES_NAMESPACE dfmplugin_myshares
-#define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
-#define DPMYSHARES_END_NAMESPACE }
-#define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
+#include "dfmplugin_smbbrowser_global.h"
 
-#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
+#include "dfm-base/interfaces/abstractmenu.h"
+#include "dfm-base/widgets/action/actiondatacontainer.h"
+#include "dfm-base/dfm_actiontype_defines.h"
+
+DPSMBBROWSER_BEGIN_NAMESPACE
+
+namespace SmbBrowserScene {
+static constexpr char kSmbBrowserScene[] { "smbbrowser" };
+}
+
+class SmbShareFileMenu : public DFMBASE_NAMESPACE::AbstractMenu
+{
+public:
+    explicit SmbShareFileMenu(QObject *parent = nullptr);
+
+    virtual QMenu *build(QWidget *parent, MenuMode mode, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> &selected, QVariant customData) override;
+    virtual void actionBusiness(QAction *act) override;
+};
+
+DPSMBBROWSER_END_NAMESPACE
+
+#endif   // SMBSHAREFILEMENU_H

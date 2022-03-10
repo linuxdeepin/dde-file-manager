@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,12 +20,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
-#define DFMPLUGIN_MYSHARES_GLOBAL_H
+#include "smbsharefilemenu.h"
 
-#define DPMYSHARES_NAMESPACE dfmplugin_myshares
-#define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
-#define DPMYSHARES_END_NAMESPACE }
-#define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
+#include <QMenu>
 
-#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
+DPSMBBROWSER_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+SmbShareFileMenu::SmbShareFileMenu(QObject *parent)
+    : AbstractMenu(parent)
+{
+}
+
+QMenu *SmbShareFileMenu::build(QWidget *parent, dfmbase::AbstractMenu::MenuMode mode, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> &selected, QVariant customData)
+{
+    QMenu *menu = new QMenu(parent);
+    return menu;
+}
+
+void SmbShareFileMenu::actionBusiness(QAction *act)
+{
+}

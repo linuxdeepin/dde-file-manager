@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,12 +20,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
-#define DFMPLUGIN_MYSHARES_GLOBAL_H
+#ifndef SMBSHAREITERATOR_P_H
+#define SMBSHAREITERATOR_P_H
 
-#define DPMYSHARES_NAMESPACE dfmplugin_myshares
-#define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
-#define DPMYSHARES_END_NAMESPACE }
-#define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
+#include "dfmplugin_smbbrowser_global.h"
 
-#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
+#include <dfm-io/dfmio_global.h>
+
+BEGIN_IO_NAMESPACE
+class DLocalEnumerator;
+END_IO_NAMESPACE
+
+DPSMBBROWSER_BEGIN_NAMESPACE
+
+class SmbShareIterator;
+class SmbShareIteratorPrivate
+{
+    friend class SmbShareIterator;
+
+public:
+    explicit SmbShareIteratorPrivate(const QUrl &url, SmbShareIterator *qq);
+    ~SmbShareIteratorPrivate();
+
+private:
+    SmbShareIterator *q { nullptr };
+    SmbShareNodes smbShares;
+    QScopedPointer<DFMIO::DLocalEnumerator> enumerator { nullptr };
+    bool tryMount { false };
+};
+
+DPSMBBROWSER_END_NAMESPACE
+
+#endif   // SMBSHAREITERATOR_P_H

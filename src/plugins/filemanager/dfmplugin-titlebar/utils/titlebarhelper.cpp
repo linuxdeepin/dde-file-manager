@@ -215,8 +215,8 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
         return true;
     }
 
-    DeviceController::instance()->mountNetworkDevice(url.toString(), [sender](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
-        if (!ok) {
+    DeviceController::instance()->mountNetworkDevice(url.toString(), [sender](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
+        if (!ok && err != DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) {
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {
             QUrl u;

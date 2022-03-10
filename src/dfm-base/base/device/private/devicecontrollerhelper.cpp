@@ -400,7 +400,7 @@ DeviceControllerHelper::DevPtr DeviceControllerHelper::createDevice(const QStrin
     return monitor->createDeviceById(devId);
 }
 
-DeviceControllerHelper::DevPtrList DeviceControllerHelper::createAllDevices(dfmmount::DeviceType type)
+DeviceControllerHelper::DevPtrList DeviceControllerHelper::createAllDevices(DFMMOUNT::DeviceType type)
 {
     DevPtrList list;
     auto manager = DFMMOUNT::DFMDeviceManager::instance();

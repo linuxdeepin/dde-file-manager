@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,12 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
-#define DFMPLUGIN_MYSHARES_GLOBAL_H
+#ifndef SMBBROWSERUTILS_H
+#define SMBBROWSERUTILS_H
 
-#define DPMYSHARES_NAMESPACE dfmplugin_myshares
-#define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
-#define DPMYSHARES_END_NAMESPACE }
-#define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
+#include "dfmplugin_smbbrowser_global.h"
 
-#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
+#include <QString>
+#include <QIcon>
+#include <QMutex>
+
+DPSMBBROWSER_BEGIN_NAMESPACE
+
+class SmbBrowserUtils
+{
+public:
+    static QString scheme();
+    static QIcon icon();
+
+    static bool mountSmb(const quint64 windowId, const QList<QUrl> urls, QString *);
+
+public:
+    static QMutex mutex;
+    static QMap<QUrl, SmbShareNode> shareNodes;
+};
+
+DPSMBBROWSER_END_NAMESPACE
+
+#endif   // SMBBROWSERUTILS_H

@@ -74,8 +74,7 @@ private:
     bool anonymous = false;
 };
 
-QDebug
-operator<<(QDebug dbg, const ShareInfo &obj);
+QDebug operator<<(QDebug dbg, const ShareInfo &obj);
 
 using StartSambaFinished = std::function<void(bool, const QString &)>;
 

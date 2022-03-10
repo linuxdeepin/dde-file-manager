@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
@@ -20,12 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
-#define DFMPLUGIN_MYSHARES_GLOBAL_H
+#ifndef MYSHARESPLUGIN_H
+#define MYSHARESPLUGIN_H
 
-#define DPMYSHARES_NAMESPACE dfmplugin_myshares
-#define DPMYSHARES_BEGIN_NAMESPACE namespace DPMYSHARES_NAMESPACE {
-#define DPMYSHARES_END_NAMESPACE }
-#define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
+#include "dfmplugin_smbbrowser_global.h"
 
-#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
+#include <dfm-framework/framework.h>
+
+DPSMBBROWSER_BEGIN_NAMESPACE
+
+class SmbBrowser : public dpf::Plugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "smbbrowser.json")
+
+public:
+    virtual void initialize() override;
+    virtual bool start() override;
+    virtual ShutdownFlag stop() override;
+
+protected Q_SLOTS:
+    void onWindowCreated(quint64 winId);
+    void onWindowOpened(quint64 windd);
+    void onWindowClosed(quint64 winId);
+
+private:
+    void initOperations();
+};
+
+DPSMBBROWSER_END_NAMESPACE
+#endif   // MYSHARESPLUGIN_H

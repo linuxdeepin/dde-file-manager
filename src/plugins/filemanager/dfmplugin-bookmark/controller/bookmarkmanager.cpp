@@ -371,7 +371,7 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
             if (info.attribute(DFileInfo::AttributeID::StandardIsDir).toBool())
                 BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         } else {
-            DeviceController::instance()->mountNetworkDevice(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+            DeviceController::instance()->mountNetworkDevice(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
                 Q_UNUSED(mntPath)
                 if (!ok) {
                     DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
