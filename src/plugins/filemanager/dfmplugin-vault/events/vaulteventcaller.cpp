@@ -19,8 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vaulteventcaller.h"
+
 #include "dfm-base/dfm_event_defines.h"
 #include "services/common/propertydialog/property_defines.h"
+
+#include "services/filemanager/bookmark/bookmark_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -50,4 +53,9 @@ void VaultEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 void VaultEventCaller::sendVaultProperty(const QUrl &url)
 {
     dispatcher()->publish(Property::EventType::kEvokePropertyDialog, QList<QUrl>() << url);
+}
+
+void VaultEventCaller::sendBookMarkDisabled(const QString scheme)
+{
+    dispatcher()->publish(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled, scheme);
 }

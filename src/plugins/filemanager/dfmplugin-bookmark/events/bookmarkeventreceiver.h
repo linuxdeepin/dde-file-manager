@@ -37,6 +37,7 @@ public:
 
 public slots:
     void handleRenameFile(quint64 windowId, const QUrl &oldUrl, const QUrl &newUrl);
+    void handleAddSchemeOfBookMarkDisabled(const QString &scheme);
 
 private:
     explicit BookMarkEventReceiver(QObject *parent = nullptr);

@@ -19,18 +19,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "bookmarkmanager.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "utils/bookmarkhelper.h"
 #include "events/bookmarkeventcaller.h"
 #include "utils/bookmarkhelper.h"
 
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/utils/dialogmanager.h"
+
 #include <DDialog>
+
+#include <dfmio_utils.h>
+#include <dfm-io/core/dfileinfo.h>
 
 #include <QFileInfo>
 #include <QMenu>
 #include <QApplication>
+
+USING_IO_NAMESPACE
 
 DPBOOKMARK_BEGIN_NAMESPACE
 const char *const kConfigGroupName = "BookMark";
@@ -47,7 +55,7 @@ void BookmarkData::resetData(const QVariantMap &map)
         ba = map.value("locateUrl").toString().toLocal8Bit();
     }
     locateUrl = QString(ba);
-    mountPoint = map.value("mountPoint").toString();
+    deviceUrl = map.value("mountPoint").toString();
     name = map.value("name").toString();
     url = QUrl::fromUserInput(map.value("url").toString());
 }
@@ -86,7 +94,7 @@ bool BookMarkManager::removeBookMark(const QUrl &url)
     return true;
 }
 
-bool BookMarkManager::addBookMark(const QList<QUrl> &urls) const
+bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
 {
     int count = urls.size();
     if (count < 0)
@@ -97,19 +105,18 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls) const
             BookmarkData bookmarkData;
             bookmarkData.created = QDateTime::currentDateTime();
             bookmarkData.lastModified = bookmarkData.created;
-            bookmarkData.locateUrl = "";
-            bookmarkData.mountPoint = "";
+            getMountInfo(url, bookmarkData.deviceUrl, bookmarkData.locateUrl);
             bookmarkData.name = info.fileName();
             bookmarkData.url = url;
             QVariantList list =
                     Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
-            list << QVariantMap { { "name", bookmarkData.name },
-                                  { "url", bookmarkData.url },
-                                  { "created", bookmarkData.created.toString(Qt::ISODate) },
-                                  { "lastModified",
-                                    bookmarkData.lastModified.toString(Qt::ISODate) },
-                                  { "mountPoint", bookmarkData.mountPoint },
-                                  { "locateUrl", bookmarkData.locateUrl } };
+            list << QVariantMap{ { "name", bookmarkData.name },
+                                 { "url", bookmarkData.url },
+                                 { "created", bookmarkData.created.toString(Qt::ISODate) },
+                                 { "lastModified",
+                                   bookmarkData.lastModified.toString(Qt::ISODate) },
+                                 { "mountPoint", bookmarkData.deviceUrl },
+                                 { "locateUrl", bookmarkData.locateUrl } };
             Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
 
             bookmarkDataMap[url] = bookmarkData;
@@ -145,8 +152,8 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
     item.text = bookmarkName;
     item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
     item.contextMenuCb = BookMarkManager::contenxtMenuHandle;
-    item.renameCb = BookMarkManager::renameCB;
-    item.cdCb = BookMarkManager::cdBookMarkUrlCB;
+    item.renameCb = BookMarkManager::renameCallBack;
+    item.cdCb = BookMarkManager::cdBookMarkUrlCallBack;
 
     BookMarkHelper::sideBarServIns()->addItem(item);
 }
@@ -227,6 +234,30 @@ int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
     return dialog.exec();
 }
 
+void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl)
+{
+    Q_UNUSED(localUrl);
+
+    QStorageInfo info(url.path());
+    QString devStr(info.device());
+    if (devStr.startsWith("/dev/")) {
+        QUrl tmp;
+        tmp.setScheme(SchemeTypes::kDevice);
+        tmp.setPath(devStr);
+        devStr = tmp.toString();
+    } else if (devStr == "gvfsd-fuse") {
+        if (info.bytesTotal() <= 0) {
+            devStr = DFMIO::DFMUtils::devicePathFromUrl(url);
+        }
+    }
+    mountPoint = devStr;
+}
+
+QSet<QString> BookMarkManager::getBookMarkDisabledSchemes()
+{
+    return bookMarkDisabledSchemes;
+}
+
 void BookMarkManager::onFileEdited(const QString &group, const QString &key, const QVariant &value)
 {
     if (group != kConfigGroupName || key != kConfigKeyName)
@@ -274,6 +305,11 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     }
 }
 
+void BookMarkManager::addSchemeOfBookMarkDisabled(const QString &scheme)
+{
+    bookMarkDisabledSchemes.insert(scheme);
+}
+
 void BookMarkManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QFileInfo info(url.path());
@@ -309,16 +345,43 @@ void BookMarkManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, cons
     delete menu;
 }
 
-void BookMarkManager::renameCB(quint64 windowId, const QUrl &url, const QString &name)
+void BookMarkManager::renameCallBack(quint64 windowId, const QUrl &url, const QString &name)
 {
     Q_UNUSED(windowId);
     BookMarkManager::instance()->bookMarkRename(url, name);
     BookMarkHelper::sideBarServIns()->updateItem(url, name, true);
 }
 
-void BookMarkManager::cdBookMarkUrlCB(quint64 windowId, const QUrl &url)
+void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
 {
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+
+    const QMap<QUrl, BookmarkData> &bookmarkMap = BookMarkManager::instance()->getBookMarkDataMap();
+
+    if (!bookmarkMap.contains(url)) {
+        qCritical() << "boormark:" << "not find the book mark!";
+        return;
+    }
+
+    if (bookmarkMap[url].deviceUrl.startsWith(SchemeTypes::kSmb)
+            || bookmarkMap[url].deviceUrl.startsWith(SchemeTypes::kFtp)
+            || bookmarkMap[url].deviceUrl.startsWith(SchemeTypes::kSFtp)) {
+        DFileInfo info(url);
+        if (info.exists()) {
+            if (info.attribute(DFileInfo::AttributeID::StandardIsDir).toBool())
+                BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
+        } else {
+            DeviceController::instance()->mountNetworkDevice(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+                Q_UNUSED(mntPath)
+                if (!ok) {
+                    DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
+                } else {
+                    BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
+                }
+            });
+        }
+        return;
+    }
 
     QFileInfo info(url.path());
     if (info.exists() && info.isDir()) {
@@ -329,7 +392,7 @@ void BookMarkManager::cdBookMarkUrlCB(quint64 windowId, const QUrl &url)
     }
 }
 
-QString BookMarkManager::bookMarkActionCreatedCB(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)
+QString BookMarkManager::bookMarkActionCreatedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)
 {
     Q_UNUSED(isNormal);
     Q_UNUSED(currentUrl);
@@ -339,7 +402,7 @@ QString BookMarkManager::bookMarkActionCreatedCB(bool isNormal, const QUrl &curr
         return QString();
 
     QUrl url = selected.at(0);
-    if (!QFileInfo(url.path()).isDir())
+    if (BookMarkManager::instance()->getBookMarkDisabledSchemes().contains(url.scheme()) || !QFileInfo(url.path()).isDir())
         return QString();
 
     if (BookMarkManager::instance()->getBookMarkDataMap().contains(url))
@@ -348,7 +411,7 @@ QString BookMarkManager::bookMarkActionCreatedCB(bool isNormal, const QUrl &curr
         return QString(tr("Add to bookmark"));
 }
 
-void BookMarkManager::bookMarkActionClickedCB(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)
+void BookMarkManager::bookMarkActionClickedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)
 {
     Q_UNUSED(isNormal);
     Q_UNUSED(currentUrl);

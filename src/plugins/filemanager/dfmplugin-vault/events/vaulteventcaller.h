@@ -35,6 +35,7 @@ public:
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendVaultProperty(const QUrl &url);
+    static void sendBookMarkDisabled(const QString scheme);
 };
 DPVAULT_END_NAMESPACE
 #endif   //VAULTEVENTCALLER_H

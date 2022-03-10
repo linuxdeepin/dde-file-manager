@@ -27,6 +27,7 @@
 #include "utils/vaultglobaldefine.h"
 #include "utils/vaultentryfileentity.h"
 #include "events/vaulteventreceiver.h"
+#include "events/vaulteventcaller.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -140,6 +141,9 @@ bool Vault::start()
     VaultEventReceiver::instance()->connectEvent();
 
     propertyServIns->registerMethod(VaultHelper::createVaultPropertyDialog, VaultHelper::scheme());
+
+    VaultEventCaller::sendBookMarkDisabled(VaultHelper::scheme());
+
     return true;
 }
 

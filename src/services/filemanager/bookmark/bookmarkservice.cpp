@@ -22,6 +22,18 @@
 #include "private/bookmarkservice_p.h"
 #include "dfm-base/utils/universalutils.h"
 
+DSB_FM_BEGIN_NAMESPACE
+
+namespace BookMark {
+
+namespace EventType {
+extern const int kBookMarkDisabled = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+}
+
+}
+
+DSB_FM_END_NAMESPACE
+
 DSB_FM_USE_NAMESPACE
 DPF_USE_NAMESPACE
 

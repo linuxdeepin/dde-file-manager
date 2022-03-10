@@ -36,4 +36,9 @@ void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QUrl &oldUr
     BookMarkManager::instance()->fileRenamed(oldUrl, newUrl);
 }
 
+void BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled(const QString &scheme)
+{
+    BookMarkManager::instance()->addSchemeOfBookMarkDisabled(scheme);
+}
+
 BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent) : QObject(parent) {}

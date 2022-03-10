@@ -22,6 +22,7 @@
 #define BOOKMARKHELPER_H
 
 #include "dfmplugin_bookmark_global.h"
+
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"

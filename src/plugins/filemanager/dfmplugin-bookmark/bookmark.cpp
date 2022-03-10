@@ -21,8 +21,11 @@
 #include "bookmark.h"
 #include "utils/bookmarkhelper.h"
 #include "controller/bookmarkmanager.h"
-#include "dfm-base/dfm_event_defines.h"
 #include "events/bookmarkeventreceiver.h"
+
+#include "dfm-base/dfm_event_defines.h"
+
+#include "services/filemanager/bookmark/bookmark_defines.h"
 
 DPBOOKMARK_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -31,19 +34,23 @@ void BookMark::initialize()
 {
     connect(BookMarkHelper::winServIns(), &DSB_FM_NAMESPACE::WindowsService::windowCreated, this,
             &BookMark::onWindowCreated, Qt::DirectConnection);
+
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
+                                            BookMarkEventReceiver::instance(),
+                                            &BookMarkEventReceiver::handleRenameFile);
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled,
+                                            BookMarkEventReceiver::instance(),
+                                            &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
 }
 
 bool BookMark::start()
 {
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
-                                            BookMarkEventReceiver::instance(),
-                                            &BookMarkEventReceiver::handleRenameFile);
-
     DSC_NAMESPACE::ActionInfo actionAddBookMark;
     actionAddBookMark.type = DFMBASE_NAMESPACE::ExtensionType::kSoAction;
-    actionAddBookMark.createCb = BookMarkManager::bookMarkActionCreatedCB;
-    actionAddBookMark.clickedCb = BookMarkManager::bookMarkActionClickedCB;
+    actionAddBookMark.createCb = BookMarkManager::bookMarkActionCreatedCallBack;
+    actionAddBookMark.clickedCb = BookMarkManager::bookMarkActionClickedCallBack;
     BookMarkHelper::menuServIns()->regAction(actionAddBookMark);
+
     return true;
 }
 

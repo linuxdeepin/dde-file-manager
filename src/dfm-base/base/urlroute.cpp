@@ -37,6 +37,7 @@ const char *const kFtp = "ftp";
 const char *const kSFtp = "sftp";
 const char *const kBurn = "burn";
 const char *const kComputer = "computer";
+extern const char *const kDevice = "device";
 }   // namespace SchemeTypes
 
 QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};

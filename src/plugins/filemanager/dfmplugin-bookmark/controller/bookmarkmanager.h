@@ -22,12 +22,14 @@
 #define BOOKMARKMANAGER_H
 
 #include "dfmplugin_bookmark_global.h"
+
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
 #include <QObject>
 #include <QUrl>
 #include <QDateTime>
 #include <QMap>
+#include <QSet>
 
 DPBOOKMARK_BEGIN_NAMESPACE
 
@@ -36,7 +38,7 @@ struct BookmarkData
     QDateTime created;
     QDateTime lastModified;
     QString locateUrl;
-    QString mountPoint;
+    QString deviceUrl;
     QString name;
     QUrl url;
 
@@ -51,20 +53,22 @@ class BookMarkManager : public QObject
 public:
     static BookMarkManager *instance();
 
-    bool addBookMark(const QList<QUrl> &urls) const;
+    bool addBookMark(const QList<QUrl> &urls);
     bool removeBookMark(const QUrl &url);
 
     void addBookMarkItem(const QUrl &url, const QString &bookmarkName) const;
     void addBookMarkItemsFromConfig();
 
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
-    static void renameCB(quint64 windowId, const QUrl &url, const QString &name);
-    static void cdBookMarkUrlCB(quint64 windowId, const QUrl &url);
+    static void renameCallBack(quint64 windowId, const QUrl &url, const QString &name);
+    static void cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url);
 
-    static QString bookMarkActionCreatedCB(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
-    static void bookMarkActionClickedCB(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
+    static QString bookMarkActionCreatedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
+    static void bookMarkActionClickedCallBack(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected);
 
     void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
+
+    void addSchemeOfBookMarkDisabled(const QString &scheme);
 
 private:
     explicit BookMarkManager(QObject *parent = nullptr);
@@ -73,12 +77,15 @@ private:
     void bookMarkRename(const QUrl &url, const QString &newName);
     QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
     int showRemoveBookMarkDialog(quint64 winId);
+    void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
+    QSet<QString> getBookMarkDisabledSchemes();
 
 private slots:
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
 
 private:
     mutable QMap<QUrl, BookmarkData> bookmarkDataMap;
+    QSet<QString> bookMarkDisabledSchemes;
 };
 
 DPBOOKMARK_END_NAMESPACE
