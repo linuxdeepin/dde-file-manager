@@ -298,6 +298,22 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
     return url1.host() == url2.host() && url1.port() == url1.port();
 }
 
+bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2)
+{
+    struct stat statFromInfo;
+    struct stat statToInfo;
+    int fromStat = stat(url1.toString().toLocal8Bit().data(), &statFromInfo);
+    int toStat = stat(url2.toString().toLocal8Bit().data(), &statToInfo);
+    if (0 == fromStat && 0 == toStat) {
+        // 通过inode判断是否是同一个文件
+        if (statFromInfo.st_ino == statToInfo.st_ino
+            && statFromInfo.st_dev == statToInfo.st_dev) {   //! 需要判断设备号
+            return true;
+        }
+    }
+    return false;
+}
+
 bool FileUtils::isSmbPath(const QUrl &url)
 {
     const QString &&strUrl = url.toString();

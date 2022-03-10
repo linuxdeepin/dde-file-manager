@@ -133,6 +133,22 @@ bool DoCutFilesWorker::cutFiles()
                 continue;
             }
         }
+
+        const QUrl &urlFrom = fileInfo->url();
+        const QString &fileName = fileInfo->fileName();
+
+        QString newFileUrl = targetInfo->url().toString();
+        if (!newFileUrl.endsWith("/"))
+            newFileUrl.append("/");
+        newFileUrl.append(fileName);
+        const auto &newFileInfo = InfoFactory::create<AbstractFileInfo>(QUrl(newFileUrl));
+
+        if (newFileInfo->url() == fileInfo->url()
+            || (FileUtils::isSameFile(urlFrom, newFileInfo->url()) && !fileInfo->isSymLink())) {
+            ++completedFilesCount;
+            continue;
+        }
+
         if (!doCutFile(fileInfo, targetInfo)) {
             return false;
         }

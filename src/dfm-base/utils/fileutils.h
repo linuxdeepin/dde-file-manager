@@ -54,6 +54,7 @@ public:
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
+    static bool isSameFile(const QUrl &url1, const QUrl &url2);
     static bool isSmbPath(const QUrl &url);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
