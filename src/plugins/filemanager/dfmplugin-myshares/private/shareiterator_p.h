@@ -1,5 +1,5 @@
-﻿/*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,33 +20,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHARESPLUGIN_H
-#define SHARESPLUGIN_H
+#ifndef SHAREITERATOR_P_H
+#define SHAREITERATOR_P_H
 
-#include "dfmplugin_shares_global.h"
+#include "dfmplugin_myshares_global.h"
+#include "services/common/usershare/usershare_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <QList>
 
-DPSHARES_BEGIN_NAMESPACE
-class Shares : public dpf::Plugin
+DPMYSHARES_BEGIN_NAMESPACE
+
+class ShareIterator;
+class ShareIteratorPrivate
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "shares.json")
+    friend class ShareIterator;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-protected Q_SLOTS:
-    void onWindowCreated(quint64 winId);
-    void onWindowOpened(quint64 windd);
-    void onWindowClosed(quint64 winId);
+    explicit ShareIteratorPrivate(ShareIterator *qq);
+    ~ShareIteratorPrivate();
 
 private:
-    void addToSidebar();
-    void addFileOperation();
+    ShareIterator *q { nullptr };
+    ShareInfoList shares;
+    DSC_NAMESPACE::ShareInfo currentInfo;
 };
 
-DPSHARES_END_NAMESPACE
-#endif   // SHARESPLUGIN_H
+DPMYSHARES_END_NAMESPACE
+
+#endif   // SHAREITERATOR_P_H

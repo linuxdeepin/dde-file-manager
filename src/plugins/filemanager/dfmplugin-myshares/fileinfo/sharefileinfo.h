@@ -20,39 +20,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREITERATOR_H
-#define SHAREITERATOR_H
+#ifndef SHAREFILEINFO_H
+#define SHAREFILEINFO_H
 
-#include "dfmplugin_shares_global.h"
+#include "dfmplugin_myshares_global.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
-#include "dfm-base/interfaces/abstractdiriterator.h"
+DPMYSHARES_BEGIN_NAMESPACE
 
-DPSHARES_BEGIN_NAMESPACE
-
-class ShareIteratorPrivate;
-class ShareIterator : public dfmbase::AbstractDirIterator
+class ShareFileInfo : public dfmbase::AbstractFileInfo
 {
-    Q_OBJECT
-    friend class ShareIteratorPrivate;
-
 public:
-    explicit ShareIterator(const QUrl &url,
-                           const QStringList &nameFilters = QStringList(),
-                           QDir::Filters filters = QDir::NoFilter,
-                           QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
-    virtual ~ShareIterator() override;
+    explicit ShareFileInfo(const QUrl &url);
+    virtual ~ShareFileInfo() override;
 
-    virtual QUrl next() override;
-    virtual bool hasNext() const override;
+    // AbstractFileInfo interface
+public:
+    virtual QUrl redirectedFileUrl() const override;
+    virtual QString fileDisplayName() const override;
     virtual QString fileName() const override;
-    virtual QUrl fileUrl() const override;
-    virtual const AbstractFileInfoPointer fileInfo() const override;
-    virtual QUrl url() const override;
-
-private:
-    QScopedPointer<ShareIteratorPrivate> d;
 };
 
-DPSHARES_END_NAMESPACE
+DPMYSHARES_END_NAMESPACE
 
-#endif   // SHAREITERATOR_H
+#endif   // SHAREFILEINFO_H

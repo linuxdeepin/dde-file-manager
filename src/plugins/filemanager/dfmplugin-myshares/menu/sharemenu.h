@@ -23,7 +23,7 @@
 #ifndef SHAREMENU_H
 #define SHAREMENU_H
 
-#include "dfmplugin_shares_global.h"
+#include "dfmplugin_myshares_global.h"
 
 #include "dfm-base/interfaces/abstractmenu.h"
 #include "dfm-base/widgets/action/actiondatacontainer.h"
@@ -31,10 +31,10 @@
 
 #include <QUrl>
 
-DPSHARES_BEGIN_NAMESPACE
+DPMYSHARES_BEGIN_NAMESPACE
 
 namespace ShareScene {
-static constexpr char kShareScene[] { "share" };
+static constexpr char kShareScene[] { "myshare" };
 }   // namespace ShareScene
 
 class ShareMenu : public DFMBASE_NAMESPACE::AbstractMenu
@@ -63,6 +63,6 @@ private:
     quint64 winId;
 };
 
-DPSHARES_END_NAMESPACE
+DPMYSHARES_END_NAMESPACE
 
 #endif   // SHAREMENU_H

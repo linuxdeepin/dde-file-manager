@@ -1,5 +1,5 @@
 {
-    "Name" : "dfmplugin-shares",
+    "Name" : "dfmplugin-myshares",
     "Version" : "1.0.0",
     "CompatVersion" : "1.0.0",
     "Vendor" : "The Uniontech Software Technology Co., Ltd.",
@@ -20,6 +20,6 @@
     "Description" : "The trash plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-        {"Name" : "shares", "Version": "1.0.0"}
+        {"Name" : "myshares", "Version": "1.0.0"}
     ]
 }

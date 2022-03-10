@@ -1,5 +1,5 @@
-/*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+﻿/*
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,33 +20,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREEVENTSCALLER_H
-#define SHAREEVENTSCALLER_H
+#ifndef MYSHARESPLUGIN_H
+#define MYSHARESPLUGIN_H
 
-#include "dfmplugin_shares_global.h"
+#include "dfmplugin_myshares_global.h"
 
-#include "dfm-base/dfm_global_defines.h"
+#include <dfm-framework/framework.h>
 
-#include <QObject>
-
-DPSHARES_BEGIN_NAMESPACE
-
-class ShareEventsCaller
+DPMYSHARES_BEGIN_NAMESPACE
+class MyShares : public dpf::Plugin
 {
-    ShareEventsCaller() = delete;
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "myshares.json")
 
 public:
-    enum OpenMode {
-        kOpenInCurrentWindow,
-        kOpenInNewWindow,
-        kOpenInNewTab,
-    };
-    static void sendOpenDirs(quint64 winId, const QList<QUrl> &urls, OpenMode mode);
-    static void sendCancelSharing(const QUrl &url);
-    static void sendShowProperty(const QList<QUrl> &urls);
-    static void sendSwitchDisplayMode(quint64 winId, dfmbase::Global::ViewMode mode);
+    virtual void initialize() override;
+    virtual bool start() override;
+    virtual ShutdownFlag stop() override;
+
+protected Q_SLOTS:
+    void onWindowCreated(quint64 winId);
+    void onWindowOpened(quint64 windd);
+    void onWindowClosed(quint64 winId);
+
+private:
+    void addToSidebar();
 };
 
-DPSHARES_END_NAMESPACE
-
-#endif   // SHAREEVENTSCALLER_H
+DPMYSHARES_END_NAMESPACE
+#endif   // MYSHARESPLUGIN_H

@@ -28,7 +28,7 @@
 
 #include <QMenu>
 
-DPSHARES_USE_NAMESPACE
+DPMYSHARES_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 #define CreateContainerByType(type) ActionTypeManager::instance().actionDataContainerByType(type)

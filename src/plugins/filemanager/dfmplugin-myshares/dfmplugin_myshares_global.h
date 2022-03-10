@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,27 +20,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREFILEINFO_H
-#define SHAREFILEINFO_H
+#ifndef DFMPLUGIN_MYSHARES_GLOBAL_H
+#define DFMPLUGIN_MYSHARES_GLOBAL_H
 
-#include "dfmplugin_shares_global.h"
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#define DPMYSHARES_BEGIN_NAMESPACE namespace dfmplugin_myshares {
+#define DPMYSHARES_END_NAMESPACE }
+#define DPMYSHARES_USE_NAMESPACE using namespace dfmplugin_myshares;
+#define DPMYSHARES_NAMESPACE dfmplugin_shares
 
-DPSHARES_BEGIN_NAMESPACE
-
-class ShareFileInfo : public dfmbase::AbstractFileInfo
-{
-public:
-    explicit ShareFileInfo(const QUrl &url);
-    virtual ~ShareFileInfo() override;
-
-    // AbstractFileInfo interface
-public:
-    virtual QUrl redirectedFileUrl() const override;
-    virtual QString fileDisplayName() const override;
-    virtual QString fileName() const override;
-};
-
-DPSHARES_END_NAMESPACE
-
-#endif   // SHAREFILEINFO_H
+#endif   // DFMPLUGIN_MYSHARES_GLOBAL_H

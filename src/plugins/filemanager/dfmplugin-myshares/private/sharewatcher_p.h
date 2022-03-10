@@ -23,11 +23,11 @@
 #ifndef SHAREWATCHER_P_H
 #define SHAREWATCHER_P_H
 
-#include "dfmplugin_shares_global.h"
+#include "dfmplugin_myshares_global.h"
 
 #include "dfm-base/interfaces/private/abstractfilewatcher_p.h"
 
-DPSHARES_BEGIN_NAMESPACE
+DPMYSHARES_BEGIN_NAMESPACE
 
 class ShareWatcher;
 class ShareWatcherPrivate : public dfmbase::AbstractFileWatcherPrivate
@@ -41,6 +41,6 @@ public:
     virtual bool stop() override;
 };
 
-DPSHARES_END_NAMESPACE
+DPMYSHARES_END_NAMESPACE
 
 #endif   // SHAREWATCHER_P_H

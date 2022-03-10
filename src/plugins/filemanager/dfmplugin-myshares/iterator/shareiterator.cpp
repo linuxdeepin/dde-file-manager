@@ -29,7 +29,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
-DPSHARES_USE_NAMESPACE
+DPMYSHARES_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 ShareIterator::ShareIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)

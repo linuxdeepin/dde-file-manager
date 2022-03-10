@@ -20,31 +20,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREFILEINFO_P_H
-#define SHAREFILEINFO_P_H
+#include "sharewatcher.h"
+#include "private/sharewatcher_p.h"
+#include "utils/shareutils.h"
 
-#include "dfmplugin_shares_global.h"
-
-#include "services/common/usershare/usershare_defines.h"
 #include "services/common/usershare/usershareservice.h"
-#include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
-DPSHARES_BEGIN_NAMESPACE
+DPMYSHARES_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
-class ShareFileInfo;
-class ShareFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
+ShareWatcher::ShareWatcher(const QUrl &url, QObject *parent)
+    : dfmbase::AbstractFileWatcher(new ShareWatcherPrivate(url, this), parent)
 {
-    friend class ShareFileInfo;
+}
 
-public:
-    explicit ShareFileInfoPrivate(const QUrl &url, dfmbase::AbstractFileInfo *qq);
+ShareWatcher::~ShareWatcher()
+{
+}
 
-    virtual ~ShareFileInfoPrivate();
+ShareWatcherPrivate::ShareWatcherPrivate(const QUrl &fileUrl, ShareWatcher *qq)
+    : dfmbase::AbstractFileWatcherPrivate(fileUrl, qq)
+{
+}
 
-private:
-    DSC_NAMESPACE::ShareInfo info;
-};
+bool ShareWatcherPrivate::start()
+{
+    return q->connect(UserShareService::service(), &UserShareService::shareAdded, q, [this](const QString &path) { Q_EMIT q->subfileCreated(ShareUtils::makeShareUrl(path)); })
+            && q->connect(UserShareService::service(), &UserShareService::shareRemoved, q, [this](const QString &path) { Q_EMIT q->fileDeleted(ShareUtils::makeShareUrl(path)); });
+}
 
-DPSHARES_END_NAMESPACE
-
-#endif   // SHAREFILEINFO_P_H
+bool ShareWatcherPrivate::stop()
+{
+    return q->disconnect(UserShareService::service(), nullptr, q, nullptr);
+}

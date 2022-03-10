@@ -21,7 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "shares.h"
+#include "myshares.h"
 
 #include "utils/shareutils.h"
 #include "fileinfo/sharefileinfo.h"
@@ -40,9 +40,9 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
-DPSHARES_USE_NAMESPACE
+DPMYSHARES_USE_NAMESPACE
 
-void Shares::initialize()
+void MyShares::initialize()
 {
     DFMBASE_USE_NAMESPACE
     DSC_USE_NAMESPACE
@@ -54,16 +54,14 @@ void Shares::initialize()
     MenuService::regClass<ShareMenu>(ShareScene::kShareScene);
 
     DSB_FM_USE_NAMESPACE
-    connect(WindowsService::service(), &WindowsService::windowCreated, this, &Shares::onWindowCreated, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowOpened, this, &Shares::onWindowOpened, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowClosed, this, &Shares::onWindowClosed, Qt::DirectConnection);
+    connect(WindowsService::service(), &WindowsService::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
+    connect(WindowsService::service(), &WindowsService::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
+    connect(WindowsService::service(), &WindowsService::windowClosed, this, &MyShares::onWindowClosed, Qt::DirectConnection);
 
     UserShareService::service();   // for loading shares.
-
-    addFileOperation();
 }
 
-bool Shares::start()
+bool MyShares::start()
 {
     DSB_FM_USE_NAMESPACE
 
@@ -72,16 +70,16 @@ bool Shares::start()
     return true;
 }
 
-dpf::Plugin::ShutdownFlag Shares::stop()
+dpf::Plugin::ShutdownFlag MyShares::stop()
 {
     return dpf::Plugin::ShutdownFlag::kSync;
 }
 
-void Shares::onWindowCreated(quint64 winId)
+void MyShares::onWindowCreated(quint64 winId)
 {
 }
 
-void Shares::onWindowOpened(quint64 winId)
+void MyShares::onWindowOpened(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
@@ -93,11 +91,11 @@ void Shares::onWindowOpened(quint64 winId)
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addToSidebar(); }, Qt::DirectConnection);
 }
 
-void Shares::onWindowClosed(quint64 winId)
+void MyShares::onWindowClosed(quint64 winId)
 {
 }
 
-void Shares::addToSidebar()
+void MyShares::addToSidebar()
 {
     DSB_FM_USE_NAMESPACE
     SideBar::ItemInfo shareEntry;
@@ -109,12 +107,4 @@ void Shares::addToSidebar()
     shareEntry.url = ShareUtils::rootUrl();
     shareEntry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     SideBarService::service()->addItem(shareEntry);
-}
-
-void Shares::addFileOperation()
-{
-    DSC_USE_NAMESPACE
-    FileOperationsFunctions funcs(new FileOperationsSpace::FileOperationsInfo);
-    funcs->openFiles = &ShareUtils::openFilesHandle;
-    FileOperationsService::service()->registerOperations(ShareUtils::scheme(), funcs);
 }

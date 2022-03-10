@@ -20,26 +20,50 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREWATCHER_H
-#define SHAREWATCHER_H
+#include "shareutils.h"
 
-#include "dfmplugin_shares_global.h"
+#include "dfm-base/base/urlroute.h"
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include <QDebug>
 
-DPSHARES_BEGIN_NAMESPACE
+DPMYSHARES_USE_NAMESPACE
 
-class ShareWatcherPrivate;
-class ShareWatcher : public dfmbase::AbstractFileWatcher
+QString ShareUtils::scheme()
 {
-    Q_OBJECT
-    friend class ShareWatcherPrivate;
+    return "usershare";
+}
 
-public:
-    explicit ShareWatcher(const QUrl &url, QObject *parent = nullptr);
-    virtual ~ShareWatcher() override;
-};
+QIcon ShareUtils::icon()
+{
+    return QIcon::fromTheme("folder-publicshare");
+}
 
-DPSHARES_END_NAMESPACE
+QString ShareUtils::displayName()
+{
+    return QObject::tr("My Shares");
+}
 
-#endif   // SHAREWATCHER_H
+QUrl ShareUtils::rootUrl()
+{
+    QUrl u;
+    u.setScheme(scheme());
+    u.setPath("/");
+    return u;
+}
+
+QUrl ShareUtils::makeShareUrl(const QString &path)
+{
+    QUrl u;
+    u.setScheme(scheme());
+    u.setPath(path);
+    return u;
+}
+
+QUrl ShareUtils::convertToLocalUrl(const QUrl &shareUrl)
+{
+    if (shareUrl.scheme() != scheme())
+        return {};
+    QUrl u = shareUrl;
+    u.setScheme(dfmbase::SchemeTypes::kFile);
+    return u;
+}

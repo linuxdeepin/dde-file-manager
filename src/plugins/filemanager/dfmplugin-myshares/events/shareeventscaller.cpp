@@ -30,7 +30,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPSHARES_USE_NAMESPACE
+DPMYSHARES_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 #define dispatcher dpfInstance.eventDispatcher()

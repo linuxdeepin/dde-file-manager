@@ -20,31 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREITERATOR_P_H
-#define SHAREITERATOR_P_H
+#ifndef SHAREEVENTSCALLER_H
+#define SHAREEVENTSCALLER_H
 
-#include "dfmplugin_shares_global.h"
-#include "services/common/usershare/usershare_defines.h"
+#include "dfmplugin_myshares_global.h"
 
-#include <QList>
+#include "dfm-base/dfm_global_defines.h"
 
-DPSHARES_BEGIN_NAMESPACE
+#include <QObject>
 
-class ShareIterator;
-class ShareIteratorPrivate
+DPMYSHARES_BEGIN_NAMESPACE
+
+class ShareEventsCaller
 {
-    friend class ShareIterator;
+    ShareEventsCaller() = delete;
 
 public:
-    explicit ShareIteratorPrivate(ShareIterator *qq);
-    ~ShareIteratorPrivate();
-
-private:
-    ShareIterator *q { nullptr };
-    ShareInfoList shares;
-    DSC_NAMESPACE::ShareInfo currentInfo;
+    enum OpenMode {
+        kOpenInCurrentWindow,
+        kOpenInNewWindow,
+        kOpenInNewTab,
+    };
+    static void sendOpenDirs(quint64 winId, const QList<QUrl> &urls, OpenMode mode);
+    static void sendCancelSharing(const QUrl &url);
+    static void sendShowProperty(const QList<QUrl> &urls);
+    static void sendSwitchDisplayMode(quint64 winId, dfmbase::Global::ViewMode mode);
 };
 
-DPSHARES_END_NAMESPACE
+DPMYSHARES_END_NAMESPACE
 
-#endif   // SHAREITERATOR_P_H
+#endif   // SHAREEVENTSCALLER_H

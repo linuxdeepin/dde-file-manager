@@ -20,56 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "shareutils.h"
+#ifndef SHAREUTILS_H
+#define SHAREUTILS_H
 
-#include "dfm-base/base/urlroute.h"
+#include "dfmplugin_myshares_global.h"
 
-#include <QDebug>
+#include <QString>
+#include <QIcon>
+#include <QUrl>
 
-DPSHARES_USE_NAMESPACE
+DPMYSHARES_BEGIN_NAMESPACE
 
-QString ShareUtils::scheme()
+class ShareUtils
 {
-    return "usershare";
-}
+public:
+    static QString scheme();
+    static QIcon icon();
+    static QString displayName();
+    static QUrl rootUrl();
+    static QUrl makeShareUrl(const QString &path);
+    static QUrl convertToLocalUrl(const QUrl &shareUrl);
+};
 
-QIcon ShareUtils::icon()
-{
-    return QIcon::fromTheme("folder-publicshare");
-}
+DPMYSHARES_END_NAMESPACE
 
-QString ShareUtils::displayName()
-{
-    return QObject::tr("My Shares");
-}
-
-QUrl ShareUtils::rootUrl()
-{
-    QUrl u;
-    u.setScheme(scheme());
-    u.setPath("/");
-    return u;
-}
-
-QUrl ShareUtils::makeShareUrl(const QString &path)
-{
-    QUrl u;
-    u.setScheme(scheme());
-    u.setPath(path);
-    return u;
-}
-
-QUrl ShareUtils::convertToLocalUrl(const QUrl &shareUrl)
-{
-    if (shareUrl.scheme() != scheme())
-        return {};
-    QUrl u = shareUrl;
-    u.setScheme(dfmbase::SchemeTypes::kFile);
-    return u;
-}
-
-bool ShareUtils::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
-{
-    qDebug() << "Hello";
-    return true;
-}
+#endif   // SHAREUTILS_H

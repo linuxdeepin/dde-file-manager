@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,12 +20,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DFMPLUGIN_SHARES_GLOBAL_H
-#define DFMPLUGIN_SHARES_GLOBAL_H
+#ifndef SHAREWATCHER_H
+#define SHAREWATCHER_H
 
-#define DPSHARES_BEGIN_NAMESPACE namespace dfmplugin_shares {
-#define DPSHARES_END_NAMESPACE }
-#define DPSHARES_USE_NAMESPACE using namespace dfmplugin_shares;
-#define DPSHARES_NAMESPACE dfmplugin_shares
+#include "dfmplugin_myshares_global.h"
 
-#endif   // DFMPLUGIN_SHARES_GLOBAL_H
+#include "dfm-base/interfaces/abstractfilewatcher.h"
+
+DPMYSHARES_BEGIN_NAMESPACE
+
+class ShareWatcherPrivate;
+class ShareWatcher : public dfmbase::AbstractFileWatcher
+{
+    Q_OBJECT
+    friend class ShareWatcherPrivate;
+
+public:
+    explicit ShareWatcher(const QUrl &url, QObject *parent = nullptr);
+    virtual ~ShareWatcher() override;
+};
+
+DPMYSHARES_END_NAMESPACE
+
+#endif   // SHAREWATCHER_H

@@ -42,7 +42,7 @@
 
 DSC_BEGIN_NAMESPACE
 
-// this maybe changed later.
+// TODO(xust) this maybe changed later, use new interface instead
 namespace DaemonServiceIFace {
 static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
 static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
