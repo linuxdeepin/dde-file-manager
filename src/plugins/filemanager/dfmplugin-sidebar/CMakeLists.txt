@@ -4,7 +4,6 @@ project(dfmplugin-sidebar)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# TODO(zhangs): remove private
 FILE(GLOB SIDEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"

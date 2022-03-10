@@ -98,7 +98,7 @@ void Trash::installToSideBar()
     item.url = TrashHelper::rootUrl();
     item.iconName = TrashHelper::icon().name();
     item.text = tr("Trash");
-    item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     item.contextMenuCb = TrashHelper::contenxtMenuHandle;
     TrashHelper::sideBarServIns()->addItem(item);
 }

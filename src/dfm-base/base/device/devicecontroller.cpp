@@ -290,8 +290,6 @@ void DeviceMonitorHandler::updateDataWithOtherInfo(BlockDeviceData *data, const 
     // clearText
     if (changes.contains(clearTextFalg))
         data->cleartextDevice = changes.value(clearTextFalg).toString();
-
-    // TODO(zhangs): handle other Property...
 }
 
 void DeviceMonitorHandler::handleBlockDevicesSizeUsedChanged()

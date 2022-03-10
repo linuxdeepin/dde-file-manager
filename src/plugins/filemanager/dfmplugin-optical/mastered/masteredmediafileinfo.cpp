@@ -114,12 +114,6 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
     return ret;
 }
 
-QVector<ActionType> MasteredMediaFileInfo::menuActionList(AbstractMenu::MenuType type) const
-{
-    // TODO(zhangs):
-    return {};
-}
-
 bool MasteredMediaFileInfo::canRedirectionFileUrl() const
 {
     if (isDir())
@@ -153,12 +147,6 @@ bool MasteredMediaFileInfo::canDrop() const
 bool MasteredMediaFileInfo::canRename() const
 {
     return false;
-}
-
-QSet<ActionType> MasteredMediaFileInfo::disableMenuActionList() const
-{
-    // TODO(zhangs):
-    return {};
 }
 
 void MasteredMediaFileInfo::refresh()

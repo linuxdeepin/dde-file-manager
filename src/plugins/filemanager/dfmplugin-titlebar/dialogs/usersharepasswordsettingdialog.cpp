@@ -22,6 +22,8 @@
 */
 #include "usersharepasswordsettingdialog.h"
 
+#include "services/common/usershare/usershareservice.h"
+
 #include "dfm-base/utils/windowutils.h"
 
 #include <QDebug>
@@ -34,6 +36,7 @@
 DFMBASE_USE_NAMESPACE
 DPTITLEBAR_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 UserSharePasswordSettingDialog::UserSharePasswordSettingDialog(QWidget *parent)
     : DDialog(parent)
@@ -82,8 +85,9 @@ void UserSharePasswordSettingDialog::onButtonClicked(const int &index)
             close();
             return;
         }
-        // TODO(zhangs): impl follow D-Bus interface
-        // userShareManager->setSambaPassword(UserShareManager::getCurrentUserName(), password);
+
+        QString userName { UserShareService::service()->getCurrentUserName() };
+        UserShareService::service()->setSharePassword(userName, password);
     }
     close();
 }

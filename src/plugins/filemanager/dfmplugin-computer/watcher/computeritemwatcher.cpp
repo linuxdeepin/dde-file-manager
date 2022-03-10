@@ -368,9 +368,9 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     SideBar::ItemInfo sbItem;
     sbItem.group = SideBar::DefaultGroup::kDevice;
     sbItem.url = info->url();
-    sbItem.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    sbItem.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     if (info->renamable())
-        sbItem.flag |= Qt::ItemIsEditable;
+        sbItem.flags |= Qt::ItemIsEditable;
     if (info->fileIcon().name().startsWith("media"))
         sbItem.iconName = "media-optical-symbolic";
     else

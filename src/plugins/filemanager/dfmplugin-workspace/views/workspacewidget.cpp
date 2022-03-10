@@ -62,6 +62,11 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 
     initCustomTopWidgets(url);
 
+    // NOTE: In the function `initCustomTopWidgets` the `cd` event may be
+    // called causing this function to reentrant!!!
+    if (workspaceUrl != url)
+        return;
+
     QString scheme { url.scheme() };
 
     if (!views.contains(scheme)) {
@@ -212,7 +217,6 @@ void WorkspaceWidget::initializeUi()
 {
     initTabBar();
     initViewLayout();
-    // TODO(zhangs): initRenameBarState
 }
 
 void WorkspaceWidget::initConnect()

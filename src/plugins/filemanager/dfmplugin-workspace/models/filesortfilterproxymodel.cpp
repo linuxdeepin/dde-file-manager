@@ -246,8 +246,8 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
         return QString::localeAwareCompare(leftData.toString(), rightData.toString()) < 0;
     case FileViewItem::kItemFileSizeRole:
         if (leftInfo->isDir()) {
-            int leftCount = qSharedPointerDynamicCast<LocalFileInfo>(leftInfo)->countChildFile();
-            int rightCount = qSharedPointerDynamicCast<LocalFileInfo>(rightInfo)->countChildFile();
+            int leftCount = qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile();
+            int rightCount = qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile();
             return leftCount < rightCount;
         } else {
             return leftInfo->size() < rightInfo->size();

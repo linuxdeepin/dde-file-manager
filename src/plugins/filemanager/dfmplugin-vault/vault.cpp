@@ -177,7 +177,7 @@ void Vault::addSideBarVaultItem()
         item.url = VaultHelper::rootUrl();
         item.iconName = VaultHelper::icon().name();
         item.text = tr("My Vault");
-        item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+        item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
         item.contextMenuCb = VaultHelper::contenxtMenuHandle;
         item.cdCb = VaultHelper::siderItemClicked;
 

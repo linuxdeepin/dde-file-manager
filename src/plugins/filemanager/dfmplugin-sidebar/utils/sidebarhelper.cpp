@@ -38,7 +38,6 @@ DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
-QList<DSB_FM_NAMESPACE::SideBar::ItemInfo> SideBarHelper::kCacheInfo {};
 
 QList<SideBarWidget *> SideBarHelper::allSideBar()
 {
@@ -49,21 +48,6 @@ QList<SideBarWidget *> SideBarHelper::allSideBar()
         list.push_back(kSideBarMap[k]);
 
     return list;
-}
-
-QList<SideBar::ItemInfo> SideBarHelper::allCacheInfo()
-{
-    return kCacheInfo;
-}
-
-void SideBarHelper::removeItemFromCache(const QUrl &url)
-{
-    for (int i = 0; i < kCacheInfo.size(); i++) {
-        if (kCacheInfo.at(i).url == url) {
-            kCacheInfo.removeAt(i);
-            return;
-        }
-    }
 }
 
 SideBarWidget *SideBarHelper::findSideBarByWindowId(quint64 windowId)
@@ -109,12 +93,18 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
                                         text,
                                         group,
                                         url);
+    auto flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled };
     DSB_FM_NAMESPACE::SideBar::ItemInfo info;
+    info.group = group;
+    info.iconName = iconName;
+    info.text = text;
+    info.url = url;
+    info.flags = flags;
     info.cdCb = defaultCdAction;
     info.contextMenuCb = defaultContenxtMenu;
     item->setItemInfo(info);
 
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled);
+    item->setFlags(flags);
 
     return item;
 }
@@ -125,7 +115,7 @@ SideBarItem *SideBarHelper::createItemByInfo(const SideBar::ItemInfo &info)
                                         info.text,
                                         info.group,
                                         info.url);
-    item->setFlags(info.flag);
+    item->setFlags(info.flags);
     item->setItemInfo(info);
 
     // create `unmount action` for removable device
@@ -140,9 +130,6 @@ SideBarItem *SideBarHelper::createItemByInfo(const SideBar::ItemInfo &info)
         lst.push_back(action);
         item->setActionList(Qt::RightEdge, lst);
     }
-
-    if (!kCacheInfo.contains(info))
-        kCacheInfo.push_back(info);
 
     return item;
 }
@@ -186,7 +173,6 @@ void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Properties"), [url]() {
-        // TODO(zhangs): show property dialog
         SideBarEventCaller::sendShowFilePropertyDialog(url);
     });
     menu->exec(globalPos);

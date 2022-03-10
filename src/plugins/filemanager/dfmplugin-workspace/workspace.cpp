@@ -122,6 +122,5 @@ void Workspace::onWindowOpened(quint64 windId)
 
 void Workspace::onWindowClosed(quint64 windId)
 {
-    // TODO(zhangs): impl me!
     WorkspaceHelper::instance()->removeWorkspace(windId);
 }

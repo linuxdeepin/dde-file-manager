@@ -105,6 +105,6 @@ void MyShares::addToSidebar()
         shareEntry.iconName.append("-symbolic");
     shareEntry.text = ShareUtils::displayName();
     shareEntry.url = ShareUtils::rootUrl();
-    shareEntry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
+    shareEntry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     SideBarService::service()->addItem(shareEntry);
 }

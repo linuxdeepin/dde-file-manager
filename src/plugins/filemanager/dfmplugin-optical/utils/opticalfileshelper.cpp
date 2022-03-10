@@ -43,7 +43,7 @@ bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> url
     for (const QUrl &url : urls) {
         redirectedFileUrls << QUrl::fromLocalFile(MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString());
     }
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, windowId, urls);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, windowId, redirectedFileUrls);
     return true;
 }
 

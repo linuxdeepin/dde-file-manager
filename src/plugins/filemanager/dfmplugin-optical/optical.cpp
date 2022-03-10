@@ -132,16 +132,17 @@ void Optical::addCustomTopWidget()
 {
     Workspace::CustomTopWidgetInfo info;
     info.scheme = SchemeTypes::kBurn;
-    info.keepShow = true;
+    info.keepShow = false;
     info.createTopWidgetCb = []() {
         return new OpticalMediaWidget;
     };
     info.showTopWidgetCb = [](QWidget *w, const QUrl &url) {
+        bool ret { true };
         OpticalMediaWidget *mediaWidget = qobject_cast<OpticalMediaWidget *>(w);
         if (mediaWidget)
-            mediaWidget->updateDiscInfo(url);
+            ret = mediaWidget->updateDiscInfo(url);
 
-        return true;
+        return ret;
     };
 
     OpticalHelper::workspaceServIns()->addCustomTopWidget(info);

@@ -182,30 +182,26 @@ int SideBarModel::appendRow(SideBarItem *item)
         return -1;
 
     QString currentGroup = item->group();
-    auto controller = QtConcurrent::run([&]() {
-        if (rowCount() == 0) {
-            QStandardItemModel::appendRow(item);
-            return 0;
-        } else {
-            // find insert group
-            for (int row = rowCount() - 1; row >= 0; row--) {
-                auto findedItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
+    if (rowCount() == 0) {
+        QStandardItemModel::appendRow(item);
+        return 0;
+    } else {
+        // find insert group
+        for (int row = rowCount() - 1; row >= 0; row--) {
+            auto findedItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
 
-                if (!findedItem)
-                    continue;
+            if (!findedItem)
+                continue;
 
-                if (findedItem && findedItem->group() == currentGroup) {
-                    QStandardItemModel::insertRow(row + 1, item);
-                    return row + 1;
-                }
+            if (findedItem && findedItem->group() == currentGroup) {
+                QStandardItemModel::insertRow(row + 1, item);
+                return row + 1;
             }
-            QStandardItemModel::appendRow(item);
-            return 0;
         }
-    });
-    controller.waitForFinished();
+        QStandardItemModel::appendRow(item);
+    }
 
-    return controller.result();
+    return 0;
 }
 
 bool SideBarModel::removeRow(SideBarItem *item)
@@ -213,23 +209,15 @@ bool SideBarModel::removeRow(SideBarItem *item)
     if (!item)
         return false;
 
-    auto controller = QtConcurrent::run([&]() {
-        for (int row = rowCount() - 1; row >= 0; row--) {
-            auto foundItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
-            if (item == foundItem) {
-                QStandardItemModel::removeRow(row);
-                return true;
-            }
+    for (int row = rowCount() - 1; row >= 0; row--) {
+        auto foundItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
+        if (item == foundItem) {
+            QStandardItemModel::removeRow(row);
+            return true;
         }
-        return false;
-    });
+    }
 
-    controller.waitForFinished();
-
-    if (!controller.result())
-        return false;
-    else
-        return true;
+    return false;
 }
 
 bool SideBarModel::removeRow(const QUrl &url)

@@ -28,6 +28,7 @@
 #include "events/sidebareventcaller.h"
 #include "utils/sidebarhelper.h"
 #include "utils/sidebarmanager.h"
+#include "utils/sidebarinfocachemananger.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/utils/systempathutil.h"
@@ -41,13 +42,15 @@ DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
+static constexpr char kNotExistedGroup[] { "__not_existed_group" };
+
 SideBarWidget::SideBarWidget(QFrame *parent)
     : AbstractFrame(parent),
       sidebarView(new SideBarView(this)),
       sidebarModel(new SideBarModel(this)),
       currentGroups { SideBar::DefaultGroup::kCommon, SideBar::DefaultGroup::kDevice,
                       SideBar::DefaultGroup::kBookmark, SideBar::DefaultGroup::kNetwork,
-                      SideBar::DefaultGroup::kTag, SideBar::DefaultGroup::kOther }
+                      SideBar::DefaultGroup::kTag, SideBar::DefaultGroup::kOther, kNotExistedGroup }
 {
     initializeUi();
     initDefaultModel();
@@ -207,18 +210,27 @@ void SideBarWidget::initDefaultModel()
     for (const QString &group : currentGroups)
         addItem(SideBarHelper::createSeparatorItem(group));
 
+    // use cahce info
+    auto allGroup = SideBarInfoCacheMananger::instance()->goups();
+    std::for_each(allGroup.cbegin(), allGroup.cend(), [this](const QString &name) {
+        auto list = SideBarInfoCacheMananger::instance()->indexCacheMap(name);
+        for (auto &&info : list) {
+            SideBarItem *item = SideBarHelper::createItemByInfo(info);
+            addItem(item);
+        }
+    });
+
     // create defualt items
-    static const QStringList names { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
+    static std::once_flag flag;
+    std::call_once(flag, [this]() {
+        static const QStringList names { "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads" };
 
-    for (const QString &name : names) {
-        SideBarItem *item = SideBarHelper::createDefaultItem(name, SideBar::DefaultGroup::kCommon);
-        addItem(item);
-    }
-
-    // add cache info
-    auto &&infos = SideBarHelper::allCacheInfo();
-    for (auto info : infos)
-        addItem(SideBarHelper::createItemByInfo(info));
+        for (const QString &name : names) {
+            SideBarItem *item = SideBarHelper::createDefaultItem(name, SideBar::DefaultGroup::kCommon);
+            addItem(item);
+            SideBarInfoCacheMananger::instance()->addItemInfoCache(item->itemInfo());
+        }
+    });
 
     // init done, then we should update the separator visible state.
     updateSeparatorVisibleState();
@@ -250,17 +262,20 @@ void SideBarWidget::initConnect()
 
 void SideBarWidget::updateSeparatorVisibleState()
 {
-    QString lastGroupName = "__not_existed_group";
+    QString lastGroupName = kNotExistedGroup;
     int lastGroupItemCount = 0;
-    int lastSeparatorIndex = -1;
+    int lastShowSeparatorIndex = -1;
 
     for (int i = 0; i < sidebarModel->rowCount(); i++) {
         SideBarItem *item = sidebarModel->itemFromIndex(i);
         if (item->group() != lastGroupName) {
             if (dynamic_cast<SideBarItemSeparator *>(item)) {   // Separator
-                if (lastGroupItemCount == 0)
+                if (lastGroupItemCount == 0) {
                     sidebarView->setRowHidden(i, true);
-                lastSeparatorIndex = i;
+                } else {
+                    lastShowSeparatorIndex = i;
+                    sidebarView->setRowHidden(i, false);
+                }
                 lastGroupItemCount = 0;
                 lastGroupName = item->group();
             }
@@ -270,8 +285,10 @@ void SideBarWidget::updateSeparatorVisibleState()
         }
     }
 
-    // hide the last one if last group is empty
-    if (lastGroupItemCount == 0) {
-        sidebarView->setRowHidden(lastSeparatorIndex, true);
+    // hide the last one
+    if (lastShowSeparatorIndex > 0) {
+        SideBarItem *item = sidebarModel->itemFromIndex(lastShowSeparatorIndex);
+        if (dynamic_cast<SideBarItemSeparator *>(item))
+            sidebarView->setRowHidden(lastShowSeparatorIndex, true);
     }
 }

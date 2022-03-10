@@ -49,7 +49,6 @@ public:
     static JobHandlePointer deleteFilesHandle(const quint64 windowId,
                                               const QList<QUrl> sources,
                                               const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    // TODO(zhangs): impl other interfaces
 };
 
 DPOPTICAL_END_NAMESPACE

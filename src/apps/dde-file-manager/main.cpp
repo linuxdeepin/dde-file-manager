@@ -44,11 +44,11 @@ DFMBASE_USE_NAMESPACE
 #    define ORGANIZATION_NAME "deepin"
 #endif
 
-/// @brief PLUGIN_INTERFACE 默认插件iid
-static const char *const kFmPluginInterface = "org.deepin.plugin.filemanager";
-static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
-static const char *const kPluginCore = "dfmplugin-core";
-static const char *const kLibCore = "libdfmplugin-core.so";
+// defualt plugin IID
+static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
+static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
+static constexpr char kPluginCore[] { "dfmplugin-core" };
+static constexpr char kLibCore[] { "libdfmplugin-core.so" };
 
 static bool pluginsLoad()
 {

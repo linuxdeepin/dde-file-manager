@@ -98,7 +98,7 @@ void Recent::addRecentItem()
     item.url = RecentManager::rootUrl();
     item.iconName = RecentManager::icon().name();
     item.text = tr("Recent");
-    item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     item.contextMenuCb = RecentManager::contenxtMenuHandle;
 
     RecentManager::sideBarServIns()->insertItem(0, item);

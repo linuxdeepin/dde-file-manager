@@ -103,13 +103,13 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls) const
             bookmarkData.url = url;
             QVariantList list =
                     Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
-            list << QVariantMap{ { "name", bookmarkData.name },
-                                 { "url", bookmarkData.url },
-                                 { "created", bookmarkData.created.toString(Qt::ISODate) },
-                                 { "lastModified",
-                                   bookmarkData.lastModified.toString(Qt::ISODate) },
-                                 { "mountPoint", bookmarkData.mountPoint },
-                                 { "locateUrl", bookmarkData.locateUrl } };
+            list << QVariantMap { { "name", bookmarkData.name },
+                                  { "url", bookmarkData.url },
+                                  { "created", bookmarkData.created.toString(Qt::ISODate) },
+                                  { "lastModified",
+                                    bookmarkData.lastModified.toString(Qt::ISODate) },
+                                  { "mountPoint", bookmarkData.mountPoint },
+                                  { "locateUrl", bookmarkData.locateUrl } };
             Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
 
             bookmarkDataMap[url] = bookmarkData;
@@ -143,7 +143,7 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
     item.url = url;
     item.iconName = BookMarkHelper::instance()->icon().name();
     item.text = bookmarkName;
-    item.flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
     item.contextMenuCb = BookMarkManager::contenxtMenuHandle;
     item.renameCb = BookMarkManager::renameCB;
     item.cdCb = BookMarkManager::cdBookMarkUrlCB;
@@ -151,7 +151,8 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
     BookMarkHelper::sideBarServIns()->addItem(item);
 }
 
-BookMarkManager::BookMarkManager(QObject *parent) : QObject(parent)
+BookMarkManager::BookMarkManager(QObject *parent)
+    : QObject(parent)
 {
     // TODO: 配置文件内容改变后，当前并没有发送valueEdited信号
     connect(Application::genericSetting(), &Settings::valueEdited, this,
@@ -280,7 +281,7 @@ void BookMarkManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, cons
 
     QMenu *menu = new QMenu;
     auto newWindowAct = menu->addAction(QObject::tr("Open in new window"),
-                    [url]() { BookMarkEventCaller::sendBookMarkOpenInNewWindow(url); });
+                                        [url]() { BookMarkEventCaller::sendBookMarkOpenInNewWindow(url); });
     newWindowAct->setEnabled(bEnabled);
 
     auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
@@ -301,7 +302,7 @@ void BookMarkManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, cons
     menu->addSeparator();
 
     auto propertyAct = menu->addAction(QObject::tr("Properties"),
-                    [url]() { BookMarkEventCaller::sendShowBookMarkPropertyDialog(url); });
+                                       [url]() { BookMarkEventCaller::sendShowBookMarkPropertyDialog(url); });
     propertyAct->setEnabled(bEnabled);
 
     menu->exec(globalPos);
@@ -326,8 +327,6 @@ void BookMarkManager::cdBookMarkUrlCB(quint64 windowId, const QUrl &url)
         if (BookMarkManager::instance()->showRemoveBookMarkDialog(windowId))
             BookMarkManager::instance()->removeBookMark(url);
     }
-
-
 }
 
 QString BookMarkManager::bookMarkActionCreatedCB(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)

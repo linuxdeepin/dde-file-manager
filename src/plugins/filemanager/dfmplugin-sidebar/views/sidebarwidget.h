@@ -46,10 +46,12 @@ public:
     void changeEvent(QEvent *event) override;
 
     QAbstractItemView *view();
+
     int addItem(SideBarItem *item);
     bool insertItem(const int index, SideBarItem *item);
     bool removeItem(SideBarItem *item);
     bool removeItem(const QUrl &url);
+
     void updateItem(const QUrl &url, const QString &newName, bool editable);
     int findItem(const QUrl &url) const;
     void editItem(const QUrl &url);

@@ -50,7 +50,7 @@ OpticalMediaWidget::OpticalMediaWidget(QWidget *parent)
     initConnect();
 }
 
-void OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
+bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
 {
     QString dev { OpticalHelper::burnDestDevice(url) };
     devId = { DeviceManager::blockDeviceId(dev) };
@@ -61,12 +61,12 @@ void OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     curDev = qvariant_cast<QString>(map[DeviceProperty::kDevice]);
     if (curDev.isEmpty()) {
         qWarning() << "Error url: " << url << "Cannot acquire dev";
-        return;
+        return false;
     }
 
     if (mnt.isEmpty() && !blank) {
         handleErrorMount();
-        return;
+        return false;
     }
 
     // Acquire blank disc info
@@ -106,6 +106,7 @@ void OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     curMediaTypeStr = rtypemap[type];
 
     updateUi();
+    return true;
 }
 
 void OpticalMediaWidget::initializeUi()

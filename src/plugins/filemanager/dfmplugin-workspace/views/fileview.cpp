@@ -158,13 +158,13 @@ QUrl FileView::rootUrl() const
 
 AbstractBaseView::ViewState FileView::viewState() const
 {
-    // TODO(zhangs): return model state
+    // TODO(liuyangming): return model state
     return AbstractBaseView::viewState();
 }
 
 QList<QAction *> FileView::toolBarActionList() const
 {
-    // TODO(zhangs): impl me
+    // TODO(liuyangming): impl me
     return QList<QAction *>();
 }
 
@@ -184,7 +184,6 @@ QList<QUrl> FileView::selectedUrlList() const
 
 void FileView::refresh()
 {
-    // TODO(zhangs): model()->refresh();
     model()->fetchMore(rootIndex());
 }
 
@@ -288,7 +287,6 @@ void FileView::wheelEvent(QWheelEvent *event)
 
 void FileView::keyPressEvent(QKeyEvent *event)
 {
-    // TODO(zhangs): impl me
     if (!d->shortcutHelper->processKeyPressEvent(event))
         return DListView::keyPressEvent(event);
 }

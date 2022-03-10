@@ -23,9 +23,10 @@
 #ifndef DFMPLUGIN_SIDEBAR_GLOBAL_H
 #define DFMPLUGIN_SIDEBAR_GLOBAL_H
 
-#define DPSIDEBAR_BEGIN_NAMESPACE namespace dfmplugin_sidebar {
-#define DPSIDEBAR_END_NAMESPACE }
-#define DPSIDEBAR_USE_NAMESPACE using namespace dfmplugin_sidebar;
 #define DPSIDEBAR_NAMESPACE dfmplugin_sidebar
+
+#define DPSIDEBAR_BEGIN_NAMESPACE namespace DPSIDEBAR_NAMESPACE {
+#define DPSIDEBAR_END_NAMESPACE }
+#define DPSIDEBAR_USE_NAMESPACE using namespace DPSIDEBAR_NAMESPACE;
 
 #endif   // DFMPLUGIN_SIDEBAR_GLOBAL_H

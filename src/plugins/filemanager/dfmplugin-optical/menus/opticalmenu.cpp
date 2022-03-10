@@ -69,8 +69,8 @@ QMenu *OpticalMenu::build(QWidget *parent,
 
 void OpticalMenu::assemblesEmptyAreaActions(QMenu *menu)
 {
-    static QVector<ActionType> typeList { ActionType::kActDisplayAs, ActionType::kActSortBy, ActionType::kActPaste,
-                                          ActionType::kActSelectAll, ActionType::kActProperty, ActionType::kActSeparator };
+    static QVector<ActionType> typeList { ActionType::kActDisplayAs, ActionType::kActSortBy, ActionType::kActPaste, ActionType::kActOpenAsAdmin,
+                                          ActionType::kActOpenInTerminal, ActionType::kActSelectAll, ActionType::kActProperty, ActionType::kActSeparator };
     filterActions(menu, typeList);
 }
 

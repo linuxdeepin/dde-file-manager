@@ -127,15 +127,12 @@ bool DAttachedBlockDevice::deviceUsageValid()
 QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 {
     if (deviceUsageValid()) {
-        bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
         qint64 bytesTotal { 0 };
         qint64 bytesFree { 0 };
-        if (optical) {
-            // TODO(zhangs): make a temp method read optical size for old dde-file-manager
-        } else {
-            bytesTotal = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal));
-            bytesFree = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeFree));
-        }
+
+        bytesTotal = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal));
+        bytesFree = qvariant_cast<qint64>(data.value(DeviceProperty::kSizeFree));
+
         return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
     return QPair<quint64, quint64>();

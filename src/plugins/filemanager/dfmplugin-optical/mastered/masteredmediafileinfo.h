@@ -43,13 +43,11 @@ public:
     bool isDir() const override;
     QString fileDisplayName() const override;
     QVariantHash extraProperties() const override;
-    QVector<DFMBASE_NAMESPACE::ActionType> menuActionList(DFMBASE_NAMESPACE::AbstractMenu::MenuType type) const override;
     bool canRedirectionFileUrl() const override;
     QUrl redirectedFileUrl() const override;
     QUrl parentUrl() const override;
     bool canDrop() const override;
     bool canRename() const override;
-    QSet<DFMBASE_NAMESPACE::ActionType> disableMenuActionList() const override;
     void refresh() override;
     bool canDragCompress() const override;
     virtual QString emptyDirectoryTip() const override;

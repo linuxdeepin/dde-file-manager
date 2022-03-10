@@ -42,7 +42,7 @@ class OpticalMediaWidget : public QWidget
 
 public:
     explicit OpticalMediaWidget(QWidget *parent = nullptr);
-    void updateDiscInfo(const QUrl &url, bool retry = false);
+    bool updateDiscInfo(const QUrl &url, bool retry = false);
 
 private:
     void initializeUi();

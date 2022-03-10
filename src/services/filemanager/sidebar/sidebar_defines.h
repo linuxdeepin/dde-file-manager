@@ -58,7 +58,7 @@ struct ItemInfo
     QString iconName;
     QString text;
     QUrl url;
-    Qt::ItemFlags flag;   //< Qt::ItemFlag
+    Qt::ItemFlags flags;   //< Qt::ItemFlag
     bool removable { false };   //< item will set actionList(right edge)
 
     CdActionCallback cdCb { nullptr };
@@ -66,7 +66,7 @@ struct ItemInfo
     RenameCallback renameCb { nullptr };
     FindMeCallback findMeCb { nullptr };
 
-    bool operator==(const ItemInfo &info)
+    bool operator==(const ItemInfo &info) const
     {
         return (url.scheme() == info.url.scheme()
                 && url.path() == info.url.path()

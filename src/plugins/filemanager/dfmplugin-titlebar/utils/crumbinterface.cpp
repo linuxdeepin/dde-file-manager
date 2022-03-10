@@ -94,7 +94,6 @@ QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
 }
 
 /*!
- * TODO(zhangs): virtual ?
  * \brief Start request a completion list for address bar auto-completion.
  *
  * \param url The base url need to be completed.
@@ -135,7 +134,6 @@ void CrumbInterface::requestCompletionList(const QUrl &url)
 }
 
 /*!
- * TODO(zhangs): virtual ?
  * \brief Cancel the started completion list transmission.
  *
  * \sa completionFound, completionListTransmissionCompleted, requestCompletionList

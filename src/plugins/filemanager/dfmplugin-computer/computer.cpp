@@ -139,8 +139,8 @@ void Computer::addComputerToSidebar()
     entry.iconName = ComputerUtils::icon().name();
     entry.text = tr("Computer");
     entry.url = ComputerUtils::rootUrl();
-    entry.flag = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
-    sidebarServ->addItem(entry);
+    entry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
+    sidebarServ->insertItem(0, entry);
 }
 
 void Computer::regComputerCrumbToTitleBar()
