@@ -96,7 +96,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
         auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
         bool isBlank { map[DeviceProperty::kOpticalBlank].toBool() };
         auto fi { InfoFactory::create<AbstractFileInfo>(urls.front()) };
-        static const QSet<QString> imageTypes { Global::kMineTypeCdImage, Global::kMineTypeISO9660Image };
+        static const QSet<QString> imageTypes { Global::kMimeTypeCdImage, Global::kMimeTypeISO9660Image };
 
         if (isBlank && fi && imageTypes.contains(fi->mimeTypeName()) && destDir.count() == 0) {
             int r { BurnHelper::showOpticalImageOpSelectionDialog() };

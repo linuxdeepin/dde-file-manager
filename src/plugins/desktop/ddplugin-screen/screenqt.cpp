@@ -42,7 +42,7 @@ static QRect dealRectRatio(QRect orgRect)
 DDP_SCREEN_USE_NAMESPACE
 
 ScreenQt::ScreenQt(QScreen *screen, QObject *parent)
-    : dfmbase::AbstractScreen(parent)
+    : DFMBASE_NAMESPACE::AbstractScreen(parent)
     , qscreen(screen)
 {
     Q_ASSERT(qscreen);

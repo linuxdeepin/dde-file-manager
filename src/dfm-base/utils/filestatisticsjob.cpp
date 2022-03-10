@@ -157,7 +157,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &direct
                 break;
             }
 
-            const AbstractFileInfo::Type type = info->fileType();
+            const AbstractFileInfo::FileType type = info->fileType();
 
             if (type == AbstractFileInfo::kCharDevice && !fileHints.testFlag(FileStatisticsJob::kDontSkipCharDeviceFile)) {
                 break;

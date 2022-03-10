@@ -64,6 +64,6 @@ QUrl ShareUtils::convertToLocalUrl(const QUrl &shareUrl)
     if (shareUrl.scheme() != scheme())
         return {};
     QUrl u = shareUrl;
-    u.setScheme(dfmbase::SchemeTypes::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
     return u;
 }

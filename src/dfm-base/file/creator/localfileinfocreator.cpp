@@ -63,7 +63,7 @@ AbstractFileInfoPointer LocalFileInfoCreator::create(const QUrl &url, bool cache
 
 DFMLocalFileInfoPointer LocalFileInfoCreator::createLocalFileInfo(const QUrl &url, bool cache, QString *error)
 {
-    auto itemInfo = dfmbase::InfoFactory::create<LocalFileInfo>(url, cache, error);
+    auto itemInfo = DFMBASE_NAMESPACE::InfoFactory::create<LocalFileInfo>(url, cache, error);
     if (Q_UNLIKELY(!itemInfo))
         return nullptr;
 

@@ -30,7 +30,7 @@
 DPMYSHARES_BEGIN_NAMESPACE
 
 class ShareIteratorPrivate;
-class ShareIterator : public dfmbase::AbstractDirIterator
+class ShareIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 {
     Q_OBJECT
     friend class ShareIteratorPrivate;

@@ -36,7 +36,7 @@ class FileOperaterProxy : public QObject
     Q_OBJECT
 public:
     static FileOperaterProxy *instance();
-    void touchFile(const CanvasView *view, const QPoint pos, const dfmbase::Global::CreateFileType type, QString suffix = "");
+    void touchFile(const CanvasView *view, const QPoint pos, const DFMBASE_NAMESPACE::Global::CreateFileType type, QString suffix = "");
     void touchFolder(const CanvasView *view, const QPoint pos);
     void copyFiles(const CanvasView *view);
     void cutFiles(const CanvasView *view);
@@ -45,7 +45,7 @@ public:
     void openFiles(const CanvasView *view, const QList<QUrl> &urls);
     void renameFile(const CanvasView *view, const QUrl &oldUrl, const QUrl &newUrl);
     void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace);
-    void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, dfmbase::AbstractJobHandler::FileNameAddFlag> pair);
+    void renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair);
     void openFilesByApp(const CanvasView *view);
     void moveToTrash(const CanvasView *view);
     void deleteFiles(const CanvasView *view);
@@ -57,7 +57,7 @@ public:
     void dropToApp(const QList<QUrl> &urls, const QString &app);
 
 public:
-    void callBackFunction(const dfmbase::Global::CallbackArgus args);
+    void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
 
 protected:
     explicit FileOperaterProxy(QObject *parent = nullptr);

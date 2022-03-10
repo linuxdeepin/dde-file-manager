@@ -48,12 +48,12 @@ UserEntryFileEntity::UserEntryFileEntity(const QUrl &url)
 
 QString UserEntryFileEntity::displayName() const
 {
-    return dfmbase::StandardPaths::displayName(dirName);
+    return DFMBASE_NAMESPACE::StandardPaths::displayName(dirName);
 }
 
 QIcon UserEntryFileEntity::icon() const
 {
-    return QIcon::fromTheme(dfmbase::StandardPaths::iconName(dirName));
+    return QIcon::fromTheme(DFMBASE_NAMESPACE::StandardPaths::iconName(dirName));
 }
 
 bool UserEntryFileEntity::exists() const
@@ -80,18 +80,18 @@ void UserEntryFileEntity::onOpen()
 {
 }
 
-dfmbase::EntryFileInfo::EntryOrder UserEntryFileEntity::order() const
+DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder UserEntryFileEntity::order() const
 {
-    return dfmbase::EntryFileInfo::EntryOrder::kOrderUserDir;
+    return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderUserDir;
 }
 
 QUrl UserEntryFileEntity::targetUrl() const
 {
-    QString path = dfmbase::StandardPaths::location(dirName);
+    QString path = DFMBASE_NAMESPACE::StandardPaths::location(dirName);
     if (path.isEmpty())
         return QUrl();
     QUrl targetUrl;
-    targetUrl.setScheme(dfmbase::SchemeTypes::kFile);
+    targetUrl.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
     targetUrl.setPath(path);
     return targetUrl;
 }

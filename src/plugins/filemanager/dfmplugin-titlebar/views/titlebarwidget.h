@@ -37,7 +37,7 @@
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
-class TitleBarWidget : public dfmbase::AbstractFrame
+class TitleBarWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
 public:

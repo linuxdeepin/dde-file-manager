@@ -460,12 +460,12 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
 
     // todo Compress
 
-    if (dfmbase::FileUtils::isTrashDesktopFile(targetFileUrl)) {
+    if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
         FileOperaterProxyIns->dropToTrash(urlList);
         return true;
-    } else if (dfmbase::FileUtils::isComputerDesktopFile(targetFileUrl)) {
+    } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         return true;
-    } else if (dfmbase::FileUtils::isDesktopFile(targetFileUrl)) {
+    } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
         FileOperaterProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());
         return true;
     }
@@ -530,7 +530,7 @@ int CanvasModel::sortRole() const
     return d->fileTreater->sortRole();
 }
 
-void CanvasModel::setSortRole(dfmbase::AbstractFileInfo::SortKey role, Qt::SortOrder order)
+void CanvasModel::setSortRole(DFMBASE_NAMESPACE::AbstractFileInfo::SortKey role, Qt::SortOrder order)
 {
     d->fileTreater->setSortRole(role, order);
 }

@@ -101,7 +101,7 @@ public:
     void setSortOrder(const Qt::SortOrder &order);
 
     int sortRole() const;
-    void setSortRole(dfmbase::AbstractFileInfo::SortKey role, Qt::SortOrder order = Qt::AscendingOrder);
+    void setSortRole(DFMBASE_NAMESPACE::AbstractFileInfo::SortKey role, Qt::SortOrder order = Qt::AscendingOrder);
 
     bool showHiddenFiles() const;
 signals:

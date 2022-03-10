@@ -57,7 +57,7 @@ QMutex FileOperationsUtils::mutex;
  */
 SizeInfoPointer FileOperationsUtils::statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl)
 {
-    SizeInfoPointer filesSizeInfo(new dfmbase::FileUtils::FilesSizeInfo);
+    SizeInfoPointer filesSizeInfo(new DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo);
 
     for (auto url : files) {
         statisticFilesSize(url, filesSizeInfo, isRecordUrl);

@@ -39,7 +39,7 @@ ShareMenu::ShareMenu(QObject *parent)
     initShareActions();
 }
 
-QMenu *ShareMenu::build(QWidget *parent, dfmbase::AbstractMenu::MenuMode mode, const QUrl &rootUrl, const QUrl &focusedUrl, const QList<QUrl> &selected, QVariant customData)
+QMenu *ShareMenu::build(QWidget *parent, DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode, const QUrl &rootUrl, const QUrl &focusedUrl, const QList<QUrl> &selected, QVariant customData)
 {
     Q_UNUSED(rootUrl)
     Q_UNUSED(focusedUrl);
@@ -48,7 +48,7 @@ QMenu *ShareMenu::build(QWidget *parent, dfmbase::AbstractMenu::MenuMode mode, c
     selectedUrls = selected;
     winId = DSB_FM_NAMESPACE::WindowsService::service()->findWindowId(parent);
 
-    if (mode == dfmbase::AbstractMenu::MenuMode::kEmpty)
+    if (mode == DFMBASE_NAMESPACE::AbstractMenu::MenuMode::kEmpty)
         return buildEmptyMenu(parent);
     else
         return buildFileMenu(selected, parent);
@@ -72,10 +72,10 @@ void ShareMenu::actionBusiness(QAction *act)
         ShareEventsCaller::sendShowProperty(selectedUrls);
         break;
     case kActDisplayAsList:
-        ShareEventsCaller::sendSwitchDisplayMode(winId, dfmbase::Global::ViewMode::kListMode);
+        ShareEventsCaller::sendSwitchDisplayMode(winId, DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
         break;
     case kActDisplayAsIcon:
-        ShareEventsCaller::sendSwitchDisplayMode(winId, dfmbase::Global::ViewMode::kIconMode);
+        ShareEventsCaller::sendSwitchDisplayMode(winId, DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
         break;
     case kActName:
     case kActLastModifiedDate:

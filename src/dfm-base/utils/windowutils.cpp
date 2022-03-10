@@ -23,24 +23,24 @@
 
 #include <QApplication>
 
-bool dfmbase::WindowUtils::isWayLand()
+bool DFMBASE_NAMESPACE::WindowUtils::isWayLand()
 {
     //! This function can only be called after QApplication to return a valid value, before it will return a null value
     Q_ASSERT(qApp);
     return QApplication::platformName() == "wayland";
 }
 
-bool dfmbase::WindowUtils::keyShiftIsPressed()
+bool DFMBASE_NAMESPACE::WindowUtils::keyShiftIsPressed()
 {
     return qApp->keyboardModifiers() == Qt::ShiftModifier;
 }
 
-bool dfmbase::WindowUtils::keyCtrlIsPressed()
+bool DFMBASE_NAMESPACE::WindowUtils::keyCtrlIsPressed()
 {
     return qApp->keyboardModifiers() == Qt::ControlModifier;
 }
 
-bool dfmbase::WindowUtils::keyAltIsPressed()
+bool DFMBASE_NAMESPACE::WindowUtils::keyAltIsPressed()
 {
     return qApp->keyboardModifiers() == Qt::AltModifier;
 }

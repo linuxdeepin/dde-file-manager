@@ -38,7 +38,7 @@ ScreenService::~ScreenService()
 
 }
 
-dfmbase::ScreenPointer ScreenService::primaryScreen()
+DFMBASE_NAMESPACE::ScreenPointer ScreenService::primaryScreen()
 {
     if (d->proxy)
         return d->proxy->primaryScreen();
@@ -46,7 +46,7 @@ dfmbase::ScreenPointer ScreenService::primaryScreen()
     return nullptr;
 }
 
-QVector<dfmbase::ScreenPointer> ScreenService::screens() const
+QVector<DFMBASE_NAMESPACE::ScreenPointer> ScreenService::screens() const
 {
     if (d->proxy)
         return d->proxy->screens();
@@ -54,7 +54,7 @@ QVector<dfmbase::ScreenPointer> ScreenService::screens() const
     return {};
 }
 
-QVector<dfmbase::ScreenPointer> ScreenService::logicScreens() const
+QVector<DFMBASE_NAMESPACE::ScreenPointer> ScreenService::logicScreens() const
 {
     if (d->proxy)
         return d->proxy->logicScreens();
@@ -62,7 +62,7 @@ QVector<dfmbase::ScreenPointer> ScreenService::logicScreens() const
     return {};
 }
 
-dfmbase::ScreenPointer ScreenService::screen(const QString &name) const
+DFMBASE_NAMESPACE::ScreenPointer ScreenService::screen(const QString &name) const
 {
     if (d->proxy)
         return d->proxy->screen(name);
@@ -78,14 +78,14 @@ qreal ScreenService::devicePixelRatio() const
     return -1;
 }
 
-dfmbase::DisplayMode ScreenService::displayMode() const
+DFMBASE_NAMESPACE::DisplayMode ScreenService::displayMode() const
 {
     if (d->proxy)
         return d->proxy->displayMode();
     return DisplayMode::Custom;
 }
 
-dfmbase::DisplayMode ScreenService::lastChangedMode() const
+DFMBASE_NAMESPACE::DisplayMode ScreenService::lastChangedMode() const
 {
     if (d->proxy)
         return d->proxy->lastChangedMode();

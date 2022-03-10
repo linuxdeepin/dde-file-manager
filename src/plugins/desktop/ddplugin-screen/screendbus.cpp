@@ -42,7 +42,7 @@ static QRect dealRectRatio(QRect orgRect)
 DDP_SCREEN_USE_NAMESPACE
 
 ScreenDBus::ScreenDBus(DBusMonitor *monitor, QObject *parent)
-    : dfmbase::AbstractScreen(parent)
+    : DFMBASE_NAMESPACE::AbstractScreen(parent)
     , dbusMonitor(monitor)
 {
     Q_ASSERT(dbusMonitor);

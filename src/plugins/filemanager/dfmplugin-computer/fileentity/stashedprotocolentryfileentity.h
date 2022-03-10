@@ -29,7 +29,7 @@
 
 DPCOMPUTER_BEGIN_NAMESPACE
 
-class StashedProtocolEntryFileEntity : public dfmbase::AbstractEntryFileEntity
+class StashedProtocolEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
 public:
     explicit StashedProtocolEntryFileEntity(const QUrl &url);
@@ -42,7 +42,7 @@ public:
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
     virtual void onOpen() override;
-    virtual dfmbase::EntryFileInfo::EntryOrder order() const override;
+    virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
     virtual QMenu *createMenu() override;
     virtual bool isAccessable() const override;
 };

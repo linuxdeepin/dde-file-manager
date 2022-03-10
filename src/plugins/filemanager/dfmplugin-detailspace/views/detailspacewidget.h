@@ -31,7 +31,7 @@
 DPDETAILSPACE_BEGIN_NAMESPACE
 
 class DetailView;
-class DetailSpaceWidget : public dfmbase::AbstractFrame
+class DetailSpaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
     Q_DISABLE_COPY(DetailSpaceWidget)

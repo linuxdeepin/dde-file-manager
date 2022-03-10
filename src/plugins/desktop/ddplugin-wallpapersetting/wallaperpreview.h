@@ -69,7 +69,7 @@ public slots:
     void updateGeometry();
     void updateWallpaper();
 protected:
-    PreviewWidgetPtr createWidget(dfmbase::ScreenPointer);
+    PreviewWidgetPtr createWidget(DFMBASE_NAMESPACE::ScreenPointer);
     QString getBackgroundFromWm(const QString &screen);
 private:
     bool visible = false;

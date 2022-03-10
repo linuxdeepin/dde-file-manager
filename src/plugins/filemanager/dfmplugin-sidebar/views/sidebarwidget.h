@@ -35,7 +35,7 @@ DPSIDEBAR_BEGIN_NAMESPACE
 class SideBarView;
 class SideBarModel;
 class SideBarItem;
-class SideBarWidget : public dfmbase::AbstractFrame
+class SideBarWidget : public DFMBASE_NAMESPACE::AbstractFrame
 {
     Q_OBJECT
 

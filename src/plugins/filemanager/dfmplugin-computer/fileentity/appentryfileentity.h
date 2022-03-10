@@ -37,7 +37,7 @@ namespace ExtraPropertyName {
 static constexpr char kExecuteCommand[] { "execute_command" };
 }   // namespace ExtraPropertyName
 
-class AppEntryFileEntity : public dfmbase::AbstractEntryFileEntity
+class AppEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
 public:
     explicit AppEntryFileEntity(const QUrl &url);
@@ -51,7 +51,7 @@ public:
     virtual bool showUsageSize() const override;
     virtual void onOpen() override;
     virtual QString description() const override;
-    virtual dfmbase::EntryFileInfo::EntryOrder order() const override;
+    virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
     virtual QVariantHash extraProperties() const override;
     virtual bool isAccessable() const override;
     virtual QMenu *createMenu() override;
@@ -60,7 +60,7 @@ private:
     QString getFormattedExecCommand() const;
 
 private:
-    QSharedPointer<dfmbase::DesktopFile> desktopInfo;
+    QSharedPointer<DFMBASE_NAMESPACE::DesktopFile> desktopInfo;
     QUrl fileUrl;
 };
 

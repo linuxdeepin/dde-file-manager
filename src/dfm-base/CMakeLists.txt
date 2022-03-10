@@ -17,7 +17,6 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64" OR
     ADD_DEFINITIONS(-DENABLE_QUICK_SEARCH)
 endif()
 
-
 # qrc
 set(QRC_FILE
     qrc/skin/skin.qrc
@@ -147,6 +146,7 @@ find_package(Qt5 COMPONENTS DBus REQUIRED)
 find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
 find_package(PkgConfig REQUIRED)
+find_package(KF5Codecs REQUIRED)
 
 pkg_search_module(dfm-burn
     REQUIRED
@@ -201,6 +201,8 @@ target_link_libraries( ${PROJECT_NAME}
     PkgConfig::dfm-io
     PkgConfig::dfm-mount
     PkgConfig::gsettings
+    poppler-cpp
+    KF5::Codecs
     ${DtkWidget_LIBRARIES}
 )
 
@@ -218,6 +220,7 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}
         dbusservice
         ${DtkWidget_INCLUDEDIRS}
+        KF5/kCodecs
         ${Qt5Widgets_PRIVATE_INCLUDE_DIRS}
 )
 #install library file

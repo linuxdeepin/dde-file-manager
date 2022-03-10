@@ -129,7 +129,7 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->info ? item->info->showUsedSize() : false;
 
     case kDeviceNameMaxLengthRole:
-        return dfmbase::FileUtils::supportedMaxLength(item->info ? item->info->extraProperty(DeviceProperty::kFileSystem).toString() : "");
+        return DFMBASE_NAMESPACE::FileUtils::supportedMaxLength(item->info ? item->info->extraProperty(DeviceProperty::kFileSystem).toString() : "");
 
     case kItemShapeTypeRole:
         return item->shape;

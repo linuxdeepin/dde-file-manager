@@ -38,6 +38,8 @@ Build-Depends:
  libdocparser-dev,
  libboost-filesystem-dev,
  libsecret-1-dev,
+ libkf5codecs-dev,
+ libpoppler-cpp-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org

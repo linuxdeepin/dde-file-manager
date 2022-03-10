@@ -146,7 +146,7 @@ public:
     virtual ~AbstractWorker();
 
 public:
-    QSharedPointer<dfmbase::FileStatisticsJob> statisticsFilesSizeJob { nullptr };   // statistics file info async
+    QSharedPointer<DFMBASE_NAMESPACE::FileStatisticsJob> statisticsFilesSizeJob { nullptr };   // statistics file info async
     QSharedPointer<QThread> updateProccessThread { nullptr };   // update proccess timer thread
     QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
 

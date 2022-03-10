@@ -20,6 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "dfm_global_defines.h"
 #include "protocolentryfileentity.h"
 #include "utils/computerdatastruct.h"
 #include "utils/computerutils.h"
@@ -35,16 +36,6 @@
 DPCOMPUTER_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
-
-namespace ProtocolName {
-const char *const kSmb { "smb" };
-const char *const kFtp { "ftp" };
-const char *const kSFtp { "sftp" };
-const char *const kGPhoto2 { "gphoto2" };
-const char *const kFile { "file" };
-const char *const kMtp { "mtp" };
-const char *const kAfc { "afc" };
-}   // namespace ProtocolName
 
 /*!
  * \class ProtocolEntryFileEntity
@@ -102,24 +93,24 @@ void ProtocolEntryFileEntity::onOpen()
 {
 }
 
-dfmbase::EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
+DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
 {
     const QString &id = datas.value(DeviceProperty::kId).toString();
 
-    if (id.startsWith(ProtocolName::kFtp)
-        || id.startsWith(ProtocolName::kSFtp))
-        return dfmbase::EntryFileInfo::EntryOrder::kOrderFtp;
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::kFtp)
+        || id.startsWith(DFMBASE_NAMESPACE::Global::kSFtp))
+        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderFtp;
 
-    if (id.startsWith(ProtocolName::kSmb))
-        return dfmbase::EntryFileInfo::EntryOrder::kOrderSmb;
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::kSmb))
+        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderSmb;
 
-    if (id.startsWith(ProtocolName::kMtp))
-        return dfmbase::EntryFileInfo::EntryOrder::kOrderMTP;
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::kMtp))
+        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderMTP;
 
-    if (id.startsWith(ProtocolName::kGPhoto2))
-        return dfmbase::EntryFileInfo::EntryOrder::kOrderGPhoto2;
+    if (id.startsWith(DFMBASE_NAMESPACE::Global::kGPhoto2))
+        return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderGPhoto2;
 
-    return dfmbase::EntryFileInfo::EntryOrder::kOrderFiles;
+    return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderFiles;
 }
 
 qint64 ProtocolEntryFileEntity::sizeTotal() const
@@ -141,7 +132,7 @@ void ProtocolEntryFileEntity::refresh()
         return DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id, detail);
     };
 
-    datas = dfmbase::UniversalUtils::convertFromQMap(queryInfo(id, true));
+    datas = DFMBASE_NAMESPACE::UniversalUtils::convertFromQMap(queryInfo(id, true));
 }
 
 QUrl ProtocolEntryFileEntity::targetUrl() const
@@ -150,7 +141,7 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
     QUrl target;
     if (mpt.isEmpty())
         return target;
-    target.setScheme(dfmbase::SchemeTypes::kFile);
+    target.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
     target.setPath(mpt);
     return target;
 }

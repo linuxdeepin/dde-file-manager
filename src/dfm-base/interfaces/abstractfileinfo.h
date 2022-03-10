@@ -90,7 +90,9 @@ bool compareByString(T, T, Qt::SortOrder order = Qt::AscendingOrder)
 DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfo;
 DFMBASE_END_NAMESPACE
+
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> AbstractFileInfoPointer;
+
 DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfoPrivate;
 class AbstractFileInfo : public QSharedData
@@ -131,23 +133,24 @@ public:
         kTypeLastReadTime,   // 文件的最后修改时间
         kTypeUnknow = 255
     };
-    enum Type {
-        kDirectory = MimeDatabase::kDirectory,
-        kCharDevice = MimeDatabase::kCharDevice,
-        kBlockDevice = MimeDatabase::kBlockDevice,
-        kFIFOFile = MimeDatabase::kFIFOFile,
-        kSocketFile = MimeDatabase::kSocketFile,
-        kRegularFile = MimeDatabase::kRegularFile,
-        kDocuments = MimeDatabase::kDocuments,
-        kImages = MimeDatabase::kImages,
-        kVideos = MimeDatabase::kVideos,
-        kAudios = MimeDatabase::kAudios,
-        kArchives = MimeDatabase::kArchives,
-        kDesktopApplication = MimeDatabase::kDesktopApplication,
-        kExecutable = MimeDatabase::kExecutable,
-        kBackups = MimeDatabase::kBackups,
-        kUnknown = MimeDatabase::kUnknown,
-        kCustomType = MimeDatabase::kCustomType
+    enum FileType {
+        kDirectory,   // 目录
+        kCharDevice,   // 字符设备
+        kBlockDevice,   // 块设备
+        kFIFOFile,   // FIFO文件
+        kSocketFile,   // socket文件
+        kRegularFile,   // Regular文件
+
+        kDocuments,   // 文档
+        kImages,   // 镜像文件
+        kVideos,   // 视频文件
+        kAudios,   // 音乐文件
+        kArchives,   // 归档文件
+        kDesktopApplication,   // 应用
+        kExecutable,   // 可执行
+        kBackups,   // 回退
+        kUnknown,
+        kCustomType = 0x100
     };
     enum SortKey {
         kSortByFileName,
@@ -221,7 +224,7 @@ public:
     virtual QString genericIconName() const;
     virtual QMimeType fileMimeType() const;
     virtual QVariantHash extraProperties() const;
-    virtual Type fileType() const;
+    virtual FileType fileType() const;
     virtual QVector<ActionType> menuActionList(AbstractMenu::MenuType type = AbstractMenu::MenuType::kSingleFile) const;
     virtual QSet<ActionType> disableMenuActionList() const;
 

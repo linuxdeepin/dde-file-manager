@@ -105,7 +105,7 @@ public:
     virtual bool isFifo() const;
     virtual bool isSocket() const;
     virtual bool isRegular() const;
-    virtual Type fileType() const override;
+    virtual AbstractFileInfo::FileType fileType() const override;
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const override;

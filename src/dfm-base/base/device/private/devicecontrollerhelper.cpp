@@ -38,7 +38,7 @@
 #include <QMutexLocker>
 #include <DDesktopServices>
 
-Q_GLOBAL_STATIC_WITH_ARGS(dfmbase::Settings, gsGlobal, ("deepin/dde-file-manager", dfmbase::Settings::GenericConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(DFMBASE_NAMESPACE::Settings, gsGlobal, ("deepin/dde-file-manager", DFMBASE_NAMESPACE::Settings::GenericConfig))
 
 static constexpr char kBurnAttribute[] { "BurnAttribute" };
 static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
@@ -49,10 +49,10 @@ static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeede" };
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-using dfmbase::FinallyUtil;
+using DFMBASE_NAMESPACE::FinallyUtil;
 using namespace GlobalServerDefines;
 
-dfmbase::Settings *DeviceControllerHelper::getGsGlobal()
+DFMBASE_NAMESPACE::Settings *DeviceControllerHelper::getGsGlobal()
 {
     return gsGlobal;
 }
@@ -60,8 +60,8 @@ dfmbase::Settings *DeviceControllerHelper::getGsGlobal()
 void DeviceControllerHelper::openFileManagerToDevice(const DeviceControllerHelper::BlockDevPtr &blkDev)
 {
     if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-        QString root { dfmbase::UrlRoute::rootPath(dfmbase::SchemeTypes::kEntry) };
-        QString mountUrlStr { /*root + QFileInfo(blkDev->device()).fileName() + "." + dfmbase::SuffixInfo::kBlock */ };   // TODO(xust)
+        QString root { DFMBASE_NAMESPACE::UrlRoute::rootPath(DFMBASE_NAMESPACE::SchemeTypes::kEntry) };
+        QString mountUrlStr { /*root + QFileInfo(blkDev->device()).fileName() + "." + DFMBASE_NAMESPACE::SuffixInfo::kBlock */ };   // TODO(xust)
         QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountUrlStr });
         qInfo() << "open by dde-file-manager: " << mountUrlStr;
         return;
@@ -308,7 +308,7 @@ bool DeviceControllerHelper::isProtectedBlocDevice(const BlockDeviceData &data)
     }
 
     // Warning: monitor only work in main thread
-    if (dfmbase::UniversalUtils::inMainThread() && gsettings.get("protect-root-device-mounts").toBool()) {
+    if (DFMBASE_NAMESPACE::UniversalUtils::inMainThread() && gsettings.get("protect-root-device-mounts").toBool()) {
         QStorageInfo qsi("/");
         auto manager = DFMMOUNT::DFMDeviceManager::instance();
         auto monitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).staticCast<DFMMOUNT::DFMBlockMonitor>();

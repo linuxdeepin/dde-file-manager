@@ -41,8 +41,8 @@ public:
     ~BackgroundManager();
      void init();
 public:
-    virtual QMap<QString, dfmbase::BackgroundWidgetPointer> allBackgroundWidgets();
-    virtual dfmbase::BackgroundWidgetPointer backgroundWidget(const QString &screen);
+    virtual QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> allBackgroundWidgets();
+    virtual DFMBASE_NAMESPACE::BackgroundWidgetPointer backgroundWidget(const QString &screen);
     virtual QMap<QString, QString> allBackgroundPath();
     virtual QString backgroundPath(const QString &screen);
     virtual void setBackgroundPath(const QString &screen,const QString &path);
@@ -60,7 +60,7 @@ private:
     void updateBackgroundPaths();
     void resetBackgroundImage();
     QString getBackground(const QString &screen);
-    dfmbase::BackgroundWidgetPointer createBackgroundWidget(QWidget *root);
+    DFMBASE_NAMESPACE::BackgroundWidgetPointer createBackgroundWidget(QWidget *root);
 
 private:
     BackgroundManagerPrivate *const d = nullptr;

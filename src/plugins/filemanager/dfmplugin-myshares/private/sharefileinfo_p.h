@@ -32,12 +32,12 @@
 DPMYSHARES_BEGIN_NAMESPACE
 
 class ShareFileInfo;
-class ShareFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
+class ShareFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
 {
     friend class ShareFileInfo;
 
 public:
-    explicit ShareFileInfoPrivate(const QUrl &url, dfmbase::AbstractFileInfo *qq);
+    explicit ShareFileInfoPrivate(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfo *qq);
 
     virtual ~ShareFileInfoPrivate();
 

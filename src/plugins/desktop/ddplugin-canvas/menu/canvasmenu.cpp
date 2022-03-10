@@ -105,7 +105,7 @@ void CanvasMenu::emptyAreaMenu(QMenu *menu, const QUrl &rootUrl)
 
     //! todo(lq) unused.
     //    QString errString;
-    //    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
+    //    auto tempInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
     //    if (!tempInfo) {
     //        qInfo() << "create LocalFileInfo error: " << errString;
     //        return;
@@ -193,7 +193,7 @@ void CanvasMenu::normalMenu(QMenu *menu,
 // using coverted file info
 #if 0
     QString errString;
-    auto tempInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(focusUrl, true, &errString);
+    auto tempInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(focusUrl, true, &errString);
     if (!tempInfo) {
         qInfo() << "create LocalFileInfo error: " << errString;
         return;
@@ -299,7 +299,7 @@ void CanvasMenu::actionBusiness(QAction *act)
     case ActionType::kActSize:
     case ActionType::kActType:
     case ActionType::kActLastModifiedDate: {
-        auto sortByRole = [=](const dfmbase::AbstractFileInfo::SortKey role) -> bool {
+        auto sortByRole = [=](const DFMBASE_NAMESPACE::AbstractFileInfo::SortKey role) -> bool {
             Qt::SortOrder order = view->model()->sortOrder();
             if (role == view->model()->sortRole())
                 order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
@@ -312,7 +312,7 @@ void CanvasMenu::actionBusiness(QAction *act)
         };
 
         // sort
-        auto sortRole = userColumnRoles.key(dfmbase::ActionType(actType));
+        auto sortRole = userColumnRoles.key(DFMBASE_NAMESPACE::ActionType(actType));
         sortByRole(sortRole);
         return;
     }
@@ -321,19 +321,19 @@ void CanvasMenu::actionBusiness(QAction *act)
         return;
     }
     case kActNewText: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypeText);
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
         return;
     }
     case kActNewWord: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypeWord);
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
         return;
     }
     case kActNewExcel: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypeExcel);
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
         return;
     }
     case kActNewPowerpoint: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), dfmbase::Global::CreateFileType::kCreateFileTypePowerpoint);
+        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
         return;
     }
         // TODO: 常规菜单中大部分直接使用基础默认的响应，不做特殊处理，
@@ -475,10 +475,10 @@ void CanvasMenu::registDesktopCustomSubActions()
 void CanvasMenu::columnRolesAssociateActionType()
 {
     // associate user column Roles associate ActionType for desktop
-    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByFileName, dfmbase::ActionType::kActName);
-    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByModified, dfmbase::ActionType::kActLastModifiedDate);
-    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByFileSize, dfmbase::ActionType::kActSize);
-    userColumnRoles.insert(dfmbase::AbstractFileInfo::SortKey::kSortByFileMimeType, dfmbase::ActionType::kActType);
+    userColumnRoles.insert(DFMBASE_NAMESPACE::AbstractFileInfo::SortKey::kSortByFileName, DFMBASE_NAMESPACE::ActionType::kActName);
+    userColumnRoles.insert(DFMBASE_NAMESPACE::AbstractFileInfo::SortKey::kSortByModified, DFMBASE_NAMESPACE::ActionType::kActLastModifiedDate);
+    userColumnRoles.insert(DFMBASE_NAMESPACE::AbstractFileInfo::SortKey::kSortByFileSize, DFMBASE_NAMESPACE::ActionType::kActSize);
+    userColumnRoles.insert(DFMBASE_NAMESPACE::AbstractFileInfo::SortKey::kSortByFileMimeType, DFMBASE_NAMESPACE::ActionType::kActType);
 }
 
 void CanvasMenu::creatMenuByDataLst(QMenu *menu, const QVector<ActionDataContainer> &lst)
@@ -516,11 +516,11 @@ void CanvasMenu::creatMenuByDataLst(QMenu *menu, const QVector<ActionDataContain
     }
 }
 
-void CanvasMenu::getActionDataByTypes(QVector<dfmbase::ActionDataContainer> &lst,
+void CanvasMenu::getActionDataByTypes(QVector<DFMBASE_NAMESPACE::ActionDataContainer> &lst,
                                       const QVector<ActionType> &types,
                                       const QSet<ActionType> &unUsedTypes)
 {
-    for (dfmbase::ActionType type : types) {
+    for (DFMBASE_NAMESPACE::ActionType type : types) {
         if (unUsedTypes.contains(type))
             continue;
         lst << ActionTypeManager::instance().actionDataContainerByType(type);

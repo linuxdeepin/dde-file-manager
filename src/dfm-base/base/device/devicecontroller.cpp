@@ -473,7 +473,7 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
         return;
     }
 
-    QString &&loginState = dfmbase::UniversalUtils::userLoginState();
+    QString &&loginState = DFMBASE_NAMESPACE::UniversalUtils::userLoginState();
     if (loginState != "active") {
         qWarning() << "Cancel mount, user login state is" << loginState;
         return;
@@ -589,7 +589,7 @@ void DeviceMonitorHandler::onProtocolDeviceAdded(const QString &deviceId)
         return;
     }
 
-    QString &&loginState = dfmbase::UniversalUtils::userLoginState();
+    QString &&loginState = DFMBASE_NAMESPACE::UniversalUtils::userLoginState();
     if (loginState != "active") {
         qWarning() << "Cancel mount, user login state is" << loginState;
         return;
@@ -1284,7 +1284,7 @@ bool DeviceController::isProtolDeviceMonitorWorking() const
 bool DeviceController::isInLiveSystem() const
 {
     bool ret = false;
-    static const QMap<QString, QString> &cmdline = dfmbase::FileUtils::getKernelParameters();
+    static const QMap<QString, QString> &cmdline = DFMBASE_NAMESPACE::FileUtils::getKernelParameters();
     if (cmdline.value("boot", "") == QStringLiteral("live"))
         ret = true;
     return ret;

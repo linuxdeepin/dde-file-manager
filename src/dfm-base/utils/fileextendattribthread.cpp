@@ -87,7 +87,7 @@ void FileExtendAttribThread::dirSizeProcess(const QUrl &url)
             return;
         }
 
-        AbstractFileInfo::Type type = info->fileType();
+        AbstractFileInfo::FileType type = info->fileType();
         if (type == AbstractFileInfo::kCharDevice) {
             return;
         }

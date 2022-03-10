@@ -44,7 +44,7 @@ public:
     static void sendOpenDirs(quint64 winId, const QList<QUrl> &urls, OpenMode mode);
     static void sendCancelSharing(const QUrl &url);
     static void sendShowProperty(const QList<QUrl> &urls);
-    static void sendSwitchDisplayMode(quint64 winId, dfmbase::Global::ViewMode mode);
+    static void sendSwitchDisplayMode(quint64 winId, DFMBASE_NAMESPACE::Global::ViewMode mode);
 };
 
 DPMYSHARES_END_NAMESPACE

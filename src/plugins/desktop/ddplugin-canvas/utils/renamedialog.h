@@ -48,7 +48,7 @@ public:
 
     ModifyMode modifyMode() const;
     QPair<QString, QString> getReplaceContent() const;
-    QPair<QString, dfmbase::AbstractJobHandler::FileNameAddFlag> getAddContent() const;
+    QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> getAddContent() const;
     QPair<QString, QString> getCustomContent() const;
 
 private:

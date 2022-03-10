@@ -58,7 +58,7 @@ ActionTypeManager &ActionTypeManager::instance()
  * \param actionText: the name of action.
  * \return return the action type, failed return -1.
  */
-QPair<int, dfmbase::ActionDataContainer> ActionTypeManager::registerActionType(const QString &actPredicate, const QString &actionText)
+QPair<int, DFMBASE_NAMESPACE::ActionDataContainer> ActionTypeManager::registerActionType(const QString &actPredicate, const QString &actionText)
 {
     QPair<int, ActionDataContainer> temp;
     if (actPredicate.isEmpty() || actionText.isEmpty() || (d->tempactType > ActionType::kActMaxCustom)) {
@@ -83,7 +83,7 @@ QPair<int, dfmbase::ActionDataContainer> ActionTypeManager::registerActionType(c
     return temp;
 }
 
-bool ActionTypeManager::addSubActionType(ActionType parentType, const dfmbase::ActionDataContainer &actionData)
+bool ActionTypeManager::addSubActionType(ActionType parentType, const DFMBASE_NAMESPACE::ActionDataContainer &actionData)
 {
     if (d->defaultActions->contains(parentType)) {
         d->defaultActions->addSubActionType(parentType, actionData);
@@ -103,10 +103,10 @@ bool ActionTypeManager::addSubActionType(ActionType parentType, const dfmbase::A
  * \param defaultAct: returns the default value when the fetch fails.
  * \return action data of target type
  */
-dfmbase::ActionDataContainer ActionTypeManager::actionDataContainerByType(const int actType,
-                                                                          const dfmbase::ActionDataContainer &defaultAct)
+DFMBASE_NAMESPACE::ActionDataContainer ActionTypeManager::actionDataContainerByType(const int actType,
+                                                                          const DFMBASE_NAMESPACE::ActionDataContainer &defaultAct)
 {
-    dfmbase::ActionDataContainer tempData = d->defaultActions->actionDataContainerByType(actType);
+    DFMBASE_NAMESPACE::ActionDataContainer tempData = d->defaultActions->actionDataContainerByType(actType);
     if (tempData.actionType() == kUnKnow && tempData.name().isEmpty())
         return d->actionTypes.value(actType, defaultAct);
     return tempData;

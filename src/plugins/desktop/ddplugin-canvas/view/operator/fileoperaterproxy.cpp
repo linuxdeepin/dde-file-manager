@@ -164,7 +164,7 @@ FileOperaterProxy *FileOperaterProxy::instance()
     return fileBusinessGlobal;
 }
 
-void FileOperaterProxy::touchFile(const CanvasView *view, const QPoint pos, const dfmbase::Global::CreateFileType type, QString suffix)
+void FileOperaterProxy::touchFile(const CanvasView *view, const QPoint pos, const DFMBASE_NAMESPACE::Global::CreateFileType type, QString suffix)
 {
     QVariantMap data;
     data.insert(KEY_SCREENNUMBER, view->screenNum());

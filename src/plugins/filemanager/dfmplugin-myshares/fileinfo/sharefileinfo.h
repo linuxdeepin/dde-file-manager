@@ -28,7 +28,7 @@
 
 DPMYSHARES_BEGIN_NAMESPACE
 
-class ShareFileInfo : public dfmbase::AbstractFileInfo
+class ShareFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
 public:
     explicit ShareFileInfo(const QUrl &url);

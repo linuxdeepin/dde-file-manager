@@ -64,10 +64,26 @@ enum CreateFileType : uint8_t {
 };
 
 constexpr char kMimetypeAppDesktop[] { "application/x-desktop" };
-constexpr char kMineTypeCdImage[] { "application/x-cd-image" };
-constexpr char kMineTypeISO9660Image[] { "application/x-iso9660-image" };
+constexpr char kMimeTypeCdImage[] { "application/x-cd-image" };
+constexpr char kMimeTypeISO9660Image[] { "application/x-iso9660-image" };
+constexpr char kMimeTypeAppXml[] { "application/xml" };
+constexpr char kMimeTypeTextHtml[] { "text/html" };
+constexpr char kMimeTypeAppXhtmlXml[] { "application/xhtml+xml" };
+constexpr char kMimeTypeTextXPython[] { "text/x-python" };
+constexpr char kMimeTypeAppXOleStorage[] { "application/x-ole-storage" };
+constexpr char kMimeTypeAppZip[] { "application/zip" };
 
 constexpr uint8_t kMaxFileNameCharCount { 255 };
+
+const char *const kSmb { "smb" };
+const char *const kSmbShare { "smb-share" };
+const char *const kFtp { "ftp" };
+const char *const kSFtp { "sftp" };
+const char *const kGPhoto { "gphoto" };
+const char *const kGPhoto2 { "gphoto2" };
+const char *const kFile { "file" };
+const char *const kMtp { "mtp" };
+const char *const kAfc { "afc" };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

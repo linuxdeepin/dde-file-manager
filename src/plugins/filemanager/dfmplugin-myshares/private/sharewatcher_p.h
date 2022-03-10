@@ -30,7 +30,7 @@
 DPMYSHARES_BEGIN_NAMESPACE
 
 class ShareWatcher;
-class ShareWatcherPrivate : public dfmbase::AbstractFileWatcherPrivate
+class ShareWatcherPrivate : public DFMBASE_NAMESPACE::AbstractFileWatcherPrivate
 {
     friend class ShareWatcher;
 

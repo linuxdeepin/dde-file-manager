@@ -38,9 +38,9 @@
 DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE
 
-using dfmbase::Application;
-using dfmbase::FileManagerWindow;
-using dfmbase::UrlRoute;
+using DFMBASE_NAMESPACE::Application;
+using DFMBASE_NAMESPACE::FileManagerWindow;
+using DFMBASE_NAMESPACE::UrlRoute;
 
 enum NetWmState {
     kNetWmStateAbove = 0x1,
@@ -124,7 +124,7 @@ bool WindowsServicePrivate::isValidUrl(const QUrl &url, QString *error)
     return true;
 }
 
-void WindowsServicePrivate::loadWindowState(dfmbase::FileManagerWindow *window)
+void WindowsServicePrivate::loadWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window)
 {
     const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "WindowState").toMap();
 
@@ -140,7 +140,7 @@ void WindowsServicePrivate::loadWindowState(dfmbase::FileManagerWindow *window)
     }
 }
 
-void WindowsServicePrivate::saveWindowState(dfmbase::FileManagerWindow *window)
+void WindowsServicePrivate::saveWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window)
 {
     /// The power by dxcb platform plugin
     NetWmStates states = static_cast<NetWmStates>(window->window()->windowHandle()->property("_d_netWmStates").toInt());
@@ -158,7 +158,7 @@ void WindowsServicePrivate::saveWindowState(dfmbase::FileManagerWindow *window)
     Application::appObtuselySetting()->setValue("WindowManager", "WindowState", state);
 }
 
-void WindowsServicePrivate::onWindowClosed(dfmbase::FileManagerWindow *window)
+void WindowsServicePrivate::onWindowClosed(DFMBASE_NAMESPACE::FileManagerWindow *window)
 {
     int count = windows.count();
     if (count <= 0)
@@ -243,7 +243,7 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
 {
     Q_ASSERT_X(thread() == qApp->thread(), "WindowsService", "Show window must in main thread!");
     QString error;
-    dfmbase::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
+    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
     QUrl showedUrl { url.isEmpty() ? Application::instance()->appUrlAttribute(Application::kUrlOfNewWindow) : url };
     if (!d->isValidUrl(showedUrl, &error)) {

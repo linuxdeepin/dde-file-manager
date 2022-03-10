@@ -28,7 +28,7 @@
 DPSEARCH_BEGIN_NAMESPACE
 
 class SearchFileWatcherPrivate;
-class SearchFileWatcher : public dfmbase::AbstractFileWatcher
+class SearchFileWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
 {
     Q_OBJECT
 public:

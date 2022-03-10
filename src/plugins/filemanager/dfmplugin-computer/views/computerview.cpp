@@ -69,9 +69,9 @@ QUrl ComputerView::rootUrl() const
     return ComputerUtils::rootUrl();
 }
 
-dfmbase::AbstractBaseView::ViewState ComputerView::viewState() const
+DFMBASE_NAMESPACE::AbstractBaseView::ViewState ComputerView::viewState() const
 {
-    return dfmbase::AbstractBaseView::ViewState::kViewIdle;
+    return DFMBASE_NAMESPACE::AbstractBaseView::ViewState::kViewIdle;
 }
 
 bool ComputerView::setRootUrl(const QUrl &url)
@@ -175,7 +175,7 @@ void ComputerView::initConnect()
     const int kEnterByDoubleClick = 1;
     const int kEnterByEnter = 2;
     auto enter = [this](const QModelIndex &idx, int type) {
-        int mode = dfmbase::Application::appAttribute(dfmbase::Application::ApplicationAttribute::kOpenFileMode).toInt();
+        int mode = DFMBASE_NAMESPACE::Application::appAttribute(DFMBASE_NAMESPACE::Application::ApplicationAttribute::kOpenFileMode).toInt();
         if (type == mode || type == kEnterByEnter)
             this->cdTo(idx);
     };

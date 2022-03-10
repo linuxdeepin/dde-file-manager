@@ -107,13 +107,13 @@ class FileViewModelPrivate : public QObject
     AbstractFileWatcherPointer watcher;
     QPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
     bool canFetchMoreFlag = true;
-    dfmbase::DThreadList<QUrl> handlingFileList;
+    DFMBASE_NAMESPACE::DThreadList<QUrl> handlingFileList;
     QQueue<QPair<QUrl, EventType>> watcherEvent;
     QMutex watcherEventMutex;
     QAtomicInteger<bool> isUpdatedChildren = false;
     QAtomicInteger<bool> processFileEventRuning = false;
     //文件的刷新队列
-    dfmbase::DThreadList<QUrl> updateurlList;
+    DFMBASE_NAMESPACE::DThreadList<QUrl> updateurlList;
     QTimer updateTimer;
 
     FileViewModel::State currentState = FileViewModel::Idle;

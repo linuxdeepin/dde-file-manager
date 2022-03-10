@@ -44,7 +44,7 @@ public:
     explicit ShareWatcherManager(QObject *parent = nullptr);
     ~ShareWatcherManager();
 
-    dfmbase::LocalFileWatcher *add(const QString &path);
+    DFMBASE_NAMESPACE::LocalFileWatcher *add(const QString &path);
     void remove(const QString &path);
 
 Q_SIGNALS:
@@ -54,7 +54,7 @@ Q_SIGNALS:
     void subfileCreated(const QString &filePath);
 
 private:
-    QMap<QString, dfmbase::LocalFileWatcher *> watchers;
+    QMap<QString, DFMBASE_NAMESPACE::LocalFileWatcher *> watchers;
 };
 
 DSC_END_NAMESPACE

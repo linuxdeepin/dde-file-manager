@@ -39,7 +39,7 @@ AppEntryFileEntity::AppEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     fileUrl = ComputerUtils::getAppEntryFileUrl(url);
-    desktopInfo.reset(new dfmbase::DesktopFile(fileUrl.path()));
+    desktopInfo.reset(new DFMBASE_NAMESPACE::DesktopFile(fileUrl.path()));
 }
 
 QString AppEntryFileEntity::displayName() const
@@ -81,9 +81,9 @@ QString AppEntryFileEntity::description() const
     return tr("Double click to open it");
 }
 
-dfmbase::EntryFileInfo::EntryOrder AppEntryFileEntity::order() const
+DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder AppEntryFileEntity::order() const
 {
-    return dfmbase::EntryFileInfo::EntryOrder::kOrderApps;
+    return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderApps;
 }
 
 QVariantHash AppEntryFileEntity::extraProperties() const

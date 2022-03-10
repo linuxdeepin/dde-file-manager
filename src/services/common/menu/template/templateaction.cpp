@@ -62,7 +62,7 @@ QList<ActionDataContainer> TemplateAction::getTemplateFileList()
             for (const QFileInfo &fileInfo : templateFileInfoList) {
                 QString errString;
                 QUrl ttt = QUrl::fromLocalFile(fileInfo.filePath());
-                auto fileinfo = dfmbase::InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(fileInfo.filePath()), true, &errString);
+                auto fileinfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(fileInfo.filePath()), true, &errString);
                 if (!fileinfo) {
                     qInfo() << "getTemplateFileList create LocalFileInfo error: " << errString;
                     continue;

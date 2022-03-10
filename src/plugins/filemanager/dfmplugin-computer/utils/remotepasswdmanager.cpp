@@ -123,7 +123,7 @@ QString RemotePasswdManager::parseServer(const QString &uri)
 
 QString RemotePasswdManager::configPath()
 {
-    static QString path = QString("%1/deepin/dde-file-manager/samba.json").arg(dfmbase::StandardPaths::location(dfmbase::StandardPaths::kApplicationConfigPath));
+    static QString path = QString("%1/deepin/dde-file-manager/samba.json").arg(DFMBASE_NAMESPACE::StandardPaths::location(DFMBASE_NAMESPACE::StandardPaths::kApplicationConfigPath));
     return path;
 }
 

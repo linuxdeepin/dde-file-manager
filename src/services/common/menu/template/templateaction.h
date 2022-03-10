@@ -36,7 +36,7 @@ class TemplateAction : public QObject
 public:
     explicit TemplateAction(QObject *parent = nullptr);
 
-    static QList<dfmbase::ActionDataContainer> getTemplateFileList();
+    static QList<DFMBASE_NAMESPACE::ActionDataContainer> getTemplateFileList();
 
     static TemplateAction &instance();
 };

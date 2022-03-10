@@ -42,10 +42,10 @@ extern const char *const kDesktopMenu;
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class CanvasView;
-class CanvasMenu : public dfmbase::AbstractMenu
+class CanvasMenu : public DFMBASE_NAMESPACE::AbstractMenu
 {
     enum DesktopCustomAction {
-        kDisplaySettings = dfmbase::ActionType::kActMaxCustom,
+        kDisplaySettings = DFMBASE_NAMESPACE::ActionType::kActMaxCustom,
         kCornerSettings,
         kWallpaperSettings,
         kFileManagerProperty,
@@ -82,25 +82,25 @@ protected:
     void registDesktopCustomActions();
     void registDesktopCustomSubActions();
     void columnRolesAssociateActionType();
-    void creatMenuByDataLst(QMenu *menu, const QVector<dfmbase::ActionDataContainer> &lst);
-    void getActionDataByTypes(QVector<dfmbase::ActionDataContainer> &lst,
-                              const QVector<dfmbase::ActionType> &types,
-                              const QSet<dfmbase::ActionType> &unUsedTypes);
+    void creatMenuByDataLst(QMenu *menu, const QVector<DFMBASE_NAMESPACE::ActionDataContainer> &lst);
+    void getActionDataByTypes(QVector<DFMBASE_NAMESPACE::ActionDataContainer> &lst,
+                              const QVector<DFMBASE_NAMESPACE::ActionType> &types,
+                              const QSet<DFMBASE_NAMESPACE::ActionType> &unUsedTypes);
     void setActionSpecialHandling(QMenu *menu);
     bool isRefreshOn() const;
 
-    dfmbase::ActionDataContainer getSendToMenu(bool hasFolder);
+    DFMBASE_NAMESPACE::ActionDataContainer getSendToMenu(bool hasFolder);
 
 private:
     DSC_NAMESPACE::MenuService *extensionMenuServer { nullptr };
-    QMap<DesktopCustomAction, dfmbase::ActionDataContainer> customAction;
+    QMap<DesktopCustomAction, DFMBASE_NAMESPACE::ActionDataContainer> customAction;
     QMap<int, DesktopCustomAction> customActionType;
     QMap<int, QUrl> sendToRemovabalDiskActs;
     CanvasView *view { nullptr };
     QVariant cusData;
-    QMap<dfmbase::AbstractFileInfo::SortKey, dfmbase::ActionType> userColumnRoles;
+    QMap<DFMBASE_NAMESPACE::AbstractFileInfo::SortKey, DFMBASE_NAMESPACE::ActionType> userColumnRoles;
     bool actionTypesInitialized { false };
-    dfmbase::ActionDataContainer *sortByActionData { nullptr };
+    DFMBASE_NAMESPACE::ActionDataContainer *sortByActionData { nullptr };
 };
 
 DDP_CANVAS_END_NAMESPACE

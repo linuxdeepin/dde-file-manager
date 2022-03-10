@@ -51,27 +51,27 @@ MimeTypeDisplayManager::~MimeTypeDisplayManager()
 
 void MimeTypeDisplayManager::initData()
 {
-    displayNamesMap[FileType::kDirectory] = tr("Directory");
-    displayNamesMap[FileType::kDesktopApplication] = tr("Application");
-    displayNamesMap[FileType::kVideos] = tr("Video");
-    displayNamesMap[FileType::kAudios] = tr("Audio");
-    displayNamesMap[FileType::kImages] = tr("Image");
-    displayNamesMap[FileType::kArchives] = tr("Archive");
-    displayNamesMap[FileType::kDocuments] = tr("Text");
-    displayNamesMap[FileType::kExecutable] = tr("Executable");
-    displayNamesMap[FileType::kBackups] = tr("Backup file");
-    displayNamesMap[FileType::kUnknown] = tr("Unknown");
+    displayNamesMap[AbstractFileInfo::FileType::kDirectory] = tr("Directory");
+    displayNamesMap[AbstractFileInfo::FileType::kDesktopApplication] = tr("Application");
+    displayNamesMap[AbstractFileInfo::FileType::kVideos] = tr("Video");
+    displayNamesMap[AbstractFileInfo::FileType::kAudios] = tr("Audio");
+    displayNamesMap[AbstractFileInfo::FileType::kImages] = tr("Image");
+    displayNamesMap[AbstractFileInfo::FileType::kArchives] = tr("Archive");
+    displayNamesMap[AbstractFileInfo::FileType::kDocuments] = tr("Text");
+    displayNamesMap[AbstractFileInfo::FileType::kExecutable] = tr("Executable");
+    displayNamesMap[AbstractFileInfo::FileType::kBackups] = tr("Backup file");
+    displayNamesMap[AbstractFileInfo::FileType::kUnknown] = tr("Unknown");
 
-    defaultIconNames[FileType::kDirectory] = "folder";
-    defaultIconNames[FileType::kDesktopApplication] = "application-default-icon";
-    defaultIconNames[FileType::kVideos] = "video";
-    defaultIconNames[FileType::kAudios] = "music";
-    defaultIconNames[FileType::kImages] = "image";
-    defaultIconNames[FileType::kArchives] = "application-x-archive";
-    defaultIconNames[FileType::kDocuments] = "text-plain";
-    defaultIconNames[FileType::kExecutable] = "application-x-executable";
-    defaultIconNames[FileType::kBackups] = "application-x-archive";   // generic backup file icon?
-    defaultIconNames[FileType::kUnknown] = "application-default-icon";
+    defaultIconNames[AbstractFileInfo::FileType::kDirectory] = "folder";
+    defaultIconNames[AbstractFileInfo::FileType::kDesktopApplication] = "application-default-icon";
+    defaultIconNames[AbstractFileInfo::FileType::kVideos] = "video";
+    defaultIconNames[AbstractFileInfo::FileType::kAudios] = "music";
+    defaultIconNames[AbstractFileInfo::FileType::kImages] = "image";
+    defaultIconNames[AbstractFileInfo::FileType::kArchives] = "application-x-archive";
+    defaultIconNames[AbstractFileInfo::FileType::kDocuments] = "text-plain";
+    defaultIconNames[AbstractFileInfo::FileType::kExecutable] = "application-x-executable";
+    defaultIconNames[AbstractFileInfo::FileType::kBackups] = "application-x-archive";   // generic backup file icon?
+    defaultIconNames[AbstractFileInfo::FileType::kUnknown] = "application-default-icon";
 
     loadSupportMimeTypes();
 }
@@ -88,28 +88,28 @@ QString MimeTypeDisplayManager::displayName(const QString &mimeType)
     return displayNamesMap.value(displayNameToEnum(mimeType));
 }
 
-AbstractFileInfo::Type MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType)
+AbstractFileInfo::FileType MimeTypeDisplayManager::displayNameToEnum(const QString &mimeType)
 {
     if (mimeType == "application/x-desktop") {
-        return FileType::kDesktopApplication;
+        return AbstractFileInfo::FileType::kDesktopApplication;
     } else if (mimeType == "inode/directory") {
-        return FileType::kDirectory;
+        return AbstractFileInfo::FileType::kDirectory;
     } else if (mimeType == "application/x-executable" || ExecutableMimeTypes.contains(mimeType)) {
-        return FileType::kExecutable;
+        return AbstractFileInfo::FileType::kExecutable;
     } else if (mimeType.startsWith("video/") || VideoMimeTypes.contains(mimeType)) {
-        return FileType::kVideos;
+        return AbstractFileInfo::FileType::kVideos;
     } else if (mimeType.startsWith("audio/") || AudioMimeTypes.contains(mimeType)) {
-        return FileType::kAudios;
+        return AbstractFileInfo::FileType::kAudios;
     } else if (mimeType.startsWith("image/") || ImageMimeTypes.contains(mimeType)) {
-        return FileType::kImages;
+        return AbstractFileInfo::FileType::kImages;
     } else if (mimeType.startsWith("text/") || TextMimeTypes.contains(mimeType)) {
-        return FileType::kDocuments;
+        return AbstractFileInfo::FileType::kDocuments;
     } else if (ArchiveMimeTypes.contains(mimeType)) {
-        return FileType::kArchives;
+        return AbstractFileInfo::FileType::kArchives;
     } else if (BackupMimeTypes.contains(mimeType)) {
-        return FileType::kBackups;
+        return AbstractFileInfo::FileType::kBackups;
     } else {
-        return FileType::kUnknown;
+        return AbstractFileInfo::FileType::kUnknown;
     }
 }
 
@@ -118,7 +118,7 @@ QString MimeTypeDisplayManager::defaultIcon(const QString &mimeType)
     return defaultIconNames.value(displayNameToEnum(mimeType));
 }
 
-QMap<AbstractFileInfo::Type, QString> MimeTypeDisplayManager::displayNames()
+QMap<AbstractFileInfo::FileType, QString> MimeTypeDisplayManager::displayNames()
 {
     return displayNamesMap;
 }

@@ -57,7 +57,7 @@ static QMap<QString, QWidget *> rootMap(FrameService *srv)
 }
 
 BackgroundDefault::BackgroundDefault(const QString &screenName, QWidget *parent)
-    : dfmbase::AbstractBackground (screenName, parent)
+    : DFMBASE_NAMESPACE::AbstractBackground (screenName, parent)
 {
     auto &ctx = dpfInstance.serviceContext();
     frameService = ctx.service<FrameService>(FrameService::name());
@@ -92,7 +92,7 @@ void BackgroundDefault::paintEvent(QPaintEvent *event)
         pa.drawPixmap(event->rect().topLeft(), pixmap, QRectF(QPointF(event->rect().topLeft()) * scale, QSizeF(event->rect().size()) * scale));
     }
     // 这里写其他扩展逻辑
-    return dfmbase::AbstractBackground::paintEvent(event);
+    return DFMBASE_NAMESPACE::AbstractBackground::paintEvent(event);
 }
 
 void BackgroundDefault::setMode(int mode)

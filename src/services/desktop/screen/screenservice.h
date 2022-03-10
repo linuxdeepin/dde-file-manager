@@ -43,13 +43,13 @@ public:
     {
         return "org.deepin.service.Desktop.ScreenService";
     }
-    dfmbase::ScreenPointer primaryScreen();
-    QVector<dfmbase::ScreenPointer> screens() const;
-    QVector<dfmbase::ScreenPointer> logicScreens() const;
-    dfmbase::ScreenPointer screen(const QString &name) const;
+    DFMBASE_NAMESPACE::ScreenPointer primaryScreen();
+    QVector<DFMBASE_NAMESPACE::ScreenPointer> screens() const;
+    QVector<DFMBASE_NAMESPACE::ScreenPointer> logicScreens() const;
+    DFMBASE_NAMESPACE::ScreenPointer screen(const QString &name) const;
     qreal devicePixelRatio() const;
-    dfmbase::DisplayMode displayMode() const;
-    dfmbase::DisplayMode lastChangedMode() const;
+    DFMBASE_NAMESPACE::DisplayMode displayMode() const;
+    DFMBASE_NAMESPACE::DisplayMode lastChangedMode() const;
     void reset();
 
 signals:

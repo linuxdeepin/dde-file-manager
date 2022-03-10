@@ -32,7 +32,7 @@
 DSC_BEGIN_NAMESPACE
 
 namespace EventType {
-const int kSendFiles = dfmbase::UniversalUtils::registerEventType();
+const int kSendFiles = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }   // namespace EventType
 
 BluetoothService *BluetoothService::service()
@@ -63,7 +63,7 @@ void BluetoothService::sendFiles(const QList<QUrl> &urls)
 void BluetoothService::sendFiles(const QStringList &paths, BluetoothTransDialog::TransferMode mode, const QString &deviceId)
 {
     if (!BluetoothTransDialog::isBluetoothIdle()) {
-        DialogManagerInstance->showMessageDialog(dfmbase::DialogManager::kMsgInfo, tr("Sending files now, please try later."));
+        DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgInfo, tr("Sending files now, please try later."));
         return;
     }
 

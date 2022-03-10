@@ -36,7 +36,7 @@ DSC_BEGIN_NAMESPACE
 #define dispatcher dpfInstance.eventDispatcher()
 
 namespace EventType {
-const int kRemoveShare = dfmbase::UniversalUtils::registerEventType();
+const int kRemoveShare = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
 
 UserShareService::UserShareService(QObject *parent)

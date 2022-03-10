@@ -29,7 +29,7 @@
 
 DPCOMPUTER_BEGIN_NAMESPACE
 
-class UserEntryFileEntity : public dfmbase::AbstractEntryFileEntity
+class UserEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
 public:
     explicit UserEntryFileEntity(const QUrl &url);
@@ -42,7 +42,7 @@ public:
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
     virtual void onOpen() override;
-    virtual dfmbase::EntryFileInfo::EntryOrder order() const override;
+    virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
     virtual QUrl targetUrl() const override;
     virtual QMenu *createMenu() override;
 

@@ -52,7 +52,7 @@ void CustomActionBuilder::setActiveDir(const QUrl &dir)
 {
     dirPath = dir;
     QString errString;
-    auto info = dfmbase::InfoFactory::create<AbstractFileInfo>(dirPath, true, &errString);
+    auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(dirPath, true, &errString);
     if (!info) {
         qInfo() << "create LocalFileInfo error: " << errString;
         return;
@@ -71,7 +71,7 @@ void CustomActionBuilder::setFocusFile(const QUrl &file)
 {
     filePath = file;
     QString errString;
-    auto info = dfmbase::InfoFactory::create<AbstractFileInfo>(dirPath, true, &errString);
+    auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(dirPath, true, &errString);
     if (info) {
         fileFullName = info->fileName();
         //baseName
@@ -125,7 +125,7 @@ CustomActionDefines::ComboType CustomActionBuilder::checkFileCombo(const QList<Q
             continue;
 
         QString errString;
-        auto info = dfmbase::InfoFactory::create<AbstractFileInfo>(file, true, &errString);
+        auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(file, true, &errString);
         if (!info)
             continue;
 
@@ -179,7 +179,7 @@ QList<CustomActionEntry> CustomActionBuilder::matchActions(const QList<QUrl> &se
     for (auto &singleUrl : selects) {
         //协议、后缀
         QString errString;
-        AbstractFileInfoPointer fileInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(singleUrl, true, &errString);
+        AbstractFileInfoPointer fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(singleUrl, true, &errString);
         if (!fileInfo) {
             qWarning() << "create selected FileInfo failed: " << singleUrl.toString();
             continue;
@@ -413,7 +413,7 @@ bool CustomActionBuilder::isSchemeSupport(const CustomActionEntry &action, const
 bool CustomActionBuilder::isSuffixSupport(const CustomActionEntry &action, const QUrl &url)
 {
     QString errString;
-    AbstractFileInfoPointer fileInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
+    AbstractFileInfoPointer fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
     auto supportList = action.supportStuffix();
     if (!fileInfo || fileInfo->isDir() || supportList.isEmpty() || supportList.contains("*")) {
         return true;   //未特殊指明支持项或者包含*为支持所有

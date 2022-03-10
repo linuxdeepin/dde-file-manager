@@ -53,7 +53,7 @@ public:
     Qt::SortOrder sortOrder() const;
     void setSortOrder(const Qt::SortOrder order);
     int sortRole() const;
-    void setSortRole(const dfmbase::AbstractFileInfo::SortKey role, const Qt::SortOrder order = Qt::AscendingOrder);
+    void setSortRole(const DFMBASE_NAMESPACE::AbstractFileInfo::SortKey role, const Qt::SortOrder order = Qt::AscendingOrder);
 
 public slots:
     void onUpdateChildren(const QList<QUrl> &children);
@@ -75,7 +75,7 @@ private:
     QMutex childrenMutex;
     QList<QSharedPointer<FileFilter>> fileFilters;
 
-    dfmbase::AbstractFileInfo::SortKey fileSortRole = dfmbase::AbstractFileInfo::kSortByFileName;
+    DFMBASE_NAMESPACE::AbstractFileInfo::SortKey fileSortRole = DFMBASE_NAMESPACE::AbstractFileInfo::kSortByFileName;
     Qt::SortOrder fileSortOrder = Qt::AscendingOrder;
 };
 DDP_CANVAS_END_NAMESPACE

@@ -33,8 +33,8 @@ class WindowFramePrivate : public QObject
     Q_OBJECT
 public:
     explicit WindowFramePrivate(WindowFrame *parent);
-    void updateProperty(BaseWindowPointer win, dfmbase::ScreenPointer screen, bool primary);
-    BaseWindowPointer createWindow(dfmbase::ScreenPointer sp);
+    void updateProperty(BaseWindowPointer win, DFMBASE_NAMESPACE::ScreenPointer screen, bool primary);
+    BaseWindowPointer createWindow(DFMBASE_NAMESPACE::ScreenPointer sp);
 public slots:
 public:
     DSB_D_NAMESPACE::ScreenService *screen = nullptr;

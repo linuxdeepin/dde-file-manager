@@ -65,7 +65,7 @@ public:
     QSharedPointer<FileTreater> fileTreater;
 
     QSharedPointer<QTimer> refreshTimer;
-    QSharedPointer<dfmbase::TraversalDirThread> traversalThread;
+    QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
     AbstractFileWatcherPointer watcher;
     QMutex watcherEventMutex;
     QQueue<QVariant> watcherEvent;

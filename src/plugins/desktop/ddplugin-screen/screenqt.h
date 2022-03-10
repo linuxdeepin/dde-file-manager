@@ -30,7 +30,7 @@
 
 DDP_SCREEN_BEGIN_NAMESPACE
 
-class ScreenQt : public dfmbase::AbstractScreen
+class ScreenQt : public DFMBASE_NAMESPACE::AbstractScreen
 {
     Q_OBJECT
 public:

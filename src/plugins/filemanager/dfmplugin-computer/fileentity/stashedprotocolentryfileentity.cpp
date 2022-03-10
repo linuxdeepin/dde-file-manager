@@ -73,9 +73,9 @@ void StashedProtocolEntryFileEntity::onOpen()
 {
 }
 
-dfmbase::EntryFileInfo::EntryOrder StashedProtocolEntryFileEntity::order() const
+DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder StashedProtocolEntryFileEntity::order() const
 {
-    return dfmbase::EntryFileInfo::EntryOrder::kOrderStashedSmb;
+    return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderStashedSmb;
 }
 
 QMenu *StashedProtocolEntryFileEntity::createMenu()

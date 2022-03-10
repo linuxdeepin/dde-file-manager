@@ -102,7 +102,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
 //                    auto urls = event->mimeData()->urls();
 //                    if (!urls.isEmpty()) {
 //                        event->setDropAction(Qt::CopyAction);
-//                        auto itemInfo = dfmbase::InfoFactory::create<dfmbase::LocalFileInfo>(urls.first());
+//                        auto itemInfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(urls.first());
 //                        // todo isGvfsMountFile
 //                        if (itemInfo && itemInfo->isGvfsMountFile()) {
 //                            event->setDropAction(Qt::MoveAction);

@@ -29,7 +29,7 @@
 
 DPCOMPUTER_BEGIN_NAMESPACE
 
-class ProtocolEntryFileEntity : public dfmbase::AbstractEntryFileEntity
+class ProtocolEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
 public:
     explicit ProtocolEntryFileEntity(const QUrl &url);
@@ -42,7 +42,7 @@ public:
     virtual bool showTotalSize() const override;
     virtual bool showUsageSize() const override;
     virtual void onOpen() override;
-    virtual dfmbase::EntryFileInfo::EntryOrder order() const override;
+    virtual DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder order() const override;
     virtual qint64 sizeTotal() const override;
     virtual qint64 sizeUsage() const override;
     virtual void refresh() override;

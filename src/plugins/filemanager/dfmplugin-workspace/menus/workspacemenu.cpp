@@ -185,7 +185,7 @@ void WorkspaceMenu::actionBusiness(QAction *act)
 void WorkspaceMenu::assemblesEmptyAreaActions(QMenu *menu, const QUrl &rootUrl)
 {
     QString errString;
-    AbstractFileInfoPointer fileInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
+    AbstractFileInfoPointer fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(rootUrl, true, &errString);
     if (!fileInfo) {
         qWarning() << "create LocalFileInfo error: " << errString;
         return;
@@ -207,7 +207,7 @@ void WorkspaceMenu::assemblesEmptyAreaActions(QMenu *menu, const QUrl &rootUrl)
 void WorkspaceMenu::assemblesNormalActions(QMenu *menu, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> &selectList)
 {
     QString errString;
-    AbstractFileInfoPointer fileInfo = dfmbase::InfoFactory::create<AbstractFileInfo>(focusUrl, true, &errString);
+    AbstractFileInfoPointer fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(focusUrl, true, &errString);
     if (!fileInfo) {
         qWarning() << "create LocalFileInfo error: " << errString;
         return;
@@ -231,7 +231,7 @@ void WorkspaceMenu::assemblesNormalActions(QMenu *menu, const QUrl &rootUrl, con
     bool hasFolder = actionInfo->isDir();
     if (!hasFolder) {
         for (const QUrl &url : selectList) {
-            auto info = dfmbase::InfoFactory::create<AbstractFileInfo>(url, true);
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
             hasFolder = info && info->isDir();
             if (hasFolder)
                 break;

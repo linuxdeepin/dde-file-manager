@@ -1211,12 +1211,12 @@ bool LocalFileInfo::isRegular() const
  *
  * \return DMimeDatabase::FileType 文件设备类型
  */
-LocalFileInfo::Type LocalFileInfo::fileType() const
+LocalFileInfo::FileType LocalFileInfo::fileType() const
 {
     d->lock.lockForRead();
-    Type fileType;
+    FileType fileType;
     if (d->fileType != MimeDatabase::FileType::kUnknown) {
-        fileType = Type(d->fileType);
+        fileType = FileType(d->fileType);
         d->lock.unlock();
         return fileType;
     }
@@ -1225,7 +1225,7 @@ LocalFileInfo::Type LocalFileInfo::fileType() const
     if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))
         && isSymLink()) {
         d->fileType = MimeDatabase::FileType::kRegularFile;
-        fileType = Type(d->fileType);
+        fileType = FileType(d->fileType);
         d->lock.unlock();
         return fileType;
     }
@@ -1254,7 +1254,7 @@ LocalFileInfo::Type LocalFileInfo::fileType() const
             d->fileType = MimeDatabase::FileType::kRegularFile;
     }
 
-    fileType = Type(d->fileType);
+    fileType = FileType(d->fileType);
     d->lock.unlock();
     return fileType;
 }

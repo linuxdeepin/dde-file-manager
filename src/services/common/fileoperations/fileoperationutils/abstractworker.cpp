@@ -182,8 +182,8 @@ bool AbstractWorker::statisticsFilesSize()
         return true;
     }
 
-    statisticsFilesSizeJob.reset(new dfmbase::FileStatisticsJob());
-    connect(statisticsFilesSizeJob.data(), &dfmbase::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish);
+    statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
+    connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish);
     statisticsFilesSizeJob->start(sourceUrls);
     return true;
 }

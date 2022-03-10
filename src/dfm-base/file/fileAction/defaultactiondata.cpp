@@ -54,8 +54,8 @@ DefaultActionData::~DefaultActionData()
  * \param defaultAct: returns the default value when the fetch fails.
  * \return action data of target type
  */
-dfmbase::ActionDataContainer DefaultActionData::actionDataContainerByType(const int actType,
-                                                                          const dfmbase::ActionDataContainer &defaultAct)
+DFMBASE_NAMESPACE::ActionDataContainer DefaultActionData::actionDataContainerByType(const int actType,
+                                                                          const DFMBASE_NAMESPACE::ActionDataContainer &defaultAct)
 {
     return d->allActionTypeToData.value(actType, defaultAct);
 }

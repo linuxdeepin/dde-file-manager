@@ -40,17 +40,17 @@ class WindowsServicePrivate : public QObject
 
 public:
     explicit WindowsServicePrivate(WindowsService *serv);
-    dfmbase::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
-    void moveWindowToScreenCenter(dfmbase::FileManagerWindow *window);
+    DFMBASE_NAMESPACE::FileManagerWindow *activeExistsWindowByUrl(const QUrl &url);
+    void moveWindowToScreenCenter(DFMBASE_NAMESPACE::FileManagerWindow *window);
     bool isValidUrl(const QUrl &url, QString *error);
-    void loadWindowState(dfmbase::FileManagerWindow *window);
-    void saveWindowState(dfmbase::FileManagerWindow *window);
-    void onWindowClosed(dfmbase::FileManagerWindow *window);
-    void onShowHotkeyHelp(dfmbase::FileManagerWindow *window);
+    void loadWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window);
+    void saveWindowState(DFMBASE_NAMESPACE::FileManagerWindow *window);
+    void onWindowClosed(DFMBASE_NAMESPACE::FileManagerWindow *window);
+    void onShowHotkeyHelp(DFMBASE_NAMESPACE::FileManagerWindow *window);
 
 private:
     QPointer<WindowsService> service;
-    QHash<quint64, dfmbase::FileManagerWindow *> windows;
+    QHash<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> windows;
 };
 
 DSB_FM_END_NAMESPACE

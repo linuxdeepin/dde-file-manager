@@ -76,7 +76,7 @@ public:
     void initUI();
     void initConnection();
 
-    static bool shouldVisiableByFilterRule(dfmbase::AbstractFileInfo *info, QVariant data);
+    static bool shouldVisiableByFilterRule(DFMBASE_NAMESPACE::AbstractFileInfo *info, QVariant data);
     static FileFilter parseFilterData(const QMap<int, QVariant> &data);
 
     QBoxLayout *mainLayout;

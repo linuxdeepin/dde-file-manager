@@ -31,7 +31,7 @@ class DBusMonitor;
 
 DDP_SCREEN_BEGIN_NAMESPACE
 
-class ScreenDBus : public dfmbase::AbstractScreen
+class ScreenDBus : public DFMBASE_NAMESPACE::AbstractScreen
 {
     Q_OBJECT
 public:

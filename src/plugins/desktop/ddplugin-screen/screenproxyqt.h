@@ -32,17 +32,17 @@ class DBusDisplay;
 
 DDP_SCREEN_BEGIN_NAMESPACE
 
-class ScreenProxyQt : public dfmbase::AbstractScreenProxy
+class ScreenProxyQt : public DFMBASE_NAMESPACE::AbstractScreenProxy
 {
     Q_OBJECT
 public:
     explicit ScreenProxyQt(QObject *parent = nullptr);
-    dfmbase::ScreenPointer primaryScreen() override;
-    QVector<dfmbase::ScreenPointer> screens() const override;
-    QVector<dfmbase::ScreenPointer> logicScreens() const override;
-    dfmbase::ScreenPointer screen(const QString &name) const override;
+    DFMBASE_NAMESPACE::ScreenPointer primaryScreen() override;
+    QVector<DFMBASE_NAMESPACE::ScreenPointer> screens() const override;
+    QVector<DFMBASE_NAMESPACE::ScreenPointer> logicScreens() const override;
+    DFMBASE_NAMESPACE::ScreenPointer screen(const QString &name) const override;
     qreal devicePixelRatio() const override;
-    dfmbase::DisplayMode displayMode() const override;
+    DFMBASE_NAMESPACE::DisplayMode displayMode() const override;
     void reset() override;
 public slots:
     void onPrimaryChanged();
@@ -55,10 +55,10 @@ private slots:
 protected:
     void processEvent() override;
 private:
-    void connectScreen(dfmbase::ScreenPointer);
-    void disconnectScreen(dfmbase::ScreenPointer);
+    void connectScreen(DFMBASE_NAMESPACE::ScreenPointer);
+    void disconnectScreen(DFMBASE_NAMESPACE::ScreenPointer);
 private:
-    QMap<QScreen *, dfmbase::ScreenPointer> screenMap;
+    QMap<QScreen *, DFMBASE_NAMESPACE::ScreenPointer> screenMap;
     DBusDisplay *display = nullptr;
 };
 

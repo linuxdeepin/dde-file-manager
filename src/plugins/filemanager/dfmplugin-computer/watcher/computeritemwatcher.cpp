@@ -167,7 +167,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
     static const QStringList udirs = { "desktop", "videos", "music", "pictures", "documents", "downloads" };
     for (auto dir : udirs) {
         QUrl url;
-        url.setScheme(dfmbase::SchemeTypes::kEntry);
+        url.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kEntry);
         url.setPath(QString("%1.%2").arg(dir).arg(SuffixInfo::kUserDir));
         //        auto info = InfoFactory::create<EntryFileInfo>(url);
         DFMEntryFileInfoPointer info(new EntryFileInfo(url));

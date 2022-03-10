@@ -35,18 +35,16 @@ class MimeTypeDisplayManager : public QObject
     explicit MimeTypeDisplayManager(QObject *parent = nullptr);
 
 public:
-    typedef AbstractFileInfo::Type FileType;
-
     ~MimeTypeDisplayManager();
 
     void initData();
     void initConnect();
 
     QString displayName(const QString &mimeType);
-    FileType displayNameToEnum(const QString &mimeType);
+    AbstractFileInfo::FileType displayNameToEnum(const QString &mimeType);
     QString defaultIcon(const QString &mimeType);
 
-    QMap<FileType, QString> displayNames();
+    QMap<AbstractFileInfo::FileType, QString> displayNames();
     static QStringList readlines(const QString &path);
     static void loadSupportMimeTypes();
     static QStringList supportArchiveMimetypes();
@@ -55,8 +53,8 @@ public:
 
 private:
     static MimeTypeDisplayManager *self;
-    QMap<FileType, QString> displayNamesMap;
-    QMap<FileType, QString> defaultIconNames;
+    QMap<AbstractFileInfo::FileType, QString> displayNamesMap;
+    QMap<AbstractFileInfo::FileType, QString> defaultIconNames;
     static QStringList ArchiveMimeTypes;
     static QStringList AvfsBlackList;
     static QStringList TextMimeTypes;

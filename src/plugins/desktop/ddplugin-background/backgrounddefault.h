@@ -30,7 +30,7 @@
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
 
-class BackgroundDefault : public dfmbase::AbstractBackground
+class BackgroundDefault : public DFMBASE_NAMESPACE::AbstractBackground
 {
     Q_OBJECT
 public:

@@ -114,14 +114,14 @@ Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPoin
  *
  * \param QUrl & 文件的URL
  */
-AbstractFileInfo::AbstractFileInfo(const QUrl &url, dfmbase::AbstractFileInfoPrivate *d)
+AbstractFileInfo::AbstractFileInfo(const QUrl &url, DFMBASE_NAMESPACE::AbstractFileInfoPrivate *d)
     : dptr(d)
 {
     Q_UNUSED(type_id)
     dptr->url = url;
 }
 
-void dfmbase::AbstractFileInfo::setProxy(const AbstractFileInfoPointer &proxy)
+void DFMBASE_NAMESPACE::AbstractFileInfo::setProxy(const AbstractFileInfoPointer &proxy)
 {
     dptr->proxy = proxy;
 }
@@ -302,7 +302,7 @@ QString AbstractFileInfo::completeBaseName() const
     return QString();
 }
 
-QString dfmbase::AbstractFileInfo::fileNameOfRename() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::fileNameOfRename() const
 {
     CALL_PROXY(fileNameOfRename());
 
@@ -458,7 +458,7 @@ QUrl AbstractFileInfo::url() const
     return dptr->url;
 }
 
-bool dfmbase::AbstractFileInfo::canRename() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canRename() const
 {
 
     CALL_PROXY(canRename());
@@ -634,7 +634,7 @@ bool AbstractFileInfo::isShared() const
  *
  * \return quint64 文件的inode
  */
-quint64 dfmbase::AbstractFileInfo::inode() const
+quint64 DFMBASE_NAMESPACE::AbstractFileInfo::inode() const
 {
     CALL_PROXY(inode());
 
@@ -778,17 +778,17 @@ qint64 AbstractFileInfo::size() const
 }
 
 /*!
- * \brief dfmbase::AbstractFileInfo::sizeFormat 使用kb，mb，gb显示文件大小
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::sizeFormat 使用kb，mb，gb显示文件大小
  * \return
  */
-QString dfmbase::AbstractFileInfo::sizeFormat() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::sizeFormat() const
 {
     CALL_PROXY(sizeFormat());
 
     return QString();
 }
 
-QString dfmbase::AbstractFileInfo::fileDisplayName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayName() const
 {
     CALL_PROXY(fileDisplayName());
 
@@ -800,14 +800,14 @@ QString dfmbase::AbstractFileInfo::fileDisplayName() const
  *
  * \return QString 文件的拼音名称
  */
-QString dfmbase::AbstractFileInfo::fileDisplayPinyinName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayPinyinName() const
 {
     const QString &displayName = fileDisplayName();
 
     return Pinyin::Chinese2Pinyin(displayName);
 }
 
-QString dfmbase::AbstractFileInfo::sizeDisplayName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::sizeDisplayName() const
 {
     CALL_PROXY(sizeDisplayName());
 
@@ -933,10 +933,10 @@ QDateTime AbstractFileInfo::fileTime(QFileDevice::FileTime time) const
     }
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::countChildFile 获取目录下有多少个文件（只有下一级）
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::countChildFile 获取目录下有多少个文件（只有下一级）
  * \return 返回文件数量
  */
-int dfmbase::AbstractFileInfo::countChildFile() const
+int DFMBASE_NAMESPACE::AbstractFileInfo::countChildFile() const
 {
     CALL_PROXY(countChildFile());
 
@@ -944,23 +944,23 @@ int dfmbase::AbstractFileInfo::countChildFile() const
 }
 
 /*!
- * \brief dfmbase::AbstractFileInfo::fileType 获取文件的设备类型
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileType 获取文件的设备类型
  * \return 返回文件的设备类型
  */
-dfmbase::AbstractFileInfo::Type dfmbase::AbstractFileInfo::fileType() const
+AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
 {
     CALL_PROXY(fileType());
 
     return kUnknown;
 }
 
-QVector<dfmbase::ActionType> dfmbase::AbstractFileInfo::menuActionList(dfmbase::AbstractMenu::MenuType type) const
+QVector<DFMBASE_NAMESPACE::ActionType> DFMBASE_NAMESPACE::AbstractFileInfo::menuActionList(DFMBASE_NAMESPACE::AbstractMenu::MenuType type) const
 {
     Q_UNUSED(type)
     return {};
 }
 
-QSet<dfmbase::ActionType> dfmbase::AbstractFileInfo::disableMenuActionList() const
+QSet<DFMBASE_NAMESPACE::ActionType> DFMBASE_NAMESPACE::AbstractFileInfo::disableMenuActionList() const
 {
     return {};
 }
@@ -970,7 +970,7 @@ QSet<dfmbase::ActionType> dfmbase::AbstractFileInfo::disableMenuActionList() con
  * \param sortKey Sorted key value
  * \return Sorting function
  */
-dfmbase::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(const SortKey &sortKey) const
+DFMBASE_NAMESPACE::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(const SortKey &sortKey) const
 {
     CALL_PROXY(compareFunByKey(sortKey));
 
@@ -991,11 +991,11 @@ dfmbase::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(con
     return CompareFunction();
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
  * \param fileName Sub file name
  * \return URL of the file
  */
-QUrl dfmbase::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
+QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) const
 {
     CALL_PROXY(getUrlByChildFileName(fileName));
 
@@ -1007,11 +1007,11 @@ QUrl dfmbase::AbstractFileInfo::getUrlByChildFileName(const QString &fileName) c
     return theUrl;
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::getUrlByNewFileName Get URL based on new file name
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName Get URL based on new file name
  * \param fileName New file name
  * \return URL of the file
  */
-QUrl dfmbase::AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
+QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName(const QString &fileName) const
 {
     CALL_PROXY(getUrlByNewFileName(fileName));
 
@@ -1022,10 +1022,10 @@ QUrl dfmbase::AbstractFileInfo::getUrlByNewFileName(const QString &fileName) con
     return theUrl;
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::fileTypeDisplayName Display name of the file type
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName Display name of the file type
  * \return Display name of the file typ
  */
-QString dfmbase::AbstractFileInfo::fileTypeDisplayName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName() const
 {
     CALL_PROXY(fileTypeDisplayName());
 
@@ -1034,27 +1034,27 @@ QString dfmbase::AbstractFileInfo::fileTypeDisplayName() const
             .append(suffix());
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::canRedirectionFileUrl Can I redirect files
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl Can I redirect files
  * \return
  */
-bool dfmbase::AbstractFileInfo::canRedirectionFileUrl() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl() const
 {
     CALL_PROXY(canRedirectionFileUrl());
 
     return false;
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::redirectedFileUrl redirection file
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl redirection file
  * \return
  */
-QUrl dfmbase::AbstractFileInfo::redirectedFileUrl() const
+QUrl DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl() const
 {
     CALL_PROXY(redirectedFileUrl());
 
     return QUrl();
 }
 
-bool dfmbase::AbstractFileInfo::canMoveOrCopy() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
 {
     // TODO(liyigang) : temp impl
     if (!isReadable())
@@ -1064,10 +1064,10 @@ bool dfmbase::AbstractFileInfo::canMoveOrCopy() const
 }
 
 /*!
- * \brief dfmbase::AbstractFileInfo::canDrop
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDrop
  * \return
  */
-bool dfmbase::AbstractFileInfo::canDrop() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop() const
 {
     CALL_PROXY(canDrop());
 
@@ -1081,30 +1081,30 @@ bool AbstractFileInfo::canTag() const
     return false;
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::parentUrl
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::parentUrl
  * \return
  */
-QUrl dfmbase::AbstractFileInfo::parentUrl() const
+QUrl DFMBASE_NAMESPACE::AbstractFileInfo::parentUrl() const
 {
     CALL_PROXY(parentUrl());
 
     return UrlRoute::urlParent(url());
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::supportedDragActions
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::supportedDragActions
  * \return
  */
-Qt::DropActions dfmbase::AbstractFileInfo::supportedDragActions() const
+Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedDragActions() const
 {
     CALL_PROXY(supportedDragActions());
 
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::supportedDropActions
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::supportedDropActions
  * \return
  */
-Qt::DropActions dfmbase::AbstractFileInfo::supportedDropActions() const
+Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedDropActions() const
 {
     CALL_PROXY(supportedDropActions());
 
@@ -1119,47 +1119,47 @@ Qt::DropActions dfmbase::AbstractFileInfo::supportedDropActions() const
     return Qt::IgnoreAction;
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::canDragCompress
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress
  * \return
  */
-bool dfmbase::AbstractFileInfo::canDragCompress() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress() const
 {
     CALL_PROXY(canDragCompress());
 
     return true;
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::isDragCompressFileFormat
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat
  * \return
  */
-bool dfmbase::AbstractFileInfo::isDragCompressFileFormat() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat() const
 {
     CALL_PROXY(isDragCompressFileFormat());
 
     return true;
 }
 
-QString dfmbase::AbstractFileInfo::emptyDirectoryTip() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::emptyDirectoryTip() const
 {
     return QObject::tr("Folder is empty");
 }
 
-QString dfmbase::AbstractFileInfo::loadingTip() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::loadingTip() const
 {
     return QObject::tr("Loading...");
 }
 
-QString dfmbase::AbstractFileInfo::mimeTypeName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName() const
 {
     CALL_PROXY(mimeTypeName());
 
     return QString();
 }
 /*!
- * \brief dfmbase::AbstractFileInfo::fileIcon
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon
  * \return
  */
-QIcon dfmbase::AbstractFileInfo::fileIcon() const
+QIcon DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon() const
 {
     CALL_PROXY(fileIcon());
 
@@ -1205,14 +1205,14 @@ QList<QIcon> AbstractFileInfo::additionalIcon() const
     return icons;
 }
 
-QString dfmbase::AbstractFileInfo::iconName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::iconName() const
 {
     CALL_PROXY(iconName());
 
     return QString();
 }
 
-QString dfmbase::AbstractFileInfo::genericIconName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::genericIconName() const
 {
     CALL_PROXY(genericIconName());
 
@@ -1220,10 +1220,10 @@ QString dfmbase::AbstractFileInfo::genericIconName() const
 }
 
 /*!
- * \brief dfmbase::AbstractFileInfo::fileMimeType
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType
  * \return
  */
-QMimeType dfmbase::AbstractFileInfo::fileMimeType() const
+QMimeType DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType() const
 {
     CALL_PROXY(fileMimeType());
 
@@ -1234,7 +1234,7 @@ QMimeType dfmbase::AbstractFileInfo::fileMimeType() const
  * \brief 用于获取特定类型文件的特定属性扩展接口
  * \return 返回特定属性的hash表
  */
-QVariantHash dfmbase::AbstractFileInfo::extraProperties() const
+QVariantHash DFMBASE_NAMESPACE::AbstractFileInfo::extraProperties() const
 {
     CALL_PROXY(extraProperties());
 

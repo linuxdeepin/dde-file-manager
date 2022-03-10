@@ -30,7 +30,7 @@ DPMYSHARES_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 ShareWatcher::ShareWatcher(const QUrl &url, QObject *parent)
-    : dfmbase::AbstractFileWatcher(new ShareWatcherPrivate(url, this), parent)
+    : DFMBASE_NAMESPACE::AbstractFileWatcher(new ShareWatcherPrivate(url, this), parent)
 {
 }
 
@@ -39,7 +39,7 @@ ShareWatcher::~ShareWatcher()
 }
 
 ShareWatcherPrivate::ShareWatcherPrivate(const QUrl &fileUrl, ShareWatcher *qq)
-    : dfmbase::AbstractFileWatcherPrivate(fileUrl, qq)
+    : DFMBASE_NAMESPACE::AbstractFileWatcherPrivate(fileUrl, qq)
 {
 }
 

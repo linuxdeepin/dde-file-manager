@@ -37,7 +37,7 @@ class WindowsService final : public dpf::PluginService, dpf::AutoServiceRegister
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
-    using FMWindow = dfmbase::FileManagerWindow;
+    using FMWindow = DFMBASE_NAMESPACE::FileManagerWindow;
 
     static QString name()
     {

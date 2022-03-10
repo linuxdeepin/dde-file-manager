@@ -688,11 +688,11 @@ void BluetoothTransDialog::sendFiles()
 
     // 无法发送文件尺寸大于 2GB 以及尺寸为 0 的文件，若包含则中止发送行为，文件不存在也一样
     foreach (auto u, urlsWaitToSend) {
-        QUrl url = dfmbase::UrlRoute::pathToReal(u);
+        QUrl url = DFMBASE_NAMESPACE::UrlRoute::pathToReal(u);
         if (!url.isValid())
             continue;
 
-        auto info = dfmbase::InfoFactory::create<dfmbase::AbstractFileInfo>(url);
+        auto info = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::AbstractFileInfo>(url);
         if (!info) {
             qWarning() << "cannot create file info: " << url;
             close();
@@ -700,14 +700,14 @@ void BluetoothTransDialog::sendFiles()
         }
 
         if (!info->exists()) {
-            DialogManagerInstance->showMessageDialog(dfmbase::DialogManager::kMsgErr, TXT_FILE_OVERSIZ, "", TXT_OKAY);
+            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgErr, TXT_FILE_OVERSIZ, "", TXT_OKAY);
             close();   // 与产品经理沟通后，为避免文件不存在时的retry可能引起的一系列问题，当用户点击retry的确认时，直接终止流程
             return;
         } else if (info->size() > kFileTransferSizeLimits) {
-            DialogManagerInstance->showMessageDialog(dfmbase::DialogManager::kMsgInfo, TXT_FILE_OVERSIZ, "", TXT_OKAY);
+            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgInfo, TXT_FILE_OVERSIZ, "", TXT_OKAY);
             return;
         } else if (info->size() == 0) {
-            DialogManagerInstance->showMessageDialog(dfmbase::DialogManager::kMsgInfo, TXT_FILE_ZEROSIZ, "", TXT_OKAY);
+            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgInfo, TXT_FILE_ZEROSIZ, "", TXT_OKAY);
             return;
         }
     }

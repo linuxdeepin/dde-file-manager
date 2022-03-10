@@ -66,7 +66,7 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
     if (path.isEmpty())
         return;
     QUrl u;
-    u.setScheme(dfmbase::SchemeTypes::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
     u.setPath(path);
     cdTo(sender, u);
 }
@@ -80,19 +80,19 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
 {
     QUrl u;
-    u.setScheme(dfmbase::SchemeTypes::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
     u.setPath(path);
     cdTo(winId, u);
 }
 
 void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(dfmbase::GlobalEventType::kOpenNewWindow, url);
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
 }
 
 void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(dfmbase::GlobalEventType::kOpenNewTab, winId, url);
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, winId, url);
 }
 
 void ComputerEventCaller::sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action)

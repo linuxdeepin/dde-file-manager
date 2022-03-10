@@ -57,7 +57,7 @@ public:
     QGSettings *gsettings = nullptr;
     Dtk::Gui::DWindowManagerHelper* windowManagerHelper = nullptr;
     DSB_D_NAMESPACE::FrameService *frameService = nullptr;
-    QMap<QString, dfmbase::BackgroundWidgetPointer> backgroundWidgets;
+    QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> backgroundWidgets;
     QMap<QString, QString> backgroundPaths;
     int currentWorkspaceIndex = 1;
 };
