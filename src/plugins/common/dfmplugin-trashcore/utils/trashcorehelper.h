@@ -35,6 +35,7 @@ public:
     static bool isEmpty();
     static QUrl rootUrl();
     static QUrl toLocalFile(const QUrl &url);
+    static QUrl fromTrashFile(const QString &filePath);
     static QString scheme();
     static QWidget *createTrashPropertyDialog(const QUrl &url);
 };

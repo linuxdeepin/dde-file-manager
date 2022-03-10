@@ -70,7 +70,8 @@ public slots:
                                             const QList<QUrl> sources,
                                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     JobHandlePointer handleOperationCleanTrash(const quint64 windowId,
-                                               const QList<QUrl> sources);
+                                               const QList<QUrl> sources,
+                                               const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType);
     void handleOperationCopy(const quint64 windowId,
                              const QList<QUrl> sources,
                              const QUrl target,

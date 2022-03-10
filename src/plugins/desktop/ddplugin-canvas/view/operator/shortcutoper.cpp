@@ -35,7 +35,6 @@
 #include <dfm-framework/framework.h>
 
 #include <DApplication>
-
 #include <QAction>
 
 DFMBASE_USE_NAMESPACE

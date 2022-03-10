@@ -161,6 +161,12 @@ public:
     };
     Q_ENUM(FileNameAddFlag)
 
+    enum class DeleteDialogNoticeType : uint8_t {
+        kEmptyTrash,
+        kDeleteTashFiles
+    };
+    Q_ENUM(DeleteDialogNoticeType)
+
     explicit AbstractJobHandler(QObject *parent = nullptr);
     virtual ~AbstractJobHandler();
     virtual qreal currentJobProcess() const;

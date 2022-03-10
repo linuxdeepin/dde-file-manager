@@ -21,11 +21,11 @@
 */
 #include "trashcoreeventreceiver.h"
 #include "utils/trashcorehelper.h"
-
-#include "dfm-framework/framework.h"
-
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/framework.h>
 
 #include <QDebug>
 #include <QUrl>
@@ -51,6 +51,5 @@ void TrashCoreEventReceiver::handleEmptyTrash(const quint64 windowId)
     QUrl url = TrashCoreHelper::toLocalFile(TrashCoreHelper::rootUrl());
     QList<QUrl> urls;
     urls.append(std::move(url));
-
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash, windowId, urls);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash, windowId, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash);
 }

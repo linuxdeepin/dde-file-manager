@@ -39,6 +39,7 @@ DFMBASE_BEGIN_NAMESPACE
 class TaskDialog;
 class ComputerPropertyDialog;
 class TrashPropertyDialog;
+
 class DialogManager : public QObject
 {
     Q_OBJECT
@@ -72,6 +73,8 @@ public:
 
     int showRunExcutableScriptDialog(const QUrl &url);
     int showRunExcutableFileDialog(const QUrl &url);
+
+    int showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, const bool showEmptyBtText = false);
 
 private:
     explicit DialogManager(QObject *parent = nullptr);

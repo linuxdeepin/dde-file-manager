@@ -58,6 +58,17 @@ QUrl TrashCoreHelper::toLocalFile(const QUrl &url)
     return QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath) + url.path());
 }
 
+QUrl TrashCoreHelper::fromTrashFile(const QString &filePath)
+{
+    QUrl url;
+
+    url.setScheme(TrashCoreHelper::scheme());
+    url.setPath(filePath);
+
+    return url;
+}
+
+
 QString TrashCoreHelper::scheme()
 {
     return "trash";

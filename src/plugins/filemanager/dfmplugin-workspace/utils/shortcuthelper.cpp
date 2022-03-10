@@ -27,8 +27,8 @@
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "events/workspaceeventcaller.h"
-
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <QAction>
 #include <QDebug>
@@ -246,6 +246,7 @@ void ShortcutHelper::moveToTrash()
     // complete deletion eg: gvfs, vault
     // only support trash on root url
     const QList<QUrl> &urls = view->selectedUrlList();
+
     if (!urls.isEmpty()) {
         FileOperatorHelperIns->moveToTrash(view);
     }

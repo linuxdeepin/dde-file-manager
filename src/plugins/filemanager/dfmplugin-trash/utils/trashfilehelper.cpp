@@ -82,10 +82,10 @@ JobHandlePointer TrashFileHelper::moveToTrashHandle(const quint64 windowId, cons
     for (QUrl url : sources) {
         redirectedFileUrls << TrashHelper::toLocalFile(url);
     }
-
     dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
                                           windowId,
-                                          redirectedFileUrls);
+                                          redirectedFileUrls,
+                                          AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);
     return {};
 }
 
@@ -97,10 +97,10 @@ JobHandlePointer TrashFileHelper::deletesHandle(const quint64 windowId, const QL
     for (QUrl url : sources) {
         redirectedFileUrls << TrashHelper::toLocalFile(url);
     }
-
     dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
                                           windowId,
-                                          redirectedFileUrls);
+                                          redirectedFileUrls,
+                                          AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);
     return {};
 }
 

@@ -26,6 +26,7 @@
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QDebug>
 
@@ -218,6 +219,7 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationCut(quint64 windowI
 JobHandlePointer FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
+
     if (!sources.isEmpty() && !sources.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
@@ -228,6 +230,7 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationMoveToTrash(const q
             return function->moveToTash(windowId, sources, flags);
         }
     }
+
     return copyMoveJob->moveToTrash(sources, flags);
 }
 
@@ -252,6 +255,10 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationDeletes(const quint
                                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
+    //Delete local file with shift+delete, show a confirm dialog.
+    if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
+        return nullptr;
+
     if (!sources.isEmpty() && !sources.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
@@ -265,8 +272,17 @@ JobHandlePointer FileOperationsEventReceiver::handleOperationDeletes(const quint
     return copyMoveJob->deletes(sources, flags);
 }
 
-JobHandlePointer FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources)
+JobHandlePointer FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType)
 {
+    //清空回收站操作弹框提示（这里只会显示Emtpy按钮）
+    bool isFileAlreadyInTrash = (deleteNoticeType == AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);   //检查用户是否从回收站内部删除文件
+    //在此处理从回收站内部选择文件的删除操作(若不在这里处理，会进入到handleOperationCleanTrash()中，导致弹框提示无法区分"Delete"和"Empty"按钮的显示)
+    if (!sources.isEmpty()) {
+        //Show clear trash dialog
+        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources, !isFileAlreadyInTrash) != QDialog::Accepted)
+            return nullptr;
+    }
+
     Q_UNUSED(windowId);
     if (!sources.isEmpty() && !sources.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };

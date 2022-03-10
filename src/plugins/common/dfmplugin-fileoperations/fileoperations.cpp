@@ -74,8 +74,8 @@ void FileOperations::initEventHandle()
                                                                                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)>(&FileOperationsEventReceiver::handleOperationDeletes));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCleanTrash,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<JobHandlePointer (FileOperationsEventReceiver::*)(const quint64,
-                                                                                                          const QList<QUrl>)>(&FileOperationsEventReceiver::handleOperationCleanTrash));
+                                            static_cast<JobHandlePointer (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,
+                                                                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType)>(&FileOperationsEventReceiver::handleOperationCleanTrash));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCopy,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QList<QUrl>,

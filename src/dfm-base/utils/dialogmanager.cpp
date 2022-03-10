@@ -30,9 +30,14 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm_global_defines.h"
 #include "dfm-base/file/local/localfilehandler.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/dfm_global_defines.h"
+
+#include <QDir>
 
 DFMBASE_USE_NAMESPACE
 
+static const QString kUserTrashFullOpened = "user-trash-full-opened";
 DialogManager *DialogManager::instance()
 {
     static DialogManager ins;
@@ -278,6 +283,72 @@ int DialogManager::showRunExcutableFileDialog(const QUrl &url)
     d.setTitle(message);
     d.setMessage(tipMessage);
     d.setIcon(info->fileIcon());
+    int code = d.exec();
+    return code;
+}
+
+int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, const bool showEmptyBtText)
+{
+    if (urlList.isEmpty())
+        return QDialog::Rejected;
+
+    static QString ClearTrash = tr("Are you sure you want to empty %1 item?");
+    static QString ClearTrashMutliple = tr("Are you sure you want to empty %1 items?");
+    static QString DeleteFileName = tr("Permanently delete %1?");
+    static QString DeleteFileItems = tr("Permanently delete %1 items?");
+
+    const int maxFileNameWidth = Global::kMaxFileNameCharCount;
+
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Cancel", "button"));
+    buttonTexts.append(tr("Delete", "button"));
+
+    QString title;
+    QString fileName;
+    QIcon icon(QIcon::fromTheme(kUserTrashFullOpened));
+    bool isLocalFile = urlList.first().isLocalFile();
+    if (showEmptyBtText) {
+        buttonTexts[1] = tr("Empty");
+        //const AbstractFileInfoPointer &fileInfo =InfoFactory::create<AbstractFileInfo>(urlList.first());//todo(zhuangshu)：add new function: filesCount()
+        QString filePath = urlList.first().path();
+        QDir dir(filePath);
+        QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
+                                              | QDir::NoDotAndDotDot | QDir::Hidden);
+        int fCount = entryList.count();   //todo(zhuangshu)：add new function: filesCount()
+        if (fCount == 1) {
+            title = ClearTrash.arg(fCount);
+        } else {
+            title = ClearTrashMutliple.arg(fCount);
+        }
+    } else if (isLocalFile) {
+        if (urlList.size() == 1) {
+            LocalFileInfo f(urlList.first());
+            fileName = f.fileDisplayName();
+        } else {
+            title = DeleteFileItems.arg(urlList.size());
+        }
+    } else {
+        title = DeleteFileItems.arg(urlList.size());
+    }
+
+    DDialog d;
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    QFontMetrics fm(d.font());
+    if (!fileName.isEmpty()) {
+        title = DeleteFileName.arg(fm.elidedText(fileName, Qt::ElideMiddle, maxFileNameWidth));
+    }
+
+    d.setIcon(icon);
+    d.setTitle(title);
+    d.setMessage(tr("This action cannot be undone"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
     int code = d.exec();
     return code;
 }
