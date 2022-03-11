@@ -50,10 +50,12 @@ protected slots:
     void clearClipBoard();
     void swichHidden();
     void showProperty();
+    void previewFiles();
+
 protected:
     CanvasView *view;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // SHORTCUTOPER_H
+#endif   // SHORTCUTOPER_H

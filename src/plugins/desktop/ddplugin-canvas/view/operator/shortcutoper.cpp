@@ -26,11 +26,13 @@
 #include "view/canvasview_p.h"
 #include "fileoperaterproxy.h"
 #include "canvasmanager.h"
+#include "services/common/preview/preview_defines.h"
 
 #include <base/application/application.h>
 #include <base/application/settings.h>
 #include <dfm-base/utils/clipboard.h>
 #include <base/schemefactory.h>
+#include <dfm-framework/framework.h>
 
 #include <DApplication>
 
@@ -40,35 +42,34 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
-#define regAction(shortcut) \
-    {\
-        QAction *action = new QAction(view);\
-        action->setShortcut(shortcut);\
-        action->setProperty("_view_shortcut_key", shortcut);\
-        view->addAction(action);\
-        connect(action, &QAction::triggered, this, &ShortcutOper::acitonTriggered);\
+#define regAction(shortcut)                                                         \
+    {                                                                               \
+        QAction *action = new QAction(view);                                        \
+        action->setShortcut(shortcut);                                              \
+        action->setProperty("_view_shortcut_key", shortcut);                        \
+        view->addAction(action);                                                    \
+        connect(action, &QAction::triggered, this, &ShortcutOper::acitonTriggered); \
     }
 
 #define actionShortcutKey(action) action->property("_view_shortcut_key").value<QKeySequence::StandardKey>()
 
 ShortcutOper::ShortcutOper(CanvasView *parent)
-    : QObject(parent)
-    , view(parent)
+    : QObject(parent), view(parent)
 {
 }
 
 void ShortcutOper::regShortcut()
 {
-    regAction(QKeySequence::HelpContents); // F1
-    regAction(QKeySequence::Refresh); // F5
-    regAction(QKeySequence::Delete); // Del
-    regAction(QKeySequence::SelectAll); // ctrl+a
-    regAction(QKeySequence::ZoomIn); // ctrl+-
-    regAction(QKeySequence::ZoomOut);// ctrl++(c_s_=)
-    regAction(QKeySequence::Copy);// ctrl+c
-    regAction(QKeySequence::Cut);// ctrl+x
-    regAction(QKeySequence::Paste);// ctrl+v
-    regAction(QKeySequence::Undo);// ctrl+z
+    regAction(QKeySequence::HelpContents);   // F1
+    regAction(QKeySequence::Refresh);   // F5
+    regAction(QKeySequence::Delete);   // Del
+    regAction(QKeySequence::SelectAll);   // ctrl+a
+    regAction(QKeySequence::ZoomIn);   // ctrl+-
+    regAction(QKeySequence::ZoomOut);   // ctrl++(c_s_=)
+    regAction(QKeySequence::Copy);   // ctrl+c
+    regAction(QKeySequence::Cut);   // ctrl+x
+    regAction(QKeySequence::Paste);   // ctrl+v
+    regAction(QKeySequence::Undo);   // ctrl+z
     //regAction(QKeySequence::New, [this](){qDebug() << "New";});// ctrl+n
     //regAction(QKeySequence::Open, &ShortcutOper::openAction); // ctrl+o
 }
@@ -91,11 +92,11 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
                 specialShortcut = true;
                 break;
             default:
-                specialShortcut = false; // other keys is disable
+                specialShortcut = false;   // other keys is disable
             }
         }
         if (!specialShortcut)
-            return true; // return true to ingore the event.
+            return true;   // return true to ingore the event.
     }
 
     Qt::KeyboardModifiers modifiers = event->modifiers();
@@ -119,7 +120,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             openAction();
             return true;
         case Qt::Key_Space:
-            // todo preview
+            previewFiles();
             break;
         default:
             break;
@@ -162,7 +163,8 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
 bool ShortcutOper::disableShortcut() const
 {
     return DFMBASE_NAMESPACE::Application::appObtuselySetting()->value(
-                "ApplicationAttribute", "DisableDesktopShortcuts", false).toBool();
+                                                                       "ApplicationAttribute", "DisableDesktopShortcuts", false)
+            .toBool();
 }
 
 void ShortcutOper::acitonTriggered()
@@ -220,7 +222,7 @@ void ShortcutOper::helpAction()
     class PublicApplication : public DApplication
     {
     public:
-        using  DApplication::handleHelpAction;
+        using DApplication::handleHelpAction;
     };
 
     QString appName = qApp->applicationName();
@@ -294,8 +296,8 @@ void ShortcutOper::showMenu()
         view->selectionModel()->clearSelection();
         view->d->menuProxy->showEmptyAreaMenu(flags, QPoint(0, 0));
     } else {
-       auto gridPos = view->d->gridAt(view->visualRect(index).center());
-       view->d->menuProxy->showNormalMenu(index, flags, gridPos);
+        auto gridPos = view->d->gridAt(view->visualRect(index).center());
+        view->d->menuProxy->showNormalMenu(index, flags, gridPos);
     }
 }
 
@@ -323,4 +325,19 @@ void ShortcutOper::swichHidden()
 void ShortcutOper::showProperty()
 {
     FileOperaterProxyIns->showFilesProperty(view);
+}
+
+void ShortcutOper::previewFiles()
+{
+    QList<QUrl> Urls = view->selectionModel()->selectedUrls();
+    QList<QUrl> selectUrls;
+    for (QUrl &url : Urls) {
+        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
+    }
+    Urls = view->selectionModel()->selectedUrls();
+    QList<QUrl> currentDirUrls;
+    for (QUrl &url : Urls) {
+        currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
+    }
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }
