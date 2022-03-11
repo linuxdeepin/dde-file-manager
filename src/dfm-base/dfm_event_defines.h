@@ -43,6 +43,8 @@ enum GlobalEventType : uint16_t {
     kSaveOperator,   // save operator
     kCleanSaveOperator,   // Ctrl+Z
     kRevocation,
+    kOpenAsAdmin,
+
     // file operations
     kOpenFiles,
     kOpenFilesByApp,

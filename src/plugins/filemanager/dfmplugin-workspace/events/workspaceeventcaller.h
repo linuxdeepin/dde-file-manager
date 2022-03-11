@@ -40,6 +40,7 @@ class WorkspaceEventCaller
 public:
     static void sendOpenWindow(const QList<QUrl> &urls);
     static void sendChangeCurrentUrl(const quint64 windowId, const QUrl &url);
+    static void sendOpenAsAdmin(const QUrl &url);
 
     static void sendTabAdded(const quint64 windowID);
     static void sendTabChanged(const quint64 windowID, const int index);

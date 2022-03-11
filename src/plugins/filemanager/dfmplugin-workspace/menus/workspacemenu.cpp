@@ -60,6 +60,7 @@ QMenu *WorkspaceMenu::build(QWidget *parent,
     view = qobject_cast<FileView *>(parent);
     selectUrls = selected;
     curUrl = focusUrl;
+    curRootUrl = rootUrl;
 
     QMenu *menu = new QMenu(parent);
 
@@ -91,6 +92,9 @@ void WorkspaceMenu::actionBusiness(QAction *act)
         WorkspaceHelper::instance()->actionNewTab(winID, curUrl);
         break;
     }
+    case kActOpenAsAdmin:
+        WorkspaceEventCaller::sendOpenAsAdmin(curUrl.isValid() ? curUrl : curRootUrl);
+        break;
     case kActSelectAll:
         view->selectAll();
         break;

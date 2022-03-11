@@ -58,6 +58,11 @@ void WorkspaceEventCaller::sendChangeCurrentUrl(const quint64 windowId, const QU
         dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
 
+void WorkspaceEventCaller::sendOpenAsAdmin(const QUrl &url)
+{
+    dispatcher()->publish(GlobalEventType::kOpenAsAdmin, url);
+}
+
 void WorkspaceEventCaller::sendTabAdded(const quint64 windowID)
 {
     dispatcher()->publish(Workspace::EventType::kTabAdded, windowID);

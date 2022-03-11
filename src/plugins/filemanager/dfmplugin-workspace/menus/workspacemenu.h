@@ -59,6 +59,7 @@ private:
     QMap<int, QUrl> sendToRemovabalDiskActs;
     QList<QUrl> selectUrls;
     QUrl curUrl;
+    QUrl curRootUrl;
 };
 
 DPWORKSPACE_END_NAMESPACE

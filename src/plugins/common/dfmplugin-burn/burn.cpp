@@ -28,28 +28,26 @@
 
 DPBURN_USE_NAMESPACE
 
-void burn::initialize()
+void Burn::initialize()
 {
 }
 
-bool burn::start()
+bool Burn::start()
 {
-    DSC_USE_NAMESPACE
-
-    dpfInstance.eventDispatcher().subscribe(Burn::EventType::kShowBurnDlg,
+    dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handleShowBurnDlg);
-    dpfInstance.eventDispatcher().subscribe(Burn::EventType::kErase,
+    dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Burn::EventType::kErase,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handleErase);
 
-    dpfInstance.eventDispatcher().subscribe(Burn::EventType::kPasteTo,
+    dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Burn::EventType::kPasteTo,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handlePasteTo);
     return true;
 }
 
-dpf::Plugin::ShutdownFlag burn::stop()
+dpf::Plugin::ShutdownFlag Burn::stop()
 {
     return kSync;
 }

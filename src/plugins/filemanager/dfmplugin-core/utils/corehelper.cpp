@@ -26,6 +26,8 @@
 
 #include <dfm-framework/framework.h>
 
+#include <QDir>
+
 DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -51,4 +53,20 @@ void CoreHelper::openNewWindow(const QUrl &url)
     auto &ctx = dpfInstance.serviceContext();
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     windowService->showWindow(url, true);
+}
+
+void CoreHelper::openAsAdmin(const QUrl &url)
+{
+    if (url.isEmpty() || !url.isValid()) {
+        qWarning() << "Invalid Url: " << url;
+        return;
+    }
+
+    QString localPath { url.toLocalFile() };
+    if (!QDir(localPath).exists()) {
+        qWarning() << "Url path not exists: " << localPath;
+        return;
+    }
+
+    QProcess::startDetached("dde-file-manager-pkexec", { localPath });
 }

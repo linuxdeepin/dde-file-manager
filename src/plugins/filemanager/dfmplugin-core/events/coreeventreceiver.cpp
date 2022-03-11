@@ -58,3 +58,8 @@ void CoreEventReceiver::handleOpenWindow(const QUrl &url)
 {
     CoreHelper::openNewWindow(url);
 }
+
+void CoreEventReceiver::handleOpenAsAdmin(const QUrl &url)
+{
+    CoreHelper::openAsAdmin(url);
+}

@@ -29,7 +29,7 @@
 
 DPBURN_BEGIN_NAMESPACE
 
-class burn : public dpf::Plugin
+class Burn : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
