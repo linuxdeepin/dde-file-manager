@@ -125,6 +125,12 @@ QByteArray MimeAppsWorker::readData(const QString &path)
     return content;
 }
 
+MimesAppsManager *MimesAppsManager::instance()
+{
+    static MimesAppsManager manager;
+    return &manager;
+}
+
 MimesAppsManager::MimesAppsManager(QObject *parent)
     : QObject(parent)
 {
@@ -137,6 +143,8 @@ MimesAppsManager::MimesAppsManager(QObject *parent)
 
 MimesAppsManager::~MimesAppsManager()
 {
+    mimeAppsThread.quit();
+    mimeAppsThread.wait();
 }
 
 QMimeType MimesAppsManager::getMimeType(const QString &fileName)

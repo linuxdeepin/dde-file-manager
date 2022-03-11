@@ -117,7 +117,9 @@ FILE (GLOB DIALOGS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/settingsdialog/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/taskdialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/taskdialog/*.cpp"
-    )
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/basedialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/dialogs/basedialog/*.cpp"
+)
 
 FILE (GLOB DBUSSERVER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/dbusservice/*.h"
@@ -186,6 +188,7 @@ add_library(${PROJECT_NAME}
     ${DBUSSERVER_FILES}
     ${SHORTCUT_FILES}
 )
+
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VERSION ${VERSION}

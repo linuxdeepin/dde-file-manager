@@ -25,6 +25,8 @@
 #include <dfm-framework/framework.h>
 
 #include "services/common/propertydialog/property_defines.h"
+#include "services/common/openwith/openwith_defines.h"
+#include "services/common/openwith/openwithservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -36,6 +38,7 @@
 #include <QDebug>
 
 DSB_FM_USE_NAMESPACE
+DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 CommandService::CommandService(QObject *parent)
@@ -183,13 +186,45 @@ QStringList CommandService::unknownOptionNames() const
 void CommandService::showPropertyDialog()
 {
     QStringList paths = positionalArguments();
-    // Todo(yanghao): show property dialog
+    QList<QUrl> urlList;
+    for (const QString &path : paths) {
+        QUrl url = QUrl::fromUserInput(path);
+        QString uPath = url.path();
+        if (uPath.endsWith(QDir::separator()) && uPath.size() > 1)
+            uPath.chop(1);
+        url.setPath(uPath);
+
+        //Todo(yanghao): symlink , desktop files filters
+        if (urlList.contains(url))
+            continue;
+        urlList << url;
+    }
+    if (urlList.isEmpty())
+        return;
+
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urlList);
 }
 
 void CommandService::openWithDialog()
 {
     QStringList files = positionalArguments();
-    // Todo(yanghao): open with dialog
+
+    QList<QUrl> urlList;
+    for (const QString &path : files) {
+        QUrl url = QUrl::fromUserInput(path);
+        QString uPath = url.path();
+        if (uPath.endsWith(QDir::separator()) && uPath.size() > 1)
+            uPath.chop(1);
+        url.setPath(uPath);
+
+        //Todo(yanghao): symlink , desktop files filters
+        if (urlList.contains(url))
+            continue;
+        urlList << url;
+    }
+    if (urlList.isEmpty())
+        return;
+    OpenWithService::service()->showOpenWithDialog(urlList);
 }
 
 void CommandService::openInHomeDirectory()

@@ -92,6 +92,14 @@ FILE(GLOB TRASH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/trash/*.cpp"
 )
 
+FILE(GLOB OPENWITH_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/private/*.cpp"
+)
+
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -105,6 +113,7 @@ add_library(${PROJECT_NAME}
     ${BURN_FILES}
     ${PREVIEW_FILES}
     ${TRASH_FILES}
+    ${OPENWITH_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

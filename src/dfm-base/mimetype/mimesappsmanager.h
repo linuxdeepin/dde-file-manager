@@ -70,7 +70,7 @@ class MimesAppsManager : public QObject
     Q_OBJECT
 
 public:
-    explicit MimesAppsManager(QObject *parent = nullptr);
+    static MimesAppsManager *instance();
     ~MimesAppsManager();
 
     static QStringList DesktopFiles;
@@ -117,6 +117,7 @@ signals:
     void requestUpdateCache();
 
 private:
+    explicit MimesAppsManager(QObject *parent = nullptr);
     MimeAppsWorker *mimeAppsWorker = nullptr;
     QThread mimeAppsThread;
 };
