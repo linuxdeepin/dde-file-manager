@@ -38,6 +38,7 @@
 #include <QMenu>
 #include <QStandardPaths>
 #include <QStorageInfo>
+#include <QApplication>
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -67,6 +68,7 @@ void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QP
 
 void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
 {
+    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     winID = windowId;
     switch (state(vaultLockPath())) {
     case VaultState::kNotExisted: {
@@ -327,6 +329,7 @@ void VaultHelper::openWindow()
 
 void VaultHelper::openWidWindow(quint64 winID, const QUrl &url)
 {
+    this->winID = winID;
     VaultEventCaller::sendItemActived(winID, url);
 }
 
