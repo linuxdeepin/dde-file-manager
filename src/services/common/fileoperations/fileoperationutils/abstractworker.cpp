@@ -37,6 +37,7 @@
 #include <QDebug>
 
 DSC_USE_NAMESPACE
+
 /*!
  * \brief setWorkArgs 设置当前任务的参数
  * \param args 参数
@@ -469,8 +470,9 @@ QString AbstractWorker::getNonExistFileName(const AbstractFileInfoPointer fromIn
         newUrl = targetDir->url();
         newUrl.setPath(newUrl.path() + "/" + newFileName);
         targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-    } while (targetFileInfo && targetFileInfo->exists());
+    } while ((targetFileInfo && targetFileInfo->exists()) || FileOperationsUtils::fileNameUsing.contains(newFileName));
 
+    FileOperationsUtils::addUsingName(newFileName);
     return newFileName;
 }
 

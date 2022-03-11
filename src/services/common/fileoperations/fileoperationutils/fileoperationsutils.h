@@ -78,6 +78,12 @@ private:
     static bool isAncestorUrl(const QUrl &from, const QUrl &to);
     static bool isFileOnDisk(const QUrl &url);
     static void getDirFiles(const QUrl &url, QList<QUrl> &files);
+    static void addUsingName(const QString &name);
+    static void removeUsingName(const QString &name);
+
+private:
+    static QSet<QString> fileNameUsing;
+    static QMutex mutex;
 };
 
 DSC_END_NAMESPACE

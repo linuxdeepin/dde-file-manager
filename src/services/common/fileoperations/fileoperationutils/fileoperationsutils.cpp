@@ -27,6 +27,7 @@
 #include <QDirIterator>
 #include <QUrl>
 #include <QDebug>
+#include <QMutexLocker>
 
 #undef signals
 extern "C" {
@@ -42,6 +43,9 @@ extern "C" {
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+QSet<QString> FileOperationsUtils::fileNameUsing = {};
+QMutex FileOperationsUtils::mutex;
 
 /*!
  * \brief FileOperationsUtils::statisticsFilesSize 使用c库统计文件大小
@@ -168,4 +172,16 @@ void FileOperationsUtils::getDirFiles(const QUrl &url, QList<QUrl> &files)
             files.append(QUrl::fromLocalFile(urlPath + ptr->d_name));
         }
     }
+}
+
+void FileOperationsUtils::addUsingName(const QString &name)
+{
+    QMutexLocker locker(&mutex);
+    fileNameUsing.insert(name);
+}
+
+void FileOperationsUtils::removeUsingName(const QString &name)
+{
+    QMutexLocker locker(&mutex);
+    fileNameUsing.remove(name);
 }

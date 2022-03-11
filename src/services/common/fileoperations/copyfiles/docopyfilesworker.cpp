@@ -508,7 +508,9 @@ bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo,
         }
     }
 
-    return doCopyOneFile(fromInfo, toInfo);
+    bool ok = doCopyOneFile(fromInfo, toInfo);
+    FileOperationsUtils::removeUsingName(toInfo->fileName());
+    return ok;
 }
 
 bool DoCopyFilesWorker::doThreadPoolCopyFile()
@@ -538,7 +540,7 @@ bool DoCopyFilesWorker::doThreadPoolCopyFile()
     bool ok = doCopyOneFile(threadInfo->fromInfo, threadInfo->toInfo);
     if (!ok)
         setStat(AbstractJobHandler::JobState::kStopState);
-
+    FileOperationsUtils::removeUsingName(threadInfo->toInfo->fileName());
     return ok;
 }
 
