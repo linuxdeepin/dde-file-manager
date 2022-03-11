@@ -584,31 +584,37 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
  */
 bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, bool *result)
 {
-    // 检查源文件的文件信息
-    if (!fromInfo) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfo == nullptr ? QUrl() : toInfo->url(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
-        *result = AbstractJobHandler::SupportAction::kSkipAction != action;
-        return false;
-    }
-    // 检查源文件是否存在
-    if (!fromInfo->exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
-                                                                                                                                     : AbstractJobHandler::JobErrorType::kNonexistenceError;
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo == nullptr ? QUrl() : toInfo->url(), fromInfo->url(), errortype);
-
-        *result = AbstractJobHandler::SupportAction::kSkipAction != action;
-        return false;
-    }
     // 检查目标文件的文件信息
     if (!toInfo) {
         doHandleErrorAndWait(fromInfo->url(), QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
+
+    AbstractFileInfoPointer toInfoDir = toInfo;
+    if (!toInfo->isDir()) {
+        toInfoDir = InfoFactory::create<AbstractFileInfo>(toInfo->parentUrl());
+    }
+
+    // 检查源文件的文件信息
+    if (!fromInfo) {
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(QUrl(), toInfoDir->url(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        *result = AbstractJobHandler::SupportAction::kSkipAction != action;
+        return false;
+    }
+    // 检查源文件是否存在
+    if (!fromInfo->exists()) {
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfoDir->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
+                                                                                                                                        : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfoDir->url(), fromInfo->url(), errortype);
+
+        *result = AbstractJobHandler::SupportAction::kSkipAction != action;
+        return false;
+    }
     // 检查目标文件是否存在
-    if (!toInfo->exists()) {
-        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfo->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
-                                                                                                                                     : AbstractJobHandler::JobErrorType::kNonexistenceError;
-        doHandleErrorAndWait(fromInfo->url(), toInfo->url(), toInfo->url(), errortype);
+    if (!toInfoDir->exists()) {
+        AbstractJobHandler::JobErrorType errortype = (fromInfo->path().startsWith("/root/") && !toInfoDir->path().startsWith("/root/")) ? AbstractJobHandler::JobErrorType::kPermissionError
+                                                                                                                                        : AbstractJobHandler::JobErrorType::kNonexistenceError;
+        doHandleErrorAndWait(fromInfo->url(), toInfoDir->url(), toInfoDir->url(), errortype);
         return false;
     }
     // 特殊文件判断
@@ -618,7 +624,7 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     case AbstractFileInfo::kFIFOFile:
     case AbstractFileInfo::kSocketFile: {
 
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), fromInfo->url(), AbstractJobHandler::JobErrorType::kSpecialFileError);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfoDir->url(), fromInfo->url(), AbstractJobHandler::JobErrorType::kSpecialFileError);
         return AbstractJobHandler::SupportAction::kSkipAction == action;
     }
     default:
@@ -628,7 +634,7 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     // 创建新的目标文件并做检查
     QString fileNewName = fromInfo->fileName();
     newTargetInfo.reset(nullptr);
-    if (!doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, result))
+    if (!doCheckNewFile(fromInfo, toInfoDir, newTargetInfo, fileNewName, result))
         return false;
 
     return true;
@@ -667,9 +673,14 @@ bool FileOperateBaseWorker::creatSystemLink(const AbstractFileInfoPointer &fromI
  */
 bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, AbstractFileInfoPointer &newTargetInfo, QString &fileNewName, bool *result)
 {
+    AbstractFileInfoPointer toInfoDir = toInfo;
+    if (!toInfoDir->isDir()) {
+        toInfoDir = InfoFactory::create<AbstractFileInfo>(toInfoDir->parentUrl());
+    }
+
     fileNewName = formatFileName(fileNewName);
     // 创建文件的名称
-    QUrl newTargetUrl = toInfo->url();
+    QUrl newTargetUrl = toInfoDir->url();
     const QString &newTargetPath = newTargetUrl.path();
 
     QString newPath = newTargetPath.endsWith("/") ? newTargetPath + fileNewName
@@ -681,7 +692,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     newTargetInfo = InfoFactory::create<AbstractFileInfo>(newTargetUrl);
 
     if (!newTargetInfo) {
-        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), newTargetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfoDir->url(), newTargetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
 
         *result = AbstractJobHandler::SupportAction::kSkipAction != action;
         return false;
@@ -689,7 +700,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
 
     if (newTargetInfo->exists()) {
         if (!jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->url(), newTargetUrl)) {
-            AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), newTargetUrl, AbstractJobHandler::JobErrorType::kTargetIsSelfError);
+            AbstractJobHandler::SupportAction action = doHandleErrorAndWait(fromInfo->url(), toInfoDir->url(), newTargetUrl, AbstractJobHandler::JobErrorType::kTargetIsSelfError);
 
             if (AbstractJobHandler::SupportAction::kSkipAction == action) {
                 *result = AbstractJobHandler::SupportAction::kSkipAction != action;
@@ -732,9 +743,11 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
             return false;
         }
         case AbstractJobHandler::SupportAction::kCoexistAction: {
-            fileNewName = getNonExistFileName(fromInfo, toInfo);
+            fileNewName = getNonExistFileName(fromInfo, toInfoDir);
+            if (fileNewName.isEmpty())
+                return false;
 
-            bool ok = doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, result);
+            bool ok = doCheckNewFile(fromInfo, toInfoDir, newTargetInfo, fileNewName, result);
 
             return ok;
         }

@@ -383,6 +383,10 @@ bool DoCopyFilesWorker::doCheckNewFile(const AbstractFileInfoPointer &fromInfo, 
             return true;
         case AbstractJobHandler::SupportAction::kCoexistAction: {
             fileNewName = getNonExistFileName(fromInfo, toInfo);
+            if (fileNewName.isEmpty()) {
+                cancelThreadProcessingError();
+                return false;
+            }
 
             bool ok = doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, result);
             cancelThreadProcessingError();

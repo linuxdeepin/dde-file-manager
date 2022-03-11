@@ -433,9 +433,13 @@ QString AbstractWorker::formatFileName(const QString &fileName)
 QString AbstractWorker::getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir)
 {
     if (!targetDir || !targetDir->exists()) {
-        // TODO:: paused and handle error
         return QString();
     }
+
+    if (!targetDir->isDir()) {
+        return QString();
+    }
+
     const QString &copy_text = QCoreApplication::translate("DoCopyFilesWorker", "copy",
                                                            "Extra name added to new file name when used for file name.");
 

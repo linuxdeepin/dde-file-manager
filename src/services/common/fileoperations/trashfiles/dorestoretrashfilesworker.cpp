@@ -244,21 +244,16 @@ bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer
 {
     //执行dorename，失败执行拷贝，再执行清理掉当前的trashinfo和源文件
     const QUrl &fromUrl = trashInfo->url();
-    const QUrl &toUrl = restoreInfo->url();
+    QUrl toUrl = restoreInfo->url();
     emitCurrentTaskNotify(fromUrl, toUrl);
     compeleteFilesCount++;
-    if (restoreInfo->exists()) {
-        AbstractJobHandler::SupportAction actionForExists { AbstractJobHandler::SupportAction::kNoAction };
-        if (trashInfo->isFile()) {
-            actionForExists = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
-        } else {
-            actionForExists = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kDirectoryExistsError);
-        }
 
-        if (actionForExists == AbstractJobHandler::SupportAction::kSkipAction) {
-            return true;
-        }
-    }
+    bool ok = false;
+    AbstractFileInfoPointer newTargetInfo(nullptr);
+    if (!doCheckFile(trashInfo, restoreInfo, newTargetInfo, &ok))
+        return ok;
+
+    toUrl = newTargetInfo->url();
 
     if (handler->renameFile(fromUrl, toUrl))
         return clearTrashFile(fromUrl, toUrl, trashInfo, true);
@@ -372,4 +367,42 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
     }
 
     return true;
+}
+
+AbstractJobHandler::SupportActions DoRestoreTrashFilesWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
+{
+    AbstractJobHandler::SupportActions support = AbstractJobHandler::SupportAction::kCancelAction;
+    switch (error) {
+    case AbstractJobHandler::JobErrorType::kPermissionError:
+    case AbstractJobHandler::JobErrorType::kOpenError:
+    case AbstractJobHandler::JobErrorType::kReadError:
+    case AbstractJobHandler::JobErrorType::kWriteError:
+    case AbstractJobHandler::JobErrorType::kSymlinkError:
+    case AbstractJobHandler::JobErrorType::kMkdirError:
+    case AbstractJobHandler::JobErrorType::kResizeError:
+    case AbstractJobHandler::JobErrorType::kRemoveError:
+    case AbstractJobHandler::JobErrorType::kRenameError:
+    case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
+    case AbstractJobHandler::JobErrorType::kSpecialFileError:
+        return AbstractJobHandler::SupportAction::kSkipAction;
+    case AbstractJobHandler::JobErrorType::kFileSizeTooBigError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
+    case AbstractJobHandler::JobErrorType::kNotEnoughSpaceError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction | AbstractJobHandler::SupportAction::kEnforceAction;
+    case AbstractJobHandler::JobErrorType::kFileExistsError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kReplaceAction | AbstractJobHandler::SupportAction::kCoexistAction;
+    case AbstractJobHandler::JobErrorType::kDirectoryExistsError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kMergeAction | AbstractJobHandler::SupportAction::kCoexistAction;
+    case AbstractJobHandler::JobErrorType::kTargetReadOnlyError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
+    case AbstractJobHandler::JobErrorType::kTargetIsSelfError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
+    case AbstractJobHandler::JobErrorType::kSymlinkToGvfsError:
+        return support | AbstractJobHandler::SupportAction::kSkipAction;
+    default:
+        break;
+    }
+
+    return support;
 }

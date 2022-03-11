@@ -291,7 +291,6 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
     const QUrl &targetUrl = targetInfo->url();
 
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
-        AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
         AbstractFileInfoPointer newTargetInfo(nullptr);
         if (!doCheckFile(sourceInfo, targetInfo, newTargetInfo, ok))
             return *ok;
@@ -313,6 +312,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
             // create link
 
+            AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
             do {
                 if (!handler->createSystemLink(sourceUrl, newTargetInfo->url()))
                     // pause and emit error msg
