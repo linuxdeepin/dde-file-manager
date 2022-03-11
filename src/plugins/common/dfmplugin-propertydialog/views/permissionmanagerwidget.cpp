@@ -90,7 +90,6 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     setComboBoxByPermission(otherComboBox, info->permissions() & 0x0007, 0);
 
     if (info->isFile()) {
-        executableCheckBox = new QCheckBox;
         executableCheckBox->setText(tr("Allow to execute as program"));
         connect(executableCheckBox, &QCheckBox::toggled, this, &PermissionManagerWidget::toggleFileExecutable);
         if (info->ownerId() != getuid()) {
@@ -218,10 +217,7 @@ bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
 {
     bool ret = true;
 
-    //    if (info->scheme() == BURN_SCHEME || info->isGvfsMountFile())
-    //        ret = false;
-
-    if (!info->canRename() /* || !info->canManageAuth()*/)
+    if (!info->canRename())
         ret = false;
 
     QString path = info->filePath();
