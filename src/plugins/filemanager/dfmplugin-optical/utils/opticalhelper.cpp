@@ -23,9 +23,10 @@
 #include "opticalhelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-framework/framework.h>
-
 #include <dfm-burn/dfmburn_global.h>
 
 #include <QCoreApplication>
@@ -50,7 +51,7 @@ QString OpticalHelper::iconString()
     return "media-optical-symbolic";
 }
 
-QUrl OpticalHelper::localStagingParent()
+QUrl OpticalHelper::localStagingRoot()
 {
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                                + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/");
@@ -58,7 +59,7 @@ QUrl OpticalHelper::localStagingParent()
 
 QUrl OpticalHelper::localStagingFile(const QUrl &dest)
 {
-    if (burnDestDevice(dest).length() == 0)
+    if (burnDestDevice(dest).isEmpty())
         return {};
 
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
@@ -72,6 +73,24 @@ QUrl OpticalHelper::localStagingFile(QString dev)
     return QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)   // ~/.cache
                                + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"   // ~/.cache/deepin/discburn/
                                + dev.replace('/', '_'));
+}
+
+QUrl OpticalHelper::localDiscFile(const QUrl &dest)
+{
+    using namespace GlobalServerDefines;
+
+    QString devFile { OpticalHelper::burnDestDevice(dest) };
+    if (devFile.isEmpty())
+        return {};
+
+    QString id { DeviceManager::blockDeviceId(devFile) };
+    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    QString mntPoint { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
+    if (mntPoint.isEmpty())
+        return {};
+
+    QString suffix { burnFilePath(dest) };
+    return QUrl::fromLocalFile(mntPoint + suffix);
 }
 
 QString OpticalHelper::burnDestDevice(const QUrl &url)
@@ -99,6 +118,15 @@ bool OpticalHelper::burnIsOnDisc(const QUrl &url)
     return m.captured(2) == BURN_SEG_ONDISC;
 }
 
+bool OpticalHelper::burnIsOnStaging(const QUrl &url)
+{
+    QRegularExpressionMatch m;
+    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(burnRxp(), &m)) {
+        return false;
+    }
+    return m.captured(2) == BURN_SEG_STAGING;
+}
+
 QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
 {
     QRegularExpressionMatch m;
@@ -118,6 +146,20 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
     QString filePath { devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path };
     url.setScheme(SchemeTypes::kBurn);
     url.setPath(filePath);
+
+    return url;
+}
+
+QUrl OpticalHelper::tansToLocalFile(const QUrl &in)
+{
+    Q_ASSERT(in.scheme() == SchemeTypes::kBurn);
+    QUrl url;
+
+    if (burnIsOnDisc(in)) {
+        url = localDiscFile(in);
+    } else if (burnIsOnStaging(in)) {
+        url = localStagingFile(in);
+    }
 
     return url;
 }

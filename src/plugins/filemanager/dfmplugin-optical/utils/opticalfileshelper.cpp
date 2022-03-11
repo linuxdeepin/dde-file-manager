@@ -62,7 +62,7 @@ bool OpticalFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const
     for (const QUrl &url : urls) {
         MasteredMediaFileInfo info(url);
         QUrl backerUrl { QUrl::fromLocalFile(info.extraProperties()["mm_backer"].toString()) };
-        if (!OpticalHelper::localStagingParent().isParentOf(backerUrl))
+        if (!OpticalHelper::localStagingRoot().isParentOf(backerUrl))
             redirectedFileUrls.push_back(backerUrl);
     }
     dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);

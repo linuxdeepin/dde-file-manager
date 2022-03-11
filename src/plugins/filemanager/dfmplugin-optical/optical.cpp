@@ -153,4 +153,5 @@ void Optical::addDelegateSettings()
     OpticalHelper::dlgateServIns()->registerTransparentHandle(SchemeTypes::kBurn, [](const QUrl &url) -> bool {
         return !OpticalHelper::burnIsOnDisc(url);
     });
+    OpticalHelper::dlgateServIns()->registerUrlTransform(SchemeTypes::kBurn, &OpticalHelper::tansToLocalFile);
 }

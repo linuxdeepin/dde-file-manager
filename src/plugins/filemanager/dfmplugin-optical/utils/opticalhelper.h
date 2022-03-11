@@ -46,13 +46,16 @@ class OpticalHelper
 public:
     static QIcon icon();
     static QString iconString();
-    static QUrl localStagingParent();
+    static QUrl localStagingRoot();
     static QUrl localStagingFile(const QUrl &dest);
     static QUrl localStagingFile(QString dev);
+    static QUrl localDiscFile(const QUrl &dest);
     static QString burnDestDevice(const QUrl &url);
     static QString burnFilePath(const QUrl &url);
     static bool burnIsOnDisc(const QUrl &url);
+    static bool burnIsOnStaging(const QUrl &url);
     static QUrl tansToBurnFile(const QUrl &in);
+    static QUrl tansToLocalFile(const QUrl &in);
     static bool isSupportedUDFVersion(const QString &version);
     static bool isSupportedUDFMedium(int type);
     static void createStagingFolder(const QString &path);

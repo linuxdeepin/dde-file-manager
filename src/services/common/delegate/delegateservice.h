@@ -22,9 +22,12 @@
 #define DELEGATESERVICE_H
 
 #include "delegate_defines.h"
+
 #include <dfm-framework/service/pluginservicecontext.h>
 
 DSC_BEGIN_NAMESPACE
+
+// TODO(zhangs): refactor it
 
 class DelegateService final : public dpf::PluginService, dpf::AutoServiceRegister<DelegateService>
 {
@@ -36,6 +39,9 @@ class DelegateService final : public dpf::PluginService, dpf::AutoServiceRegiste
     using TransparentHandle = Delegate::IsTransparentCallback;
     using TransparentHandleMap = QMap<KeyType, TransparentHandle>;
 
+    using UrlTransformHandle = Delegate::UrlTransformCallback;
+    using UrlTransformHandleMap = QMap<KeyType, UrlTransformHandle>;
+
 public:
     static QString name()
     {
@@ -46,6 +52,10 @@ public:
     TransparentHandleMap getTransparentHandles();
     bool isTransparent(const QUrl &url);
 
+    void registerUrlTransform(const KeyType &scheme, const UrlTransformHandle &handle);
+    bool isRegisterUrlTransform(const KeyType &scheme);
+    QUrl urlTransform(const QUrl &url);
+
     static DelegateService *instance();
 
 private:
@@ -54,6 +64,7 @@ private:
 
 private:
     TransparentHandleMap transparentHandles;
+    UrlTransformHandleMap urlTransformHandles;
 };
 
 DSC_END_NAMESPACE
