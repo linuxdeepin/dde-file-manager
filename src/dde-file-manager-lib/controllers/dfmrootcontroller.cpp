@@ -78,6 +78,16 @@ private:
 
 static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice> blk, QSharedPointer<DDiskDevice> drv)
 {
+    // 过滤snap产生的loop设备
+    if(blk->isLoopDevice()){ // loop devices' display status only determind by GA_HideLoopPartitions property.
+        if (DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool()) {
+            qDebug()  << "block device is ignored by loop device:"  << blkPath;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     if (blk->hintIgnore()) {
         qWarning()  << "block device is ignored by hintIgnore:"  << blkPath;
         return true;
@@ -98,7 +108,7 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
     }
 
     if (!blk->hasFileSystem() && blk->size() < 1024 && !isOptical) {   // a super block is at least 1024 bytes, a full filesystem always have a superblock.
-        qWarning() << "block device is ignored cause it's size is less than 1024";
+        qWarning() << "block device is ignored cause it's size is less than 1024" << blkPath;
         return true;
     }
 
@@ -110,12 +120,6 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
     // 是否是设备根节点，设备根节点无须记录
     if(blk->hasPartitionTable()){ // 替换 FileUtils::deviceShouldBeIgnore
         qDebug()  << "block device is ignored by parent node:"  << blkPath;
-        return true;
-    }
-
-    // 过滤snap产生的loop设备
-    if(blk->isLoopDevice() && DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool()){
-        qDebug()  << "block device is ignored by loop device:"  << blkPath;
         return true;
     }
 
