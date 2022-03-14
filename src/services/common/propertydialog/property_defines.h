@@ -30,7 +30,13 @@
 
 DSC_BEGIN_NAMESPACE
 
-namespace Property {
+#define CPY_NAMESPACE Property
+
+#define CPY_BEGIN_NAMESPACE namespace CPY_NAMESPACE {
+#define CPY_END_NAMESPACE }
+#define CPY_USE_NAMESPACE using namespace CPY_NAMESPACE;
+
+CPY_BEGIN_NAMESPACE
 namespace EventType {
 extern const int kEvokePropertyDialog;
 }
@@ -102,11 +108,13 @@ public:
 
     QWidget *createWidget(const QUrl &url)
     {
-        if (viewCreateFunctionHash.contains(url.scheme())) {
-            createControlViewFunc func = viewCreateFunctionHash.value(url.scheme());
-            return func(url);
+        QWidget *widget = nullptr;
+        for (createControlViewFunc func : viewCreateFunctionHash.values()) {
+            widget = func(url);
+            if (widget)
+                break;
         }
-        return nullptr;
+        return widget;
     }
 
     QMap<int, QWidget *> createControlView(const QUrl &url)
@@ -120,7 +128,7 @@ public:
         return temp;
     }
 };
-}
+CPY_END_NAMESPACE
 DSC_END_NAMESPACE
-Q_DECLARE_METATYPE(DSC_NAMESPACE::Property::DeviceInfo)
+Q_DECLARE_METATYPE(DSC_NAMESPACE::CPY_NAMESPACE::DeviceInfo)
 #endif   //PROPERTY_DEFINE_H

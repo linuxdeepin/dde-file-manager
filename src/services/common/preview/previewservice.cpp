@@ -36,3 +36,15 @@ PreviewService::PreviewService(QObject *parent)
       dpf::AutoServiceRegister<PreviewService>()
 {
 }
+
+PreviewService *PreviewService::instance()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::PreviewService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::PreviewService>(DSC_NAMESPACE::PreviewService::name());
+}

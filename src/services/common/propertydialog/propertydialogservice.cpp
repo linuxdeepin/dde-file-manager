@@ -19,10 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "propertydialogservice.h"
+#include "utils/computerpropertyhelper.h"
 #include "dfm-base/utils/universalutils.h"
 
 DSC_BEGIN_NAMESPACE
-namespace Property {
+CPY_BEGIN_NAMESPACE
 namespace EventType {
 const int kEvokePropertyDialog = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
@@ -31,12 +32,12 @@ const int kIconTitle { 0x40000 };
 const int kBasisInfo { 0x20000 };
 const int kPermission { 0x10000 };
 }
-}
+CPY_END_NAMESPACE
 DSC_END_NAMESPACE
 
 DFMBASE_USE_NAMESPACE
+CPY_USE_NAMESPACE
 DSC_USE_NAMESPACE
-
 PropertyDialogService::PropertyDialogService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<PropertyDialogService>()
@@ -133,4 +134,9 @@ bool PropertyDialogService::registerMethod(Property::RegisterCreateMethod::creat
 bool PropertyDialogService::registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, QString scheme)
 {
     return Property::RegisterCreateMethod::ins()->registerViewCreateFunction(view, scheme);
+}
+
+void PropertyDialogService::addComputerPropertyToPropertyService()
+{
+    registerMethod(ComputerPropertyHelper::createComputerProperty, ComputerPropertyHelper::scheme());
 }

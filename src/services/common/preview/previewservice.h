@@ -40,6 +40,9 @@ public:
     {
         return "org.deepin.service.PreviewService";
     }
+
+    static PreviewService *instance();
 };
 DSC_END_NAMESPACE
+#define previewServIns ::DSC_NAMESPACE::PreviewService::instance()
 #endif   // PREVIEWSERVICE_H

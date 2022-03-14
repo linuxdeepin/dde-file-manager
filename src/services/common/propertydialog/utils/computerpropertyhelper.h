@@ -17,28 +17,26 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#include "propertydialog.h"
-#include "events/propertyeventreceiver.h"
-#include "utils/propertydialoghelper.h"
+ */
+#ifndef COMUPERPROPERTYHELPER_H
+#define COMUPERPROPERTYHELPER_H
+#include "propertydialog/property_defines.h"
 
-DSC_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+#include <QObject>
+#include <QWidget>
 
-void PropertyDialog::initialize()
+CPY_BEGIN_NAMESPACE
+class ComputerPropertyHelper : public QObject
 {
-    PropertyEventReceiver::instance()->connectService();
-}
+    Q_OBJECT
+private:
+    explicit ComputerPropertyHelper(QObject *parent = nullptr) = delete;
 
-bool PropertyDialog::start()
-{
+public:
+    static QString scheme();
 
-    PropertyDialogHelper::propertyServiceInstance()->addComputerPropertyToPropertyService();
-    return true;
-}
-
-dpf::Plugin::ShutdownFlag PropertyDialog::stop()
-{
-    return kSync;
-}
+public:
+    static QWidget *createComputerProperty(const QUrl &url);
+};
+CPY_END_NAMESPACE
+#endif   //COMUPERPROPERTYHELPER_H

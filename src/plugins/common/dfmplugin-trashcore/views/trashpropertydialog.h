@@ -31,6 +31,7 @@
 DPTRASHCORE_BEGIN_NAMESPACE
 class TrashPropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
+    Q_OBJECT
 public:
     explicit TrashPropertyDialog(QWidget *parent = nullptr);
 

@@ -45,6 +45,8 @@ public:
     bool registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, int index = -1, QString *error = nullptr);
 
     bool registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, QString scheme);
+
+    void addComputerPropertyToPropertyService();
 };
 DSC_END_NAMESPACE
 #define propertyServIns ::DSC_NAMESPACE::PropertyDialogService::instance()

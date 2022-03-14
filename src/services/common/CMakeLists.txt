@@ -15,7 +15,6 @@ FILE(GLOB GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-
 FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.cpp"
@@ -47,8 +46,8 @@ FILE(GLOB DIALOG_FILES
 )
 
 FILE(GLOB PROPERTYDIALOG_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
 )
 
 FILE(GLOB MENU_FILES
@@ -98,7 +97,6 @@ FILE(GLOB OPENWITH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/openwith/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/openwith/private/*.cpp"
 )
-
 
 add_library(${PROJECT_NAME}
     SHARED

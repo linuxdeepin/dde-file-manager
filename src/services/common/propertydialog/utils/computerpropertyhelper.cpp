@@ -17,28 +17,28 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#include "propertydialog.h"
-#include "events/propertyeventreceiver.h"
-#include "utils/propertydialoghelper.h"
+ */
+#include "computerpropertyhelper.h"
+#include "propertydialog/views/computerpropertydialog.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/fileutils.h"
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
-
-void PropertyDialog::initialize()
+CPY_USE_NAMESPACE
+QString ComputerPropertyHelper::scheme()
 {
-    PropertyEventReceiver::instance()->connectService();
+    return "computer";
 }
 
-bool PropertyDialog::start()
+QWidget *ComputerPropertyHelper::createComputerProperty(const QUrl &url)
 {
-
-    PropertyDialogHelper::propertyServiceInstance()->addComputerPropertyToPropertyService();
-    return true;
-}
-
-dpf::Plugin::ShutdownFlag PropertyDialog::stop()
-{
-    return kSync;
+    static ComputerPropertyDialog *widget = nullptr;
+    if (UrlRoute::isRootUrl(url) || FileUtils::isComputerDesktopFile(url)) {
+        if (!widget) {
+            widget = new ComputerPropertyDialog;
+            return widget;
+        }
+        return widget;
+    }
+    return nullptr;
 }

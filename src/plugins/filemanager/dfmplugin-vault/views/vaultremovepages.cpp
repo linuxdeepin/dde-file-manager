@@ -85,8 +85,6 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
     setOnButtonClickedClose(false);
 
     initConnect();
-
-    showVerifyWidget();
 }
 
 void VaultRemovePages::initConnect()

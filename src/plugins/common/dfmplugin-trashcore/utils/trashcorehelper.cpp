@@ -22,9 +22,10 @@
 #include "trashcorehelper.h"
 #include "views/trashpropertydialog.h"
 
-#include "dfm-framework/framework.h"
-
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/standardpaths.h"
+
+#include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -65,7 +66,7 @@ QString TrashCoreHelper::scheme()
 QWidget *TrashCoreHelper::createTrashPropertyDialog(const QUrl &url)
 {
     static TrashPropertyDialog *trashPropertyDialog = nullptr;
-    if (UrlRoute::isRootUrl(url)) {
+    if (UrlRoute::isRootUrl(url) || FileUtils::isTrashDesktopFile(url)) {
         if (!trashPropertyDialog) {
             trashPropertyDialog = new TrashPropertyDialog();
             return trashPropertyDialog;
