@@ -343,7 +343,7 @@ void CanvasManagerPrivate::initModel()
 void CanvasManagerPrivate::initSetting()
 {
     // setting changed.
-    connect(Application::instance(), &Application::showedHiddenFilesChanged, canvasModel, &CanvasModel::setShowHiddenFiles);
+    connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &CanvasManagerPrivate::onHiddenFlagsChanged);
     connect(Application::instance(), &Application::previewAttributeChanged, canvasModel, &CanvasModel::update);
     connect(Application::instance(), &Application::showedFileSuffixChanged, canvasModel, &CanvasModel::update);
 }
@@ -385,6 +385,14 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, QWidget *ro
     auto avRect = relativeRect(root->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
                                root->property(FrameProperty::kPropScreenGeometry).toRect());
     view->setGeometry(avRect);
+}
+
+void CanvasManagerPrivate::onHiddenFlagsChanged(bool show)
+{
+    if (show != canvasModel->showHiddenFiles()) {
+        canvasModel->setShowHiddenFiles(show);
+        canvasModel->refresh(canvasModel->rootIndex());
+    }
 }
 
 void CanvasManagerPrivate::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)

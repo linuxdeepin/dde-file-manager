@@ -28,6 +28,7 @@
 
 #include <base/standardpaths.h>
 #include <base/schemefactory.h>
+#include <base/application/application.h>
 #include <file/local/localfileinfo.h>
 #include <file/local/localdiriterator.h>
 #include <file/local/localfilewatcher.h>
@@ -52,6 +53,9 @@ void ddplugin_core::Core::initialize()
 
 bool ddplugin_core::Core::start()
 {
+    // 手动初始化application
+    new DFMBASE_NAMESPACE::Application();
+
     auto &ctx = dpfInstance.serviceContext();
 
     {

@@ -319,10 +319,12 @@ Qt::ItemFlags CanvasModel::flags(const QModelIndex &index) const
         if (file->canRename())
             flags |= Qt::ItemIsEditable;
 
-        if (file->isWritable())
-            flags |= Qt::ItemIsDropEnabled;
-        else
-            flags |= Qt::ItemNeverHasChildren;
+        if (file->isWritable()) {
+            if (file->canDrop())
+                flags |= Qt::ItemIsDropEnabled;
+            else
+                flags |= Qt::ItemNeverHasChildren;
+        }
 
         // todo
         //flags &= ~file->fileItemDisableFlags();

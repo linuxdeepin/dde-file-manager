@@ -33,7 +33,7 @@ class AbstractDesktopFrame : public QObject
 public:
     explicit AbstractDesktopFrame(QObject *parent = nullptr);
     virtual QList<QWidget *> rootWindows() const = 0;
-signals: // must connect with Qt::Qt::DirectConnection
+signals: // must connect with Qt::DirectConnection
     void windowAboutToBeBuilded();
     void windowBuilded();
     void geometryChanged();
