@@ -32,6 +32,7 @@
 
 #include "dfmsettings.h"
 #include "utils.h"
+#include "searchservice/searchservice.h"
 
 #include <QCoreApplication>
 #include <QMetaEnum>
@@ -118,6 +119,10 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             break;
         case DFMApplication::GA_HideLoopPartitions:
             Q_EMIT self->reloadComputerModel();
+            break;
+        case DFMApplication::GA_IndexFullTextSearch:
+            if (value.toBool() && qAppName() == "dde-file-manager")
+                searchServ->createFullTextIndex();
             break;
         default:
             break;

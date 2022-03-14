@@ -1,5 +1,10 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
 #include <ContribInc.h>
-#include <ChineseTokenizer.h>
 #include <TermAttribute.h>
 #include <OffsetAttribute.h>
 #include <Reader.h>
@@ -7,20 +12,25 @@
 #include <MiscUtils.h>
 #include <UnicodeUtils.h>
 
+#include "chinesetokenizer.h"
+
 namespace Lucene {
 
-const int32_t ChineseTokenizer::MAX_WORD_LEN = 255;
-const int32_t ChineseTokenizer::IO_BUFFER_SIZE = 1024;
+const int32_t ChineseTokenizer::kMaxWordLen = 255;
+const int32_t ChineseTokenizer::kIoBufferSize = 1024;
 
-ChineseTokenizer::ChineseTokenizer(const ReaderPtr &input) : Tokenizer(input)
+ChineseTokenizer::ChineseTokenizer(const ReaderPtr &input)
+    : Tokenizer(input)
 {
 }
 
-ChineseTokenizer::ChineseTokenizer(const AttributeSourcePtr &source, const ReaderPtr &input) : Tokenizer(source, input)
+ChineseTokenizer::ChineseTokenizer(const AttributeSourcePtr &source, const ReaderPtr &input)
+    : Tokenizer(source, input)
 {
 }
 
-ChineseTokenizer::ChineseTokenizer(const AttributeFactoryPtr &factory, const ReaderPtr &input) : Tokenizer(factory, input)
+ChineseTokenizer::ChineseTokenizer(const AttributeFactoryPtr &factory, const ReaderPtr &input)
+    : Tokenizer(factory, input)
 {
 }
 
@@ -33,10 +43,10 @@ void ChineseTokenizer::initialize()
     offset = 0;
     bufferIndex = 0;
     dataLen = 0;
-    buffer = CharArray::newInstance(MAX_WORD_LEN);
-    memset(buffer.get(), 0, MAX_WORD_LEN);
-    ioBuffer = CharArray::newInstance(IO_BUFFER_SIZE);
-    memset(ioBuffer.get(), 0, IO_BUFFER_SIZE);
+    buffer = CharArray::newInstance(kMaxWordLen);
+    memset(buffer.get(), 0, kMaxWordLen);
+    ioBuffer = CharArray::newInstance(kIoBufferSize);
+    memset(ioBuffer.get(), 0, kIoBufferSize);
     length = 0;
     start = 0;
 
@@ -47,9 +57,9 @@ void ChineseTokenizer::initialize()
 void ChineseTokenizer::push(wchar_t c)
 {
     if (length == 0) {
-        start = offset - 1;    // start of token
+        start = offset - 1;   // start of token
     }
-    buffer[length++] = CharFolder::toLower(c); // buffer it
+    buffer[length++] = CharFolder::toLower(c);   // buffer it
 }
 
 bool ChineseTokenizer::flush()
@@ -95,7 +105,7 @@ bool ChineseTokenizer::incrementToken()
             }
 
             push(c);
-            if (length == MAX_WORD_LEN) {
+            if (length == kMaxWordLen) {
                 return flush();
             }
             last_is_en = true;
@@ -107,7 +117,7 @@ bool ChineseTokenizer::incrementToken()
             }
 
             push(c);
-            if (length == MAX_WORD_LEN) {
+            if (length == kMaxWordLen) {
                 return flush();
             }
             last_is_num = true;

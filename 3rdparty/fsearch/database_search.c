@@ -459,6 +459,13 @@ db_search (DatabaseSearch *search, FsearchQuery *q)
 {
     assert (search != NULL);
     assert (search->entries != NULL);
+    if (search->num_entries == 0) {
+        DatabaseSearchResult *result_ctx = calloc (1, sizeof (DatabaseSearchResult));
+        result_ctx->results = 0;
+        result_ctx->num_folders = 0;
+        result_ctx->num_files = 0;
+        return result_ctx;
+    }
 
     search_query_t **queries = build_queries (search, q);
 

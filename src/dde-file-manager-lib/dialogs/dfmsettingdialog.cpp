@@ -21,6 +21,13 @@
 */
 
 #include "dfmsettingdialog.h"
+#include "dfmglobal.h"
+#include "app/define.h"
+#include "singleton.h"
+#include "dfmapplication.h"
+#include "app/filesignalmanager.h"
+#include "dfmsettings.h"
+#include "private/dfmsettingdialog_p.h"
 
 #include <QCheckBox>
 #include <QFrame>
@@ -38,24 +45,9 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #endif
-#ifndef FULLTEXTSEARCH_ENABLE
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QJsonDocument>
-#else
-#include "fulltextsearch/fulltextsearch.h"
-#endif
-
-#include "dfmglobal.h"
-#include "app/define.h"
-#include "singleton.h"
-#include "dfmapplication.h"
-#include "app/filesignalmanager.h"
-#include "dfmsettings.h"
-#include "private/dfmsettingdialog_p.h"
 
 #define FULLTEXT_KEY      "IndexFullTextSearch"
-#define FULLTEXT_GROUP             "GenericAttribute"
+#define FULLTEXT_GROUP    "GenericAttribute"
 
 SettingBackend::SettingBackend(QObject *parent)
     : DSettingsBackend(parent)
@@ -112,12 +104,6 @@ void SettingBackend::doSetOption(const QString &key, const QVariant &value)
     if (key == QString("advance.other.hide_system_partition")) {
         fileSignalManager->requestHideSystemPartition(value.toBool());
     }
-
-    // fix bug 81014
-#ifdef FULLTEXTSEARCH_ENABLE
-    if (key == QString("advance.index.index_search") && value.toBool())
-        DFMFullTextSearchManager::getInstance()->fulltextIndex("/");/*全文搜索建立索引*/
-#endif
 }
 
 void SettingBackend::onValueChanged(int attribute, const QVariant &value)
@@ -238,25 +224,6 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
         }
     }
 
-#ifndef FULLTEXTSEARCH_ENABLE
-    auto const &jdoc = QJsonDocument::fromJson(data);
-    QJsonObject RootObject = jdoc.object();
-    QJsonValueRef ArrayRef = RootObject.find("groups").value();
-    QJsonArray Array = ArrayRef.toArray();
-    QJsonArray::iterator ArrayIterator = Array.begin();
-    QJsonValueRef ElementOneValueRef = ArrayIterator[1];
-    QJsonObject ElementOneObject = ElementOneValueRef.toObject();
-    QJsonValueRef ArrayRef2 = ElementOneObject.find("groups").value();
-    QJsonArray Array2 = ArrayRef2.toArray();
-    Array2.removeFirst();
-    ArrayRef2 = Array2;
-    ElementOneValueRef = ElementOneObject;
-    ArrayRef = Array;
-    qDebug() << RootObject;
-    QByteArray arr = QJsonDocument(RootObject).toJson();
-
-    return DSettings::fromJson(arr);
-#else
 #ifdef DISABLE_QUICK_SEARCH
     /*fix task 22667,针对ARM下不能使用anything,所以去掉整个索引配置项
     */
@@ -290,7 +257,6 @@ static auto fromJsJson(const QString &fileName) -> decltype(DSettings::fromJson(
     return DSettings::fromJson(arr);
 #else
     return DSettings::fromJson(data);
-#endif
 #endif
 }
 
@@ -329,14 +295,11 @@ DFMSettingDialog::DFMSettingDialog(QWidget *parent):
 
     //load conf value
     auto backen = new SettingBackend(this);
-#ifdef FULLTEXTSEARCH_ENABLE
     //fulltext fix 42500 配置文件无FULLTEXT_KEY 导致第一次索引失败
     QVariant var = DFMApplication::genericSetting()->value(FULLTEXT_GROUP, FULLTEXT_KEY);
-    if (!var.isValid()) {
+    if (!var.isValid())
         DFMApplication::genericSetting()->setValue(FULLTEXT_GROUP, FULLTEXT_KEY, QVariant(false));
 
-    }
-#endif
     m_settings->setParent(this);
     m_settings->setBackend(backen);
     updateSettings("GenerateSettingTranslate", m_settings);

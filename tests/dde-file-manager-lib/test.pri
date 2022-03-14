@@ -18,7 +18,6 @@ SOURCES += $$PWD/shutil/ut_danythingmonitor.cpp
 }
 
 SOURCES += \
-    $$PWD/main.cpp \
     # vault
     $$PWD/interfaces/ut_dfmbaseview.cpp \
     $$PWD/vault/ut_interfaceactivevault.cpp \
@@ -138,7 +137,6 @@ SOURCES += \
     ###
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
-    $$PWD/fulltextsearch/ut_fulltextsearch.cpp \
     $$PWD/controllers/ut_searchcontroller.cpp \
     $$PWD/sw_label/ut_llsdeepinlabellibrary_test.cpp \
     $$PWD/sw_label/ut_filemanagerlibrary_test.cpp \
@@ -305,6 +303,20 @@ SOURCES += \
     $$PWD/interfaces/ut_dgvfsfileinfo.cpp \
     $$PWD/controllers/ut_dfmftpcrumbcontroller.cpp \
     $$PWD/controllers/ut_dfmsftpcrumbcontroller.cpp
+
+SOURCES += \
+    $$PWD/searchservice/ut_searchservice.cpp \
+    $$PWD/searchservice/ut_fulltextsearcher.cpp \
+    $$PWD/searchservice/ut_fsearch.cpp \
+    $$PWD/searchservice/ut_iteratorsearch.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
+    $$PWD/searchservice/ut_anythingsearch.cpp
+}
+
+SOURCES += \
+    $$PWD/main.cpp
 
 !CONFIG(DISABLE_TSAN_TOOL) {
     #DEFINES += TSAN_THREAD #互斥

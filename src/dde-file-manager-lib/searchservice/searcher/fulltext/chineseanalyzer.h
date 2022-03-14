@@ -1,3 +1,9 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
 #ifndef CHINESEANALYZER_H
 #define CHINESEANALYZER_H
 
@@ -6,7 +12,10 @@
 
 namespace Lucene {
 
-/// An {@link Analyzer} that tokenizes text with {@link ChineseTokenizer} and filters with {@link ChineseFilter}
+/**
+ * An Analyzer that tokenizes text with ChineseTokenizer
+ * Only used for Lucene++
+ */
 class LPPCONTRIBAPI ChineseAnalyzer : public Analyzer
 {
 public:
@@ -41,4 +50,4 @@ public:
 
 }
 
-#endif // CHINESEANALYZER_H
+#endif   // CHINESEANALYZER_H

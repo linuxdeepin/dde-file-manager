@@ -1,10 +1,20 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
 #ifndef CHINESETOKENIZER_H
 #define CHINESETOKENIZER_H
 
 #include <Tokenizer.h>
 
+/**
+ * An tokenizer that tokenizes chinese
+ * Only used for Lucene++
+ */
 namespace Lucene {
-class ChineseTokenizer: public Tokenizer
+class ChineseTokenizer : public Tokenizer
 {
 public:
     explicit ChineseTokenizer(const ReaderPtr &input);
@@ -17,9 +27,9 @@ public:
 
 protected:
     /// Max word length
-    static const int32_t MAX_WORD_LEN;
+    static const int32_t kMaxWordLen;
 
-    static const int32_t IO_BUFFER_SIZE;
+    static const int32_t kIoBufferSize;
 
 protected:
     /// word offset, used to imply which character(in) is parsed
@@ -56,4 +66,4 @@ protected:
 };
 }
 
-#endif // CHINESETOKENIZER_H
+#endif   // CHINESETOKENIZER_H

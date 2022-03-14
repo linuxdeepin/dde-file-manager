@@ -70,9 +70,9 @@ include($$SRC_FOLDER/dde-file-manager-plugins/plugininterfaces/plugininterfaces.
 include($$LIB_DFM_SRC_FOLDER/tag/tag.pri)
 include($$LIB_DFM_SRC_FOLDER/mediainfo/mediainfo.pri)
 include($$LIB_DFM_SRC_FOLDER/vault/vault.pri)
-include($$LIB_DFM_SRC_FOLDER/fulltextsearch/fulltextsearch.pri)
 include($$LIB_DFM_SRC_FOLDER/log/log.pri)
 include($$LIB_DFM_SRC_FOLDER/extensionimpl/extensionimpl.pri)
+include($$LIB_DFM_SRC_FOLDER/searchservice/searchservice.pri)
 
 isEqual(ARCH, sw_64){
 #    isEqual(ENABLE_SW_LABLE, YES){
@@ -85,9 +85,6 @@ include($$LIB_DFM_SRC_FOLDER/interfaces/vfs/vfs.pri)
 include($$LIB_DFM_SRC_FOLDER/interfaces/customization/customization.pri)
 include($$LIB_DFM_SRC_FOLDER/src.pri)
 
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) {
-    include($$LIB_DFM_SRC_FOLDER/search/dfsearch.pri)
-}
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
 DEFINES += APPSHAREDIR=\\\"$$APPSHAREDIR\\\"

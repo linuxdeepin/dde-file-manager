@@ -1,3 +1,9 @@
+/////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2009-2014 Alan Wright. All rights reserved.
+// Distributable under the terms of either the Apache License (Version 2.0)
+// or the GNU Lesser General Public License.
+/////////////////////////////////////////////////////////////////////////////
+
 #include "chineseanalyzer.h"
 #include "chinesetokenizer.h"
 
@@ -29,7 +35,6 @@ TokenStreamPtr ChineseAnalyzer::reusableTokenStream(const String &fieldName, con
     if (!streams) {
         streams = newLucene<ChineseAnalyzerSavedStreams>();
         streams->source = newLucene<ChineseTokenizer>(reader);
-//        streams->result = newLucene<ChineseFilter>(streams->source);
         setPreviousTokenStream(streams);
     } else {
         streams->source->reset(reader);

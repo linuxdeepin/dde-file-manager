@@ -28,6 +28,7 @@
 
 #include <QSet>
 #include <QPair>
+#include <QQueue>
 
 class SearchFileWatcher;
 class SearchController : public DAbstractFileController
@@ -76,6 +77,46 @@ private:
 
     friend class SearchDiriterator;
     friend class SearchFileWatcher;
+};
+
+class SearchDiriterator : public QObject, public DDirIterator
+{
+    Q_OBJECT
+public:
+    SearchDiriterator(const DUrl &url, const QStringList &nameFilters, QDir::Filters filter,
+                      QDirIterator::IteratorFlags flags, SearchController *parent);
+    ~SearchDiriterator() override;
+
+    void initConnect();
+    void doSearch();
+
+    DUrl next() override;
+    bool hasNext() const override;
+
+    QString fileName() const override;
+    DUrl fileUrl() const override;
+    const DAbstractFileInfoPointer fileInfo() const override;
+    DUrl url() const override;
+    void close() override;
+
+public slots:
+    void onMatched(const QString &id);
+    void onSearchCompleted(const QString &id);
+    void onSearchStoped(const QString &id);
+
+public:
+    SearchController *parent;
+    DAbstractFileInfoPointer currentFileInfo;
+    mutable QQueue<DUrl> childrens;
+
+    DUrl rootUrl;
+    DUrl targetUrl;
+    QString keyword;
+
+    bool searchCompleted = false;
+    bool searchStoped = false;
+    QString taskId;
+    mutable QMutex mutex;
 };
 
 #endif // SEARCHCONTROLLER_H

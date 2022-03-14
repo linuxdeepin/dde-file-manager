@@ -65,8 +65,8 @@ TEST_F(TestAccessControlManager, testCheckAuthentication2)
     Stub stu1;
     stu1.set(ADDR(QDBusReply<uint>, value), stu_value);
 
-    QDBusConnectionInterface *(*stu_interface)() = []()->QDBusConnectionInterface *{
-        QObject *pobj = new QObject();
+    static QObject *pobj = new QObject();
+    QDBusConnectionInterface *(*stu_interface)() = [pobj]()->QDBusConnectionInterface *{
         return static_cast<QDBusConnectionInterface *>(pobj);
     };
     Stub stu3;
@@ -85,6 +85,8 @@ TEST_F(TestAccessControlManager, testCheckAuthentication2)
     stu5.set(ADDR(QDBusConnectionInterface, servicePid), stu_servicePid);
 
     EXPECT_FALSE(mng->checkAuthentication());
+
+    pobj->deleteLater();
 
 }
 
@@ -116,8 +118,8 @@ TEST_F(TestAccessControlManager, testSetAccessPolicy1)
     Stub stu2;
     stu2.set(ADDR(QDBusContext, connection), stu_connect);
 
-    QDBusConnectionInterface *(*stu_interface)() = []()->QDBusConnectionInterface *{
-        QObject *pobj = new QObject();
+    static QObject *pobj = new QObject();
+    QDBusConnectionInterface *(*stu_interface)() = [pobj]()->QDBusConnectionInterface *{
         return static_cast<QDBusConnectionInterface *>(pobj);
     };
     Stub stu3;
@@ -140,6 +142,8 @@ TEST_F(TestAccessControlManager, testSetAccessPolicy1)
     policy.insert("policy", 1);
     policy.insert("type", 2);
     EXPECT_NO_FATAL_FAILURE(mng->SetAccessPolicy(policy));
+
+    pobj->deleteLater();
 }
 
 TEST_F(TestAccessControlManager, testSetAccessPolicy2)
@@ -157,8 +161,8 @@ TEST_F(TestAccessControlManager, testSetAccessPolicy2)
     Stub stu2;
     stu2.set(ADDR(QDBusContext, connection), stu_connect);
 
-    QDBusConnectionInterface *(*stu_interface)() = []()->QDBusConnectionInterface *{
-        QObject *pobj = new QObject();
+    static QObject *pobj = new QObject();
+    QDBusConnectionInterface *(*stu_interface)() = [pobj]()->QDBusConnectionInterface *{
         return static_cast<QDBusConnectionInterface *>(pobj);
     };
     Stub stu3;
@@ -187,6 +191,8 @@ TEST_F(TestAccessControlManager, testSetAccessPolicy2)
     policy.insert("policy", 1);
     policy.insert("type", 2);
     EXPECT_NO_FATAL_FAILURE(mng->SetAccessPolicy(policy));
+
+    pobj->deleteLater();
 }
 
 TEST_F(TestAccessControlManager, testSetAccessPolicy3)
@@ -204,8 +210,8 @@ TEST_F(TestAccessControlManager, testSetAccessPolicy3)
     Stub stu2;
     stu2.set(ADDR(QDBusContext, connection), stu_connect);
 
-    QDBusConnectionInterface *(*stu_interface)() = []()->QDBusConnectionInterface *{
-        QObject *pobj = new QObject();
+    static QObject *pobj = new QObject();
+    QDBusConnectionInterface *(*stu_interface)() = [pobj]()->QDBusConnectionInterface *{
         return static_cast<QDBusConnectionInterface *>(pobj);
     };
     Stub stu3;
@@ -242,6 +248,8 @@ TEST_F(TestAccessControlManager, testSetAccessPolicy3)
     policy.insert("policy", 1);
     policy.insert("type", 2);
     EXPECT_NO_FATAL_FAILURE(mng->SetAccessPolicy(policy));
+
+    pobj->deleteLater();
 }
 
 TEST_F(TestAccessControlManager, testOnFileCreated)

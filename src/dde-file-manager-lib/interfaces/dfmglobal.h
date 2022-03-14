@@ -47,7 +47,7 @@
 
 // begin file item global define
 #define TEXT_LINE_HEIGHT 18
-#define MAX_THREAD_COUNT 1000
+#define MAX_THREAD_COUNT 100
 #define MAX_FILE_NAME_CHAR_COUNT 255
 #define DDE_TRASH_ID "dde-trash"
 #define DDE_COMPUTER_ID "dde-computer"

@@ -79,24 +79,19 @@ include(vault/vault.pri)
 include(log/log.pri)
 include(extensionimpl/extensionimpl.pri)
 
+include(searchservice/searchservice.pri)
+TR_EXCLUDE += /usr/include/boost/ \
+          $$PWD/searchservice/*
+
 isEqual(ARCH, sw_64){
     DEFINES += SW_LABEL
     include(./sw_label/sw_label.pri)
 }
 
-include(fulltextsearch/fulltextsearch.pri)
-DEFINES += FULLTEXTSEARCH_ENABLE
-TR_EXCLUDE += /usr/include/boost/ \
-          $$PWD/fulltextsearch/*
-
 include(io/io.pri)
 include(interfaces/vfs/vfs.pri)
 include(interfaces/customization/customization.pri)
 include(src.pri)
-
-isEqual(ARCH, sw_64) | isEqual(ARCH, mips64) | isEqual(ARCH, mips32) | isEqual(ARCH, aarch64) | isEqual(ARCH, loongarch64) {
-    include(search/dfsearch.pri)
-}
 
 APPSHAREDIR = $$PREFIX/share/$$TARGET
 ICONDIR = $$PREFIX/share/icons/hicolor/scalable/apps
