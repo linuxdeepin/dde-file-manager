@@ -66,6 +66,7 @@ public:
     virtual void keyboardSearch(const QString &search) override;
     virtual void setSelectionModel(QItemSelectionModel *selectionModel) override;
     QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
+    WId winId() const;
 
 public:
     void setScreenNum(const int screenNum);

@@ -264,6 +264,16 @@ QList<QRect> CanvasView::itemPaintGeomertys(const QModelIndex &index) const
     return itemDelegate()->paintGeomertys(option, index);
 }
 
+WId CanvasView::winId() const
+{
+    // If it not the top widget and QAbstractItemView::winId() is called,that will cause errors in window system coordinates and graphics.
+    if (isTopLevel()) {
+        return QAbstractItemView::winId();
+    } else {
+        return topLevelWidget()->winId();
+    }
+}
+
 void CanvasView::paintEvent(QPaintEvent *event)
 {
     ViewPainter painter(d.get());
