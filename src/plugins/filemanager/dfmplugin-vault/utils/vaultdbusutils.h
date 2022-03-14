@@ -18,30 +18,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef VAULT_H
-#define VAULT_H
+#ifndef VAULTDBUSUTILS_H
+#define VAULTDBUSUTILS_H
 
 #include "dfmplugin_vault_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QObject>
+#include <QVariant>
 
 DPVAULT_BEGIN_NAMESPACE
-class Vault : public dpf::Plugin
+class VaultDBusUtils
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "vault.json")
-
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    static QVariant vaultManagerDBusCall(QString function, const QVariant &vaule = {});
 
-public slots:
-    void onWindowOpened(quint64 winID);
-    void addSideBarVaultItem();
-    void addCustomCrumbar();
-    void addComputer();
+    static int getVaultPolicy();
+
+    static bool setVaultPolicyState(int policyState);
 };
 DPVAULT_END_NAMESPACE
-
-#endif   // VAULT_H
+#endif   // VAULTDBUSUTILS_H

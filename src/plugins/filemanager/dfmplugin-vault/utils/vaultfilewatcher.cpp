@@ -30,7 +30,7 @@ VaultFileWatcher::VaultFileWatcher(const QUrl &url, QObject *parent)
     : AbstractFileWatcher(new VaultFileWatcherPrivate(url, this), parent)
 {
     dptr = dynamic_cast<VaultFileWatcherPrivate *>(d.data());
-    QString path = url.path().contains(VaultHelper::rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url);
+    QString path = url.path().contains(VaultHelper::instance()->rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url);
     QUrl localUrl = QUrl::fromLocalFile(path);
     dptr->proxyStaging = WacherFactory::create<AbstractFileWatcher>(localUrl);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileAttributeChanged,
@@ -50,7 +50,7 @@ VaultFileWatcher::~VaultFileWatcher()
 void VaultFileWatcher::onFileDeleted(const QUrl &url)
 {
     QUrl vaultUrl = url;
-    vaultUrl.setScheme(VaultHelper::scheme());
+    vaultUrl.setScheme(VaultHelper::instance()->scheme());
     vaultUrl.setHost("");
     emit fileDeleted(vaultUrl);
 }
@@ -58,7 +58,7 @@ void VaultFileWatcher::onFileDeleted(const QUrl &url)
 void VaultFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
     QUrl vaultUrl = url;
-    vaultUrl.setScheme(VaultHelper::scheme());
+    vaultUrl.setScheme(VaultHelper::instance()->scheme());
     vaultUrl.setHost("");
     emit fileAttributeChanged(vaultUrl);
 }
@@ -66,10 +66,10 @@ void VaultFileWatcher::onFileAttributeChanged(const QUrl &url)
 void VaultFileWatcher::onFileRename(const QUrl &fromUrl, const QUrl &toUrl)
 {
     QUrl vaultFromUrl = fromUrl;
-    vaultFromUrl.setScheme(VaultHelper::scheme());
+    vaultFromUrl.setScheme(VaultHelper::instance()->scheme());
     vaultFromUrl.setHost("");
     QUrl vaultToUrl = toUrl;
-    vaultToUrl.setScheme(VaultHelper::scheme());
+    vaultToUrl.setScheme(VaultHelper::instance()->scheme());
     vaultToUrl.setHost("");
     emit fileRename(vaultFromUrl, vaultToUrl);
 }
@@ -77,7 +77,7 @@ void VaultFileWatcher::onFileRename(const QUrl &fromUrl, const QUrl &toUrl)
 void VaultFileWatcher::onSubfileCreated(const QUrl &url)
 {
     QUrl vaultUrl = url;
-    vaultUrl.setScheme(VaultHelper::scheme());
+    vaultUrl.setScheme(VaultHelper::instance()->scheme());
     vaultUrl.setHost("");
     emit subfileCreated(vaultUrl);
 }

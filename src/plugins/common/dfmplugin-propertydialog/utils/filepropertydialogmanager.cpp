@@ -85,6 +85,9 @@ void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls, 
                     dialog->move(pos);
                 }
                 dialog->show();
+            } else {
+                filePropertyDialogs.value(url)->show();
+                filePropertyDialogs.value(url)->activateWindow();
             }
             filePropertyDialogs.value(url)->show();
         }

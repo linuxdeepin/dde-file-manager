@@ -134,8 +134,8 @@ void VaultRecoveryKeyPages::onButtonClicked(const int &index)
         QString strCipher("");
         if (InterfaceActiveVault::checkUserKey(strKey, strCipher)) {
             unlockByKey = true;
-            QString encryptBaseDir = VaultHelper::vaultLockPath();
-            QString decryptFileDir = VaultHelper::vaultUnlockPath();
+            QString encryptBaseDir = VaultHelper::instance()->vaultLockPath();
+            QString decryptFileDir = VaultHelper::instance()->vaultUnlockPath();
             VaultHelper::vaultServiceInstance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
         } else {
             showAlertMessage(tr("Wrong recovery key"));

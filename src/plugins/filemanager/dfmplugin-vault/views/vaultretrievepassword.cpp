@@ -20,8 +20,9 @@
  */
 
 #include "vaultretrievepassword.h"
-#include "utils/encryption/operatorcenter.h"
 #include "vaultunlockpages.h"
+#include "utils/encryption/operatorcenter.h"
+#include "utils/vaulthelper.h"
 
 #include <DFontSizeManager>
 
@@ -281,6 +282,7 @@ void VaultRetrievePassword::setResultsPage(QString password)
 
 void VaultRetrievePassword::showEvent(QShowEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kRetrievePassWordPage);
     if (QFile::exists(defaultKeyPath)) {
         defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
         getButton(1)->setEnabled(true);
@@ -296,5 +298,6 @@ void VaultRetrievePassword::showEvent(QShowEvent *event)
 
 void VaultRetrievePassword::closeEvent(QCloseEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kUnknown);
     VaultPageBase::closeEvent(event);
 }

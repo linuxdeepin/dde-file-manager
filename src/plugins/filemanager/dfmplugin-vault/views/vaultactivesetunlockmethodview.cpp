@@ -21,6 +21,7 @@
 
 #include "vaultactivesetunlockmethodview.h"
 #include "utils/encryption/operatorcenter.h"
+#include "utils/vaulthelper.h"
 
 #include <DPasswordEdit>
 #include <DLabel>
@@ -314,5 +315,6 @@ bool VaultActiveSetUnlockMethodView::checkInputInfo()
 
 void VaultActiveSetUnlockMethodView::showEvent(QShowEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kCreateVaultPage);
     QWidget::showEvent(event);
 }

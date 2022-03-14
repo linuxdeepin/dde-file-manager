@@ -120,7 +120,7 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
-    connect(VaultHelper::vaultServiceInstance(), &VaultService::signalCreateVaultState,
+    connect(VaultHelper::instance()->vaultServiceInstance(), &VaultService::signalCreateVaultState,
             this, &VaultActiveFinishedView::slotEncryptComplete);
 
     // 初始化定时器
@@ -167,11 +167,8 @@ void VaultActiveFinishedView::slotEncryptVault()
         finishedBtn->setEnabled(false);
     } else {
         // 切换到保险箱主页面
-        UrlRoute::regScheme(VaultHelper::scheme(), VaultHelper::rootUrl().path(), VaultHelper::icon(), false, tr("My Vault"));
-        QUrl url;
-        url.setScheme(VaultHelper::scheme());
-        url.setPath("/");
-        VaultHelper::defaultCdAction(url);
+        UrlRoute::regScheme(VaultHelper::instance()->scheme(), VaultHelper::instance()->rootUrl().path(), VaultHelper::instance()->icon(), false, tr("My Vault"));
+        VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->rootUrl());
         emit sigAccepted();
     }
 }
@@ -181,6 +178,7 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
                this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
     if (isVisible()) {
+        VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kCreateVaultPage1);
         if (result == Authority::Yes) {
             if (finishedBtn->text() == tr("Encrypt")) {
                 // 完成按钮灰化
@@ -197,7 +195,7 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
                     // 拿到密码
                     QString strPassword = OperatorCenter::getInstance()->getSaltAndPasswordCipher();
                     if (!strPassword.isEmpty()) {
-                        VaultHelper::createVault(strPassword);
+                        VaultHelper::instance()->createVault(strPassword);
                         OperatorCenter::getInstance()->clearSaltAndPasswordCipher();
                     } else
                         qDebug() << "获取cryfs密码为空，创建保险箱失败！";
@@ -212,6 +210,7 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
 
 void VaultActiveFinishedView::showEvent(QShowEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kCreateVaultPage1);
     QWidget::showEvent(event);
 }
 

@@ -4,27 +4,16 @@ project(ddplugin-dbusregister)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(INTERFACES_H
-    dbusregister.h
-    devicemanagerdbus.h
-    operationsstackmanagerdbus.h
-    dbus_adaptor/devicemanagerdbus_adaptor.h
-    dbus_adaptor/operationsstackmanagerdbus_adaptor.h
-)
-
-set(INTERFACES_CPP
-    dbusregister.cpp
-    devicemanagerdbus.cpp
-    operationsstackmanagerdbus.cpp
-    dbus_adaptor/devicemanagerdbus_adaptor.cpp
-    dbus_adaptor/operationsstackmanagerdbus_adaptor.cpp
-    dbusregister.json
+FILE(GLOB DBUSREGISTER
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
 )
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${INTERFACES_H}
-    ${INTERFACES_CPP}
+    ${DBUSREGISTER}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

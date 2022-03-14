@@ -23,6 +23,7 @@
 #include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
+#include "services/common/preview/preview_defines.h"
 #include "view/canvasview_p.h"
 #include "fileoperaterproxy.h"
 #include "canvasmanager.h"

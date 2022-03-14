@@ -48,102 +48,30 @@ DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
-namespace GlobalPrivateService {
-static SideBarService *sideBarService { nullptr };
-static WorkspaceService *workspaceService { nullptr };
-static ComputerService *computerService { nullptr };
-static TitleBarService *titleBarService { nullptr };
-static WindowsService *windowsService { nullptr };
-}   // namespace GlobalPrivate
 
 void Vault::initialize()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    QString errStr;
-    if (!ctx.load(SideBarService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
 
-    if (!ctx.load(WorkspaceService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(ComputerService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(TitleBarService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(WindowsService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    if (!ctx.load(PropertyDialogService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
-
-    GlobalPrivateService::sideBarService = ctx.service<SideBarService>(SideBarService::name());
-    if (!GlobalPrivateService::sideBarService) {
-        qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
-        abort();
-    }
-
-    GlobalPrivateService::computerService = ctx.service<ComputerService>(ComputerService::name());
-    if (!GlobalPrivateService::computerService) {
-        qCritical() << "Failed, init computer \"computerService\" is empty";
-        abort();
-    }
-
-    GlobalPrivateService::titleBarService = ctx.service<TitleBarService>(TitleBarService::name());
-
-    if (!GlobalPrivateService::titleBarService) {
-        qCritical() << "Failed, init titleBar \"titleBarService\" is empty";
-        abort();
-    }
-
-    GlobalPrivateService::windowsService = ctx.service<WindowsService>(WindowsService::name());
-
-    if (!GlobalPrivateService::windowsService) {
-        qCritical() << "Failed, init workspace \"windowsService\" is empty";
-        abort();
-    }
-
-    if (VaultHelper::state(VaultHelper::vaultLockPath()) == VaultState::kUnlocked) {
-        UrlRoute::regScheme(VaultHelper::scheme(), VaultHelper::rootUrl().path(), VaultHelper::icon(), false, tr("My Vault"));
+    if (VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath()) == VaultState::kUnlocked) {
+        UrlRoute::regScheme(VaultHelper::instance()->scheme(), VaultHelper::instance()->rootUrl().path(), VaultHelper::instance()->icon(), false, tr("My Vault"));
     }
 
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<VaultFileInfo>(VaultHelper::scheme());
-    WacherFactory::regClass<VaultFileWatcher>(VaultHelper::scheme());
-    DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::scheme());
+    InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());
+    WacherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme());
+    DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
     EntryEntityFactor::registCreator<VaultEntryFileEntity>("vault");
 }
 
 bool Vault::start()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    GlobalPrivateService::workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
 
-    if (!GlobalPrivateService::workspaceService) {
-        qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-        abort();
-    }
-    GlobalPrivateService::workspaceService->addScheme(VaultHelper::scheme());
-    connect(GlobalPrivateService::windowsService, &WindowsService::windowOpened, this, &Vault::onWindowOpened, Qt::DirectConnection);
+    VaultHelper::workspaceServiceInstance()->addScheme(VaultHelper::instance()->scheme());
+    connect(VaultHelper::windowServiceInstance(), &WindowsService::windowOpened, this, &Vault::onWindowOpened, Qt::DirectConnection);
     VaultEventReceiver::instance()->connectEvent();
 
-    propertyServIns->registerMethod(VaultHelper::createVaultPropertyDialog, VaultHelper::scheme());
-
-    VaultEventCaller::sendBookMarkDisabled(VaultHelper::scheme());
-
+    VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
+    propertyServIns->registerMethod(VaultHelper::createVaultPropertyDialog, VaultHelper::instance()->scheme());
     return true;
 }
 
@@ -154,7 +82,7 @@ dpf::Plugin::ShutdownFlag Vault::stop()
 
 void Vault::onWindowOpened(quint64 winID)
 {
-    auto window = GlobalPrivateService::windowsService->findWindowById(winID);
+    auto window = VaultHelper::windowServiceInstance()->findWindowById(winID);
     if (window->titleBar())
         addCustomCrumbar();
     else
@@ -170,48 +98,36 @@ void Vault::onWindowOpened(quint64 winID)
 
 void Vault::addSideBarVaultItem()
 {
-    bool vaultEnabled = VaultHelper::isVaultEnabled();
+    bool vaultEnabled = VaultHelper::instance()->isVaultEnabled();
     if (vaultEnabled) {
         SideBar::ItemInfo item;
         item.group = SideBar::DefaultGroup::kDevice;
-        QUrl url;
-        url.setScheme(VaultHelper::scheme());
-        url.setPath(VaultHelper::rootUrl().path());
-        url.setHost("");
-        item.url = VaultHelper::rootUrl();
-        item.iconName = VaultHelper::icon().name();
+        item.url = VaultHelper::instance()->rootUrl();
+        item.iconName = VaultHelper::instance()->icon().name();
         item.text = tr("My Vault");
         item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
         item.contextMenuCb = VaultHelper::contenxtMenuHandle;
         item.cdCb = VaultHelper::siderItemClicked;
 
-        GlobalPrivateService::sideBarService->insertItem(1, item);
+        VaultHelper::sideBarServiceInstance()->insertItem(1, item);
     }
 }
 
 void Vault::addCustomCrumbar()
 {
-    bool vaultEnabled = VaultHelper::isVaultEnabled();
+    bool vaultEnabled = VaultHelper::instance()->isVaultEnabled();
     if (vaultEnabled) {
         TitleBar::CustomCrumbInfo crumb;
-        crumb.scheme = VaultHelper::scheme();
+        crumb.scheme = VaultHelper::instance()->scheme();
         crumb.keepAddressBar = false;
-        crumb.seperateCb = VaultHelper::seprateUrl;
-        GlobalPrivateService::titleBarService->addCustomCrumbar(crumb);
+        crumb.seperateCb = VaultHelper::instance()->seprateUrl;
+        VaultHelper::titleBarServiceInstance()->addCustomCrumbar(crumb);
     }
 }
 
 void Vault::addComputer()
 {
-    bool vaultEnabled = VaultHelper::isVaultEnabled();
+    bool vaultEnabled = VaultHelper::instance()->isVaultEnabled();
     if (vaultEnabled)
-        GlobalPrivateService::computerService->addDevice(tr("Vault"), QUrl("entry:///vault.vault"));
-}
-
-void Vault::removeSideBarVaultItem()
-{
-    QUrl url;
-    url.setScheme(VaultHelper::scheme());
-    url.setPath("/");
-    GlobalPrivateService::sideBarService->removeItem(url);
+        VaultHelper::computerServiceInstance()->addDevice(tr("Vault"), QUrl("entry:///vault.vault"));
 }

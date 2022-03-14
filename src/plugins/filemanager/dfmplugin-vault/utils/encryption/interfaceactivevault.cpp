@@ -70,7 +70,7 @@ QStringList InterfaceActiveVault::getConfigFilePath()
 
 VaultState InterfaceActiveVault::vaultState()
 {
-    return VaultHelper::state(VaultHelper::makeVaultLocalPath(QString(""), kVaultEncrypyDirName));
+    return VaultHelper::instance()->state(VaultHelper::instance()->makeVaultLocalPath(QString(""), kVaultEncrypyDirName));
 }
 
 bool InterfaceActiveVault::getRootPassword()

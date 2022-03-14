@@ -25,6 +25,7 @@
 #include "devicemanagerdbus.h"
 #include "dbus_adaptor/devicemanagerdbus_adaptor.h"
 #include "dbus_adaptor/operationsstackmanagerdbus_adaptor.h"
+#include "dbus_adaptor/vaultmanagerdbus_adaptor.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -74,6 +75,7 @@ void DBusRegister::initServiceDBusInterfaces(QDBusConnection &connection)
         }
         initDeviceDBus(connection);
         initOperationsDBus(connection);
+        initVaultDBus(connection);
     });
 }
 
@@ -99,6 +101,19 @@ void DBusRegister::initOperationsDBus(QDBusConnection &connection)
                                    operationsStackManager.data())) {
         qWarning("Cannot register the \"/com/deepin/filemanager/service/OperationsStackManager\" object.\n");
         operationsStackManager.reset(nullptr);
+        return;
+    }
+}
+
+void DBusRegister::initVaultDBus(QDBusConnection &connection)
+{
+    // register object
+    vaultManager.reset(new VaultManagerDBus);
+    Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
+    if (!connection.registerObject("/com/deepin/filemanager/service/VaultManager",
+                                   vaultManager.data())) {
+        qWarning("Cannot register the \"/com/deepin/filemanager/service/VaultManager\" object.\n");
+        vaultManager.reset(nullptr);
         return;
     }
 }

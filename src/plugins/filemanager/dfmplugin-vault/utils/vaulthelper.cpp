@@ -21,13 +21,16 @@
 
 #include "vaulthelper.h"
 #include "vaultglobaldefine.h"
-#include "dfm-base/base/urlroute.h"
 #include "views/vaultactiveview.h"
 #include "views/vaultunlockpages.h"
 #include "views/vaultremovepages.h"
 #include "views/vaultpropertydialog.h"
 #include "utils/encryption/vaultconfig.h"
+#include "utils/vaultautolock.h"
 #include "events/vaulteventcaller.h"
+#include "vaultdbusutils.h"
+
+#include "dfm-base/base/urlroute.h"
 
 #include <dfm-framework/framework.h>
 
@@ -45,8 +48,6 @@ DSB_FM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 
-bool VaultHelper::isModel = false;
-
 quint64 VaultHelper::winID = 0;
 
 QUrl VaultHelper::rootUrl()
@@ -58,6 +59,12 @@ QUrl VaultHelper::rootUrl()
     return url;
 }
 
+/*!
+ * \brief 用于右侧栏保险箱右键菜单创建
+ * \param windowId 窗口ID
+ * \param url      保险箱Url
+ * \param globalPos 右键菜单显示坐标
+ */
 void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     winID = windowId;
@@ -66,11 +73,16 @@ void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QP
     delete menu;
 }
 
+/*!
+ * \brief 用于右侧栏保险箱点击处理
+ * \param windowId 窗口ID
+ * \param url      保险箱Url
+ */
 void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
 {
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     winID = windowId;
-    switch (state(vaultLockPath())) {
+    switch (instance()->state(instance()->vaultLockPath())) {
     case VaultState::kNotExisted: {
         VaultPageBase *page = new VaultActiveView();
         page->exec();
@@ -80,7 +92,7 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
         page->exec();
     } break;
     case VaultState::kUnlocked:
-        defaultCdAction(url);
+        instance()->defaultCdAction(url);
         break;
     case VaultState::kUnderProcess:
     case VaultState::kBroken:
@@ -103,7 +115,6 @@ bool VaultHelper::isVaultEnabled()
 
 VaultState VaultHelper::state(QString lockBaseDir)
 {
-
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) {
         // 记录保险箱状态
@@ -173,11 +184,111 @@ VaultService *VaultHelper::vaultServiceInstance()
 
         vaultService = ctx.service<VaultService>(VaultService::name());
         if (!vaultService) {
-            qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
+            qCritical() << "Failed, init vault \"sideBarService\" is empty";
             abort();
         }
     }
     return vaultService;
+}
+
+SideBarService *VaultHelper::sideBarServiceInstance()
+{
+    static SideBarService *sideBarService = nullptr;
+    if (sideBarService == nullptr) {
+        auto &ctx = dpfInstance.serviceContext();
+        QString errStr;
+        if (!ctx.load(SideBarService::name(), &errStr)) {
+            qCritical() << errStr;
+            abort();
+        }
+
+        sideBarService = ctx.service<SideBarService>(SideBarService::name());
+        if (!sideBarService) {
+            qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
+            abort();
+        }
+    }
+    return sideBarService;
+}
+
+WindowsService *VaultHelper::windowServiceInstance()
+{
+    static WindowsService *windowsService = nullptr;
+    if (windowsService == nullptr) {
+        auto &ctx = dpfInstance.serviceContext();
+        QString errStr;
+        if (!ctx.load(WindowsService::name(), &errStr)) {
+            qCritical() << errStr;
+            abort();
+        }
+
+        windowsService = ctx.service<WindowsService>(WindowsService::name());
+        if (!windowsService) {
+            qCritical() << "Failed, init windows \"sideBarService\" is empty";
+            abort();
+        }
+    }
+    return windowsService;
+}
+
+ComputerService *VaultHelper::computerServiceInstance()
+{
+    static ComputerService *computerService = nullptr;
+    if (computerService == nullptr) {
+        auto &ctx = dpfInstance.serviceContext();
+        QString errStr;
+        if (!ctx.load(ComputerService::name(), &errStr)) {
+            qCritical() << errStr;
+            abort();
+        }
+
+        computerService = ctx.service<ComputerService>(ComputerService::name());
+        if (!computerService) {
+            qCritical() << "Failed, init computer \"computerService\" is empty";
+            abort();
+        }
+    }
+    return computerService;
+}
+
+TitleBarService *VaultHelper::titleBarServiceInstance()
+{
+    static TitleBarService *titleBarService = nullptr;
+    if (titleBarService == nullptr) {
+        auto &ctx = dpfInstance.serviceContext();
+        QString errStr;
+        if (!ctx.load(TitleBarService::name(), &errStr)) {
+            qCritical() << errStr;
+            abort();
+        }
+
+        titleBarService = ctx.service<TitleBarService>(TitleBarService::name());
+        if (!titleBarService) {
+            qCritical() << "Failed, init titlebar \"titleBarService\" is empty";
+            abort();
+        }
+    }
+    return titleBarService;
+}
+
+WorkspaceService *VaultHelper::workspaceServiceInstance()
+{
+    static WorkspaceService *workspaceService = nullptr;
+    if (workspaceService == nullptr) {
+        auto &ctx = dpfInstance.serviceContext();
+        QString errStr;
+        if (!ctx.load(WorkspaceService::name(), &errStr)) {
+            qCritical() << errStr;
+            abort();
+        }
+
+        workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
+        if (!workspaceService) {
+            qCritical() << "Failed, init workspace \"workspaceService\" is empty";
+            abort();
+        }
+    }
+    return workspaceService;
 }
 
 void VaultHelper::defaultCdAction(const QUrl &url)
@@ -210,10 +321,50 @@ QString VaultHelper::vaultUnlockPath()
     return VaultHelper::makeVaultLocalPath("", kVaultDecryptDirName);
 }
 
+int VaultHelper::getVaultPolicy()
+{
+    return VaultDBusUtils::getVaultPolicy();
+}
+
+bool VaultHelper::setVaultPolicyState(int policyState)
+{
+    return VaultDBusUtils::setVaultPolicyState(policyState);
+}
+
+VaultHelper::VaultPageMark VaultHelper::getVaultCurrentPageMark()
+{
+    return recordVaultPageMark;
+}
+
+void VaultHelper::setVauleCurrentPageMark(VaultHelper::VaultPageMark mark)
+{
+    recordVaultPageMark = mark;
+}
+
+bool VaultHelper::isVaultVisiable()
+{
+    return vaultVisiable;
+}
+
+void VaultHelper::removeSideBarVaultItem()
+{
+    sideBarServiceInstance()->removeItem(rootUrl());
+}
+
+void VaultHelper::removeComputerVaultItem()
+{
+    computerServiceInstance()->removeDevice(QUrl("entry:///vault.vault"));
+}
+
+void VaultHelper::killVaultTasks()
+{
+}
+
 QMenu *VaultHelper::createMenu()
 {
     QMenu *menu = new QMenu;
-    switch (state(vaultLockPath())) {
+    QMenu *timeMenu = new QMenu;
+    switch (instance()->state(instance()->vaultLockPath())) {
     case VaultState::kNotExisted:
         menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::creatVaultDialog);
         break;
@@ -229,17 +380,41 @@ QMenu *VaultHelper::createMenu()
 
         menu->addAction(QObject::tr("Lock Now"), VaultHelper::instance(), &VaultHelper::lockVault);
 
-        menu->addAction(QObject::tr("Time Lock"), []() {
-
+        QAction *timeLock = new QAction;
+        timeLock->setText(QObject::tr("Time Lock"));
+        VaultAutoLock::AutoLockState autoState = VaultAutoLock::instance()->getAutoLockState();
+        QAction *actionNever = timeMenu->addAction(QObject::tr("Never"), []() {
+            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kNever);
         });
+        actionNever->setCheckable(true);
+        actionNever->setChecked(VaultAutoLock::AutoLockState::kNever == autoState ? true : false);
+        timeMenu->addSeparator();
+        QAction *actionFiveMins = timeMenu->addAction(QObject::tr("5 minutes"), []() {
+            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kFiveMinutes);
+        });
+        actionFiveMins->setCheckable(true);
+        actionFiveMins->setChecked(VaultAutoLock::AutoLockState::kFiveMinutes == autoState ? true : false);
+        QAction *actionTenMins = timeMenu->addAction(QObject::tr("10 minutes"), []() {
+            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kTenMinutes);
+        });
+        actionTenMins->setCheckable(true);
+        actionTenMins->setChecked(VaultAutoLock::AutoLockState::kTenMinutes == autoState ? true : false);
+        QAction *actionTwentyMins = timeMenu->addAction(QObject::tr("20 minutes"), []() {
+            VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kTwentyMinutes);
+        });
+        actionTwentyMins->setCheckable(true);
+        actionTwentyMins->setChecked(VaultAutoLock::AutoLockState::kTwentyMinutes == autoState ? true : false);
+        timeLock->setMenu(timeMenu);
+
+        menu->addMenu(timeMenu);
 
         menu->addSeparator();
 
-        menu->addAction(QObject::tr("Delete Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
+        menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
 
         menu->addAction(QObject::tr("Property"), []() {
             QUrl url;
-            url.setScheme(scheme());
+            url.setScheme(instance()->scheme());
             url.setPath("/");
             url.setHost("");
             VaultEventCaller::sendVaultProperty(url);
@@ -257,8 +432,8 @@ QMenu *VaultHelper::createMenu()
 QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
 {
     static VaultPropertyDialog *vaultDialog = nullptr;
-    QUrl rUrl = rootUrl();
-    bool flg = rUrl == url;
+    QUrl rUrl = VaultHelper::instance()->rootUrl();
+    bool flg = (rUrl == url);
     if ((UrlRoute::isRootUrl(url) || flg) && !vaultDialog) {
         vaultDialog = new VaultPropertyDialog();
         vaultDialog->selectFileUrl(url);
@@ -342,9 +517,70 @@ void VaultHelper::newOpenWindow()
     openNewWindow(rootUrl());
 }
 
+void VaultHelper::slotVaultPolicy()
+{
+    switch (getVaultPolicy()) {
+    case 1: {
+        switch (getVaultCurrentPageMark()) {
+        case VaultPageMark::kUnknown:
+            break;
+        case VaultPageMark::kCreateVaultPage:
+            emit sigCloseWindow();
+            break;
+        case VaultPageMark::kRetrievePassWordPage:
+            emit sigCloseWindow();
+            break;
+        case VaultPageMark::kVaultPage:
+            emit sigCloseWindow();
+            break;
+        case VaultPageMark::kClipboardPage:
+            if (vaultVisiable) {
+                lockVault();
+                vaultVisiable = false;
+                VaultHelper::instance()->removeSideBarVaultItem();
+                VaultHelper::instance()->removeComputerVaultItem();
+                VaultHelper::killVaultTasks();
+                return;
+            }
+            break;
+        case VaultPageMark::kCopyFilePage:
+            if (vaultVisiable) {
+                lockVault();
+                vaultVisiable = false;
+                VaultHelper::instance()->removeSideBarVaultItem();
+                VaultHelper::instance()->removeComputerVaultItem();
+                VaultHelper::killVaultTasks();
+                return;
+            }
+            break;
+        case VaultPageMark::kCreateVaultPage1:
+        case VaultPageMark::kUnlockVaultPage:
+        case VaultPageMark::kDeleteFilePage:
+        case VaultPageMark::kDeleteVaultPage:
+            setVaultPolicyState(2);
+            return;
+        }
+
+        lockVault();
+        vaultVisiable = false;
+        VaultHelper::instance()->removeSideBarVaultItem();
+        VaultHelper::instance()->removeComputerVaultItem();
+
+    } break;
+    case 2:
+        if (!vaultVisiable) {
+            vaultVisiable = true;
+            VaultHelper::instance()->removeSideBarVaultItem();
+            VaultHelper::instance()->removeComputerVaultItem();
+        }
+        break;
+    }
+}
+
 void VaultHelper::slotlockVault(int state)
 {
     if (state == 0) {
+        VaultAutoLock::instance()->slotLockVault(state);
         emit VaultHelper::instance()->sigLocked(state);
         QUrl url;
         url.setScheme(QString(Global::kComputer));

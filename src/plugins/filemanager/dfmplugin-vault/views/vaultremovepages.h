@@ -60,6 +60,7 @@ private:
     void showVerifyWidget();
 
     void showRemoveWidget();
+
     void setInfo(const QString &hintInfo);
 
 protected:

@@ -30,6 +30,7 @@
 class QDBusConnection;
 class DeviceManagerDBus;
 class OperationsStackManagerDbus;
+class VaultManagerDBus;
 class DBusRegister : public dpf::Plugin
 {
     Q_OBJECT
@@ -45,10 +46,12 @@ private:
     void initServiceDBusInterfaces(QDBusConnection &connection);
     void initDeviceDBus(QDBusConnection &connection);
     void initOperationsDBus(QDBusConnection &connection);
+    void initVaultDBus(QDBusConnection &connection);
 
 private:
     QScopedPointer<DeviceManagerDBus> deviceManager;
     QScopedPointer<OperationsStackManagerDbus> operationsStackManager;
+    QScopedPointer<VaultManagerDBus> vaultManager;
 };
 
 #endif   // INTERFACES_H

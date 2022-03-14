@@ -24,6 +24,7 @@
 #include "vaultactivesetunlockmethodview.h"
 #include "vaultactivesavekeyfileview.h"
 #include "vaultactivefinishedview.h"
+#include "utils/vaulthelper.h"
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -70,12 +71,14 @@ VaultActiveView::VaultActiveView(QWidget *parent)
 
 void VaultActiveView::closeEvent(QCloseEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kUnknown);
     //! 响应基类关闭事件
     VaultPageBase::closeEvent(event);
 }
 
 void VaultActiveView::showEvent(QShowEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kCreateVaultPage);
     VaultPageBase::showEvent(event);
 }
 

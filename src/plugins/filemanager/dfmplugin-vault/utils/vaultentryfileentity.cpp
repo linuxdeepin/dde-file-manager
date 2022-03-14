@@ -59,9 +59,9 @@ bool VaultEntryFileEntity::showProgress() const
 
 bool VaultEntryFileEntity::showTotalSize() const
 {
-    if (VaultHelper::state(VaultHelper::vaultLockPath()) == VaultState::kUnlocked) {
+    if (VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath()) == VaultState::kUnlocked) {
         showSizeState = true;
-        fileCalculationUtils->start(QList<QUrl>() << VaultHelper::rootUrl());
+        fileCalculationUtils->start(QList<QUrl>() << VaultHelper::instance()->rootUrl());
         return true;
     }
     return false;
@@ -84,7 +84,7 @@ EntryFileInfo::EntryOrder VaultEntryFileEntity::order() const
 
 QMenu *VaultEntryFileEntity::createMenu()
 {
-    return VaultHelper::createMenu();
+    return VaultHelper::instance()->createMenu();
 }
 
 void VaultEntryFileEntity::refresh()
@@ -102,7 +102,7 @@ qint64 VaultEntryFileEntity::sizeTotal() const
 QUrl VaultEntryFileEntity::targetUrl() const
 {
     QUrl url;
-    url.setScheme(VaultHelper::scheme());
+    url.setScheme(VaultHelper::instance()->scheme());
     url.setHost("");
     url.setPath("/");
     return url;

@@ -52,6 +52,14 @@ public:
     static QVariantHash convertFromQMap(const QVariantMap map);
 
     static bool urlEquals(const QUrl &url1, const QUrl &url2);
+
+    static QString getCurrentUser();
+
+    static void userChange(QObject *obj, const char *cslot = nullptr);
+
+    static void prepareForSleep(QObject *obj, const char *cslot = nullptr);
+
+    static void lockEventTriggered(QObject *obj, const char *cslot = nullptr);
 };
 
 DFMBASE_END_NAMESPACE

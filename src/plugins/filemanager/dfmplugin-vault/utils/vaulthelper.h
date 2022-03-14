@@ -26,76 +26,140 @@
 #include "utils/vaultglobaldefine.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/vault/vaultservice.h"
+#include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
+#include "services/filemanager/computer/computerservice.h"
+#include "services/filemanager/titlebar/titlebarservice.h"
+#include "services/filemanager/windows/windowsservice.h"
 
 #include <QObject>
 #include <QIcon>
 #include <QMenu>
+#include <QTimer>
 
 DPVAULT_BEGIN_NAMESPACE
 class VaultHelper final : public QObject
 {
     Q_OBJECT
 public:
-    inline static QString scheme()
+    //! 保险箱当前页面标记
+    enum VaultPageMark {
+        kUnknown,
+        kCreateVaultPage,
+        kCreateVaultPage1,
+        kUnlockVaultPage,
+        kRetrievePassWordPage,
+        kDeleteFilePage,
+        kDeleteVaultPage,
+        kCopyFilePage,
+        kClipboardPage,
+        kVaultPage
+    };
+
+    inline QString scheme()
     {
         return "dfmvault";
     }
 
-    inline static QIcon icon()
+    inline QIcon icon()
     {
         return QIcon::fromTheme("drive-harddisk-encrypted-symbolic");
     }
 
-    static QUrl rootUrl();
+    QUrl rootUrl();
 
+    /*!
+    * \brief isVaultEnabled
+    * \return true vault is available, vice versa.
+    */
+    bool isVaultEnabled();
+
+    VaultState state(QString lockBaseDir);
+
+    QString makeVaultLocalPath(QString path = "", QString base = "");
+
+    /*!
+     * \brief getVaultVersion   获取当前保险箱版本是否是1050及以上版本
+     * \return  true大于等于1050,false小于1050
+     */
+    bool getVaultVersion();
+
+    QString vaultLockPath();
+
+    QString vaultUnlockPath();
+
+    /*!
+     * \brief getVaultPolicy 获取当前策略
+     * \return 返回保险箱是否隐藏  1隐藏 2显示
+     */
+    int getVaultPolicy();
+
+    /*!
+     * \brief setVaultPolicyState 设置策略是否可用
+     * \param policyState 1策略可用 2策略不可用
+     * \return 设置是否成功
+     */
+    bool setVaultPolicyState(int policyState);
+
+    /*!
+     * \brief  获取当前所处保险箱页面
+     * \return 返回当前页面标识
+     */
+    VaultPageMark getVaultCurrentPageMark();
+
+    /*!
+     * \brief 设置当前所处保险箱页面
+     * \param mark 页面标识
+     */
+    void setVauleCurrentPageMark(VaultPageMark mark);
+
+    /*!
+     * \brief isVaultVisiable 获取保险箱显示状态
+     * \return true显示、false隐藏
+     */
+    bool isVaultVisiable();
+
+    void removeSideBarVaultItem();
+
+    void removeComputerVaultItem();
+
+    void killVaultTasks();
+
+public:
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
 
     static void siderItemClicked(quint64 windowId, const QUrl &url);
 
-    /*!
-    * @brief isVaultEnabled
-    * @return true vault is available, vice versa.
-    */
-    static bool isVaultEnabled();
-
-    static VaultState state(QString lockBaseDir);
-
-    static QString makeVaultLocalPath(QString path = "", QString base = "");
-
-    static QList<DSB_FM_NAMESPACE::TitleBar::CrumbData> seprateUrl(const QUrl &url);
-
     static DSB_FM_NAMESPACE::VaultService *vaultServiceInstance();
 
-    /**
-     * @brief getVaultVersion   获取当前保险箱版本是否是1050及以上版本
-     * @return  true大于等于1050,false小于1050
-     */
-    static bool getVaultVersion();
+    static DSB_FM_NAMESPACE::SideBarService *sideBarServiceInstance();
 
-    static QString vaultLockPath();
+    static DSB_FM_NAMESPACE::WindowsService *windowServiceInstance();
 
-    static QString vaultUnlockPath();
+    static DSB_FM_NAMESPACE::ComputerService *computerServiceInstance();
+
+    static DSB_FM_NAMESPACE::TitleBarService *titleBarServiceInstance();
+
+    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
+
+    static QList<DSB_FM_NAMESPACE::TitleBar::CrumbData> seprateUrl(const QUrl &url);
 
     static QMenu *createMenu();
 
     static QWidget *createVaultPropertyDialog(const QUrl &url);
 
-public:
-    // 定义静态变量，记录当前保险箱是否处于模态弹窗状态
-    static bool isModel;
-
 public slots:
-    static void slotlockVault(int state);
+    void slotlockVault(int state);
 
-    static void createVault(QString &password);
+    void createVault(QString &password);
 
-    static void unlockVault(QString &password);
+    void unlockVault(QString &password);
 
-    static void lockVault();
+    void lockVault();
 
-    static void defaultCdAction(const QUrl &url);
+    void defaultCdAction(const QUrl &url);
 
-    static void openNewWindow(const QUrl &url);
+    void openNewWindow(const QUrl &url);
 
     void creatVaultDialog();
 
@@ -109,12 +173,21 @@ public slots:
 
     void newOpenWindow();
 
+    //! 保险箱策略处理函数
+    void slotVaultPolicy();
+
 signals:
     void sigCreateVault(int state);
 
     void sigUnlocked(int state);
 
     void sigLocked(int state);
+
+    //! 通知关闭对话框
+    void sigCloseWindow();
+
+private:
+    explicit VaultHelper();
 
 private:
     static quint64 winID;
@@ -123,7 +196,9 @@ public:
     static VaultHelper *instance();
 
 private:
-    explicit VaultHelper();
+    //! 用于记录当前保险箱所处页面标识
+    VaultPageMark recordVaultPageMark;
+    bool vaultVisiable { true };
 };
 
 DPVAULT_END_NAMESPACE

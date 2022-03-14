@@ -90,7 +90,7 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
 void VaultRemovePages::initConnect()
 {
     connect(this, &VaultRemovePages::buttonClicked, this, &VaultRemovePages::onButtonClicked);
-    connect(VaultHelper::vaultServiceInstance(), &VaultService::signalLockVaultState, this, &VaultRemovePages::onLockVault);
+    connect(VaultHelper::instance()->vaultServiceInstance(), &VaultService::signalLockVaultState, this, &VaultRemovePages::onLockVault);
     connect(progressView, &VaultRemoveProgressView::removeFinished, this, &VaultRemovePages::onVualtRemoveFinish);
 }
 
@@ -103,10 +103,10 @@ void VaultRemovePages::showVerifyWidget()
     QStringList buttonTexts({ tr("Cancel", "button"), tr("Use Key", "button"), tr("Delete", "button") });
     addButton(buttonTexts[0], false);
     //! 1050及以上版本无密钥验证
-    if (!VaultHelper::getVaultVersion())
+    if (!VaultHelper::instance()->getVaultVersion())
         addButton(buttonTexts[1], false);
     addButton(buttonTexts[2], true, DDialog::ButtonWarning);
-    if (!VaultHelper::getVaultVersion())
+    if (!VaultHelper::instance()->getVaultVersion())
         setDefaultButton(2);
     else
         setDefaultButton(1);
@@ -151,6 +151,7 @@ void VaultRemovePages::closeEvent(QCloseEvent *event)
 
 void VaultRemovePages::showEvent(QShowEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kDeleteVaultPage);
     VaultPageBase::showEvent(event);
 }
 
@@ -162,7 +163,7 @@ void VaultRemovePages::onButtonClicked(int index)
         break;
     case 1:
         //! 1050及以上版本无密钥验证
-        if (!VaultHelper::getVaultVersion()) {
+        if (!VaultHelper::instance()->getVaultVersion()) {
             {   // 切换验证方式
                 if (stackedWidget->currentIndex() == 0) {
                     getButton(1)->setText(tr("Use Password"));
@@ -206,7 +207,7 @@ void VaultRemovePages::onButtonClicked(int index)
 
         QAbstractButton *btn;
         //! 1050及以上版本无密钥验证
-        if (!VaultHelper::getVaultVersion()) {
+        if (!VaultHelper::instance()->getVaultVersion()) {
             btn = getButton(2);
         } else {
             btn = getButton(1);
@@ -226,6 +227,7 @@ void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
                this, &VaultRemovePages::slotCheckAuthorizationFinished);
     if (isVisible()) {
+        VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kDeleteVaultPage);
         if (result == Authority::Yes) {
             removeVault = true;
             // 删除前，先置顶保险箱内拷贝、剪贴、压缩任务
@@ -234,13 +236,13 @@ void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
                 qDebug() << "当前保险箱内是否有拷贝、剪贴、压缩任务，不能删除保险箱！";
             } else {
                 // 验证成功，先对保险箱进行上锁
-                VaultHelper::lockVault();
+                VaultHelper::instance()->lockVault();
             }
         }
 
         QAbstractButton *btn;
         //! 1050及以上版本无密钥验证
-        if (!VaultHelper::getVaultVersion()) {
+        if (!VaultHelper::instance()->getVaultVersion()) {
             btn = getButton(2);
         } else {
             btn = getButton(1);
@@ -259,8 +261,8 @@ void VaultRemovePages::onLockVault(int state)
             // 切换至删除界面
             showRemoveWidget();
 
-            QString vaultLockPath = VaultHelper::vaultLockPath();
-            QString vaultUnlockPath = VaultHelper::vaultUnlockPath();
+            QString vaultLockPath = VaultHelper::instance()->vaultLockPath();
+            QString vaultUnlockPath = VaultHelper::instance()->vaultUnlockPath();
             progressView->removeVault(vaultLockPath, vaultUnlockPath);
         } else {
             // error tips

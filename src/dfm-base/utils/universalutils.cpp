@@ -289,4 +289,58 @@ bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
     return url1 == url2 || (url1.scheme() == url2.scheme() && url1.path() == url2.path());
 }
 
+QString UniversalUtils::getCurrentUser()
+{
+    QString user;
+
+    QDBusInterface sessionManagerIface("com.deepin.dde.LockService",
+                                       "/com/deepin/dde/LockService",
+                                       "com.deepin.dde.LockService",
+                                       QDBusConnection::systemBus());
+
+    if (sessionManagerIface.isValid()) {
+        QDBusPendingCall call = sessionManagerIface.asyncCall("CurrentUser");
+        call.waitForFinished();
+        if (!call.isError()) {
+            QDBusReply<QString> reply = call.reply();
+            user = reply.value();
+        }
+    }
+
+    return user;
+}
+
+void UniversalUtils::userChange(QObject *obj, const char *cslot)
+{
+    QDBusConnection::systemBus().connect(
+            "com.deepin.dde.LockService",
+            "/com/deepin/dde/LockService",
+            "com.deepin.dde.LockService",
+            "UserChanged",
+            obj,
+            cslot);
+}
+
+void UniversalUtils::prepareForSleep(QObject *obj, const char *cslot)
+{
+    QDBusConnection::systemBus().connect(
+            "org.freedesktop.login1",
+            "/org/freedesktop/login1",
+            "org.freedesktop.login1.Manager",
+            "PrepareForSleep",
+            obj,
+            cslot);
+}
+
+void UniversalUtils::lockEventTriggered(QObject *obj, const char *cslot)
+{
+    QDBusConnection::sessionBus().connect(
+            "org.freedesktop.FileManager1",
+            "/org/freedesktop/FileManager1",
+            "org.freedesktop.FileManager1",
+            "lockEventTriggered",
+            obj,
+            cslot);
+}
+
 DFMBASE_END_NAMESPACE

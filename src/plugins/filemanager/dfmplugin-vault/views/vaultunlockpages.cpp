@@ -19,14 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define TOOLTIP_SHOW_DURATION 3000
-
 #include "vaultunlockpages.h"
 #include "vaultretrievepassword.h"
 #include "vaultretrievepassword.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaultglobaldefine.h"
 #include "utils/vaulthelper.h"
+#include "utils/vaultautolock.h"
 #include "services/filemanager/vault/vaultservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
@@ -54,7 +53,7 @@ DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
-
+constexpr int kToolTipShowDuration = 3000;
 VaultUnlockPages::VaultUnlockPages(QWidget *parent)
     : VaultPageBase(parent)
 {
@@ -130,12 +129,12 @@ VaultUnlockPages::VaultUnlockPages(QWidget *parent)
 
     connect(this, &VaultUnlockPages::buttonClicked, this, &VaultUnlockPages::onButtonClicked);
     connect(passwordEdit, &DPasswordEdit::textChanged, this, &VaultUnlockPages::onPasswordChanged);
-    connect(VaultHelper::vaultServiceInstance(), &VaultService::signalUnlockVaultState, this, &VaultUnlockPages::onVaultUlocked);
+    connect(VaultHelper::instance()->vaultServiceInstance(), &VaultService::signalUnlockVaultState, this, &VaultUnlockPages::onVaultUlocked);
     connect(tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
             QString hint = tr("Password hint: %1").arg(strPwdHint);
-            showToolTip(hint, TOOLTIP_SHOW_DURATION, EN_ToolTip::Information);
+            showToolTip(hint, kToolTipShowDuration, EN_ToolTip::Information);
         }
     });
 
@@ -144,6 +143,7 @@ VaultUnlockPages::VaultUnlockPages(QWidget *parent)
 
 void VaultUnlockPages::showEvent(QShowEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kUnlockVaultPage);
     if (extraLockVault) {
         extraLockVault = false;
     }
@@ -170,6 +170,7 @@ void VaultUnlockPages::showEvent(QShowEvent *event)
 
 void VaultUnlockPages::closeEvent(QCloseEvent *event)
 {
+    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kUnknown);
     extraLockVault = true;
 
     VaultPageBase::closeEvent(event);
@@ -232,7 +233,7 @@ void VaultUnlockPages::onButtonClicked(const int &index)
         QString strCipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
             unlockByPwd = true;
-            VaultHelper::unlockVault(strCipher);
+            VaultHelper::instance()->unlockVault(strCipher);
         } else {
             //! 设置密码输入框颜色
             //! 修复bug-51508 激活密码框警告状态
@@ -259,10 +260,11 @@ void VaultUnlockPages::onVaultUlocked(int state)
 {
     if (unlockByPwd) {
         if (state == 0) {
-            UrlRoute::regScheme(VaultHelper::scheme(), VaultHelper::rootUrl().path(), VaultHelper::icon(), false, tr("My Vault"));
-            VaultHelper::defaultCdAction(VaultHelper::rootUrl());
+            UrlRoute::regScheme(VaultHelper::instance()->scheme(), VaultHelper::instance()->rootUrl().path(), VaultHelper::instance()->icon(), false, tr("My Vault"));
+            VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->rootUrl());
             Settings setting(kVaultTimeConfigFile);
             setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+            VaultAutoLock::instance()->slotUnlockVault(state);
             close();
         } else if (state == 1) {   //! cryfs没有成功卸载挂载目录
             //! 解决sp3bug-38885:注销系统时，cryfs卸载挂载目录会概率性失败

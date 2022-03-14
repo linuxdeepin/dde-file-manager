@@ -41,7 +41,7 @@ DPVAULT_BEGIN_NAMESPACE
 VaultFileInfo::VaultFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new VaultFileInfoPrivate(this))
 {
-    QString path = url.path().contains(VaultHelper::rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url);
+    QString path = url.path().contains(VaultHelper::instance()->rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url);
     QUrl tempUrl = QUrl::fromLocalFile(path);
     setProxy(InfoFactory::create<AbstractFileInfo>(tempUrl));
 }
