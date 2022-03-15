@@ -1270,7 +1270,8 @@ void DFileView::mousePressEvent(QMouseEvent *event)
             d->currentSelection = selectionModel()->selection();
             if (!DFMGlobal::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
-
+                if (qApp->keyboardModifiers() == Qt::NoModifier)
+                    setCurrentIndex(QModelIndex());
                 if (dragDropMode() != NoDragDrop) {
                     setDragDropMode(DropOnly);
                 }
