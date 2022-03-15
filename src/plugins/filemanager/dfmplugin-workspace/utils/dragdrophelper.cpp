@@ -125,19 +125,22 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (event->source() == view && (!hoverIndex.isValid() || view->isSelected(hoverIndex)))
             return true;
 
-        if (!hoverIndex.isValid())
+        bool isDropAtRootIndex = false;
+        if (!hoverIndex.isValid()) {
             hoverIndex = view->model()->rootIndex();
-
+            isDropAtRootIndex = true;
+        }
         if (!hoverIndex.isValid())
             return true;
 
-        if (view->model()->supportedDropActions() & event->dropAction()
-            && view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled) {
+        bool supportDropAction = view->model()->supportedDropActions() & event->dropAction();
+        bool dropEnabled = isDropAtRootIndex ? true : (view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled);
+        if (supportDropAction && dropEnabled) {
             const Qt::DropAction action = view->dragDropMode() == QAbstractItemView::InternalMove
                     ? Qt::MoveAction
                     : event->dropAction();
-
-            if (view->model()->dropMimeData(event->mimeData(), action, hoverIndex.row(), hoverIndex.column(), hoverIndex)) {
+            bool isDropped = view->model()->dropMimeData(event->mimeData(), action, hoverIndex.row(), hoverIndex.column(), hoverIndex);
+            if (isDropped) {
                 if (action != event->dropAction()) {
                     event->setDropAction(action);
                     event->accept();

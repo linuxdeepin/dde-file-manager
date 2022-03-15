@@ -117,7 +117,7 @@ JobHandlePointer TrashFileHelper::cutHandle(const quint64 windowId, const QList<
 {
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
                                           windowId,
-                                          sources);
+                                          sources, flags);
     return {};
 }
 

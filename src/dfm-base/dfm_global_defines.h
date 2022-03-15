@@ -84,6 +84,7 @@ const char *const kGPhoto2 { "gphoto2" };
 const char *const kFile { "file" };
 const char *const kMtp { "mtp" };
 const char *const kAfc { "afc" };
+const char *const kTrash { "trash" };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

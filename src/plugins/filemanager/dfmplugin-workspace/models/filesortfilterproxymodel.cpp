@@ -61,7 +61,8 @@ QVariant FileSortFilterProxyModel::headerData(int column, Qt::Orientation, int r
 
 bool FileSortFilterProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
-    const QModelIndex &sourceIndex = mapToSource(parent);
+    bool isRootIndex = parent == rootIndex();
+    const QModelIndex &sourceIndex = isRootIndex ? parent : mapToSource(parent);
     return viewModel()->dropMimeData(data, action, sourceIndex.row(), sourceIndex.column(), sourceIndex);
 }
 
