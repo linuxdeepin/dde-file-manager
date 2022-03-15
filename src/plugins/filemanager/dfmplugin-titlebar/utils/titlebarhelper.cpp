@@ -210,6 +210,10 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
     if (scheme != SchemeTypes::kSmb && scheme != SchemeTypes::kFtp && scheme != SchemeTypes::kSFtp)
         return false;
 
+    // TODO(xust) see if i can find any other way to handle the choise (browse the smb shares and mount the samba directly)
+    if (scheme == SchemeTypes::kSmb && url.path() == "/")
+        return false;
+
     if (url.host().isEmpty()) {
         DialogManagerInstance->showErrorDialog("", QObject::tr("Mounting device error"));
         return true;

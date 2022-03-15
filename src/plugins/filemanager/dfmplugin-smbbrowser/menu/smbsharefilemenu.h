@@ -29,6 +29,8 @@
 #include "dfm-base/widgets/action/actiondatacontainer.h"
 #include "dfm-base/dfm_actiontype_defines.h"
 
+#include <QUrl>
+
 DPSMBBROWSER_BEGIN_NAMESPACE
 
 namespace SmbBrowserScene {
@@ -42,6 +44,13 @@ public:
 
     virtual QMenu *build(QWidget *parent, MenuMode mode, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> &selected, QVariant customData) override;
     virtual void actionBusiness(QAction *act) override;
+
+private:
+    QMenu *createMenuByContainer(const QVector<DFMBASE_NAMESPACE::ActionDataContainer> &containers, QWidget *parent = nullptr);
+
+private:
+    quint64 winId;
+    QUrl selectedUrl;
 };
 
 DPSMBBROWSER_END_NAMESPACE

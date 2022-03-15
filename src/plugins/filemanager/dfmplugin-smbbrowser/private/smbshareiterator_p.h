@@ -46,7 +46,6 @@ private:
     SmbShareIterator *q { nullptr };
     SmbShareNodes smbShares;
     QScopedPointer<DFMIO::DLocalEnumerator> enumerator { nullptr };
-    bool tryMount { false };
 };
 
 DPSMBBROWSER_END_NAMESPACE

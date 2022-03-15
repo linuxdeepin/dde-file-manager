@@ -59,8 +59,8 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     if (info && info->exists() && info->isFile()) {
         TitleBarEventCaller::sendOpenFile(sender, url);
     } else {
-        //        if (Q_UNLIKELY(TitleBarHelper::handleConnection(sender, url)))
-        //            return;
+        if (Q_UNLIKELY(TitleBarHelper::handleConnection(sender, url)))
+            return;
         dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
     }
 }

@@ -36,10 +36,10 @@ class SmbShareIterator : public dfmbase::AbstractDirIterator
     friend class SmbShareIteratorPrivate;
 
 public:
-    SmbShareIterator(const QUrl &url,
-                     const QStringList &nameFilters = QStringList(),
-                     QDir::Filters filters = QDir::NoFilter,
-                     QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
+    explicit SmbShareIterator(const QUrl &url,
+                              const QStringList &nameFilters = QStringList(),
+                              QDir::Filters filters = QDir::NoFilter,
+                              QDirIterator::IteratorFlags flags = QDirIterator::NoIteratorFlags);
     virtual ~SmbShareIterator() override;
 
     virtual QUrl next() override;
