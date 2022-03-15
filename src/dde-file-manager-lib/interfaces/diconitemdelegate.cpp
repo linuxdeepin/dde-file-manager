@@ -1135,6 +1135,8 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
 
         geometry = d->expandedItem->textGeometry().toRect();
         geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
+        geometry.setTop(geometries.first().bottom());
+
         geometries << geometry;
 
         return geometries;
@@ -1195,19 +1197,16 @@ QList<QRect> DIconItemDelegate::paintGeomertys(const QStyleOptionViewItem &optio
                               ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
                               QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
                               Qt::AlignCenter);
-
-        label_rect = boundingRect(lines).toRect();
     } else {
         //此处慎重更改 auto lines会同步document属性,更改后导致行数的计算错误影响绘制
         lines = drawText(index, nullptr, str, QRect(label_rect.topLeft(), QSize(label_rect.width(), INT_MAX)),
                               ICON_MODE_RECT_RADIUS, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
                               QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
                               Qt::AlignCenter);
-
-        label_rect = boundingRect(lines).toRect();
-        label_rect.setTop(icon_rect.bottom());
     }
 
+    label_rect = boundingRect(lines).toRect();
+    label_rect.setTop(icon_rect.bottom());
     geometries << label_rect;
 
     // background rect
