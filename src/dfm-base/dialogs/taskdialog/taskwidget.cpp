@@ -263,6 +263,9 @@ void TaskWidget::onHandlerTaskStateChange(const JobInfoPointer JobInfo)
     if (hide)
         isBtnHidden = true;
 
+    if (JobInfo->count(AbstractJobHandler::NotifyInfoKey::kJobStateKey) == 0)
+        return;
+
     AbstractJobHandler::JobState state = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kJobStateKey).value<AbstractJobHandler::JobState>();
     bool isCurPaused = kPausedState == state;
     if (isCurPaused == isPauseState) {
@@ -271,10 +274,16 @@ void TaskWidget::onHandlerTaskStateChange(const JobInfoPointer JobInfo)
     if (state == kPausedState) {
         isPauseState = true;
         btnPause->setIcon(QIcon::fromTheme("dfm_task_start"));
+        QVariant variantPause;
+        variantPause.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kResumAction);
+        btnPause->setProperty(kBtnPropertyActionName, variantPause);
         progress->stop();
     } else {
         isPauseState = false;
         btnPause->setIcon(QIcon::fromTheme("dfm_task_pause"));
+        QVariant variantPause;
+        variantPause.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kPauseAction);
+        btnPause->setProperty(kBtnPropertyActionName, variantPause);
         progress->start();
     }
 }

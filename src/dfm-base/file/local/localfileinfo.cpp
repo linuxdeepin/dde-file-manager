@@ -373,17 +373,17 @@ QString LocalFileInfo::path() const
     d->lock.lockForRead();
     QString path;
 
-    if (d->attributes.count(DFileInfo::AttributeID::StandardFilePath) == 0) {
+    if (d->attributes.count(DFileInfo::AttributeID::StandardParentPath) == 0) {
         bool success = false;
         if (d->dfmFileInfo) {
-            path = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardFilePath, &success).toString();
+            path = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardParentPath, &success).toString();
         }
         if (!success)
             path = QFileInfo(d->url.path()).path();
 
-        d->attributes.insert(DFileInfo::AttributeID::StandardFilePath, path);
+        d->attributes.insert(DFileInfo::AttributeID::StandardParentPath, path);
     } else {
-        path = d->attributes.value(DFileInfo::AttributeID::StandardFilePath).toString();
+        path = d->attributes.value(DFileInfo::AttributeID::StandardParentPath).toString();
     }
 
     d->lock.unlock();
@@ -1353,7 +1353,7 @@ QVariantHash LocalFileInfo::extraProperties() const
 QIcon LocalFileInfo::fileIcon() const
 {
     d->lock.lockForRead();
-    QIcon icon = DFileIconProvider::globalProvider()->icon(this->path());
+    QIcon icon = DFileIconProvider::globalProvider()->icon(this->filePath());
     d->lock.unlock();
     return icon;
 }

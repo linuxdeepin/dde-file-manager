@@ -172,7 +172,12 @@ QString StandardPaths::location(const QString &dirName)
         { "pictures", location(kPicturesPath) },
         { "documents", location(kDocumentsPath) },
         { "downloads", location(kDownloadsPath) },
-        { "trash", location(kTrashFilesPath) }
+        { "trash", location(kTrashFilesPath) },
+        { "thumbnail", location(kThumbnailPath) },
+        { "thumbnailFail", location(kThumbnailFailPath) },
+        { "thumbnailLarge", location(kThumbnailLargePath) },
+        { "thumbnailNormal", location(kThumbnailNormalPath) },
+        { "thumbnailSmall", location(kThumbnailSmallPath) }
     };
 
     return pathConvert.value(dirName, "");

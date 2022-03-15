@@ -183,7 +183,7 @@ bool AbstractWorker::statisticsFilesSize()
     }
 
     statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
-    connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish);
+    connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
     statisticsFilesSizeJob->start(sourceUrls);
     return true;
 }

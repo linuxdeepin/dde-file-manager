@@ -591,6 +591,8 @@ bool DoCopyFilesWorker::doCopyOneFile(const AbstractFileInfoPointer fromInfo, co
         if (Q_LIKELY(jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyIntegrityChecking))) {
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
+
+        toInfo->refresh();
     } while (fromDevice->pos() != fromInfo->size() && toInfo->size() != fromInfo->size());
 
     delete[] data;
