@@ -98,6 +98,11 @@ FILE(GLOB OPENWITH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/openwith/private/*.cpp"
 )
 
+FILE(GLOB EMBLEM_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/emblem/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/emblem/*.cpp"
+)
+
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
@@ -112,6 +117,7 @@ add_library(${PROJECT_NAME}
     ${PREVIEW_FILES}
     ${TRASH_FILES}
     ${OPENWITH_FILES}
+    ${EMBLEM_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

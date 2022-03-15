@@ -368,6 +368,8 @@ QRect ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewI
 
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
+    paintEmblems(painter, iconRect, index);
+
     return iconRect;
 }
 /*!
@@ -481,7 +483,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                                                      textLineHeight);
         }
 
-        painter->drawText(rect, Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()), fileName);
+        painter->drawText(rect, static_cast<int>(Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt())), fileName);
     } else {
         //Todo(yanghao&liuyangming)???
         //        drawNotStringData(option, textLineHeight, rect, data, drawBackground, painter, 0);

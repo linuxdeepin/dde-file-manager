@@ -22,8 +22,9 @@
 */
 #include "workspaceeventcaller.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
 #include "services/common/propertydialog/property_defines.h"
+#include "services/common/emblem/emblem_defines.h"
+#include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/detailspace/detailspace_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -33,6 +34,7 @@
 
 DFMGLOBAL_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DSC_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -92,3 +94,13 @@ void WorkspaceEventCaller::sendSetSelectDetailFileUrl(const quint64 windowId, co
 {
     dispatcher()->publish(DSB_FM_NAMESPACE::DetailEventType::kSetDetailViewSelectFileUrl, windowId, url);
 }
+
+void WorkspaceEventCaller::sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
+{
+    dispatcher()->publish(Emblem::EventType::kPaintEmblems, painter, paintArea, url);
+}
+
+//void WorkspaceEventCaller::sendGetEmblems(const QUrl &url, QList<QIcon> *emblems)
+//{
+//    dispatcher()->publish(Emblem::EventType::kFetchEmblems, url, emblems);
+//}

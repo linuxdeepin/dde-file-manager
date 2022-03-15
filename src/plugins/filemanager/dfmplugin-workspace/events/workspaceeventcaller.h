@@ -29,6 +29,7 @@
 #include "dfm-base/utils/clipboard.h"
 
 #include <QObject>
+#include <QPainter>
 
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -48,8 +49,12 @@ public:
     static void sendTabRemoved(const quint64 windowID, const int index);
     static void sendShowCustomTopWidget(const quint64 windowId, const QString &scheme, bool visible);
     static void sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url);
+
+    static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
 };
 
 DPWORKSPACE_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QPainter *)
 
 #endif   // WORKSPACEEVENTCALLER_H

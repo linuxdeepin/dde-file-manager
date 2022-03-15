@@ -367,7 +367,8 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
         ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
-    // Todo(yanghao): draw file additional icon
+    paintEmblems(painter, iconRect, index);
+
     return iconRect;
 }
 

@@ -24,6 +24,8 @@
 #include "fileview.h"
 #include "utils/fileviewhelper.h"
 #include "utils/itemdelegatehelper.h"
+#include "events/workspaceeventcaller.h"
+#include "models/filesortfilterproxymodel.h"
 
 #include <QTextLayout>
 #include <QPainter>
@@ -68,6 +70,12 @@ QList<QRectF> BaseItemDelegate::getCornerGeometryList(const QRectF &baseRect, co
     list.append(QRectF(QPointF(list.first().left(), list.at(2).top()), cornerSize));
 
     return list;
+}
+
+void BaseItemDelegate::paintEmblems(QPainter *painter, const QRectF &iconRect, const QModelIndex &index) const
+{
+    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    WorkspaceEventCaller::sendPaintEmblems(painter, iconRect, url);
 }
 
 BaseItemDelegate::~BaseItemDelegate()

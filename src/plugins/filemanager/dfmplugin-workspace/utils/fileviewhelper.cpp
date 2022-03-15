@@ -73,11 +73,8 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
-
-        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->url())) {
-            qDebug() << index << file->url();
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(file->url()))
             return true;
-        }
 
         // the linked file only judges the URL, not the inode,
         // because the inode of the linked file is consistent with that of the source file
