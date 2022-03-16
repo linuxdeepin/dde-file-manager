@@ -375,7 +375,7 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
  * \param fileInfo delete file information
  * \return Delete file successfully
  */
-bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
+bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, bool *result)
 {
     if (!stateCheck())
         return false;
@@ -383,7 +383,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         if (!handler->deleteFile(fromUrl)) {
-            action = doHandleErrorAndWait(fromUrl, toUrl, fromUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
+            action = doHandleErrorAndWait(fromUrl, QUrl(), fromUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
         }
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -393,7 +393,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
     return action != AbstractJobHandler::SupportAction::kNoAction;
 }
 
-bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
+bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, bool *result)
 {
     QSharedPointer<dfmio::DIOFactory> factory = produceQSharedIOFactory(fromUrl.scheme(), static_cast<QUrl>(fromUrl));
     if (!factory) {
@@ -412,12 +412,12 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
         const QUrl &urlNext = QUrl::fromLocalFile(path);
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlNext);
         if (info->isDir()) {
-            succ = deleteDir(urlNext, QUrl(), result);
+            succ = deleteDir(urlNext, result);
         } else {
-            succ = deleteFile(urlNext, QUrl(), result);
+            succ = deleteFile(urlNext, result);
         }
     }
-    succ = deleteFile(fromUrl, toUrl, result);
+    succ = deleteFile(fromUrl, result);
     return succ;
 }
 
@@ -475,7 +475,7 @@ bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, co
         return false;
     }
 
-    if (!deleteFile(fromInfo->url(), toInfo->url(), result))
+    if (!deleteFile(fromInfo->url(), result))
         return false;
 
     return true;
@@ -536,10 +536,16 @@ bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, con
 
     handler->setPermissions(toInfo->url(), permissions);
 
-    if (!deleteFile(fromInfo->url(), toInfo->url(), result))
-        return false;
+    bool ret = true;
+    if (fromInfo->isDir()) {
+        if (!deleteDir(fromInfo->url(), result))
+            ret = false;
+    } else {
+        if (!deleteFile(fromInfo->url(), result))
+            ret = false;
+    }
 
-    return true;
+    return ret;
 }
 /*!
  * \brief FileOperateBaseWorker::doCopyFile Copy to a new file and delete the source file
@@ -560,7 +566,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     if (fromInfo->isSymLink()) {
         ok = creatSystemLink(fromInfo, newTargetInfo, result);
         if (ok)
-            ok = deleteFile(fromInfo->url(), toInfo->url(), result);
+            ok = deleteFile(fromInfo->url(), result);
     } else if (fromInfo->isDir()) {
         ok = copyDir(fromInfo, newTargetInfo, result);
     } else {

@@ -261,9 +261,9 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
         completeFilesCount++;
         // ToDo::大于1G，执行彻底删除代码
         if (fileInfo->isFile() || fileInfo->isSymLink())
-            return deleteFile(sourceUrl, QUrl(), &result);
+            return deleteFile(sourceUrl, &result);
         else
-            return deleteDir(sourceUrl, QUrl(), &result);
+            return deleteDir(sourceUrl, &result);
     }
 
     // ToDo::判断是否同盘，是就直接rename
@@ -441,12 +441,14 @@ bool DoMoveToTrashFilesWorker::doCopyAndDelete(const AbstractFileInfoPointer &fr
 {
     bool result = false;
     if (fromInfo->isFile()) {
-
         if (!copyFile(fromInfo, toInfo, &result))
             return result;
-
+        if (!deleteFile(fromInfo->url(), &result))
+            return result;
     } else {
         if (!copyDir(fromInfo, toInfo, &result))
+            return result;
+        if (!deleteDir(fromInfo->url(), &result))
             return result;
     }
 

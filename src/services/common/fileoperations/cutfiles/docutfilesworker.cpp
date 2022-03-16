@@ -304,7 +304,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                     completeFiles.append(sourceUrl);
                     completeTargetFiles.append(newTargetInfo->url());
                 }
-                bool succ = deleteFile(sourceUrl, targetUrl, ok);
+                bool succ = deleteFile(sourceUrl, ok);
                 if (!succ) {
                     return *ok;
                 }
@@ -329,7 +329,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
                 completeTargetFiles.append(newTargetInfo->url());
             }
             // remove old link file
-            if (!deleteFile(sourceUrl, targetUrl, ok))
+            if (!deleteFile(sourceUrl, ok))
                 return *ok;
 
             return true;
