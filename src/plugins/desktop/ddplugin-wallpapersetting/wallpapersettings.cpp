@@ -337,7 +337,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         QDBusReply<QString> reply = call.reply();
         QString value = reply.value();
         auto wallapers = processListReply(value);
-        QString currentPath ;//= QString(m_backgroundManager->backgroundImages().value(m_screenName)); todo
+        QString currentPath = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
         if (currentPath.contains("/usr/share/backgrounds/default_background.jpg")) {
             QFileInfo tempInfo(currentPath);
             currentPath = tempInfo.symLinkTarget();
@@ -359,12 +359,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             connect(item, &WallpaperItem::tab, this, &WallpaperSettingsPrivate::onItemTab);
             connect(item, &WallpaperItem::backtab, this, &WallpaperSettingsPrivate::onItemBacktab);
 
-            //首次进入时，选中当前设置壁纸 todo
-/*            if (m_backgroundManager == nullptr) {
-                qCritical() << "Critical!" << "m_backgroundManager has deleted!";
-                q->hide();
-                return;
-            } else */if (path.remove("file://") == currentPath.remove("file://")) { //均有机会出现头部为file:///概率
+            if (path.remove("file://") == currentPath.remove("file://")) { //均有机会出现头部为file:///概率
                 emit item->pressed(item);
             }
         }

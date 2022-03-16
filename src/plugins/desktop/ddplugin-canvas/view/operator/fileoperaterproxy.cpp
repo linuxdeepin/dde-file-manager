@@ -221,7 +221,9 @@ void FileOperaterProxy::pasteFiles(const CanvasView *view, const QPoint pos)
 
 void FileOperaterProxy::openFiles(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, view->winId(), view->selectionModel()->selectedUrls());
+    auto urls = view->selectionModel()->selectedUrls();
+    if (!urls.isEmpty())
+        openFiles(view, urls);
 }
 
 void FileOperaterProxy::openFiles(const CanvasView *view, const QList<QUrl> &urls)
