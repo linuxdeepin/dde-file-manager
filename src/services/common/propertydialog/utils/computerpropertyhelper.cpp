@@ -22,6 +22,7 @@
 #include "propertydialog/views/computerpropertydialog.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 DFMBASE_USE_NAMESPACE
 CPY_USE_NAMESPACE
@@ -33,7 +34,11 @@ QString ComputerPropertyHelper::scheme()
 QWidget *ComputerPropertyHelper::createComputerProperty(const QUrl &url)
 {
     static ComputerPropertyDialog *widget = nullptr;
-    if (UrlRoute::isRootUrl(url) || FileUtils::isComputerDesktopFile(url)) {
+    QUrl tempUrl;
+    tempUrl.setPath("/");
+    tempUrl.setScheme(scheme());
+    bool flg = UniversalUtils::urlEquals(tempUrl, url);
+    if (flg || FileUtils::isComputerDesktopFile(url)) {
         if (!widget) {
             widget = new ComputerPropertyDialog;
             return widget;

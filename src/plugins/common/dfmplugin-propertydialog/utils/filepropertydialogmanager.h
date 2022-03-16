@@ -27,7 +27,6 @@
 #include "views/closealldialog.h"
 #include "views/trashpropertydialog.h"
 #include "views/devicepropertydialog.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include <QObject>
 #include <QMap>

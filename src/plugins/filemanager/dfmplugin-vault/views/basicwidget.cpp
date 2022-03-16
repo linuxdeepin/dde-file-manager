@@ -123,11 +123,11 @@ void BasicWidget::selectFileUrl(const QUrl &url)
     if (info.isNull())
         return;
 
-    QString path = url.url();
+    QUrl tempUrl = UrlRoute::pathToReal(url.path());
 
     Settings setting(kVaultTimeConfigFile);
 
-    filePosition->setRightValue(path, Qt::ElideMiddle, Qt::AlignVCenter, true);
+    filePosition->setRightValue(tempUrl.url(), Qt::ElideMiddle, Qt::AlignVCenter, true);
 
     if (setting.value(QString("VaultTime"), QString("CreateTime")).toString().isEmpty())
         fileCreated->setRightValue(setting.value(QString("VaultTime"), QString("InterviewTime")).toString(), Qt::ElideNone, Qt::AlignVCenter, true);

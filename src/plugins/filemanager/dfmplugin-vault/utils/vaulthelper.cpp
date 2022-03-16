@@ -31,6 +31,7 @@
 #include "vaultdbusutils.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -413,11 +414,7 @@ QMenu *VaultHelper::createMenu()
         menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
 
         menu->addAction(QObject::tr("Property"), []() {
-            QUrl url;
-            url.setScheme(instance()->scheme());
-            url.setPath("/");
-            url.setHost("");
-            VaultEventCaller::sendVaultProperty(url);
+            VaultEventCaller::sendVaultProperty(VaultHelper::instance()->rootUrl());
         });
     } break;
     case VaultState::kUnderProcess:
@@ -432,17 +429,15 @@ QMenu *VaultHelper::createMenu()
 QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
 {
     static VaultPropertyDialog *vaultDialog = nullptr;
-    QUrl rUrl = VaultHelper::instance()->rootUrl();
-    bool flg = (rUrl == url);
-    if ((UrlRoute::isRootUrl(url) || flg) && !vaultDialog) {
-        vaultDialog = new VaultPropertyDialog();
-        vaultDialog->selectFileUrl(url);
+    if (UniversalUtils::urlEquals(VaultHelper::instance()->rootUrl(), url)) {
+        if (!vaultDialog) {
+            vaultDialog = new VaultPropertyDialog();
+            vaultDialog->selectFileUrl(url);
+            return vaultDialog;
+        }
         return vaultDialog;
-    } else if ((UrlRoute::isRootUrl(url) || flg) && vaultDialog) {
-        return vaultDialog;
-    } else {
-        return nullptr;
     }
+    return nullptr;
 }
 
 void VaultHelper::createVault(QString &password)

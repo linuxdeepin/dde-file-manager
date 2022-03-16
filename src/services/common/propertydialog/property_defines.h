@@ -29,12 +29,14 @@
 #include <QDebug>
 
 DSC_BEGIN_NAMESPACE
-
 #define CPY_NAMESPACE Property
 
 #define CPY_BEGIN_NAMESPACE namespace CPY_NAMESPACE {
 #define CPY_END_NAMESPACE }
 #define CPY_USE_NAMESPACE using namespace CPY_NAMESPACE;
+DSC_END_NAMESPACE
+
+DSC_BEGIN_NAMESPACE
 
 CPY_BEGIN_NAMESPACE
 namespace EventType {
@@ -58,76 +60,6 @@ struct DeviceInfo
     qint64 availableSpace;
 };
 
-class RegisterCreateMethod
-{
-
-private:
-    RegisterCreateMethod() {}
-
-public:
-    static RegisterCreateMethod *ins()
-    {
-        static RegisterCreateMethod reg;
-        return &reg;
-    }
-
-public:
-    //! 定义创建控件函数类型
-    typedef std::function<QWidget *(const QUrl &url)> createControlViewFunc;
-
-protected:
-    //创建函数列表
-    QHash<int, createControlViewFunc> constructList {};
-    QHash<QString, createControlViewFunc> viewCreateFunctionHash {};
-
-public:
-    bool registerFunction(createControlViewFunc view, int index = -1, QString *errorString = nullptr)
-    {
-        QString error;
-        DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
-
-        if (constructList.keys().contains(index)) {
-            error = QObject::tr("The current index has registered "
-                                "the associated construction class");
-            qInfo() << error;
-            return false;
-        }
-
-        constructList.insert(index, view);
-        finally.dismiss();
-        return true;
-    }
-
-    bool registerViewCreateFunction(createControlViewFunc view, QString scheme)
-    {
-        if (!viewCreateFunctionHash.contains(scheme)) {
-            viewCreateFunctionHash.insert(scheme, view);
-        }
-        return true;
-    }
-
-    QWidget *createWidget(const QUrl &url)
-    {
-        QWidget *widget = nullptr;
-        for (createControlViewFunc func : viewCreateFunctionHash.values()) {
-            widget = func(url);
-            if (widget)
-                break;
-        }
-        return widget;
-    }
-
-    QMap<int, QWidget *> createControlView(const QUrl &url)
-    {
-        QMap<int, QWidget *> temp {};
-        for (int i = 0; i < constructList.count(); ++i) {
-            QWidget *g = constructList.value(i)(url);
-            if (g != nullptr)
-                temp.insert(i, g);
-        }
-        return temp;
-    }
-};
 CPY_END_NAMESPACE
 DSC_END_NAMESPACE
 Q_DECLARE_METATYPE(DSC_NAMESPACE::CPY_NAMESPACE::DeviceInfo)

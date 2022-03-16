@@ -23,6 +23,7 @@
 #include "views/trashpropertydialog.h"
 
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/standardpaths.h"
 
 #include <dfm-framework/framework.h>
@@ -68,7 +69,6 @@ QUrl TrashCoreHelper::fromTrashFile(const QString &filePath)
     return url;
 }
 
-
 QString TrashCoreHelper::scheme()
 {
     return Global::kTrash;
@@ -77,7 +77,7 @@ QString TrashCoreHelper::scheme()
 QWidget *TrashCoreHelper::createTrashPropertyDialog(const QUrl &url)
 {
     static TrashPropertyDialog *trashPropertyDialog = nullptr;
-    if (UrlRoute::isRootUrl(url) || FileUtils::isTrashDesktopFile(url)) {
+    if (UniversalUtils::urlEquals(url, rootUrl()) || FileUtils::isTrashDesktopFile(url)) {
         if (!trashPropertyDialog) {
             trashPropertyDialog = new TrashPropertyDialog();
             return trashPropertyDialog;

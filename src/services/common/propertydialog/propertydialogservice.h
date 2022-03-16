@@ -21,7 +21,8 @@
 #ifndef PROPERTYDIALOGSERVICE_H
 #define PROPERTYDIALOGSERVICE_H
 
-#include "property_defines.h"
+#include "utils/registercreateprocess.h"
+
 #include <dfm-framework/framework.h>
 
 DSC_BEGIN_NAMESPACE
@@ -42,9 +43,17 @@ public:
 
     static PropertyDialogService *instance();
 
-    bool registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, int index = -1, QString *error = nullptr);
+    bool registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, int index = -1, QString *error = nullptr);
 
-    bool registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, QString scheme);
+    bool registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, QString scheme);
+
+    bool registerPropertyPathShowStyle(QString scheme);
+
+    QWidget *createWidget(const QUrl &url);
+
+    QMap<int, QWidget *> createControlView(const QUrl &url);
+
+    bool isContains(const QUrl &url);
 
     void addComputerPropertyToPropertyService();
 };

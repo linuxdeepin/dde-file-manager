@@ -70,8 +70,9 @@ bool Vault::start()
     connect(VaultHelper::windowServiceInstance(), &WindowsService::windowOpened, this, &Vault::onWindowOpened, Qt::DirectConnection);
     VaultEventReceiver::instance()->connectEvent();
 
-    VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
     propertyServIns->registerMethod(VaultHelper::createVaultPropertyDialog, VaultHelper::instance()->scheme());
+    propertyServIns->registerPropertyPathShowStyle(VaultHelper::instance()->scheme());
+    VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
     return true;
 }
 

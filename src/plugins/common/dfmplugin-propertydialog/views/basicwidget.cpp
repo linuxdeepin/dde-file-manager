@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "basicwidget.h"
+#include "utils/propertydialoghelper.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/mimetype/mimedatabase.h"
@@ -125,9 +126,13 @@ void BasicWidget::selectFileUrl(const QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
-
-    QUrl selectUrl = UrlRoute::pathToReal(url.path());
-    QString path = selectUrl.url();
+    QString path;
+    if (PropertyDialogHelper::propertyServiceInstance()->isContains(url)) {
+        QUrl selectUrl = UrlRoute::pathToReal(url.path());
+        path = selectUrl.url();
+    } else {
+        path = url.path();
+    }
 
     filePosition->setRightValue(path, Qt::ElideMiddle, Qt::AlignVCenter, true);
     fileCreated->setRightValue(info->birthTime().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
@@ -138,14 +143,14 @@ void BasicWidget::selectFileUrl(const QUrl &url)
     QMimeType mimeType = MimeDatabase::mimeTypeForUrl(QUrl::fromLocalFile(url.path()));
     MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
     switch (static_cast<int>(type)) {
-    case MimeDatabase::FileType::kDirectory:
+    case MimeDatabase::FileType::kDirectory: {
         fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fileCount->setVisible(true);
         fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
         fileCalculationUtils->start(QList<QUrl>() << url);
         connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
-        break;
+    } break;
     case MimeDatabase::FileType::kDocuments: {
         fileType->setRightValue(tr("Documents") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
@@ -174,34 +179,34 @@ void BasicWidget::selectFileUrl(const QUrl &url)
         fSize += info->size();
         fCount += 1;
     } break;
-    case MimeDatabase::FileType::kExecutable:
+    case MimeDatabase::FileType::kExecutable: {
         fileType->setRightValue(tr("Executable") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
-        break;
-    case MimeDatabase::FileType::kArchives:
+    } break;
+    case MimeDatabase::FileType::kArchives: {
         fileType->setRightValue(tr("Archives") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
-        break;
-    case MimeDatabase::FileType::kDesktopApplication:
+    } break;
+    case MimeDatabase::FileType::kDesktopApplication: {
         fileType->setRightValue(tr("application") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
-        break;
-    case MimeDatabase::FileType::kUnknown:
+    } break;
+    case MimeDatabase::FileType::kUnknown: {
         fileType->setRightValue(tr("Unknown") + "(" + mimeType.name() + ")", Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
         fileSize->setVisible(true);
         fSize += info->size();
         fCount += 1;
-        break;
+    } break;
     }
 }
 

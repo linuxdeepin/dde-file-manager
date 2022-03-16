@@ -210,13 +210,13 @@ void FileBaseInfoView::initUI()
     fileChangeTime->setLeftValue(tr("Modified"));
     QGridLayout *glayout = new QGridLayout;
     glayout->setSpacing(10);
-    glayout->addWidget(fileName, 0, 0);
-    glayout->addWidget(fileSize, 1, 0);
-    glayout->addWidget(fileViewSize, 2, 0);
-    glayout->addWidget(fileDuration, 3, 0);
-    glayout->addWidget(fileType, 4, 0);
-    glayout->addWidget(fileInterviewTime, 5, 0);
-    glayout->addWidget(fileChangeTime, 6, 0);
+    glayout->addWidget(fileName, 0, 0, 1, 6);
+    glayout->addWidget(fileSize, 1, 0, 1, 6);
+    glayout->addWidget(fileViewSize, 2, 0, 1, 6);
+    glayout->addWidget(fileDuration, 3, 0, 1, 6);
+    glayout->addWidget(fileType, 4, 0, 1, 6);
+    glayout->addWidget(fileInterviewTime, 5, 0, 1, 6);
+    glayout->addWidget(fileChangeTime, 6, 0, 1, 6);
     glayout->setColumnStretch(0, 1);
     setLayout(glayout);
 }

@@ -21,6 +21,8 @@
 #include "filepropertydialogmanager.h"
 #include "views/multifilepropertydialog.h"
 
+#include "services/common/propertydialog/propertydialogservice.h"
+
 #include <QApplication>
 #include <QScreen>
 
@@ -239,12 +241,12 @@ FilePropertyDialogManager *FilePropertyDialogManager::instance()
 
 QMap<int, QWidget *> FilePropertyDialogManager::createView(const QUrl &url)
 {
-    return Property::RegisterCreateMethod::ins()->createControlView(url);
+    return propertyServIns->createControlView(url);
 }
 
 QWidget *FilePropertyDialogManager::createCustomizeView(const QUrl &url)
 {
-    return Property::RegisterCreateMethod::ins()->createWidget(url);
+    return propertyServIns->createWidget(url);
 }
 
 QPoint FilePropertyDialogManager::getPropertyPos(int dialogWidth, int dialogHeight)

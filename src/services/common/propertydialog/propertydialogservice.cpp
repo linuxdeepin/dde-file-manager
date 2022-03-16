@@ -91,9 +91,9 @@ PropertyDialogService *PropertyDialogService::instance()
  * QString error;
  * bool flg = service->registerMethod(fun, 1, &error);
  */
-bool PropertyDialogService::registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, int index, QString *error)
+bool PropertyDialogService::registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, int index, QString *error)
 {
-    return Property::RegisterCreateMethod::ins()->registerFunction(view, index, error);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerFunction(view, index, error);
 }
 
 /*!
@@ -131,9 +131,29 @@ bool PropertyDialogService::registerMethod(Property::RegisterCreateMethod::creat
  *
  * bool flg = service->registerMethod(fun, scheme);
  */
-bool PropertyDialogService::registerMethod(Property::RegisterCreateMethod::createControlViewFunc view, QString scheme)
+bool PropertyDialogService::registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, QString scheme)
 {
-    return Property::RegisterCreateMethod::ins()->registerViewCreateFunction(view, scheme);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerViewCreateFunction(view, scheme);
+}
+
+bool PropertyDialogService::registerPropertyPathShowStyle(QString scheme)
+{
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerPropertyPathShowStyle(scheme);
+}
+
+QWidget *PropertyDialogService::createWidget(const QUrl &url)
+{
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->createWidget(url);
+}
+
+QMap<int, QWidget *> PropertyDialogService::createControlView(const QUrl &url)
+{
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->createControlView(url);
+}
+
+bool PropertyDialogService::isContains(const QUrl &url)
+{
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->isContains(url);
 }
 
 void PropertyDialogService::addComputerPropertyToPropertyService()
