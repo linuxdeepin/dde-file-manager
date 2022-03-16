@@ -166,6 +166,8 @@ public:
     // 设置总是在当前窗口打开子目录
     void setAlwaysOpenInCurrentWindow(bool openInCurrentWindow);
 
+    int verticalOffset() const override;
+
 public slots:
     bool cd(const DUrl &url);
     bool cdUp();

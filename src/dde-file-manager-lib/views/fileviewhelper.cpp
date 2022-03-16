@@ -122,6 +122,16 @@ void FileViewHelper::viewFlicker()
     refreshFileView(windowId());
 }
 
+QSize FileViewHelper::viewContentSize() const
+{
+    return parent()->contentsSize();
+}
+
+int FileViewHelper::verticalOffset() const
+{
+    return parent()->verticalOffset();
+}
+
 void FileViewHelper::preHandleCd(const DFMUrlBaseEvent &event)
 {
     if (event.windowId() != windowId())

@@ -24,6 +24,7 @@
 #include "diconitemdelegate.h"
 #include "dfileviewhelper.h"
 #include "views/fileitem.h"
+#include "views/fileviewhelper.h"
 #include "private/dstyleditemdelegate_p.h"
 #include "dfmapplication.h"
 #include "dfilesystemmodel.h"
@@ -1023,8 +1024,9 @@ void DIconItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
     if (isCanvas) {
         item->setMaxHeight(parent()->parent()->height() - item->pos().y());
     } else {
-        // todo(yh) dfm
-        item->setMaxHeight(INT_MAX);
+        FileViewHelper *viewHelper = qobject_cast<FileViewHelper*>(parent());
+        const int maxHeight = viewHelper ? (viewHelper->viewContentSize().height() - viewHelper->verticalOffset() - item->pos().y()) : INT_MAX;
+        item->setMaxHeight(maxHeight);
     }
 
     QLabel *icon = item->icon;

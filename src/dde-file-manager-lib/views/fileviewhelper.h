@@ -42,6 +42,9 @@ public:
     int columnWidth(int columnIndex) const override;
     void select(const QList<DUrl> &list) override;
     virtual void viewFlicker() override;
+    QSize viewContentSize() const;
+    int verticalOffset() const;
+
 public slots:
     // helper fm event
     void preHandleCd(const DFMUrlBaseEvent &event);

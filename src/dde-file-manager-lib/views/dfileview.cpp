@@ -911,6 +911,11 @@ void DFileView::setAlwaysOpenInCurrentWindow(bool openInCurrentWindow)
     d->isAlwaysOpenInCurrentWindow = openInCurrentWindow;
 }
 
+int DFileView::verticalOffset() const
+{
+    return DListView::verticalOffset();
+}
+
 void DFileView::setFilters(QDir::Filters filters)
 {
     model()->setFilters(filters);
