@@ -1030,6 +1030,42 @@ static DFMMOUNT::MountPassInfo askForPasswdWhenMountNetworkDevice(const QString 
     return info;
 }
 
+static int askForUserChoice(const QString &message, const QStringList &choices)
+{
+    QString newMsg = message;
+    QString title;
+    if (message.startsWith("Can’t verify the identity of")
+        && message.endsWith("If you want to be absolutely sure it is safe to continue, contact the system administrator.")) {
+        QString arg1, arg2;
+        QRegularExpression reg("“.*?”");
+        auto matcher = reg.match(message);
+        if (matcher.hasMatch()) {
+            arg1 = matcher.captured(0);
+            newMsg = newMsg.replace(arg1, "");
+
+            matcher = reg.match(newMsg);
+            arg2 = matcher.captured(0);
+
+            title = DeviceController::tr("Can’t verify the identity of %1.").arg(arg1);
+            newMsg = DeviceController::tr("This happens when you log in to a computer the first time.") + '\n'
+                    + DeviceController::tr("The identity sent by the remote computer is") + '\n'
+                    + arg2 + '\n'
+                    + DeviceController::tr("If you want to be absolutely sure it is safe to continue, contact the system administrator.");
+        }
+        newMsg = newMsg.replace("\\r\\n", "\n");
+
+        qDebug() << "filtered question message is: " << newMsg;
+    }
+
+    DDialog askForChoice;
+    askForChoice.setTitle(title);
+    askForChoice.setMessage(newMsg);
+    askForChoice.addButtons(choices);
+    askForChoice.setMaximumWidth(480);
+
+    return askForChoice.exec();
+}
+
 void DeviceController::mountNetworkDevice(const QString &address, DFMMOUNT::DeviceOperateCallbackWithMessage callback)
 {
     Q_ASSERT_X(!address.isEmpty(), "DeviceService", "address is emtpy");
@@ -1037,7 +1073,7 @@ void DeviceController::mountNetworkDevice(const QString &address, DFMMOUNT::Devi
     using namespace std::placeholders;
     auto func = std::bind(askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
 
-    DFMMOUNT::DFMProtocolDevice::mountNetworkDevice(address, func, callback);
+    DFMMOUNT::DFMProtocolDevice::mountNetworkDevice(address, func, askForUserChoice, callback);
 }
 
 bool DeviceController::stopDefenderScanDrive(const QString &deviceId)
