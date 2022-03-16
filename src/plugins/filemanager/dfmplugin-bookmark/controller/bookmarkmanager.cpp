@@ -28,6 +28,7 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <DDialog>
 
@@ -110,13 +111,13 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             bookmarkData.url = url;
             QVariantList list =
                     Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
-            list << QVariantMap{ { "name", bookmarkData.name },
-                                 { "url", bookmarkData.url },
-                                 { "created", bookmarkData.created.toString(Qt::ISODate) },
-                                 { "lastModified",
-                                   bookmarkData.lastModified.toString(Qt::ISODate) },
-                                 { "mountPoint", bookmarkData.deviceUrl },
-                                 { "locateUrl", bookmarkData.locateUrl } };
+            list << QVariantMap { { "name", bookmarkData.name },
+                                  { "url", bookmarkData.url },
+                                  { "created", bookmarkData.created.toString(Qt::ISODate) },
+                                  { "lastModified",
+                                    bookmarkData.lastModified.toString(Qt::ISODate) },
+                                  { "mountPoint", bookmarkData.deviceUrl },
+                                  { "locateUrl", bookmarkData.locateUrl } };
             Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
 
             bookmarkDataMap[url] = bookmarkData;
@@ -242,7 +243,7 @@ void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint, QString
     QString devStr(info.device());
     if (devStr.startsWith("/dev/")) {
         QUrl tmp;
-        tmp.setScheme(SchemeTypes::kDevice);
+        tmp.setScheme(Global::kDevice);
         tmp.setPath(devStr);
         devStr = tmp.toString();
     } else if (devStr == "gvfsd-fuse") {
@@ -359,13 +360,14 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     const QMap<QUrl, BookmarkData> &bookmarkMap = BookMarkManager::instance()->getBookMarkDataMap();
 
     if (!bookmarkMap.contains(url)) {
-        qCritical() << "boormark:" << "not find the book mark!";
+        qCritical() << "boormark:"
+                    << "not find the book mark!";
         return;
     }
 
-    if (bookmarkMap[url].deviceUrl.startsWith(SchemeTypes::kSmb)
-            || bookmarkMap[url].deviceUrl.startsWith(SchemeTypes::kFtp)
-            || bookmarkMap[url].deviceUrl.startsWith(SchemeTypes::kSFtp)) {
+    if (bookmarkMap[url].deviceUrl.startsWith(Global::kSmb)
+        || bookmarkMap[url].deviceUrl.startsWith(Global::kFtp)
+        || bookmarkMap[url].deviceUrl.startsWith(Global::kSFtp)) {
         DFileInfo info(url);
         if (info.exists()) {
             if (info.attribute(DFileInfo::AttributeID::StandardIsDir).toBool())

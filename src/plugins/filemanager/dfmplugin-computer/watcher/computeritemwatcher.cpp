@@ -37,6 +37,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QDebug>
 #include <QApplication>
@@ -152,7 +153,7 @@ void ComputerItemWatcher::initDeviceConn()
 void ComputerItemWatcher::initAppWatcher()
 {
     QUrl extensionUrl;
-    extensionUrl.setScheme(SchemeTypes::kFile);
+    extensionUrl.setScheme(Global::kFile);
     extensionUrl.setPath(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath));
     appEntryWatcher.reset(new LocalFileWatcher(extensionUrl, this));
     appEntryWatcher->startWatcher();
@@ -167,7 +168,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
     static const QStringList udirs = { "desktop", "videos", "music", "pictures", "documents", "downloads" };
     for (auto dir : udirs) {
         QUrl url;
-        url.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kEntry);
+        url.setScheme(DFMBASE_NAMESPACE::Global::kEntry);
         url.setPath(QString("%1.%2").arg(dir).arg(SuffixInfo::kUserDir));
         //        auto info = InfoFactory::create<EntryFileInfo>(url);
         DFMEntryFileInfoPointer info(new EntryFileInfo(url));
@@ -447,7 +448,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, bool ne
 
     if (info->suffix() == SuffixInfo::kProtocol) {
         QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
-        if (id.startsWith("smb")) {
+        if (id.startsWith(Global::kSmb)) {
             StashMountsUtils::stashMount(info->url(), info->displayName());
             Q_EMIT this->itemRemoved(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
@@ -541,7 +542,7 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty()) {   // device have been removed
         Q_EMIT this->itemRemoved(devUrl);
-        if (id.startsWith("smb"))
+        if (id.startsWith(Global::kSmb))
             onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
     } else {
         Q_EMIT this->itemRemoved(devUrl);

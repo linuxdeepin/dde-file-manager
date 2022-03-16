@@ -24,6 +24,7 @@
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QDebug>
 #include <QProcess>
@@ -76,7 +77,7 @@ QUrl HistoryStack::back()
 
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-        if (url.scheme() != SchemeTypes::kFile && !fileInfo)
+        if (url.scheme() != Global::kFile && !fileInfo)
             break;
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {
@@ -105,7 +106,7 @@ QUrl HistoryStack::forward()
 
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
 
-        if (url.scheme() != SchemeTypes::kFile && !fileInfo)
+        if (url.scheme() != Global::kFile && !fileInfo)
             break;
 
         if (!fileInfo || !fileInfo->exists() || currentUrl == url) {

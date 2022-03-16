@@ -31,6 +31,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -66,7 +67,7 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
     if (path.isEmpty())
         return;
     QUrl u;
-    u.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     u.setPath(path);
     cdTo(sender, u);
 }
@@ -80,7 +81,7 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
 {
     QUrl u;
-    u.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     u.setPath(path);
     cdTo(winId, u);
 }

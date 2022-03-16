@@ -37,6 +37,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dfm_global_defines.h"
 
 DSB_FM_USE_NAMESPACE
 namespace GlobalPrivate {
@@ -57,8 +58,8 @@ void Computer::initialize()
 
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true, tr("Computer"));
     ViewFactory::regClass<ComputerView>(ComputerUtils::scheme());
-    UrlRoute::regScheme(SchemeTypes::kEntry, "/", QIcon(), true);
-    InfoFactory::regClass<EntryFileInfo>(SchemeTypes::kEntry);
+    UrlRoute::regScheme(Global::kEntry, "/", QIcon(), true);
+    InfoFactory::regClass<EntryFileInfo>(Global::kEntry);
 
     EntryEntityFactor::registCreator<UserEntryFileEntity>(SuffixInfo::kUserDir);
     EntryEntityFactor::registCreator<BlockEntryFileEntity>(SuffixInfo::kBlock);

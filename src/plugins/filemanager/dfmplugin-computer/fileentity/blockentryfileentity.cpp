@@ -258,7 +258,7 @@ QUrl BlockEntryFileEntity::targetUrl() const
     QUrl target;
     if (mpt.isEmpty())
         return target;
-    target.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
+    target.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     target.setPath(mpt);
     return target;
 }

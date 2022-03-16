@@ -54,7 +54,7 @@ void Workspace::initialize()
     DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
 
-    ViewFactory::regClass<FileView>(SchemeTypes::kFile);
+    ViewFactory::regClass<FileView>(Global::kFile);
 
     auto &ctx = dpfInstance.serviceContext();
     Q_ASSERT_X(ctx.loaded(WindowsService::name()), "Workspace", "WindowService not loaded");
@@ -87,7 +87,7 @@ bool Workspace::start()
     dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
 
-    const QString &scheme = SchemeTypes::kFile;
+    const QString &scheme = Global::kFile;
 
     if (WorkspaceHelper::instance()->isRegistedTopWidget(scheme)) {
         qWarning() << "custom top widget sechme " << scheme << "has been resigtered!";

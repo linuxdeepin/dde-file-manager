@@ -24,6 +24,7 @@
 #include "private/entryfileinfo_p.h"
 #include "dbusservice/global_server_defines.h"
 #include "base/standardpaths.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QRegularExpression>
 #include <QAction>
@@ -54,7 +55,7 @@ EntryFileInfo::EntryFileInfo(const QUrl &url)
 {
     d = static_cast<EntryFileInfoPrivate *>(dptr.data());
     d->init();
-    Q_ASSERT_X(url.scheme() == SchemeTypes::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
+    Q_ASSERT_X(url.scheme() == Global::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
 }
 
 EntryFileInfo::~EntryFileInfo()

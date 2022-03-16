@@ -23,6 +23,7 @@
 #include "burnhelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <DDialog>
 #include <QObject>
@@ -145,7 +146,7 @@ QString BurnHelper::burnDestDevice(const QUrl &url)
     static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
 
     QRegularExpressionMatch m;
-    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(rxp, &m))
+    if (url.scheme() != Global::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(1);
 }
@@ -156,7 +157,7 @@ QString BurnHelper::burnFilePath(const QUrl &url)
     static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
 
     QRegularExpressionMatch m;
-    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(rxp, &m))
+    if (url.scheme() != Global::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(3);
 }

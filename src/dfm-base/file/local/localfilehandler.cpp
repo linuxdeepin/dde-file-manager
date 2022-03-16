@@ -254,7 +254,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &urls)
     bool ret = false;
     for (const QUrl &url : urls) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-        if (info->suffix() == "desktop") {
+        if (info->suffix() == Global::kDesktop) {
             ret = launchApp(url.path()) || ret;   //有一个成功就成功
             resourceUrls.removeOne(url);
             continue;
@@ -610,7 +610,7 @@ QUrl LocalFileHandler::smbFileUrl(const QString &filePath)
     const QString &path = match.captured("path");
 
     QUrl newUrl;
-    newUrl.setScheme("smb");
+    newUrl.setScheme(Global::kSmb);
     newUrl.setHost(host);
     newUrl.setPath("/" + path.mid(0, path.lastIndexOf("/")));
     return newUrl;

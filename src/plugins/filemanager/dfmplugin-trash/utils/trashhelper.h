@@ -31,6 +31,7 @@
 #include "services/common/fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QUrl>
 #include <QIcon>
@@ -52,7 +53,7 @@ public:
 
     inline static QString scheme()
     {
-        return "trash";
+        return DFMBASE_NAMESPACE::Global::kTrash;
     }
 
     inline static QIcon icon()

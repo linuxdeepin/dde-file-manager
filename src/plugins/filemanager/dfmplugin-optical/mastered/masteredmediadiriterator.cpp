@@ -26,6 +26,7 @@
 #include "utils/opticalhelper.h"
 
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
@@ -108,7 +109,7 @@ QUrl MasteredMediaDirIterator::changeScheme(const QUrl &in) const
     } else {
         path.replace(mntPoint, devFile + "/" + kBurnSegOndisc);
     }
-    ret.setScheme(SchemeTypes::kBurn);
+    ret.setScheme(Global::kBurn);
     ret.setPath(path);
     if (skip.contains(ret)) {
         ret.setFragment("dup");

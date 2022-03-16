@@ -27,7 +27,7 @@ DFMBASE_USE_NAMESPACE
 CPY_USE_NAMESPACE
 QString ComputerPropertyHelper::scheme()
 {
-    return "computer";
+    return Global::kComputer;
 }
 
 QWidget *ComputerPropertyHelper::createComputerProperty(const QUrl &url)

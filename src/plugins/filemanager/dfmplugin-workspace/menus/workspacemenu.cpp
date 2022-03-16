@@ -147,7 +147,7 @@ void WorkspaceMenu::actionBusiness(QAction *act)
     case kActRename:
         if (selectUrls.count() > 1) {
             const quint64 winID = WorkspaceHelper::instance()->windowId(view);
-            WorkspaceEventCaller::sendShowCustomTopWidget(winID, SchemeTypes::kFile, true);
+            WorkspaceEventCaller::sendShowCustomTopWidget(winID, Global::kFile, true);
         } else {
             const QModelIndex &index = view->selectionModel()->currentIndex();
             if (index.isValid())

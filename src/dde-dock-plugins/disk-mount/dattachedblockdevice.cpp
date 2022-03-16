@@ -24,12 +24,13 @@
 #include "devicemanager.h"
 #include "sizeformathelper.h"
 
+#include "dfm-base/dfm_global_defines.h"
+
 #include <global_server_defines.h>
 #include <QCoreApplication>
 #include <QVariantMap>
 
 static const char *const kBurnSegOndisc = "disc_files";
-static const char *const kBurnScheme = "burn";
 
 using namespace GlobalServerDefines;
 
@@ -42,7 +43,7 @@ static QUrl makeBurnFileUrl(const QString &device)
 {
     QUrl url;
     QString virtualPath(device + "/" + kBurnSegOndisc + "/");
-    url.setScheme(kBurnScheme);
+    url.setScheme(DFMBASE_NAMESPACE::Global::kBurn);
     url.setPath(virtualPath);
     return url;
 }

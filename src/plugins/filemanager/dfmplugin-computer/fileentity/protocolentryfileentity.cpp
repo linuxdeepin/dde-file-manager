@@ -30,6 +30,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QMenu>
 
@@ -141,7 +142,7 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
     QUrl target;
     if (mpt.isEmpty())
         return target;
-    target.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
+    target.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     target.setPath(mpt);
     return target;
 }
@@ -158,7 +159,7 @@ QMenu *ProtocolEntryFileEntity::createMenu()
         menu->addAction(ContextMenuActionTrs::trUnmount());
 
         QString origId = datas[DeviceProperty::kId].toString();
-        if (origId.startsWith("smb") || origId.startsWith("ftp") || origId.startsWith("sftp") || origId.startsWith("dav"))
+        if (origId.startsWith(DFMBASE_NAMESPACE::Global::kSmb) || origId.startsWith(DFMBASE_NAMESPACE::Global::kFtp) || origId.startsWith(DFMBASE_NAMESPACE::Global::kSFtp) || origId.startsWith(DFMBASE_NAMESPACE::Global::kDav))
             menu->addAction(ContextMenuActionTrs::trLogoutAndClearSavedPasswd());
     }
 

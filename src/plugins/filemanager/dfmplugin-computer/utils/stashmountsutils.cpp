@@ -28,6 +28,7 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QFile>
 #include <QJsonObject>
@@ -73,7 +74,7 @@ QMap<QString, QString> StashMountsUtils::stashedMounts()
     cfgSettings()->reload();
     QStringList keys = cfgSettings()->keys(StashedMountsKeys::kJsonGroup).toList();
     for (const auto &key : keys) {
-        if (!key.startsWith("smb")) {   // old v1 version, which's key is start with '/run/user...'
+        if (!key.startsWith(Global::kSmb)) {   // old v1 version, which's key is start with '/run/user...'
             QMap<QString, QVariant> vals = cfgSettings()->value(StashedMountsKeys::kJsonGroup, key).toMap();
             if (vals.contains(StashedMountsKeys::kProtocolKey)
                 && vals.contains(StashedMountsKeys::kHostKey)
@@ -183,7 +184,7 @@ void StashMountsUtils::stashMountedMounts()
 {
     QStringList &&ids = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
     for (auto id : ids) {
-        if (id.startsWith("smb")) {
+        if (id.startsWith(Global::kSmb)) {
             DFMEntryFileInfoPointer info(new EntryFileInfo(ComputerUtils::makeProtocolDevUrl(id)));
             QString displayName = info->displayName();
             if (!displayName.isEmpty()) {

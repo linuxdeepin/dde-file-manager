@@ -25,6 +25,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 #include <dfm-burn/dfmburn_global.h>
@@ -96,7 +97,7 @@ QUrl OpticalHelper::localDiscFile(const QUrl &dest)
 QString OpticalHelper::burnDestDevice(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(burnRxp(), &m))
+    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m))
         return {};
     return m.captured(1);
 }
@@ -104,7 +105,7 @@ QString OpticalHelper::burnDestDevice(const QUrl &url)
 QString OpticalHelper::burnFilePath(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(burnRxp(), &m))
+    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m))
         return {};
     return m.captured(3);
 }
@@ -112,7 +113,7 @@ QString OpticalHelper::burnFilePath(const QUrl &url)
 bool OpticalHelper::burnIsOnDisc(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(burnRxp(), &m)) {
+    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m)) {
         return false;
     }
     return m.captured(2) == BURN_SEG_ONDISC;
@@ -121,7 +122,7 @@ bool OpticalHelper::burnIsOnDisc(const QUrl &url)
 bool OpticalHelper::burnIsOnStaging(const QUrl &url)
 {
     QRegularExpressionMatch m;
-    if (url.scheme() != SchemeTypes::kBurn || !url.path().contains(burnRxp(), &m)) {
+    if (url.scheme() != Global::kBurn || !url.path().contains(burnRxp(), &m)) {
         return false;
     }
     return m.captured(2) == BURN_SEG_STAGING;
@@ -144,7 +145,7 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
 
     QUrl url;
     QString filePath { devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path };
-    url.setScheme(SchemeTypes::kBurn);
+    url.setScheme(Global::kBurn);
     url.setPath(filePath);
 
     return url;
@@ -152,7 +153,7 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
 
 QUrl OpticalHelper::tansToLocalFile(const QUrl &in)
 {
-    Q_ASSERT(in.scheme() == SchemeTypes::kBurn);
+    Q_ASSERT(in.scheme() == Global::kBurn);
     QUrl url;
 
     if (burnIsOnDisc(in)) {

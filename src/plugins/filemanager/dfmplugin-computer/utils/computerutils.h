@@ -31,6 +31,7 @@
 
 #include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QString>
 #include <QIcon>
@@ -43,7 +44,7 @@ class ComputerUtils
 public:
     inline static QString scheme()
     {
-        return "computer";
+        return DFMBASE_NAMESPACE::Global::kComputer;
     }
 
     inline static QIcon icon()

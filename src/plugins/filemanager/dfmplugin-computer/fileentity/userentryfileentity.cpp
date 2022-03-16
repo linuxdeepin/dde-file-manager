@@ -25,6 +25,7 @@
 
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QDebug>
 #include <QMenu>
@@ -91,7 +92,7 @@ QUrl UserEntryFileEntity::targetUrl() const
     if (path.isEmpty())
         return QUrl();
     QUrl targetUrl;
-    targetUrl.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
+    targetUrl.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     targetUrl.setPath(path);
     return targetUrl;
 }

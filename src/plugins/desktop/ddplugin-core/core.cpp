@@ -22,6 +22,7 @@
 
 #include "core.h"
 #include "frame/windowframe.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <services/desktop/frame/frameservice.h>
 #include <services/desktop/screen/screenservice.h>
@@ -38,10 +39,10 @@ DSB_D_USE_NAMESPACE
 
 static void registerFileSystem()
 {
-    UrlRoute::regScheme(SchemeTypes::kFile, "/");
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
+    UrlRoute::regScheme(Global::kFile, "/");
+    InfoFactory::regClass<LocalFileInfo>(Global::kFile);
+    DirIteratorFactory::regClass<LocalDirIterator>(Global::kFile);
+    WacherFactory::regClass<LocalFileWatcher>(Global::kFile);
 }
 
 void ddplugin_core::Core::initialize()
@@ -96,4 +97,3 @@ void ddplugin_core::Core::onStart()
     // create desktop frame windows.
     frame->buildBaseWindow();
 }
-

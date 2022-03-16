@@ -23,6 +23,7 @@
 #include "shareutils.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QDebug>
 
@@ -64,6 +65,6 @@ QUrl ShareUtils::convertToLocalUrl(const QUrl &shareUrl)
     if (shareUrl.scheme() != scheme())
         return {};
     QUrl u = shareUrl;
-    u.setScheme(DFMBASE_NAMESPACE::SchemeTypes::kFile);
+    u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     return u;
 }

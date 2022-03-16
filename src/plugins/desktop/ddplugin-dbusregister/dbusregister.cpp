@@ -27,6 +27,7 @@
 #include "dbus_adaptor/operationsstackmanagerdbus_adaptor.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 #include <QDBusConnection>
@@ -36,7 +37,7 @@ DFMBASE_USE_NAMESPACE
 void DBusRegister::initialize()
 {
     QString errStr;
-    UrlRoute::regScheme(SchemeTypes::kEntry, "/", QIcon(), true);
+    UrlRoute::regScheme(Global::kEntry, "/", QIcon(), true);
 }
 
 bool DBusRegister::start()

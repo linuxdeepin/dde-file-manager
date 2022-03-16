@@ -23,6 +23,7 @@
 #include "recentmanager.h"
 #include "events/recenteventcaller.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <DDialog>
@@ -38,7 +39,7 @@ bool RecentFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls
 
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
-        url.setScheme(SchemeTypes::kFile);
+        url.setScheme(Global::kFile);
         redirectedFileUrls << url;
     }
     RecentEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
@@ -52,7 +53,7 @@ bool RecentFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const 
 
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
-        url.setScheme(SchemeTypes::kFile);
+        url.setScheme(Global::kFile);
         redirectedFileUrls << url;
     }
     RecentEventCaller::sendWriteToClipboard(windowId, action, redirectedFileUrls);
@@ -89,7 +90,7 @@ void RecentFilesHelper::removeRecent(const QList<QUrl> &urls)
             //list << DUrl::fromLocalFile(url.path()).toString();
             //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
             QUrl newUrl = url;
-            newUrl.setScheme(SchemeTypes::kFile);
+            newUrl.setScheme(Global::kFile);
             list << newUrl.toString();
         }
 

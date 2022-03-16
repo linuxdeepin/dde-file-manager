@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "urlroute.h"
+#include "dfm_global_defines.h"
 
 #include "utils/finallyutil.h"
 
@@ -27,18 +28,6 @@
 #include <QRegularExpression>
 
 DFMBASE_BEGIN_NAMESPACE
-
-namespace SchemeTypes {
-const char *const kFile = "file";
-const char *const kDesktop = "desktop";
-const char *const kEntry = "entry";
-const char *const kSmb = "smb";
-const char *const kFtp = "ftp";
-const char *const kSFtp = "sftp";
-const char *const kBurn = "burn";
-const char *const kComputer = "computer";
-extern const char *const kDevice = "device";
-}   // namespace SchemeTypes
 
 QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};
 QMultiMap<int, QString> UrlRoute::kSchemeRealTree {};
@@ -357,7 +346,7 @@ QString UrlRoute::urlToLocalPath(const QUrl &url)
     if (!url.isValid())
         return {};
     QUrl localUrl { url };
-    localUrl.setScheme(SchemeTypes::kFile);
+    localUrl.setScheme(Global::kFile);
     return localUrl.toString().replace(0, 4, url.scheme());
 }
 

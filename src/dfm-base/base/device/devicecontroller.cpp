@@ -1007,7 +1007,7 @@ static DFMMOUNT::MountPassInfo askForPasswdWhenMountNetworkDevice(const QString 
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);
 
-    if (uri.startsWith("ftp") || uri.startsWith("sftp"))
+    if (uri.startsWith(Global::kFtp) || uri.startsWith(Global::kSFtp))
         dlg.setDomainLineVisible(false);
 
     DFMMOUNT::MountPassInfo info;

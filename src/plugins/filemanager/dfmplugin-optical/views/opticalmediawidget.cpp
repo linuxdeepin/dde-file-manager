@@ -169,7 +169,7 @@ void OpticalMediaWidget::handleErrorMount()
     auto winId { OpticalHelper::winServIns()->findWindowId(this) };
     FileManagerWindow *window { OpticalHelper::winServIns()->findWindowById(winId) };
     if (window) {
-        QUrl jumpUrl { UrlRoute::rootUrl(SchemeTypes::kComputer) };
+        QUrl jumpUrl { UrlRoute::rootUrl(Global::kComputer) };
         window->cd(jumpUrl);
     }
     DialogManagerInstance->showErrorDialog(tr("Mounting failed"), {});

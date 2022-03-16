@@ -23,6 +23,7 @@
 #include "remotepasswdmanager.h"
 
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QFile>
 #include <QDebug>
@@ -140,14 +141,14 @@ void RemotePasswdManager::clearPasswd(const QString &uri)
     QString server = parseServer(uri);
     QString protocol = uri.mid(0, uri.indexOf("://"));
 
-    if (protocol == "smb") {
+    if (protocol == DFMBASE_NAMESPACE::Global::kSmb) {
         secret_password_clear(smbSchema(), nullptr, onPasswdCleared, nullptr,
                               //                              "user", user.toStdString().c_str(),
                               //                              "domain", domain.toStdString().c_str(),
                               "server", server.toStdString().c_str(),
                               "protocol", protocol.toStdString().c_str(),
                               nullptr);
-    } else if (protocol.endsWith("ftp")) {   // ftp && sftp
+    } else if (protocol.endsWith(DFMBASE_NAMESPACE::Global::kFtp)) {   // ftp && sftp
         secret_password_clear(ftpSchema(), nullptr, onPasswdCleared, nullptr,
                               //                              "user", user.toStdString().c_str(),
                               "server", server.toStdString().c_str(),

@@ -29,6 +29,7 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -38,7 +39,7 @@ DFMBASE_USE_NAMESPACE
 QUrl ComputerUtils::makeBlockDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(SchemeTypes::kEntry);
+    devUrl.setScheme(Global::kEntry);
     auto shortenBlk = id;
     shortenBlk.remove(QString(DeviceId::kBlockDeviceIdPrefix));   // /org/freedesktop/UDisks2/block_devices/sda1 -> sda1
     auto path = QString("%1.%2").arg(shortenBlk).arg(SuffixInfo::kBlock);   // sda1.blockdev
@@ -48,7 +49,7 @@ QUrl ComputerUtils::makeBlockDevUrl(const QString &id)
 
 QString ComputerUtils::getBlockDevIdByUrl(const QUrl &url)
 {
-    if (url.scheme() != SchemeTypes::kEntry)
+    if (url.scheme() != Global::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kBlock))
         return "";
@@ -61,7 +62,7 @@ QString ComputerUtils::getBlockDevIdByUrl(const QUrl &url)
 QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(SchemeTypes::kEntry);
+    devUrl.setScheme(Global::kEntry);
     auto path = id.toUtf8().toBase64();
     QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kProtocol);
     devUrl.setPath(encodecPath);
@@ -70,7 +71,7 @@ QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 
 QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
 {
-    if (url.scheme() != SchemeTypes::kEntry)
+    if (url.scheme() != Global::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kProtocol))
         return "";
@@ -93,7 +94,7 @@ QUrl ComputerUtils::makeAppEntryUrl(const QString &filePath)
     QString newPath = QString("%1.%2").arg(fileName).arg(SuffixInfo::kAppEntry);
 
     QUrl url;
-    url.setScheme(SchemeTypes::kEntry);
+    url.setScheme(Global::kEntry);
     url.setPath(newPath);
     return url;
 }
@@ -107,7 +108,7 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
 
     QString fileName = entryUrl.path().remove("." + QString(SuffixInfo::kAppEntry));
     QUrl origUrl;
-    origUrl.setScheme(SchemeTypes::kFile);
+    origUrl.setScheme(Global::kFile);
     origUrl.setPath(QString("%1/%2.%3").arg(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath)).arg(fileName).arg("desktop"));
     return origUrl;
 }
@@ -115,7 +116,7 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
 QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(SchemeTypes::kEntry);
+    devUrl.setScheme(Global::kEntry);
     auto path = id.toUtf8().toBase64();
     QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kStashedProtocol);
     devUrl.setPath(encodecPath);
@@ -124,7 +125,7 @@ QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
 
 QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
 {
-    if (url.scheme() != SchemeTypes::kEntry)
+    if (url.scheme() != Global::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kStashedProtocol))
         return "";
@@ -137,7 +138,7 @@ QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
 
 QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
 {
-    if (stashedUrl.scheme() != SchemeTypes::kEntry)
+    if (stashedUrl.scheme() != Global::kEntry)
         return {};
     if (!stashedUrl.path().endsWith(SuffixInfo::kStashedProtocol))
         return {};
@@ -145,14 +146,14 @@ QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
     QString path = stashedUrl.path();
     path.replace(SuffixInfo::kStashedProtocol, SuffixInfo::kProtocol);
     QUrl ret;
-    ret.setScheme(SchemeTypes::kEntry);
+    ret.setScheme(Global::kEntry);
     ret.setPath(path);
     return ret;
 }
 
 QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
 {
-    if (protocolDevUrl.scheme() != SchemeTypes::kEntry)
+    if (protocolDevUrl.scheme() != Global::kEntry)
         return {};
     if (!protocolDevUrl.path().endsWith(SuffixInfo::kProtocol))
         return {};
@@ -160,7 +161,7 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
     QString path = protocolDevUrl.path();
     path.replace(SuffixInfo::kProtocol, SuffixInfo::kStashedProtocol);
     QUrl ret;
-    ret.setScheme(SchemeTypes::kEntry);
+    ret.setScheme(Global::kEntry);
     ret.setPath(path);
     return ret;
 }
@@ -168,7 +169,7 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
 QUrl ComputerUtils::makeLocalUrl(const QString &path)
 {
     QUrl u;
-    u.setScheme(SchemeTypes::kFile);
+    u.setScheme(Global::kFile);
     u.setPath(path);
     return u;
 }
@@ -177,7 +178,7 @@ QUrl ComputerUtils::makeBurnUrl(const QString &id)
 {
     QString dev = id.mid(id.lastIndexOf("/") + 1);
     QUrl u;
-    u.setScheme(SchemeTypes::kBurn);
+    u.setScheme(Global::kBurn);
     // burn:///dev/sr0/disc_files/
     u.setPath(QString("/dev/%1/disc_files/").arg(dev));
     return u;

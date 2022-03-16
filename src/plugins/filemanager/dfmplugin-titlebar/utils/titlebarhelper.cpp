@@ -110,7 +110,7 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
 
 bool TitleBarHelper::crumbSupportedUrl(const QUrl &url)
 {
-    return url.scheme() == SchemeTypes::kFile;
+    return url.scheme() == Global::kFile;
 }
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
@@ -136,7 +136,7 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
             // TODO(zhangs): device info  (ref DFMFileCrumbController::seprateUrl)
 
             if (prefixPath == "/") {
-                CrumbData data(UrlRoute::rootUrl(SchemeTypes::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
+                CrumbData data(UrlRoute::rootUrl(Global::kFile), getDisplayName("System Disk"), "drive-harddisk-root-symbolic");
                 list.append(data);
             } else {
                 CrumbData data(QUrl::fromLocalFile(prefixPath), QString(), iconName);
@@ -207,11 +207,11 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
 bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
 {
     QString &&scheme = url.scheme();
-    if (scheme != SchemeTypes::kSmb && scheme != SchemeTypes::kFtp && scheme != SchemeTypes::kSFtp)
+    if (scheme != Global::kSmb && scheme != Global::kFtp && scheme != Global::kSFtp)
         return false;
 
     // TODO(xust) see if i can find any other way to handle the choise (browse the smb shares and mount the samba directly)
-    if (scheme == SchemeTypes::kSmb && url.path() == "/")
+    if (scheme == Global::kSmb && url.path() == "/")
         return false;
 
     if (url.host().isEmpty()) {
@@ -224,7 +224,7 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {
             QUrl u;
-            u.setScheme(SchemeTypes::kFile);
+            u.setScheme(Global::kFile);
             u.setPath(mntPath);
             TitleBarEventCaller::sendCd(sender, u);
         }

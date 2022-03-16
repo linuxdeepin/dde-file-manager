@@ -347,7 +347,7 @@ void VaultHelper::slotlockVault(int state)
     if (state == 0) {
         emit VaultHelper::instance()->sigLocked(state);
         QUrl url;
-        url.setScheme(QString("computer"));
+        url.setScheme(QString(Global::kComputer));
         url.setPath("/");
         defaultCdAction(url);
     }

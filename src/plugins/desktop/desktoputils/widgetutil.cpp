@@ -47,7 +47,7 @@ bool ddplugin_desktop_util::enableScreensaver()
     QDBusMessage msg = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", "ListActivatableNames");
     QDBusMessage response = QDBusConnection::sessionBus().call(msg);
     if (response.type() == QDBusMessage::ReplyMessage && !response.arguments().isEmpty()
-            && response.arguments().first().toList().contains("com.deepin.ScreenSaver")){
+        && response.arguments().first().toList().contains("com.deepin.ScreenSaver")) {
         qDebug() << "com.deepin.ScreenSaver is ok";
     } else {
         qWarning() << "The screen saver is uninstalled";
@@ -68,7 +68,7 @@ void ddplugin_desktop_util::setDesktopWindow(QWidget *w)
     if (!w)
         return;
 
-    w->winId(); // must be called
+    w->winId();   // must be called
     QWindow *window = w->windowHandle();
     if (!window) {
         qWarning() << w << "windowHandle is null";
@@ -79,7 +79,7 @@ void ddplugin_desktop_util::setDesktopWindow(QWidget *w)
         qDebug() << "wayland set desktop";
         w->setWindowFlags(Qt::FramelessWindowHint);
         w->setAttribute(Qt::WA_NativeWindow);
-        window->setProperty("_d_dwayland_window-type","desktop");
+        window->setProperty("_d_dwayland_window-type", "desktop");
     } else {
         QXcbWindowFunctions::setWmWindowType(window, QXcbWindowFunctions::Desktop);
     }
@@ -92,13 +92,13 @@ void ddplugin_desktop_util::setPrviewWindow(QWidget *w)
 
     w->setWindowFlags(w->windowFlags() | Qt::BypassWindowManagerHint | Qt::WindowDoesNotAcceptFocus);
     if (WindowUtils::isWayLand()) {
-        w->winId(); // must be called
+        w->winId();   // must be called
         QWindow *window = w->windowHandle();
         if (!window) {
             qWarning() << w << "windowHandle is null";
             return;
         }
         qDebug() << "wayland set role dock";
-        window->setProperty("_d_dwayland_window-type","wallpaper");
+        window->setProperty("_d_dwayland_window-type", "wallpaper");
     }
 }

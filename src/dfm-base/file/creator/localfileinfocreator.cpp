@@ -22,18 +22,19 @@
 #include "file/local/desktopfileinfo.h"
 #include "base/schemefactory.h"
 
+#include "dfm-base/dfm_global_defines.h"
 
 DFMBASE_USE_NAMESPACE
 
-LocalFileInfoCreator::LocalFileInfoCreator() : AbstractFileInfoCreator()
+LocalFileInfoCreator::LocalFileInfoCreator()
+    : AbstractFileInfoCreator()
 {
-
 }
 
 bool LocalFileInfoCreator::registerConvertor(AbstractFileInfoCreator::Convertor func, void *extData)
 {
     QWriteLocker lk(&funcLocker);
-    auto iter = std::find_if(convertFuncs.begin(), convertFuncs.end(), [func](const QPair<Convertor, void *> &cur){
+    auto iter = std::find_if(convertFuncs.begin(), convertFuncs.end(), [func](const QPair<Convertor, void *> &cur) {
         return cur.first == func;
     });
 
@@ -79,8 +80,8 @@ DFMLocalFileInfoPointer LocalFileInfoCreator::createLocalFileInfo(const QUrl &ur
 
 AbstractFileInfoPointer LocalFileInfoCreator::tryCovertDesktopFileInfo(const AbstractFileInfoPointer &info, void *)
 {
-    if (info->suffix() == "desktop" && info->mimeTypeName() == "application/x-desktop") {
-        return DFMLocalFileInfoPointer(new DesktopFileInfo(info->url())); // todo(lxs) 处理watcher问题
+    if (info->suffix() == Global::kDesktop && info->mimeTypeName() == "application/x-desktop") {
+        return DFMLocalFileInfoPointer(new DesktopFileInfo(info->url()));   // todo(lxs) 处理watcher问题
     }
 
     return nullptr;

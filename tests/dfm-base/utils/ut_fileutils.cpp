@@ -46,7 +46,7 @@ public:
 
 TEST_F(UT_FileUtils, test_mkdir)
 {
-    UrlRoute::regScheme(SchemeTypes::kFile, "/");
+    UrlRoute::regScheme(Global::kFile, "/");
     qInfo() << UrlRoute::pathToReal("/funningTest/");
     FileUtils::mkdir(UrlRoute::pathToReal("/"), "test");
     qInfo() << StandardPaths::location(StandardPaths::kHomePath);

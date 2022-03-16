@@ -37,6 +37,7 @@
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -60,11 +61,11 @@ void Core::initialize()
     }
 
     // 注册路由
-    UrlRoute::regScheme(SchemeTypes::kFile, "/");
+    UrlRoute::regScheme(Global::kFile, "/");
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<LocalFileInfo>(SchemeTypes::kFile);
-    DirIteratorFactory::regClass<LocalDirIterator>(SchemeTypes::kFile);
-    WacherFactory::regClass<LocalFileWatcher>(SchemeTypes::kFile);
+    InfoFactory::regClass<LocalFileInfo>(Global::kFile);
+    DirIteratorFactory::regClass<LocalDirIterator>(Global::kFile);
+    WacherFactory::regClass<LocalFileWatcher>(Global::kFile);
     // 初始化剪切板
     ClipBoard::instance();
 }

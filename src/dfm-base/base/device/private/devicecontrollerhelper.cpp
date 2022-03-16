@@ -60,7 +60,7 @@ DFMBASE_NAMESPACE::Settings *DeviceControllerHelper::getGsGlobal()
 void DeviceControllerHelper::openFileManagerToDevice(const DeviceControllerHelper::BlockDevPtr &blkDev)
 {
     if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-        QString root { DFMBASE_NAMESPACE::UrlRoute::rootPath(DFMBASE_NAMESPACE::SchemeTypes::kEntry) };
+        QString root { DFMBASE_NAMESPACE::UrlRoute::rootPath(DFMBASE_NAMESPACE::Global::kEntry) };
         QString mountUrlStr { /*root + QFileInfo(blkDev->device()).fileName() + "." + DFMBASE_NAMESPACE::SuffixInfo::kBlock */ };   // TODO(xust)
         QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountUrlStr });
         qInfo() << "open by dde-file-manager: " << mountUrlStr;

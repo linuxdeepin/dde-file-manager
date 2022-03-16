@@ -30,6 +30,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -196,7 +197,7 @@ void TabBar::closeTab(quint64 winId, const QString &path)
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
                 if (isMountedDevPath(path)) {
-                    redirectToWhenDelete.setScheme(SchemeTypes::kComputer);
+                    redirectToWhenDelete.setScheme(Global::kComputer);
                     redirectToWhenDelete.setPath("/");
                 } else {   // redirect to upper directory
                     QString localPath = path;
@@ -205,7 +206,7 @@ void TabBar::closeTab(quint64 winId, const QString &path)
                         pathFragment.removeLast();
                         localPath = pathFragment.join("/");
                     } while (!QDir(localPath).exists());
-                    redirectToWhenDelete.setScheme(SchemeTypes::kFile);
+                    redirectToWhenDelete.setScheme(Global::kFile);
                     redirectToWhenDelete.setPath(localPath);
                 }
                 dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);

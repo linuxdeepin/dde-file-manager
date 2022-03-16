@@ -75,16 +75,22 @@ constexpr char kMimeTypeAppZip[] { "application/zip" };
 
 constexpr uint8_t kMaxFileNameCharCount { 255 };
 
-const char *const kSmb { "smb" };
-const char *const kSmbShare { "smb-share" };
-const char *const kFtp { "ftp" };
-const char *const kSFtp { "sftp" };
-const char *const kGPhoto { "gphoto" };
-const char *const kGPhoto2 { "gphoto2" };
-const char *const kFile { "file" };
-const char *const kMtp { "mtp" };
-const char *const kAfc { "afc" };
-const char *const kTrash { "trash" };
+constexpr char kSmb[] { "smb" };
+constexpr char kSmbShare[] { "smb-share" };
+constexpr char kFtp[] { "ftp" };
+constexpr char kSFtp[] { "sftp" };
+constexpr char kGPhoto[] { "gphoto" };
+constexpr char kGPhoto2[] { "gphoto2" };
+constexpr char kFile[] { "file" };
+constexpr char kDesktop[] { "desktop" };
+constexpr char kMtp[] { "mtp" };
+constexpr char kAfc[] { "afc" };
+constexpr char kDav[] { "dav" };
+constexpr char kEntry[] { "entry" };
+constexpr char kBurn[] { "burn" };
+constexpr char kComputer[] { "computer" };
+constexpr char kDevice[] { "device" };
+constexpr char kTrash[] { "trash" };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

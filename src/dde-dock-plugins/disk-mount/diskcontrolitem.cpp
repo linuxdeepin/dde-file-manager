@@ -23,6 +23,8 @@
 #include "diskcontrolitem.h"
 #include "sizeformathelper.h"
 
+#include "dfm-base/dfm_global_defines.h"
+
 #include <DGuiApplicationHelper>
 #include <DDialog>
 #include <DDesktopServices>
@@ -129,7 +131,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
     }
 
     QUrl &&url = QUrl(attachedDev->accessPointUrl());
-    if (url.scheme() == "burn") {
+    if (url.scheme() == DFMBASE_NAMESPACE::Global::kBurn) {
         // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
         // 2. 默认文件管理器为其他时，依然采用打开挂载点的方式
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {

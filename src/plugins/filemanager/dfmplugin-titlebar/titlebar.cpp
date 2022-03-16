@@ -27,6 +27,7 @@
 #include "views/titlebarwidget.h"
 #include "events/titlebarunicastreceiver.h"
 #include "events/titlebareventreceiver.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
@@ -56,7 +57,7 @@ void TitleBar::initialize()
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &TitleBar::onWindowClosed, Qt::DirectConnection);
 
     // file scheme for crumbar
-    CrumbManager::instance()->registerCrumbCreator(SchemeTypes::kFile, []() {
+    CrumbManager::instance()->registerCrumbCreator(Global::kFile, []() {
         CrumbInterface *interface { new CrumbInterface };
         interface->registewrSupportedUrlCallback(&TitleBarHelper::crumbSupportedUrl);
         interface->registerSeprateUrlCallback(&TitleBarHelper::crumbSeprateUrl);
@@ -69,9 +70,9 @@ void TitleBar::initialize()
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabChanged,
                                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabChanged);
 
-    UrlRoute::regScheme(SchemeTypes::kSmb, "/", {}, true);
-    UrlRoute::regScheme(SchemeTypes::kFtp, "/", {}, true);
-    UrlRoute::regScheme(SchemeTypes::kSFtp, "/", {}, true);
+    UrlRoute::regScheme(Global::kSmb, "/", {}, true);
+    UrlRoute::regScheme(Global::kFtp, "/", {}, true);
+    UrlRoute::regScheme(Global::kSFtp, "/", {}, true);
 
     TitleBarUnicastReceiver::instance()->connectService();
 }

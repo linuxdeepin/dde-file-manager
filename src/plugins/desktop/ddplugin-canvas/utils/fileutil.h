@@ -30,11 +30,11 @@
 #include <QUrl>
 
 DDP_CANVAS_BEGIN_NAMESPACE
-#if 0 // destop should use file:// rather than desktop://.
+#if 0   // destop should use file:// rather than desktop://.
 inline QUrl covertDesktopUrlToFile(const QUrl &desktopUrl) {
     QUrl fileUrl = DFMBASE_NAMESPACE::UrlRoute::pathToUrl(
                 DFMBASE_NAMESPACE::UrlRoute::urlToPath(desktopUrl),
-                DFMBASE_NAMESPACE::SchemeTypes::kFile);
+                DFMBASE_NAMESPACE::Global::kFile);
     return fileUrl;
 }
 
@@ -50,6 +50,7 @@ class DesktopFileCreator : protected DFMBASE_NAMESPACE::LocalFileInfoCreator
 public:
     static DesktopFileCreator *instance();
     DFMLocalFileInfoPointer createFileInfo(const QUrl &url, bool cache = true);
+
 protected:
     explicit DesktopFileCreator();
 };
@@ -57,4 +58,4 @@ protected:
 DDP_CANVAS_END_NAMESPACE
 
 #define FileCreator DDP_CANVAS_NAMESPACE::DesktopFileCreator::instance()
-#endif // FILEUTIL_H
+#endif   // FILEUTIL_H
