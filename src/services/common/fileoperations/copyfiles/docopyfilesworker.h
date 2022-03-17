@@ -83,7 +83,7 @@ protected:
 protected:
     void determineCountProcessType();
     bool copyFiles();
-    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
+    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool &workContinue);
     bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                      AbstractFileInfoPointer &newTargetInfo, bool &result);
 
@@ -91,14 +91,13 @@ protected:
                         const AbstractFileInfoPointer &toInfo,
                         AbstractFileInfoPointer &newTargetInfo,
                         QString &fileNewName,
-                        bool &result,
+                        bool &workContinue,
                         bool isCountSize = false);
     bool doCheckFileFreeSpace(const qint64 &size);
-    bool creatSystemLink(const AbstractFileInfoPointer &fromInfo,
-                         const AbstractFileInfoPointer &toInfo);
-    bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    bool creatSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool &workContinue);
+    bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool &workContinue);
     bool doThreadPoolCopyFile();
-    bool doCopyOneFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
+    bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo);
     bool createFileDevices(const AbstractFileInfoPointer &fromInfo,
                            const AbstractFileInfoPointer &toInfo,
                            QSharedPointer<DFile> &fromeFile,
@@ -134,8 +133,7 @@ protected:
                      const char *data,
                      const qint64 &readSize,
                      bool &result);
-    bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo,
-                         const AbstractFileInfoPointer &toInfo);
+    bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool &workContinue);
     void setTargetPermissions(const AbstractFileInfoPointer &fromInfo,
                               const AbstractFileInfoPointer &toInfo);
     bool verifyFileIntegrity(const qint64 &blockSize,
