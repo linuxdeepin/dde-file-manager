@@ -660,7 +660,7 @@ bool FileOperateBaseWorker::creatSystemLink(const AbstractFileInfoPointer &fromI
     AbstractJobHandler::SupportAction actionForlink { AbstractJobHandler::SupportAction::kNoAction };
 
     do {
-        if (handler->createSystemLink(toInfo->url(), newFromInfo->url())) {
+        if (handler->createSystemLink(newFromInfo->url(), toInfo->url())) {
             return true;
         }
         actionForlink = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), fromInfo->url(), AbstractJobHandler::JobErrorType::kSymlinkError, QString(QObject::tr("Fail to create symlink, cause: %1")).arg(handler->errorString()));
