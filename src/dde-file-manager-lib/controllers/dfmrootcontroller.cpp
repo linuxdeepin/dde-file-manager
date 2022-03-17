@@ -78,6 +78,12 @@ private:
 
 static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice> blk, QSharedPointer<DDiskDevice> drv)
 {
+    bool isOptical = drv->mediaCompatibility().join(",").contains("optical");
+    if (!blk->hasFileSystem() && blk->size() < 1024 && !isOptical) {   // a super block is at least 1024 bytes, a full filesystem always have a superblock.
+        qWarning() << "block device is ignored cause it's size is less than 1024" << blkPath;
+        return true;
+    }
+
     // 过滤snap产生的loop设备
     if(blk->isLoopDevice()){ // loop devices' display status only determind by GA_HideLoopPartitions property.
         if (DFMApplication::genericAttribute(DFMApplication::GA_HideLoopPartitions).toBool()) {
@@ -93,23 +99,11 @@ static bool ignoreBlkDevice(const QString& blkPath, QSharedPointer<DBlockDevice>
         return true;
     }
 
-    //wayland 情况下sda/sdb/sdc做特殊用处
-    if (DFMGlobal::isWayLand() && blkPath.contains(QRegularExpression("/sd[a-c][1-9]*$"))) {
-        qWarning()  << "block device is ignored by wayland set:"  << blkPath;
-        return true;
-    }
-
-    bool isOptical = drv->mediaCompatibility().join(",").contains("optical");
     if (!blk->hasFileSystem() && !isOptical && !blk->isEncrypted()) {
         if (!drv->removable()){ // 满足外围条件的本地磁盘，直接遵循以前的处理直接 continue
             qWarning()  << "block device is ignored by wrong removeable set for system disk:"  << blkPath;
             return true;
         }
-    }
-
-    if (!blk->hasFileSystem() && blk->size() < 1024 && !isOptical) {   // a super block is at least 1024 bytes, a full filesystem always have a superblock.
-        qWarning() << "block device is ignored cause it's size is less than 1024" << blkPath;
-        return true;
     }
 
     if (blk->cryptoBackingDevice().length() > 1) {
