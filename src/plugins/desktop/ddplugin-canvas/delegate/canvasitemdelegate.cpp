@@ -27,9 +27,13 @@
 #include "view/canvasview_p.h"
 #include "view/operator/fileoperaterproxy.h"
 
+#include <services/common/emblem/emblem_defines.h>
+
 #include <base/application/application.h>
 #include <base/application/settings.h>
 #include <dfm-base/utils/clipboard.h>
+
+#include <dfm-framework/framework.h>
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -178,7 +182,8 @@ void CanvasItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         paintIcon(painter, indexOption.icon, rIcon, Qt::AlignCenter,
                   (option.state & QStyle::State_Enabled) ? QIcon::Normal : QIcon::Disabled);   //why Enabled?
 
-        // todo(zy) 绘制角标
+        // paint emblems to icon
+        paintEmblems(painter, rIcon, parent()->model()->url(index));
 
         // do not draw text if index is in editing,
         if (!parent()->isPersistentEditorOpen(index)) {
@@ -839,6 +844,12 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 
     // return rect before scale
     return QRect(qRound(x), qRound(y), w, h);
+}
+
+QRect CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
+{
+    //todo uing extend painter by registering.
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url);
 }
 
 void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const
