@@ -37,9 +37,17 @@ DPSMBBROWSER_USE_NAMESPACE
 QMutex SmbBrowserUtils::mutex;
 QMap<QUrl, SmbShareNode> SmbBrowserUtils::shareNodes;
 
-QString SmbBrowserUtils::scheme()
+QString SmbBrowserUtils::networkScheme()
 {
-    return DFMBASE_NAMESPACE::Global::kSmb;
+    return "network";
+}
+
+QUrl SmbBrowserUtils::netNeighborRootUrl()
+{
+    QUrl u;
+    u.setScheme(networkScheme());
+    u.setPath("/");
+    return u;
 }
 
 QIcon SmbBrowserUtils::icon()
@@ -53,12 +61,14 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls, Q
         return false;
 
     DFMBASE_USE_NAMESPACE
-    QString devUrl = urls.first().toString();
-    DeviceController::instance()->mountNetworkDevice(devUrl, [windowId](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+    QUrl url = urls.first();
+    QString urlStr = url.toString();
+    DeviceController::instance()->mountNetworkDevice(urlStr, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         if (!ok && err != DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) {
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, windowId, QUrl::fromLocalFile(mpt));
+            QUrl u = mpt.isEmpty() ? url : QUrl::fromLocalFile(mpt);
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, windowId, u);
         }
     });
     return true;

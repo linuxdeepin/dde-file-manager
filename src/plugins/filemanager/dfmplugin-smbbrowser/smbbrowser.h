@@ -46,6 +46,7 @@ protected Q_SLOTS:
 
 private:
     void initOperations();
+    void addNeighborToSidebar();
 };
 
 DPSMBBROWSER_END_NAMESPACE

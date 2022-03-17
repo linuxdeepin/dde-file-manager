@@ -34,7 +34,8 @@ DPSMBBROWSER_BEGIN_NAMESPACE
 class SmbBrowserUtils
 {
 public:
-    static QString scheme();
+    static QString networkScheme();
+    static QUrl netNeighborRootUrl();
     static QIcon icon();
 
     static bool mountSmb(const quint64 windowId, const QList<QUrl> urls, QString *);

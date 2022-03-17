@@ -27,29 +27,49 @@
 #include "iterator/smbshareiterator.h"
 #include "menu/smbsharefilemenu.h"
 
+#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
+#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
 
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void SmbBrowser::initialize()
 {
-    UrlRoute::regScheme(SmbBrowserUtils::scheme(), "/", SmbBrowserUtils::icon(), true);
+    UrlRoute::regScheme(Global::kSmb, "/", SmbBrowserUtils::icon(), true);
+    UrlRoute::regScheme(SmbBrowserUtils::networkScheme(), "/", SmbBrowserUtils::icon(), true);
 
-    InfoFactory::regClass<SmbShareFileInfo>(SmbBrowserUtils::scheme());
-    DirIteratorFactory::regClass<SmbShareIterator>(SmbBrowserUtils::scheme());
+    InfoFactory::regClass<SmbShareFileInfo>(Global::kSmb);
+    DirIteratorFactory::regClass<SmbShareIterator>(Global::kSmb);
+
+    InfoFactory::regClass<SmbShareFileInfo>(Global::kFtp);
+    DirIteratorFactory::regClass<SmbShareIterator>(Global::kFtp);
+
+    InfoFactory::regClass<SmbShareFileInfo>(Global::kSFtp);
+    DirIteratorFactory::regClass<SmbShareIterator>(Global::kSFtp);
+
+    InfoFactory::regClass<SmbShareFileInfo>(SmbBrowserUtils::networkScheme());
+    DirIteratorFactory::regClass<SmbShareIterator>(SmbBrowserUtils::networkScheme());
+
     DSC_NAMESPACE::MenuService::regClass<SmbShareFileMenu>(SmbBrowserScene::kSmbBrowserScene);
+
+    DSB_FM_USE_NAMESPACE
+    connect(WindowsService::service(), &WindowsService::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
 }
 
 bool SmbBrowser::start()
 {
     DSB_FM_USE_NAMESPACE
-    WorkspaceService::service()->addScheme(SmbBrowserUtils::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(SmbBrowserUtils::scheme(), SmbBrowserScene::kSmbBrowserScene);
+    WorkspaceService::service()->addScheme(Global::kSmb);
+    WorkspaceService::service()->setWorkspaceMenuScene(Global::kSmb, SmbBrowserScene::kSmbBrowserScene);
+
+    WorkspaceService::service()->addScheme(SmbBrowserUtils::networkScheme());
+    WorkspaceService::service()->setWorkspaceMenuScene(SmbBrowserUtils::networkScheme(), SmbBrowserScene::kSmbBrowserScene);
     initOperations();
     return true;
 }
@@ -65,6 +85,12 @@ void SmbBrowser::onWindowCreated(quint64 winId)
 
 void SmbBrowser::onWindowOpened(quint64 winId)
 {
+    DSB_FM_USE_NAMESPACE
+    auto window = WindowsService::service()->findWindowById(winId);
+    if (window->sideBar())
+        addNeighborToSidebar();
+    else
+        connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addNeighborToSidebar(); }, Qt::DirectConnection);
 }
 
 void SmbBrowser::onWindowClosed(quint64 winId)
@@ -76,7 +102,22 @@ void SmbBrowser::initOperations()
     DSC_USE_NAMESPACE
     FileOperationsFunctions funcs(new FileOperationsSpace::FileOperationsInfo);
     funcs->openFiles = &SmbBrowserUtils::mountSmb;
-    FileOperationsService::service()->registerOperations(SmbBrowserUtils::scheme(), funcs);
+    FileOperationsService::service()->registerOperations(Global::kSmb, funcs);
+    FileOperationsService::service()->registerOperations(Global::kFtp, funcs);
+    FileOperationsService::service()->registerOperations(Global::kSFtp, funcs);
+}
+
+void SmbBrowser::addNeighborToSidebar()
+{
+    DSB_FM_USE_NAMESPACE
+
+    SideBar::ItemInfo entry;
+    entry.group = SideBar::DefaultGroup::kNetwork;
+    entry.iconName = SmbBrowserUtils::icon().name();
+    entry.text = tr("Computers in LAN");
+    entry.url = SmbBrowserUtils::netNeighborRootUrl();
+    entry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
+    SideBarService::service()->insertItem(0, entry);
 }
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node)
