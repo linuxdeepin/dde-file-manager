@@ -299,7 +299,7 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey, QVariant::fromValue(error));
     info->insert(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey, QVariant::fromValue(errorMsg));
     info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey, QVariant::fromValue(supportActions(error)));
-
+    info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
     emit errorNotify(info);
 }
 /*!

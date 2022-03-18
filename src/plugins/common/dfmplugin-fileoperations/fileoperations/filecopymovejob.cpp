@@ -82,7 +82,15 @@ void FileCopyMoveJob::onHandleAddTaskWithArgs(const JobInfoPointer info)
     }
 
     copyMoveTask.value(jobHandler)->stop();
-    dialogManager->addTask(jobHandler);
+    AbstractJobHandler::JobErrorType errorType = info.data()->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
+    if (errorType == AbstractJobHandler::JobErrorType::kPermissionDeniedError) {
+        QUrl source = info.data()->value(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey).toUrl();
+        QList<QUrl> sources;
+        sources << source;
+        dialogManager->showNoPermissionDialog(sources);
+    } else {
+        dialogManager->addTask(jobHandler);
+    }
 }
 
 void FileCopyMoveJob::onHandleTaskFinished(const JobInfoPointer info)
