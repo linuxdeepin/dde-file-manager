@@ -65,6 +65,7 @@ enum GlobalEventType : uint16_t {
     kOpenInTerminal,
     kCleanTrash,
     kWriteCustomToClipboard,
+    kHideFiles,
 
     kOperationResultStart = 1000,
 

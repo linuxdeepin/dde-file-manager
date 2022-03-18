@@ -21,12 +21,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperationseventreceiver.h"
+
 #include "fileoperations/filecopymovejob.h"
+#include "fileoperations/fileoperationutils/hidefilehelper.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QDebug>
 
@@ -997,6 +1002,38 @@ bool FileOperationsEventReceiver::handleOperationRevocation(const quint64 window
     }
 
     return false;
+}
+
+bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls)
+{
+    Q_UNUSED(windowId)
+
+    for (const QUrl &url : urls) {
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info) {
+            const QUrl &parentUrl = info->parentUrl();
+            const QString &fileName = info->fileName();
+
+            HideFileHelper helper(parentUrl);
+            helper.contains(fileName) ? helper.remove(fileName) : helper.insert(fileName);
+            helper.save();
+        }
+    }
+
+    return true;
+}
+
+void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls, const QVariant custom, OperaterCallback callback)
+{
+    bool ok = handleOperationHideFiles(windowId, urls);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
 }
 
 void FileOperationsEventReceiver::invokeRegister(const QString scheme, const FileOperationsFunctions functions)

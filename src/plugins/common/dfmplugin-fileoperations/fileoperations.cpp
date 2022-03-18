@@ -248,4 +248,14 @@ void FileOperations::initEventHandle()
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRevocation,
                                             FileOperationsEventReceiver::instance(),
                                             &FileOperationsEventReceiver::handleOperationRevocation);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kHideFiles,
+                                            FileOperationsEventReceiver::instance(),
+                                            static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
+                                                                                              const QList<QUrl>)>(&FileOperationsEventReceiver::handleOperationHideFiles));
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kHideFiles,
+                                            FileOperationsEventReceiver::instance(),
+                                            static_cast<void (FileOperationsEventReceiver::*)(const quint64,
+                                                                                              const QList<QUrl>,
+                                                                                              const QVariant,
+                                                                                              OperaterCallback)>(&FileOperationsEventReceiver::handleOperationHideFiles));
 }

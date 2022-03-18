@@ -201,6 +201,9 @@ public slots:
     bool handleOperationSaveOperations(const QVariantMap values);
     bool handleOperationCleanSaveOperationsStack();
     bool handleOperationRevocation(const quint64 windowId);
+    bool handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls);
+    void handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
+                                  const QVariant custom, DFMBASE_NAMESPACE::Global::OperaterCallback callback);
 
 private slots:
     void invokeRegister(const QString scheme, const FileOperationsFunctions functions);
