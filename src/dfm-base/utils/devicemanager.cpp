@@ -239,6 +239,7 @@ bool DeviceManager::invokeDetachBlockDevice(const QString &id)
     if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachBlockDevice(id);
+        reply.waitForFinished();
         if (!reply.isValid()) {
             qCritical() << "D-Bus reply is invalid " << reply.error();
             return false;
