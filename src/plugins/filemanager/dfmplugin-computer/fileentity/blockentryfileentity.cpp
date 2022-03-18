@@ -222,10 +222,11 @@ QMenu *BlockEntryFileEntity::createMenu()
     menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
     menu->addSeparator();
 
+    bool isOpticalDrive = datas.value(DeviceProperty::kOpticalDrive).toBool();
+    bool isOptical = datas.value(DeviceProperty::kOptical).toBool();
     if (datas.value(DeviceProperty::kHintSystem).toBool()) {
         menu->addAction(ContextMenuActionTrs::trRename());
     } else {
-        bool isOpticalDrive = datas.value(DeviceProperty::kOpticalDrive).toBool();
         if (targetUrl().isValid()) {
             menu->addAction(ContextMenuActionTrs::trUnmount());
         } else {
@@ -237,7 +238,7 @@ QMenu *BlockEntryFileEntity::createMenu()
         }
 
         if (isOpticalDrive) {
-            if (datas.value(DeviceProperty::kOptical).toBool()
+            if (isOptical
                 && datas.value(DeviceProperty::kMedia).toString().contains(QRegularExpression("_r(w|e)")))
                 menu->addAction(ContextMenuActionTrs::trErase());
             menu->addAction(ContextMenuActionTrs::trEject());
@@ -248,6 +249,14 @@ QMenu *BlockEntryFileEntity::createMenu()
     menu->addSeparator();
 
     menu->addAction(ContextMenuActionTrs::trProperties());
+
+    // disable actions
+    if (isOpticalDrive && !isOptical) {
+        for (auto act : menu->actions()) {
+            if (act->text() != ContextMenuActionTrs::trEject())
+                act->setDisabled(true);
+        }
+    }
 
     return menu;
 }
