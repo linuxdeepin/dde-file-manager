@@ -75,6 +75,7 @@ Q_SIGNALS:
 
 private:
     explicit ComputerController(QObject *parent = nullptr);
+    void waitUDisks2DataReady(const QString &id);
 };
 
 DPCOMPUTER_END_NAMESPACE

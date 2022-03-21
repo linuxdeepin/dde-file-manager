@@ -262,6 +262,9 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAft
         if (ok || isOpticalDevice) {
             QUrl u = isOpticalDevice ? ComputerUtils::makeBurnUrl(id) : ComputerUtils::makeLocalUrl(mpt);
 
+            if (isOpticalDevice)
+                this->waitUDisks2DataReady(id);
+
             if (act == kEnterDirectory)
                 ComputerEventCaller::cdTo(winId, u);
             else if (act == kEnterInNewWindow)
@@ -508,4 +511,32 @@ void ComputerController::actErase(DFMEntryFileInfoPointer info)
 ComputerController::ComputerController(QObject *parent)
     : QObject(parent)
 {
+}
+
+void ComputerController::waitUDisks2DataReady(const QString &id)
+{
+    /* this is a workaround, and it's a upstream bug.
+     * after mounted, try to obtain the mountpoint through
+     * UDisksFilesystem's method right away, empty string is returned.
+     * so make short wait here until timeout or the mountpoint is obtained.
+     * and this is an upstream issue, the latest of udisks2 seems to have
+     * solved this issue already, but the version of ours is too old and costs
+     * a lot to make patch.
+     * https://github.com/storaged-project/udisks/issues/930
+    */
+    EntryFileInfo *info { nullptr };
+    int maxRetry = 5;
+    while (maxRetry > 0) {
+        if (!info)
+            info = new EntryFileInfo(ComputerUtils::makeBlockDevUrl(id));
+        if (info->targetUrl().isValid()) {
+            break;
+        } else {
+            QThread::msleep(100);
+            info->refresh();
+        }
+        maxRetry--;
+    }
+    if (info)
+        delete info;
 }
