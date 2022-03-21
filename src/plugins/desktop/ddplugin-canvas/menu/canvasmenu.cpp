@@ -546,7 +546,7 @@ void CanvasMenu::setActionSpecialHandling(QMenu *menu)
         }
 
         // paste enable
-        bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknowAction;
+        bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction;
         if (tempType == kActPaste)
             act->setEnabled(clipBoardUnknow ? false : true);
 

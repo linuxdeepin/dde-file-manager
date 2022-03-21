@@ -30,6 +30,8 @@
 #include "dfm-base/dfm_actiontype_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractmenu.h"
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -50,6 +52,7 @@ struct ActionInfo
     ActionClickedCb clickedCb { nullptr };
 };
 
+class MenuServicePrivate;
 class MenuService final : public dpf::PluginService, dpf::AutoServiceRegister<MenuService>
 {
     Q_OBJECT
@@ -82,11 +85,24 @@ public:
                       ExtensionFlags flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,
                       QVariant customData = QVariant());
 
+    // TODO(Lee):移植最新的menu后删除
+
     static void regAction(ActionInfo &info);
+
+    // TODO(lee) delete old interface when new menu frame be used
+    bool contains(const QString &name) const;
+    bool registerScene(const QString &name, DFMBASE_NAMESPACE::AbstractSceneCreator *creator);
+    DFMBASE_NAMESPACE::AbstractSceneCreator *unregisterScene(const QString &name);
+    bool bind(const QString &name, const QString &parent);
+    void unBind(const QString &name, const QString &parent = QString());
+    DFMBASE_NAMESPACE::AbstractMenuScene *createScene(const QString &name) const;
 
 private:
     explicit MenuService(QObject *parent = nullptr);
     virtual ~MenuService() override;
+
+private:
+    MenuServicePrivate *d { nullptr };
 };
 
 DSC_END_NAMESPACE

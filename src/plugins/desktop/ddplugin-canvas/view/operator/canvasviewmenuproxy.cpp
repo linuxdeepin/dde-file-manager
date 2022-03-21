@@ -27,6 +27,7 @@
 #include "model/canvasselectionmodel.h"
 #include "view/operator/fileoperaterproxy.h"
 #include "menu/canvasmenu.h"
+#include "menu/canvasmenuscene.h"
 
 #include <dfm-base/utils/clipboard.h>
 #include <interfaces/abstractfileinfo.h>
@@ -50,6 +51,9 @@ CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
     // 获取扩展菜单服务
     auto &ctx = dpfInstance.serviceContext();
     extensionMenuServer = ctx.service<MenuService>(MenuService::name());
+
+    // 注册canvas菜单
+    extensionMenuServer->registerScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
 }
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()
@@ -73,19 +77,28 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
 {
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
-    QMenu *menu = extensionMenuServer->createMenu(view,
-                                           MenuScene::kDesktopMenu,
-                                           AbstractMenu::MenuMode::kEmpty,
-                                           view->model()->rootUrl(),
-                                           QUrl(),
-                                           {},
-                                           true,
-                                           kAllExtensionAction,
-                                           QVariant::fromValue(gridPos));
 
-    if (menu) {
-        menu->exec(QCursor::pos());
+    auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
+
+    QVariantHash params;
+    params["currentDir"] = view->model()->rootUrl();
+    params["desktop"] = false;
+    params["customData"] = QVariant::fromValue(gridPos);
+    params["isEmptyArea"] = true;
+
+    if (!canvasScene->initialize(params)) {
+        delete canvasScene;
+        return;
     }
+
+    QMenu menu(this->view);
+
+    canvasScene->create(&menu);
+    canvasScene->updateState(&menu);
+
+    QAction *act = menu.exec(QCursor::pos());
+    canvasScene->triggered(act);
+    delete canvasScene;
 }
 
 void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
@@ -96,20 +109,33 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
 
     auto selectUrls = view->selectionModel()->selectedUrls();
-    auto tgUrl = view->model()->url(index);
-    QMenu *menu = extensionMenuServer->createMenu(view,
-                                                  MenuScene::kDesktopMenu,
-                                                  AbstractMenu::MenuMode::kNormal,
-                                                  QUrl(),
-                                                  tgUrl,
-                                                  selectUrls,
-                                                  true,
-                                                  kAllExtensionAction,
-                                                  QVariant::fromValue(gridPos));
+    QStringList selectPath;
+    for (const auto &temp : selectUrls)
+        selectPath << temp.path();
 
-    if (menu) {
-        menu->exec(QCursor::pos());
+    auto tgUrl = view->model()->url(index);
+    auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
+
+    QVariantHash params;
+    params["currentDir"] = view->model()->rootUrl();
+    params["focusFile"] = tgUrl;
+    params["selectFiles"] = selectPath;
+    params["desktop"] = false;
+    params["isEmptyArea"] = false;
+    params["customData"] = QVariant::fromValue(gridPos);
+
+    if (!canvasScene->initialize(params)) {
+        delete canvasScene;
+        return;
     }
+
+    QMenu menu;
+    canvasScene->create(&menu);
+    canvasScene->updateState(&menu);
+
+    QAction *act = menu.exec(QCursor::pos());
+    canvasScene->triggered(act);
+    delete canvasScene;
 }
 
 void CanvasViewMenuProxy::changeIconLevel(bool increase)

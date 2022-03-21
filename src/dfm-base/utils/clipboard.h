@@ -36,7 +36,7 @@ public:
         kCopyAction,
         kDeleteAction,
         kRemoteAction,
-        kUnknowAction = 255
+        kUnknownAction = 255
     };
 
 public:

@@ -19,7 +19,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "menuservice.h"
+
+#include "private/menuservice_p.h"
+
 #include "private/menuservicehelper.h"
 
 #include <dfm-framework/framework.h>
@@ -53,6 +55,30 @@ MenuService *MenuService::service()
     return ctx.service<MenuService>(name());
 }
 
+MenuServicePrivate::MenuServicePrivate(MenuService *parent)
+    : QObject(parent), q(parent)
+{
+    setObjectName("dfm_service_desktop::ScreenServicePrivate");
+}
+
+void MenuServicePrivate::createSubscene(AbstractSceneCreator *creator, AbstractMenuScene *parent) const
+{
+    if (!parent) {
+        qDebug() << "target  SceneCreator not exist!!!";
+        return;
+    }
+
+    if (!creator) {
+        qDebug() << "target MenuScene not exist!!!";
+        return;
+    }
+
+    for (const QString &child : creator->getChildren()) {
+        if (auto sub = q->createScene(child))
+            parent->addSubscene(sub);
+    }
+}
+
 QMenu *MenuService::createMenu(QWidget *parent,
                                const QString &scene,
                                DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
@@ -63,7 +89,7 @@ QMenu *MenuService::createMenu(QWidget *parent,
                                ExtensionFlags flags,
                                QVariant customData)
 {
-    Q_UNUSED(onDesktop);   // 扩展预留
+    Q_UNUSED(onDesktop);
 
     auto topClass = DFMBASE_NAMESPACE::MenuFactory::create(scene);
     if (!topClass)
@@ -112,8 +138,75 @@ void MenuService::regAction(ActionInfo &info)
     MenuServiceHelper::regAction(info);
 }
 
+bool MenuService::contains(const QString &name) const
+{
+    return d->creators.contains(name);
+}
+
+bool MenuService::registerScene(const QString &name, AbstractSceneCreator *creator)
+{
+    if (d->creators.contains(name) || !creator)
+        return false;
+
+    d->creators.insert(name, creator);
+    return true;
+}
+
+AbstractSceneCreator *MenuService::unregisterScene(const QString &name)
+{
+    auto scene = d->creators.take(name);
+    unBind(name);
+    return scene;
+}
+
+bool MenuService::bind(const QString &name, const QString &parent)
+{
+    if (!d->creators.contains(name) || !d->creators.contains(parent))
+        return false;
+
+    auto creator = d->creators.value(parent);
+
+    if (!creator)
+        return false;
+
+    return creator->addChild(name);
+}
+
+void MenuService::unBind(const QString &name, const QString &parent)
+{
+    if (name.isEmpty())
+        return;
+
+    if (parent.isEmpty()) {
+        for (auto it = d->creators.begin(); it != d->creators.end(); ++it)
+            it.value()->removeChild(name);
+    } else {
+        auto creator = d->creators.value(parent);
+        if (creator)
+            creator->removeChild(name);
+    }
+}
+
+AbstractMenuScene *MenuService::createScene(const QString &name) const
+{
+    AbstractMenuScene *top = nullptr;
+    auto it = d->creators.find(name);
+    if (it == d->creators.end())
+        return top;
+
+    auto creator = it.value();
+    if (creator)
+        top = creator->create();
+
+    if (!top)
+        return top;
+
+    d->createSubscene(creator, top);
+    return top;
+}
+
 MenuService::MenuService(QObject *parent)
-    : dpf::PluginService(parent), dpf::AutoServiceRegister<MenuService>()
+    : dpf::PluginService(parent), dpf::AutoServiceRegister<MenuService>(), d(new MenuServicePrivate(this))
 {
 }
 

@@ -43,7 +43,7 @@ static QList<QUrl> clipboardFileUrls;
 static QMutex clipboardFileUrlsMutex;
 static QList<quint64> clipbordFileinode;
 static QAtomicInt remoteCurrentCount = 0;
-static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknowAction;
+static ClipBoard::ClipboardAction clipboardAction = ClipBoard::kUnknownAction;
 
 static constexpr char kUserIdKey[] = "userId";
 static constexpr char kRemoteCopyKey[] = "uos/remote-copy";
@@ -74,7 +74,7 @@ void onClipboardDataChanged()
     } else if (data.startsWith("copy")) {
         clipboardAction = ClipBoard::kCopyAction;
     } else {
-        clipboardAction = ClipBoard::kUnknowAction;
+        clipboardAction = ClipBoard::kUnknownAction;
     }
     QString errorStr;
     for (QUrl &url : mimeData->urls()) {
@@ -124,7 +124,7 @@ ClipBoard *ClipBoard::instance()
  */
 void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::ClipboardAction action, QMimeData *mimeData)
 {
-    if (action == kUnknowAction)
+    if (action == kUnknownAction)
         return;
 
     if (!mimeData)
