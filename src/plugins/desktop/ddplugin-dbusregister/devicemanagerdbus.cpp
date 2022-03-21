@@ -58,11 +58,6 @@ void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
 
 bool DeviceManagerDBus::DetachBlockDevice(QString id)
 {
-    if (deviceServ->isDefenderScanningDrive(id)) {
-        // show query dialog
-        emit AskStopScanningWhenDetach(id);
-        return false;
-    }
     return deviceServ->detachBlockDevice(id);
 }
 
