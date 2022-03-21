@@ -278,8 +278,7 @@ void clearStageDir(const QString &stagingRoot)
     QFile f(stagingRoot);
     f.setPermissions(f.permissions()
                      | QFile::ReadUser | QFile::WriteUser
-                     | QFile::ReadGroup | QFile::WriteGroup
-                     | QFile::ReadOther | QFile:: WriteOther);
+                     | QFile::ReadGroup | QFile::ReadOther );
 
     const static QString stagePrefix = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/"
             + qApp->organizationName() + "/" DISCBURN_STAGING + "/_dev_sr";
