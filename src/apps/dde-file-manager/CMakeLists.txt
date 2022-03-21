@@ -42,4 +42,7 @@ install(FILES dde-file-manager.desktop DESTINATION share/applications)
 install(FILES pkexec/com.deepin.pkexec.dde-file-manager.policy DESTINATION share/polkit-1/actions/)
 install(FILES pkexec/dde-file-manager-pkexec DESTINATION bin)
 
+# manual
+install(DIRECTORY assets/dde-file-manager DESTINATION share/deepin-manual/manual-assets/application)
+
 # TODO(zhangs): translation

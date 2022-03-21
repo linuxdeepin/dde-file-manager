@@ -4,3 +4,5 @@ usr/bin/dde-file-manager-pkexec
 usr/share/applications/dde-file-manager.desktop
 
 usr/share/polkit-1/actions/*.policy
+
+usr/share/deepin-manual/manual-assets/application

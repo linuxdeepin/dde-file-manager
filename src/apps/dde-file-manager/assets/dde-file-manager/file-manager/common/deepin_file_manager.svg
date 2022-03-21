@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
+  <defs>
+    <filter id="dde-file-manager-a" width="135%" height="128.6%" x="-17.5%" y="-11.9%" filterUnits="objectBoundingBox">
+      <feOffset in="SourceAlpha" result="shadowOffsetOuter1"/>
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation=".5"/>
+      <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"/>
+      <feColorMatrix in="shadowBlurOuter1" result="shadowMatrixOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.15 0"/>
+      <feMerge>
+        <feMergeNode in="shadowMatrixOuter1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="dde-file-manager-b" x1="50%" x2="50%" y1="0%" y2="37.968%">
+      <stop offset="0%" stop-color="#00B8FF"/>
+      <stop offset="100%" stop-color="#2E5DFF"/>
+    </linearGradient>
+    <path id="dde-file-manager-d" d="M1.97039183,6.01816933 C1.96158541,4.96167434 2.80341137,4.10446435 3.86531012,4.10352427 L16.7014024,4.09216067 C17.7567433,4.09122639 18.6193958,4.94581111 18.6282115,6.00342242 L18.7222215,17.2816843 C18.7310279,18.3381793 17.889202,19.1953893 16.8273032,19.1963294 L3.991211,19.207693 C2.93587011,19.2086273 2.07321757,18.3540425 2.06440184,17.2964312 L1.97039183,6.01816933 Z"/>
+    <filter id="dde-file-manager-c" width="117.9%" height="119.8%" x="-9%" y="-9.9%" filterUnits="objectBoundingBox">
+      <feOffset in="SourceAlpha" result="shadowOffsetOuter1"/>
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation=".5"/>
+      <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0"/>
+    </filter>
+    <rect id="dde-file-manager-f" width="18" height="15" x="1" y="5" rx="1.905"/>
+    <filter id="dde-file-manager-e" width="116.7%" height="120%" x="-8.3%" y="-10%" filterUnits="objectBoundingBox">
+      <feOffset in="SourceAlpha" result="shadowOffsetOuter1"/>
+      <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation=".5"/>
+      <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.2 0"/>
+    </filter>
+    <radialGradient id="dde-file-manager-g" cx="50%" cy="25.527%" r="96.89%" fx="50%" fy="25.527%" gradientTransform="matrix(0 1 -.7 0 .679 -.245)">
+      <stop offset="0%" stop-color="#48D5FF"/>
+      <stop offset="100%" stop-color="#0056FF"/>
+    </radialGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd" filter="url(#dde-file-manager-a)" transform="translate(2 1)">
+    <path fill="url(#dde-file-manager-b)" d="M0,6.90476887 L0,5.80266078 C0,4.75139081 0.78627967,3.57386543 1.76837059,3.16755094 L8.25197446,0.485129074 C9.22861857,0.0810680667 10.8034318,0.0788145909 11.7815347,0.485129074 L18.2388103,3.16755094 C19.2114885,3.57161195 20,4.75241309 20,5.80266078 L20,6.90476887 L20,19.0990544 C20,20.1489177 19.140625,21 18.1004177,21 L1.89958233,21 C0.85047198,21 0,20.1394981 0,19.0990544 L0,6.90476887 Z"/>
+    <g transform="rotate(-8 10.346 11.65)">
+      <use fill="#000" filter="url(#dde-file-manager-c)" xlink:href="#dde-file-manager-d"/>
+      <use fill="#FF517F" xlink:href="#dde-file-manager-d"/>
+    </g>
+    <use fill="#000" filter="url(#dde-file-manager-e)" xlink:href="#dde-file-manager-f"/>
+    <use fill="#FFF" xlink:href="#dde-file-manager-f"/>
+    <path fill="url(#dde-file-manager-g)" d="M0,7 L20,7 L20,19.0973277 C20,20.1481446 19.140625,21 18.1004177,21 L1.89958233,21 C0.85047198,21 0,20.1453119 0,19.0973277 L0,7 Z"/>
+    <path fill="#FFF" fill-rule="nonzero" d="M12.0012456,14.9482196 L12,18.7045455 C12,18.9806878 11.7761424,19.2045455 11.5,19.2045455 C11.2545401,19.2045455 11.0503916,19.0276703 11.0080557,18.7944211 L11,18.7045455 L11.0010375,15.6626913 C11.3759686,15.4844295 11.7141828,15.2414607 12.0012456,14.9482196 Z M6.99972609,14.9492118 C7.28683665,15.2422704 7.62505839,15.4850642 7.99996673,15.6631686 L8,16.3778409 C8,16.6539833 7.77614237,16.8778409 7.5,16.8778409 C7.25454011,16.8778409 7.05039163,16.7009657 7.00805567,16.4677165 L7,16.3778409 L6.99972609,14.9492118 Z M9.5,10 C10.8807119,10 12,11.1192881 12,12.5 C12,13.8807119 10.8807119,15 9.5,15 C8.11928813,15 7,13.8807119 7,12.5 C7,11.1192881 8.11928813,10 9.5,10 Z M9.5,11.5 C8.94771525,11.5 8.5,11.9487328 8.5,12.5022727 C8.5,13.0558127 8.94771525,13.5045455 9.5,13.5045455 C10.0522847,13.5045455 10.5,13.0558127 10.5,12.5022727 C10.5,11.9487328 10.0522847,11.5 9.5,11.5 Z"/>
+  </g>
+</svg>
