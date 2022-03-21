@@ -232,6 +232,7 @@ bool DialogManager::askForFormat()
     dlg.addButton(tr("Cancel", "button"));
     dlg.addButton(tr("Format", "button"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
+    dlg.setMaximumWidth(640);
     return dlg.exec() == QDialog::Accepted;
 }
 
