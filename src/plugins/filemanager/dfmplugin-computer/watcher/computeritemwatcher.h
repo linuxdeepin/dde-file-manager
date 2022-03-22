@@ -44,6 +44,7 @@ typedef QList<ComputerItemData> ComputerDataList;
 class ComputerItemWatcher : public QObject
 {
     Q_OBJECT
+
 public:
     static ComputerItemWatcher *instance();
     virtual ~ComputerItemWatcher() override;
@@ -63,6 +64,8 @@ public:
     void updateSidebarItem(const QUrl &url, const QString &newName, bool editable);
     void addSidebarItem(DFMEntryFileInfoPointer info);
     void removeSidebarItem(const QUrl &url);
+
+    void insertUrlMapper(const QString &devId, const QUrl &mntUrl);
 
 public Q_SLOTS:
     void startQueryItems();
@@ -86,6 +89,8 @@ protected Q_SLOTS:
     void onBlockDeviceAdded(const QString &id);
     void onBlockDeviceRemoved(const QString &id);
     void onBlockDeviceMounted(const QString &id, const QString &mntPath);
+    void onBlockDeviceUnmounted(const QString &id);
+    void onBlockDeviceLocked(const QString &id);
     void onUpdateBlockItem(const QString &id);
     void onProtocolDeviceMounted(const QString &id, const QString &mntPath);
     void onProtocolDeviceUnmounted(const QString &id);
@@ -115,6 +120,8 @@ private:
     ComputerDataList initedDatas;
     QSharedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> appEntryWatcher { nullptr };
     QMap<QString, int> groupIds;
+
+    QMap<QUrl, QUrl> routeMapper;
 };
 DPCOMPUTER_END_NAMESPACE
 #endif   // COMPUTERITEMWATCHER_H

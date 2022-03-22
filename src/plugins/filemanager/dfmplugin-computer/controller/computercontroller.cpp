@@ -239,7 +239,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                 setCursorStatus();
 
                 if (ok) {
-                    this->mountDevice(winId, newId, act);
+                    this->mountDevice(winId, newId, shellId, act);
                 } else {
                     DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
                     qInfo() << "unlock device failed: " << shellId << static_cast<int>(err);
@@ -247,14 +247,15 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
             });
         } else {
             auto realDevId = info->extraProperty(DeviceProperty::kCleartextDevice).toString();
-            mountDevice(winId, realDevId, act);
+            mountDevice(winId, realDevId, shellId, act);
         }
     } else {
-        mountDevice(winId, shellId, act);
+        auto realId = shellId;
+        mountDevice(winId, realId, "", act);
     }
 }
 
-void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAfterMount act)
+void ComputerController::mountDevice(quint64 winId, const QString &id, const QString &shellId, ActionAfterMount act)
 {
     setCursorStatus(true);
     ComputerUtils::deviceServIns()->mountBlockDeviceAsync(id, {}, [=](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
@@ -264,6 +265,10 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, ActionAft
 
             if (isOpticalDevice)
                 this->waitUDisks2DataReady(id);
+
+            ComputerItemWatcherInstance->insertUrlMapper(id, QUrl::fromLocalFile(mpt));
+            if (!shellId.isEmpty())
+                ComputerItemWatcherInstance->insertUrlMapper(shellId, QUrl::fromLocalFile(mpt));
 
             if (act == kEnterDirectory)
                 ComputerEventCaller::cdTo(winId, u);
@@ -375,6 +380,7 @@ void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, b
         QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->url());
         ComputerUtils::deviceServIns()->mountNetworkDevice(devId, [devId, enterAfterMounted, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
             onNetworkDeviceMountFinished(ok, err, mntPath, winId, enterAfterMounted);
+            ComputerItemWatcherInstance->insertUrlMapper(devId, QUrl::fromLocalFile(mntPath));
         });
         return;
     } else if (sfx == SuffixInfo::kBlock) {
@@ -527,6 +533,8 @@ void ComputerController::waitUDisks2DataReady(const QString &id)
     EntryFileInfo *info { nullptr };
     int maxRetry = 5;
     while (maxRetry > 0) {
+        qApp->processEvents();   // if launch without service, this blocks the udisks' event loop.
+
         if (!info)
             info = new EntryFileInfo(ComputerUtils::makeBlockDevUrl(id));
         if (info->targetUrl().isValid()) {

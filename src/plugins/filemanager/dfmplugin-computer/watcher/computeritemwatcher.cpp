@@ -30,6 +30,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/base/schemefactory.h"
@@ -139,8 +140,8 @@ void ComputerItemWatcher::initDeviceConn()
     connect(&DeviceManagerInstance, &DeviceManager::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
     connect(&DeviceManagerInstance, &DeviceManager::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
     connect(&DeviceManagerInstance, &DeviceManager::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevLocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, &ComputerItemWatcher::onBlockDeviceUnmounted);
+    connect(&DeviceManagerInstance, &DeviceManager::blockDevLocked, this, &ComputerItemWatcher::onBlockDeviceLocked);
     connect(&DeviceManagerInstance, &DeviceManager::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
     connect(&DeviceManagerInstance, &DeviceManager::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
     connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
@@ -382,10 +383,13 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     sbItem.contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
     sbItem.renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
-    sbItem.findMeCb = [](const QUrl &itemUrl, const QUrl &targetUrl) {
-        DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));   // TODO(xust) BUG HERE: if enter an unmounted device, the mntUrl is invalid.
+    sbItem.findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
+        if (this->routeMapper.contains(itemUrl))
+            return dfmbase::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
+
+        DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));
         auto mntUrl = info->targetUrl();
-        return mntUrl.scheme() == targetUrl.scheme() && mntUrl.path() == targetUrl.path();
+        return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
     ComputerUtils::sbServIns()->addItem(sbItem);
 }
@@ -393,6 +397,19 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
     ComputerUtils::sbServIns()->removeItem(url);
+}
+
+void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
+{
+    QUrl devUrl;
+    if (devId.startsWith(DeviceId::kBlockDeviceIdPrefix))
+        devUrl = ComputerUtils::makeBlockDevUrl(devId);
+    else
+        devUrl = ComputerUtils::makeProtocolDevUrl(devId);
+    routeMapper.insert(devUrl, mntUrl);
+
+    if (devId.contains(QRegularExpression("sr[0-9]*$")))
+        routeMapper.insert(devUrl, ComputerUtils::makeBurnUrl(devId));
 }
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
@@ -522,6 +539,7 @@ void ComputerItemWatcher::onBlockDeviceRemoved(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
     Q_EMIT itemRemoved(devUrl);
+    routeMapper.remove(ComputerUtils::makeBlockDevUrl(id));
 }
 
 void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
@@ -547,6 +565,8 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
     } else {
         Q_EMIT this->itemRemoved(devUrl);
     }
+
+    routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));
 }
 
 void ComputerItemWatcher::onDeviceSizeChanged(const QString &id, qlonglong total, qlonglong free)
@@ -567,6 +587,18 @@ void ComputerItemWatcher::onBlockDeviceMounted(const QString &id, const QString 
     auto &&datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
     auto shellDevId = datas.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
     onUpdateBlockItem(shellDevId.length() > 1 ? shellDevId : id);
+}
+
+void ComputerItemWatcher::onBlockDeviceUnmounted(const QString &id)
+{
+    routeMapper.remove(ComputerUtils::makeBlockDevUrl(id));
+    onUpdateBlockItem(id);
+}
+
+void ComputerItemWatcher::onBlockDeviceLocked(const QString &id)
+{
+    routeMapper.remove(ComputerUtils::makeBlockDevUrl(id));
+    onUpdateBlockItem(id);
 }
 
 DPCOMPUTER_END_NAMESPACE
