@@ -109,7 +109,7 @@ void TrashMenu::actionBusiness(QAction *act)
 void TrashMenu::assemblesEmptyAreaActions(QMenu *menu)
 {
     filterEmptyActions(menu);
-    auto isDisabled = !UniversalUtils::urlEquals(rootUrl, TrashHelper::rootUrl());
+    auto isDisabled = TrashHelper::isEmpty() || !UniversalUtils::urlEquals(rootUrl, TrashHelper::rootUrl());
 
     QAction *restoreAllAct = createAction(TrashActionType::kRestoreAll, QObject::tr("Restore all"), isDisabled);
     QAction *emptyTrashAct = createAction(TrashActionType::kEmptyTrash, QObject::tr("Empty trash"), isDisabled);
