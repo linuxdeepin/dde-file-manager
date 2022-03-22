@@ -27,6 +27,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QIcon>
 
 #include <functional>
 

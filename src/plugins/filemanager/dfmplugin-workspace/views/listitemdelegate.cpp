@@ -74,6 +74,7 @@ void ListItemDelegate::paint(QPainter *painter,
     QStyleOptionViewItem opt = option;
     initStyleOption(&opt, index);
     painter->setFont(opt.font);
+
     static QFont oldFont = option.font;
 
     if (oldFont != option.font) {
@@ -449,7 +450,6 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
             cGroup = QPalette::Active;
             elideMode = Qt::ElideMiddle;
-
             paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight);
         } else {
             if (!isSelected)

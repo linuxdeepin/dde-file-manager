@@ -47,7 +47,9 @@ public:
     void addItem(const SideBar::ItemInfo &info);
     void removeItem(const QUrl &url);
     void insertItem(int index, const SideBar::ItemInfo &info);
-    void updateItem(const QUrl &url, const QString &newName, bool editable);
+    void updateItem(const QUrl &url, const SideBar::ItemInfo &info);
+    void updateItemName(const QUrl &url, const QString &newName, bool editable);
+    void updateItemIcon(const QUrl &url, const QIcon &newIcon);
     void triggerItemEdit(quint64 winId, const QUrl &url);
     bool registerSortFunc(const QString &subGroup, SideBar::SortFunc);
 

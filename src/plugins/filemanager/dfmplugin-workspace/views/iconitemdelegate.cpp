@@ -411,9 +411,8 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
     labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
     labelRect.setBottom(path.boundingRect().toRect().bottom());
 
-    QRectF extendRect = labelRect;
     const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
-    if (WorkspaceEventSequence::instance()->doPaintIconItem(kItemFileDisplayNameRole, url, painter, &extendRect))
+    if (WorkspaceEventSequence::instance()->doPaintIconItem(kItemFileDisplayNameRole, url, painter, &labelRect))
         return;
 
     //文管窗口拖拽时的字体保持白色

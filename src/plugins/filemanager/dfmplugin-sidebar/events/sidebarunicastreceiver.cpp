@@ -57,6 +57,7 @@ void SideBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("SideBarService::addItem"), this, &SideBarUnicastReceiver::invokeAddItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::removeItem"), this, &SideBarUnicastReceiver::invokeRemoveItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::updateItem"), this, &SideBarUnicastReceiver::invokeUpdateItem);
+    dpfInstance.eventUnicast().connect(topic("SideBarService::updateItemIcon"), this, &SideBarUnicastReceiver::invokeUpdateItemIcon);
     dpfInstance.eventUnicast().connect(topic("SideBarService::insertItem"), this, &SideBarUnicastReceiver::invokeInsertItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::triggerItemEdit"), this, &SideBarUnicastReceiver::invokeTriggerItemEdit);
     dpfInstance.eventUnicast().connect(topic("SideBarService::registerSortFunc"), this, &SideBarUnicastReceiver::invokeRegisterSortFunc);
@@ -93,11 +94,25 @@ void SideBarUnicastReceiver::invokeRemoveItem(const QUrl &url)
         sidebar->removeItem(url);
 }
 
-void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const QString &newName, bool editable)
+void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const ItemInfo &info)
+{
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar)
+        sidebar->updateItem(url, info);
+}
+
+void SideBarUnicastReceiver::invokeUpdateItemName(const QUrl &url, const QString &newName, bool editable)
 {
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar)
         sidebar->updateItem(url, newName, editable);
+}
+
+void SideBarUnicastReceiver::invokeUpdateItemIcon(const QUrl &url, const QIcon &newIcon)
+{
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar)
+        sidebar->updateItem(url, newIcon);
 }
 
 void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info)

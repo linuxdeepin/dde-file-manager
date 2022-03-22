@@ -23,6 +23,8 @@
 
 #include "dfmplugin_sidebar_global.h"
 
+#include "services/filemanager/sidebar/sidebar_defines.h"
+
 #include <QStandardItemModel>
 
 DPSIDEBAR_BEGIN_NAMESPACE
@@ -44,7 +46,9 @@ public:
     int appendRow(SideBarItem *item);
     bool removeRow(SideBarItem *item);
     bool removeRow(const QUrl &url);
+    void updateRow(const QUrl &url, const DSB_FM_NAMESPACE::SideBar::ItemInfo &newInfo);
     void updateRow(const QUrl &url, const QString &newName, bool editable);
+    void updateRow(const QUrl &url, const QIcon &newIcon);
     QStringList groups() const;
 };
 

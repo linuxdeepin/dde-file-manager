@@ -30,6 +30,7 @@
 
 static constexpr char kModelitemMimetype[] { "application/x-dfmsidebaritemmodeldata" };
 
+DSB_FM_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
 
 namespace GlobalPrivate {
@@ -245,6 +246,23 @@ bool SideBarModel::removeRow(const QUrl &url)
     return false;
 }
 
+void SideBarModel::updateRow(const QUrl &url, const SideBar::ItemInfo &newInfo)
+{
+    if (!url.isValid())
+        return;
+
+    for (int r = 0; r < rowCount(); r++) {
+        auto item = itemFromIndex(r);
+        if (item->url() == url) {
+            item->setItemInfo(newInfo);
+            item->setIcon(QIcon::fromTheme(newInfo.iconName));
+            item->setText(newInfo.text);
+            item->setUrl(newInfo.url);
+            item->setFlags(newInfo.flags);
+        }
+    }
+}
+
 void SideBarModel::updateRow(const QUrl &url, const QString &newName, bool editable)
 {
     if (!url.isValid())
@@ -261,6 +279,18 @@ void SideBarModel::updateRow(const QUrl &url, const QString &newName, bool edita
                 flags &= (~Qt::ItemIsEditable);
             item->setFlags(flags);
         }
+    }
+}
+
+void SideBarModel::updateRow(const QUrl &url, const QIcon &newIcon)
+{
+    if (!url.isValid())
+        return;
+
+    for (int r = 0; r < rowCount(); r++) {
+        auto item = itemFromIndex(r);
+        if (item->url() == url)
+            item->setIcon(newIcon);
     }
 }
 

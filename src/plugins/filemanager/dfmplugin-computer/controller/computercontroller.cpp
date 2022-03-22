@@ -197,7 +197,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 
     // update sidebar and computer display
     QString sidebarName = displayAlias.isEmpty() ? info->displayName() : displayAlias;
-    SideBarService::service()->updateItem(info->url(), sidebarName, true);
+    SideBarService::service()->updateItemName(info->url(), sidebarName, true);
     Q_EMIT updateItemAlias(info->url());
 }
 

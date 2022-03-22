@@ -108,9 +108,19 @@ void SideBarService::removeItem(const QUrl &url)
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url);
 }
 
-void SideBarService::updateItem(const QUrl &url, const QString &newName, bool editable)
+void SideBarService::updateItem(const QUrl &url, const SideBar::ItemInfo &info)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, info);
+}
+
+void SideBarService::updateItemName(const QUrl &url, const QString &newName, bool editable)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, newName, editable);
+}
+
+void SideBarService::updateItemIcon(const QUrl &url, const QIcon &newIcon)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, url, newIcon);
 }
 
 void SideBarService::triggerItemEdit(quint64 winId, const QUrl &url)

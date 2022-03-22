@@ -42,7 +42,9 @@ public:
 public slots:
     void invokeAddItem(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
     void invokeRemoveItem(const QUrl &url);
-    void invokeUpdateItem(const QUrl &url, const QString &newName, bool editable);
+    void invokeUpdateItem(const QUrl &url, const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
+    void invokeUpdateItemName(const QUrl &url, const QString &newName, bool editable);
+    void invokeUpdateItemIcon(const QUrl &url, const QIcon &newIcon);
     void invokeInsertItem(int index,
                           const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
     void invokeTriggerItemEdit(quint64 winId, const QUrl &url);

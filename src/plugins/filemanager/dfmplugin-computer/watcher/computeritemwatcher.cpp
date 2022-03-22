@@ -408,7 +408,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
     SideBarService::service()->addItem(sbItem);
-    SideBarService::service()->updateItem(info->url(), info->displayName(), info->renamable());
+    SideBarService::service()->updateItemName(info->url(), info->displayName(), info->renamable());
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
@@ -431,7 +431,7 @@ void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntU
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
-    SideBarService::service()->updateItem(url, newName, editable);
+    SideBarService::service()->updateItemName(url, newName, editable);
 }
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)

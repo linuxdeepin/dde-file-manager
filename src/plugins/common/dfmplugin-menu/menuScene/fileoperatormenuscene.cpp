@@ -87,7 +87,7 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
         }
     }
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *FileOperatorMenuScene::scene(QAction *action) const
@@ -124,7 +124,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCreateSymlink));
     }
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void FileOperatorMenuScene::updateState(QMenu *parent)
@@ -203,12 +203,14 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
             }
         }
     }
+
+    AbstractMenuScene::updateState(parent);
 }
 
 bool FileOperatorMenuScene::triggered(QAction *action)
 {
     if (!d->predicateAction.values().contains(action))
-        return false;
+        return AbstractMenuScene::triggered(action);
 
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
 

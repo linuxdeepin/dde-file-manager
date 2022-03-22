@@ -114,10 +114,22 @@ bool SideBarWidget::removeItem(const QUrl &url)
     return sidebarModel->removeRow(url);
 }
 
+void SideBarWidget::updateItem(const QUrl &url, const SideBar::ItemInfo &newInfo)
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    sidebarModel->updateRow(url, newInfo);
+}
+
 void SideBarWidget::updateItem(const QUrl &url, const QString &newName, bool editable)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     sidebarModel->updateRow(url, newName, editable);
+}
+
+void SideBarWidget::updateItem(const QUrl &url, const QIcon &newIcon)
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    sidebarModel->updateRow(url, newIcon);
 }
 
 /*!

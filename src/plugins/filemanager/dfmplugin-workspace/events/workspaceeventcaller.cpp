@@ -99,8 +99,3 @@ void WorkspaceEventCaller::sendPaintEmblems(QPainter *painter, const QRectF &pai
 {
     dispatcher()->publish(Emblem::EventType::kPaintEmblems, painter, paintArea, url);
 }
-
-//void WorkspaceEventCaller::sendGetEmblems(const QUrl &url, QList<QIcon> *emblems)
-//{
-//    dispatcher()->publish(Emblem::EventType::kFetchEmblems, url, emblems);
-//}

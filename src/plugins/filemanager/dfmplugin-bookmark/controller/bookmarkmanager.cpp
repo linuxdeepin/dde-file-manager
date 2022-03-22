@@ -350,7 +350,7 @@ void BookMarkManager::renameCallBack(quint64 windowId, const QUrl &url, const QS
 {
     Q_UNUSED(windowId);
     BookMarkManager::instance()->bookMarkRename(url, name);
-    BookMarkHelper::sideBarServIns()->updateItem(url, name, true);
+    BookMarkHelper::sideBarServIns()->updateItemName(url, name, true);
 }
 
 void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
