@@ -24,6 +24,7 @@
 #include "utils/chinese2pinyin.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <QMetaType>
 #include <QDateTime>
@@ -1069,9 +1070,33 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
  */
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop() const
 {
-    CALL_PROXY(canDrop());
+    // todo lanxs
+    /*if (isPrivate()) {
+        return false;
+    }*/
 
-    return true;
+    if (!isSymLink()) {
+        const bool isDesktop = mimeTypeName() == Global::kMimeTypeAppXDesktop;
+        return isDir() || isDesktop || (canDragCompress() && isDragCompressFileFormat());
+    }
+
+    AbstractFileInfoPointer info = nullptr;
+
+    do {
+        const QUrl &targetUrl = symLinkTarget();
+
+        if (targetUrl == url()) {
+            return false;
+        }
+
+        info = InfoFactory::create<AbstractFileInfo>(targetUrl);
+
+        if (!info) {
+            return false;
+        }
+    } while (info->isSymLink());
+
+    return info->canDrop();
 }
 
 bool AbstractFileInfo::canTag() const
@@ -1126,7 +1151,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress() const
 {
     CALL_PROXY(canDragCompress());
 
-    return true;
+    return false;
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat
@@ -1136,7 +1161,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat() const
 {
     CALL_PROXY(isDragCompressFileFormat());
 
-    return true;
+    return false;
 }
 
 QString DFMBASE_NAMESPACE::AbstractFileInfo::emptyDirectoryTip() const

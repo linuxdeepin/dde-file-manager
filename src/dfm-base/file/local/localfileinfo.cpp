@@ -485,14 +485,6 @@ QUrl LocalFileInfo::url() const
     return tmp;
 }
 
-bool LocalFileInfo::canDrop() const
-{
-    if (!isSymLink())
-        return isDir();
-
-    return false;
-}
-
 bool LocalFileInfo::canRename() const
 {
     if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
@@ -1426,6 +1418,21 @@ QString LocalFileInfo::emptyDirectoryTip() const
     }
 
     return AbstractFileInfo::emptyDirectoryTip();
+}
+
+bool LocalFileInfo::canDragCompress() const
+{
+    return isDragCompressFileFormat()
+            && isWritable()
+            && isReadable();
+}
+
+bool LocalFileInfo::isDragCompressFileFormat() const
+{
+    const QString &&name = fileName();
+    return name.endsWith(".zip")
+            || (name.endsWith(".7z")
+                && !name.endsWith(".tar.7z"));
 }
 
 QString LocalFileInfo::mimeTypeName() const

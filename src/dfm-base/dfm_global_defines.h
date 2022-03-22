@@ -72,6 +72,7 @@ constexpr char kMimeTypeAppXhtmlXml[] { "application/xhtml+xml" };
 constexpr char kMimeTypeTextXPython[] { "text/x-python" };
 constexpr char kMimeTypeAppXOleStorage[] { "application/x-ole-storage" };
 constexpr char kMimeTypeAppZip[] { "application/zip" };
+constexpr char kMimeTypeAppXDesktop[] { "application/x-desktop" };
 
 constexpr uint8_t kMaxFileNameCharCount { 255 };
 

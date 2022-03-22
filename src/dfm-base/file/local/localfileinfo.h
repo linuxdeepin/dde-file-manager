@@ -66,7 +66,6 @@ public:
     virtual QDir dir() const override;
     virtual QDir absoluteDir() const override;
     virtual QUrl url() const override;
-    virtual bool canDrop() const override;
     virtual bool canRename() const override;
     virtual bool canTag() const override;
     virtual bool isReadable() const override;
@@ -114,6 +113,9 @@ public:
     virtual QString mimeTypeName() const override;
 
     virtual QString emptyDirectoryTip() const override;
+
+    virtual bool canDragCompress() const override;
+    virtual bool isDragCompressFileFormat() const override;
 
 private:
     void init(const QUrl &url);
