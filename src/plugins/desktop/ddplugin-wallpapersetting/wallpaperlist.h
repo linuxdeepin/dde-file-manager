@@ -71,6 +71,7 @@ private slots:
     void onItemHoverIn(WallpaperItem *);
     void onItemHoverOut(WallpaperItem *);
 protected:
+    void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void showEvent(QShowEvent *event) override;

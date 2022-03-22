@@ -225,10 +225,34 @@ void WallpaperList::onItemHoverOut(WallpaperItem *it)
     Q_UNUSED(it)
 }
 
+void WallpaperList::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Left:
+    case Qt::Key_Right:
+        if (event->isAutoRepeat() && QAbstractAnimation::Running == scrollAnimation.state()) {
+            event->accept();
+            return;
+        }
+
+        if (Qt::Key_Left == event->key()) {
+            setCurrentIndex(currentIndex - 1);
+        } else {
+            setCurrentIndex(currentIndex + 1);
+        }
+            break;
+    default:
+        event->ignore();
+        break;
+    }
+
+    return QScrollArea::keyPressEvent(event);
+}
+
 void WallpaperList::resizeEvent(QResizeEvent *event)
 {
     QFrame::resizeEvent(event);
-    if (width() < kItemWidth){
+    if (width() < kItemWidth) {
         qCritical() << "error. widget width is less than ItemWidth" <<
                    width() << "<" << kItemWidth
                     << "resize" << event->size();
@@ -238,7 +262,7 @@ void WallpaperList::resizeEvent(QResizeEvent *event)
     if (width() % kItemWidth == 0)
         --itemCount;
 
-    if (itemCount < 1){
+    if (itemCount < 1) {
         qCritical() << "screen_item_count: " << itemCount
                     << "set to 1";
         itemCount = 1;

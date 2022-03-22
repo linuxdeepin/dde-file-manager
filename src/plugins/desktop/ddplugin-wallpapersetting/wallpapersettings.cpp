@@ -587,7 +587,7 @@ void WallpaperSettingsPrivate::initCarousel()
                 btn = new DButtonBoxButton(ok ? timeFormat(t) : time, q);
             }
 
-            btn->installEventFilter(this);
+            btn->installEventFilter(q);
             btn->setMinimumWidth(40);
             slideBtns.append(btn);
         }
@@ -621,8 +621,6 @@ void WallpaperSettingsPrivate::initSreenSaver()
     lockScreenBox = new QCheckBox(tr("Require a password on wakeup"), q);
     // process tab key
     lockScreenBox->installEventFilter(q);
-    // process enter to check
-    lockScreenBox->installEventFilter(this);
     connect(lockScreenBox, &QCheckBox::toggled, screenSaverIfs, &ScreenSaverIfs::setLockScreenAtAwake);
 
     DPalette pal = DApplicationHelper::instance()->palette(q);
@@ -646,14 +644,14 @@ void WallpaperSettingsPrivate::initSreenSaver()
     for (const int time : timeArray) {
         if (time > 0) {
             DButtonBoxButton *btn = new DButtonBoxButton(timeFormat(time), q);
-            btn->installEventFilter(this);
+            btn->installEventFilter(q);
             btn->setMinimumWidth(40);
             timeArrayBtns.append(btn);
         }
     }
 
     timeArrayBtns.append(new DButtonBoxButton(tr("Never"), q));
-    timeArrayBtns.last()->installEventFilter(this);
+    timeArrayBtns.last()->installEventFilter(q);
     waitControlLabel = new QLabel(tr("Wait:"), q);
     QPalette wcPal = waitControlLabel->palette();
     wcPal.setColor(QPalette::All, QPalette::WindowText, textColor);
@@ -1005,7 +1003,7 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
             } else {
                 return false;
             }
-        } else if (key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) {  //b 屏蔽上下键
+        } else if (key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) {  // 屏蔽上下键
             return true;
         } else {
             return false;

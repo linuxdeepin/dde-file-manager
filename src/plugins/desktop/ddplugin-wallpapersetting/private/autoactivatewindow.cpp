@@ -156,6 +156,8 @@ void AutoActivateWindowPrivate::checkWindowOnX11()
     for (int i = count - 1;  i > -1; i--) {
         xcb_get_window_attributes_reply_t *attrreply = xcb_get_window_attributes_reply(
                     x11Con, xcb_get_window_attributes(x11Con, children[i]), nullptr);
+        if (!attrreply)
+            continue;
         bool viewable = attrreply->map_state == XCB_MAP_STATE_VIEWABLE;
         free(attrreply);
 

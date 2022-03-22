@@ -203,10 +203,11 @@ void WallpaperItem::keyPressEvent(QKeyEvent *event)
         QWidget *w = focusWidget();
         for (int i = 0; i <  buttonLayout->count(); ++i) {
             if (buttonLayout->itemAt(i)->widget() == w) {
-                if (0 == i)
-                    focusOnLastButton();      // 已经在第一个，则设置到最后一个
-                else
+                if (0 == i) {
+                    focusOnLastButton();      // first,go to last
+                } else {
                     buttonLayout->itemAt(--i)->widget()->setFocus();
+                }
                 break;
             }
         }
@@ -218,7 +219,7 @@ void WallpaperItem::keyPressEvent(QKeyEvent *event)
         for (int i = 0; i <  buttonLayout->count(); ++i) {
             if (buttonLayout->itemAt(i)->widget() == w) {
                 if (buttonLayout->count() - 1 == i)
-                    focusOnFirstButton();      // 已经在最后一个，则设置到第一个
+                    focusOnFirstButton();      // last,go to first
                 else
                     buttonLayout->itemAt(++i)->widget()->setFocus();
                 break;
@@ -278,7 +279,9 @@ bool WallpaperItem::eventFilter(QObject *watched, QEvent *event)
                 emit btn->clicked();
                 return true;
             default:
-                break;
+                // button ignore event,and WallpaperItem will handle it
+                event->ignore();
+                return true;
             }
         }
     }
