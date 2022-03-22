@@ -56,9 +56,10 @@ void ComputerUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("ComputerService::removeDevice"), this, &ComputerUnicastReceiver::doRemoveDevice);
 }
 
-void ComputerUnicastReceiver::doAddDevice(const QString &name, const QUrl &url)
+bool ComputerUnicastReceiver::doAddDevice(const QString &name, const QUrl &url)
 {
     ComputerItemWatcherInstance->addDevice(name, url);
+    return true;
 }
 
 void ComputerUnicastReceiver::doRemoveDevice(const QUrl &url)

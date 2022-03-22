@@ -41,7 +41,7 @@ public:
     void connectService();
 
 protected:
-    void doAddDevice(const QString &name, const QUrl &url);
+    bool doAddDevice(const QString &name, const QUrl &url);
     void doRemoveDevice(const QUrl &url);
 
 private:

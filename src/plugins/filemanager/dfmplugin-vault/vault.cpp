@@ -88,13 +88,15 @@ void Vault::onWindowOpened(quint64 winID)
         addCustomCrumbar();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Vault::addCustomCrumbar, Qt::DirectConnection);
-    if (window->sideBar()) {
+    if (window->sideBar())
         addSideBarVaultItem();
-        addComputer();
-    } else {
+    else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, &Vault::addSideBarVaultItem, Qt::DirectConnection);
-        connect(window, &FileManagerWindow::sideBarInstallFinished, this, &Vault::addComputer, Qt::DirectConnection);
-    }
+
+    if (window->workSpace())
+        addComputer();
+    else
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Vault::addComputer, Qt::DirectConnection);
 }
 
 void Vault::addSideBarVaultItem()
