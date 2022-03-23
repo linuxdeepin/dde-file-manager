@@ -21,14 +21,15 @@
 
 #include "desktopitemdelegate.h"
 #include "app/define.h"
-#include <QAbstractItemView>
-#include <dfileviewhelper.h>
-
-#include "private/dstyleditemdelegate_p.h"
 #include "canvasgridview.h"
 #include "canvasviewhelper.h"
+#include "views/fileitem.h"
 
-#include <views/fileitem.h>
+#include "private/dstyleditemdelegate_p.h"
+
+#include <QAbstractItemView>
+#include <QTextEdit>
+#include <DStyle>
 
 DesktopItemDelegate::DesktopItemDelegate(DFileViewHelper *parent) :
     DIconItemDelegate(parent)
@@ -54,6 +55,18 @@ QWidget *DesktopItemDelegate::createEditor(QWidget *parent, const QStyleOptionVi
     FileIconItem *item = static_cast<FileIconItem *>(widget);
     connect(item, &FileIconItem::inputFocusOut, this, &DesktopItemDelegate::commitDataAndCloseActiveEditor);
     item->setContentsMargins(0, 0, 0, 0); // no margins
+
+    auto edit = item->getTextEdit();
+    // 设置文本与编辑框的边距
+    edit->document()->setDocumentMargin(TEXT_PADDING);
+
+    //在DTextEdit中FrameRadius会被设置为viewportMargins,导致文本可用的宽度减少。
+    //在此修改为0，并使用eventfilter重写绘制
+    DTK_WIDGET_NAMESPACE::DStyle::setFrameRadius(edit, 0);
+
+    // 在edit自身的EventFilter中处理绘制
+    edit->installEventFilter(edit);
+
     return widget;
 }
 

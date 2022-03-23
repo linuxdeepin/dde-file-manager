@@ -35,6 +35,8 @@
 #include <DTextEdit>
 #include <DArrowRectangle>
 #include <DThemeManager>
+#include <DStyle>
+#include <QStyleOptionFrame>
 
 #include "fileitem.h"
 #include "dfmglobal.h"
@@ -50,6 +52,8 @@ public:
     explicit CanSetDragTextEdit(const QString& text, QWidget* parent = nullptr);
     //set QTextEdit can drag
     void setDragEnabled(const bool &bdrag);
+protected:
+    bool eventFilter(QObject *, QEvent *); //just for desktop
 };
 
 class FileIconItemPrivate{
@@ -66,7 +70,7 @@ public:
     QString validText;
 };
 
-FileIconItem::FileIconItem(QWidget *parent) :
+FileIconItem::FileIconItem(QWidget *parent, bool desktop) :
     QFrame(parent)
   , d_ptr(new FileIconItemPrivate())
 {
@@ -94,8 +98,13 @@ FileIconItem::FileIconItem(QWidget *parent) :
     setLayout(vlayout);
 
     vlayout->addWidget(icon, 0, Qt::AlignTop | Qt::AlignHCenter);
-    vlayout->addSpacing(ICON_MODE_ICON_SPACING);
+    m_iconSpace = desktop ? ICON_BOTTOM_SPACING_DESKTOP : ICON_MODE_ICON_SPACING;
+    vlayout->addSpacing(m_iconSpace);
     vlayout->addWidget(edit, 0, Qt::AlignTop | Qt::AlignHCenter);
+
+    // 顶上去
+    if (desktop)
+        vlayout->addStretch();
 
     setFrameShape(QFrame::NoFrame);
     setFocusProxy(edit);
@@ -150,7 +159,7 @@ int FileIconItem::maxCharSize()
 
 QSize FileIconItem::sizeHint() const
 {
-    return QSize(width(), icon->height() + ICON_MODE_ICON_SPACING + edit->height());
+    return QSize(width(), icon->height() + m_iconSpace + edit->height());
 }
 
 void FileIconItem::popupEditContentMenu()
@@ -308,7 +317,7 @@ bool FileIconItem::event(QEvent *ee)
     } else if (ee->type() == QEvent::Resize) {
         updateEditorGeometry();
         int marginsHeight = contentsMargins().top();
-        resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING + marginsHeight);
+        resize(width(), icon->height() + edit->height() + m_iconSpace + marginsHeight);
     } else if (ee->type() == QEvent::FontChange) {
         edit->setFont(font());
     }
@@ -323,7 +332,7 @@ bool FileIconItem::eventFilter(QObject *obj, QEvent *ee)
         if (obj == icon || obj == edit) {
             int marginsHeight = contentsMargins().top();
             //计算高度时需加上marginsHeight，否则文字会显示不全
-            resize(width(), icon->height() + edit->height() + ICON_MODE_ICON_SPACING + marginsHeight);
+            resize(width(), icon->height() + edit->height() + m_iconSpace + marginsHeight);
         }
 
         break;
@@ -389,7 +398,7 @@ void FileIconItem::updateEditorGeometry()
         }
     } else {
         // max height 减去 edit的起始位置,注:不可直接使用edit->pos().y(),因为其是变量不是固定的高度值
-        auto maxTextHeight = m_maxHeight - (contentsMargins().top() + icon->height() + ICON_MODE_ICON_SPACING);
+        auto maxTextHeight = m_maxHeight - (contentsMargins().top() + icon->height() + m_iconSpace);
         if (maxTextHeight < 0) {
             // 之前的处理方式,最多显示3行.
             edit->setFixedHeight(qMin(fontMetrics().height() * 3 + TEXT_PADDING * 2, text_height));
@@ -454,7 +463,6 @@ void FileIconItem::pushItemToEditTextStack(const QString &item)
 CanSetDragTextEdit::CanSetDragTextEdit(QWidget *parent) :
     DTextEdit (parent)
 {
-
 }
 
 CanSetDragTextEdit::CanSetDragTextEdit(const QString &text, QWidget *parent) :
@@ -467,4 +475,35 @@ void CanSetDragTextEdit::setDragEnabled(const bool &bdrag)
 {
     QTextEditPrivate *dd = reinterpret_cast<QTextEditPrivate *>(qGetPtrHelper(d_ptr));
     dd->control->setDragEnabled(bdrag);
+}
+
+bool CanSetDragTextEdit::eventFilter(QObject *obj, QEvent *e)
+{
+    if (e->type() == QEvent::Paint && obj == this) {
+        // 获取原来的圆角值
+        const int oldFrameRadius = DStyle::pixelMetric(style(), DStyle::PM_FrameRadius, nullptr, this);
+
+        // 桌面将其设置为0, 防止DTextEdit将其设置为viewportmargin。
+        if (oldFrameRadius != 0)
+            return DTextEdit::eventFilter(obj, e);
+
+        // 基础值，该值应该是个定值，dtk中写死为8
+        const int frameRadius = DStyle::pixelMetric(style(), DStyle::PM_FrameRadius);
+
+        //设置frameRadius，用于绘制圆角背景
+        DStyle::setFrameRadius(this, frameRadius);
+
+        QPainter p(this);
+        p.setRenderHints(QPainter::Antialiasing);
+
+        QStyleOptionFrame panel;
+        initStyleOption(&panel);
+        style()->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, &p, this);
+
+        //还原为0
+        DStyle::setFrameRadius(this, oldFrameRadius);
+        return true;
+    }
+
+    return DTextEdit::eventFilter(obj, e);
 }

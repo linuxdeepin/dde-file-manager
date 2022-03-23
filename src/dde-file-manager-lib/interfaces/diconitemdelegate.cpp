@@ -36,8 +36,8 @@
 
 #include <DApplicationHelper>
 #include <DStyleOption>
-#include <DStyle>
 #include <DApplication>
+#include <DStyle>
 
 #include <QLabel>
 #include <QPainter>
@@ -882,7 +882,7 @@ QWidget *DIconItemDelegate::createEditor(QWidget *parent, const QStyleOptionView
 
     d->editingIndex = index;
 
-    FileIconItem *item = new FileIconItem(parent);
+    FileIconItem *item = new FileIconItem(parent, DIconItemDelegate::parent()->property("isCanvasViewHelper").toBool());
 
     //此处更改逻辑不再保持焦点离开后依然保持的item编辑态，将会提交相关的编辑框(与桌面保持一致)
     connect(item, &FileIconItem::inputFocusOut,
