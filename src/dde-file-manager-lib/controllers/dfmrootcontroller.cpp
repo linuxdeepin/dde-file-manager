@@ -434,7 +434,7 @@ void DFMRootFileWatcherPrivate::initBlockDevConnections(QSharedPointer<DBlockDev
     DFMRootFileWatcher *wpar = qobject_cast<DFMRootFileWatcher *>(q);
     blkdevs.push_back(blk);
     blk->setWatchChanges(true);
-    QString urlstr = DFMROOT_ROOT + devs.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS;
+    QString urlstr = DFMROOT_ROOT + QString(blk->device().mid(5)) + "."  + SUFFIX_UDISKS;
     DUrl url(urlstr);
 
     if (blk->isEncrypted()) {
@@ -607,6 +607,8 @@ bool DFMRootFileWatcherPrivate::start()
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceAdded, [wpar, this](const QString & blks) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
         QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if (!blk || !drv)
+            return;
 
         if(ignoreBlkDevice(blks, blk, drv)) {
             return ;
@@ -614,10 +616,14 @@ bool DFMRootFileWatcherPrivate::start()
 
         initBlockDevConnections(blk, blks);
 
-        Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+        Q_EMIT wpar->subfileCreated(DUrl(DFMROOT_ROOT +  QString(blk->device()).mid(QString("/dev/").length()) + "." SUFFIX_UDISKS));
     }));
     connections.push_back(QObject::connect(udisksmgr.data(), &DDiskManager::blockDeviceRemoved, [wpar](const QString & blks) {
-        Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT + blks.mid(QString("/org/freedesktop/UDisks2/block_devices/").length()) + "." SUFFIX_UDISKS));
+        QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+        QString volTag = blks.mid(blks.lastIndexOf("/") + 1);
+        if (blk && !blk->device().isEmpty())
+            volTag = blk->device().mid(5);
+        Q_EMIT wpar->fileDeleted(DUrl(DFMROOT_ROOT +  volTag + "." SUFFIX_UDISKS));
     }));
 
     for (auto devs : udisksmgr->blockDevices({})) {

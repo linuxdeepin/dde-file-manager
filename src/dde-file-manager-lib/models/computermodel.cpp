@@ -734,8 +734,14 @@ int ComputerModel::findItem(const DUrl &url)
 {
     int p;
     for (p = 0; p < m_items.size(); ++p) {
-        if (m_items[p].url == url) {
+        if (m_items[p].url == url)
             break;
+
+        auto fi = m_items[p].fi;
+        if (fi && url.path().endsWith(SUFFIX_UDISKS)) {
+            QString backUrl = fi->extraProperties()["udisksblk"].toString();
+            if (!backUrl.isEmpty() && backUrl.endsWith(url.path().remove("." SUFFIX_UDISKS)))
+                break;
         }
     }
     if (p >= m_items.size()) {

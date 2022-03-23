@@ -133,6 +133,28 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
             qInfo() << "  remove   " << fileurl;
             d_ptr->rootfilelist.remove(fileurl);
         }
+
+        DUrl target;
+        QString volTag = fileurl.path().remove("." SUFFIX_UDISKS);
+        for (auto iter = d_ptr->rootfilelist.cbegin(); iter != d_ptr->rootfilelist.cend(); ++iter) {
+            if (!iter.key().path().endsWith(SUFFIX_UDISKS))
+                continue;
+            auto info = iter.value();
+            if (!info)
+                continue;
+
+            QString blkPath = info->extraProperties()["udisksblk"].toString();
+            if (!blkPath.isEmpty() && blkPath.startsWith("/org/freedesktop/UDisks2/block_devices/")
+                    && blkPath.endsWith(volTag)) {
+                target = iter.key();
+                break;
+            }
+        }
+        if (target.isValid()) {
+            qInfo() << "remove item by block object path: " << target;
+            d_ptr->rootfilelist.remove(target);
+        }
+
     }
 }
 

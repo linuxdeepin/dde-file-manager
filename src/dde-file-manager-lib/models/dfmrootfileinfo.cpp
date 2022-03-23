@@ -99,23 +99,11 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             }
         }
     } else if (suffix() == SUFFIX_UDISKS) {
-        QStringList pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
+        const QString &&volTag = url.path().chopped(QString("." SUFFIX_UDISKS).length()); // /sdb1
+        QStringList pathList = DDiskManager::resolveDeviceNode("/dev" + volTag, {});
         if (pathList.size() == 0) {
             qWarning() << url << "not existed";
-            //fix 临时解决方案，彻底解决需要DDiskManager::resolveDeviceNode往下追踪
-            for (int i = 0; i < 20; ++i) {
-                QThread::msleep(50);
-
-                pathList = DDiskManager::resolveDeviceNode("/dev" + url.path().chopped(QString("." SUFFIX_UDISKS).length()), {});
-                if (pathList.size() != 0)
-                    break;
-                qWarning() << url << "not existed" << i;
-            }
-            if (pathList.size() == 0)
-                return;
-            //old
-            //return;
-            //endl
+            pathList << QString("/org/freedesktop/UDisks2/block_devices%1").arg(volTag);
         }
 
         //note: fix the U disk quickly installed and removed into two U disk, last valid
@@ -124,7 +112,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             udiskspath = pathList.last();
         }
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(udiskspath));
-        if (blk->path().length() != 0) {
+        if (blk && blk->path().length() != 0) {
             QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
             d_ptr->isod = drv->mediaCompatibility().join(" ").contains("optical");
             d_ptr->backer_url = udiskspath;
@@ -132,10 +120,7 @@ DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
             d_ptr->blk->setWatchChanges(true);
             checkCache();
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idLabelChanged, [this] {this->checkCache();});
-            QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] {
-//                this->loadDiskInfo();
-                this->checkCache();
-            });
+            QObject::connect(d_ptr->blk.data(), &DBlockDevice::mountPointsChanged, [this] { this->checkCache(); });
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::sizeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::idTypeChanged, [this] {this->checkCache();});
             QObject::connect(d_ptr->blk.data(), &DBlockDevice::cleartextDeviceChanged, [this] {this->checkCache();});
