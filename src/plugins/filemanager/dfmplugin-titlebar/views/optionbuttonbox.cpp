@@ -125,8 +125,11 @@ void OptionButtonBox::onUrlChanged(const QUrl &url)
         if (state & OptionButtonManager::kHideIconViewBtn)
             d->iconViewButton->setHidden(true);
 
-        if (state & OptionButtonManager::kHideDetailSpaceBtn)
+        if (state & OptionButtonManager::kHideDetailSpaceBtn) {
             d->detailButton->setHidden(true);
+            if (d->detailButton->isChecked())
+                d->detailButton->click();
+        }
     } else {
         d->listViewButton->setHidden(false);
         d->iconViewButton->setHidden(false);
