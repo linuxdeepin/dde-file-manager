@@ -132,6 +132,8 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool();
     if (removable && info->suffix() == SuffixInfo::kBlock) {
+        if (info->displayName() == name)
+            return;
         setCursorStatus(true);
         QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
         ComputerUtils::deviceServIns()->renameBlockDeviceAsync(devId, name, {}, [=](bool ok, DFMMOUNT::DeviceError err) {

@@ -301,9 +301,11 @@ bool DeviceControllerHelper::isProtectedBlocDevice(const BlockDeviceData &data)
     QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
 
     if (gsettings.get("protect-non-media-mounts").toBool()) {
-        for (auto &mountPoint : data.mountpoints) {
-            if (!mountPoint.isEmpty() && !mountPoint.startsWith("/media/"))
-                return true;
+        for (auto mountPoint : data.mountpoints) {
+            if (!mountPoint.isEmpty() && !mountPoint.endsWith("/"))
+                mountPoint.append("/");
+
+            if (!mountPoint.isEmpty() && !mountPoint.startsWith("/media/")) return true;
         }
     }
 

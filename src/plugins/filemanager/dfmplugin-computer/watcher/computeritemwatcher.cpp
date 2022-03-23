@@ -385,7 +385,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     sbItem.renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
     sbItem.findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
         if (this->routeMapper.contains(itemUrl))
-            return dfmbase::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
+            return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
 
         DFMEntryFileInfoPointer info(new EntryFileInfo(itemUrl));
         auto mntUrl = info->targetUrl();
