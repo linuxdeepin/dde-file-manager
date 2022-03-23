@@ -85,6 +85,7 @@
 #include <QtConcurrent>
 #include <QMutex>
 #include <private/qguiapplication_p.h>
+#include <private/qtextengine_p.h>
 #include <qpa/qplatformtheme.h>
 #include <DSysInfo>
 
@@ -110,6 +111,13 @@ DWIDGET_USE_NAMESPACE
 #define DRAGICON_ROTATE 10.0   //拖拽聚合旋转角度
 #define DRAGICON_OPACITY 0.1   //拖拽聚合透明度梯度
 #define DRAGICON_MAX_COUNT 99   //最大显示计数
+
+#define LIST_DRAGRECT_WIDTH 120
+#define LIST_DRAGICON_SIZE 80
+#define LIST_DRAGTEXT_WIDTH 116
+#define LIST_DRAGTEXT_HEIGTH 47
+
+#define BOX_LINE_WIDTH 2
 
 static const int kMinMoveLenght { 5 };
 
@@ -1895,24 +1903,37 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
         if (fileInfo) {
             d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
             if (!fileInfo->canDrop()
-                || !fileInfo->supportedDropActions().testFlag(event->dropAction())
-                || (fileInfo->isDir() && !fileInfo->isWritable())) {
-                d->dragMoveHoverIndex = QModelIndex();
-                update();
+                    || !fileInfo->supportedDropActions().testFlag(event->dropAction())
+                    || (fileInfo->isDir() && !fileInfo->isWritable())) {
+                const DUrl &toUrl = model()->getUrlByIndex(d->dragMoveHoverIndex);
+                if ((fileInfo->isFile() || fileInfo->fileUrl().isTrashFile())
+                        && (event->source() != this)
+                        && !(toUrl.isSearchFile() && (toUrl.fragment().startsWith(TRASH_ROOT) || toUrl.fragment().startsWith(RECENT_ROOT)))
+                        && fileInfo->isWritable()) {
+                    // 设置工作区域框选状态
+                    d->dragMoveHoverIndex = rootIndex();
+                    setViewSelectState(true);
+                    return event->accept();
+                }
 
+                d->dragMoveHoverIndex = QModelIndex();
+                setViewSelectState(false);
                 return event->ignore();
             }
+
             if (fileInfo->isDir() && ((!fileInfo->fileUrl().isTaggedFile()) || (fileInfo->fileUrl().isTaggedFile() && fileInfo->canRedirectionFileUrl()))) {
                 DUrl dragMoveHoverIndexUrl = fileInfo->fileUrl().isTaggedFile() ? fileInfo->redirectedFileUrl() : fileInfo->fileUrl();
                 for (const auto &url : m_urlsForDragEvent) {
                     const DAbstractFileInfoPointer &dragFileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
                     if (!dragFileInfo) {
+                        setViewSelectState(false);
                         event->ignore();
                         return;
                     }
 
                     bool isInSameDevice = DStorageInfo::inSameDevice(dragFileInfo->fileUrl(), dragMoveHoverIndexUrl);
                     if ((!isInSameDevice && !dragFileInfo->isReadable()) || (!DFMGlobal::keyCtrlIsPressed() && isInSameDevice && !dragFileInfo->canRename())) {
+                        setViewSelectState(false);
                         event->ignore();
                         return;
                     }
@@ -1922,8 +1943,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
             const DUrl &toUrl = model()->getUrlByIndex(d->dragMoveHoverIndex);
             if (toUrl.isSearchFile() && toUrl.fragment().startsWith(TRASH_ROOT)) {
                 d->dragMoveHoverIndex = QModelIndex();
-                update();
-
+                setViewSelectState(false);
                 return event->ignore();
             }
 
@@ -1934,8 +1954,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 const DUrl &parent = srcInfo->parentUrl();
                 if (parent == fileInfo->fileUrl() && event->source() == d->fileViewHelper->parent()) {
                     d->dragMoveHoverIndex = QModelIndex();
-                    update();
-
+                    setViewSelectState(false);
                     return event->ignore();
                 }
             }
@@ -1944,6 +1963,9 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 event->acceptProposedAction();
                 setTargetUrlToApp(event->mimeData(), fileInfo->fileUrl());
             } else {
+                if (fileInfo->isDir() || fileInfo->isDesktopFile()) {
+                    setViewSelectState(false);
+                }
                 event->accept();
             }
 
@@ -1954,6 +1976,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                     const DAbstractFileInfoPointer &dragfileInfo = DFileService::instance()->createFileInfo(this, DUrl(m_urlsForDragEvent.first()));
                     if (dragfileInfo->isGvfsMountFile()) {
                         event->setDropAction(Qt::MoveAction);
+                        setViewSelectState(false);
                         return event->ignore();
                     }
                 }
@@ -1963,10 +1986,12 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 if (toUrl.isSearchFile()) {
                     // 判断搜索出来的文件的父目录是否可读
                     if (!fileInfo->canRename()) {
+                        setViewSelectState(false);
                         return event->ignore();
                     }
                     // 判断是否是拖拽到最近使用或回收站的搜索目录
                     if (!(toUrl.fragment().startsWith(RECENT_ROOT) || toUrl.fragment().startsWith(TRASH_ROOT))) {
+                        setViewSelectState(false);
                         return event->setDropAction(Qt::CopyAction);
                     }
                 }
@@ -1974,11 +1999,16 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
                 // 父目录为只读文件时，不支持追加压缩
                 const DAbstractFileInfoPointer &parentInfo = model()->fileInfo(d->dragMoveHoverIndex.parent());
                 if (parentInfo && parentInfo->isWritable()) {
+                    setViewSelectState(false);
                     return event->setDropAction(Qt::CopyAction);
                 }
+                setViewSelectState(false);
                 return event->ignore();
             }
         }
+
+        if (d->dragMoveHoverIndex == rootIndex())
+            setViewSelectState(true);
     }
 
     update();
@@ -1993,7 +2023,7 @@ void DFileView::dragMoveEvent(QDragMoveEvent *event)
 void DFileView::dragLeaveEvent(QDragLeaveEvent *event)
 {
     D_D(DFileView);
-
+    setViewSelectState(false);
     d->dragMoveHoverIndex = QModelIndex();
 
     DListView::dragLeaveEvent(event);
@@ -2002,6 +2032,7 @@ void DFileView::dragLeaveEvent(QDragLeaveEvent *event)
 void DFileView::dropEvent(QDropEvent *event)
 {
     D_D(DFileView);
+    setViewSelectState(false);
     d->dragMoveHoverIndex = QModelIndex();
     // clean old index area
     update();
@@ -2024,7 +2055,6 @@ void DFileView::dropEvent(QDropEvent *event)
 
         event->accept();   // yeah! we've done with XDS so stop Qt from further event propagation.
     } else {
-
         QModelIndex index;
         if (isIconViewMode()) {
             index = d->fileViewHelper->isEmptyArea(event->pos()) ? QModelIndex() : indexAt(event->pos());
@@ -2034,6 +2064,17 @@ void DFileView::dropEvent(QDropEvent *event)
 
         if (!index.isValid())
             index = rootIndex();
+
+        const DAbstractFileInfoPointer &fileInfo = model()->fileInfo(index);
+        if (fileInfo) {
+            if (fileInfo->fileUrl().isTrashFile())
+                index = rootIndex();
+            // 列表模式，且非桌面类型的普通文件，非压缩文件,将drop的路径替换成当前目录
+            if (fileInfo->isFile()
+                    && !DFMGlobal::isDesktopFile(fileInfo->fileUrl())
+                    && !fileInfo->isDragCompressFileFormat())
+                index = rootIndex();
+        }
 
         if (!index.isValid())
             return;
@@ -2475,6 +2516,19 @@ bool DFileView::eventFilter(QObject *obj, QEvent *event)
     return DListView::eventFilter(obj, event);
 }
 
+void DFileView::paintEvent(QPaintEvent *e)
+{
+    DListView::paintEvent(e);
+    if (bShowViewSelectBox) {
+        QPainter painter(viewport());
+        QColor color = palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight);
+        color.setAlpha(255 * 0.4);  // ui要求，40%的透明度
+        QPen pen(color, BOX_LINE_WIDTH);
+        painter.setPen(pen);
+        painter.drawRect(QRectF(BOX_LINE_WIDTH/2, BOX_LINE_WIDTH/2, viewport()->size().width() - BOX_LINE_WIDTH, viewport()->size().height() - BOX_LINE_WIDTH));
+    }
+}
+
 #if QT_CONFIG(draganddrop)
 void DFileView::startDrag(Qt::DropActions supportedActions)
 {
@@ -2482,28 +2536,13 @@ void DFileView::startDrag(Qt::DropActions supportedActions)
     QModelIndexList indexes = d->selectedDraggableIndexes();
     if (!indexes.isEmpty()) {
         if (indexes.count() == 1) {
-            DListView::startDrag(supportedActions);
+            if (d->currentViewMode == DFileView::ListMode)
+                showCustomDragPixmap(indexes, supportedActions);
+            else
+                DListView::startDrag(supportedActions);
             return;
         }
-
-        QMimeData *data = model()->mimeData(indexes);
-        if (!data)
-            return;
-
-        QPixmap pixmap = d->renderToPixmap(indexes);
-        QDrag *drag = new QDrag(this);
-        drag->setPixmap(pixmap);
-        drag->setMimeData(data);
-        drag->setHotSpot(QPoint(static_cast<int>(pixmap.size().width() / (2 * pixmap.devicePixelRatio())),
-                                static_cast<int>(pixmap.size().height() / (2 * pixmap.devicePixelRatio()))));
-        Qt::DropAction dropAction = Qt::IgnoreAction;
-        Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
-        if (defaultDropAction != Qt::IgnoreAction && (supportedActions & defaultDropAction))
-            dropAction = defaultDropAction;
-        else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
-            dropAction = Qt::CopyAction;
-
-        drag->exec(supportedActions, dropAction);
+        showCustomDragPixmap(indexes, supportedActions);
     }
 }
 #endif   // QT_CONFIG(draganddrop)
@@ -3829,6 +3868,41 @@ void DFileView::setTargetUrlToApp(const QMimeData *data, const DUrl &url)
     }
 }
 
+void DFileView::showCustomDragPixmap(const QModelIndexList &indexes, Qt::DropActions supportedActions)
+{
+    Q_D(DFileView);
+
+    QMimeData *data = model()->mimeData(indexes);
+    if (!data || indexes.isEmpty())
+        return;
+
+    QPixmap pixmap;
+    if (indexes.count() == 1) {
+        pixmap = d->getPixmap(indexes.at(0));
+    } else {
+        pixmap = d->renderToPixmap(indexes);
+    }
+    QDrag *drag = new QDrag(this);
+    drag->setPixmap(pixmap);
+    drag->setMimeData(data);
+    drag->setHotSpot(QPoint(static_cast<int>(pixmap.size().width() / (2 * pixmap.devicePixelRatio())),
+                            static_cast<int>(pixmap.size().height() / (2 * pixmap.devicePixelRatio()))));
+    Qt::DropAction dropAction = Qt::IgnoreAction;
+    Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
+    if (defaultDropAction != Qt::IgnoreAction && (supportedActions & defaultDropAction))
+        dropAction = defaultDropAction;
+    else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
+        dropAction = Qt::CopyAction;
+
+    drag->exec(supportedActions, dropAction);
+}
+
+void DFileView::setViewSelectState(bool bSelect)
+{
+    bShowViewSelectBox = bSelect;
+    viewport()->update();
+}
+
 int DFileViewPrivate::iconModeColumnCount(int itemWidth) const
 {
     Q_Q(const DFileView);
@@ -4074,6 +4148,50 @@ QPixmap DFileViewPrivate::renderToPixmap(const QModelIndexList &indexes) const
     painter.setFont(ft);
     QString countStr = indexes.length() > DRAGICON_MAX_COUNT ? QString::number(DRAGICON_MAX_COUNT).append("+") : QString::number(indexes.length());
     painter.drawText(QRect(x, y, length, length), Qt::AlignCenter, countStr);
+
+    return pixmap;
+}
+
+QPixmap DFileViewPrivate::getPixmap(const QModelIndex &index) const
+{
+    Q_Q(const DFileView);
+
+    qreal scale = 1;
+    QWidget *window = q->window();
+    if (window) {
+        QWindow *windowHandle = window->windowHandle();
+        if (windowHandle)
+            scale = windowHandle->devicePixelRatio();
+    }
+
+    QRect pixRect(0, 0, LIST_DRAGRECT_WIDTH, LIST_DRAGICON_SIZE + LIST_DRAGTEXT_HEIGTH);
+    QPixmap pixmap(pixRect.size() * scale);
+    pixmap.setDevicePixelRatio(scale);
+    pixmap.fill(Qt::transparent);
+    QPainter painter(&pixmap);
+    QStyleOptionViewItem option = q->viewOptions();
+    option.state |= QStyle::State_Selected;
+    option.rect = option.rect.translated((LIST_DRAGRECT_WIDTH - LIST_DRAGICON_SIZE)/2, 0);
+
+    // 绘制当前按住的icon
+    q->itemDelegate()->paintDragIcon(&painter, option, m_currentPressedIndex, QSize(LIST_DRAGICON_SIZE, LIST_DRAGICON_SIZE));
+
+    // 绘制文件名
+    QString fileName = q->model()->data(index, DFileSystemModel::FileDisplayNameRole).toString();
+    QTextLayout layout;
+    layout.setText(fileName);
+    layout.setFont(painter.font());
+    painter.setPen(Qt::white);
+    QRectF boundingRect((LIST_DRAGRECT_WIDTH - LIST_DRAGTEXT_WIDTH)/2, LIST_DRAGICON_SIZE, LIST_DRAGTEXT_WIDTH, LIST_DRAGTEXT_HEIGTH);
+    QTextOption::WrapMode wordWrap(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    Qt::TextElideMode mode(Qt::ElideLeft);
+    int textLineHeight = q->fontMetrics().lineSpacing();
+    int flags = Qt::AlignHCenter;
+    QColor shadowColor;
+    QBrush background(q->palette().color(QPalette::ColorGroup::Active, QPalette::ColorRole::Highlight));
+    DFMGlobal::elideText(&layout, boundingRect.size(), wordWrap, mode, textLineHeight, flags, nullptr,
+                         &painter, boundingRect.topLeft(), shadowColor, QPointF(0, 1),
+                         background);
 
     return pixmap;
 }

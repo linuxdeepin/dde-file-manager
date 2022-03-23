@@ -61,6 +61,7 @@ public:
     QPixmap renderToPixmap(const QModelIndexList &indexes) const;
     void paintDragIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                        QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off) const;
+    QPixmap getPixmap(const QModelIndex &index) const;
 
 public:
     DFileView *q_ptr;

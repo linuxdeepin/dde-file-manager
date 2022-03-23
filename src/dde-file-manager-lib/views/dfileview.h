@@ -268,6 +268,7 @@ protected:
     bool event(QEvent *e) override;
     void updateGeometries() override;
     bool eventFilter(QObject *obj, QEvent *event) override;
+    void paintEvent(QPaintEvent *e) override;
 
 #if QT_CONFIG(draganddrop)
     void startDrag(Qt::DropActions supportedActions) override;
@@ -332,6 +333,11 @@ private:
      * @param url 目标Url
      */
     void setTargetUrlToApp(const QMimeData *data, const DUrl &url);
+
+    void showCustomDragPixmap(const QModelIndexList &indexes, Qt::DropActions supportedActions);
+    void setViewSelectState(bool bSelect);
+
+    bool bShowViewSelectBox { false };
 
     bool m_isRemovingCase = false;
     QScopedPointer<DFileViewPrivate> d_ptr;

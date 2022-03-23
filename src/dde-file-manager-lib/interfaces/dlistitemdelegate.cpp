@@ -294,7 +294,7 @@ void DListItemDelegate::paint(QPainter *painter,
 
             paintFileName(painter, opt, index, rol, rec, d->textLineHeight);
         } else {
-            if (isSelected)
+            if (isSelected || isDropTarget)
                 painter->setPen(opt.palette.color(QPalette::Active, QPalette::HighlightedText));
             else
                 painter->setPen(opt.palette.color(QPalette::Inactive, QPalette::Text));
@@ -344,7 +344,6 @@ void DListItemDelegate::paint(QPainter *painter,
 void DListItemDelegate::drawNotStringData(const QStyleOptionViewItem &opt, int lineHeight, const QRect &rect, const QVariant &data,
                                           bool drawBackground, QPainter *painter, const int &column) const
 {
-
     const DFileSystemModel *model = parent()->model();
     const DAbstractFileInfoPointer &fileInfo = model->fileInfo(model->rootUrl());
 
@@ -770,7 +769,7 @@ bool DListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, co
 
 void DListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRect &rect, const int &textLineHeight) const
 {
-    bool drawBackground =(option.state & QStyle::State_Selected) && option.showDecorationSelected;
+    bool drawBackground =((option.state & QStyle::State_Selected) || parent()->isDropTarget(index)) && option.showDecorationSelected;
     const QVariant &data = index.data(role);
     painter->setPen(option.palette.color(drawBackground ? QPalette::BrightText : QPalette::Text));
     if (data.canConvert<QString>()) {
