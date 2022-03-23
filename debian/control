@@ -52,18 +52,10 @@ Build-Depends:
  libssl-dev,
  libmediainfo-dev,
  libqt5xdg-dev,
- libtag1-dev,
  libicu-dev,
  liblucene++-dev,
  libgsf-1-dev,
- libglib2.0-dev,
- libboost-date-time-dev,
  libboost-filesystem-dev,
- libboost-iostreams-dev,
- libboost-regex-dev,
- libboost-system-dev,
- libboost-test-dev,
- libboost-thread-dev,
  libdocparser-dev,
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
@@ -78,7 +70,6 @@ Depends:
  socat,
  cryfs,
  deepin-anything-dkms[i386 amd64],
- deepin-anything-server[i386 amd64],
  libblockdev-crypto2,
  dde-device-formatter
 Conflicts: dde-file-manager-oem
@@ -123,11 +114,7 @@ Depends:
  libpoppler-cpp0v5 (>= 0.48.0),
  gvfs-backends(>=1.27.3),
  cryptsetup,
- libkf5codecs5,
  deepin-anything-libs[i386 amd64],
- libudisks2-qt5 (>=5.0.6),
- libdisomaster (>=5.0.7),
- libdocparser,
  libdfm-extension
 Recommends:
  libudfburn
