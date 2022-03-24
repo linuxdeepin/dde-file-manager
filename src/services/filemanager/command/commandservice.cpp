@@ -91,10 +91,12 @@ void CommandService::init()
 
 void CommandService::processCommand()
 {
-    qDebug() << "processCommand";
+    // whether to add setQuitOnLastWindowClosed
+    if (isSet("d"))
+        return;
 
     if (isSet("e")) {
-        // Todo(yanghao): event from json handle
+        // Todo(yanghao): event from json handle, the old filemanager does not seem to be used
         return;
     }
 
