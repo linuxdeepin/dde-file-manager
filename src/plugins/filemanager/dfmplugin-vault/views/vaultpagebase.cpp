@@ -27,5 +27,5 @@ VaultPageBase::VaultPageBase(QWidget *parent)
     : DDialog(parent)
 {
     this->moveToCenter();
-    this->setAttribute(Qt::WA_DeleteOnClose, true);
+    this->setAttribute(Qt::WA_DeleteOnClose, false);
 }

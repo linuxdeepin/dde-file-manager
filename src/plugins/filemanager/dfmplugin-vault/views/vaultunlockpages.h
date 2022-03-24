@@ -25,6 +25,13 @@
 #include "dfmplugin_vault_global.h"
 
 #include "vaultpagebase.h"
+#include "unlockview/unlockview.h"
+#include "unlockview/retrievepasswordview.h"
+#include "unlockview/recoverykeyview.h"
+#include "unlockview/passwordrecoveryview.h"
+#include "utils/vaultglobaldefine.h"
+
+#include <QStackedWidget>
 
 DWIDGET_BEGIN_NAMESPACE
 class DPasswordEdit;
@@ -35,58 +42,39 @@ DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 DPVAULT_BEGIN_NAMESPACE
+class VaultRetrievePassword;
 class VaultUnlockPages : public VaultPageBase
 {
     Q_OBJECT
 public:
-    enum EN_ToolTip {
-        Warning = 0,
-        Information
-    };
-
     explicit VaultUnlockPages(QWidget *parent = nullptr);
-    ~VaultUnlockPages() override {}
-
-public slots:
-    void onButtonClicked(const int &index);
-
-    void onPasswordChanged(const QString &pwd);
-
-    void onVaultUlocked(int state);
-
-    /*!
-     * /brief onReturnUnlockedPage 返回界面页面
-     */
-    void onReturnUnlockedPage();
-
-private slots:
-    //! 超时函数，定时隐藏tooltip显示
-    void slotTooltipTimerTimeout();
-
-protected:
-    virtual void showEvent(QShowEvent *event) override;
-
-    virtual void closeEvent(QCloseEvent *event) override;
-
-    void showToolTip(const QString &text, int duration, EN_ToolTip enType);
-
-    //! 重写视图隐藏事件，用于隐藏tooltip
-    virtual void hideEvent(QHideEvent *event) override;
-
-    virtual bool eventFilter(QObject *obj, QEvent *evt) override;   //! m_forgetPassword 点击事件过滤处理
+    ~VaultUnlockPages() override;
 
 private:
-    DPasswordEdit *passwordEdit { nullptr };
-    QPushButton *tipsButton { nullptr };
-    bool unlockByPwd { false };
+    void initUI();
 
-    DToolTip *tooltip { nullptr };
-    DFloatingWidget *floatWidget { nullptr };
-    //! 定时器，用于定时隐藏tooltip
-    QTimer *tooltipTimer { nullptr };
-    DLabel *forgetPassword { nullptr };   //! 忘记密码提示与找回入口
-    VaultPageBase *retrievePage { nullptr };   //! 找回密码验证页面
-    bool extraLockVault { true };
+    void setBtnText(int index);
+
+public slots:
+    void pageSelect(PageType page);
+
+    void onButtonClicked(int index, const QString &text);
+
+    void onSetBtnEnabled(int index, const bool &state);
+
+private:
+    QStackedWidget *stackedWidget { nullptr };
+
+    //! retrieve password
+    RetrievePasswordView *retrievePasswordView { nullptr };
+
+    //! key unlock
+    RecoveryKeyView *recoveryKeyView { nullptr };
+
+    //! password unlock
+    UnlockView *unlockView { nullptr };
+
+    PasswordRecoveryView *passwordRecoveryView { nullptr };
 };
 DPVAULT_END_NAMESPACE
 #endif   //!VAULTUNLOCKPAGES_H

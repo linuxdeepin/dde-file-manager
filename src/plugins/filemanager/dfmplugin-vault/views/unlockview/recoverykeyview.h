@@ -23,11 +23,11 @@
 #define VAULTRECOVERYKEYPAGES_H
 
 #include "dfmplugin_vault_global.h"
-#include "vaultpagebase.h"
 
 #include <dtkwidget_global.h>
 
 #include <QScopedPointer>
+#include <QFrame>
 
 class QPlainTextEdit;
 
@@ -37,18 +37,28 @@ class DFloatingWidget;
 DWIDGET_END_NAMESPACE
 
 DPVAULT_BEGIN_NAMESPACE
-class VaultRecoveryKeyPages : public VaultPageBase
+class RecoveryKeyView : public QFrame
 {
     Q_OBJECT
 public:
-    explicit VaultRecoveryKeyPages(QWidget *parent = nullptr);
+    explicit RecoveryKeyView(QWidget *parent = nullptr);
 
-    ~VaultRecoveryKeyPages() override;
+    ~RecoveryKeyView() override;
+
+    QStringList btnText();
+
+    QString titleText();
+
+    void buttonClicked(int index, const QString &text);
 
     void showAlertMessage(const QString &text, int duration = 3000);
 
+signals:
+    void sigBtnEnabled(const int &index, const bool &state);
+
+    void sigCloseDialog();
+
 private slots:
-    void onButtonClicked(const int &index);
 
     void recoveryKeyChanged();
 

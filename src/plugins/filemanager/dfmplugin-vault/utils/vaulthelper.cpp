@@ -21,10 +21,10 @@
 
 #include "vaulthelper.h"
 #include "vaultglobaldefine.h"
-#include "views/vaultactiveview.h"
+#include "views/vaultcreatepage.h"
 #include "views/vaultunlockpages.h"
 #include "views/vaultremovepages.h"
-#include "views/vaultpropertydialog.h"
+#include "views/vaultpropertyview/vaultpropertydialog.h"
 #include "utils/encryption/vaultconfig.h"
 #include "utils/vaultautolock.h"
 #include "events/vaulteventcaller.h"
@@ -89,7 +89,8 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
         page->exec();
     } break;
     case VaultState::kEncrypted: {
-        VaultPageBase *page = new VaultUnlockPages();
+        VaultUnlockPages *page = new VaultUnlockPages();
+        page->pageSelect(PageType::kUnlockPage);
         page->exec();
     } break;
     case VaultState::kUnlocked:
@@ -478,7 +479,8 @@ void VaultHelper::creatVaultDialog()
 
 void VaultHelper::unlockVaultDialog()
 {
-    VaultPageBase *page = new VaultUnlockPages();
+    VaultUnlockPages *page = new VaultUnlockPages();
+    page->pageSelect(PageType::kUnlockPage);
     page->exec();
 }
 

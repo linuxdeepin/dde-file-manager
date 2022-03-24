@@ -92,7 +92,7 @@ void VaultFileInfo::refresh()
 
 bool VaultFileInfo::isReadable() const
 {
-    return !dptr->proxy || dptr->proxy->isSymLink();
+    return !dptr->proxy || dptr->proxy->isReadable();
 }
 
 bool VaultFileInfo::isWritable() const

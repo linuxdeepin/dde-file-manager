@@ -19,11 +19,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "vaultactiveview.h"
-#include "vaultactivestartview.h"
-#include "vaultactivesetunlockmethodview.h"
-#include "vaultactivesavekeyfileview.h"
-#include "vaultactivefinishedview.h"
+#include "vaultcreatepage.h"
+#include "createvaultview/vaultactivestartview.h"
+#include "createvaultview/vaultactivesetunlockmethodview.h"
+#include "createvaultview/vaultactivesavekeyfileview.h"
+#include "createvaultview/vaultactivefinishedview.h"
 #include "utils/vaulthelper.h"
 
 #include <QDebug>

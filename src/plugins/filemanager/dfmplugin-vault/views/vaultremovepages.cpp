@@ -22,9 +22,9 @@
 #include "vaultremovepages.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
-#include "vaultremoveprogressview.h"
-#include "vaultremovebypasswordview.h"
-#include "vaultremovebyrecoverykeyview.h"
+#include "removevaultview/vaultremoveprogressview.h"
+#include "removevaultview/vaultremovebypasswordview.h"
+#include "removevaultview/vaultremovebyrecoverykeyview.h"
 #include "services/filemanager/vault/vaultservice.h"
 
 #include <DLabel>

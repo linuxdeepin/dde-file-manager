@@ -22,8 +22,7 @@
 #define VAULTRETRIEVEPASSWORD_H
 
 #include "dfmplugin_vault_global.h"
-
-#include "vaultpagebase.h"
+#include "utils/vaultglobaldefine.h"
 
 #include <DFileChooserEdit>
 #include <DLabel>
@@ -32,13 +31,12 @@
 
 #include <polkit-qt5-1/PolkitQt1/Authority>
 
-DWIDGET_USE_NAMESPACE
 DPVAULT_BEGIN_NAMESPACE
-class VaultRetrievePassword : public VaultPageBase
+class RetrievePasswordView : public QFrame
 {
     Q_OBJECT
 public:
-    explicit VaultRetrievePassword(QWidget *parent = nullptr);
+    explicit RetrievePasswordView(QWidget *parent = nullptr);
 
     /*!
      * /brief verificationKey 验证密钥
@@ -51,19 +49,30 @@ public:
      */
     QString getUserName();
 
-signals:
-    /*!
-     * /brief signalReturn 返回解锁页面
-     */
-    void signalReturn();
+    QStringList btnText();
 
-public slots:
+    QString titleText();
+
     /*!
      * /brief onButtonClicked 返回解锁页面与验证密钥按钮
      * /param index         按钮编号
      * /param text          按钮文本
      */
-    void onButtonClicked(int index, const QString &text);
+    void buttonClicked(int index, const QString &text);
+
+    QString ValidationResults();
+
+signals:
+    /*!
+     * /brief signalJump 页面跳转
+     */
+    void signalJump(const PageType type);
+
+    void sigBtnEnabled(const int &index, const bool &state);
+
+    void sigResults(QString message);
+
+public slots:
 
     /*!
      * /brief onComboBoxIndex   选择密钥文件的方式
@@ -90,12 +99,6 @@ private:
      */
     void setVerificationPage();
 
-    /*!
-     * /brief setResultsPage    设置找回密码后的页面
-     * /param password          密码
-     */
-    void setResultsPage(QString password);
-
 protected:
     void showEvent(QShowEvent *event) override;
 
@@ -103,35 +106,27 @@ protected:
 
 private:
     //! 找回密码页面标题
-    DLabel *currentPageTitle { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *currentPageTitle { nullptr };
 
     //! 选择要验证的密钥路径
     QComboBox *savePathTypeComboBox { nullptr };
 
     //! 用户自选密钥文件路径编辑框
-    DFileChooserEdit *filePathEdit { nullptr };
+    DTK_WIDGET_NAMESPACE::DFileChooserEdit *filePathEdit { nullptr };
 
     //! 默认密钥文件路径编辑框
     QLineEdit *defaultFilePathEdit { nullptr };
 
     //! 密钥验证失败提示标签
-    DLabel *verificationPrompt { nullptr };
+    DTK_WIDGET_NAMESPACE::DLabel *verificationPrompt { nullptr };
 
     //! 选择密钥页面
     QFrame *selectKeyPage { nullptr };
 
-    //! 显示找回的密码页面
-    QFrame *passwordRecoveryPage { nullptr };
-
-    //! 密钥验证成页面标题
-    DLabel *verificationPageTitle { nullptr };
-    //! 找回的密码信息
-    DLabel *passwordMsg { nullptr };
-    //! 安全提示
-    DLabel *hintMsg { nullptr };
-
     //! 4个按钮的文本
     QStringList btnList {};
+
+    QString validationResults;
 };
 DPVAULT_END_NAMESPACE
 #endif   // VAULTRETRIEVEPASSWORD_H

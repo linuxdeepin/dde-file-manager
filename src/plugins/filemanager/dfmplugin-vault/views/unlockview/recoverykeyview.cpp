@@ -19,13 +19,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "vaultrecoverykeypages.h"
+#include "recoverykeyview.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
 #include "services/filemanager/vault/vaultservice.h"
 
 #include <DToolTip>
 #include <DFloatingWidget>
+#include <DDialog>
 
 #include <QPlainTextEdit>
 #include <QAbstractButton>
@@ -39,12 +40,9 @@ DWIDGET_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 
-VaultRecoveryKeyPages::VaultRecoveryKeyPages(QWidget *parent)
-    : VaultPageBase(parent)
+RecoveryKeyView::RecoveryKeyView(QWidget *parent)
+    : QFrame(parent)
 {
-    this->setIcon(QIcon::fromTheme("dfm_vault"));
-    this->setFixedSize(396, 218);
-
     //! 标题
     QLabel *pTitle = new QLabel(tr("Unlock by Key"), this);
     QFont font = pTitle->font();
@@ -67,29 +65,27 @@ VaultRecoveryKeyPages::VaultRecoveryKeyPages(QWidget *parent)
     mainLayout->addWidget(recoveryKeyEdit);
 
     mainFrame->setLayout(mainLayout);
-    addContent(mainFrame);
 
     QStringList btnList({ tr("Cancel", "button"), tr("Unlock", "button") });
-    addButton(btnList[0], false);
-    addButton(btnList[1], true, ButtonType::ButtonRecommend);
-    getButton(1)->setEnabled(false);
 
-    //! 防止点击按钮后界面隐藏
-    setOnButtonClickedClose(false);
-
-    connect(this, &VaultRecoveryKeyPages::buttonClicked, this, &VaultRecoveryKeyPages::onButtonClicked);
-    connect(recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &VaultRecoveryKeyPages::recoveryKeyChanged);
-    connect(VaultHelper::vaultServiceInstance(), &VaultService::signalUnlockVaultState, this, &VaultRecoveryKeyPages::onUnlockVault);
+    //    connect(this, &RecoveryKeyView::buttonClicked, this, &RecoveryKeyView::onButtonClicked);
+    connect(recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &RecoveryKeyView::recoveryKeyChanged);
+    connect(VaultHelper::vaultServiceInstance(), &VaultService::signalUnlockVaultState, this, &RecoveryKeyView::onUnlockVault);
 }
 
-VaultRecoveryKeyPages::~VaultRecoveryKeyPages()
+RecoveryKeyView::~RecoveryKeyView()
 {
     if (tooltip) {
         tooltip->deleteLater();
     }
 }
 
-void VaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)
+QString RecoveryKeyView::titleText()
+{
+    return QString(tr("Unlock by Key"));
+}
+
+void RecoveryKeyView::showAlertMessage(const QString &text, int duration)
 {
     if (!tooltip) {
         tooltip = new DToolTip(text);
@@ -122,11 +118,11 @@ void VaultRecoveryKeyPages::showAlertMessage(const QString &text, int duration)
     });
 }
 
-void VaultRecoveryKeyPages::onButtonClicked(const int &index)
+void RecoveryKeyView::buttonClicked(int index, const QString &text)
 {
     if (index == 1) {
         //! 点击解锁后，灰化解锁按钮
-        getButton(1)->setEnabled(false);
+        emit sigBtnEnabled(1, false);
 
         QString strKey = recoveryKeyEdit->toPlainText();
         strKey.replace("-", "");
@@ -143,11 +139,9 @@ void VaultRecoveryKeyPages::onButtonClicked(const int &index)
 
         return;
     }
-
-    close();
 }
 
-int VaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
+int RecoveryKeyView::afterRecoveryKeyChanged(QString &str)
 {
     if (str.isEmpty()) {
         return -1;
@@ -185,23 +179,23 @@ int VaultRecoveryKeyPages::afterRecoveryKeyChanged(QString &str)
     return location;
 }
 
-void VaultRecoveryKeyPages::showEvent(QShowEvent *event)
+void RecoveryKeyView::showEvent(QShowEvent *event)
 {
     recoveryKeyEdit->clear();
     unlockByKey = false;
     event->accept();
 }
 
-void VaultRecoveryKeyPages::recoveryKeyChanged()
+void RecoveryKeyView::recoveryKeyChanged()
 {
     QString key = recoveryKeyEdit->toPlainText();
     int length = key.length();
     int maxLength = MAX_KEY_LENGTH + 7;
 
     if (key.isEmpty()) {
-        getButton(1)->setEnabled(false);
+        //        getButton(1)->setEnabled(false);
     } else {
-        getButton(1)->setEnabled(true);
+        //        getButton(1)->setEnabled(true);
     }
 
     //! 限制密钥输入框只能输入数字、字母、以及+/-
@@ -238,13 +232,12 @@ void VaultRecoveryKeyPages::recoveryKeyChanged()
     recoveryKeyEdit->blockSignals(false);
 }
 
-void VaultRecoveryKeyPages::onUnlockVault(int state)
+void RecoveryKeyView::onUnlockVault(int state)
 {
     if (unlockByKey) {
         if (state == 0) {
             //! success
-            emit accepted();
-            close();
+            emit sigCloseDialog();
         } else {
             //! others
             QString errMsg = tr("Failed to unlock file vault");
@@ -258,7 +251,7 @@ void VaultRecoveryKeyPages::onUnlockVault(int state)
     }
 }
 
-bool VaultRecoveryKeyPages::eventFilter(QObject *watched, QEvent *event)
+bool RecoveryKeyView::eventFilter(QObject *watched, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QPlainTextEdit *edit = qobject_cast<QPlainTextEdit *>(watched);
@@ -276,5 +269,5 @@ bool VaultRecoveryKeyPages::eventFilter(QObject *watched, QEvent *event)
         }
     }
 
-    return DDialog::eventFilter(watched, event);
+    return QFrame::eventFilter(watched, event);
 }

@@ -89,5 +89,12 @@ enum VaultPageMark {
     kClipboardPage,
     kVaultPage
 };
+
+enum PageType : int {
+    kUnlockPage = 0,
+    kRecoverPage = 1,
+    kRetrievePage = 2,
+    kPasswordRecoverPage = 3
+};
 DPVAULT_END_NAMESPACE
 #endif   //! VAULTGLOBALDEFINE_H
