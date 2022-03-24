@@ -1844,6 +1844,14 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     DUrl rootItemUrl = rootUrl();
     if (rootFileInfo && rootItemUrl.isTaggedFile() && rootFileInfo->canRedirectionFileUrl())
         rootItemUrl = rootFileInfo->redirectedFileUrl();
+
+    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
+    if (m_urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(m_urlsForDragEvent)) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return;
+    }
+
     for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
         if (!fileInfo) {

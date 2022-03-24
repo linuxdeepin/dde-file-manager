@@ -80,6 +80,7 @@
 #include "app/define.h"
 #include "controllers/mergeddesktopcontroller.h"
 #include "../dde-wallpaper-chooser/screensavercontrol.h"
+#include "shutil/fileutils.h"
 
 #include "accessibility/ac-desktop-define.h"
 #include "app/filesignalmanager.h"
@@ -1273,6 +1274,13 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         fetchDragEventUrlsFromSharedMemory();
     } else {
         m_urlsForDragEvent = event->mimeData()->urls();
+    }
+
+    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
+    if (m_urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(m_urlsForDragEvent)) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return;
     }
 
     d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);

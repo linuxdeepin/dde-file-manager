@@ -1768,6 +1768,27 @@ void FileUtils::addRecentFile(const QString &filePath, const DesktopFile &deskto
     DRecentManager::addItem(filePath, recentData);
 }
 
+bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
+{
+    // user home prohibit Paths
+    QStringList usrProhibitPaths;
+    usrProhibitPaths << QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
+
+
+    for (const auto &url : urls) {
+        // usr Prohibit Paths
+        if (!url.isEmpty() && usrProhibitPaths.contains(url.path())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool FileUtils::appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList)
 {
     if (!fromUrlList.isEmpty()) {

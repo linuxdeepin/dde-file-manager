@@ -28,6 +28,7 @@
 #include "controllers/vaultcontroller.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "plugins/schemepluginmanager.h"
+#include "shutil/fileutils.h"
 
 #include <QDebug>
 #include <dstorageinfo.h>
@@ -417,6 +418,11 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
     if (itemUrl.isBookMarkFile() && info && info->canRedirectionFileUrl())
         itemUrl = info->redirectedFileUrl();
 
+    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
+    if (m_urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(m_urlsForDragEvent)) {
+        return Qt::IgnoreAction;
+    }
+
     for (const QUrl &url : urls) {
         const DAbstractFileInfoPointer &fileInfo = fileService->createFileInfo(this, DUrl(url));
         if (!fileInfo || !info)
@@ -435,7 +441,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         //防止不可添加tag的文件被拖进tag目录从而获取tag属性
         if (item->url().isTaggedFile() && !fileInfo->canTag()) {
             return Qt::IgnoreAction;
-        }
+        }        
     }
 
     if (!info || !info->canDrop()) {
