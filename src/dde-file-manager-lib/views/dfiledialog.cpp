@@ -477,9 +477,8 @@ void DFileDialog::selectNameFilterByIndex(int index)
                 return getFileView()->setNameFilters(newNameFilters); //这里传递回去的有可能是一个正则表达式，它决定哪些文件不被置灰
             }
         }
-//        下面这部分内容似乎没有必要，因为上面已经查询到了第一个符合QMimeDataBase记录的扩展名
-//        newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
-
+        if (!newNameFilters.isEmpty())
+            newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
         if (!fileNameExtension.isEmpty() && !newNameFilterExtension.isEmpty()) {
             const int fileNameExtensionLength = fileNameExtension.count();
             fileName.replace(fileName.count() - fileNameExtensionLength,
