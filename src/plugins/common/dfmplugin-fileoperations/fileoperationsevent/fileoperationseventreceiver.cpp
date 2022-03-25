@@ -174,6 +174,30 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     return true;
 }
 
+bool FileOperationsEventReceiver::doRenameFiles(const QList<QUrl> urls, const QPair<QString, QString> pair,
+                                                const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair2,
+                                                const RenameTypes type, QMap<QUrl, QUrl> &successUrls, QString &errorMsg)
+{
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    bool ok = false;
+    switch (type) {
+    case RenameTypes::kBatchRepalce:
+        ok = fileHandler.renameFileBatchReplace(urls, pair, successUrls);
+        break;
+    case RenameTypes::kBatchCustom:
+        ok = fileHandler.renameFileBatchCustom(urls, pair, successUrls);
+        break;
+    case RenameTypes::kBatchAppend:
+        ok = fileHandler.renameFileBatchAppend(urls, pair2, successUrls);
+        break;
+    }
+    if (!ok) {
+        errorMsg = fileHandler.errorString();
+        DialogManagerInstance->showErrorDialog("Rename file error: %1", errorMsg);
+    }
+    return ok;
+}
+
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
@@ -556,28 +580,37 @@ void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 
 bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace)
 {
-    // TODO lanxs deal custom function
+    QMap<QUrl, QUrl> successUrls;
     QString error;
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    bool ok = replace ? fileHandler.renameFileBatchReplace(urls, pair) : fileHandler.renameFileBatchCustom(urls, pair);
-    if (!ok) {
-        error = fileHandler.errorString();
-        DialogManagerInstance->showErrorDialog("rename file error", error);
-    }
-    // TODO:: file renameFile finished need to send file renameFile finished event
+    RenameTypes type = RenameTypes::kBatchRepalce;
+    if (!replace)
+        type = RenameTypes::kBatchCustom;
+    bool ok = doRenameFiles(urls, pair, {}, type, successUrls, error);
+
+    // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, urls, ok, error);
+                                          windowId, urls, successUrls.values(), ok, error);
     return ok;
 }
 
 void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, OperaterCallback callback)
 {
-    bool ok = handleOperationRenameFiles(windowId, urls, pair, replace);
+    QMap<QUrl, QUrl> successUrls;
+    QString error;
+    RenameTypes type = RenameTypes::kBatchRepalce;
+    if (!replace)
+        type = RenameTypes::kBatchCustom;
+    bool ok = doRenameFiles(urls, pair, {}, type, successUrls, error);
+    // publish result
+    const QList<QUrl> &lists = successUrls.values();
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                          windowId, urls, lists, ok, error);
+
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
-        // TODO lanxs insert kTargets
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << lists));
         args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
         args->insert(CallbackKey::kCustom, custom);
         callback(args);
@@ -586,28 +619,31 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 
 bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
-    // TODO lanxs deal custom function
+    QMap<QUrl, QUrl> successUrls;
     QString error;
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    bool ok = fileHandler.renameFileBatchAppend(urls, pair);
-    if (!ok) {
-        error = fileHandler.errorString();
-        DialogManagerInstance->showErrorDialog("rename file error", error);
-    }
-    // TODO:: file renameFile finished need to send file renameFile finished event
+    bool ok = doRenameFiles(urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
+
+    // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, urls, ok, error);
+                                          windowId, urls, successUrls.values(), ok, error);
     return ok;
 }
 
 void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, OperaterCallback callback)
 {
-    bool ok = handleOperationRenameFiles(windowId, urls, pair);
+    QMap<QUrl, QUrl> successUrls;
+    QString error;
+    bool ok = doRenameFiles(urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
+    const QList<QUrl> &lists = successUrls.values();
+    // publish result
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                          windowId, urls, lists, ok, error);
+
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
-        // TODO lanxs insert kTargets
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << lists));
         args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
         args->insert(CallbackKey::kCustom, custom);
         callback(args);

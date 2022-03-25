@@ -210,6 +210,11 @@ private slots:
     void invokeUnregister(const QString scheme);
 
 private:
+    enum class RenameTypes {
+        kBatchRepalce,
+        kBatchCustom,
+        kBatchAppend
+    };
     explicit FileOperationsEventReceiver(QObject *parent = nullptr);
     bool initService();
     QString newDocmentName(const QString targetdir,
@@ -221,6 +226,12 @@ private:
     void initDBus();
 
     bool revocation(const quint64 windowId, const QVariantMap &ret);
+
+    bool doRenameFiles(const QList<QUrl> urls,
+                       const QPair<QString, QString> pair,
+                       const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair2,
+                       const RenameTypes type,
+                       QMap<QUrl, QUrl> &successUrls, QString &errorMsg);
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };

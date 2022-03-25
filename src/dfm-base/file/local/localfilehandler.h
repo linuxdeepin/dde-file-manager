@@ -47,9 +47,9 @@ public:
     virtual bool mkdir(const QUrl &dir);
     virtual bool rmdir(const QUrl &url);
     virtual bool renameFile(const QUrl &url, const QUrl &newUrl);
-    virtual bool renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair);
-    virtual bool renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair);
-    virtual bool renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair);
+    virtual bool renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls);
+    virtual bool renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair, QMap<QUrl, QUrl> &successUrls);
+    virtual bool renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls);
     virtual bool openFile(const QUrl &file);
     virtual bool openFiles(const QList<QUrl> &files);
     virtual bool openFileByApp(const QUrl &file, const QString &appDesktop);
@@ -73,7 +73,7 @@ private:
     QString getFileMimetypeFromGio(const QUrl &url);
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     QString getFileMimetype(const QString &path);
-    bool renameFilesBatch(const QMap<QUrl, QUrl> &urls);
+    bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);
 
 private:
     void setError(const QString &error);

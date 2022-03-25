@@ -216,22 +216,22 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     return true;
 }
 
-bool LocalFileHandler::renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair)
+bool LocalFileHandler::renameFileBatchReplace(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls)
 {
     QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchReplaceText(urls, pair);
-    return renameFilesBatch(needDealUrls);
+    return renameFilesBatch(needDealUrls, successUrls);
 }
 
-bool LocalFileHandler::renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair)
+bool LocalFileHandler::renameFileBatchAppend(const QList<QUrl> &urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair, QMap<QUrl, QUrl> &successUrls)
 {
     QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair);
-    return renameFilesBatch(needDealUrls);
+    return renameFilesBatch(needDealUrls, successUrls);
 }
 
-bool LocalFileHandler::renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair)
+bool LocalFileHandler::renameFileBatchCustom(const QList<QUrl> &urls, const QPair<QString, QString> &pair, QMap<QUrl, QUrl> &successUrls)
 {
     QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
-    return renameFilesBatch(needDealUrls);
+    return renameFilesBatch(needDealUrls, successUrls);
 }
 /*!
  * \brief LocalFileHandler::openFile 打开文件
@@ -680,9 +680,9 @@ QString LocalFileHandler::getFileMimetype(const QString &path)
     return result;
 }
 
-bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls)
+bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls)
 {
-    QMap<QUrl, QUrl> successMap;
+    successUrls.clear();
 
     QMap<QUrl, QUrl>::const_iterator beg = urls.constBegin();
     QMap<QUrl, QUrl>::const_iterator end = urls.constEnd();
@@ -697,11 +697,11 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls)
 
         ///###: just cache files that rename successfully.
         if (renameFile(currentName, expectedName)) {
-            successMap[currentName] = expectedName;
+            successUrls[currentName] = expectedName;
         }
     }
 
-    return successMap.size() == urls.size();
+    return successUrls.size() == urls.size();
 }
 /*!
  * \brief LocalFileHandler::errorString 获取错误信息
