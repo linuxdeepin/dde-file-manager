@@ -136,6 +136,11 @@ bool PropertyDialogService::registerMethod(CPY_NAMESPACE::RegisterCreateProcess:
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerViewCreateFunction(view, scheme);
 }
 
+bool PropertyDialogService::registerBasicExpand(dfm_service_common::Property::RegisterCreateProcess::basicViewFieldFunc func, QString scheme)
+{
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerBasicViewExpand(func, scheme);
+}
+
 bool PropertyDialogService::registerPropertyPathShowStyle(QString scheme)
 {
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerPropertyPathShowStyle(scheme);
@@ -149,6 +154,11 @@ QWidget *PropertyDialogService::createWidget(const QUrl &url)
 QMap<int, QWidget *> PropertyDialogService::createControlView(const QUrl &url)
 {
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->createControlView(url);
+}
+
+QList<QMap<QString, QString>> PropertyDialogService::basicExpandField(const QUrl &url)
+{
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->basicExpandField(url);
 }
 
 bool PropertyDialogService::isContains(const QUrl &url)

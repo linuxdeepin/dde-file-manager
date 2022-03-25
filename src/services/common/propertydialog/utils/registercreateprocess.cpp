@@ -68,6 +68,15 @@ bool RegisterCreateProcess::registerViewCreateFunction(RegisterCreateProcess::cr
     return false;
 }
 
+bool RegisterCreateProcess::registerBasicViewExpand(RegisterCreateProcess::basicViewFieldFunc func, const QString &scheme)
+{
+    if (!basicViewFieldFuncHash.contains(scheme)) {
+        basicViewFieldFuncHash.insert(scheme, func);
+        return true;
+    }
+    return false;
+}
+
 bool RegisterCreateProcess::isContains(const QUrl &url) const
 {
     if (propertyPathList.contains(url.scheme()))
@@ -95,4 +104,15 @@ QMap<int, QWidget *> RegisterCreateProcess::createControlView(const QUrl &url)
             temp.insert(i, g);
     }
     return temp;
+}
+
+QList<QMap<QString, QString>> RegisterCreateProcess::basicExpandField(const QUrl &url)
+{
+    QList<QMap<QString, QString>> expandField {};
+    for (basicViewFieldFunc func : basicViewFieldFuncHash.values()) {
+        QMap<QString, QString> field = func(url);
+        if (!field.isEmpty())
+            expandField.append(field);
+    }
+    return expandField;
 }

@@ -121,6 +121,27 @@ void BasicWidget::initUI()
     setContent(frame);
 }
 
+void BasicWidget::basicExpand(const QUrl &url)
+{
+    QList<QMap<QString, QString>> fieldList = PropertyDialogHelper::propertyServiceInstance()->basicExpandField(url);
+    int row = 8;
+    for (QMap<QString, QString> fieldMap : fieldList) {
+        if (!fieldMap.isEmpty()) {
+            QList<QString> keys = fieldMap.keys();
+            for (QString key : keys) {
+                QGridLayout *glayout = static_cast<QGridLayout *>(this->getContent()->layout());
+                KeyValueLabel *expandLabel = new KeyValueLabel(this);
+                expandLabel->setLeftValue(key);
+                expandLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
+                expandLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
+                expandLabel->setRightValue(QString(fieldMap.value(key)), Qt::ElideMiddle, Qt::AlignVCenter, true);
+                glayout->addWidget(expandLabel, row, 0, 1, 6);
+                row++;
+            }
+        }
+    }
+}
+
 void BasicWidget::selectFileUrl(const QUrl &url)
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
@@ -133,6 +154,8 @@ void BasicWidget::selectFileUrl(const QUrl &url)
     } else {
         path = url.path();
     }
+
+    basicExpand(url);
 
     filePosition->setRightValue(path, Qt::ElideMiddle, Qt::AlignVCenter, true);
     fileCreated->setRightValue(info->birthTime().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);

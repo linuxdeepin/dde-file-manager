@@ -40,6 +40,8 @@ public:
 private:
     void initUI();
 
+    void basicExpand(const QUrl &url);
+
 public:
     void selectFileUrl(const QUrl &url);
 

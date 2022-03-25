@@ -38,11 +38,13 @@ public:
 public:
     //! 定义创建控件函数类型
     typedef std::function<QWidget *(const QUrl &url)> createControlViewFunc;
+    typedef std::function<QMap<QString, QString>(const QUrl &url)> basicViewFieldFunc;
 
 protected:
     //创建函数列表
     QHash<int, createControlViewFunc> constructList {};
     QHash<QString, createControlViewFunc> viewCreateFunctionHash {};
+    QHash<QString, basicViewFieldFunc> basicViewFieldFuncHash {};
     QList<QString> propertyPathList {};
 
 public:
@@ -52,11 +54,15 @@ public:
 
     bool registerViewCreateFunction(createControlViewFunc view, const QString &scheme);
 
+    bool registerBasicViewExpand(basicViewFieldFunc func, const QString &scheme);
+
     bool isContains(const QUrl &url) const;
 
     QWidget *createWidget(const QUrl &url);
 
     QMap<int, QWidget *> createControlView(const QUrl &url);
+
+    QList<QMap<QString, QString>> basicExpandField(const QUrl &url);
 };
 CPY_END_NAMESPACE
 DSC_END_NAMESPACE

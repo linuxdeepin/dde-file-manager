@@ -47,11 +47,15 @@ public:
 
     bool registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, QString scheme);
 
+    bool registerBasicExpand(CPY_NAMESPACE::RegisterCreateProcess::basicViewFieldFunc func, QString scheme);
+
     bool registerPropertyPathShowStyle(QString scheme);
 
     QWidget *createWidget(const QUrl &url);
 
     QMap<int, QWidget *> createControlView(const QUrl &url);
+
+    QList<QMap<QString, QString>> basicExpandField(const QUrl &url);
 
     bool isContains(const QUrl &url);
 
