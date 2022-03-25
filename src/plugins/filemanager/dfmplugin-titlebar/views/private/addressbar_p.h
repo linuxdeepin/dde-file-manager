@@ -25,6 +25,7 @@
 #include "dfmplugin_titlebar_global.h"
 #include "views/addressbar.h"
 #include "views/completerview.h"
+#include "views/completerviewdelegate.h"
 
 #include "dfm-base/base/urlroute.h"
 
@@ -44,6 +45,7 @@
 #include <QVariantAnimation>
 #include <QPalette>
 #include <QAction>
+#include <QStringListModel>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -74,6 +76,7 @@ class AddressBarPrivate : public QObject
     QStringListModel completerModel;
     CompleterView *completerView { nullptr };
     QCompleter *urlCompleter { nullptr };
+    CompleterViewDelegate cpItemDelegate;
     // inputMethodEvent中获取不到选中的内容，故缓存光标开始位置以及选中长度
     int selectPosStart { 0 };
     int selectLength { 0 };

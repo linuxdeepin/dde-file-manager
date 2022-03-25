@@ -263,6 +263,9 @@ bool FileSortFilterProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex
     FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
     QModelIndex rowIndex = sourceModel()->index(sourceRow, 0, sourceParent);
 
+    if (!rowIndex.isValid())
+        return false;
+
     AbstractFileInfoPointer fileInfo = fileModel->itemFromIndex(rowIndex)->fileInfo();
 
     return passFileFilters(fileInfo);

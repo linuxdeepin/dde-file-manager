@@ -24,22 +24,13 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <QCompleter>
 #include <QListView>
-#include <QStringListModel>
-#include <QStyledItemDelegate>
-#include <QPainter>
 #include <QFileSystemModel>
 
 DPTITLEBAR_BEGIN_NAMESPACE
-class CompleterViewDelegate;
-class CompleterViewPrivate;
 class CompleterView : public QListView
 {
     Q_OBJECT
-    friend class CompleterViewPrivate;
-    CompleterViewPrivate *const d;
-
 public:
     explicit CompleterView(QWidget *parent = nullptr);
     void keyPressEvent(QKeyEvent *e) override;
