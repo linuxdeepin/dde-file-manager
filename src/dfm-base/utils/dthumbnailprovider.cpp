@@ -28,6 +28,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 
 #include <DThumbnailProvider>
 
@@ -380,7 +381,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
                 goto _return;
             }
 
-            auto dfile = FileUtils::createFile(QUrl::fromLocalFile(saveImage));
+            auto dfile = DFMBASE_NAMESPACE::DecoratorFile(saveImage).filePtr();
             if (dfile && dfile->open(DFMIO::DFile::OpenFlag::ReadOnly)) {
                 QByteArray output = dfile->readAll();
                 Q_ASSERT(!output.isEmpty());
@@ -433,7 +434,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         }
     } else if (mime.name() == DFMGLOBAL_NAMESPACE::kMimeTypeTextPlain) {
         //FIXME(zccrs): This should be done using the image plugin?
-        auto dfile = FileUtils::createFile(QUrl::fromLocalFile(absoluteFilePath));
+        auto dfile = DFMBASE_NAMESPACE::DecoratorFile(absoluteFilePath).filePtr();
         if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::ReadOnly)) {
             d->errorString = dfile->lastError().errorMsg();
             goto _return;

@@ -26,6 +26,7 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/utils/desktopfile.h"
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -68,8 +69,10 @@ public:
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString {});
 
     static quint16 getMemoryPageSize();
-
-    static QSharedPointer<DFMIO::DFile> createFile(const QUrl &url);
+    // icon
+    static QIcon searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
+    static QIcon searchGenericIcon(const QString &category, const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
+    static QIcon searchMimeIcon(QString mime, const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
 };
 
 class DesktopAppUrl

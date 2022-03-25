@@ -34,6 +34,7 @@
 #include <KEncodingProber>
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
 #include <QFileInfo>
@@ -49,8 +50,9 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-static constexpr char DDE_TRASH_ID[] { "dde-trash" };
-static constexpr char DDE_COMPUTER_ID[] { "dde-computer" };
+static constexpr char kDdeTrashId[] { "dde-trash" };
+static constexpr char kDdeComputerId[] { "dde-computer" };
+static constexpr char kSharePixmapPath[] { "/usr/share/pixmaps" };
 const static int kDefaultMemoryPageSize = 4096;
 
 static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
@@ -257,7 +259,7 @@ bool FileUtils::isTrashDesktopFile(const QUrl &url)
 {
     if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
-        return df.desktopDeepinId() == DDE_TRASH_ID;
+        return df.desktopDeepinId() == kDdeTrashId;
     }
     return false;
 }
@@ -266,7 +268,7 @@ bool FileUtils::isComputerDesktopFile(const QUrl &url)
 {
     if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
-        return df.desktopDeepinId() == DDE_COMPUTER_ID;
+        return df.desktopDeepinId() == kDdeComputerId;
     }
     return false;
 }
@@ -833,12 +835,74 @@ quint16 FileUtils::getMemoryPageSize()
     return memoryPageSize > 0 ? memoryPageSize : kDefaultMemoryPageSize;
 }
 
-QSharedPointer<dfmio::DFile> FileUtils::createFile(const QUrl &url)
+QIcon FileUtils::searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory)
-        return nullptr;
-    return factory->createFile();
+    // Resulting icon
+    QIcon icon;
+
+    // First attempt, try load icon from theme
+    icon = QIcon::fromTheme(app.desktopIcon());
+    if (!icon.isNull()) {
+        return icon;
+    }
+
+    // Second attempt, check whether icon is a valid file
+    const QString &iconPath = app.desktopIcon();
+    const QUrl &iconUrl = QUrl::fromLocalFile(iconPath);
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(iconUrl.scheme(), static_cast<QUrl>(iconUrl));
+    if (factory) {
+        QSharedPointer<DFMIO::DFile> dfile = factory->createFile();
+        if (dfile && dfile->exists()) {
+            icon = QIcon(app.desktopIcon());
+            if (!icon.isNull()) {
+                return icon;
+            }
+        }
+    }
+
+    // Next, try luck with application name
+    QString name = app.desktopFileName().remove(".desktop").split("/").last();
+    icon = QIcon::fromTheme(name);
+    if (!icon.isNull()) {
+        return icon;
+    }
+
+    // Last chance
+    const QUrl &pixmapUrl = QUrl::fromLocalFile(QString(kSharePixmapPath));
+    QSharedPointer<DFMIO::DIOFactory> factoryPixmap = produceQSharedIOFactory(pixmapUrl.scheme(), static_cast<QUrl>(pixmapUrl));
+    if (factoryPixmap) {
+        QSharedPointer<DFMIO::DEnumerator> enumerator = factoryPixmap->createEnumerator({}, DFMIO::DEnumerator::DirFilter::Files | DFMIO::DEnumerator::DirFilter::NoDotAndDotDot);
+        if (enumerator) {
+            while (enumerator->hasNext()) {
+                QSharedPointer<DFMIO::DFileInfo> fileinfo = enumerator->fileInfo();
+                if (fileinfo) {
+                    const QString &fileName = fileinfo->attribute(DFMIO::DFileInfo::AttributeID::StandardName).toString();
+                    if (fileName.contains(name)) {
+                        return QIcon(QString(kSharePixmapPath) + QDir::separator() + fileName);
+                    }
+                }
+            }
+        }
+    }
+
+    // Default icon
+    return defaultIcon;
+}
+
+QIcon FileUtils::searchGenericIcon(const QString &category, const QIcon &defaultIcon)
+{
+    QIcon icon = QIcon::fromTheme(category + "-generic");
+    if (!icon.isNull()) {
+        return icon;
+    }
+    icon = QIcon::fromTheme(category + "-x-generic");
+    return icon.isNull() ? defaultIcon : icon;
+}
+
+QIcon FileUtils::searchMimeIcon(QString mime, const QIcon &defaultIcon)
+{
+    QIcon icon = QIcon::fromTheme(mime.replace("/", "-"), defaultIcon);
+    return icon;
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()
