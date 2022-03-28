@@ -165,7 +165,7 @@ QUrl DAttachedBlockDevice::accessPointUrl()
     bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
 
     if (optical) {
-        QString device { qvariant_cast<QString>(data.value("device")) };
+        QString device { qvariant_cast<QString>(data.value(DeviceProperty::kDevice)) };
         url = makeBurnFileUrl(device);
     }
 
