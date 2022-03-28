@@ -24,6 +24,7 @@
 #include "menuScene/openfilemenuscene.h"
 #include "menuScene/openwithmenuscene.h"
 #include "menuScene/newcreatemenuscene.h"
+#include "menuScene/sendtomenuscene.h"
 
 #include <services/common/menu/menuservice.h>
 
@@ -74,4 +75,6 @@ void Menu::regDefaultScene()
 
     // 注册文件场景
     menuServer->registerScene(OpenFileMenuCreator::name(), new OpenFileMenuCreator);
+
+    menuServer->registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
 }

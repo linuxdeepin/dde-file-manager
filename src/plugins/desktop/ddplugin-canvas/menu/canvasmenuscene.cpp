@@ -103,6 +103,9 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
         // file (rename)
         if (auto fileScene = d->extensionMenuServer->createScene("OpenFileMenu"))
             subScene.append(fileScene);
+
+        if (auto sendToScene = d->extensionMenuServer->createScene("SendToMenu"))
+            subScene.append(sendToScene);
     }
 
     // 初始化所有子场景

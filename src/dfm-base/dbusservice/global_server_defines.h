@@ -106,6 +106,8 @@ namespace ListOpt {
 constexpr char kUnmountable[] { "unmountable" };
 constexpr char kMountable[] { "mountable" };
 constexpr char kNotIgnorable[] { "not_ignorable" };
+constexpr char kMounted[] { "mounted" };
+constexpr char kRemovable[] { "removable" };
 }   // namespace DeviceProperty
 
 /*!

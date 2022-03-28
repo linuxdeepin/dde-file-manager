@@ -1383,6 +1383,8 @@ QStringList DeviceController::blockDevicesIdList(const QVariantMap &opts) const
     bool needUnmountable = opts.value(ListOpt::kUnmountable).toBool();
     bool needMountable = opts.value(ListOpt::kMountable).toBool();
     bool needNotIgnorable = opts.value(ListOpt::kNotIgnorable).toBool();
+    bool needMounted = opts.value(ListOpt::kMounted).toBool();
+    bool needRemovable = opts.value(ListOpt::kRemovable).toBool();
 
     const auto allBlkData = monitorHandler->allBlockDevData;   // must use value!!!
     for (const auto &data : allBlkData) {
@@ -1395,6 +1397,12 @@ QStringList DeviceController::blockDevicesIdList(const QVariantMap &opts) const
             idList.append(data.common.id);
             continue;
         }
+
+        if (needMounted && data.mountpoints.isEmpty())
+            continue;
+
+        if (needRemovable && !data.removable)
+            continue;
 
         QString errMsg;
         if (needNotIgnorable && !DeviceControllerHelper::isIgnorableBlockDevice(data, &errMsg)) {
