@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3384"/>
+        <location filename="../view/canvasgridview.cpp" line="3370"/>
         <source>Icon size</source>
         <translation>Величина иконица</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3392"/>
+        <location filename="../view/canvasgridview.cpp" line="3378"/>
         <source>Auto merge</source>
         <translation>Аутоматски сврстај</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3404"/>
+        <location filename="../view/canvasgridview.cpp" line="3390"/>
         <source>Auto arrange</source>
         <translation>Аутоматски сложи</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3441"/>
+        <location filename="../view/canvasgridview.cpp" line="3427"/>
         <source>Corner Settings</source>
         <translation>Подешавање углова</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3450"/>
-        <location filename="../view/canvasgridview.cpp" line="3455"/>
+        <location filename="../view/canvasgridview.cpp" line="3436"/>
+        <location filename="../view/canvasgridview.cpp" line="3441"/>
         <source>Set Wallpaper</source>
         <translation>Постави позадину</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3453"/>
+        <location filename="../view/canvasgridview.cpp" line="3439"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Позадина и чувар екрана</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3632"/>
+        <location filename="../view/canvasgridview.cpp" line="3618"/>
         <source>Properties</source>
         <translation>Својства</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3432"/>
+        <location filename="../view/canvasgridview.cpp" line="3418"/>
         <source>Display Settings</source>
         <translation>Подешавање приказа</translation>
     </message>
@@ -46,27 +46,27 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="37"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Tiny</source>
         <translation>Сићушне</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Small</source>
         <translation>Мале</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Medium</source>
         <translation>Средње</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="43"/>
         <source>Large</source>
         <translation>Велике</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="44"/>
         <source>Super large</source>
         <translation>Огромне</translation>
     </message>

@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3384"/>
+        <location filename="../view/canvasgridview.cpp" line="3370"/>
         <source>Icon size</source>
         <translation>Rozmiar ikon</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3392"/>
+        <location filename="../view/canvasgridview.cpp" line="3378"/>
         <source>Auto merge</source>
         <translation>Automatyczne łączenie</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3404"/>
+        <location filename="../view/canvasgridview.cpp" line="3390"/>
         <source>Auto arrange</source>
         <translation>Automatyczne sortowanie</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3441"/>
+        <location filename="../view/canvasgridview.cpp" line="3427"/>
         <source>Corner Settings</source>
         <translation>Ustawienia narożników</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3450"/>
-        <location filename="../view/canvasgridview.cpp" line="3455"/>
+        <location filename="../view/canvasgridview.cpp" line="3436"/>
+        <location filename="../view/canvasgridview.cpp" line="3441"/>
         <source>Set Wallpaper</source>
         <translation>Ustaw tapetę pulpitu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3453"/>
+        <location filename="../view/canvasgridview.cpp" line="3439"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Tapeta pulpitu i wygaszacz ekranu</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3632"/>
+        <location filename="../view/canvasgridview.cpp" line="3618"/>
         <source>Properties</source>
         <translation>Właściwości</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3432"/>
+        <location filename="../view/canvasgridview.cpp" line="3418"/>
         <source>Display Settings</source>
         <translation>Ustawienia ekranu</translation>
     </message>
@@ -46,29 +46,29 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="37"/>
-        <source>Tiny</source>
-        <translation>Maleńki</translation>
-    </message>
-    <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
-        <source>Small</source>
-        <translation>Mały</translation>
-    </message>
-    <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
-        <source>Medium</source>
-        <translation>Średni</translation>
-    </message>
-    <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
-        <source>Large</source>
-        <translation>Duży</translation>
+        <source>Tiny</source>
+        <translation>Bardzo małe</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
+        <source>Small</source>
+        <translation>Małe</translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
+        <source>Medium</source>
+        <translation>Średnie</translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="43"/>
+        <source>Large</source>
+        <translation>Duże</translation>
+    </message>
+    <message>
+        <location filename="../view/desktopitemdelegate.cpp" line="44"/>
         <source>Super large</source>
-        <translation>Bardzo duży</translation>
+        <translation>Bardzo duże</translation>
     </message>
 </context>
 <context>

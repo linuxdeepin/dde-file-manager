@@ -1229,17 +1229,17 @@
         <translation>Error al escribir el archivo, motivo: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3800"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3793"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>Fallo al posicionar el puntero del archivo, causa: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Syncing data</source>
         <translation>Sincronizando datos</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Please wait</source>
         <translation>Espere por favor</translation>
     </message>
@@ -1253,7 +1253,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3849"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3842"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Error al abrir el archivo, causa: %1</translation>
     </message>
@@ -1261,7 +1261,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3838"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Error al abrir el archivo, acceso denegado</translation>
     </message>
@@ -1309,44 +1309,44 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1153"/>
-        <location filename="../views/dfiledialog.cpp" line="1450"/>
+        <location filename="../views/dfiledialog.cpp" line="1152"/>
+        <location filename="../views/dfiledialog.cpp" line="1449"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Guardar</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1268"/>
-        <location filename="../views/dfiledialog.cpp" line="1315"/>
+        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1314"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1269"/>
+        <location filename="../views/dfiledialog.cpp" line="1268"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmar</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1313"/>
+        <location filename="../views/dfiledialog.cpp" line="1312"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 ya existe, ¿quiere reemplazar?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1316"/>
+        <location filename="../views/dfiledialog.cpp" line="1315"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Reemplazar</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1447"/>
+        <location filename="../views/dfiledialog.cpp" line="1446"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Abrir</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1266"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Este archivo será ocultado si el nombre del archivo comienza con un punto (.). ¿Quiere ocultarlo?</translation>
     </message>
@@ -1412,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>Disc mount error</source>
         <translation>Error al montar el disco</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>El disco está en uso, finalice el proceso en ejecución y vuelva a montar el disco.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2832"/>
+        <location filename="../views/dfileview.cpp" line="2877"/>
         <source>Mounting failed</source>
         <translation>Error al montar</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3568"/>
+        <location filename="../views/dfileview.cpp" line="3613"/>
         <source>(Reverse)</source>
         <translation>(Invertido)</translation>
     </message>
@@ -1551,7 +1551,7 @@
         <location filename="../../dialogs/dtaskdialog.cpp" line="819"/>
         <source>Merge</source>
         <comment>button</comment>
-        <translation>Mezclar</translation>
+        <translation>Combinar</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="822"/>
@@ -2425,7 +2425,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>Mostrar extensión</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -4063,7 +4063,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="627"/>
-        <location filename="../../utils/utils.cpp" line="513"/>
+        <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>Desconocido</translation>
     </message>
@@ -4105,17 +4105,17 @@
         <translation>Confirmar</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
-        <location filename="../views/fileitem.cpp" line="203"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="941"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1110"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="476"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="682"/>
+        <location filename="../views/fileitem.cpp" line="217"/>
         <source>%1 are not allowed</source>
         <translation>%1 no están permitidos</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="549"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="555"/>
         <source>Failed to start Samba services</source>
         <translation>El inicio del servicio de Samba falló</translation>
     </message>
@@ -4676,7 +4676,7 @@
         <location filename="../../usershare/usersharemanager.cpp" line="415"/>
         <location filename="../../usershare/usersharemanager.cpp" line="453"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
-        <translation type="unfinished"/>
+        <translation>El nombre del recurso compartido no debe contener %1 y no puede comenzar con un guión (-) o un espacio en blanco, ni terminar con un espacio en blanco.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="447"/>
@@ -4685,6 +4685,7 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="470"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
         <source>Sharing failed</source>
         <translation>No se pudo compartir</translation>
     </message>
@@ -4694,7 +4695,12 @@
         <translation>El nombre de la computadora es demasiado largo</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="567"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
+        <source>The transport-connection attempt was refused by the remote system. Maybe smbd is not running.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="573"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>¡No tienes permiso para operar el archivo/carpeta!</translation>
     </message>

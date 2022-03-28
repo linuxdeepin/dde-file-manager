@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3384"/>
+        <location filename="../view/canvasgridview.cpp" line="3370"/>
         <source>Icon size</source>
         <translation>ஐகான் அளவு</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3392"/>
+        <location filename="../view/canvasgridview.cpp" line="3378"/>
         <source>Auto merge</source>
         <translation>தானாக இணை</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3404"/>
+        <location filename="../view/canvasgridview.cpp" line="3390"/>
         <source>Auto arrange</source>
         <translation>தானாக ஒழுங்குபடுத்து</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3441"/>
+        <location filename="../view/canvasgridview.cpp" line="3427"/>
         <source>Corner Settings</source>
         <translation>கார்னர் அமைப்புகள்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3450"/>
-        <location filename="../view/canvasgridview.cpp" line="3455"/>
+        <location filename="../view/canvasgridview.cpp" line="3436"/>
+        <location filename="../view/canvasgridview.cpp" line="3441"/>
         <source>Set Wallpaper</source>
         <translation>வால்பேப்பராக அமைக்கவும்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3453"/>
+        <location filename="../view/canvasgridview.cpp" line="3439"/>
         <source>Wallpaper and Screensaver</source>
         <translation>வால்பேப்பர் மற்றும் ஸ்கிரீன்சேவர்கள்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3632"/>
+        <location filename="../view/canvasgridview.cpp" line="3618"/>
         <source>Properties</source>
         <translation>பண்புகள்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3432"/>
+        <location filename="../view/canvasgridview.cpp" line="3418"/>
         <source>Display Settings</source>
         <translation>காட்சி அமைப்புகள்</translation>
     </message>
@@ -46,27 +46,27 @@
 <context>
     <name>DesktopItemDelegate</name>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="37"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Tiny</source>
         <translation>மிக சிறிய</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="38"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
         <source>Small</source>
         <translation>சிறிய</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="39"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="42"/>
         <source>Medium</source>
         <translation>நடுத்தரம்</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="40"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="43"/>
         <source>Large</source>
         <translation>பெரிய</translation>
     </message>
     <message>
-        <location filename="../view/desktopitemdelegate.cpp" line="41"/>
+        <location filename="../view/desktopitemdelegate.cpp" line="44"/>
         <source>Super large</source>
         <translation>மிகப்பெரிய</translation>
     </message>

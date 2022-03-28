@@ -90,7 +90,7 @@
     </message>
     <message>
         <source>Access denied</source>
-        <translation>Zakaz dostępu</translation>
+        <translation>Odmowa dostępu</translation>
     </message>
     <message>
         <source>You do not have permission to access this folder</source>

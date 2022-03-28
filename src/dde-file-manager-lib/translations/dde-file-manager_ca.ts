@@ -1229,17 +1229,17 @@
         <translation>Ha fallat escriure el fitxer. Causa:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3800"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3793"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>Ha fallat situar el punter del fitxer. Causa: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Syncing data</source>
         <translation>Se sincronitzen dades</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Please wait</source>
         <translation>Espereu, si us plau...</translation>
     </message>
@@ -1253,7 +1253,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3849"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3842"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Ha fallat obrir el fitxer, causa: %1</translation>
     </message>
@@ -1261,7 +1261,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3838"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Ha fallat obrir el fitxer. Causa: permís denegat.</translation>
     </message>
@@ -1309,44 +1309,44 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1153"/>
-        <location filename="../views/dfiledialog.cpp" line="1450"/>
+        <location filename="../views/dfiledialog.cpp" line="1152"/>
+        <location filename="../views/dfiledialog.cpp" line="1449"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Desa</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1268"/>
-        <location filename="../views/dfiledialog.cpp" line="1315"/>
+        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1314"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1269"/>
+        <location filename="../views/dfiledialog.cpp" line="1268"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1313"/>
+        <location filename="../views/dfiledialog.cpp" line="1312"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 ja existeix, voleu reemplaçar-la?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1316"/>
+        <location filename="../views/dfiledialog.cpp" line="1315"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Reemplaça</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1447"/>
+        <location filename="../views/dfiledialog.cpp" line="1446"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Obre</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1266"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Aquest fitxer serà ocult si el nom comença amb un punt. Voleu amagar-lo?</translation>
     </message>
@@ -1412,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>Disc mount error</source>
         <translation>Error de muntatge de dis</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>El disc està en ús. Acabeu el procés en execució i torneu a muntar-lo.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2832"/>
+        <location filename="../views/dfileview.cpp" line="2877"/>
         <source>Mounting failed</source>
         <translation>Ha fallat el muntatge.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3568"/>
+        <location filename="../views/dfileview.cpp" line="3613"/>
         <source>(Reverse)</source>
         <translation>(Inversió)</translation>
     </message>
@@ -4063,7 +4063,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="627"/>
-        <location filename="../../utils/utils.cpp" line="513"/>
+        <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>Desconegut</translation>
     </message>
@@ -4105,17 +4105,17 @@
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
-        <location filename="../views/fileitem.cpp" line="203"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="941"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1110"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="476"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="682"/>
+        <location filename="../views/fileitem.cpp" line="217"/>
         <source>%1 are not allowed</source>
         <translation>No es permeten %1</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="549"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="555"/>
         <source>Failed to start Samba services</source>
         <translation>No s&apos;han pogut iniciar els serveis de Samba.</translation>
     </message>
@@ -4685,6 +4685,7 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="470"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
         <source>Sharing failed</source>
         <translation>Ha fallat la compartició.</translation>
     </message>
@@ -4694,7 +4695,12 @@
         <translation>El nom de l&apos;ordinador és massa llarg.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="567"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
+        <source>The transport-connection attempt was refused by the remote system. Maybe smbd is not running.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="573"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>No teniu permís per fer operacions amb el fitxer o carpeta!</translation>
     </message>

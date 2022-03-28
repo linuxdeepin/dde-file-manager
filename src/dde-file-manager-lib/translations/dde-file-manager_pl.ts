@@ -900,7 +900,7 @@
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="111"/>
         <source>Once deleted, the files in it will be permanently deleted</source>
-        <translation>Raz usunięte, pliki w tym katalogu przepadną na zawsze</translation>
+        <translation>Pliki usunięte w tym katalogu przepadną na zawsze</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="202"/>
@@ -1015,7 +1015,7 @@
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="218"/>
         <source>Keep it safe</source>
-        <translation>Zachowaj go w bezpiecznym miejscu</translation>
+        <translation>Zachowaj je w bezpiecznym miejscu</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
@@ -1229,17 +1229,17 @@
         <translation>Błąd zapisu pliku, powód:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3800"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3793"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>Nie udało się ustawić wskaźnika pliku, przyczyna: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Syncing data</source>
         <translation>Synchronizowanie</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Please wait</source>
         <translation>Proszę czekać</translation>
     </message>
@@ -1253,7 +1253,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3849"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3842"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Błąd otwarcia pliku, powód: %1</translation>
     </message>
@@ -1261,7 +1261,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3838"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Błąd otwarcia pliku, powód: Odmowa dostępu</translation>
     </message>
@@ -1309,44 +1309,44 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1153"/>
-        <location filename="../views/dfiledialog.cpp" line="1450"/>
+        <location filename="../views/dfiledialog.cpp" line="1152"/>
+        <location filename="../views/dfiledialog.cpp" line="1449"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Zapisz</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1268"/>
-        <location filename="../views/dfiledialog.cpp" line="1315"/>
+        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1314"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuluj</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1269"/>
+        <location filename="../views/dfiledialog.cpp" line="1268"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potwierdź</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1313"/>
+        <location filename="../views/dfiledialog.cpp" line="1312"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 już istnieje, czy chcesz go zastąpić?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1316"/>
+        <location filename="../views/dfiledialog.cpp" line="1315"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zastąp</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1447"/>
+        <location filename="../views/dfiledialog.cpp" line="1446"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Otwórz</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1266"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Plik zostanie ukryty jeśli jego nazwa będzie zaczynać się od kropki (.). Czy chcesz go ukryć?</translation>
     </message>
@@ -1412,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>Disc mount error</source>
         <translation>Błąd montowania dysku</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Dysk jest w użyciu, zakończ trwający proces i zamontuj dysk od nowa</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2832"/>
+        <location filename="../views/dfileview.cpp" line="2877"/>
         <source>Mounting failed</source>
         <translation>Błąd montowania</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3568"/>
+        <location filename="../views/dfileview.cpp" line="3613"/>
         <source>(Reverse)</source>
         <translation>(Odwróć)</translation>
     </message>
@@ -2686,7 +2686,7 @@
     <message>
         <location filename="../controllers/masteredmediacontroller.cpp" line="394"/>
         <source>Unable to burn. Not enough free space on the target disk.</source>
-        <translation>Nie można wypalić. Za mało wolnego miejsca na dysku docelowym.</translation>
+        <translation>Nie można nagrać. Za mało wolnego miejsca na dysku docelowym.</translation>
     </message>
 </context>
 <context>
@@ -2876,12 +2876,12 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="49"/>
         <source>This file is too big for the trash</source>
-        <translation>Ten plik jest za duży, aby wyrzucić go do kosza</translation>
+        <translation>Ten plik jest za duży, aby przenieść go do kosza</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="53"/>
         <source>The files are too big for the trash</source>
-        <translation>Zaznaczone pliki są za duże, aby wyrzucić je do kosza</translation>
+        <translation>Zaznaczone pliki są za duże, aby przenieść je do kosza</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="54"/>
@@ -4063,7 +4063,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="627"/>
-        <location filename="../../utils/utils.cpp" line="513"/>
+        <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>Nieznany</translation>
     </message>
@@ -4105,17 +4105,17 @@
         <translation>Potwierdź</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
-        <location filename="../views/fileitem.cpp" line="203"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="941"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1110"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="476"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="682"/>
+        <location filename="../views/fileitem.cpp" line="217"/>
         <source>%1 are not allowed</source>
         <translation>%1 są niedozwolone</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="549"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="555"/>
         <source>Failed to start Samba services</source>
         <translation>Nie udało się wystartować usług Samba</translation>
     </message>
@@ -4685,6 +4685,7 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="470"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
         <source>Sharing failed</source>
         <translation>Błąd dzielenia</translation>
     </message>
@@ -4694,7 +4695,12 @@
         <translation>Nazwa komputera jest zbyt długa</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="567"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
+        <source>The transport-connection attempt was refused by the remote system. Maybe smbd is not running.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="573"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Nie masz uprawnień do wykonywania działań na tym pliku/katalogu!</translation>
     </message>

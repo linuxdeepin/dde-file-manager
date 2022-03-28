@@ -1229,17 +1229,17 @@
         <translation>Не вдалося записати файл. Причина:</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3800"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3793"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>Не вдалося розташувати вказівник на файл, причина: %1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Syncing data</source>
         <translation>Синхронізація даних</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4475"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
         <source>Please wait</source>
         <translation>Будь ласка, зачекайте</translation>
     </message>
@@ -1253,7 +1253,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3849"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3842"/>
         <source>Failed to open the file, cause: %1</source>
         <translation>Не вдалося відкрити файл. Причина: %1</translation>
     </message>
@@ -1261,7 +1261,7 @@
         <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3845"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3838"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>Не вдалося відкрити файл. Причина: доступ заборонено</translation>
     </message>
@@ -1309,44 +1309,44 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1153"/>
-        <location filename="../views/dfiledialog.cpp" line="1450"/>
+        <location filename="../views/dfiledialog.cpp" line="1152"/>
+        <location filename="../views/dfiledialog.cpp" line="1449"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Зберегти</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1268"/>
-        <location filename="../views/dfiledialog.cpp" line="1315"/>
+        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1314"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1269"/>
+        <location filename="../views/dfiledialog.cpp" line="1268"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Підтвердити</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1313"/>
+        <location filename="../views/dfiledialog.cpp" line="1312"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>1% вже існує, ви хочете його перезаписати?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1316"/>
+        <location filename="../views/dfiledialog.cpp" line="1315"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Замінити</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1447"/>
+        <location filename="../views/dfiledialog.cpp" line="1446"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Відкрити</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1267"/>
+        <location filename="../views/dfiledialog.cpp" line="1266"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Цей файл буде приховано, якщо його назва починатиметься з крапки («.»). Хочете приховати файл?</translation>
     </message>
@@ -1412,22 +1412,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>Disc mount error</source>
         <translation>Помилка під час монтування диска</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2819"/>
+        <location filename="../views/dfileview.cpp" line="2864"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Диск використовують інші програми. Будь ласка, завершіть роботу відповідного процесу і повторно змонтуйте диск.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2832"/>
+        <location filename="../views/dfileview.cpp" line="2877"/>
         <source>Mounting failed</source>
         <translation>Не вдалося змонтувати</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3568"/>
+        <location filename="../views/dfileview.cpp" line="3613"/>
         <source>(Reverse)</source>
         <translation>(Зворотний)</translation>
     </message>
@@ -4063,7 +4063,7 @@
     </message>
     <message>
         <location filename="../shutil/fileutils.cpp" line="627"/>
-        <location filename="../../utils/utils.cpp" line="513"/>
+        <location filename="../../utils/utils.cpp" line="512"/>
         <source>Unknown</source>
         <translation>Невідомо</translation>
     </message>
@@ -4105,17 +4105,17 @@
         <translation>Підтвердити</translation>
     </message>
     <message>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="919"/>
-        <location filename="../interfaces/diconitemdelegate.cpp" line="1080"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="477"/>
-        <location filename="../interfaces/dlistitemdelegate.cpp" line="683"/>
-        <location filename="../views/fileitem.cpp" line="203"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="941"/>
+        <location filename="../interfaces/diconitemdelegate.cpp" line="1110"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="476"/>
+        <location filename="../interfaces/dlistitemdelegate.cpp" line="682"/>
+        <location filename="../views/fileitem.cpp" line="217"/>
         <source>%1 are not allowed</source>
         <translation>%1 заборонено</translation>
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="549"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="555"/>
         <source>Failed to start Samba services</source>
         <translation>Не вдалося запустити служби Samba</translation>
     </message>
@@ -4685,6 +4685,7 @@
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="470"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
         <source>Sharing failed</source>
         <translation>Невдала спроба оприлюднення</translation>
     </message>
@@ -4694,7 +4695,12 @@
         <translation>Надто довга назва комп&apos;ютера</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="567"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
+        <source>The transport-connection attempt was refused by the remote system. Maybe smbd is not running.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../../usershare/usersharemanager.cpp" line="573"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Ви не маєте права керувати файлами/теками!</translation>
     </message>
