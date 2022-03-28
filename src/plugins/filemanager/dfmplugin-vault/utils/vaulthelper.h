@@ -31,6 +31,11 @@
 #include "services/filemanager/computer/computerservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
+#include "services/common/fileoperations/fileoperationsservice.h"
+
+#include "dfm-base/interfaces/abstractjobhandler.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <QObject>
 #include <QIcon>
@@ -142,11 +147,36 @@ public:
 
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
 
+    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
+
     static QList<DSB_FM_NAMESPACE::TitleBar::CrumbData> seprateUrl(const QUrl &url);
 
     static QMenu *createMenu();
 
     static QWidget *createVaultPropertyDialog(const QUrl &url);
+
+    static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
+
+    static bool writeToClipBoardHandle(const quint64 windowId,
+                                       const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                                       const QList<QUrl> urls);
+
+    static JobHandlePointer moveToTrashHandle(const quint64 windowId,
+                                              const QList<QUrl> sources,
+                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
+    static JobHandlePointer deletesHandle(const quint64 windowId,
+                                          const QList<QUrl> sources,
+                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
+    static JobHandlePointer copyHandle(const quint64 windowId,
+                                       const QList<QUrl> sources,
+                                       const QUrl target,
+                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static JobHandlePointer cutHandle(const quint64 windowId,
+                                      const QList<QUrl> sources,
+                                      const QUrl target,
+                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
 public slots:
     void slotlockVault(int state);

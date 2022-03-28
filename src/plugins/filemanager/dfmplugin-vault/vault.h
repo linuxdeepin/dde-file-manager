@@ -38,9 +38,13 @@ public:
 
 public slots:
     void onWindowOpened(quint64 winID);
+    void onAllPluginsInitialized();
+
+private:
     void addSideBarVaultItem();
     void addCustomCrumbar();
     void addComputer();
+    void addFileOperations();
 };
 DPVAULT_END_NAMESPACE
 

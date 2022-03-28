@@ -32,6 +32,8 @@
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -45,6 +47,7 @@
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
@@ -293,6 +296,18 @@ WorkspaceService *VaultHelper::workspaceServiceInstance()
     return workspaceService;
 }
 
+FileOperationsService *VaultHelper::fileOperationsServIns()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
+            abort();
+    });
+
+    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}
+
 void VaultHelper::defaultCdAction(const QUrl &url)
 {
     VaultEventCaller::sendItemActived(winID, url);
@@ -430,7 +445,12 @@ QMenu *VaultHelper::createMenu()
 QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
 {
     static VaultPropertyDialog *vaultDialog = nullptr;
-    if (UniversalUtils::urlEquals(VaultHelper::instance()->rootUrl(), url)) {
+    bool flg = UniversalUtils::urlEquals(VaultHelper::instance()->rootUrl(), url);
+    QUrl tempUrl;
+    tempUrl.setPath("/");
+    tempUrl.setScheme("dfmvault");
+    bool flg1 = UniversalUtils::urlEquals(tempUrl, url);
+    if (flg || flg1) {
         if (!vaultDialog) {
             vaultDialog = new VaultPropertyDialog();
             vaultDialog->selectFileUrl(url);
@@ -439,6 +459,77 @@ QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
         return vaultDialog;
     }
     return nullptr;
+}
+
+bool VaultHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
+{
+    Q_UNUSED(error)
+
+    QList<QUrl> redirectedFileUrls;
+    for (const QUrl &url : urls) {
+        QUrl redirectedFileUrl = QUrl::fromLocalFile(url.path());
+        QFileInfo fileInfo(redirectedFileUrl.path());
+        redirectedFileUrls << redirectedFileUrl;
+    }
+
+    if (!redirectedFileUrls.isEmpty())
+        VaultEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
+
+    return true;
+}
+
+bool VaultHelper::writeToClipBoardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
+{
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : urls) {
+        redirectedFileUrls << QUrl::fromLocalFile(url.path());
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+
+    return true;
+}
+
+JobHandlePointer VaultHelper::moveToTrashHandle(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    Q_UNUSED(flags)
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : sources) {
+        redirectedFileUrls << QUrl::fromLocalFile(url.path());
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
+                                          windowId,
+                                          redirectedFileUrls, flags);
+    return {};
+}
+
+JobHandlePointer VaultHelper::deletesHandle(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    Q_UNUSED(flags)
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : sources) {
+        redirectedFileUrls << QUrl::fromLocalFile(url.path());
+    }
+
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
+                                          windowId,
+                                          redirectedFileUrls, flags);
+    return {};
+}
+
+JobHandlePointer VaultHelper::copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    QUrl url = QUrl::fromLocalFile(target.path());
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint);
+    return {};
+}
+
+JobHandlePointer VaultHelper::cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    QUrl url = QUrl::fromLocalFile(target.path());
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint);
+    return {};
 }
 
 void VaultHelper::createVault(QString &password)

@@ -21,20 +21,13 @@
 #include "vault.h"
 
 #include "utils/vaultfileinfo.h"
+#include "utils/vaulthelper.h"
 #include "utils/vaultfileiterator.h"
 #include "utils/vaultfilewatcher.h"
-#include "utils/vaulthelper.h"
 #include "utils/vaultglobaldefine.h"
 #include "utils/vaultentryfileentity.h"
 #include "events/vaulteventreceiver.h"
 #include "events/vaulteventcaller.h"
-
-#include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/computer/computerservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -61,6 +54,8 @@ void Vault::initialize()
     WacherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme());
     DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
     EntryEntityFactor::registCreator<VaultEntryFileEntity>("vault");
+
+    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Vault::onAllPluginsInitialized, Qt::DirectConnection);
 }
 
 bool Vault::start()
@@ -99,6 +94,11 @@ void Vault::onWindowOpened(quint64 winID)
         connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Vault::addComputer, Qt::DirectConnection);
 }
 
+void Vault::onAllPluginsInitialized()
+{
+    addFileOperations();
+}
+
 void Vault::addSideBarVaultItem()
 {
     bool vaultEnabled = VaultHelper::instance()->isVaultEnabled();
@@ -133,4 +133,16 @@ void Vault::addComputer()
     bool vaultEnabled = VaultHelper::instance()->isVaultEnabled();
     if (vaultEnabled)
         VaultHelper::computerServiceInstance()->addDevice(tr("Vault"), QUrl("entry:///vault.vault"));
+}
+
+void Vault::addFileOperations()
+{
+    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = &VaultHelper::openFilesHandle;
+    fileOpeationsHandle->writeUrlsToClipboard = &VaultHelper::writeToClipBoardHandle;
+    fileOpeationsHandle->moveToTash = &VaultHelper::moveToTrashHandle;
+    fileOpeationsHandle->deletes = &VaultHelper::deletesHandle;
+    fileOpeationsHandle->copy = &VaultHelper::copyHandle;
+    fileOpeationsHandle->cut = &VaultHelper::cutHandle;
+    VaultHelper::fileOperationsServIns()->registerOperations(VaultHelper::instance()->scheme(), fileOpeationsHandle);
 }

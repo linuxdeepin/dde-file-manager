@@ -59,3 +59,8 @@ void VaultEventCaller::sendBookMarkDisabled(const QString scheme)
 {
     dispatcher()->publish(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled, scheme);
 }
+
+void VaultEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
+{
+    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+}
