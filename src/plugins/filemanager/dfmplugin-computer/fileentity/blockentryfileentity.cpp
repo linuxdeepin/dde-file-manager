@@ -267,6 +267,14 @@ QUrl BlockEntryFileEntity::targetUrl() const
     QUrl target;
     if (mpt.isEmpty())
         return target;
+
+    // when enter DataDisk, enter Home directory.
+    if (QUrl::fromLocalFile(mpt) == QUrl::fromLocalFile("/data")) {
+        QString userHome = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+        if (QDir("/data" + userHome).exists())
+            return QUrl::fromLocalFile("/data" + userHome);
+    }
+
     target.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     target.setPath(mpt);
     return target;
@@ -307,7 +315,7 @@ QString BlockEntryFileEntity::getNameOrAlias() const
     // get system disk name if there is no alias
     if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
         return tr("System Disk");
-    if (datas.value(DeviceProperty::kIdLabel).toString() == "_dde_")
+    if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_"))
         return tr("Data Disk");
     return getDefaultLabel(label, size);
 }
