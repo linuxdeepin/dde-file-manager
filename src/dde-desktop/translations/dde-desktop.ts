@@ -151,30 +151,18 @@
         <comment>button</comment>
         <translation>Apply</translation>
     </message>
-    <message>
-        <source>Only desktop</source>
-        <translation type="vanished">Only desktop</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <translation type="vanished">Only lock screen</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="vanished">Apply</translation>
-    </message>
 </context>
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="402"/>
-        <location filename="../view/watermaskframe.cpp" line="403"/>
+        <location filename="../view/watermaskframe.cpp" line="378"/>
+        <location filename="../view/watermaskframe.cpp" line="379"/>
         <source>Not authorized</source>
         <translation>Not authorized</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="413"/>
-        <location filename="../view/watermaskframe.cpp" line="414"/>
+        <location filename="../view/watermaskframe.cpp" line="389"/>
+        <location filename="../view/watermaskframe.cpp" line="390"/>
         <source>In trial period</source>
         <translation>In trial period</translation>
     </message>

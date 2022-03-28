@@ -53,14 +53,6 @@
         <translation>Click &quot;Safely Remove&quot; and then disconnect it next time</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">The device is busy, cannot eject now</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">The device is busy, cannot remove now</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>Cannot unmount the device</translation>
     </message>
@@ -107,20 +99,8 @@
         <translation>You do not have permission to access this folder</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">Confirm</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>Scanning the device, stop it?</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">Cancel</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">Stop</translation>
     </message>
     <message>
         <source>Confirm</source>

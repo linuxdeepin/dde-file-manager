@@ -151,30 +151,18 @@
         <comment>button</comment>
         <translation>设置屏保</translation>
     </message>
-    <message>
-        <source>Only desktop</source>
-        <translation type="vanished">仅设置桌面</translation>
-    </message>
-    <message>
-        <source>Only lock screen</source>
-        <translation type="vanished">仅设置锁屏</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="vanished">设置屏保</translation>
-    </message>
 </context>
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="402"/>
-        <location filename="../view/watermaskframe.cpp" line="403"/>
+        <location filename="../view/watermaskframe.cpp" line="378"/>
+        <location filename="../view/watermaskframe.cpp" line="379"/>
         <source>Not authorized</source>
         <translation>未授权</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="413"/>
-        <location filename="../view/watermaskframe.cpp" line="414"/>
+        <location filename="../view/watermaskframe.cpp" line="389"/>
+        <location filename="../view/watermaskframe.cpp" line="390"/>
         <source>In trial period</source>
         <translation>试用期</translation>
     </message>

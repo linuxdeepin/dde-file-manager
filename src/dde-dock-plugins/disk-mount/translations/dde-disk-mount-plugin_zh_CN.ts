@@ -53,14 +53,6 @@
         <translation>请点击“安全移除”后，再断开连接</translation>
     </message>
     <message>
-        <source>The device is busy, cannot eject now</source>
-        <translation type="vanished">光驱正忙，无法弹出</translation>
-    </message>
-    <message>
-        <source>The device is busy, cannot remove now</source>
-        <translation type="vanished">设备正忙，无法安全移除</translation>
-    </message>
-    <message>
         <source>Cannot unmount the device</source>
         <translation>无法卸载设备</translation>
     </message>
@@ -107,20 +99,8 @@
         <translation>您没有权限访问该文件夹</translation>
     </message>
     <message>
-        <source>Confirm</source>
-        <translation type="vanished">确 定</translation>
-    </message>
-    <message>
         <source>Scanning the device, stop it?</source>
         <translation>正在扫描当前设备，是否终止扫描？</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="vanished">取 消</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation type="vanished">终 止</translation>
     </message>
     <message>
         <source>Confirm</source>
