@@ -29,6 +29,8 @@
 #include "menu/canvasmenu.h"
 #include "menu/canvasmenuscene.h"
 
+#include <services/common/menu/menu_defines.h>
+
 #include <dfm-base/utils/clipboard.h>
 #include <interfaces/abstractfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -81,10 +83,10 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
 
     QVariantHash params;
-    params["currentDir"] = view->model()->rootUrl();
-    params["desktop"] = false;
-    params["customData"] = QVariant::fromValue(gridPos);
-    params["isEmptyArea"] = true;
+    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl();
+    params[MenuParamKey::kOnDesktop] = true;
+    params[MenuParamKey::kIsEmptyArea] = true;
+    params["DesktopGridPos"] = QVariant::fromValue(gridPos);
 
     if (!canvasScene->initialize(params)) {
         delete canvasScene;
@@ -117,12 +119,12 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
 
     QVariantHash params;
-    params["currentDir"] = view->model()->rootUrl();
-    params["focusFile"] = tgUrl;
-    params["selectFiles"] = selectPath;
-    params["desktop"] = false;
-    params["isEmptyArea"] = false;
-    params["customData"] = QVariant::fromValue(gridPos);
+    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl();
+    params[MenuParamKey::kFocusFile] = tgUrl;
+    params[MenuParamKey::kSelectFiles] = selectPath;
+    params[MenuParamKey::kOnDesktop] = true;
+    params[MenuParamKey::kIsEmptyArea] = false;
+    params["DesktopGridPos"] = QVariant::fromValue(gridPos);
 
     if (!canvasScene->initialize(params)) {
         delete canvasScene;
@@ -133,8 +135,8 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     canvasScene->create(&menu);
     canvasScene->updateState(&menu);
 
-    QAction *act = menu.exec(QCursor::pos());
-    canvasScene->triggered(act);
+    if (QAction *act = menu.exec(QCursor::pos()))
+        canvasScene->triggered(act);
     delete canvasScene;
 }
 

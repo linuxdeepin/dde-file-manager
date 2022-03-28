@@ -20,7 +20,7 @@
  */
 #include "private/opendirmenuscene_p.h"
 
-DPMENU_USE_NAMESPACE
+#include <services/common/menu/menu_defines.h>
 
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/base/schemefactory.h>
@@ -30,6 +30,7 @@ DPMENU_USE_NAMESPACE
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 AbstractMenuScene *OpenDirMenuCreator::create()
 {
@@ -59,11 +60,11 @@ QString OpenDirMenuScene::name() const
 
 bool OpenDirMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(kCurrentDir).toString();
-    d->focusFile = params.value(kFocusFile).toString();
-    d->selectFiles = params.value(kSelectFiles).toStringList();
-    d->onDesktop = params.value(kOnDesktop).toBool();
-    d->isEmptyArea = params.value(kIsEmptyArea).toBool();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     // 文件不存在，则无文件相关菜单项
     if (d->selectFiles.isEmpty())
@@ -84,7 +85,7 @@ AbstractMenuScene *OpenDirMenuScene::scene(QAction *action) const
     if (action == nullptr)
         return nullptr;
 
-    if (d->providSelfActionList.contains(action))
+    if (d->predicateAction.values().contains(action))
         return const_cast<OpenDirMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -117,34 +118,27 @@ bool OpenDirMenuScene::triggered(QAction *action)
 void OpenDirMenuScene::emptyMenu(QMenu *parent)
 {
     QAction *tempAction = parent->addAction(d->predicateName.value(d->openAsAdmin));
-    d->providSelfActionList.append(tempAction);
     d->predicateAction[d->openAsAdmin] = tempAction;
 
     tempAction = parent->addAction(d->predicateName.value(d->selectAll));
-    d->providSelfActionList.append(tempAction);
     d->predicateAction[d->selectAll] = tempAction;
 }
 
 void OpenDirMenuScene::normalMenu(QMenu *parent)
 {
-
     if (d->selectFiles.count() == 1) {
         QAction *tempAction = parent->addAction(d->predicateName.value(d->openInNewWindow));
-        d->providSelfActionList.append(tempAction);
         d->predicateAction[d->openInNewWindow] = tempAction;
 
         tempAction = parent->addAction(d->predicateName.value(d->openInNewTab));
-        d->providSelfActionList.append(tempAction);
         d->predicateAction[d->openInNewTab] = tempAction;
 
         tempAction = parent->addAction(d->predicateName.value(d->openInTerminal));
-        d->providSelfActionList.append(tempAction);
         d->predicateAction[d->openInTerminal] = tempAction;
 
         if (d->focusFileInfo->isDir() && SystemPathUtil::instance()->isSystemPath(d->focusFileInfo->filePath())) {
 
             tempAction = parent->addAction(d->predicateName.value(d->openAsAdmin));
-            d->providSelfActionList.append(tempAction);
             d->predicateAction[d->openAsAdmin] = tempAction;
         }
     }

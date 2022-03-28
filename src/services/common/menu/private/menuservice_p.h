@@ -32,6 +32,7 @@ class MenuServicePrivate : public QObject
     Q_OBJECT
 public:
     explicit MenuServicePrivate(MenuService *parent);
+    ~MenuServicePrivate();
     void createSubscene(DFMBASE_NAMESPACE::AbstractSceneCreator *creator, DFMBASE_NAMESPACE::AbstractMenuScene *parent) const;
 
 public:

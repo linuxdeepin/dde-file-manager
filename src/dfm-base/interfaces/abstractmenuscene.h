@@ -30,12 +30,6 @@ QT_END_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
 
-static constexpr char kCurrentDir[] = { "currentDir" };
-static constexpr char kFocusFile[] = { "focusFile" };
-static constexpr char kSelectFiles[] = { "selectFiles" };
-static constexpr char kOnDesktop[] = { "onDesktop" };
-static constexpr char kIsEmptyArea[] = { "isEmptyArea" };
-
 class AbstractMenuScenePrivate;
 class AbstractMenuScene : public QObject
 {

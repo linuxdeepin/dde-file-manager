@@ -19,6 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/clipboardmenuscene_p.h"
+#include "action_defines.h"
+
+#include <services/common/menu/menu_defines.h>
 
 #include <dfm-base/utils/clipboard.h>
 
@@ -27,6 +30,7 @@
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 AbstractMenuScene *ClipBoardMenuCreator::create()
 {
@@ -36,9 +40,9 @@ AbstractMenuScene *ClipBoardMenuCreator::create()
 ClipBoardMenuScenePrivate::ClipBoardMenuScenePrivate(AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[paste] = tr("Paste");
-    predicateName[cut] = tr("Cut");
-    predicateName[copy] = tr("Copy");
+    predicateName[ActionID::kPaste] = tr("Paste");
+    predicateName[ActionID::kCut] = tr("Cut");
+    predicateName[ActionID::kCopy] = tr("Copy");
 }
 
 ClipBoardMenuScene::ClipBoardMenuScene(QObject *parent)
@@ -54,10 +58,10 @@ QString ClipBoardMenuScene::name() const
 
 bool ClipBoardMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(kCurrentDir).toString();
-    d->selectFiles = params.value(kSelectFiles).toStringList();
-    d->focusFile = params.value(kFocusFile).toString();
-    d->isEmptyArea = params.value(kIsEmptyArea).toBool();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     // 文件不存在，则无文件相关菜单项
     if (d->selectFiles.isEmpty() && d->focusFile.isEmpty() && d->currentDir.isEmpty())
@@ -71,7 +75,7 @@ AbstractMenuScene *ClipBoardMenuScene::scene(QAction *action) const
     if (action == nullptr)
         return nullptr;
 
-    if (d->providSelfActionList.contains(action))
+    if (d->predicateAction.values().contains(action))
         return const_cast<ClipBoardMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -80,17 +84,17 @@ AbstractMenuScene *ClipBoardMenuScene::scene(QAction *action) const
 bool ClipBoardMenuScene::create(QMenu *parent)
 {
     if (d->isEmptyArea) {
-        QAction *tempAction = parent->addAction(d->predicateName.key(d->paste));
-        d->providSelfActionList.append(tempAction);
-        d->predicateAction[d->paste] = tempAction;
+        QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kPaste));
+        d->predicateAction[ActionID::kPaste] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kPaste);
     } else {
-        QAction *tempAction = parent->addAction(d->predicateName.key(d->cut));
-        d->providSelfActionList.append(tempAction);
-        d->predicateAction[d->cut] = tempAction;
+        QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kCut));
+        d->predicateAction[ActionID::kCut] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kCut);
 
-        tempAction = parent->addAction(d->predicateName.key(d->copy));
-        d->providSelfActionList.append(tempAction);
-        d->predicateAction[d->copy] = tempAction;
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kCopy));
+        d->predicateAction[ActionID::kCopy] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kCopy);
     }
 
     return true;
@@ -101,14 +105,26 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
-    bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction;
-    d->predicateAction[d->paste]->setEnabled(clipBoardUnknow ? false : true);
+    if (auto paste = d->predicateAction.value(ActionID::kPaste)) {
+        bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction;
+        paste->setEnabled(clipBoardUnknow ? false : true);
+    }
 }
 
 bool ClipBoardMenuScene::triggered(QAction *action)
 {
-    Q_UNUSED(action)
-
     // TODO(Lee or others):
+    QString id = d->predicateAction.key(action);
+    if (d->predicateName.contains(id)) {
+        if (id == ActionID::kPaste) {
+
+        } else if (id == ActionID::kCut) {
+
+        } else if (id == ActionID::kCopy) {
+
+        }
+        return true;
+    }
+
     return false;
 }

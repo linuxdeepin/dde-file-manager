@@ -96,7 +96,9 @@ public:
     bool bind(const QString &name, const QString &parent);
     void unBind(const QString &name, const QString &parent = QString());
     DFMBASE_NAMESPACE::AbstractMenuScene *createScene(const QString &name) const;
-
+signals:
+    void sceneAdded(const QString &scene);
+    void sceneRemoved(const QString &scene);
 private:
     explicit MenuService(QObject *parent = nullptr);
     virtual ~MenuService() override;

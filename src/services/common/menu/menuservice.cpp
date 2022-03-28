@@ -61,6 +61,15 @@ MenuServicePrivate::MenuServicePrivate(MenuService *parent)
     setObjectName("dfm_service_desktop::ScreenServicePrivate");
 }
 
+MenuServicePrivate::~MenuServicePrivate()
+{
+    auto tmp = creators;
+    creators.clear();
+
+    for (auto it = tmp.begin(); it != tmp.end(); ++it)
+        delete it.value();
+}
+
 void MenuServicePrivate::createSubscene(AbstractSceneCreator *creator, AbstractMenuScene *parent) const
 {
     if (!parent) {
@@ -145,10 +154,11 @@ bool MenuService::contains(const QString &name) const
 
 bool MenuService::registerScene(const QString &name, AbstractSceneCreator *creator)
 {
-    if (d->creators.contains(name) || !creator)
+    if (d->creators.contains(name) || !creator || name.isEmpty())
         return false;
 
     d->creators.insert(name, creator);
+    emit sceneAdded(name);
     return true;
 }
 
@@ -156,6 +166,10 @@ AbstractSceneCreator *MenuService::unregisterScene(const QString &name)
 {
     auto scene = d->creators.take(name);
     unBind(name);
+
+    if (scene)
+        emit sceneRemoved(name);
+
     return scene;
 }
 

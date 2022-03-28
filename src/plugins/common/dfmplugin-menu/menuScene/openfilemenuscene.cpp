@@ -20,6 +20,8 @@
  */
 #include "private/openfilemenuscene_p.h"
 
+#include <services/common/menu/menu_defines.h>
+
 #include <dfm-base/base/schemefactory.h>
 
 #include <QMenu>
@@ -27,6 +29,7 @@
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 AbstractMenuScene *OpenFileMenuCreator::create()
 {
@@ -52,10 +55,10 @@ QString OpenFileMenuScene::name() const
 
 bool OpenFileMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(kCurrentDir).toString();
-    d->focusFile = params.value(kFocusFile).toString();
-    d->selectFiles = params.value(kSelectFiles).toStringList();
-    d->onDesktop = params.value(kOnDesktop).toBool();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
     // 文件不存在，则无文件相关菜单项
     if (d->selectFiles.isEmpty())
@@ -76,7 +79,7 @@ AbstractMenuScene *OpenFileMenuScene::scene(QAction *action) const
     if (action == nullptr)
         return nullptr;
 
-    if (d->providSelfActionList.contains(action))
+    if (d->predicateAction.values().contains(action))
         return const_cast<OpenFileMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -85,7 +88,6 @@ AbstractMenuScene *OpenFileMenuScene::scene(QAction *action) const
 bool OpenFileMenuScene::create(QMenu *parent)
 {
     QAction *tempAction = parent->addAction(d->predicateName.value(d->rename));
-    d->providSelfActionList.append(tempAction);
     d->predicateAction[d->rename] = tempAction;
 
     return true;

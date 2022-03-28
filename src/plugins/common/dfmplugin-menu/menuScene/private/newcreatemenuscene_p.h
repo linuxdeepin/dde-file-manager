@@ -32,14 +32,6 @@ class NewCreateMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     friend class NewCreateMenuScene;
     explicit NewCreateMenuScenePrivate(NewCreateMenuScene *qq);
-
-private:
-    const QString newFolder { "New folder" };
-    const QString newDoc { "New document" };
-    const QString officeText { "Office Text" };
-    const QString spreadsheets { "Spreadsheets" };
-    const QString presentation { "Presentation" };
-    const QString plainText { "Plain Text" };
 };
 
 DPMENU_END_NAMESPACE

@@ -28,6 +28,7 @@
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
 
+#include <services/common/menu/menu_defines.h>
 #include <services/common/menu/menuservice.h>
 
 #include <dfm-framework/framework.h>
@@ -68,25 +69,29 @@ QString CanvasMenuScene::name() const
 
 bool CanvasMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value("currentDir").toString();
-    d->focusFile = params.value("focusFile").toString();
-    d->selectFiles = params.value("selectFiles").toStringList();
-    d->onDesktop = params.value("desktop").toBool();
-    d->isEmptyArea = params.value("isEmptyArea").toBool();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     if (d->currentDir.isEmpty())
         return false;
-
-    // default
-    if (auto defaultScene = d->extensionMenuServer->createScene("DefaultMenu"))
-        subScene.append(defaultScene);
 
     if (d->isEmptyArea) {
         // new (new doc, new dir)
         if (auto newCreateScene = d->extensionMenuServer->createScene("NewCreateMenu"))
             subScene.append(newCreateScene);
 
+        // file operation
+        if (auto operationScene = d->extensionMenuServer->createScene("ClipBoardMenu"))
+            subScene.append(operationScene);
+
     } else {
+        // file operation
+        if (auto operationScene = d->extensionMenuServer->createScene("ClipBoardMenu"))
+            subScene.append(operationScene);
+
         // open with
         if (auto openWithScene = d->extensionMenuServer->createScene("OpenWithMenu"))
             subScene.append(openWithScene);
@@ -132,20 +137,18 @@ bool CanvasMenuScene::create(QMenu *parent)
 
     // 创建子场景菜单
     AbstractMenuScene::create(parent);
-
-    // TODO(Lee) 排序
     return true;
 }
 
 void CanvasMenuScene::updateState(QMenu *parent)
 {
-    Q_UNUSED(parent)
+    AbstractMenuScene::updateState(parent);
 }
 
 bool CanvasMenuScene::triggered(QAction *action)
 {
     if (!d->providSelfActionList.contains(action))
-        return false;
+        return AbstractMenuScene::triggered(action);
 
     auto actionText = action->text();
 

@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CLIPBOARDMENUSCENE_P_H
-#define CLIPBOARDMENUSCENE_P_H
-#include "menuScene/clipboardmenuscene.h"
+#ifndef MENU_DEFINES_H
+#define MENU_DEFINES_H
 
-#include "interfaces/private/abstractmenuscene_p.h"
+#include "dfm_common_service_global.h"
 
-DPMENU_BEGIN_NAMESPACE
-DFMBASE_USE_NAMESPACE
+DSC_BEGIN_NAMESPACE
 
-class ClipBoardMenuScenePrivate : public AbstractMenuScenePrivate
-{
+namespace MenuParamKey {
+// file menu params for initialize
+static constexpr char kCurrentDir[] = "currentDir" ;
+static constexpr char kFocusFile[] = "focusFile" ;
+static constexpr char kSelectFiles[] = "selectFiles";
+static constexpr char kOnDesktop[] = "onDesktop";
+static constexpr char kIsEmptyArea[] = "isEmptyArea";
+}
 
-public:
-    friend class ClipBoardMenuScene;
-    explicit ClipBoardMenuScenePrivate(AbstractMenuScene *qq);
-};
+namespace ActionPropertyKey {
+// key for action property
+static constexpr char kActionID[] = "actionID";
 
-DPMENU_END_NAMESPACE
+}
 
-#endif   // CLIPBOARDMENUSCENE_P_H
+DSC_END_NAMESPACE
+
+#endif // MENU_DEFINES_H

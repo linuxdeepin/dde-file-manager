@@ -41,12 +41,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/newcreatemenuscene_p.h"
+#include "action_defines.h"
+
+#include "services/common/menu/menu_defines.h"
 
 #include <QMenu>
 #include <QVariant>
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 AbstractMenuScene *NewCreateMenuCreator::create()
 {
@@ -56,12 +60,12 @@ AbstractMenuScene *NewCreateMenuCreator::create()
 NewCreateMenuScenePrivate::NewCreateMenuScenePrivate(NewCreateMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[newFolder] = tr("New folder");
-    predicateName[newDoc] = tr("New document");
-    predicateName[officeText] = tr("Office Text");
-    predicateName[spreadsheets] = tr("Spreadsheets");
-    predicateName[presentation] = tr("Presentation");
-    predicateName[plainText] = tr("Plain Text");
+    predicateName[ActionID::kNewFolder] = tr("New folder");
+    predicateName[ActionID::kNewDoc] = tr("New document");
+    predicateName[ActionID::kNewOfficeText] = tr("Office Text");
+    predicateName[ActionID::kNewSpreadsheets] = tr("Spreadsheets");
+    predicateName[ActionID::kNewPresentation] = tr("Presentation");
+    predicateName[ActionID::kNewPlainText] = tr("Plain Text");
 }
 
 NewCreateMenuScene::NewCreateMenuScene(QObject *parent)
@@ -77,8 +81,8 @@ QString NewCreateMenuScene::name() const
 
 bool NewCreateMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(kCurrentDir).toString();
-    d->onDesktop = params.value(kOnDesktop).toBool();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
     if (d->currentDir.isEmpty())
         return false;
@@ -91,7 +95,7 @@ AbstractMenuScene *NewCreateMenuScene::scene(QAction *action) const
     if (action == nullptr)
         return nullptr;
 
-    if (d->providSelfActionList.contains(action))
+    if (d->predicateAction.values().contains(action))
         return const_cast<NewCreateMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -99,36 +103,36 @@ AbstractMenuScene *NewCreateMenuScene::scene(QAction *action) const
 
 bool NewCreateMenuScene::create(QMenu *parent)
 {
-
     if (!parent)
         return false;
 
-    QAction *tempAction = parent->addAction(d->predicateName.value(d->newFolder));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[d->newFolder] = tempAction;
+    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kNewFolder));
+    d->predicateAction[ActionID::kNewFolder] = tempAction;
+    // set action id
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewFolder));
 
-    tempAction = parent->addAction(d->predicateName.value(d->newDoc));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[d->newFolder] = tempAction;
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kNewDoc));
+    d->predicateAction[ActionID::kNewDoc] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewDoc));
 
     QMenu *newDocSubMenu = new QMenu(parent);
     tempAction->setMenu(newDocSubMenu);
 
-    tempAction = newDocSubMenu->addAction(d->predicateName.value(d->officeText));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[d->officeText] = tempAction;
+    tempAction = newDocSubMenu->addAction(d->predicateName.value(ActionID::kNewOfficeText));
+    d->predicateAction[ActionID::kNewOfficeText] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewOfficeText));
 
-    tempAction = newDocSubMenu->addAction(d->predicateName.value(d->spreadsheets));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[d->spreadsheets] = tempAction;
+    tempAction = newDocSubMenu->addAction(d->predicateName.value(ActionID::kNewSpreadsheets));
+    d->predicateAction[ActionID::kNewSpreadsheets] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewSpreadsheets));
 
-    tempAction = newDocSubMenu->addAction(d->predicateName.value(d->presentation));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[d->presentation] = tempAction;
+    tempAction = newDocSubMenu->addAction(d->predicateName.value(ActionID::kNewPresentation));
+    d->predicateAction[ActionID::kNewPresentation] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewPresentation));
 
-    tempAction = newDocSubMenu->addAction(d->predicateName.value(d->plainText));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[d->plainText] = tempAction;
+    tempAction = newDocSubMenu->addAction(d->predicateName.value(ActionID::kNewPlainText));
+    d->predicateAction[ActionID::kNewPlainText] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewPlainText));
 
     return true;
 }
@@ -140,7 +144,25 @@ void NewCreateMenuScene::updateState(QMenu *parent)
 
 bool NewCreateMenuScene::triggered(QAction *action)
 {
-    Q_UNUSED(action)
     // TODO(Lee or others):
+
+    QString id = d->predicateAction.key(action);
+    if (d->predicateName.contains(id)) {
+        if (id == ActionID::kNewFolder) {
+
+        } else if (id == ActionID::kNewDoc) {
+
+        } else if (id == ActionID::kNewOfficeText) {
+
+        } else if (id == ActionID::kNewSpreadsheets) {
+
+        } else if (id == ActionID::kNewPresentation) {
+
+        } else if (id == ActionID::kNewPlainText) {
+
+        }
+        return true;
+    }
+
     return false;
 }

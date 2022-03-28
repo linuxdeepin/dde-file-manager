@@ -22,6 +22,8 @@
 
 #include "private/openwithmenuscene_p.h"
 
+#include <services/common/menu/menu_defines.h>
+
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 
@@ -30,6 +32,7 @@
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 AbstractMenuScene *OpenWithMenuCreator::create()
 {
@@ -55,10 +58,10 @@ QString OpenWithMenuScene::name() const
 
 bool OpenWithMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(kCurrentDir).toString();
-    d->focusFile = params.value(kFocusFile).toString();
-    d->selectFiles = params.value(kSelectFiles).toStringList();
-    d->onDesktop = params.value(kOnDesktop).toBool();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
     // 文件不存在，则无文件相关菜单项
     if (d->selectFiles.isEmpty())
@@ -79,7 +82,7 @@ AbstractMenuScene *OpenWithMenuScene::scene(QAction *action) const
     if (action == nullptr)
         return nullptr;
 
-    if (d->providSelfActionList.contains(action))
+    if (d->predicateAction.values().contains(action))
         return const_cast<OpenWithMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -98,7 +101,6 @@ bool OpenWithMenuScene::create(QMenu *parent)
         return false;
 
     QAction *tempAction = parent->addAction(d->predicateName.value(d->openWith));
-    d->providSelfActionList.append(tempAction);
     d->predicateAction[d->openWith] = tempAction;
 
     QMenu *subMenu = new QMenu(parent);
@@ -123,7 +125,6 @@ bool OpenWithMenuScene::create(QMenu *parent)
         DesktopFile desktopFile(app);
         QString actionName = desktopFile.desktopFileName();
         QAction *action = subMenu->addAction(desktopFile.desktopFileName());
-        d->providSelfActionList.append(action);
 
         // TODO(Lee or others): 此种外部注入的未分配谓词
         d->predicateAction[actionName] = tempAction;
