@@ -30,6 +30,7 @@
 #include <QThread>
 #include <QDebug>
 #include <QX11Info>
+#include <QFile>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -271,6 +272,27 @@ int UniversalUtils::dockHeight()
         dockHeight = temp.toInt();
     }
     return dockHeight;
+}
+
+QMap<QString, QString> UniversalUtils::getKernelParameters()
+{
+    QFile cmdline("/proc/cmdline");
+    cmdline.open(QIODevice::ReadOnly);
+    QByteArray content = cmdline.readAll();
+
+    QByteArrayList paraList(content.split(' '));
+
+    QMap<QString, QString> result;
+    result.insert("_ori_proc_cmdline", content);
+
+    for (const QByteArray &onePara : paraList) {
+        int equalsIdx = onePara.indexOf('=');
+        QString key = equalsIdx == -1 ? onePara.trimmed() : onePara.left(equalsIdx).trimmed();
+        QString value = equalsIdx == -1 ? QString() : onePara.right(equalsIdx).trimmed();
+        result.insert(key, value);
+    }
+
+    return result;
 }
 
 QVariantHash UniversalUtils::convertFromQMap(const QVariantMap map)

@@ -22,6 +22,8 @@
 */
 #include "devicecontrollerhelper.h"
 
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/universalutils.h"

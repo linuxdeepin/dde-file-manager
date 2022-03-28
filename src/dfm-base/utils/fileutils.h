@@ -44,7 +44,6 @@ public:
     static bool mkdir(const QUrl &url, const QString &dirName, QString *errorString = nullptr);
     static bool touch(const QUrl &url, const QString &fileName, QString *errorString = nullptr);
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
-    static QMap<QString, QString> getKernelParameters();
     static int supportedMaxLength(const QString &fileSystem);
     static bool isGvfsFile(const QUrl &url);
     static QString preprocessingFileName(QString name);

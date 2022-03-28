@@ -18,6 +18,9 @@ set(BASE_UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/utils)
 include_directories(${BASE_UTIL_DIR})
 include_directories(${BASE_UTIL_DIR}/../../)
 
+set(BASE_BASE_DEV_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/base/device)
+include_directories(${BASE_BASE_DEV_DIR})
+
 set(MOUNT_PLUGIN_SRC
     disk-mount.json
     diskmountplugin.cpp
@@ -28,6 +31,9 @@ set(MOUNT_PLUGIN_SRC
     dattachedblockdevice.cpp
     dattachedprotocoldevice.cpp
     dattacheddevice.cpp
+    ${BASE_BASE_DEV_DIR}/private/defendercontroller.cpp
+    ${BASE_BASE_DEV_DIR}/private/devicecontrollerhelper.cpp
+    ${BASE_BASE_DEV_DIR}/devicecontroller.cpp
     ${BASE_UTIL_DIR}/devicemanager.cpp
     )
 
@@ -41,6 +47,10 @@ set(MOUNT_PLUGIN_HEADER
     dattachedprotocoldevice.h
     dattacheddevice.h
     sizeformathelper.h
+    ${BASE_BASE_DEV_DIR}/private/defendercontroller.h
+    ${BASE_BASE_DEV_DIR}/private/devicecontrollerhelper.h
+    ${BASE_BASE_DEV_DIR}/private/devicemonitorhandler.h
+    ${BASE_BASE_DEV_DIR}/devicecontroller.h
     ${BASE_UTIL_DIR}/devicemanager.h
     )
 
@@ -60,6 +70,7 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(DdeDockInterface REQUIRED dde-dock)
 pkg_check_modules(Gesttings REQUIRED  gsettings-qt)
+pkg_search_module(dfm-mount REQUIRED dfm-mount IMPORTED_TARGET)
 
 set(QRC_FILE
     resources.qrc
@@ -92,6 +103,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${DtkWidget_LIBRARIES}
     ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
+    PkgConfig::dfm-mount
 )
 
 set(CMAKE_INSTALL_PREFIX "/usr")

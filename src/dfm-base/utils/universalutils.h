@@ -48,6 +48,7 @@ public:
     static bool checkLaunchAppInterface();
     static bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths);
     static int dockHeight();
+    static QMap<QString, QString> getKernelParameters();
 
     static QVariantHash convertFromQMap(const QVariantMap map);
 

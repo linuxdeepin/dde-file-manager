@@ -24,6 +24,7 @@
 #include "private/defendercontroller.h"
 #include "private/devicemonitorhandler.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -34,7 +35,7 @@
 #include <dfm-burn/opticaldiscmanager.h>
 #include <dfm-burn/opticaldiscinfo.h>
 
-#include <QtConcurrent>
+#include <QtConcurrent/QtConcurrent>
 #include <DDesktopServices>
 
 #include <algorithm>
@@ -1325,7 +1326,7 @@ bool DeviceController::isProtolDeviceMonitorWorking() const
 bool DeviceController::isInLiveSystem() const
 {
     bool ret = false;
-    static const QMap<QString, QString> &cmdline = DFMBASE_NAMESPACE::FileUtils::getKernelParameters();
+    static const QMap<QString, QString> &cmdline = DFMBASE_NAMESPACE::UniversalUtils::getKernelParameters();
     if (cmdline.value("boot", "") == QStringLiteral("live"))
         ret = true;
     return ret;
