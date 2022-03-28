@@ -53,7 +53,8 @@
 DWIDGET_USE_NAMESPACE
 QString UserShareManager::CurrentUser = "";
 
-UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
+UserShareManager::UserShareManager(QObject *parent)
+    : QObject(parent)
 {
     m_fileMonitor = new DFileWatcherManager(this);
     m_fileMonitor->add(UserSharePath());
@@ -75,7 +76,6 @@ UserShareManager::UserShareManager(QObject *parent) : QObject(parent)
 
 UserShareManager::~UserShareManager()
 {
-
 }
 
 void UserShareManager::initMonitorPath()
@@ -90,17 +90,16 @@ void UserShareManager::initConnect()
 {
     connect(m_fileMonitor, &DFileWatcherManager::fileDeleted, this, &UserShareManager::onFileDeleted);
     connect(m_fileMonitor, &DFileWatcherManager::subfileCreated, this, &UserShareManager::handleShareChanged);
-    connect(m_fileMonitor, &DFileWatcherManager::fileMoved, this, [this](const QString & from, const QString & to) {
+    connect(m_fileMonitor, &DFileWatcherManager::fileMoved, this, [this](const QString &from, const QString &to) {
         onFileDeleted(from);
         handleShareChanged(to);
     });
-    connect(m_shareInfosChangedTimer, &QTimer::timeout, this, [this]() {emit updateUserShareInfo(true);});
+    connect(m_shareInfosChangedTimer, &QTimer::timeout, this, [this]() { emit updateUserShareInfo(true); });
 }
 
 QString UserShareManager::getCacehPath()
 {
-    return QString("%1/.cache/%2/usershare.json").arg(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0),
-                                                      qApp->applicationName());
+    return QString("%1/.cache/%2/usershare.json").arg(QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0), qApp->applicationName());
 }
 
 ShareInfo UserShareManager::getOldShareInfoByNewInfo(const ShareInfo &newInfo) const
@@ -209,7 +208,7 @@ QString UserShareManager::readCacheFromFile(const QString &path)
 
 QString UserShareManager::getCurrentUserName()
 {
-    CurrentUser = getpwuid(getuid())->pw_name; //getpwuid get password uid，pw_name password name，这个用来获取uid对应的用户名
+    CurrentUser = getpwuid(getuid())->pw_name;   //getpwuid get password uid，pw_name password name，这个用来获取uid对应的用户名
     return CurrentUser;
 }
 
@@ -235,7 +234,7 @@ int UserShareManager::validShareInfoCount() const
     int counter = 0;
     for (auto info : shareInfoList()) {
         if (info.isValid())
-            counter ++;
+            counter++;
     }
     return counter;
 }
@@ -259,7 +258,7 @@ void UserShareManager::handleShareChanged(const QString &filePath)
     if (filePath.contains(":tmp"))
         return;
     m_shareInfosChangedTimer->start();
-    QTimer::singleShot(1000, this, [ = ]() {
+    QTimer::singleShot(1000, this, [=]() {
         emit fileSignalManager->requestRefreshFileModel(DUrl::fromUserShareFile("/"));
     });
 }
@@ -304,10 +303,7 @@ void UserShareManager::updateUserShareInfo(bool sendSignal)
         QString shareName = info.value("sharename");
         QString sharePath = info.value("path");
         QString share_acl = info.value("usershare_acl");
-        if (!shareName.isEmpty() &&
-                !sharePath.isEmpty() &&
-                QFile(sharePath).exists() &&
-                !share_acl.isEmpty()) {
+        if (!shareName.isEmpty() && !sharePath.isEmpty() && QFile(sharePath).exists() && !share_acl.isEmpty()) {
             shareInfo.setShareName(shareName);
             shareInfo.setPath(sharePath);
             shareInfo.setComment(info.value("comment"));
@@ -395,11 +391,11 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
         } else {
             _info.setUsershare_acl("Everyone:R");
         }
-        args << "usershare" << "add"
+        args << "usershare"
+             << "add"
              << _info.shareName() << _info.path()
              << _info.comment() << _info.usershare_acl()
              << _info.guest_ok();
-
 
         QProcess process;
         process.start(cmd, args);
@@ -443,6 +439,12 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
                 return false;
             }
 
+            if (err.contains("net usershare add: cannot convert name") && err.contains("The transport-connection attempt was refused by the remote system")) {
+                dialogManager->showErrorDialog(tr("Sharing failed"), tr("The transport-connection attempt was refused by the remote system. Maybe smbd is not running."));
+                qWarning() << err;
+                return false;
+            }
+
             qWarning() << err << "err code = " << QString::number(process.exitCode());
             dialogManager->showErrorDialog(QString(), err);
             return false;
@@ -455,7 +457,6 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
     }
     return false;
 }
-
 
 void UserShareManager::deleteUserShareByPath(const QString &path)
 {
@@ -473,7 +474,8 @@ void UserShareManager::removeFiledeleteUserShareByPath(const QString &path)
     }
     QString cmd = "net";
     QStringList args;
-    args << "usershare" << "delete"
+    args << "usershare"
+         << "delete"
          << shareName;
     QProcess p;
     p.start(cmd, args);
@@ -504,9 +506,9 @@ void UserShareManager::deleteUserShareByShareName(const QString &shareName)
         QMap<QString, ShareInfo> shareInfoCache = m_shareInfos;
         if (shareInfoCache.contains(shareName)) {
             /*fix 64070 root用户共享的文件，普通用户去取消该共享的时候需要做弹窗处理*/
-            QString filename = shareName.toLower(); //文件名小写
+            QString filename = shareName.toLower();   //文件名小写
             auto getShareUid = getCreatorUidByShareName("/var/lib/samba/usershares/" + filename);
-            if (DFMGlobal::getUserId() != getShareUid) { //对比文件属主与共享属主
+            if (DFMGlobal::getUserId() != getShareUid) {   //对比文件属主与共享属主
                 if (!DFMGlobal::isRootUser())
                     dialogManager->showErrorDialog(tr("You do not have permission to operate file/folder!"), QString());
             }
@@ -518,7 +520,8 @@ void UserShareManager::deleteUserShareByShareName(const QString &shareName)
 
     QString cmd = "net";
     QStringList args;
-    args << "usershare" << "delete"
+    args << "usershare"
+         << "delete"
          << shareName;
     QProcess p;
     p.start(cmd, args);
