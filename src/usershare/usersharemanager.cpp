@@ -471,6 +471,12 @@ bool UserShareManager::addUserShare(const ShareInfo &info)
                 return false;
             }
 
+            if (err.contains("net usershare add: cannot convert name") && err.contains("The transport-connection attempt was refused by the remote system")) {
+                dialogManager->showErrorDialog(tr("Sharing failed"), tr("The transport-connection attempt was refused by the remote system. Maybe smbd is not running."));
+                qWarning() << err;
+                return false;
+            }
+
             qWarning() << err << "err code = " << QString::number(process.exitCode());
 
             dialogManager->showErrorDialog(QString(), err);
