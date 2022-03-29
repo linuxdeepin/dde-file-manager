@@ -36,6 +36,7 @@ class GridCore
 protected:
     explicit GridCore();
     explicit GridCore(const GridCore &other);
+    virtual ~GridCore();
 
 public:
     QList<int> surfaceIndex() const;

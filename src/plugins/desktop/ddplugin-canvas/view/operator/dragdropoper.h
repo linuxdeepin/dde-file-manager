@@ -52,7 +52,11 @@ protected:
     bool dropBetweenView(QDropEvent *event) const;
     bool dropDirectSaveMode(QDropEvent *event) const;
     bool dropMimeData(QDropEvent *event) const;
+    void handleMoveMimeData(QDropEvent *event, const QUrl &url);
 private:
+    void updatePrepareDodgeValue(QEvent *event);
+    void tryDodge(QDragMoveEvent *event);
+    void stopDelayDodge();
 
 protected:
     CanvasView *view;

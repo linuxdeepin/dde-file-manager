@@ -29,6 +29,7 @@ extern uint qHash(const QPoint &key, uint seed);
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
+class GridCore;
 class CanvasGridPrivate;
 class CanvasGrid : public QObject
 {
@@ -64,9 +65,9 @@ public:
     void tryAppendAfter(const QStringList &items, int index, const QPoint &begin);
     void popOverload();
     void arrange();
-signals:
 
-public slots:
+    GridCore &core() const;
+    void requestSync();
 
 protected:
     explicit CanvasGrid(QObject *parent = nullptr);

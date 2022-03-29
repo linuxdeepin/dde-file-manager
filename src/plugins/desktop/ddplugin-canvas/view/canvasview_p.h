@@ -31,6 +31,7 @@
 #include "operator/keyselecter.h"
 #include "operator/operstate.h"
 #include "operator/dragdropoper.h"
+#include "operator/dodgeoper.h"
 #include "operator/shortcutoper.h"
 #include "operator/canvasviewmenuproxy.h"
 #include "operator/viewsettingutil.h"
@@ -129,12 +130,11 @@ public:
     ClickSelecter *clickSelecter;
     KeySelecter *keySelecter;
     DragDropOper *dragDropOper;
+    DodgeOper *dodgeOper;
     ShortcutOper *shortcutOper;
     ViewSettingUtil *viewSetting;
     OperState state;
     bool flicker = false;
-
-    QPoint dragTargetGrid { QPoint(-1, -1) };
 
     CanvasViewMenuProxy *menuProxy = nullptr;
     WaterMaskFrame *waterMask = nullptr;

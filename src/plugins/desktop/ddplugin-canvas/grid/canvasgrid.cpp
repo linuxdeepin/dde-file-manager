@@ -316,6 +316,16 @@ void CanvasGrid::arrange()
     d->sequence(items());
 }
 
+GridCore &CanvasGrid::core() const
+{
+    return *static_cast<GridCore*>(d);
+}
+
+void CanvasGrid::requestSync()
+{
+    d->requestSync();
+}
+
 CanvasGridPrivate::CanvasGridPrivate(CanvasGrid *qq)
     : QObject(qq)
     , q(qq)

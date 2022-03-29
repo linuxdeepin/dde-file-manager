@@ -54,7 +54,12 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
     // todo:封装优化代码
     {
         const QHash<QString, QPoint> &pos = GridIns->points(d->screenNum);
+        bool dodgeAnimationing = d->dodgeOper->getDodgeAnimationing();
+        const QStringList &dodgeItems = d->dodgeOper->getDodgeItems();
         for (auto itor = pos.begin(); itor != pos.end(); ++itor) {
+            if (dodgeAnimationing && dodgeItems.contains(itor.key()))
+                continue;
+
             auto index = model()->index(itor.key());
             if (!index.isValid())
                 continue;
@@ -141,7 +146,7 @@ void ViewPainter::drawGirdInfos()
         fillRect(rect, backColor);
 
         // drag target
-        if (pos.point() == d->dragTargetGrid)
+        if (pos.point() == d->dodgeOper->getDragTargetGridPos())
             fillRect(rect, Qt::green);
 
         // draw grid border.
@@ -177,11 +182,61 @@ void ViewPainter::drawGirdInfos()
 }
 
 /*!
-    让位相关绘制，由成员变量startDodge控制，startDodge为true进行让位相关绘制，传入参数\a painter用于绘制。
+    让位相关绘制， \a option拖动绘制项相关信息
 */
-void ViewPainter::drawDodge()
+void ViewPainter::drawDodge(QStyleOptionViewItem option)
 {
+    if (d->dodgeOper->getPrepareDodge()) {
+        auto mousePoint = view()->mapFromGlobal(QCursor::pos());
+        auto hoverIndex = view()->indexAt(mousePoint);
+        auto url = model()->url(hoverIndex);
 
+        auto selects = selectionModel()->selectedUrls();
+        if (selects.contains(url) || (d->dodgeOper->getDodgeAnimationing() && d->dodgeOper->getDodgeItems().contains(url.toString()))) {
+            // hover item selected,it draged.
+            // or,it dodge animationing.
+        } else {
+            if (hoverIndex.isValid() && hoverIndex != view()->currentIndex()) {
+                QPainterPath path;
+                auto lastRect = view()->visualRect(hoverIndex);
+                path.addRoundRect(lastRect, 4, 4);
+                fillPath(path, QColor(43, 167, 248, 255 * 3 / 10));
+                strokePath(path, QColor(30, 126, 255, 255 * 2 / 10));
+            }
+        }
+    }
+
+    if (d->dodgeOper->getDodgeAnimationing()) {
+        const QStringList &dodgeItems = d->dodgeOper->getDodgeItems();
+        for (auto animationItem : dodgeItems) {
+            auto index = model()->index(animationItem);
+            auto margins = view()->d->gridMargins;
+
+            if (!index.isValid())
+                continue;
+
+            GridPos gridPos;
+            if (!d->dodgeOper->getDodgeItemGridPos(animationItem, gridPos))
+                continue;
+
+            if (gridPos.first != view()->screenNum())
+                continue;
+
+            QRect end = view()->d->visualRect(gridPos.second).marginsRemoved(margins);
+            auto tempCurrent = d->dodgeOper->getDodgeDuration();
+            option.rect = view()->visualRect(index).marginsRemoved(margins);
+
+            auto nx = option.rect.x() + (end.x() - option.rect.x()) * tempCurrent;
+            auto ny = option.rect.y() + (end.y() - option.rect.y()) * tempCurrent;
+            option.rect.setX(static_cast<int>(nx));
+            option.rect.setY(static_cast<int>(ny));
+            option.rect.setSize(end.size());
+
+            save();
+            drawFile(option, index, gridPos.second);
+            restore();
+        }
+    }
 }
 
 /*!
@@ -236,7 +291,7 @@ QPixmap ViewPainter::polymerize(QModelIndexList indexs, CanvasViewPrivate *d)
     static const int iconWidth = 128;
     static const int iconMargin = 30;    // add margin for showing ratoted item.
     static const int maxIconCount = 4;   // max painting item number.
-    static const int maxTextCount = 99;  //max text number.
+    static const int maxTextCount = 99;  // max text number.
     static const qreal rotateBase = 10.0;
     static const qreal opacityBase = 0.1;
     static const int rectSzie = iconWidth + iconMargin * 2;

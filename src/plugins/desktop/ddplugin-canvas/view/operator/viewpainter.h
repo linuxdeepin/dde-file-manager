@@ -55,7 +55,7 @@ public:
     void drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &gridPos);
     void drawSelectRect();
 
-    void drawDodge();
+    void drawDodge(QStyleOptionViewItem option);
     void drawDragMove(QStyleOptionViewItem &option);
     static QPixmap polymerize(QModelIndexList indexs, CanvasViewPrivate *d);
 protected:

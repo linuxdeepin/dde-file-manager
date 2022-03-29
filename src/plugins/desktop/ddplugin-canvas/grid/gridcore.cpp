@@ -41,6 +41,11 @@ GridCore::GridCore(const GridCore &other)
 {
 }
 
+GridCore::~GridCore()
+{
+
+}
+
 QList<int> GridCore::surfaceIndex() const
 {
     QList<int> order = surfaces.keys();

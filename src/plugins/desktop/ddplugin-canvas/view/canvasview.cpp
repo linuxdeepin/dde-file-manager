@@ -282,11 +282,11 @@ void CanvasView::paintEvent(QPaintEvent *event)
     // debug网格信息展示
     painter.drawGirdInfos();
 
-    // todo:让位
-    painter.drawDodge();
-
     // 桌面文件绘制
     auto option = viewOptions();
+
+    // dodge
+    painter.drawDodge(option);
 
     // for flicker when refresh.
     if (!d->flicker)
@@ -376,6 +376,13 @@ void CanvasView::dropEvent(QDropEvent *event)
         return;
     }
     QAbstractItemView::dropEvent(event);
+}
+
+void CanvasView::focusOutEvent(QFocusEvent *event)
+{
+    d->dodgeOper->stopDelayDodge();
+    d->dodgeOper->updatePrepareDodgeValue(event);
+    QAbstractItemView::focusOutEvent(event);
 }
 
 void CanvasView::setScreenNum(const int screenNum)
@@ -649,6 +656,7 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     clickSelecter = new ClickSelecter(q);
     keySelecter = new KeySelecter(q);
     dragDropOper = new DragDropOper(q);
+    dodgeOper = new DodgeOper(q);
     shortcutOper = new ShortcutOper(q);
     menuProxy = new CanvasViewMenuProxy(q);
     viewSetting = new ViewSettingUtil(q);

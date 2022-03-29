@@ -42,11 +42,8 @@ DFMBASE_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
 DragDropOper::DragDropOper(CanvasView *parent)
-    : QObject(parent)
-    , view(parent)
+    : QObject(parent), view(parent)
 {
-
-
 }
 
 bool DragDropOper::enter(QDragEnterEvent *event)
@@ -64,6 +61,8 @@ bool DragDropOper::enter(QDragEnterEvent *event)
         return false;
     }
 
+    updatePrepareDodgeValue(event);
+
     if (checkXdndDirectSave(event))
         return false;
 
@@ -73,60 +72,59 @@ bool DragDropOper::enter(QDragEnterEvent *event)
 
 void DragDropOper::leave(QDragLeaveEvent *event)
 {
-    Q_UNUSED(event)
     m_target.clear();
+    stopDelayDodge();
+    updatePrepareDodgeValue(event);
 }
 
 bool DragDropOper::move(QDragMoveEvent *event)
 {
+    stopDelayDodge();
     auto pos = event->pos();
     auto hoverIndex = view->indexAt(pos);
     QUrl curUrl = hoverIndex.isValid() ? view->model()->url(hoverIndex) : view->model()->rootUrl();
     if (hoverIndex.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
-            bool canDrop = !fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) ||
-                    !fileInfo->supportedDropActions().testFlag(event->dropAction());
+            bool canDrop = !fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) || !fileInfo->supportedDropActions().testFlag(event->dropAction());
             if (!canDrop) {
-                if (DFileDragClient::checkMimeData(event->mimeData())) {
-                    event->acceptProposedAction();
-                    // update target url if mouse focus is on file which can drop.
-                    updateTarget(event->mimeData(), curUrl);
-                    qWarning() << "drop by app " << m_target;
-                } else {
-                    event->accept();
-                }
+                handleMoveMimeData(event, curUrl);
 
                 // append compress
-//                if (fileInfo->canDrop() && fileInfo->canDragCompress()) {
-//                    // Set when dragging and dropping gvfs files, do not support additional compression
-//                    auto urls = event->mimeData()->urls();
-//                    if (!urls.isEmpty()) {
-//                        event->setDropAction(Qt::CopyAction);
-//                        auto itemInfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(urls.first());
-//                        // todo isGvfsMountFile
-//                        if (itemInfo && itemInfo->isGvfsMountFile()) {
-//                            event->setDropAction(Qt::MoveAction);
-//                        }
-//                    }
-//                }
+                //                if (fileInfo->canDrop() && fileInfo->canDragCompress()) {
+                //                    // Set when dragging and dropping gvfs files, do not support additional compression
+                //                    auto urls = event->mimeData()->urls();
+                //                    if (!urls.isEmpty()) {
+                //                        event->setDropAction(Qt::CopyAction);
+                //                        auto itemInfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(urls.first());
+                //                        // todo isGvfsMountFile
+                //                        if (itemInfo && itemInfo->isGvfsMountFile()) {
+                //                            event->setDropAction(Qt::MoveAction);
+                //                        }
+                //                    }
+                //                }
                 return false;
             } else {
+                // not support drop
                 event->ignore();
             }
         }
-
-        preproccessDropEvent(event, event->mimeData()->urls(), curUrl);
-    } else {
-        // todo dodge
-        // on blank space
-        preproccessDropEvent(event, event->mimeData()->urls(), curUrl);
     }
-    event->accept();
+
+    tryDodge(event);
+
+    // on blank space
+    preproccessDropEvent(event, event->mimeData()->urls(), view->model()->rootUrl());
+    if (!hoverIndex.isValid())
+        handleMoveMimeData(event, curUrl);
+
     return false;
 }
 
 bool DragDropOper::drop(QDropEvent *event)
 {
+    stopDelayDodge();
+    updatePrepareDodgeValue(event);
+
     // some special case.
     if (dropFilter(event))
         return false;
@@ -182,7 +180,7 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
         // is from or to trash or is to trash
         {
             bool isFromTrash = from.url().contains(".local/share/Trash/");
-            bool isToTrash = false;//to.isTrashFile(); // todo(zy)
+            bool isToTrash = false;   //to.isTrashFile(); // todo(zy)
 
             if (isFromTrash && isToTrash) {
                 event->setDropAction(Qt::IgnoreAction);
@@ -269,17 +267,14 @@ bool DragDropOper::dropFilter(QDropEvent *event)
 {
     //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
     {
-        QModelIndex index =  view->indexAt(event->pos());
+        QModelIndex index = view->indexAt(event->pos());
         if (index.isValid()) {
             QUrl targetItem = view->model()->url(index);
             auto itemInfo = FileCreator->createFileInfo(targetItem);
-            if (itemInfo && (itemInfo->isDir() ||
-                             itemInfo->url() == DesktopAppUrl::homeDesktopFileUrl())) {
+            if (itemInfo && (itemInfo->isDir() || itemInfo->url() == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();
                 for (const QUrl &url : sourceUrls) {
-                    if ((DesktopAppUrl::computerDesktopFileUrl() == url) ||
-                            (DesktopAppUrl::trashDesktopFileUrl() == url) ||
-                            (DesktopAppUrl::homeDesktopFileUrl() == url)) {
+                    if ((DesktopAppUrl::computerDesktopFileUrl() == url) || (DesktopAppUrl::trashDesktopFileUrl() == url) || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
                         event->setDropAction(Qt::IgnoreAction);
                         return true;
                     }
@@ -311,7 +306,7 @@ bool DragDropOper::dropClientDownload(QDropEvent *event) const
             });
 
             connect(client, &DFileDragClient::serverDestroyed, client, &DFileDragClient::deleteLater);
-            connect(client, &DFileDragClient::destroyed, [](){
+            connect(client, &DFileDragClient::destroyed, []() {
                 qDebug() << "drag client deleted";
             });
         }
@@ -328,15 +323,23 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
     if (!fromView || isCtrlPressed())
         return false;
 
-    auto targetGridPos = view->d->gridAt(event->pos());
-    auto targetItem = GridIns->item(view->screenNum(), targetGridPos);
-    auto sourceUrls = event->mimeData()->urls();
-    bool dropOnSelf = sourceUrls.contains(QUrl(targetItem));
+    auto dropGridPos = view->d->gridAt(event->pos());
+    auto dropRect = view->d->itemRect(dropGridPos);
+    auto dropIndex = view->indexAt(dropRect.center());
 
-    // process this case in other drop function if targetGridPos is used and it is not drop-needed.
-    if (!targetItem.isEmpty() && !dropOnSelf)
+    auto targetIndex = view->indexAt(event->pos());
+    bool dropOnSelf = targetIndex.isValid() ? view->selectionModel()->selectedIndexes().contains(targetIndex) : false;
+
+    // process this case in other drop function(e.g. move) if targetGridPos is used and it is not drop-needed.
+    if (dropIndex.isValid() && !dropOnSelf) {
+        if (!targetIndex.isValid()) {
+            qInfo() << "drop on invaild target, skip. drop:" << dropGridPos.x() << dropGridPos.y();
+            return true;
+        }
         return false;
+    }
 
+    auto sourceUrls = event->mimeData()->urls();
     QSet<int> itemfrom;
     QPair<int, QPoint> tmpPos;
     QMap<QString, QPair<int, QPoint>> itemPos;
@@ -361,20 +364,21 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
         for (auto iter = itemPos.begin(); iter != itemPos.end(); ++iter)
             GridIns->remove(iter.value().first, iter.key());
         // then try drop item on target.
-        GridIns->tryAppendAfter(itemPos.keys(), view->screenNum(), targetGridPos);
+        GridIns->tryAppendAfter(itemPos.keys(), view->screenNum(), dropGridPos);
 
         // reset the focus for key move
-        auto newFocus = resetFocus(targetGridPos);
-        qDebug() << "reset focus " << "to" << newFocus;
+        auto newFocus = resetFocus(dropGridPos);
+        qDebug() << "reset focus "
+                 << "to" << newFocus;
     } else if (itemfrom.size() == 1) {
         // items are from one view, using move.
         // normally, item should from the view that is event->source().
         auto focus = fromView->d->operState().current();
         auto focusItem = fromView->model()->url(focus).toString();
         if (!focusItem.isEmpty()) {
-            if (GridIns->move(view->screenNum(), targetGridPos, focusItem, itemPos.keys())) {
+            if (GridIns->move(view->screenNum(), dropGridPos, focusItem, itemPos.keys())) {
                 // reset the focus for key move
-                auto newFocus = resetFocus(targetGridPos);
+                auto newFocus = resetFocus(dropGridPos);
                 qDebug() << "reset focus from" << focus << "to" << newFocus;
             }
         } else {
@@ -403,11 +407,11 @@ bool DragDropOper::dropDirectSaveMode(QDropEvent *event) const
         if (fileInfo && fileInfo->url().isLocalFile()) {
             if (fileInfo->isDir())
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->url());
-             else
+            else
                 const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->parentUrl());
         }
 
-        event->accept(); // yeah! we've done with XDS so stop Qt from further event propagation.
+        event->accept();   // yeah! we've done with XDS so stop Qt from further event propagation.
         return true;
     }
 
@@ -418,11 +422,9 @@ bool DragDropOper::dropMimeData(QDropEvent *event) const
 {
     auto model = view->model();
     auto targetIndex = view->indexAt(event->pos());
-    bool enableDrop = targetIndex.isValid() ? model->flags(targetIndex) & Qt::ItemIsDropEnabled :
-                                              model->flags(model->rootIndex()) & Qt::ItemIsDropEnabled;
+    bool enableDrop = targetIndex.isValid() ? model->flags(targetIndex) & Qt::ItemIsDropEnabled : model->flags(model->rootIndex()) & Qt::ItemIsDropEnabled;
     if (model->supportedDropActions() & event->dropAction() && enableDrop) {
-        preproccessDropEvent(event, event->mimeData()->urls(), targetIndex.isValid() ? model->url(targetIndex)
-                                                                                     : model->rootUrl());
+        preproccessDropEvent(event, event->mimeData()->urls(), targetIndex.isValid() ? model->url(targetIndex) : model->rootUrl());
         const Qt::DropAction action = event->dropAction();
         if (model->dropMimeData(event->mimeData(), action, targetIndex.row(), targetIndex.column(), targetIndex)) {
             if (action != event->dropAction()) {
@@ -436,4 +438,31 @@ bool DragDropOper::dropMimeData(QDropEvent *event) const
         return true;
     }
     return false;
+}
+
+void DragDropOper::handleMoveMimeData(QDropEvent *event, const QUrl &url)
+{
+    if (DFileDragClient::checkMimeData(event->mimeData())) {
+        event->acceptProposedAction();
+        // update target url if mouse focus is on file which can drop.
+        updateTarget(event->mimeData(), url);
+        qWarning() << "drop by app " << m_target;
+    } else {
+        event->accept();
+    }
+}
+
+void DragDropOper::updatePrepareDodgeValue(QEvent *event)
+{
+    view->d->dodgeOper->updatePrepareDodgeValue(event);
+}
+
+void DragDropOper::tryDodge(QDragMoveEvent *event)
+{
+    view->d->dodgeOper->tryDodge(event);
+}
+
+void DragDropOper::stopDelayDodge()
+{
+    view->d->dodgeOper->stopDelayDodge();
 }

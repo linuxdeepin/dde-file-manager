@@ -41,6 +41,7 @@ class CanvasView : public QAbstractItemView
     Q_OBJECT
     friend class ShortcutOper;
     friend class DragDropOper;
+    friend class DodgeOper;
     friend class BoxSelecter;
     friend class ClickSelecter;
     friend class KeySelecter;
@@ -99,6 +100,7 @@ protected:
     void dragMoveEvent(QDragMoveEvent *event) override;
     void dragLeaveEvent(QDragLeaveEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
 private:
     QScopedPointer<CanvasViewPrivate> d;
 };
