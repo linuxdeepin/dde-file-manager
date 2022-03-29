@@ -65,7 +65,6 @@ private:
     QHBoxLayout *hBoxLayout { nullptr };
 
     ViewMode currentMode { ViewMode::kIconMode };
-    ViewMode defaultMode { ViewMode::kIconMode };
 };
 DPTITLEBAR_END_NAMESPACE
 

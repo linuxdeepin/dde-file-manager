@@ -28,6 +28,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/application/application.h"
 
 #include <dfm-framework/framework.h>
 
@@ -82,6 +83,12 @@ void WorkspaceHelper::setWorkspaceMenuScene(const QString &scheme, const QString
 {
     if (!scheme.isEmpty() && !scene.isEmpty())
         menuSceneMap[scheme] = scene;
+}
+
+void WorkspaceHelper::setDefaultViewMode(const QString &scheme, const Global::ViewMode mode)
+{
+    if (!scheme.isEmpty())
+        defaultViewMode[scheme] = mode;
 }
 
 WorkspaceHelper *WorkspaceHelper::instance()
@@ -158,6 +165,14 @@ QString WorkspaceHelper::findMenuScene(const QString &scheme)
         return menuSceneMap[scheme];
 
     return QString();
+}
+
+Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
+{
+    if (defaultViewMode.contains(scheme))
+        return defaultViewMode[scheme];
+
+    return static_cast<Global::ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)

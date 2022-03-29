@@ -1160,7 +1160,7 @@ void FileView::setDefaultViewMode()
 
 void FileView::loadViewState(const QUrl &url)
 {
-    QVariant defaultViewMode = Application::instance()->appAttribute(Application::kViewMode).toInt();
+    int defaultViewMode = static_cast<int>(WorkspaceHelper::instance()->findViewMode(url.scheme()));
     d->currentViewMode = static_cast<Global::ViewMode>(fileViewStateValue(url, "viewMode", defaultViewMode).toInt());
 
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();

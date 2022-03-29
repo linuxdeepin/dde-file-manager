@@ -24,6 +24,8 @@
 #include "events/titlebareventcaller.h"
 #include "utils/optionbuttonmanager.h"
 
+#include "services/filemanager/workspace/workspaceservice.h"
+
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -35,7 +37,6 @@ DFMBASE_USE_NAMESPACE
 OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)
     : QObject(parent), q(parent)
 {
-    defaultMode = static_cast<ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
 }
 
 void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
@@ -53,14 +54,10 @@ void OptionButtonBoxPrivate::setViewMode(ViewMode mode)
 
 void OptionButtonBoxPrivate::loadViewMode(const QUrl &url)
 {
-    int savedViewMode = Application::appObtuselySetting()->value("FileViewState", url).toMap().value("viewMode", -1).toInt();
+    int defaultViewMode = static_cast<int>(WorkspaceService::service()->getDefaultViewMode(url.scheme()));
+    auto viewMode = static_cast<ViewMode>(Application::appObtuselySetting()->value("FileViewState", url).toMap().value("viewMode", defaultViewMode).toInt());
 
-    if (savedViewMode == -1) {
-        switchMode(defaultMode);
-        return;
-    }
-
-    switchMode(static_cast<ViewMode>(savedViewMode));
+    switchMode(viewMode);
 }
 
 void OptionButtonBoxPrivate::switchMode(ViewMode mode)
@@ -81,8 +78,7 @@ void OptionButtonBoxPrivate::switchMode(ViewMode mode)
 void OptionButtonBoxPrivate::onViewModeChanged(int mode)
 {
     auto viewMode = static_cast<ViewMode>(mode);
-    defaultMode = viewMode;
-    switchMode(defaultMode);
+    switchMode(viewMode);
 }
 
 QToolButton *OptionButtonBox::detailButton() const

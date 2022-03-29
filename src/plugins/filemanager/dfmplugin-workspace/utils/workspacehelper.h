@@ -27,6 +27,7 @@
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "workspace/workspace_defines.h"
+#include "dfm_global_defines.h"
 
 #include <QMap>
 #include <QMutex>
@@ -50,6 +51,7 @@ public:
     using TopWidgetCreator = std::function<CustomTopWidgetInterface *()>;
     using TopWidgetCreatorMap = QMap<KeyType, TopWidgetCreator>;
     using MenuSceneMap = QMap<QString, QString>;
+    using DefaultViewMode = QMap<QString, DFMBASE_NAMESPACE::Global::ViewMode>;
 
     void registerTopWidgetCreator(const KeyType &scheme, const TopWidgetCreator &creator);
     bool isRegistedTopWidget(const KeyType &scheme) const;
@@ -58,6 +60,7 @@ public:
     void setFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void setFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
+    void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QString &path);
@@ -70,6 +73,7 @@ public:
     void actionNewWindow(const QList<QUrl> &urls);
     void actionNewTab(quint64 windowId, const QUrl &url);
     QString findMenuScene(const QString &scheme);
+    DFMBASE_NAMESPACE::Global::ViewMode findViewMode(const QString &scheme);
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
@@ -85,6 +89,7 @@ private:
 private:
     TopWidgetCreatorMap topWidgetCreators;
     MenuSceneMap menuSceneMap;
+    DefaultViewMode defaultViewMode;
     Q_DISABLE_COPY(WorkspaceHelper)
 };
 

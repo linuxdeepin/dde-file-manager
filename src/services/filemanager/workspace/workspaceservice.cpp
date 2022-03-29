@@ -122,6 +122,16 @@ void WorkspaceService::setWorkspaceMenuScene(const QString &scheme, const QStrin
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, scene);
 }
 
+void WorkspaceService::setDefaultViewMode(const QString &scheme, const dfmbase::Global::ViewMode mode)
+{
+    dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, mode);
+}
+
+DFMBASE_NAMESPACE::Global::ViewMode WorkspaceService::getDefaultViewMode(const QString &scheme)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme).value<DFMBASE_NAMESPACE::Global::ViewMode>();
+}
+
 WorkspaceService *WorkspaceService::instance()
 {
     auto &ctx = dpfInstance.serviceContext();

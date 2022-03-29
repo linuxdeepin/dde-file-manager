@@ -24,6 +24,7 @@
 #define WORKSPACESERVICE_H
 
 #include "workspace_defines.h"
+#include "dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -51,6 +52,8 @@ public:
     void setFileViewFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFileViewFilterCallback(const quint64 windowID, const QUrl &url, const Workspace::FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
+    void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
+    DFMBASE_NAMESPACE::Global::ViewMode getDefaultViewMode(const QString &scheme);
 
     static WorkspaceService *instance();
 

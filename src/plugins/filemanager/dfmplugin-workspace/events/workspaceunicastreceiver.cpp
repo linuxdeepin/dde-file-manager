@@ -36,6 +36,8 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::setFileViewFilterData"), this, &WorkspaceUnicastReceiver::invokeSetFileViewFilterData);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::setFileViewFilterCallback"), this, &WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::setWorkspaceMenuScene"), this, &WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::setDefaultViewMode"), this, &WorkspaceUnicastReceiver::invokeSetDefaultViewMode);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::getDefaultViewMode"), this, &WorkspaceUnicastReceiver::invokeGetDefaultViewMode);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -91,6 +93,16 @@ void WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback(const quint64 win
 void WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene)
 {
     WorkspaceHelper::instance()->setWorkspaceMenuScene(scheme, scene);
+}
+
+void WorkspaceUnicastReceiver::invokeSetDefaultViewMode(const QString &scheme, const dfmbase::Global::ViewMode mode)
+{
+    WorkspaceHelper::instance()->setDefaultViewMode(scheme, mode);
+}
+
+DFMBASE_NAMESPACE::Global::ViewMode WorkspaceUnicastReceiver::invokeGetDefaultViewMode(const QString &scheme)
+{
+    return WorkspaceHelper::instance()->findViewMode(scheme);
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)

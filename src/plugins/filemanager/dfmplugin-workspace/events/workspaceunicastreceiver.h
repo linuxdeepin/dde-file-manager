@@ -2,6 +2,7 @@
 #define WORKSPACEUNICASTRECEIVER_H
 
 #include "dfmplugin_workspace_global.h"
+#include "dfm_global_defines.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
 
@@ -26,6 +27,8 @@ public slots:
     void invokeSetFileViewFilterCallback(const quint64 windowID, const QUrl &url,
                                          const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
     void invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene);
+    void invokeSetDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
+    DFMBASE_NAMESPACE::Global::ViewMode invokeGetDefaultViewMode(const QString &scheme);
 
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);

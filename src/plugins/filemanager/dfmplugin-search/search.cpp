@@ -40,6 +40,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm_global_defines.h"
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -122,6 +123,7 @@ void Search::regSearchPlugin()
 void Search::regSearchToWorkspaceService()
 {
     WorkspaceService::service()->addScheme(SearchHelper::scheme());
+    WorkspaceService::service()->setDefaultViewMode(SearchHelper::scheme(), Global::ViewMode::kListMode);
     WorkspaceService::service()->setWorkspaceMenuScene(SearchHelper::scheme(), SearchScene::kSearchMenu);
 
     Workspace::CustomTopWidgetInfo info;
