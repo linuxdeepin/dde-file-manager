@@ -234,7 +234,7 @@ void ComputerModel::initConnect()
         this->beginResetModel();
         items = datas;
         this->endResetModel();
-        view->hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
+        QTimer::singleShot(0, this, [this]() { view->hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide()); });
     });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemAdded, this, &ComputerModel::onItemAdded);
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::itemRemoved, this, &ComputerModel::onItemRemoved);
