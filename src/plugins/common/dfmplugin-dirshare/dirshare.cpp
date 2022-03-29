@@ -1,0 +1,74 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     xushitong<xushitong@uniontech.com>
+ *
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#include "dirshare.h"
+#include "sharemenu/sharemenuscene.h"
+#include "widget/sharecontrolwidget.h"
+
+#include "services/common/menu/menuservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
+
+DPDIRSHARE_USE_NAMESPACE
+DSC_USE_NAMESPACE
+
+void DirShare::initialize()
+{
+}
+
+bool DirShare::start()
+{
+    MenuService::service()->registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
+
+    const QString &canvasMenu { "CanvasMenu" };
+    if (MenuService::service()->contains(canvasMenu)) {
+        MenuService::service()->bind(ShareMenuCreator::name(), canvasMenu);
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+            if (scene == canvasMenu || scene == "workspaceMenu")   // TODO(xust), TODO(liuyangming) what's the name of workspace's menu scene?
+                MenuService::service()->bind(ShareMenuCreator::name(), scene);
+        },
+                Qt::DirectConnection);
+    }
+
+    PropertyDialogService::service()->registerMethod(DirShare::createShareControlWidget, 2, nullptr);
+    return true;
+}
+
+dpf::Plugin::ShutdownFlag DirShare::stop()
+{
+    return kSync;
+}
+
+QWidget *DirShare::createShareControlWidget(const QUrl &url)
+{
+    DFMBASE_USE_NAMESPACE
+    if (url.scheme() != Global::kFile)
+        return nullptr;
+
+    auto info = InfoFactory::create<AbstractFileInfo>(url);
+    if (!info->isDir())
+        return nullptr;
+
+    return new ShareControlWidget(url);
+}

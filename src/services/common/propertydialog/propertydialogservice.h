@@ -42,7 +42,7 @@ public:
         return "org.deepin.service.PropertyDialogService";
     }
 
-    static PropertyDialogService *instance();
+    static PropertyDialogService *service();
 
     bool registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, int index = -1, QString *error = nullptr);
 
@@ -63,5 +63,5 @@ public:
     void addComputerPropertyToPropertyService();
 };
 DSC_END_NAMESPACE
-#define propertyServIns ::DSC_NAMESPACE::PropertyDialogService::instance()
+#define propertyServIns ::DSC_NAMESPACE::PropertyDialogService::service()
 #endif   // PROPERTYDIALOGSERVICE_H

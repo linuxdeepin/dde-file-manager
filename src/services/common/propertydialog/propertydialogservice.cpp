@@ -47,7 +47,7 @@ PropertyDialogService::PropertyDialogService(QObject *parent)
 {
 }
 
-PropertyDialogService *PropertyDialogService::instance()
+PropertyDialogService *PropertyDialogService::service()
 {
     auto &ctx = dpfInstance.serviceContext();
     static std::once_flag onceFlag;

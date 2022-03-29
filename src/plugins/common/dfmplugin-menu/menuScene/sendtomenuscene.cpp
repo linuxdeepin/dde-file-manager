@@ -55,7 +55,7 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     for (auto path : d->selectFiles) {
-        QFileInfo f(path);
+        QFileInfo f(QUrl(path).path());
         if (f.isDir()) {
             d->folderSelected = true;
             break;

@@ -163,6 +163,7 @@ void ShareInfo::setUserShareAcl(const QString &value)
 void ShareInfo::setGuestEnable(const QString &value)
 {
     guestEnable = value;
+    anonymous = (value == "y");
 }
 
 void ShareInfo::setWritable(bool value)

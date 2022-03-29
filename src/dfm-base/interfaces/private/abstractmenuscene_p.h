@@ -40,8 +40,8 @@ public:
     bool isEmptyArea;
 
     AbstractFileInfoPointer focusFileInfo;
-    QMap<QString, QAction *> predicateAction; // id -- instance
-    QMap<QString, QString> predicateName; // id -- text
+    QMap<QString, QAction *> predicateAction;   // id -- instance
+    QMap<QString, QString> predicateName;   // id -- text
 };
 
 DFMBASE_END_NAMESPACE

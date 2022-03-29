@@ -1,0 +1,157 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     xushitong<xushitong@uniontech.com>
+ *
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+#include "sharemenuscene.h"
+#include "private/sharemenuscene_p.h"
+
+#include "services/common/menu/menu_defines.h"
+#include "services/common/usershare/usershareservice.h"
+#include "services/common/propertydialog/property_defines.h"
+#include "dfm-base/dfm_global_defines.h"
+
+#include <dfm-framework/framework.h>
+
+#include <QFileInfo>
+#include <QMenu>
+
+DPDIRSHARE_USE_NAMESPACE
+
+ShareMenuScenePrivate::ShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
+    : AbstractMenuScenePrivate(qq)
+{
+}
+
+void ShareMenuScenePrivate::addShare(const QString &path)
+{
+    QList<QUrl> urls { QUrl(path) };
+    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+}
+
+ShareMenuScene::ShareMenuScene(QObject *parent)
+    : AbstractMenuScene(parent), d(new ShareMenuScenePrivate(this))
+{
+}
+
+ShareMenuScene::~ShareMenuScene()
+{
+}
+
+QString ShareMenuScene::name() const
+{
+    return ShareMenuCreator::name();
+}
+
+bool ShareMenuScene::initialize(const QVariantHash &params)
+{
+    DSC_USE_NAMESPACE
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+
+    d->predicateName.insert(ShareActionId::kActAddShareKey, tr("Share folder"));
+    d->predicateName.insert(ShareActionId::kActRemoveShareKey, tr("Cancel sharing"));
+
+    if (d->selectFiles.count() != 1)
+        return false;
+
+    QUrl u(d->selectFiles.first());
+    if (u.scheme() != Global::kFile)
+        return false;
+
+    if (!QFileInfo(u.path()).isDir())
+        return false;
+
+    return true;
+}
+
+bool ShareMenuScene::create(QMenu *parent)
+{
+    if (!parent)
+        return false;
+
+    if (d->selectFiles.count() != 1)
+        return false;
+
+    QUrl u(d->selectFiles.first());
+    if (QFileInfo(u.path()).isDir()) {
+        DSC_USE_NAMESPACE
+        if (UserShareService::service()->isSharedPath(d->selectFiles.first())) {
+            auto act = parent->addAction(d->predicateName[ShareActionId::kActRemoveShareKey]);
+            act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActRemoveShareKey);
+            d->predicateAction.insert(ShareActionId::kActRemoveShareKey, act);
+        } else {
+            auto act = parent->addAction(d->predicateName[ShareActionId::kActAddShareKey]);
+            act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActAddShareKey);
+            d->predicateAction.insert(ShareActionId::kActAddShareKey, act);
+        }
+    }
+
+    return true;
+}
+
+void ShareMenuScene::updateState(QMenu *parent)
+{
+}
+
+bool ShareMenuScene::triggered(QAction *action)
+{
+    if (!d->predicateAction.values().contains(action))
+        return false;
+
+    if (d->selectFiles.count() != 1)
+        return false;
+
+    QUrl u = d->selectFiles.first();
+    if (u.scheme() != Global::kFile)
+        return false;
+
+    if (!QFileInfo(u.path()).isDir())
+        return false;
+
+    DSC_USE_NAMESPACE
+    QString key = action->property(ActionPropertyKey::kActionID).toString();
+    if (key == ShareActionId::kActAddShareKey) {
+        d->addShare(d->selectFiles.first());
+        return true;
+    } else if (key == ShareActionId::kActRemoveShareKey) {
+        UserShareService::service()->removeShare(d->selectFiles.first());
+        return true;
+    } else {
+        return false;
+    }
+}
+
+AbstractMenuScene *ShareMenuScene::scene(QAction *action) const
+{
+    if (action == nullptr)
+        return nullptr;
+
+    if (!d->predicateAction.key(action).isEmpty())
+        return const_cast<ShareMenuScene *>(this);
+
+    return AbstractMenuScene::scene(action);
+}
+
+AbstractMenuScene *ShareMenuCreator::create()
+{
+    return new ShareMenuScene();
+}
