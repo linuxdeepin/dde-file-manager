@@ -26,6 +26,7 @@
 
 #include <QUrl>
 #include <QIcon>
+#include <QMap>
 #include <QDebug>
 
 DSC_BEGIN_NAMESPACE
@@ -48,6 +49,28 @@ extern const int kIconTitle;
 extern const int kBasisInfo;
 extern const int kPermission;
 }
+
+enum BasicFieldExpandEnum : int {
+    kNotAll,
+    kFileSize,
+    kFileCount,
+    kFileType,
+    kFilePosition,
+    kFileCreateTime,
+    kFileAccessedTime,
+    kFileModifiedTime,
+};
+
+enum BasicExpandType : int {
+    kFieldFilter,
+    kFieldInsert,
+    kFieldReplace
+};
+
+struct BasicExpand
+{
+    QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>> expandFieldMap;
+};
 
 struct DeviceInfo
 {

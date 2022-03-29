@@ -83,11 +83,14 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         DialogManager::instance()->showErrorDialog(tr("Unable to find the original file"), QString());
     }
 
+    if (filePreviewDialog) {
+        filePreviewDialog->close();
+        filePreviewDialog = nullptr;
+    }
+
     if (!filePreviewDialog) {
         filePreviewDialog = new FilePreviewDialog(selecturls, nullptr);
         DPlatformWindowHandle::enableDXcbForWindow(filePreviewDialog, true);
-    } else {
-        filePreviewDialog->updatePreviewList(selecturls);
     }
 
     if (selecturls.count() == 1)

@@ -32,3 +32,8 @@ void PropertyEventCall::sendSetPermissionManager(quint64 winID, const QUrl &url,
 {
     dpfInstance.eventDispatcher().publish(GlobalEventType::kSetPermission, winID, url, permissions);
 }
+
+void PropertyEventCall::sendFileHide(quint64 winID, const QList<QUrl> &urls)
+{
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kHideFiles, winID, urls);
+}

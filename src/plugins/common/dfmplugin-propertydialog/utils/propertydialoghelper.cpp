@@ -1,5 +1,5 @@
 #include "propertydialoghelper.h"
-
+DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
 
@@ -21,4 +21,24 @@ PropertyDialogService *PropertyDialogHelper::propertyServiceInstance()
         }
     }
     return propertyService;
+}
+
+WindowsService *PropertyDialogHelper::windowServiceInstance()
+{
+    static WindowsService *windowsService = nullptr;
+    if (windowsService == nullptr) {
+        auto &ctx = dpfInstance.serviceContext();
+        QString errStr;
+        if (!ctx.load(WindowsService::name(), &errStr)) {
+            qCritical() << errStr;
+            abort();
+        }
+
+        windowsService = ctx.service<WindowsService>(WindowsService::name());
+        if (!windowsService) {
+            qCritical() << "Failed, init windows \"sideBarService\" is empty";
+            abort();
+        }
+    }
+    return windowsService;
 }

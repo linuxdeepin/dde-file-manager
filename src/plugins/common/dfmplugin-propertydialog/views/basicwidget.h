@@ -22,6 +22,8 @@
 #define BASICWIDGET_H
 
 #include "dfmplugin_propertydialog_global.h"
+#include "services/common/propertydialog/property_defines.h"
+
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
@@ -42,6 +44,8 @@ private:
 
     void basicExpand(const QUrl &url);
 
+    void initFileMap();
+
 public:
     void selectFileUrl(const QUrl &url);
 
@@ -52,6 +56,8 @@ public:
 public slots:
 
     void slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount);
+
+    void slotFileHide(int state);
 
 protected:
     virtual void closeEvent(QCloseEvent *event) override;
@@ -68,6 +74,9 @@ private:
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
     int fSize { 0 };
     int fCount { 0 };
+    QMultiMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
+    QFrame *frameMain { nullptr };
+    QUrl currentUrl;
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // BASICWIDGET_H

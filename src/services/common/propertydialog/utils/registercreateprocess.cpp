@@ -98,21 +98,23 @@ QWidget *RegisterCreateProcess::createWidget(const QUrl &url)
 QMap<int, QWidget *> RegisterCreateProcess::createControlView(const QUrl &url)
 {
     QMap<int, QWidget *> temp {};
-    for (int i = 0; i < constructList.count(); ++i) {
-        QWidget *g = constructList.value(i)(url);
+    for (createControlViewFunc &func : constructList.values()) {
+        int index = constructList.key(func);
+        QWidget *g = func(url);
         if (g != nullptr)
-            temp.insert(i, g);
+            temp.insert(index, g);
     }
     return temp;
 }
 
-QList<QMap<QString, QString>> RegisterCreateProcess::basicExpandField(const QUrl &url)
+QMap<BasicExpandType, BasicExpand> RegisterCreateProcess::basicExpandField(const QUrl &url)
 {
-    QList<QMap<QString, QString>> expandField {};
-    for (basicViewFieldFunc func : basicViewFieldFuncHash.values()) {
-        QMap<QString, QString> field = func(url);
+    QMap<BasicExpandType, BasicExpand> expandField {};
+    basicViewFieldFunc func = basicViewFieldFuncHash.value(url.scheme());
+    if (func != nullptr) {
+        QMap<BasicExpandType, BasicExpand> field = func(url);
         if (!field.isEmpty())
-            expandField.append(field);
+            expandField.unite(field);
     }
     return expandField;
 }

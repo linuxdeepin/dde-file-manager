@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "propertydialogservice.h"
+#include "property_defines.h"
 #include "utils/computerpropertyhelper.h"
 #include "dfm-base/utils/universalutils.h"
 
@@ -27,11 +28,13 @@ CPY_BEGIN_NAMESPACE
 namespace EventType {
 const int kEvokePropertyDialog = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
+
 namespace EventFilePropertyControlFilter {
-const int kIconTitle { 0x40000 };
-const int kBasisInfo { 0x20000 };
-const int kPermission { 0x10000 };
+const int kIconTitle { 0x00001 };
+const int kBasisInfo { 0x00002 };
+const int kPermission { 0x00004 };
 }
+
 CPY_END_NAMESPACE
 DSC_END_NAMESPACE
 
@@ -136,7 +139,7 @@ bool PropertyDialogService::registerMethod(CPY_NAMESPACE::RegisterCreateProcess:
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerViewCreateFunction(view, scheme);
 }
 
-bool PropertyDialogService::registerBasicExpand(dfm_service_common::Property::RegisterCreateProcess::basicViewFieldFunc func, QString scheme)
+bool PropertyDialogService::registerBasicExpand(dfm_service_common::Property::RegisterCreateProcess::basicViewFieldFunc func, const QString &scheme)
 {
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerBasicViewExpand(func, scheme);
 }
@@ -156,7 +159,7 @@ QMap<int, QWidget *> PropertyDialogService::createControlView(const QUrl &url)
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->createControlView(url);
 }
 
-QList<QMap<QString, QString>> PropertyDialogService::basicExpandField(const QUrl &url)
+QMap<dfm_service_common::Property::BasicExpandType, dfm_service_common::Property::BasicExpand> PropertyDialogService::basicExpandField(const QUrl &url)
 {
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->basicExpandField(url);
 }

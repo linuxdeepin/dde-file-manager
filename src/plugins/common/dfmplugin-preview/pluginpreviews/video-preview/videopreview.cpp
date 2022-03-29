@@ -45,8 +45,7 @@ VideoPreview::~VideoPreview()
 {
     if (playerWidget->isVisible()) {
         playerWidget->hide();
-        //        delete playerWidget.data();
-        playerWidget->deleteLater();
+        delete playerWidget.data();
     }
 
     if (statusBar) {

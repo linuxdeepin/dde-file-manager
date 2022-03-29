@@ -288,9 +288,12 @@ void FilePreviewDialog::switchToPage(int index)
         if (preview && (FilePreviewFactory::isSuitedWithKey(preview, key) || FilePreviewFactory::isSuitedWithKey(preview, gKey)) && !FileUtils::isDesktopFile(fileList.at(index))) {
             if (preview->setFileUrl(fileList.at(index))) {
                 preview->contentWidget()->updateGeometry();
-                adjustSize();
                 updateTitle();
                 statusBar->openButton()->setFocus();
+                preview->contentWidget()->adjustSize();
+                int newPerviewWidth = preview->contentWidget()->size().width();
+                int newPerviewHeight = preview->contentWidget()->size().height();
+                resize(newPerviewWidth, newPerviewHeight + statusBar->height());
                 playCurrentPreviewFile();
                 moveToCenter();
                 return;
@@ -333,16 +336,15 @@ void FilePreviewDialog::switchToPage(int index)
         disconnect(preview, &AbstractBasePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
 
     connect(view, &AbstractBasePreview::titleChanged, this, &FilePreviewDialog::updateTitle);
+
     if (preview) {
         preview->contentWidget()->setVisible(false);
-        preview->deleteLater();
+        static_cast<QHBoxLayout *>(statusBar->layout())->removeWidget(preview->statusBarWidget());
         static_cast<QVBoxLayout *>(layout())->removeWidget(preview->contentWidget());
+        preview->deleteLater();
     }
 
     static_cast<QVBoxLayout *>(layout())->insertWidget(0, view->contentWidget());
-
-    if (preview)
-        static_cast<QHBoxLayout *>(statusBar->layout())->removeWidget(preview->statusBarWidget());
 
     if (QWidget *w = view->statusBarWidget())
         static_cast<QHBoxLayout *>(statusBar->layout())->insertWidget(3, w, 0, view->statusBarWidgetAlignment());
@@ -352,20 +354,14 @@ void FilePreviewDialog::switchToPage(int index)
 
     QTimer::singleShot(0, this, [this] {
         updateTitle();
+        playCurrentPreviewFile();
         statusBar->openButton()->setFocus();
-        int perviewwidth = preview->contentWidget()->size().width();
-        int perviewheight = preview->contentWidget()->size().height();
-        this->resize(perviewwidth, perviewheight);
-        adjustSize();
+        this->adjustSize();
         preview->contentWidget()->adjustSize();
         int newPerviewWidth = preview->contentWidget()->size().width();
         int newPerviewHeight = preview->contentWidget()->size().height();
+        resize(newPerviewWidth, newPerviewHeight + statusBar->height());
 
-        if (perviewwidth != newPerviewWidth || perviewheight != newPerviewHeight) {
-            resize(newPerviewWidth, newPerviewHeight);
-        }
-
-        playCurrentPreviewFile();
         moveToCenter();
     });
 }

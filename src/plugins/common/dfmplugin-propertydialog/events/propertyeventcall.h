@@ -33,6 +33,8 @@ public:
 
 public:
     static void sendSetPermissionManager(quint64 winID, const QUrl &url, const QFileDevice::Permissions permissions);
+
+    static void sendFileHide(quint64 winID, const QList<QUrl> &urls);
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 
