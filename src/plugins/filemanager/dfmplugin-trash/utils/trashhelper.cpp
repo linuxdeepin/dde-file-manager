@@ -38,6 +38,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/file/local/localfilewatcher.h"
 
 #include <DHorizontalLine>
 #include <DApplicationHelper>
@@ -235,7 +236,34 @@ dfm_service_common::FileOperationsService *TrashHelper::fileOperationsServIns()
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
 }
 
-TrashHelper::TrashHelper(QObject *parent)
-    : QObject(parent)
+void TrashHelper::trashFilesChanged(const QUrl &url)
 {
+    if (isEmpty() == isTrashEmpty)
+        return;
+
+    isTrashEmpty = isEmpty();
+
+    const QList<quint64> &windowIds = winServIns()->windowIdList();
+    for (const quint64 winId : windowIds) {
+        TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+    }
+}
+
+TrashHelper::TrashHelper(QObject *parent)
+    : QObject(parent),
+      isTrashEmpty(isEmpty())
+{
+    initTrashWatcher();
+}
+
+void TrashHelper::initTrashWatcher()
+{
+    QUrl trashFilesUrl;
+    trashFilesUrl.setScheme(Global::kFile);
+    trashFilesUrl.setPath(StandardPaths::location(StandardPaths::kTrashFilesPath));
+
+    trashFileWatcher = new LocalFileWatcher(trashFilesUrl, this);
+    connect(trashFileWatcher, &LocalFileWatcher::subfileCreated, this, &TrashHelper::trashFilesChanged);
+    connect(trashFileWatcher, &LocalFileWatcher::fileDeleted, this, &TrashHelper::trashFilesChanged);
+    trashFileWatcher->startWatcher();
 }

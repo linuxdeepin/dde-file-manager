@@ -40,6 +40,10 @@ QT_BEGIN_HEADER
 class QFrame;
 QT_END_NAMESPACE
 
+DFMBASE_BEGIN_NAMESPACE
+class LocalFileWatcher;
+DFMBASE_END_NAMESPACE
+
 DPTRASH_BEGIN_NAMESPACE
 
 class EmptyTrashWidget;
@@ -79,8 +83,19 @@ public:
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 
+signals:
+    void trashStateChanged(bool isEmpty);
+
+private:
+    void trashFilesChanged(const QUrl &url);
+
 private:
     explicit TrashHelper(QObject *parent = nullptr);
+    void initTrashWatcher();
+
+private:
+    DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher { nullptr };
+    bool isTrashEmpty;
 };
 
 DPTRASH_END_NAMESPACE

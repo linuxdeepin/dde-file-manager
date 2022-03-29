@@ -19,9 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "trasheventcaller.h"
+#include "utils/trashhelper.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/common/propertydialog/property_defines.h"
+#include "services/filemanager/workspace/workspace_defines.h"
+
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include <dfm-framework/framework.h>
@@ -30,6 +33,7 @@
 
 DPTRASH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 
 static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
 {
@@ -59,4 +63,9 @@ void TrashEventCaller::sendEmptyTrash(const quint64 windowID, const QList<QUrl> 
 void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)
 {
     dispatcher()->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, QList<QUrl>() << url);
+}
+
+void TrashEventCaller::sendShowEmptyTrash(quint64 winId, bool visible)
+{
+    dispatcher()->publish(Workspace::EventType::kShowCustomTopWidget, winId, TrashHelper::scheme(), visible);
 }
