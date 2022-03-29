@@ -1,0 +1,10 @@
+[Unit]
+Description=DDE File Manager Daemon
+
+[Service]
+Type=dbus
+BusName=com.deepin.filemanager.daemon
+ExecStart=/usr/bin/dde-file-manager-daemon
+
+[Install]
+WantedBy=multi-user.target

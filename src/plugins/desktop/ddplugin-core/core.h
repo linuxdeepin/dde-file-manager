@@ -28,7 +28,7 @@
 
 DDPCORE_BEGIN_NAMESPACE
 class WindowFrame;
-class Core : public dpf::Plugin
+class Core : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "core.json")
@@ -36,6 +36,7 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual dpf::Plugin::ShutdownFlag stop() override;
+
 protected:
     void onStart();
     WindowFrame *frame = nullptr;
@@ -43,4 +44,4 @@ protected:
 
 DDPCORE_END_NAMESPACE
 
-#endif // COREPLUGIN_H
+#endif   // COREPLUGIN_H

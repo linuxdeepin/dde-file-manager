@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +19,25 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef GLOBAL_DFM_FRAMEWORK_H
-#define GLOBAL_DFM_FRAMEWORK_H
+*/
+#ifndef CORE_H
+#define CORE_H
 
-#define DPF_NAMESPACE dpf
+#include "daemonplugin_core_global.h"
 
-#define DPF_BEGIN_NAMESPACE namespace DPF_NAMESPACE {
-#define DPF_END_NAMESPACE }
-#define DPF_USE_NAMESPACE using namespace DPF_NAMESPACE;
+#include <dfm-framework/framework.h>
 
-#if defined(DPF_LIBRARY)
-#    define DPF_EXPORT Q_DECL_EXPORT
-#else
-#    define DPF_EXPORT Q_DECL_IMPORT
-#endif
+DAEMONPCORE_BEGIN_NAMESPACE
 
-#endif   // GLOBAL_DFM_FRAMEWORK_H
+class Core : public DPF_NAMESPACE::Plugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.daemon" FILE "core.json")
+
+public:
+    virtual bool start() override;
+};
+
+DAEMONPCORE_END_NAMESPACE
+
+#endif   // CORE_H
