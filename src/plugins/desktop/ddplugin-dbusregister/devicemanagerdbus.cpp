@@ -58,7 +58,10 @@ void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
 
 bool DeviceManagerDBus::DetachBlockDevice(QString id)
 {
-    return deviceServ->detachBlockDevice(id);
+    bool ret = deviceServ->detachBlockDevice(id);
+    if (!ret)
+        emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
+    return ret;
 }
 
 bool DeviceManagerDBus::DetachBlockDeviceForced(QString id)
@@ -132,8 +135,11 @@ bool DeviceManagerDBus::DetachAllMountedDevices()
         return false;
     }
 
-    return deviceServ->detachAllMountedBlockDevices()
+    bool ret = deviceServ->detachAllMountedBlockDevices()
             && deviceServ->detachAllMountedProtocolDevices();
+    if (!ret)
+        emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
+    return ret;
 }
 
 bool DeviceManagerDBus::DetachAllMountedDevicesForced()
