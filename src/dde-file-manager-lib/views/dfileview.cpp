@@ -105,7 +105,7 @@ DWIDGET_USE_NAMESPACE
 #define ICON_WIDTH_OFFSET -20
 #define ICON_HEIGHT_OFFSET -20
 
-#define DRAGICON_SIZE 128   //拖拽聚合默认icon边长
+#define DRAGICON_SIZE 96   // 拖拽聚合默认icon边长(size来自ui需求)
 #define DRAGICON_OUTLINE 30   //增加外圈范围，防止旋转后部分图片的角绘制不到
 #define DRAGICON_MAX 4   //拖拽聚合最多绘制icon数量
 #define DRAGICON_ROTATE 10.0   //拖拽聚合旋转角度
@@ -113,7 +113,6 @@ DWIDGET_USE_NAMESPACE
 #define DRAGICON_MAX_COUNT 99   //最大显示计数
 
 #define LIST_DRAGRECT_WIDTH 120
-#define LIST_DRAGICON_SIZE 80
 #define LIST_DRAGTEXT_WIDTH 116
 #define LIST_DRAGTEXT_HEIGTH 47
 
@@ -4172,17 +4171,17 @@ QPixmap DFileViewPrivate::getPixmap(const QModelIndex &index) const
             scale = windowHandle->devicePixelRatio();
     }
 
-    QRect pixRect(0, 0, LIST_DRAGRECT_WIDTH, LIST_DRAGICON_SIZE + LIST_DRAGTEXT_HEIGTH);
+    QRect pixRect(0, 0, LIST_DRAGRECT_WIDTH, DRAGICON_SIZE + LIST_DRAGTEXT_HEIGTH);
     QPixmap pixmap(pixRect.size() * scale);
     pixmap.setDevicePixelRatio(scale);
     pixmap.fill(Qt::transparent);
     QPainter painter(&pixmap);
     QStyleOptionViewItem option = q->viewOptions();
     option.state |= QStyle::State_Selected;
-    option.rect = option.rect.translated((LIST_DRAGRECT_WIDTH - LIST_DRAGICON_SIZE)/2, 0);
+    option.rect = option.rect.translated((LIST_DRAGRECT_WIDTH - DRAGICON_SIZE)/2, 0);
 
     // 绘制当前按住的icon
-    q->itemDelegate()->paintDragIcon(&painter, option, m_currentPressedIndex, QSize(LIST_DRAGICON_SIZE, LIST_DRAGICON_SIZE));
+    q->itemDelegate()->paintDragIcon(&painter, option, m_currentPressedIndex, QSize(DRAGICON_SIZE, DRAGICON_SIZE));
 
     // 绘制文件名
     QString fileName = q->model()->data(index, DFileSystemModel::FileDisplayNameRole).toString();
@@ -4190,7 +4189,7 @@ QPixmap DFileViewPrivate::getPixmap(const QModelIndex &index) const
     layout.setText(fileName);
     layout.setFont(painter.font());
     painter.setPen(Qt::white);
-    QRectF boundingRect((LIST_DRAGRECT_WIDTH - LIST_DRAGTEXT_WIDTH)/2, LIST_DRAGICON_SIZE, LIST_DRAGTEXT_WIDTH, LIST_DRAGTEXT_HEIGTH);
+    QRectF boundingRect((LIST_DRAGRECT_WIDTH - LIST_DRAGTEXT_WIDTH)/2, DRAGICON_SIZE, LIST_DRAGTEXT_WIDTH, LIST_DRAGTEXT_HEIGTH);
     QTextOption::WrapMode wordWrap(QTextOption::WrapAtWordBoundaryOrAnywhere);
     Qt::TextElideMode mode(Qt::ElideLeft);
     int textLineHeight = q->fontMetrics().lineSpacing();
