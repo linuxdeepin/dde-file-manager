@@ -1772,7 +1772,8 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
 {
     // user home prohibit Paths
     QStringList usrProhibitPaths;
-    usrProhibitPaths << QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()
+    usrProhibitPaths << QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()
                      << QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first()
                      << QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first()
                      << QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()
