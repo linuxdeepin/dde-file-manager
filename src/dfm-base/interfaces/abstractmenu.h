@@ -35,7 +35,7 @@ QT_END_NAMESPACE
 
 DFMBASE_BEGIN_NAMESPACE
 class AbstractMenuPrivate;
-class AbstractMenu : public QObject
+class Q_DECL_DEPRECATED AbstractMenu : public QObject
 {
     Q_OBJECT
 public:

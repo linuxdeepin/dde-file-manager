@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +44,7 @@ DSC_BEGIN_NAMESPACE
 using ActionCreateCb = std::function<QString(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)>;
 using ActionClickedCb = std::function<void(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)>;
 
-struct ActionInfo
+struct Q_DECL_DEPRECATED ActionInfo
 {
     DFMBASE_NAMESPACE::ExtensionType type;
     ActionCreateCb createCb { nullptr };
@@ -67,15 +66,13 @@ public:
         return "org.deepin.service.MenuService";
     }
 
-    static MenuService *service();
-
     template<class T>
-    static bool regClass(const QString &name, QString *errorString = nullptr)
+    Q_DECL_DEPRECATED static bool regClass(const QString &name, QString *errorString = nullptr)
     {
         return DFMBASE_NAMESPACE::MenuFactory::regClass<T>(name, errorString);
     }
 
-    QMenu *createMenu(QWidget *parent,
+    Q_DECL_DEPRECATED QMenu *createMenu(QWidget *parent,
                       const QString &scene,
                       DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
                       const QUrl &rootUrl,
@@ -87,9 +84,10 @@ public:
 
     // TODO(Lee):移植最新的menu后删除
 
-    static void regAction(ActionInfo &info);
+    Q_DECL_DEPRECATED static void regAction(ActionInfo &info);
 
     // TODO(lee) delete old interface when new menu frame be used
+    static MenuService *service();
     bool contains(const QString &name) const;
     bool registerScene(const QString &name, DFMBASE_NAMESPACE::AbstractSceneCreator *creator);
     DFMBASE_NAMESPACE::AbstractSceneCreator *unregisterScene(const QString &name);

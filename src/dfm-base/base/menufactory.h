@@ -28,7 +28,7 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-class MenuFactory final : dpf::QtClassFactory<AbstractMenu>,
+class Q_DECL_DEPRECATED MenuFactory final : dpf::QtClassFactory<AbstractMenu>,
                           dpf::QtClassManager<AbstractMenu>
 {
     Q_DISABLE_COPY(MenuFactory)

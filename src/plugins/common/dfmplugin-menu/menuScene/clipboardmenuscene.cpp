@@ -86,15 +86,15 @@ bool ClipBoardMenuScene::create(QMenu *parent)
     if (d->isEmptyArea) {
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kPaste));
         d->predicateAction[ActionID::kPaste] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kPaste);
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kPaste));
     } else {
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kCut));
         d->predicateAction[ActionID::kCut] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kCut);
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCut));
 
         tempAction = parent->addAction(d->predicateName.value(ActionID::kCopy));
         d->predicateAction[ActionID::kCopy] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kCopy);
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCopy));
     }
 
     return true;

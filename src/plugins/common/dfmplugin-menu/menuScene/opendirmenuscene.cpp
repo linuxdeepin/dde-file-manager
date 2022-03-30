@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/opendirmenuscene_p.h"
+#include "action_defines.h"
 
 #include <services/common/menu/menu_defines.h>
 
@@ -40,11 +41,11 @@ AbstractMenuScene *OpenDirMenuCreator::create()
 OpenDirMenuScenePrivate::OpenDirMenuScenePrivate(OpenDirMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[openAsAdmin] = tr("Open as administrator");
-    predicateName[selectAll] = tr("Select all");
-    predicateName[openInNewWindow] = tr("Open in new window");
-    predicateName[openInNewTab] = tr("Open in new tab");
-    predicateName[openInTerminal] = tr("Open in terminal");
+    predicateName[ActionID::kOpenAsAdmin] = tr("Open as administrator");
+    predicateName[ActionID::kSelectAll] = tr("Select all");
+    predicateName[ActionID::kOpenInNewWindow] = tr("Open in new window");
+    predicateName[ActionID::kOpenInNewTab] = tr("Open in new tab");
+    predicateName[ActionID::kOpenInTerminal] = tr("Open in terminal");
 }
 
 OpenDirMenuScene::OpenDirMenuScene(QObject *parent)
@@ -93,11 +94,10 @@ AbstractMenuScene *OpenDirMenuScene::scene(QAction *action) const
 
 bool OpenDirMenuScene::create(QMenu *parent)
 {
-    if (d->isEmptyArea) {
+    if (d->isEmptyArea)
         emptyMenu(parent);
-    } else {
+    else
         normalMenu(parent);
-    }
 
     return true;
 }
@@ -117,29 +117,34 @@ bool OpenDirMenuScene::triggered(QAction *action)
 
 void OpenDirMenuScene::emptyMenu(QMenu *parent)
 {
-    QAction *tempAction = parent->addAction(d->predicateName.value(d->openAsAdmin));
-    d->predicateAction[d->openAsAdmin] = tempAction;
+    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
+    d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
 
-    tempAction = parent->addAction(d->predicateName.value(d->selectAll));
-    d->predicateAction[d->selectAll] = tempAction;
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kSelectAll));
+    d->predicateAction[ActionID::kSelectAll] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kSelectAll);
 }
 
 void OpenDirMenuScene::normalMenu(QMenu *parent)
 {
     if (d->selectFiles.count() == 1) {
-        QAction *tempAction = parent->addAction(d->predicateName.value(d->openInNewWindow));
-        d->predicateAction[d->openInNewWindow] = tempAction;
+        QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInNewWindow));
+        d->predicateAction[ActionID::kOpenInNewWindow] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInNewWindow);
 
-        tempAction = parent->addAction(d->predicateName.value(d->openInNewTab));
-        d->predicateAction[d->openInNewTab] = tempAction;
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInNewTab));
+        d->predicateAction[ActionID::kOpenInNewTab] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInNewTab);
 
-        tempAction = parent->addAction(d->predicateName.value(d->openInTerminal));
-        d->predicateAction[d->openInTerminal] = tempAction;
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInTerminal));
+        d->predicateAction[ActionID::kOpenInTerminal] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInTerminal);
 
         if (d->focusFileInfo->isDir() && SystemPathUtil::instance()->isSystemPath(d->focusFileInfo->filePath())) {
-
-            tempAction = parent->addAction(d->predicateName.value(d->openAsAdmin));
-            d->predicateAction[d->openAsAdmin] = tempAction;
+            tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
+            d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
         }
     }
 }

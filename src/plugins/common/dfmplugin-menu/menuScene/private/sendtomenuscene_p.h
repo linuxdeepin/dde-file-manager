@@ -41,9 +41,6 @@ private:
     void handleActionTriggered(QAction *act);
 
 private:
-    static constexpr char kSendTo[] { "Send to" };
-    static constexpr char kSendToBluetooth[] { "Bluetooth" };
-
     bool folderSelected { false };
 };
 

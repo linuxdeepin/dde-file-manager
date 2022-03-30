@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasmenuscene_p.h"
+#include "canvasmenu_defines.h"
 
 #include "displayconfig.h"
 #include "canvasmanager.h"
@@ -48,18 +49,27 @@ AbstractMenuScene *CanvasMenuCreator::create()
     return new CanvasMenuScene();
 }
 
-CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq)
-    : QObject(qq)
+CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq) : q (qq)
 {
     // 获取菜单服务
-    auto &ctx = dpfInstance.serviceContext();
-    extensionMenuServer = ctx.service<MenuService>(MenuService::name());
+    menuServer = MenuService::service();
 }
 
 CanvasMenuScene::CanvasMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new CanvasMenuScenePrivate(this))
 {
+    d->predicateName[ActionID::kSortBy] = tr("Sort by");
+    d->predicateName[ActionID::kIconSize] = tr("Icon size");
+    d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
+    d->predicateName[ActionID::kDisplaySettings] = tr("Display Settings");
+    d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
+
+    // 排序子菜单
+    d->predicateName[ActionID::kSrtName] = tr("Name");
+    d->predicateName[ActionID::kSrtTimeModified] = tr("Time modified");
+    d->predicateName[ActionID::kSrtSize] = tr("Size");
+    d->predicateName[ActionID::kSrtType] = tr("Type");
 }
 
 QString CanvasMenuScene::name() const
@@ -78,35 +88,40 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     if (d->currentDir.isEmpty())
         return false;
 
+    QList<AbstractMenuScene *> currentScene;
     if (d->isEmptyArea) {
         // new (new doc, new dir)
-        if (auto newCreateScene = d->extensionMenuServer->createScene("NewCreateMenu"))
-            subScene.append(newCreateScene);
+        if (auto newCreateScene = d->menuServer->createScene("NewCreateMenu"))
+            currentScene.append(newCreateScene);
 
         // file operation
-        if (auto operationScene = d->extensionMenuServer->createScene("ClipBoardMenu"))
-            subScene.append(operationScene);
+        if (auto operationScene = d->menuServer->createScene("ClipBoardMenu"))
+            currentScene.append(operationScene);
 
     } else {
         // file operation
-        if (auto operationScene = d->extensionMenuServer->createScene("ClipBoardMenu"))
-            subScene.append(operationScene);
+        if (auto operationScene = d->menuServer->createScene("ClipBoardMenu"))
+            currentScene.append(operationScene);
 
         // open with
-        if (auto openWithScene = d->extensionMenuServer->createScene("OpenWithMenu"))
-            subScene.append(openWithScene);
+        if (auto openWithScene = d->menuServer->createScene("OpenWithMenu"))
+            currentScene.append(openWithScene);
 
         // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
-        if (auto dirScene = d->extensionMenuServer->createScene("OpenDirMenu"))
-            subScene.append(dirScene);
+        if (auto dirScene = d->menuServer->createScene("OpenDirMenu"))
+            currentScene.append(dirScene);
 
         // file (rename)
-        if (auto fileScene = d->extensionMenuServer->createScene("OpenFileMenu"))
-            subScene.append(fileScene);
+        if (auto fileScene = d->menuServer->createScene("OpenFileMenu"))
+            currentScene.append(fileScene);
 
-        if (auto sendToScene = d->extensionMenuServer->createScene("SendToMenu"))
-            subScene.append(sendToScene);
+        if (auto sendToScene = d->menuServer->createScene("SendToMenu"))
+            currentScene.append(sendToScene);
     }
+
+    // the scene added by binding must be initializeed after 'defalut scene'.
+    currentScene.append(subScene);
+    subScene = currentScene;
 
     // 初始化所有子场景
     AbstractMenuScene::initialize(params);
@@ -116,10 +131,10 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
 
 AbstractMenuScene *CanvasMenuScene::scene(QAction *action) const
 {
-    if (action == nullptr)
+    if (!action)
         return nullptr;
 
-    if (d->providSelfActionList.contains(action))
+    if (d->predicateAction.values().contains(action))
         return const_cast<CanvasMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -150,15 +165,12 @@ void CanvasMenuScene::updateState(QMenu *parent)
 
 bool CanvasMenuScene::triggered(QAction *action)
 {
-    if (!d->providSelfActionList.contains(action))
+    if (!d->predicateAction.values().contains(action))
         return AbstractMenuScene::triggered(action);
 
-    auto actionText = action->text();
-
     // icon size
-    if (d->iconSizeMap.contains(actionText)) {
-
-        int iconLv = d->iconSizeMap.value(actionText);
+    if (d->iconSizeAction.contains(action)) {
+        int iconLv = d->iconSizeAction.value(action);
         for (auto v : ddplugin_canvas::CanvasIns->views()) {
             v->itemDelegate()->setIconLevel(iconLv);
             v->updateGrid();
@@ -168,21 +180,23 @@ bool CanvasMenuScene::triggered(QAction *action)
         return true;
     }
 
+    const QString &actionID = d->predicateAction.key(action);
+
     // Display Settings
-    if (actionText == tr("Display Settings")) {
+    if (actionID == ActionID::kDisplaySettings) {
         QDBusInterface interface("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter", "com.deepin.dde.ControlCenter");
         interface.asyncCall("ShowModule", QVariant::fromValue(QString("display")));
         return true;
     }
 
     // Wallpaper and Screensaver
-    if (actionText == tr("Wallpaper and Screensaver")) {
+    if (actionID == ActionID::kWallpaperSettings) {
         CanvasIns->onWallperSetting(d->view);
         return true;
     }
 
     // Auto arrange
-    if (actionText == tr("Auto arrange")) {
+    if (actionID == ActionID::kAutoArrange) {
         bool align = action->isChecked();
         DispalyIns->setAutoAlign(align);
         GridIns->setMode(align ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
@@ -198,31 +212,33 @@ bool CanvasMenuScene::triggered(QAction *action)
 
 void CanvasMenuScene::emptyMenu(QMenu *parent)
 {
-    QAction *tempAction = parent->addAction(tr("Sort by"));
+    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kSortBy));
     tempAction->setMenu(sortBySubActions(parent));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Sort by")] = tempAction;
+    d->predicateAction[ActionID::kSortBy] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSortBy));
 
-    tempAction = parent->addAction(tr("Icon size"));
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kIconSize));
     tempAction->setMenu(iconSizeSubActions(parent));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Open as administrator")] = tempAction;
+    d->predicateAction[ActionID::kIconSize] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kIconSize));
 
-    tempAction = parent->addAction(tr("Auto arrange"));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Auto arrange")] = tempAction;
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kAutoArrange));
+    d->predicateAction[ActionID::kAutoArrange] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kAutoArrange));
 
     parent->addSeparator();
-    tempAction = parent->addAction(tr("Display Settings"));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Display Settings")] = tempAction;
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kDisplaySettings));
+    d->predicateAction[ActionID::kDisplaySettings] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySettings));
 
-    tempAction = parent->addAction(tr("Wallpaper and Screensaver"));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Wallpaper and Screensaver")] = tempAction;
+    //todo update text when screensaver is disbale.
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kWallpaperSettings));
+    d->predicateAction[ActionID::kWallpaperSettings] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kWallpaperSettings));
 }
 
-void CanvasMenuScene::normalMenu(QMenu *parent) {
+void CanvasMenuScene::normalMenu(QMenu *parent)
+{
     Q_UNUSED(parent)
 }
 
@@ -232,12 +248,14 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
     int maxinum = d->view->itemDelegate()->maximumIconLevel();
 
     QMenu *subMenu = new QMenu(menu);
-    d->iconSizeMap.clear();
+    d->iconSizeAction.clear();
 
     for (int i = mininum; i <= maxinum; ++i) {
-        QAction *tempAction = subMenu->addAction(d->view->itemDelegate()->iconSizeLevelDescription(i));
-        d->iconSizeMap.insert(d->view->itemDelegate()->iconSizeLevelDescription(i), i);
-        d->providSelfActionList.append(tempAction);
+        const QString &text = d->view->itemDelegate()->iconSizeLevelDescription(i);
+        QAction *tempAction = subMenu->addAction(text);
+        d->iconSizeAction.insert(tempAction, i);
+        d->predicateAction[text] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, text);
     }
     return subMenu;
 }
@@ -247,21 +265,21 @@ QMenu *CanvasMenuScene::sortBySubActions(QMenu *menu)
     QMenu *subMenu = new QMenu(menu);
 
     // SortBy
-    QAction *tempAction = subMenu->addAction(tr("Name"));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Name")] = tempAction;
+    QAction *tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtName));
+    d->predicateAction[ActionID::kSrtName] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtName));
 
-    tempAction = subMenu->addAction(tr("Time modified"));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Time modified")] = tempAction;
+    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtTimeModified));
+    d->predicateAction[ActionID::kSrtTimeModified] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtTimeModified));
 
-    tempAction = subMenu->addAction(tr("Size"));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Size")] = tempAction;
+    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtSize));
+    d->predicateAction[ActionID::kSrtSize] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtSize));
 
-    tempAction = subMenu->addAction(tr("Type"));
-    d->providSelfActionList.append(tempAction);
-    d->predicateAction[tr("Type")] = tempAction;
+    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtType));
+    d->predicateAction[ActionID::kSrtType] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtType));
 
     return subMenu;
 }

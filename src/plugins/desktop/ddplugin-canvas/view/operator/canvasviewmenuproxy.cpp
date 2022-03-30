@@ -50,9 +50,8 @@ DDP_CANVAS_USE_NAMESPACE
 CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
     : QObject(parent), view(parent)
 {
-    // 获取扩展菜单服务
-    auto &ctx = dpfInstance.serviceContext();
-    extensionMenuServer = ctx.service<MenuService>(MenuService::name());
+    // 获取菜单服务
+    extensionMenuServer = MenuService::service();
 
     // 注册canvas菜单
     extensionMenuServer->registerScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
@@ -83,7 +82,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
 
     QVariantHash params;
-    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl();
+    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kIsEmptyArea] = true;
     params["DesktopGridPos"] = QVariant::fromValue(gridPos);
@@ -113,14 +112,14 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     auto selectUrls = view->selectionModel()->selectedUrls();
     QStringList selectPath;
     for (const auto &temp : selectUrls)
-        selectPath << temp.path();
+        selectPath << temp.toString();
 
     auto tgUrl = view->model()->url(index);
     auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
 
     QVariantHash params;
-    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl();
-    params[MenuParamKey::kFocusFile] = tgUrl;
+    params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
+    params[MenuParamKey::kFocusFile] = tgUrl.toString();
     params[MenuParamKey::kSelectFiles] = selectPath;
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kIsEmptyArea] = false;

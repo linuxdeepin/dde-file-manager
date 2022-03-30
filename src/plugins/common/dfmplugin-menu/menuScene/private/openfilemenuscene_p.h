@@ -33,9 +33,6 @@ class OpenFileMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     friend class OpenFileMenuScene;
     explicit OpenFileMenuScenePrivate(OpenFileMenuScene *qq);
-
-private:
-    const QString rename { "rename" };
 };
 
 DPMENU_END_NAMESPACE

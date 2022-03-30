@@ -23,35 +23,33 @@
 #include "canvasmenuscene.h"
 
 #include <services/common/dfm_common_service_global.h>
+#include <services/common/menu/menuservice.h>
 
 #include <QMap>
 
-namespace dfm_service_common {
-class MenuService;
-}
-
+DSC_USE_NAMESPACE
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class CanvasView;
-class CanvasMenuScenePrivate : public QObject
+class CanvasMenuScenePrivate
 {
-
 public:
-    friend class CanvasMenuScene;
     explicit CanvasMenuScenePrivate(CanvasMenuScene *qq);
 
-private:
     QString currentDir;
     QStringList selectFiles;
     QString focusFile;
     bool onDesktop { false };
     bool isEmptyArea { true };
-    QList<QAction *> providSelfActionList;
+    QMap<QAction *, int> iconSizeAction;
+
+    QMap<QString, QString> predicateName;
     QMap<QString, QAction *> predicateAction;
-    QMap<QString, int> iconSizeMap;
 
     CanvasView *view { nullptr };
-    dfm_service_common::MenuService *extensionMenuServer = nullptr;
+    MenuService *menuServer = nullptr;
+private:
+    CanvasMenuScene *q;
 };
 
 DDP_CANVAS_END_NAMESPACE

@@ -1052,7 +1052,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl() const
 {
     CALL_PROXY(redirectedFileUrl());
 
-    return QUrl();
+    return url();
 }
 
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const

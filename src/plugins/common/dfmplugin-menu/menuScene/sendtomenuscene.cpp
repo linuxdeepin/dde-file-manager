@@ -22,6 +22,7 @@
 */
 #include "sendtomenuscene.h"
 #include "private/sendtomenuscene_p.h"
+#include "action_defines.h"
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/bluetooth/bluetoothservice.h"
@@ -34,9 +35,6 @@
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-
-constexpr char SendToMenuScenePrivate::kSendTo[];
-constexpr char SendToMenuScenePrivate::kSendToBluetooth[];
 
 SendToMenuScene::SendToMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
@@ -82,10 +80,10 @@ bool SendToMenuScene::create(QMenu *parent)
             delete sendToMenu;
             sendToMenu = nullptr;
         } else {
-            auto sendToAct = parent->addAction(d->predicateName[d->kSendTo]);
+            auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
             sendToAct->setMenu(sendToMenu);
-            sendToAct->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, d->kSendTo);
-            d->predicateAction[d->kSendTo] = sendToAct;
+            sendToAct->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendTo);
+            d->predicateAction[ActionID::kSendTo] = sendToAct;
         }
     }
     return true;
@@ -127,8 +125,8 @@ dfmbase::AbstractMenuScene *SendToMenuCreator::create()
 SendToMenuScenePrivate::SendToMenuScenePrivate(AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[kSendTo] = tr("Send to");
-    predicateName[kSendToBluetooth] = tr("Bluetooth");
+    predicateName[ActionID::kSendTo] = tr("Send to");
+    predicateName[ActionID::kSendToBluetooth] = tr("Bluetooth");
 }
 
 void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
@@ -137,11 +135,11 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
         return;
 
     if (DSC_NAMESPACE::BluetoothService::service()->bluetoothEnable()) {
-        auto *act = subMenu->addAction(predicateName[kSendToBluetooth]);
-        act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, kSendToBluetooth);
+        auto *act = subMenu->addAction(predicateName[ActionID::kSendToBluetooth]);
+        act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
         if (folderSelected)
             act->setEnabled(false);
-        predicateAction[kSendToBluetooth] = act;
+        predicateAction[ActionID::kSendToBluetooth] = act;
     }
 
     using namespace GlobalServerDefines;
@@ -189,7 +187,7 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
     if (!act)
         return;
 
-    if (act->text() == predicateName[kSendToBluetooth]) {
+    if (act->text() == predicateName[ActionID::kSendToBluetooth]) {
         DSC_NAMESPACE::BluetoothService::service()->sendFiles(selectFiles);
     } else {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;

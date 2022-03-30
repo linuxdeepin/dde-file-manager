@@ -38,6 +38,23 @@ namespace ActionID {
     static constexpr char kPaste[] = "paste";
     static constexpr char kCut[] = "cut";
     static constexpr char kCopy[] = "copy";
+
+    // OpenDirMenu
+    static constexpr char kOpenAsAdmin[] = "open-as-administrator";
+    static constexpr char kSelectAll[] = "select-all" ;
+    static constexpr char kOpenInNewWindow[] = "open-in-new-window";
+    static constexpr char kOpenInNewTab[] = "open-in-new-tab";
+    static constexpr char kOpenInTerminal[] = "open-in-terminal";
+
+    // OpenFileMenu
+    static constexpr char kRename[] = "rename";
+
+    // "OpenWithMenu"
+    static constexpr char kOpenWith[] = "open-with";
+
+    // SendToMenu
+    static constexpr char kSendTo[] = "send-to";
+    static constexpr char kSendToBluetooth[] = "send-to-bluetooth";
 }
 
 DPMENU_END_NAMESPACE

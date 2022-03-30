@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             zhangyu<zhangyub@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,17 +42,6 @@ DFMBASE_USE_NAMESPACE
  * \param customData: some custom data when creating the menu (if needed).
  * \return Return menu
  */
-MenuService *MenuService::service()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(name()))
-            abort();
-    });
-
-    return ctx.service<MenuService>(name());
-}
 
 MenuServicePrivate::MenuServicePrivate(MenuService *parent)
     : QObject(parent), q(parent)
@@ -147,24 +135,43 @@ void MenuService::regAction(ActionInfo &info)
     MenuServiceHelper::regAction(info);
 }
 
+MenuService *MenuService::service()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(name()))
+            abort();
+    });
+
+    return ctx.service<MenuService>(name());
+}
+
 bool MenuService::contains(const QString &name) const
 {
+    QReadLocker lk(&d->locker);
     return d->creators.contains(name);
 }
 
 bool MenuService::registerScene(const QString &name, AbstractSceneCreator *creator)
 {
+    QWriteLocker lk(&d->locker);
     if (d->creators.contains(name) || !creator || name.isEmpty())
         return false;
 
     d->creators.insert(name, creator);
+    lk.unlock();
+
     emit sceneAdded(name);
     return true;
 }
 
 AbstractSceneCreator *MenuService::unregisterScene(const QString &name)
 {
+    QWriteLocker lk(&d->locker);
     auto scene = d->creators.take(name);
+    lk.unlock();
+
     unBind(name);
 
     if (scene)
@@ -175,6 +182,7 @@ AbstractSceneCreator *MenuService::unregisterScene(const QString &name)
 
 bool MenuService::bind(const QString &name, const QString &parent)
 {
+    QReadLocker lk(&d->locker);
     if (!d->creators.contains(name) || !d->creators.contains(parent))
         return false;
 
@@ -191,6 +199,7 @@ void MenuService::unBind(const QString &name, const QString &parent)
     if (name.isEmpty())
         return;
 
+    QReadLocker lk(&d->locker);
     if (parent.isEmpty()) {
         for (auto it = d->creators.begin(); it != d->creators.end(); ++it)
             it.value()->removeChild(name);
@@ -203,12 +212,16 @@ void MenuService::unBind(const QString &name, const QString &parent)
 
 AbstractMenuScene *MenuService::createScene(const QString &name) const
 {
+    QReadLocker lk(&d->locker);
+
     AbstractMenuScene *top = nullptr;
     auto it = d->creators.find(name);
     if (it == d->creators.end())
         return top;
 
     auto creator = it.value();
+    lk.unlock();
+
     if (creator)
         top = creator->create();
 

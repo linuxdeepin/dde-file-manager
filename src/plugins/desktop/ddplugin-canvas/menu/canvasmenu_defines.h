@@ -18,28 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MENU_DEFINES_H
-#define MENU_DEFINES_H
+#ifndef CANVASMENU_DEFINES_H
+#define CANVASMENU_DEFINES_H
 
-#include "dfm_common_service_global.h"
+#include "ddplugin_canvas_global.h"
 
-DSC_BEGIN_NAMESPACE
+DDP_CANVAS_BEGIN_NAMESPACE
 
-namespace MenuParamKey {
-// file menu params for initialize
-static constexpr char kCurrentDir[] = "currentDir"; // string url
-static constexpr char kFocusFile[] = "focusFile";  // string url
-static constexpr char kSelectFiles[] = "selectFiles"; // string urls
-static constexpr char kOnDesktop[] = "onDesktop";  // bool
-static constexpr char kIsEmptyArea[] = "isEmptyArea"; // bool
+namespace ActionID {
+   static constexpr char kSortBy[] = "sort-by";
+   static constexpr char kIconSize[] = "icon-size";
+   static constexpr char kAutoArrange[] = "auto-arrange";
+   static constexpr char kDisplaySettings[] = "display-settings";
+   static constexpr char kWallpaperSettings[] = "wallpaper-settings";
+
+   // sort by
+   static constexpr char kSrtName[] = "sort-by-name";
+   static constexpr char kSrtTimeModified[] = "sort-by-time-modified";
+   static constexpr char kSrtSize[] = "sort-by-size";
+   static constexpr char kSrtType[] = "sort-by-type";
 }
 
-namespace ActionPropertyKey {
-// key for action property
-static constexpr char kActionID[] = "actionID"; // string
+DDP_CANVAS_END_NAMESPACE
 
-}
-
-DSC_END_NAMESPACE
-
-#endif // MENU_DEFINES_H
+#endif // CANVASMENU_DEFINES_H

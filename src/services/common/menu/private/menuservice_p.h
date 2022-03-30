@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
  * Maintainer: liqiang<liqianga@uniontech.com>
  *
@@ -25,6 +25,8 @@
 #include <dfm-base/interfaces/abstractscenecreator.h>
 #include <services/common/menu/menuservice.h>
 
+#include <QReadWriteLock>
+
 DSC_BEGIN_NAMESPACE
 
 class MenuServicePrivate : public QObject
@@ -37,6 +39,7 @@ public:
 
 public:
     QHash<QString, DFMBASE_NAMESPACE::AbstractSceneCreator *> creators;
+    QReadWriteLock locker;
 
 private:
     MenuService *q;

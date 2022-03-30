@@ -28,7 +28,7 @@
 
 DSC_BEGIN_NAMESPACE
 
-class MenuServiceHelper
+class Q_DECL_DEPRECATED MenuServiceHelper
 {
     friend class MenuServer;
 

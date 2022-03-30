@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangyu<zhangyub@uniontech.com>
  *
  * Maintainer: liqiang<liqianga@uniontech.com>
  *

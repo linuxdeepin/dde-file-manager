@@ -59,9 +59,8 @@ const char *const kDesktopMenu = "desktop-menu";
 
 CanvasMenu::CanvasMenu()
 {
-    // 获取扩展菜单服务
-    auto &ctx = dpfInstance.serviceContext();
-    extensionMenuServer = ctx.service<MenuService>(MenuService::name());
+    // 获取菜单服务
+    extensionMenuServer = MenuService::service();
 
     // regist desktop aciton type
     this->registDesktopCustomActions();

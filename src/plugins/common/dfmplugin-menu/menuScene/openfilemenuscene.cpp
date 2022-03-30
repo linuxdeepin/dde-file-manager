@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/openfilemenuscene_p.h"
+#include "action_defines.h"
 
 #include <services/common/menu/menu_defines.h>
 
@@ -39,7 +40,7 @@ AbstractMenuScene *OpenFileMenuCreator::create()
 OpenFileMenuScenePrivate::OpenFileMenuScenePrivate(OpenFileMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[rename] = tr("Rename");
+    predicateName[ActionID::kRename] = tr("Rename");
 }
 
 OpenFileMenuScene::OpenFileMenuScene(QObject *parent)
@@ -87,9 +88,9 @@ AbstractMenuScene *OpenFileMenuScene::scene(QAction *action) const
 
 bool OpenFileMenuScene::create(QMenu *parent)
 {
-    QAction *tempAction = parent->addAction(d->predicateName.value(d->rename));
-    d->predicateAction[d->rename] = tempAction;
-
+    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kRename));
+    d->predicateAction[ActionID::kRename] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRename));
     return true;
 }
 

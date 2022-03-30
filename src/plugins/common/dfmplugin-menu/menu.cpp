@@ -39,17 +39,7 @@ void Menu::initialize()
 
 bool Menu::start()
 {
-    auto &ctx = dpfInstance.serviceContext();
-
-    // start menu service.
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        QString error;
-        bool ret = ctx.load(MenuService::name(), &error);
-        Q_ASSERT_X(ret, "Menu Plugin ", error.toStdString().c_str());
-    });
-
-    menuServer = ctx.service<MenuService>(MenuService::name());
+    menuServer = MenuService::service();
     Q_ASSERT_X(menuServer, "Menu Plugin", "MenuService not found");
 
     this->regDefaultScene();
@@ -75,6 +65,8 @@ void Menu::regDefaultScene()
 
     // 注册文件场景
     menuServer->registerScene(OpenFileMenuCreator::name(), new OpenFileMenuCreator);
+
+    menuServer->registerScene(OpenWithMenuCreator::name(), new OpenWithMenuCreator);
 
     menuServer->registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
 }

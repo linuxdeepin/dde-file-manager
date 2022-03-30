@@ -33,9 +33,7 @@ class OpenWithMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     friend class OpenWithMenuScene;
     explicit OpenWithMenuScenePrivate(OpenWithMenuScene *qq);
-
-private:
-    const QString openWith { "Open with" };
+    QStringList recommendApps;
 };
 
 DPMENU_END_NAMESPACE

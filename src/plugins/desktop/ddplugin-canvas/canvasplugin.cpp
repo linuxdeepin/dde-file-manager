@@ -47,8 +47,8 @@ bool CanvasPlugin::start()
         QString error;
         bool ret = ctx.load(CanvasService::name(), &error);
         Q_ASSERT_X(ret, "CanvasPlugin", error.toStdString().c_str());
-        ret = ctx.load(MenuService::name(), &error);
-        Q_ASSERT_X(ret, "CanvasPlugin", error.toStdString().c_str());
+
+        MenuService::service();
     }
 
     auto service = ctx.service<CanvasService>(CanvasService::name());

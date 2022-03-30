@@ -32,13 +32,6 @@ class OpenDirMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     friend class OpenDirMenuScene;
     explicit OpenDirMenuScenePrivate(OpenDirMenuScene *qq);
-
-private:
-    const QString openAsAdmin { "Open as administrator" };
-    const QString selectAll { "Select all" };
-    const QString openInNewWindow { "Open in new window" };
-    const QString openInNewTab { "Open in new tab" };
-    const QString openInTerminal { "Open in terminal" };
 };
 
 DPMENU_END_NAMESPACE
