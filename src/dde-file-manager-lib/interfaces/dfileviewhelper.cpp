@@ -807,7 +807,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event) const
 
         if (qApp->keyboardModifiers() == Qt::AltModifier) {
             default_action = Qt::MoveAction;
-        } else if (!DFMGlobal::keyCtrlIsPressed()) {
+        } else if (qApp->queryKeyboardModifiers() != Qt::ControlModifier) {
             // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
             if (DStorageInfo::inSameDevice(from, to)) {
                 default_action = Qt::MoveAction;
@@ -890,7 +890,7 @@ void DFileViewHelper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> 
 
         if (qApp->keyboardModifiers() == Qt::AltModifier) {
             default_action = Qt::MoveAction;
-        } else if (!DFMGlobal::keyCtrlIsPressed()) {
+        } else if (qApp->queryKeyboardModifiers() != Qt::ControlModifier) {
             // 如果文件和目标路径在同一个分区下，默认为移动文件，否则默认为复制文件
             if (DStorageInfo::inSameDevice(from, to)) {
                 default_action = Qt::MoveAction;
