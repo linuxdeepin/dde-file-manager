@@ -27,6 +27,7 @@
 #include "events/recenteventcaller.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
+
 #include "dfm-base/base/schemefactory.h"
 
 #include <QFile>
@@ -95,6 +96,23 @@ void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const 
     });
     menu->exec(globalPos);
     delete menu;
+}
+
+RecentManager::ExpandFieldMap RecentManager::propetyExtensionFunc(const QUrl &url)
+{
+    using BasicExpandType = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType;
+    using BasicExpand = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand;
+    using BasicFieldExpandEnum = DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum;
+
+    BasicExpand expand;
+    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+    const QString &sourcePath = info->redirectedFileUrl().toLocalFile();
+    expand.expandFieldMap.insert(BasicFieldExpandEnum::kFileModifiedTime, qMakePair(QObject::tr("Source path"), sourcePath));
+
+    ExpandFieldMap map;
+    map[BasicExpandType::kFieldInsert] = expand;
+
+    return map;
 }
 
 QMap<QUrl, AbstractFileInfoPointer> RecentManager::getRecentNodes() const

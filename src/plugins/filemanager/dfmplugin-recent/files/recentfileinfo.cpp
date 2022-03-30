@@ -78,6 +78,16 @@ bool RecentFileInfo::isWritable() const
 {
     // Todo(yanghao): gvfs优化
     return permissions().testFlag(QFile::Permission::WriteUser);
+}
+
+bool RecentFileInfo::canRedirectionFileUrl() const
+{
+    return d->proxy;
+}
+
+QUrl RecentFileInfo::redirectedFileUrl() const
+{
+    return d->proxy ? d->proxy->url() : url();
 };
 
 DPRECENT_END_NAMESPACE

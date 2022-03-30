@@ -28,6 +28,7 @@
 #include "menus/recentmenu.h"
 
 #include "services/common/menu/menuservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -138,6 +139,9 @@ void Recent::addFileOperations()
 {
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
     WorkspaceService::instance()->setWorkspaceMenuScene(RecentManager::scheme(), RecentScene::kRecentMenu);
+
+    propertyServIns->registerBasicExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
+
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->copy = [](const quint64,
                                    const QList<QUrl>,

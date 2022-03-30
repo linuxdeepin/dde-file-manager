@@ -30,6 +30,7 @@
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+#include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -50,6 +51,7 @@ class RecentManager final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(RecentManager)
+    using ExpandFieldMap = QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand>;
 
 public:
     static RecentManager *instance();
@@ -73,6 +75,7 @@ public:
 
     static void clearRecent();
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+    static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
 
     QMap<QUrl, AbstractFileInfoPointer> getRecentNodes() const;
     bool removeRecentFile(const QUrl &url);
