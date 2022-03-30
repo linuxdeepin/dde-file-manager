@@ -24,11 +24,11 @@ FILE(GLOB WINDOWS_FILES
 )
 
 
-FILE(GLOB VAULT_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/vault/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/vault/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/vault/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/vault/private/*.cpp"
+FILE(GLOB FILEENCRYPT_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/private/*.cpp"
 )
 
 FILE(GLOB SIDEBAR_FILES
@@ -103,7 +103,7 @@ add_library(
     SHARED
     ${GLOBAL_FILES}
     ${WINDOWS_FILES}
-    ${VAULT_FILES}
+    ${FILEENCRYPT_FILES}
     ${SIDEBAR_FILES}
     ${TITLEBAR_FILES}
     ${WORKSPACE_FILES}

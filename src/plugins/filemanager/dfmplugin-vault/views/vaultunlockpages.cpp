@@ -26,7 +26,7 @@
 #include "utils/vaultglobaldefine.h"
 #include "utils/vaulthelper.h"
 #include "utils/vaultautolock.h"
-#include "services/filemanager/vault/vaultservice.h"
+#include "services/filemanager/fileencrypt/fileencryptservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
 

@@ -23,24 +23,24 @@
 #define VAULTHANDLE_H
 
 #include "dfm_filemanager_service_global.h"
-#include "vault/vaulterrorcode.h"
+#include "fileencrypt/fileencrypterrorcode.h"
 
 #include <QObject>
 
 DSB_FM_BEGIN_NAMESPACE
 
-class VaultService;
-class VaultHandlePrivate;
-class VaultHandle : public QObject
+class FileEncryptService;
+class FileEncryptPrivate;
+class FileEncryptHandle : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(VaultHandle)
+    Q_DISABLE_COPY(FileEncryptHandle)
 private:
-    friend class VaultServicePrivate;
-    explicit VaultHandle(QObject *parent = nullptr);
+    friend class FileEncryptServicePrivate;
+    explicit FileEncryptHandle(QObject *parent = nullptr);
 
 public:
-    virtual ~VaultHandle() override;
+    virtual ~FileEncryptHandle() override;
 
 private:
     void createVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type = EncryptType::AES_256_GCM, int blockSize = 32768);
@@ -88,7 +88,7 @@ private slots:
     void slotReadOutput();
 
 private:
-    VaultHandlePrivate *vaultHandlePrivatePtr = nullptr;
+    FileEncryptPrivate *fileencryptHandlePrivatePtr = nullptr;
 };
 DSB_FM_END_NAMESPACE
 #endif   // VAULTHANDLE_H

@@ -19,9 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "vaulthandle.h"
-#include "vaulthandle_p.h"
-#include "vault/vaulterrorcode.h"
+#include "fileencrypthandle.h"
+#include "fileencrypthandle_p.h"
+#include "fileencrypt/fileencrypterrorcode.h"
 
 #include <QDirIterator>
 #include <QObject>
@@ -38,23 +38,23 @@
 
 DSB_FM_USE_NAMESPACE
 
-VaultHandle::VaultHandle(QObject *parent)
-    : QObject(parent), vaultHandlePrivatePtr(new VaultHandlePrivate(this))
+FileEncryptHandle::FileEncryptHandle(QObject *parent)
+    : QObject(parent), fileencryptHandlePrivatePtr(new FileEncryptPrivate(this))
 {
 
-    this->moveToThread(vaultHandlePrivatePtr->thread);
-    connect(vaultHandlePrivatePtr->process, &QProcess::readyReadStandardError, this, &VaultHandle::slotReadError);
-    connect(vaultHandlePrivatePtr->process, &QProcess::readyReadStandardOutput, this, &VaultHandle::slotReadOutput);
-    vaultHandlePrivatePtr->thread->start();
+    this->moveToThread(fileencryptHandlePrivatePtr->thread);
+    connect(fileencryptHandlePrivatePtr->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
+    connect(fileencryptHandlePrivatePtr->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
+    fileencryptHandlePrivatePtr->thread->start();
 }
 
-VaultHandle::~VaultHandle()
+FileEncryptHandle::~FileEncryptHandle()
 {
-    disconnect(vaultHandlePrivatePtr->process, &QProcess::readyReadStandardError, this, &VaultHandle::slotReadError);
-    disconnect(vaultHandlePrivatePtr->process, &QProcess::readyReadStandardOutput, this, &VaultHandle::slotReadOutput);
+    disconnect(fileencryptHandlePrivatePtr->process, &QProcess::readyReadStandardError, this, &FileEncryptHandle::slotReadError);
+    disconnect(fileencryptHandlePrivatePtr->process, &QProcess::readyReadStandardOutput, this, &FileEncryptHandle::slotReadOutput);
 
-    delete vaultHandlePrivatePtr;
-    vaultHandlePrivatePtr = nullptr;
+    delete fileencryptHandlePrivatePtr;
+    fileencryptHandlePrivatePtr = nullptr;
 }
 
 /*!
@@ -69,22 +69,22 @@ VaultHandle::~VaultHandle()
  *  调用runVaultProcess函数进行创建保险箱并返回创建状态标记。
  *  最后使用信号signalCreateVault发送创建状态标记。
  */
-void VaultHandle::createVault(QString lockBaseDir, QString unlockFileDir, QString passWord, EncryptType type, int blockSize)
+void FileEncryptHandle::createVault(QString lockBaseDir, QString unlockFileDir, QString passWord, EncryptType type, int blockSize)
 {
-    vaultHandlePrivatePtr->mutex->lock();
-    vaultHandlePrivatePtr->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
+    fileencryptHandlePrivatePtr->mutex->lock();
+    fileencryptHandlePrivatePtr->activeState.insert(1, static_cast<int>(ErrorCode::kSuccess));
     createDirIfNotExist(lockBaseDir);
     createDirIfNotExist(unlockFileDir);
-    int flg = vaultHandlePrivatePtr->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
-    if (vaultHandlePrivatePtr->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
-        emit signalCreateVault(vaultHandlePrivatePtr->activeState.value(1));
+    int flg = fileencryptHandlePrivatePtr->runVaultProcess(lockBaseDir, unlockFileDir, passWord, type, blockSize);
+    if (fileencryptHandlePrivatePtr->activeState.value(1) != static_cast<int>(ErrorCode::kSuccess)) {
+        emit signalCreateVault(fileencryptHandlePrivatePtr->activeState.value(1));
         qInfo() << "create fail";
     } else {
         emit signalCreateVault(flg);
         qInfo() << "create success " << flg;
     }
-    vaultHandlePrivatePtr->activeState.clear();
-    vaultHandlePrivatePtr->mutex->unlock();
+    fileencryptHandlePrivatePtr->activeState.clear();
+    fileencryptHandlePrivatePtr->mutex->unlock();
 }
 
 /*!
@@ -97,22 +97,22 @@ void VaultHandle::createVault(QString lockBaseDir, QString unlockFileDir, QStrin
  *  调用runVaultProcess函数进行解锁保险箱并返回解锁状态标记。
  *  最后使用信号signalUnlockVault发送解锁状态标记。
  */
-void VaultHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
+void FileEncryptHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
 {
-    vaultHandlePrivatePtr->mutex->lock();
-    vaultHandlePrivatePtr->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
+    fileencryptHandlePrivatePtr->mutex->lock();
+    fileencryptHandlePrivatePtr->activeState.insert(3, static_cast<int>(ErrorCode::kSuccess));
     qDebug() << "VaultHandle::unlockVault:" << QThread::currentThread();
     createDirIfNotExist(unlockFileDir);
-    int flg = vaultHandlePrivatePtr->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
-    if (vaultHandlePrivatePtr->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
-        emit signalUnlockVault(vaultHandlePrivatePtr->activeState.value(3));
+    int flg = fileencryptHandlePrivatePtr->runVaultProcess(lockBaseDir, unlockFileDir, DSecureString);
+    if (fileencryptHandlePrivatePtr->activeState.value(3) != static_cast<int>(ErrorCode::kSuccess)) {
+        emit signalUnlockVault(fileencryptHandlePrivatePtr->activeState.value(3));
         qInfo() << "Decrypt fail";
     } else {
         emit signalUnlockVault(flg);
         qInfo() << "Decrypt success " << flg;
     }
-    vaultHandlePrivatePtr->activeState.clear();
-    vaultHandlePrivatePtr->mutex->unlock();
+    fileencryptHandlePrivatePtr->activeState.clear();
+    fileencryptHandlePrivatePtr->mutex->unlock();
 }
 
 /*!
@@ -123,24 +123,24 @@ void VaultHandle::unlockVault(QString lockBaseDir, QString unlockFileDir, QStrin
  *  调用runVaultProcess函数进行上锁保险箱并返回上锁状态标记。
  *  最后使用信号signalLockVault发送上锁状态标记。
  */
-void VaultHandle::lockVault(QString unlockFileDir)
+void FileEncryptHandle::lockVault(QString unlockFileDir)
 {
-    vaultHandlePrivatePtr->mutex->lock();
-    vaultHandlePrivatePtr->activeState.insert(7, static_cast<int>(ErrorCode::kSuccess));
-    int flg = vaultHandlePrivatePtr->lockVaultProcess(unlockFileDir);
-    if (vaultHandlePrivatePtr->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
-        emit signalLockVault(vaultHandlePrivatePtr->activeState.value(7));
+    fileencryptHandlePrivatePtr->mutex->lock();
+    fileencryptHandlePrivatePtr->activeState.insert(7, static_cast<int>(ErrorCode::kSuccess));
+    int flg = fileencryptHandlePrivatePtr->lockVaultProcess(unlockFileDir);
+    if (fileencryptHandlePrivatePtr->activeState.value(7) != static_cast<int>(ErrorCode::kSuccess)) {
+        emit signalLockVault(fileencryptHandlePrivatePtr->activeState.value(7));
         qInfo() << "encrypt fial";
     } else {
         emit signalLockVault(flg);
         qInfo() << "encrypt success " << flg;
     }
     createDirIfNotExist(unlockFileDir);
-    vaultHandlePrivatePtr->activeState.clear();
-    vaultHandlePrivatePtr->mutex->unlock();
+    fileencryptHandlePrivatePtr->activeState.clear();
+    fileencryptHandlePrivatePtr->mutex->unlock();
 }
 
-void VaultHandle::createDirIfNotExist(QString path)
+void FileEncryptHandle::createDirIfNotExist(QString path)
 {
     if (!QFile::exists(path)) {
         QDir().mkpath(path);
@@ -162,23 +162,23 @@ void VaultHandle::createDirIfNotExist(QString path)
  * \note
  *  根据获取的error值是否含有对应的标识来确定错误的具体原因
  */
-void VaultHandle::slotReadError()
+void FileEncryptHandle::slotReadError()
 {
-    QString error = vaultHandlePrivatePtr->process->readAllStandardError().data();
+    QString error = fileencryptHandlePrivatePtr->process->readAllStandardError().data();
     qInfo() << error;
-    if (vaultHandlePrivatePtr->activeState.contains(1)) {
+    if (fileencryptHandlePrivatePtr->activeState.contains(1)) {
         if (error.contains("mountpoint is not empty"))
-            vaultHandlePrivatePtr->activeState[1] = static_cast<int>(ErrorCode::kMountpointNotEmpty);
+            fileencryptHandlePrivatePtr->activeState[1] = static_cast<int>(ErrorCode::kMountpointNotEmpty);
         else if (error.contains("Permission denied"))
-            vaultHandlePrivatePtr->activeState[1] = static_cast<int>(ErrorCode::kPermissionDenied);
-    } else if (vaultHandlePrivatePtr->activeState.contains(3)) {
+            fileencryptHandlePrivatePtr->activeState[1] = static_cast<int>(ErrorCode::kPermissionDenied);
+    } else if (fileencryptHandlePrivatePtr->activeState.contains(3)) {
         if (error.contains("mountpoint is not empty"))
-            vaultHandlePrivatePtr->activeState[3] = static_cast<int>(ErrorCode::kMountpointNotEmpty);
+            fileencryptHandlePrivatePtr->activeState[3] = static_cast<int>(ErrorCode::kMountpointNotEmpty);
         else if (error.contains("Permission denied"))
-            vaultHandlePrivatePtr->activeState[3] = static_cast<int>(ErrorCode::kPermissionDenied);
-    } else if (vaultHandlePrivatePtr->activeState.contains(7)) {
+            fileencryptHandlePrivatePtr->activeState[3] = static_cast<int>(ErrorCode::kPermissionDenied);
+    } else if (fileencryptHandlePrivatePtr->activeState.contains(7)) {
         if (error.contains("Device or resource busy"))
-            vaultHandlePrivatePtr->activeState[7] = static_cast<int>(ErrorCode::kResourceBusy);
+            fileencryptHandlePrivatePtr->activeState[7] = static_cast<int>(ErrorCode::kResourceBusy);
     }
     emit signalReadError(error);
 }
@@ -186,13 +186,13 @@ void VaultHandle::slotReadError()
 /*!
  * \brief   进程执行过程中的输出信息，发送signalReadOutput信号
  */
-void VaultHandle::slotReadOutput()
+void FileEncryptHandle::slotReadOutput()
 {
-    QString msg = vaultHandlePrivatePtr->process->readAllStandardOutput().data();
+    QString msg = fileencryptHandlePrivatePtr->process->readAllStandardOutput().data();
     emit signalReadOutput(msg);
 }
 
-VaultHandlePrivate::VaultHandlePrivate(VaultHandle *q)
+FileEncryptPrivate::FileEncryptPrivate(FileEncryptHandle *q)
     : q_ptr(q)
 {
     process = new QProcess;
@@ -201,7 +201,7 @@ VaultHandlePrivate::VaultHandlePrivate(VaultHandle *q)
     initEncryptType();
 }
 
-VaultHandlePrivate::~VaultHandlePrivate()
+FileEncryptPrivate::~FileEncryptPrivate()
 {
     if (process) {
         delete process;
@@ -229,7 +229,7 @@ VaultHandlePrivate::~VaultHandlePrivate()
  *  最后根据执行结果返回cryfs执行状态。此函数主要用于解锁保险箱
  * \return                       返回ErrorCode枚举值
  */
-int VaultHandlePrivate::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
+int FileEncryptPrivate::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) return static_cast<int>(ErrorCode::kCryfsNotExist);
@@ -264,7 +264,7 @@ int VaultHandlePrivate::runVaultProcess(QString lockBaseDir, QString unlockFileD
  *  最后根据执行结果返回cryfs执行状态。此函数主要用于创建保险箱
  * \return                      返回ErrorCode枚举值
  */
-int VaultHandlePrivate::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type, int blockSize)
+int FileEncryptPrivate::runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type, int blockSize)
 {
     QString cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) return static_cast<int>(ErrorCode::kCryfsNotExist);
@@ -297,7 +297,7 @@ int VaultHandlePrivate::runVaultProcess(QString lockBaseDir, QString unlockFileD
  *  最后根据执行结果返回cryfs执行状态。此函数主要用于上锁保险箱
  * \return                  返回ErrorCode枚举值
  */
-int VaultHandlePrivate::lockVaultProcess(QString unlockFileDir)
+int FileEncryptPrivate::lockVaultProcess(QString unlockFileDir)
 {
     QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
     if (fusermountBinary.isEmpty()) return static_cast<int>(ErrorCode::kFusermountNotExist);
@@ -316,7 +316,7 @@ int VaultHandlePrivate::lockVaultProcess(QString unlockFileDir)
 /*!
  * \brief 初始化加密类型选项
  */
-void VaultHandlePrivate::initEncryptType()
+void FileEncryptPrivate::initEncryptType()
 {
     encryptTypeMap.insert(EncryptType::AES_256_GCM, "aes-256-gcm");
     encryptTypeMap.insert(EncryptType::AES_256_CFB, "aes-256-cfb");

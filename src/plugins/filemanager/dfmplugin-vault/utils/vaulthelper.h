@@ -25,7 +25,7 @@
 #include "dfmplugin_vault_global.h"
 #include "utils/vaultglobaldefine.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
-#include "services/filemanager/vault/vaultservice.h"
+#include "services/filemanager/fileencrypt/fileencryptservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/computer/computerservice.h"
@@ -135,7 +135,7 @@ public:
 
     static void siderItemClicked(quint64 windowId, const QUrl &url);
 
-    static DSB_FM_NAMESPACE::VaultService *vaultServiceInstance();
+    static DSB_FM_NAMESPACE::FileEncryptService *fileEncryptServiceInstance();
 
     static DSB_FM_NAMESPACE::SideBarService *sideBarServiceInstance();
 

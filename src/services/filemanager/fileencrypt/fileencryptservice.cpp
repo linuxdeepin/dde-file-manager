@@ -19,10 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "vaultservice.h"
-#include "private/vaultservice_p.h"
-#include "private/vaulthandle.h"
-#include "vault_defines.h"
+#include "fileencryptservice.h"
+#include "private/fileencryptservice_p.h"
+#include "private/fileencrypthandle.h"
+#include "fileencrypt_defines.h"
 
 #include <QStorageInfo>
 #include <QStandardPaths>
@@ -32,19 +32,19 @@
 
 DSB_FM_USE_NAMESPACE
 
-VaultService::VaultService(QObject *parent)
+FileEncryptService::FileEncryptService(QObject *parent)
     : dpf::PluginService(parent),
-      dpf::AutoServiceRegister<VaultService>(),
-      vaultServicePrivate(new VaultServicePrivate(this))
+      dpf::AutoServiceRegister<FileEncryptService>(),
+      fileEncryptServicePrivate(new FileEncryptServicePrivate(this))
 {
-    connect(vaultServicePrivate.data(), &VaultServicePrivate::signalCreateVaultPrivate, this, &VaultService::signalCreateVaultState, Qt::QueuedConnection);
-    connect(vaultServicePrivate.data(), &VaultServicePrivate::signalLockVaultPrivate, this, &VaultService::signalLockVaultState, Qt::QueuedConnection);
-    connect(vaultServicePrivate.data(), &VaultServicePrivate::signalUnlockVaultPrivate, this, &VaultService::signalUnlockVaultState, Qt::QueuedConnection);
-    connect(vaultServicePrivate.data(), &VaultServicePrivate::signalReadErrorPrivate, this, &VaultService::signalError, Qt::QueuedConnection);
-    connect(vaultServicePrivate.data(), &VaultServicePrivate::signalReadOutputPrivate, this, &VaultService::signalOutputMessage, Qt::QueuedConnection);
+    connect(fileEncryptServicePrivate.data(), &FileEncryptServicePrivate::signalCreateVaultPrivate, this, &FileEncryptService::signalCreateVaultState, Qt::QueuedConnection);
+    connect(fileEncryptServicePrivate.data(), &FileEncryptServicePrivate::signalLockVaultPrivate, this, &FileEncryptService::signalLockVaultState, Qt::QueuedConnection);
+    connect(fileEncryptServicePrivate.data(), &FileEncryptServicePrivate::signalUnlockVaultPrivate, this, &FileEncryptService::signalUnlockVaultState, Qt::QueuedConnection);
+    connect(fileEncryptServicePrivate.data(), &FileEncryptServicePrivate::signalReadErrorPrivate, this, &FileEncryptService::signalError, Qt::QueuedConnection);
+    connect(fileEncryptServicePrivate.data(), &FileEncryptServicePrivate::signalReadOutputPrivate, this, &FileEncryptService::signalOutputMessage, Qt::QueuedConnection);
 }
 
-VaultService::~VaultService()
+FileEncryptService::~FileEncryptService()
 {
 }
 
@@ -62,9 +62,9 @@ VaultService::~VaultService()
  *      connect(vaultService, &vaultService::signalCreateVaultState, this, &class::createVaultState);
  * \endcode
  */
-void VaultService::createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString)
+void FileEncryptService::createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString)
 {
-    emit vaultServicePrivate->sigCreateVault(encryptBaseDir, decryptFileDir, DSecureString);
+    emit fileEncryptServicePrivate->sigCreateVault(encryptBaseDir, decryptFileDir, DSecureString);
 }
 
 /*!
@@ -83,9 +83,9 @@ void VaultService::createVault(const QString &encryptBaseDir, const QString &dec
  *      connect(vaultService, &vaultService::signalCreateVaultState, this, &class::createVaultState);
  * \endcode
  */
-void VaultService::createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString, EncryptType type, int blockSize)
+void FileEncryptService::createVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString, EncryptType type, int blockSize)
 {
-    emit vaultServicePrivate->sigCreateVault(encryptBaseDir, decryptFileDir, DSecureString, type, blockSize);
+    emit fileEncryptServicePrivate->sigCreateVault(encryptBaseDir, decryptFileDir, DSecureString, type, blockSize);
 }
 
 /*!
@@ -100,9 +100,9 @@ void VaultService::createVault(const QString &encryptBaseDir, const QString &dec
  *      connect(vaultService, &vaultService::signalLockVaultPrivate, this, &class::lockVault);
  * \endcode
  */
-void VaultService::lockVault(const QString &decryptFileDir)
+void FileEncryptService::lockVault(const QString &decryptFileDir)
 {
-    emit vaultServicePrivate->sigLockVault(decryptFileDir);
+    emit fileEncryptServicePrivate->sigLockVault(decryptFileDir);
 }
 
 /*!
@@ -119,12 +119,12 @@ void VaultService::lockVault(const QString &decryptFileDir)
  *      connect(vaultService, &vaultService::signalUnlockVaultPrivate, this, &class::unlockVault);
  * \endcode
  */
-void VaultService::unlockVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString)
+void FileEncryptService::unlockVault(const QString &encryptBaseDir, const QString &decryptFileDir, const QString &DSecureString)
 {
-    emit vaultServicePrivate->sigUnlockVault(encryptBaseDir, decryptFileDir, DSecureString);
+    emit fileEncryptServicePrivate->sigUnlockVault(encryptBaseDir, decryptFileDir, DSecureString);
 }
 
-ServiceVaultState VaultService::vaultState(const QString &encryptBaseDir, const QString &decryptFileDir)
+ServiceVaultState FileEncryptService::vaultState(const QString &encryptBaseDir, const QString &decryptFileDir)
 {
     const QString &cryfsBinary = QStandardPaths::findExecutable("cryfs");
     if (cryfsBinary.isEmpty()) {
@@ -150,22 +150,22 @@ ServiceVaultState VaultService::vaultState(const QString &encryptBaseDir, const 
     }
 }
 
-VaultServicePrivate::VaultServicePrivate(QObject *parent)
+FileEncryptServicePrivate::FileEncryptServicePrivate(QObject *parent)
     : QObject(parent),
-      vaultHandle(new VaultHandle())
+      vaultHandle(new FileEncryptHandle())
 {
 
-    connect(this, &VaultServicePrivate::sigCreateVault, vaultHandle.data(), &VaultHandle::createVault, Qt::QueuedConnection);
-    connect(this, &VaultServicePrivate::sigUnlockVault, vaultHandle.data(), &VaultHandle::unlockVault, Qt::QueuedConnection);
-    connect(this, &VaultServicePrivate::sigLockVault, vaultHandle.data(), &VaultHandle::lockVault, Qt::QueuedConnection);
+    connect(this, &FileEncryptServicePrivate::sigCreateVault, vaultHandle.data(), &FileEncryptHandle::createVault, Qt::QueuedConnection);
+    connect(this, &FileEncryptServicePrivate::sigUnlockVault, vaultHandle.data(), &FileEncryptHandle::unlockVault, Qt::QueuedConnection);
+    connect(this, &FileEncryptServicePrivate::sigLockVault, vaultHandle.data(), &FileEncryptHandle::lockVault, Qt::QueuedConnection);
 
-    connect(vaultHandle.data(), &VaultHandle::signalCreateVault, this, &VaultServicePrivate::signalCreateVaultPrivate, Qt::QueuedConnection);
-    connect(vaultHandle.data(), &VaultHandle::signalLockVault, this, &VaultServicePrivate::signalLockVaultPrivate, Qt::QueuedConnection);
-    connect(vaultHandle.data(), &VaultHandle::signalUnlockVault, this, &VaultServicePrivate::signalUnlockVaultPrivate, Qt::QueuedConnection);
-    connect(vaultHandle.data(), &VaultHandle::signalReadError, this, &VaultServicePrivate::signalReadErrorPrivate, Qt::QueuedConnection);
-    connect(vaultHandle.data(), &VaultHandle::signalReadOutput, this, &VaultServicePrivate::signalReadOutputPrivate, Qt::QueuedConnection);
+    connect(vaultHandle.data(), &FileEncryptHandle::signalCreateVault, this, &FileEncryptServicePrivate::signalCreateVaultPrivate, Qt::QueuedConnection);
+    connect(vaultHandle.data(), &FileEncryptHandle::signalLockVault, this, &FileEncryptServicePrivate::signalLockVaultPrivate, Qt::QueuedConnection);
+    connect(vaultHandle.data(), &FileEncryptHandle::signalUnlockVault, this, &FileEncryptServicePrivate::signalUnlockVaultPrivate, Qt::QueuedConnection);
+    connect(vaultHandle.data(), &FileEncryptHandle::signalReadError, this, &FileEncryptServicePrivate::signalReadErrorPrivate, Qt::QueuedConnection);
+    connect(vaultHandle.data(), &FileEncryptHandle::signalReadOutput, this, &FileEncryptServicePrivate::signalReadOutputPrivate, Qt::QueuedConnection);
 }
 
-VaultServicePrivate::~VaultServicePrivate()
+FileEncryptServicePrivate::~FileEncryptServicePrivate()
 {
 }

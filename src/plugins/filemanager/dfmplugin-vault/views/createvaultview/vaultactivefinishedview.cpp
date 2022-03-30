@@ -22,7 +22,7 @@
 #include "vaultactivefinishedview.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/vaulthelper.h"
-#include "services/filemanager/vault/vaultservice.h"
+#include "services/filemanager/fileencrypt/fileencryptservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -120,7 +120,7 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
-    connect(VaultHelper::instance()->vaultServiceInstance(), &VaultService::signalCreateVaultState,
+    connect(VaultHelper::instance()->fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState,
             this, &VaultActiveFinishedView::slotEncryptComplete);
 
     // 初始化定时器

@@ -176,18 +176,18 @@ QList<TitleBar::CrumbData> VaultHelper::seprateUrl(const QUrl &url)
     return list;
 }
 
-VaultService *VaultHelper::vaultServiceInstance()
+FileEncryptService *VaultHelper::fileEncryptServiceInstance()
 {
-    static VaultService *vaultService = nullptr;
+    static FileEncryptService *vaultService = nullptr;
     if (vaultService == nullptr) {
         auto &ctx = dpfInstance.serviceContext();
         QString errStr;
-        if (!ctx.load(VaultService::name(), &errStr)) {
+        if (!ctx.load(FileEncryptService::name(), &errStr)) {
             qCritical() << errStr;
             abort();
         }
 
-        vaultService = ctx.service<VaultService>(VaultService::name());
+        vaultService = ctx.service<FileEncryptService>(FileEncryptService::name());
         if (!vaultService) {
             qCritical() << "Failed, init vault \"sideBarService\" is empty";
             abort();
@@ -536,30 +536,30 @@ void VaultHelper::createVault(QString &password)
 {
     static bool flg = true;
     if (flg) {
-        connect(vaultServiceInstance(), &VaultService::signalCreateVaultState, VaultHelper::instance(), &VaultHelper::sigCreateVault);
+        connect(fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState, VaultHelper::instance(), &VaultHelper::sigCreateVault);
         flg = false;
     }
-    vaultServiceInstance()->createVault(vaultLockPath(), vaultUnlockPath(), password);
+    fileEncryptServiceInstance()->createVault(vaultLockPath(), vaultUnlockPath(), password);
 }
 
 void VaultHelper::unlockVault(QString &password)
 {
     static bool flg = true;
     if (flg) {
-        connect(vaultServiceInstance(), &VaultService::signalUnlockVaultState, VaultHelper::instance(), &VaultHelper::sigUnlocked);
+        connect(fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, VaultHelper::instance(), &VaultHelper::sigUnlocked);
         flg = false;
     }
-    vaultServiceInstance()->unlockVault(vaultLockPath(), vaultUnlockPath(), password);
+    fileEncryptServiceInstance()->unlockVault(vaultLockPath(), vaultUnlockPath(), password);
 }
 
 void VaultHelper::lockVault()
 {
     static bool flg = true;
     if (flg) {
-        connect(vaultServiceInstance(), &VaultService::signalLockVaultState, VaultHelper::instance(), &VaultHelper::slotlockVault);
+        connect(fileEncryptServiceInstance(), &FileEncryptService::signalLockVaultState, VaultHelper::instance(), &VaultHelper::slotlockVault);
         flg = false;
     }
-    vaultServiceInstance()->lockVault(vaultUnlockPath());
+    fileEncryptServiceInstance()->lockVault(vaultUnlockPath());
 }
 
 void VaultHelper::creatVaultDialog()

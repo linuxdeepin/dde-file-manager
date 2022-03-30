@@ -1,26 +1,26 @@
 #ifndef VAULTSERVICE_P_H
 #define VAULTSERVICE_P_H
 #include "dfm_filemanager_service_global.h"
-#include "vault/vaulterrorcode.h"
+#include "fileencrypt/fileencrypterrorcode.h"
 
 #include <QObject>
 #include <QSharedPointer>
 
 DSB_FM_BEGIN_NAMESPACE
 
-class VaultHandle;
-class VaultService;
-class VaultServicePrivate : public QObject
+class FileEncryptHandle;
+class FileEncryptService;
+class FileEncryptServicePrivate : public QObject
 {
     Q_OBJECT
 
-    friend class VaultService;
+    friend class FileEncryptService;
 
 private:
-    explicit VaultServicePrivate(QObject *parent = nullptr);
+    explicit FileEncryptServicePrivate(QObject *parent = nullptr);
 
 public:
-    virtual ~VaultServicePrivate() override;
+    virtual ~FileEncryptServicePrivate() override;
 
 signals:
 
@@ -81,7 +81,7 @@ private:
     /*!
      * \brief  保险箱处理对象
      */
-    QSharedPointer<VaultHandle> vaultHandle;
+    QSharedPointer<FileEncryptHandle> vaultHandle;
 };
 DSB_FM_END_NAMESPACE
 #endif   // VAULTSERVICE_P_H

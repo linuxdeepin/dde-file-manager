@@ -23,7 +23,7 @@
 #define VAULTHANDLE_P_H
 
 #include "dfm_filemanager_service_global.h"
-#include "vault/vaulterrorcode.h"
+#include "fileencrypt/fileencrypterrorcode.h"
 
 #include <QMap>
 
@@ -33,15 +33,15 @@ class QThread;
 
 DSB_FM_BEGIN_NAMESPACE
 
-class VaultHandle;
-class VaultHandlePrivate
+class FileEncryptHandle;
+class FileEncryptPrivate
 {
-    friend class VaultHandle;
-    Q_DISABLE_COPY(VaultHandlePrivate)
+    friend class FileEncryptHandle;
+    Q_DISABLE_COPY(FileEncryptPrivate)
 private:
-    explicit VaultHandlePrivate(VaultHandle *q = nullptr);
+    explicit FileEncryptPrivate(FileEncryptHandle *q = nullptr);
 
-    ~VaultHandlePrivate();
+    ~FileEncryptPrivate();
 
 private:
     int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
@@ -58,7 +58,7 @@ private:
     QThread *thread = nullptr;
     QMap<int, int> activeState;
     QMap<EncryptType, QString> encryptTypeMap;
-    VaultHandle *q_ptr = nullptr;
+    FileEncryptHandle *q_ptr = nullptr;
 };
 DSB_FM_END_NAMESPACE
 #endif   //VAULTHANDLE_P_H

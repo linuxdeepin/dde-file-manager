@@ -22,7 +22,7 @@
 #include "recoverykeyview.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
-#include "services/filemanager/vault/vaultservice.h"
+#include "services/filemanager/fileencrypt/fileencryptservice.h"
 
 #include <DToolTip>
 #include <DFloatingWidget>
@@ -70,7 +70,7 @@ RecoveryKeyView::RecoveryKeyView(QWidget *parent)
 
     //    connect(this, &RecoveryKeyView::buttonClicked, this, &RecoveryKeyView::onButtonClicked);
     connect(recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &RecoveryKeyView::recoveryKeyChanged);
-    connect(VaultHelper::vaultServiceInstance(), &VaultService::signalUnlockVaultState, this, &RecoveryKeyView::onUnlockVault);
+    connect(VaultHelper::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &RecoveryKeyView::onUnlockVault);
 }
 
 RecoveryKeyView::~RecoveryKeyView()
@@ -132,7 +132,7 @@ void RecoveryKeyView::buttonClicked(int index, const QString &text)
             unlockByKey = true;
             QString encryptBaseDir = VaultHelper::instance()->vaultLockPath();
             QString decryptFileDir = VaultHelper::instance()->vaultUnlockPath();
-            VaultHelper::vaultServiceInstance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
+            VaultHelper::fileEncryptServiceInstance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
         } else {
             showAlertMessage(tr("Wrong recovery key"));
         }

@@ -23,8 +23,8 @@
 #define VAULTINTERFACE_H
 
 #include "dfm_filemanager_service_global.h"
-#include "vault_defines.h"
-#include "vaulterrorcode.h"
+#include "fileencrypt_defines.h"
+#include "fileencrypterrorcode.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -33,12 +33,12 @@
 
 DSB_FM_BEGIN_NAMESPACE
 
-class VaultHandle;
-class VaultServicePrivate;
-class VaultService final : public dpf::PluginService, dpf::AutoServiceRegister<VaultService>
+class FileEncryptHandle;
+class FileEncryptServicePrivate;
+class FileEncryptService final : public dpf::PluginService, dpf::AutoServiceRegister<FileEncryptService>
 {
     Q_OBJECT
-    Q_DISABLE_COPY(VaultService)
+    Q_DISABLE_COPY(FileEncryptService)
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
@@ -48,9 +48,9 @@ public:
     }
 
 public:
-    explicit VaultService(QObject *parent = nullptr);
+    explicit FileEncryptService(QObject *parent = nullptr);
 
-    virtual ~VaultService() override;
+    virtual ~FileEncryptService() override;
 
     Q_ENUM(EncryptType)
 
@@ -124,7 +124,7 @@ private:
     /*!
      * \brief  保险箱服务私有对象
      */
-    QSharedPointer<VaultServicePrivate> vaultServicePrivate;
+    QSharedPointer<FileEncryptServicePrivate> fileEncryptServicePrivate;
 };
 DSB_FM_END_NAMESPACE
 #endif   // VAULTINTERFACE_H

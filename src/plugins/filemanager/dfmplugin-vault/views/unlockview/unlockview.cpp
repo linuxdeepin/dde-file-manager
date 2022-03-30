@@ -98,7 +98,7 @@ void UnlockView::initUI()
     this->setLayout(mainLayout);
 
     connect(passwordEdit, &DPasswordEdit::textChanged, this, &UnlockView::onPasswordChanged);
-    connect(VaultHelper::instance()->vaultServiceInstance(), &VaultService::signalUnlockVaultState, this, &UnlockView::onVaultUlocked);
+    connect(VaultHelper::instance()->fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &UnlockView::onVaultUlocked);
     connect(tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
