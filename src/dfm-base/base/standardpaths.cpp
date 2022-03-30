@@ -106,7 +106,7 @@ QString StandardPaths::location(StandardPaths::StandardLocation type)
         return getConfigPath();
 #endif
     case kThumbnailPath: {
-        const QString &cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first();
+        const QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first();
         return cachePath + "/thumbnails";
     }
     case kThumbnailFailPath:

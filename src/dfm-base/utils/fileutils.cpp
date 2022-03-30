@@ -34,6 +34,7 @@
 #include <KEncodingProber>
 
 #include <dfm-io/dfmio_utils.h>
+#include <dfm-io/core/diofactory.h>
 
 #include <QFileInfo>
 #include <QTimer>
@@ -353,6 +354,16 @@ bool FileUtils::isLowSpeedDevice(const QUrl &url)
             || device.startsWith(QString(Global::kGPhoto2) + "://")
             || device.startsWith(QString(Global::kSmbShare) + "://")
             || device.startsWith(QString(Global::kSmb) + "://");
+}
+
+bool FileUtils::isLocalDevice(const QUrl &url)
+{
+    return !DFMIO::DFMUtils::fileUnmountable(url.toLocalFile());
+}
+
+bool FileUtils::isCdRomDevice(const QUrl &url)
+{
+    return DFMIO::DFMUtils::devicePathFromUrl(url).startsWith("/dev/sr");
 }
 
 QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
@@ -820,6 +831,14 @@ quint16 FileUtils::getMemoryPageSize()
 {
     static const quint16 memoryPageSize = static_cast<quint16>(getpagesize());
     return memoryPageSize > 0 ? memoryPageSize : kDefaultMemoryPageSize;
+}
+
+QSharedPointer<dfmio::DFile> FileUtils::createFile(const QUrl &url)
+{
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+    if (!factory)
+        return nullptr;
+    return factory->createFile();
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

@@ -67,12 +67,29 @@ constexpr char kMimetypeAppDesktop[] { "application/x-desktop" };
 constexpr char kMimeTypeCdImage[] { "application/x-cd-image" };
 constexpr char kMimeTypeISO9660Image[] { "application/x-iso9660-image" };
 constexpr char kMimeTypeAppXml[] { "application/xml" };
+constexpr char kMimeTypeAppPdf[] { "application/pdf" };
+constexpr char kMimeTypeAppMxf[] { "application/mxf" };
+constexpr char kMimeTypeAppVMAsf[] { "application/vnd.ms-asf" };
+constexpr char kMimeTypeAppCRRMedia[] { "application/cnd.rn-realmedia" };
+constexpr char kMimeTypeAppVRRMedia[] { "application/vnd.rn-realmedia" };
 constexpr char kMimeTypeTextHtml[] { "text/html" };
 constexpr char kMimeTypeAppXhtmlXml[] { "application/xhtml+xml" };
 constexpr char kMimeTypeTextXPython[] { "text/x-python" };
+constexpr char kMimeTypeTextPlain[] { "text/plain" };
 constexpr char kMimeTypeAppXOleStorage[] { "application/x-ole-storage" };
 constexpr char kMimeTypeAppZip[] { "application/zip" };
 constexpr char kMimeTypeAppXDesktop[] { "application/x-desktop" };
+// image
+constexpr char kMimeTypeImageIef[] { "image/ief" };
+constexpr char kMimeTypeImageTiff[] { "image/tiff" };
+constexpr char kMimeTypeImageXTMultipage[] { "image/x-tiff-multipage" };
+constexpr char kMimeTypeImageVDMultipage[] { "image/vnd.djvu+multipage" };
+constexpr char kMimeTypeImageXADng[] { "image/x-adobe-dng" };
+constexpr char kMimeTypeImageJpeg[] { "image/jpeg" };
+constexpr char kMimeTypeImagePng[] { "image/png" };
+constexpr char kMimeTypeImagePipeg[] { "image/pipeg" };
+constexpr char kMimeTypeImageVDjvu[] { "image/vnd.djvu" };
+constexpr char kMimeTypeImageSvgXml[] { "image/svg+xml" };
 
 constexpr uint8_t kMaxFileNameCharCount { 255 };
 

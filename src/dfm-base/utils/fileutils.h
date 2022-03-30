@@ -56,6 +56,8 @@ public:
     static bool isSameFile(const QUrl &url1, const QUrl &url2);
     static bool isSmbPath(const QUrl &url);
     static bool isLowSpeedDevice(const QUrl &url);
+    static bool isLocalDevice(const QUrl &url);
+    static bool isCdRomDevice(const QUrl &url);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
     static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair);
@@ -66,6 +68,8 @@ public:
     static QByteArray detectCharset(const QByteArray &data, const QString &fileName = QString {});
 
     static quint16 getMemoryPageSize();
+
+    static QSharedPointer<DFMIO::DFile> createFile(const QUrl &url);
 };
 
 class DesktopAppUrl

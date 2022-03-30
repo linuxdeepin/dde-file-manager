@@ -46,6 +46,13 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     QMap<DFileInfo::AttributeID, QVariant> attributes;   // 缓存的fileinfo信息
     QReadWriteLock lock;
 
+    // thumbnail
+    QIcon icon;
+    bool needThumbnail = false;
+    qint8 hasThumbnail = -1;   // 小于0时表示此值未初始化，0表示不支持，1表示支持
+    bool iconFromTheme = false;
+    QPointer<QTimer> getIconTimer = nullptr;
+
 public:
     explicit LocalFileInfoPrivate(LocalFileInfo *qq);
     virtual ~LocalFileInfoPrivate();
