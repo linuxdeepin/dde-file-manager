@@ -33,6 +33,7 @@ public:
 
     bool exists() const override;
     bool isReadable() const override;
+    bool isWritable() const override;
     bool isDir() const override;
     virtual bool isVirtualEntry() const override;
 

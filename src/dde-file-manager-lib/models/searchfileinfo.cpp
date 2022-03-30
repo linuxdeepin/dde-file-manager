@@ -77,6 +77,16 @@ bool SearchFileInfo::isReadable() const
     return d->proxy->isReadable();
 }
 
+bool SearchFileInfo::isWritable() const
+{
+    Q_D(const DAbstractFileInfo);
+
+    if (!d->proxy)
+        return true;
+
+    return d->proxy->isWritable();
+}
+
 bool SearchFileInfo::isDir() const
 {
     Q_D(const DAbstractFileInfo);
