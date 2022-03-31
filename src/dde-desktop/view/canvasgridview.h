@@ -212,6 +212,7 @@ private:
 
     void setGeometry(int, int, int, int) = delete;
     bool fetchDragEventUrlsFromSharedMemory();
+    bool prohibitPaths();
 
     /**
      * @brief setTargetUrlToApp 为其他应用设置目标Url

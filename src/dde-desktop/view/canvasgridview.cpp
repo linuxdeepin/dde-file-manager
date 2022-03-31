@@ -415,6 +415,16 @@ bool CanvasGridView::fetchDragEventUrlsFromSharedMemory()
     return true;
 }
 
+bool CanvasGridView::prohibitPaths()
+{
+    for (const auto &url : m_urlsForDragEvent) {
+        const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));
+        if (!fileInfo || !fileInfo->isReadable())
+            return true;
+    }
+    return false;
+}
+
 void CanvasGridView::setTargetUrlToApp(const QMimeData *data, const DUrl &url)
 {
     //仅当target改变的时候才调用DFileDragClient::setTargetUrl
@@ -1281,6 +1291,13 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         fetchDragEventUrlsFromSharedMemory();
     } else {
         m_urlsForDragEvent = event->mimeData()->urls();
+    }
+
+    // 禁止root用户的文件
+    if (prohibitPaths()) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return;
     }
 
     d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
