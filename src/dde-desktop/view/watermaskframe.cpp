@@ -342,11 +342,9 @@ bool WaterMaskFrame::isNeedState()
                 || DSysInfo::DeepinType::DeepinServer == deepinType);
 
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 4, 7, 0))
-    // 教育版不需要水印
     ret = ret || DSysInfo::UosEdition::UosEducation == uosEdition;
     qInfo() << "check uos Edition" << ret;
 #endif
-
     return ret;
 }
 
@@ -381,7 +379,13 @@ void WaterMaskFrame::updateAuthorizationState()
 
 void WaterMaskFrame::onChangeAuthorizationLabel(int stateType)
 {
-    qInfo() << "reply ActiveState is" << stateType << this;
+    bool need = isNeedState();
+    qInfo() << "reply ActiveState is" << stateType << this << "NeedState" << need;
+    if (!need) {
+        m_textLabel->setText("");
+        qInfo() << "disbale show state text";
+        return;
+    }
 
     switch (stateType) {
     case Unauthorized:
