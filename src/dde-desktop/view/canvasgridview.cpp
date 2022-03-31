@@ -2956,6 +2956,18 @@ void CanvasGridView::updateCanvas()
 
     //需在expandedWidget->setContentsMargins(margins)之后在更新，否则在计算时没有将Margins纳入计算，导致显示错误
     updateEditorGeometries();
+
+    {
+        QModelIndex index = itemDelegate()->editingIndex();
+        if (index.isValid()) {
+            auto url = model()->getUrlByIndex(index);
+            // 当前正在重命名的文件已经移动到别的屏幕上，退出编辑
+            if (!GridManager::instance()->contains(m_screenNum, url.toString())) {
+                closePersistentEditor(index);
+                qWarning() << index << "leave out the screen" << m_screenNum;
+            }
+        }
+    }
     update();
 }
 
