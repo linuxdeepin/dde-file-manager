@@ -86,3 +86,17 @@ qint64 DecoratorFile::size() const
         return d->dfile->size();
     return -1;
 }
+
+DFMIO::DFile::Permissions DecoratorFile::permissions() const
+{
+    if (d->dfile)
+        return d->dfile->permissions();
+    return DFMIO::DFile::Permission::NoPermission;
+}
+
+bool DecoratorFile::setPermissions(DFMIO::DFile::Permissions permission)
+{
+    if (d->dfile)
+        return d->dfile->setPermissions(permission);
+    return false;
+}

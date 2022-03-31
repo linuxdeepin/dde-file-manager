@@ -130,3 +130,10 @@ QString DecoratorFileInfo::parentPath() const
         return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardParentPath).toString();
     return QString();
 }
+
+DFMIO::DFile::Permissions DecoratorFileInfo::permissions() const
+{
+    if (d->dfileInfo)
+        return d->dfileInfo->permissions();
+    return DFMIO::DFile::Permission::NoPermission;
+}

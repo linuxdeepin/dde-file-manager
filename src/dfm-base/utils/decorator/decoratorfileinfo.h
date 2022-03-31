@@ -48,6 +48,7 @@ public:
     QString completeSuffix() const;
     QString filePath() const;
     QString parentPath() const;
+    DFMIO::DFile::Permissions permissions() const;
 
 private:
     QSharedPointer<DecoratorFileInfoPrivate> d = nullptr;

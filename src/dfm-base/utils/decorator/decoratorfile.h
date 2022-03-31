@@ -41,6 +41,8 @@ public:
     QSharedPointer<DFMIO::DFile> filePtr();
     bool exists() const;
     qint64 size() const;
+    DFMIO::DFile::Permissions permissions() const;
+    bool setPermissions(DFMIO::DFile::Permissions permission);
 
 private:
     QSharedPointer<DecoratorFilePrivate> d = nullptr;
