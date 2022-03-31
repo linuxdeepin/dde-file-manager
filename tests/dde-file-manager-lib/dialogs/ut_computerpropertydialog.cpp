@@ -91,7 +91,7 @@ TEST_F(TestComputerPropertyDialog, testGetMessage)
 {
     QHash<QString, QString> datas;
     QStringList data;
-    data << "计算机名：" << "版本：" << "系统类型：" << "处理器：" << "内存：" << "UOS";
+    data << "计算机名：" << "版本号：" << "版本：" << "构建号：" << "类型：" << "处理器：" << "内存：";
     datas = m_pTester->getMessage(data);
     EXPECT_GT(datas.size(), 0);
 }
@@ -106,7 +106,7 @@ TEST_F(TestComputerPropertyDialog, testGetMessage2)
 
     QHash<QString, QString> datas;
     QStringList data;
-    data << "计算机名：" << "版本：" << "系统类型：" << "处理器：" << "内存：" << "UOS";
+    data << "计算机名：" << "版本号：" << "版本：" << "构建号：" << "类型：" << "处理器：" << "内存：";
     datas = m_pTester->getMessage(data);
     EXPECT_GT(datas.size(), 0);
 }
@@ -121,7 +121,7 @@ TEST_F(TestComputerPropertyDialog, testGetMessage3)
 
     QHash<QString, QString> datas;
     QStringList data;
-    data << "计算机名：" << "版本：" << "系统类型：" << "处理器：" << "内存：" << "UOS";
+    data << "计算机名：" << "版本号：" << "版本：" << "构建号：" << "类型：" << "处理器：" << "内存：";
     datas = m_pTester->getMessage(data);
     EXPECT_GT(datas.size(), 0);
 }

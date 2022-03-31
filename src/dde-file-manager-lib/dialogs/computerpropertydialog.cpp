@@ -104,7 +104,7 @@ void GetInfoWork::run()
     DBusSystemInfo *systemInfo = nullptr;
     QDBusInterface *deepin_systemInfo = nullptr;
     QString computerName("");
-    QString keyName = qApp->translate("ComputerPropertyDialog", "Computer Name");
+    QString keyName = qApp->translate("ComputerPropertyDialog", "Computer name");
     QString Edition("");
     QString keyEditon = qApp->translate("ComputerPropertyDialog", "Edition");
     QString version("");
@@ -173,7 +173,7 @@ void GetInfoWork::run()
                 if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
                     Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
                 } else {
-                    Edition = DSysInfo::uosEditionName();
+                    Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
                 }
             }
             // 获取系统版本号
@@ -266,7 +266,6 @@ void ComputerPropertyDialog::initUI()
         //设置对话框窗口最大最小化按钮隐藏
         this->setWindowFlags(this->windowFlags() & ~Qt::WindowMinMaxButtonsHint);
         this->setAttribute(Qt::WA_NativeWindow);
-        //this->windowHandle()->setProperty("_d_dwayland_window-type", "wallpaper");
         this->windowHandle()->setProperty("_d_dwayland_minimizable", false);
         this->windowHandle()->setProperty("_d_dwayland_maximizable", false);
         this->windowHandle()->setProperty("_d_dwayland_resizable", false);
@@ -302,9 +301,10 @@ void ComputerPropertyDialog::initUI()
     gridLayout->setSpacing(10);
 
     QStringList msgsTitle;
-    msgsTitle << tr("Computer Name")
-              << tr("Edition")
+    msgsTitle << tr("Computer name")
               << tr("Version")
+              << tr("Edition")
+              << tr("OS build")
               << tr("Type")
               << tr("Processor")
               << tr("Memory");
@@ -340,8 +340,6 @@ void ComputerPropertyDialog::initUI()
         pt = valLabel->palette();
         pt.setColor(QPalette::Text, palette().color(QPalette::Inactive, QPalette::Text));
         valLabel->setPalette(pt);
-//        keyLabel->setStyleSheet("QLabel { color: #001A2E; font-size: 13px; }");
-//        valLabel->setStyleSheet("QLabel { color: #526A7F; font-size: 12px; }");
 
         gridLayout->addWidget(keyLabel, row, 0);
         gridLayout->addWidget(valLabel, row, 1);
@@ -353,8 +351,9 @@ void ComputerPropertyDialog::initUI()
             auto boundingRect = valLabel->fontMetrics().boundingRect(valLabel->text());
             gridLayout->setRowMinimumHeight(row, boundingRect.height() - boundingRect.y());
         }
-        // 如果没有达到对应属性值
-        if (datas.value(key).isEmpty()) {
+        // 如果没有拿到对应属性值
+        if (datas.value(key).isEmpty()
+                && key != tr("OS build")) {
            // 隐藏属性视图
            valLabel->hide();
            // 创建并显示等待视图
@@ -424,8 +423,8 @@ void ComputerPropertyDialog::initUI()
 QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &data)
 {
     QHash<QString, QString> datas;
-    QString Edition;
     QString version;
+    QString Edition;
     QString memoryInstallStr;
     QString memoryStr;
     QString processor;
@@ -465,7 +464,7 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
             Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
         } else {
-            Edition = DSysInfo::uosEditionName();
+            Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
         }
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
@@ -483,23 +482,23 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         if (processor.isEmpty())
             processor = QString("%1 x %2").arg(DSysInfo::cpuModelName())
                                          .arg(QThread::idealThreadCount());
-
     }
     // 通过qt获得
     if (systemType.isEmpty())
         systemType = QString::number(QSysInfo::WordSize) + tr("Bit");
 
     datas.insert(data.at(0), DSysInfo::computerName());
-    datas.insert(data.at(1), Edition);
-    datas.insert(data.at(2), version);
-    datas.insert(data.at(3), systemType);
-    datas.insert(data.at(4), processor);
+    datas.insert(data.at(1), version);
+    datas.insert(data.at(2), Edition);
+    datas.insert(data.at(3), DSysInfo::buildVersion());
+    datas.insert(data.at(4), systemType);
+    datas.insert(data.at(5), processor);
     if (!memoryInstallStr.isEmpty() && !memoryStr.isEmpty())
-        datas.insert(data.at(5), memoryInstallStr
+        datas.insert(data.at(6), memoryInstallStr
                      + "(" +  memoryStr
                      + ' ' + tr("Available") + ")");
     else
-        datas.insert(data.at(5), "");
+        datas.insert(data.at(6), "");
     return datas;
 }
 
