@@ -53,6 +53,8 @@
 #define DDE_COMPUTER_ID "dde-computer"
 #define REVOCATION_TIMES 2
 #define MIME_USER_ID "userID_for_MoveAction"
+#define MIME_PROHIBIT_DRAG "ProhibitDragInSource"
+#define ISDRAGPROHIBIT "yes"
 
 #define ASYN_CALL(Fun, Code, captured...) {\
         QDBusPendingCallWatcher * watcher = new QDBusPendingCallWatcher(Fun);\

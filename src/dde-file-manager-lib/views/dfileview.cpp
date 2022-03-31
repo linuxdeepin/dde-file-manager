@@ -1819,6 +1819,14 @@ bool DFileView::canShowContextMenu(QContextMenuEvent *event)
 void DFileView::dragEnterEvent(QDragEnterEvent *event)
 {
     Q_D(DFileView);
+
+    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
+    if (QByteArray(ISDRAGPROHIBIT) == event->mimeData()->data(QString(MIME_PROHIBIT_DRAG))) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return;
+    }
+
     // 修复bug-65773 拖拽事件进入前，需要将当前拖拽缓存清空，
     // 使得程序执行DFileDragClient::setTargetUrl(data, url);
     // 方便压缩软件获得目的地址，这种方案会导致“系统关闭窗口特效时，拖拽压缩软件中的文件
@@ -1838,18 +1846,12 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
     } else {
         m_urlsForDragEvent = event->mimeData()->urls();
     }
+
     const DAbstractFileInfoPointer &rootFileInfo = DFileService::instance()->createFileInfo(this, rootUrl());
 
     DUrl rootItemUrl = rootUrl();
     if (rootFileInfo && rootItemUrl.isTaggedFile() && rootFileInfo->canRedirectionFileUrl())
         rootItemUrl = rootFileInfo->redirectedFileUrl();
-
-    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
-    if (m_urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(m_urlsForDragEvent)) {
-        event->setDropAction(Qt::IgnoreAction);
-        event->ignore();
-        return;
-    }
 
     for (const auto &url : m_urlsForDragEvent) {
         const DAbstractFileInfoPointer &fileInfo = DFileService::instance()->createFileInfo(this, DUrl(url));

@@ -133,6 +133,13 @@ void DFMSideBarView::mouseMoveEvent(QMouseEvent *event)
 
 void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
+    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
+    if (QByteArray(ISDRAGPROHIBIT) == event->mimeData()->data(QString(MIME_PROHIBIT_DRAG))) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return;
+    }
+
     previousRowCount = model()->rowCount();
     //从view本身拖拽的item不需要从共享内存取url数据
     if (event->source() == this) {

@@ -1939,6 +1939,12 @@ QMimeData *DFileSystemModel::mimeData(const QModelIndexList &indexes) const
 
     QMimeData *data = new QMimeData();
 
+    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
+    if (urls.isEmpty() || FileUtils::isContainProhibitPath(urls)) {
+        QByteArray isProhibit(ISDRAGPROHIBIT);
+        data->setData(MIME_PROHIBIT_DRAG, isProhibit);
+    }
+
     DFMGlobal::setMimeDataUserID(data);
     data->setUrls(urls);
     qInfo() << data->data(MIME_USER_ID);

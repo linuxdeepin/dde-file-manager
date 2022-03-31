@@ -1245,6 +1245,13 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
 void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
 {
+    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
+    if (QByteArray(ISDRAGPROHIBIT) == event->mimeData()->data(QString(MIME_PROHIBIT_DRAG))) {
+        event->setDropAction(Qt::IgnoreAction);
+        event->ignore();
+        return;
+    }
+
     // 修复bug-65773
     m_currentTargetUrl.clear();
     if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -1274,13 +1281,6 @@ void CanvasGridView::dragEnterEvent(QDragEnterEvent *event)
         fetchDragEventUrlsFromSharedMemory();
     } else {
         m_urlsForDragEvent = event->mimeData()->urls();
-    }
-
-    // 主目录下多个库目录禁止拖拽, 只要包含目录即禁止, 用户目录相关
-    if (m_urlsForDragEvent.isEmpty() || FileUtils::isContainProhibitPath(m_urlsForDragEvent)) {
-        event->setDropAction(Qt::IgnoreAction);
-        event->ignore();
-        return;
     }
 
     d->fileViewHelper->preproccessDropEvent(event, m_urlsForDragEvent);
