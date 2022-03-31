@@ -333,6 +333,7 @@ void WaterMaskFrame::initUI()
 bool WaterMaskFrame::isNeedState()
 {
     DSysInfo::DeepinType deepinType = DSysInfo::deepinType();
+    qInfo() << "deepinType" << deepinType;
     return (DSysInfo::DeepinType::DeepinProfessional == deepinType
             || DSysInfo::DeepinType::DeepinPersonal == deepinType
             || DSysInfo::DeepinType::DeepinServer == deepinType );
@@ -369,7 +370,13 @@ void WaterMaskFrame::updateAuthorizationState()
 
 void WaterMaskFrame::onChangeAuthorizationLabel(int stateType)
 {
-    qInfo() << "reply ActiveState is" << stateType << this;
+    bool need = isNeedState();
+    qInfo() << "reply ActiveState is" << stateType << this << "NeedState" << need;
+    if (!need) {
+        m_textLabel->setText("");
+        qInfo() << "disbale show state text";
+        return;
+    }
 
     switch (stateType) {
     case Unauthorized:
