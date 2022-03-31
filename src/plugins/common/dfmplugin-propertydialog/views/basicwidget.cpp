@@ -30,6 +30,8 @@
 
 #include <QFileInfo>
 #include <QDateTime>
+#include <QApplication>
+#include <QSet>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -157,9 +159,16 @@ void BasicWidget::basicExpand(const QUrl &url)
     glayout->setContentsMargins(15, 15, 5, 10);
     glayout->setSpacing(16);
     int row = 0;
-    for (KeyValueLabel *kvl : fieldMap.values()) {
-        glayout->addWidget(kvl, row, 0, 1, 6);
-        row++;
+    QList<BasicFieldExpandEnum> fields = fieldMap.keys();
+    QSet<BasicFieldExpandEnum> fieldset = QSet<BasicFieldExpandEnum>::fromList(fields);
+    fields = fieldset.toList();
+    for (BasicFieldExpandEnum &key : fields) {
+        QList<KeyValueLabel *> kvls = fieldMap.values(key);
+        for (int i = kvls.count() - 1; i >= 0; --i) {
+            KeyValueLabel *kvl = kvls[i];
+            glayout->addWidget(kvl, row, 0, 1, 6);
+            row++;
+        }
     }
     glayout->addWidget(tempFrame, row, 0, 1, 6);
     glayout->setColumnStretch(0, 1);
@@ -241,7 +250,7 @@ void BasicWidget::selectFileUrl(const QUrl &url)
             fileType->setRightValue(tr("application") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         } break;
         case MimeDatabase::FileType::kUnknown: {
-            fileType->setRightValue(tr("Unknown") + "(" + mimeType.name() + ")", Qt::ElideNone, Qt::AlignVCenter, true);
+            fileType->setRightValue(tr("Unknown") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
         } break;
         }
     }
@@ -268,8 +277,8 @@ void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int di
 
 void BasicWidget::slotFileHide(int state)
 {
-    QList<quint64> winIDs = PropertyDialogHelper::windowServiceInstance()->windowIdList();
-    PropertyEventCall::sendFileHide(winIDs.first(), { currentUrl });
+    quint64 winIDs = QApplication::activeWindow()->winId();
+    PropertyEventCall::sendFileHide(winIDs, { currentUrl });
 }
 
 void BasicWidget::closeEvent(QCloseEvent *event)

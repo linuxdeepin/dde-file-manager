@@ -14,8 +14,6 @@ public:
     explicit PropertyDialogHelper(QObject *parent = nullptr) = delete;
 
     static DSC_NAMESPACE::PropertyDialogService *propertyServiceInstance();
-
-    static DSB_FM_NAMESPACE::WindowsService *windowServiceInstance();
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // PROPERTYDIALOGHELPER_H
