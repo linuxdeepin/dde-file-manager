@@ -200,12 +200,10 @@ void TitleBarWidget::showSearchButton()
         searchFilterButton->hide();
 }
 
-void TitleBarWidget::showSearchFilterButton()
+void TitleBarWidget::showSearchFilterButton(bool visible)
 {
-    if (searchButton)
-        searchButton->hide();
-    if (searchFilterButton)
-        searchFilterButton->show();
+    if (searchButtonSwitchState)
+        searchButton->setVisible(visible);
 }
 
 bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
@@ -226,7 +224,7 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
 void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
 {
     if (switchBtn) {
-        //        searchButton->setHidden(true);
+        searchButton->setHidden(true);
         searchButton->setObjectName("filterButton");
         searchButton->setIcon(QIcon::fromTheme("dfm_view_filter"));
         searchButton->style()->unpolish(searchButton);
@@ -235,7 +233,7 @@ void TitleBarWidget::toggleSearchButtonState(bool switchBtn)
         searchButton->setProperty("showFilterView", false);
         searchButtonSwitchState = true;
     } else {
-        //        searchButton->setHidden(false);
+        searchButton->setHidden(false);
         searchButton->style()->unpolish(searchButton);
         searchButton->style()->polish(searchButton);
         searchButton->setIcon(QIcon::fromTheme("search"));

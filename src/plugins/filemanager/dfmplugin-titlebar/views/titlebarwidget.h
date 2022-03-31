@@ -48,6 +48,7 @@ public:
 
     void startSpinner();
     void stopSpinner();
+    void showSearchFilterButton(bool visible);
 
 public slots:
     void handleHotkeyCtrlF();
@@ -59,7 +60,6 @@ private:
     void showAddrsssBar(const QUrl &url);   // switch addrasssBar and crumbBar show
     void showCrumbBar();
     void showSearchButton();
-    void showSearchFilterButton();
     bool eventFilter(QObject *watched, QEvent *event) override;
     void toggleSearchButtonState(bool switchBtn = true);
 

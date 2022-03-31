@@ -39,6 +39,7 @@ const int kStopSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kShowFilterView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kStartSpinner = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kStopSpinner = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kShowFilterButton = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 }   // namespace TitleBar

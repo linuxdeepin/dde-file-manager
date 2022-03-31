@@ -30,6 +30,8 @@
 #include <QUrl>
 #include <QMutex>
 
+#include <mutex>
+
 DPSEARCH_BEGIN_NAMESPACE
 
 class SearchDirIterator;
@@ -58,6 +60,7 @@ private:
     QUrl currentFileUrl;
     QString taskId;
     QMutex mutex;
+    std::once_flag onceFlag;
 };
 
 DPSEARCH_END_NAMESPACE

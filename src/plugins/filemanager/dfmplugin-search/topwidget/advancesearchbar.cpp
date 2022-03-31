@@ -187,7 +187,8 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
         return true;
 
     SearchFileInfo *fileInfo = dynamic_cast<SearchFileInfo *>(info);
-    Q_ASSERT(fileInfo);
+    if (!fileInfo)
+        return false;
 
     const auto &filter = parseFilterData(filterData);
     if (filter.comboValid[SEARCH_RANGE] && !filter.includeSubDir) {

@@ -81,6 +81,14 @@ void TitleBarEventReceiver::handleStopSpinner(quint64 windowId)
     w->stopSpinner();
 }
 
+void TitleBarEventReceiver::handleShowFilterButton(quint64 windowId, bool visible)
+{
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+    w->showSearchFilterButton(visible);
+}
+
 TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
     : QObject(parent)
 {

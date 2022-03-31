@@ -89,6 +89,8 @@ bool TitleBar::start()
                                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStartSpinner);
     dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kStopSpinner,
                                             TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStopSpinner);
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kShowFilterButton,
+                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleShowFilterButton);
     return true;
 }
 

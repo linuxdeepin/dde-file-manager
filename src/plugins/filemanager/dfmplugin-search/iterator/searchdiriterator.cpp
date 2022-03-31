@@ -77,6 +77,9 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
             QMutexLocker lk(&mutex);
             childrens << url;
         }
+        std::call_once(onceFlag, [this]() {
+            SearchEventCaller::sendShowAdvanceSearchButton(taskId.toULongLong(), true);
+        });
     }
 }
 

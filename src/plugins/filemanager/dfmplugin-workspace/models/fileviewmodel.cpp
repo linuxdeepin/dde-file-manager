@@ -699,14 +699,17 @@ void FileNodeManagerThread::removeChildren(const QUrl &url)
 
 int FileNodeManagerThread::childrenCount()
 {
+    QMutexLocker lk(&childrenMutex);
     return visibleChildren.count();
 }
 
 FileNodePointer FileNodeManagerThread::childByIndex(const int &index)
 {
     FileNodePointer child { nullptr };
-    if (index >= 0 && index < visibleChildren.size())
+    if (index >= 0 && index < visibleChildren.size()) {
+        QMutexLocker lk(&childrenMutex);
         child = visibleChildren.at(index);
+    }
     return child;
 }
 

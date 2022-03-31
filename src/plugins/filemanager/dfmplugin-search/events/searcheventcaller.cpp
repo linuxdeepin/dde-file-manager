@@ -47,6 +47,12 @@ void SearchEventCaller::sendShowAdvanceSearchBar(quint64 winId, bool visible)
     dispatcher()->publish(Workspace::EventType::kShowCustomTopWidget, winId, SearchHelper::scheme(), visible);
 }
 
+void SearchEventCaller::sendShowAdvanceSearchButton(quint64 winId, bool visible)
+{
+    DSB_FM_USE_NAMESPACE
+    dispatcher()->publish(TitleBar::EventType::kShowFilterButton, winId, visible);
+}
+
 void SearchEventCaller::sendStartSpinner(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
