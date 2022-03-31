@@ -1790,6 +1790,23 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
     return false;
 }
 
+bool FileUtils::isContainProhibitPath(const QUrl &url)
+{
+    QStringList usrProhibitPaths;
+    usrProhibitPaths << QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first()
+                     << QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
+
+    if (!url.isEmpty() && usrProhibitPaths.contains(url.path())) {
+        return true;
+    }
+    return false;
+}
+
 bool FileUtils::appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList)
 {
     if (!fromUrlList.isEmpty()) {

@@ -144,6 +144,7 @@ public:
     static void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
 
     static bool isContainProhibitPath(const QList<QUrl> &urls);
+    static bool isContainProhibitPath(const QUrl &url);
 
     // 启用deepin-compressor追加压缩
     static bool appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList);

@@ -47,6 +47,7 @@
 #include "controllers/vaultcontroller.h"
 #include "dfmstandardpaths.h"
 #include "deviceinfo/udisklistener.h"
+#include "shutil/fileutils.h"
 
 #include <sys/stat.h>
 
@@ -241,6 +242,13 @@ void DFileViewHelperPrivate::init()
         DUrlList selectedUrls = q->selectedUrls();
         qInfo() << " ctrl X writeFilesToClipboard and selectedUrls = " << selectedUrls
                 << " currentUrl = " << q->currentUrl();
+
+        // 用户库目录以及主目录禁止剪切
+        for (const DUrl &url : selectedUrls) {
+            if(FileUtils::isContainProhibitPath(url))
+                return;
+        }
+
         fileService->writeFilesToClipboard(q, DFMGlobal::CutAction, selectedUrls);
     });
 
