@@ -29,9 +29,13 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/framework.h>
 
 #include <QMenu>
 #include <QFileInfo>
+#include <QApplication>
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -39,6 +43,10 @@ DFMBASE_USE_NAMESPACE
 SendToMenuScene::SendToMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new SendToMenuScenePrivate(this))
+{
+}
+
+SendToMenuScene::~SendToMenuScene()
 {
 }
 
@@ -175,7 +183,7 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
         }
 
         if (act) {
-            QString actId = QString("removable_disk_%1").arg(idx++);
+            QString actId = ActionID::kSendToRemovablePrefix + QString::number(idx++);
             predicateAction.insert(actId, act);
             act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, actId);
         }
@@ -187,10 +195,19 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
     if (!act)
         return;
 
-    if (act->text() == predicateName[ActionID::kSendToBluetooth]) {
-        DSC_NAMESPACE::BluetoothService::service()->sendFiles(selectFiles);
-    } else {
+    QList<QUrl> urls;
+    QStringList filePaths;
+    for (const auto &urlstr : selectFiles) {
+        QUrl url(urlstr);
+        urls << url;
+        filePaths << url.path();
+    }
+    DSC_USE_NAMESPACE
+    QString actId = act->property(ActionPropertyKey::kActionID).toString();
+    if (actId == ActionID::kSendToBluetooth) {
+        BluetoothService::service()->sendFiles(filePaths);
+    } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
-        // TODO(xust) do send/copy files.
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), urls, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint);
     }
 }

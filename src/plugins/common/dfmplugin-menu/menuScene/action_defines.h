@@ -26,37 +26,38 @@
 DPMENU_BEGIN_NAMESPACE
 
 namespace ActionID {
-    // NewCreateMenu
-    static constexpr char kNewFolder[] = "new-folder";
-    static constexpr char kNewDoc[] = "new-document";
-    static constexpr char kNewOfficeText[] = "new-office-text";
-    static constexpr char kNewSpreadsheets[] = "new-spreadsheets";
-    static constexpr char kNewPresentation[] = "new-presentation";
-    static constexpr char kNewPlainText[] = "new-plain-text";
+// NewCreateMenu
+static constexpr char kNewFolder[] = "new-folder";
+static constexpr char kNewDoc[] = "new-document";
+static constexpr char kNewOfficeText[] = "new-office-text";
+static constexpr char kNewSpreadsheets[] = "new-spreadsheets";
+static constexpr char kNewPresentation[] = "new-presentation";
+static constexpr char kNewPlainText[] = "new-plain-text";
 
-    // ClipBoardMenu
-    static constexpr char kPaste[] = "paste";
-    static constexpr char kCut[] = "cut";
-    static constexpr char kCopy[] = "copy";
+// ClipBoardMenu
+static constexpr char kPaste[] = "paste";
+static constexpr char kCut[] = "cut";
+static constexpr char kCopy[] = "copy";
 
-    // OpenDirMenu
-    static constexpr char kOpenAsAdmin[] = "open-as-administrator";
-    static constexpr char kSelectAll[] = "select-all" ;
-    static constexpr char kOpenInNewWindow[] = "open-in-new-window";
-    static constexpr char kOpenInNewTab[] = "open-in-new-tab";
-    static constexpr char kOpenInTerminal[] = "open-in-terminal";
+// OpenDirMenu
+static constexpr char kOpenAsAdmin[] = "open-as-administrator";
+static constexpr char kSelectAll[] = "select-all";
+static constexpr char kOpenInNewWindow[] = "open-in-new-window";
+static constexpr char kOpenInNewTab[] = "open-in-new-tab";
+static constexpr char kOpenInTerminal[] = "open-in-terminal";
 
-    // OpenFileMenu
-    static constexpr char kRename[] = "rename";
+// OpenFileMenu
+static constexpr char kRename[] = "rename";
 
-    // "OpenWithMenu"
-    static constexpr char kOpenWith[] = "open-with";
+// "OpenWithMenu"
+static constexpr char kOpenWith[] = "open-with";
 
-    // SendToMenu
-    static constexpr char kSendTo[] = "send-to";
-    static constexpr char kSendToBluetooth[] = "send-to-bluetooth";
+// SendToMenu
+static constexpr char kSendTo[] = "send-to";
+static constexpr char kSendToBluetooth[] = "send-to-bluetooth";
+static constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
 }
 
 DPMENU_END_NAMESPACE
 
-#endif // ACTION_DEFINES_H
+#endif   // ACTION_DEFINES_H

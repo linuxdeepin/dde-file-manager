@@ -30,7 +30,7 @@
 
 DPMENU_BEGIN_NAMESPACE
 
-class SendToMenuCreator: public DFMBASE_NAMESPACE::AbstractSceneCreator
+class SendToMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
@@ -42,10 +42,11 @@ public:
 };
 
 class SendToMenuScenePrivate;
-class SendToMenuScene: public DFMBASE_NAMESPACE::AbstractMenuScene
+class SendToMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
     explicit SendToMenuScene(QObject *parent = nullptr);
+    virtual ~SendToMenuScene() override;
 
     virtual QString name() const override;
     virtual bool initialize(const QVariantHash &params) override;
@@ -55,9 +56,9 @@ public:
     virtual dfmbase::AbstractMenuScene *scene(QAction *action) const override;
 
 private:
-    SendToMenuScenePrivate *const d = nullptr;
+    QScopedPointer<SendToMenuScenePrivate> d;
 };
 
 DPMENU_END_NAMESPACE
 
-#endif // SENDTOMENUSCENE_H
+#endif   // SENDTOMENUSCENE_H

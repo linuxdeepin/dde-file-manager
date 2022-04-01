@@ -19,10 +19,18 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
+find_package(Dtk REQUIRED Widget REQUIRED)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${DtkWidget_INCLUDE_DIRS}
+)
+
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     DFMSERVICE::common
+    ${DtkWidget_LIBRARIES}
 )
 
 #install library file
