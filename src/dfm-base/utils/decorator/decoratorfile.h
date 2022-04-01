@@ -44,6 +44,8 @@ public:
     DFMIO::DFile::Permissions permissions() const;
     bool setPermissions(DFMIO::DFile::Permissions permission);
 
+    DFMIOError lastError() const;
+
 private:
     QSharedPointer<DecoratorFilePrivate> d = nullptr;
 };

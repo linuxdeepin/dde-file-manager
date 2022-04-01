@@ -137,3 +137,10 @@ DFMIO::DFile::Permissions DecoratorFileInfo::permissions() const
         return d->dfileInfo->permissions();
     return DFMIO::DFile::Permission::NoPermission;
 }
+
+DFMIOError DecoratorFileInfo::lastError() const
+{
+    if (d->dfileInfo)
+        return d->dfileInfo->lastError();
+    return DFMIOError();
+}

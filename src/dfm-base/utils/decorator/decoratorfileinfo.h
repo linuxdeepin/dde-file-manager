@@ -50,6 +50,8 @@ public:
     QString parentPath() const;
     DFMIO::DFile::Permissions permissions() const;
 
+    DFMIOError lastError() const;
+
 private:
     QSharedPointer<DecoratorFileInfoPrivate> d = nullptr;
 };

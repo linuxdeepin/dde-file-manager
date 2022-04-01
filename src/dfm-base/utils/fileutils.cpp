@@ -50,8 +50,8 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-static constexpr char kDdeTrashId[] { "dde-trash" };
-static constexpr char kDdeComputerId[] { "dde-computer" };
+static constexpr char kDDETrashId[] { "dde-trash" };
+static constexpr char kDDEComputerId[] { "dde-computer" };
 static constexpr char kSharePixmapPath[] { "/usr/share/pixmaps" };
 const static int kDefaultMemoryPageSize = 4096;
 
@@ -259,7 +259,7 @@ bool FileUtils::isTrashDesktopFile(const QUrl &url)
 {
     if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
-        return df.desktopDeepinId() == kDdeTrashId;
+        return df.desktopDeepinId() == kDDETrashId;
     }
     return false;
 }
@@ -268,7 +268,7 @@ bool FileUtils::isComputerDesktopFile(const QUrl &url)
 {
     if (isDesktopFile(url)) {
         DesktopFile df(url.toLocalFile());
-        return df.desktopDeepinId() == kDdeComputerId;
+        return df.desktopDeepinId() == kDDEComputerId;
     }
     return false;
 }

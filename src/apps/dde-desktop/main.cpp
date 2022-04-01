@@ -102,7 +102,7 @@ static bool pluginsLoad()
     return true;
 }
 
-void registerDdeSession()
+void registerDDESession()
 {
     const char *envName = "DDE_SESSION_PROCESS_COOKIE_ID";
     QByteArray cookie = qgetenv(envName);
@@ -117,9 +117,9 @@ void registerDdeSession()
     }
 }
 
-#define DesktopServiceName          "com.deepin.dde.desktop"
-#define DesktopServicePath          "/com/deepin/dde/desktop"
-#define DesktopServiceInterface     "com.deepin.dde.desktop"
+constexpr char kDesktopServiceName[] { "com.deepin.dde.desktop" };
+constexpr char kDesktopServicePath[] { "/com/deepin/dde/desktop" };
+constexpr char kDesktopServiceInterface[] { "com.deepin.dde.desktop" };
 
 int main(int argc, char *argv[])
 {
@@ -136,18 +136,18 @@ int main(int argc, char *argv[])
     if (true) {
         QDBusConnection conn = QDBusConnection::sessionBus();
 
-        if (!conn.registerService(DesktopServiceName)) {
+        if (!conn.registerService(kDesktopServiceName)) {
             qCritical() << "registerService Failed, maybe service exist" << conn.lastError();
             exit(0x0002);
         }
 
-//        auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
-//        if (!conn.registerObject(DesktopServicePath, Desktop::instance(), registerOptions)) {
-//            qCritical() << "registerObject Failed" << conn.lastError();
-//            exit(0x0003);
-//        }
+        //        auto registerOptions = QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals | QDBusConnection::ExportAllProperties;
+        //        if (!conn.registerObject(DesktopServicePath, Desktop::instance(), registerOptions)) {
+        //            qCritical() << "registerObject Failed" << conn.lastError();
+        //            exit(0x0003);
+        //        }
 
-        registerDdeSession();
+        registerDDESession();
     }
 
     if (!pluginsLoad()) {

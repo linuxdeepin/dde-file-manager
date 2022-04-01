@@ -56,6 +56,8 @@ void EmblemManager::paintEmblems(QPainter *painter, const QRectF &paintArea, con
 QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    if (!info)
+        return {};
 
     QList<QIcon> emblemList;
 

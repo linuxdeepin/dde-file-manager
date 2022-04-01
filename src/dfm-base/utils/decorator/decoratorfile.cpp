@@ -100,3 +100,10 @@ bool DecoratorFile::setPermissions(DFMIO::DFile::Permissions permission)
         return d->dfile->setPermissions(permission);
     return false;
 }
+
+DFMIOError DecoratorFile::lastError() const
+{
+    if (d->dfile)
+        return d->dfile->lastError();
+    return DFMIOError();
+}
