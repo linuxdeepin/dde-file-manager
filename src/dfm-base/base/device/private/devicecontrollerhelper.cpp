@@ -475,6 +475,7 @@ void DeviceControllerHelper::makeBlockDeviceData(const DeviceControllerHelper::B
     data->hasFileSystem = ptr->hasFileSystem();
     data->hasPartitionTable = ptr->hasPartitionTable();
     data->hasPartition = ptr->hasPartition();
+    data->connectionBus = ptr->getProperty(DFMMOUNT::Property::DriveConnectionBus).toString();
 
     // We cannot acqurie optical capacity by udisks2
     if (data->optical && !data->mountpoints.isEmpty()) {
@@ -539,6 +540,7 @@ void DeviceControllerHelper::makeBlockDeviceMap(const BlockDeviceData &data, QVa
     map->insert(DeviceProperty::kHintSystem, data.hintSystem);
     map->insert(DeviceProperty::kHintIgnore, data.hintIgnore);
     map->insert(DeviceProperty::kCryptoBackingDevice, data.cryptoBackingDevice);
+    map->insert(DeviceProperty::kConnectionBus, data.connectionBus);
 
     // Too much information can slow down the performance of D-Bus interface calls,
     // so only return all information when using `detail`.

@@ -258,7 +258,7 @@ void InfoCache::cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info)
     //获取监视器，监听当前的file的改变
     QSharedPointer<AbstractFileWatcher> watcher { nullptr };
 
-    watcher = WacherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
+    watcher = WatcherFactory::create<AbstractFileWatcher>(UrlRoute::urlParent(url));
 
     if (watcher) {
         if (watcher->getCacheInfoConnectSize() == 0) {
@@ -300,7 +300,7 @@ void InfoCache::removeCacheInfo(const QUrl &url)
 {
     Q_D(InfoCache);
     // 断开信号连接
-    QSharedPointer<AbstractFileWatcher> watcher = WacherFactory::create<AbstractFileWatcher>(url);
+    QSharedPointer<AbstractFileWatcher> watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (watcher) {
         watcher->reduceCacheInfoConnectSize();
         if (watcher->getCacheInfoConnectSize() <= 0) {

@@ -164,7 +164,7 @@ void RecentManager::init()
 
     connect(&updateRecentTimer, &QTimer::timeout, this, &RecentManager::asyncHandleFileChanged);
 
-    watcher = WacherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentManager::xbelPath()));
+    watcher = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile(RecentManager::xbelPath()));
     connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentManager::updateRecent);
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentManager::updateRecent);
     watcher->startWatcher();

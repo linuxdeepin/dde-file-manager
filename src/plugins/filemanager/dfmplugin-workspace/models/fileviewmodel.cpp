@@ -213,7 +213,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename,
                    d.data(), &FileViewModelPrivate::dofileMoved);
     }
-    d->watcher = WacherFactory::create<AbstractFileWatcher>(url);
+    d->watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (!d->watcher.isNull()) {
         connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted,
                 d.data(), &FileViewModelPrivate::doFileDeleted);

@@ -51,7 +51,7 @@ void Vault::initialize()
 
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());
-    WacherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme());
+    WatcherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme());
     DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
     EntryEntityFactor::registCreator<VaultEntryFileEntity>("vault");
 

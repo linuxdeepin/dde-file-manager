@@ -53,7 +53,7 @@ void Search::initialize()
     //注册Scheme为"search"的扩展的文件信息
     InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
-    WacherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
+    WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
     MenuService::regClass<SearchMenu>(SearchScene::kSearchMenu);
 
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);

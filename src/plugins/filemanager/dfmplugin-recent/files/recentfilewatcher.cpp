@@ -47,7 +47,7 @@ void RecentFileWatcherPrivate::initFileWatcher()
 {
     QUrl watchUrl = QUrl::fromLocalFile(path);
 
-    proxy = WacherFactory::create<AbstractFileWatcher>(watchUrl);
+    proxy = WatcherFactory::create<AbstractFileWatcher>(watchUrl);
 
     if (!proxy) {
         qWarning("watcher create failed.");
@@ -92,7 +92,7 @@ void RecentFileWatcher::addWatcher(const QUrl &url)
         return;
     }
 
-    AbstractFileWatcherPointer watcher = WacherFactory::create<AbstractFileWatcher>(url);
+    AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (!watcher)
         return;
 

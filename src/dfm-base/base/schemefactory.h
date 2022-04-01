@@ -205,11 +205,11 @@ private:
     explicit ViewFactory() {}
 };
 
-class WacherFactory final : public SchemeFactory<AbstractFileWatcher>
+class WatcherFactory final : public SchemeFactory<AbstractFileWatcher>
 {
-    Q_DISABLE_COPY(WacherFactory)
-    friend class GC<WacherFactory>;
-    static WacherFactory *ins;
+    Q_DISABLE_COPY(WatcherFactory)
+    friend class GC<WatcherFactory>;
+    static WatcherFactory *ins;
 
 public:
     template<class CT = AbstractFileWatcher>
@@ -232,8 +232,8 @@ public:
     }
 
 private:
-    static WacherFactory &instance();   // 获取全局实例
-    explicit WacherFactory() {}
+    static WatcherFactory &instance();   // 获取全局实例
+    explicit WatcherFactory() {}
 };
 
 // 参数列表偏特化

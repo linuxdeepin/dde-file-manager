@@ -32,7 +32,7 @@ VaultFileWatcher::VaultFileWatcher(const QUrl &url, QObject *parent)
     dptr = dynamic_cast<VaultFileWatcherPrivate *>(d.data());
     QString path = url.path().contains(VaultHelper::instance()->rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url);
     QUrl localUrl = QUrl::fromLocalFile(path);
-    dptr->proxyStaging = WacherFactory::create<AbstractFileWatcher>(localUrl);
+    dptr->proxyStaging = WatcherFactory::create<AbstractFileWatcher>(localUrl);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileAttributeChanged,
             this, &VaultFileWatcher::onFileAttributeChanged);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileDeleted,

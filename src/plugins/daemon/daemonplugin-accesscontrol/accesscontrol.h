@@ -20,25 +20,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef CORE_H
-#define CORE_H
+#ifndef ACCESSCONTROL_H
+#define ACCESSCONTROL_H
 
-#include "daemonplugin_core_global.h"
+#include "daemonplugin_accesscontrol_global.h"
+
+#include "dfm-base/interfaces/abstractfilewatcher.h"
+#include "accesscontroldbus.h"
 
 #include <dfm-framework/framework.h>
 
-DAEMONPCORE_BEGIN_NAMESPACE
+DAEMONPAC_BEGIN_NAMESPACE
 
-class Core : public DPF_NAMESPACE::Plugin
+class AccessControl : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.daemon" FILE "core.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.daemon" FILE "accesscontrol.json")
 
 public:
-    virtual void initialize() override;
     virtual bool start() override;
+
+private:
+    bool isDaemonServiceRegistered();
+    void initDBusInterce();
+    void initConnect();
+
+private slots:
+    void onFileCreatedInHomePath();
+
+private:
+    QScopedPointer<AccessControlDBus> accessControlManager;
+    AbstractFileWatcherPointer wathcer;
 };
 
-DAEMONPCORE_END_NAMESPACE
+DAEMONPAC_END_NAMESPACE
 
-#endif   // CORE_H
+#endif   // ACCESSCONTROL_H

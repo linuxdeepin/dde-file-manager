@@ -43,7 +43,7 @@ void Optical::initialize()
 {
     UrlRoute::regScheme(Global::kBurn, "/", OpticalHelper::icon(), true);
     InfoFactory::regClass<MasteredMediaFileInfo>(Global::kBurn);
-    WacherFactory::regClass<MasteredMediaFileWatcher>(Global::kBurn);
+    WatcherFactory::regClass<MasteredMediaFileWatcher>(Global::kBurn);
     DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::kBurn);
     MenuService::regClass<OpticalMenu>(OpticalScene::kOpticalMenu);
 

@@ -20,25 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef CORE_H
-#define CORE_H
+#ifndef DAEMONPLUGIN_ACCESSCONTROL_GLOBAL_H
+#define DAEMONPLUGIN_ACCESSCONTROL_GLOBAL_H
 
-#include "daemonplugin_core_global.h"
+#define DAEMONPAC_NAMESPACE daemonplugin_accesscontrol
 
-#include <dfm-framework/framework.h>
+#define DAEMONPAC_BEGIN_NAMESPACE namespace DAEMONPAC_NAMESPACE {
+#define DAEMONPAC_END_NAMESPACE }
+#define DAEMONPAC_USE_NAMESPACE using namespace DAEMONPAC_NAMESPACE;
 
-DAEMONPCORE_BEGIN_NAMESPACE
-
-class Core : public DPF_NAMESPACE::Plugin
-{
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.daemon" FILE "core.json")
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-};
-
-DAEMONPCORE_END_NAMESPACE
-
-#endif   // CORE_H
+#endif   // DAEMONPLUGIN_ACCESSCONTROL_GLOBAL_H

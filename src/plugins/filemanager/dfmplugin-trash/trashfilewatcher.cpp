@@ -57,7 +57,7 @@ void TrashFileWatcherPrivate::initFileWatcher()
 {
     const QUrl &watchUrl = QUrl::fromLocalFile(TrashHelper::toLocalFile(path).path());
 
-    proxy = WacherFactory::create<AbstractFileWatcher>(watchUrl);
+    proxy = WatcherFactory::create<AbstractFileWatcher>(watchUrl);
     if (!proxy) {
         qWarning("watcher create failed.");
         abort();

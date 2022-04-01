@@ -364,7 +364,7 @@ QModelIndex CanvasModel::setRootUrl(QUrl url)
 
     }
 
-    d->watcher = WacherFactory::create<AbstractFileWatcher>(d->rootUrl);
+    d->watcher = WatcherFactory::create<AbstractFileWatcher>(d->rootUrl);
     if (Q_LIKELY(!d->watcher.isNull())) {
         connect(d->watcher.data(), &AbstractFileWatcher::fileDeleted, d.data(), &CanvasModelPrivate::onFileDeleted);
         connect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &CanvasModelPrivate::onFileCreated);

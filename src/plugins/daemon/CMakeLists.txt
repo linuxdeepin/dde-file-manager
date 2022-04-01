@@ -1,3 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
 
 add_subdirectory(daemonplugin-core)
+add_subdirectory(daemonplugin-accesscontrol)

@@ -81,7 +81,7 @@ void SearchFileWatcher::addWatcher(const QUrl &url)
     if (!url.isValid() || dptr->urlToWatcherHash.contains(url))
         return;
 
-    AbstractFileWatcherPointer watcher = WacherFactory::create<AbstractFileWatcher>(url);
+    AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (!watcher)
         return;
 

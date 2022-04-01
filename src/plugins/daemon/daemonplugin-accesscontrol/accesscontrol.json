@@ -1,5 +1,5 @@
 {
-    "Name" : "daemonplugin-core",
+    "Name" : "daemonplugin-accesscontrol",
     "Version" : "1.0.0",
     "CompatVersion" : "1.0.0",
     "Vendor" : "The Uniontech Software Technology Co., Ltd.",
@@ -17,8 +17,9 @@
             will be met: https://www.gnu.org/licenses/gpl-3.0.html."
     ],
     "Category" : "",
-    "Description" : "The core plugin for the dde-file-manager-daemon.",
+    "Description" : "The accesscontrol plugin for the dde-file-manager-daemon.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
+        {"Name" : "core", "Version": "1.0.0"}
     ]
 }

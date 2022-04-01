@@ -52,7 +52,7 @@ WatcherCache::~WatcherCache()
 /*!
  * \brief  instance 获取全局的文件监视器的缓存管理模块实例
  *
- *  只有提供给自己使用DFMWacherFactory，不对外做操作防止出现多个watcher
+ *  只有提供给自己使用DFMWatcherFactory，不对外做操作防止出现多个watcher
  *
  * \return DWatcherCachesManager 返回全局的文件监视器的缓存管理模块实例
  */
@@ -63,7 +63,7 @@ WatcherCache &WatcherCache::instance()
 /*!
  * \brief getCacheWatcher 根据url获取缓存中对应的监视器
  *
- * 只有提供给自己使用DFMWacherFactory，不对外做操作防止出现多个watcher
+ * 只有提供给自己使用DFMWatcherFactory，不对外做操作防止出现多个watcher
  *
  * \param const QUrl &url 需要构造的Url
  *
@@ -80,7 +80,7 @@ QSharedPointer<AbstractFileWatcher> WatcherCache::getCacheWatcher(const QUrl &ur
 /*!
  * \brief cacheWatcher 缓存url对应的watcher
  *
- *  只有提供给自己使用DFMWacherFactory，不对外做操作防止出现多个watcher
+ *  只有提供给自己使用DFMWatcherFactory，不对外做操作防止出现多个watcher
  *
  *  watcher必须有值，如果为nullptr那就不会缓存
  *
@@ -99,7 +99,7 @@ void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFi
 /*!
  * \brief removCacheWatcher 根据Url移除当前缓存的watcher
  *
- *  只有提供给自己使用DFMWacherFactory，不对外做操作防止出现多个watcher
+ *  只有提供给自己使用DFMWatcherFactory，不对外做操作防止出现多个watcher
  *
  *  首先需要注册scheme到DFMUrlRoute类
  *

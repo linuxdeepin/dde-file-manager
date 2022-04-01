@@ -28,7 +28,7 @@
 #include <QUrl>
 
 DFMBASE_BEGIN_NAMESPACE
-class WacherFactory;
+class WatcherFactory;
 class InfoCache;
 class WatcherCachePrivate;
 class WatcherCache : public QObject
@@ -36,7 +36,7 @@ class WatcherCache : public QObject
     Q_OBJECT
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), WatcherCache)
     QScopedPointer<WatcherCachePrivate> d;
-    friend WacherFactory;
+    friend WatcherFactory;
     friend InfoCache;
 
 public:

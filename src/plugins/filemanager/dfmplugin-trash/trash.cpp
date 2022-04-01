@@ -42,7 +42,7 @@ void Trash::initialize()
 {
     UrlRoute::regScheme(TrashHelper::scheme(), "/", TrashHelper::icon(), true, tr("Trash"));
     InfoFactory::regClass<TrashFileInfo>(TrashHelper::scheme());
-    WacherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
+    WatcherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
     MenuService::regClass<TrashMenu>(TrashScene::kTrashMenu);
     connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);

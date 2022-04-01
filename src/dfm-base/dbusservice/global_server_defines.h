@@ -94,6 +94,7 @@ constexpr char kMediaCompatibility[] { "MediaCompatibility" };
 constexpr char kCleartextDevice[] { "CleartextDevice" };
 constexpr char kDisplayName[] { "DisplayName" };
 constexpr char kDeviceIcon[] { "DeviceIcon" };
+constexpr char kConnectionBus[] { "connectBus" };
 
 }   // namespace DeviceProperty
 

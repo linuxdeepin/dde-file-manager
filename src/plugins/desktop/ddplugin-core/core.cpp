@@ -42,7 +42,7 @@ static void registerFileSystem()
     UrlRoute::regScheme(Global::kFile, "/");
     InfoFactory::regClass<LocalFileInfo>(Global::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::kFile);
-    WacherFactory::regClass<LocalFileWatcher>(Global::kFile);
+    WatcherFactory::regClass<LocalFileWatcher>(Global::kFile);
 }
 
 void ddplugin_core::Core::initialize()

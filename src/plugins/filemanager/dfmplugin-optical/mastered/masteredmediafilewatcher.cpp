@@ -58,7 +58,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
 
     OpticalHelper::createStagingFolder(urlStaging.toLocalFile());
 
-    dptr->proxyStaging = WacherFactory::create<AbstractFileWatcher>(urlStaging);
+    dptr->proxyStaging = WatcherFactory::create<AbstractFileWatcher>(urlStaging);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileAttributeChanged,
             this, &MasteredMediaFileWatcher::onFileAttributeChanged);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileDeleted,
@@ -73,7 +73,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     QString id { DeviceManager::blockDeviceId(devFile) };
     auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
     QString mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
-    dptr->proxyOnDisk = WacherFactory::create<AbstractFileWatcher>(mntPoint);
+    dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(mntPoint);
 
     // TODO(zhangs):
     /*

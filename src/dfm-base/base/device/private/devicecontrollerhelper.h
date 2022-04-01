@@ -78,6 +78,7 @@ struct BlockDeviceData
     bool hintIgnore;
     QString cryptoBackingDevice;
     QString cleartextDevice;
+    QString connectionBus;
 };
 struct ProtocolDeviceData
 {

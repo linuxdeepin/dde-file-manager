@@ -65,7 +65,7 @@ void Core::initialize()
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<LocalFileInfo>(Global::kFile);
     DirIteratorFactory::regClass<LocalDirIterator>(Global::kFile);
-    WacherFactory::regClass<LocalFileWatcher>(Global::kFile);
+    WatcherFactory::regClass<LocalFileWatcher>(Global::kFile);
     // 初始化剪切板
     ClipBoard::instance();
 }

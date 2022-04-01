@@ -50,7 +50,7 @@ void MyShares::initialize()
 
     InfoFactory::regClass<ShareFileInfo>(ShareUtils::scheme());
     DirIteratorFactory::regClass<ShareIterator>(ShareUtils::scheme());
-    WacherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
+    WatcherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
     MenuService::regClass<ShareMenu>(ShareScene::kShareScene);
 
     DSB_FM_USE_NAMESPACE

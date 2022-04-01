@@ -47,7 +47,7 @@ void Recent::initialize()
     UrlRoute::regScheme(RecentManager::scheme(), "/", RecentManager::icon(), true, tr("Recent"));
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
-    WacherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
+    WatcherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
     MenuService::regClass<RecentMenu>(RecentScene::kRecentMenu);
 
