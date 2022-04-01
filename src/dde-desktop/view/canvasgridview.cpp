@@ -86,7 +86,7 @@
 #include "app/filesignalmanager.h"
 
 #define DESKTOP_CAN_SCREENSAVER "DESKTOP_CAN_SCREENSAVER"
-#define DRAGICON_SIZE 128       //拖拽聚合默认icon边长
+#define DRAGICON_SIZE 96       //拖拽聚合默认icon边长(size来自ui需求)
 #define DRAGICON_OUTLINE 30     //增加外圈范围，防止旋转后部分图片的角绘制不到
 #define DRAGICON_MAX 4          //拖拽聚合最多绘制icon数量
 #define DRAGICON_ROTATE 10.0    //拖拽聚合旋转角度
