@@ -745,7 +745,7 @@ bool FileUtils::cpTemplateFileToTargetDir(const QString &targetdir, const QStrin
     return !AppController::createFile(templateFile, targetdir, baseName, windowId).isEmpty();
 }
 
-bool FileUtils::openFile(const QString &filePath)
+bool FileUtils::openFile(const QString &filePath, const QString &desktopFile)
 {
     bool result = false;
     if (QFileInfo(filePath).suffix() == "desktop") {
@@ -764,30 +764,38 @@ bool FileUtils::openFile(const QString &filePath)
         mimetype = getFileMimetype(filePath);
     }
     /*********************************************************/
+
     QAtomicInteger<bool> isOpenNow = false;
-    QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
-    if (defaultDesktopFile.isEmpty()) {
-        if (isSmbUnmountedFile(DUrl::fromLocalFile(filePath))) {
-            mimetype = QString("inode/directory");
-            defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
-            isOpenNow = true;
-            mimetype = QString();
-        } else {
-            qDebug() << "no default application for" << filePath;
-            return false;
+    QString defaultDesktopFile;
+
+    if(!desktopFile.isEmpty() && isFileManagerSelf(desktopFile)) {
+        defaultDesktopFile = desktopFile;
+    } else {
+        defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+        if (defaultDesktopFile.isEmpty()) {
+            if (isSmbUnmountedFile(DUrl::fromLocalFile(filePath))) {
+                mimetype = QString("inode/directory");
+                defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
+                isOpenNow = true;
+                mimetype = QString();
+            } else {
+                qDebug() << "no default application for" << filePath;
+                return false;
+            }
+        }
+        //此处会排除执行段(Exec=)包含dde-file-manager的desktop文件，需要对目录(inode/directory)类型及dde-open.desktop例外处理
+        if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory" && !defaultDesktopFile.contains("/dde-open.desktop")) {
+            QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
+            recommendApps.removeOne(defaultDesktopFile);
+            if (recommendApps.count() > 0) {
+                defaultDesktopFile = recommendApps.first();
+            } else {
+                qDebug() << "no default application for" << filePath;
+                return false;
+            }
         }
     }
-    //此处会排除执行段(Exec=)包含dde-file-manager的desktop文件，需要对目录(inode/directory)类型及dde-open.desktop例外处理
-    if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory" && !defaultDesktopFile.contains("/dde-open.desktop")) {
-        QStringList recommendApps = mimeAppsManager->getRecommendedApps(DUrl::fromLocalFile(filePath));
-        recommendApps.removeOne(defaultDesktopFile);
-        if (recommendApps.count() > 0) {
-            defaultDesktopFile = recommendApps.first();
-        } else {
-            qDebug() << "no default application for" << filePath;
-            return false;
-        }
-    }
+
     result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromLocalFile(filePath).toString());
     if (result) {
         // workaround since DTK apps doesn't support the recent file spec.
@@ -1026,7 +1034,7 @@ bool FileUtils::launchApp(const QString &desktopFile, const QStringList &filePat
             if (t_file.isLocalFile()) {
                 t_filePath = t_file.toLocalFile();
             }
-            openFile(t_filePath);
+            openFile(t_filePath, desktopFile);
         }
         return true;
     }

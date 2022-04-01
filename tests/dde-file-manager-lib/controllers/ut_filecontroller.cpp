@@ -19,7 +19,7 @@ public:
     static void SetUpTestCase()
     {
         typedef bool (*OpenFileWithFlag)(const QString & path, int flag);
-        typedef bool (*OpenFile)(const QString & path);
+        typedef bool (*OpenFile)(const QString & path, const QString & desktopFile);
         typedef bool (*OpenFiles)(const QStringList & filePaths);
         typedef bool (*OpenFilesWithArgs)(const QString & file, const QStringList & filePaths);
         typedef QString(*GetPath)();
@@ -30,8 +30,9 @@ public:
             Q_UNUSED(flag);
             return true;
         };
-        OpenFile openFile = [](const QString & path) {
+        OpenFile openFile = [](const QString & path, const QString &desktopFile) {
             Q_UNUSED(path);
+            Q_UNUSED(desktopFile);
             return true;
         };
         OpenFiles openFiles = [](const QStringList & filePaths) {

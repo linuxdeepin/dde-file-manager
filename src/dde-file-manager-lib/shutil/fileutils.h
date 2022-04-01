@@ -86,7 +86,7 @@ public:
     static QString newDocmentName(QString targetdir, const QString &baseName, const QString &suffix);
     static bool cpTemplateFileToTargetDir(const QString &targetdir, const QString &baseName, const QString &suffix, WId windowId);
 
-    static bool openFile(const QString &filePath);
+    static bool openFile(const QString &filePath, const QString &desktopFile = QString());
     static bool openFiles(const QStringList &filePaths);
     static bool openEnterFiles(const QStringList &filePaths);
     static bool launchApp(const QString &desktopFile, const QStringList &filePaths = {}); // open filePaths by desktopFile
