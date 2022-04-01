@@ -36,6 +36,8 @@
 #include <QDebug>
 #include <QIcon>
 
+#include <unistd.h>
+
 DPDIRSHARE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -70,8 +72,8 @@ ShareControlWidget::ShareControlWidget(const QUrl &url, QWidget *parent)
     : DArrowLineDrawer(parent), url(url)
 {
     setupUi();
-    initConnection();
     init();
+    initConnection();
 }
 
 void ShareControlWidget::setupUi()
@@ -153,9 +155,9 @@ void ShareControlWidget::initConnection()
             this->unshareFolder();
     });
 
-    connect(shareAnonymousSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::shareFolder);
-    connect(sharePermissionSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::shareFolder);
-    connect(shareNameEditor, &QLineEdit::editingFinished, this, &ShareControlWidget::shareFolder);
+    connect(shareAnonymousSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::updateShare);
+    connect(sharePermissionSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &ShareControlWidget::updateShare);
+    connect(shareNameEditor, &QLineEdit::editingFinished, this, &ShareControlWidget::updateShare);
 
     connect(UserShareService::service(), &UserShareService::shareAdded, this, &ShareControlWidget::updateWidgetStatus);
     connect(UserShareService::service(), &UserShareService::shareRemoved, this, &ShareControlWidget::updateWidgetStatus);
@@ -205,6 +207,12 @@ bool ShareControlWidget::validateShareName()
     return true;
 }
 
+void ShareControlWidget::updateShare()
+{
+    shareFolder();
+    shareSwitcher->setEnabled(true);
+}
+
 void ShareControlWidget::shareFolder()
 {
     if (!shareSwitcher->isChecked())
@@ -212,6 +220,8 @@ void ShareControlWidget::shareFolder()
 
     if (!validateShareName())
         return;
+
+    shareSwitcher->setEnabled(false);
 
     bool writable = sharePermissionSelector->currentIndex() == 0;
     bool anonymous = shareAnonymousSelector->currentIndex() == 1;
@@ -238,6 +248,35 @@ void ShareControlWidget::unshareFolder()
 
 void ShareControlWidget::updateWidgetStatus(const QString &filePath)
 {
+    shareSwitcher->setEnabled(true);
+    if (filePath != url.path())
+        return;
+
+    auto shareInfo = UserShareService::service()->getInfoByPath(filePath);
+    if (shareInfo.isValid()) {
+        shareSwitcher->setChecked(true);
+        shareNameEditor->setText(shareInfo.getShareName());
+        if (shareInfo.getWritable())
+            sharePermissionSelector->setCurrentIndex(0);
+        else
+            sharePermissionSelector->setCurrentIndex(1);
+
+        if (shareInfo.getAnonymous())
+            shareAnonymousSelector->setCurrentIndex(1);
+        else
+            shareAnonymousSelector->setCurrentIndex(0);
+
+        uint shareUid = UserShareService::service()->getUidByShareName(shareInfo.getShareName());
+        if ((shareUid != info->ownerId() || shareUid != getuid()) && getuid() != 0)
+            this->setEnabled(false);
+
+        sharePermissionSelector->setEnabled(true);
+        shareAnonymousSelector->setEnabled(true);
+    } else {
+        shareSwitcher->setChecked(false);
+        sharePermissionSelector->setEnabled(false);
+        shareAnonymousSelector->setEnabled(false);
+    }
 }
 
 #include "sharecontrolwidget.moc"

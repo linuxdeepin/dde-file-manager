@@ -41,6 +41,7 @@ public:
 
 private:
     static QWidget *createShareControlWidget(const QUrl &url);
+    void bindScene(const QString &parentScene);
 };
 
 DPDIRSHARE_END_NAMESPACE

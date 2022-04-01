@@ -48,6 +48,7 @@ protected:
     bool validateShareName();
 
 protected Q_SLOTS:
+    void updateShare();
     void shareFolder();
     void unshareFolder();
     void updateWidgetStatus(const QString &filePath);

@@ -40,16 +40,7 @@ bool DirShare::start()
 {
     MenuService::service()->registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
 
-    const QString &canvasMenu { "CanvasMenu" };
-    if (MenuService::service()->contains(canvasMenu)) {
-        MenuService::service()->bind(ShareMenuCreator::name(), canvasMenu);
-    } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == canvasMenu || scene == "workspaceMenu")   // TODO(xust), TODO(liuyangming) what's the name of workspace's menu scene?
-                MenuService::service()->bind(ShareMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
-    }
+    bindScene("CanvasMenu");
 
     PropertyDialogService::service()->registerMethod(DirShare::createShareControlWidget, 2, nullptr);
     return true;
@@ -71,4 +62,17 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
         return nullptr;
 
     return new ShareControlWidget(url);
+}
+
+void DirShare::bindScene(const QString &parentScene)
+{
+    if (MenuService::service()->contains(parentScene)) {
+        MenuService::service()->bind(ShareMenuCreator::name(), parentScene);
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+            if (scene == parentScene)
+                MenuService::service()->bind(ShareMenuCreator::name(), scene);
+        },
+                Qt::DirectConnection);
+    }
 }
