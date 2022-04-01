@@ -1315,8 +1315,13 @@ QIcon LocalFileInfo::fileIcon() const
     const QUrl &fileUrl = this->url();
     const QString &filePath = this->absoluteFilePath();
 
-    if (!d->icon.isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->icon.name().isEmpty())) {
-        return d->icon;
+    return DFileIconProvider::globalProvider()->icon(filePath);
+
+    // todo lanxs
+    // 暂时屏蔽缩略图生成
+
+    if (!d->fileIcon().isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->fileIcon().name().isEmpty())) {
+        return d->fileIcon();
     }
 
     d->iconFromTheme = false;
@@ -1339,17 +1344,21 @@ QIcon LocalFileInfo::fileIcon() const
 
             pa.setPen(Qt::gray);
             pa.drawPixmap(0, 0, pixmap);
-            d->icon.addPixmap(pixmap);
+            QIcon fileIcon = d->fileIcon();
+            fileIcon.addPixmap(pixmap);
             d->iconFromTheme = false;
             d->needThumbnail = false;
 
-            return d->icon;
+            d->setIcon(fileIcon);
+
+            return fileIcon;
         }
 
         if (d->getIconTimer) {
             QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
         } else {
             QTimer *timer = new QTimer();
+
             const QExplicitlySharedDataPointer<LocalFileInfo> me(const_cast<LocalFileInfo *>(this));
 
             d->getIconTimer = timer;
@@ -1357,28 +1366,30 @@ QIcon LocalFileInfo::fileIcon() const
             timer->moveToThread(qApp->thread());
             timer->setInterval(REQUEST_THUMBNAIL_DEALY);
 
-            QObject::connect(timer, &QTimer::timeout, timer, [fileUrl, timer, me, filePath] {
-                DThumbnailProvider::instance()->appendToProduceQueue(filePath, DThumbnailProvider::kLarge,
-                                                                     [me](const QString &path) {
-                                                                         if (path.isEmpty()) {
-                                                                             me->d->iconFromTheme = true;
-                                                                         } else {
-                                                                             // clean old icon
-                                                                             me->d->icon = QIcon();
-                                                                         }
+            QObject::connect(timer, &QTimer::timeout, timer, [timer, me, filePath] {
+                DThumbnailProvider::instance()->appendToProduceQueue(filePath, DThumbnailProvider::kLarge, [me](const QString &path) {
+                    if (QThread::currentThread() == qApp->thread()) {
+                        if (path.isEmpty()) {
+                            me->d->iconFromTheme = true;
+                        } else {
+                            me->d->setIcon(QIcon());
+                        }
 
-                                                                         me->d->needThumbnail = false;
-                                                                     });
+                        me->d->needThumbnail = false;
+                    } else {
+                        qWarning() << "thread run other!!!";
+                    }
+                });
                 timer->deleteLater();
             });
 
             QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
         }
 
-        if (d->icon.isNull())
-            d->icon = DFileIconProvider::globalProvider()->icon(filePath);
+        if (d->fileIcon().isNull())
+            d->setIcon(DFileIconProvider::globalProvider()->icon(filePath));
 
-        return d->icon;
+        return d->fileIcon();
     } else {
         d->needThumbnail = false;
     }
@@ -1389,18 +1400,18 @@ QIcon LocalFileInfo::fileIcon() const
         if (symLinkTarget != filePath) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(symLinkTarget));
             if (info) {
-                d->icon = info->fileIcon();
+                d->setIcon(info->fileIcon());
                 d->iconFromTheme = false;
 
-                return d->icon;
+                return d->fileIcon();
             }
         }
     }
 
-    d->icon = DFileIconProvider::globalProvider()->icon(filePath);
+    d->setIcon(DFileIconProvider::globalProvider()->icon(filePath));
     d->iconFromTheme = true;
 
-    return d->icon;
+    return d->fileIcon();
 }
 
 QString LocalFileInfo::iconName() const

@@ -45,12 +45,13 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
     QMap<DFileInfo::AttributeID, QVariant> attributes;   // 缓存的fileinfo信息
     QReadWriteLock lock;
+    QMutex mutex;
 
     // thumbnail
     QIcon icon;
-    bool needThumbnail = false;
-    qint8 hasThumbnail = -1;   // 小于0时表示此值未初始化，0表示不支持，1表示支持
-    bool iconFromTheme = false;
+    std::atomic_bool needThumbnail = { false };
+    std::atomic_int hasThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
+    std::atomic_bool iconFromTheme = { false };
     QPointer<QTimer> getIconTimer = nullptr;
 
 public:
@@ -75,6 +76,17 @@ public:
         return size.left(size.count() - 1);
     }
     virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
+
+    void setIcon(const QIcon &icon)
+    {
+        QMutexLocker locker(&mutex);
+        this->icon = icon;
+    }
+    QIcon fileIcon()
+    {
+        QReadLocker locker(&lock);
+        return this->icon;
+    }
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(LocalFileInfo *qq)

@@ -573,7 +573,7 @@ void TaskWidget::showBtnByAction(const AbstractJobHandler::SupportActions &actio
         btnReplace->setText(tr("Retry", "button"));
         variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kRetryAction);
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kReplaceAction)) {
-        btnReplace->setText(tr("RePlace", "button"));
+        btnReplace->setText(tr("Replace", "button"));
         variantReplace.setValue<AbstractJobHandler::SupportAction>(AbstractJobHandler::SupportAction::kReplaceAction);
     } else if (actions.testFlag(AbstractJobHandler::SupportAction::kMergeAction)) {
         btnReplace->setText(tr("Merge", "button"));

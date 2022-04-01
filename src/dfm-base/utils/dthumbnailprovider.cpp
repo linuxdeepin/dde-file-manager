@@ -29,6 +29,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
+#include "dfm-base/utils/decorator/decoratorfileOperator.h"
 
 #include <DThumbnailProvider>
 
@@ -57,8 +58,7 @@
 
 #include <sys/stat.h>
 
-#define FORMAT ".png"
-//#define CREATE_VEDIO_THUMB "CreateVedioThumbnail"
+constexpr char kFormat[] { ".png" };
 
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
@@ -76,9 +76,8 @@ public:
 
     QString sizeToFilePath(DThumbnailProvider::Size size) const;
 
-    DThumbnailProvider *q_ptr;
+    DThumbnailProvider *q = nullptr;
     QString errorString;
-    // 5MB
     qint64 defaultSizeLimit = 1024 * 1024 * 20;
     QHash<QMimeType, qint64> sizeLimitHash;
     DMimeDatabase mimeDatabase;
@@ -89,21 +88,18 @@ public:
     {
         QFileInfo fileInfo;
         DThumbnailProvider::Size size;
-        DThumbnailProvider::CallBack callback;
+        DThumbnailProvider::CallBack callback = nullptr;
     };
 
     QQueue<ProduceInfo> produceQueue;
     QQueue<QString> produceAbsoluteFilePathQueue;
-    QSet<QPair<QString, DThumbnailProvider::Size>> discardedProduceInfos;
 
     bool running = true;
 
     QWaitCondition waitCondition;
-    QReadWriteLock dataReadWriteLock;
+    QMutex mutex;
 
     QHash<QString, QString> keyToThumbnailTool;
-
-    Q_DECLARE_PUBLIC(DThumbnailProvider)
 };
 
 class DFileThumbnailProviderPrivate : public DThumbnailProvider
@@ -118,7 +114,7 @@ QSet<QString> DThumbnailProviderPrivate::hasThumbnailMimeHash;
 Q_GLOBAL_STATIC(DFileThumbnailProviderPrivate, ftpGlobal)
 
 DThumbnailProviderPrivate::DThumbnailProviderPrivate(DThumbnailProvider *qq)
-    : q_ptr(qq)
+    : q(qq)
 {
 }
 
@@ -152,7 +148,7 @@ QString DThumbnailProviderPrivate::sizeToFilePath(DThumbnailProvider::Size size)
     case DThumbnailProvider::Size::kLarge:
         return StandardPaths::location(StandardPaths::StandardLocation::kThumbnailLargePath);
     }
-    return "";   //默认返回空字符 warning项
+    return "";
 }
 
 DThumbnailProvider *DThumbnailProvider::instance()
@@ -253,17 +249,15 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
     if (stat(pathStd.c_str(), &st) == 0)
         inode = st.st_ino;
 
-    const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded) + QString::number(inode)).toLocal8Bit()) + FORMAT;
+    const QString thumbnailName = dataToMd5Hex((QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded) + QString::number(inode)).toLocal8Bit()) + kFormat;
     QString thumbnail = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
-
-    if (!QFile::exists(thumbnail)) {
+    if (!DecoratorFile(thumbnail).exists()) {
         return QString();
     }
 
-    QImageReader ir(thumbnail, QByteArray(FORMAT).mid(1));
+    QImageReader ir(thumbnail, QByteArray(kFormat).mid(1));
     if (!ir.canRead()) {
-        QFile::remove(thumbnail);
-        emit thumbnailChanged(absoluteFilePath, QString());
+        DecoratorFileOperator(thumbnail).deleteFile();
         return QString();
     }
     ir.setAutoDetectImageFormat(false);
@@ -271,9 +265,7 @@ QString DThumbnailProvider::thumbnailFilePath(const QFileInfo &info, Size size) 
     const QImage image = ir.read();
 
     if (!image.isNull() && image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
-        QFile::remove(thumbnail);
-
-        emit thumbnailChanged(absoluteFilePath, QString());
+        DecoratorFileOperator(thumbnail).deleteFile();
 
         return QString();
     }
@@ -295,44 +287,35 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 {
     d->errorString.clear();
 
-    const QString &absolutePath = info.absolutePath();
-    const QString &absoluteFilePath = info.absoluteFilePath();
+    const QString &DirPath = info.absolutePath();
+    const QString &filePath = info.absoluteFilePath();
 
-    if (absolutePath == d->sizeToFilePath(DThumbnailProvider::Size::kSmall)
-        || absolutePath == d->sizeToFilePath(DThumbnailProvider::Size::kNormal)
-        || absolutePath == d->sizeToFilePath(DThumbnailProvider::Size::kLarge)
-        || absolutePath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
-        return absoluteFilePath;
+    if (DirPath == d->sizeToFilePath(DThumbnailProvider::Size::kSmall)
+        || DirPath == d->sizeToFilePath(DThumbnailProvider::Size::kNormal)
+        || DirPath == d->sizeToFilePath(DThumbnailProvider::Size::kLarge)
+        || DirPath == StandardPaths::location(StandardPaths::kThumbnailFailPath)) {
+        return filePath;
     }
 
     if (!hasThumbnail(info)) {
-        d->errorString = QStringLiteral("This file has not support thumbnail: ") + absoluteFilePath;
+        d->errorString = QStringLiteral("This file has not support thumbnail: ") + filePath;
 
         //!Warnning: Do not store thumbnails to the fail path
         return QString();
     }
 
-    const QString fileUrl = QUrl::fromLocalFile(absoluteFilePath).toString(QUrl::FullyEncoded);
+    const QString fileUrl = QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded);
+
     struct stat st;
     ulong inode = 0;
-    QByteArray pathArray = absoluteFilePath.toUtf8();
+    QByteArray pathArray = filePath.toUtf8();
     std::string pathStd = pathArray.toStdString();
     if (stat(pathStd.c_str(), &st) == 0)
         inode = st.st_ino;
-    const QString thumbnailName = dataToMd5Hex((fileUrl + QString::number(inode)).toLocal8Bit()) + FORMAT;
+    const QString thumbnailName = dataToMd5Hex((fileUrl + QString::number(inode)).toLocal8Bit()) + kFormat;
 
     // the file is in fail path
     QString thumbnail = StandardPaths::location(StandardPaths::kThumbnailFailPath) + QDir::separator() + thumbnailName;
-
-    //    if (QFile::exists(thumbnail)) {
-    //        QImage image(thumbnail);
-
-    //        if (image.text(QT_STRINGIFY(Thumb::MTime)).toInt() != (int)info.lastModified().toTime_t()) {
-    //            QFile::remove(thumbnail);
-    //        } else {
-    //            return QString();
-    //        }
-    //    }// end
 
     QMimeType mime = d->mimeDatabase.mimeTypeForFile(info);
     QScopedPointer<QImage> image(new QImage());
@@ -346,8 +329,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
         if (d->errorString.isEmpty()) {
-            emit createThumbnailFinished(absoluteFilePath, thumbnail);
-            emit thumbnailChanged(absoluteFilePath, thumbnail);
+            emit createThumbnailFinished(filePath, thumbnail);
 
             return thumbnail;
         } else {
@@ -360,7 +342,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             //! 生成缩略图缓存地址
             QString saveImage = d->sizeToFilePath(size) + QDir::separator() + thumbnailName;
             arguments << "--thumbnail"
-                      << "-f" << absoluteFilePath << "-t" << saveImage;
+                      << "-f" << filePath << "-t" << saveImage;
             process.start(readerBinary, arguments);
 
             if (!process.waitForFinished()) {
@@ -403,7 +385,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         QString mimeType = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent).name();
         QString suffix = mimeType.replace("image/", "");
 
-        QImageReader reader(absoluteFilePath, suffix.toLatin1());
+        QImageReader reader(filePath, suffix.toLatin1());
         if (!reader.canRead()) {
             d->errorString = reader.errorString();
             goto _return;
@@ -434,12 +416,12 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         }
     } else if (mime.name() == DFMGLOBAL_NAMESPACE::kMimeTypeTextPlain) {
         //FIXME(zccrs): This should be done using the image plugin?
-        auto dfile = DFMBASE_NAMESPACE::DecoratorFile(absoluteFilePath).filePtr();
+        auto dfile = DFMBASE_NAMESPACE::DecoratorFile(filePath).filePtr();
         if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::ReadOnly)) {
             d->errorString = dfile->lastError().errorMsg();
             goto _return;
         }
-        AbstractFileInfoPointer fileinfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(absoluteFilePath));
+        AbstractFileInfoPointer fileinfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(filePath));
         if (!fileinfo)
             goto _return;
 
@@ -464,10 +446,10 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         painter.drawText(image->rect(), text, option);
     } else if (mimeTypeList.contains(DFMGLOBAL_NAMESPACE::kMimeTypeAppPdf)) {
         //FIXME(zccrs): This should be done using the image plugin?
-        QScopedPointer<poppler::document> doc(poppler::document::load_from_file(absoluteFilePath.toStdString()));
+        QScopedPointer<poppler::document> doc(poppler::document::load_from_file(filePath.toStdString()));
 
         if (!doc || doc->is_locked()) {
-            d->errorString = QStringLiteral("Cannot read this pdf file: ") + absoluteFilePath;
+            d->errorString = QStringLiteral("Cannot read this pdf file: ") + filePath;
             goto _return;
         }
 
@@ -525,8 +507,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
 
         if (d->errorString.isEmpty()) {
-            emit createThumbnailFinished(absoluteFilePath, thumbnail);
-            emit thumbnailChanged(absoluteFilePath, thumbnail);
+            emit createThumbnailFinished(filePath, thumbnail);
 
             return thumbnail;
         } else {   // fallback to thumbnail tool
@@ -582,7 +563,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             }
 
             QProcess process;
-            process.start(tool, { QString::number(size), absoluteFilePath }, QIODevice::ReadOnly);
+            process.start(tool, { QString::number(size), filePath }, QIODevice::ReadOnly);
 
             if (!process.waitForFinished()) {
                 d->errorString = process.errorString();
@@ -643,14 +624,13 @@ _return:
     }
 
     if (d->errorString.isEmpty()) {
-        emit createThumbnailFinished(absoluteFilePath, thumbnail);
-        emit thumbnailChanged(absoluteFilePath, thumbnail);
+        emit createThumbnailFinished(filePath, thumbnail);
 
         return thumbnail;
     }
 
     // fail
-    emit createThumbnailFailed(absoluteFilePath);
+    emit createThumbnailFailed(filePath);
 
     return QString();
 }
@@ -664,34 +644,32 @@ void DThumbnailProvider::appendToProduceQueue(const QFileInfo &info, DThumbnailP
     produceInfo.callback = callback;
 
     if (isRunning()) {
-        QWriteLocker locker(&d->dataReadWriteLock);
-        // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
-        // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
-        if (!d->produceAbsoluteFilePathQueue.contains(info.absoluteFilePath())) {
-            d->produceQueue.append(std::move(produceInfo));
-            d->produceAbsoluteFilePathQueue << info.absoluteFilePath();
+        {
+            QMutexLocker locker(&d->mutex);
+            // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
+            // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
+            const QString &filePath = info.absoluteFilePath();
+            if (!d->produceAbsoluteFilePathQueue.contains(filePath)) {
+                d->produceQueue.append(std::move(produceInfo));
+                d->produceAbsoluteFilePathQueue.push_back(filePath);
+            }
         }
-        locker.unlock();
         d->waitCondition.wakeAll();
     } else {
         // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
         // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
-        if (!d->produceAbsoluteFilePathQueue.contains(info.absoluteFilePath())) {
-            d->produceQueue.append(std::move(produceInfo));
-            d->produceAbsoluteFilePathQueue << info.absoluteFilePath();
+        {
+            QMutexLocker locker(&d->mutex);
+            // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
+            // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
+            const QString &filePath = info.absoluteFilePath();
+            if (!d->produceAbsoluteFilePathQueue.contains(filePath)) {
+                d->produceQueue.append(std::move(produceInfo));
+                d->produceAbsoluteFilePathQueue.push_back(filePath);
+            }
         }
-        start();
     }
-}
-
-void DThumbnailProvider::removeInProduceQueue(const QFileInfo &info, DThumbnailProvider::Size size)
-{
-    if (isRunning()) {
-        QWriteLocker locker(&d->dataReadWriteLock);
-        Q_UNUSED(locker)
-    }
-
-    d->discardedProduceInfos.insert(qMakePair(info.absoluteFilePath(), size));
+    start();
 }
 
 QString DThumbnailProvider::errorString() const
@@ -699,24 +677,9 @@ QString DThumbnailProvider::errorString() const
     return d->errorString;
 }
 
-qint64 DThumbnailProvider::defaultSizeLimit() const
-{
-    return d->defaultSizeLimit;
-}
-
-void DThumbnailProvider::setDefaultSizeLimit(qint64 size)
-{
-    d->defaultSizeLimit = size;
-}
-
 qint64 DThumbnailProvider::sizeLimit(const QMimeType &mimeType) const
 {
     return d->sizeLimitHash.value(mimeType, d->defaultSizeLimit);
-}
-
-void DThumbnailProvider::setSizeLimit(const QMimeType &mimeType, qint64 size)
-{
-    d->sizeLimitHash[mimeType] = size;
 }
 
 DThumbnailProvider::DThumbnailProvider(QObject *parent)
@@ -735,28 +698,18 @@ DThumbnailProvider::~DThumbnailProvider()
 void DThumbnailProvider::run()
 {
     forever {
-        QWriteLocker locker(&d->dataReadWriteLock);
+        QMutexLocker locker(&d->mutex);
 
         if (d->produceQueue.isEmpty()) {
-            d->waitCondition.wait(&d->dataReadWriteLock);
+            d->waitCondition.wait(&d->mutex);
         }
 
         if (!d->running)
             return;
 
         const DThumbnailProviderPrivate::ProduceInfo &task = d->produceQueue.dequeue();
-        const QPair<QString, DThumbnailProvider::Size> &tmpKey = qMakePair(task.fileInfo.absoluteFilePath(), task.size);
-
-        if (d->discardedProduceInfos.contains(tmpKey)) {
-            d->discardedProduceInfos.remove(tmpKey);
-            //fix 62540 去除缓存
-            d->produceAbsoluteFilePathQueue.removeOne(task.fileInfo.absoluteFilePath());
-            locker.unlock();
-            continue;
-        }
 
         locker.unlock();
-
         const QString &thumbnail = createThumbnail(task.fileInfo, task.size);
 
         locker.relock();

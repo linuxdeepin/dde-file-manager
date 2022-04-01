@@ -55,26 +55,21 @@ public:
 
     QString thumbnailFilePath(const QFileInfo &info, Size size) const;
 
-    typedef std::function<void(const QString &)> CallBack;
     QString createThumbnail(const QFileInfo &info, Size size);
-    void appendToProduceQueue(const QFileInfo &info, Size size, CallBack callback = 0);
-    void removeInProduceQueue(const QFileInfo &info, Size size);
+
+    using CallBack = std::function<void(const QString &)>;
+    void appendToProduceQueue(const QFileInfo &info, Size size, CallBack callback = nullptr);
 
     QString errorString() const;
 
-    qint64 defaultSizeLimit() const;
-    void setDefaultSizeLimit(qint64 size);
-
     qint64 sizeLimit(const QMimeType &mimeType) const;
-    void setSizeLimit(const QMimeType &mimeType, qint64 size);
 
 signals:
-    void thumbnailChanged(const QString &sourceFilePath, const QString &thumbnailPath) const;
     void createThumbnailFinished(const QString &sourceFilePath, const QString &thumbnailPath) const;
     void createThumbnailFailed(const QString &sourceFilePath) const;
 
 protected:
-    explicit DThumbnailProvider(QObject *parent = 0);
+    explicit DThumbnailProvider(QObject *parent = nullptr);
     ~DThumbnailProvider() override;
 
     void run() override;
