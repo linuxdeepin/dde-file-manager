@@ -44,3 +44,6 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_DIR}
 )
+
+set(AppEntryInstallDir "${CMAKE_INSTALL_PREFIX}/share/dde-file-manager/extensions/appEntry")
+install(FILES .readme DESTINATION ${AppEntryInstallDir})
