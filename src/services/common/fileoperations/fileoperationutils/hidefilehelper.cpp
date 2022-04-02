@@ -19,6 +19,10 @@
 
 #include "hidefilehelper.h"
 
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
+
 #include "dfm-io/dfmio_register.h"
 #include "dfm-io/core/dfile.h"
 #include "dfm-io/core/diofactory.h"
@@ -62,12 +66,25 @@ public:
             dfile->close();
         }
     }
+    void updateAttribute()
+    {
+        for (const QString &name : hideListUpdate) {
+            const QString &path = dirUrl.toLocalFile() + "/" + name;
+            const QUrl &url = QUrl::fromLocalFile(path);
+            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            info->refresh();
+
+            DFMBASE_NAMESPACE::DecoratorFileInfo decorator(url);
+            decorator.notifyAttributeChanged();
+        }
+    }
 
 public:
     HideFileHelper *q = nullptr;
     QUrl dirUrl;
     QUrl fileUrl;
     QSet<QString> hideList;
+    QSet<QString> hideListUpdate;
     QSharedPointer<DFMIO::DFile> dfile = nullptr;
 };
 
@@ -107,15 +124,18 @@ bool HideFileHelper::save() const
         d->dfile->write(data);
         d->dfile->close();
     }
+    d->updateAttribute();
 }
 
 bool HideFileHelper::insert(const QString &name)
 {
     d->hideList.insert(name);
+    d->hideListUpdate.insert(name);
 }
 
 bool HideFileHelper::remove(const QString &name)
 {
+    d->hideListUpdate.insert(name);
     return d->hideList.remove(name);
 }
 

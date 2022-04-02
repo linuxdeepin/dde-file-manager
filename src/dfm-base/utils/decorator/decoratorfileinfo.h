@@ -50,6 +50,8 @@ public:
     QString parentPath() const;
     DFMIO::DFile::Permissions permissions() const;
 
+    bool notifyAttributeChanged();
+
     DFMIOError lastError() const;
 
 private:

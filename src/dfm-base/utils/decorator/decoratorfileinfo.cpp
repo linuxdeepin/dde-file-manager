@@ -138,6 +138,15 @@ DFMIO::DFile::Permissions DecoratorFileInfo::permissions() const
     return DFMIO::DFile::Permission::NoPermission;
 }
 
+bool DecoratorFileInfo::notifyAttributeChanged()
+{
+    if (d->dfileInfo) {
+        return d->dfileInfo->setCustomAttribute("xattr::update", DFMIO::DFileInfo::DFileAttributeType::TypeString, "");
+    }
+
+    return false;
+}
+
 DFMIOError DecoratorFileInfo::lastError() const
 {
     if (d->dfileInfo)
