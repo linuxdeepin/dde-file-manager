@@ -79,6 +79,7 @@ Q_SIGNALS:
     void itemSizeChanged(const QUrl &url, qlonglong, qlonglong);
     void hideFileSystemTag(bool hide);
     void hideNativeDisks(bool hide);
+    void hideLoopPartitions(bool hide);
 
 protected Q_SLOTS:
     void onDeviceAdded(const QUrl &devUrl, int groupId, bool needSidebarItem = true);

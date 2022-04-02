@@ -337,18 +337,13 @@ bool DeviceControllerHelper::isIgnorableBlockDevice(const BlockDeviceData &data,
         return true;
     }
 
-    if (Q_UNLIKELY(data.hintIgnore)) {
+    if (Q_UNLIKELY(data.hintIgnore && !data.isLoopDevice)) {
         error = QString("Block device is ignored by hintIgnore: %1").arg(id);
         return true;
     }
 
     if (Q_UNLIKELY(data.cryptoBackingDevice.length() > 1)) {
         error = QString("Block device is ignored by crypted back device: %1").arg(id);
-        return true;
-    }
-
-    if (Q_UNLIKELY(data.isLoopDevice)) {
-        error = QString("Block device is ignored by loop device: %1").arg(id);
         return true;
     }
 

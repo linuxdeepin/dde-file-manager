@@ -112,7 +112,12 @@ bool BlockEntryFileEntity::exists() const
     bool hasExtendedPartition { qvariant_cast<bool>(datas.value(DeviceProperty::kHasExtendedPatition)) };
     bool isLoopDevice { qvariant_cast<bool>(datas.value(DeviceProperty::kIsLoopDevice)) };
 
-    if (hintIgnore) {
+    if (isLoopDevice && !hasFileSystem) {
+        qWarning() << "loop device has no filesystem so hide it: " << id;
+        return false;
+    }
+
+    if (hintIgnore && !isLoopDevice) {
         qWarning() << "block device is ignored by hintIgnore:" << id;
         return false;
     }
@@ -133,12 +138,6 @@ bool BlockEntryFileEntity::exists() const
     // 是否是设备根节点，设备根节点无须记录
     if (hasPartitionTable) {   // 替换 FileUtils::deviceShouldBeIgnore
         qDebug() << "block device is ignored by parent node:" << id;
-        return false;
-    }
-
-    // 过滤snap产生的loop设备
-    if (isLoopDevice) {
-        qDebug() << "block device is ignored by loop device:" << id;
         return false;
     }
 

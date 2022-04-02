@@ -134,6 +134,7 @@ void ComputerView::showEvent(QShowEvent *event)
 {
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
     hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
+    hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
     DListView::showEvent(event);
 }
 
@@ -191,6 +192,7 @@ void ComputerView::initConnect()
     });
 
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideNativeDisks, this, [this](bool hide) { this->hideSystemPartitions(hide); });
+    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideLoopPartitions, this, [this](bool hide) { this->hideLoopPartitions(hide); });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
 
     QAction *actProperty = new QAction(this);
@@ -248,7 +250,28 @@ void ComputerView::hideSystemPartitions(bool hide)
 
         // TODO(xust) Disk group should be hidden when no disk is visiable.
         bool removable = item.info && item.info->extraProperty(DeviceProperty::kRemovable).toBool();
-        if (!removable)
+        bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
+        if (!removable && !isLoop)
+            this->setRowHidden(i, hide);
+    }
+}
+
+void ComputerView::hideLoopPartitions(bool hide)
+{
+    auto model = this->computerModel();
+    if (!model) {
+        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        return;
+    }
+
+    for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
+        auto item = model->items.at(i);
+        if (!item.url.path().endsWith(SuffixInfo::kBlock))
+            continue;
+
+        // TODO(xust) Disk group should be hidden when no disk is visiable.
+        bool isLoop = item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool();
+        if (isLoop)
             this->setRowHidden(i, hide);
     }
 }

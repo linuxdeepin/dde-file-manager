@@ -80,6 +80,7 @@ public:
 
     static bool isPresetSuffix(const QString &suffix);
     static bool shouldSystemPartitionHide();
+    static bool shouldLoopPartitionsHide();
 
     static int getUniqueInteger();
 

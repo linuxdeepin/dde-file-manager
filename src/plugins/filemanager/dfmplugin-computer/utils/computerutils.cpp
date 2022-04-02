@@ -231,6 +231,11 @@ bool ComputerUtils::shouldSystemPartitionHide()
     return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();
 }
 
+bool ComputerUtils::shouldLoopPartitionsHide()
+{
+    return Application::instance()->genericAttribute(Application::kHideLoopPartitions).toBool();
+}
+
 int ComputerUtils::getUniqueInteger()
 {
     static int idx = 0;

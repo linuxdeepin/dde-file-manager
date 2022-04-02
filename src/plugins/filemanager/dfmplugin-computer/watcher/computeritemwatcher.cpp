@@ -510,7 +510,7 @@ void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga
         bool hide = value.toBool();
         Q_EMIT hideNativeDisks(hide);
         for (const auto &data : initedDatas) {
-            if (data.info && !data.info->extraProperty(DeviceProperty::kRemovable).toBool() && data.info->suffix() == SuffixInfo::kBlock) {
+            if (data.info && !data.info->extraProperty(DeviceProperty::kRemovable).toBool() && data.info->suffix() == SuffixInfo::kBlock && !data.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
                 if (hide)
                     removeSidebarItem(data.url);
                 else
@@ -528,6 +528,18 @@ void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga
             StashMountsUtils::clearStashedMounts();
         } else {
             StashMountsUtils::stashMountedMounts();
+        }
+    } else if (ga == Application::GenericAttribute::kHideLoopPartitions) {
+        bool hide = value.toBool();
+        Q_EMIT hideLoopPartitions(hide);
+        bool unused = false;
+        for (const auto &item : getBlockDeviceItems(unused)) {
+            if (item.info && item.info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()) {
+                if (hide)
+                    removeSidebarItem(item.url);
+                else
+                    addSidebarItem(item.info);
+            }
         }
     }
 }

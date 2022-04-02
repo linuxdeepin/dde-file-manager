@@ -61,6 +61,7 @@ public:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 
     void hideSystemPartitions(bool hide);
+    void hideLoopPartitions(bool hide);
 
 protected:
     // QWidget interface
