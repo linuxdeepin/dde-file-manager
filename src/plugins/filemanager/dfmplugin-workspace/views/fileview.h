@@ -74,6 +74,7 @@ public:
     void refresh() override;
 
     void setViewMode(DFMBASE_NAMESPACE::Global::ViewMode mode);
+    DFMBASE_NAMESPACE::Global::ViewMode currentViewMode();
     void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
     FileSortFilterProxyModel *model() const;
     void setModel(QAbstractItemModel *model) override;

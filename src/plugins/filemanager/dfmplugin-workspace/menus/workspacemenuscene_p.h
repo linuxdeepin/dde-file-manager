@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuyangming<liuyangming@uniontech.com>
+ * Author:     liuzhangjian<liqianga@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuzhangjian<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,39 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEVIEWMENUHELPER_H
-#define FILEVIEWMENUHELPER_H
+#ifndef WORKSPACEMENUSCENE_P_H
+#define WORKSPACEMENUSCENE_P_H
 
-#include "dfm_common_service_global.h"
-#include "dfmplugin_workspace_global.h"
+#include "workspacemenuscene.h"
+#include "interfaces/private/abstractmenuscene_p.h"
 
-#include <QObject>
-#include <QString>
-
-DSC_BEGIN_NAMESPACE
-class MenuService;
-DSC_END_NAMESPACE
+#include "services/common/dfm_common_service_global.h"
+#include "services/common/menu/menuservice.h"
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
 class FileView;
-class FileViewMenuHelper : public QObject
+class WorkspaceMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
-    Q_OBJECT
 public:
-    explicit FileViewMenuHelper(FileView *view = nullptr);
+    explicit WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq);
 
-    void showEmptyAreaMenu();
-    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
-
-    void setMenuScene(const QString &scene);
+public:
+    FileView *view = nullptr;
+    DSC_NAMESPACE::MenuService *menuServer = nullptr;
 
 private:
-    QString currentMenuScene() const;
-
-    FileView *view { nullptr };
+    WorkspaceMenuScene *q;
 };
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif   // FILEVIEWMENUHELPER_H
+#endif   // WORKSPACEMENUSCENE_P_H

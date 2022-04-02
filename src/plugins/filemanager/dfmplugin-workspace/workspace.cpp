@@ -28,7 +28,7 @@
 #include "utils/customtopwidgetinterface.h"
 #include "events/workspaceeventreceiver.h"
 #include "events/workspaceunicastreceiver.h"
-#include "menus/workspacemenu.h"
+#include "menus/workspacemenuscene.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
@@ -69,8 +69,7 @@ void Workspace::initialize()
     connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
     WorkspaceUnicastReceiver::instance()->connectService();
-
-    MenuService::regClass<WorkspaceMenu>(DSB_FM_NAMESPACE::Workspace::MenuScene::kWorkspaceMenu);
+    MenuService::service()->registerScene(WorkspaceMenuCreator::name(), new WorkspaceMenuCreator());
 }
 
 bool Workspace::start()

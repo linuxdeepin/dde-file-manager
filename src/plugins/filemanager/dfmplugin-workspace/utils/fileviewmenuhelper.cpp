@@ -22,11 +22,12 @@
 #include "fileviewmenuhelper.h"
 #include "views/fileview.h"
 #include "models/filesortfilterproxymodel.h"
-#include "menus/workspacemenu.h"
+#include "menus/workspacemenuscene.h"
 #include "utils/workspacehelper.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "services/common/menu/menuservice.h"
+#include "services/common/menu/menu_defines.h"
 #include "dfm-framework/framework.h"
 
 DSC_USE_NAMESPACE
@@ -41,53 +42,56 @@ FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
 
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
-    const QUrl &url = view->rootUrl();
+    auto scene = MenuService::service()->createScene(currentMenuScene());
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = view->rootUrl();
+    params[MenuParamKey::kOnDesktop] = false;
+    params[MenuParamKey::kIsEmptyArea] = true;
 
-    QMenu *menu = menuServer()->createMenu(view,
-                                           currentMenuScene(),
-                                           AbstractMenu::kEmpty,
-                                           url, QUrl(), {}, ExtensionType::kNoExtensionAction);
-
-    if (menu) {
-        menu->exec(QCursor::pos());
-        menu->deleteLater();
+    if (!scene->initialize(params)) {
+        delete scene;
+        return;
     }
+
+    QMenu menu(this->view);
+    scene->create(&menu);
+    scene->updateState(&menu);
+
+    QAction *act = menu.exec(QCursor::pos());
+    if (act)
+        scene->triggered(act);
+    delete scene;
 }
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
     Q_UNUSED(indexFlags)
 
-    const QUrl &rootUrl = view->rootUrl();
-    QList<QUrl> selectUrls = view->selectedUrlList();
-    const QUrl focusUrl = view->model()->itemFileInfo(index)->url();
+    auto scene = MenuService::service()->createScene(currentMenuScene());
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = view->rootUrl();
+    params[MenuParamKey::kFocusFile] = view->model()->itemFileInfo(index)->url();
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(view->selectedUrlList());
+    params[MenuParamKey::kOnDesktop] = false;
+    params[MenuParamKey::kIsEmptyArea] = false;
 
-    QMenu *menu = menuServer()->createMenu(view,
-                                           currentMenuScene(),
-                                           AbstractMenu::MenuMode::kNormal,
-                                           rootUrl,
-                                           focusUrl,
-                                           selectUrls,
-                                           ExtensionType::kNoExtensionAction);
-
-    if (menu) {
-        menu->exec(QCursor::pos());
-        menu->deleteLater();
-    }
-}
-
-MenuService *FileViewMenuHelper::menuServer()
-{
-    if (!server) {
-        auto &ctx = dpfInstance.serviceContext();
-        server = ctx.service<MenuService>(MenuService::name());
+    if (!scene->initialize(params)) {
+        delete scene;
+        return;
     }
 
-    return server;
+    QMenu menu(this->view);
+    scene->create(&menu);
+    scene->updateState(&menu);
+
+    QAction *act = menu.exec(QCursor::pos());
+    if (act)
+        scene->triggered(act);
+    delete scene;
 }
 
 QString FileViewMenuHelper::currentMenuScene() const
 {
     QString scene = WorkspaceHelper::instance()->findMenuScene(view->rootUrl().scheme());
-    return scene.isEmpty() ? DSB_FM_NAMESPACE::Workspace::MenuScene::kWorkspaceMenu : scene;
+    return scene.isEmpty() ? WorkspaceMenuCreator::name() : scene;
 }

@@ -291,7 +291,7 @@ void FileViewModel::clear()
 {
     d->nodeManager->disconnect(d->nodeManager.data());
     d->nodeManager->stop();
-    beginRemoveRows(QModelIndex(), 0, d->nodeManager->childrenCount() - 1);
+    beginRemoveRows(rootIndex(), 0, d->nodeManager->childrenCount() - 1);
     d->nodeManager->clearChildren();
     endRemoveRows();
 }

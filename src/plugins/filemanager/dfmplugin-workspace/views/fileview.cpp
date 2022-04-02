@@ -116,6 +116,11 @@ void FileView::setViewMode(Global::ViewMode mode)
     d->currentViewMode = mode;
 }
 
+Global::ViewMode FileView::currentViewMode()
+{
+    return d->currentViewMode;
+}
+
 void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 {
     if (!view)

@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuyangming<liuyangming@uniontech.com>
+ * Author:     liuzhangjian<liqianga@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: liuzhangjian<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,39 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEVIEWMENUHELPER_H
-#define FILEVIEWMENUHELPER_H
+#ifndef WORKSPACEMENU_DEFINES_H
+#define WORKSPACEMENU_DEFINES_H
 
-#include "dfm_common_service_global.h"
 #include "dfmplugin_workspace_global.h"
-
-#include <QObject>
-#include <QString>
-
-DSC_BEGIN_NAMESPACE
-class MenuService;
-DSC_END_NAMESPACE
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
-class FileView;
-class FileViewMenuHelper : public QObject
-{
-    Q_OBJECT
-public:
-    explicit FileViewMenuHelper(FileView *view = nullptr);
+namespace ActionID {
+static constexpr char kSortBy[] = "sort-by";
+static constexpr char kDisplayAs[] = "display-as";
 
-    void showEmptyAreaMenu();
-    void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags);
+// sort by
+static constexpr char kSrtName[] = "sort-by-name";
+static constexpr char kSrtTimeModified[] = "sort-by-time-modified";
+static constexpr char kSrtSize[] = "sort-by-size";
+static constexpr char kSrtType[] = "sort-by-type";
 
-    void setMenuScene(const QString &scene);
-
-private:
-    QString currentMenuScene() const;
-
-    FileView *view { nullptr };
-};
+// display by
+static constexpr char kDisplayIcon[] = "display-as-icon";
+static constexpr char kDisplayList[] = "display-as-list";
+}
 
 DPWORKSPACE_END_NAMESPACE
 
-#endif   // FILEVIEWMENUHELPER_H
+#endif   // WORKSPACEMENU_DEFINES_H
