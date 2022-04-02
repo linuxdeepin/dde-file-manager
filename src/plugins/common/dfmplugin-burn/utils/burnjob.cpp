@@ -153,7 +153,7 @@ void AbstractBurnJob::run()
     emit jobHandlePtr->finishedNotify(info);
 }
 
-bool AbstractBurnJob::readyToBurn()
+bool AbstractBurnJob::readyToWork()
 {
     QVariantMap &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(curDevId);
     if (map.isEmpty()) {
@@ -323,6 +323,9 @@ void EraseJob::work()
 
     // TODO(zhangs): check unmount
     curJobType = JobType::kOpticalBlank;
+    if (!readyToWork())
+        return;
+
     OpticalDiscManager *manager = new OpticalDiscManager(curDev, this);
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     connect(manager, &OpticalDiscManager::jobStatusChanged, this, &AbstractBurnJob::onJobUpdated, Qt::DirectConnection);
@@ -367,7 +370,7 @@ void BurnISOFilesJob::work()
 {
     qInfo() << "Start burn ISO files: " << curDev;
     curJobType = JobType::kOpticalBurn;
-    if (!readyToBurn())
+    if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
@@ -406,7 +409,7 @@ void BurnISOImageJob::work()
 {
     qInfo() << "Start burn ISO image: " << curDev;
     curJobType = JobType::kOpticalImageBurn;
-    if (!readyToBurn())
+    if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();
@@ -438,7 +441,7 @@ void BurnUDFFilesJob::work()
 {
     qInfo() << "Start burn UDF files: " << curDev;
     curJobType = JobType::kOpticalBurn;
-    if (!readyToBurn())
+    if (!readyToWork())
         return;
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
     workingInSubProcess();

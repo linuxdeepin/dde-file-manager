@@ -73,7 +73,7 @@ protected:
     virtual void work() = 0;
 
     void run() override;
-    bool readyToBurn();
+    bool readyToWork();
     void workingInSubProcess();
     DFMBURN::OpticalDiscManager *createManager(int fd);
     QByteArray updatedInSubProcess(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
