@@ -496,20 +496,15 @@ void FilePreviewDialog::switchToPage(int index)
                       || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
                 m_preview->contentWidget()->updateGeometry();
+                adjustSize();
                 updateTitle();
                 m_statusBar->openButton()->setFocus();
-                m_preview->contentWidget()->adjustSize();
-                int newPerviewWidth = m_preview->contentWidget()->size().width();
-                int newPerviewHeight = m_preview->contentWidget()->size().height();
-                resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
-
                 playCurrentPreviewFile();
                 moveToCenter();
                 return;
             }
         }
-        if(!info->isDesktopFile())
-            preview = DFMFilePreviewFactory::create(key);
+        preview = DFMFilePreviewFactory::create(key);
 
         if (!preview && general_key != key && !info->isDesktopFile()) {
             preview = DFMFilePreviewFactory::create(general_key);
@@ -544,12 +539,14 @@ void FilePreviewDialog::switchToPage(int index)
 
     if (m_preview) {
         m_preview->contentWidget()->setVisible(false);
-        static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
-        static_cast<QHBoxLayout *>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
         m_preview->deleteLater();
+        static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
     }
 
     static_cast<QVBoxLayout *>(layout())->insertWidget(0, preview->contentWidget());
+
+    if (m_preview)
+        static_cast<QHBoxLayout *>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
 
     if (QWidget *w = preview->statusBarWidget())
         static_cast<QHBoxLayout *>(m_statusBar->layout())->insertWidget(3, w, 0, preview->statusBarWidgetAlignment());
@@ -558,18 +555,20 @@ void FilePreviewDialog::switchToPage(int index)
     m_preview = preview;
 
     QTimer::singleShot(0, this, [this] {
-        if (m_preview && m_statusBar) {
-            updateTitle();
-            playCurrentPreviewFile();
-            m_statusBar->openButton()->setFocus();
-            this->adjustSize();
-            m_preview->contentWidget()->adjustSize();
-            int newPerviewWidth = m_preview->contentWidget()->size().width();
-            int newPerviewHeight = m_preview->contentWidget()->size().height();
-            resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
-
-            moveToCenter();
+        updateTitle();
+        m_statusBar->openButton()->setFocus();
+        int perviewwidth = m_preview->contentWidget()->size().width();
+        int perviewheight = m_preview->contentWidget()->size().height();
+        this->resize(perviewwidth, perviewheight);
+        adjustSize();
+        m_preview->contentWidget()->adjustSize();
+        int newPerviewWidth = m_preview->contentWidget()->size().width();
+        int newPerviewHeight = m_preview->contentWidget()->size().height();
+        if(perviewwidth != newPerviewWidth || perviewheight != newPerviewHeight){
+            resize(newPerviewWidth, newPerviewHeight);
         }
+        playCurrentPreviewFile();
+        moveToCenter();
     });
 }
 
