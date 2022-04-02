@@ -212,6 +212,9 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         if (info->targetUrl().isValid())
             insertUrlMapper(dev, info->targetUrl());
 
+        if (info->extraProperty(DeviceProperty::kIsLoopDevice).toBool()
+            && ComputerUtils::shouldLoopPartitionsHide())
+            continue;
         addSidebarItem(info);
     }
 
