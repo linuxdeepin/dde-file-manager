@@ -209,6 +209,9 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
         ret.push_back(data);
         hasNewItem = true;
 
+        if (info->targetUrl().isValid())
+            insertUrlMapper(dev, info->targetUrl());
+
         addSidebarItem(info);
     }
 
