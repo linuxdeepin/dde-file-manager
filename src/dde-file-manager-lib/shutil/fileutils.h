@@ -146,6 +146,8 @@ public:
     static bool isContainProhibitPath(const QList<QUrl> &urls);
     static bool isContainProhibitPath(const QUrl &url);
 
+    static QStringList fstabProhibitPaths(const QStringList &usrProhibitPaths);
+
     // 启用deepin-compressor追加压缩
     static bool appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList);
     //获取内存叶大小

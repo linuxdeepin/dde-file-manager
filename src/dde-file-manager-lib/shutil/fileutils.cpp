@@ -1788,12 +1788,11 @@ bool FileUtils::isContainProhibitPath(const QList<QUrl> &urls)
                      << QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first()
                      << QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
 
-
+    static QStringList fstabPaths = fstabProhibitPaths(usrProhibitPaths);
     for (const auto &url : urls) {
         // usr Prohibit Paths
-        if (!url.isEmpty() && usrProhibitPaths.contains(url.path())) {
+        if (!url.isEmpty() && (usrProhibitPaths.contains(url.path()) || fstabPaths.contains(url.path())))
             return true;
-        }
     }
     return false;
 }
@@ -1809,10 +1808,27 @@ bool FileUtils::isContainProhibitPath(const QUrl &url)
                      << QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first()
                      << QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
 
-    if (!url.isEmpty() && usrProhibitPaths.contains(url.path())) {
+    static QStringList fstabPaths = fstabProhibitPaths(usrProhibitPaths);
+    if (!url.isEmpty() && (usrProhibitPaths.contains(url.path()) || fstabPaths.contains(url.path())))
         return true;
-    }
     return false;
+}
+
+QStringList FileUtils::fstabProhibitPaths(const QStringList &usrProhibitPaths)
+{
+    QStringList tempList;
+    QList<QStringList> fstabInfo = catFstabFileInfo("defaults,bind");
+    for (const QStringList &temp : fstabInfo) {
+        if(!temp.isEmpty() && temp.count() >=4) {
+            for (QString path : usrProhibitPaths) {
+                if ((temp.at(1) == "/root" && path.left(5) == "/root") ||
+                        (temp.at(1) == "/home" && path.left(5) == "/home")) {
+                    tempList << path.replace(0, 5, temp.first());
+                }
+            }
+        }
+    }
+    return tempList;
 }
 
 bool FileUtils::appendCompress(const DUrl &toUrl, const DUrlList &fromUrlList)
