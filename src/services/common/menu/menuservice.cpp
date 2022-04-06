@@ -140,6 +140,12 @@ MenuService *MenuService::service()
     auto &ctx = dpfInstance.serviceContext();
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&ctx]() {
+        if (QThread::currentThread() != qApp->thread()) {
+            qCritical() << name() << "invaild thread: " << QThread::currentThread()
+                        << ". service must be created in main thread." << qApp->thread();
+            abort();
+        }
+
         if (!ctx.load(name()))
             abort();
     });

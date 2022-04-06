@@ -32,11 +32,6 @@ target_link_libraries(${PROJECT_NAME}
     DFMSERVICE::common
     DFMSERVICE::desktop
     ${DFrameworkDBus_LIBRARIES}
-    )
-
-target_link_libraries(${PROJECT_NAME}
-    DFM::base
-    DFMSERVICE::desktop
 )
 
 #install library file

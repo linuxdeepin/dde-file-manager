@@ -48,6 +48,7 @@ public:
 
     CanvasView *view { nullptr };
     MenuService *menuServer = nullptr;
+
 private:
     CanvasMenuScene *q;
 };

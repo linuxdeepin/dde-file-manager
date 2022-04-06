@@ -192,17 +192,17 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
         auto url = model()->url(hoverIndex);
 
         auto selects = selectionModel()->selectedUrls();
-        if (selects.contains(url) || (d->dodgeOper->getDodgeAnimationing() && d->dodgeOper->getDodgeItems().contains(url.toString()))) {
+        if (selects.contains(url) ||
+                (d->dodgeOper->getDodgeAnimationing()
+                 && d->dodgeOper->getDodgeItems().contains(url.toString()))) {
             // hover item selected,it draged.
             // or,it dodge animationing.
-        } else {
-            if (hoverIndex.isValid() && hoverIndex != view()->currentIndex()) {
-                QPainterPath path;
-                auto lastRect = view()->visualRect(hoverIndex);
-                path.addRoundRect(lastRect, 4, 4);
-                fillPath(path, QColor(43, 167, 248, 255 * 3 / 10));
-                strokePath(path, QColor(30, 126, 255, 255 * 2 / 10));
-            }
+        } else if (hoverIndex.isValid() && hoverIndex != view()->currentIndex()) {
+            QPainterPath path;
+            auto lastRect = view()->visualRect(hoverIndex);
+            path.addRoundRect(lastRect, 4, 4);
+            fillPath(path, QColor(43, 167, 248, 255 * 3 / 10));
+            strokePath(path, QColor(30, 126, 255, 255 * 2 / 10));
         }
     }
 

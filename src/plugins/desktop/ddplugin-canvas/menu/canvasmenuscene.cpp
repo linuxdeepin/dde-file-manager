@@ -49,7 +49,8 @@ AbstractMenuScene *CanvasMenuCreator::create()
     return new CanvasMenuScene();
 }
 
-CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq) : q (qq)
+CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq)
+    : q(qq)
 {
     // 获取菜单服务
     menuServer = MenuService::service();
@@ -168,6 +169,30 @@ bool CanvasMenuScene::triggered(QAction *action)
     if (!d->predicateAction.values().contains(action))
         return AbstractMenuScene::triggered(action);
 
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    // sort by
+    {
+        static const QMap<QString, AbstractFileInfo::SortKey> sortRole = {
+            {ActionID::kSrtName, AbstractFileInfo::SortKey::kSortByFileName},
+            {ActionID::kSrtSize, AbstractFileInfo::SortKey::kSortByFileSize},
+            {ActionID::kSrtType, AbstractFileInfo::SortKey::kSortByFileMimeType},
+            {ActionID::kSrtTimeModified, AbstractFileInfo::SortKey::kSortByModified}
+        };
+
+        if (sortRole.contains(actionId)) {
+             AbstractFileInfo::SortKey role = sortRole.value(actionId);
+             Qt::SortOrder order = d->view->model()->sortOrder();
+             if (role == d->view->model()->sortRole())
+                 order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+             d->view->model()->setSortRole(role, order);
+             d->view->model()->sort();
+
+             // save config
+             DispalyIns->setSortMethod(role, order);
+             return true;
+        }
+    }
+
     // icon size
     if (d->iconSizeAction.contains(action)) {
         int iconLv = d->iconSizeAction.value(action);
@@ -223,6 +248,8 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kIconSize));
 
     tempAction = parent->addAction(d->predicateName.value(ActionID::kAutoArrange));
+    tempAction->setCheckable(true);
+    tempAction->setChecked(DispalyIns->autoAlign());
     d->predicateAction[ActionID::kAutoArrange] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kAutoArrange));
 
@@ -237,8 +264,7 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kWallpaperSettings));
 }
 
-void CanvasMenuScene::normalMenu(QMenu *parent)
-{
+void CanvasMenuScene::normalMenu(QMenu *parent) {
     Q_UNUSED(parent)
 }
 
@@ -253,6 +279,8 @@ QMenu *CanvasMenuScene::iconSizeSubActions(QMenu *menu)
     for (int i = mininum; i <= maxinum; ++i) {
         const QString &text = d->view->itemDelegate()->iconSizeLevelDescription(i);
         QAction *tempAction = subMenu->addAction(text);
+        tempAction->setCheckable(true);
+        tempAction->setChecked(i == d->view->itemDelegate()->iconLevel());
         d->iconSizeAction.insert(tempAction, i);
         d->predicateAction[text] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, text);

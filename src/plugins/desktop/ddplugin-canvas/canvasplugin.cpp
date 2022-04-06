@@ -35,7 +35,6 @@ DFMBASE_USE_NAMESPACE
 
 void CanvasPlugin::initialize()
 {
-
 }
 
 bool CanvasPlugin::start()

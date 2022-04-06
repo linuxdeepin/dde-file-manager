@@ -24,6 +24,8 @@
 
 #include <services/desktop/frame/frameservice.h>
 
+#include <QWindow>
+
 DDPCORE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -56,6 +58,9 @@ BaseWindowPointer WindowFramePrivate::createWindow(ScreenPointer sp)
     qDebug() << "screen name" << sp->name() << "geometry" << sp->geometry() << win.get();
 
     ddplugin_desktop_util::setDesktopWindow(win.get());
+    // the Desktop Window is opaque though it has been setted Qt::WA_TranslucentBackground
+    // uing setOpacity to set opacity for Desktop Window to be transparent.
+    win->windowHandle()->setOpacity(0.99);
     return win;
 }
 

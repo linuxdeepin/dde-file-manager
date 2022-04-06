@@ -285,12 +285,12 @@ void CanvasView::paintEvent(QPaintEvent *event)
     // 桌面文件绘制
     auto option = viewOptions();
 
-    // dodge
-    painter.drawDodge(option);
-
     // for flicker when refresh.
-    if (!d->flicker)
+    if (!d->flicker) {
+        // dodge
+        painter.drawDodge(option);
         painter.paintFiles(option, event);
+    }
 
     // 绘制选中区域
     painter.drawSelectRect();

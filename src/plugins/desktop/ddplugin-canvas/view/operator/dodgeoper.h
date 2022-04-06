@@ -40,7 +40,7 @@ public:
     explicit DodgeItemsOper(GridCore *core);
     bool tryDodge(const QStringList &orgItems, const GridPos &ref, QStringList &dodgeItems);
 
-private:
+protected:
     int toIndex(const int screenNumber, const QPoint &pos);
     QList<int> toIndex(const int screenNumber, const QList<QPoint> &pos);
     QPoint toPos(const int screenNumber, const int index);

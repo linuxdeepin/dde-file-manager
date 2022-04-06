@@ -97,8 +97,8 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     canvasScene->create(&menu);
     canvasScene->updateState(&menu);
 
-    QAction *act = menu.exec(QCursor::pos());
-    canvasScene->triggered(act);
+    if (QAction *act = menu.exec(QCursor::pos()))
+        canvasScene->triggered(act);
     delete canvasScene;
 }
 

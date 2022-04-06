@@ -35,7 +35,6 @@ public:
     explicit CanvasGridPrivate(CanvasGrid *qq);
     void sequence(QStringList sortedItems);
     void restore(QStringList currentItems);
-    void requestSync();
     void clean();
 protected slots:
     void sync();
@@ -45,9 +44,9 @@ protected:
 
 public:
     CanvasGrid::Mode mode = CanvasGrid::Mode::Custom;
+    QTimer syncTimer;
 private:
     CanvasGrid *q;
-    QTimer syncTimer;
 };
 
 DDP_CANVAS_END_NAMESPACE

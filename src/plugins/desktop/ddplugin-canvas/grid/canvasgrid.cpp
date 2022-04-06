@@ -193,7 +193,7 @@ bool CanvasGrid::drop(int index, const QPoint &pos, const QString &item)
         // pos is enable to drop
         if (d->isVoid(index, pos)) {
             d->insert(index, pos, item);
-            d->requestSync();
+            requestSync();
             return true;
         }
     }
@@ -218,7 +218,7 @@ bool CanvasGrid::move(int toIndex, const QPoint &toPos, const QString &focus, co
     MoveGridOper oper(d);
     if (oper.move(GridPos(toIndex, toPos), centerPos, items)) {
         d->applay(&oper);
-        d->requestSync();
+        requestSync();
         return true;
     }
 
@@ -232,7 +232,7 @@ bool CanvasGrid::remove(int index, const QString &item)
 
     if (d->itemPos.value(index).contains(item)) {
         d->remove(index, item);
-        d->requestSync();
+        requestSync();
         return true;
     }
 
@@ -252,7 +252,7 @@ bool CanvasGrid::replace(const QString &oldItem, const QString &newItem)
 
     d->remove(pos.first, pos.second);
     d->insert(pos.first, pos.second, newItem);
-    d->requestSync();
+    requestSync();
 
     return true;
 }
@@ -271,7 +271,7 @@ void CanvasGrid::append(const QString &item)
         d->pushOverload({item});
     }
 
-    d->requestSync();
+    requestSync();
     return;
 }
 
@@ -284,7 +284,7 @@ void CanvasGrid::append(QStringList items)
     oper.append(items);
     d->applay(&oper);
 
-    d->requestSync();
+    requestSync();
 }
 
 void CanvasGrid::tryAppendAfter(const QStringList &items, int index, const QPoint &begin)
@@ -296,7 +296,7 @@ void CanvasGrid::tryAppendAfter(const QStringList &items, int index, const QPoin
     oper.tryAppendAfter(items, index, begin);
     d->applay(&oper);
 
-    d->requestSync();
+    requestSync();
 }
 
 void CanvasGrid::popOverload()
@@ -306,7 +306,7 @@ void CanvasGrid::popOverload()
         if (d->findVoidPos(pos)) {
             auto item = d->overload.takeFirst();
             d->insert(pos.first, pos.second, item);
-            d->requestSync();
+            requestSync();
         }
     }
 }
@@ -323,7 +323,8 @@ GridCore &CanvasGrid::core() const
 
 void CanvasGrid::requestSync()
 {
-    d->requestSync();
+    d->syncTimer.stop();
+    d->syncTimer.start();
 }
 
 CanvasGridPrivate::CanvasGridPrivate(CanvasGrid *qq)
@@ -370,7 +371,7 @@ void CanvasGridPrivate::sequence(QStringList sortedItems)
     qDebug() << "overload items " << sortedItems.size();
     overload = sortedItems;
 
-    requestSync();
+    q->requestSync();
 }
 
 void CanvasGridPrivate::restore(QStringList currentItems)
@@ -424,13 +425,7 @@ void CanvasGridPrivate::restore(QStringList currentItems)
             q->append(overloadItems);
     }
 
-    requestSync();
-}
-
-void CanvasGridPrivate::requestSync()
-{
-    syncTimer.stop();
-    syncTimer.start();
+    q->requestSync();
 }
 
 QHash<int, QHash<QString, QPoint> > CanvasGridPrivate::profiles() const
