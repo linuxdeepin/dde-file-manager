@@ -18,16 +18,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEOPERATERPROXY_P_H
-#define FILEOPERATERPROXY_P_H
+#ifndef FILEOPERATORPROXY_P_H
+#define FILEOPERATORPROXY_P_H
 
-#include "fileoperaterproxy.h"
+#include "fileoperatorproxy.h"
 
 #include <QTimer>
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-class FileOperaterProxyPrivate : public QObject
+class FileOperatorProxyPrivate : public QObject
 {
     Q_OBJECT
 public:
@@ -45,7 +45,7 @@ public:
         kCallBackDeleteFiles
     };
 
-    explicit FileOperaterProxyPrivate(FileOperaterProxy *q_ptr);
+    explicit FileOperatorProxyPrivate(FileOperatorProxy *q_ptr);
 
     void callBackTouchFile(const QUrl &target, const QVariantMap &customData);
     void callBackPasteFiles(const JobInfoPointer info);
@@ -55,13 +55,13 @@ public:
     void doSelectUrls(const QList<QUrl> &urls);
 
 public:
-    FileOperaterProxy *const q;
+    FileOperatorProxy *const q;
     QSharedPointer<QTimer> selectTimer;
-    DFMGLOBAL_NAMESPACE::OperaterCallback callBack;
+    DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-Q_DECLARE_METATYPE(DDP_CANVAS_NAMESPACE::FileOperaterProxyPrivate::CallBackFunc)
+Q_DECLARE_METATYPE(DDP_CANVAS_NAMESPACE::FileOperatorProxyPrivate::CallBackFunc)
 
-#endif // FILEOPERATERPROXY_P_H
+#endif // FILEOPERATORPROXY_P_H

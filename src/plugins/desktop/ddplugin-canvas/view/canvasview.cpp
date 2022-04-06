@@ -29,7 +29,7 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "operator/canvasviewmenuproxy.h"
-#include "operator/fileoperaterproxy.h"
+#include "operator/fileoperatorproxy.h"
 #include "utils/keyutil.h"
 
 #include <QGSettings>
@@ -575,20 +575,19 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
     const QModelIndex &index = indexAt(pos);
     if (!index.isValid())
         return;
-
     if (isPersistentEditorOpen(index)) {
         itemDelegate()->commitDataAndCloseEditor();
         QTimer::singleShot(200, this, [this, pos]() {
             // file info and url changed,but pos will not change
             const QModelIndex &renamedIndex = indexAt(pos);
             const QUrl &renamedUrl = model()->url(renamedIndex);
-            FileOperaterProxyIns->openFiles(this, { renamedUrl });
+            FileOperatorProxyIns->openFiles(this, { renamedUrl });
         });
         return;
     }
 
     const QUrl &url = model()->url(index);
-    FileOperaterProxyIns->openFiles(this, { url });
+    FileOperatorProxyIns->openFiles(this, { url });
 }
 
 void CanvasView::wheelEvent(QWheelEvent *event)

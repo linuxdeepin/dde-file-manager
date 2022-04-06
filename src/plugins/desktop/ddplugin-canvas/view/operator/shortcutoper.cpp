@@ -25,7 +25,7 @@
 #include "delegate/canvasitemdelegate.h"
 #include "services/common/preview/preview_defines.h"
 #include "view/canvasview_p.h"
-#include "fileoperaterproxy.h"
+#include "fileoperatorproxy.h"
 #include "canvasmanager.h"
 #include "services/common/preview/preview_defines.h"
 
@@ -233,32 +233,32 @@ void ShortcutOper::helpAction()
 
 void ShortcutOper::openAction()
 {
-    FileOperaterProxyIns->openFiles(view);
+    FileOperatorProxyIns->openFiles(view);
 }
 
 void ShortcutOper::moveToTrash()
 {
-    FileOperaterProxyIns->moveToTrash(view);
+    FileOperatorProxyIns->moveToTrash(view);
 }
 
 void ShortcutOper::deleteFile()
 {
-    FileOperaterProxyIns->deleteFiles(view);
+    FileOperatorProxyIns->deleteFiles(view);
 }
 
 void ShortcutOper::copyFiles()
 {
-    FileOperaterProxyIns->copyFiles(view);
+    FileOperatorProxyIns->copyFiles(view);
 }
 
 void ShortcutOper::cutFiles()
 {
-    FileOperaterProxyIns->cutFiles(view);
+    FileOperatorProxyIns->cutFiles(view);
 }
 
 void ShortcutOper::pasteFiles()
 {
-    FileOperaterProxyIns->pasteFiles(view);
+    FileOperatorProxyIns->pasteFiles(view);
 }
 
 void ShortcutOper::tabToFirst()
@@ -324,7 +324,7 @@ void ShortcutOper::swichHidden()
 
 void ShortcutOper::showProperty()
 {
-    FileOperaterProxyIns->showFilesProperty(view);
+    FileOperatorProxyIns->showFilesProperty(view);
 }
 
 void ShortcutOper::previewFiles()

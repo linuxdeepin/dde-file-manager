@@ -19,8 +19,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FILEOPERATERHELPER_H
-#define FILEOPERATERHELPER_H
+#ifndef FILEOPERATORHELPER_H
+#define FILEOPERATORHELPER_H
 
 #include "dfmplugin_workspace_global.h"
 #include "dfm_global_defines.h"
@@ -63,4 +63,4 @@ private:
 
 #define FileOperatorHelperIns DPWORKSPACE_USE_NAMESPACE::FileOperatorHelper::instance()
 DPWORKSPACE_END_NAMESPACE
-#endif   // FILEOPERATERHELPER_H
+#endif   // FILEOPERATORHELPER_H

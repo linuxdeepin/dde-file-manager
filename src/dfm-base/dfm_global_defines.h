@@ -51,9 +51,9 @@ enum class CallbackKey : uint8_t {
     kCustom,   // QVariant
 };
 using CallbackArgus = QSharedPointer<QMap<CallbackKey, QVariant>>;
-using OperaterCallback = std::function<void(const CallbackArgus args)>;
+using OperatorCallback = std::function<void(const CallbackArgus args)>;
 
-using OperaterHandleCallback = std::function<void(QSharedPointer<AbstractJobHandler>)>;
+using OperatorHandleCallback = std::function<void(QSharedPointer<AbstractJobHandler>)>;
 
 enum CreateFileType : uint8_t {
     kCreateFileTypeUnknow = 0,
@@ -116,8 +116,8 @@ constexpr char kTrash[] { "trash" };
 DFMBASE_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperaterCallback);
-Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperaterHandleCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorHandleCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
 
 #endif   // DFM_GLOBAL_DEFINES_H

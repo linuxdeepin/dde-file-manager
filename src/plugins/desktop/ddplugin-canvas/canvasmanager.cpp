@@ -25,7 +25,7 @@
 #include "delegate/canvasitemdelegate.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
-#include "view/operator/fileoperaterproxy.h"
+#include "view/operator/fileoperatorproxy.h"
 
 #include "services/desktop/event/private/eventhelperfunc.h"
 #include <services/desktop/wallpapersetting/wallpaperservice.h>
@@ -38,12 +38,13 @@ DFMBASE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
-class CanvasManagerGlobal : public CanvasManager{};
+class CanvasManagerGlobal : public CanvasManager
+{
+};
 Q_GLOBAL_STATIC(CanvasManagerGlobal, canvasManagerGlobal)
 
 CanvasManager::CanvasManager(QObject *parent)
-    : QObject(parent)
-    , d(new CanvasManagerPrivate(this))
+    : QObject(parent), d(new CanvasManagerPrivate(this))
 {
     Q_ASSERT(thread() == qApp->thread());
 }
@@ -53,11 +54,13 @@ CanvasManager *CanvasManager::instance()
     return canvasManagerGlobal;
 }
 
-static QString getScreenName(QWidget *win) {
+static QString getScreenName(QWidget *win)
+{
     return win->property(FrameProperty::kPropScreenName).toString();
 }
 
-static QMap<QString, QWidget *> rootMap(FrameService *srv) {
+static QMap<QString, QWidget *> rootMap(FrameService *srv)
+{
     QList<QWidget *> root = srv->rootWindows();
     QMap<QString, QWidget *> ret;
     for (QWidget *win : root) {
@@ -198,7 +201,7 @@ void CanvasManager::onCanvasBuild()
             view->show();
         }
 
-    // 检查移除的窗口
+        // 检查移除的窗口
         {
             auto winMap = rootMap(d->frameService);
             for (const QString &sp : d->viewMap.keys()) {
@@ -206,7 +209,6 @@ void CanvasManager::onCanvasBuild()
                     d->viewMap.take(sp);
             }
         }
-
     }
 
     // todo(zy) 优化首次加载与屏幕改变的加载重复问题，现在在初始化时有冗余
@@ -238,7 +240,7 @@ void CanvasManager::onGeometryChanged()
 
         // calc current geometry.
         QRect avRect = d->relativeRect(win->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
-                                   win->property(FrameProperty::kPropScreenGeometry).toRect());
+                                       win->property(FrameProperty::kPropScreenGeometry).toRect());
 
         // no need to update.
         if (view->geometry() == avRect) {

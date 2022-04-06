@@ -22,7 +22,7 @@
 #include "canvasmodel.h"
 #include "canvasmodel_p.h"
 #include "filetreater.h"
-#include "view/operator/fileoperaterproxy.h"
+#include "view/operator/fileoperatorproxy.h"
 
 #include <interfaces/abstractfileinfo.h>
 #include <base/standardpaths.h>
@@ -39,15 +39,13 @@ DFMBASE_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
 CanvasModelPrivate::CanvasModelPrivate(CanvasModel *qq)
-    : QObject (qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
     fileTreater.reset(new FileTreater(qq));
 }
 
 CanvasModelPrivate::~CanvasModelPrivate()
 {
-
 }
 
 void CanvasModelPrivate::onFileDeleted(const QUrl &url)
@@ -123,18 +121,18 @@ void CanvasModelPrivate::doWatcherEvent()
 
         if (kAddFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-                fileTreater->insertChild(url);
+            fileTreater->insertChild(url);
         } else if (kRmFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-                fileTreater->removeChild(url);
+            fileTreater->removeChild(url);
         } else if (kReFile == eventType) {
             const QPair<QUrl, QUrl> urls = eventData.second.value<QPair<QUrl, QUrl>>();
             const QUrl &oldUrl = urls.first;
             const QUrl &newUrl = urls.second;
-                fileTreater->renameChild(oldUrl, newUrl);
+            fileTreater->renameChild(oldUrl, newUrl);
         } else if (kUpdateFile == eventType) {
             const QUrl &url = eventData.second.toUrl();
-                fileTreater->updateChild(url);
+            fileTreater->updateChild(url);
         }
     }
     processFileEventRuning = false;
@@ -189,10 +187,8 @@ void CanvasModelPrivate::doRefresh()
 }
 
 CanvasModel::CanvasModel(QObject *parent)
-    : QAbstractItemModel(parent)
-    , d(new CanvasModelPrivate(this))
+    : QAbstractItemModel(parent), d(new CanvasModelPrivate(this))
 {
-
 }
 
 QModelIndex CanvasModel::index(int row, int column, const QModelIndex &parent) const
@@ -261,7 +257,7 @@ int CanvasModel::columnCount(const QModelIndex &parent) const
 
 QModelIndex CanvasModel::rootIndex() const
 {
-    return createIndex((quintptr)this, 0, (void*)this);
+    return createIndex((quintptr)this, 0, (void *)this);
 }
 
 QVariant CanvasModel::data(const QModelIndex &index, int role) const
@@ -285,11 +281,11 @@ QVariant CanvasModel::data(const QModelIndex &index, int role) const
     case kFilePinyinName:
         return indexFileInfo->fileDisplayPinyinName();
     case kFileLastModifiedRole:
-        return indexFileInfo->lastModified().toString();    // todo by file info: lastModifiedDisplayName
+        return indexFileInfo->lastModified().toString();   // todo by file info: lastModifiedDisplayName
     case kFileSizeRole:
         return indexFileInfo->size();   // todo by file info: sizeDisplayName
     case kFileMimeTypeRole:
-        return indexFileInfo->fileMimeType().name();    // todo by file info: mimeTypeDisplayName
+        return indexFileInfo->fileMimeType().name();   // todo by file info: mimeTypeDisplayName
     case kExtraProperties:
         return indexFileInfo->extraProperties();
     case kFileBaseNameRole:
@@ -361,7 +357,6 @@ QModelIndex CanvasModel::setRootUrl(QUrl url)
         disconnect(d->watcher.data(), &AbstractFileWatcher::subfileCreated, d.data(), &CanvasModelPrivate::onFileCreated);
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename, d.data(), &CanvasModelPrivate::onFileRename);
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileAttributeChanged, d.data(), &CanvasModelPrivate::onFileUpdated);
-
     }
 
     d->watcher = WatcherFactory::create<AbstractFileWatcher>(d->rootUrl);
@@ -446,7 +441,7 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
     if (!parent.isValid() || parent == rootIndex()) {
         // drop file to desktop
         targetFileUrl = rootUrl();
-        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action ;
+        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
     } else {
         targetFileUrl = url(parent);
         qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
@@ -463,19 +458,19 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
     // todo Compress
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
-        FileOperaterProxyIns->dropToTrash(urlList);
+        FileOperatorProxyIns->dropToTrash(urlList);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
-        FileOperaterProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());
+        FileOperatorProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());
         return true;
     }
 
     switch (action) {
     case Qt::CopyAction:
     case Qt::MoveAction:
-        FileOperaterProxyIns->dropFiles(action, targetFileUrl, urlList);
+        FileOperatorProxyIns->dropFiles(action, targetFileUrl, urlList);
         break;
     case Qt::LinkAction:
         break;
@@ -488,7 +483,7 @@ bool CanvasModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int
 
 QStringList CanvasModel::mimeTypes() const
 {
-    static QStringList types {QLatin1String("text/uri-list")};
+    static QStringList types { QLatin1String("text/uri-list") };
     return types;
 }
 

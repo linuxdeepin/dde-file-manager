@@ -25,7 +25,7 @@
 #include "view/canvasview.h"
 #include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
-#include "view/operator/fileoperaterproxy.h"
+#include "view/operator/fileoperatorproxy.h"
 #include "menu/canvasmenu.h"
 #include "menu/canvasmenuscene.h"
 

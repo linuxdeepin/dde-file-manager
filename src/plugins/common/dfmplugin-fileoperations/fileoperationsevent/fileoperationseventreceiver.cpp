@@ -144,7 +144,7 @@ void FileOperationsEventReceiver::initDBus()
 }
 
 bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVariantMap &ret,
-                                             DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle)
+                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle)
 {
     if (!ret.contains("event") || !ret.contains("sources") || !ret.contains("target"))
         return false;
@@ -215,7 +215,7 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QList<QUrl> sources,
                                                       const QUrl target,
                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                      DFMGLOBAL_NAMESPACE::OperaterHandleCallback callbaskHandle)
+                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle)
 {
     Q_UNUSED(windowId);
     if (!sources.isEmpty() && !target.isLocalFile()) {
@@ -236,7 +236,7 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
 }
 
 void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                     DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback)
+                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId);
     if (!sources.isEmpty() && !target.isLocalFile()) {
@@ -257,7 +257,7 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
 }
 
 void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                             DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback)
+                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId);
 
@@ -280,7 +280,7 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
 }
 
 void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                                  DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback)
+                                                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId);
     if (!sources.isEmpty() && !sources.first().isLocalFile()) {
@@ -303,7 +303,7 @@ void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                         DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback)
+                                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId);
     //Delete local file with shift+delete, show a confirm dialog.
@@ -328,7 +328,7 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
 }
 
 void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
-                                                            DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback)
+                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
     //清空回收站操作弹框提示（这里只会显示Emtpy按钮）
     bool isFileAlreadyInTrash = (deleteNoticeType == AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);   //检查用户是否从回收站内部删除文件
@@ -361,9 +361,9 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QList<QUrl> sources,
                                                       const QUrl target,
                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                      DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback,
+                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
                                                       const QVariant custom,
-                                                      DFMGLOBAL_NAMESPACE::OperaterCallback callback)
+                                                      DFMGLOBAL_NAMESPACE::OperatorCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
     if (handleCallback)
@@ -381,9 +381,9 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
                                                      const QList<QUrl> sources,
                                                      const QUrl target,
                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                     DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback,
+                                                     DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
                                                      const QVariant custom,
-                                                     DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                     DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
     if (handleCallback)
@@ -400,9 +400,9 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
 void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId,
                                                              const QList<QUrl> sources,
                                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                             DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback,
+                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
                                                              const QVariant custom,
-                                                             DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                             DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->moveToTrash(sources, flags);
     if (handleCallback)
@@ -419,9 +419,9 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
 void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId,
                                                                   const QList<QUrl> sources,
                                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                                  DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback,
+                                                                  DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
                                                                   const QVariant custom,
-                                                                  DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                                  DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
     if (handleCallback)
@@ -438,9 +438,9 @@ void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QList<QUrl> sources,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
-                                                         DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback,
+                                                         DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
                                                          const QVariant custom,
-                                                         DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                         DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
     if (handleCallback)
@@ -455,8 +455,8 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
 }
 
 void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources,
-                                                            DFMGLOBAL_NAMESPACE::OperaterHandleCallback handleCallback,
-                                                            const QVariant custom, OperaterCallback callback)
+                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
+                                                            const QVariant custom, OperatorCallback callback)
 {
     JobHandlePointer handle = copyMoveJob->deletes(sources);
     if (handleCallback)
@@ -506,7 +506,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
 void FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId,
                                                            const QList<QUrl> urls,
                                                            const QVariant custom,
-                                                           DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                           DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     bool ok = handleOperationOpenFiles(windowId, urls);
     if (callback) {
@@ -523,7 +523,7 @@ void FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
                                                                 const QList<QUrl> urls,
                                                                 const QList<QString> apps,
                                                                 const QVariant custom,
-                                                                DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                                DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     bool ok = handleOperationOpenFilesByApp(windowId, urls, apps);
     if (callback) {
@@ -614,7 +614,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
                                                             const QUrl oldUrl,
                                                             const QUrl newUrl, const QVariant custom,
-                                                            OperaterCallback callback)
+                                                            OperatorCallback callback)
 {
     bool ok = handleOperationRenameFile(windowId, oldUrl, newUrl);
     if (callback) {
@@ -643,7 +643,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     return ok;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, OperaterCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace, const QVariant custom, OperatorCallback callback)
 {
     QMap<QUrl, QUrl> successUrls;
     QString error;
@@ -679,7 +679,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     return ok;
 }
 
-void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, OperaterCallback callback)
+void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair, const QVariant custom, OperatorCallback callback)
 {
     QMap<QUrl, QUrl> successUrls;
     QString error;
@@ -715,7 +715,7 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                        const QUrl url,
                                                        CreateFileType fileType,
                                                        const QVariant custom,
-                                                       OperaterCallback callback)
+                                                       OperatorCallback callback)
 {
     QString newPath = handleOperationMkdir(windowId, url, fileType);
     if (callback) {
@@ -731,7 +731,7 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
 
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                        const QUrl url, const QVariant custom,
-                                                       OperaterCallback callback)
+                                                       OperatorCallback callback)
 {
     bool ok = handleOperationMkdir(windowId, url);
     if (callback) {
@@ -816,7 +816,7 @@ bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                            const QUrl url, const QVariant custom,
-                                                           OperaterCallback callback)
+                                                           OperatorCallback callback)
 {
     bool ok = handleOperationTouchFile(windowId, url);
     if (callback) {
@@ -845,7 +845,7 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
                                                            const CreateFileType fileType,
                                                            const QString suffix,
                                                            const QVariant custom,
-                                                           OperaterCallback callback)
+                                                           OperatorCallback callback)
 {
     QString newPath = handleOperationTouchFile(windowId, url, fileType, suffix);
     if (callback) {
@@ -898,7 +898,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
 void FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
                                                           const QUrl url,
                                                           const QUrl link, const QVariant custom,
-                                                          DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                          DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     bool ok = handleOperationLinkFile(windowId, url, link);
 
@@ -951,7 +951,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
 void FileOperationsEventReceiver::handleOperationSetPermission(const quint64 windowId,
                                                                const QUrl url,
                                                                const QFileDevice::Permissions permissions, const QVariant custom,
-                                                               DFMBASE_NAMESPACE::Global::OperaterCallback callback)
+                                                               DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     bool ok = handleOperationSetPermission(windowId, url, permissions);
     if (callback) {
@@ -1070,7 +1070,7 @@ bool FileOperationsEventReceiver::handleOperationCleanSaveOperationsStack()
 }
 
 bool FileOperationsEventReceiver::handleOperationRevocation(const quint64 windowId,
-                                                            DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle)
+                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handle)
 {
     QVariantMap ret;
     if (operationsStackDbus) {
@@ -1110,7 +1110,7 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
     return true;
 }
 
-void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls, const QVariant custom, OperaterCallback callback)
+void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls, const QVariant custom, OperatorCallback callback)
 {
     bool ok = handleOperationHideFiles(windowId, urls);
     if (callback) {

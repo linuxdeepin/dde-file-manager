@@ -25,7 +25,7 @@
 #include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
-#include "view/operator/fileoperaterproxy.h"
+#include "view/operator/fileoperatorproxy.h"
 
 #include <services/common/emblem/emblem_defines.h>
 
@@ -285,7 +285,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     if (const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
         QUrl oldUrl = fileInfo->url();
         QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
-        FileOperaterProxyIns->renameFile(parent(), oldUrl, newUrl);
+        FileOperatorProxyIns->renameFile(parent(), oldUrl, newUrl);
     }
 }
 
@@ -862,4 +862,3 @@ void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewIte
     }
     painter->restore();
 }
-

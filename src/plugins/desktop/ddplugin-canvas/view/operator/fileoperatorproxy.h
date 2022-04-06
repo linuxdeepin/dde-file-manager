@@ -30,12 +30,12 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasView;
-class FileOperaterProxyPrivate;
-class FileOperaterProxy : public QObject
+class FileOperatorProxyPrivate;
+class FileOperatorProxy : public QObject
 {
     Q_OBJECT
 public:
-    static FileOperaterProxy *instance();
+    static FileOperatorProxy *instance();
     void touchFile(const CanvasView *view, const QPoint pos, const DFMBASE_NAMESPACE::Global::CreateFileType type, QString suffix = "");
     void touchFolder(const CanvasView *view, const QPoint pos);
     void copyFiles(const CanvasView *view);
@@ -60,13 +60,13 @@ public:
     void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
 
 protected:
-    explicit FileOperaterProxy(QObject *parent = nullptr);
+    explicit FileOperatorProxy(QObject *parent = nullptr);
 
 private:
-    QSharedPointer<FileOperaterProxyPrivate> d;
+    QSharedPointer<FileOperatorProxyPrivate> d;
 };
 
-#define FileOperaterProxyIns DDP_CANVAS_NAMESPACE::FileOperaterProxy::instance()
+#define FileOperatorProxyIns DDP_CANVAS_NAMESPACE::FileOperatorProxy::instance()
 
 DDP_CANVAS_END_NAMESPACE
 

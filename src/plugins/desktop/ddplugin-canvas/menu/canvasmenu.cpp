@@ -20,7 +20,7 @@
  */
 #include "canvasmenu.h"
 #include "view/canvasview.h"
-#include "view/operator/fileoperaterproxy.h"
+#include "view/operator/fileoperatorproxy.h"
 #include "canvasmanager.h"
 #include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
@@ -316,35 +316,35 @@ void CanvasMenu::actionBusiness(QAction *act)
         return;
     }
     case kActNewFolder: {
-        FileOperaterProxyIns->touchFolder(view, cusData.toPoint());
+        FileOperatorProxyIns->touchFolder(view, cusData.toPoint());
         return;
     }
     case kActNewText: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
+        FileOperatorProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
         return;
     }
     case kActNewWord: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
+        FileOperatorProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
         return;
     }
     case kActNewExcel: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
+        FileOperatorProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
         return;
     }
     case kActNewPowerpoint: {
-        FileOperaterProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
+        FileOperatorProxyIns->touchFile(view, cusData.toPoint(), DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
         return;
     }
         // TODO: 常规菜单中大部分直接使用基础默认的响应，不做特殊处理，
         //       这里是暂时接入桌面业务,后续待dde-file-manager接入进来后调整清理.
     case kActOpen: {
-        FileOperaterProxyIns->openFiles(view);
+        FileOperatorProxyIns->openFiles(view);
         return;
     }
         //    case kActOpenWith:
         //    case kActOpenAsAdmin:
     case kActDelete: {
-        FileOperaterProxyIns->moveToTrash(view);
+        FileOperatorProxyIns->moveToTrash(view);
         return;
     }
     case ActionType::kActOpenInTerminal: {
@@ -354,11 +354,11 @@ void CanvasMenu::actionBusiness(QAction *act)
         return;
     }
     case kActPaste: {
-        FileOperaterProxyIns->pasteFiles(view, cusData.toPoint());
+        FileOperatorProxyIns->pasteFiles(view, cusData.toPoint());
         return;
     }
     case kActCopy: {
-        FileOperaterProxyIns->copyFiles(view);
+        FileOperatorProxyIns->copyFiles(view);
         return;
     }
     case kActRename: {
@@ -379,13 +379,13 @@ void CanvasMenu::actionBusiness(QAction *act)
                 RenameDialog::ModifyMode mode = renameDlg.modifyMode();
                 if (RenameDialog::kReplace == mode) {
                     auto content = renameDlg.getReplaceContent();
-                    FileOperaterProxyIns->renameFiles(view, selected, content, true);
+                    FileOperatorProxyIns->renameFiles(view, selected, content, true);
                 } else if (RenameDialog::kAdd == mode) {
                     auto content = renameDlg.getAddContent();
-                    FileOperaterProxyIns->renameFiles(view, selected, content);
+                    FileOperatorProxyIns->renameFiles(view, selected, content);
                 } else if (RenameDialog::kCustom == mode) {
                     auto content = renameDlg.getCustomContent();
-                    FileOperaterProxyIns->renameFiles(view, selected, content, false);
+                    FileOperatorProxyIns->renameFiles(view, selected, content, false);
                 }
             }
         }
@@ -402,11 +402,11 @@ void CanvasMenu::actionBusiness(QAction *act)
         return;
     }
     case kActProperty: {
-        FileOperaterProxyIns->showFilesProperty(view);
+        FileOperatorProxyIns->showFilesProperty(view);
         return;
     }
     case kActSendToBluetooth: {
-        FileOperaterProxyIns->sendFilesToBluetooth(view);
+        FileOperatorProxyIns->sendFilesToBluetooth(view);
         return;
     }
     default:
