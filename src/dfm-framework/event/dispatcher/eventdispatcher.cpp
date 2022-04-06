@@ -62,7 +62,7 @@ EventDispatcherManager &EventDispatcherManager::instance()
 
 void EventDispatcherManager::unsubscribe(EventDispatcherManager::EventType type)
 {
-    QMutexLocker guard(&mutex);
+    QWriteLocker guard(&rwLock);
     if (dispatcherMap.contains(type))
         dispatcherMap.remove(type);
 }

@@ -109,7 +109,7 @@ EventUnicastManager &EventUnicastManager::instance()
 
 void EventUnicastManager::disconnect(const QString &topic)
 {
-    QMutexLocker guard(&mutex);
+    QWriteLocker guard(&rwLock);
     if (unicastMap.contains(topic))
         unicastMap.remove(topic);
 }

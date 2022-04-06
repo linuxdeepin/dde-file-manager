@@ -28,6 +28,7 @@
 #include "dfm-framework/event/invokehelper.h"
 
 #include <QFuture>
+#include <QReadWriteLock>
 
 DPF_BEGIN_NAMESPACE
 
@@ -112,7 +113,7 @@ public:
     template<class T, class Func>
     [[gnu::hot]] inline void connect(const QString &topic, T *obj, Func method)
     {
-        QMutexLocker guard(&mutex);
+        QWriteLocker guard(&rwLock);
         if (unicastMap.contains(topic)) {
             unicastMap[topic]->setReceiver(obj, method);
         } else {
@@ -127,16 +128,23 @@ public:
     template<class T, class... Args>
     [[gnu::hot]] inline QVariant push(const QString &topic, T param, Args &&... args)
     {
-        if (Q_LIKELY(unicastMap.contains(topic)))
-            return unicastMap[topic]->send(param, std::forward<Args>(args)...);
-
+        QReadLocker guard(&rwLock);
+        if (Q_LIKELY(unicastMap.contains(topic))) {
+            auto unicast = unicastMap.value(topic);
+            guard.unlock();
+            return unicast->send(param, std::forward<Args>(args)...);
+        }
         return QVariant();
     }
 
     inline QVariant push(const QString &topic)
     {
-        if (Q_LIKELY(unicastMap.contains(topic)))
-            return unicastMap[topic]->send();
+        QReadLocker guard(&rwLock);
+        if (Q_LIKELY(unicastMap.contains(topic))) {
+            auto unicast = unicastMap.value(topic);
+            guard.unlock();
+            return unicast->send();
+        }
 
         return QVariant();
     }
@@ -144,6 +152,7 @@ public:
     template<class T, class... Args>
     inline EventUnicastFuture post(const QString &topic, T param, Args &&... args)
     {
+        QReadLocker guard(&rwLock);
         if (Q_LIKELY(unicastMap.contains(topic)))
             return unicastMap[topic]->asyncSend(param, std::forward<Args>(args)...);
         return EventUnicastFuture(QFuture<QVariant>());
@@ -158,7 +167,7 @@ private:
 
 private:
     EventUnicastMap unicastMap;
-    QMutex mutex;
+    QReadWriteLock rwLock;
 };
 
 DPF_END_NAMESPACE

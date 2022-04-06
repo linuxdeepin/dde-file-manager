@@ -30,6 +30,7 @@
 #include <QVariant>
 #include <QFuture>
 #include <QSharedPointer>
+#include <QReadWriteLock>
 
 DPF_BEGIN_NAMESPACE
 
@@ -101,7 +102,7 @@ public:
     template<class T, class Func>
     [[gnu::hot]] inline void subscribe(EventType type, T *obj, Func method)
     {
-        QMutexLocker guard(&mutex);
+        QWriteLocker lk(&rwLock);
         if (dispatcherMap.contains(type)) {
             dispatcherMap[type]->appendListener(obj, method);
         } else {
@@ -116,8 +117,11 @@ public:
     template<class T, class... Args>
     [[gnu::hot]] inline bool publish(EventType type, T param, Args &&... args)
     {
+        QReadLocker lk(&rwLock);
         if (Q_LIKELY(dispatcherMap.contains(type))) {
-            dispatcherMap[type]->dispatch(param, std::forward<Args>(args)...);
+            auto dispatcher = dispatcherMap.value(type);
+            lk.unlock();
+            dispatcher->dispatch(param, std::forward<Args>(args)...);
             return true;
         }
         return false;
@@ -126,6 +130,7 @@ public:
     template<class T, class... Args>
     inline QFuture<void> asyncPublish(EventType type, T param, Args &&... args)
     {
+        QReadLocker lk(&rwLock);
         if (Q_LIKELY(dispatcherMap.contains(type))) {
             return dispatcherMap[type]->asyncDispatch(param, std::forward<Args>(args)...);
         }
@@ -141,7 +146,7 @@ private:
 
 private:
     EventDispatcherMap dispatcherMap;
-    QMutex mutex;
+    QReadWriteLock rwLock;
 };
 
 DPF_END_NAMESPACE
