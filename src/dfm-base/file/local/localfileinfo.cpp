@@ -1315,11 +1315,6 @@ QIcon LocalFileInfo::fileIcon() const
     const QUrl &fileUrl = this->url();
     const QString &filePath = this->absoluteFilePath();
 
-    return DFileIconProvider::globalProvider()->icon(filePath);
-
-    // todo lanxs
-    // 暂时屏蔽缩略图生成
-
     if (!d->fileIcon().isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->fileIcon().name().isEmpty())) {
         return d->fileIcon();
     }
@@ -1359,16 +1354,16 @@ QIcon LocalFileInfo::fileIcon() const
         } else {
             QTimer *timer = new QTimer();
 
-            const QExplicitlySharedDataPointer<LocalFileInfo> me(const_cast<LocalFileInfo *>(this));
+            QPointer<LocalFileInfo> me = const_cast<LocalFileInfo *>(this);
 
             d->getIconTimer = timer;
             timer->setSingleShot(true);
             timer->moveToThread(qApp->thread());
             timer->setInterval(REQUEST_THUMBNAIL_DEALY);
 
-            QObject::connect(timer, &QTimer::timeout, timer, [timer, me, filePath] {
+            QObject::connect(timer, &QTimer::timeout, [timer, filePath, me] {
                 DThumbnailProvider::instance()->appendToProduceQueue(filePath, DThumbnailProvider::kLarge, [me](const QString &path) {
-                    if (QThread::currentThread() == qApp->thread()) {
+                    if (me) {
                         if (path.isEmpty()) {
                             me->d->iconFromTheme = true;
                         } else {
@@ -1377,7 +1372,7 @@ QIcon LocalFileInfo::fileIcon() const
 
                         me->d->needThumbnail = false;
                     } else {
-                        qWarning() << "thread run other!!!";
+                        qWarning() << "me is nullptr !!!";
                     }
                 });
                 timer->deleteLater();

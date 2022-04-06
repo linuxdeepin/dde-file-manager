@@ -32,7 +32,7 @@
 DFMBASE_BEGIN_NAMESPACE
 
 class LocalFileInfoPrivate;
-class LocalFileInfo : public AbstractFileInfo
+class LocalFileInfo : public AbstractFileInfo, public QObject
 {
     LocalFileInfoPrivate *d = nullptr;
 

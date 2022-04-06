@@ -635,41 +635,28 @@ _return:
     return QString();
 }
 
-void DThumbnailProvider::appendToProduceQueue(const QFileInfo &info, DThumbnailProvider::Size size, DThumbnailProvider::CallBack callback)
+void DThumbnailProvider::appendToProduceQueue(const QString &filePath, DThumbnailProvider::Size size, DThumbnailProvider::CallBack callback)
 {
     DThumbnailProviderPrivate::ProduceInfo produceInfo;
 
-    produceInfo.fileInfo = info;
+    produceInfo.fileInfo = QFileInfo(filePath);
     produceInfo.size = size;
     produceInfo.callback = callback;
 
-    if (isRunning()) {
-        {
-            QMutexLocker locker(&d->mutex);
-            // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
-            // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
-            const QString &filePath = info.absoluteFilePath();
-            if (!d->produceAbsoluteFilePathQueue.contains(filePath)) {
-                d->produceQueue.append(std::move(produceInfo));
-                d->produceAbsoluteFilePathQueue.push_back(filePath);
-            }
-        }
-        d->waitCondition.wakeAll();
-    } else {
+    {
+        QMutexLocker locker(&d->mutex);
         // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
         // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
-        {
-            QMutexLocker locker(&d->mutex);
-            // fix bug 62540 这里在没生成缩略图的情况下，（触发刷新，文件大小改变）同一个文件会多次生成缩略图的情况,
-            // 缓存当前队列中生成的缩略图文件的路劲没有就加入队里生成
-            const QString &filePath = info.absoluteFilePath();
-            if (!d->produceAbsoluteFilePathQueue.contains(filePath)) {
-                d->produceQueue.append(std::move(produceInfo));
-                d->produceAbsoluteFilePathQueue.push_back(filePath);
-            }
+        if (!d->produceAbsoluteFilePathQueue.contains(filePath)) {
+            d->produceQueue.append(std::move(produceInfo));
+            d->produceAbsoluteFilePathQueue.push_back(filePath);
         }
     }
-    start();
+
+    if (!isRunning())
+        start();
+    else
+        d->waitCondition.wakeAll();
 }
 
 QString DThumbnailProvider::errorString() const
@@ -698,15 +685,16 @@ DThumbnailProvider::~DThumbnailProvider()
 void DThumbnailProvider::run()
 {
     forever {
-        QMutexLocker locker(&d->mutex);
 
         if (d->produceQueue.isEmpty()) {
             d->waitCondition.wait(&d->mutex);
+            d->mutex.unlock();
         }
 
         if (!d->running)
             return;
 
+        QMutexLocker locker(&d->mutex);
         const DThumbnailProviderPrivate::ProduceInfo &task = d->produceQueue.dequeue();
 
         locker.unlock();
