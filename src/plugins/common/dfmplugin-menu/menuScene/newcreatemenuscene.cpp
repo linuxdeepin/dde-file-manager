@@ -81,10 +81,10 @@ QString NewCreateMenuScene::name() const
 
 bool NewCreateMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
-    if (d->currentDir.isEmpty())
+    if (!d->currentDir.isValid())
         return false;
 
     return true;
@@ -159,7 +159,6 @@ bool NewCreateMenuScene::triggered(QAction *action)
         } else if (id == ActionID::kNewPresentation) {
 
         } else if (id == ActionID::kNewPlainText) {
-
         }
         return true;
     }

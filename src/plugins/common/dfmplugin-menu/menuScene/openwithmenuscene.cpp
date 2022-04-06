@@ -59,9 +59,9 @@ QString OpenWithMenuScene::name() const
 
 bool OpenWithMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
-    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
     // 文件不存在，则无文件相关菜单项
@@ -69,7 +69,7 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
         return false;
 
     QString errString;
-    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(QUrl(d->focusFile), true, &errString);
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
     if (d->focusFileInfo.isNull()) {
         qDebug() << errString;
         return false;
@@ -98,7 +98,7 @@ AbstractMenuScene *OpenWithMenuScene::scene(QAction *action) const
 
 bool OpenWithMenuScene::create(QMenu *parent)
 {
-    if (0 == d->selectFiles.count() || d->focusFile.isEmpty())
+    if (d->selectFiles.isEmpty() || !d->focusFile.isValid())
         return false;
 
     QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenWith));
@@ -109,7 +109,7 @@ bool OpenWithMenuScene::create(QMenu *parent)
     tempAction->setMenu(subMenu);
 
     QList<QUrl> redirectedUrlList;
-    for (const QString &fileUrl : d->selectFiles) {
+    for (const auto &fileUrl : d->selectFiles) {
         QString errString;
         auto fileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(fileUrl, true, &errString);
         if (fileInfo.isNull()) {

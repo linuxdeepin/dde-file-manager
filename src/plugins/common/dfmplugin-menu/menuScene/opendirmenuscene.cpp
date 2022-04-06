@@ -61,9 +61,9 @@ QString OpenDirMenuScene::name() const
 
 bool OpenDirMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
-    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
@@ -72,7 +72,7 @@ bool OpenDirMenuScene::initialize(const QVariantHash &params)
         return false;
 
     QString errString;
-    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(QUrl(d->focusFile), true, &errString);
+    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
     if (d->focusFileInfo.isNull()) {
         qDebug() << errString;
         return false;

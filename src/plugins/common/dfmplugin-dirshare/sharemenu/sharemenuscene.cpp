@@ -27,6 +27,7 @@
 #include "services/common/usershare/usershareservice.h"
 #include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/dfm_global_defines.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/framework.h>
 
@@ -63,8 +64,8 @@ QString ShareMenuScene::name() const
 bool ShareMenuScene::initialize(const QVariantHash &params)
 {
     DSC_USE_NAMESPACE
-    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     d->predicateName.insert(ShareActionId::kActAddShareKey, tr("Share folder"));
@@ -77,7 +78,8 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
     if (u.scheme() != Global::kFile)
         return false;
 
-    if (!QFileInfo(u.path()).isDir())
+    auto info = InfoFactory::create<AbstractFileInfo>(u, true);
+    if (!info->isDir())
         return false;
 
     return true;
@@ -91,10 +93,10 @@ bool ShareMenuScene::create(QMenu *parent)
     if (d->selectFiles.count() != 1)
         return false;
 
-    QUrl u(d->selectFiles.first());
-    if (QFileInfo(u.path()).isDir()) {
+    auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first(), true);
+    if (info->isDir()) {
         DSC_USE_NAMESPACE
-        if (UserShareService::service()->isSharedPath(d->selectFiles.first())) {
+        if (UserShareService::service()->isSharedPath(info->absoluteFilePath())) {
             auto act = parent->addAction(d->predicateName[ShareActionId::kActRemoveShareKey]);
             act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActRemoveShareKey);
             d->predicateAction.insert(ShareActionId::kActRemoveShareKey, act);
@@ -129,11 +131,12 @@ bool ShareMenuScene::triggered(QAction *action)
 
     DSC_USE_NAMESPACE
     QString key = action->property(ActionPropertyKey::kActionID).toString();
+    auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first(), true);
     if (key == ShareActionId::kActAddShareKey) {
-        d->addShare(d->selectFiles.first());
+        d->addShare(info->absoluteFilePath());
         return true;
     } else if (key == ShareActionId::kActRemoveShareKey) {
-        UserShareService::service()->removeShare(d->selectFiles.first());
+        UserShareService::service()->removeShare(info->absoluteFilePath());
         return true;
     } else {
         return false;

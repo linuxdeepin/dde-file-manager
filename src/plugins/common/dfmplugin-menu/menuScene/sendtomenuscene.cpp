@@ -30,6 +30,7 @@
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include <dfm-base/base/schemefactory.h>
 
 #include <dfm-framework/framework.h>
 
@@ -58,13 +59,13 @@ QString SendToMenuScene::name() const
 bool SendToMenuScene::initialize(const QVariantHash &params)
 {
     DSC_USE_NAMESPACE
-    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
-    for (auto path : d->selectFiles) {
-        QFileInfo f(QUrl(path).path());
-        if (f.isDir()) {
+    for (auto url : d->selectFiles) {
+        auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
+        if (f->isDir()) {
             d->folderSelected = true;
             break;
         }
@@ -195,12 +196,10 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
     if (!act)
         return;
 
-    QList<QUrl> urls;
     QStringList filePaths;
-    for (const auto &urlstr : selectFiles) {
-        QUrl url(urlstr);
-        urls << url;
-        filePaths << url.path();
+    for (const auto &url : selectFiles) {
+        auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
+        filePaths << f->absoluteFilePath();
     }
     DSC_USE_NAMESPACE
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
@@ -208,6 +207,6 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         BluetoothService::service()->sendFiles(filePaths);
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), urls, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint);
     }
 }

@@ -58,13 +58,13 @@ QString ClipBoardMenuScene::name() const
 
 bool ClipBoardMenuScene::initialize(const QVariantHash &params)
 {
-    d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
-    d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     // 文件不存在，则无文件相关菜单项
-    if (d->selectFiles.isEmpty() && d->focusFile.isEmpty() && d->currentDir.isEmpty())
+    if (d->selectFiles.isEmpty() && !d->focusFile.isValid() && !d->currentDir.isValid())
         return false;
 
     return true;
@@ -121,7 +121,6 @@ bool ClipBoardMenuScene::triggered(QAction *action)
         } else if (id == ActionID::kCut) {
 
         } else if (id == ActionID::kCopy) {
-
         }
         return true;
     }

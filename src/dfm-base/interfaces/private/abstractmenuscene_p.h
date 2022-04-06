@@ -33,9 +33,9 @@ public:
     explicit AbstractMenuScenePrivate(AbstractMenuScene *qq);
 
 public:
-    QString currentDir;
-    QStringList selectFiles;
-    QString focusFile;
+    QUrl currentDir;
+    QList<QUrl> selectFiles;
+    QUrl focusFile;
     bool onDesktop;
     bool isEmptyArea;
 
