@@ -500,7 +500,7 @@ JobHandlePointer VaultHelper::moveToTrashHandle(const quint64 windowId, const QL
 
     dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
                                           windowId,
-                                          redirectedFileUrls, flags);
+                                          redirectedFileUrls, flags, nullptr);
     return {};
 }
 
@@ -514,21 +514,21 @@ JobHandlePointer VaultHelper::deletesHandle(const quint64 windowId, const QList<
 
     dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
                                           windowId,
-                                          redirectedFileUrls, flags);
+                                          redirectedFileUrls, flags, nullptr);
     return {};
 }
 
 JobHandlePointer VaultHelper::copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
     QUrl url = QUrl::fromLocalFile(target.path());
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint, nullptr);
     return {};
 }
 
 JobHandlePointer VaultHelper::cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
     QUrl url = QUrl::fromLocalFile(target.path());
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint, nullptr);
     return {};
 }
 

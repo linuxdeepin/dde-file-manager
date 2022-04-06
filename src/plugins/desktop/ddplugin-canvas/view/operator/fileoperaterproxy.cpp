@@ -105,8 +105,8 @@ void FileOperaterProxyPrivate::delaySelectUrls(const QList<QUrl> &urls, int ms)
     } else {
         selectTimer.reset(new QTimer);
         selectTimer->setSingleShot(true);
-        connect(selectTimer.get(), &QTimer::timeout, this, [&, urls](){
-           this->doSelectUrls(urls);
+        connect(selectTimer.get(), &QTimer::timeout, this, [&, urls]() {
+            this->doSelectUrls(urls);
         });
         selectTimer->start(ms);
     }
@@ -207,9 +207,9 @@ void FileOperaterProxy::pasteFiles(const CanvasView *view, const QPoint pos)
     auto urls = ClipBoard::instance()->clipboardFileUrlList();
     ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
     if (ClipBoard::kCopyAction == action) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, custom, d->callBack);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     } else if (ClipBoard::kCutAction == action) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, custom, d->callBack);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, view->winId(), urls, view->model()->rootUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
         //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
 
         // clear clipboard after cutting files from clipboard
@@ -260,12 +260,12 @@ void FileOperaterProxy::openFilesByApp(const CanvasView *view)
 
 void FileOperaterProxy::moveToTrash(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, view->winId(), view->selectionModel()->selectedUrls(), AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, view->winId(), view->selectionModel()->selectedUrls(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperaterProxy::deleteFiles(const CanvasView *view)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, view->winId(), view->selectionModel()->selectedUrls(), AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, view->winId(), view->selectionModel()->selectedUrls(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperaterProxy::showFilesProperty(const CanvasView *view)
@@ -292,17 +292,17 @@ void FileOperaterProxy::dropFiles(const Qt::DropAction &action, const QUrl &targ
         return;
 
     if (action == Qt::MoveAction) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint, custom, d->callBack);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     } else {
         // default is copy file
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint, custom, d->callBack);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, view->winId(), urls, targetUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr, custom, d->callBack);
     }
 }
 
 void FileOperaterProxy::dropToTrash(const QList<QUrl> &urls)
 {
     auto view = CanvasIns->views().first();
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, view->winId(), urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperaterProxy::dropToApp(const QList<QUrl> &urls, const QString &app)

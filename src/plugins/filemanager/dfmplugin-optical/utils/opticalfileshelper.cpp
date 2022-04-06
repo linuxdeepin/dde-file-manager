@@ -99,6 +99,6 @@ JobHandlePointer OpticalFilesHelper::deleteFilesHandle(const quint64 windowId, c
             redirectedFileUrls.push_back(backer);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, windowId, redirectedFileUrls, flags);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, windowId, redirectedFileUrls, flags, nullptr);
     return {};
 }

@@ -160,7 +160,7 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
                                               windowId,
                                               sourceUrls,
                                               view->rootUrl(),
-                                              AbstractJobHandler::JobFlag::kNoHint);
+                                              AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else if (ClipBoard::kCutAction == action) {
 
         if (ClipBoard::supportCut()) {
@@ -169,7 +169,7 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
                                                   windowId,
                                                   sourceUrls,
                                                   view->rootUrl(),
-                                                  AbstractJobHandler::JobFlag::kNoHint);
+                                                  AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << sourceUrls;
@@ -191,7 +191,7 @@ void FileOperatorHelper::moveToTrash(const FileView *view)
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
                                           windowId,
                                           view->selectedUrlList(),
-                                          AbstractJobHandler::JobFlag::kNoHint);
+                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperatorHelper::deleteFiles(const FileView *view)
@@ -200,7 +200,7 @@ void FileOperatorHelper::deleteFiles(const FileView *view)
     dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
                                           windowId,
                                           view->selectedUrlList(),
-                                          AbstractJobHandler::JobFlag::kNoHint);
+                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
@@ -265,14 +265,14 @@ void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &a
                                               windowId,
                                               urls,
                                               targetUrl,
-                                              AbstractJobHandler::JobFlag::kNoHint);
+                                              AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else {
         // default is copy file
         dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy,
                                               windowId,
                                               urls,
                                               targetUrl,
-                                              AbstractJobHandler::JobFlag::kNoHint);
+                                              AbstractJobHandler::JobFlag::kNoHint, nullptr);
     }
 }
 

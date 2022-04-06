@@ -484,25 +484,25 @@ void AbstractWorker::saveOperations()
             || jobType == AbstractJobHandler::JobType::kCutType
             || jobType == AbstractJobHandler::JobType::kMoveToTrashType
             || jobType == AbstractJobHandler::JobType::kRestoreType) {
-            GlobalEventType operatorType = kDeleteFiles;
+            GlobalEventType operatorType = GlobalEventType::kDeleteFiles;
             QUrl targetUrl;
             switch (jobType) {
             case AbstractJobHandler::JobType::kCopyType:
-                operatorType = kDeleteFiles;
+                operatorType = GlobalEventType::kDeleteFiles;
                 targetUrl = UrlRoute::urlParent(completeFiles.first());
                 break;
             case AbstractJobHandler::JobType::kCutType:
-                operatorType = kCutFile;
+                operatorType = GlobalEventType::kCutFile;
                 targetUrl = UrlRoute::urlParent(completeFiles.first());
                 break;
             case AbstractJobHandler::JobType::kMoveToTrashType:
-                operatorType = kRestoreFromTrash;
+                operatorType = GlobalEventType::kRestoreFromTrash;
                 break;
             case AbstractJobHandler::JobType::kRestoreType:
-                operatorType = kMoveToTrash;
+                operatorType = GlobalEventType::kMoveToTrash;
                 break;
             default:
-                operatorType = kDeleteFiles;
+                operatorType = GlobalEventType::kDeleteFiles;
                 break;
             }
             QVariantMap values;
@@ -513,7 +513,7 @@ void AbstractWorker::saveOperations()
             }
             values.insert("sources", QVariant::fromValue(listUrls));
             values.insert("target", targetUrl.toString());
-            dpfInstance.eventDispatcher().publish(kSaveOperator, values);
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kSaveOperator, values);
         }
     }
 }
@@ -535,16 +535,10 @@ void AbstractWorker::initHandleConnects(const JobHandlePointer &handle)
 
     connect(handle.data(), &AbstractJobHandler::userAction, this, &AbstractWorker::doOperateWork, Qt::QueuedConnection);
 
-    connect(this, &AbstractWorker::proccessChangedNotify, handle.data(), &AbstractJobHandler::onProccessChanged,
-            Qt::QueuedConnection);
-    connect(this, &AbstractWorker::stateChangedNotify, handle.data(), &AbstractJobHandler::onStateChanged,
-            Qt::QueuedConnection);
-    connect(this, &AbstractWorker::currentTaskNotify, handle.data(), &AbstractJobHandler::onCurrentTask,
-            Qt::QueuedConnection);
-    connect(this, &AbstractWorker::finishedNotify, handle.data(), &AbstractJobHandler::onFinished,
-            Qt::QueuedConnection);
-    connect(this, &AbstractWorker::errorNotify, handle.data(), &AbstractJobHandler::onError,
-            Qt::QueuedConnection);
-    connect(this, &AbstractWorker::speedUpdatedNotify, handle.data(), &AbstractJobHandler::onSpeedUpdated,
-            Qt::QueuedConnection);
+    connect(this, &AbstractWorker::proccessChangedNotify, handle.data(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::stateChangedNotify, handle.data(), &AbstractJobHandler::onStateChanged, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::currentTaskNotify, handle.data(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::finishedNotify, handle.data(), &AbstractJobHandler::onFinished, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::errorNotify, handle.data(), &AbstractJobHandler::onError, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::speedUpdatedNotify, handle.data(), &AbstractJobHandler::onSpeedUpdated, Qt::QueuedConnection);
 }

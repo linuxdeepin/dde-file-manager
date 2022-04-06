@@ -53,6 +53,8 @@ enum class CallbackKey : uint8_t {
 using CallbackArgus = QSharedPointer<QMap<CallbackKey, QVariant>>;
 using OperaterCallback = std::function<void(const CallbackArgus args)>;
 
+using OperaterHandleCallback = std::function<void(QSharedPointer<AbstractJobHandler>)>;
+
 enum CreateFileType : uint8_t {
     kCreateFileTypeUnknow = 0,
     kCreateFileTypeFolder,
@@ -115,6 +117,7 @@ DFMBASE_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperaterCallback);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperaterHandleCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
 
 #endif   // DFM_GLOBAL_DEFINES_H

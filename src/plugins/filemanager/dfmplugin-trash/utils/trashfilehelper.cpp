@@ -85,7 +85,7 @@ JobHandlePointer TrashFileHelper::moveToTrashHandle(const quint64 windowId, cons
     dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
                                           windowId,
                                           redirectedFileUrls,
-                                          AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);
+                                          AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
     return {};
 }
 
@@ -100,7 +100,7 @@ JobHandlePointer TrashFileHelper::deletesHandle(const quint64 windowId, const QL
     dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
                                           windowId,
                                           redirectedFileUrls,
-                                          AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);
+                                          AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
     return {};
 }
 
@@ -109,7 +109,7 @@ JobHandlePointer TrashFileHelper::copyHandle(const quint64 windowId, const QList
 
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
                                           windowId,
-                                          sources);
+                                          sources, nullptr);
     return {};
 }
 
@@ -117,7 +117,7 @@ JobHandlePointer TrashFileHelper::cutHandle(const quint64 windowId, const QList<
 {
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
                                           windowId,
-                                          sources, flags);
+                                          sources, flags, nullptr);
     return {};
 }
 
@@ -132,6 +132,6 @@ JobHandlePointer TrashFileHelper::restoreFromTrashHandle(const quint64 windowId,
     dpfInstance.eventDispatcher().publish(GlobalEventType::kRestoreFromTrash,
                                           windowId,
                                           urlsLocal,
-                                          flags);
+                                          flags, nullptr);
     return {};
 }

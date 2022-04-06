@@ -91,7 +91,6 @@ JobInfoPointer AbstractJobHandler::getTaskInfoByNotifyType(const AbstractJobHand
  */
 void AbstractJobHandler::operateTaskJob(SupportActions actions)
 {
-
     emit userAction(actions);
 }
 

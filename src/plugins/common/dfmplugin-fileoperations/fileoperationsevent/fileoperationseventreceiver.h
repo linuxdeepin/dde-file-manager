@@ -52,55 +52,67 @@ public:
     void connectService();
 
 public slots:
-    JobHandlePointer handleOperationCopy(const quint64 windowId,
-                                         const QList<QUrl> sources,
-                                         const QUrl target,
-                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    JobHandlePointer handleOperationCut(const quint64 windowId,
-                                        const QList<QUrl> sources,
-                                        const QUrl target,
-                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    JobHandlePointer handleOperationMoveToTrash(const quint64 windowId,
-                                                const QList<QUrl> sources,
-                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    JobHandlePointer handleOperationRestoreFromTrash(const quint64 windowId,
-                                                     const QList<QUrl> sources,
-                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    JobHandlePointer handleOperationDeletes(const quint64 windowId,
-                                            const QList<QUrl> sources,
-                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    JobHandlePointer handleOperationCleanTrash(const quint64 windowId,
-                                               const QList<QUrl> sources,
-                                               const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType);
     void handleOperationCopy(const quint64 windowId,
                              const QList<QUrl> sources,
                              const QUrl target,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                             DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
+    void handleOperationCut(const quint64 windowId,
+                            const QList<QUrl> sources,
+                            const QUrl target,
+                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                            DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
+    void handleOperationMoveToTrash(const quint64 windowId,
+                                    const QList<QUrl> sources,
+                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                    DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
+    void handleOperationRestoreFromTrash(const quint64 windowId,
+                                         const QList<QUrl> sources,
+                                         const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                         DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
+    void handleOperationDeletes(const quint64 windowId,
+                                const QList<QUrl> sources,
+                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
+    void handleOperationCleanTrash(const quint64 windowId,
+                                   const QList<QUrl> sources,
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
+                                   DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
+    void handleOperationCopy(const quint64 windowId,
+                             const QList<QUrl> sources,
+                             const QUrl target,
+                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                             DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle,
                              const QVariant custom,
                              DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationCut(const quint64 windowId,
                             const QList<QUrl> sources,
                             const QUrl target,
                             const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                            DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle,
                             const QVariant custom,
                             DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationMoveToTrash(const quint64 windowId,
                                     const QList<QUrl> sources,
                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                    DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle,
                                     const QVariant custom,
                                     DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationRestoreFromTrash(const quint64 windowId,
                                          const QList<QUrl> sources,
                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                         DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle,
                                          const QVariant custom,
                                          DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationDeletes(const quint64 windowId,
                                 const QList<QUrl> sources,
                                 const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle,
                                 const QVariant custom,
                                 DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     void handleOperationCleanTrash(const quint64 windowId,
                                    const QList<QUrl> sources,
+                                   DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle,
                                    const QVariant custom,
                                    DFMBASE_NAMESPACE::Global::OperaterCallback callback);
     bool handleOperationOpenFiles(const quint64 windowId,
@@ -200,7 +212,8 @@ public slots:
                                        const QList<QUrl> urls);
     bool handleOperationSaveOperations(const QVariantMap values);
     bool handleOperationCleanSaveOperationsStack();
-    bool handleOperationRevocation(const quint64 windowId);
+    bool handleOperationRevocation(const quint64 windowId,
+                                   DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
     bool handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls);
     void handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
                                   const QVariant custom, DFMBASE_NAMESPACE::Global::OperaterCallback callback);
@@ -225,7 +238,8 @@ private:
                            const QString &suffix);
     void initDBus();
 
-    bool revocation(const quint64 windowId, const QVariantMap &ret);
+    bool revocation(const quint64 windowId, const QVariantMap &ret,
+                    DFMGLOBAL_NAMESPACE::OperaterHandleCallback handle);
 
     bool doRenameFiles(const QList<QUrl> urls,
                        const QPair<QString, QString> pair,

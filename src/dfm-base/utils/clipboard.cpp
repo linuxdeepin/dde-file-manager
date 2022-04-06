@@ -160,7 +160,7 @@ void ClipBoard::setUrlsToClipboard(const QList<QUrl> &list, ClipBoard::Clipboard
             if (!info->isReadable()) {
                 iconList << "emblem-unreadable";
             }
-            // TODO::目前缩略图还没有处理，等待处理完成了在修改
+            // TODO lanxs::目前缩略图还没有处理，等待处理完成了在修改
             // 多文件时只显示文件图标, 一个文件时显示缩略图(如果有的话)
             //            DFileInfo *fi = dynamic_cast<DFileInfo *>(info.data());
             //            QIcon icon = fi ? DFileIconProvider::globalProvider()->icon(*fi) :

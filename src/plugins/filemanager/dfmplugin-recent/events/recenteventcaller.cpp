@@ -57,10 +57,10 @@ void RecentEventCaller::sendWriteToClipboard(const quint64 windowID, const ClipB
 
 void RecentEventCaller::sendCopyFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
 {
-    dispatcher()->publish(GlobalEventType::kCopy, windowID, sourceUrls, target, flags);
+    dispatcher()->publish(GlobalEventType::kCopy, windowID, sourceUrls, target, flags, nullptr);
 }
 
 void RecentEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl> &sourceUrls, const QUrl &target, const AbstractJobHandler::JobFlags flags)
 {
-    dispatcher()->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags);
+    dispatcher()->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags, nullptr);
 }

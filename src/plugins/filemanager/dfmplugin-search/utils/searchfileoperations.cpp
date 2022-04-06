@@ -80,7 +80,7 @@ JobHandlePointer SearchFileOperations::moveToTrashHandle(const quint64 winId,
         realUrls << SearchHelper::searchedFileUrl(url);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, winId, realUrls, flags);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, winId, realUrls, flags, nullptr);
     return {};
 }
 
@@ -93,7 +93,7 @@ JobHandlePointer SearchFileOperations::deleteFilesHandle(const quint64 winId,
         realUrls << SearchHelper::searchedFileUrl(url);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, winId, realUrls, flags);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, winId, realUrls, flags, nullptr);
     return {};
 }
 

@@ -33,13 +33,13 @@ DFMBASE_USE_NAMESPACE
 void BurnEventCaller::sendDeleteFiles(const QList<QUrl> &files)
 {
     qInfo() << "Delete disc cache: " << files;
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, 0, files, AbstractJobHandler::JobFlag::kNoHint);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, 0, files, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void BurnEventCaller::sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, bool isCopy)
 {
     if (isCopy)
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint, nullptr);
     else
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }

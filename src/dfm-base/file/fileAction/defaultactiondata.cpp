@@ -55,7 +55,7 @@ DefaultActionData::~DefaultActionData()
  * \return action data of target type
  */
 DFMBASE_NAMESPACE::ActionDataContainer DefaultActionData::actionDataContainerByType(const int actType,
-                                                                          const DFMBASE_NAMESPACE::ActionDataContainer &defaultAct)
+                                                                                    const DFMBASE_NAMESPACE::ActionDataContainer &defaultAct)
 {
     return d->allActionTypeToData.value(actType, defaultAct);
 }
@@ -126,18 +126,18 @@ void DefaultActionData::initDefaultActionData()
 void DefaultActionData::initDefaultActionEvent()
 {
     // TODO(Lee,Lym): actionType-Event
-    d->actionTypeToEventType.insert(kActOpen, kOpenFiles);   // TODO(Lee,Lym)要不只保留 kOpenFiles？
-    d->actionTypeToEventType.insert(kActNewFolder, kMkdir);
-    d->actionTypeToEventType.insert(kActNewDocument, kTouchFile);
-    d->actionTypeToEventType.insert(kActOpenInNewWindow, kOpenNewWindow);
-    d->actionTypeToEventType.insert(kActOpenInNewTab, kOpenNewTab);
-    d->actionTypeToEventType.insert(kActOpenWith, kOpenFilesByApp);
-    d->actionTypeToEventType.insert(kActOpenInTerminal, kOpenInTerminal);
-    d->actionTypeToEventType.insert(kActCut, kWriteUrlsToClipboard);   // TODO(Lee,Lym)?
-    d->actionTypeToEventType.insert(kActCopy, kWriteUrlsToClipboard);   // TODO(Lee,Lym)?
-    d->actionTypeToEventType.insert(kActDelete, kMoveToTrash);
-    d->actionTypeToEventType.insert(kActRename, kRenameFile);
-    d->actionTypeToEventType.insert(kActCreateSymlink, kCreateSymlink);
+    d->actionTypeToEventType.insert(kActOpen, GlobalEventType::kOpenFiles);   // TODO(Lee,Lym)要不只保留 kOpenFiles？
+    d->actionTypeToEventType.insert(kActNewFolder, GlobalEventType::kMkdir);
+    d->actionTypeToEventType.insert(kActNewDocument, GlobalEventType::kTouchFile);
+    d->actionTypeToEventType.insert(kActOpenInNewWindow, GlobalEventType::kOpenNewWindow);
+    d->actionTypeToEventType.insert(kActOpenInNewTab, GlobalEventType::kOpenNewTab);
+    d->actionTypeToEventType.insert(kActOpenWith, GlobalEventType::kOpenFilesByApp);
+    d->actionTypeToEventType.insert(kActOpenInTerminal, GlobalEventType::kOpenInTerminal);
+    d->actionTypeToEventType.insert(kActCut, GlobalEventType::kWriteUrlsToClipboard);   // TODO(Lee,Lym)?
+    d->actionTypeToEventType.insert(kActCopy, GlobalEventType::kWriteUrlsToClipboard);   // TODO(Lee,Lym)?
+    d->actionTypeToEventType.insert(kActDelete, GlobalEventType::kMoveToTrash);
+    d->actionTypeToEventType.insert(kActRename, GlobalEventType::kRenameFile);
+    d->actionTypeToEventType.insert(kActCreateSymlink, GlobalEventType::kCreateSymlink);
 }
 
 ActionDataContainer DefaultActionData::addDefaultActionType(ActionType type, const QString &actPredicate, const QString &actionText)

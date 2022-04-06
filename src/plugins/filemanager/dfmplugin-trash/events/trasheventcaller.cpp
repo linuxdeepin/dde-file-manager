@@ -57,7 +57,7 @@ void TrashEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &
 
 void TrashEventCaller::sendEmptyTrash(const quint64 windowID, const QList<QUrl> &urls)
 {
-    dispatcher()->publish(GlobalEventType::kCleanTrash, windowID, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash);
+    dispatcher()->publish(GlobalEventType::kCleanTrash, windowID, urls, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, nullptr);
 }
 
 void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)

@@ -207,6 +207,6 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         BluetoothService::service()->sendFiles(filePaths);
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
     }
 }
