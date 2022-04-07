@@ -48,6 +48,8 @@ public:
     QString completeSuffix() const;
     QString filePath() const;
     QString parentPath() const;
+    QList<QString> standardIconNames() const;
+
     DFMIO::DFile::Permissions permissions() const;
 
     bool notifyAttributeChanged();

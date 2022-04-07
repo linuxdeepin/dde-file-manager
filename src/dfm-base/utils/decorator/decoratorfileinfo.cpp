@@ -131,6 +131,13 @@ QString DecoratorFileInfo::parentPath() const
     return QString();
 }
 
+QList<QString> DecoratorFileInfo::standardIconNames() const
+{
+    if (d->dfileInfo)
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardIcon).toStringList();
+    return {};
+}
+
 DFMIO::DFile::Permissions DecoratorFileInfo::permissions() const
 {
     if (d->dfileInfo)

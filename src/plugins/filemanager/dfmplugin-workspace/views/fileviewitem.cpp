@@ -240,7 +240,7 @@ QVariant FileViewItem::data(int role) const
     case kItemFilePinyinNameRole:
         return d->fileinfo->fileDisplayPinyinName();
     case kItemFileBaseNameRole:
-        return d->fileinfo->baseName();
+        return d->fileinfo->completeBaseName();
     case kItemFileSuffixRole:
         return d->fileinfo->suffix();
     case kItemFileNameOfRenameRole:

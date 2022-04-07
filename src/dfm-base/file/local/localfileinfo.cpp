@@ -20,7 +20,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "localfileinfo.h"
-#include "dfileiconprovider.h"
 #include "private/localfileinfo_p.h"
 #include "base/urlroute.h"
 #include "base/standardpaths.h"
@@ -29,6 +28,7 @@
 #include "utils/systempathutil.h"
 #include "utils/chinese2pinyin.h"
 #include "dfm-base/utils/dthumbnailprovider.h"
+#include "dfm-base/file/local/localfileiconprovider.h"
 
 #include <dfm-io/local/dlocalfileinfo.h>
 
@@ -50,7 +50,6 @@
  * \class LocalFileInfo 本地文件信息类
  * \brief 内部实现本地文件的fileinfo，对应url的scheme是file://
  */
-DWIDGET_USE_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 
 LocalFileInfo::LocalFileInfo(const QUrl &url)
@@ -1382,7 +1381,7 @@ QIcon LocalFileInfo::fileIcon() const
         }
 
         if (d->fileIcon().isNull())
-            d->setIcon(DFileIconProvider::globalProvider()->icon(filePath));
+            d->setIcon(LocalFileIconProvider::globalProvider()->icon(filePath));
 
         return d->fileIcon();
     } else {
@@ -1403,7 +1402,7 @@ QIcon LocalFileInfo::fileIcon() const
         }
     }
 
-    d->setIcon(DFileIconProvider::globalProvider()->icon(filePath));
+    d->setIcon(LocalFileIconProvider::globalProvider()->icon(filePath));
     d->iconFromTheme = true;
 
     return d->fileIcon();
@@ -1432,7 +1431,7 @@ QString LocalFileInfo::iconName() const
 
 QString LocalFileInfo::genericIconName() const
 {
-    return QStringLiteral("application-default-icon");
+    return fileMimeType().genericIconName();
 }
 /*!
  * \brief inode linux系统下的唯一表示符
