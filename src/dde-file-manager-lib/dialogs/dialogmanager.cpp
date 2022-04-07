@@ -1121,12 +1121,14 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
             m_filePreviewDialog->close();
             m_filePreviewDialog = nullptr;
         }
+
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
 
         //! 记录预览列表
         for (const DUrl &url : canPreivewlist) {
             m_urlList << url;
         }
+
         //! 对话框关闭时回收FilePreviewDialog对象
         m_filePreviewDialog->setAttribute(Qt::WA_DeleteOnClose);
         //! 对话框关闭时m_filePreviewDialog对象置空
@@ -1136,15 +1138,13 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
             m_urlList.clear();
         });
     } else {
-        if (m_filePreviewDialog) {
-            m_filePreviewDialog->close();
-            m_filePreviewDialog = nullptr;
-        }
 
         if (!m_filePreviewDialog) {
-            m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
-            if (!DFMGlobal::isWayLand())
-                DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
+           m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
+           if (!DFMGlobal::isWayLand())
+               DPlatformWindowHandle::enableDXcbForWindow(m_filePreviewDialog, true);
+        } else {
+           m_filePreviewDialog->updatePreviewList(canPreivewlist);
         }
     }
 

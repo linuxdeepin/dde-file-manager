@@ -341,35 +341,37 @@ void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 
 bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::KeyPress) {
+    if (event->type() == QEvent::KeyRelease) {
         const QKeyEvent *e = static_cast<QKeyEvent *>(event);
-        switch (e->key()) {
-        case Qt::Key_Left:
-        case Qt::Key_Up:
-            if (!e->isAutoRepeat())
-                previousPage();
-            break;
-        case Qt::Key_Right:
-        case Qt::Key_Down:
-            if (!e->isAutoRepeat())
-                nextPage();
-            break;
-        case Qt::Key_Space: {
-            // 视频预览的前一秒禁止再次播放
-            if (m_playingVideo) {
+        if(!e->isAutoRepeat()){
+            switch (e->key()) {
+            case Qt::Key_Left:
+            case Qt::Key_Up:
+                if (!e->isAutoRepeat())
+                    previousPage();
+                break;
+            case Qt::Key_Right:
+            case Qt::Key_Down:
+                if (!e->isAutoRepeat())
+                    nextPage();
+                break;
+            case Qt::Key_Escape:
+            case Qt::Key_Space: {
+                // 视频预览的前一秒禁止再次播放
+                if (m_playingVideo) {
+                    break;
+                }
+
+                if (m_preview) {
+                    m_preview->stop();
+                }
+
+                close();
+                return true;
+            }
+            default:
                 break;
             }
-            if (m_preview) {
-                m_preview->stop();
-            }
-            close();
-            return true;
-        }
-        case Qt::Key_Escape:
-            close();
-            break;
-        default:
-            break;
         }
     }
 
@@ -497,7 +499,7 @@ void FilePreviewDialog::switchToPage(int index)
             if (m_preview->setFileUrl(m_fileList.at(index))) {
                 m_preview->contentWidget()->updateGeometry();
                 updateTitle();
-                m_statusBar->openButton()->setFocus();
+                this->setFocus();
                 m_preview->contentWidget()->adjustSize();
                 int newPerviewWidth = m_preview->contentWidget()->size().width();
                 int newPerviewHeight = m_preview->contentWidget()->size().height();
@@ -561,7 +563,7 @@ void FilePreviewDialog::switchToPage(int index)
         if (m_preview && m_statusBar) {
             updateTitle();
             playCurrentPreviewFile();
-            m_statusBar->openButton()->setFocus();
+            this->setFocus();
             this->adjustSize();
             m_preview->contentWidget()->adjustSize();
             int newPerviewWidth = m_preview->contentWidget()->size().width();
