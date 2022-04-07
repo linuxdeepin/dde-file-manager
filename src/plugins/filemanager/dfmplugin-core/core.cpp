@@ -40,6 +40,7 @@
 #include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-mount/dfmdevicemanager.h>
 
 DFMBASE_USE_NAMESPACE
 DPCORE_USE_NAMESPACE
@@ -92,6 +93,12 @@ bool Core::start()
     connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
 
     connect(&dpfInstance.listener(), &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
+
+    // the object must be initialized in main thread, otherwise the GVolumeMonitor do not have an event loop.
+    static std::once_flag flg;
+    std::call_once(flg, [this] {
+        QTimer::singleShot(500, this, [] { DFMMOUNT::DFMDeviceManager::instance(); });
+    });
 
     return true;
 }
