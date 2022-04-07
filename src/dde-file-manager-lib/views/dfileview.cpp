@@ -1028,10 +1028,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
     switch (event->modifiers()) {
     case Qt::NoModifier:
-        if (event->key() == Qt::Key_Space) {
-            emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
-            return;
-        } else if (normalKeyPressEvent(event)) {
+        if (normalKeyPressEvent(event)) {
             return;
         }
         break;
@@ -2259,6 +2256,12 @@ bool DFileView::event(QEvent *e)
     case QEvent::FontChange:
         // blumia: to trigger DIconItemDelegate::updateItemSizeHint() to update its `d->itemSizeHint` ...
         emit iconSizeChanged(iconSize());
+    case QEvent::KeyRelease:{
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+        if(keyEvent->key() == Qt::Key_Space && !keyEvent->isAutoRepeat()){
+          emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
+        }
+    } break;
     default:
         break;
     }

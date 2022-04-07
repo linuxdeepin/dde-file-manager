@@ -341,32 +341,37 @@ void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 
 bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::KeyPress) {
+    if (event->type() == QEvent::KeyRelease) {
         const QKeyEvent *e = static_cast<QKeyEvent *>(event);
-        switch (e->key()) {
-        case Qt::Key_Left:
-        case Qt::Key_Up:
-            if (!e->isAutoRepeat())
-                previousPage();
-            break;
-        case Qt::Key_Right:
-        case Qt::Key_Down:
-            if (!e->isAutoRepeat())
-                nextPage();
-            break;
-        case Qt::Key_Space: {
-            // 视频预览的前一秒禁止再次播放
-            if (m_playingVideo) {
+        if(!e->isAutoRepeat()){
+            switch (e->key()) {
+            case Qt::Key_Left:
+            case Qt::Key_Up:
+                if (!e->isAutoRepeat())
+                    previousPage();
+                break;
+            case Qt::Key_Right:
+            case Qt::Key_Down:
+                if (!e->isAutoRepeat())
+                    nextPage();
+                break;
+            case Qt::Key_Escape:
+            case Qt::Key_Space: {
+                // 视频预览的前一秒禁止再次播放
+                if (m_playingVideo) {
+                    break;
+                }
+
+                if (m_preview) {
+                    m_preview->stop();
+                }
+
+                close();
+                return true;
+            }
+            default:
                 break;
             }
-            if (m_preview) {
-                m_preview->stop();
-            }
-            close();
-            return true;
-        }
-        default:
-            break;
         }
     }
 
@@ -497,7 +502,12 @@ void FilePreviewDialog::switchToPage(int index)
                 m_preview->contentWidget()->updateGeometry();
                 adjustSize();
                 updateTitle();
-                m_statusBar->openButton()->setFocus();
+                this->setFocus();
+                m_preview->contentWidget()->adjustSize();
+                int newPerviewWidth = m_preview->contentWidget()->size().width();
+                int newPerviewHeight = m_preview->contentWidget()->size().height();
+                resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
+
                 playCurrentPreviewFile();
                 moveToCenter();
                 return;
@@ -557,35 +567,18 @@ void FilePreviewDialog::switchToPage(int index)
     m_preview = preview;
 
     QTimer::singleShot(0, this, [this] {
-        updateTitle();
-        m_statusBar->openButton()->setFocus();
-        if (m_firstEnterSwitchToPage)
-        {
-            adjustSize();
-        } else
-        {
-            /*fix bug 48357 预览图片快速切换导致预览析构了定时器还在工作，使用智能指针对其进行判断*/
-            if (!m_preview) {
-                qDebug() << "switchToPage m_preview is null,so exit";
-                return;
-            }
-            if (m_preview->metaObject()->className() == QStringLiteral("dde_file_manager::VideoPreview")) {
-                adjustSize();
-            } else {
-                /*fix bug 45465 对视频和图片的切换进行size整理，adjustSize有不成功的可能，所以需要二次resize*/
-                this->resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
-                QSize end_zoompin = size();
-                adjustSize();
-                if (end_zoompin.width() > size().width()) {
-                    /*m_preview->contentWidget()->size().width() * 2 2和1.5是adjustSize的自适应值*/
-                    resize((double)m_preview->contentWidget()->size().width() * 2, (double)m_preview->contentWidget()->size().height() * 1.5);
-                } else if (end_zoompin.width() == size().width()) {
-                    resize(m_preview->contentWidget()->size().width(), m_preview->contentWidget()->size().height());
-                }
-            }
+        if (m_preview && m_statusBar) {
+            updateTitle();
+            playCurrentPreviewFile();
+            this->setFocus();
+            this->adjustSize();
+            m_preview->contentWidget()->adjustSize();
+            int newPerviewWidth = m_preview->contentWidget()->size().width();
+            int newPerviewHeight = m_preview->contentWidget()->size().height();
+            resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
+
+            moveToCenter();
         }
-        playCurrentPreviewFile();
-        moveToCenter();
     });
 }
 
