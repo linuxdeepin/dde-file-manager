@@ -228,6 +228,7 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
             JobHandlePointer handle = function->copy(windowId, sources, target, flags);
             if (callbaskHandle)
                 callbaskHandle(handle);
+            return;
         }
     }
     JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
@@ -249,6 +250,7 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
             JobHandlePointer handle = function->cut(windowId, sources, target, flags);
             if (handleCallback)
                 handleCallback(handle);
+            return;
         }
     }
     JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
@@ -271,6 +273,7 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
             JobHandlePointer handle = function->moveToTash(windowId, sources, flags);
             if (handleCallback)
                 handleCallback(handle);
+            return;
         }
     }
 
@@ -293,6 +296,7 @@ void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 
             JobHandlePointer handle = function->restoreFromTrash(windowId, sources, flags);
             if (handleCallback)
                 handleCallback(handle);
+            return;
         }
     }
     JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
@@ -320,6 +324,7 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
             JobHandlePointer handle = function->deletes(windowId, sources, flags);
             if (handleCallback)
                 handleCallback(handle);
+            return;
         }
     }
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
@@ -350,6 +355,7 @@ void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 window
             JobHandlePointer handle = function->cleanTrash(windowId, sources);
             if (handleCallback)
                 handleCallback(handle);
+            return;
         }
     }
     JobHandlePointer handle = copyMoveJob->cleanTrash(sources);
