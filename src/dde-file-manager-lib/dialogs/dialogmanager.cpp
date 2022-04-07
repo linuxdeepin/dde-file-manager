@@ -1121,12 +1121,14 @@ void DialogManager::showFilePreviewDialog(const DUrlList &selectUrls, const DUrl
             m_filePreviewDialog->close();
             m_filePreviewDialog = nullptr;
         }
+
         m_filePreviewDialog = new FilePreviewDialog(canPreivewlist, nullptr);
 
         //! 记录预览列表
         for (const DUrl &url : canPreivewlist) {
             m_urlList << url;
         }
+
         //! 对话框关闭时回收FilePreviewDialog对象
         m_filePreviewDialog->setAttribute(Qt::WA_DeleteOnClose);
         //! 对话框关闭时m_filePreviewDialog对象置空

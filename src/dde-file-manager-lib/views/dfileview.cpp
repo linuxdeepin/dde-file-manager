@@ -1049,10 +1049,7 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
     switch (event->modifiers()) {
     case Qt::NoModifier:
-        if (event->key() == Qt::Key_Space) {
-            emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
-            return;
-        } else if (normalKeyPressEvent(event)) {
+        if (normalKeyPressEvent(event)) {
             return;
         }
         break;
@@ -1191,6 +1188,18 @@ void DFileView::keyPressEvent(QKeyEvent *event)
     }
 
     DListView::keyPressEvent(event);
+}
+
+void DFileView::keyReleaseEvent(QKeyEvent *event)
+{
+    if(this == QApplication::focusWidget()){
+        if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+            emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
+            return;
+        }
+    }
+
+    DListView::keyReleaseEvent(event);
 }
 
 void DFileView::showEvent(QShowEvent *event)

@@ -341,35 +341,37 @@ void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 
 bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
 {
-    if (event->type() == QEvent::KeyPress) {
+    if (event->type() == QEvent::KeyRelease) {
         const QKeyEvent *e = static_cast<QKeyEvent *>(event);
-        switch (e->key()) {
-        case Qt::Key_Left:
-        case Qt::Key_Up:
-            if (!e->isAutoRepeat())
-                previousPage();
-            break;
-        case Qt::Key_Right:
-        case Qt::Key_Down:
-            if (!e->isAutoRepeat())
-                nextPage();
-            break;
-        case Qt::Key_Space: {
-            // 视频预览的前一秒禁止再次播放
-            if (m_playingVideo) {
+        if(!e->isAutoRepeat()){
+            switch (e->key()) {
+            case Qt::Key_Left:
+            case Qt::Key_Up:
+                if (!e->isAutoRepeat())
+                    previousPage();
+                break;
+            case Qt::Key_Right:
+            case Qt::Key_Down:
+                if (!e->isAutoRepeat())
+                    nextPage();
+                break;
+            case Qt::Key_Escape:
+            case Qt::Key_Space: {
+                // 视频预览的前一秒禁止再次播放
+                if (m_playingVideo) {
+                    break;
+                }
+
+                if (m_preview) {
+                    m_preview->stop();
+                }
+
+                close();
+                return true;
+            }
+            default:
                 break;
             }
-            if (m_preview) {
-                m_preview->stop();
-            }
-            close();
-            return true;
-        }
-        case Qt::Key_Escape:
-            close();
-            break;
-        default:
-            break;
         }
     }
 
@@ -496,9 +498,13 @@ void FilePreviewDialog::switchToPage(int index)
                       || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
                 m_preview->contentWidget()->updateGeometry();
-                adjustSize();
                 updateTitle();
-                m_statusBar->openButton()->setFocus();
+                this->setFocus();
+                m_preview->contentWidget()->adjustSize();
+                int newPerviewWidth = m_preview->contentWidget()->size().width();
+                int newPerviewHeight = m_preview->contentWidget()->size().height();
+                resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
+
                 playCurrentPreviewFile();
                 moveToCenter();
                 return;
@@ -555,20 +561,18 @@ void FilePreviewDialog::switchToPage(int index)
     m_preview = preview;
 
     QTimer::singleShot(0, this, [this] {
-        updateTitle();
-        m_statusBar->openButton()->setFocus();
-        int perviewwidth = m_preview->contentWidget()->size().width();
-        int perviewheight = m_preview->contentWidget()->size().height();
-        this->resize(perviewwidth, perviewheight);
-        adjustSize();
-        m_preview->contentWidget()->adjustSize();
-        int newPerviewWidth = m_preview->contentWidget()->size().width();
-        int newPerviewHeight = m_preview->contentWidget()->size().height();
-        if(perviewwidth != newPerviewWidth || perviewheight != newPerviewHeight){
-            resize(newPerviewWidth, newPerviewHeight);
+        if (m_preview && m_statusBar) {
+            updateTitle();
+            playCurrentPreviewFile();
+            this->setFocus();
+            this->adjustSize();
+            m_preview->contentWidget()->adjustSize();
+            int newPerviewWidth = m_preview->contentWidget()->size().width();
+            int newPerviewHeight = m_preview->contentWidget()->size().height();
+            resize(newPerviewWidth, newPerviewHeight + m_statusBar->height());
+
+            moveToCenter();
         }
-        playCurrentPreviewFile();
-        moveToCenter();
     });
 }
 
