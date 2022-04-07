@@ -849,7 +849,9 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 QRect CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
 {
     //todo uing extend painter by registering.
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url);
+    if (!dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url))
+        qWarning() << "publish `kPaintEmblems` event failed!";
+    return rect.toRect();
 }
 
 void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const

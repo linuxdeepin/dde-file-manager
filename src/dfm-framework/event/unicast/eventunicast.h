@@ -143,7 +143,8 @@ public:
         if (Q_LIKELY(unicastMap.contains(topic))) {
             auto unicast = unicastMap.value(topic);
             guard.unlock();
-            return unicast->send();
+            if (unicast)
+                return unicast->send();
         }
 
         return QVariant();

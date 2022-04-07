@@ -121,8 +121,10 @@ public:
         if (Q_LIKELY(dispatcherMap.contains(type))) {
             auto dispatcher = dispatcherMap.value(type);
             lk.unlock();
-            dispatcher->dispatch(param, std::forward<Args>(args)...);
-            return true;
+            if (dispatcher) {
+                dispatcher->dispatch(param, std::forward<Args>(args)...);
+                return true;
+            }
         }
         return false;
     }
