@@ -34,7 +34,6 @@ class BurnEventCaller
     BurnEventCaller() = delete;
 
 public:
-    static void sendDeleteFiles(const QList<QUrl> &files);
     static void sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, bool isCopy);
 };
 

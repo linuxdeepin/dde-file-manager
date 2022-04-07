@@ -30,12 +30,6 @@
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-void BurnEventCaller::sendDeleteFiles(const QList<QUrl> &files)
-{
-    qInfo() << "Delete disc cache: " << files;
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, 0, files, AbstractJobHandler::JobFlag::kNoHint, nullptr);
-}
-
 void BurnEventCaller::sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, bool isCopy)
 {
     if (isCopy)

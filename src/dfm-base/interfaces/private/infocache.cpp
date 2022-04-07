@@ -300,7 +300,7 @@ void InfoCache::removeCacheInfo(const QUrl &url)
 {
     Q_D(InfoCache);
     // 断开信号连接
-    QSharedPointer<AbstractFileWatcher> watcher = WatcherFactory::create<AbstractFileWatcher>(url);
+    QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(url);
     if (watcher) {
         watcher->reduceCacheInfoConnectSize();
         if (watcher->getCacheInfoConnectSize() <= 0) {

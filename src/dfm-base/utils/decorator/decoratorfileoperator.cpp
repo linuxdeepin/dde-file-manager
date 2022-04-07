@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "decoratorfileOperator.h"
+#include "decoratorfileoperator.h"
 #include "decoratorfileinfo.h"
 
 #include <dfm-io/dfmio_global.h>

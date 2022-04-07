@@ -29,7 +29,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
-#include "dfm-base/utils/decorator/decoratorfileOperator.h"
+#include "dfm-base/utils/decorator/decoratorfileoperator.h"
 
 #include <DThumbnailProvider>
 

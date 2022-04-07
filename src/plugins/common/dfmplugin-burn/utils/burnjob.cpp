@@ -27,6 +27,7 @@
 #include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/utils/decorator/decoratorfileoperator.h"
 
 #include <QDebug>
 #include <QThread>
@@ -262,7 +263,10 @@ void AbstractBurnJob::comfort()
 void AbstractBurnJob::deleteStagingFiles()
 {
     QUrl url { curProperty[PropertyType::KStagingUrl].toUrl() };
-    BurnEventCaller::sendDeleteFiles({ url });
+    if (!DecoratorFileOperator(url).deleteFile())
+        qWarning() << "Delete " << url << "failed!";
+    else
+        qInfo() << "Delete cache folder: " << url << "success";
 }
 
 void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString &speed, const QStringList &message)
