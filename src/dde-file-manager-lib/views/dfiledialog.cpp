@@ -146,9 +146,9 @@ DFileDialog::DFileDialog(QWidget *parent)
     , m_acceptCanOpenOnSave(false)
 {
     d_ptr->view = qobject_cast<DFileView *>(DFileManagerWindow::getFileView()->widget());
-    // 文件对话框只能在本窗口打开新目录
     if (d_ptr->view) {
-        d_ptr->view->setAlwaysOpenInCurrentWindow(true);
+        d_ptr->view->setAlwaysOpenInCurrentWindow(true);    // 文件对话框只能在本窗口打开新目录
+        connect(d_ptr->view, &DFileView::clicked, this, &DFileDialog::listViewItemClicked);
     }
 
     setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);
@@ -883,6 +883,26 @@ void DFileDialog::reject()
 void DFileDialog::disableOpenBtn()
 {
     statusBar()->acceptButton()->setEnabled(false);
+}
+
+void DFileDialog::listViewItemClicked(const QModelIndex &index)
+{
+    if (!d_ptr->view->model())
+        return;
+
+    if (d_ptr->acceptMode != QFileDialog::AcceptSave)
+        return;
+
+    DAbstractFileInfoPointer info = d_ptr->view->model()->fileInfo(index);
+    if (info && !info->isDir()) {
+        QString displayName = d_ptr->view->model()->data(index).toString();
+        QMimeDatabase db;
+        int suffixLength = db.suffixForFileName(displayName).count();
+        if (suffixLength != 0)
+            suffixLength++; // 考虑到小数点
+        QString displayNameWithoutSuffix = displayName.mid(0, displayName.count() - suffixLength);
+        statusBar()->changeFileNameWithoutSuffix(displayNameWithoutSuffix);
+    }
 }
 
 void DFileDialog::showEvent(QShowEvent *event)

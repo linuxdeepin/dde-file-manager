@@ -123,6 +123,9 @@ public Q_SLOTS:
      */
     void disableOpenBtn();
 
+private slots:
+    void listViewItemClicked(const QModelIndex &index);
+
 protected:
     void showEvent(QShowEvent *event) override;
     void closeEvent(QCloseEvent *event) override;

@@ -222,6 +222,22 @@ void FileDialogStatusBar::endAddCustomWidget()
     updateLayout();
 }
 
+void FileDialogStatusBar::changeFileNameWithoutSuffix(const QString &fileName)
+{
+    if (!m_fileNameEdit)
+        return;
+
+    QMimeDatabase db;
+    QString newFileName;
+    QString suffix = db.suffixForFileName(m_fileNameEdit->text());
+    if (!suffix.isEmpty())
+        newFileName = fileName + "." + suffix;
+    else
+        newFileName = fileName;
+
+    m_fileNameEdit->setText(newFileName);
+}
+
 void FileDialogStatusBar::showEvent(QShowEvent *event)
 {
     const QString &title = window()->windowTitle();

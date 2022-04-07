@@ -50,6 +50,8 @@ public:
     void beginAddCustomWidget();
     void endAddCustomWidget();
 
+    void changeFileNameWithoutSuffix(const QString &fileName);
+
 private:
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
