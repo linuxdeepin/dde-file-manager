@@ -239,16 +239,15 @@ void FileManagerWindow::installWorkSpace(AbstractFrame *w)
  */
 void FileManagerWindow::installDetailView(AbstractFrame *w)
 {
-    Q_ASSERT_X(w, "FileManagerWindow", "Null Detail view");
-    std::call_once(d->detailVewFlag, [this, w]() {
-        d->detailSpace = w;
+    d->detailSpace = w;
+    if (d->detailSpace) {
         d->detailSpace->setFixedWidth(320);
         d->midLayout->addWidget(d->detailSpace, 1);
         d->detailSpace->setVisible(false);
         d->detailSpace->setCurrentUrl(d->currentUrl);
+    }
 
-        emit this->detailViewInstallFinished();
-    });
+    emit this->detailViewInstallFinished();
 }
 
 AbstractFrame *FileManagerWindow::titleBar() const

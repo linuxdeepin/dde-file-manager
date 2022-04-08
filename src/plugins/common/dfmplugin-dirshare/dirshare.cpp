@@ -29,6 +29,9 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include <QLabel>
+#include <QHBoxLayout>
+
 DPDIRSHARE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
@@ -43,6 +46,7 @@ bool DirShare::start()
     bindScene("CanvasMenu");
 
     PropertyDialogService::service()->registerMethod(DirShare::createShareControlWidget, 2, nullptr);
+
     return true;
 }
 

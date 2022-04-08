@@ -41,6 +41,10 @@ public:
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
 
+    bool insterExpandControl(const int &index, QWidget *widget);
+
+    void removeControls();
+
 private:
     void initializeUi();
     void initConnect();

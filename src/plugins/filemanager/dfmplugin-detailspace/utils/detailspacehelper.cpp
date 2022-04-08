@@ -24,6 +24,7 @@
 #include "views/detailspacewidget.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/detailspace/detailspaceservice.h"
 
 #include <dfm-framework/framework.h>
 
@@ -50,8 +51,10 @@ void DetailSpaceHelper::addDetailSpace(quint64 windowId, DetailSpaceWidget *titl
 void DetailSpaceHelper::removeDetailSpace(quint64 windowId)
 {
     QMutexLocker locker(&DetailSpaceHelper::mutex());
-    if (kDetailSpaceMap.contains(windowId))
-        kDetailSpaceMap.remove(windowId);
+    if (kDetailSpaceMap.contains(windowId)) {
+        DetailSpaceWidget *widget = kDetailSpaceMap.take(windowId);
+        widget->deleteLater();
+    }
 }
 
 void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
@@ -59,23 +62,41 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
 
     // create new detail widget in window and
-    if (!w) {
-        auto &ctx = dpfInstance.serviceContext();
-        auto windowService = ctx.service<WindowsService>(WindowsService::name());
-        auto window = windowService->findWindowById(windowId);
-        w = new DetailSpaceWidget;
-        window->installDetailView(w);
-        addDetailSpace(windowId, w);
+    if (checked) {
+        if (!w) {
+            auto &ctx = dpfInstance.serviceContext();
+            auto windowService = ctx.service<WindowsService>(WindowsService::name());
+            auto window = windowService->findWindowById(windowId);
+            w = new DetailSpaceWidget;
+            window->installDetailView(w);
+            addDetailSpace(windowId, w);
+        }
+        w->setVisible(checked);
+    } else {
+        if (w) {
+            w->setVisible(checked);
+            removeDetailSpace(windowId);
+            auto &ctx = dpfInstance.serviceContext();
+            auto windowService = ctx.service<WindowsService>(WindowsService::name());
+            auto window = windowService->findWindowById(windowId);
+            window->installDetailView(nullptr);
+        }
     }
-
-    w->setVisible(checked);
 }
 
 void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url)
 {
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
-    if (w)
+    if (w) {
         w->setCurrentUrl(url);
+        QMap<int, QWidget *> widgetMap = detailServIns->createControlView(url);
+        if (!widgetMap.isEmpty()) {
+            QList<int> indexs = widgetMap.keys();
+            for (int &index : indexs) {
+                w->insterExpandControl(index, widgetMap.value(index));
+            }
+        }
+    }
 }
 
 QMutex &DetailSpaceHelper::mutex()

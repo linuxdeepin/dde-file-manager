@@ -60,6 +60,7 @@ bool DetailView::addCustomControl(QWidget *widget)
     if (widget) {
         QPushButton *btn = new QPushButton(this);
         btn->setMaximumHeight(1);
+        detailViewPrivate->addCustomControl(btn);
         detailViewPrivate->addCustomControl(widget);
         return true;
     }
@@ -78,6 +79,11 @@ bool DetailView::insertCustomControl(int index, QWidget *widget)
         return true;
     }
     return false;
+}
+
+void DetailView::removeControl()
+{
+    detailViewPrivate->removeControl();
 }
 
 void DetailView::setUrl(const QUrl &url)
@@ -169,7 +175,6 @@ void DetailViewPrivate::initUI()
 void DetailViewPrivate::addCustomControl(QWidget *widget)
 {
     splitter->addWidget(widget);
-    static_cast<DetailExtendView *>(widget)->setFileUrl(url);
 }
 
 /*!
@@ -179,7 +184,16 @@ void DetailViewPrivate::addCustomControl(QWidget *widget)
 void DetailViewPrivate::insertCustomControl(int index, QWidget *widget)
 {
     splitter->insertWidget(index, widget);
-    static_cast<DetailExtendView *>(widget)->setFileUrl(url);
+}
+
+void DetailViewPrivate::removeControl()
+{
+    for (int i = 0; i < splitter->count(); ++i) {
+        QLayoutItem *item = splitter->takeAt(i);
+        QWidget *w = item->widget();
+        w->deleteLater();
+        delete item;
+    }
 }
 
 FileBaseInfoView::FileBaseInfoView(QWidget *parent)

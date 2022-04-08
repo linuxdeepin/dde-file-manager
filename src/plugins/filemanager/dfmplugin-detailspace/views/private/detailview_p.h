@@ -68,6 +68,7 @@ private:
     void initUI();
     void addCustomControl(QWidget *widget);
     void insertCustomControl(int index, QWidget *widget);
+    void removeControl();
 
 private:
     QUrl url;

@@ -33,5 +33,9 @@ extern const int kSetDetailViewSelectFileUrl;
 }
 
 DSB_FM_END_NAMESPACE
+#define DTSP_NAMESPACE detailsapce_service
+#define DTSP_BEGIN_NAMESPACE namespace DTSP_NAMESPACE {
+#define DTSP_END_NAMESPACE }
+#define DTSP_USE_NAMESPACE using namespace DTSP_NAMESPACE;
 
 #endif   // DETAILSPACE_DEFINES_H

@@ -55,8 +55,8 @@ FILE(GLOB WORKSPACE_FILES
 FILE(GLOB DETAILSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*/*.cpp"
 )
 
 FILE(GLOB SEARCH_FILES

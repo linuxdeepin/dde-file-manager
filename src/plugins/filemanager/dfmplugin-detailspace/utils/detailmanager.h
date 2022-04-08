@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -18,41 +18,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DETAILVIEW_H
-#define DETAILVIEW_H
+#ifndef DETAILMANAGER_H
+#define DETAILMANAGER_H
 
-#include "dfmplugin_detailspace_global.h"
+#include <QObject>
 
-#include <QFrame>
-
-DPDETAILSPACE_BEGIN_NAMESPACE
-
-class DetailViewPrivate;
-class DetailView : public QFrame
+class DetailManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit DetailView(QWidget *parent = nullptr);
-    virtual ~DetailView();
+    explicit DetailManager(QObject *parent = nullptr);
 
-    bool addCustomControl(QWidget *widget);
-    bool insertCustomControl(int index, QWidget *widget);
-
-    void removeControl();
+signals:
 
 public slots:
-    void setUrl(const QUrl &url);
-
-private:
-    void detailHandle(QUrl &url);
-
-protected:
-    virtual void showEvent(QShowEvent *event);
-
-private:
-    DetailViewPrivate *const detailViewPrivate { nullptr };
+    void showDetailView(const QUrl &url);
 };
 
-DPDETAILSPACE_END_NAMESPACE
-
-#endif   // DETAILVIEW_H
+#endif   // DETAILMANAGER_H

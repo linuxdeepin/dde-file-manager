@@ -25,7 +25,6 @@
 
 #include "views/filepropertydialog.h"
 #include "views/closealldialog.h"
-#include "views/trashpropertydialog.h"
 #include "views/devicepropertydialog.h"
 
 #include <QObject>

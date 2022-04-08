@@ -36,6 +36,7 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
+    removeControls();
     detailSpaceUrl = url;
     detailView->setUrl(url);
 }
@@ -43,6 +44,16 @@ void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 QUrl DetailSpaceWidget::currentUrl() const
 {
     return detailSpaceUrl;
+}
+
+bool DetailSpaceWidget::insterExpandControl(const int &index, QWidget *widget)
+{
+    return detailView->insertCustomControl(index, widget);
+}
+
+void DetailSpaceWidget::removeControls()
+{
+    detailView->removeControl();
 }
 
 void DetailSpaceWidget::initializeUi()

@@ -24,6 +24,7 @@
 #define DETAILSPACESERVICE_H
 
 #include "detailspace_defines.h"
+#include "utils/registerexpandprocess.h"
 
 #include <dfm-framework/framework.h>
 
@@ -42,13 +43,20 @@ public:
         return "org.deepin.service.DetailSpaceService";
     }
 
+    static DetailSpaceService *serviceInstance();
+
 private:
     explicit DetailSpaceService(QObject *parent = nullptr);
     virtual ~DetailSpaceService() override;
 
     QScopedPointer<DetailSpaceServicePrivate> d;
+
+public:
+    bool registerMethod(DTSP_NAMESPACE::RegisterExpandProcess::createControlViewFunc view, int index = -1, QString *error = nullptr);
+
+    QMap<int, QWidget *> createControlView(const QUrl &url);
 };
 
 DSB_FM_END_NAMESPACE
-
+#define detailServIns ::DSB_FM_NAMESPACE::DetailSpaceService::serviceInstance()
 #endif   // DETAILSPACESERVICE_H

@@ -48,6 +48,18 @@ DetailSpaceServicePrivate::DetailSpaceServicePrivate(DetailSpaceService *serv)
  * \brief
  */
 
+DetailSpaceService *DetailSpaceService::serviceInstance()
+{
+    auto &ctx = dpfInstance.serviceContext();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&ctx]() {
+        if (!ctx.load(DSB_FM_NAMESPACE::DetailSpaceService::name()))
+            abort();
+    });
+
+    return ctx.service<DSB_FM_NAMESPACE::DetailSpaceService>(DSB_FM_NAMESPACE::DetailSpaceService::name());
+}
+
 DetailSpaceService::DetailSpaceService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<DetailSpaceService>(),
@@ -57,4 +69,14 @@ DetailSpaceService::DetailSpaceService(QObject *parent)
 
 DetailSpaceService::~DetailSpaceService()
 {
+}
+
+bool DetailSpaceService::registerMethod(DTSP_NAMESPACE::RegisterExpandProcess::createControlViewFunc view, int index, QString *error)
+{
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->registerFunction(view, index, error);
+}
+
+QMap<int, QWidget *> DetailSpaceService::createControlView(const QUrl &url)
+{
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->createControlView(url);
 }
