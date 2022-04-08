@@ -340,7 +340,7 @@ void EraseJob::work()
 
     comfort();
 
-    // TODO(zhangs): rescan
+    DeviceController::instance()->rescanDevice(curDevId);
 }
 
 BurnISOFilesJob::BurnISOFilesJob(const QString &dev, const JobHandlePointer handler)

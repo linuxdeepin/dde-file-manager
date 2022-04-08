@@ -1077,6 +1077,19 @@ void DeviceController::mountNetworkDevice(const QString &address, DFMMOUNT::Devi
     DFMMOUNT::DFMProtocolDevice::mountNetworkDevice(address, func, askForUserChoice, callback);
 }
 
+bool DeviceController::rescanDevice(const QString &deviceId, const QVariantMap &opts)
+{
+    Q_ASSERT_X(!deviceId.isEmpty(), "DeviceService", "id is empty");
+
+    auto ptr = DeviceControllerHelper::createBlockDevice(deviceId);
+    if (!ptr) {
+        qWarning() << "cannot create block device: " << deviceId;
+        return false;
+    }
+
+    return ptr->rescan(opts);
+}
+
 bool DeviceController::stopDefenderScanDrive(const QString &deviceId)
 {
     auto &&ptr = DeviceControllerHelper::createBlockDevice(deviceId);

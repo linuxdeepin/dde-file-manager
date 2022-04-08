@@ -80,6 +80,7 @@ public:   // operations
     bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
 
     void mountNetworkDevice(const QString &address, DFMMOUNT::DeviceOperateCallbackWithMessage callback);
+    bool rescanDevice(const QString &deviceId, const QVariantMap &opts = {});
 
 public:   // status
     bool isBlockDeviceMonitorWorking() const;
