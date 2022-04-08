@@ -143,7 +143,24 @@ bool UserShareManager::createShareLinkFile()
     }*/
 
     QProcess sh;
-    sh.start("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+    static QString cmd("ln -sf /lib/systemd/system/smbd.service /etc/systemd/system/multi-user.target.wants/smbd.service");
+    sh.start(cmd);
     auto ret = sh.waitForFinished();
     return ret;
+}
+
+bool UserShareManager::isUserSharePasswordSet(const QString &username)
+{
+    QProcess p;
+    p.start("pdbedit -L");
+    auto ret = p.waitForFinished();
+    QStringList resultLines = QString::fromUtf8(p.readAllStandardOutput()).split('\n');
+    bool isPasswordSet = false;
+    foreach (const QString &line, resultLines) {
+        if (line.startsWith(username + ":")) {
+            isPasswordSet = true;
+            break;
+        }
+    }
+    return ret && isPasswordSet;
 }

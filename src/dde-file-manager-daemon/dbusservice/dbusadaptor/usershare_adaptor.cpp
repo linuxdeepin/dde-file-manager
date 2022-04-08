@@ -51,6 +51,12 @@ bool UserShareAdaptor::createShareLinkFile()
     return parent()->createShareLinkFile();
 }
 
+bool UserShareAdaptor::isUserSharePasswordSet(const QString &username)
+{
+    // handle method call com.deepin.filemanager.daemon.UserShareManager.isUserSharePasswordSet
+    return parent()->isUserSharePasswordSet(username);
+}
+
 bool UserShareAdaptor::setUserSharePassword(const QString &username, const QString &passward)
 {
     // handle method call com.deepin.filemanager.daemon.UserShareManager.setUserSharePassword

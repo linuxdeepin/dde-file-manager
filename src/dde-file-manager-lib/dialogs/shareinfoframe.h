@@ -25,6 +25,7 @@
 
 #include <QFrame>
 #include <QTimer>
+#include <QPointer>
 
 #include "dabstractfileinfo.h"
 
@@ -32,6 +33,8 @@ QT_BEGIN_NAMESPACE
 class QComboBox;
 class QCheckBox;
 class QLineEdit;
+class QTextBrowser;
+class QPushButton;
 QT_END_NAMESPACE
 
 class ShareInfoFrame : public QFrame
@@ -50,6 +53,8 @@ signals:
     void folderShared(const QString &filePath);
     void unfolderShared();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 public slots:
     void handleCheckBoxChanged(const bool &checked);
     void handleShareNameFinished();
@@ -62,6 +67,8 @@ public slots:
     void updateShareInfo(const QString &filePath);
     void activateWidgets();
     void disactivateWidgets();
+private slots:
+    void setOrModifySharePassword();
 
 private:
     DAbstractFileInfoPointer m_fileinfo;
@@ -69,6 +76,13 @@ private:
     QLineEdit *m_shareNamelineEdit = nullptr;
     QComboBox *m_permissoComBox = nullptr;
     QComboBox *m_anonymityCombox = nullptr;
+    QLabel *m_networkAddrLabel = nullptr;
+    QLineEdit *m_userNamelineEdit = nullptr;
+    QLineEdit *m_sharePasswordlineEdit = nullptr;
+    QPointer<QWidget> m_sharePropertyBkgWidget = nullptr;
+    QTextBrowser *m_shareNotes = nullptr;
+    QPushButton *splitLineGray = nullptr;
+    bool m_isSharePasswordSet = false;
     //QTimer *m_jobTimer;
 };
 

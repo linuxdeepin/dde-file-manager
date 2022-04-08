@@ -56,6 +56,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("createShareLinkFile"), argumentList);
     }
 
+    inline QDBusPendingReply<bool> isUserSharePasswordSet(const QString &username)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(username);
+        return asyncCallWithArgumentList(QStringLiteral("isUserSharePasswordSet"), argumentList);
+    }
+
     inline QDBusPendingReply<bool> setUserSharePassword(const QString &username, const QString &passward)
     {
         QList<QVariant> argumentList;

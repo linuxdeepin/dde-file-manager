@@ -32,6 +32,8 @@ class UserShareAdaptor;
 class UserShareManager : public QObject, public QDBusContext
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface","com.deepin.filemanager.daemon.UserShareManager")
+
 public:
     explicit UserShareManager(QObject *parent = nullptr);
     ~UserShareManager();
@@ -50,6 +52,7 @@ public slots:
     bool setUserSharePassword(const QString &username, const QString &passward);
     bool closeSmbShareByShareName(const QString &sharename,const bool bshow);
     bool createShareLinkFile();
+    bool isUserSharePasswordSet(const QString &username);
 
 private:
     UserShareAdaptor* m_userShareAdaptor = nullptr;

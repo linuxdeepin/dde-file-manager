@@ -270,6 +270,18 @@ bool UserShareManager::isShareFile(const QString &filePath) const
     return m_sharePathToNames.contains(filePath);
 }
 
+bool UserShareManager::isSharePasswordSet(const QString &userName)
+{
+    QDBusReply<bool> reply = m_userShareInterface->isUserSharePasswordSet(userName);
+    if (reply.isValid()) {
+        qDebug() << "isSharePasswordSet:" << reply.value();
+        return reply.value();
+    } else {
+        qDebug() << "isSharePasswordSet error:" << reply.error();
+        return false;
+    }
+}
+
 void UserShareManager::handleShareChanged(const QString &filePath)
 {
     if (filePath.contains(":tmp"))

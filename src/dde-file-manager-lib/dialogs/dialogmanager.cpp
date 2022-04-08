@@ -842,7 +842,14 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
     if (m_propertyDialogs.contains(url)) {
         PropertyDialog *dialog = m_propertyDialogs.value(url);
         if (dialog->expandGroup().count() > 1) {
+            dialog->expandGroup().at(0)->setAnimationDuration(1);
+            dialog->expandGroup().at(1)->setAnimationDuration(1);
+            dialog->expandGroup().at(0)->setExpand(false);
             dialog->expandGroup().at(1)->setExpand(true);
+            QTimer::singleShot(120, this, [=]() {
+                dialog->expandGroup().at(0)->setAnimationDuration(250);
+                dialog->expandGroup().at(1)->setAnimationDuration(250);
+            });
         }
     }
 }
@@ -992,6 +999,21 @@ void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)
     w->setProperty("UserSharePwdSettingDialogShown", true);
     connect(dialog, &UserSharePasswordSettingDialog::closed, [ = ] {
         w->setProperty("UserSharePwdSettingDialogShown", false);
+    });
+}
+
+void DialogManager::showSharePasswordSettingDialog(QFrame *parent)
+{
+    if (!parent || parent->property("ConnectToServerDialogShown").toBool()) {
+        return;
+    }
+    UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(parent);
+    dialog->show();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    connect(dialog, &UserSharePasswordSettingDialog::finished, dialog, &UserSharePasswordSettingDialog::onButtonClicked);
+    parent->setProperty("UserSharePwdSettingDialogShown", true);
+    connect(dialog, &UserSharePasswordSettingDialog::closed, [=] {
+        parent->setProperty("UserSharePwdSettingDialogShown", false);
     });
 }
 

@@ -36,6 +36,12 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QAbstractItemView>
+#include <QNetworkInterface>
+#include <QPainter>
+#include <QTextBrowser>
+#include <QApplication>
+#include <QClipboard>
+
 #include <unistd.h>
 
 ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent) :
@@ -53,8 +59,22 @@ ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *pa
 void ShareInfoFrame::initUI()
 {
     int labelWidth = 100;
-    int fieldWidth = 160;
+    int fieldWidth = 160 + 38;
+    QFont fontNormal = this->font();
+    fontNormal.setFamily("SourceHanSansSC");
+    fontNormal.setPixelSize(12);
+    fontNormal.setWeight(QFont::Normal);
+    fontNormal.setStyle(QFont::StyleNormal);
 
+    QFont fontMedium = this->font();
+    fontMedium.setFamily("SourceHanSansSC");
+    fontMedium.setPixelSize(12);
+    fontMedium.setWeight(QFont::Medium);
+    fontMedium.setStyle(QFont::StyleNormal);
+
+    m_isSharePasswordSet = userShareManager->isSharePasswordSet(UserShareManager::getCurrentUserName());
+
+    //控件构造
     m_shareCheckBox = new QCheckBox(this);
     m_shareCheckBox->setFixedWidth(fieldWidth);
     m_shareCheckBox->setText(tr("Share this folder"));
@@ -62,11 +82,11 @@ void ShareInfoFrame::initUI()
     QWidget *centerAlignContainer = new QWidget();
     QHBoxLayout *centerAlignLayout = new QHBoxLayout(centerAlignContainer);
     centerAlignLayout->addWidget(m_shareCheckBox);
-    centerAlignLayout->setAlignment(Qt::AlignCenter);
+    centerAlignLayout->setAlignment(Qt::AlignLeft);
     centerAlignLayout->setContentsMargins(0, 0, 0, 0);
     centerAlignContainer->setLayout(centerAlignLayout);
 
-    SectionKeyLabel *shareNameLabel = new SectionKeyLabel(tr("Share name:"));
+    SectionKeyLabel *shareNameLabel = new SectionKeyLabel(tr("Share name"));
     shareNameLabel->setFixedWidth(labelWidth);
     m_shareNamelineEdit = new QLineEdit(this);
     m_shareNamelineEdit->setObjectName("ShareNameEdit");
@@ -79,7 +99,7 @@ void ShareInfoFrame::initUI()
     QValidator *validator = new QRegExpValidator(regx, this);
     m_shareNamelineEdit->setValidator(validator);
 
-    SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission:"));
+    SectionKeyLabel *permissionLabel = new SectionKeyLabel(tr("Permission"));
     permissionLabel->setFixedWidth(labelWidth);
     m_permissoComBox = new QComboBox(this);
     m_permissoComBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
@@ -88,7 +108,7 @@ void ShareInfoFrame::initUI()
     permissions << tr("Read and write") << tr("Read only");
     m_permissoComBox->addItems(permissions);
 
-    SectionKeyLabel *anonymityLabel = new SectionKeyLabel(tr("Anonymous:"));
+    SectionKeyLabel *anonymityLabel = new SectionKeyLabel(tr("Anonymous"));
     anonymityLabel->setFixedWidth(labelWidth);
     m_anonymityCombox = new QComboBox(this);
     m_anonymityCombox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);
@@ -97,21 +117,171 @@ void ShareInfoFrame::initUI()
     anonymityChoices << tr("Not allow") << tr("Allow");
     m_anonymityCombox->addItems(anonymityChoices);
 
-    QFormLayout *mainLayoyt = new QFormLayout(this);
+    SectionKeyLabel *networkAddLabel = new SectionKeyLabel(tr("Network path"));
+    networkAddLabel->setFixedWidth(labelWidth + 5);
+    networkAddLabel->setAttribute(Qt::WA_TranslucentBackground, true);
+    QString selfIp;
+    QList<QHostAddress> list = QNetworkInterface::allAddresses();
+    foreach (QHostAddress address, list) {
+        if (address.protocol() == QAbstractSocket::IPv4Protocol) {
+            selfIp = address.toString();
+        }
+    }
+    m_networkAddrLabel = new QLabel(selfIp.prepend(QString("%1://").arg(SMB_SCHEME)), this);
+    m_networkAddrLabel->setAttribute(Qt::WA_TranslucentBackground, true);
+    m_networkAddrLabel->setFont(fontNormal);
+    QPalette pe;
+    pe.setColor(QPalette::Text, QColor("#526A7F"));
+    m_networkAddrLabel->setPalette(pe);
+    m_networkAddrLabel->setObjectName("NetworkAddress");
 
+    SectionKeyLabel *userNameLabel = new SectionKeyLabel(tr("Username"));
+    userNameLabel->setFixedWidth(labelWidth + 5);
+    userNameLabel->setAttribute(Qt::WA_TranslucentBackground, true);
+    m_userNamelineEdit = new QLineEdit(this);
+    m_userNamelineEdit->setAttribute(Qt::WA_TranslucentBackground, true);
+    m_userNamelineEdit->setFont(fontNormal);
+    m_userNamelineEdit->setPalette(pe);
+    m_userNamelineEdit->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
+    m_userNamelineEdit->setObjectName("UserNameEdit");
+    m_userNamelineEdit->setText(UserShareManager::getCurrentUserName());
+    m_userNamelineEdit->setDisabled(true);
+
+    SectionKeyLabel *sharePasswordLabel = new SectionKeyLabel(tr("Share password"));
+    sharePasswordLabel->setFixedWidth(labelWidth + 5);
+    sharePasswordLabel->setAttribute(Qt::WA_TranslucentBackground, true);
+    m_sharePasswordlineEdit = new QLineEdit(this);
+    m_sharePasswordlineEdit->setAttribute(Qt::WA_TranslucentBackground, true);
+    pe.setColor(QPalette::Text, QColor("#000000"));
+    m_sharePasswordlineEdit->setPalette(pe);
+    m_sharePasswordlineEdit->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
+    QFont font = this->font();
+    int defaultFontSize = font.pointSize();
+    font.setPointSize(m_isSharePasswordSet ? 7 : defaultFontSize);
+    m_sharePasswordlineEdit->setFont(font);
+    m_sharePasswordlineEdit->setEchoMode(m_isSharePasswordSet ? QLineEdit::Password : QLineEdit::Normal);
+    m_sharePasswordlineEdit->setObjectName("SharePasswordEdit");
+    m_sharePasswordlineEdit->setAlignment(Qt::AlignJustify | Qt::AlignLeft);
+    m_sharePasswordlineEdit->setText(m_isSharePasswordSet ? "------" : tr("None"));
+    m_sharePasswordlineEdit->setDisabled(true);
+    m_sharePasswordlineEdit->setCursorPosition(0);
+
+    //控件布局
+    QGridLayout *mainLayout = new QGridLayout(this);
+    mainLayout->setSpacing(6);
+    QFormLayout *firstLayout = new QFormLayout();
+    firstLayout->setSpacing(10);
     DFMGlobal::setToolTip(shareNameLabel);
     DFMGlobal::setToolTip(permissionLabel);
     DFMGlobal::setToolTip(anonymityLabel);
 
-    mainLayoyt->addRow(centerAlignContainer);
-    mainLayoyt->addRow(shareNameLabel, m_shareNamelineEdit);
-    mainLayoyt->addRow(permissionLabel, m_permissoComBox);
-    mainLayoyt->addRow(anonymityLabel, m_anonymityCombox);
-    mainLayoyt->setLabelAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    mainLayoyt->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-    mainLayoyt->setFormAlignment(Qt::AlignVCenter | Qt::AlignCenter);
-    mainLayoyt->setContentsMargins(10, 10, 10, 10);
-    setLayout(mainLayoyt);
+    firstLayout->addRow(centerAlignContainer);
+    firstLayout->addRow(shareNameLabel, m_shareNamelineEdit);
+    firstLayout->addRow(permissionLabel, m_permissoComBox);
+
+    firstLayout->addRow(anonymityLabel, m_anonymityCombox);
+    firstLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    firstLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    firstLayout->setFormAlignment(Qt::AlignVCenter | Qt::AlignCenter);
+    mainLayout->setContentsMargins(12, 10, 12, 10);
+
+    QGridLayout *secondLayout = new QGridLayout();
+    secondLayout->setSpacing(0);
+    secondLayout->setContentsMargins(0, 0, 0, 0);
+    if (m_sharePropertyBkgWidget == nullptr) {
+        m_sharePropertyBkgWidget = new QWidget();
+        m_sharePropertyBkgWidget->installEventFilter(this);
+        m_sharePropertyBkgWidget->setAttribute(Qt::WA_StyledBackground, true);
+    }
+
+    QFormLayout *netLayout = new QFormLayout();
+    netLayout->setSpacing(0);
+    //Layout: network
+    QHBoxLayout *networkAddrLayout = new QHBoxLayout;
+    networkAddrLayout->setContentsMargins(0, 0, 0, 0);
+    QPushButton *copyNetAddr = new QPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
+    QObject::connect(copyNetAddr, &QPushButton::clicked, [=]() {
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(m_networkAddrLabel->text());
+    });
+    networkAddrLayout->addWidget(m_networkAddrLabel);
+    networkAddrLayout->addWidget(copyNetAddr);
+    networkAddrLayout->setStretch(0, 1);
+    netLayout->addRow(networkAddLabel, networkAddrLayout);
+    //Layout: user name
+    QHBoxLayout *userNameLayout = new QHBoxLayout();
+    userNameLayout->setContentsMargins(0, 0, 0, 0);
+    QPushButton *copyUserName = new QPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
+    QObject::connect(copyUserName, &QPushButton::clicked, [=]() {
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText(m_userNamelineEdit->text());
+    });
+    userNameLayout->addWidget(m_userNamelineEdit);
+    userNameLayout->addWidget(copyUserName);
+    userNameLayout->setStretch(0, 1);
+    netLayout->addRow(userNameLabel, userNameLayout);
+
+    netLayout->setLabelAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    netLayout->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
+    netLayout->setFormAlignment(Qt::AlignVCenter | Qt::AlignCenter);
+    netLayout->setContentsMargins(10, 10, 10, 10);
+    secondLayout->addLayout(netLayout, 0, 0, 1, 1);
+
+    QHBoxLayout *netLayout2 = new QHBoxLayout();
+    netLayout2->setContentsMargins(0, 0, 0, 0);
+    //Layout: password
+    QHBoxLayout *passwordLayout = new QHBoxLayout;
+    passwordLayout->setSpacing(6);
+    passwordLayout->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
+    QPushButton *passwordOperation = new QPushButton(m_isSharePasswordSet ? tr("Change password") : tr("Set password"));
+    passwordOperation->setAttribute(Qt::WA_TranslucentBackground, true);
+    passwordOperation->setFont(fontMedium);
+    passwordOperation->setStyleSheet("QPushButton{color:#0082FA;background-color:rgba(0,0,0,0)}");
+    connect(passwordOperation, &QPushButton::clicked, this, &ShareInfoFrame::setOrModifySharePassword);
+
+    passwordLayout->addWidget(m_sharePasswordlineEdit);
+    passwordLayout->addWidget(passwordOperation);
+
+    passwordLayout->setStretch(0, 1);
+    netLayout2->addWidget(sharePasswordLabel);
+    netLayout2->addLayout(passwordLayout);
+    netLayout2->setContentsMargins(10, 10, 10, 10);
+
+    secondLayout->addLayout(netLayout2, 2, 0, 1, 1);
+    m_sharePropertyBkgWidget->setLayout(secondLayout);
+
+    mainLayout->addLayout(firstLayout, 0, 0);
+    if(!splitLineGray)
+        splitLineGray = new QPushButton(this);
+
+    splitLineGray->installEventFilter(this);
+    splitLineGray->setContentsMargins(0, 0, 0, 0);
+    splitLineGray->setMaximumHeight(2);
+    splitLineGray->setFocusPolicy(Qt::NoFocus);
+    mainLayout->addWidget(splitLineGray, 1, 0);
+    mainLayout->addWidget(m_sharePropertyBkgWidget, 2, 0);
+    m_shareNotes = new QTextBrowser(this);
+    m_shareNotes->setFont(fontNormal);
+    m_shareNotes->setContentsMargins(0, 0, 0, 0);
+    pe.setColor(QPalette::Text, QColor("#526A7F"));
+    m_shareNotes->setPalette(pe);
+
+    static QString notice = tr("This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. ");
+    m_shareNotes->setPlainText(notice);
+    m_shareNotes->setFixedHeight(60);
+    m_shareNotes->setReadOnly(true);
+    m_shareNotes->setFrameStyle(QFrame::NoFrame);
+    connect(m_shareNotes, &QTextBrowser::copyAvailable, this, [=](bool yesCopy) {
+        if (yesCopy) {
+            QTextCursor textCursor = m_shareNotes->textCursor();
+            if (textCursor.hasSelection()) {
+                textCursor.clearSelection();
+                m_shareNotes->setTextCursor(textCursor);   // 去除选中
+            }
+        }
+    });
+    mainLayout->addWidget(m_shareNotes, 3, 0);
+    setLayout(mainLayout);
 
     //当前文件夹已被共享
     if (userShareManager->isShareFile(m_fileinfo->filePath())) {
@@ -302,6 +472,11 @@ void ShareInfoFrame::disactivateWidgets()
     m_anonymityCombox->setEnabled(false);
 }
 
+void ShareInfoFrame::setOrModifySharePassword()
+{
+    dialogManager->showSharePasswordSettingDialog(this);
+}
+
 void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
 {
     m_fileinfo = fileinfo;
@@ -351,6 +526,30 @@ bool ShareInfoFrame::checkShareName() //返回值表示是否继续
         }
     }
     return  true;
+}
+
+bool ShareInfoFrame::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == m_sharePropertyBkgWidget && event->type() == QEvent::Paint) {
+        QPainter painter(m_sharePropertyBkgWidget);
+        QStyleOption opt;
+        opt.init(m_sharePropertyBkgWidget);
+        m_sharePropertyBkgWidget->setStyleSheet("background-color: rgba(0,0,0,0.03);border-radius: 8px;");
+        m_sharePropertyBkgWidget->style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, m_sharePropertyBkgWidget);
+        painter.setPen(Qt::white);
+        painter.setBrush(Qt::white);
+        int vpos = m_userNamelineEdit->height()*3;
+        painter.drawRect(QRect(QPoint(0,vpos),QPoint(m_sharePropertyBkgWidget->width(),vpos)));
+    }
+    else if (obj == splitLineGray && event->type() == QEvent::Paint) {
+        QPainter painter(splitLineGray);
+        QColor color(0,0,0);
+        color.setAlphaF(0.05);
+        painter.setBrush(color);
+        painter.setPen(color);
+        painter.drawRect(splitLineGray->rect());
+    }
+    return QFrame::eventFilter(obj, event);
 }
 
 ShareInfoFrame::~ShareInfoFrame()

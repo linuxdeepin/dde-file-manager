@@ -67,6 +67,7 @@ public:
     int validShareInfoCount() const ;
     bool hasValidShareFolders() const;
     bool isShareFile(const QString &filePath) const;
+    bool isSharePasswordSet(const QString &userName);
 
     static void writeCacheToFile(const QString &path, const QString &content);
     static QString readCacheFromFile(const QString &path);

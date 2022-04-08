@@ -33,22 +33,26 @@ class UserShareAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.daemon.UserShareManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.daemon.UserShareManager\">\n"
+"    <method name=\"addGroup\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"groupName\"/>\n"
+"    </method>\n"
 "    <method name=\"setUserSharePassword\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"username\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"passward\"/>\n"
-"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
-"    </method>\n"
-"    <method name=\"addGroup\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"groupName\"/>\n"
-"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
 "    </method>\n"
 "    <method name=\"closeSmbShareByShareName\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"sharename\"/>\n"
 "      <arg direction=\"in\" type=\"b\" name=\"bshow\"/>\n"
-"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
 "    </method>\n"
 "    <method name=\"createShareLinkFile\">\n"
-"      <arg direction=\"out\" type=\"b\" name=\"result\"/>\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"    </method>\n"
+"    <method name=\"isUserSharePasswordSet\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"      <arg direction=\"in\" type=\"s\" name=\"username\"/>\n"
 "    </method>\n"
 "  </interface>\n"
         "")
@@ -64,6 +68,7 @@ public Q_SLOTS: // METHODS
     bool addGroup(const QString &groupName);
     bool closeSmbShareByShareName(const QString &sharename, bool bshow);
     bool createShareLinkFile();
+    bool isUserSharePasswordSet(const QString &username);
     bool setUserSharePassword(const QString &username, const QString &passward);
 Q_SIGNALS: // SIGNALS
 };
