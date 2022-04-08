@@ -25,6 +25,7 @@
 #include "views/fileviewitem.h"
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
+
 #include "dfm-base/dfm_global_defines.h"
 
 #include <DAnchors>

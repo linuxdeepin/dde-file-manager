@@ -53,7 +53,7 @@ enum class CallbackKey : uint8_t {
 };
 
 enum ItemRoles {
-    kItemNameRole = Qt::DisplayRole,
+    kItemFileDisplayNameRole = Qt::DisplayRole,
     kItemIconRole = Qt::DecorationRole,
     kItemEditRole = Qt::EditRole,
     kItemToolTipRole = Qt::ToolTipRole,
@@ -77,7 +77,7 @@ enum ItemRoles {
     kItemCornerMarkBLRole = Qt::UserRole + 10,
     kItemCornerMarkBRRole = Qt::UserRole + 11,
     kItemIconLayersRole = Qt::UserRole + 12,
-    kItemFileDisplayNameRole = Qt::UserRole + 13,
+    kItemNameRole = Qt::UserRole + 13,
     kItemFilePinyinNameRole = Qt::UserRole + 14,
     kItemFileBaseNameRole = Qt::UserRole + 15,
     kItemFileSuffixRole = Qt::UserRole + 16,
@@ -159,5 +159,6 @@ Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorHandleCallback);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ViewMode);
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::ItemRoles);
 
 #endif   // DFM_GLOBAL_DEFINES_H

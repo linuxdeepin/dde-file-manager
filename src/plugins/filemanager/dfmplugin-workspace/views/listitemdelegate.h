@@ -24,6 +24,9 @@
 
 #include "baseitemdelegate.h"
 
+#include "services/filemanager/workspace/workspace_defines.h"
+#include "dfm-base/dfm_global_defines.h"
+
 #include <QStyledItemDelegate>
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -51,13 +54,14 @@ protected:
 private:
     void paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option,
                              const QModelIndex &index) const;
-    QRect paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option,
-                        const QModelIndex &index) const;
+    QRectF paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const;
     void paintItemColumn(QPainter *painter, const QStyleOptionViewItem &option,
-                         const QModelIndex &index, const QRect &iconRect) const;
-    void paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRect &rect, const int &textLineHeight) const;
+                         const QModelIndex &index, const QRectF &iconRect) const;
+    void paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRectF &rect, const int &textLineHeight) const;
 
     bool setEditorData(ListItemEditor *editor);
+
     Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };
 

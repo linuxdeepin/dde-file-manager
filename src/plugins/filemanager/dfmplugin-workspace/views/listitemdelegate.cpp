@@ -25,10 +25,12 @@
 #include "fileview.h"
 #include "fileviewitem.h"
 #include "listitemeditor.h"
-#include "models/fileviewmodel.h"
+#include "models/filesortfilterproxymodel.h"
 #include "dfm-base/dfm_base_global.h"
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
+#include "events/workspaceeventcaller.h"
+#include "events/workspaceeventsequence.h"
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
@@ -92,7 +94,7 @@ void ListItemDelegate::paint(QPainter *painter,
 
     paintItemBackground(painter, opt, index);
 
-    QRect iconRect = paintItemIcon(painter, opt, index);
+    QRectF iconRect = paintItemIcon(painter, opt, index);
 
     paintItemColumn(painter, opt, index, iconRect);
 
@@ -349,7 +351,7 @@ void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOption
  *
  * \return QRect 返回绘制icon的区域方便后面绘制
  **/
-QRect ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (!parent() || !parent()->parent())
         return QRect();
@@ -363,13 +365,14 @@ QRect ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewI
     opt.rect.setRight(opt.rect.right() - kListModeRightPadding);
 
     // draw icon
-    QRect iconRect = opt.rect;
+    QRectF iconRect = opt.rect;
     iconRect.setSize(parent()->parent()->iconSize());
     iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
 
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
-    paintEmblems(painter, iconRect, index);
+    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    WorkspaceEventSequence::instance()->doPaintListItem(kItemIconRole, url, painter, &iconRect);
 
     return iconRect;
 }
@@ -378,7 +381,7 @@ QRect ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewI
  *
  * \return void
  **/
-void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &iconRect) const
+void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRectF &iconRect) const
 {
     D_DC(ListItemDelegate);
     // 绘制需要绘制的项，计算每一项绘制的宽度
@@ -389,7 +392,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     QStyleOptionViewItem opt = option;
     painter->setFont(opt.font);
 
-    int columnX = iconRect.right() + kListModeIconSpacing;
+    double columnX = iconRect.right() + kListModeIconSpacing;
 
     bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     if (isSelected)
@@ -406,7 +409,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
             continue;
         }
 
-        QRect columnRect = opt.rect;
+        QRectF columnRect = opt.rect;
         columnRect.setLeft(columnX);
 
         if (columnRect.left() >= columnRect.right()) {
@@ -414,18 +417,24 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         }
 
         columnX += columnWidth;
-        columnRect.setRight(qMin(columnX - kListModeRightPadding, opt.rect.right() - kListModeRightPadding));
+        if (columnX > opt.rect.right())
+            columnX = opt.rect.right();
+        columnRect.setRight(columnX - kListModeRightPadding);
+
         int rol = columnRoleList.at(i).first;
         const QVariant &data = index.data(rol);
 
+        const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+        if (WorkspaceEventSequence::instance()->doPaintListItem(rol, url, painter, &columnRect))
+            continue;
+
         QPalette::ColorGroup cGroup = QPalette::Inactive;
         Qt::TextElideMode elideMode = Qt::ElideRight;
-        if (rol == kItemNameRole) {
+
+        if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
             cGroup = QPalette::Active;
             elideMode = Qt::ElideMiddle;
-        }
-        if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
-            //Todo(liuyangming):绘制标记
+
             paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight);
         } else {
             if (!isSelected)
@@ -443,7 +452,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     }
 }
 
-void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRect &rect, const int &textLineHeight) const
+void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRectF &rect, const int &textLineHeight) const
 {
     bool drawBackground = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     const QVariant &data = index.data(role);
@@ -456,10 +465,10 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
                 break;
 
             if (role == kItemFileDisplayNameRole) {
-                const auto fileName = index.data(kItemNameRole);
-                const auto fileDisplayName = index.data(kItemFileDisplayNameRole);
+                const auto itemFileName = index.data(kItemNameRole);
+                const auto itemFileDisplayName = index.data(kItemFileDisplayNameRole);
 
-                if (fileName != fileDisplayName)
+                if (itemFileName != itemFileDisplayName)
                     break;
             }
 

@@ -94,6 +94,7 @@ private:
     TopWidgetCreatorMap topWidgetCreators;
     MenuSceneMap menuSceneMap;
     DefaultViewMode defaultViewMode;
+
     Q_DISABLE_COPY(WorkspaceHelper)
 };
 

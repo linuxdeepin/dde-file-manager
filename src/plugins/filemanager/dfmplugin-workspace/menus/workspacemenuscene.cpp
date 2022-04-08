@@ -27,10 +27,13 @@
 #include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperatorhelper.h"
 
+#include "dfm-base/dfm_global_defines.h"
+
 DPWORKSPACE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";

@@ -44,4 +44,5 @@ const double kMinEmblemSize = 12.0;
 const double kMaxEmblemSize = 128.0;
 
 DPEMBLEM_END_NAMESPACE
+
 #endif   // DFMPLUGIN_EMBLEM_GLOBAL_H

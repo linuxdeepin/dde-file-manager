@@ -23,7 +23,7 @@
 #ifndef WORKSPACE_DEFINES_H
 #define WORKSPACE_DEFINES_H
 
-#include "dfm_filemanager_service_global.h"
+#include "services/filemanager/dfm_filemanager_service_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
@@ -51,6 +51,8 @@ extern const int kTabMoved;
 extern const int kTabRemoved;
 extern const int kCloseTabs;
 extern const int kShowCustomTopWidget;
+extern const int kPaintListItem;
+extern const int kPaintIconItem;
 };   // namespace EventType
 
 namespace MenuScene {
@@ -76,7 +78,6 @@ DSB_FM_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback);
-//Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler);
 

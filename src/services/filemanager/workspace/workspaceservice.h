@@ -65,5 +65,4 @@ private:
 
 DSB_FM_END_NAMESPACE
 
-//#define workspaceServIns dfm_service_filemanager::WorkspaceService::instance()
 #endif   // WORKSPACESERVICE_H

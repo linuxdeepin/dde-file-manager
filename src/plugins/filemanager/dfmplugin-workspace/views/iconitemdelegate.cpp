@@ -22,13 +22,15 @@
 
 #include "private/delegatecommon.h"
 #include "iconitemdelegate.h"
-
 #include "private/iconitemdelegate_p.h"
 #include "utils/itemdelegatehelper.h"
 #include "utils/fileviewhelper.h"
 #include "fileviewitem.h"
 #include "fileview.h"
 #include "iconitemeditor.h"
+#include "models/filesortfilterproxymodel.h"
+#include "events/workspaceeventsequence.h"
+
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
@@ -368,7 +370,8 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
         ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
     }
 
-    paintEmblems(painter, iconRect, index);
+    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    WorkspaceEventSequence::instance()->doPaintIconItem(kItemIconRole, url, painter, &iconRect);
 
     return iconRect;
 }
@@ -392,10 +395,15 @@ void IconItemDelegate::paintItemFileName(QPainter *painter, QRectF iconRect, QPa
 
     // init file name geometry
     QRectF labelRect = opt.rect;
-    labelRect.setTop(iconRect.bottom() + kIconModeTextPadding + kIconModeIconSpacing);
+    labelRect.setTop(static_cast<int>(iconRect.bottom()) + kIconModeTextPadding + kIconModeIconSpacing);
     labelRect.setWidth(opt.rect.width() - 2 * kIconModeTextPadding - 2 * backgroundMargin - kIconModeBackRadius);
     labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
     labelRect.setBottom(path.boundingRect().toRect().bottom());
+
+    QRectF extendRect = labelRect;
+    const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
+    if (WorkspaceEventSequence::instance()->doPaintIconItem(kItemFileDisplayNameRole, url, painter, &extendRect))
+        return;
 
     //文管窗口拖拽时的字体保持白色
     if (isDragMode) {

@@ -25,7 +25,11 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <QPainter>
+
+DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
 EmblemManager::EmblemManager(QObject *parent)
@@ -40,10 +44,13 @@ EmblemManager *EmblemManager::instance()
     return &ins;
 }
 
-void EmblemManager::paintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url) const
+bool EmblemManager::paintEmblems(int role, const QUrl &url, QPainter *painter, QRectF *paintArea)
 {
-    const QList<QRectF> &paintRects = caculatePaintRectList(paintArea);
-    const QList<QIcon> &emblems = fetchEmblems(url);
+    if (role != kItemIconRole)
+        return false;
+
+    const QList<QRectF> &paintRects = EmblemManager::instance()->caculatePaintRectList(*paintArea);
+    const QList<QIcon> &emblems = EmblemManager::instance()->fetchEmblems(url);
 
     for (int i = 0; i < qMin(paintRects.count(), emblems.count()); ++i) {
         if (emblems.at(i).isNull())
@@ -51,6 +58,8 @@ void EmblemManager::paintEmblems(QPainter *painter, const QRectF &paintArea, con
 
         emblems.at(i).paint(painter, paintRects.at(i).toRect());
     }
+
+    return false;
 }
 
 QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const

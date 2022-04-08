@@ -36,6 +36,7 @@ class EmblemEventRecevier : public QObject
 public:
     static EmblemEventRecevier *instance();
 
+    // TODO(liuyangming) : discard function.
     void handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
 
     void initializeConnections() const;

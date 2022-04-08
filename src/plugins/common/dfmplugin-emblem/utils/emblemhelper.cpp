@@ -28,6 +28,7 @@
 
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DPF_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
 EmblemHelper::EmblemHelper(QObject *parent)
@@ -96,6 +97,11 @@ QList<QIcon> EmblemHelper::getExtendEmblems(const AbstractFileInfoPointer &info)
     QList<QIcon> emblems;
 
     return emblems;
+}
+
+EventSequenceManager *EmblemHelper::eventSequence()
+{
+    return &dpfInstance.eventSequence();
 }
 
 QIcon EmblemHelper::standardEmblem(const SystemEmblemType type) const

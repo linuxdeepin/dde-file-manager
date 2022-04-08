@@ -23,6 +23,7 @@
 #include "fileviewitem.h"
 #include "utils/fileutils.h"
 #include "private/fileviewitem_p.h"
+
 #include "dfm-base/dfm_global_defines.h"
 
 DFMBASE_USE_NAMESPACE
@@ -222,7 +223,6 @@ QVariant FileViewItem::data(int role) const
         return d->fileinfo->lastModified().toString(dateTimeFormat());
     case kItemIconRole:
         return d->fileinfo->fileIcon();
-        //return QStandardItem::data(Roles::kItemIconRole);
     case kItemFileSizeRole:
         return d->fileinfo->sizeDisplayName();
     case kItemFileMimeTypeRole:

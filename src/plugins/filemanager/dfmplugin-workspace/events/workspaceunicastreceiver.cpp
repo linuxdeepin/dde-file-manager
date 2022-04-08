@@ -6,7 +6,8 @@
 
 #include <dfm-framework/framework.h>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
 #define STR1(s) #s
 #define STR2(s) STR1(s)
@@ -115,4 +116,3 @@ WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)
     : QObject(parent)
 {
 }
-DPWORKSPACE_END_NAMESPACE

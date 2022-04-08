@@ -25,6 +25,7 @@
 #include "dfmplugin_emblem_global.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include <dfm-framework/framework.h>
 
 #include <QIcon>
 
@@ -39,6 +40,8 @@ public:
     QList<QIcon> getCustomEmblems(const AbstractFileInfoPointer &info) const;
     QMap<int, QIcon> getGioEmblems(const AbstractFileInfoPointer &info) const;
     QList<QIcon> getExtendEmblems(const AbstractFileInfoPointer &info) const;
+
+    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 
 private:
     QIcon standardEmblem(const SystemEmblemType type) const;

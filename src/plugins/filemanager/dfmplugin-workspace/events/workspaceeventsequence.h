@@ -4,7 +4,6 @@
  * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,37 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EMBLEMMANAGER_H
-#define EMBLEMMANAGER_H
+#ifndef WORKSPACEEVENTSEQUENCE_H
+#define WORKSPACEEVENTSEQUENCE_H
 
-#include "dfmplugin_emblem_global.h"
-#include "services/filemanager/workspace/workspaceservice.h"
+#include "dfmplugin_workspace_global.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include <dfm-framework/framework.h>
 
-#include <QIcon>
+DPWORKSPACE_BEGIN_NAMESPACE
 
-DPEMBLEM_BEGIN_NAMESPACE
-
-class EmblemHelper;
-class EmblemManager : public QObject
+class WorkspaceEventSequence : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(EmblemManager)
-public:
-    static EmblemManager *instance();
+    Q_DISABLE_COPY(WorkspaceEventSequence)
 
-    bool paintEmblems(int role, const QUrl &url, QPainter *painter, QRectF *paintArea);
+public:
+    static WorkspaceEventSequence *instance();
+
+    bool doPaintListItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
+    bool doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
 
 private:
-    explicit EmblemManager(QObject *parent = nullptr);
-
-    QList<QIcon> fetchEmblems(const QUrl &url) const;
-    QList<QRectF> caculatePaintRectList(const QRectF &paintArea) const;
-
-    EmblemHelper *helper { nullptr };
+    explicit WorkspaceEventSequence(QObject *parent = nullptr);
+    DPF_NAMESPACE::EventSequenceManager *sequence();
 };
 
-DPEMBLEM_END_NAMESPACE
+DPWORKSPACE_END_NAMESPACE
 
-#endif   // EMBLEMMANAGER_H
+#endif   // WORKSPACEEVENTSEQUENCE_H

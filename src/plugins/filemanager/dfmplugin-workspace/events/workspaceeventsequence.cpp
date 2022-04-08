@@ -4,7 +4,6 @@
  * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,37 +18,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "emblem.h"
-#include "events/emblemeventrecevier.h"
-#include "utils/emblemhelper.h"
-#include "utils/emblemmanager.h"
+#include "workspaceeventsequence.h"
 
-#include "dfm-base/dfm_global_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
+#include <QPainter>
 #include <QRectF>
 
 Q_DECLARE_METATYPE(QRectF *)
+Q_DECLARE_METATYPE(QPainter *)
 
 DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DPEMBLEM_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
+DPWORKSPACE_USE_NAMESPACE
 
-void Emblem::initialize()
+WorkspaceEventSequence *WorkspaceEventSequence::instance()
+{
+    static WorkspaceEventSequence ins;
+    return &ins;
+}
+
+bool WorkspaceEventSequence::doPaintListItem(int role, const QUrl &url, QPainter *painter, QRectF *rect)
+{
+    return sequence()->run(Workspace::EventType::kPaintListItem, role, url, painter, rect);
+}
+
+bool WorkspaceEventSequence::doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect)
+{
+    return sequence()->run(Workspace::EventType::kPaintIconItem, role, url, painter, rect);
+}
+
+WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)
+    : QObject(parent)
 {
 }
 
-bool Emblem::start()
+EventSequenceManager *WorkspaceEventSequence::sequence()
 {
-    EmblemEventRecevier::instance()->initializeConnections();
-
-    followPaintEvent();
-
-    return true;
-}
-
-void Emblem::followPaintEvent()
-{
-    EmblemHelper::eventSequence()->follow(Workspace::EventType::kPaintListItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
-    EmblemHelper::eventSequence()->follow(Workspace::EventType::kPaintIconItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
+    return &dpfInstance.eventSequence();
 }

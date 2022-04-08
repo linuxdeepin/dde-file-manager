@@ -20,12 +20,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "emblemeventrecevier.h"
-
 #include "utils/emblemmanager.h"
 #include "services/common/emblem/emblem_defines.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include <dfm-framework/framework.h>
 
+DFMGLOBAL_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
 EmblemEventRecevier::EmblemEventRecevier(QObject *parent)
@@ -41,7 +42,9 @@ EmblemEventRecevier *EmblemEventRecevier::instance()
 
 void EmblemEventRecevier::handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
 {
-    EmblemManager::instance()->paintEmblems(painter, paintArea, url);
+    int role = kItemIconRole;
+    QRectF rect = paintArea;
+    EmblemManager::instance()->paintEmblems(role, url, painter, &rect);
 }
 
 void EmblemEventRecevier::initializeConnections() const
