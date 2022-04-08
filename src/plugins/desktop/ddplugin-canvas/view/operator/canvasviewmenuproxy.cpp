@@ -28,6 +28,7 @@
 #include "view/operator/fileoperatorproxy.h"
 #include "menu/canvasmenu.h"
 #include "menu/canvasmenuscene.h"
+#include "menu/canvasmenu_defines.h"
 
 #include <services/common/menu/menu_defines.h>
 
@@ -84,8 +85,9 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
     params[MenuParamKey::kOnDesktop] = true;
+    params[MenuParamKey::kwindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = true;
-    params["DesktopGridPos"] = QVariant::fromValue(gridPos);
+    params[CanvasMenuParams::kDesktopGridPos] = QVariant::fromValue(gridPos);
 
     if (!canvasScene->initialize(params)) {
         delete canvasScene;
@@ -123,7 +125,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     params[MenuParamKey::kSelectFiles] = selectPath;
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kIsEmptyArea] = false;
-    params["DesktopGridPos"] = QVariant::fromValue(gridPos);
+    params[CanvasMenuParams::kDesktopGridPos] = QVariant::fromValue(gridPos);
 
     if (!canvasScene->initialize(params)) {
         delete canvasScene;

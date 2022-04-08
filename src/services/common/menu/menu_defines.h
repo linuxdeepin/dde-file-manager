@@ -27,19 +27,20 @@ DSC_BEGIN_NAMESPACE
 
 namespace MenuParamKey {
 // file menu params for initialize
-static constexpr char kCurrentDir[] = "currentDir"; // string url
-static constexpr char kFocusFile[] = "focusFile";  // string url
-static constexpr char kSelectFiles[] = "selectFiles"; // string urls
-static constexpr char kOnDesktop[] = "onDesktop";  // bool
-static constexpr char kIsEmptyArea[] = "isEmptyArea"; // bool
+static constexpr char kCurrentDir[] = "currentDir";   // string url
+static constexpr char kFocusFile[] = "focusFile";   // string url
+static constexpr char kSelectFiles[] = "selectFiles";   // string urls
+static constexpr char kOnDesktop[] = "onDesktop";   // bool
+static constexpr char kwindowId[] = "windowId";   // quint64
+static constexpr char kIsEmptyArea[] = "isEmptyArea";   // bool
 }
 
 namespace ActionPropertyKey {
 // key for action property
-static constexpr char kActionID[] = "actionID"; // string
+static constexpr char kActionID[] = "actionID";   // string
 
 }
 
 DSC_END_NAMESPACE
 
-#endif // MENU_DEFINES_H
+#endif   // MENU_DEFINES_H

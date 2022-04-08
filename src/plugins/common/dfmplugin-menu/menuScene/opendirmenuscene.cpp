@@ -25,6 +25,8 @@
 
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-framework/framework.h>
 
 #include <QMenu>
 #include <QVariant>
@@ -65,17 +67,20 @@ bool OpenDirMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->windowId = params.value(MenuParamKey::kwindowId).toULongLong();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
-    // 文件不存在，则无文件相关菜单项
-    if (d->selectFiles.isEmpty())
-        return false;
+    if (!d->isEmptyArea) {
+        // 文件不存在，则无文件相关菜单项
+        if (d->selectFiles.isEmpty())
+            return false;
 
-    QString errString;
-    d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
-    if (d->focusFileInfo.isNull()) {
-        qDebug() << errString;
-        return false;
+        QString errString;
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
+        if (d->focusFileInfo.isNull()) {
+            qDebug() << errString;
+            return false;
+        }
     }
 
     return true;
@@ -110,7 +115,23 @@ void OpenDirMenuScene::updateState(QMenu *parent)
 
 bool OpenDirMenuScene::triggered(QAction *action)
 {
-    Q_UNUSED(action)
+    if (!d->predicateAction.values().contains(action))
+        return false;
+
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+
+    // Open in terminal
+    if (actionId == ActionID::kOpenInTerminal) {
+        QList<QUrl> urls;
+        if (d->isEmptyArea)
+            urls << d->currentDir;
+        else
+            urls << d->focusFile;
+
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, d->windowId, urls);
+        return true;
+    }
+
     // TODO(Lee or others):
     return false;
 }
@@ -124,6 +145,10 @@ void OpenDirMenuScene::emptyMenu(QMenu *parent)
     tempAction = parent->addAction(d->predicateName.value(ActionID::kSelectAll));
     d->predicateAction[ActionID::kSelectAll] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kSelectAll);
+
+    tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInTerminal));
+    d->predicateAction[ActionID::kOpenInTerminal] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInTerminal);
 }
 
 void OpenDirMenuScene::normalMenu(QMenu *parent)

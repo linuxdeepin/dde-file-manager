@@ -21,10 +21,7 @@
 #ifndef ACTION_DEFINES_H
 #define ACTION_DEFINES_H
 
-#include "dfmplugin_menu_global.h"
-
-DPMENU_BEGIN_NAMESPACE
-
+namespace dfmplugin_menu {
 namespace ActionID {
 // NewCreateMenu
 static constexpr char kNewFolder[] = "new-folder";
@@ -57,7 +54,6 @@ static constexpr char kSendTo[] = "send-to";
 static constexpr char kSendToBluetooth[] = "send-to-bluetooth";
 static constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
 }
-
-DPMENU_END_NAMESPACE
+}
 
 #endif   // ACTION_DEFINES_H

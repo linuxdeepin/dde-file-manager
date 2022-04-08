@@ -21,33 +21,34 @@
 #ifndef CANVASMENUSCENE_P_H
 #define CANVASMENUSCENE_P_H
 #include "canvasmenuscene.h"
+#include "interfaces/private/abstractmenuscene_p.h"
 
 #include <services/common/dfm_common_service_global.h>
 #include <services/common/menu/menuservice.h>
 
 #include <QMap>
+#include <QMultiHash>
 
 DSC_USE_NAMESPACE
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class CanvasView;
-class CanvasMenuScenePrivate
+class CanvasMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
 public:
     explicit CanvasMenuScenePrivate(CanvasMenuScene *qq);
 
-    QString currentDir;
-    QStringList selectFiles;
-    QString focusFile;
-    bool onDesktop { false };
-    bool isEmptyArea { true };
-    QMap<QAction *, int> iconSizeAction;
+    void filterDisableAction(QMenu *menu);
 
-    QMap<QString, QString> predicateName;
-    QMap<QString, QAction *> predicateAction;
+public:
+    QMap<QAction *, int> iconSizeAction;
+    QPoint gridPos;
 
     CanvasView *view { nullptr };
     MenuService *menuServer = nullptr;
+
+    QMultiHash<QString, QString> emptyDisableActions;
+    QMultiHash<QString, QString> normalDisableActions;
 
 private:
     CanvasMenuScene *q;

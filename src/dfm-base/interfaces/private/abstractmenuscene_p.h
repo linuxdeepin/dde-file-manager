@@ -37,6 +37,7 @@ public:
     QList<QUrl> selectFiles;
     QUrl focusFile;
     bool onDesktop;
+    quint64 windowId;
     bool isEmptyArea;
 
     AbstractFileInfoPointer focusFileInfo;

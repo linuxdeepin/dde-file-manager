@@ -28,9 +28,12 @@
 #include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
+#include "view/operator/fileoperaterproxy.h"
 
 #include <services/common/menu/menu_defines.h>
 #include <services/common/menu/menuservice.h>
+#include <plugins/common/dfmplugin-menu/dfmplugin_menu_global.h>
+#include <plugins/common/dfmplugin-menu/menuScene/action_defines.h>
 
 #include <dfm-framework/framework.h>
 
@@ -43,6 +46,14 @@
 DDP_CANVAS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
+DPMENU_USE_NAMESPACE;
+
+static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
+static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
+static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
+static const char *const kOpenFileMenuSceneName = "OpenFileMenu";
+static const char *const kSendToMenuSceneName = "SendToMenu";
+static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 
 AbstractMenuScene *CanvasMenuCreator::create()
 {
@@ -50,10 +61,45 @@ AbstractMenuScene *CanvasMenuCreator::create()
 }
 
 CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq)
-    : q(qq)
+    : AbstractMenuScenePrivate(qq), q(qq)
 {
     // 获取菜单服务
     menuServer = MenuService::service();
+
+    emptyDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenAsAdmin);
+}
+
+void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
+{
+    // remove disable action
+    auto actions = menu->actions();
+    QMultiHash<QString, QString> *disableActions = nullptr;
+    if (isEmptyArea)
+        disableActions = &emptyDisableActions;
+    else
+        disableActions = &normalDisableActions;
+
+    if (!disableActions->isEmpty()) {
+        for (auto action : actions) {
+            if (action->isSeparator())
+                continue;
+
+            auto actionScene = q->scene(action);
+            if (!actionScene) {
+                // no scene,remove it.
+                menu->removeAction(action);
+                continue;
+            }
+
+            auto sceneName = actionScene->name();
+            auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+
+            if (disableActions->contains(sceneName, actionId)) {
+                // disable,remove it.
+                menu->removeAction(action);
+            }
+        }
+    }
 }
 
 CanvasMenuScene::CanvasMenuScene(QObject *parent)
@@ -82,9 +128,10 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toString();
     d->focusFile = params.value(MenuParamKey::kFocusFile).toString();
-    d->selectFiles = params.value(MenuParamKey::kSelectFiles).toStringList();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->gridPos = params.value(CanvasMenuParams::kDesktopGridPos).toPoint();
 
     if (d->currentDir.isEmpty())
         return false;
@@ -92,33 +139,33 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     QList<AbstractMenuScene *> currentScene;
     if (d->isEmptyArea) {
         // new (new doc, new dir)
-        if (auto newCreateScene = d->menuServer->createScene("NewCreateMenu"))
+        if (auto newCreateScene = d->menuServer->createScene(kNewCreateMenuSceneName))
             currentScene.append(newCreateScene);
 
         // file operation
-        if (auto operationScene = d->menuServer->createScene("ClipBoardMenu"))
+        if (auto operationScene = d->menuServer->createScene(kClipBoardMenuSceneName))
             currentScene.append(operationScene);
 
     } else {
         // file operation
-        if (auto operationScene = d->menuServer->createScene("ClipBoardMenu"))
+        if (auto operationScene = d->menuServer->createScene(kClipBoardMenuSceneName))
             currentScene.append(operationScene);
 
         // open with
-        if (auto openWithScene = d->menuServer->createScene("OpenWithMenu"))
+        if (auto openWithScene = d->menuServer->createScene(kOpenWithMenuSceneName))
             currentScene.append(openWithScene);
 
-        // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
-        if (auto dirScene = d->menuServer->createScene("OpenDirMenu"))
-            currentScene.append(dirScene);
-
         // file (rename)
-        if (auto fileScene = d->menuServer->createScene("OpenFileMenu"))
+        if (auto fileScene = d->menuServer->createScene(kOpenFileMenuSceneName))
             currentScene.append(fileScene);
 
-        if (auto sendToScene = d->menuServer->createScene("SendToMenu"))
+        if (auto sendToScene = d->menuServer->createScene(kSendToMenuSceneName))
             currentScene.append(sendToScene);
     }
+
+    // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
+    if (auto dirScene = d->menuServer->createScene(kOpenDirMenuSceneName))
+        currentScene.append(dirScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);
@@ -156,83 +203,147 @@ bool CanvasMenuScene::create(QMenu *parent)
 
     // 创建子场景菜单
     AbstractMenuScene::create(parent);
+
+    d->filterDisableAction(parent);
+
     return true;
 }
 
 void CanvasMenuScene::updateState(QMenu *parent)
 {
+    // todo:sort
     AbstractMenuScene::updateState(parent);
 }
 
 bool CanvasMenuScene::triggered(QAction *action)
 {
-    if (!d->predicateAction.values().contains(action))
-        return AbstractMenuScene::triggered(action);
-
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
-    // sort by
-    {
-        static const QMap<QString, AbstractFileInfo::SortKey> sortRole = {
-            {ActionID::kSrtName, AbstractFileInfo::SortKey::kSortByFileName},
-            {ActionID::kSrtSize, AbstractFileInfo::SortKey::kSortByFileSize},
-            {ActionID::kSrtType, AbstractFileInfo::SortKey::kSortByFileMimeType},
-            {ActionID::kSrtTimeModified, AbstractFileInfo::SortKey::kSortByModified}
-        };
 
-        if (sortRole.contains(actionId)) {
-             AbstractFileInfo::SortKey role = sortRole.value(actionId);
-             Qt::SortOrder order = d->view->model()->sortOrder();
-             if (role == d->view->model()->sortRole())
-                 order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
-             d->view->model()->setSortRole(role, order);
-             d->view->model()->sort();
+    if (d->predicateAction.values().contains(action)) {
+        // sort by
+        {
+            static const QMap<QString, AbstractFileInfo::SortKey> sortRole = {
+                { ActionID::kSrtName, AbstractFileInfo::SortKey::kSortByFileName },
+                { ActionID::kSrtSize, AbstractFileInfo::SortKey::kSortByFileSize },
+                { ActionID::kSrtType, AbstractFileInfo::SortKey::kSortByFileMimeType },
+                { ActionID::kSrtTimeModified, AbstractFileInfo::SortKey::kSortByModified }
+            };
 
-             // save config
-             DispalyIns->setSortMethod(role, order);
-             return true;
+            if (sortRole.contains(actionId)) {
+                AbstractFileInfo::SortKey role = sortRole.value(actionId);
+                Qt::SortOrder order = d->view->model()->sortOrder();
+                if (role == d->view->model()->sortRole())
+                    order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;
+                d->view->model()->setSortRole(role, order);
+                d->view->model()->sort();
+
+                // save config
+                DispalyIns->setSortMethod(role, order);
+                return true;
+            }
+        }
+
+        // icon size
+        if (d->iconSizeAction.contains(action)) {
+            int iconLv = d->iconSizeAction.value(action);
+            for (auto v : ddplugin_canvas::CanvasIns->views()) {
+                v->itemDelegate()->setIconLevel(iconLv);
+                v->updateGrid();
+            }
+
+            DispalyIns->setIconLevel(iconLv);
+            return true;
+        }
+
+        // Display Settings
+        if (actionId == ActionID::kDisplaySettings) {
+            QDBusInterface interface("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter", "com.deepin.dde.ControlCenter");
+            interface.asyncCall("ShowModule", QVariant::fromValue(QString("display")));
+            return true;
+        }
+
+        // Wallpaper and Screensaver
+        if (actionId == ActionID::kWallpaperSettings) {
+            CanvasIns->onWallperSetting(d->view);
+            return true;
+        }
+
+        // Auto arrange
+        if (actionId == ActionID::kAutoArrange) {
+            bool align = action->isChecked();
+            DispalyIns->setAutoAlign(align);
+            GridIns->setMode(align ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
+            if (align) {
+                GridIns->arrange();
+                CanvasIns->update();
+            }
+            return true;
+        }
+
+        qWarning() << "Note:" << actionId << " is belong to screen scene,but not handled.";
+
+    } else {
+        auto actionScene = scene(action);
+        if (!actionScene) {
+            qWarning() << actionId << " doesn't belong to any scene.";
+            return false;
+        }
+
+        const QString &sceneName = actionScene->name();
+
+        // OpenDirMenu scene
+        if (sceneName == kOpenDirMenuSceneName) {
+            // select all
+            if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
+                d->view->selectAll();
+                return true;
+            }
+        }
+
+        // ClipBoardMenu scene
+        if (sceneName == kClipBoardMenuSceneName) {
+            // paste
+            if (actionId == dfmplugin_menu::ActionID::kPaste) {
+                FileOperaterProxyIns->pasteFiles(d->view, d->gridPos);
+                return true;
+            }
+        }
+
+        // NewCreateMenu scene
+        if (sceneName == kNewCreateMenuSceneName) {
+            // new folder
+            if (actionId == dfmplugin_menu::ActionID::kNewFolder) {
+                FileOperaterProxyIns->touchFolder(d->view, d->gridPos);
+                return true;
+            }
+
+            // new office text
+            if (actionId == dfmplugin_menu::ActionID::kNewOfficeText) {
+                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
+                return true;
+            }
+
+            // new spreadsheets
+            if (actionId == dfmplugin_menu::ActionID::kNewSpreadsheets) {
+                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
+                return true;
+            }
+
+            // new presentation
+            if (actionId == dfmplugin_menu::ActionID::kNewPresentation) {
+                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
+                return true;
+            }
+
+            // new plain text
+            if (actionId == dfmplugin_menu::ActionID::kNewPlainText) {
+                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
+                return true;
+            }
         }
     }
 
-    // icon size
-    if (d->iconSizeAction.contains(action)) {
-        int iconLv = d->iconSizeAction.value(action);
-        for (auto v : ddplugin_canvas::CanvasIns->views()) {
-            v->itemDelegate()->setIconLevel(iconLv);
-            v->updateGrid();
-        }
-
-        DispalyIns->setIconLevel(iconLv);
-        return true;
-    }
-
-    const QString &actionID = d->predicateAction.key(action);
-
-    // Display Settings
-    if (actionID == ActionID::kDisplaySettings) {
-        QDBusInterface interface("com.deepin.dde.ControlCenter", "/com/deepin/dde/ControlCenter", "com.deepin.dde.ControlCenter");
-        interface.asyncCall("ShowModule", QVariant::fromValue(QString("display")));
-        return true;
-    }
-
-    // Wallpaper and Screensaver
-    if (actionID == ActionID::kWallpaperSettings) {
-        CanvasIns->onWallperSetting(d->view);
-        return true;
-    }
-
-    // Auto arrange
-    if (actionID == ActionID::kAutoArrange) {
-        bool align = action->isChecked();
-        DispalyIns->setAutoAlign(align);
-        GridIns->setMode(align ? CanvasGrid::Mode::Align : CanvasGrid::Mode::Custom);
-        if (align) {
-            GridIns->arrange();
-            CanvasIns->update();
-        }
-        return true;
-    }
-
-    return false;
+    return AbstractMenuScene::triggered(action);
 }
 
 void CanvasMenuScene::emptyMenu(QMenu *parent)

@@ -26,19 +26,23 @@
 DDP_CANVAS_BEGIN_NAMESPACE
 
 namespace ActionID {
-   static constexpr char kSortBy[] = "sort-by";
-   static constexpr char kIconSize[] = "icon-size";
-   static constexpr char kAutoArrange[] = "auto-arrange";
-   static constexpr char kDisplaySettings[] = "display-settings";
-   static constexpr char kWallpaperSettings[] = "wallpaper-settings";
+static constexpr char kSortBy[] = "sort-by";
+static constexpr char kIconSize[] = "icon-size";
+static constexpr char kAutoArrange[] = "auto-arrange";
+static constexpr char kDisplaySettings[] = "display-settings";
+static constexpr char kWallpaperSettings[] = "wallpaper-settings";
 
-   // sort by
-   static constexpr char kSrtName[] = "sort-by-name";
-   static constexpr char kSrtTimeModified[] = "sort-by-time-modified";
-   static constexpr char kSrtSize[] = "sort-by-size";
-   static constexpr char kSrtType[] = "sort-by-type";
+// sort by
+static constexpr char kSrtName[] = "sort-by-name";
+static constexpr char kSrtTimeModified[] = "sort-by-time-modified";
+static constexpr char kSrtSize[] = "sort-by-size";
+static constexpr char kSrtType[] = "sort-by-type";
+}
+
+namespace CanvasMenuParams {
+static constexpr char kDesktopGridPos[] = "DesktopGridPos";
 }
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASMENU_DEFINES_H
+#endif   // CANVASMENU_DEFINES_H
