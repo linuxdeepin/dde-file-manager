@@ -197,7 +197,24 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
                 return;
             }
         }
-
+        //!点击计算机页面中的SMB设备时，如果是SMB设备，则进入smb://<host>目录
+        //! dfmroot:///smb://<host>/<share_folder>.remote
+        //! dfmroot:///smb://xxxxxxxxxxxxxxxxxx.gvfsmp
+        QString localFilePath = QUrl::fromPercentEncoding(url.path().toLocal8Bit());
+        localFilePath = localFilePath.startsWith("//") ? localFilePath.mid(1) : localFilePath;
+        bool isGvfsFile = FileUtils::isGvfsMountFile(localFilePath);
+        if(isGvfsFile || FileUtils::isSmbShareFolder(url)){
+            QString smbIp;
+            bool re = FileUtils::isSmbRelatedUrl(url,smbIp);
+            if (re) {
+                QWidget *p = WindowManager::getWindowById(window()->internalWinId());
+                if (p) {
+                    DUrl temUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
+                    DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, temUrl, p);
+                    return;
+                }
+            }
+        }
         // searchBarTextEntered also invoke "checkGvfsMountFileBusy", forbit invoke twice
         if (url.path().endsWith(SUFFIX_STASHED_REMOTE)) {
             DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());

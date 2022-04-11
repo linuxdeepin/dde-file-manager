@@ -41,6 +41,7 @@ public:
         ItemUseRegisteredHandlerRole,
         ItemUniqueKeyRole,
         ItemVolTagRole,
+        ItemSmbMountedUrls,
         ItemUserCustomRole = Dtk::UserRole + 0x0100
     };
 

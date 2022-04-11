@@ -85,8 +85,15 @@ DFMSideBarItem *DFMSideBarDeviceItemHandler::createItem(const DUrl &url)
     }
     QString displayName = infoPointer->fileDisplayName();
     QString iconName = infoPointer->iconName() + "-symbolic";
-
-    DFMSideBarItem * item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
+    if(url.scheme() == SMB_SCHEME){
+        if (displayName.isEmpty()) {
+            displayName = url.host();
+        }
+        if (iconName == "-symbolic") {
+            iconName = "folder-remote-symbolic";
+        }
+    }
+    DFMSideBarItem *item = new DFMSideBarItem(QIcon::fromTheme(iconName), displayName, url);
 
     Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
 
@@ -150,13 +157,27 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
         disabled.insert(MenuAction::Property);
     }
 
-    if (item->url().path().endsWith(".remote")) {
+    if (item->url().path().endsWith(QString(".%1").arg(SUFFIX_STASHED_REMOTE))) {
         disabled.remove(MenuAction::Mount);
         disabled.remove(MenuAction::Property);
     }
+    QVector<MenuAction> av = infoPointer->menuActionList();
+    bool isSmbIp = FileUtils::isSmbIpHost(item->url());
+    if(isSmbIp){
+        av.push_back(MenuAction::UnmountAllSmbMount);
+    }
 
-    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(infoPointer->menuActionList(), disabled);
-    menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
+    DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
+    if(isSmbIp){
+        QStringList sideBarSmbIpItemNamesList = item->data(DFMSideBarItem::ItemSmbMountedUrls).toStringList();
+        DUrlList urlList;
+        foreach (const QString& var, sideBarSmbIpItemNamesList) {
+            urlList << DUrl(var);
+        }
+        menu->setEventData(DUrl(), urlList, WindowManager::getWindowId(wnd), sidebar);
+    }
+    else
+        menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
     menu->setAccessibleInfo(AC_FILE_MENU_SIDEBAR_DEVICE_ITEM);
 
     return menu;

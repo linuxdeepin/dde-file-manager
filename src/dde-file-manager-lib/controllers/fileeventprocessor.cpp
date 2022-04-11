@@ -370,6 +370,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::RemoveStashedRemoteConn:
         AppController::instance()->actionRemoveStashedMount(dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), event->selectedUrls().first()));
         break;
+    case DFMGlobal::UnmountAllSmbMount:
+        AppController::instance()->actionUnmountAllSmbMount(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        break;
     }
 
     return true;

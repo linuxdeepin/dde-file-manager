@@ -60,6 +60,7 @@
 #include "views/dfilemanagerwindow.h"
 #include "views/dtagedit.h"
 #include "views/dfmopticalmediawidget.h"
+#include "views/dfmsidebar.h"
 
 #include "gvfs/networkmanager.h"
 #include "gvfs/gvfsmountmanager.h"
@@ -225,6 +226,30 @@ void AppController::actionOpenDisk(const QSharedPointer<DFMUrlBaseEvent> &event)
     QScopedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
 
     if (fileUrl.path().contains("dfmroot:///sr") && blk->idUUID().isEmpty() && !drv->opticalBlank()) return; // 如果光驱的uuid为空（光盘未挂载）且不是空光盘的情况下
+
+    //判断url是否是形如：smb://host
+    if (FileUtils::isSmbIpHost(fileUrl)) {
+        QString smbIp = event->url().host();
+        if (!smbIp.isEmpty()) {
+            QWidget *p = WindowManager::getWindowById(event->windowId());
+            if (p) {
+                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, fileUrl, p);
+                return;
+            }
+        }
+    }else{
+        QString ip;
+        if(FileUtils::isSmbRelatedUrl(fileUrl,ip)){
+            QWidget *p = WindowManager::getWindowById(event->windowId());
+            if (p) {
+                DUrl url;
+                url.setScheme(SMB_SCHEME);
+                url.setHost(ip);
+                DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, url, p);
+                return;
+            }
+        }
+    }
 
     if (!mounted) {
         m_fmEvent = event;
@@ -565,7 +590,6 @@ void AppController::actionNewText(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         auto path = fileUrl.path();
         // mount the stashed remote connections
@@ -606,6 +630,18 @@ void AppController::actionMount(const QSharedPointer<DFMUrlBaseEvent> &event)
         actionOpen(e);
         return;
     }
+    ///处理对smb设备根目录下共享文件夹的挂载操作 - start
+    else if (fileUrl.scheme() == SMB_SCHEME && FileUtils::isSmbShareFolder(fileUrl)) {
+        deviceListener->setBatchedRemovingSmbMount(false);
+        QString temUrl = fileUrl.toString();
+        if(!temUrl.endsWith(SUFFIX_STASHED_REMOTE))
+            temUrl.append('.').append(SUFFIX_STASHED_REMOTE);
+        QString path = RemoteMountsStashManager::normalizeConnUrl(temUrl);
+        auto e = dMakeEventPointer<DFMUrlBaseEvent>(event->sender(), path);
+        GvfsMountManager::instance()->mount_sync(*e);
+        return;
+    }
+    ///处理对smb设备根目录下共享文件夹的挂载操作 - end
 
     QStringList deviceNode = DDiskManager::resolveDeviceNode(fileUrl.query(), {});
     if(deviceNode.isEmpty()) {
@@ -737,7 +773,6 @@ void AppController::actionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 void AppController::doActionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     const DUrl &fileUrl = event->url();
-
     if (fileUrl.scheme() == DFMROOT_SCHEME) {
         DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), fileUrl);
 
@@ -775,10 +810,17 @@ void AppController::doActionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event
                 }
                 qInfo() << "umount path = " << path;
             }
-
             deviceListener->unmount(path);
         }
-    } else if (fileUrl.query().length()) {
+    }else if (fileUrl.scheme() == SMB_SCHEME && FileUtils::isSmbShareFolder(fileUrl)) {///处理对smb设备根目录下共享文件夹的卸载操作 - start
+        QString path = fileUrl.path();
+        path = path.startsWith('/') ? path.mid(1) : path;
+        path = path.toLower();
+        path = fileUrl.scheme() + "://" + fileUrl.host() + "/" + QUrl::toPercentEncoding(path) + "/";
+        deviceListener->unmount(path);
+        return;
+        ///处理对smb设备根目录下共享文件夹的卸载操作 - end
+    }else if (fileUrl.query().length()) {
         QString dev = fileUrl.query(DUrl::FullyEncoded);
         deviceListener->unmount(dev);
     }
@@ -1117,7 +1159,7 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
 
 void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    auto path = event->url().path(); // something like "/smb://1.2.3.4/shared-folder.remote"
+    auto path = event->url().path(); // something like "/smb://host/shared-folder.remote"
     path = RemoteMountsStashManager::normalizeConnUrl(path);
     // then find the stashed key of it.
     const auto &&stashedRemoteMounts = RemoteMountsStashManager::remoteMounts();
@@ -1140,6 +1182,36 @@ void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEven
     if (!key.isEmpty()) {
         RemoteMountsStashManager::removeRemoteMountItem(key);
     }
+}
+
+void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBaseEvent> &event)
+{
+   //移除所有该IP下的挂载项
+   DUrlList urlList = event->urlList();
+   if(urlList.count() <=0)
+    return;
+   deviceListener->setBatchedRemovingSmbMount(true);//设置批量移除smb挂载，用途：最后一个卸载后才刷新界面
+   QString smbIp;
+   foreach (DUrl url, urlList) {
+       if(FileUtils::isSmbRelatedUrl(url,smbIp) && url.toString().endsWith(SUFFIX_GVFSMP)){
+         QString encodePath = QUrl::fromPercentEncoding(url.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
+         QString folderName = encodePath.section("=",-1);
+         if(folderName.isEmpty())
+             continue;
+         DUrl temUrl(QString("%1://%2/%3").arg(SMB_SCHEME).arg(smbIp).arg(folderName));
+         QByteArray temPath = QUrl::toPercentEncoding(folderName);
+         //finalPath like: smb://host/share_folder/
+         QString fianlPath = QString("%1://%2/%3/").arg(SMB_SCHEME).arg(smbIp).arg(QString(temPath));
+         deviceListener->unmount(fianlPath);
+       }
+   }
+   //从侧边栏移除SMB IP按钮
+   DFileManagerWindow* managerWindow = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(event->windowId()));
+   if(managerWindow && !smbIp.isEmpty()){
+       DUrl smbUrl = DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
+       managerWindow->getLeftSideBar()->removeItem(smbUrl,"device");
+       managerWindow->getLeftSideBar()->removeSmbUrlFromMultipMap(smbUrl);//必须从multihash中移除，否则下次添加不上
+   }
 }
 
 void AppController::actionctrlL(quint64 winId)
@@ -1186,15 +1258,18 @@ void AppController::actionForward(quint64 winId)
 
 void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
-    QString path;
     DAbstractFileInfoPointer fi = fileService->createFileInfo(event->sender(), event->url());
-    if (fi && fi->suffix() == SUFFIX_GVFSMP) {
+    if(fi == nullptr)
+        return;
+    QString path = fi->fileUrl().toString();
+    if (fi->suffix() == SUFFIX_GVFSMP) {
         path = QUrl(fi->extraProperties()["rooturi"].toString()).toString();
+    }else if(FileUtils::isSmbPath(path)){
+        if(!path.endsWith("/"))
+            path.append("/");
     }
     QJsonObject smbObj = secretManager->getLoginData(path);
-
     qDebug() << path << smbObj;
-
     if (!smbObj.empty()) {
         QStringList ids = path.split("/");
         QString domain;
@@ -1228,6 +1303,10 @@ void AppController::actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &
     actionUnmount(event);
 
     auto stashKey = fi->extraProperties()["backer_url"].toString();
+    if(stashKey.isEmpty())
+        stashKey = QString("/run/user/%1/gvfs/smb-share:server=%2,share=%3")
+                .arg(getuid()).arg(event->url().host()).arg(event->url().path().mid(1));
+
     RemoteMountsStashManager::removeRemoteMountItem(stashKey);
 }
 

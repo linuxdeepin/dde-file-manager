@@ -103,6 +103,9 @@ public:
     bool isFromNativeDisk(const QString &uuid); // 是否为本地分区
     bool isFromNativeBlockDev(const QString &mntPath); // 挂载点的设备是否是本地的块设备
 
+    int getCountOfMountedSmb(const QString &ip);//获取ip下smb挂载数量
+    void setBatchedRemovingSmbMount(bool value);//设置批量卸载smb的标志
+    bool isBatchedRemovingSmbMount();
 private:
     void initDiskManager();
     void initConnect();
@@ -149,6 +152,7 @@ private:
 
     QStringList m_hiddenDirs; // feature: hide specified dirs of unremovable devices
     QStringList m_uuids; // from /etc/fstab
+    bool m_isBatchedRemovingSmbMount = false;//是否批量卸载SMB
 };
 
 #endif // UDISKLISTENER_H

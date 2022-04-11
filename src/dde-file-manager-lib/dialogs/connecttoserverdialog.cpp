@@ -25,9 +25,12 @@
 #include "dfmeventdispatcher.h"
 #include "connecttoserverdialog.h"
 #include "../views/dfilemanagerwindow.h"
+#include "../views/dtoolbar.h"
+#include "../shutil/fileutils.h"
 #include "../controllers/searchhistroymanager.h"
 #include "../interfaces/dfmsettings.h"
 #include "../interfaces/dfmapplication.h"
+
 
 #include <QComboBox>
 #include <QVBoxLayout>
@@ -81,6 +84,12 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
         if (!historyManager->toStringList().contains(text)) {
             historyManager->writeIntoSearchHistory(text);
+        }
+        if(FileUtils::isSmbIpHost(inputUrl)){
+            DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(fileWindow->topLevelWidget());
+            if(window){
+                emit window->getToolBar()->addSmbIpToSideBar(inputUrl);
+            }
         }
     }
     close();
