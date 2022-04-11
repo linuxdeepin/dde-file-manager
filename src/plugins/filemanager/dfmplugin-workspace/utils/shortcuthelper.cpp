@@ -114,7 +114,7 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
         return false;
     switch (event->modifiers()) {
     case Qt::NoModifier:
-        if (event->key() == Qt::Key_Space) {
+        if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
             previewFiles();
             return true;
         } else if (normalKeyPressEventHandle(event)) {

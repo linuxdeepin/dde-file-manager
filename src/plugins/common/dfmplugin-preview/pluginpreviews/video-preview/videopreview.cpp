@@ -39,18 +39,23 @@ VideoPreview::VideoPreview(QObject *parent)
 
     playerWidget = new VideoWidget(this);
     statusBar = new VideoStatusBar(this);
+
+    connect(&playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, &VideoPreview::sigPlayState);
+    connect(&playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, &VideoPreview::elapsedChanged);
 }
 
 VideoPreview::~VideoPreview()
 {
-    if (playerWidget->isVisible()) {
-        playerWidget->hide();
-        delete playerWidget.data();
-    }
-
     if (statusBar) {
         statusBar->hide();
         statusBar->deleteLater();
+    }
+
+    if (!playerWidget.isNull()) {
+        playerWidget->hide();
+        disconnect(&playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, &VideoPreview::sigPlayState);
+        disconnect(&playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, &VideoPreview::elapsedChanged);
+        playerWidget.data()->deleteLater();
     }
 }
 

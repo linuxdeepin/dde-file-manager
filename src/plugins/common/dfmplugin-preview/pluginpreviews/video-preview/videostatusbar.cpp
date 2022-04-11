@@ -61,23 +61,28 @@ VideoStatusBar::VideoStatusBar(VideoPreview *preview)
         p->pause();
         p->playerWidget->engine().play();
     });
-    connect(&p->playerWidget->engine(), &dmr::PlayerEngine::stateChanged, this, [this, control_button] {
+
+    connect(p, &VideoPreview::sigPlayState, this, [this, control_button] {
         if (p->playerWidget->engine().state() == dmr::PlayerEngine::Playing) {
             control_button->setIcon(QIcon::fromTheme("dfm_pause"));
         } else {
             control_button->setIcon(QIcon::fromTheme("dfm_start"));
         }
     });
+
     connect(slider, &QSlider::valueChanged, this, [this] {
         p->playerWidget->engine().seekAbsolute(slider->value());
     });
+
     connect(slider, &QSlider::sliderPressed, this, [this] {
         sliderIsPressed = true;
     });
+
     connect(slider, &QSlider::sliderReleased, this, [this] {
         sliderIsPressed = false;
     });
-    connect(&p->playerWidget->engine(), &dmr::PlayerEngine::elapsedChanged, this, [this] {
+
+    connect(p, &VideoPreview::elapsedChanged, this, [this] {
         if (!sliderIsPressed) {
             QSignalBlocker blocker(slider);
             Q_UNUSED(blocker)

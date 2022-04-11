@@ -54,6 +54,11 @@ public:
     void pause() override;
     void stop() override;
 
+signals:
+    void sigPlayState();
+
+    void elapsedChanged();
+
 private:
     QUrl videoUrl;
     QPointer<VideoWidget> playerWidget;

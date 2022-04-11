@@ -173,20 +173,20 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
             if (!e->isAutoRepeat())
                 nextPage();
             break;
+        case Qt::Key_Escape:
         case Qt::Key_Space: {
-            // 视频预览的前一秒禁止再次播放
-            if (playingVideo) {
-                break;
+            if (!e->isAutoRepeat()) {
+                // 视频预览的前一秒禁止再次播放
+                if (playingVideo) {
+                    break;
+                }
+                if (preview) {
+                    preview->stop();
+                }
+                close();
             }
-            if (preview) {
-                preview->stop();
-            }
-            close();
             return true;
         }
-        case Qt::Key_Escape:
-            close();
-            break;
         default:
             break;
         }
