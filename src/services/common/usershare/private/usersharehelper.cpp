@@ -46,10 +46,11 @@ DSC_BEGIN_NAMESPACE
 namespace DaemonServiceIFace {
 static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
 static constexpr char kInterfacePath[] { "/com/deepin/filemanager/daemon/UserShareManager" };
-static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon" };
+static constexpr char kInterfaceInterface[] { "com.deepin.filemanager.daemon.UserShareManager" };
 
-static constexpr char kFuncSetPasswd[] { "setUserSharePassword" };
-static constexpr char kFuncCloseShare[] { "closeSmbShareByShareName" };
+static constexpr char kFuncSetPasswd[] { "SetUserSharePassword" };
+static constexpr char kFuncCloseShare[] { "CloseSmbShareByShareName" };
+static constexpr char kFuncCreateShareLinkFile[] { "CreateShareLinkFile" };
 }   // namespace DBusINterfaceInfo
 
 namespace ShareConfig {
@@ -134,7 +135,6 @@ bool UserShareHelper::share(const ShareInfo &info)
 
 void UserShareHelper::setSambaPasswd(const QString &userName, const QString &passwd)
 {
-    return;   // TODO(xust) impl dbus in new daemon
     userShareInter->asyncCall(DaemonServiceIFace::kFuncSetPasswd, userName, passwd);
 }
 
@@ -336,7 +336,6 @@ void UserShareHelper::initMonitorPath()
 
 void UserShareHelper::removeShareByShareName(const QString &name)
 {
-    return;   // TODO(xust) impl dbus in new daemon
     QDBusReply<bool> reply = userShareInter->asyncCall(DaemonServiceIFace::kFuncCloseShare, name, true);
     if (reply.isValid() && reply.value()) {
         qDebug() << "share closed: " << name;
@@ -469,15 +468,14 @@ QPair<bool, QString> UserShareHelper::startSmbService()
 
 bool UserShareHelper::setSmbdAutoStart()
 {
-    // TODO(xust): invoke daemon method `createShareLinkFile` to auto start;
-    return true;
+    QDBusReply<bool> reply = userShareInter->call(DaemonServiceIFace::kFuncCreateShareLinkFile);
+    return reply.value();
 }
 
 UserShareHelper::UserShareHelper(QObject *parent)
     : QObject(parent)
 {
-    // TODO(xust) impl dbus in new daemon
-    //    userShareInter.reset(new QDBusInterface(DaemonServiceIFace::kInterfaceService, DaemonServiceIFace::kInterfacePath, DaemonServiceIFace::kInterfaceInterface, QDBusConnection::systemBus(), this));
+    userShareInter.reset(new QDBusInterface(DaemonServiceIFace::kInterfaceService, DaemonServiceIFace::kInterfacePath, DaemonServiceIFace::kInterfaceInterface, QDBusConnection::systemBus(), this));
 
     watcherManager = new ShareWatcherManager(this);
     watcherManager->add(ShareConfig::kShareConfigPath);
