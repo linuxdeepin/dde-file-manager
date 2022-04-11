@@ -216,6 +216,29 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     DUrlList redirectedUrlList;
     if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
+        ///此处需要判断currentUrl是否形如：smb://xx.xx.xx.xx/<share_folder>
+        bool isSmbSharedDir = FileUtils::isSmbShareFolder(currentUrl);
+        if (isSmbSharedDir) {
+            // /run/user/1000/gvfs/smb-share:server=xx.xx.xx.xx,share=<folderName>
+            QString formatPath("/run/user/%1/gvfs/smb-share:server=%2,share=%3");
+            QString scheme = currentUrl.scheme();
+            QUrl tem = QUrl::fromPercentEncoding(currentUrl.toString().toLocal8Bit());
+            QString path = tem.path();
+            if(!path.isEmpty()){
+                QString ip = tem.host();
+                QString dirName = path.split("/").last();
+                formatPath = formatPath.arg(getuid()).arg(ip).arg(dirName.toLower());
+                DUrl mountUrl;
+                mountUrl.setScheme(DFMROOT_SCHEME);
+                mountUrl.setPath("/" + QUrl::toPercentEncoding(formatPath + "." SUFFIX_GVFSMP));
+                bool isMounted = FileUtils::isNetworkUrlMounted(mountUrl);
+                if (isMounted) {//Menu show unmount item
+                    actions << MenuAction::Unmount << MenuAction::ForgetPassword;
+                } else {//Menu show mount item
+                    actions << MenuAction::Mount;
+                }
+            }
+        }
         //修改在挂载的文件下面，不能删除，但是显示了删除
         //判定逻辑，如果是挂载盘，并且这个文件是对应的不是一个虚拟的项（表示有实体），那么这个文件就有彻底删除权限MenuAction::CompleteDeletion
         //但是这个文件canrename权限为false，以前的判断输出就是，不能MenuAction::Cut，MenuAction::Rename
@@ -574,9 +597,19 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     if(!VaultController::isVaultFile(currentUrl.toLocalFile())) {
         loadNormalPluginMenu(menu, urls, currentUrl, onDesktop);
     }
+    //把挂载、卸载、取消记住密码并卸载放到右键菜单的最后
+    QList<QAction*> acList = menu->actions();
+    QList<QAction*> lastList;
+    foreach(QAction* ac,acList){
+        if(ac->data() == MenuAction::Mount || ac->data() == MenuAction::Unmount || ac->data() == MenuAction::ForgetPassword){
+            lastList << ac;
+            acList.removeOne(ac);
+        }
+    }
+    if(!lastList.isEmpty())
+        menu->addActions(lastList);
     // stop loading Extension menus from json files
     //loadNormalExtensionMenu(menu, urlList, currentUrl);
-
     return menu;
 }
 
@@ -920,6 +953,7 @@ void DFileMenuData::initData()
     }
 
     actionKeys[MenuAction::RemoveStashedRemoteConn] = QObject::tr("Remove");
+    actionKeys[MenuAction::UnmountAllSmbMount] = QObject::tr("Remove");
     actionKeys[MenuAction::RefreshView] = QObject::tr("Refresh");
 }
 
@@ -1084,7 +1118,6 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
 
             action->setDisabled(disableList.contains(key));
             action->setProperty("_dfm_menu", QVariant::fromValue(menu));
-
             menu->addAction(action);
 
             if (!subMenuList.contains(key)) {
@@ -1097,7 +1130,6 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             action->setMenu(subMenu);
         }
     }
-
     return menu;
 }
 

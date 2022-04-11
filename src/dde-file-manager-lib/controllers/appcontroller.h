@@ -143,7 +143,7 @@ public slots:
     void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event);
-
+    void actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBaseEvent> &event);
 
     void actionctrlL(quint64 winId);
     void actionctrlF(quint64 winId);
@@ -221,7 +221,6 @@ public:
     static QPair<QList<DUrl>, quint64> multiSelectionFilesCache;  //###: for multi selection.
     static std::atomic<quint64> multiSelectionFilesCacheCounter;
     static std::atomic<bool> flagForDDesktopRenameBar;
-
     StartManagerInterface *startManagerInterface() const;
     bool checkLaunchAppInterface();
 };

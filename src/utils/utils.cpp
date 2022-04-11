@@ -523,6 +523,6 @@ QString RemoteMountsStashManager::normalizeConnUrl(const QString &url)
     auto path = url;
     while (path.startsWith("/"))
         path = path.mid(1);
-    path.remove(".remote");
+    path.remove(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
     return path;
 }

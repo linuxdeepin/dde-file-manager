@@ -34,7 +34,7 @@
 #include "dfmevent.h"
 #include "app/define.h"
 #include "app/filesignalmanager.h"
-
+#include "shutil/fileutils.h"
 #include "dfilemenumanager.h"
 
 #include "singleton.h"
@@ -288,6 +288,10 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
     DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
 
     QDir::setCurrent(currentDir);
+
+    if(FileUtils::isSmbIpHost(inputUrl)){//like: smb://xx.xx.xx.xx
+        emit addSmbIpToSideBar(inputUrl);
+    }
 
     //fix bug 32652 当连接了同一台机器的smb共享时，就缓存了它，第二次再去连接smb访问时，使用了缓存
     NetworkManager::NetworkNodes.remove(inputUrl);

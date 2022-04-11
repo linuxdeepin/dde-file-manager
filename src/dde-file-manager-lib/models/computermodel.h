@@ -110,11 +110,21 @@ public Q_SLOTS:
     void removeItem(const DUrl &url);
     void onGetRootFile(const DAbstractFileInfoPointer &chi);
     void onOpticalChanged();
-
+private:
+    /**
+     * @brief removeSmbUrlFromMultipMap 当SMB卸载发生时，从MultipMap中移除SMB URL
+     * @param url
+     */
+    void removeSmbUrlFromMultipMap(const DUrl& url);
+    /**
+     * @brief remainCountOfMountedSmb 检查传入的SMB IP设备下还有多少个挂载的目录
+     * @param ip SMB IP地址
+     * @return 返回传入的SMB IP设备下挂载的共享文件夹数量
+     */
+    int remainCountOfMountedSmb(const QString& ip);
 Q_SIGNALS:
     void itemCountChanged(int nitems);
     void opticalChanged();
-
 private:
     ComputerView* par;
     QScopedPointer<DDiskManager> m_diskm;
@@ -141,6 +151,7 @@ private:
     static DUrl makeSplitterUrl(QString text);
     static DUrl makeSplitterUrl(SplitterType type);
     int findNextSplitter(const int &index);
+    QMultiMap<QString, DUrl> m_computerSmbIpItemNames;   //<ip,smb_source>
 };
 
 

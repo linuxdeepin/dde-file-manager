@@ -130,9 +130,20 @@ void DRootFileManager::changeRootFile(const DUrl &fileurl, const bool bcreate)
         }
     } else {
         qDebug() << "  remove   " << d_ptr->rootfilelist;
+        bool isRemoded = false;
         if (d_ptr->rootfilelist.contains(fileurl)) {
-            qInfo() << "  remove   " << fileurl;
-            d_ptr->rootfilelist.remove(fileurl);
+            isRemoded = d_ptr->rootfilelist.remove(fileurl)>=1;
+        }
+        if(!isRemoded){//当配置成smb常驻时，d_ptr->rootfilelist中保存的是：dfmroot:///smb://host/share_folder.remote
+            QString path = QUrl::fromPercentEncoding(fileurl.path().toUtf8());
+            if (path.contains(QString(".%1").arg(SUFFIX_GVFSMP)) && path.contains("gvfs/smb-share:server=") && path.contains(",share=")) {
+                QString host = path.section("server=",-1).section(",",0,0);
+                QString shardFolder = path.section("share=",-1).section(QString(".%1").arg(SUFFIX_GVFSMP),0,0);
+                DUrl tem(QString("dfmroot:///smb://%1/%2.remote").arg(host).arg(shardFolder));//tem like: dfmroot:///smb://host/share_folder.remote
+                if (d_ptr->rootfilelist.contains(tem)) {
+                    d_ptr->rootfilelist.remove(tem);
+                }
+            }
         }
     }
 }

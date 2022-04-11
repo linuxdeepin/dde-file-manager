@@ -545,7 +545,6 @@ bool DFMRootFileWatcherPrivate::start()
         if (mnt->getVolume() && mnt->getVolume()->volumeMonitorName().endsWith("UDisks2")) {
             return;
         }
-
         DUrl url;
         url.setScheme(DFMROOT_SCHEME);
         QString path = mnt->getRootFile()->path();
@@ -571,13 +570,20 @@ bool DFMRootFileWatcherPrivate::start()
         }
         qDebug() << path;
         url.setPath("/" + QUrl::toPercentEncoding(path) + "." SUFFIX_GVFSMP);
-        Q_EMIT wpar->fileDeleted(url);
         QString uri = mnt->getRootFile()->uri();
-        fileSignalManager->requestRemoveRecentFile(path);
+        wpar->setProperty("isBathUnmuntSmb",deviceListener->isBatchedRemovingSmbMount());
+        wpar->setProperty("remainUnmuntSmb",deviceListener->getCountOfMountedSmb(DUrl(uri).host()));
+        Q_EMIT wpar->fileDeleted(url);
+        emit fileSignalManager->requestRemoveRecentFile(path);
         qDebug() << uri << "mount removed";
         if (FileUtils::isSmbPath(path)) {
-            emit fileSignalManager->requestFreshAllFileView();
-            emit fileSignalManager->requestFreshAllDesktop();
+          int remainCountOfSmbMount = deviceListener->getCountOfMountedSmb(DUrl(uri).host());
+          if(!(deviceListener->isBatchedRemovingSmbMount() && remainCountOfSmbMount >0)){//批量卸载SMB时，需卸载完毕再刷新界面以避免卡顿
+              deviceListener->setBatchedRemovingSmbMount(false);
+              emit fileSignalManager->requestFreshAllFileView();
+              emit fileSignalManager->requestFreshAllDesktop();
+           }
+
         }
         if (uri.contains("smb-share://") || uri.contains("smb://") || uri.contains("ftp://") || uri.contains("sftp://")) {
             // remove NetworkNodes cache, so next time cd uri will fetchNetworks
@@ -596,7 +602,6 @@ bool DFMRootFileWatcherPrivate::start()
             NetworkManager::NetworkNodes.remove(smbUrl);
             smbUrl.setPath("");
             NetworkManager::NetworkNodes.remove(smbUrl);
-
             mnt->unmount(); // yes, we need do it again...otherwise we will goto an removed path like /run/user/1000/gvfs/smb-sharexxxx
         }
     }));
