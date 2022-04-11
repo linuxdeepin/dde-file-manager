@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EVENTPROXY_H
-#define EVENTPROXY_H
+#ifndef FILEOPERATORPROXY_H
+#define FILEOPERATORPROXY_H
 
 #include "ddplugin_canvas_global.h"
 
@@ -70,4 +70,4 @@ private:
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif   // EVENTPROXY_H
+#endif   // FILEOPERATORPROXY_H

@@ -28,7 +28,7 @@
 #include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
-#include "view/operator/fileoperaterproxy.h"
+#include "view/operator/fileoperatorproxy.h"
 
 #include <services/common/menu/menu_defines.h>
 #include <services/common/menu/menuservice.h>
@@ -304,7 +304,7 @@ bool CanvasMenuScene::triggered(QAction *action)
         if (sceneName == kClipBoardMenuSceneName) {
             // paste
             if (actionId == dfmplugin_menu::ActionID::kPaste) {
-                FileOperaterProxyIns->pasteFiles(d->view, d->gridPos);
+                FileOperatorProxyIns->pasteFiles(d->view, d->gridPos);
                 return true;
             }
         }
@@ -313,31 +313,31 @@ bool CanvasMenuScene::triggered(QAction *action)
         if (sceneName == kNewCreateMenuSceneName) {
             // new folder
             if (actionId == dfmplugin_menu::ActionID::kNewFolder) {
-                FileOperaterProxyIns->touchFolder(d->view, d->gridPos);
+                FileOperatorProxyIns->touchFolder(d->view, d->gridPos);
                 return true;
             }
 
             // new office text
             if (actionId == dfmplugin_menu::ActionID::kNewOfficeText) {
-                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
+                FileOperatorProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
                 return true;
             }
 
             // new spreadsheets
             if (actionId == dfmplugin_menu::ActionID::kNewSpreadsheets) {
-                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
+                FileOperatorProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
                 return true;
             }
 
             // new presentation
             if (actionId == dfmplugin_menu::ActionID::kNewPresentation) {
-                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
+                FileOperatorProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
                 return true;
             }
 
             // new plain text
             if (actionId == dfmplugin_menu::ActionID::kNewPlainText) {
-                FileOperaterProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
+                FileOperatorProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
                 return true;
             }
         }
