@@ -46,6 +46,7 @@ public:   // operations
     bool stopMonitor();
     bool stopDefenderScanDrive(const QString &deviceId);
     bool stopDefenderScanAllDrives();
+    void disableStorageInfoPoll();
 
     bool detachBlockDevice(const QString &deviceId);
     bool detachProtocolDevice(const QString &deviceId);

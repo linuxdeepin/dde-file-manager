@@ -281,6 +281,7 @@ void AccessControlDBus::initConnect()
 {
     connect(DeviceController::instance(), &DeviceController::blockDevAdded, this, &AccessControlDBus::onBlockDevAdded);
     connect(DeviceController::instance(), &DeviceController::blockDevMounted, this, &AccessControlDBus::onBlockDevMounted);
+    DeviceController::instance()->disableStorageInfoPoll();
 }
 
 void AccessControlDBus::changeMountedOnInit()

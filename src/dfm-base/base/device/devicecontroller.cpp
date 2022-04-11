@@ -1115,6 +1115,11 @@ bool DeviceController::stopDefenderScanAllDrives()
     return true;
 }
 
+void DeviceController::disableStorageInfoPoll()
+{
+    monitorHandler->sizeUpdateTimer.stop();
+}
+
 /*!
  * \brief detach a block device (dde-dock plugin is eject, dde-file-manager
  * is safely remove)
