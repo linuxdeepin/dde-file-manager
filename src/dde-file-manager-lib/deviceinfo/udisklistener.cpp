@@ -156,7 +156,6 @@ void UDiskListener::addDevice(UDiskDeviceInfoPointer device)
     m_map.insert(device->getDiskInfo().id(), device);
     m_list.append(device);
 
-
     DAbstractFileWatcher::ghostSignal(DUrl(DEVICE_ROOT),
                                       &DAbstractFileWatcher::subfileCreated,
                                       DUrl::fromDeviceId(device->getId()));
@@ -600,6 +599,28 @@ bool UDiskListener::isFromNativeBlockDev(const QString &mntPath)
 
     endmntent(mntfile);
     return ret;
+}
+
+int UDiskListener::getCountOfMountedSmb(const QString& ip)
+{
+    int sum = 0;
+    foreach (UDiskDeviceInfoPointer device, m_list) {
+        DUrl url(device->getDiskInfo().mounted_root_uri());
+        if(url.scheme() == SMB_SCHEME && !ip.isEmpty() && url.host() == ip){
+            sum++;
+        }
+    }
+    return sum;
+}
+
+void UDiskListener::setBatchedRemovingSmbMount(bool value)
+{
+    m_isBatchedRemovingSmbMount = value;
+}
+
+bool UDiskListener::isBatchedRemovingSmbMount()
+{
+    return m_isBatchedRemovingSmbMount;
 }
 
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)

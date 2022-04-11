@@ -69,7 +69,6 @@ ComputerViewItemDelegate::~ComputerViewItemDelegate()
 void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
-
     ComputerModelItemData::Category cat = ComputerModelItemData::Category(index.data(ComputerModel::DataRoles::ICategoryRole).toInt());
     if (cat == ComputerModelItemData::Category::cat_splitter) {
         QFont fnt(par->font());
@@ -161,7 +160,13 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     } else {
         text = option.fontMetrics.elidedText(index.data(Qt::DisplayRole).toString(), Qt::ElideMiddle, text_max_width - 5);
     }
-
+    ComputerModelItemData* itemData = static_cast<ComputerModelItemData *>(index.internalPointer());
+    QString smbHost;
+    bool isSmbHost = false;
+    if(itemData && FileUtils::isSmbRelatedUrl(itemData->url,smbHost)){
+        text = smbHost;//SMB设备只显示host
+        isSmbHost = true;
+    }
     QRect nameTextDarwRect; //此处真实的字符绘制Rect非labelRect
     painter->drawText(nameLabelRect, Qt::TextWrapAnywhere, text, &nameTextDarwRect);
 
@@ -230,7 +235,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     // Paint size.
     bool bSizeVisible = index.data(ComputerModel::DataRoles::SizeRole).toBool();
     QString scheme = index.data(ComputerModel::DataRoles::SchemeRole).toString();
-    if (bSizeVisible) {
+    if (bSizeVisible && !isSmbHost) {//smb共享目录在计算机界面不显示容量
         if (scheme == DFMVAULT_SCHEME) {
             // vault only show size.
             painter->drawText(totalLabelRect, Qt::AlignLeft, FileUtils::formatSize(static_cast<qint64>(sizeinuse)));
@@ -287,7 +292,7 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
     // Paint progress
     bool bProgressVisible = index.data(ComputerModel::DataRoles::ProgressRole).toBool();
 
-    if (bProgressVisible) {
+    if (bProgressVisible && !isSmbHost) {//smb共享目录在计算机界面不显示容量
         sty->drawControl(QStyle::ControlElement::CE_ProgressBarGroove, &plopt, painter, option.widget);
         sty->drawControl(QStyle::ControlElement::CE_ProgressBarContents, &plopt, painter, option.widget);
     }

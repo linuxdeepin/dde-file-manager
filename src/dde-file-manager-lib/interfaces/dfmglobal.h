@@ -202,6 +202,7 @@ public:
         CompleteDeletion,
         Mount,
         Unmount,
+        UnmountAllSmbMount,
         Eject,
         SafelyRemoveDrive,
         Name,

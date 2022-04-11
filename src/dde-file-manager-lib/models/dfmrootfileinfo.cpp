@@ -457,6 +457,7 @@ QVector<MenuAction> DFMRootFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     ret.push_back(MenuAction::Separator);
 
     ret.push_back(MenuAction::Property);
+
     return ret;
 }
 
