@@ -24,8 +24,7 @@
 
 #include <dfm-framework/framework.h>
 
-#include <DApplication>
-
+#include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
 
@@ -34,9 +33,6 @@
 #include <stdlib.h>
 #include <pwd.h>
 #include <sys/types.h>
-
-DGUI_USE_NAMESPACE
-DWIDGET_USE_NAMESPACE
 
 static constexpr char kDaemonInterface[] { "org.deepin.plugin.daemon" };
 static constexpr char kPluginCore[] { "daemonplugin-core" };
@@ -88,7 +84,7 @@ static bool pluginsLoad()
     qDebug() << "using plugins dir:" << pluginsDir;
     lifeCycle.setPluginPaths({ pluginsDir });
 
-    qInfo() << "Depend library paths:" << DApplication::libraryPaths();
+    qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
@@ -116,7 +112,7 @@ static bool pluginsLoad()
 int main(int argc, char *argv[])
 {
     initEnv();
-    DApplication a(argc, argv);
+    QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
 
     initLog();

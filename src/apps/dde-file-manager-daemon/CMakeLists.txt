@@ -18,14 +18,12 @@ find_package(Qt5 COMPONENTS
     Widgets
     DBus
     REQUIRED)
-find_package(Dtk REQUIRED Widget REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRCS})
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}
-        ${DtkWidget_INCLUDE_DIRS}
 )
 
 
@@ -34,7 +32,6 @@ target_link_libraries(
     DFM::framework
     Qt5::Widgets
     Qt5::DBus
-    ${DtkWidget_LIBRARIES}
 )
 
 # binary
