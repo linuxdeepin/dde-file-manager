@@ -161,14 +161,11 @@ void DiskControlItem::showEvent(QShowEvent *e)
         QPair<quint64, quint64> &&freeAndTotal = attachedDev->deviceUsage();
         quint64 bytesFree = freeAndTotal.first;
         quint64 bytesTotal = freeAndTotal.second;
+        quint64 bytesUsage = bytesTotal > bytesFree ? (bytesTotal - bytesFree) : 0;
 
-        if (bytesTotal > 0 && bytesTotal >= bytesFree) {
-            diskCapacity->setText(QString("%1 / %2")
-                                          .arg(SizeFormatHelper::formatDiskSize(bytesTotal - bytesFree))
-                                          .arg(SizeFormatHelper::formatDiskSize(bytesTotal)));
-        } else {
-            diskCapacity->setText(tr("Unknown"));
-        }
+        diskCapacity->setText(QString("%1 / %2")
+                                      .arg(SizeFormatHelper::formatDiskSize(bytesUsage))
+                                      .arg(SizeFormatHelper::formatDiskSize(bytesTotal)));
 
         if (bytesTotal > 0) {
             capacityValueBar->setValue(static_cast<int>(100 * (bytesTotal - bytesFree) / bytesTotal));

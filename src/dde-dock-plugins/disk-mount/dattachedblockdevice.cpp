@@ -136,7 +136,7 @@ QPair<quint64, quint64> DAttachedBlockDevice::deviceUsage()
 
         return QPair<quint64, quint64>(static_cast<quint64>(bytesFree), static_cast<quint64>(bytesTotal));
     }
-    return QPair<quint64, quint64>();
+    return QPair<quint64, quint64>(0, 0);
 }
 
 QString DAttachedBlockDevice::iconName()
