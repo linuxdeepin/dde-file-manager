@@ -412,6 +412,8 @@ void DFMSideBar::rootFileResult()
 
 void DFMSideBar::onItemActivated(const QModelIndex &index)
 {
+    if(!DRootFileManager::instance()->isRootFileInited())
+        return;
     DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
     QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
 
