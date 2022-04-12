@@ -254,20 +254,20 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="285"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="284"/>
         <source>Computer</source>
         <translation>Computer</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="294"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="293"/>
         <source>Basic Info</source>
         <translation>Grundlegende Informationen</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
-        <source>Computer Name</source>
-        <translation>Computername</translation>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="304"/>
+        <source>Computer name</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="109"/>
@@ -277,7 +277,7 @@
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="111"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="317"/>
         <source>Version</source>
         <translation>Version</translation>
@@ -291,33 +291,39 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="115"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="309"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="352"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="350"/>
         <source>Processor</source>
         <translation>Prozessor</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="118"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="310"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="349"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="347"/>
         <source>Memory</source>
         <translation>Arbeitsspeicher</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="143"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="203"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="449"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="490"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="448"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="488"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="225"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="500"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="499"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="371"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="356"/>
+        <source>OS build</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="370"/>
         <source>Obtaining...</source>
         <translation>Wird abgerufen ...</translation>
     </message>
@@ -1309,44 +1315,44 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1152"/>
-        <location filename="../views/dfiledialog.cpp" line="1449"/>
+        <location filename="../views/dfiledialog.cpp" line="1172"/>
+        <location filename="../views/dfiledialog.cpp" line="1469"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1267"/>
-        <location filename="../views/dfiledialog.cpp" line="1314"/>
+        <location filename="../views/dfiledialog.cpp" line="1287"/>
+        <location filename="../views/dfiledialog.cpp" line="1334"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1268"/>
+        <location filename="../views/dfiledialog.cpp" line="1288"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Bestätigen</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1312"/>
+        <location filename="../views/dfiledialog.cpp" line="1332"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 existiert bereits, möchten Sie es ersetzen?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1315"/>
+        <location filename="../views/dfiledialog.cpp" line="1335"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Ersetzen</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1446"/>
+        <location filename="../views/dfiledialog.cpp" line="1466"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Öffnen</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1266"/>
+        <location filename="../views/dfiledialog.cpp" line="1286"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Diese Datei wird ausgeblendet, wenn der Dateiname mit einem Punkt (.) beginnt. Möchten Sie diese Datei ausblenden?</translation>
     </message>
@@ -1375,7 +1381,7 @@
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
-        <location filename="../models/searchfileinfo.cpp" line="146"/>
+        <location filename="../models/searchfileinfo.cpp" line="156"/>
         <source>Time modified</source>
         <translation>Änderungszeit</translation>
     </message>
@@ -1403,8 +1409,8 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
-        <location filename="../models/searchfileinfo.cpp" line="144"/>
-        <location filename="../models/searchfileinfo.cpp" line="149"/>
+        <location filename="../models/searchfileinfo.cpp" line="154"/>
+        <location filename="../models/searchfileinfo.cpp" line="159"/>
         <source>Path</source>
         <translation>Pfad</translation>
     </message>
@@ -1412,22 +1418,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2864"/>
+        <location filename="../views/dfileview.cpp" line="2880"/>
         <source>Disc mount error</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2864"/>
+        <location filename="../views/dfileview.cpp" line="2880"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2877"/>
+        <location filename="../views/dfileview.cpp" line="2893"/>
         <source>Mounting failed</source>
         <translation>Einhängen fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3613"/>
+        <location filename="../views/dfileview.cpp" line="3629"/>
         <source>(Reverse)</source>
         <translation>(Umgekehrt)</translation>
     </message>
@@ -1435,7 +1441,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="670"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="678"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Schlagwort &quot;%1&quot; hinzufügen</translation>
     </message>
@@ -1658,9 +1664,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="399"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1160"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1175"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1185"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1163"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1188"/>
         <source>Operation failed!</source>
         <translation>Operation fehlgeschlagen!</translation>
     </message>
@@ -1810,44 +1816,44 @@
         <translation>Die Originaldatei kann nicht gefunden werden</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1212"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1179"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1215"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Sie besitzen nicht die erforderlichen Rechte um den Ordner oder die Datei zu bearbeiten!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1190"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Datei %1 konnte nicht wiederhergestellt werden, die Quelldatei existiert nicht</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1229"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1232"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Sie haben keine Berechtigung um die Operation auf die folgenden %1 Datei(en)/Ordner anzuwenden!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1370"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
         <source>Unable to access %1</source>
         <translation>Zugriff auf %1 nicht möglich</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1453"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1456"/>
         <source>Sending files now, please try later</source>
         <translation>Dateien werden jetzt gesendet, bitte versuchen Sie es später</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1505"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Um auf das Gerät zugreifen zu können, müssen Sie das Laufwerk zuerst formatieren. Sind Sie sicher, dass Sie es jetzt formatieren wollen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1517"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1520"/>
         <source>Scanning the device, stop it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1577"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Ein geteilter Ordner kann nicht nach dem aktuellen Benutzernamen benamt werden.</translation>
     </message>
@@ -1891,11 +1897,11 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1052"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1070"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1192"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1258"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1181"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1195"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1261"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1579"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
@@ -1911,8 +1917,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="751"/>
         <location filename="../dialogs/dialogmanager.cpp" line="915"/>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1500"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1515"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1503"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1518"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Abbrechen</translation>
@@ -1944,8 +1950,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="520"/>
         <location filename="../dialogs/dialogmanager.cpp" line="632"/>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1272"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1376"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Bestätigen</translation>
@@ -1997,28 +2003,28 @@
         <translation>Kopieren nicht möglich. Nicht genügend freier Speicherplatz auf dem Ziellaufwerk.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1162"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1165"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>%1 Datei konnte nicht wiederhergestellt werden. Der Zielordner ist schreibgeschützt</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>%1 Dateien konnten nicht wiederhergestellt werden. Der Zielordner ist schreibgeschützt</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1192"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Dateien %1 konnten nicht wiederhergestellt werden, die Quelldateien existieren nicht</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1501"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formatieren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1516"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1519"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Stopp</translation>
@@ -2425,7 +2431,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Show file extensions</source>
-        <translation type="unfinished"/>
+        <translation>Dateierweiterungen anzeigen</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="156"/>
@@ -2509,7 +2515,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="293"/>
         <location filename="../configure/global-setting-template.js" line="299"/>
         <source>Hide loop partitions</source>
-        <translation type="unfinished"/>
+        <translation>Loop-Partitionen verstecken</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="306"/>
@@ -3766,12 +3772,12 @@
         <translation>Ordner ist leer</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="371"/>
+        <location filename="../models/searchfileinfo.cpp" line="381"/>
         <source>Searching...</source>
         <translation>Wird gesucht ...</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="376"/>
+        <location filename="../models/searchfileinfo.cpp" line="386"/>
         <source>No results</source>
         <translation>Keine Ergebnisse</translation>
     </message>
@@ -3950,7 +3956,7 @@
         <translation>Tipps: Nach ausgewählter Dateireihenfolge sortieren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1541"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1544"/>
         <source>Rename %1 Files</source>
         <translation>%1 Dateien umbenennen</translation>
     </message>
@@ -4439,7 +4445,7 @@
         <translation>Neuer Ordner</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="387"/>
+        <location filename="../models/searchfileinfo.cpp" line="397"/>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Search</source>
         <translation>Suchen</translation>

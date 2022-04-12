@@ -254,19 +254,19 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="285"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="284"/>
         <source>Computer</source>
         <translation>Ordinador</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="294"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="293"/>
         <source>Basic Info</source>
         <translation>Informació bàsica</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
-        <source>Computer Name</source>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="304"/>
+        <source>Computer name</source>
         <translation>Nom de l&apos;ordinador</translation>
     </message>
     <message>
@@ -277,7 +277,7 @@
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="111"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="317"/>
         <source>Version</source>
         <translation>Versió</translation>
@@ -291,33 +291,39 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="115"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="309"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="352"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="350"/>
         <source>Processor</source>
         <translation>Processador</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="118"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="310"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="349"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="347"/>
         <source>Memory</source>
         <translation>Memòria</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="143"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="203"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="449"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="490"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="448"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="488"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="225"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="500"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="499"/>
         <source>Available</source>
         <translation>Disponible</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="371"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="356"/>
+        <source>OS build</source>
+        <translation>Compilació del SO</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="370"/>
         <source>Obtaining...</source>
         <translation>S&apos;obté...</translation>
     </message>
@@ -1309,44 +1315,44 @@
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1152"/>
-        <location filename="../views/dfiledialog.cpp" line="1449"/>
+        <location filename="../views/dfiledialog.cpp" line="1172"/>
+        <location filename="../views/dfiledialog.cpp" line="1469"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Desa</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1267"/>
-        <location filename="../views/dfiledialog.cpp" line="1314"/>
+        <location filename="../views/dfiledialog.cpp" line="1287"/>
+        <location filename="../views/dfiledialog.cpp" line="1334"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1268"/>
+        <location filename="../views/dfiledialog.cpp" line="1288"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1312"/>
+        <location filename="../views/dfiledialog.cpp" line="1332"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 ja existeix, voleu reemplaçar-la?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1315"/>
+        <location filename="../views/dfiledialog.cpp" line="1335"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Reemplaça</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1446"/>
+        <location filename="../views/dfiledialog.cpp" line="1466"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Obre</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1266"/>
+        <location filename="../views/dfiledialog.cpp" line="1286"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Aquest fitxer serà ocult si el nom comença amb un punt. Voleu amagar-lo?</translation>
     </message>
@@ -1375,7 +1381,7 @@
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
-        <location filename="../models/searchfileinfo.cpp" line="146"/>
+        <location filename="../models/searchfileinfo.cpp" line="156"/>
         <source>Time modified</source>
         <translation>Hora de modificació</translation>
     </message>
@@ -1403,8 +1409,8 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
-        <location filename="../models/searchfileinfo.cpp" line="144"/>
-        <location filename="../models/searchfileinfo.cpp" line="149"/>
+        <location filename="../models/searchfileinfo.cpp" line="154"/>
+        <location filename="../models/searchfileinfo.cpp" line="159"/>
         <source>Path</source>
         <translation>Camí</translation>
     </message>
@@ -1412,22 +1418,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2864"/>
+        <location filename="../views/dfileview.cpp" line="2880"/>
         <source>Disc mount error</source>
         <translation>Error de muntatge de dis</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2864"/>
+        <location filename="../views/dfileview.cpp" line="2880"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>El disc està en ús. Acabeu el procés en execució i torneu a muntar-lo.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2877"/>
+        <location filename="../views/dfileview.cpp" line="2893"/>
         <source>Mounting failed</source>
         <translation>Ha fallat el muntatge.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3613"/>
+        <location filename="../views/dfileview.cpp" line="3629"/>
         <source>(Reverse)</source>
         <translation>(Inversió)</translation>
     </message>
@@ -1435,7 +1441,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="670"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="678"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>Afegeix l&apos;etiqueta «%1»</translation>
     </message>
@@ -1658,9 +1664,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="399"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1160"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1175"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1185"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1163"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1188"/>
         <source>Operation failed!</source>
         <translation>Ha fallat l&apos;operació!</translation>
     </message>
@@ -1810,44 +1816,44 @@
         <translation>No es pot trobar el fitxer original.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1212"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1179"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1215"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>No teniu permís per fer operacions amb el fitxer o carpeta!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1190"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Ha fallat restaurar %1 fitxer. El fitxer d&apos;origen no existeix.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1229"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1232"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Disculpeu, no teniu permís per fer operacions amb els %1 fitxers o carpetes següents!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1370"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
         <source>Unable to access %1</source>
         <translation>No es pot accedir a %1.</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1453"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1456"/>
         <source>Sending files now, please try later</source>
         <translation>Ara s&apos;envien fitxers. Proveu-ho més tard.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1505"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Per accedir al dispositiu, primer heu de formatar el disc. Segur que el voleu formatar ara?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1517"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1520"/>
         <source>Scanning the device, stop it?</source>
         <translation>S&apos;escaneja el dispositiu. Voleu interrompre-ho?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1577"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>La carpeta de compartició no pot tenir el nom de l&apos;usuari actual.</translation>
     </message>
@@ -1891,11 +1897,11 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1052"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1070"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1192"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1258"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1181"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1195"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1261"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1579"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>D&apos;acord</translation>
@@ -1911,8 +1917,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="751"/>
         <location filename="../dialogs/dialogmanager.cpp" line="915"/>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1500"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1515"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1503"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1518"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
@@ -1944,8 +1950,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="520"/>
         <location filename="../dialogs/dialogmanager.cpp" line="632"/>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1272"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1376"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmeu-ho</translation>
@@ -1997,28 +2003,28 @@
         <translation>No es pot fer la còpia. No hi ha prou espai al disc de destinació.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1162"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1165"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>No s&apos;ha pogut restaurar %1 fitxer, la carpeta de destinació és de només lectura.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>No s&apos;han pogut restaurar %1 fitxers, la carpeta de destinació és de només lectura.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1192"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Ha fallat restaurar %1 fitxers. Els fitxers d&apos;origen no existeixen.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1501"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formatació</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1516"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1519"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Interromp</translation>
@@ -3766,12 +3772,12 @@
         <translation>La carpeta és buida</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="371"/>
+        <location filename="../models/searchfileinfo.cpp" line="381"/>
         <source>Searching...</source>
         <translation>Cercant...</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="376"/>
+        <location filename="../models/searchfileinfo.cpp" line="386"/>
         <source>No results</source>
         <translation>No ha ha resultats.</translation>
     </message>
@@ -3950,7 +3956,7 @@
         <translation>Consell: classificació per ordre de fitxer seleccionat</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1541"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1544"/>
         <source>Rename %1 Files</source>
         <translation>Canvia el nom de %1 fitxers</translation>
     </message>
@@ -4439,7 +4445,7 @@
         <translation>Carpeta nova</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="387"/>
+        <location filename="../models/searchfileinfo.cpp" line="397"/>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Search</source>
         <translation>Cerca</translation>
@@ -4697,7 +4703,7 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="475"/>
         <source>The transport-connection attempt was refused by the remote system. Maybe smbd is not running.</source>
-        <translation type="unfinished"/>
+        <translation>L&apos;intent de connexió de transport ha estat rebutjat pel sistema remot. Potser smbd no s&apos;executa.</translation>
     </message>
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="573"/>
