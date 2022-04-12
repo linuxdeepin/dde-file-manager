@@ -66,7 +66,6 @@ private:
     QPushButton *m_preButton;
     QPushButton *m_nextButton;
     QPushButton *m_openButton;
-
 };
 
 FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
@@ -94,7 +93,7 @@ FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     m_title->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_title->hide();
 
-    m_openButton = new QPushButton(QObject::tr("Open","button"), this);
+    m_openButton = new QPushButton(QObject::tr("Open", "button"), this);
     m_openButton->setObjectName("OpenButton");
     QFont font = m_openButton->font();
     font.setPixelSize(12);
@@ -134,8 +133,7 @@ QLabel *FilePreviewDialogStatusBar::title() const
 }
 
 UnknowFilePreview::UnknowFilePreview(QObject *parent)
-    : DFMFilePreview(parent)
-    , m_contentWidget(new QWidget())
+    : DFMFilePreview(parent), m_contentWidget(new QWidget())
 {
     m_contentWidget->setFixedSize(550, 200);
     m_iconLabel = new QLabel(m_contentWidget);
@@ -222,7 +220,7 @@ void UnknowFilePreview::setFileInfo(const DAbstractFileInfoPointer &info)
             m_sizeWorker->wait();
         }
 
-        m_sizeWorker->start({info->fileUrl()});
+        m_sizeWorker->start({ info->fileUrl() });
         m_sizeLabel->setText(QObject::tr("Size: 0"));
     }
 }
@@ -233,19 +231,17 @@ void UnknowFilePreview::updateFolderSize(qint64 size)
     m_sizeLabel->setText(QObject::tr("Size: %1").arg(FileUtils::formatSize(size)));
 }
 
-
 QWidget *UnknowFilePreview::contentWidget() const
 {
     return m_contentWidget;
 }
 
 FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *parent)
-    : DAbstractDialog(parent)
-    , m_fileList(previewUrllist)
+    : DAbstractDialog(parent), m_fileList(previewUrllist)
 {
 #ifdef Q_OS_LINUX
-#ifndef ARCH_SW     // 申威和龙芯架构已禁用视频预览功能，不会触发此问题
-#ifndef ARCH_MIPSEL //
+#    ifndef ARCH_SW   // 申威和龙芯架构已禁用视频预览功能，不会触发此问题
+#        ifndef ARCH_MIPSEL   //
     // 先触发Qt多媒体库加载gstreamter插件
     // 因为预览视频时会先加载mpv库，如果之后再加载gst库，会导致崩溃在init_plugin
     // 崩溃的原因是libcdio这个demuxer的long_name字段为NULL，gst-libav代码segfault了。
@@ -254,9 +250,9 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
     // Qt用了gst-libav，这个库加载时也会掉ffmpeg的初始化函数，但是只调用了部分，它编译时显示去掉了libavdevice依赖，所以初始化时不会加载libcdio的demuxer。
     //问题来了：如果先跑gst-libav去初始化ffmpeg，那么没有崩溃问题。因为libcdio demuxer没加载。如果先跑影院库预览视频后，libcdio demuxer被加载了。于是就崩了。
 //    QMediaPlayer::hasSupport("audio/mpeg");
-    // NOTE(zccrs): 不再需要此特殊处理，已给 gst-libav 添加 fix-crash-on-load-libcdio-plugin.patch
-#endif
-#endif
+// NOTE(zccrs): 不再需要此特殊处理，已给 gst-libav 添加 fix-crash-on-load-libcdio-plugin.patch
+#        endif
+#    endif
 #endif
 
     initUI();
@@ -319,6 +315,7 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
 {
     emit signalCloseEvent();
     if (m_preview) {
+        m_preview->contentWidget()->hide();
         m_preview->stop();
         if (DFMGlobal::isWayLand()) {
             m_preview->DoneCurrent();
@@ -334,8 +331,8 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
 void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 {
     DAbstractDialog::resizeEvent(event);
-    QTimer::singleShot(50, this, [ = ]() { //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
-        repaint(); //通过重绘来解决调整大小前的窗口残留的问题
+    QTimer::singleShot(50, this, [=]() {   //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
+        repaint();   //通过重绘来解决调整大小前的窗口残留的问题
     });
 }
 
@@ -363,6 +360,7 @@ bool FilePreviewDialog::eventFilter(QObject *obj, QEvent *event)
                 }
 
                 if (m_preview) {
+                    m_preview->contentWidget()->hide();
                     m_preview->stop();
                 }
 
@@ -394,8 +392,8 @@ void FilePreviewDialog::initUI()
     m_closeButton = new DWindowCloseButton(this);
     m_closeButton->setObjectName("CloseButton");
     m_closeButton->setFocusPolicy(Qt::NoFocus);
-    m_closeButton->setIconSize({50, 50});
-    m_closeButton->setFixedSize({50, 50});
+    m_closeButton->setIconSize({ 50, 50 });
+    m_closeButton->setFixedSize({ 50, 50 });
     QColor base_color = palette().base().color();
     DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::toColorType(base_color);
     if (ct == DGuiApplicationHelper::LightType) {
@@ -438,15 +436,12 @@ void FilePreviewDialog::initUI()
     connect(m_statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
     connect(m_statusBar->openButton(), &QPushButton::clicked, this, [this] {
         /*fix bug 47136 在回收站预览打开不了，url传入错误，因为在回收站里面实现了openfile，所以这里倒回到以前代码*/
-        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex)))
-        {
+        if (DFileService::instance()->openFile(this, m_fileList.at(m_currentPageIndex))) {
             close();
         }
-
     });
     connect(shortcut_action, &QAction::triggered, this, [this] {
-        if (m_preview)
-        {
+        if (m_preview) {
             m_preview->copyFile();
         }
     });
@@ -494,8 +489,7 @@ void FilePreviewDialog::switchToPage(int index)
     for (const QString &key : key_list) {
         const QString &general_key = generalKey(key);
 
-        if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key)
-                      || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
+        if (m_preview && (DFMFilePreviewFactory::isSuitedWithKey(m_preview, key) || DFMFilePreviewFactory::isSuitedWithKey(m_preview, general_key))) {
             if (m_preview->setFileUrl(m_fileList.at(index))) {
                 m_preview->contentWidget()->updateGeometry();
                 updateTitle();
@@ -510,7 +504,9 @@ void FilePreviewDialog::switchToPage(int index)
                 return;
             }
         }
-        preview = DFMFilePreviewFactory::create(key);
+
+        if (!info->isDesktopFile())
+            preview = DFMFilePreviewFactory::create(key);
 
         if (!preview && general_key != key && !info->isDesktopFile()) {
             preview = DFMFilePreviewFactory::create(general_key);
@@ -663,8 +659,7 @@ void FilePreviewDialog::updateTitle()
         }
         elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() - 30);
     } else {
-        elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->preButton()->width() -
-                                   m_statusBar->nextButton()->width() - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() * 3 - 30);
+        elidedText = fm.elidedText(m_preview->title(), Qt::ElideMiddle, width() / 2 - m_statusBar->preButton()->width() - m_statusBar->nextButton()->width() - m_statusBar->contentsMargins().left() - m_statusBar->layout()->spacing() * 3 - 30);
     }
     m_statusBar->title()->setText(elidedText);
     m_statusBar->title()->setHidden(m_statusBar->title()->text().isEmpty());
