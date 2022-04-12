@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     huanyu<huanyub@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,27 +19,28 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef PLUGINSERVICE_H
-#define PLUGINSERVICE_H
+*/
+#ifndef FRAMELOGMANAGER_P_H
+#define FRAMELOGMANAGER_P_H
 
 #include "dfm-framework/dfm_framework_global.h"
-
-#include <QObject>
-#include <QHash>
+#include "dfm-framework/log/framelogmanager.h"
 
 DPF_BEGIN_NAMESPACE
 
-class PluginService : public QObject
+class FrameLogManagerPrivate
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(PluginService)
 public:
-    explicit PluginService(QObject *parent = nullptr)
-        : QObject(parent) {}
-    virtual ~PluginService() {}
+    explicit FrameLogManagerPrivate(FrameLogManager *qq);
+    void initFilterAppender();
+    FilterAppender *filterAppender();
+
+public:
+    FilterAppender *curFilterAppender { nullptr };
+
+    FrameLogManager *const q;
 };
 
 DPF_END_NAMESPACE
 
-#endif   // PLUGINSERVICE_H
+#endif   // FRAMELOGMANAGER_P_H

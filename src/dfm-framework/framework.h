@@ -28,6 +28,7 @@
 #include "dfm-framework/event/dispatcher/eventdispatcher.h"
 #include "dfm-framework/event/unicast/eventunicast.h"
 #include "dfm-framework/service/pluginservicecontext.h"
+#include "dfm-framework/log/framelogmanager.h"
 
 #include <QObject>
 
@@ -46,12 +47,13 @@ public:
 
     bool initialize();
     bool start();
-    const LifeCycle &lifeCycle() const;
+    LifeCycle &lifeCycle() const;
     [[gnu::hot]] PluginServiceContext &serviceContext() const;
     EventCallProxy &eventProxy() const;
     [[gnu::hot]] EventDispatcherManager &eventDispatcher() const;
     [[gnu::hot]] EventUnicastManager &eventUnicast() const;
-    const Listener &listener() const;
+    Listener &listener() const;
+    FrameLogManager &log() const;
 
 private:
     Framework();

@@ -64,7 +64,9 @@ static void initLog()
     if (!logDir.exists())
         QDir().mkpath(logPath);
 
-    // TODO(zhangs): framework log
+    dpfInstance.log().setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
+    dpfInstance.log().registerConsoleAppender();
+    dpfInstance.log().registerFileAppender();
 }
 
 static bool pluginsLoad()
@@ -114,6 +116,8 @@ int main(int argc, char *argv[])
     initEnv();
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
+
+    dpfInstance.initialize();
 
     initLog();
     if (!pluginsLoad()) {

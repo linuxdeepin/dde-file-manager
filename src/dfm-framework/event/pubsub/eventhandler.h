@@ -23,7 +23,6 @@
 #define EVENTHANDLER_H
 
 #include "dfm-framework/event/pubsub/event.h"
-#include "dfm-framework/log/frameworklog.h"
 #include "dfm-framework/log/codetimecheck.h"
 #include "dfm-framework/dfm_framework_global.h"
 

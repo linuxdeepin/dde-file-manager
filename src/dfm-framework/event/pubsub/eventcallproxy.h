@@ -24,7 +24,6 @@
 
 #include "dfm-framework/event/pubsub/event.h"
 #include "dfm-framework/event/pubsub/eventhandler.h"
-#include "dfm-framework/log/frameworklog.h"
 
 #include <QObject>
 #include <QMutex>

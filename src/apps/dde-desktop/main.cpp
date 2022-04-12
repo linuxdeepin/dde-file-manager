@@ -117,6 +117,14 @@ void registerDDESession()
     }
 }
 
+static void initLog()
+{
+    const QString logFormat = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
+    dpfInstance.log().setLogFormat(logFormat);
+    dpfInstance.log().registerConsoleAppender();
+    dpfInstance.log().registerFileAppender();
+}
+
 constexpr char kDesktopServiceName[] { "com.deepin.dde.desktop" };
 constexpr char kDesktopServicePath[] { "/com/deepin/dde/desktop" };
 constexpr char kDesktopServiceInterface[] { "com.deepin.dde.desktop" };
@@ -130,6 +138,7 @@ int main(int argc, char *argv[])
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     dpfInstance.initialize();
+    initLog();
 
     // Notify dde-desktop start up
     // if (!fileDialogOnly)

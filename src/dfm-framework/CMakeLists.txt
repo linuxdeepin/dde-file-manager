@@ -11,7 +11,6 @@ if (NOT PROJECT_VERSION_MAJOR)
 endif()
 
 add_definitions(-DDPF_LIBRARY)
-add_definitions(-DDTK_LOG)
 
 FILE(GLOB FRAMEWORK_GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -41,6 +40,8 @@ FILE(GLOB FRAMEWORK_FEATURE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/listener/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/log/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/log/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/log/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/log/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/service/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/service/*.cpp"
     )

@@ -107,7 +107,7 @@ void handleSIGPIPE(int sig)
     qCritical() << "ignore !SIGPIPE! " << sig;
 }
 
-int main(int argc, char *argv[])
+static void initEnv()
 {
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (qEnvironmentVariableIsEmpty("XDG_CURRENT_DESKTOP")) {
@@ -117,6 +117,17 @@ int main(int argc, char *argv[])
     if (qEnvironmentVariable("CLUTTER_IM_MODULE") == QStringLiteral("fcitx")) {
         setenv("QT_IM_MODULE", "fcitx", 1);
     }
+}
+
+static void initLog()
+{
+    dpfInstance.log().registerConsoleAppender();
+    dpfInstance.log().registerFileAppender();
+}
+
+int main(int argc, char *argv[])
+{
+    initEnv();
 
     // Fixed the locale codec to utf-8
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
@@ -136,6 +147,7 @@ int main(int argc, char *argv[])
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     dpfInstance.initialize();
+    initLog();
 
     commandServIns->process();
 

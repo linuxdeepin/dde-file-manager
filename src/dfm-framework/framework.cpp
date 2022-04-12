@@ -20,7 +20,6 @@
 */
 #include "framework.h"
 #include "backtrace/backtrace.h"
-#include "dfm-framework/log/frameworklog.h"
 #include "dfm-framework/lifecycle/lifecycle.h"
 
 DPF_BEGIN_NAMESPACE
@@ -65,8 +64,6 @@ bool Framework::initialize()
 
     backtrace::initbacktrace();
 
-    FrameworkLog::initialize();
-
     // It will be true after all inner moudules initialized
     // successfully.
     d->bInitialized = true;
@@ -89,7 +86,7 @@ bool Framework::start()
  * \brief Get plugin life cycle manager
  * \return
  */
-const LifeCycle &Framework::lifeCycle() const
+LifeCycle &Framework::lifeCycle() const
 {
     return *d->lifeCycle;
 }
@@ -112,9 +109,14 @@ EventCallProxy &Framework::eventProxy() const
     return EventCallProxy::instance();
 }
 
-const Listener &Framework::listener() const
+Listener &Framework::listener() const
 {
     return Listener::instance();
+}
+
+FrameLogManager &Framework::log() const
+{
+    return FrameLogManager::instance();
 }
 
 EventDispatcherManager &Framework::eventDispatcher() const
