@@ -542,6 +542,17 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_handleContextMenuAction)
     EXPECT_EQ(DFileSystemModel::FileLastModifiedRole, m_canvasGridView->model()->sortRole());
 }
 
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_KeyReleaseEvent_Space)
+{
+    stub_ext::StubExt tub;
+    QKeyEvent keyRelaseEvt_Key_Space(QEvent::KeyRelease, Qt::Key_Space, Qt::KeypadModifier);
+    static bool spacejudge = false;
+    void(*myspace)() = [](){spacejudge = true;};
+    tub.set(ADDR(DFMGlobal, showFilePreviewDialog), myspace);
+    m_canvasGridView->event(&keyRelaseEvt_Key_Space);
+    EXPECT_TRUE(spacejudge);
+}
+
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
 {
     ASSERT_NE(m_canvasGridView, nullptr);
@@ -610,17 +621,6 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent)
     //pad Delete
     QKeyEvent keyPressEvt_Key_padDelete(QEvent::KeyPress, Qt::Key_Delete, Qt::KeypadModifier);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_padDelete);
-
-    //pad Space
-    {
-        stub_ext::StubExt tub;
-        QKeyEvent keyPressEvt_Key_Space(QEvent::KeyPress, Qt::Key_Space, Qt::KeypadModifier);
-        static bool spacejudge = false;
-        void(*myspace)() = [](){spacejudge = true;};
-        tub.set(ADDR(DFMGlobal, showFilePreviewDialog), myspace);
-        m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Space);
-        EXPECT_TRUE(spacejudge);
-    }
 
     //other 直接break
     QKeyEvent keyPressEvt_Key_D(QEvent::KeyPress, Qt::Key_D, Qt::KeypadModifier);
