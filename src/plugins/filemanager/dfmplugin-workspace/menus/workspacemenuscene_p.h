@@ -23,9 +23,12 @@
 
 #include "workspacemenuscene.h"
 #include "interfaces/private/abstractmenuscene_p.h"
+#include "workspacemenu_defines.h"
 
 #include "services/common/dfm_common_service_global.h"
 #include "services/common/menu/menuservice.h"
+#include "services/common/menu/menu_defines.h"
+#include <plugins/common/dfmplugin-menu/menuScene/action_defines.h>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -34,6 +37,26 @@ class WorkspaceMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePri
 {
 public:
     explicit WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq);
+
+    void sortMenuAction(QMenu *menu, const QStringList &sortRule);
+
+    inline QStringList emptyMenuActionRule()
+    {
+        static QStringList actionRule {
+            dfmplugin_menu::ActionID::kNewFolder,
+            dfmplugin_menu::ActionID::kNewDoc,
+            ActionID::kSeparator,
+            ActionID::kDisplayAs,
+            ActionID::kSortBy,
+            dfmplugin_menu::ActionID::kOpenAsAdmin,
+            dfmplugin_menu::ActionID::kOpenInTerminal,
+            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kPaste,
+            dfmplugin_menu::ActionID::kSelectAll,
+        };
+
+        return actionRule;
+    }
 
 public:
     FileView *view = nullptr;

@@ -43,6 +43,11 @@ FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
     auto scene = MenuService::service()->createScene(currentMenuScene());
+    if (!scene) {
+        qWarning() << "Create scene failed, scene name: " << currentMenuScene();
+        return;
+    }
+
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
     params[MenuParamKey::kOnDesktop] = false;
@@ -68,6 +73,11 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     Q_UNUSED(indexFlags)
 
     auto scene = MenuService::service()->createScene(currentMenuScene());
+    if (!scene) {
+        qWarning() << "Create scene failed, scene name: " << currentMenuScene();
+        return;
+    }
+
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
     params[MenuParamKey::kFocusFile] = view->model()->itemFileInfo(index)->url();

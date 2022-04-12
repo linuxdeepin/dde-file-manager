@@ -21,9 +21,7 @@
 #ifndef WORKSPACEMENU_DEFINES_H
 #define WORKSPACEMENU_DEFINES_H
 
-#include "dfmplugin_workspace_global.h"
-
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 namespace ActionID {
 static constexpr char kSortBy[] = "sort-by";
@@ -38,8 +36,11 @@ static constexpr char kSrtType[] = "sort-by-type";
 // display by
 static constexpr char kDisplayIcon[] = "display-as-icon";
 static constexpr char kDisplayList[] = "display-as-list";
+
+// Separator
+static constexpr char kSeparator[] = "separator-line";
 }
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACEMENU_DEFINES_H

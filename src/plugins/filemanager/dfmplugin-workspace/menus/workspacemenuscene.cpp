@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liqianga@uniontech.com>
@@ -20,16 +20,12 @@
  */
 #include "workspacemenuscene.h"
 #include "workspacemenuscene_p.h"
-#include "workspacemenu_defines.h"
 
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperatorhelper.h"
-
-#include "services/common/menu/menu_defines.h"
-#include <plugins/common/dfmplugin-menu/menuScene/action_defines.h>
 
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -52,6 +48,36 @@ WorkspaceMenuScenePrivate::WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq)
       q(qq)
 {
     menuServer = MenuService::service();
+}
+
+void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &sortRule)
+{
+    auto actions = menu->actions();
+    qSort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
+        const auto &property1 = act1->property(ActionPropertyKey::kActionID).toString();
+        const auto &property2 = act2->property(ActionPropertyKey::kActionID).toString();
+
+        auto index1 = sortRule.indexOf(property1);
+        if (index1 == -1)
+            return false;
+
+        auto index2 = sortRule.indexOf(property2);
+        if (index2 == -1)
+            return true;
+
+        return index1 < index2;
+    });
+
+    // insert separator
+    int index = sortRule.indexOf(ActionID::kSeparator);
+    while (index != -1) {
+        QAction *separatorAct = new QAction(menu);
+        separatorAct->setSeparator(true);
+        actions.insert(index, separatorAct);
+        index = sortRule.indexOf(ActionID::kSeparator, index + 1);
+    }
+
+    menu->addActions(actions);
 }
 
 WorkspaceMenuScene::WorkspaceMenuScene(QObject *parent)
@@ -157,8 +183,10 @@ bool WorkspaceMenuScene::create(QMenu *parent)
 
 void WorkspaceMenuScene::updateState(QMenu *parent)
 {
-    if (d->isEmptyArea)
+    if (d->isEmptyArea) {
         updateEmptyAreaActionState();
+        d->sortMenuAction(parent, d->emptyMenuActionRule());
+    }
     // todo: sort item (liuzhangjian)
     AbstractMenuScene::updateState(parent);
 }
