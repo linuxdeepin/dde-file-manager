@@ -626,14 +626,14 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent_Delete)
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_padDelete);
 }
 
-TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent_Space)
+TEST_F(CanvasGridViewTest, CanvasGridViewTest_KeyReleaseEvent_Space)
 {
     stub_ext::StubExt tub;
-    QKeyEvent keyPressEvt_Key_Space(QEvent::KeyPress, Qt::Key_Space, Qt::KeypadModifier);
+    QKeyEvent keyRelaseEvt_Key_Space(QEvent::KeyRelease, Qt::Key_Space, Qt::KeypadModifier);
     static bool spacejudge = false;
     void(*myspace)() = [](){spacejudge = true;};
     tub.set(ADDR(DFMGlobal, showFilePreviewDialog), myspace);
-    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Space);
+    m_canvasGridView->event(&keyRelaseEvt_Key_Space);
     EXPECT_TRUE(spacejudge);
 }
 

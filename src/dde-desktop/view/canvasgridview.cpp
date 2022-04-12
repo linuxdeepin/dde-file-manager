@@ -1109,16 +1109,6 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
                 DFileService::instance()->moveToTrash(this, selectUrls);
             }
             break;
-        case Qt::Key_Space: {
-            QStringList urls = GridManager::instance()->itemIds(m_screenNum);
-            DUrlList entryUrls;
-            foreach (QString url, urls) {
-                entryUrls << DUrl(url);
-            }
-            DUrlList selectUrlsActual = MergedDesktopController::convertToRealPaths(selectUrls);
-            DFMGlobal::showFilePreviewDialog(selectUrlsActual, entryUrls);
-        }
-        break;
         default:
             break;
         }
@@ -1931,6 +1921,35 @@ bool CanvasGridView::event(QEvent *event)
 {
     if (event->type() == QEvent::FontChange) {
         updateCanvas();
+    }else if (event->type() == QEvent::KeyRelease) {
+        if(this == QApplication::focusWidget()){
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() == Qt::Key_Space && !keyEvent->isAutoRepeat()) {
+                QMap<QString, DUrl> selectUrlsMap;
+                auto rootUrl = model()->rootUrl();
+                for (const QModelIndex &index : selectionModel()->selectedIndexes()) {
+                    auto url = model()->getUrlByIndex(index);
+                    if (url.isEmpty()) {
+                        continue;
+                    }
+                    const DAbstractFileInfoPointer fileInfo = model()->fileInfo(index);
+                    if (fileInfo && !fileInfo->isVirtualEntry()) {
+                        selectUrlsMap.insert(url.toString(), url);
+                    }
+                }
+                selectUrlsMap.remove(rootUrl.toString());
+
+                const DUrlList &selectUrls = selectUrlsMap.values();
+
+                QStringList urls = GridManager::instance()->itemIds(m_screenNum);
+                DUrlList entryUrls;
+                foreach (QString url, urls) {
+                    entryUrls << DUrl(url);
+                }
+                DUrlList selectUrlsActual = MergedDesktopController::convertToRealPaths(selectUrls);
+                DFMGlobal::showFilePreviewDialog(selectUrlsActual, entryUrls);
+            }
+        }
     }
 
     return QAbstractItemView::event(event);
