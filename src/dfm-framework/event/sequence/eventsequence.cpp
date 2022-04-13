@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,25 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef TESTQOBJECT_H
-#define TESTQOBJECT_H
+#include "eventsequence.h"
 
-#include <QObject>
+DPF_USE_NAMESPACE
 
-class TestQObject : public QObject
+bool EventSequence::traversal()
 {
-    Q_OBJECT
-public:
-    explicit TestQObject(QObject *parent = nullptr);
+    return traversal(QVariantList());
+}
 
-public slots:
-    int test1(int a);
-    bool bigger10(int v, int *called);
-    bool bigger15(int v, int *called);
-    bool empty1();
-    bool empty2();
-};
+bool EventSequence::traversal(const QVariantList &params)
+{
+    for (auto seq : allSequences) {
+        if (seq(params))
+            return true;
+    }
+    return false;
+}
 
-Q_DECLARE_METATYPE(int *);
+EventSequenceManager &EventSequenceManager::instance()
+{
+    static EventSequenceManager instance;
+    return instance;
+}
 
-#endif   // TESTQOBJECT_H
+void EventSequenceManager::unfollow(EventType type)
+{
+    QWriteLocker guard(&rwLock);
+    if (sequenceMap.contains(type))
+        sequenceMap.remove(type);
+}

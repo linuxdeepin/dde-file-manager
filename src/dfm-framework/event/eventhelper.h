@@ -30,6 +30,96 @@
 
 DPF_BEGIN_NAMESPACE
 
+template<typename T>
+struct ReturnTypeHelper;
+
+template<typename R, typename... Args>
+struct ReturnTypeHelper<R(Args...)>
+{
+    using type = R;
+};
+
+template<typename R, typename... Args>
+struct ReturnTypeHelper<R (*)(Args...)>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...)>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) &>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) &&>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) const>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) const &>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) const &&>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) volatile>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) volatile &>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) volatile &&>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) const volatile>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) const volatile &>
+{
+    using type = R;
+};
+
+template<typename R, typename C, typename... Args>
+struct ReturnTypeHelper<R (C::*)(Args...) const volatile &&>
+{
+    using type = R;
+};
+
+template<typename T>
+using ReturnType = typename ReturnTypeHelper<T>::type;
+
 /*
  * copy from qobjectdefs_impl.h
  * trick to set the return value of a slot that works even if the signal or the slot returns void

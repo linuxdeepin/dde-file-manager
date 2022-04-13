@@ -22,6 +22,8 @@
 */
 #include "testqobject.h"
 
+#include <QDebug>
+
 TestQObject::TestQObject(QObject *parent)
     : QObject(parent)
 {
@@ -30,4 +32,28 @@ TestQObject::TestQObject(QObject *parent)
 int TestQObject::test1(int a)
 {
     return a + 10;
+}
+
+bool TestQObject::bigger10(int v, int *called)
+{
+    *called = 10;
+    return v > 10;
+}
+
+bool TestQObject::bigger15(int v, int *called)
+{
+    *called = 15;
+    return v > 15;
+}
+
+bool TestQObject::empty1()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    return false;
+}
+
+bool TestQObject::empty2()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    return true;
 }

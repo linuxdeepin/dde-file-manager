@@ -69,6 +69,14 @@ void packParamsHelper(QVariantList &ret, const char *arg, Args &&... args)
     packParamsHelper(ret, std::forward<Args>(args)...);
 }
 
+template<class T, class... Args>
+inline void makeVariantList(QVariantList *list, T t, Args &&... args)
+{
+    *list << QVariant::fromValue(t);
+    if (sizeof...(args) > 0)
+        packParamsHelper(*list, std::forward<Args>(args)...);
+}
+
 DPF_END_NAMESPACE
 
 #endif   // INVOKEHELPER_H

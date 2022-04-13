@@ -90,15 +90,6 @@ public:
     }
 
 private:
-    template<class T, class... Args>
-    inline static void makeVariantList(QVariantList *list, T t, Args &&... args)
-    {
-        *list << QVariant::fromValue(t);
-        if (sizeof...(args) > 0)
-            packParamsHelper(*list, std::forward<Args>(args)...);
-    }
-
-private:
     Connector conn;
     QMutex receiverMutex;
 };

@@ -34,10 +34,11 @@
 
 DPF_BEGIN_NAMESPACE
 
+using EventType = int;
+
 class EventDispatcher
 {
 public:
-    using EventType = int;
     using Listener = std::function<QVariant(const QVariantList &)>;
     using ListenerList = QList<Listener>;
 
@@ -62,7 +63,7 @@ public:
     }
 
     template<class T, class Func>
-    inline void appendListener(T *obj, Func method)
+    inline void append(T *obj, Func method)
     {
         static_assert(std::is_base_of<QObject, T>::value, "Template type T must be derived QObject");
         static_assert(!std::is_pointer<T>::value, "Receiver::bind's template type T must not be a pointer type");
@@ -76,15 +77,6 @@ public:
     }
 
 private:
-    template<class T, class... Args>
-    inline static void makeVariantList(QVariantList *list, T t, Args &&... args)
-    {
-        *list << QVariant::fromValue(t);
-        if (sizeof...(args) > 0)
-            packParamsHelper(*list, std::forward<Args>(args)...);
-    }
-
-private:
     ListenerList allListeners;
     QMutex listenerMutex;
 };
@@ -94,9 +86,6 @@ class EventDispatcherManager
     Q_DISABLE_COPY(EventDispatcherManager)
 
 public:
-    using EventType = int;
-
-public:
     static EventDispatcherManager &instance();
 
     template<class T, class Func>
@@ -104,10 +93,10 @@ public:
     {
         QWriteLocker lk(&rwLock);
         if (dispatcherMap.contains(type)) {
-            dispatcherMap[type]->appendListener(obj, method);
+            dispatcherMap[type]->append(obj, method);
         } else {
             DispatcherPtr dispatcher { new EventDispatcher };
-            dispatcher->appendListener(obj, method);
+            dispatcher->append(obj, method);
             dispatcherMap.insert(type, dispatcher);
         }
     }

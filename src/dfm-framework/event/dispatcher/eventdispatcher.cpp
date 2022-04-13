@@ -60,7 +60,7 @@ EventDispatcherManager &EventDispatcherManager::instance()
     return instance;
 }
 
-void EventDispatcherManager::unsubscribe(EventDispatcherManager::EventType type)
+void EventDispatcherManager::unsubscribe(EventType type)
 {
     QWriteLocker guard(&rwLock);
     if (dispatcherMap.contains(type))
