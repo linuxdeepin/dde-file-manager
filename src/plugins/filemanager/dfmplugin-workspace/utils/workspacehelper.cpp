@@ -105,11 +105,11 @@ WorkspaceWidget *WorkspaceHelper::findWorkspaceByWindowId(quint64 windowId)
     return kWorkspaceMap[windowId];
 }
 
-void WorkspaceHelper::closeTab(const QString &path)
+void WorkspaceHelper::closeTab(const QUrl &url)
 {
     for (auto iter = kWorkspaceMap.cbegin(); iter != kWorkspaceMap.cend(); ++iter) {
         if (iter.value())
-            iter.value()->closeTab(iter.key(), path);
+            iter.value()->closeTab(iter.key(), url);
     }
 }
 

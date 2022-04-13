@@ -63,7 +63,7 @@ public:
     void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
-    void closeTab(const QString &path);
+    void closeTab(const QUrl &url);
     void addWorkspace(quint64 windowId, WorkspaceWidget *workspace);
     void removeWorkspace(quint64 windowId);
     quint64 windowId(const QWidget *sender);

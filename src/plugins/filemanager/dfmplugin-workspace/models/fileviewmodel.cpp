@@ -130,7 +130,7 @@ void FileViewModelPrivate::doWatcherEvent()
             nodeManager->insertChild(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
-            dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs, fileUrl.path());
+            dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs, fileUrl);
         }
     }
     q->childrenUpdated();

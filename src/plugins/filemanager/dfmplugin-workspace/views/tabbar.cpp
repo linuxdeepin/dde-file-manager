@@ -185,22 +185,22 @@ void TabBar::setCurrentView(AbstractBaseView *view)
     tab->setFileView(view);
 }
 
-void TabBar::closeTab(quint64 winId, const QString &path)
+void TabBar::closeTab(quint64 winId, const QUrl &url)
 {
-    auto isParentPath = [](const QString &deletedPath, const QString &tabPath) {
-        return tabPath.startsWith(deletedPath);
-    };
-
     for (int i = count() - 1; i >= 0; --i) {
         Tab *tab = tabAt(i);
-        if (tab && isParentPath(path, tab->getCurrentUrl().path())) {
+        if (!tab)
+            continue;
+
+        QUrl curUrl = tab->getCurrentUrl();
+        if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
-                if (isMountedDevPath(path)) {
+                if (isMountedDevPath(url)) {
                     redirectToWhenDelete.setScheme(Global::kComputer);
                     redirectToWhenDelete.setPath("/");
                 } else {   // redirect to upper directory
-                    QString localPath = path;
+                    QString localPath = url.path();
                     do {
                         QStringList pathFragment = localPath.split("/");
                         pathFragment.removeLast();
@@ -357,6 +357,22 @@ void TabBar::activatePreviousTab()
         setCurrentIndex(currentIndex - 1);
 }
 
+void TabBar::closeTabAndRemoveCachedMnts(const QString &id)
+{
+    if (!allMntedDevs.contains(id))
+        return;
+    for (const auto &url : allMntedDevs.values(id)) {
+        this->closeTab(WorkspaceHelper::instance()->windowId(this), url);
+    }
+    allMntedDevs.remove(id);
+}
+
+void TabBar::cacheMnt(const QString &id, const QString &mnt)
+{
+    if (!mnt.isEmpty())
+        allMntedDevs.insert(id, QUrl::fromLocalFile(mnt));
+}
+
 void TabBar::resizeEvent(QResizeEvent *event)
 {
     scene->setSceneRect(0, 0, width(), height());
@@ -469,32 +485,23 @@ void TabBar::initializeConnections()
     QObject::connect(tabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
     QObject::connect(tabCloseButton, &TabCloseButton::clicked, this, &TabBar::onTabCloseButtonClicked);
 
-    auto cacheMnt = [this](const QString &id, const QString &mntPath) {
-        allMntedDevs.insert(id, mntPath);
-    };
-    auto closeTabAndRemoveCachedMnts = [this](const QString &id) {
-        if (!allMntedDevs.contains(id))
-            return;
-        this->closeTab(WorkspaceHelper::instance()->windowId(this), allMntedDevs.value(id));
-        allMntedDevs.remove(id);
-    };
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevMounted, this, cacheMnt);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, cacheMnt);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, closeTabAndRemoveCachedMnts);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevRemoved, this, closeTabAndRemoveCachedMnts);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevUnmounted, this, closeTabAndRemoveCachedMnts);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevMounted, this, &TabBar::cacheMnt);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, &TabBar::cacheMnt);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevAdded, this, [this](const QString &id) { cacheMnt(id, ""); });
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevRemoved, this, &TabBar::closeTabAndRemoveCachedMnts);
+    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
 
     for (auto id : DeviceManagerInstance.invokeBlockDevicesIdList({})) {
         auto datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
         const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
-        if (!mntPath.isEmpty())
-            allMntedDevs.insert(id, mntPath);
+        cacheMnt(id, mntPath);
     }
     for (auto id : DeviceManagerInstance.invokeProtolcolDevicesIdList({})) {
         auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
         const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
         if (!mntPath.isEmpty())
-            allMntedDevs.insert(id, mntPath);
+            allMntedDevs.insert(id, QUrl::fromLocalFile(mntPath));
     }
 }
 
@@ -564,10 +571,12 @@ void TabBar::handleTabAnimationFinished(const int index)
     }
 }
 
-bool TabBar::isMountedDevPath(const QString &path)
+bool TabBar::isMountedDevPath(const QUrl &url)
 {
     for (auto iter = allMntedDevs.cbegin(); iter != allMntedDevs.cend(); ++iter) {
-        if (iter.value() == path)
+        auto urls = allMntedDevs.values(iter.key());
+        auto ret = std::find_if(urls.cbegin(), urls.cend(), [url](const QUrl &u) { return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(u, url); });
+        if (ret != urls.cend())
             return true;
     }
     return false;

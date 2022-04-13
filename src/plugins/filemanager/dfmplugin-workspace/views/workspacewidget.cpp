@@ -117,10 +117,10 @@ bool WorkspaceWidget::canAddNewTab()
     return false;
 }
 
-void WorkspaceWidget::closeTab(quint64 winId, const QString &path)
+void WorkspaceWidget::closeTab(quint64 winId, const QUrl &url)
 {
     if (tabBar)
-        tabBar->closeTab(winId, path);
+        tabBar->closeTab(winId, url);
 }
 
 void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)
