@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OPENFILEMENUSCENE_H
-#define OPENFILEMENUSCENE_H
+#ifndef FILEOPERATORMENUSCENE_H
+#define FILEOPERATORMENUSCENE_H
 
 #include "dfmplugin_menu_global.h"
 
@@ -28,21 +28,21 @@
 
 DPMENU_BEGIN_NAMESPACE
 
-class OpenFileMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
+class FileOperatorMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
     {
-        return "OpenFileMenu";
+        return "FileOperatorMenu";
     }
     DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
 };
 
-class OpenFileMenuScenePrivate;
-class OpenFileMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+class FileOperatorMenuScenePrivate;
+class FileOperatorMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
-    explicit OpenFileMenuScene(QObject *parent = nullptr);
+    explicit FileOperatorMenuScene(QObject *parent = nullptr);
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
     AbstractMenuScene *scene(QAction *action) const override;
@@ -51,8 +51,8 @@ public:
     bool triggered(QAction *action) override;
 
 private:
-    OpenFileMenuScenePrivate *const d = nullptr;
+    FileOperatorMenuScenePrivate *const d = nullptr;
 };
 
 DPMENU_END_NAMESPACE
-#endif   // OPENFILEMENUSCENE_H
+#endif   // FILEOPERATORMENUSCENE_H

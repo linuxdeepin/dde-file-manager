@@ -18,23 +18,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OPENFILEMENUSCENE_P_H
-#define OPENFILEMENUSCENE_P_H
+#ifndef FILEOPERATORMENUSCENE_P_H
+#define FILEOPERATORMENUSCENE_P_H
 
-#include "menuScene/openfilemenuscene.h"
+#include "menuScene/fileoperatormenuscene.h"
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
 DPMENU_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-class OpenFileMenuScenePrivate : public AbstractMenuScenePrivate
+class FileOperatorMenuScenePrivate : public AbstractMenuScenePrivate
 {
 public:
-    friend class OpenFileMenuScene;
-    explicit OpenFileMenuScenePrivate(OpenFileMenuScene *qq);
+    friend class FileOperatorMenuScene;
+    explicit FileOperatorMenuScenePrivate(FileOperatorMenuScene *qq);
 };
 
 DPMENU_END_NAMESPACE
 
-#endif   // OPENFILEMENUSCENE_P_H
+#endif   // FILEOPERATORMENUSCENE_P_H

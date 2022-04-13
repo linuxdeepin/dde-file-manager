@@ -29,6 +29,7 @@
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
 #include "view/operator/fileoperatorproxy.h"
+#include "utils/renamedialog.h"
 
 #include <services/common/menu/menu_defines.h>
 #include <services/common/menu/menuservice.h>
@@ -51,7 +52,7 @@ DPMENU_USE_NAMESPACE;
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
 static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
-static const char *const kOpenFileMenuSceneName = "OpenFileMenu";
+static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
 static const char *const kSendToMenuSceneName = "SendToMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 
@@ -67,6 +68,9 @@ CanvasMenuScenePrivate::CanvasMenuScenePrivate(CanvasMenuScene *qq)
     menuServer = MenuService::service();
 
     emptyDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenAsAdmin);
+
+    normalDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewTab);
+    normalDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewWindow);
 }
 
 void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
@@ -131,10 +135,13 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->gridPos = params.value(CanvasMenuParams::kDesktopGridPos).toPoint();
 
     if (d->currentDir.isEmpty())
         return false;
+
+    // todo(wangcl):handle computer,home,trash.and custom menu.
 
     QList<AbstractMenuScene *> currentScene;
     if (d->isEmptyArea) {
@@ -147,16 +154,17 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
             currentScene.append(operationScene);
 
     } else {
-        // file operation
-        if (auto operationScene = d->menuServer->createScene(kClipBoardMenuSceneName))
-            currentScene.append(operationScene);
 
         // open with
         if (auto openWithScene = d->menuServer->createScene(kOpenWithMenuSceneName))
             currentScene.append(openWithScene);
 
-        // file (rename)
-        if (auto fileScene = d->menuServer->createScene(kOpenFileMenuSceneName))
+        // file operation
+        if (auto operationScene = d->menuServer->createScene(kClipBoardMenuSceneName))
+            currentScene.append(operationScene);
+
+        // file (open, rename, delete)
+        if (auto fileScene = d->menuServer->createScene(kFileOperatorMenuSceneName))
             currentScene.append(fileScene);
 
         if (auto sendToScene = d->menuServer->createScene(kSendToMenuSceneName))
@@ -338,6 +346,38 @@ bool CanvasMenuScene::triggered(QAction *action)
             // new plain text
             if (actionId == dfmplugin_menu::ActionID::kNewPlainText) {
                 FileOperatorProxyIns->touchFile(d->view, d->gridPos, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
+                return true;
+            }
+        }
+
+        // FileOperatorMenu scene
+        if (sceneName == kFileOperatorMenuSceneName) {
+            // rename
+            if (actionId == dfmplugin_menu::ActionID::kRename) {
+                if (1 == d->selectFiles.count()) {
+                    auto index = d->view->model()->index(d->focusFile);
+                    if (Q_UNLIKELY(!index.isValid()))
+                        return false;
+                    d->view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+                } else {
+                    RenameDialog renameDlg(d->selectFiles.count());
+                    renameDlg.moveToCenter();
+
+                    // see DDialog::exec,it will return the index of buttons
+                    if (1 == renameDlg.exec()) {
+                        RenameDialog::ModifyMode mode = renameDlg.modifyMode();
+                        if (RenameDialog::kReplace == mode) {
+                            auto content = renameDlg.getReplaceContent();
+                            FileOperatorProxyIns->renameFiles(d->view, d->selectFiles, content, true);
+                        } else if (RenameDialog::kAdd == mode) {
+                            auto content = renameDlg.getAddContent();
+                            FileOperatorProxyIns->renameFiles(d->view, d->selectFiles, content);
+                        } else if (RenameDialog::kCustom == mode) {
+                            auto content = renameDlg.getCustomContent();
+                            FileOperatorProxyIns->renameFiles(d->view, d->selectFiles, content, false);
+                        }
+                    }
+                }
                 return true;
             }
         }

@@ -39,6 +39,7 @@ public:
     bool onDesktop;
     quint64 windowId;
     bool isEmptyArea;
+    Qt::ItemFlags indexFlags;
 
     AbstractFileInfoPointer focusFileInfo;
     QMap<QString, QAction *> predicateAction;   // id -- instance

@@ -22,8 +22,11 @@
 #include "action_defines.h"
 
 #include <services/common/menu/menu_defines.h>
-
+#include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/clipboard.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/interfaces/abstractjobhandler.h>
+#include <dfm-framework/framework.h>
 
 #include <QMenu>
 #include <QVariant>
@@ -63,9 +66,19 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
     d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
-    // 文件不存在，则无文件相关菜单项
-    if (d->selectFiles.isEmpty() && !d->focusFile.isValid() && !d->currentDir.isValid())
-        return false;
+    if (!d->isEmptyArea) {
+        if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
+            qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+            return false;
+        }
+
+        QString errString;
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
+        if (d->focusFileInfo.isNull()) {
+            qDebug() << errString;
+            return false;
+        }
+    }
 
     return true;
 }
@@ -105,25 +118,52 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
-    if (auto paste = d->predicateAction.value(ActionID::kPaste)) {
-        bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction;
-        paste->setEnabled(clipBoardUnknow ? false : true);
+    if (d->isEmptyArea) {
+        if (auto paste = d->predicateAction.value(ActionID::kPaste)) {
+            bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction;
+            paste->setEnabled(clipBoardUnknow ? false : true);
+        }
+    } else if (1 == d->selectFiles.count()) {
+        if (auto copy = d->predicateAction.value(ActionID::kCopy)) {
+            if (!d->focusFileInfo->isReadable() && !d->focusFileInfo->isSymLink())
+                copy->setDisabled(true);
+        }
+
+        if (auto cut = d->predicateAction.value(ActionID::kCut)) {
+            if (!d->focusFileInfo->canRename())
+                cut->setDisabled(true);
+        }
+    } else {
+        // todo(wangcl) disable action?
     }
 }
 
 bool ClipBoardMenuScene::triggered(QAction *action)
 {
-    // TODO(Lee or others):
+    if (!d->predicateAction.values().contains(action))
+        return false;
+
     QString id = d->predicateAction.key(action);
-    if (d->predicateName.contains(id)) {
-        if (id == ActionID::kPaste) {
 
-        } else if (id == ActionID::kCut) {
+    if (id == ActionID::kPaste) {
+        ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
+        if (ClipBoard::kCopyAction == action) {
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, d->windowId, d->selectFiles, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
+        } else if (ClipBoard::kCutAction == action) {
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, d->windowId, d->selectFiles, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
+            //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
 
-        } else if (id == ActionID::kCopy) {
+            // clear clipboard after cutting files from clipboard
+            ClipBoard::instance()->clearClipboard();
+        } else {
+            qWarning() << "clipboard action:" << action << "    urls:" << d->selectFiles;
         }
-        return true;
+
+    } else if (id == ActionID::kCut) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCutAction, d->selectFiles);
+    } else if (id == ActionID::kCopy) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCopyAction, d->selectFiles);
     }
 
-    return false;
+    return true;
 }

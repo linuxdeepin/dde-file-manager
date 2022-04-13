@@ -81,6 +81,10 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     Q_UNUSED(indexFlags)
 
     auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
+    if (!canvasScene) {
+        qWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
+        return;
+    }
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
@@ -109,22 +113,25 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
 
+    auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
+    if (!canvasScene) {
+        qWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
+        return;
+    }
+
     // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
 
     auto selectUrls = view->selectionModel()->selectedUrls();
-    QStringList selectPath;
-    for (const auto &temp : selectUrls)
-        selectPath << temp.toString();
-
     auto tgUrl = view->model()->url(index);
-    auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
-    params[MenuParamKey::kFocusFile] = tgUrl.toString();
-    params[MenuParamKey::kSelectFiles] = selectPath;
+    params[MenuParamKey::kFocusFile] = tgUrl;
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
     params[MenuParamKey::kOnDesktop] = true;
+    params[MenuParamKey::kwindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = false;
+    params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[CanvasMenuParams::kDesktopGridPos] = QVariant::fromValue(gridPos);
 
     if (!canvasScene->initialize(params)) {
@@ -132,7 +139,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
         return;
     }
 
-    QMenu menu;
+    QMenu menu(view);
     canvasScene->create(&menu);
     canvasScene->updateState(&menu);
 

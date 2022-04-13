@@ -27,6 +27,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-framework/framework.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
 #include <QMenu>
 #include <QVariant>
@@ -71,9 +72,10 @@ bool OpenDirMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     if (!d->isEmptyArea) {
-        // 文件不存在，则无文件相关菜单项
-        if (d->selectFiles.isEmpty())
+        if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
+            qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
             return false;
+        }
 
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
@@ -162,14 +164,20 @@ void OpenDirMenuScene::normalMenu(QMenu *parent)
         d->predicateAction[ActionID::kOpenInNewTab] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInNewTab);
 
-        tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInTerminal));
-        d->predicateAction[ActionID::kOpenInTerminal] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInTerminal);
+        if (d->focusFileInfo->isDir()) {
+            tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInTerminal));
+            d->predicateAction[ActionID::kOpenInTerminal] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInTerminal);
+        }
 
-        if (d->focusFileInfo->isDir() && SystemPathUtil::instance()->isSystemPath(d->focusFileInfo->filePath())) {
-            tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
-            d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
-            tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
+        if (d->focusFileInfo->isDir()) {
+            if (SysInfoUtils::isRootUser() || SysInfoUtils::isServerSys() || SysInfoUtils::isDeveloperMode()) {
+                // root user, server version user and non developer mode do not need to be opened as an administrator
+            } else {
+                tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
+                d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
+                tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
+            }
         }
     }
 }

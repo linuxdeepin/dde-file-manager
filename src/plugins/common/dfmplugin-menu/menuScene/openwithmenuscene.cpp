@@ -27,6 +27,9 @@
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/desktopfileinfo.h>
+#include <dfm-base/mimetype/mimesappsmanager.h>
+#include <dfm-base/utils/properties.h>
+#include <dfm-framework/framework.h>
 
 #include <QMenu>
 #include <QVariant>
@@ -64,9 +67,10 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
     d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
-    // 文件不存在，则无文件相关菜单项
-    if (d->selectFiles.isEmpty())
+    if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
+        qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
+    }
 
     QString errString;
     d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
@@ -140,6 +144,57 @@ void OpenWithMenuScene::updateState(QMenu *parent)
 {
     if (!parent)
         return;
+
+    // open with
+    if (auto openWith = d->predicateAction.value(ActionID::kOpenWith)) {
+
+        // app support mime types
+        QStringList supportedMimeTypes;
+        QMimeType fileMimeType = d->focusFileInfo->fileMimeType();
+        QString defaultAppDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(fileMimeType.name());
+        QSettings desktopFile(defaultAppDesktopFile, QSettings::IniFormat);
+        desktopFile.setIniCodec("UTF-8");
+        Properties mimeTypeProperties(defaultAppDesktopFile, "Desktop Entry");
+        supportedMimeTypes = mimeTypeProperties.value("MimeType").toString().split(';');
+        supportedMimeTypes.removeAll("");
+
+        QString errString;
+        QList<QUrl> redirectedUrls;
+
+        for (auto url : d->selectFiles) {
+            auto info = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
+            if (Q_UNLIKELY(info.isNull())) {
+                qDebug() << errString;
+                break;
+            }
+
+            // if the suffix is the same, it can be opened with the same application
+            if (info->suffix() != d->focusFileInfo->suffix()) {
+
+                QStringList mimeTypeList { info->mimeTypeName() };
+                QUrl parentUrl = info->parentUrl();
+                auto parentInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true, &errString);
+                if (!info.isNull()) {
+                    mimeTypeList << parentInfo->mimeTypeName();
+                }
+
+                bool matched = false;
+                // or,the application suooprt mime type contains the type of the url file mime type
+                for (const QString &oneMimeType : mimeTypeList) {
+                    if (supportedMimeTypes.contains(oneMimeType)) {
+                        matched = true;
+                        break;
+                    }
+                }
+
+                // disable open action when there are different opening methods
+                if (!matched) {
+                    openWith->setDisabled(true);
+                    break;
+                }
+            }
+        }
+    }
 }
 
 bool OpenWithMenuScene::triggered(QAction *action)

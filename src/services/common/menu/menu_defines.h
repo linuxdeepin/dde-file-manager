@@ -33,6 +33,7 @@ static constexpr char kSelectFiles[] = "selectFiles";   // string urls
 static constexpr char kOnDesktop[] = "onDesktop";   // bool
 static constexpr char kwindowId[] = "windowId";   // quint64
 static constexpr char kIsEmptyArea[] = "isEmptyArea";   // bool
+static constexpr char kIndexFlags[] = "indexFlags";   // Qt::ItemFlags
 }
 
 namespace ActionPropertyKey {

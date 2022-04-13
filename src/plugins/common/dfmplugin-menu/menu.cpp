@@ -21,7 +21,7 @@
 #include "menu.h"
 #include "menuScene/clipboardmenuscene.h"
 #include "menuScene/opendirmenuscene.h"
-#include "menuScene/openfilemenuscene.h"
+#include "menuScene/fileoperatormenuscene.h"
 #include "menuScene/openwithmenuscene.h"
 #include "menuScene/newcreatemenuscene.h"
 #include "menuScene/sendtomenuscene.h"
@@ -64,7 +64,7 @@ void Menu::regDefaultScene()
     menuServer->registerScene(OpenDirMenuCreator::name(), new OpenDirMenuCreator);
 
     // 注册文件场景
-    menuServer->registerScene(OpenFileMenuCreator::name(), new OpenFileMenuCreator);
+    menuServer->registerScene(FileOperatorMenuCreator::name(), new FileOperatorMenuCreator);
 
     menuServer->registerScene(OpenWithMenuCreator::name(), new OpenWithMenuCreator);
 

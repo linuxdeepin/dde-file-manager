@@ -43,8 +43,10 @@ static constexpr char kOpenInNewWindow[] = "open-in-new-window";
 static constexpr char kOpenInNewTab[] = "open-in-new-tab";
 static constexpr char kOpenInTerminal[] = "open-in-terminal";
 
-// OpenFileMenu
+// FileOperatorMenu
+static constexpr char kOpen[] = "open";
 static constexpr char kRename[] = "rename";
+static constexpr char kDelete[] = "delete";
 
 // "OpenWithMenu"
 static constexpr char kOpenWith[] = "open-with";
