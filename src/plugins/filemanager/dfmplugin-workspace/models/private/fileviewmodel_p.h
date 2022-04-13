@@ -113,7 +113,7 @@ class FileViewModelPrivate : public QObject
     QAtomicInteger<bool> isUpdatedChildren = false;
     QAtomicInteger<bool> processFileEventRuning = false;
     //文件的刷新队列
-    DFMBASE_NAMESPACE::DThreadList<QUrl> updateurlList;
+    DFMBASE_NAMESPACE::DThreadList<QUrl> updateUrlList;
     QTimer updateTimer;
 
     FileViewModel::State currentState = FileViewModel::Idle;

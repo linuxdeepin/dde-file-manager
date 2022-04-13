@@ -43,6 +43,10 @@ FileViewModelPrivate::FileViewModelPrivate(FileViewModel *qq)
     : QObject(qq), q(qq)
 {
     nodeManager.reset(new FileNodeManagerThread(qq));
+
+    updateTimer.setInterval(15);
+    updateTimer.setSingleShot(true);
+    connect(&updateTimer, &QTimer::timeout, qq, &FileViewModel::onFilesUpdated);
 }
 
 FileViewModelPrivate::~FileViewModelPrivate()
@@ -78,9 +82,9 @@ void FileViewModelPrivate::dofileCreated(const QUrl &url)
 
 void FileViewModelPrivate::doFileUpdated(const QUrl &url)
 {
-    // Todo(yanghao): filter .hidden file update
-    if (!updateurlList.containsByLock(url))
-        updateurlList.appendByLock(url);
+    //     Todo(yanghao): filter .hidden file update
+    if (!updateUrlList.containsByLock(url))
+        updateUrlList.appendByLock(url);
 
     if (!updateTimer.isActive())
         updateTimer.start();
@@ -517,6 +521,11 @@ void FileViewModel::setState(FileViewModel::State state)
 void FileViewModel::childrenUpdated()
 {
     emit modelChildrenUpdated();
+}
+
+void FileViewModel::onFilesUpdated()
+{
+    emit updateFiles();
 }
 
 FileNodeManagerThread::FileNodeManagerThread(FileViewModel *parent)

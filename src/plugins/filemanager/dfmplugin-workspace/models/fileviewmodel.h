@@ -95,9 +95,13 @@ public:
     void setState(FileViewModel::State state);
     void childrenUpdated();
 
+public slots:
+    void onFilesUpdated();
+
 signals:
     void stateChanged();
     void modelChildrenUpdated();
+    void updateFiles();
 };
 
 DPWORKSPACE_END_NAMESPACE

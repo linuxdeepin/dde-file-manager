@@ -171,6 +171,7 @@ private slots:
     void onShowHiddenFileChanged(bool isShow);
     void onShowFileSuffixChanged(bool isShow);
     void updateHorizontalOffset();
+    void updateView();
 
 private:
     void initializeModel();

@@ -538,6 +538,11 @@ void FileView::updateHorizontalOffset()
     }
 }
 
+void FileView::updateView()
+{
+    viewport()->update();
+}
+
 bool FileView::isIconViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kIconMode;
@@ -1080,6 +1085,7 @@ void FileView::initializeConnect()
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::updateModelActiveIndex);
 
+    connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(sourceModel(), &FileViewModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::delayUpdateStatusBar);
