@@ -22,6 +22,7 @@
  */
 
 #include "dthumbnailprovider.h"
+#include "dvideothumbnailprovider.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/base/standardpaths.h"
@@ -170,8 +171,8 @@ bool DThumbnailProvider::hasThumbnail(const QFileInfo &info) const
 
     // todo lanxs
     //if (mime.name().startsWith("video/") && FileJob::CopyingFiles.contains(QUrl::fromLocalFile(info.filePath())))
-    if (mime.name().startsWith("video/"))
-        return false;
+    //if (mime.name().startsWith("video/"))
+    //  return false;
 
     if (mime.name().startsWith("video/") && DFMBASE_NAMESPACE::FileUtils::isGvfsFile(QUrl::fromLocalFile(info.absoluteFilePath())))
         return false;
@@ -511,95 +512,17 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
 
             return thumbnail;
         } else {   // fallback to thumbnail tool
-            if (d->keyToThumbnailTool.isEmpty()) {
-                d->keyToThumbnailTool["Initialized"] = QString();
-
-                // todo lanxs
-                /*
-                for (const QString &path : QString(TOOLDIR).split(":")) {
-                    const QString &thumbnail_tool_path = path + QDir::separator() + "/thumbnail";
-                    QDirIterator dir(thumbnail_tool_path, { "*.json" }, QDir::NoDotAndDotDot | QDir::Files);
-
-                    while (dir.hasNext()) {
-                        const QString &file_path = dir.next();
-                        const QFileInfo &file_info = dir.fileInfo();
-
-                        QFile file(file_path);
-
-                        if (!file.open(QFile::ReadOnly)) {
-                            continue;
-                        }
-
-                        const QJsonDocument document = QJsonDocument::fromJson(file.readAll());
-                        file.close();
-
-                        const QStringList keys = document.object().toVariantMap().value("Keys").toStringList();
-                        const QString &tool_file_path = file_info.absoluteDir().filePath(file_info.baseName());
-
-                        if (!QFile::exists(tool_file_path)) {
-                            continue;
-                        }
-
-                        for (const QString &key : keys) {
-                            if (d->keyToThumbnailTool.contains(key))
-                                continue;
-
-                            d->keyToThumbnailTool[key] = tool_file_path;
-                        }
-                    }
-                }*/
-            }
+            DFMBASE_NAMESPACE::DVideoThumbnailProvider videoProvider;
 
             QString mime_name = mime.name();
-            QString tool = d->keyToThumbnailTool.value(mime_name);
-
-            if (tool.isEmpty()) {
+            bool useVideo = videoProvider.hasKey(mime_name);
+            if (!useVideo) {
                 mime_name = generalKey(mime_name);
-                tool = d->keyToThumbnailTool.value(mime_name);
+                useVideo = videoProvider.hasKey(mime_name);
             }
-
-            if (tool.isEmpty()) {
-                return thumbnail;
-            }
-
-            QProcess process;
-            process.start(tool, { QString::number(size), filePath }, QIODevice::ReadOnly);
-
-            if (!process.waitForFinished()) {
-                d->errorString = process.errorString();
-
-                goto _return;
-            }
-
-            if (process.exitCode() != 0) {
-                const QString &error = process.readAllStandardError();
-
-                if (error.isEmpty()) {
-                    d->errorString = QString("get thumbnail failed from the \"%1\" application").arg(tool);
-                } else {
-                    d->errorString = error;
-                }
-
-                goto _return;
-            }
-
-            const QByteArray output = process.readAllStandardOutput();
-            const QByteArray png_data = QByteArray::fromBase64(output);
-            Q_ASSERT(!png_data.isEmpty());
-
-            if (image->loadFromData(png_data, "png")) {
+            if (useVideo) {
+                *image = videoProvider.createThumbnail(QString::number(size), filePath);
                 d->errorString.clear();
-            } else {
-                //过滤video tool的其他输出信息
-                QString processResult(output);
-                processResult = processResult.split(QRegExp("[\n]"), QString::SkipEmptyParts).last();
-                const QByteArray pngData = QByteArray::fromBase64(processResult.toUtf8());
-                Q_ASSERT(!pngData.isEmpty());
-                if (image->loadFromData(pngData, "png")) {
-                    d->errorString.clear();
-                } else {
-                    d->errorString = QString("load png image failed from the \"%1\" application").arg(tool);
-                }
             }
         }
     }
