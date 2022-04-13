@@ -198,6 +198,12 @@ bool AbstractFileInfo::exists() const
  */
 void AbstractFileInfo::refresh()
 {
+    CALL_PROXY(refresh());
+}
+
+void dfmbase::AbstractFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
+{
+    CALL_PROXY(refresh(id, value));
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -1172,6 +1178,13 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::emptyDirectoryTip() const
 QString DFMBASE_NAMESPACE::AbstractFileInfo::loadingTip() const
 {
     return QObject::tr("Loading...");
+}
+
+bool dfmbase::AbstractFileInfo::notifyAttributeChanged()
+{
+    CALL_PROXY(notifyAttributeChanged());
+
+    return false;
 }
 
 QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName() const

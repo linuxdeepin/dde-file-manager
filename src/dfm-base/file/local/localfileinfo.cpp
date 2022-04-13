@@ -139,7 +139,17 @@ void LocalFileInfo::refresh()
 {
     QWriteLocker locker(&d->lock);
     d->attributes.clear();
-    d->dfmFileInfo->flush();
+    d->clearIcon();
+    d->dfmFileInfo->clearCache();
+}
+
+void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
+{
+    QWriteLocker locker(&d->lock);
+    if (value.isValid())
+        d->dfmFileInfo->setAttribute(id, value);
+    if (d->attributes.contains(id))
+        d->attributes.remove(id);
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -1309,8 +1319,6 @@ QVariantHash LocalFileInfo::extraProperties() const
 
 QIcon LocalFileInfo::fileIcon() const
 {
-    QReadLocker locker(&d->lock);
-
     const QUrl &fileUrl = this->url();
     const QString &filePath = this->absoluteFilePath();
 
@@ -1324,7 +1332,7 @@ QIcon LocalFileInfo::fileIcon() const
     d->hasThumbnail = 0;
 #else
     if (d->hasThumbnail < 0) {
-        d->hasThumbnail = FileUtils::isLocalDevice(fileUrl) && DThumbnailProvider::instance()->hasThumbnail(filePath) && !FileUtils::isCdRomDevice(filePath);
+        d->hasThumbnail = FileUtils::isLocalDevice(fileUrl) && DThumbnailProvider::instance()->hasThumbnail(filePath) && !FileUtils::isCdRomDevice(QUrl::fromLocalFile(filePath));
     }
 #endif
     if (d->needThumbnail || d->hasThumbnail > 0) {
@@ -1370,6 +1378,8 @@ QIcon LocalFileInfo::fileIcon() const
                         }
 
                         me->d->needThumbnail = false;
+
+                        me->notifyAttributeChanged();
                     } else {
                         qWarning() << "me is nullptr !!!";
                     }
@@ -1487,6 +1497,14 @@ bool LocalFileInfo::isDragCompressFileFormat() const
     return name.endsWith(".zip")
             || (name.endsWith(".7z")
                 && !name.endsWith(".tar.7z"));
+}
+
+bool LocalFileInfo::notifyAttributeChanged()
+{
+    if (d->dfmFileInfo)
+        return d->dfmFileInfo->setCustomAttribute("xattr::update", DFMIO::DFileInfo::DFileAttributeType::TypeString, "");
+
+    return false;
 }
 
 QString LocalFileInfo::mimeTypeName() const

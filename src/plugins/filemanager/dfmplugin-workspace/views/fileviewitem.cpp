@@ -120,7 +120,7 @@ void FileViewItem::setUrl(const QUrl url)
     if (!d->mimeType.isValid())
         abort();
     // Todo(yanghao)
-    setData(QVariant(d->fileinfo->fileIcon()), kItemIconRole);
+    //setData(QVariant(d->fileinfo->fileIcon()), kItemIconRole);
     setData(QVariant(d->fileinfo->fileName()), kItemNameRole);
 }
 
@@ -219,7 +219,8 @@ QVariant FileViewItem::data(int role) const
     case kItemFileLastModifiedRole:
         return d->fileinfo->lastModified().toString(dateTimeFormat());
     case kItemIconRole:
-        return QStandardItem::data(Roles::kItemIconRole);
+        return d->fileinfo->fileIcon();
+        //return QStandardItem::data(Roles::kItemIconRole);
     case kItemFileSizeRole:
         return d->fileinfo->sizeDisplayName();
     case kItemFileMimeTypeRole:

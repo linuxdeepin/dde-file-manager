@@ -29,6 +29,8 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <KCodecs>
 #include <KEncodingProber>
@@ -44,6 +46,8 @@
 #include <QDebug>
 #include <QApplication>
 #include <QTextCodec>
+#include <QSet>
+#include <QRegularExpression>
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -1013,6 +1017,66 @@ float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, co
     c -= static_cast<float>(qreal(unidentificationCount) / nonBaseLatinCount);
 
     return qMax(0.0f, c);
+}
+
+Match::Match(const QString &group)
+{
+    for (const QString &key : Application::instance()->genericObtuselySetting()->keys(group)) {
+        const QString &value = Application::instance()->genericObtuselySetting()->value(group, key).toString();
+
+        int last_dir_split = value.lastIndexOf(QDir::separator());
+
+        if (last_dir_split >= 0) {
+            QString path = value.left(last_dir_split);
+
+            if (path.startsWith("~/")) {
+                path.replace(0, 1, QDir::homePath());
+            }
+
+            patternList << qMakePair(path, value.mid(last_dir_split + 1));
+        } else {
+            patternList << qMakePair(QString(), value);
+        }
+    }
+}
+
+bool Match::match(const QString &path, const QString &name)
+{
+    // 这里可能会析构 先复制一份再循环
+    const QList<QPair<QString, QString>> patternListNew = patternList;
+    for (auto pattern : patternListNew) {
+        QRegularExpression re(QString(), QRegularExpression::MultilineOption);
+
+        if (!pattern.first.isEmpty()) {
+            re.setPattern(pattern.first);
+
+            if (!re.isValid()) {
+                qWarning() << re.errorString();
+                continue;
+            }
+
+            if (!re.match(path).hasMatch()) {
+                continue;
+            }
+        }
+
+        if (pattern.second.isEmpty()) {
+            return true;
+        }
+
+        re.setPattern(pattern.second);
+
+        if (!re.isValid()) {
+            qWarning() << re.errorString();
+            continue;
+        }
+
+        if (re.match(name).hasMatch()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 DFMBASE_END_NAMESPACE

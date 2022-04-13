@@ -87,6 +87,14 @@ public:
         QReadLocker locker(&lock);
         return this->icon;
     }
+    void clearIcon()
+    {
+        icon = QIcon();
+        needThumbnail = false;
+        hasThumbnail = -1;
+        iconFromTheme = false;
+        getIconTimer = nullptr;
+    }
 };
 
 LocalFileInfoPrivate::LocalFileInfoPrivate(LocalFileInfo *qq)

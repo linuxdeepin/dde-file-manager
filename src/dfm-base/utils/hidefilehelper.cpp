@@ -22,6 +22,7 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 
 #include "dfm-io/dfmio_register.h"
 #include "dfm-io/core/dfile.h"
@@ -51,11 +52,8 @@ public:
 
     void init()
     {
-        QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(fileUrl.scheme(), static_cast<QUrl>(fileUrl));
-        if (!factory) {
-            return;
-        }
-        dfile = factory->createFile();
+        dfile = DFMBASE_NAMESPACE::DecoratorFile(fileUrl).filePtr();
+
         if (!dfile)
             return;
 
@@ -63,6 +61,7 @@ public:
             QByteArray data = dfile->readAll();
             const QString &dataStr = QString::fromLocal8Bit(data);
             hideList = QSet<QString>::fromList(dataStr.split('\n', QString::SkipEmptyParts));
+            hideListUpdate = hideList;
             dfile->close();
         }
     }
@@ -77,6 +76,10 @@ public:
             DFMBASE_NAMESPACE::DecoratorFileInfo decorator(url);
             decorator.notifyAttributeChanged();
         }
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(fileUrl);
+        info->refresh();
+        DFMBASE_NAMESPACE::DecoratorFileInfo decorator(fileUrl);
+        decorator.notifyAttributeChanged();
     }
 
 public:

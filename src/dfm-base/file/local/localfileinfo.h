@@ -53,6 +53,7 @@ public:
     virtual void setFile(const QUrl &url) override;
     virtual bool exists() const override;
     virtual void refresh() override;
+    virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant()) override;
     virtual QString filePath() const override;
     virtual QString absoluteFilePath() const override;
     virtual QString fileName() const override;
@@ -116,6 +117,8 @@ public:
 
     virtual bool canDragCompress() const override;
     virtual bool isDragCompressFileFormat() const override;
+
+    virtual bool notifyAttributeChanged() override;
 
 private:
     void init(const QUrl &url);

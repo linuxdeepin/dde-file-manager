@@ -123,7 +123,9 @@ protected:
                           bool &result);
     bool doReadFile(const AbstractFileInfoPointer &fromInfo,
                     const AbstractFileInfoPointer &toInfo,
-                    const QSharedPointer<DFile> &fromDevice, char *data,
+                    const QSharedPointer<DFile> &fromDevice,
+                    const QSharedPointer<DFile> &toDevice,
+                    char *data,
                     const qint64 &blockSize,
                     qint64 &readSize,
                     bool &result);

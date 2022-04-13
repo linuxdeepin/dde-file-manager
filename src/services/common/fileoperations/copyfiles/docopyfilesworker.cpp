@@ -588,7 +588,7 @@ bool DoCopyFilesWorker::doCopyFilePractically(const AbstractFileInfoPointer from
     qint64 sizeRead = 0;
 
     do {
-        if (!doReadFile(fromInfo, toInfo, fromDevice, data, blockSize, sizeRead, reslut)) {
+        if (!doReadFile(fromInfo, toInfo, fromDevice, toDevice, data, blockSize, sizeRead, reslut)) {
             delete[] data;
             data = nullptr;
             return reslut;
@@ -604,8 +604,9 @@ bool DoCopyFilesWorker::doCopyFilePractically(const AbstractFileInfoPointer from
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
 
-        toInfo->refresh();
-    } while (fromDevice->pos() != fromInfo->size() && toInfo->size() != fromInfo->size());
+        toInfo->refresh(DFMIO::DFileInfo::AttributeID::StandardSize, toDevice->size());
+
+    } while (fromDevice->size() != toDevice->size());
 
     delete[] data;
     data = nullptr;
@@ -617,7 +618,9 @@ bool DoCopyFilesWorker::doCopyFilePractically(const AbstractFileInfoPointer from
     }
 
     // 校验文件完整性
-    return verifyFileIntegrity(blockSize, sourceCheckSum, fromInfo, toInfo, toDevice);
+    bool ret = verifyFileIntegrity(blockSize, sourceCheckSum, fromInfo, toInfo, toDevice);
+    toInfo->refresh();
+    return ret;
 }
 
 bool DoCopyFilesWorker::createFileDevices(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, QSharedPointer<DFile> &fromeFile, QSharedPointer<DFile> &toFile, bool &result)
@@ -691,7 +694,10 @@ bool DoCopyFilesWorker::openFile(const AbstractFileInfoPointer &fromInfo,
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
         if (!file->open(flags)) {
-            action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kDfmIoError, QObject::tr("create dfm io dfile failed!"));
+            auto lastError = file->lastError();
+            qWarning() << "file open error, url from: " << fromInfo->url() << " url to: " << toInfo->url() << " open flag: " << flags << " error code: " << lastError.code() << " error msg: " << lastError.errorMsg();
+
+            action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kDfmIoError, QObject::tr("File open error, cause: %1").arg(lastError.errorMsg()));
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     cancelThreadProcessingError();
@@ -723,8 +729,10 @@ bool DoCopyFilesWorker::resizeTargetFile(const AbstractFileInfoPointer &fromInfo
 bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
                                    const AbstractFileInfoPointer &toInfo,
                                    const QSharedPointer<DFile> &fromDevice,
+                                   const QSharedPointer<DFile> &toDevice,
                                    char *data,
-                                   const qint64 &blockSize, qint64 &readSize,
+                                   const qint64 &blockSize,
+                                   qint64 &readSize,
                                    bool &result)
 {
     readSize = 0;
@@ -741,13 +749,11 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
         }
 
         if (Q_UNLIKELY(readSize <= 0)) {
-            const auto &fromInfoSize = fromInfo->size();
-            const auto &toInfoSize = toInfo->size();
-            const auto &fromDevicePos = fromDevice->pos();
-            if (readSize == 0 && (fromInfoSize == toInfoSize || fromInfoSize == fromDevicePos)) {
+
+            if (readSize == 0 && fromDevice->size() == toDevice->size()) {
                 return true;
             }
-            fromInfo->refresh();
+
             AbstractJobHandler::JobErrorType errortype = fromInfo->exists() ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
             QString errorstr = fromInfo->exists() ? QString(QObject::tr("DFileCopyMoveJob", "Failed to read the file, cause: %1")).arg("to something!") : QString();
 
@@ -777,7 +783,9 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
     return true;
 }
 
-bool DoCopyFilesWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, const QSharedPointer<DFile> &toDevice, const char *data, const qint64 &readSize, bool &result)
+bool DoCopyFilesWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                                    const QSharedPointer<DFile> &toDevice,
+                                    const char *data, const qint64 &readSize, bool &result)
 {
     qint64 currentPos = toDevice->pos();
     AbstractJobHandler::SupportAction actionForWrite { AbstractJobHandler::SupportAction::kNoAction };
@@ -971,6 +979,7 @@ bool DoCopyFilesWorker::verifyFileIntegrity(const qint64 &blockSize,
         cancelThreadProcessingError();
         return actionForCheck == AbstractJobHandler::SupportAction::kSkipAction;
     }
+
     return true;
 }
 

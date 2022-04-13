@@ -22,6 +22,7 @@
 #ifndef ABSTRACTFILEINFO_H
 #define ABSTRACTFILEINFO_H
 
+// todo lanxs deal private
 #define private public
 #include <QSharedPointer>
 #undef private
@@ -42,6 +43,7 @@
 class QDir;
 class QDateTime;
 
+// todo zhangyu deal define
 #define COMPARE_FUN_DEFINE(Value, Name, Type)                                                                           \
     bool compareFileListBy##Name(const QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> &info1,                      \
                                  const QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> &info2, Qt::SortOrder order) \
@@ -171,6 +173,7 @@ public:
     virtual void setFile(const QUrl &url);
     virtual bool exists() const;
     virtual void refresh();
+    virtual void refresh(DFMIO::DFileInfo::AttributeID id, const QVariant &value = QVariant());
     virtual QString filePath() const;
     virtual QString absoluteFilePath() const;
     virtual QString fileName() const;
@@ -251,6 +254,8 @@ public:
     // property for view
     virtual QString emptyDirectoryTip() const;
     virtual QString loadingTip() const;
+
+    virtual bool notifyAttributeChanged();
 
 protected:
     explicit AbstractFileInfo(const QUrl &url, AbstractFileInfoPrivate *d);

@@ -125,7 +125,7 @@ void WorkspaceWidget::closeTab(quint64 winId, const QString &path)
 
 void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)
 {
-    if (topWidgets.contains(scheme)) {
+    if (topWidgets.contains(scheme) && views.count(scheme) > 0 && views[scheme]->widget()->isVisible()) {
         topWidgets[scheme]->setVisible(visible);
     }
 }

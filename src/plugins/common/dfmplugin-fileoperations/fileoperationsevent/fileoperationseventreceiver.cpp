@@ -23,7 +23,7 @@
 #include "fileoperationseventreceiver.h"
 
 #include "fileoperations/filecopymovejob.h"
-#include "fileoperations/fileoperationutils/hidefilehelper.h"
+#include "dfm-base/utils/hidefilehelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/local/localfilehandler.h"

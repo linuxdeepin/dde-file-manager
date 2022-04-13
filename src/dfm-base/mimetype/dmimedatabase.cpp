@@ -77,7 +77,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
         }
     }
 
-    if (isMatchExtension || FileUtils::isLowSpeedDevice(path)) {
+    if (isMatchExtension || FileUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
@@ -146,7 +146,7 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QFileInfo &fileInfo, QMimeDatabas
             isMatchExtension = blackList.contains(filePath);
         }
     }
-    if (isMatchExtension || FileUtils::isLowSpeedDevice(path)) {
+    if (isMatchExtension || FileUtils::isLowSpeedDevice(QUrl::fromLocalFile(path))) {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, QMimeDatabase::MatchExtension);
     } else {
         result = QMimeDatabase::mimeTypeForFile(fileInfo, mode);
