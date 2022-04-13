@@ -29,7 +29,8 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-class CanvasModel;
+class FileInfoModel;
+class CanvasModelExtend;
 class CanvasSelectionModel;
 typedef QSharedPointer<CanvasView> CanvasViewPointer;
 
@@ -62,7 +63,9 @@ public slots:
 protected slots:
 
 public:
-    CanvasModel *canvasModel = nullptr;
+    FileInfoModel *sourceModel = nullptr;
+    CanvasProxyModel *canvasModel = nullptr;
+    CanvasModelExtend *modelExt = nullptr;
     CanvasSelectionModel *selectionModel = nullptr ;
     DSB_D_NAMESPACE::FrameService *frameService = nullptr ;
     QMap<QString, CanvasViewPointer> viewMap;

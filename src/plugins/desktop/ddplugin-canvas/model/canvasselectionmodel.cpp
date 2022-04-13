@@ -19,18 +19,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "canvasselectionmodel.h"
-#include "canvasmodel.h"
+#include "canvasproxymodel.h"
 
 DDP_CANVAS_USE_NAMESPACE
 
-CanvasSelectionModel::CanvasSelectionModel(CanvasModel *model, QObject *parent) : QItemSelectionModel(model, parent)
+CanvasSelectionModel::CanvasSelectionModel(CanvasProxyModel *model, QObject *parent) : QItemSelectionModel(model, parent)
 {
 
 }
 
-CanvasModel *CanvasSelectionModel::model()
+CanvasProxyModel *CanvasSelectionModel::model()
 {
-    return qobject_cast<CanvasModel *>(QItemSelectionModel::model());
+    return qobject_cast<CanvasProxyModel *>(QItemSelectionModel::model());
 }
 
 QList<QUrl> CanvasSelectionModel::selectedUrls()
@@ -38,7 +38,7 @@ QList<QUrl> CanvasSelectionModel::selectedUrls()
     auto indexs = selectedIndexes();
     QList<QUrl> urls;
     for (auto index : indexs) {
-        urls <<  model()->url(index);
+        urls <<  model()->fileUrl(index);
     }
 
     return urls;

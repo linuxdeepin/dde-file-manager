@@ -23,7 +23,7 @@
 #include "canvasmanager.h"
 #include "grid/canvasgrid.h"
 #include "view/canvasview.h"
-#include "model/canvasmodel.h"
+#include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
 #include "view/operator/fileoperatorproxy.h"
 #include "menu/canvasmenu.h"
@@ -122,7 +122,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
 
     auto selectUrls = view->selectionModel()->selectedUrls();
-    auto tgUrl = view->model()->url(index);
+    auto tgUrl = view->model()->fileUrl(index);
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();

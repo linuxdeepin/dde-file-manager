@@ -19,13 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dragdropoper.h"
-#include "model/canvasmodel.h"
 #include "utils/keyutil.h"
 #include "grid/canvasgrid.h"
 #include "model/canvasselectionmodel.h"
 #include "view/canvasview_p.h"
 #include "canvasmanager.h"
 #include "displayconfig.h"
+#include "utils/fileutil.h"
 
 #include <base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
@@ -82,7 +82,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
     stopDelayDodge();
     auto pos = event->pos();
     auto hoverIndex = view->indexAt(pos);
-    QUrl curUrl = hoverIndex.isValid() ? view->model()->url(hoverIndex) : view->model()->rootUrl();
+    QUrl curUrl = hoverIndex.isValid() ? view->model()->fileUrl(hoverIndex) : view->model()->rootUrl();
     if (hoverIndex.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
             bool canDrop = !fileInfo->canDrop() || (fileInfo->isDir() && !fileInfo->isWritable()) || !fileInfo->supportedDropActions().testFlag(event->dropAction());
@@ -269,7 +269,7 @@ bool DragDropOper::dropFilter(QDropEvent *event)
     {
         QModelIndex index = view->indexAt(event->pos());
         if (index.isValid()) {
-            QUrl targetItem = view->model()->url(index);
+            QUrl targetItem = view->model()->fileUrl(index);
             auto itemInfo = FileCreator->createFileInfo(targetItem);
             if (itemInfo && (itemInfo->isDir() || itemInfo->url() == DesktopAppUrl::homeDesktopFileUrl())) {
                 auto sourceUrls = event->mimeData()->urls();
@@ -374,7 +374,7 @@ bool DragDropOper::dropBetweenView(QDropEvent *event) const
         // items are from one view, using move.
         // normally, item should from the view that is event->source().
         auto focus = fromView->d->operState().current();
-        auto focusItem = fromView->model()->url(focus).toString();
+        auto focusItem = fromView->model()->fileUrl(focus).toString();
         if (!focusItem.isEmpty()) {
             if (GridIns->move(view->screenNum(), dropGridPos, focusItem, itemPos.keys())) {
                 // reset the focus for key move
@@ -424,7 +424,7 @@ bool DragDropOper::dropMimeData(QDropEvent *event) const
     auto targetIndex = view->indexAt(event->pos());
     bool enableDrop = targetIndex.isValid() ? model->flags(targetIndex) & Qt::ItemIsDropEnabled : model->flags(model->rootIndex()) & Qt::ItemIsDropEnabled;
     if (model->supportedDropActions() & event->dropAction() && enableDrop) {
-        preproccessDropEvent(event, event->mimeData()->urls(), targetIndex.isValid() ? model->url(targetIndex) : model->rootUrl());
+        preproccessDropEvent(event, event->mimeData()->urls(), targetIndex.isValid() ? model->fileUrl(targetIndex) : model->rootUrl());
         const Qt::DropAction action = event->dropAction();
         if (model->dropMimeData(event->mimeData(), action, targetIndex.row(), targetIndex.column(), targetIndex)) {
             if (action != event->dropAction()) {

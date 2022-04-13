@@ -26,13 +26,13 @@
 #include <QItemSelectionModel>
 
 DDP_CANVAS_BEGIN_NAMESPACE
-class CanvasModel;
+class CanvasProxyModel;
 class CanvasSelectionModel : public QItemSelectionModel
 {
     Q_OBJECT
 public:
-    explicit CanvasSelectionModel(CanvasModel *model, QObject *parent);
-    CanvasModel *model();
+    explicit CanvasSelectionModel(CanvasProxyModel *model, QObject *parent);
+    CanvasProxyModel *model();
     QList<QUrl> selectedUrls();
 };
 DDP_CANVAS_END_NAMESPACE

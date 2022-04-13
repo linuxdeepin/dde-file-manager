@@ -18,49 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "filefilter.h"
+#ifndef CANVASMODELEXTEND_H
+#define CANVASMODELEXTEND_H
 
-#include <dfm-base/utils/fileutils.h>
-#include <base/standardpaths.h>
+#include "ddplugin_canvas_global.h"
+#include "model/modelextendinterface.h"
 
-#include <QGSettings>
-#include <QDebug>
+#include <QObject>
 
-DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+DDP_CANVAS_BEGIN_NAMESPACE
 
-FileFilter::FileFilter()
+class CanvasModelExtendPrivate;
+class CanvasModelExtend : public QObject, public ModelExtendInterface
 {
+    Q_OBJECT
+    friend class CanvasModelExtendPrivate;
+public:
+    explicit CanvasModelExtend(QObject *parent = nullptr);
+    bool initEvent();
+    virtual bool modelData(const QUrl &url, int role, QVariant *out, void *userData = nullptr) const override;
+signals:
 
-}
+public slots:
+private:
+    CanvasModelExtendPrivate *d;
+};
 
-bool FileFilter::fileTraversalFilter(QList<QUrl> &urls)
-{
-    return false;
-}
+DDP_CANVAS_END_NAMESPACE
 
-bool FileFilter::fileDeletedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-    return false;
-}
-
-bool FileFilter::fileCreatedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-    return false;
-}
-
-bool FileFilter::fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl)
-{
-    Q_UNUSED(oldUrl)
-    Q_UNUSED(newUrl)
-    return false;
-}
-
-bool FileFilter::fileUpdatedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-    return false;
-}
-
+#endif // CANVASMODELEXTEND_H

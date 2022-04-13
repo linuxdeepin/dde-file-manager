@@ -189,7 +189,7 @@ void ViewPainter::drawDodge(QStyleOptionViewItem option)
     if (d->dodgeOper->getPrepareDodge()) {
         auto mousePoint = view()->mapFromGlobal(QCursor::pos());
         auto hoverIndex = view()->indexAt(mousePoint);
-        auto url = model()->url(hoverIndex);
+        auto url = model()->fileUrl(hoverIndex);
 
         auto selects = selectionModel()->selectedUrls();
         if (selects.contains(url) ||

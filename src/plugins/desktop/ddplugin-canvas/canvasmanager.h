@@ -28,7 +28,7 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasView;
-class CanvasModel;
+class CanvasProxyModel;
 class CanvasSelectionModel;
 class CanvasManagerPrivate;
 class CanvasManager : public QObject
@@ -41,7 +41,7 @@ public:
     void init();
     void update();
     void openEditor(const QUrl &url);
-    CanvasModel *model() const;
+    CanvasProxyModel *model() const;
     CanvasSelectionModel *selectionModel() const;
     QList<QSharedPointer<CanvasView> > views() const;
 public slots:

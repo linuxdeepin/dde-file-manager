@@ -18,49 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "filefilter.h"
+#ifndef FILEINFOMODEL_P_H
+#define FILEINFOMODEL_P_H
 
-#include <dfm-base/utils/fileutils.h>
-#include <base/standardpaths.h>
+#include "fileinfomodel.h"
+#include "fileprovider.h"
 
-#include <QGSettings>
-#include <QDebug>
+DDP_CANVAS_BEGIN_NAMESPACE
 
-DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
-
-FileFilter::FileFilter()
+class FileInfoModelPrivate : public QObject
 {
+    Q_OBJECT
+public:
+    explicit FileInfoModelPrivate(FileInfoModel *qq);
+    void doRefresh();
+public slots:
+    void resetData(const QList<QUrl> &urls);
+    void insertData(const QUrl &url);
+    void removeData(const QUrl &url);
+    void replaceData(const QUrl &oldUrl, const QUrl &newUrl);
+    void updateData(const QUrl &url);
+public:
+    QDir::Filters filters = QDir::NoFilter;
+    FileProvider *fileProvider = nullptr;
+    QList<QUrl> fileList;
+    QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
+    QReadWriteLock lock;
+private:
+    FileInfoModel *q;
+};
 
-}
+DDP_CANVAS_END_NAMESPACE
 
-bool FileFilter::fileTraversalFilter(QList<QUrl> &urls)
-{
-    return false;
-}
-
-bool FileFilter::fileDeletedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-    return false;
-}
-
-bool FileFilter::fileCreatedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-    return false;
-}
-
-bool FileFilter::fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl)
-{
-    Q_UNUSED(oldUrl)
-    Q_UNUSED(newUrl)
-    return false;
-}
-
-bool FileFilter::fileUpdatedFilter(const QUrl &url)
-{
-    Q_UNUSED(url)
-    return false;
-}
-
+#endif // FILEINFOMODEL_P_H

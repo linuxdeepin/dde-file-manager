@@ -32,6 +32,8 @@
 #include "operator/fileoperatorproxy.h"
 #include "utils/keyutil.h"
 
+#include <dfm-base/dfm_global_defines.h>
+
 #include <QGSettings>
 #include <QPainter>
 #include <QDebug>
@@ -42,6 +44,7 @@
 #include <QMimeData>
 #include <QTimer>
 
+DFMBASE_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
 CanvasView::CanvasView(QWidget *parent)
@@ -51,7 +54,7 @@ CanvasView::CanvasView(QWidget *parent)
 
 QRect CanvasView::visualRect(const QModelIndex &index) const
 {
-    return d->visualRect(model()->url(index).toString());
+    return d->visualRect(model()->fileUrl(index).toString());
 }
 
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
@@ -127,7 +130,7 @@ QModelIndex CanvasView::moveCursor(QAbstractItemView::CursorAction cursorAction,
     QPoint pos;
     {
         QPair<int, QPoint> postion;
-        auto currentItem = model()->url(current).toString();
+        auto currentItem = model()->fileUrl(current).toString();
         if (Q_UNLIKELY(!GridIns->point(currentItem, postion))) {
             qWarning() << "can not find pos for" << currentItem;
             return d->firstIndex();
@@ -400,9 +403,9 @@ CanvasItemDelegate *CanvasView::itemDelegate() const
     return qobject_cast<CanvasItemDelegate *>(QAbstractItemView::itemDelegate());
 }
 
-CanvasModel *CanvasView::model() const
+CanvasProxyModel *CanvasView::model() const
 {
-    return qobject_cast<CanvasModel *>(QAbstractItemView::model());
+    return qobject_cast<CanvasProxyModel *>(QAbstractItemView::model());
 }
 
 CanvasSelectionModel *CanvasView::selectionModel() const
@@ -441,7 +444,7 @@ void CanvasView::updateGrid()
 
 void CanvasView::refresh()
 {
-    model()->refresh(rootIndex());
+    model()->refresh(rootIndex(), true);
 
     // flicker
     d->flicker = true;
@@ -521,7 +524,7 @@ void CanvasView::selectAll()
 
 QRect CanvasView::itemRect(const QModelIndex &index) const
 {
-    return d->itemRect(model()->url(index).toString());
+    return d->itemRect(model()->fileUrl(index).toString());
 }
 
 void CanvasView::keyPressEvent(QKeyEvent *event)
@@ -580,13 +583,13 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
         QTimer::singleShot(200, this, [this, pos]() {
             // file info and url changed,but pos will not change
             const QModelIndex &renamedIndex = indexAt(pos);
-            const QUrl &renamedUrl = model()->url(renamedIndex);
+            const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
             FileOperatorProxyIns->openFiles(this, { renamedUrl });
         });
         return;
     }
 
-    const QUrl &url = model()->url(index);
+    const QUrl &url = model()->fileUrl(index);
     FileOperatorProxyIns->openFiles(this, { url });
 }
 
@@ -649,9 +652,6 @@ const QSize CanvasViewPrivate::dockReserveSize = QSize(80, 80);
 CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     : QObject(qq), q(qq)
 {
-#ifdef QT_DEBUG
-    showGrid = true;
-#endif
     clickSelecter = new ClickSelecter(q);
     keySelecter = new KeySelecter(q);
     dragDropOper = new DragDropOper(q);
@@ -803,7 +803,7 @@ QModelIndex CanvasViewPrivate::findIndex(const QString &key, bool matchStart, co
         if (!index.isValid())
             continue;
 
-        const QString &pinyinName = q->model()->data(index, CanvasModel::kFilePinyinName).toString();
+        const QString &pinyinName = q->model()->data(index, Global::ItemRoles::kItemFilePinyinNameRole).toString();
 
         if (matchStart ? pinyinName.startsWith(key, Qt::CaseInsensitive)
                        : pinyinName.contains(key, Qt::CaseInsensitive)) {

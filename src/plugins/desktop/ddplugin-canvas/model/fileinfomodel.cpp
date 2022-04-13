@@ -1,0 +1,471 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     zhangyu<zhangyub@uniontech.com>
+ *
+ * Maintainer: zhangyu<zhangyub@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "fileinfomodel_p.h"
+#include "fileprovider.h"
+
+#include <base/standardpaths.h>
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-base/dfm_global_defines.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-framework/framework.h>
+
+#include <QMimeData>
+
+DFMBASE_USE_NAMESPACE
+DDP_CANVAS_USE_NAMESPACE
+
+FileInfoModelPrivate::FileInfoModelPrivate(FileInfoModel *qq)
+    : QObject(qq)
+    , q(qq)
+{
+
+}
+
+void FileInfoModelPrivate::doRefresh()
+{
+    fileProvider->refresh(filters);
+}
+
+void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
+{
+    QList<QUrl> fileUrls;
+    QMap<QUrl, DFMLocalFileInfoPointer> fileMaps;
+    for (const QUrl &child : urls) {
+        if (auto itemInfo = FileCreator->createFileInfo(child)) {
+            fileUrls.append(itemInfo->url());
+            fileMaps.insert(itemInfo->url(), itemInfo);
+        }
+    }
+
+    q->beginResetModel();
+    {
+        QWriteLocker lk(&lock);
+        fileList = fileUrls;
+        fileMap = fileMaps;
+    }
+    q->endResetModel();
+}
+
+void FileInfoModelPrivate::insertData(const QUrl &url)
+{
+    int row = -1;
+    {
+        QReadLocker lk(&lock);
+        if (Q_UNLIKELY(fileMap.contains(url))) {
+            qWarning() << "file exists:" << url;
+            return;
+        }
+        row = fileList.count();
+    }
+
+    auto itemInfo = FileCreator->createFileInfo(url);
+    if (Q_UNLIKELY(!itemInfo)) {
+        qWarning() << "fail to create file info" << url;
+        return;
+    }
+
+    q->beginInsertRows(q->rootIndex(), row, row);
+    {
+        QWriteLocker lk(&lock);
+        fileList.append(url);
+        fileMap.insert(url, itemInfo);
+    }
+    q->endInsertRows();
+}
+
+void FileInfoModelPrivate::removeData(const QUrl &url)
+{
+
+    int position = -1;
+    {
+        QReadLocker lk(&lock);
+        position = fileList.indexOf(url);
+    }
+
+    if (Q_UNLIKELY(position < 0)) {
+        qInfo() << "file dose not exists:" << url;
+        return;
+    }
+
+    q->beginRemoveRows(q->rootIndex(), position, position);
+    {
+        QWriteLocker lk(&lock);
+        position = fileList.indexOf(url);
+        fileList.removeAt(position);
+        fileMap.remove(url);
+    }
+    q->endRemoveRows();
+}
+
+void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
+{ 
+    if (newUrl.isEmpty()) {
+        qInfo() << "target url is empty, remove old" << oldUrl;
+        removeData(oldUrl);
+        return;
+    }
+
+    auto newInfo = FileCreator->createFileInfo(newUrl);
+    if (Q_UNLIKELY(newInfo.isNull())) {
+        qWarning() << "fail to create new file info:" << newUrl << "old" << oldUrl;
+        removeData(oldUrl);
+        return;
+    }
+
+    {
+        QWriteLocker lk(&lock);
+        int position = fileList.indexOf(oldUrl);
+        if (Q_LIKELY(position < 0)) {
+            if (!fileMap.contains(newUrl)) {
+                lk.unlock();
+                insertData(newUrl);
+                return;
+            }
+        } else {
+            fileList.replace(position, newUrl);
+            fileMap.remove(oldUrl);
+            fileMap.insert(newUrl, newInfo);
+            emit q->dataReplaced(oldUrl, newUrl);
+
+            auto index = q->index(position);
+            emit q->dataChanged(index, index);
+        }
+    }
+}
+
+void FileInfoModelPrivate::updateData(const QUrl &url)
+{
+    {
+        QReadLocker lk(&lock);
+        if (Q_UNLIKELY(!fileMap.contains(url)))
+            return;
+
+        // Although the files cached in InfoCache will be refreshed automatically,
+        // a redundant refresh is still required here, because the current variant of LocalFileInfo
+        // (like DesktopFileInfo created from DesktopFileCreator) is not in InfoCache and will not be refreshed automatically.
+        if (auto info = fileMap.value(url))
+            info->refresh();
+    }
+
+    const QModelIndex &index = q->index(url);
+    if (Q_UNLIKELY(!index.isValid()))
+        return;
+
+    emit q->dataChanged(index, index);
+}
+
+FileInfoModel::FileInfoModel(QObject *parent) :
+    QAbstractItemModel(parent),
+    d(new FileInfoModelPrivate(this))
+{
+    d->fileProvider = new FileProvider(this);
+    connect(d->fileProvider, &FileProvider::refreshEnd, d, &FileInfoModelPrivate::resetData);
+
+    connect(d->fileProvider, &FileProvider::fileInserted, d, &FileInfoModelPrivate::insertData);
+    connect(d->fileProvider, &FileProvider::fileRemoved, d, &FileInfoModelPrivate::removeData);
+    connect(d->fileProvider, &FileProvider::fileUpdated, d, &FileInfoModelPrivate::updateData);
+    connect(d->fileProvider, &FileProvider::fileRenamed, d, &FileInfoModelPrivate::replaceData);
+}
+
+FileInfoModel::~FileInfoModel()
+{
+
+}
+
+QModelIndex FileInfoModel::setRootUrl(QUrl url)
+{
+    if (url.isEmpty())
+        url = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath));
+
+    d->fileProvider->setRoot(url);
+
+    //! FileInfoModel should get all files
+    d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+
+    // root url changed,refresh data as soon as
+    d->doRefresh();
+
+    return rootIndex();
+}
+
+QUrl FileInfoModel::rootUrl() const
+{
+    return d->fileProvider->root();
+}
+
+QModelIndex FileInfoModel::rootIndex() const
+{
+    return createIndex((quintptr)this, 0, (void *)this);
+}
+
+void FileInfoModel::installFilter(QSharedPointer<FileFilter> filter)
+{
+    d->fileProvider->installFileFilter(filter);
+}
+
+void FileInfoModel::removeFilter(QSharedPointer<FileFilter> filter)
+{
+    d->fileProvider->removeFileFilter(filter);
+}
+
+QModelIndex FileInfoModel::index(int row, int column, const QModelIndex &parent) const
+{
+    Q_UNUSED(parent)
+    if (row < 0 || column < 0 || rowCount(rootIndex()) <= row)
+        return QModelIndex();
+
+    auto url = d->fileList.at(row);
+    if (auto fileInfo = d->fileMap.value(url))
+        return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
+
+    return QModelIndex();
+}
+
+QModelIndex FileInfoModel::index(const QUrl &url, int column) const
+{
+    if (url.isEmpty())
+        return QModelIndex();
+
+    if (auto fileInfo = d->fileMap.value(url)) {
+        int row = d->fileList.indexOf(url);
+        return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
+    }
+
+    return QModelIndex();
+}
+
+DFMLocalFileInfoPointer FileInfoModel::fileInfo(const QModelIndex &index) const
+{
+    if (index == rootIndex())
+        return FileCreator->createFileInfo(rootUrl());
+
+    if (index.row() < 0 || index.row() >= d->fileList.count())
+        return nullptr;
+
+    return d->fileMap.value(d->fileList.at(index.row()));
+}
+
+QUrl FileInfoModel::fileUrl(const QModelIndex &index) const
+{
+    if (index == rootIndex())
+        return rootUrl();
+
+    if ((index.row() < 0) || (index.row() >= d->fileList.count()))
+        return QUrl();
+
+    return d->fileList.at(index.row());
+}
+
+QList<QUrl> FileInfoModel::files() const
+{
+    return d->fileList;
+}
+
+void FileInfoModel::refresh(const QModelIndex &parent)
+{
+    if (parent != rootIndex())
+        return;
+
+    d->fileProvider->refresh(d->filters);
+}
+
+QModelIndex FileInfoModel::parent(const QModelIndex &child) const
+{
+    if (child != rootIndex() && child.isValid())
+        return rootIndex();
+
+    return QModelIndex();
+}
+
+int FileInfoModel::rowCount(const QModelIndex &parent) const
+{
+    if (parent == rootIndex())
+        return d->fileList.count();
+
+    return 0;
+}
+
+int FileInfoModel::columnCount(const QModelIndex &parent) const
+{
+    if (parent == rootIndex())
+        return 1;
+
+    return 0;
+}
+
+QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
+{
+    if (!index.isValid() || index.model() != this || index == rootIndex())
+        return QVariant();
+
+    auto indexFileInfo = static_cast<LocalFileInfo *>(index.internalPointer());
+    if (!indexFileInfo) {
+        return QVariant();
+    }
+    switch (itemRole) {
+    case Global::ItemRoles::kItemIconRole:
+        return indexFileInfo->fileIcon();
+    case Global::ItemRoles::kItemNameRole:
+        return indexFileInfo->fileName();
+    case Qt::EditRole:
+    case Global::ItemRoles::kItemFileDisplayNameRole:
+        return indexFileInfo->fileDisplayName();
+    case Global::ItemRoles::kItemFilePinyinNameRole:
+        return indexFileInfo->fileDisplayPinyinName();
+    case Global::ItemRoles::kItemFileLastModifiedRole:
+        return indexFileInfo->lastModified().toString();   // todo by file info: lastModifiedDisplayName
+    case Global::ItemRoles::kItemFileSizeRole:
+        return indexFileInfo->size();   // todo by file info: sizeDisplayName
+    case Global::ItemRoles::kItemFileMimeTypeRole:
+        return indexFileInfo->fileMimeType().name();   // todo by file info: mimeTypeDisplayName
+    case Global::ItemRoles::kItemExtraProperties:
+        return indexFileInfo->extraProperties();
+    case Global::ItemRoles::kItemFileBaseNameRole:
+        return indexFileInfo->baseName();
+    case Global::ItemRoles::kItemFileSuffixRole:
+        return indexFileInfo->suffix();
+    case Global::ItemRoles::kItemFileNameOfRenameRole:
+        return indexFileInfo->fileNameOfRename();
+    case Global::ItemRoles::kItemFileBaseNameOfRenameRole:
+        return indexFileInfo->baseNameOfRename();
+    case Global::ItemRoles::kItemFileSuffixOfRenameRole:
+        return indexFileInfo->suffixOfRename();
+    default:
+        return QString();
+    }
+}
+
+Qt::ItemFlags FileInfoModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+    if (!index.isValid())
+        return flags;
+
+    flags |= Qt::ItemIsDragEnabled;
+
+    if (auto file = fileInfo(index)) {
+        if (file->canRename())
+            flags |= Qt::ItemIsEditable;
+
+        if (file->isWritable()) {
+            if (file->canDrop())
+                flags |= Qt::ItemIsDropEnabled;
+            else
+                flags |= Qt::ItemNeverHasChildren;
+        }
+
+        // todo
+        //flags &= ~file->fileItemDisableFlags();
+    }
+
+    return flags;
+}
+
+QMimeData *FileInfoModel::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData *data = new QMimeData();
+    QList<QUrl> urls;
+
+    for (const QModelIndex &idx : indexes)
+        urls << fileUrl(idx);
+
+    data->setUrls(urls);
+    return data;
+}
+
+bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+    Q_UNUSED(row);
+    Q_UNUSED(column);
+
+    QList<QUrl> urlList = data->urls();
+    if (urlList.isEmpty())
+        return false;
+
+    QUrl targetFileUrl;
+    if (!parent.isValid() || parent == rootIndex()) {
+        // drop file to desktop
+        targetFileUrl = rootUrl();
+        qInfo() << "drop file to desktop" << targetFileUrl << "data" << urlList << action;
+    } else {
+        targetFileUrl = fileUrl(parent);
+        qInfo() << "drop file to " << targetFileUrl << "data:" << urlList << action;
+    }
+
+    auto itemInfo = FileCreator->createFileInfo(targetFileUrl);
+    if (Q_UNLIKELY(!itemInfo))
+        return false;
+
+    if (itemInfo->isSymLink()) {
+        targetFileUrl = itemInfo->symLinkTarget();
+    }
+
+    // todo(wcl) Compress
+
+    if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, 0, urlList, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        return true;
+    } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
+        //todo(wcl)
+        return true;
+    } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList{targetFileUrl.toLocalFile()});
+        return true;
+    }
+
+    switch (action) {
+    case Qt::CopyAction:
+    case Qt::MoveAction: {
+        if (action == Qt::MoveAction) {
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        } else {
+            // default is copy file
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        }
+    }
+        break;
+    case Qt::LinkAction:
+        break;
+    default:
+        return false;
+    }
+
+    return true;
+}
+
+QStringList FileInfoModel::mimeTypes() const
+{
+    static QStringList types { QLatin1String("text/uri-list") };
+    return types;
+}
+
+Qt::DropActions FileInfoModel::supportedDragActions() const
+{
+    // todo
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+
+Qt::DropActions FileInfoModel::supportedDropActions() const
+{
+    // todo
+    return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
+}
+

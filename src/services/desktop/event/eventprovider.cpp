@@ -22,12 +22,6 @@
 
 DSB_D_USE_NAMESPACE
 
-QVariantHash EventProvider::query(int type) const
-{
-    Q_UNUSED(type);
-    return {};
-}
-
 bool EventProvider::monitor(EventChanged func, void *data)
 {
     if (!func)

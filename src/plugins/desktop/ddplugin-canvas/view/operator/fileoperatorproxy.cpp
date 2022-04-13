@@ -22,7 +22,7 @@
 #include "fileoperatorproxy_p.h"
 #include "canvasmanager.h"
 #include "view/canvasview.h"
-#include "model/canvasmodel.h"
+#include "model/canvasproxymodel.h"
 #include "grid/canvasgrid.h"
 #include "model/canvasselectionmodel.h"
 

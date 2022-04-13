@@ -25,7 +25,7 @@
 #include "ddplugin_canvas_global.h"
 #include "canvasview.h"
 #include "watermask/watermaskframe.h"
-#include "model/canvasmodel.h"
+#include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
 #include "operator/clickselecter.h"
 #include "operator/keyselecter.h"

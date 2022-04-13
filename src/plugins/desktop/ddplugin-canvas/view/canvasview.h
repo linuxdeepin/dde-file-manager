@@ -32,7 +32,7 @@ class DragDropOper;
 class ClickSelecter;
 class KeySelecter;
 class CanvasViewMenuProxy;
-class CanvasModel;
+class CanvasProxyModel;
 class CanvasSelectionModel;
 class CanvasItemDelegate;
 class CanvasViewPrivate;
@@ -73,7 +73,7 @@ public:
     void setScreenNum(const int screenNum);
     int screenNum() const;
     CanvasItemDelegate *itemDelegate() const;
-    CanvasModel *model() const;
+    CanvasProxyModel *model() const;
     CanvasSelectionModel *selectionModel() const;
     void setGeometry(const QRect &rect);
     void updateGrid();

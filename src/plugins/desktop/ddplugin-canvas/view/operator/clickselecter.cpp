@@ -180,8 +180,8 @@ void ClickSelecter::continuesSelect(const QModelIndex &index)
 void ClickSelecter::traverseSelect(const QModelIndex &from, const QModelIndex &to)
 {
     auto model = view->model();
-    auto item1 = model->url(from).toString();
-    auto item2 = model->url(to).toString();
+    auto item1 = model->fileUrl(from).toString();
+    auto item2 = model->fileUrl(to).toString();
     if (item1.isEmpty() || item2.isEmpty()) {
         qWarning() << "invalid item" << "from:" << item1 << "to:" << item2;
         return ;

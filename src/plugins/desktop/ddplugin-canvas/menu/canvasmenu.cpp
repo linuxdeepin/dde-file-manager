@@ -22,14 +22,13 @@
 #include "view/canvasview.h"
 #include "view/operator/fileoperatorproxy.h"
 #include "canvasmanager.h"
-#include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
 #include "utils/renamedialog.h"
 #include "displayconfig.h"
 #include "grid/canvasgrid.h"
 #include "utils/fileutil.h"
 #include "delegate/canvasitemdelegate.h"
-#include "model/canvasmodel.h"
+#include "model/canvasproxymodel.h"
 
 #include <services/common/bluetooth/bluetoothservice.h>
 
@@ -398,7 +397,7 @@ void CanvasMenu::actionBusiness(QAction *act)
     case kActCreateSymlink: {
         dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
                                               view->winId(),
-                                              view->model()->url(view->currentIndex()));
+                                              view->model()->fileUrl(view->currentIndex()));
         return;
     }
     case kActProperty: {

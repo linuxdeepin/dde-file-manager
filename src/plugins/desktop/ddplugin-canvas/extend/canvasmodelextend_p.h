@@ -18,30 +18,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEFILTER_H
-#define FILEFILTER_H
+#ifndef CANVASMODELEXTEND_P_H
+#define CANVASMODELEXTEND_P_H
 
 #include "ddplugin_canvas_global.h"
+#include "canvasmodelextend.h"
 
-#include <QAbstractItemModel>
+#include <services/desktop/event/eventprovider.h>
+#include <services/desktop/canvas/canvasservice.h>
+
 #include <QObject>
 
-class QGSettings;
 DDP_CANVAS_BEGIN_NAMESPACE
 
-class FileFilter
+static constexpr char kFilterCanvaModelData[] = "CanvaModel_Method_data";
+
+class CanvasModelExtendPrivate : public QObject, public DSB_D_NAMESPACE::EventProvider
 {
-    Q_DISABLE_COPY(FileFilter)
+    Q_OBJECT
 public:
-    explicit FileFilter();
-    virtual bool fileTraversalFilter(QList<QUrl> &urls);
-    virtual bool fileDeletedFilter(const QUrl &url);
-    virtual bool fileCreatedFilter(const QUrl &url);
-    virtual bool fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl);
-    virtual bool fileUpdatedFilter(const QUrl &url);
-protected:
+    explicit CanvasModelExtendPrivate(CanvasModelExtend *);
+    ~CanvasModelExtendPrivate();
+public:
+    QVariantHash query(int type) const;
+public:
+    DSB_D_NAMESPACE::CanvasService *service = nullptr;
+    QVariantHash eSignals;
+    QVariantHash eSlots;
+    QVariantHash eSeqSig;
+private:
+    CanvasModelExtend *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // FILEFILTER_H
+#endif // CANVASMODELEXTEND_P_H

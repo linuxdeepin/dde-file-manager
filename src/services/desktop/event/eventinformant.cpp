@@ -69,6 +69,7 @@ bool EventInformant::registerEvent(EventProvider *e)
 
     notiyAll(EventType::kEventSignal, e);
     notiyAll(EventType::kEventSlot, e);
+    notiyAll(EventType::kSeqSignal, e);
     return true;
 }
 
@@ -83,6 +84,7 @@ void EventInformant::unRegisterEvent(EventProvider *e)
 
     notiyAll(EventType::kEventSignal, e);
     notiyAll(EventType::kEventSlot, e);
+    notiyAll(EventType::kSeqSignal, e);
 }
 
 EventInformant::~EventInformant()

@@ -26,6 +26,8 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "view/operator/fileoperatorproxy.h"
+#include "model/fileinfomodel.h"
+#include "extend/canvasmodelextend.h"
 
 #include "services/desktop/event/private/eventhelperfunc.h"
 #include <services/desktop/wallpapersetting/wallpaperservice.h>
@@ -124,7 +126,7 @@ void CanvasManager::openEditor(const QUrl &url)
     }
 }
 
-CanvasModel *CanvasManager::model() const
+CanvasProxyModel *CanvasManager::model() const
 {
     return d->canvasModel;
 }
@@ -212,7 +214,7 @@ void CanvasManager::onCanvasBuild()
     }
 
     // todo(zy) 优化首次加载与屏幕改变的加载重复问题，现在在初始化时有冗余
-    if (d->canvasModel->isRefreshed())
+    if (d->canvasModel->rowCount(d->canvasModel->rootIndex()) > 0)
         reloadItem();
 }
 
@@ -313,9 +315,14 @@ CanvasManagerPrivate::~CanvasManagerPrivate()
 
 void CanvasManagerPrivate::initModel()
 {
-    canvasModel = new CanvasModel(q);
+    sourceModel = new FileInfoModel(q);
+    canvasModel = new CanvasProxyModel(q);
+    canvasModel->setShowHiddenFiles(Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool());
+    canvasModel->setSourceModel(sourceModel);
+
     // use default root url
-    canvasModel->setRootUrl(QUrl());
+    sourceModel->setRootUrl(QUrl());
+
     // sort
     {
         Qt::SortOrder sortOrder;
@@ -334,20 +341,25 @@ void CanvasManagerPrivate::initModel()
     }
 
     selectionModel = new CanvasSelectionModel(canvasModel, q);
-    connect(canvasModel, &CanvasModel::rowsInserted, this, &CanvasManagerPrivate::onFileInserted, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::rowsAboutToBeRemoved, this, &CanvasManagerPrivate::onFileAboutToBeRemoved, Qt::DirectConnection);
-    connect(canvasModel, &CanvasModel::dataChanged, this, &CanvasManagerPrivate::onFileDataChanged, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::modelReset, this, &CanvasManagerPrivate::onFileModelReset, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasModel::fileRenamed, this, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasProxyModel::rowsInserted, this, &CanvasManagerPrivate::onFileInserted, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasProxyModel::rowsAboutToBeRemoved, this, &CanvasManagerPrivate::onFileAboutToBeRemoved, Qt::DirectConnection);
+    connect(canvasModel, &CanvasProxyModel::dataChanged, this, &CanvasManagerPrivate::onFileDataChanged, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasProxyModel::modelReset, this, &CanvasManagerPrivate::onFileModelReset, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasProxyModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
+    connect(canvasModel, &CanvasProxyModel::dataReplaced, this, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
+
+    // extend interface
+    modelExt = new CanvasModelExtend(q);
+    modelExt->initEvent();
+    canvasModel->setModelExtend(modelExt);
 }
 
 void CanvasManagerPrivate::initSetting()
 {
     // setting changed.
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &CanvasManagerPrivate::onHiddenFlagsChanged);
-    connect(Application::instance(), &Application::previewAttributeChanged, canvasModel, &CanvasModel::update);
-    connect(Application::instance(), &Application::showedFileSuffixChanged, canvasModel, &CanvasModel::update);
+    connect(Application::instance(), &Application::previewAttributeChanged, canvasModel, &CanvasProxyModel::update);
+    connect(Application::instance(), &Application::showedFileSuffixChanged, canvasModel, &CanvasProxyModel::update);
 }
 
 CanvasViewPointer CanvasManagerPrivate::createView(QWidget *root, int index)
@@ -414,7 +426,7 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
         QModelIndex index = canvasModel->index(i, 0, parent);
         if (Q_UNLIKELY(!index.isValid()))
             continue;
-        QUrl url = canvasModel->url(index);
+        QUrl url = canvasModel->fileUrl(index);
 
         QString path = url.toString();
         QPair<int, QPoint> pos;
@@ -436,7 +448,7 @@ void CanvasManagerPrivate::onFileAboutToBeRemoved(const QModelIndex &parent, int
         QModelIndex index = canvasModel->index(i, 0, parent);
         if (Q_UNLIKELY(!index.isValid()))
             continue;
-        QUrl url = canvasModel->url(index);
+        QUrl url = canvasModel->fileUrl(index);
 
         QString path = url.toString();
         QPair<int, QPoint> pos;

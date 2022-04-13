@@ -20,14 +20,15 @@
  */
 #include "shortcutoper.h"
 #include "view/canvasview.h"
-#include "model/canvasmodel.h"
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
 #include "services/common/preview/preview_defines.h"
 #include "view/canvasview_p.h"
 #include "fileoperatorproxy.h"
 #include "canvasmanager.h"
-#include "services/common/preview/preview_defines.h"
+#include "utils/fileutil.h"
+
+#include <services/common/preview/preview_defines.h>
 
 #include <base/application/application.h>
 #include <base/application/settings.h>

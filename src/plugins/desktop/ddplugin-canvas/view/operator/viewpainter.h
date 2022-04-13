@@ -38,7 +38,7 @@ public:
         return d->q;
     }
 
-    inline CanvasModel *model() const {
+    inline CanvasProxyModel *model() const {
         return d->q->model();
     }
 

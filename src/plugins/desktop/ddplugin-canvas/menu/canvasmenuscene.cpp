@@ -25,7 +25,7 @@
 #include "canvasmanager.h"
 #include "grid/canvasgrid.h"
 #include "view/canvasview.h"
-#include "model/canvasmodel.h"
+#include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
 #include "view/operator/fileoperatorproxy.h"
@@ -47,7 +47,7 @@
 DDP_CANVAS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
-DPMENU_USE_NAMESPACE;
+DPMENU_USE_NAMESPACE
 
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
