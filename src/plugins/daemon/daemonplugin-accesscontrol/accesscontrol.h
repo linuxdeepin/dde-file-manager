@@ -25,10 +25,11 @@
 
 #include "daemonplugin_accesscontrol_global.h"
 
-#include "dfm-base/interfaces/abstractfilewatcher.h"
 #include "accesscontroldbus.h"
 
 #include <dfm-framework/framework.h>
+
+#include <dfm-io/local/dlocalwatcher.h>
 
 DAEMONPAC_BEGIN_NAMESPACE
 
@@ -50,7 +51,7 @@ private slots:
 
 private:
     QScopedPointer<AccessControlDBus> accessControlManager;
-    AbstractFileWatcherPointer wathcer;
+    QScopedPointer<DFMIO::DLocalWatcher> watcher;
 };
 
 DAEMONPAC_END_NAMESPACE

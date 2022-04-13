@@ -26,6 +26,12 @@
 #include <QObject>
 #include <QDBusContext>
 
+#include <dfm-mount/base/dfmmount_global.h>
+
+DFM_MOUNT_BEGIN_NS
+class DFMBlockMonitor;
+DFM_MOUNT_END_NS
+
 class AccessControlDBus : public QObject, public QDBusContext
 {
     Q_OBJECT
@@ -76,6 +82,7 @@ private:
     QMap<int, QPair<QString, int>> globalDevPolicies;
     QMap<QString, int> globalVaultHidePolicies;
     QMap<int, QString> errMsg;
+    QScopedPointer<DFMMOUNT::DFMBlockMonitor> monitor;
 };
 
 #endif   // ACCESSCONTROLDBUS_H

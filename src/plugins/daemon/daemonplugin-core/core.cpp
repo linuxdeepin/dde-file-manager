@@ -28,7 +28,6 @@
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
-#include "dfm-base/base/device/devicecontroller.h"
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
@@ -53,8 +52,6 @@ void Core::initialize()
 
 bool Core::start()
 {
-    DeviceController::instance()->startMonitor();
-
     QDBusConnection connection = QDBusConnection::systemBus();
     if (!connection.interface()->isServiceRegistered(kDaemonServicePath)) {
         qInfo() << connection.registerService(kDaemonServicePath) << "register" << kDaemonServicePath << "success";

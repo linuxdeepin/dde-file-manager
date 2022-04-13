@@ -23,19 +23,19 @@
 #include "accesscontroldbus.h"
 #include "utils.h"
 
-#include "dfm-base/base/device/devicecontroller.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-
 #include <QDebug>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusVariant>
 #include <QtConcurrent>
 
+#include <dfm-mount/dfmblockmonitor.h>
+#include <dfm-mount/dfmblockdevice.h>
+#include <dfm-mount/base/dfmmountutils.h>
+
 #include <sys/mount.h>
 
 DAEMONPAC_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
 
 /*!
  * \class AccessControlDBus
@@ -212,14 +212,20 @@ QString AccessControlDBus::FileManagerReply(int policystate)
 
 void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
 {
-    QVariantMap info { DeviceController::instance()->blockDeviceInfo(deviceId) };
-    bool canPowerOff { info[GlobalServerDefines::DeviceProperty::kCanPowerOff].toBool() };
-    QString connectionDBus { info[GlobalServerDefines::DeviceProperty::kConnectionBus].toString() };
+    DFM_MOUNT_USE_NS
+    auto dev = monitor->createDeviceById(deviceId).objectCast<DFMBlockDevice>();
+    if (!dev) {
+        qWarning() << "cannot craete device handler for " << deviceId;
+        return;
+    }
+
+    bool canPowerOff { dev->canPowerOff() };
+    QString connectionDBus { dev->getProperty(Property::DriveConnectionBus).toString() };
 
     if (!canPowerOff || connectionDBus != "usb")   // 不能断电的通常为内置光驱
         return;
 
-    bool opticalDrive { info[GlobalServerDefines::DeviceProperty::kOpticalDrive].toBool() };
+    bool opticalDrive { dev->mediaCompatibility().join(" ").contains("optical") };
     if (!opticalDrive)
         return;
     if (!globalDevPolicies.contains(kTypeOptical))
@@ -228,17 +234,12 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
     int policy = globalDevPolicies.value(kTypeOptical).second;
 
     if (policy == kPolicyDisable) {
-        QtConcurrent::run([deviceId]() {
-            int retry = 0;
-            do {
-                retry++;
-                bool ret { DeviceController::instance()->poweroffBlockDevice(deviceId) };
-                if (ret || retry == kMaxRetry)
-                    break;
-                else
-                    qDebug() << "poweroff device failed";
+        QtConcurrent::run([deviceId, dev]() {
+            int retry = 5;
+            while (retry-- && !dev->powerOff()) {
+                qWarning() << "poweroff device failed: " << deviceId << DFMMOUNT::Utils::errorMessage(dev->lastError());
                 QThread::msleep(500);
-            } while (1);
+            }
         });
     }
 }
@@ -246,12 +247,18 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
 void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString &mountPoint)
 {
     if (globalDevPolicies.contains(kTypeBlock)) {
-        QVariantMap info { DeviceController::instance()->blockDeviceInfo(deviceId) };
-        QString devDesc { info[GlobalServerDefines::DeviceProperty::kDevice].toString() };
-        int mode = Utils::accessMode(mountPoint);
+        DFM_MOUNT_USE_NS
+        auto dev = monitor->createDeviceById(deviceId).objectCast<DFMBlockDevice>();
+        if (!dev) {
+            qWarning() << "cannot craete device handler for " << deviceId;
+            return;
+        }
+
+        QString devDesc { dev->device() };
+        int mode = ::Utils::accessMode(mountPoint);
         QString source = globalDevPolicies.value(kTypeBlock).first;
         int policy = globalDevPolicies.value(kTypeBlock).second;
-        QString fs { info[GlobalServerDefines::DeviceProperty::kFileSystem].toString() };
+        QString fs { dev->fileSystem() };
         if (mode != policy) {
             if (policy == kPolicyDisable) {
                 // unmount
@@ -279,9 +286,11 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
 
 void AccessControlDBus::initConnect()
 {
-    connect(DeviceController::instance(), &DeviceController::blockDevAdded, this, &AccessControlDBus::onBlockDevAdded);
-    connect(DeviceController::instance(), &DeviceController::blockDevMounted, this, &AccessControlDBus::onBlockDevMounted);
-    DeviceController::instance()->disableStorageInfoPoll();
+    DFM_MOUNT_USE_NS
+    monitor.reset(new DFMBlockMonitor(this));
+    monitor->startMonitor();
+    connect(monitor.data(), &DFMBlockMonitor::deviceAdded, this, &AccessControlDBus::onBlockDevAdded);
+    connect(monitor.data(), &DFMBlockMonitor::mountAdded, this, &AccessControlDBus::onBlockDevMounted);
 }
 
 void AccessControlDBus::changeMountedOnInit()
@@ -301,18 +310,22 @@ void AccessControlDBus::changeMountedBlock(int mode, const QString &device)
 {
     Q_UNUSED(device)
 
-    QStringList blockIdGroup { DeviceController::instance()->blockDevicesIdList({}) };
+    DFM_MOUNT_USE_NS
+    QStringList blockIdGroup { monitor->getDevices() };
     QList<MountArgs> waitToHandle;
     for (const auto &id : blockIdGroup) {
-        QVariantMap info { DeviceController::instance()->blockDeviceInfo(id) };
-        bool hasFs { info[GlobalServerDefines::DeviceProperty::kHasFileSystem].toBool() };
-        QString mnt { info[GlobalServerDefines::DeviceProperty::kMountPoint].toString() };
+        auto dev = monitor->createDeviceById(id).objectCast<DFMBlockDevice>();
+        if (!dev)
+            continue;
+
+        bool hasFs { dev->hasFileSystem() };
+        QString mnt { dev->mountPoint() };
 
         if (!hasFs || mnt.isEmpty())
             continue;
 
-        bool removable { info[GlobalServerDefines::DeviceProperty::kRemovable].toBool() };
-        bool optical { info[GlobalServerDefines::DeviceProperty::kOptical].toBool() };
+        bool removable { dev->removable() };
+        bool optical { dev->optical() };
         if (!removable || optical)
             continue;
 
@@ -321,16 +334,16 @@ void AccessControlDBus::changeMountedBlock(int mode, const QString &device)
         // 1. 检查设备是否在白名单内
 
         // 2. 检查挂载点权限是否与策略一致，不一致则需要更改
-        int mountedMode = Utils::accessMode(mnt);
+        int mountedMode = ::Utils::accessMode(mnt);
         if (mountedMode == mode)
             continue;
 
         // 3. 需要重载或卸载
-        const QString &devDesc = info[GlobalServerDefines::DeviceProperty::kDevice].toString();   // 设备描述符
+        const QString &devDesc = dev->device();   // 设备描述符
         MountArgs args;
         args.devDesc = devDesc;
         args.mountPoint = mnt;
-        args.fileSystem = info[GlobalServerDefines::DeviceProperty::kFileSystem].toString();
+        args.fileSystem = dev->fileSystem();
         waitToHandle.append(args);
     }
 
@@ -362,36 +375,34 @@ void AccessControlDBus::changeMountedOptical(int mode, const QString &device)
     if (mode != kPolicyDisable)
         return;
 
-    QStringList blockIdGroup { DeviceController::instance()->blockDevicesIdList({}) };
+    DFM_MOUNT_USE_NS
+    QStringList blockIdGroup { monitor->getDevices() };
 
     for (const QString &id : blockIdGroup) {
-        QVariantMap info { DeviceController::instance()->blockDeviceInfo(id) };
-        bool opticalDrive { info[GlobalServerDefines::DeviceProperty::kOpticalDrive].toBool() };
+        auto dev = monitor->createDeviceById(id).objectCast<DFMBlockDevice>();
+        if (!dev)
+            continue;
+
+        bool opticalDrive { dev->mediaCompatibility().join(" ").contains("optical") };
         if (!opticalDrive)
             continue;
 
-        QtConcurrent::run([info, id]() {
-            QString mnt { info[GlobalServerDefines::DeviceProperty::kMountPoint].toString() };
-            if (!mnt.isEmpty()) {
-                if (!DeviceController::instance()->unmountBlockDevice(id)) {
-                    qDebug() << "Error occured while unmount optical device: " << id;
-                    return;
-                }
-
-                QThread::msleep(500);
-                // poweroff it
-                int retry = 0;
-                do {
-                    retry++;
-                    bool ret { DeviceController::instance()->poweroffBlockDevice(id) };
-                    if (ret)
-                        return;
-
-                    qDebug() << "Error occured while poweroff optical device: " << id;
+        if (!dev->mountPoint().isEmpty()) {
+            dev->unmountAsync({}, [id, dev](bool ok, DeviceError err) {
+                if (!ok) {
+                    qDebug() << "Error occured while unmount optical device: " << id << DFMMOUNT::Utils::errorMessage(err);
+                } else {
                     QThread::msleep(500);
-                } while (1);
-            }
-        });
+                    QtConcurrent::run([dev, id]() {
+                        int retry = 5;
+                        while (retry-- && !dev->powerOff()) {
+                            qDebug() << "Error occured while poweroff optical device: " << id;
+                            QThread::msleep(500);
+                        }
+                    });
+                }
+            });
+        }
     }
 }
 

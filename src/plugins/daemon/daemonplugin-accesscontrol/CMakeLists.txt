@@ -20,9 +20,27 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
+find_package(PkgConfig REQUIRED)
+pkg_search_module(dfm-mount
+    REQUIRED
+    dfm-mount
+    IMPORTED_TARGET
+)
+pkg_search_module(dfm-io
+    REQUIRED
+    dfm-io
+    IMPORTED_TARGET
+)
+find_package(Qt5 COMPONENTS
+    DBus
+    REQUIRED
+)
+
 target_link_libraries(${PROJECT_NAME}
-    DFM::base
     DFM::framework
+    PkgConfig::dfm-mount
+    PkgConfig::dfm-io
+    Qt5::DBus
     ${DtkWidget_LIBRARIES}
 )
 

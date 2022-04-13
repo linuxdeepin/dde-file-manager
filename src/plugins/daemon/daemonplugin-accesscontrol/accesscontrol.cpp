@@ -23,21 +23,18 @@
 #include "accesscontrol.h"
 #include "dbusadaptor/accesscontrolmanager_adaptor.h"
 
-#include "dfm-base/base/schemefactory.h"
-
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
 DAEMONPAC_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
 
 bool AccessControl::start()
 {
     if (!isDaemonServiceRegistered())
         return false;
 
-    wathcer = WatcherFactory::create<AbstractFileWatcher>(QUrl::fromLocalFile("/home"));
+    watcher.reset(new DFMIO::DLocalWatcher(QUrl::fromLocalFile("/home")));
 
     onFileCreatedInHomePath();
     initConnect();
@@ -70,16 +67,16 @@ void AccessControl::initDBusInterce()
 
 void AccessControl::initConnect()
 {
-    if (Q_UNLIKELY((wathcer.isNull()))) {
+    if (Q_UNLIKELY((watcher.isNull()))) {
         qWarning() << "Wathcer is invliad";
         return;
     }
 
-    connect(wathcer.data(), &AbstractFileWatcher::subfileCreated, this, [this](const QUrl &url) {
+    connect(watcher.data(), &DFMIO::DLocalWatcher::fileAdded, this, [this](const QUrl &url) {
         qInfo() << "File: " << url << " has been created";
         onFileCreatedInHomePath();
     });
-    wathcer->startWatcher();
+    watcher->start();
 }
 
 void AccessControl::onFileCreatedInHomePath()
