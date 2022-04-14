@@ -41,6 +41,7 @@ class EventDispatcher
 public:
     using Listener = std::function<QVariant(const QVariantList &)>;
     using ListenerList = QList<Listener>;
+    using Filter = std::function<bool(Listener, const QVariantList &)>;
 
     void dispatch();
     void dispatch(const QVariantList &params);
@@ -76,8 +77,13 @@ public:
         allListeners.push_back(func);
     }
 
+    void setFilter(Filter filter);
+    void unsetFilter();
+    Filter filter();
+
 private:
-    ListenerList allListeners;
+    ListenerList allListeners {};
+    Filter curFilter {};
     QMutex listenerMutex;
 };
 
@@ -127,6 +133,9 @@ public:
         }
         return QFuture<void>();
     }
+
+    bool installEventFilter(EventType type, EventDispatcher::Filter filter);
+    bool removeEventFilter(EventType type);
 
 private:
     using DispatcherPtr = QSharedPointer<EventDispatcher>;

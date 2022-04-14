@@ -24,6 +24,8 @@
 
 #include <QtConcurrent>
 
+#include <algorithm>
+
 DPF_USE_NAMESPACE
 
 void EventDispatcher::dispatch()
@@ -33,8 +35,19 @@ void EventDispatcher::dispatch()
 
 void EventDispatcher::dispatch(const QVariantList &params)
 {
-    for (auto listener : allListeners)
+    if (Q_UNLIKELY(curFilter)) {
+        if (std::any_of(allListeners.begin(), allListeners.end(), [this, params](const Listener &listener) {
+                if (curFilter(listener, params))
+                    return true;
+                return false;
+            })) {
+            return;
+        }
+    }
+
+    std::for_each(allListeners.begin(), allListeners.end(), [params](const Listener &listener) {
         listener(params);
+    });
 }
 
 QFuture<void> EventDispatcher::asyncDispatch()
@@ -47,6 +60,21 @@ QFuture<void> EventDispatcher::asyncDispatch(const QVariantList &params)
     return QFuture<void>(QtConcurrent::run([this, params]() {
         return this->dispatch(params);
     }));
+}
+
+void EventDispatcher::setFilter(EventDispatcher::Filter filter)
+{
+    curFilter = filter;
+}
+
+void EventDispatcher::unsetFilter()
+{
+    curFilter = {};
+}
+
+EventDispatcher::Filter EventDispatcher::filter()
+{
+    return curFilter;
 }
 
 /*!
@@ -65,4 +93,26 @@ void EventDispatcherManager::unsubscribe(EventType type)
     QWriteLocker guard(&rwLock);
     if (dispatcherMap.contains(type))
         dispatcherMap.remove(type);
+}
+
+bool EventDispatcherManager::installEventFilter(EventType type, EventDispatcher::Filter filter)
+{
+    if (dispatcherMap.contains(type)) {
+        if (dispatcherMap.value(type)->filter())
+            return false;
+        QWriteLocker guard(&rwLock);
+        dispatcherMap.value(type)->setFilter(filter);
+        return true;
+    }
+    return false;
+}
+
+bool EventDispatcherManager::removeEventFilter(EventType type)
+{
+    if (dispatcherMap.contains(type)) {
+        QWriteLocker guard(&rwLock);
+        dispatcherMap.value(type)->unsetFilter();
+        return true;
+    }
+    return false;
 }

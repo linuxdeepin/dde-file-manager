@@ -129,6 +129,11 @@ EventUnicastManager &Framework::eventUnicast() const
     return EventUnicastManager::instance();
 }
 
+EventSequenceManager &Framework::eventSequence() const
+{
+    return EventSequenceManager::instance();
+}
+
 Framework::Framework()
     : d(new FrameworkPrivate(this))
 {
