@@ -39,6 +39,7 @@ public:
     virtual QUrl redirectedFileUrl() const override;
     virtual QString fileDisplayName() const override;
     virtual QString fileName() const override;
+    virtual bool isDir() const override;
 };
 
 DPMYSHARES_END_NAMESPACE

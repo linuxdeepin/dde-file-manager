@@ -57,6 +57,13 @@ QString ShareFileInfo::fileName() const
     return d->info.getShareName();
 }
 
+bool ShareFileInfo::isDir() const
+{
+    // a `openFile` function is register, so we have to treat the share folder like a normal file, when double click to access the directory,
+    // the `openFile` will be invoked to open the real directory
+    return false;
+}
+
 ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
 {

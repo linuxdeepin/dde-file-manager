@@ -56,7 +56,7 @@ public:
     bool isRegisterUrlTransform(const KeyType &scheme);
     QUrl urlTransform(const QUrl &url);
 
-    static DelegateService *instance();
+    static DelegateService *service();
 
 private:
     explicit DelegateService(QObject *parent = nullptr);
@@ -69,5 +69,5 @@ private:
 
 DSC_END_NAMESPACE
 
-#define delegateServIns ::dfm_service_common::DelegateService::instance()
+#define delegateServIns ::dfm_service_common::DelegateService::service()
 #endif   // DELEGATESERVICE_H

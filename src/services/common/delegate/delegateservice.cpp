@@ -77,7 +77,7 @@ QUrl DelegateService::urlTransform(const QUrl &url)
     return urlTransformHandles.value(scheme)(url);
 }
 
-DelegateService *DelegateService::instance()
+DelegateService *DelegateService::service()
 {
     auto &ctx = dpfInstance.serviceContext();
     static std::once_flag onceFlag;

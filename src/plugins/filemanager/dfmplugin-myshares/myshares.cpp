@@ -28,6 +28,7 @@
 #include "iterator/shareiterator.h"
 #include "watcher/sharewatcher.h"
 #include "menu/sharemenu.h"
+#include "events/shareeventscaller.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
@@ -67,6 +68,13 @@ bool MyShares::start()
 
     WorkspaceService::service()->addScheme(ShareUtils::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(ShareUtils::scheme(), ShareScene::kShareScene);
+    FileOperationsFunctions fileOpeationsHandle(new DSC_NAMESPACE::FileOperationsSpace::FileOperationsInfo);
+    fileOpeationsHandle->openFiles = [](quint64 winId, QList<QUrl> urls, QString *) {
+        ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::OpenMode::kOpenInCurrentWindow);
+        return true;
+    };
+    DSC_NAMESPACE::FileOperationsService::service()->registerOperations(ShareUtils::scheme(), fileOpeationsHandle);
+
     return true;
 }
 
