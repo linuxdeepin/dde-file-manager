@@ -258,10 +258,15 @@ void AccessControlManager::chmodMountpoints(const QString &blockDevicePath, cons
             return;
     }
 
-    qInfo() << "chmod ==>" << mountPoint;
-    struct stat fileStat;
-    stat(mountPoint.data(), &fileStat);
-    chmod(mountPoint.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH));
+    if (blk->userspaceMountOptions().contains("uhelper=udisks2") && mountPoint.startsWith("/media/")) {
+        qInfo() << "chmod of udisks mount ==>" << mountPoint;
+        struct stat fileStat;
+        stat(mountPoint.data(), &fileStat);
+        chmod(mountPoint.data(), (fileStat.st_mode | S_IWUSR | S_IWGRP | S_IWOTH));
+    } else {
+        qInfo() << "give up chmod of " << mountPoint;
+        qInfo() << "not mounted at /media/ or not mounted by udisks" << blk->userspaceMountOptions();
+    }
 }
 
 void AccessControlManager::disconnOpticalDev(const QString &drivePath)
