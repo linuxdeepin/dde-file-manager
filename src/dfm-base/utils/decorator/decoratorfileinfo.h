@@ -44,10 +44,12 @@ public:
     bool isFile() const;
     bool isDir() const;
     bool isSymLink() const;
+    bool isHidden() const;
     QString suffix() const;
     QString completeSuffix() const;
     QString filePath() const;
     QString parentPath() const;
+    QString fileName() const;
     QList<QString> standardIconNames() const;
 
     DFMIO::DFile::Permissions permissions() const;

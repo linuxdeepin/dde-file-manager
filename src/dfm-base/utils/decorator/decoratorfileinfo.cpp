@@ -21,6 +21,8 @@
 
 #include "decoratorfileinfo.h"
 
+#include "dfm-base/utils/fileutils.h"
+
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
@@ -103,6 +105,24 @@ bool DecoratorFileInfo::isSymLink() const
     return false;
 }
 
+bool DecoratorFileInfo::isHidden() const
+{
+    if (d->dfileInfo) {
+        const bool hidden = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardIsHidden).toBool();
+        if (hidden)
+            return true;
+    }
+
+    static DFMBASE_NAMESPACE::Match match("PrivateFiles");
+
+    const QString &fileName = this->fileName();
+    const bool hidden = match.match(this->filePath(), fileName);
+    if (hidden)
+        return hidden;
+
+    return false;
+}
+
 QString DecoratorFileInfo::suffix() const
 {
     if (d->dfileInfo)
@@ -128,6 +148,13 @@ QString DecoratorFileInfo::parentPath() const
 {
     if (d->dfileInfo)
         return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardParentPath).toString();
+    return QString();
+}
+
+QString DecoratorFileInfo::fileName() const
+{
+    if (d->dfileInfo)
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardFileName).toString();
     return QString();
 }
 

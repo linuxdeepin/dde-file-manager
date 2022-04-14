@@ -514,11 +514,11 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         } else {   // fallback to thumbnail tool
             DFMBASE_NAMESPACE::DVideoThumbnailProvider videoProvider;
 
-            QString mime_name = mime.name();
-            bool useVideo = videoProvider.hasKey(mime_name);
+            QString mimeName = mime.name();
+            bool useVideo = videoProvider.hasKey(mimeName);
             if (!useVideo) {
-                mime_name = generalKey(mime_name);
-                useVideo = videoProvider.hasKey(mime_name);
+                mimeName = generalKey(mimeName);
+                useVideo = videoProvider.hasKey(mimeName);
             }
             if (useVideo) {
                 *image = videoProvider.createThumbnail(QString::number(size), filePath);
