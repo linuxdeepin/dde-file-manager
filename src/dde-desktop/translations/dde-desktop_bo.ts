@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3370"/>
+        <location filename="../view/canvasgridview.cpp" line="3407"/>
         <source>Icon size</source>
         <translation>རྟགས་རིས་ཆེ་ཆུང་།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3378"/>
+        <location filename="../view/canvasgridview.cpp" line="3415"/>
         <source>Auto merge</source>
         <translation>རང་འགུལ་ལེགས་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3390"/>
+        <location filename="../view/canvasgridview.cpp" line="3427"/>
         <source>Auto arrange</source>
         <translation>སྟར་རང་སྒྲིག</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3427"/>
+        <location filename="../view/canvasgridview.cpp" line="3464"/>
         <source>Corner Settings</source>
         <translation>ཚ་གནས་སྒྲིག་འགོད།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3436"/>
-        <location filename="../view/canvasgridview.cpp" line="3441"/>
+        <location filename="../view/canvasgridview.cpp" line="3473"/>
+        <location filename="../view/canvasgridview.cpp" line="3478"/>
         <source>Set Wallpaper</source>
         <translation>རྒྱབ་ཤོག་སྒྲིག་འགོད།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3439"/>
+        <location filename="../view/canvasgridview.cpp" line="3476"/>
         <source>Wallpaper and Screensaver</source>
         <translation>རྒྱབ་ཤོག་དང་འཆར་སྲུང་།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3618"/>
+        <location filename="../view/canvasgridview.cpp" line="3655"/>
         <source>Properties</source>
         <translation>ངོ་བོ།</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3418"/>
+        <location filename="../view/canvasgridview.cpp" line="3455"/>
         <source>Display Settings</source>
         <translation>སྒྲིག་འགོད་མངོན་སྟོན།</translation>
     </message>
@@ -158,14 +158,14 @@
 <context>
     <name>WaterMaskFrame</name>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="390"/>
-        <location filename="../view/watermaskframe.cpp" line="391"/>
+        <location filename="../view/watermaskframe.cpp" line="394"/>
+        <location filename="../view/watermaskframe.cpp" line="395"/>
         <source>Not authorized</source>
         <translation>དབང་བརྩལ་མེད།</translation>
     </message>
     <message>
-        <location filename="../view/watermaskframe.cpp" line="401"/>
-        <location filename="../view/watermaskframe.cpp" line="402"/>
+        <location filename="../view/watermaskframe.cpp" line="405"/>
+        <location filename="../view/watermaskframe.cpp" line="406"/>
         <source>In trial period</source>
         <translation>ཚོད་སྤྱོད་དུས་ཡུན།</translation>
     </message>

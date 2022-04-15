@@ -254,20 +254,20 @@
 <context>
     <name>ComputerPropertyDialog</name>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="285"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="284"/>
         <source>Computer</source>
         <translation>電腦</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="294"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="293"/>
         <source>Basic Info</source>
         <translation>基本資訊</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="107"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
-        <source>Computer Name</source>
-        <translation>電腦名稱</translation>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="304"/>
+        <source>Computer name</source>
+        <translation>計算機名</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="109"/>
@@ -277,7 +277,7 @@
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="111"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="305"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="317"/>
         <source>Version</source>
         <translation>版本號</translation>
@@ -291,33 +291,39 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="115"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="309"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="352"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="350"/>
         <source>Processor</source>
         <translation>處理器</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="118"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="310"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="349"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="347"/>
         <source>Memory</source>
         <translation>記憶體</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="143"/>
         <location filename="../dialogs/computerpropertydialog.cpp" line="203"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="449"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="490"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="448"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="488"/>
         <source>Bit</source>
         <translation> 位元</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="225"/>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="500"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="499"/>
         <source>Available</source>
         <translation>可用</translation>
     </message>
     <message>
-        <location filename="../dialogs/computerpropertydialog.cpp" line="371"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="307"/>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="356"/>
+        <source>OS build</source>
+        <translation>構建號</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/computerpropertydialog.cpp" line="370"/>
         <source>Obtaining...</source>
         <translation>正在獲取中...</translation>
     </message>
@@ -1375,7 +1381,7 @@
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
-        <location filename="../models/searchfileinfo.cpp" line="146"/>
+        <location filename="../models/searchfileinfo.cpp" line="156"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
     </message>
@@ -1403,8 +1409,8 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
-        <location filename="../models/searchfileinfo.cpp" line="144"/>
-        <location filename="../models/searchfileinfo.cpp" line="149"/>
+        <location filename="../models/searchfileinfo.cpp" line="154"/>
+        <location filename="../models/searchfileinfo.cpp" line="159"/>
         <source>Path</source>
         <translation>路徑</translation>
     </message>
@@ -1412,22 +1418,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2864"/>
+        <location filename="../views/dfileview.cpp" line="2882"/>
         <source>Disc mount error</source>
         <translation>光盤掛載錯誤</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2864"/>
+        <location filename="../views/dfileview.cpp" line="2882"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>當前光驅設備正在佔用，請關閉佔用進程再重新掛載</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2877"/>
+        <location filename="../views/dfileview.cpp" line="2895"/>
         <source>Mounting failed</source>
         <translation>掛載失敗</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3613"/>
+        <location filename="../views/dfileview.cpp" line="3631"/>
         <source>(Reverse)</source>
         <translation>（還原）</translation>
     </message>
@@ -1435,7 +1441,7 @@
 <context>
     <name>DFileViewHelper</name>
     <message>
-        <location filename="../interfaces/dfileviewhelper.cpp" line="670"/>
+        <location filename="../interfaces/dfileviewhelper.cpp" line="678"/>
         <source>Add tag &quot;%1&quot;</source>
         <translation>新增「%1」標記</translation>
     </message>
@@ -1658,9 +1664,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="399"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1160"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1175"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1185"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1162"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1177"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
         <source>Operation failed!</source>
         <translation>作業失敗！</translation>
     </message>
@@ -1810,44 +1816,44 @@
         <translation>無法找到連結目標文件</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1176"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1212"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1214"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>你無權對檔案或資料夾進行操作！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>原文件不存在，%1個文件復原失敗</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1229"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1231"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>抱歉，您無權執行以下 %1 個檔案和資料夾！</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1370"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1372"/>
         <source>Unable to access %1</source>
         <translation>訪問%1失敗</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1453"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1455"/>
         <source>Sending files now, please try later</source>
         <translation>目前已有傳送中的文件，請稍後再試</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>需要格式化磁碟才能訪問此裝置，是否繼續？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1517"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1519"/>
         <source>Scanning the device, stop it?</source>
         <translation>正在掃描目前裝置，是否終止掃描？</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1574"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>無法在目前使用者名稱後命名分享資料夾</translation>
     </message>
@@ -1891,11 +1897,11 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1052"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1070"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1192"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1258"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1576"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1169"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1180"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1194"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1260"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1578"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>確 定</translation>
@@ -1911,8 +1917,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="751"/>
         <location filename="../dialogs/dialogmanager.cpp" line="915"/>
         <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1500"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1515"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1502"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1517"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
@@ -1944,8 +1950,8 @@
         <location filename="../dialogs/dialogmanager.cpp" line="520"/>
         <location filename="../dialogs/dialogmanager.cpp" line="632"/>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1269"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1271"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1375"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
@@ -1997,28 +2003,28 @@
         <translation>無法進行複製，目標磁碟剩餘空間不足</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1162"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>%1個文件還原失敗，目標資料夾不可寫</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1164"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1166"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>%1個文件還原失敗，目標資料夾不可寫</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1191"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>原文件不存在，%1個文件復原失敗</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1501"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1503"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1516"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1518"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>終 止</translation>
@@ -3766,12 +3772,12 @@
         <translation>空資料夾</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="371"/>
+        <location filename="../models/searchfileinfo.cpp" line="381"/>
         <source>Searching...</source>
         <translation>正在搜尋…</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="376"/>
+        <location filename="../models/searchfileinfo.cpp" line="386"/>
         <source>No results</source>
         <translation>找不到結果</translation>
     </message>
@@ -3950,7 +3956,7 @@
         <translation>小提示：用選取檔案順序來排序</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1541"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1543"/>
         <source>Rename %1 Files</source>
         <translation>重新命名 %1 個檔案</translation>
     </message>
@@ -4439,7 +4445,7 @@
         <translation>新增資料夾</translation>
     </message>
     <message>
-        <location filename="../models/searchfileinfo.cpp" line="387"/>
+        <location filename="../models/searchfileinfo.cpp" line="397"/>
         <location filename="../shutil/shortcut.cpp" line="52"/>
         <source>Search</source>
         <translation>搜尋</translation>
