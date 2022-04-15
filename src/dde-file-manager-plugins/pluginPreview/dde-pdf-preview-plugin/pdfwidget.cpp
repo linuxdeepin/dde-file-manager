@@ -21,6 +21,7 @@
 */
 
 #include "pdfwidget.h"
+#include "dfmglobal.h"
 
 #include <QImage>
 #include <QHBoxLayout>
@@ -76,6 +77,11 @@ PdfWidget::~PdfWidget()
     disconnect(d->pdfInitWorker, &PdfInitWorker::thumbAdded, this, &PdfWidget::onThumbAdded);
     disconnect(d->pdfInitWorker, &PdfInitWorker::pageAdded, this, &PdfWidget::onpageAdded);
     this->hide();
+
+    if (DFMGlobal::isWayLand()) {
+        threadPage.waitForFinished();
+        threadThumb.waitForFinished();
+    }
 
     d->pdfInitWorker->deleteLater();
 }
@@ -405,15 +411,15 @@ void PdfWidget::loadPageSync(const int &index)
 
     QPointer<PdfWidget> mePtr = this;
 
-    QtConcurrent::run([=]{
-        if (mePtr.isNull() || d->m_needRelease)
-            return;
-        d->m_threadRunningCount++;
-        d->pdfInitWorker->startGetPageImage(index);
-        d->m_threadRunningCount--;
-        if (d->m_needRelease && d->m_threadRunningCount <= 0)
-            this->deleteLater();
-    });
+    threadPage = QtConcurrent::run([=]{
+                        if (mePtr.isNull() || d->m_needRelease)
+                            return;
+                        d->m_threadRunningCount++;
+                        d->pdfInitWorker->startGetPageImage(index);
+                        d->m_threadRunningCount--;
+                        if (d->m_needRelease && d->m_threadRunningCount <= 0)
+                            this->deleteLater();
+                    });
 }
 
 void PdfWidget::loadThumbSync(const int &index)
@@ -422,15 +428,15 @@ void PdfWidget::loadThumbSync(const int &index)
 
     QPointer<PdfWidget> mePtr = this;
 
-    QtConcurrent::run([=]{
-        if (mePtr.isNull() || d->m_needRelease)
-            return;
-        d->m_threadRunningCount++;
-        d->pdfInitWorker->startGetPageThumb(index);
-        d->m_threadRunningCount--;
-        if (d->m_needRelease && d->m_threadRunningCount <= 0)
-            this->deleteLater();
-    });
+    threadThumb = QtConcurrent::run([=]{
+                        if (mePtr.isNull() || d->m_needRelease)
+                            return;
+                        d->m_threadRunningCount++;
+                        d->pdfInitWorker->startGetPageThumb(index);
+                        d->m_threadRunningCount--;
+                        if (d->m_needRelease && d->m_threadRunningCount <= 0)
+                            this->deleteLater();
+                    });
 }
 
 void PdfWidget::initEmptyPages()

@@ -90,6 +90,8 @@ private:
     void resizeCurrentPage();
 
     QSharedPointer<PdfWidgetPrivate> d_ptr;
+    QFuture<void> threadPage;
+    QFuture<void> threadThumb;
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), PdfWidget)
 };
 
