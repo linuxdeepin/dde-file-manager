@@ -83,13 +83,15 @@ private:
     void renderBorder(QImage &img);
     void emptyBorder(QImage &img);
 
-    void loadPageSync(const int &index);
-    void loadThumbSync(const int &index);
+    void loadPageAsync(const int &index);
+    void loadThumbAsync(const int &index);
     void initEmptyPages();
 
     void resizeCurrentPage();
 
     QSharedPointer<PdfWidgetPrivate> d_ptr;
+    QFuture<void> threadPage;
+    QFuture<void> threadThumb;
     Q_DECLARE_PRIVATE_D(qGetPtrHelper(d_ptr), PdfWidget)
 };
 
