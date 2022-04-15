@@ -37,10 +37,6 @@ DeviceManagerDBus::DeviceManagerDBus(QObject *parent)
     initConnection();
 }
 
-DeviceManagerDBus::~DeviceManagerDBus()
-{
-}
-
 bool DeviceManagerDBus::IsMonotorWorking()
 {
     return deviceServ->isBlockDeviceMonitorWorking() && deviceServ->isProtolDeviceMonitorWorking();

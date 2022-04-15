@@ -26,6 +26,7 @@
 #include "dbus_adaptor/devicemanagerdbus_adaptor.h"
 #include "dbus_adaptor/operationsstackmanagerdbus_adaptor.h"
 #include "dbus_adaptor/vaultmanagerdbus_adaptor.h"
+#include "dbus_adaptor/filemanager1dbus_adaptor.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -50,7 +51,8 @@ bool DBusRegister::start()
         return false;
     }
 
-    initServiceDBusInterfaces(connection);
+    initServiceDBusInterfaces(&connection);
+    initFreedesktopDBusInterfaces(&connection);
     return true;
 }
 
@@ -65,11 +67,12 @@ std::once_flag &DBusRegister::onceFlag()
     return flag;
 }
 
-void DBusRegister::initServiceDBusInterfaces(QDBusConnection &connection)
+void DBusRegister::initServiceDBusInterfaces(QDBusConnection *connection)
 {
-    std::call_once(DBusRegister::onceFlag(), [&connection, this]() {
+    static std::once_flag flag;
+    std::call_once(flag, [&connection, this]() {
         // add our D-Bus interface and connect to D-Bus
-        if (!connection.registerService("com.deepin.filemanager.service")) {
+        if (!connection->registerService("com.deepin.filemanager.service")) {
             qWarning("Cannot register the \"com.deepin.filemanager.service\" service.\n");
             return;
         }
@@ -79,41 +82,65 @@ void DBusRegister::initServiceDBusInterfaces(QDBusConnection &connection)
     });
 }
 
-void DBusRegister::initDeviceDBus(QDBusConnection &connection)
+void DBusRegister::initFreedesktopDBusInterfaces(QDBusConnection *connection)
+{
+    static std::once_flag flag;
+    std::call_once(flag, [&connection, this]() {
+        // add Freedesktop D-Bus interface and connect to D-Bus
+        if (!connection->registerService("org.freedesktop.FileManager1")) {
+            qWarning("Cannot register the \"org.freedesktop.FileManager1\" service.\n");
+            return;
+        }
+
+        initFileManager1DBus(connection);
+    });
+}
+
+void DBusRegister::initDeviceDBus(QDBusConnection *connection)
 {
     // register object
     deviceManager.reset(new DeviceManagerDBus);
     Q_UNUSED(new DeviceManagerAdaptor(deviceManager.data()));
-    if (!connection.registerObject("/com/deepin/filemanager/service/DeviceManager",
-                                   deviceManager.data())) {
+    if (!connection->registerObject("/com/deepin/filemanager/service/DeviceManager",
+                                    deviceManager.data())) {
         qWarning("Cannot register the \"/com/deepin/filemanager/service/DeviceManager\" object.\n");
         deviceManager.reset(nullptr);
-        return;
     }
 }
 
-void DBusRegister::initOperationsDBus(QDBusConnection &connection)
+void DBusRegister::initOperationsDBus(QDBusConnection *connection)
 {
     // register object
     operationsStackManager.reset(new OperationsStackManagerDbus);
     Q_UNUSED(new OperationsStackManagerAdaptor(operationsStackManager.data()));
-    if (!connection.registerObject("/com/deepin/filemanager/service/OperationsStackManager",
-                                   operationsStackManager.data())) {
+    if (!connection->registerObject("/com/deepin/filemanager/service/OperationsStackManager",
+                                    operationsStackManager.data())) {
         qWarning("Cannot register the \"/com/deepin/filemanager/service/OperationsStackManager\" object.\n");
         operationsStackManager.reset(nullptr);
-        return;
     }
 }
 
-void DBusRegister::initVaultDBus(QDBusConnection &connection)
+void DBusRegister::initVaultDBus(QDBusConnection *connection)
 {
     // register object
     vaultManager.reset(new VaultManagerDBus);
     Q_UNUSED(new VaultManagerAdaptor(vaultManager.data()));
-    if (!connection.registerObject("/com/deepin/filemanager/service/VaultManager",
-                                   vaultManager.data())) {
+    if (!connection->registerObject("/com/deepin/filemanager/service/VaultManager",
+                                    vaultManager.data())) {
         qWarning("Cannot register the \"/com/deepin/filemanager/service/VaultManager\" object.\n");
         vaultManager.reset(nullptr);
+    }
+}
+
+void DBusRegister::initFileManager1DBus(QDBusConnection *connection)
+{
+    // register object
+    filemanager1.reset(new FileManager1DBus);
+    Q_UNUSED(new FileManager1Adaptor(filemanager1.data()));
+    if (!connection->registerObject("/org/freedesktop/FileManager1",
+                                    filemanager1.data())) {
+        qWarning("Cannot register the \"/org/freedesktop/FileManager1\" object.\n");
+        filemanager1.reset(nullptr);
         return;
     }
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.freedesktop.FileManager1">
+    <method name="ShowFolders">
+      <arg name="URIs" type="as" direction="in"/>
+      <arg name="StartupId" type="s" direction="in"/>
+    </method>
+    <method name="ShowItemProperties">
+      <arg name="URIs" type="as" direction="in"/>
+      <arg name="StartupId" type="s" direction="in"/>
+    </method>
+    <method name="ShowItems">
+      <arg name="URIs" type="as" direction="in"/>
+      <arg name="StartupId" type="s" direction="in"/>
+    </method>
+    <method name="Trash">
+      <arg name="URIs" type="as" direction="in"/>
+    </method>
+  </interface>
+</node>

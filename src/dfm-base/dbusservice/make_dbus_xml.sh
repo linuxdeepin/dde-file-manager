@@ -7,3 +7,6 @@ qdbuscpp2xml -M -S $INTERFACES_PATH/devicemanagerdbus.h -o ./devicemanagerdbus.x
 
 echo "-->make XML of OperationsStackManagerDbus"
 qdbuscpp2xml -M -S $INTERFACES_PATH/operationsstackmanagerdbus.h -o ./operationsstackmanagerdbus.xml
+
+echo "-->make XML of FileManager1DBus"
+qdbuscpp2xml -M -S $INTERFACES_PATH/filemanager1dbus.h -o ./filemanager1dbus.xml

@@ -23,21 +23,19 @@
 /*
  * Proxy class for interface com.deepin.filemanager.service.OperationsStackManager
  */
-class OperationsStackManagerInterface : public QDBusAbstractInterface
+class OperationsStackManagerInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    {
-        return "com.deepin.filemanager.service.OperationsStackManager";
-    }
+    { return "com.deepin.filemanager.service.OperationsStackManager"; }
 
 public:
     OperationsStackManagerInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = nullptr);
 
     ~OperationsStackManagerInterface();
 
-public Q_SLOTS:   // METHODS
+public Q_SLOTS: // METHODS
     inline QDBusPendingReply<> CleanOperations()
     {
         QList<QVariant> argumentList;
@@ -57,16 +55,16 @@ public Q_SLOTS:   // METHODS
         return asyncCallWithArgumentList(QStringLiteral("SaveOperations"), argumentList);
     }
 
-Q_SIGNALS:   // SIGNALS
+Q_SIGNALS: // SIGNALS
 };
 
 namespace com {
-namespace deepin {
-namespace filemanager {
-namespace service {
-typedef ::OperationsStackManagerInterface OperationsStackManager;
-}
-}
-}
+  namespace deepin {
+    namespace filemanager {
+      namespace service {
+        typedef ::OperationsStackManagerInterface OperationsStackManager;
+      }
+    }
+  }
 }
 #endif

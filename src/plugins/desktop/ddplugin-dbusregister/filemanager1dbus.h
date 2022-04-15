@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liyigang<liyigang@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
@@ -20,31 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPERATIONSSTACKMANAGERDBUS_H
-#define OPERATIONSSTACKMANAGERDBUS_H
+#ifndef FILEMANAGER1DBUS_H
+#define FILEMANAGER1DBUS_H
 
-#include <QDBusVariant>
-#include <QVariantMap>
-#include <QStack>
-#include <QMutex>
 #include <QObject>
+#include <QDBusMessage>
 
-class OperationsStackManagerDbus : public QObject
+// NOTE:
+// Detail see: https://www.freedesktop.org/wiki/Specifications/file-manager-interface/
+
+class FileManager1DBus : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.OperationsStackManager")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.FileManager1")
 
 public:
-    explicit OperationsStackManagerDbus(QObject *parent = nullptr);
+    explicit FileManager1DBus(QObject *parent = nullptr);
 
 public slots:
-    void SaveOperations(const QVariantMap &values);
-    void CleanOperations();
-    QVariantMap RevocationOperations();
-
-private:
-    QStack<QVariantMap> fileOperations;
-    QMutex lock;
+    void ShowFolders(const QStringList &URIs, const QString &StartupId);
+    void ShowItemProperties(const QStringList &URIs, const QString &StartupId);
+    void ShowItems(const QStringList &URIs, const QString &StartupId);
+    void Trash(const QStringList &URIs);
 };
 
-#endif   // OPERATIONSSTACKMANAGERDBUS_H
+#endif   // FILEMANAGER1DBUS_H

@@ -32,10 +32,6 @@ OperationsStackManagerDbus::OperationsStackManagerDbus(QObject *parent)
 {
 }
 
-OperationsStackManagerDbus::~OperationsStackManagerDbus()
-{
-}
-
 void OperationsStackManagerDbus::SaveOperations(const QVariantMap &values)
 {
     QMutexLocker lk(&lock);

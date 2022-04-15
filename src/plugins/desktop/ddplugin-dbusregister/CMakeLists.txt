@@ -32,3 +32,6 @@ install(TARGETS
     DESTINATION
     ${DFM_PLUGIN_DIR}
 )
+
+# install dbus
+install(FILES data/org.freedesktop.FileManager.service DESTINATION share/dbus-1/services)

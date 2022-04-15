@@ -36,7 +36,6 @@ class DeviceManagerDBus : public QObject
 
 public:
     explicit DeviceManagerDBus(QObject *parent = nullptr);
-    ~DeviceManagerDBus();
 
 signals:
     void AskStopSacnningWhenUnmount(QString id);
