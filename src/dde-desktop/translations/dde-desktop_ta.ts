@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3407"/>
+        <location filename="../view/canvasgridview.cpp" line="3426"/>
         <source>Icon size</source>
         <translation>ஐகான் அளவு</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3415"/>
+        <location filename="../view/canvasgridview.cpp" line="3434"/>
         <source>Auto merge</source>
         <translation>தானாக இணை</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3427"/>
+        <location filename="../view/canvasgridview.cpp" line="3446"/>
         <source>Auto arrange</source>
         <translation>தானாக ஒழுங்குபடுத்து</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3464"/>
+        <location filename="../view/canvasgridview.cpp" line="3483"/>
         <source>Corner Settings</source>
         <translation>கார்னர் அமைப்புகள்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3473"/>
-        <location filename="../view/canvasgridview.cpp" line="3478"/>
+        <location filename="../view/canvasgridview.cpp" line="3492"/>
+        <location filename="../view/canvasgridview.cpp" line="3497"/>
         <source>Set Wallpaper</source>
         <translation>வால்பேப்பராக அமைக்கவும்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3476"/>
+        <location filename="../view/canvasgridview.cpp" line="3495"/>
         <source>Wallpaper and Screensaver</source>
         <translation>வால்பேப்பர் மற்றும் ஸ்கிரீன்சேவர்கள்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3655"/>
+        <location filename="../view/canvasgridview.cpp" line="3674"/>
         <source>Properties</source>
         <translation>பண்புகள்</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3455"/>
+        <location filename="../view/canvasgridview.cpp" line="3474"/>
         <source>Display Settings</source>
         <translation>காட்சி அமைப்புகள்</translation>
     </message>

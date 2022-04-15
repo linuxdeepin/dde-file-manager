@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3407"/>
+        <location filename="../view/canvasgridview.cpp" line="3426"/>
         <source>Icon size</source>
         <translation>आइकन का आकार</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3415"/>
+        <location filename="../view/canvasgridview.cpp" line="3434"/>
         <source>Auto merge</source>
         <translation>स्वतः विलय</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3427"/>
+        <location filename="../view/canvasgridview.cpp" line="3446"/>
         <source>Auto arrange</source>
         <translation>स्वतः क्रमबद्ध</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3464"/>
+        <location filename="../view/canvasgridview.cpp" line="3483"/>
         <source>Corner Settings</source>
         <translation>स्क्रीन के कोनों की सेटिंग्स</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3473"/>
-        <location filename="../view/canvasgridview.cpp" line="3478"/>
+        <location filename="../view/canvasgridview.cpp" line="3492"/>
+        <location filename="../view/canvasgridview.cpp" line="3497"/>
         <source>Set Wallpaper</source>
         <translation>वॉलपेपर सेट करें</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3476"/>
+        <location filename="../view/canvasgridview.cpp" line="3495"/>
         <source>Wallpaper and Screensaver</source>
         <translation>वॉलपेपर व स्क्रीनसेवर</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3655"/>
+        <location filename="../view/canvasgridview.cpp" line="3674"/>
         <source>Properties</source>
         <translation>विशेषताएँ</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3455"/>
+        <location filename="../view/canvasgridview.cpp" line="3474"/>
         <source>Display Settings</source>
         <translation>डिस्प्ले सेटिंग्स</translation>
     </message>

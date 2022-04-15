@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3407"/>
+        <location filename="../view/canvasgridview.cpp" line="3426"/>
         <source>Icon size</source>
         <translation>Velikost ikone</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3415"/>
+        <location filename="../view/canvasgridview.cpp" line="3434"/>
         <source>Auto merge</source>
         <translation>Samodejno združevanje</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3427"/>
+        <location filename="../view/canvasgridview.cpp" line="3446"/>
         <source>Auto arrange</source>
         <translation>Samodejno razporedi</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3464"/>
+        <location filename="../view/canvasgridview.cpp" line="3483"/>
         <source>Corner Settings</source>
         <translation>Nastavitve roba</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3473"/>
-        <location filename="../view/canvasgridview.cpp" line="3478"/>
+        <location filename="../view/canvasgridview.cpp" line="3492"/>
+        <location filename="../view/canvasgridview.cpp" line="3497"/>
         <source>Set Wallpaper</source>
         <translation>Nastavi ozadje</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3476"/>
+        <location filename="../view/canvasgridview.cpp" line="3495"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Ozadje in ohranjevalnik zaslona</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3655"/>
+        <location filename="../view/canvasgridview.cpp" line="3674"/>
         <source>Properties</source>
         <translation>Lastnosti</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3455"/>
+        <location filename="../view/canvasgridview.cpp" line="3474"/>
         <source>Display Settings</source>
         <translation>Nastavitve zaslona</translation>
     </message>

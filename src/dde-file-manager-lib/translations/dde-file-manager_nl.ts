@@ -843,12 +843,12 @@
         <translation>Ontgrendelen met sleutel</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="274"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="268"/>
         <source>Failed to unlock file vault</source>
         <translation>De bestandskluis kan niet worden ontgrendeld</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="278"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="272"/>
         <source>OK</source>
         <translation>Oké</translation>
     </message>
@@ -870,7 +870,7 @@
         <translation>Ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="165"/>
+        <location filename="../views/dfmvaultrecoverykeypages.cpp" line="159"/>
         <source>Wrong recovery key</source>
         <translation>Onjuiste herstelsleutel</translation>
     </message>
@@ -909,7 +909,7 @@
         <translation>Door het vernietigen worden alle kluisbestanden permanent verwijderd.</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="202"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="196"/>
         <source>Use Key</source>
         <translation>Sleutel gebruiken</translation>
     </message>
@@ -933,38 +933,38 @@
     </message>
     <message>
         <location filename="../views/dfmvaultremovepages.cpp" line="149"/>
-        <location filename="../views/dfmvaultremovepages.cpp" line="305"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="299"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oké</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="199"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="193"/>
         <source>Use Password</source>
         <translation>Wachtwoord gebruiken</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="215"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="209"/>
         <source>Wrong password</source>
         <translation>Onjuist wachtwoord</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="225"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="219"/>
         <source>Wrong recovery key</source>
         <translation>Onjuiste herstelsleutel</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="301"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="295"/>
         <source>Failed to delete file vault</source>
         <translation>De bestandskluis kan niet worden vernietigd</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="315"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="309"/>
         <source>Deleted successfully</source>
         <translation>De kluis is vernietigd</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultremovepages.cpp" line="317"/>
+        <location filename="../views/dfmvaultremovepages.cpp" line="311"/>
         <source>Failed to delete</source>
         <translation>De kluis kan niet worden vernietigd</translation>
     </message>
@@ -977,78 +977,78 @@
 <context>
     <name>DFMVaultRetrievePassword</name>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="69"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="78"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="134"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="145"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="146"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="303"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="63"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="72"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="128"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="139"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="140"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="297"/>
         <source>Unable to get the key file</source>
         <translation>Het sleutelbestand kan niet worden opgehaald</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="90"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="84"/>
         <source>Verification failed</source>
         <translation>De verificatie is mislukt</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="150"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="195"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="144"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="189"/>
         <source>Select a path</source>
         <translation>Kies een locatie</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="183"/>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="271"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="177"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="265"/>
         <source>Retrieve Password</source>
         <translation>Wachtwoord opvragen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="190"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="184"/>
         <source>By key in the default path</source>
         <translation>Op sleutel op standaardlocatie</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="191"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="185"/>
         <source>By key in the specified path</source>
         <translation>Op sleutel op andere locatie</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="287"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="281"/>
         <source>Verification Successful</source>
         <translation>De sleutel is geverifieerd.</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="218"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="212"/>
         <source>Keep it safe</source>
         <translation>Veilig bewaren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="244"/>
         <source>Back</source>
         <comment>button</comment>
         <translation>Terug</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="244"/>
         <source>Verify Key</source>
         <comment>button</comment>
         <translation>Sleutel verifiëren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="244"/>
         <source>Go to Unlock</source>
         <comment>button</comment>
         <translation>Ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="250"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="244"/>
         <source>Close</source>
         <comment>button</comment>
         <translation>Sluiten</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultretrievepassword.cpp" line="284"/>
+        <location filename="../views/dfmvaultretrievepassword.cpp" line="278"/>
         <source>Vault password: %1</source>
         <translation>Kluiswachtwoord: %1</translation>
     </message>
@@ -1056,69 +1056,69 @@
 <context>
     <name>DFMVaultUnlockPages</name>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="63"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="61"/>
         <source>Unlock File Vault</source>
         <translation>Bestandskluis ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="72"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="70"/>
         <source>Forgot password?</source>
         <translation>Wachtwoord vergeten?</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="145"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="143"/>
         <source>Password hint: %1</source>
         <translation>Wachtwoordhint: %1</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="353"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="344"/>
         <source>Failed to unlock file vault</source>
         <translation>De bestandskluis kan niet worden ontgrendeld</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="88"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="86"/>
         <source>Password</source>
         <translation>Wachtwoord</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="130"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
         <source>Unlock</source>
         <comment>button</comment>
         <translation>Ontgrendelen</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="271"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="262"/>
         <source>Please try again %1 minutes later</source>
         <translation>Probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="298"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="289"/>
         <source>Wrong password, please try again %1 minutes later</source>
         <translation>Onjuist wachtwoord - probeer het over %1 minuten opnieuw</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="301"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="292"/>
         <source>Wrong password, one chance left</source>
         <translation>Onjuist wachtwoord - nog 1 poging te gaan</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="303"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="294"/>
         <source>Wrong password, %1 chances left</source>
         <translation>Onjuist wachtwoord - nog %1 pogingen te gaan</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="348"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="339"/>
         <source>Wrong password</source>
         <translation>Onjuist wachtwoord</translation>
     </message>
     <message>
-        <location filename="../views/dfmvaultunlockpages.cpp" line="357"/>
+        <location filename="../views/dfmvaultunlockpages.cpp" line="348"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oké</translation>
@@ -1664,9 +1664,9 @@
     <name>DialogManager</name>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="399"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1163"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1178"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1188"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1185"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1200"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1210"/>
         <source>Operation failed!</source>
         <translation>Operatie mislukt!</translation>
     </message>
@@ -1781,79 +1781,79 @@
         <translation>Je bladwijzermap is niet aangetroffen. Wil je deze verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="913"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="920"/>
         <source>Name: </source>
         <translation>Naam:</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="939"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
         <translation>%1, dat naar deze snelkoppeling verwijst, is gewijzigd of verplaatst</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="943"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="950"/>
         <source>Do you want to delete this shortcut？</source>
         <translation>Wil je deze snelkoppeling verwijderen?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1041"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1063"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Mislukt. De bestandsgrootte moet kleiner dan 4 GB zijn.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1050"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1072"/>
         <source>Fail to create symlink, cause:</source>
         <translation>Er kan geen snelkoppeling worden gemaakt. Oorzaak: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1068"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1090"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
         <translation>De geselecteerde items bevatten systeembestanden of -mappen, en kunnen niet worden verwijderd</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1104"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1126"/>
         <source>Unable to find the original file</source>
         <translation>Het oorspronkelijke bestand is niet aangetroffen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1179"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1215"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1201"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1237"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Je bent niet bevoegd om deze map/dit bestand te gebruiken!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1190"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1212"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
         <translation>Kan %1 bestand niet terugzetten: het bronbestand bestaat niet</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1232"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1254"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
         <translation>Je bent niet bevoegd om het/de volgende %1 bestand(en)/map(pen) te gebruiken!</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1373"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1395"/>
         <source>Unable to access %1</source>
         <translation>Geen toegang tot %1</translation>
     </message>
     <message>
         <location filename="../bluetooth/bluetoothtransdialog.cpp" line="723"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1456"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1478"/>
         <source>Sending files now, please try later</source>
         <translation>De bestanden worden verstuurd - probeer het later opnieuw</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1505"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1527"/>
         <source>To access the device, you must format the disk first. Are you sure you want to format it now?</source>
         <translation>Het apparaat kan pas worden gebruikt als het geformatteerd is. Weet je zeker dat je het nu wilt formatteren?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1520"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1542"/>
         <source>Scanning the device, stop it?</source>
         <translation>Wil je het doorzoeken van het apparaat afbreken?</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1577"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1599"/>
         <source>Share folder can&apos;t be named after the current username</source>
         <translation>Gedeelde mappen mogen niet dezelfde naam dragen als de huidige gebruikersnaam</translation>
     </message>
@@ -1893,15 +1893,15 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="402"/>
         <location filename="../dialogs/dialogmanager.cpp" line="643"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1030"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1043"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1052"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1070"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1170"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1181"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1195"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1261"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1579"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1065"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1074"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1092"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1192"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1203"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1217"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1283"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1601"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oké</translation>
@@ -1915,10 +1915,10 @@
         <location filename="../dialogs/dialogmanager.cpp" line="660"/>
         <location filename="../dialogs/dialogmanager.cpp" line="734"/>
         <location filename="../dialogs/dialogmanager.cpp" line="751"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="915"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="945"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1503"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1518"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="922"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="952"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1525"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1540"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annuleren</translation>
@@ -1949,9 +1949,9 @@
         <location filename="../dialogs/dialogmanager.cpp" line="504"/>
         <location filename="../dialogs/dialogmanager.cpp" line="520"/>
         <location filename="../dialogs/dialogmanager.cpp" line="632"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="946"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1272"/>
-        <location filename="../dialogs/dialogmanager.cpp" line="1376"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="953"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1294"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1398"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Oké</translation>
@@ -1987,44 +1987,44 @@
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="912"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="919"/>
         <source>Disk is busy, cannot unmount now</source>
         <translation>Schijf is in gebruik; je kunt nu niet afkoppelen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="916"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="923"/>
         <source>Force unmount</source>
         <comment>button</comment>
         <translation>Afkoppelen forceren</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1029"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1051"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Kopiëren mislukt: onvoldoende vrije ruimte op de doelschijf.</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1165"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
         <translation>Kan %1 bestand niet terugzetten: de doelmap is alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1167"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
         <translation>Kan %1 bestanden niet terugzetten: de doelmap is alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1192"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1214"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
         <translation>Kan %1 bestanden niet terugzetten: de bronbestanden bestaan niet</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1504"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1526"/>
         <source>Format</source>
         <comment>button</comment>
         <translation>Formaat</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1519"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1541"/>
         <source>Stop</source>
         <comment>button</comment>
         <translation>Afbreken</translation>
@@ -2033,35 +2033,35 @@
 <context>
     <name>FileController</name>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="630"/>
-        <location filename="../controllers/filecontroller.cpp" line="686"/>
-        <location filename="../controllers/filecontroller.cpp" line="749"/>
-        <location filename="../controllers/filecontroller.cpp" line="775"/>
+        <location filename="../controllers/filecontroller.cpp" line="312"/>
+        <location filename="../controllers/filecontroller.cpp" line="368"/>
+        <location filename="../controllers/filecontroller.cpp" line="431"/>
+        <location filename="../controllers/filecontroller.cpp" line="457"/>
         <source>Unable to find the original file</source>
         <translation>Het oorspronkelijke bestand is niet aangetroffen</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="489"/>
+        <location filename="../controllers/filecontroller.cpp" line="508"/>
+        <location filename="../controllers/filecontroller.cpp" line="527"/>
         <source>Kindly Reminder</source>
         <translation>Vriendelijke herinnering</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="807"/>
-        <location filename="../controllers/filecontroller.cpp" line="826"/>
-        <location filename="../controllers/filecontroller.cpp" line="845"/>
+        <location filename="../controllers/filecontroller.cpp" line="489"/>
+        <location filename="../controllers/filecontroller.cpp" line="508"/>
+        <location filename="../controllers/filecontroller.cpp" line="527"/>
         <source>Please install File Roller first and then continue</source>
         <translation>Installeer file-roller om door te gaan</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1536"/>
-        <location filename="../controllers/filecontroller.cpp" line="1556"/>
+        <location filename="../controllers/filecontroller.cpp" line="1218"/>
+        <location filename="../controllers/filecontroller.cpp" line="1238"/>
         <source>Unable to create files here: %1</source>
         <translation>Er kunnen hier geen bestanden worden aangemaakt: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1538"/>
+        <location filename="../controllers/filecontroller.cpp" line="1220"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Oké</translation>
@@ -3236,29 +3236,29 @@
         <translation>Ontgrendelen met sleutel</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="97"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="96"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Openen</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="213"/>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="233"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="231"/>
         <source>Size: %1</source>
         <translation>Grootte: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="214"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="212"/>
         <source>Type: %1</source>
         <translation>Type: %1</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="226"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="224"/>
         <source>Size: 0</source>
         <translation>Grootte: 0</translation>
     </message>
     <message>
-        <location filename="../dialogs/filepreviewdialog.cpp" line="232"/>
+        <location filename="../dialogs/filepreviewdialog.cpp" line="230"/>
         <source>Items: %1</source>
         <translation>Items: %1</translation>
     </message>
@@ -3534,12 +3534,12 @@
         <translation>Herladen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="348"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="311"/>
         <source>Auto mount</source>
         <translation>Automatisch aankoppelen</translation>
     </message>
     <message>
-        <location filename="../dialogs/dfmsettingdialog.cpp" line="386"/>
+        <location filename="../dialogs/dfmsettingdialog.cpp" line="349"/>
         <source>Open after auto mount</source>
         <translation>Openen na automatisch aankoppelen</translation>
     </message>
@@ -3956,7 +3956,7 @@
         <translation>Tip: sorteren op geselecteerde bestandsvolgorde</translation>
     </message>
     <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1544"/>
+        <location filename="../dialogs/dialogmanager.cpp" line="1566"/>
         <source>Rename %1 Files</source>
         <translation>%1 bestandsnamen wijzigen</translation>
     </message>
@@ -4121,7 +4121,7 @@
     </message>
     <message>
         <location filename="../views/dfilemanagerwindow.cpp" line="1560"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="555"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="567"/>
         <source>Failed to start Samba services</source>
         <translation>De Samba-diensten kunnen niet worden gestart</translation>
     </message>
@@ -4159,75 +4159,110 @@
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="60"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
         <source>Share this folder</source>
         <translation>Deze map delen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="69"/>
-        <source>Share name:</source>
-        <translation>Deelnaam:</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="82"/>
-        <source>Permission:</source>
-        <translation>Machtiging:</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="108"/>
         <source>Read and write</source>
         <translation>Lezen en schrijven</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="108"/>
         <source>Read only</source>
         <translation>Alleen-lezen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="91"/>
-        <source>Anonymous:</source>
-        <translation>Anoniem:</translation>
+        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
+        <source>Share name</source>
+        <translation>Deelnaam</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="97"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="102"/>
+        <source>Permission</source>
+        <translation>Toestemming</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="111"/>
+        <source>Anonymous</source>
+        <translation>Anoniem</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="117"/>
         <source>Not allow</source>
         <translation>Niet machtigen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="97"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="117"/>
         <source>Allow</source>
         <translation>Machtigen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="321"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="120"/>
+        <source>Network path</source>
+        <translation>Netwerklocatie</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="138"/>
+        <source>Username</source>
+        <translation>Gebruikersnaam</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="150"/>
+        <source>Share password</source>
+        <translation>Gedeeld wachtwoord</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="165"/>
+        <source>None</source>
+        <translation>Geen</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="236"/>
+        <source>Change password</source>
+        <translation>Wachtwoord wijzigen</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="236"/>
+        <source>Set password</source>
+        <translation>Wachtwoord instellen</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="269"/>
+        <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
+        <translation>Het wachtwoord wordt ingesteld op alle gedeelde mappen. Gebruikers die het wachtwoord niet weten, hebben alleen toegang tot mappen waarop anonieme toegang is toegestaan.</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="496"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Het gedeelde bestand mag geen .. of . bevatten.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="337"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="512"/>
         <source>The share name is used by another user.</source>
         <translation>Het gedeelde item is in gebruik door een andere gebruiker.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="338"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="513"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>Oké</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="341"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="516"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Annuleren</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="342"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="517"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Vervangen</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="340"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="515"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Het gedeelde item bestaat al. Wil je het vervangen?</translation>
     </message>
@@ -4669,44 +4704,44 @@
 <context>
     <name>UserShareManager</name>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="405"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="417"/>
         <source>Kindly Reminder</source>
         <translation>Vriendelijke herinnering</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="405"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="417"/>
         <source>Please firstly install samba to continue</source>
         <translation>Installeer samba om door te gaan</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="415"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="453"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="427"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="465"/>
         <source>The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.</source>
         <translation>De naam mag niet ‘%1’ bevatten en mag niet beginnen met of eindigen op een streepje (-) of witruimte.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="447"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="459"/>
         <source>To protect the files, you cannot share this folder.</source>
         <translation>Om de bestanden te beschermen, kunt u deze map niet delen.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="470"/>
-        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="482"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="487"/>
         <source>Sharing failed</source>
         <translation>Delen mislukt</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="470"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="482"/>
         <source>The computer name is too long</source>
         <translation>De computernaam is te lang</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="475"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="487"/>
         <source>The transport-connection attempt was refused by the remote system. Maybe smbd is not running.</source>
         <translation>Het verbindingsverzoek is geweigerd door het externe systeem - mogelijk is smbd niet actief.</translation>
     </message>
     <message>
-        <location filename="../../usershare/usersharemanager.cpp" line="573"/>
+        <location filename="../../usershare/usersharemanager.cpp" line="585"/>
         <source>You do not have permission to operate file/folder!</source>
         <translation>Je bent niet bevoegd om deze map/dit bestand te gebruiken!</translation>
     </message>
