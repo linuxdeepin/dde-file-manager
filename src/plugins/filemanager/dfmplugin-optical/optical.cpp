@@ -45,7 +45,6 @@ void Optical::initialize()
     InfoFactory::regClass<MasteredMediaFileInfo>(Global::kBurn);
     WatcherFactory::regClass<MasteredMediaFileWatcher>(Global::kBurn);
     DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::kBurn);
-    MenuService::regClass<OpticalMenu>(OpticalScene::kOpticalMenu);
 
     connect(OpticalHelper::winServIns(), &WindowsService::windowCreated, this,
             [this]() {

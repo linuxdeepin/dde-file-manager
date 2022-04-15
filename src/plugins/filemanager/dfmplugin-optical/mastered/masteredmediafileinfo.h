@@ -57,6 +57,7 @@ private:
 
 private:
     QUrl backerUrl;
+    QVariantMap devInfoMap;
 };
 
 DPOPTICAL_END_NAMESPACE
