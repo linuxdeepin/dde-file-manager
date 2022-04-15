@@ -71,7 +71,7 @@ class FileViewPrivate
 
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int currentIconSizeLevel = 1;
-    FileViewItem::Roles currentSortRole = FileViewItem::Roles::kItemNameRole;
+    DFMGLOBAL_NAMESPACE::ItemRoles currentSortRole = DFMGLOBAL_NAMESPACE::kItemNameRole;
     Qt::SortOrder currentSortOrder = Qt::SortOrder::AscendingOrder;
 
     FileView::RandeIndex visibleIndexRande;

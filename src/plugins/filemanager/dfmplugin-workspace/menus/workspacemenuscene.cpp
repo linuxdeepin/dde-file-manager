@@ -28,6 +28,7 @@
 #include "utils/fileoperatorhelper.h"
 
 DPWORKSPACE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
@@ -241,25 +242,25 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
         {
             // sort by name
             if (actionId == ActionID::kSrtName) {
-                sortByRole(FileViewItem::kItemNameRole);
+                sortByRole(kItemNameRole);
                 return true;
             }
 
             // sort by time modified
             if (actionId == ActionID::kSrtTimeModified) {
-                sortByRole(FileViewItem::kItemFileLastModifiedRole);
+                sortByRole(kItemFileLastModifiedRole);
                 return true;
             }
 
             // sort by size
             if (actionId == ActionID::kSrtSize) {
-                sortByRole(FileViewItem::kItemFileSizeRole);
+                sortByRole(kItemFileSizeRole);
                 return true;
             }
 
             // sort by size
             if (actionId == ActionID::kSrtType) {
-                sortByRole(FileViewItem::kItemFileMimeTypeRole);
+                sortByRole(kItemFileMimeTypeRole);
                 return true;
             }
         }
@@ -380,7 +381,7 @@ QMenu *WorkspaceMenuScene::sortBySubActions(QMenu *menu)
 
 void WorkspaceMenuScene::sortByRole(int role)
 {
-    auto itemRole = static_cast<FileViewItem::Roles>(role);
+    auto itemRole = static_cast<ItemRoles>(role);
     Qt::SortOrder order = d->view->model()->sortOrder();
     int column = d->view->model()->getColumnByRole(itemRole);
 
@@ -391,18 +392,18 @@ void WorkspaceMenuScene::sortByRole(int role)
 void WorkspaceMenuScene::updateEmptyAreaActionState()
 {
     // sort  by
-    auto role = static_cast<FileViewItem::Roles>(d->view->model()->sortRole());
+    auto role = static_cast<ItemRoles>(d->view->model()->sortRole());
     switch (role) {
-    case FileViewItem::kItemNameRole:
+    case kItemNameRole:
         d->predicateAction[ActionID::kSrtName]->setChecked(true);
         break;
-    case FileViewItem::kItemFileLastModifiedRole:
+    case kItemFileLastModifiedRole:
         d->predicateAction[ActionID::kSrtTimeModified]->setChecked(true);
         break;
-    case FileViewItem::kItemFileSizeRole:
+    case kItemFileSizeRole:
         d->predicateAction[ActionID::kSrtSize]->setChecked(true);
         break;
-    case FileViewItem::kItemFileMimeTypeRole:
+    case kItemFileMimeTypeRole:
         d->predicateAction[ActionID::kSrtType]->setChecked(true);
         break;
     default:

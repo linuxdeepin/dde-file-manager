@@ -60,44 +60,6 @@ class FileViewItem : public QStandardItem
     FileViewItemPrivate *const d;
 
 public:
-    enum Roles {
-        kItemNameRole = Qt::DisplayRole,
-        kItemIconRole = Qt::DecorationRole,
-        kItemEditRole = Qt::EditRole,
-        kItemToolTipRole = Qt::ToolTipRole,
-        kItemSizeHintRole = Qt::SizeHintRole,
-        kItemBackgroundRole = Qt::BackgroundRole,
-        kItemForegroundRole = Qt::ForegroundRole,
-        kItemCheckStateRole = Qt::CheckStateRole,
-        kItemInitialSortOrderRole = Qt::InitialSortOrderRole,
-        kItemFontRole = Qt::FontRole,
-        kItemTextAlignmentRole = Qt::TextAlignmentRole,
-        kItemColorRole = Qt::TextColorRole,
-        kItemUrlRole = Qt::UserRole + 1,
-        kItemFileLastModifiedRole = Qt::UserRole + 2,
-        kItemFileSizeRole = Qt::UserRole + 3,
-        kItemFileMimeTypeRole = Qt::UserRole + 4,
-        kItemFilePathRole = Qt::UserRole + 5,
-        kItemColumListRole = Qt::UserRole + 6,
-        kItemColumWidthScaleListRole = Qt::UserRole + 7,
-        kItemCornerMarkTLRole = Qt::UserRole + 8,
-        kItemCornerMarkTRRole = Qt::UserRole + 9,
-        kItemCornerMarkBLRole = Qt::UserRole + 10,
-        kItemCornerMarkBRRole = Qt::UserRole + 11,
-        kItemIconLayersRole = Qt::UserRole + 12,
-        kItemFileDisplayNameRole = Qt::UserRole + 13,
-        kItemFilePinyinNameRole = Qt::UserRole + 14,
-        kItemFileBaseNameRole = Qt::UserRole + 15,
-        kItemFileSuffixRole = Qt::UserRole + 16,
-        kItemFileNameOfRenameRole = Qt::UserRole + 17,
-        kItemFileBaseNameOfRenameRole = Qt::UserRole + 18,
-        kItemFileSuffixOfRenameRole = Qt::UserRole + 19,
-        kItemExtraProperties = Qt::UserRole + 20,
-        kItemFileIconModelToolTipRole = Qt::UserRole + 21,   // 用于返回图标视图下的tooltip
-
-        kItemUnknowRole = Qt::UserRole + 999
-    };
-
     enum CornerMark {
         kTopLeft,
         kTopRight,

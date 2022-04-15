@@ -108,7 +108,7 @@ void WorkspaceMenu::actionBusiness(QAction *act)
     case kActSize:
     case kActType:
     case kActLastModifiedDate: {
-        FileViewItem::Roles role = static_cast<FileViewItem::Roles>(getRoleByActionType(static_cast<ActionType>(actType)));
+        ItemRoles role = static_cast<ItemRoles>(getRoleByActionType(static_cast<ActionType>(actType)));
         Qt::SortOrder order = view->model()->sortOrder();
         int column = view->model()->getColumnByRole(role);
 
@@ -348,14 +348,14 @@ int WorkspaceMenu::getRoleByActionType(const ActionType type) const
 {
     switch (type) {
     case ActionType::kActName:
-        return FileViewItem::kItemNameRole;
+        return kItemNameRole;
     case ActionType::kActLastModifiedDate:
-        return FileViewItem::kItemFileLastModifiedRole;
+        return kItemFileLastModifiedRole;
     case ActionType::kActSize:
-        return FileViewItem::kItemFileSizeRole;
+        return kItemFileSizeRole;
     case ActionType::kActType:
-        return FileViewItem::kItemFileMimeTypeRole;
+        return kItemFileMimeTypeRole;
     default:
-        return FileViewItem::kItemNameRole;
+        return kItemNameRole;
     }
 }

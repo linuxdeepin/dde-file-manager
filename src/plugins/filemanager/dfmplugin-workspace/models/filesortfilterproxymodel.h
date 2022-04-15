@@ -27,6 +27,7 @@
 #include "views/fileviewitem.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QSortFilterProxyModel>
 #include <QDir>
@@ -63,8 +64,8 @@ public:
     QList<QUrl> getCurrentDirFileUrls() const;
 
     int getColumnWidth(const int &column) const;
-    FileViewItem::Roles getRoleByColumn(const int &column) const;
-    int getColumnByRole(const FileViewItem::Roles role) const;
+    DFMGLOBAL_NAMESPACE::ItemRoles getRoleByColumn(const int &column) const;
+    int getColumnByRole(const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
 
     // Filter
     QDir::Filters getFilters() const;

@@ -48,6 +48,7 @@ DPWORKSPACE_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 FileViewHelper::FileViewHelper(FileView *parent)
@@ -206,7 +207,7 @@ QModelIndex FileViewHelper::findIndex(const QByteArray &keys, bool matchStart, i
         }
 
         const QModelIndex &index = parent()->model()->index(row, 0);
-        const QString &pinyinName = parent()->model()->data(index, FileViewItem::kItemFilePinyinNameRole).toString();
+        const QString &pinyinName = parent()->model()->data(index, kItemFilePinyinNameRole).toString();
         if (matchStart ? pinyinName.startsWith(keys, Qt::CaseInsensitive)
                        : pinyinName.contains(keys, Qt::CaseInsensitive)) {
             return index;

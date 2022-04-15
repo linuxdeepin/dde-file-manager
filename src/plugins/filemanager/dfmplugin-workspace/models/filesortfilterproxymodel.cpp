@@ -25,6 +25,7 @@
 #include "dfm-base/base/application/application.h"
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
@@ -103,7 +104,7 @@ AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex
 QUrl FileSortFilterProxyModel::getUrlByIndex(const QModelIndex &index) const
 {
     const QModelIndex &sourceIndex = mapToSource(index);
-    return sourceIndex.data(FileViewItem::kItemUrlRole).toUrl();
+    return sourceIndex.data(kItemUrlRole).toUrl();
 }
 
 QList<QUrl> FileSortFilterProxyModel::getCurrentDirFileUrls() const
@@ -129,27 +130,27 @@ int FileSortFilterProxyModel::getColumnWidth(const int &column) const
     return 120;
 }
 
-FileViewItem::Roles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
+ItemRoles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
 {
     // TODO(liuyangming): get role list from config
-    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
-                                                                                    << FileViewItem::kItemFileLastModifiedRole
-                                                                                    << FileViewItem::kItemFileSizeRole
-                                                                                    << FileViewItem::kItemFileMimeTypeRole;
+    static QList<ItemRoles> columnRoleList = QList<ItemRoles>() << kItemNameRole
+                                                                << kItemFileLastModifiedRole
+                                                                << kItemFileSizeRole
+                                                                << kItemFileMimeTypeRole;
 
     if (columnRoleList.length() > column)
         return columnRoleList.at(column);
 
-    return FileViewItem::kItemNameRole;
+    return kItemNameRole;
 }
 
-int FileSortFilterProxyModel::getColumnByRole(const FileViewItem::Roles role) const
+int FileSortFilterProxyModel::getColumnByRole(const ItemRoles role) const
 {
     // TODO(liuyangming): get role list from config
-    static QList<FileViewItem::Roles> columnRoleList = QList<FileViewItem::Roles>() << FileViewItem::kItemNameRole
-                                                                                    << FileViewItem::kItemFileLastModifiedRole
-                                                                                    << FileViewItem::kItemFileSizeRole
-                                                                                    << FileViewItem::kItemFileMimeTypeRole;
+    static QList<ItemRoles> columnRoleList = QList<ItemRoles>() << kItemNameRole
+                                                                << kItemFileLastModifiedRole
+                                                                << kItemFileSizeRole
+                                                                << kItemFileMimeTypeRole;
     return columnRoleList.indexOf(role) < 0 ? 0 : columnRoleList.indexOf(role);
 }
 
@@ -235,17 +236,17 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
 
     // When the selected sort attribute value is the same, sort by file name
     if (leftData == rightData) {
-        QString leftName = fileModel->data(left, FileViewItem::kItemNameRole).toString();
-        QString rightName = fileModel->data(right, FileViewItem::kItemNameRole).toString();
+        QString leftName = fileModel->data(left, kItemNameRole).toString();
+        QString rightName = fileModel->data(right, kItemNameRole).toString();
         return QString::localeAwareCompare(leftName, rightName) < 0;
     }
 
     switch (sortRole()) {
-    case FileViewItem::kItemNameRole:
-    case FileViewItem::kItemFileLastModifiedRole:
-    case FileViewItem::kItemFileMimeTypeRole:
+    case kItemNameRole:
+    case kItemFileLastModifiedRole:
+    case kItemFileMimeTypeRole:
         return QString::localeAwareCompare(leftData.toString(), rightData.toString()) < 0;
-    case FileViewItem::kItemFileSizeRole:
+    case kItemFileSizeRole:
         if (leftInfo->isDir()) {
             int leftCount = qSharedPointerDynamicCast<AbstractFileInfo>(leftInfo)->countChildFile();
             int rightCount = qSharedPointerDynamicCast<AbstractFileInfo>(rightInfo)->countChildFile();
@@ -315,13 +316,13 @@ FileViewModel *FileSortFilterProxyModel::viewModel() const
 QString FileSortFilterProxyModel::roleDisplayString(int role) const
 {
     switch (role) {
-    case FileViewItem::kItemNameRole:
+    case kItemNameRole:
         return tr("Name");
-    case FileViewItem::kItemFileLastModifiedRole:
+    case kItemFileLastModifiedRole:
         return tr("Time modified");
-    case FileViewItem::kItemFileSizeRole:
+    case kItemFileSizeRole:
         return tr("Size");
-    case FileViewItem::kItemFileMimeTypeRole:
+    case kItemFileMimeTypeRole:
         return tr("Type");
     default:
         return QString();

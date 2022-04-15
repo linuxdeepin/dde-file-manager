@@ -23,8 +23,10 @@
 #include "fileviewitem.h"
 #include "utils/fileutils.h"
 #include "private/fileviewitem_p.h"
+#include "dfm-base/dfm_global_defines.h"
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 FileViewItem::FileViewItem()
@@ -105,12 +107,12 @@ void FileViewItem::refresh()
 
 QUrl FileViewItem::url() const
 {
-    return QStandardItem::data(Roles::kItemUrlRole).toUrl();
+    return QStandardItem::data(kItemUrlRole).toUrl();
 }
 
 void FileViewItem::setUrl(const QUrl url)
 {
-    setData(QVariant(url), Roles::kItemUrlRole);
+    setData(QVariant(url), kItemUrlRole);
 
     d->fileinfo = InfoFactory::create<AbstractFileInfo>(url);
     if (!d->fileinfo)

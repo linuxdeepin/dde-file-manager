@@ -39,6 +39,7 @@
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/windowutils.h"
@@ -50,6 +51,7 @@
 #include <QDrag>
 
 DPWORKSPACE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 FileView::FileView(const QUrl &url, QWidget *parent)
@@ -1177,7 +1179,7 @@ void FileView::loadViewState(const QUrl &url)
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     d->currentIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
 
-    d->currentSortRole = static_cast<FileViewItem::Roles>(fileViewStateValue(url, "sortRole", FileViewItem::Roles::kItemNameRole).toInt());
+    d->currentSortRole = static_cast<ItemRoles>(fileViewStateValue(url, "sortRole", kItemNameRole).toInt());
     d->currentSortOrder = static_cast<Qt::SortOrder>(fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
 }
 

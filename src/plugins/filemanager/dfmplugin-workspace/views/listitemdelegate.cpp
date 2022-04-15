@@ -51,6 +51,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 ListItemDelegate::ListItemDelegate(FileViewHelper *parent)
@@ -146,13 +147,13 @@ void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     QRect iconRect = optRect;
     iconRect.setSize(iconSize);
 
-    const QList<QPair<int, int>> &columnRoleList = index.data(FileViewItem::kItemColumListRole).value<QList<QPair<int, int>>>();
+    const QList<QPair<int, int>> &columnRoleList = index.data(kItemColumListRole).value<QList<QPair<int, int>>>();
     if (columnRoleList.isEmpty())
         return;
     QRect rect = optRect;
     for (int i = 0; i < columnRoleList.length(); ++i) {
         int rol = columnRoleList.at(i).first;
-        if (rol == FileViewItem::kItemNameRole) {
+        if (rol == kItemNameRole) {
             int iconOffset = i == 0 ? iconRect.right() + 1 : 0;
 
             rect.setLeft(columnX + iconOffset);
@@ -199,7 +200,7 @@ bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
 bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (event->type() == QEvent::ToolTip) {
-        const QString tooltip = index.data(FileViewItem::kItemToolTipRole).toString();
+        const QString tooltip = index.data(kItemToolTipRole).toString();
 
         if (tooltip.isEmpty()) {
             ItemDelegateHelper::hideTooltipImmediately();
@@ -381,7 +382,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
 {
     D_DC(ListItemDelegate);
     // 绘制需要绘制的项，计算每一项绘制的宽度
-    const QList<QPair<int, int>> &columnRoleList = index.data(FileViewItem::kItemColumListRole).value<QList<QPair<int, int>>>();
+    const QList<QPair<int, int>> &columnRoleList = index.data(kItemColumListRole).value<QList<QPair<int, int>>>();
     if (columnRoleList.isEmpty())
         return;
 
@@ -419,11 +420,11 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
 
         QPalette::ColorGroup cGroup = QPalette::Inactive;
         Qt::TextElideMode elideMode = Qt::ElideRight;
-        if (rol == FileViewItem::kItemNameRole) {
+        if (rol == kItemNameRole) {
             cGroup = QPalette::Active;
             elideMode = Qt::ElideMiddle;
         }
-        if (rol == FileViewItem::kItemNameRole || rol == FileViewItem::kItemFileDisplayNameRole) {
+        if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
             //Todo(liuyangming):绘制标记
             paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight);
         } else {
@@ -451,21 +452,21 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
         QString fileName;
 
         do {
-            if (role != FileViewItem::kItemNameRole && role != FileViewItem::kItemFileDisplayNameRole)
+            if (role != kItemNameRole && role != kItemFileDisplayNameRole)
                 break;
 
-            if (role == FileViewItem::kItemFileDisplayNameRole) {
-                const auto fileName = index.data(FileViewItem::kItemNameRole);
-                const auto fileDisplayName = index.data(FileViewItem::kItemFileDisplayNameRole);
+            if (role == kItemFileDisplayNameRole) {
+                const auto fileName = index.data(kItemNameRole);
+                const auto fileDisplayName = index.data(kItemFileDisplayNameRole);
 
                 if (fileName != fileDisplayName)
                     break;
             }
 
-            const QString &suffix = "." + index.data(FileViewItem::kItemFileSuffixRole).toString();
+            const QString &suffix = "." + index.data(kItemFileSuffixRole).toString();
             if (suffix == ".")
                 break;
-            fileName = ItemDelegateHelper::elideText(index.data(FileViewItem::kItemFileBaseNameRole).toString().remove('\n'),
+            fileName = ItemDelegateHelper::elideText(index.data(kItemFileBaseNameRole).toString().remove('\n'),
                                                      QSize(rect.width() - option.fontMetrics.width(suffix), rect.height()),
                                                      QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                      option.font, Qt::ElideRight,
@@ -497,10 +498,10 @@ bool ListItemDelegate::setEditorData(ListItemEditor *editor)
 
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
-    const QString &suffix = d->editingIndex.data(FileViewItem::kItemFileSuffixOfRenameRole).toString();
+    const QString &suffix = d->editingIndex.data(kItemFileSuffixOfRenameRole).toString();
 
     if (showSuffix) {
-        QString name = d->editingIndex.data(FileViewItem::kItemFileNameOfRenameRole).toString();
+        QString name = d->editingIndex.data(kItemFileNameOfRenameRole).toString();
         name = FileUtils::preprocessingFileName(name);
         editor->setMaxCharSize(NAME_MAX);
         editor->setText(name);
@@ -508,7 +509,7 @@ bool ListItemDelegate::setEditorData(ListItemEditor *editor)
     } else {
         editor->setProperty(kEidtorShowSuffix, suffix);
         editor->setMaxCharSize(NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
-        QString name = d->editingIndex.data(FileViewItem::kItemFileBaseNameOfRenameRole).toString();
+        QString name = d->editingIndex.data(kItemFileBaseNameOfRenameRole).toString();
         name = FileUtils::preprocessingFileName(name);
         editor->setText(name);
         editor->select(name);

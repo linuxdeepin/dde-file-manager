@@ -56,6 +56,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 IconItemDelegate::IconItemDelegate(FileViewHelper *parent)
@@ -132,7 +133,7 @@ void IconItemDelegate::paint(QPainter *painter,
 bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (event->type() == QEvent::ToolTip) {
-        const QString tooltip = index.data(FileViewItem::kItemFileIconModelToolTipRole).toString();
+        const QString tooltip = index.data(kItemFileIconModelToolTipRole).toString();
 
         if (tooltip.isEmpty()) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
             ItemDelegateHelper::hideTooltipImmediately();
@@ -244,8 +245,8 @@ void IconItemDelegate::hideNotEditingIndexWidget()
 QString IconItemDelegate::displayFileName(const QModelIndex &index) const
 {
     bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
-    QString str = index.data(FileViewItem::kItemFileDisplayNameRole).toString();
-    const QString &suffix = "." + index.data(FileViewItem::kItemFileSuffixRole).toString();
+    QString str = index.data(kItemFileDisplayNameRole).toString();
+    const QString &suffix = "." + index.data(kItemFileSuffixRole).toString();
 
     if (!showSuffix && str.endsWith(suffix) && suffix != ".")
         str = str.mid(0, str.length() - suffix.length());
@@ -564,16 +565,16 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 
     bool showSuffix = Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool();
 
-    QString suffix = index.data(FileViewItem::kItemFileSuffixOfRenameRole).toString();
-    qDebug() << "Display" << index.data(FileViewItem::kItemFileDisplayNameRole).toString()
-             << "FileName" << index.data(FileViewItem::kItemNameRole).toString()
-             << "FileNameofrenmae" << index.data(FileViewItem::kItemFileNameOfRenameRole).toString()
-             << "BaseName" << index.data(FileViewItem::kItemFileBaseNameRole).toString()
-             << "BaseNameofrename" << index.data(FileViewItem::kItemFileBaseNameOfRenameRole).toString()
-             << "suffix" << index.data(FileViewItem::kItemFileSuffixRole).toString()
+    QString suffix = index.data(kItemFileSuffixOfRenameRole).toString();
+    qDebug() << "Display" << index.data(kItemFileDisplayNameRole).toString()
+             << "FileName" << index.data(kItemNameRole).toString()
+             << "FileNameofrenmae" << index.data(kItemFileNameOfRenameRole).toString()
+             << "BaseName" << index.data(kItemFileBaseNameRole).toString()
+             << "BaseNameofrename" << index.data(kItemFileBaseNameOfRenameRole).toString()
+             << "suffix" << index.data(kItemFileSuffixRole).toString()
              << "suffixofrename" << suffix;
     if (showSuffix) {
-        QString name = index.data(FileViewItem::kItemFileNameOfRenameRole).toString();
+        QString name = index.data(kItemFileNameOfRenameRole).toString();
         name = FileUtils::preprocessingFileName(name);
 
         item->setMaxCharSize(NAME_MAX);
@@ -583,7 +584,7 @@ void IconItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
         item->setProperty(kEidtorShowSuffix, suffix);
         item->setMaxCharSize(NAME_MAX - suffix.toLocal8Bit().size() - (suffix.isEmpty() ? 0 : 1));
 
-        QString name = index.data(FileViewItem::kItemFileBaseNameOfRenameRole).toString();
+        QString name = index.data(kItemFileBaseNameOfRenameRole).toString();
         name = FileUtils::preprocessingFileName(name);
 
         item->setText(name);
