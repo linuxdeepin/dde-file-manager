@@ -336,8 +336,7 @@ void ComputerModel::updateItemInfo(int pos)
     view->update(this->index(pos, 0));
     QString newName = info.info->displayName();
 
-    if (oldName != newName)
-        ComputerItemWatcherInstance->updateSidebarItem(info.url, newName, info.info->renamable());
+    ComputerItemWatcherInstance->updateSidebarItem(info.url, newName, info.info->renamable());
 }
 
 void ComputerModel::onItemSizeChanged(const QUrl &url, qlonglong total, qlonglong free)
