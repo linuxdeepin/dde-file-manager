@@ -67,7 +67,13 @@ bool FsSearcher::search()
     }
 
     notifyTimer.start();
-    auto searchPath = searchUrl.toLocalFile().toLocal8Bit();
+
+    auto info = DFileService::instance()->createFileInfo(nullptr, searchUrl);
+    if (!info)
+        return false;
+
+    searchUrl = DUrl::fromLocalFile(info->absoluteFilePath());
+    auto searchPath = info->absoluteFilePath().toLocal8Bit();
     load_database(app, searchPath.data(), &isWorking);//加载数据库
     if (!isWorking) return false;
     Q_ASSERT(app && app->search);
@@ -159,7 +165,7 @@ bool FsSearcher::isSupported(const DUrl &url)
     if (!info || info->isVirtualEntry())
         return false;
 
-    QByteArray searchPath = url.toLocalFile().toLocal8Bit();
+    QByteArray searchPath = info->absoluteFilePath().toLocal8Bit();
     return db_support(searchPath.data(), searchPath.startsWith("/data"));
 }
 
