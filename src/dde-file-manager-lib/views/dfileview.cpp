@@ -1192,10 +1192,13 @@ void DFileView::keyPressEvent(QKeyEvent *event)
 
 void DFileView::keyReleaseEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
-        emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
-        return;
+    if(this == QApplication::focusWidget()){
+        if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+            emit fileSignalManager->requestShowFilePreviewDialog(selectedUrls(), model()->sortedUrls());
+            return;
+        }
     }
+
 
     DListView::keyReleaseEvent(event);
 }
