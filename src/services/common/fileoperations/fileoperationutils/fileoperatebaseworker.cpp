@@ -24,6 +24,7 @@
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 #include <dfm-io/core/diofactory.h>
 #include <dfm-io/dfmio_register.h>
@@ -395,12 +396,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, bool *result)
 
 bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, bool *result)
 {
-    QSharedPointer<dfmio::DIOFactory> factory = produceQSharedIOFactory(fromUrl.scheme(), static_cast<QUrl>(fromUrl));
-    if (!factory) {
-        return false;
-    }
-
-    QSharedPointer<dfmio::DEnumerator> enumerator = factory->createEnumerator();
+    QSharedPointer<dfmio::DEnumerator> enumerator = DecoratorFileEnumerator(fromUrl).enumeratorPtr();
     if (!enumerator) {
         return false;
     }

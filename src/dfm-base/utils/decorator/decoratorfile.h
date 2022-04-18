@@ -42,6 +42,9 @@ public:
     bool exists() const;
     qint64 size() const;
 
+    QByteArray readAll() const;
+    qint64 writeAll(const QByteArray &byteArray);
+
     DFMIO::DFile::Permissions permissions() const;
     bool setPermissions(DFMIO::DFile::Permissions permission);
 

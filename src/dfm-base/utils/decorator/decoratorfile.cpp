@@ -87,6 +87,35 @@ qint64 DecoratorFile::size() const
     return -1;
 }
 
+QByteArray DecoratorFile::readAll() const
+{
+    if (d->dfile) {
+        if (!d->dfile->isOpen())
+            d->dfile->open(DFMIO::DFile::OpenFlag::ReadOnly);
+        QByteArray ret = d->dfile->readAll();
+        d->dfile->close();
+
+        return ret;
+    }
+    return QByteArray();
+}
+
+qint64 DecoratorFile::writeAll(const QByteArray &byteArray)
+{
+    if (d->dfile) {
+        if (!d->dfile->isOpen()) {
+            bool ok = d->dfile->open(DFMIO::DFile::OpenFlag::WriteOnly);
+            if (!ok)
+                return -1;
+        }
+        qint64 ret = d->dfile->write(byteArray);
+        d->dfile->close();
+
+        return ret;
+    }
+    return -1;
+}
+
 DFMIO::DFile::Permissions DecoratorFile::permissions() const
 {
     if (d->dfile)

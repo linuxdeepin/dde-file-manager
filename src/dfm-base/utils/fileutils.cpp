@@ -31,6 +31,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 #include <KCodecs>
 #include <KEncodingProber>
@@ -647,6 +648,8 @@ QString FileUtils::getSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl
             }
         }
     }
+
+    return QString();
 }
 
 QString FileUtils::toUnicode(const QByteArray &data, const QString &fileName)
@@ -873,17 +876,14 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon)
 
     // Last chance
     const QUrl &pixmapUrl = QUrl::fromLocalFile(QString(kSharePixmapPath));
-    QSharedPointer<DFMIO::DIOFactory> factoryPixmap = produceQSharedIOFactory(pixmapUrl.scheme(), static_cast<QUrl>(pixmapUrl));
-    if (factoryPixmap) {
-        QSharedPointer<DFMIO::DEnumerator> enumerator = factoryPixmap->createEnumerator({}, DFMIO::DEnumerator::DirFilter::Files | DFMIO::DEnumerator::DirFilter::NoDotAndDotDot);
-        if (enumerator) {
-            while (enumerator->hasNext()) {
-                QSharedPointer<DFMIO::DFileInfo> fileinfo = enumerator->fileInfo();
-                if (fileinfo) {
-                    const QString &fileName = fileinfo->attribute(DFMIO::DFileInfo::AttributeID::StandardName).toString();
-                    if (fileName.contains(name)) {
-                        return QIcon(QString(kSharePixmapPath) + QDir::separator() + fileName);
-                    }
+    QSharedPointer<DFMIO::DEnumerator> enumerator = DecoratorFileEnumerator(pixmapUrl, {}, DFMIO::DEnumerator::DirFilter::Files | DFMIO::DEnumerator::DirFilter::NoDotAndDotDot).enumeratorPtr();
+    if (enumerator) {
+        while (enumerator->hasNext()) {
+            QSharedPointer<DFMIO::DFileInfo> fileinfo = enumerator->fileInfo();
+            if (fileinfo) {
+                const QString &fileName = fileinfo->attribute(DFMIO::DFileInfo::AttributeID::StandardName).toString();
+                if (fileName.contains(name)) {
+                    return QIcon(QString(kSharePixmapPath) + QDir::separator() + fileName);
                 }
             }
         }

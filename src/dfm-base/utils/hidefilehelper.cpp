@@ -128,12 +128,16 @@ bool HideFileHelper::save() const
         d->dfile->close();
     }
     d->updateAttribute();
+
+    return true;
 }
 
 bool HideFileHelper::insert(const QString &name)
 {
     d->hideList.insert(name);
     d->hideListUpdate.insert(name);
+
+    return true;
 }
 
 bool HideFileHelper::remove(const QString &name)

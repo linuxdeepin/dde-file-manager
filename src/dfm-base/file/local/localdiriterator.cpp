@@ -24,6 +24,7 @@
 #include "file/local/localdiriterator.h"
 #include "base/urlroute.h"
 #include "base/schemefactory.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 #include <dfm-io/local/dlocalenumerator.h>
 #include <dfm-io/core/denumerator.h>
@@ -40,15 +41,12 @@ LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
 {
     QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 
-    QSharedPointer<DIOFactory> factory = produceQSharedIOFactory(temp.scheme(), static_cast<QUrl>(temp));
-    if (!factory) {
-        qWarning("Failed dfm-io create factory .");
-        abort();
-    }
+    DecoratorFileEnumerator enumerator(temp,
+                                       nameFilters,
+                                       static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
+                                       static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags)));
 
-    dfmioDirIterator = factory->createEnumerator(nameFilters,
-                                                 static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
-                                                 static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags)));
+    dfmioDirIterator = enumerator.enumeratorPtr();
     if (!dfmioDirIterator) {
         qWarning("Failed dfm-io use factory create enumerator");
         abort();

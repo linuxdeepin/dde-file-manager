@@ -29,6 +29,7 @@
 #include "utils/chinese2pinyin.h"
 #include "dfm-base/utils/dthumbnailprovider.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
+#include "dfm-base/utils/sysinfoutils.h"
 
 #include <dfm-io/local/dlocalfileinfo.h>
 
@@ -139,6 +140,7 @@ void LocalFileInfo::refresh()
 {
     QWriteLocker locker(&d->lock);
     d->attributes.clear();
+    d->attributesExtend.clear();
     d->clearIcon();
     d->dfmFileInfo->clearCache();
 }
@@ -543,17 +545,21 @@ bool LocalFileInfo::isWritable() const
     bool isWritable = false;
 
     if (d->attributes.count(DFileInfo::AttributeID::AccessCanWrite) == 0) {
-        bool success = false;
-        if (d->dfmFileInfo) {
-            isWritable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanWrite, &success).toBool();
-        }
-        if (!success)
-            isWritable = QFileInfo(d->url.path()).isWritable();
-
-        d->attributes.insert(DFileInfo::AttributeID::AccessCanWrite, isWritable);
-    } else {
-        isWritable = d->attributes.value(DFileInfo::AttributeID::AccessCanWrite).toBool();
+        do {
+            if (SysInfoUtils::isRootUser()) {
+                d->attributes.insert(DFileInfo::AttributeID::AccessCanWrite, true);
+                break;
+            }
+            QByteArray pathBytes(path().toLocal8Bit());
+            int result = access(pathBytes.data(), W_OK);
+            if (result == 0) {
+                d->attributes.insert(DFileInfo::AttributeID::AccessCanWrite, true);
+                break;
+            }
+        } while (false);
     }
+
+    isWritable = d->attributes.value(DFileInfo::AttributeID::AccessCanWrite).toBool();
 
     return isWritable;
 }
@@ -1497,6 +1503,28 @@ bool LocalFileInfo::isDragCompressFileFormat() const
     return name.endsWith(".zip")
             || (name.endsWith(".7z")
                 && !name.endsWith(".tar.7z"));
+}
+
+void LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const
+{
+    if (d->dfmFileInfo) {
+        d->extendIDs = ids;
+        d->attributesExtendCallbackFunc = callback;
+
+        auto it = ids.begin();
+        while (it != ids.end()) {
+            if (d->attributesExtend.count(*it))
+                it = ids.erase(it);
+            else
+                ++it;
+        }
+
+        if (!ids.isEmpty()) {
+            d->dfmFileInfo->attributeExtend(type, ids, std::bind(&LocalFileInfoPrivate::attributesExtendCallback, d, std::placeholders::_1, std::placeholders::_2));
+        } else {
+            d->attributesExtendCallback(true, {});
+        }
+    }
 }
 
 bool LocalFileInfo::notifyAttributeChanged()

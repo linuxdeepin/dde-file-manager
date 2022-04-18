@@ -118,6 +118,11 @@ public:
     virtual bool canDragCompress() const override;
     virtual bool isDragCompressFileFormat() const override;
 
+    // media info
+    virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,
+                                     QList<DFMIO::DFileInfo::AttributeExtendID> ids,
+                                     DFMIO::DFileInfo::AttributeExtendFuncCallback callback = nullptr) const override;
+
     virtual bool notifyAttributeChanged() override;
 
 private:

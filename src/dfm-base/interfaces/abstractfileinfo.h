@@ -255,6 +255,11 @@ public:
     virtual QString emptyDirectoryTip() const;
     virtual QString loadingTip() const;
 
+    // media info
+    virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,
+                                     QList<DFMIO::DFileInfo::AttributeExtendID> ids,
+                                     DFMIO::DFileInfo::AttributeExtendFuncCallback callback = nullptr) const;
+
     virtual bool notifyAttributeChanged();
 
 protected:

@@ -44,6 +44,10 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     MimeDatabase::FileType fileType { MimeDatabase::FileType::kUnknown };   // 缓存文件的FileType
     QSharedPointer<DFileInfo> dfmFileInfo { nullptr };   // dfm文件的信息
     QMap<DFileInfo::AttributeID, QVariant> attributes;   // 缓存的fileinfo信息
+    QMap<DFileInfo::AttributeExtendID, QVariant> attributesExtend;   // 缓存的fileinfo 扩展信息
+    QList<DFileInfo::AttributeExtendID> extendIDs;
+    DFMIO::DFileInfo::AttributeExtendFuncCallback attributesExtendCallbackFunc = nullptr;
+
     QReadWriteLock lock;
     QMutex mutex;
 
@@ -94,6 +98,33 @@ public:
         hasThumbnail = -1;
         iconFromTheme = false;
         getIconTimer = nullptr;
+    }
+
+    void attributesExtendCallback(bool ok, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> values)
+    {
+        if (ok) {
+            auto it = values.constBegin();
+            while (it != values.constEnd()) {
+                const QVariant &value = it.value();
+                if (value.isValid())
+                    attributesExtend.insert(it.key(), value);
+                ++it;
+            }
+
+            QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> ret;
+            for (const DFileInfo::AttributeExtendID &id : extendIDs) {
+                if (attributesExtend.count(id) > 0) {
+                    ret.insert(id, attributesExtend.value(id));
+                }
+            }
+
+            if (attributesExtendCallbackFunc) {
+                attributesExtendCallbackFunc(true, ret);
+            }
+        } else {
+            if (attributesExtendCallbackFunc)
+                attributesExtendCallbackFunc(false, {});
+        }
     }
 };
 

@@ -29,6 +29,11 @@
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/decorator/decoratorfileoperator.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "utils/universalutils.h"
 #include "dfm_event_defines.h"
 
@@ -86,13 +91,9 @@ LocalFileHandler::~LocalFileHandler()
  */
 bool LocalFileHandler::touchFile(const QUrl &url)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (!factory) {
-        qWarning() << "create factory failed, url: " << url;
-        return false;
-    }
+    DecoratorFileOperator doperator(url);
 
-    QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+    QSharedPointer<DFMIO::DOperator> oper = doperator.operatorPtr();
     if (!oper) {
         qWarning() << "create operator failed, url: " << url;
         return false;
@@ -106,6 +107,27 @@ bool LocalFileHandler::touchFile(const QUrl &url)
         setError(error.errorMsg());
 
         return false;
+    }
+
+    DecoratorFileInfo targetFileInfo(url);
+    const QString &suffix = targetFileInfo.suffix();
+
+    QString templateFile;
+    DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
+    while (enumerator.hasNext()) {
+        if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::StandardSuffix) == suffix) {
+            templateFile = enumerator.next();
+            break;
+        }
+    }
+
+    if (!templateFile.isEmpty()) {
+        QByteArray arr = DecoratorFile(templateFile).readAll();
+        if (!arr.isEmpty()) {
+            qint64 writeCount = DecoratorFile(url).writeAll(arr);
+            if (writeCount <= 0)
+                qWarning() << "file touch succ, but write template failed";
+        }
     }
 
     return true;

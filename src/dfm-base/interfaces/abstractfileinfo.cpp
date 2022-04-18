@@ -1180,6 +1180,11 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::loadingTip() const
     return QObject::tr("Loading...");
 }
 
+void dfmbase::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const
+{
+    CALL_PROXY(mediaInfoAttributes(type, ids, callback));
+}
+
 bool dfmbase::AbstractFileInfo::notifyAttributeChanged()
 {
     CALL_PROXY(notifyAttributeChanged());
