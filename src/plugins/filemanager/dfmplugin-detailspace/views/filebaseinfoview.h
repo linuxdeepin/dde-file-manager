@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
@@ -18,31 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DETAILVIEW_P_H
-#define DETAILVIEW_P_H
+#ifndef FILEBASEINFOVIEW_H
+#define FILEBASEINFOVIEW_H
 
 #include "dfmplugin_detailspace_global.h"
+#include "services/filemanager/detailspace/detailspace_defines.h"
 
-#include "services/filemanager/dfm_filemanager_service_global.h"
-#include "dfm-base/widgets/dfmsplitter/splitter.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 
 #include <QUrl>
 #include <QFrame>
-
-class QLabel;
-class QScrollArea;
-
 DPDETAILSPACE_BEGIN_NAMESPACE
-class DetailView;
 class FileBaseInfoView : public QFrame
 {
     Q_OBJECT
 public:
     explicit FileBaseInfoView(QWidget *parent);
     virtual ~FileBaseInfoView();
+
+private:
     void initUI();
-    void setFileUrl(QUrl &url);
+
+    void initFileMap();
+
+    void basicExpand(const QUrl &url);
+
+    void basicFieldFilter(const QUrl &url);
+
+    void basicFill(const QUrl &url);
+
+    void clearField();
+
+public:
+    void setFileUrl(const QUrl &url);
 
 private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileName { nullptr };
@@ -52,32 +60,10 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileType { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileInterviewTime { nullptr };
     DFMBASE_NAMESPACE::KeyValueLabel *fileChangeTime { nullptr };
-};
 
-class DetailViewPrivate : public QObject
-{
-    Q_OBJECT
-    friend class DetailView;
+    QMultiMap<DSB_FM_NAMESPACE::BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
 
-public:
-    virtual ~DetailViewPrivate();
-
-private:
-    explicit DetailViewPrivate(DetailView *view);
-    void setFileUrl(QUrl &url);
-    void initUI();
-    void addCustomControl(QWidget *widget);
-    void insertCustomControl(int index, QWidget *widget);
-    void removeControl();
-
-private:
-    QUrl url;
-    QVBoxLayout *splitter { nullptr };
-    QLabel *iconLabel { nullptr };
-    FileBaseInfoView *baseInfoView { nullptr };
-    DetailView *detailView { nullptr };
-    QScrollArea *scrollArea { nullptr };
+    QUrl currentUrl;
 };
 DPDETAILSPACE_END_NAMESPACE
-
-#endif   // DETAILVIEW_P_H
+#endif   // FILEBASEINFOVIEW_H

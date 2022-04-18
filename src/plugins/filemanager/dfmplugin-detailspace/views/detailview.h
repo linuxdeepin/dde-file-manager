@@ -22,12 +22,15 @@
 #define DETAILVIEW_H
 
 #include "dfmplugin_detailspace_global.h"
+#include "filebaseinfoview.h"
 
 #include <QFrame>
+#include <QVBoxLayout>
+
+class QScrollArea;
 
 DPDETAILSPACE_BEGIN_NAMESPACE
 
-class DetailViewPrivate;
 class DetailView : public QFrame
 {
     Q_OBJECT
@@ -41,16 +44,25 @@ public:
     void removeControl();
 
 public slots:
-    void setUrl(const QUrl &url);
+    void setUrl(const QUrl &url, int widgetFilter);
 
 private:
-    void detailHandle(QUrl &url);
+    void initInfoUI();
+
+    void createHeadUI(const QUrl &url, int widgetFilter);
+
+    void createBasicWidget(const QUrl &url, int widgetFilter);
 
 protected:
     virtual void showEvent(QShowEvent *event);
 
 private:
-    DetailViewPrivate *const detailViewPrivate { nullptr };
+    QScrollArea *scrollArea { nullptr };
+    QFrame *expandFrame { nullptr };
+    QVBoxLayout *mainLayout { nullptr };
+    FileBaseInfoView *fileBaseInfoView { nullptr };
+    QList<QWidget *> expandList {};
+    QLabel *iconLabel { nullptr };
 };
 
 DPDETAILSPACE_END_NAMESPACE

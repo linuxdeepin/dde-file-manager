@@ -36,9 +36,14 @@ DetailSpaceWidget::DetailSpaceWidget(QFrame *parent)
 
 void DetailSpaceWidget::setCurrentUrl(const QUrl &url)
 {
+    setCurrentUrl(url, 0);
+}
+
+void DetailSpaceWidget::setCurrentUrl(const QUrl &url, int widgetFilter)
+{
     removeControls();
     detailSpaceUrl = url;
-    detailView->setUrl(url);
+    detailView->setUrl(url, widgetFilter);
 }
 
 QUrl DetailSpaceWidget::currentUrl() const

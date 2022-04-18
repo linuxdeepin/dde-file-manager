@@ -72,7 +72,7 @@ void TrashPropertyDialog::initUI()
     DHorizontalLine *hLine = new DHorizontalLine(this);
     fileCountAndFileSize = new KeyValueLabel(this);
     fileCountAndFileSize->setLeftValue(QString(tr("Contains %1 %2")).arg(QString::number(fCount), itemStr));
-    fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignRight);
+    fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignHCenter);
 
     QFrame *infoFrame = new QFrame;
     infoFrame->setFixedHeight(48);
@@ -101,7 +101,7 @@ void TrashPropertyDialog::initUI()
 
 void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size)
 {
-    fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignRight);
+    fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignHCenter);
 }
 
 void TrashPropertyDialog::showEvent(QShowEvent *event)

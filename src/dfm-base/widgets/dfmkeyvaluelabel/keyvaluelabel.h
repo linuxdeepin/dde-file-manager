@@ -38,11 +38,27 @@ class KeyValueLabel : public QFrame
 {
     Q_OBJECT
 public:
+    enum KeyType {
+        kLeftValue,
+        kLeftElideMode,
+        kLeftTip,
+        kLeftAlignment,
+        kLeftWordWrap,
+        kRightValue,
+        kRightElideMode,
+        kRightTip,
+        kRightAlignment,
+        kRightWordWrap,
+        kRowHeight
+    };
+
     explicit KeyValueLabel(QWidget *parent);
-    virtual ~KeyValueLabel();
+    virtual ~KeyValueLabel() override;
 
 private:
     void initUI();
+
+    void initPropertyMap();
 
 public:
     void setLeftValue(QString value, Qt::TextElideMode elideMode = Qt::ElideNone, Qt::Alignment aligment = Qt::Alignment(), bool toolTipVisibility = false);
@@ -65,10 +81,14 @@ public:
 
     QString RightValue();
 
+protected:
+    void paintEvent(QPaintEvent *evt) override;
+
 private:
     DLabel *leftValueLabel = nullptr;
     DLabel *rightValueLabel = nullptr;
     QGridLayout *glayout = nullptr;
+    QMap<KeyType, QVariant> propertyMap {};
 };
 DFMBASE_END_NAMESPACE
 #endif   //KEYVALUELABEL_H

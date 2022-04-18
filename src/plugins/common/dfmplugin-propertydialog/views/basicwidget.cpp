@@ -162,6 +162,7 @@ void BasicWidget::basicExpand(const QUrl &url)
     QList<BasicFieldExpandEnum> fields = fieldMap.keys();
     QSet<BasicFieldExpandEnum> fieldset = QSet<BasicFieldExpandEnum>::fromList(fields);
     fields = fieldset.toList();
+    qSort(fields.begin(), fields.end());
     for (BasicFieldExpandEnum &key : fields) {
         QList<KeyValueLabel *> kvls = fieldMap.values(key);
         for (int i = kvls.count() - 1; i >= 0; --i) {

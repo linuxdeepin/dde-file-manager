@@ -22,6 +22,7 @@
 */
 #include "detailspaceservice.h"
 #include "private/detailspaceservice_p.h"
+#include "utils/registerexpandprocess.h"
 #include "dfm-base/utils/universalutils.h"
 
 DSB_FM_BEGIN_NAMESPACE
@@ -29,6 +30,7 @@ namespace DetailEventType {
 const int kShowDetailView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSetDetailViewSelectFileUrl = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
+
 DSB_FM_END_NAMESPACE
 
 DSB_FM_USE_NAMESPACE
@@ -71,12 +73,47 @@ DetailSpaceService::~DetailSpaceService()
 {
 }
 
-bool DetailSpaceService::registerMethod(DTSP_NAMESPACE::RegisterExpandProcess::createControlViewFunc view, int index, QString *error)
+bool DetailSpaceService::registerControlExpand(createControlViewFunc view, int index)
 {
-    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->registerFunction(view, index, error);
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->registerControlExpand(view, index);
+}
+
+void DetailSpaceService::unregisterControlExpand(int index)
+{
+    DTSP_NAMESPACE::RegisterExpandProcess::instance()->unregisterControlExpand(index);
 }
 
 QMap<int, QWidget *> DetailSpaceService::createControlView(const QUrl &url)
 {
     return DTSP_NAMESPACE::RegisterExpandProcess::instance()->createControlView(url);
+}
+
+bool DetailSpaceService::registerBasicViewExpand(basicViewFieldFunc func, const QString &scheme)
+{
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->registerBasicViewExpand(func, scheme);
+}
+
+void DetailSpaceService::unregisterBasicViewExpand(const QString &scheme)
+{
+    DTSP_NAMESPACE::RegisterExpandProcess::instance()->unregisterBasicViewExpand(scheme);
+}
+
+QMap<BasicExpandType, BasicExpandMap> DetailSpaceService::createBasicExpandField(const QUrl &url)
+{
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->createBasicExpandField(url);
+}
+
+bool DetailSpaceService::registerFilterControlField(const QString &scheme, DetailFilterType filter)
+{
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->registerFilterControlField(scheme, filter);
+}
+
+void DetailSpaceService::unregisterFilterControlField(const QString &scheme)
+{
+    DTSP_NAMESPACE::RegisterExpandProcess::instance()->unregisterFilterControlField(scheme);
+}
+
+DetailFilterType DetailSpaceService::contorlFieldFilter(const QUrl &url)
+{
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->contorlFieldFilter(url);
 }

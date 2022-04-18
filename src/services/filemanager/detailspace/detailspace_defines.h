@@ -25,12 +25,52 @@
 
 #include "dfm_filemanager_service_global.h"
 
+#include <QMultiMap>
+#include <QUrl>
+#include <QWidget>
+
 DSB_FM_BEGIN_NAMESPACE
 
 namespace DetailEventType {
 extern const int kShowDetailView;
 extern const int kSetDetailViewSelectFileUrl;
 }
+
+enum DetailFilterType : int {
+    kNotFilter = 0x00000000,
+    kBasicView = 0x00000001,
+    kIconView = 0x00000002,
+    kFileNameField = 0x00000004,
+    kFileSizeField = 0x00000008,
+    kFileViewSizeField = 0x00000016,
+    kFileDurationField = 0x00000032,
+    kFileTypeField = 0x00000064,
+    kFileInterviewTimeField = 0x000000128,
+    kFileChangeTImeField = 0x000000256
+};
+
+enum BasicFieldExpandEnum : int {
+    kNotAll,
+    kFileName,
+    kFileSize,
+    kFileViewSize,
+    kFileDuration,
+    kFileType,
+    kFileInterviewTime,
+    kFileChangeTIme
+};
+
+enum BasicExpandType : int {
+    kFieldInsert,
+    kFieldReplace
+};
+
+typedef QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>> BasicExpandMap;
+
+//! 定义创建控件函数类型
+typedef QWidget *(*createControlViewFunc)(const QUrl &url);
+
+typedef QMap<BasicExpandType, BasicExpandMap> (*basicViewFieldFunc)(const QUrl &url);
 
 DSB_FM_END_NAMESPACE
 #define DTSP_NAMESPACE detailsapce_service
