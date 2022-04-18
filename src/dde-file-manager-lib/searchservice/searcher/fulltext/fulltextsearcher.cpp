@@ -25,6 +25,8 @@
 #include "durl.h"
 #include "dfmapplication.h"
 #include "interfaces/dfileservices.h"
+#include "controllers/vaultcontroller.h"
+#include "interfaces/dfmstandardpaths.h"
 
 // Lucune++ headers
 #include <FileUtils.h>
@@ -382,8 +384,20 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                     if (!SearchHelper::isHiddenFile(StringUtils::toUTF8(resultPath).c_str(), hiddenFileHash, searchPath)) {
                         if (isDelDataPrefix)
                             resultPath.insert(0, L"/data");
+
+                        DUrl fileUrl;
+                        QString filePath = StringUtils::toUTF8(resultPath).c_str();
+                        // 由于回收站和保险箱文件的菜单，特殊处理
+                        if (VaultController::isVaultFile(searchPath)) {
+                            fileUrl = VaultController::localToVault(filePath);
+                        } else if (searchPath.startsWith(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath))) {
+                            fileUrl = DUrl::fromTrashFile(filePath.remove(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath)));
+                        } else {
+                            fileUrl = DUrl::fromLocalFile(filePath);
+                        }
+
                         QMutexLocker lk(&mutex);
-                        allResults.append(DUrl::fromLocalFile(StringUtils::toUTF8(resultPath).c_str()));
+                        allResults.append(fileUrl);
                     }
 
                     //推送
@@ -484,7 +498,13 @@ bool FullTextSearcher::search()
     if (!d->status.testAndSetRelease(kReady, kRuning))
         return false;
 
-    const QString path = searchUrl.toLocalFile();
+    const auto &info = DFileService::instance()->createFileInfo(nullptr, searchUrl);
+    if (!info)
+        return false;
+
+    const QString path = info->absoluteFilePath();
+    searchUrl = DUrl::fromLocalFile(path);
+
     const QString key = d->dealKeyword(keyword);
     if (path.isEmpty() || key.isEmpty()) {
         d->status.storeRelease(kCompleted);

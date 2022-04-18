@@ -187,7 +187,7 @@ bool AnythingSearcher::hasSymLinkDirInSearchPath(const QString &path, SearchInfo
 
 bool AnythingSearcher::isSupported(const DUrl &url, bool &isPrependData)
 {
-    if (!url.isValid())
+    if (!url.isValid() || url.isVaultFile() || url.isTrashFile())
         return false;
 
     auto info = DFileService::instance()->createFileInfo(nullptr, url);

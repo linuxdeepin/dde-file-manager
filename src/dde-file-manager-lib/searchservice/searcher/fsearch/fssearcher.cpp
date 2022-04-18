@@ -21,6 +21,7 @@
 #include "fssearcher.h"
 #include "utils/searchhelper.h"
 #include "interfaces/dfileservices.h"
+#include "controllers/vaultcontroller.h"
 
 #include <QDebug>
 
@@ -158,7 +159,7 @@ void FsSearcher::tryNotify()
 
 bool FsSearcher::isSupported(const DUrl &url)
 {
-    if (!url.isValid())
+    if (!url.isValid() || url.isTrashFile())
         return false;
 
     auto info = DFileService::instance()->createFileInfo(nullptr, url);
@@ -218,8 +219,16 @@ void FsSearcher::cbReceiveResults(void *data, void *sender)
 
             // 过滤文管设置的隐藏文件
             if (!SearchHelper::isHiddenFile(fileName, self->hiddenFilters, self->searchUrl.toLocalFile())) {
+                DUrl fileUrl;
+                // 保险箱文件特殊处理
+                if (VaultController::isVaultFile(self->searchUrl.toLocalFile())) {
+                    fileUrl = VaultController::localToVault(fileName);
+                } else {
+                    fileUrl = DUrl::fromLocalFile(fileName);
+                }
+
                 QMutexLocker lk(&self->mutex);
-                self->allResults << DUrl::fromLocalFile(fileName);
+                self->allResults << fileUrl;
             }
 
             //推送

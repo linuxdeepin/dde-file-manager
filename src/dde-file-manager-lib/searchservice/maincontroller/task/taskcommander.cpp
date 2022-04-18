@@ -49,7 +49,7 @@ AbstractSearcher *TaskCommanderPrivate::createFileNameSearcher(const DUrl &url, 
 {
 #ifndef DISABLE_QUICK_SEARCH
     bool isPrependData = false;
-    if (!url.isVaultFile() && AnythingSearcher::isSupported(url, isPrependData))
+    if (AnythingSearcher::isSupported(url, isPrependData))
         return new AnythingSearcher(url, keyword, isPrependData, q);
 #endif
 
