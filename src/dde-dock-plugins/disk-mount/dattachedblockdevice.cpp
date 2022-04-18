@@ -97,7 +97,7 @@ QString DAttachedBlockDevice::displayName()
         { "data", "Data Disk" }
     };
 
-    qint64 totalSize { qvariant_cast<qint64>(DeviceProperty::kSizeTotal) };
+    qint64 totalSize { qvariant_cast<qint64>(data.value(DeviceProperty::kSizeTotal)) };
     if (isValid()) {
         QString devName { qvariant_cast<QString>(data.value(DeviceProperty::kIdLabel)) };
         if (devName.isEmpty()) {
@@ -143,6 +143,7 @@ QString DAttachedBlockDevice::iconName()
 {
     bool optical { qvariant_cast<bool>(data.value(DeviceProperty::kOptical)) };
     bool removable { qvariant_cast<bool>(data.value(DeviceProperty::kRemovable)) };
+    bool decryptedDev = qvariant_cast<QString>(data.value(DeviceProperty::kCryptoBackingDevice)) != "/";
     QString iconName { QStringLiteral("drive-harddisk") };
 
     if (removable)
@@ -150,6 +151,9 @@ QString DAttachedBlockDevice::iconName()
 
     if (optical)
         iconName = QStringLiteral("media-optical");
+
+    if (decryptedDev)
+        iconName = QStringLiteral("drive-removable-media-encrypted");
 
     return iconName;
 }

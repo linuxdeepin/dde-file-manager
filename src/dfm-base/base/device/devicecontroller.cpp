@@ -1136,7 +1136,18 @@ bool DeviceController::detachBlockDevice(const QString &deviceId)
         return false;
     }
 
-    if (!ptr->removable()) {
+    bool removable = false;
+    QString drivePath = "";
+    auto cryptBackingDevId = ptr->getProperty(DFMMOUNT::Property::BlockCryptoBackingDevice).toString();
+    if (cryptBackingDevId != "/") {
+        auto backingDev = DeviceControllerHelper::createBlockDevice(cryptBackingDevId);
+        if (backingDev) {
+            removable = backingDev->removable();
+            drivePath = backingDev->drive();
+        }
+    }
+
+    if (!removable && !ptr->removable()) {
         qWarning() << "Not removable device: " << deviceId;
         return false;
     }
@@ -1145,7 +1156,7 @@ bool DeviceController::detachBlockDevice(const QString &deviceId)
     // when detach a device, you need to unmount its partitions,
     // and then poweroff
     bool isAllUnmounted = true;
-    QStringList &&idList = DeviceControllerHelper::makeAllDevicesIdForDrive(ptr->drive());
+    QStringList &&idList = DeviceControllerHelper::makeAllDevicesIdForDrive(drivePath.isEmpty() ? ptr->drive() : drivePath);
     std::for_each(idList.cbegin(), idList.cend(), [this, &isAllUnmounted](const QString &id) {
         if (!unmountBlockDevice(id)) {
             qWarning() << "Detach " << id << " abnormal, it's cannot unmount";
@@ -1160,7 +1171,7 @@ bool DeviceController::detachBlockDevice(const QString &deviceId)
         if (ptr->optical())
             ejectBlockDeviceAsync(deviceId);
     } else {
-        poweroffBlockDeviceAsync(deviceId);
+        poweroffBlockDeviceAsync(cryptBackingDevId == "/" ? deviceId : cryptBackingDevId);
     }
     return true;
 }
