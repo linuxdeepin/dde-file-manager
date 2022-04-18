@@ -80,7 +80,8 @@ public:   // operations
     void unmountProtocolDeviceAsync(const QString &deviceId, const QVariantMap &opts = {}, DFMMOUNT::DeviceOperateCallback callback = nullptr);
     bool unmountProtocolDevice(const QString &deviceId, const QVariantMap &opts = {});
 
-    void mountNetworkDevice(const QString &address, DFMMOUNT::DeviceOperateCallbackWithMessage callback);
+    // timeout == 0 means never timed out
+    void mountNetworkDevice(const QString &address, DFMMOUNT::DeviceOperateCallbackWithMessage callback, int timeout = 0);
     bool rescanDevice(const QString &deviceId, const QVariantMap &opts = {});
 
 public:   // status
@@ -94,6 +95,7 @@ public:   // status
     QVariantMap blockDeviceInfo(const QString &deviceId, bool detail = false) const;
     QStringList protocolDevicesIdList() const;
     QVariantMap protocolDeviceInfo(const QString &deviceId, bool detail = false) const;
+    QString getErrorMessage(DFMMOUNT::DeviceError err);
 
 public:   // special
     void ghostBlockDevMounted(const QString &deviceId, const QString &mountPoint);

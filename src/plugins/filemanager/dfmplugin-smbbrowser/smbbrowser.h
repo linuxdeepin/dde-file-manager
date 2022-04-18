@@ -47,6 +47,8 @@ protected Q_SLOTS:
 private:
     void initOperations();
     void addNeighborToSidebar();
+    void registerSambaPrehandler();
+    static void sambaPrehandler(const QUrl &url, std::function<void()> after);
 };
 
 DPSMBBROWSER_END_NAMESPACE

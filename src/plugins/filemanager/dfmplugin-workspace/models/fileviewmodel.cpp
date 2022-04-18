@@ -191,7 +191,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         QModelIndex root = createIndex(0, 0, d->root.data());
 
         d->canFetchMoreFlag = true;
-        fetchMore(root);
+        //        fetchMore(root);
 
         return root;
     }
@@ -319,36 +319,16 @@ int FileViewModel::rowCountMaxShow()
 void FileViewModel::fetchMore(const QModelIndex &parent)
 {
     Q_UNUSED(parent)
-    d->isUpdatedChildren = false;
-    if (!d->traversalThread.isNull()) {
-        d->traversalThread->disconnect();
-        d->traversalThread->stopAndDeleteLater();
-        d->traversalThread->setParent(nullptr);
-    }
 
-    d->traversalThread = new TraversalDirThread(
-            d->root->url(), QStringList(),
-            QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
-            QDirIterator::NoIteratorFlags);
-
-    d->traversalThread->setParent(this);
-
-    if (d->traversalThread.isNull()) {
-        d->isUpdatedChildren = true;
-        return;
-    }
-
-    d->nodeManager->connect(d->traversalThread.data(), &TraversalDirThread::updateChild,
-                            d->nodeManager.data(), &FileNodeManagerThread::onHandleAddFile,
-                            Qt::QueuedConnection);
-    d->nodeManager->connect(d->traversalThread.data(), &QThread::finished,
-                            d->nodeManager.data(), &FileNodeManagerThread::onHandleTraversalFinished,
-                            Qt::QueuedConnection);
-
-    if (d->canFetchMoreFlag) {
-        d->canFetchMoreFlag = false;
-        setState(Busy);
-        d->traversalThread->start();
+    auto url = d->root->url();
+    auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
+    if (prehandler) {
+        QPointer<FileViewModel> guard(this);
+        prehandler(url, [=]() {
+            if (guard)
+                this->traversCurrDir(); });
+    } else {
+        traversCurrDir();
     }
 }
 
@@ -521,6 +501,41 @@ void FileViewModel::setState(FileViewModel::State state)
 void FileViewModel::childrenUpdated()
 {
     emit modelChildrenUpdated();
+}
+
+void FileViewModel::traversCurrDir()
+{
+    d->isUpdatedChildren = false;
+    if (!d->traversalThread.isNull()) {
+        d->traversalThread->disconnect();
+        d->traversalThread->stopAndDeleteLater();
+        d->traversalThread->setParent(nullptr);
+    }
+
+    d->traversalThread = new TraversalDirThread(
+            d->root->url(), QStringList(),
+            QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden,
+            QDirIterator::NoIteratorFlags);
+
+    d->traversalThread->setParent(this);
+
+    if (d->traversalThread.isNull()) {
+        d->isUpdatedChildren = true;
+        return;
+    }
+
+    d->nodeManager->connect(d->traversalThread.data(), &TraversalDirThread::updateChild,
+                            d->nodeManager.data(), &FileNodeManagerThread::onHandleAddFile,
+                            Qt::QueuedConnection);
+    d->nodeManager->connect(d->traversalThread.data(), &QThread::finished,
+                            d->nodeManager.data(), &FileNodeManagerThread::onHandleTraversalFinished,
+                            Qt::QueuedConnection);
+
+    if (d->canFetchMoreFlag) {
+        d->canFetchMoreFlag = false;
+        setState(Busy);
+        d->traversalThread->start();
+    }
 }
 
 void FileViewModel::onFilesUpdated()

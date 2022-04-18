@@ -37,6 +37,7 @@ DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, WorkspaceWidget *> WorkspaceHelper::kWorkspaceMap {};
+QMap<QString, DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler> WorkspaceHelper::kPrehandlers {};
 
 void WorkspaceHelper::registerTopWidgetCreator(const WorkspaceHelper::KeyType &scheme, const WorkspaceHelper::TopWidgetCreator &creator)
 {
@@ -173,6 +174,19 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
         return defaultViewMode[scheme];
 
     return static_cast<Global::ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
+}
+
+bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const Workspace::FileViewRoutePrehaldler prehandler)
+{
+    if (kPrehandlers.contains(scheme))
+        return false;
+    kPrehandlers.insert(scheme, prehandler);
+    return true;
+}
+
+Workspace::FileViewRoutePrehaldler WorkspaceHelper::viewRoutePrehandler(const QString &scheme)
+{
+    return kPrehandlers.value(scheme, nullptr);
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)

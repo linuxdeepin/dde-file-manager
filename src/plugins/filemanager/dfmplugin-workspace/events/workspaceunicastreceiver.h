@@ -29,6 +29,7 @@ public slots:
     void invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene);
     void invokeSetDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
     DFMBASE_NAMESPACE::Global::ViewMode invokeGetDefaultViewMode(const QString &scheme);
+    bool invokeRegisterFileViewRoutePrehanlder(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler &prehandler);
 
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);

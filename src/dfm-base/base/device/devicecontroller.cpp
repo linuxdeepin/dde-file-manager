@@ -1067,14 +1067,14 @@ static int askForUserChoice(const QString &message, const QStringList &choices)
     return askForChoice.exec();
 }
 
-void DeviceController::mountNetworkDevice(const QString &address, DFMMOUNT::DeviceOperateCallbackWithMessage callback)
+void DeviceController::mountNetworkDevice(const QString &address, DFMMOUNT::DeviceOperateCallbackWithMessage callback, int timeout)
 {
     Q_ASSERT_X(!address.isEmpty(), "DeviceService", "address is emtpy");
 
     using namespace std::placeholders;
     auto func = std::bind(askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
 
-    DFMMOUNT::DFMProtocolDevice::mountNetworkDevice(address, func, askForUserChoice, callback);
+    DFMMOUNT::DFMProtocolDevice::mountNetworkDevice(address, func, askForUserChoice, callback, timeout);
 }
 
 bool DeviceController::rescanDevice(const QString &deviceId, const QVariantMap &opts)
@@ -1517,6 +1517,11 @@ QVariantMap DeviceController::protocolDeviceInfo(const QString &deviceId, bool d
     const auto &protoData = allProtoData.value(deviceId);
     DeviceControllerHelper::makeProtocolDeviceMap(protoData, &info, detail);
     return info;
+}
+
+QString DeviceController::getErrorMessage(dfmmount::DeviceError err)
+{
+    return DFMMOUNT::Utils::errorMessage(err);
 }
 
 void DeviceController::ghostBlockDevMounted(const QString &deviceId, const QString &mountPoint)

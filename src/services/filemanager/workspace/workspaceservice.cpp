@@ -132,14 +132,7 @@ DFMBASE_NAMESPACE::Global::ViewMode WorkspaceService::getDefaultViewMode(const Q
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme).value<DFMBASE_NAMESPACE::Global::ViewMode>();
 }
 
-WorkspaceService *WorkspaceService::instance()
+bool WorkspaceService::registerFileViewRoutePrehandle(const QString &scheme, const Workspace::FileViewRoutePrehaldler &prehandler)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, prehandler).toBool();
 }

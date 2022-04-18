@@ -35,6 +35,8 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 DPSMBBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -60,6 +62,8 @@ void SmbBrowser::initialize()
 
     DSB_FM_USE_NAMESPACE
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
+
+    connect(&dpfInstance.listener(), &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerSambaPrehandler, Qt::DirectConnection);
 }
 
 bool SmbBrowser::start()
@@ -118,6 +122,29 @@ void SmbBrowser::addNeighborToSidebar()
     entry.url = SmbBrowserUtils::netNeighborRootUrl();
     entry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     SideBarService::service()->insertItem(0, entry);
+}
+
+void SmbBrowser::registerSambaPrehandler()
+{
+    DSB_FM_USE_NAMESPACE
+    if (!WorkspaceService::service()->registerFileViewRoutePrehandle(Global::kSmb, sambaPrehandler)) {
+        qWarning() << "smb's prehandler has been registered";
+    }
+}
+
+void SmbBrowser::sambaPrehandler(const QUrl &url, std::function<void()> after)
+{
+    if (url.scheme() == Global::kSmb) {
+        DeviceController::instance()->mountNetworkDevice(url.toString(), [after](bool ok, DFMMOUNT::DeviceError err, const QString &) {
+            if ((ok || err == DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) && after) {
+                after();
+            } else if (after) {
+                DialogManager::instance()->showErrorDialog(tr("Mount device error"), "");
+                qDebug() << DeviceController::instance()->getErrorMessage(err);
+            }
+        },
+                                                         10000);
+    }
 }
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node)

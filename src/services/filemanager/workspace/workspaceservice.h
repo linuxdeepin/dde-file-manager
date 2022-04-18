@@ -54,8 +54,7 @@ public:
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
     void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
     DFMBASE_NAMESPACE::Global::ViewMode getDefaultViewMode(const QString &scheme);
-
-    static WorkspaceService *instance();
+    bool registerFileViewRoutePrehandle(const QString &scheme, const Workspace::FileViewRoutePrehaldler &prehandler);
 
 private:
     explicit WorkspaceService(QObject *parent = nullptr);

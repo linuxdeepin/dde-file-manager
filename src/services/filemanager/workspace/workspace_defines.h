@@ -60,6 +60,7 @@ extern const char *const kWorkspaceMenu;
 using CreateTopWidgetCallback = std::function<QWidget *()>;
 using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
 using FileViewFilterCallback = std::function<bool(DFMBASE_NAMESPACE::AbstractFileInfo *, QVariant)>;
+using FileViewRoutePrehaldler = std::function<void(const QUrl &, std::function<void()>)>;
 
 struct CustomTopWidgetInfo
 {
@@ -77,5 +78,6 @@ Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback);
 //Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback);
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler);
 
 #endif   // WORKSPACE_DEFINES_H

@@ -95,6 +95,8 @@ public:
     void setState(FileViewModel::State state);
     void childrenUpdated();
 
+    void traversCurrDir();
+
 public slots:
     void onFilesUpdated();
 

@@ -138,7 +138,7 @@ void Recent::installToSideBar()
 void Recent::addFileOperations()
 {
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
-    WorkspaceService::instance()->setWorkspaceMenuScene(RecentManager::scheme(), RecentScene::kRecentMenu);
+    WorkspaceService::service()->setWorkspaceMenuScene(RecentManager::scheme(), RecentScene::kRecentMenu);
 
     propertyServIns->registerBasicExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
 

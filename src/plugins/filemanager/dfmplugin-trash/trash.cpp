@@ -106,7 +106,7 @@ void Trash::installToSideBar()
 void Trash::addFileOperations()
 {
     TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
-    WorkspaceService::instance()->setWorkspaceMenuScene(TrashHelper::scheme(), TrashScene::kTrashMenu);
+    WorkspaceService::service()->setWorkspaceMenuScene(TrashHelper::scheme(), TrashScene::kTrashMenu);
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &TrashFileHelper::writeToClipBoardHandle;

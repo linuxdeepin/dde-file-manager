@@ -75,6 +75,9 @@ public:
     QString findMenuScene(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode findViewMode(const QString &scheme);
 
+    bool reigsterViewRoutePrehandler(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler prehandler);
+    DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);
+
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);
@@ -85,6 +88,7 @@ private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
     static QMutex &mutex();
     static QMap<quint64, WorkspaceWidget *> kWorkspaceMap;
+    static QMap<QString, DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler> kPrehandlers;
 
 private:
     TopWidgetCreatorMap topWidgetCreators;
