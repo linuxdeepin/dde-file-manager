@@ -65,7 +65,17 @@ bool TextPreview::setFileUrl(const DUrl &url)
 
     m_url = url;
 
-    m_device.open(url.path().toLocal8Bit().data(), ios::binary);
+    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
+
+    if (!info)
+        return false;
+
+    m_device.open(info->toLocalFile().toLocal8Bit().data(), ios::binary);
+
+    if(!m_device.is_open()){
+        qWarning() << "open file failed :" << m_url;
+        return false;
+    }
 
     if (!m_textBrowser) {
         m_textBrowser = new QPlainTextEdit();
@@ -78,7 +88,7 @@ bool TextPreview::setFileUrl(const DUrl &url)
         m_textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
     }
 
-    m_title = QFileInfo(url.toLocalFile()).fileName();
+    m_title = info->fileName();
 
     vector<char> buf(m_device.seekg(0, ios::end).tellg());
     m_device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
