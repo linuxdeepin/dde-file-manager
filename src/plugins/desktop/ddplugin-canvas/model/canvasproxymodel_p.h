@@ -52,7 +52,7 @@ public slots:
     void sourceRowsAboutToBeRemoved(const QModelIndex &sourceParent,
                                        int start, int end);
     void sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-protected:
+public:
     void specialSort(QList<DFMLocalFileInfoPointer> &files) const;
     void sortMainDesktopFile(QList<DFMLocalFileInfoPointer> &files, Qt::SortOrder order) const;
     bool insertFilter(const QUrl &url);

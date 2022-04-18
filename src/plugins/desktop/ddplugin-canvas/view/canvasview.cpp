@@ -326,6 +326,11 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
     if (d->viewSetting->isDelayDrag())
         return;
 
+    if (d->extend && d->extend->startDrag(screenNum(), supportedActions)) {
+        qDebug() << "start drag by extend.";
+        return;
+    }
+
     QModelIndexList validIndexes = selectionModel()->selectedIndexes();
     if (validIndexes.count() > 1) {
         QMimeData *data = model()->mimeData(validIndexes);
@@ -352,7 +357,7 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
 
 void CanvasView::dragEnterEvent(QDragEnterEvent *event)
 {
-    if (!d->dragDropOper->enter(event))
+    if (d->dragDropOper->enter(event))
         return;
 
     QAbstractItemView::dragEnterEvent(event);
@@ -360,7 +365,7 @@ void CanvasView::dragEnterEvent(QDragEnterEvent *event)
 
 void CanvasView::dragMoveEvent(QDragMoveEvent *event)
 {
-    if (!d->dragDropOper->move(event))
+    if (d->dragDropOper->move(event))
         return;
     QAbstractItemView::dragMoveEvent(event);
 }
@@ -374,7 +379,7 @@ void CanvasView::dragLeaveEvent(QDragLeaveEvent *event)
 void CanvasView::dropEvent(QDropEvent *event)
 {
     setState(NoState);
-    if (!d->dragDropOper->drop(event)) {
+    if (d->dragDropOper->drop(event)) {
         activateWindow();
         return;
     }
@@ -641,6 +646,16 @@ void CanvasView::initUI()
         d->waterMask->lower();
         d->waterMask->refresh();
     }
+}
+
+void CanvasView::setViewExtend(ViewExtendInterface *ext)
+{
+    d->extend = ext;
+}
+
+ViewExtendInterface *CanvasView::viewExtend() const
+{
+    return d->extend;
 }
 
 const QMargins CanvasViewPrivate::gridMiniMargin = QMargins(2, 2, 2, 2);

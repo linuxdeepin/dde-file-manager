@@ -49,7 +49,7 @@ private:
     void singleSelect(const QModelIndex &index);
 protected:
     CanvasView *view;
-    QPersistentModelIndex lastPressedIndex; // todo using url
+    QPersistentModelIndex lastPressedIndex;
     QPersistentModelIndex toggleIndex;
 };
 DDP_CANVAS_END_NAMESPACE

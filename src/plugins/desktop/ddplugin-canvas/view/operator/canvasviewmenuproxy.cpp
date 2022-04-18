@@ -23,6 +23,7 @@
 #include "canvasmanager.h"
 #include "grid/canvasgrid.h"
 #include "view/canvasview.h"
+#include "view/canvasview_p.h"
 #include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
 #include "view/operator/fileoperatorproxy.h"
@@ -77,9 +78,12 @@ bool CanvasViewMenuProxy::disableMenu()
 
 void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
+    // extend menu
+    if (view->d->extend && view->d->extend->contextMenu(view->screenNum(), view->model()->rootUrl(), QList<QUrl>(), QCursor::pos()))
+        return;
+
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
-
     auto canvasScene = extensionMenuServer->createScene(CanvasMenuCreator::name());
     if (!canvasScene) {
         qWarning() << "Create scene failed, scene name: " << CanvasMenuCreator::name();
@@ -110,6 +114,18 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
 
 void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
+    auto selectUrls = view->selectionModel()->selectedUrls();
+    auto tgUrl = view->model()->fileUrl(index);
+
+    // extend menu
+    {
+        // first is focus
+        selectUrls.removeAll(tgUrl);
+        selectUrls.prepend(tgUrl);
+        if (view->d->extend && view->d->extend->contextMenu(view->screenNum(), view->model()->rootUrl(), selectUrls, QCursor::pos()))
+            return;
+    }
+
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
     Q_UNUSED(indexFlags)
 
@@ -120,9 +136,6 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     }
 
     // TODO(Lee)：多文件筛选、多选中包含 计算机 回收站 主目录时不显示扩展菜单
-
-    auto selectUrls = view->selectionModel()->selectedUrls();
-    auto tgUrl = view->model()->fileUrl(index);
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();

@@ -22,7 +22,6 @@
 #define CANVASITEMDELEGATE_P_H
 
 #include "canvasitemdelegate.h"
-#include "expandeditem.h"
 #include "tagtextformat.h"
 #include "filetagobjectinterface.h"
 #include "elidetextlayout.h"

@@ -18,38 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMODELEXTEND_P_H
-#define CANVASMODELEXTEND_P_H
+#ifndef CANVASVIEWEXTEND_H
+#define CANVASVIEWEXTEND_H
 
-#include "ddplugin_canvas_global.h"
-#include "canvasmodelextend.h"
-
-#include <services/desktop/event/eventprovider.h>
-#include <services/desktop/canvas/canvasservice.h>
-
-#include <QObject>
+#include "view/viewextendinterface.h"
 
 DDP_CANVAS_BEGIN_NAMESPACE
-
-static constexpr char kFilterCanvaModelData[] = "CanvaModel_Method_data";
-
-class CanvasModelExtendPrivate : public QObject, public DSB_D_NAMESPACE::EventProvider
+class CanvasViewExtendPrivate;
+class CanvasViewExtend : public QObject, public ViewExtendInterface
 {
     Q_OBJECT
+    friend class CanvasViewExtendPrivate;
 public:
-    explicit CanvasModelExtendPrivate(CanvasModelExtend *);
-    ~CanvasModelExtendPrivate();
-public:
-    QVariantHash query(int type) const override;
-public:
-    DSB_D_NAMESPACE::CanvasService *service = nullptr;
-    QVariantHash eSignals;
-    QVariantHash eSlots;
-    QVariantHash eSeqSig;
+    explicit CanvasViewExtend(QObject *parent = nullptr);
+    ~CanvasViewExtend();
+    bool initEvent();
+    bool contextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData = nullptr) const override;
+    bool dropData(int viewIndex, const QMimeData *, const QPoint &viewPos, void *extData = nullptr) const override;
 private:
-    CanvasModelExtend *q;
+    CanvasViewExtendPrivate *d;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASMODELEXTEND_P_H
+#endif // CANVASVIEWEXTEND_H

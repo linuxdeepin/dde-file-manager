@@ -36,6 +36,7 @@
 #include "operator/canvasviewmenuproxy.h"
 #include "operator/viewsettingutil.h"
 #include "gridcoordinate.h"
+#include "viewextendinterface.h"
 
 #include <QDebug>
 
@@ -138,6 +139,8 @@ public:
 
     CanvasViewMenuProxy *menuProxy = nullptr;
     WaterMaskFrame *waterMask = nullptr;
+
+    ViewExtendInterface *extend = nullptr;
     CanvasView *q;
 };
 

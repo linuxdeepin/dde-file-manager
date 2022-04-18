@@ -49,7 +49,6 @@ DragDropOper::DragDropOper(CanvasView *parent)
 
 bool DragDropOper::enter(QDragEnterEvent *event)
 {
-    //todo using model
     // set target dir as desktop.
     m_target = view->model()->rootUrl();
     if (DFileDragClient::checkMimeData(event->mimeData())) {
@@ -59,16 +58,16 @@ bool DragDropOper::enter(QDragEnterEvent *event)
         // and this action is start before dropEvent instead in or after dropEvent.
         DFileDragClient::setTargetUrl(event->mimeData(), m_target);
         event->setDropAction(Qt::CopyAction);
-        return false;
+        return true;
     }
 
     updatePrepareDodgeValue(event);
 
     if (checkXdndDirectSave(event))
-        return false;
+        return true;
 
     preproccessDropEvent(event, event->mimeData()->urls(), view->model()->rootUrl());
-    return true;
+    return false;
 }
 
 void DragDropOper::leave(QDragLeaveEvent *event)
@@ -100,7 +99,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
                             event->setDropAction(Qt::MoveAction);
                     }
                 }
-                return false;
+                return true;
             } else {
                 // not support drop
                 event->ignore();
@@ -115,7 +114,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
     if (!hoverIndex.isValid())
         handleMoveMimeData(event, curUrl);
 
-    return false;
+    return true;
 }
 
 bool DragDropOper::drop(QDropEvent *event)
@@ -123,27 +122,37 @@ bool DragDropOper::drop(QDropEvent *event)
     stopDelayDodge();
     updatePrepareDodgeValue(event);
 
+    // extend
+    if (view->d->extend) {
+        QVariantHash ext;
+        ext.insert("QDropEvent", (qlonglong)event);
+        if (view->d->extend->dropData(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
+            qDebug() << "droped by extend";
+            return true;
+        }
+    }
+
     // some special case.
     if (dropFilter(event))
-        return false;
+        return true;
 
     // copy file by other app
     if (dropClientDownload(event))
-        return false;
+        return true;
 
     // DirectSaveMode
     if (dropDirectSaveMode(event))
-        return false;
+        return true;
 
     // move file on view grid.
     if (dropBetweenView(event))
-        return false;
+        return true;
 
     if (dropMimeData(event))
-        return false;
+        return true;
 
     event->ignore();
-    return false;
+    return true;
 }
 
 void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls, const QUrl &targetFileUrl) const

@@ -18,11 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMODELEXTEND_P_H
-#define CANVASMODELEXTEND_P_H
+#ifndef CANVASVIEWEXTEND_P_H
+#define CANVASVIEWEXTEND_P_H
 
 #include "ddplugin_canvas_global.h"
-#include "canvasmodelextend.h"
+#include "canvasviewextend.h"
 
 #include <services/desktop/event/eventprovider.h>
 #include <services/desktop/canvas/canvasservice.h>
@@ -30,15 +30,11 @@
 #include <QObject>
 
 DDP_CANVAS_BEGIN_NAMESPACE
-
-static constexpr char kFilterCanvaModelData[] = "CanvaModel_Method_data";
-
-class CanvasModelExtendPrivate : public QObject, public DSB_D_NAMESPACE::EventProvider
+class CanvasViewExtendPrivate : public QObject, public DSB_D_NAMESPACE::EventProvider
 {
-    Q_OBJECT
 public:
-    explicit CanvasModelExtendPrivate(CanvasModelExtend *);
-    ~CanvasModelExtendPrivate();
+    explicit CanvasViewExtendPrivate(CanvasViewExtend *qq);
+    ~CanvasViewExtendPrivate();
 public:
     QVariantHash query(int type) const override;
 public:
@@ -47,9 +43,9 @@ public:
     QVariantHash eSlots;
     QVariantHash eSeqSig;
 private:
-    CanvasModelExtend *q;
+    CanvasViewExtend *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASMODELEXTEND_P_H
+#endif // CANVASVIEWEXTEND_P_H

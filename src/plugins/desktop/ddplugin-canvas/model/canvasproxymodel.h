@@ -73,6 +73,8 @@ public slots:
     void update();
     void refresh(const QModelIndex &parent, bool global = false, int ms = 50);
     void setShowHiddenFiles(bool show);
+    bool fetch(const QUrl &url); //show \a url if exsited
+    bool take(const QUrl &url);  // hide \a url
 private:
     CanvasProxyModelPrivate *d;
 };

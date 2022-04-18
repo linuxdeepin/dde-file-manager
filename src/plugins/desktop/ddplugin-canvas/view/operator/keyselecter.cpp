@@ -86,6 +86,10 @@ void KeySelecter::keyboardSearch(const QString &search)
 {
     if (search.isEmpty())
         return;
+
+    if (view->d->extend && view->d->extend->keyboardSearch(view->screenNum(), search))
+        return;
+
     bool reverseOrder = isShiftPressed();
     searchKeys.append(search);
     QModelIndex current = view->currentIndex();

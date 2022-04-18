@@ -117,6 +117,10 @@ void ViewPainter::paintFiles(QStyleOptionViewItem option, QPaintEvent *event)
 void ViewPainter::drawFile(QStyleOptionViewItem option, const QModelIndex &index, const QPoint &gridPos)
 {
     Q_UNUSED(gridPos);
+    // painting extend.
+    if (d->extend && d->extend->drawFile(d->screenNum, d->q->model()->fileUrl(index), this, &option))
+        return;
+
     itemDelegate()->paint(this, option, index);
 }
 

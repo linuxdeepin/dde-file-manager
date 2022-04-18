@@ -778,3 +778,64 @@ void CanvasProxyModel::setShowHiddenFiles(bool show)
     else
         d->filters &= ~QDir::Hidden;
 }
+
+bool CanvasProxyModel::fetch(const QUrl &url)
+{
+    if (d->fileMap.contains(url))
+        return true;
+
+    QModelIndex index = d->srcModel->index(url);
+    if (!index.isValid())
+        return false;
+
+    auto info = d->srcModel->fileInfo(index);
+    if (info) {
+        if (d->extend && d->extend->dataInserted(url)) {
+            qDebug() << "filter by extend module. can not add" << url;
+            return false;
+        }
+
+        // canvas filter
+        if (d->insertFilter(url)) {
+            qDebug() << "filter it, don't add" << url;
+            return false;
+        }
+
+        int row = d->fileList.count();
+        beginInsertRows(rootIndex(), row, row);
+
+        d->fileList.append(url);
+        d->fileMap.insert(url, info);
+
+        endInsertRows();
+        return true;
+    }
+
+    qDebug() << "fail to add: no such file" << url;
+    return false;
+}
+
+bool CanvasProxyModel::take(const QUrl &url)
+{
+    if (!d->fileMap.contains(url))
+        return true;
+
+    if (d->extend && d->extend->dataRemoved(url)) {
+        qWarning() << "invalid module: dataRemoved returns true.";
+    }
+
+    // canvas filter
+    d->removeFilter(url);
+
+    int row = d->fileList.indexOf(url);
+    if (Q_UNLIKELY(row < 0)) {
+        qCritical() << "invaild index of" << url;
+        return false;
+    }
+
+    beginRemoveRows(rootIndex(), row, row);
+    d->fileList.removeAt(row);
+    d->fileMap.remove(url);
+    endRemoveRows();
+    return true;
+}

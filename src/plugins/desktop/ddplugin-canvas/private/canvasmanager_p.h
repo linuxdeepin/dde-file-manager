@@ -31,6 +31,7 @@ DDP_CANVAS_BEGIN_NAMESPACE
 
 class FileInfoModel;
 class CanvasModelExtend;
+class CanvasViewExtend;
 class CanvasSelectionModel;
 typedef QSharedPointer<CanvasView> CanvasViewPointer;
 
@@ -67,7 +68,8 @@ public:
     CanvasProxyModel *canvasModel = nullptr;
     CanvasModelExtend *modelExt = nullptr;
     CanvasSelectionModel *selectionModel = nullptr ;
-    DSB_D_NAMESPACE::FrameService *frameService = nullptr ;
+    DSB_D_NAMESPACE::FrameService *frameService = nullptr;
+    CanvasViewExtend *viewExt = nullptr;
     QMap<QString, CanvasViewPointer> viewMap;
 private:
     CanvasManager *q = nullptr;

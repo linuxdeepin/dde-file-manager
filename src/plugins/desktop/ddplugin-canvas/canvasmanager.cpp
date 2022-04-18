@@ -28,8 +28,9 @@
 #include "view/operator/fileoperatorproxy.h"
 #include "model/fileinfomodel.h"
 #include "extend/canvasmodelextend.h"
+#include "extend/canvasviewextend.h"
 
-#include "services/desktop/event/private/eventhelperfunc.h"
+#include <services/desktop/event/private/eventhelperfunc.h>
 #include <services/desktop/wallpapersetting/wallpaperservice.h>
 
 #include <dfm-framework/framework.h>
@@ -352,6 +353,9 @@ void CanvasManagerPrivate::initModel()
     modelExt = new CanvasModelExtend(q);
     modelExt->initEvent();
     canvasModel->setModelExtend(modelExt);
+
+    viewExt = new CanvasViewExtend(q);
+    viewExt->initEvent();
 }
 
 void CanvasManagerPrivate::initSetting()
@@ -372,6 +376,7 @@ CanvasViewPointer CanvasManagerPrivate::createView(QWidget *root, int index)
     view->setParent(root);
     view->setModel(canvasModel);
     view->setSelectionModel(selectionModel);
+    view->setViewExtend(viewExt);
     view->setAttribute(Qt::WA_NativeWindow, false);
     view->initUI();
 
@@ -406,6 +411,8 @@ void CanvasManagerPrivate::onHiddenFlagsChanged(bool show)
     if (show != canvasModel->showHiddenFiles()) {
         canvasModel->setShowHiddenFiles(show);
         canvasModel->refresh(canvasModel->rootIndex());
+
+        viewExt->sigHiddenFlagChanged(!show);
     }
 }
 
@@ -526,5 +533,8 @@ void CanvasManager::onChangeIconLevel(bool increase)
             v->updateGrid();
         }
         DispalyIns->setIconLevel(currentLevel);
+
+        // notify others that icon size changed
+        d->viewExt->sigIconSizeChanged(currentLevel);
     }
 }
