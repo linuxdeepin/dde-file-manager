@@ -67,6 +67,7 @@ public:
     void checkArrowVisiable();
     void updateController(const QUrl &url);
     void setClickableAreaEnabled(bool enabled);
+    void writeUrlToClipboard(const QUrl &url);
 
 private:
     void initUI();

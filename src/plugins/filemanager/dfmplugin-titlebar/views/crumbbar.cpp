@@ -151,6 +151,25 @@ void CrumbBarPrivate::setClickableAreaEnabled(bool enabled)
     q->update();
 }
 
+void CrumbBarPrivate::writeUrlToClipboard(const QUrl &url)
+{
+    QString copyPath;
+    if (url.isLocalFile() || !UrlRoute::hasScheme(url.scheme())) {
+        copyPath = url.toString();
+    } else {
+        // why? The format of the custom scheme URL was incorrect when it was converted to a string
+        // eg: QUrl("recent:///") -> "recent:/"
+        QUrl tmpUrl(url);
+        tmpUrl.setScheme(Global::kFile);
+        copyPath = tmpUrl.toString().replace(0, 4, url.scheme());
+    }
+
+    if (copyPath.isEmpty())
+        return;
+
+    QGuiApplication::clipboard()->setText(copyPath);
+}
+
 void CrumbBarPrivate::initUI()
 {
     // Arrows
@@ -375,8 +394,8 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
         editIcon = QIcon::fromTheme("entry-edit");
     }
 
-    menu->addAction(copyIcon, QObject::tr("Copy path"), [url]() {
-        QGuiApplication::clipboard()->setText(url.toString());
+    menu->addAction(copyIcon, QObject::tr("Copy path"), [this, url]() {
+        d->writeUrlToClipboard(url);
     });
 
     menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url]() {
