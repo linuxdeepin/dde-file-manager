@@ -58,6 +58,16 @@ bool SmbShareFileInfo::isDir() const
     return false;
 }
 
+bool SmbShareFileInfo::isReadable() const
+{
+    return true;
+}
+
+bool SmbShareFileInfo::isWritable() const
+{
+    return true;
+}
+
 SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
 {

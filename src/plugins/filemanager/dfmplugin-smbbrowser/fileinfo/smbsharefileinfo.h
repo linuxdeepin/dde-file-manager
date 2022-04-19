@@ -39,6 +39,8 @@ public:
     virtual QString fileDisplayName() const override;
     virtual QIcon fileIcon() const override;
     virtual bool isDir() const override;
+    virtual bool isReadable() const override;
+    virtual bool isWritable() const override;
 };
 
 DPSMBBROWSER_END_NAMESPACE
