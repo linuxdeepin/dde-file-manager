@@ -441,7 +441,7 @@ bool DoMoveToTrashFilesWorker::doCopyAndDelete(const AbstractFileInfoPointer &fr
 {
     bool result = false;
     if (fromInfo->isFile()) {
-        if (!copyFile(fromInfo, toInfo, &result))
+        if (!doCopyFile(fromInfo, toInfo, &result))
             return result;
         if (!deleteFile(fromInfo->url(), &result))
             return result;

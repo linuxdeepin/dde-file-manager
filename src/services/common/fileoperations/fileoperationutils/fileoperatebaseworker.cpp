@@ -566,7 +566,10 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     } else if (fromInfo->isDir()) {
         ok = copyDir(fromInfo, newTargetInfo, result);
     } else {
+        const QUrl &url = newTargetInfo->url();
+        FileUtils::cacheCopyingFileUrl(url);
         ok = copyFile(fromInfo, newTargetInfo, result);
+        FileUtils::removeCopyingFileUrl(url);
     }
 
     if (!isConvert && !oldExist && newTargetInfo->exists() && targetInfo == toInfo) {

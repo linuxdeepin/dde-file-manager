@@ -60,6 +60,8 @@ static constexpr char kDDEComputerId[] { "dde-computer" };
 static constexpr char kSharePixmapPath[] { "/usr/share/pixmaps" };
 const static int kDefaultMemoryPageSize = 4096;
 
+QMutex FileUtils::cacheCopyingMutex;
+
 static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
 
 /*!
@@ -907,6 +909,33 @@ QIcon FileUtils::searchMimeIcon(QString mime, const QIcon &defaultIcon)
 {
     QIcon icon = QIcon::fromTheme(mime.replace("/", "-"), defaultIcon);
     return icon;
+}
+
+void FileUtils::cacheCopyingFileUrl(const QUrl &url)
+{
+    QMutexLocker locker(&cacheCopyingMutex);
+    QList<QVariant> listCopying = Application::dataPersistence()->value(DFMBASE_NAMESPACE::kOperateFileGroup, DFMBASE_NAMESPACE::kCopyingFileKey).toList();
+    if (!listCopying.contains(url)) {
+        listCopying.push_back(url);
+        Application::dataPersistence()->setValue(DFMBASE_NAMESPACE::kOperateFileGroup, DFMBASE_NAMESPACE::kCopyingFileKey, listCopying);
+    }
+}
+
+void FileUtils::removeCopyingFileUrl(const QUrl &url)
+{
+    QMutexLocker locker(&cacheCopyingMutex);
+    QList<QVariant> listCopying = Application::dataPersistence()->value(DFMBASE_NAMESPACE::kOperateFileGroup, DFMBASE_NAMESPACE::kCopyingFileKey).toList();
+    if (listCopying.contains(url)) {
+        listCopying.removeAll(url);
+        Application::dataPersistence()->setValue(DFMBASE_NAMESPACE::kOperateFileGroup, DFMBASE_NAMESPACE::kCopyingFileKey, listCopying);
+    }
+}
+
+bool FileUtils::containsCopyingFileUrl(const QUrl &url)
+{
+    QMutexLocker locker(&cacheCopyingMutex);
+    const QList<QVariant> &listCopying = Application::dataPersistence()->value(DFMBASE_NAMESPACE::kOperateFileGroup, DFMBASE_NAMESPACE::kCopyingFileKey).toList();
+    return listCopying.contains(url);
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

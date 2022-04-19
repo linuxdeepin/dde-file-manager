@@ -130,6 +130,7 @@ protected:
     }
     bool isStopped();
     JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
+
 protected slots:
     virtual bool doWork();
     virtual void onUpdateProccess() {}
@@ -178,6 +179,7 @@ public:
     QWaitCondition waitCondition;
     QWaitCondition errorCondition;   //  Condition variables that block other bad threads
     QMutex errorThreadIdQueueMutex;   // Condition variables that block other bad threads mutex
+    QMutex cacheCopyingMutex;
 };
 
 DSC_END_NAMESPACE

@@ -47,10 +47,11 @@ public:
     bool autoSync = false;   // automatically synchronize
     bool watchChanges = false;   //monitor for configuration changes
     bool settingFileIsDirty = false;   // set whether the file has cached data (dirty data)
+    QSet<QString> autoSyncGroupExclude;   // when auto sync, exclude some group
     QTimer *syncTimer = nullptr;   // synchronization Timer
     QString fallbackFile;   // backup settings file path
     QString settingFile;   // set the file path
-    AbstractFileWatcherPointer settingWatcher; // watch file changed
+    AbstractFileWatcherPointer settingWatcher;   // watch file changed
     Settings *q;
 
     struct Data
@@ -265,7 +266,9 @@ QByteArray SettingsPrivate::toJson(const Data &data)
     QJsonObject root_object;
 
     for (auto begin = data.values.constBegin(); begin != data.values.constEnd(); ++begin) {
-        root_object.insert(begin.key(), QJsonValue(QJsonObject::fromVariantHash(begin.value())));
+        const QString &key = begin.key();
+        if (!autoSyncGroupExclude.contains(key))
+            root_object.insert(key, QJsonValue(QJsonObject::fromVariantHash(begin.value())));
     }
 
     return QJsonDocument(root_object).toJson();
@@ -864,6 +867,14 @@ bool Settings::watchChanges() const
 {
     return d->watchChanges;
 }
+
+void Settings::autoSyncExclude(const QString &group, bool sync /*= false*/)
+{
+    if (!sync)
+        d->autoSyncGroupExclude.insert(group);
+    else
+        d->autoSyncGroupExclude.remove(group);
+}
 /*!
  * \brief Settings::setAutoSync 设置是否自动写配置文件
  *
@@ -936,6 +947,5 @@ void Settings::setWatchChanges(bool watchChanges)
         d->settingWatcher.reset();
     }
 }
-
 
 DFMBASE_END_NAMESPACE

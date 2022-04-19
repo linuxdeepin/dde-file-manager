@@ -30,6 +30,9 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
+static constexpr char kOperateFileGroup[] { "CopyingFileGroup" };
+static constexpr char kCopyingFileKey[] { "CopyingFile" };
+
 class FileUtils
 {
 public:
@@ -73,6 +76,13 @@ public:
     static QIcon searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
     static QIcon searchGenericIcon(const QString &category, const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
     static QIcon searchMimeIcon(QString mime, const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
+
+    static void cacheCopyingFileUrl(const QUrl &url);
+    static void removeCopyingFileUrl(const QUrl &url);
+    static bool containsCopyingFileUrl(const QUrl &url);
+
+private:
+    static QMutex cacheCopyingMutex;
 };
 
 class DesktopAppUrl

@@ -364,6 +364,8 @@ void InfoCache::timeNeedRemoveCache()
         }
     }
 
+    // removeUrl 太多 可能导致主线程卡主
+    // todo lanxs
     for (const auto &url : removeUrl) {
         d->sortByTimeCacheUrl.removeAll(url);
     }

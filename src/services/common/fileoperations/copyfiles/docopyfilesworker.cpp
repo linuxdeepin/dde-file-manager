@@ -520,7 +520,11 @@ bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo,
         }
     }
 
+    const QString &targetUrl = toInfo->url().toString();
+    FileUtils::cacheCopyingFileUrl(targetUrl);
     bool ok = doCopyFilePractically(fromInfo, toInfo);
+    FileUtils::removeCopyingFileUrl(targetUrl);
+
     FileOperationsUtils::removeUsingName(toInfo->fileName());
     return ok;
 }
@@ -549,9 +553,12 @@ bool DoCopyFilesWorker::doThreadPoolCopyFile()
         qWarning() << " the threadInfo is nullptr, some error here! ";
         return false;
     }
+    const QString &targetUrl = threadInfo->toInfo->url().toString();
+    FileUtils::cacheCopyingFileUrl(targetUrl);
     bool ok = doCopyFilePractically(threadInfo->fromInfo, threadInfo->toInfo);
     if (!ok)
         setStat(AbstractJobHandler::JobState::kStopState);
+    FileUtils::removeCopyingFileUrl(targetUrl);
     FileOperationsUtils::removeUsingName(threadInfo->toInfo->fileName());
     return ok;
 }
@@ -606,7 +613,7 @@ bool DoCopyFilesWorker::doCopyFilePractically(const AbstractFileInfoPointer from
 
         toInfo->refresh(DFMIO::DFileInfo::AttributeID::StandardSize, toDevice->size());
 
-    } while (fromDevice->size() != toDevice->size());
+    } while (fromDevice->pos() != fromInfo->size());
 
     delete[] data;
     data = nullptr;
@@ -750,7 +757,7 @@ bool DoCopyFilesWorker::doReadFile(const AbstractFileInfoPointer &fromInfo,
 
         if (Q_UNLIKELY(readSize <= 0)) {
 
-            if (readSize == 0 && fromDevice->size() == toDevice->size()) {
+            if (readSize == 0 && fromDevice->pos() == fromInfo->size()) {
                 return true;
             }
 

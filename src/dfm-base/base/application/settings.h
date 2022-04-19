@@ -70,6 +70,7 @@ public:
     bool sync();
     bool autoSync() const;
     bool watchChanges() const;
+    void autoSyncExclude(const QString &group, bool sync = false);
 public Q_SLOTS:
     void setAutoSync(bool autoSync);
     void setWatchChanges(bool watchChanges);
@@ -85,4 +86,4 @@ private:
 
 DFMBASE_END_NAMESPACE
 
-#endif // SETTINGS_H
+#endif   // SETTINGS_H

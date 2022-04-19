@@ -1326,6 +1326,10 @@ QVariantHash LocalFileInfo::extraProperties() const
 QIcon LocalFileInfo::fileIcon() const
 {
     const QUrl &fileUrl = this->url();
+
+    if (FileUtils::containsCopyingFileUrl(fileUrl))
+        return QIcon();
+
     const QString &filePath = this->absoluteFilePath();
 
     if (!d->fileIcon().isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->fileIcon().name().isEmpty())) {

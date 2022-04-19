@@ -25,6 +25,8 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/application/application.h"
 
 #include <dfm-framework/framework.h>
 
@@ -402,6 +404,7 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
 AbstractWorker::AbstractWorker(QObject *parent)
     : QObject(parent)
 {
+    Application::dataPersistence()->autoSyncExclude(DFMBASE_NAMESPACE::kOperateFileGroup);
 }
 /*!
  * \brief AbstractWorker::formatFileName Processing and formatting file names
