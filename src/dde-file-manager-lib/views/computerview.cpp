@@ -296,6 +296,11 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
 
     connect(&DeviceInfoParser::Instance(), SIGNAL(loadFinished()), this, SLOT(repaint()));
     connect(fileSignalManager, &FileSignalManager::requestUpdateComputerView, this, static_cast<void (ComputerView::*)()>(&ComputerView::update));
+    connect(DFMApplication::instance(), &DFMApplication::genericAttributeChanged, this, [this](DFMApplication::GenericAttribute ga, const QVariant &value) {
+        Q_UNUSED(value);
+        if (ga == DFMApplication::GA_ShowFileSystemTagOnDiskIcon)
+            this->update();
+    });
 }
 
 ComputerView::~ComputerView()
