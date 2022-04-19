@@ -27,7 +27,7 @@
 #include "fileinfo/sharefileinfo.h"
 #include "iterator/shareiterator.h"
 #include "watcher/sharewatcher.h"
-#include "menu/sharemenu.h"
+#include "menu/mysharemenuscene.h"
 #include "events/shareeventscaller.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -52,7 +52,8 @@ void MyShares::initialize()
     InfoFactory::regClass<ShareFileInfo>(ShareUtils::scheme());
     DirIteratorFactory::regClass<ShareIterator>(ShareUtils::scheme());
     WatcherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
-    MenuService::regClass<ShareMenu>(ShareScene::kShareScene);
+    MenuService::service()->registerScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
+    bindSubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
 
     DSB_FM_USE_NAMESPACE
     connect(WindowsService::service(), &WindowsService::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
@@ -67,7 +68,7 @@ bool MyShares::start()
     DSB_FM_USE_NAMESPACE
 
     WorkspaceService::service()->addScheme(ShareUtils::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(ShareUtils::scheme(), ShareScene::kShareScene);
+    WorkspaceService::service()->setWorkspaceMenuScene(ShareUtils::scheme(), MyShareMenuCreator::name());
     FileOperationsFunctions fileOpeationsHandle(new DSC_NAMESPACE::FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = [](quint64 winId, QList<QUrl> urls, QString *) {
         ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::OpenMode::kOpenInCurrentWindow);
@@ -115,4 +116,20 @@ void MyShares::addToSidebar()
     shareEntry.url = ShareUtils::rootUrl();
     shareEntry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     SideBarService::service()->addItem(shareEntry);
+}
+
+void MyShares::bindSubScene(const QString &scene)
+{
+    DSC_USE_NAMESPACE
+    if (MenuService::service()->contains(scene)) {
+        MenuService::service()->bind(scene, MyShareMenuCreator::name());
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
+            if (scene == addedScene) {
+                MenuService::service()->bind(scene, MyShareMenuCreator::name());
+                MenuService::service()->disconnect(this);
+            }
+        },
+                Qt::DirectConnection);
+    }
 }

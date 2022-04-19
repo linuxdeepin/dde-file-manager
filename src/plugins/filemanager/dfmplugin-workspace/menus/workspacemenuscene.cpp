@@ -85,18 +85,6 @@ WorkspaceMenuScene::WorkspaceMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new WorkspaceMenuScenePrivate(this))
 {
-    d->predicateName[ActionID::kSortBy] = tr("Sort by");
-    d->predicateName[ActionID::kDisplayAs] = tr("Display as");
-
-    // 排序子菜单
-    d->predicateName[ActionID::kSrtName] = tr("Name");
-    d->predicateName[ActionID::kSrtTimeModified] = tr("Time modified");
-    d->predicateName[ActionID::kSrtSize] = tr("Size");
-    d->predicateName[ActionID::kSrtType] = tr("Type");
-
-    // 显示子菜单
-    d->predicateName[ActionID::kDisplayIcon] = tr("Icon");
-    d->predicateName[ActionID::kDisplayList] = tr("List");
 }
 
 QString WorkspaceMenuScene::name() const
@@ -171,9 +159,7 @@ bool WorkspaceMenuScene::create(QMenu *parent)
     d->view = qobject_cast<FileView *>(parent->parent());
     Q_ASSERT(d->view);
 
-    if (d->isEmptyArea) {
-        this->createEmptyMenu(parent);
-    } else {
+    if (!d->isEmptyArea) {
         this->createNormalMenu(parent);
     }
 
@@ -185,7 +171,6 @@ bool WorkspaceMenuScene::create(QMenu *parent)
 void WorkspaceMenuScene::updateState(QMenu *parent)
 {
     if (d->isEmptyArea) {
-        updateEmptyAreaActionState();
         d->sortMenuAction(parent, d->emptyMenuActionRule());
     }
     // todo: sort item (liuzhangjian)
@@ -200,19 +185,6 @@ bool WorkspaceMenuScene::triggered(QAction *action)
     return normalMenuTriggered(action);
 }
 
-void WorkspaceMenuScene::createEmptyMenu(QMenu *parent)
-{
-    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kDisplayAs));
-    tempAction->setMenu(displayAsSubActions(parent));
-    d->predicateAction[ActionID::kDisplayAs] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayAs));
-
-    tempAction = parent->addAction(d->predicateName.value(ActionID::kSortBy));
-    tempAction->setMenu(sortBySubActions(parent));
-    d->predicateAction[ActionID::kSortBy] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSortBy));
-}
-
 void WorkspaceMenuScene::createNormalMenu(QMenu *parent)
 {
     // todo (liuzhangjian)
@@ -222,105 +194,62 @@ void WorkspaceMenuScene::createNormalMenu(QMenu *parent)
 bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
 {
     const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
-    if (d->predicateAction.values().contains(action)) {
-        // display as
-        {
-            // display as icon
-            if (actionId == ActionID::kDisplayIcon) {
-                d->view->setViewMode(Global::ViewMode::kIconMode);
-                return true;
-            }
 
-            // display as list
-            if (actionId == ActionID::kDisplayList) {
-                d->view->setViewMode(Global::ViewMode::kListMode);
-                return true;
-            }
+    auto actionScene = scene(action);
+    if (!actionScene) {
+        qWarning() << actionId << " doesn't belong to any scene.";
+        return false;
+    }
+
+    const QString &sceneName = actionScene->name();
+    // OpenDirMenu scene
+    if (sceneName == kOpenDirMenuSceneName) {
+        // select all
+        if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
+            d->view->selectAll();
+            return true;
+        }
+    }
+
+    // ClipBoardMenu scene
+    if (sceneName == kClipBoardMenuSceneName) {
+        // paste
+        if (actionId == dfmplugin_menu::ActionID::kPaste) {
+            FileOperatorHelperIns->pasteFiles(d->view);
+            return true;
+        }
+    }
+
+    // NewCreateMenu scene
+    if (sceneName == kNewCreateMenuSceneName) {
+        // new folder
+        if (actionId == dfmplugin_menu::ActionID::kNewFolder) {
+            FileOperatorHelperIns->touchFolder(d->view);
+            return true;
         }
 
-        // sort by
-        {
-            // sort by name
-            if (actionId == ActionID::kSrtName) {
-                sortByRole(kItemNameRole);
-                return true;
-            }
-
-            // sort by time modified
-            if (actionId == ActionID::kSrtTimeModified) {
-                sortByRole(kItemFileLastModifiedRole);
-                return true;
-            }
-
-            // sort by size
-            if (actionId == ActionID::kSrtSize) {
-                sortByRole(kItemFileSizeRole);
-                return true;
-            }
-
-            // sort by size
-            if (actionId == ActionID::kSrtType) {
-                sortByRole(kItemFileMimeTypeRole);
-                return true;
-            }
-        }
-    } else {
-        auto actionScene = scene(action);
-        if (!actionScene) {
-            qWarning() << actionId << " doesn't belong to any scene.";
-            return false;
+        // new office text
+        if (actionId == dfmplugin_menu::ActionID::kNewOfficeText) {
+            FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
+            return true;
         }
 
-        const QString &sceneName = actionScene->name();
-        // OpenDirMenu scene
-        if (sceneName == kOpenDirMenuSceneName) {
-            // select all
-            if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
-                d->view->selectAll();
-                return true;
-            }
+        // new spreadsheets
+        if (actionId == dfmplugin_menu::ActionID::kNewSpreadsheets) {
+            FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
+            return true;
         }
 
-        // ClipBoardMenu scene
-        if (sceneName == kClipBoardMenuSceneName) {
-            // paste
-            if (actionId == dfmplugin_menu::ActionID::kPaste) {
-                FileOperatorHelperIns->pasteFiles(d->view);
-                return true;
-            }
+        // new presentation
+        if (actionId == dfmplugin_menu::ActionID::kNewPresentation) {
+            FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
+            return true;
         }
 
-        // NewCreateMenu scene
-        if (sceneName == kNewCreateMenuSceneName) {
-            // new folder
-            if (actionId == dfmplugin_menu::ActionID::kNewFolder) {
-                FileOperatorHelperIns->touchFolder(d->view);
-                return true;
-            }
-
-            // new office text
-            if (actionId == dfmplugin_menu::ActionID::kNewOfficeText) {
-                FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeWord);
-                return true;
-            }
-
-            // new spreadsheets
-            if (actionId == dfmplugin_menu::ActionID::kNewSpreadsheets) {
-                FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeExcel);
-                return true;
-            }
-
-            // new presentation
-            if (actionId == dfmplugin_menu::ActionID::kNewPresentation) {
-                FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypePowerpoint);
-                return true;
-            }
-
-            // new plain text
-            if (actionId == dfmplugin_menu::ActionID::kNewPlainText) {
-                FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
-                return true;
-            }
+        // new plain text
+        if (actionId == dfmplugin_menu::ActionID::kNewPlainText) {
+            FileOperatorHelperIns->touchFiles(d->view, DFMBASE_NAMESPACE::Global::CreateFileType::kCreateFileTypeText);
+            return true;
         }
     }
 
@@ -331,95 +260,4 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
 {
     // todo (liuzhangjian)
     return AbstractMenuScene::triggered(action);
-}
-
-QMenu *WorkspaceMenuScene::displayAsSubActions(QMenu *menu)
-{
-    QMenu *subMenu = new QMenu(menu);
-
-    // DisplayAs
-    QAction *tempAction = subMenu->addAction(d->predicateName.value(ActionID::kDisplayIcon));
-    tempAction->setCheckable(true);
-    d->predicateAction[ActionID::kDisplayIcon] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayIcon));
-
-    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kDisplayList));
-    tempAction->setCheckable(true);
-    d->predicateAction[ActionID::kDisplayList] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplayList));
-
-    return subMenu;
-}
-
-QMenu *WorkspaceMenuScene::sortBySubActions(QMenu *menu)
-{
-    QMenu *subMenu = new QMenu(menu);
-
-    // SortBy
-    QAction *tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtName));
-    tempAction->setCheckable(true);
-    d->predicateAction[ActionID::kSrtName] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtName));
-
-    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtTimeModified));
-    tempAction->setCheckable(true);
-    d->predicateAction[ActionID::kSrtTimeModified] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtTimeModified));
-
-    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtSize));
-    tempAction->setCheckable(true);
-    d->predicateAction[ActionID::kSrtSize] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtSize));
-
-    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kSrtType));
-    tempAction->setCheckable(true);
-    d->predicateAction[ActionID::kSrtType] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSrtType));
-
-    return subMenu;
-}
-
-void WorkspaceMenuScene::sortByRole(int role)
-{
-    auto itemRole = static_cast<ItemRoles>(role);
-    Qt::SortOrder order = d->view->model()->sortOrder();
-    int column = d->view->model()->getColumnByRole(itemRole);
-
-    d->view->model()->setSortRole(itemRole);
-    d->view->model()->sort(column, order);
-}
-
-void WorkspaceMenuScene::updateEmptyAreaActionState()
-{
-    // sort  by
-    auto role = static_cast<ItemRoles>(d->view->model()->sortRole());
-    switch (role) {
-    case kItemNameRole:
-        d->predicateAction[ActionID::kSrtName]->setChecked(true);
-        break;
-    case kItemFileLastModifiedRole:
-        d->predicateAction[ActionID::kSrtTimeModified]->setChecked(true);
-        break;
-    case kItemFileSizeRole:
-        d->predicateAction[ActionID::kSrtSize]->setChecked(true);
-        break;
-    case kItemFileMimeTypeRole:
-        d->predicateAction[ActionID::kSrtType]->setChecked(true);
-        break;
-    default:
-        break;
-    }
-
-    // display as
-    auto mode = d->view->currentViewMode();
-    switch (mode) {
-    case Global::ViewMode::kIconMode:
-        d->predicateAction[ActionID::kDisplayIcon]->setChecked(true);
-        break;
-    case Global::ViewMode::kListMode:
-        d->predicateAction[ActionID::kDisplayList]->setChecked(true);
-        break;
-    default:
-        break;
-    }
 }

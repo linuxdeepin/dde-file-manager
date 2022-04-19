@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuzhangjian<liqianga@uniontech.com>
+ * Author:     xushitong<xushitong@uniontech.com>
  *
- * Maintainer: liuzhangjian<liqianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +19,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef WORKSPACEMENUSCENE_H
-#define WORKSPACEMENUSCENE_H
+*/
+#ifndef SORTANDDISPLAYMENUSCENE_H
+#define SORTANDDISPLAYMENUSCENE_H
 
 #include "dfmplugin_workspace_global.h"
 
@@ -27,22 +29,23 @@
 #include <interfaces/abstractscenecreator.h>
 
 DPWORKSPACE_BEGIN_NAMESPACE
-
-class WorkspaceMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
+class SortAndDisplayMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
     {
-        return "WorkspaceMenu";
+        return "SortAndDisplayMenu";
     }
     DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
 };
 
-class WorkspaceMenuScenePrivate;
-class WorkspaceMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+class SortAndDisplayMenuScenePrivate;
+class SortAndDisplayMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
-    explicit WorkspaceMenuScene(QObject *parent = nullptr);
+    explicit SortAndDisplayMenuScene(QObject *parent = nullptr);
+    virtual ~SortAndDisplayMenuScene() override;
+
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
     AbstractMenuScene *scene(QAction *action) const override;
@@ -51,13 +54,7 @@ public:
     bool triggered(QAction *action) override;
 
 private:
-    void createNormalMenu(QMenu *parent);
-    bool emptyMenuTriggered(QAction *action);
-    bool normalMenuTriggered(QAction *action);
-
-private:
-    WorkspaceMenuScenePrivate *const d = nullptr;
+    QScopedPointer<SortAndDisplayMenuScenePrivate> d;
 };
-
 DPWORKSPACE_END_NAMESPACE
-#endif   // WORKSPACEMENUSCENE_H
+#endif   // SORTANDDISPLAYMENUSCENE_H

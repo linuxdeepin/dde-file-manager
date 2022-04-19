@@ -89,7 +89,7 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
     params[MenuParamKey::kOnDesktop] = true;
-    params[MenuParamKey::kwindowId] = view->winId();
+    params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = true;
     params[CanvasMenuParams::kDesktopGridPos] = QVariant::fromValue(gridPos);
 
@@ -129,7 +129,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     params[MenuParamKey::kFocusFile] = tgUrl;
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
     params[MenuParamKey::kOnDesktop] = true;
-    params[MenuParamKey::kwindowId] = view->winId();
+    params[MenuParamKey::kWindowId] = view->winId();
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[CanvasMenuParams::kDesktopGridPos] = QVariant::fromValue(gridPos);

@@ -68,7 +68,7 @@ bool OpenDirMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
-    d->windowId = params.value(MenuParamKey::kwindowId).toULongLong();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     if (!d->isEmptyArea) {

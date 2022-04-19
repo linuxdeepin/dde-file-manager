@@ -29,6 +29,7 @@
 #include "events/workspaceeventreceiver.h"
 #include "events/workspaceunicastreceiver.h"
 #include "menus/workspacemenuscene.h"
+#include "menus/sortanddisplaymenuscene.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebar_defines.h"
@@ -70,6 +71,8 @@ void Workspace::initialize()
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
     WorkspaceUnicastReceiver::instance()->connectService();
     MenuService::service()->registerScene(WorkspaceMenuCreator::name(), new WorkspaceMenuCreator());
+    MenuService::service()->registerScene(SortAndDisplayMenuCreator::name(), new SortAndDisplayMenuCreator());
+    MenuService::service()->bind(SortAndDisplayMenuCreator::name(), WorkspaceMenuCreator::name());
 }
 
 bool Workspace::start()

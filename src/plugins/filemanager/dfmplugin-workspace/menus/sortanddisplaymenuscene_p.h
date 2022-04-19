@@ -1,5 +1,5 @@
-﻿/*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,33 +20,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef MYSHARESPLUGIN_H
-#define MYSHARESPLUGIN_H
+#ifndef SORTANDDISPLAYMENUSCENE_P_H
+#define SORTANDDISPLAYMENUSCENE_P_H
 
-#include "dfmplugin_myshares_global.h"
+#include "dfmplugin_workspace_global.h"
+#include <interfaces/private/abstractmenuscene_p.h>
 
-#include <dfm-framework/framework.h>
+DFMBASE_USE_NAMESPACE
+DPWORKSPACE_BEGIN_NAMESPACE
 
-DPMYSHARES_BEGIN_NAMESPACE
-class MyShares : public dpf::Plugin
+class FileView;
+class SortAndDisplayMenuScene;
+class SortAndDisplayMenuScenePrivate : public AbstractMenuScenePrivate
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "myshares.json")
+    friend SortAndDisplayMenuScene;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-protected Q_SLOTS:
-    void onWindowCreated(quint64 winId);
-    void onWindowOpened(quint64 windd);
-    void onWindowClosed(quint64 winId);
+    explicit SortAndDisplayMenuScenePrivate(AbstractMenuScene *qq);
 
 private:
-    void addToSidebar();
-    void bindSubScene(const QString &scene);
+    void createEmptyMenu(QMenu *parent);
+    QMenu *addSortByActions(QMenu *menu);
+    QMenu *addDisplayAsActions(QMenu *menu);
+
+    void sortByRole(int role);
+    void updateEmptyAreaActionState();
+
+private:
+    FileView *view = nullptr;
 };
 
-DPMYSHARES_END_NAMESPACE
-#endif   // MYSHARESPLUGIN_H
+DPWORKSPACE_END_NAMESPACE
+
+#endif   // SORTANDDISPLAYMENUSCENE_P_H

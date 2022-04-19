@@ -28,4 +28,16 @@
 #define DPMYSHARES_END_NAMESPACE }
 #define DPMYSHARES_USE_NAMESPACE using namespace DPMYSHARES_NAMESPACE;
 
+DPMYSHARES_BEGIN_NAMESPACE
+
+namespace MySharesActionId {
+static constexpr char kOpenShareFolder[] { "open-share-folder" };
+static constexpr char kOpenShareInNewWin[] { "open-share-in-new-win" };
+static constexpr char kOpenShareInNewTab[] { "open-share-in-new-tab" };
+static constexpr char kCancleSharing[] { "cancel-sharing" };
+static constexpr char kShareProperty[] { "share-property" };
+}
+
+DPMYSHARES_END_NAMESPACE
+
 #endif   // DFMPLUGIN_MYSHARES_GLOBAL_H
