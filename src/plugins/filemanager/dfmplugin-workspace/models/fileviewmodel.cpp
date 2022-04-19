@@ -655,6 +655,10 @@ bool FileNodeManagerThread::insertChildren(QList<QUrl> &urls)
     for (const auto &url : urls) {
         if (stoped)
             return false;
+
+        if (tempChildren.contains(url))
+            continue;
+
         FileNodePointer needNode(new FileViewItem(root.data(), url));
         const AbstractFileInfoPointer &needNodeInfo = needNode->fileInfo();
         if (needNodeInfo.isNull())
