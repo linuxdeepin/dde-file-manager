@@ -320,6 +320,10 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
 {
     Q_UNUSED(parent)
 
+    if (!canFetchMore(parent))
+        return;
+    d->canFetchMoreFlag = false;
+
     auto url = d->root->url();
     auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
     if (prehandler) {
@@ -507,7 +511,7 @@ void FileViewModel::traversCurrDir()
 {
     d->isUpdatedChildren = false;
     if (!d->traversalThread.isNull()) {
-        d->traversalThread->disconnect();
+        d->traversalThread.data()->disconnect();
         d->traversalThread->stopAndDeleteLater();
         d->traversalThread->setParent(nullptr);
     }
@@ -531,11 +535,8 @@ void FileViewModel::traversCurrDir()
                             d->nodeManager.data(), &FileNodeManagerThread::onHandleTraversalFinished,
                             Qt::QueuedConnection);
 
-    if (d->canFetchMoreFlag) {
-        d->canFetchMoreFlag = false;
-        setState(Busy);
-        d->traversalThread->start();
-    }
+    setState(Busy);
+    d->traversalThread->start();
 }
 
 void FileViewModel::onFilesUpdated()
