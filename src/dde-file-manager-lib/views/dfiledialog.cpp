@@ -149,6 +149,14 @@ DFileDialog::DFileDialog(QWidget *parent)
     // 文件对话框只能在本窗口打开新目录
     if (d_ptr->view) {
         d_ptr->view->setAlwaysOpenInCurrentWindow(true);
+        DFileSystemModel *model = d_ptr->view->model();
+        if (model) {
+            connect(model, &DFileSystemModel::stateChanged, this, [model](DFileSystemModel::State state){
+                if (state == DFileSystemModel::Idle && (model->effectFilters() != model->filters())) {
+                    model->refresh();
+                }
+            });
+        }
     }
 
     setWindowFlags(Qt::WindowCloseButtonHint | Qt::WindowTitleHint | Qt::Dialog);

@@ -255,6 +255,7 @@ public:
     int sortRole = DFileSystemModel::FileDisplayNameRole;
     QStringList nameFilters;
     QDir::Filters filters;
+    QDir::Filters effectFilter { QDir::NoFilter };  // 记录当前已经生效的筛选器
     Qt::SortOrder srotOrder = Qt::AscendingOrder;
 //    QModelIndex d->activeIndex;
 

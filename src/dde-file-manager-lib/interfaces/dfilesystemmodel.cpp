@@ -1760,7 +1760,8 @@ void DFileSystemModel::fetchMore(const QModelIndex &parent)
     setState(Busy);
 
     d->childrenUpdated = false;
-    //
+    // 设置当前已经生效的筛选器
+    d->effectFilter = d->filters;
     d->jobController->start();
     d->rootNodeManager->setEnable(true);
 }
@@ -2330,6 +2331,13 @@ QDir::Filters DFileSystemModel::filters() const
     Q_D(const DFileSystemModel);
 
     return d->filters;
+}
+
+QDir::Filters DFileSystemModel::effectFilters() const
+{
+    Q_D(const DFileSystemModel);
+
+    return d->effectFilter;
 }
 
 void DFileSystemModel::sort(int column, Qt::SortOrder order)
