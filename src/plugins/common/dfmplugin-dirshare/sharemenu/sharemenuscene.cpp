@@ -41,9 +41,9 @@ ShareMenuScenePrivate::ShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
 {
 }
 
-void ShareMenuScenePrivate::addShare(const QString &path)
+void ShareMenuScenePrivate::addShare(const QUrl &url)
 {
-    QList<QUrl> urls { QUrl(path) };
+    QList<QUrl> urls { url };
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 
@@ -131,12 +131,11 @@ bool ShareMenuScene::triggered(QAction *action)
 
     DSC_USE_NAMESPACE
     QString key = action->property(ActionPropertyKey::kActionID).toString();
-    auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first(), true);
     if (key == ShareActionId::kActAddShareKey) {
-        d->addShare(info->absoluteFilePath());
+        d->addShare(u);
         return true;
     } else if (key == ShareActionId::kActRemoveShareKey) {
-        UserShareService::service()->removeShare(info->absoluteFilePath());
+        UserShareService::service()->removeShare(u.path());
         return true;
     } else {
         return false;

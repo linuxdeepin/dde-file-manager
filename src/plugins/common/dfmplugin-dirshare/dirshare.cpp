@@ -44,6 +44,7 @@ bool DirShare::start()
     MenuService::service()->registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
 
     bindScene("CanvasMenu");
+    bindScene("WorkspaceMenu");
 
     PropertyDialogService::service()->registerMethod(DirShare::createShareControlWidget, 2, nullptr);
 

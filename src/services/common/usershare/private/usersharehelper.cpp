@@ -452,7 +452,7 @@ int UserShareHelper::validShareInfoCount() const
 QPair<bool, QString> UserShareHelper::startSmbService()
 {
     QDBusInterface iface(SambaServiceIFace::kService, SambaServiceIFace::kPath, SambaServiceIFace::kInterface, QDBusConnection::systemBus());
-    QDBusPendingReply<QString> reply = iface.asyncCall(SambaServiceIFace::kFuncStart, SambaServiceIFace::kParamReplace);
+    QDBusPendingReply<QDBusObjectPath> reply = iface.asyncCall(SambaServiceIFace::kFuncStart, SambaServiceIFace::kParamReplace);
     reply.waitForFinished();
     if (reply.isValid()) {
         const QString &errMsg = reply.error().message();

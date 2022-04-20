@@ -38,7 +38,7 @@ public:
     explicit ShareMenuScenePrivate(AbstractMenuScene *qq);
 
 private:
-    void addShare(const QString &path);
+    void addShare(const QUrl &url);
 };
 
 DPDIRSHARE_END_NAMESPACE
