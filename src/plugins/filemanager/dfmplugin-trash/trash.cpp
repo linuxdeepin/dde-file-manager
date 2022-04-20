@@ -46,11 +46,12 @@ void Trash::initialize()
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
     MenuService::regClass<TrashMenu>(TrashScene::kTrashMenu);
     connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Trash::onAllPluginsInitialized, Qt::DirectConnection);
 }
 
 bool Trash::start()
 {
+    addCustomTopWidget();
+    addFileOperations();
     return true;
 }
 
@@ -83,12 +84,6 @@ void Trash::regTrashCrumbToTitleBar()
         info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TrashHelper::scheme(); };
         TrashHelper::titleServIns()->addCustomCrumbar(info);
     });
-}
-
-void Trash::onAllPluginsInitialized()
-{
-    addCustomTopWidget();
-    addFileOperations();
 }
 
 void Trash::installToSideBar()

@@ -26,12 +26,6 @@
 
 #include <dfm-framework/framework.h>
 
-DPF_BEGIN_NAMESPACE
-namespace GlobalPrivate {
-class PluginServiceGlobal;
-};
-DPF_END_NAMESPACE
-
 DPCORE_BEGIN_NAMESPACE
 class Core : public dpf::Plugin
 {

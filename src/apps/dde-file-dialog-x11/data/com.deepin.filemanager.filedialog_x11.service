@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.deepin.filemanager.filedialog_x11
+Exec=/usr/bin/dde-file-dialog-x11

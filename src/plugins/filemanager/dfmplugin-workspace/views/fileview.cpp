@@ -573,7 +573,7 @@ DirOpenMode FileView::currentDirOpenMode() const
     DirOpenMode mode;
 
     if (d->isAlwaysOpenInCurrentWindow) {
-        mode = DirOpenMode::kOpenNewWindow;
+        mode = DirOpenMode::kOpenInCurrentWindow;
     } else {
         if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
             mode = DirOpenMode::kOpenNewWindow;

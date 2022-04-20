@@ -24,6 +24,7 @@
 #define WINDOWSERVICEPRIVATE_H
 
 #include "dfm_filemanager_service_global.h"
+#include "windowsservice.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
@@ -51,6 +52,7 @@ public:
 private:
     QPointer<WindowsService> service;
     QHash<quint64, DFMBASE_NAMESPACE::FileManagerWindow *> windows;
+    WindowsService::WindowCreator customCreator {};
 };
 
 DSB_FM_END_NAMESPACE

@@ -38,6 +38,7 @@ class WindowsService final : public dpf::PluginService, dpf::AutoServiceRegister
 
 public:
     using FMWindow = DFMBASE_NAMESPACE::FileManagerWindow;
+    using WindowCreator = std::function<FMWindow *(const QUrl &)>;
 
     static QString name()
     {
@@ -48,6 +49,7 @@ public:
 
     explicit WindowsService(QObject *parent = nullptr);
     virtual ~WindowsService() override;
+    void setCustomWindowCreator(WindowCreator creator);
 
     FMWindow *showWindow(const QUrl &url, bool isNewWindow = false, QString *errorString = nullptr);
     quint64 findWindowId(const QWidget *window);

@@ -1,0 +1,38 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.deepin.filemanager.filedialogmanager">
+    <method name="createDialog">
+        <arg name="key" type="s" direction="in"/>
+        <arg name="path" type="o" direction="out"/>
+    </method>
+    <method name="destroyDialog">
+        <arg name="path" type="o" direction="in"/>
+    </method>
+    <method name="dialogs">
+        <arg name="dialogObjectList" type="ao" direction="out"/>
+    </method>
+    <method name="errorString">
+        <arg name="error" type="s" direction="out"/>
+    </method>
+    <method name="isUseFileChooserDialog">
+        <arg name="ok" type="b" direction="out"/>
+    </method>
+    <method name="canUseFileChooserDialog">
+        <arg name="ok" type="b" direction="out"/>
+        <arg name="group" type="s" direction="in"/>
+        <arg name="executableFileName" type="s" direction="in"/>
+    </method>
+    <method name="globPatternsForMime">
+        <arg name="mime" type="s" direction="in"/>
+        <arg name="patterns" type="as" direction="out"/>
+    </method>
+    <method name="monitorFiles">
+        <arg name="files" type="as" direction="out"/>
+    </method>
+    <method name="showBluetoothTransDialog">
+        <arg name="id" type="s" direction="in"/>
+        <arg name="URIs" type="as" direction="in"/>
+    </method>
+  </interface>
+</node>

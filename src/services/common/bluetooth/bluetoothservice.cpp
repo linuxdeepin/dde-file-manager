@@ -23,6 +23,7 @@
 #include "bluetoothservice.h"
 #include "bluetooth_defines.h"
 #include "private/bluetoothmanager.h"
+#include "private/bluetoothtransdialog.h"
 
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/universalutils.h"
@@ -60,7 +61,7 @@ void BluetoothService::sendFiles(const QList<QUrl> &urls)
     sendFiles(paths);
 }
 
-void BluetoothService::sendFiles(const QStringList &paths, BluetoothTransDialog::TransferMode mode, const QString &deviceId)
+void BluetoothService::sendFiles(const QStringList &paths, TransferMode mode, const QString &deviceId)
 {
     if (!BluetoothTransDialog::isBluetoothIdle()) {
         DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgInfo, tr("Sending files now, please try later."));
@@ -72,7 +73,7 @@ void BluetoothService::sendFiles(const QStringList &paths, BluetoothTransDialog:
         return;
     }
 
-    BluetoothTransDialog *dlg = new BluetoothTransDialog(paths, mode, deviceId);
+    BluetoothTransDialog *dlg = new BluetoothTransDialog(paths, static_cast<BluetoothTransDialog::TransferMode>(mode), deviceId);
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     dlg->show();
 }

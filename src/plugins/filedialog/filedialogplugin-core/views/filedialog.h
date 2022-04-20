@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lixiang<lixianga@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: lixiang<lixianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,33 +20,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef VAULT_H
-#define VAULT_H
+#ifndef FILEDIALOG_H
+#define FILEDIALOG_H
 
-#include "dfmplugin_vault_global.h"
+#include "filedialogplugin_core_global.h"
 
-#include <dfm-framework/framework.h>
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
-DPVAULT_BEGIN_NAMESPACE
-class Vault : public dpf::Plugin
+#include <QWidget>
+
+DIALOGCORE_BEGIN_NAMESPACE
+
+class FileDialog : public DFMBASE_NAMESPACE::FileManagerWindow
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "vault.json")
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-public slots:
-    void onWindowOpened(quint64 winID);
-
-private:
-    void addSideBarVaultItem();
-    void addCustomCrumbar();
-    void addComputer();
-    void addFileOperations();
+    explicit FileDialog(const QUrl &url, QWidget *parent = nullptr);
+    virtual ~FileDialog() override;
 };
-DPVAULT_END_NAMESPACE
 
-#endif   // VAULT_H
+DIALOGCORE_END_NAMESPACE
+
+#endif   // FILEDIALOG_H

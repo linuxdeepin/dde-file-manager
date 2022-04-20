@@ -52,7 +52,6 @@ void Recent::initialize()
     MenuService::regClass<RecentMenu>(RecentScene::kRecentMenu);
 
     connect(RecentManager::winServIns(), &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Recent::onAllPluginsInitialized, Qt::DirectConnection);
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
     RecentManager::instance();
@@ -60,7 +59,7 @@ void Recent::initialize()
 
 bool Recent::start()
 {
-
+    addFileOperations();
     return true;
 }
 
@@ -120,11 +119,6 @@ void Recent::regRecentCrumbToTitleBar()
         return { TitleBar::CrumbData(RecentManager::rootUrl(), tr("Recent"), RecentManager::icon().name()) };
     };
     RecentManager::titleServIns()->addCustomCrumbar(info);
-}
-
-void Recent::onAllPluginsInitialized()
-{
-    addFileOperations();
 }
 
 void Recent::installToSideBar()

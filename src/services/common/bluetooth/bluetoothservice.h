@@ -24,7 +24,6 @@
 #define BLUETOOTHSERVICE_H
 
 #include "dfm_common_service_global.h"
-#include "private/bluetoothtransdialog.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -37,6 +36,11 @@ class BluetoothService final : public dpf::PluginService, dpf::AutoServiceRegist
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
+    enum TransferMode {
+        kSelectDeviceToSend = 0,
+        kSendToDeviceDirectly
+    };
+
     static QString name()
     {
         return "org.deepin.service.BluetoothService";
@@ -48,7 +52,7 @@ public:
 
 public slots:
     void sendFiles(const QList<QUrl> &urls);
-    void sendFiles(const QStringList &paths, BluetoothTransDialog::TransferMode mode = BluetoothTransDialog::kSelectDeviceToSend, const QString &deviceId = {});
+    void sendFiles(const QStringList &paths, TransferMode mode = kSelectDeviceToSend, const QString &deviceId = {});
 
 private:
     explicit BluetoothService(QObject *parent = nullptr);

@@ -1,0 +1,120 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="com.deepin.filemanager.filedialog">
+    <property name="directory" type="s" access="readwrite"></property>
+    <property name="directoryUrl" type="s" access="readwrite"></property>
+    <property name="nameFilters" type="as" access="readwrite">
+        <annotation name="org.qtproject.QtDBus.QtTypeName" value="QStringList"/>
+    </property>
+    <property name="filter" type="i" access="readwrite"></property>
+    <property name="viewMode" type="i" access="readwrite"></property>
+    <property name="acceptMode" type="i" access="readwrite"></property>
+    <property name="windowActive" type="b" access="read"></property>
+    <property name="heartbeatInterval" type="i" access="readwrite"></property>
+    <property name="windowFlags" type="u" access="readwrite"></property>
+    <property name="hideOnAccept" type="b" access="readwrite"></property>
+    <method name="selectFile">
+        <arg name="filename" type="s" direction="in"/>
+    </method>
+    <method name="selectedFiles">
+        <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QStringList"/>
+        <arg name="filelist" type="as" direction="out"/>
+    </method>
+    <method name="selectUrl">
+        <arg name="url" type="s" direction="in"/>
+    </method>
+    <method name="selectedUrls">
+        <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QStringList"/>
+        <arg name="urllist" type="as" direction="out"/>
+    </method>
+    <method name="selectNameFilter">
+        <arg name="filter" type="s" direction="in"/>
+    </method>
+    <method name="selectedNameFilter">
+        <arg name="filter" type="s" direction="out"/>
+    </method>
+    <method name="selectNameFilterByIndex">
+        <arg name="index" type="i" direction="in"/>
+    </method>
+    <method name="selectedNameFilterIndex">
+        <arg name="index" type="i" direction="out"/>
+    </method>
+    <method name="setFileMode">
+        <arg name="fileMode" type="i" direction="in"/>
+    </method>
+    <method name="setLabelText">
+        <arg name="label" type="i" direction="in"/>
+        <arg name="text" type="s" direction="in"/>
+    </method>
+    <method name="labelText">
+        <arg name="label" type="i" direction="in"/>
+        <arg name="text" type="s" direction="out"/>
+    </method>
+    <method name="setOptions">
+        <arg name="options" type="i" direction="in"/>
+    </method>
+    <method name="setOption">
+        <arg name="option" type="i" direction="in"/>
+        <arg name="on" type="b" direction="in"/>
+    </method>
+    <method name="options">
+        <arg name="options" type="i" direction="out"/>
+    </method>
+    <method name="testOption">
+        <arg name="option" type="i" direction="in"/>
+        <arg name="on" type="b" direction="out"/>
+    </method>
+    <method name="setCurrentInputName">
+        <arg name="name" type="s" direction="in"/>
+    </method>
+    <method name="show"></method>
+    <method name="open"></method>
+    <method name="hide"></method>
+    <method name="accept"></method>
+    <method name="reject"></method>
+    <method name="winId">
+        <arg name="windowId" type="t" direction="out"/>
+    </method>
+    <method name="setWindowTitle">
+        <arg name="title" type="s" direction="in"/>
+    </method>
+    <method name="deleteLater"></method>
+    <method name="activateWindow"></method>
+    <method name="makeHeartbeat"></method>
+    <method name="addCustomWidget">
+        <arg name="type" type="i" direction="in"/>
+        <arg name="data" type="s" direction="in"/>
+    </method>
+    <method name="getCustomWidgetValue">
+        <arg name="type" type="i" direction="in"/>
+        <arg name="text" type="s" direction="in"/>
+        <arg name="value" type="v" direction="out"/>
+    </method>
+    <method name="allCustomWidgetsValue">
+        <arg name="type" type="i" direction="in"/>
+        <arg name="values" type="a{sv}" direction="out"/>
+        <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QMap&lt;QString,QVariant&gt;"/>
+    </method>
+    <method name="beginAddCustomWidget"></method>
+    <method name="endAddCustomWidget"></method>
+    <method name="addDisableUrlScheme">
+        <arg name="type" type="s" direction="in"/>
+    </method>
+    <method name="setAllowMixedSelection">
+        <arg name="on" type="b" direction="in"/>
+    </method>
+    <signal name="finished">
+      <arg name="result" type="i" direction="out"/>
+    </signal>
+    <signal name="accepted"></signal>
+    <signal name="rejected"></signal>
+    <signal name="windowActiveChanged"></signal>
+    <signal name="destroyed"></signal>
+    <signal name="selectionFilesChanged"></signal>
+    <signal name="currentUrlChanged"></signal>
+    <signal name="directoryChanged"></signal>
+    <signal name="directoryUrlChanged"></signal>
+    <signal name="selectedNameFilterChanged"></signal>
+  </interface>
+</node>

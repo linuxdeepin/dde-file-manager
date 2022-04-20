@@ -73,6 +73,7 @@ signals:
     void selectUrlChanged(const QList<QUrl> &urlList);
 
     // The following signals are used to send shortcut requests
+    // TODO(liuyangming): impl follow
     void reqRefresh();   // F5
     void reqActivateNextTab();   // ctrl + Tab
     void reqActivatePreviousTab();   // ctrl + {shift + } BackTab

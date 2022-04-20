@@ -102,7 +102,7 @@ static bool pluginsLoad()
     return true;
 }
 
-void registerDDESession()
+static void registerDDESession()
 {
     const char *envName = "DDE_SESSION_PROCESS_COOKIE_ID";
     QByteArray cookie = qgetenv(envName);

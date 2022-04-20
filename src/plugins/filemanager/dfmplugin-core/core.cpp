@@ -121,5 +121,10 @@ void Core::onAllPluginsInitialized()
 
 void Core::onAllPluginsStarted()
 {
-    commandServIns->processCommand();
+    // dde-select-dialog also uses the core plugin, don't start filemanger window
+    QString &&curAppName { qApp->applicationName() };
+    if (curAppName == "dde-file-manager")
+        commandServIns->processCommand();
+    else
+        qInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
 }

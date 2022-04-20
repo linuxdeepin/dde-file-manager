@@ -1,9 +1,9 @@
 {
-    "Name" : "dfmplugin-core",
+    "Name" : "filedialogplugin-core",
     "Version" : "1.0.0",
     "CompatVersion" : "1.0.0",
     "Vendor" : "The Uniontech Software Technology Co., Ltd.",
-    "Copyright" : "Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.",
+    "Copyright" : "Copyright (C) 2022 Uniontech Software Technology Co., Ltd.",
     "License" : [
         "Licensees holding valid Qt Commercial licenses \
             may use this plugin in accordance with the Qt Commercial License Agreement \
@@ -17,7 +17,7 @@
             will be met: https://www.gnu.org/licenses/gpl-3.0.html."
     ],
     "Category" : "",
-    "Description" : "The core plugin for the filemanager.",
+    "Description" : "The core plugin for the filedialog.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
     ]

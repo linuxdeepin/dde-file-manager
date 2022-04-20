@@ -54,12 +54,11 @@ void Vault::initialize()
     WatcherFactory::regClass<VaultFileWatcher>(VaultHelper::instance()->scheme());
     DirIteratorFactory::regClass<VaultFileIterator>(VaultHelper::instance()->scheme());
     EntryEntityFactor::registCreator<VaultEntryFileEntity>("vault");
-
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Vault::onAllPluginsInitialized, Qt::DirectConnection);
 }
 
 bool Vault::start()
 {
+    addFileOperations();
 
     VaultHelper::workspaceServiceInstance()->addScheme(VaultHelper::instance()->scheme());
     connect(VaultHelper::windowServiceInstance(), &WindowsService::windowOpened, this, &Vault::onWindowOpened, Qt::DirectConnection);
@@ -92,11 +91,6 @@ void Vault::onWindowOpened(quint64 winID)
         addComputer();
     else
         connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Vault::addComputer, Qt::DirectConnection);
-}
-
-void Vault::onAllPluginsInitialized()
-{
-    addFileOperations();
 }
 
 void Vault::addSideBarVaultItem()

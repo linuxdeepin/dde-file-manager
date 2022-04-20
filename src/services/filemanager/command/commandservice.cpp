@@ -241,7 +241,7 @@ void CommandService::openInUrls()
 {
     QList<QUrl> argumentUrls;
 
-    foreach (QString path, positionalArguments()) {
+    for (QString path : positionalArguments()) {
         if (!isSet("raw")) {
             //路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
             if (!QDir().exists(path) && !path.startsWith("./") && !path.startsWith("../") && !path.startsWith("/")) {
@@ -261,7 +261,7 @@ void CommandService::openInUrls()
             }
         }
 
-        QUrl url = QUrl::fromUserInput(path);
+        QUrl url = UrlRoute::fromUserInput(path);
 
         //Todo(yanghao): 路径转换（回收站、保险箱）
         if (isSet("show-item")) {

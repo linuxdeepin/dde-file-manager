@@ -19,7 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "windowsservice.h"
 #include "private/windowsservice_p.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -232,6 +231,11 @@ WindowsService::~WindowsService()
     d->windows.clear();
 }
 
+void WindowsService::setCustomWindowCreator(WindowsService::WindowCreator creator)
+{
+    d->customCreator = creator;
+}
+
 /*!
  * \brief WindowsService::showWindow
  * \param url
@@ -265,7 +269,10 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
 
     QX11Info::setAppTime(QX11Info::appUserTime());
 
-    auto window = new FMWindow(showedUrl);
+    // you can inherit from FMWindow to implement a custom window (by call `setCustomWindowCreator`)
+    FMWindow *window = d->customCreator ? d->customCreator(showedUrl)
+                                        : new FMWindow(showedUrl);
+
     window->show();
     d->loadWindowState(window);
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
@@ -276,6 +283,8 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     connect(window, &FileManagerWindow::reqShowHotkeyHelp, this, [this, window]() {
         d->onShowHotkeyHelp(window);
     });
+
+    // In order for the plugin to cache the current window (before the base frame is installed)
     emit windowCreated(window->internalWinId());
 
     qInfo() << "New window created: " << window->winId() << showedUrl;
