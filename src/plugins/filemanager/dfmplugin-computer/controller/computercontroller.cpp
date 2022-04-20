@@ -332,7 +332,12 @@ void ComputerController::actEject(const QUrl &url)
         ok = DeviceManagerInstance.invokeDetachBlockDevice(id);
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
-        ok = DeviceManagerInstance.invokeDetachProtocolDevice(id);
+        ComputerUtils::deviceServIns()->unmountProtocolDeviceAsync(id, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
+            if (!ok) {
+                qWarning() << "unmount protocol device failed: " << id << static_cast<int>(err);
+                DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
+            }
+        });
     } else {
         qDebug() << url << "is not support " << __FUNCTION__;
     }

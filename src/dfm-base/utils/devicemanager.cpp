@@ -293,6 +293,7 @@ bool DeviceManager::invokeDetachProtocolDevice(const QString &id)
     if (Q_LIKELY(isServiceDBusRunning())) {
         qInfo() << "Start call dbus: " << __PRETTY_FUNCTION__ << id;
         auto &&reply = deviceInterface->DetachProtocolDevice(id);
+        reply.waitForFinished();
         if (!reply.isValid()) {
             qCritical() << "D-Bus reply is invalid " << reply.error();
             return false;
