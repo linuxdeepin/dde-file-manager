@@ -20,39 +20,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SMBSHAREFILEMENU_H
-#define SMBSHAREFILEMENU_H
+#ifndef SMBBROWSERMENUSCENE_P_H
+#define SMBBROWSERMENUSCENE_P_H
 
 #include "dfmplugin_smbbrowser_global.h"
 
-#include "dfm-base/interfaces/abstractmenu.h"
-#include "dfm-base/widgets/action/actiondatacontainer.h"
-#include "dfm-base/dfm_actiontype_defines.h"
-
-#include <QUrl>
+#include <interfaces/private/abstractmenuscene_p.h>
 
 DPSMBBROWSER_BEGIN_NAMESPACE
 
-namespace SmbBrowserScene {
-static constexpr char kSmbBrowserScene[] { "smbbrowser" };
-}
-
-class SmbShareFileMenu : public DFMBASE_NAMESPACE::AbstractMenu
+class SmbBrowserMenuScene;
+class SmbBrowserMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    friend class SmbBrowserMenuScene;
+
 public:
-    explicit SmbShareFileMenu(QObject *parent = nullptr);
-
-    virtual QMenu *build(QWidget *parent, MenuMode mode, const QUrl &rootUrl, const QUrl &focusUrl, const QList<QUrl> &selected, QVariant customData) override;
-    virtual void actionBusiness(QAction *act) override;
+    explicit SmbBrowserMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
 
 private:
-    QMenu *createMenuByContainer(const QVector<DFMBASE_NAMESPACE::ActionDataContainer> &containers, QWidget *parent = nullptr);
-
-private:
-    quint64 winId;
-    QUrl selectedUrl;
 };
 
 DPSMBBROWSER_END_NAMESPACE
 
-#endif   // SMBSHAREFILEMENU_H
+#endif   // SMBBROWSERMENUSCENE_P_H

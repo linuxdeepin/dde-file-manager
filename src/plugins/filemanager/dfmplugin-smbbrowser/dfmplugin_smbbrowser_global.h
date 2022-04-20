@@ -40,6 +40,11 @@ struct SmbShareNode
     QString iconType;
 };
 
+namespace SmbBrowserActionId {
+static constexpr char kOpenSmb[] { "open-smb" };
+static constexpr char kOpenSmbInNewWin[] { "open-smb-in-new-win" };
+}
+
 DPSMBBROWSER_END_NAMESPACE
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node);

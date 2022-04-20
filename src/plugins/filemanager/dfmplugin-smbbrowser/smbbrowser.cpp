@@ -25,7 +25,7 @@
 #include "utils/smbbrowserutils.h"
 #include "fileinfo/smbsharefileinfo.h"
 #include "iterator/smbshareiterator.h"
-#include "menu/smbsharefilemenu.h"
+#include "menu/smbbrowsermenuscene.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -58,7 +58,7 @@ void SmbBrowser::initialize()
     InfoFactory::regClass<SmbShareFileInfo>(SmbBrowserUtils::networkScheme());
     DirIteratorFactory::regClass<SmbShareIterator>(SmbBrowserUtils::networkScheme());
 
-    DSC_NAMESPACE::MenuService::regClass<SmbShareFileMenu>(SmbBrowserScene::kSmbBrowserScene);
+    DSC_NAMESPACE::MenuService::service()->registerScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
 
     DSB_FM_USE_NAMESPACE
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
@@ -70,10 +70,10 @@ bool SmbBrowser::start()
 {
     DSB_FM_USE_NAMESPACE
     WorkspaceService::service()->addScheme(Global::kSmb);
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::kSmb, SmbBrowserScene::kSmbBrowserScene);
+    WorkspaceService::service()->setWorkspaceMenuScene(Global::kSmb, SmbBrowserMenuCreator::name());
 
     WorkspaceService::service()->addScheme(SmbBrowserUtils::networkScheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(SmbBrowserUtils::networkScheme(), SmbBrowserScene::kSmbBrowserScene);
+    WorkspaceService::service()->setWorkspaceMenuScene(SmbBrowserUtils::networkScheme(), SmbBrowserMenuCreator::name());
     initOperations();
     return true;
 }
