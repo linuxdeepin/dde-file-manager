@@ -188,6 +188,7 @@ public:
     int sortRole() const;
     QStringList nameFilters() const;
     QDir::Filters filters() const;
+    QDir::Filters effectFilters() const;
 
     void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
     bool sort();
