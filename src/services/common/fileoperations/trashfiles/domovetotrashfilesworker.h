@@ -67,7 +67,7 @@ private:
     QAtomicInteger<qint64> completeFilesCount { 0 };   // move to trash success file count
     qint8 isSameDisk { -1 };   // the source file and trash files is in same disk
     QString trashLocalDir;   // the trash file locak dir
-    QSharedPointer<QStorageInfo> targetStorageInfo { nullptr };   // target file's device infor
+    QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
 };
 
 DSC_END_NAMESPACE

@@ -36,6 +36,8 @@
 
 DSC_BEGIN_NAMESPACE
 
+class StorageInfo;
+
 class DoCutFilesWorker : public FileOperateBaseWorker
 {
     friend class CutFiles;
@@ -64,7 +66,7 @@ private:
     bool canCutFile(const QUrl &url, bool *ok);
 
 private:
-    QSharedPointer<QStorageInfo> targetStorageInfo { nullptr };   // target file's device infor
+    QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
     int totalMoveFilesCount = 1;
     int completedFilesCount = 0;
     qreal lastProgress = 0.01;

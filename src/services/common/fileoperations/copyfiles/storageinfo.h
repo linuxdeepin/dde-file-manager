@@ -54,6 +54,8 @@ class StorageInfo : public QStorageInfo
 {
     friend class DoCopyFilesWorker;
     friend class DoCutFilesWorker;
+    friend class DoMoveToTrashFilesWorker;
+    friend class DoRestoreTrashFilesWorker;
 
 public:
     enum PathHint {

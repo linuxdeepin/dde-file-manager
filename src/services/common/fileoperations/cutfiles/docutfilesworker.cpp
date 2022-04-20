@@ -23,6 +23,8 @@
 
 #include "docutfilesworker.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
+#include "services/common/fileoperations/copyfiles/storageinfo.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
@@ -103,7 +105,7 @@ bool DoCutFilesWorker::initArgs()
         return false;
     }
 
-    targetStorageInfo.reset(new QStorageInfo(targetUrl.path()));
+    targetStorageInfo.reset(new StorageInfo(targetUrl.path()));
 
     return true;
 }

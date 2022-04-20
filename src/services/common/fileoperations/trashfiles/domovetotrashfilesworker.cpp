@@ -21,6 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "domovetotrashfilesworker.h"
+#include "services/common/fileoperations/copyfiles/storageinfo.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 
@@ -76,7 +78,7 @@ bool DoMoveToTrashFilesWorker::statisticsFilesSize()
     sourceFilesCount = sourceUrls.size();
     targetUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath).endsWith("/") ? StandardPaths::location(StandardPaths::kTrashFilesPath) : StandardPaths::location(StandardPaths::kTrashFilesPath) + "/");
     trashLocalDir = QString("%1/.local/share/Trash").arg(QDir::homePath());
-    targetStorageInfo.reset(new QStorageInfo(trashLocalDir));
+    targetStorageInfo.reset(new StorageInfo(trashLocalDir));
 
     targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
 

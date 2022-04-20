@@ -22,6 +22,8 @@
  */
 #include "fileoperatebaseworker.h"
 #include "fileoperations/fileoperationutils/fileoperationsutils.h"
+#include "services/common/fileoperations/copyfiles/storageinfo.h"
+
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
@@ -32,7 +34,6 @@
 #include <QMutex>
 #include <QWaitCondition>
 #include <QDateTime>
-#include <QStorageInfo>
 #include <QApplication>
 
 #include <fcntl.h>
@@ -348,7 +349,7 @@ void FileOperateBaseWorker::readAheadSourceFile(const AbstractFileInfoPointer &f
  */
 bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
                                                     const QUrl &toUrl,
-                                                    QSharedPointer<QStorageInfo> targetStorageInfo,
+                                                    QSharedPointer<StorageInfo> targetStorageInfo,
                                                     bool *result)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;

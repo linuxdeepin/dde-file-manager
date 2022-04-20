@@ -21,6 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "dorestoretrashfilesworker.h"
+#include "services/common/fileoperations/copyfiles/storageinfo.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/urlroute.h"
@@ -303,7 +305,7 @@ bool DoRestoreTrashFilesWorker::clearTrashFile(const QUrl &fromUrl, const QUrl &
 bool DoRestoreTrashFilesWorker::checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
 {
 
-    QSharedPointer<QStorageInfo> restoreStorage(new QStorageInfo(toUrl.path()));
+    QSharedPointer<StorageInfo> restoreStorage(new StorageInfo(toUrl.path()));
     return FileOperateBaseWorker::checkDiskSpaceAvailable(fromUrl, toUrl, restoreStorage, result);
 }
 /*!

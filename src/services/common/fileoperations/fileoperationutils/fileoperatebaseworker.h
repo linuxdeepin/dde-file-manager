@@ -29,9 +29,10 @@
 #include <dfm-io/core/dfile.h>
 
 class QObject;
-class QStorageInfo;
 
 DSC_BEGIN_NAMESPACE
+class StorageInfo;
+
 class FileOperateBaseWorker : public AbstractWorker
 {
 public:
@@ -83,7 +84,7 @@ public:
     void readAheadSourceFile(const AbstractFileInfoPointer &fileInfo);
     bool checkDiskSpaceAvailable(const QUrl &fromUrl,
                                  const QUrl &toUrl,
-                                 QSharedPointer<QStorageInfo> targetStorageInfo,
+                                 QSharedPointer<StorageInfo> targetStorageInfo,
                                  bool *result);
     bool deleteFile(const QUrl &fromUrl, bool *result);
     bool deleteDir(const QUrl &fromUrl, bool *result);
