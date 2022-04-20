@@ -6,8 +6,6 @@ usr/bin/dde-property-dialog
 usr/share/applications/dde-file-manager.desktop
 usr/share/applications/dde-open.desktop
 
-usr/share/polkit-1/actions/*.policy
-
 usr/share/deepin-manual/manual-assets/application
 
 etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
