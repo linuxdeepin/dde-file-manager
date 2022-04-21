@@ -142,33 +142,33 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
     if (rowCount() == 0) {
         QStandardItemModel::appendRow(item);
     } else {
-        int endRowIndex = -1;
-        int beginRowIndex = -1;
+        int groupStart = -1;
+        int groupEnd = -1;
         // find insert group
-        for (int rowIndex = rowCount() - 1; rowIndex >= 0; rowIndex--) {
-            if (dynamic_cast<SideBarItemSeparator *>(this->item(rowIndex, 0)))
+        for (int r = 0; r < rowCount(); r++) {
+            auto foundItem = dynamic_cast<SideBarItem *>(this->item(r, 0));
+            if (!foundItem)
                 continue;
 
-            auto findedItem = dynamic_cast<SideBarItem *>(this->item(rowIndex, 0));
-
-            if (!findedItem)
-                continue;
-
-            if (findedItem->group() == item->group()) {
-                if (-1 == endRowIndex)
-                    endRowIndex = rowIndex;
-                else
-                    beginRowIndex = rowIndex;
+            if (foundItem->group() == item->group()) {
+                if (-1 == groupStart)
+                    groupStart = r;
+                groupEnd = r;
+            } else {
+                if (groupStart != -1)
+                    break;
             }
         }
 
-        if (-1 != endRowIndex && -1 != beginRowIndex) {
-            int groupCount = endRowIndex - beginRowIndex + 1;
+        if (-1 != groupEnd && -1 != groupStart) {
+            int groupCount = groupEnd - groupStart;   // don't treat the splitter as a group item
             // if the index is greater than the total number of elements in the group,
             // then inserted at the end of the group.
             if (row > groupCount)
                 row = groupCount;
-            QStandardItemModel::insertRow(row + beginRowIndex, item);
+            // all item must be insterted below group splitter, so:
+            row += 1;
+            QStandardItemModel::insertRow(row + groupStart, item);
         } else {
             QStandardItemModel::appendRow(item);
         }
