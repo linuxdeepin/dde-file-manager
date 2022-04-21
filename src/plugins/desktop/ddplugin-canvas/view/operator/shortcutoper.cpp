@@ -330,14 +330,17 @@ void ShortcutOper::showProperty()
 
 void ShortcutOper::previewFiles()
 {
-    QList<QUrl> Urls = view->selectionModel()->selectedUrls();
+    QList<QUrl> urls = view->selectionModel()->selectedUrls();
+    if (urls.isEmpty())
+        return;
+
     QList<QUrl> selectUrls;
-    for (QUrl &url : Urls) {
+    for (QUrl &url : urls) {
         selectUrls.append(UrlRoute::fromLocalFile(url.path()));
     }
-    Urls = view->selectionModel()->selectedUrls();
+    urls = view->selectionModel()->selectedUrls();
     QList<QUrl> currentDirUrls;
-    for (QUrl &url : Urls) {
+    for (QUrl &url : urls) {
         currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
     }
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, view->topLevelWidget()->winId(), selectUrls, currentDirUrls);

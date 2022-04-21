@@ -56,6 +56,10 @@ WindowsService *PreviewDialogManager::windowService()
 void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
 {
     Q_UNUSED(winId)
+
+    if (selecturls.isEmpty())
+        return;
+
     bool hasInvalidSymlink = false;
     for (const QUrl &url : selecturls) {
         const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
