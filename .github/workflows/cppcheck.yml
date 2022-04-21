@@ -1,6 +1,8 @@
 name: cppcheck
 on:
   pull_request_target:
+    paths-ignore:
+      - ".github/workflows/**"
 
 concurrency:
   group: ${{ github.workflow }}-pull/${{ github.event.number }}
