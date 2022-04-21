@@ -61,6 +61,12 @@ void MyShares::initialize()
     connect(WindowsService::service(), &WindowsService::windowClosed, this, &MyShares::onWindowClosed, Qt::DirectConnection);
 
     UserShareService::service();   // for loading shares.
+    connect(UserShareService::service(), &UserShareService::shareAdded, this, [this] { this->addToSidebar(); }, Qt::DirectConnection);
+    connect(UserShareService::service(), &UserShareService::shareRemoved, this, [] {
+        if (UserShareService::service()->shareInfos().count() == 0)
+            SideBarService::service()->removeItem(ShareUtils::rootUrl());
+    },
+            Qt::DirectConnection);
 }
 
 bool MyShares::start()
@@ -106,6 +112,10 @@ void MyShares::onWindowClosed(quint64 winId)
 
 void MyShares::addToSidebar()
 {
+    DSC_USE_NAMESPACE
+    if (UserShareService::service()->shareInfos().count() == 0)
+        return;
+
     DSB_FM_USE_NAMESPACE
     SideBar::ItemInfo shareEntry;
     shareEntry.group = SideBar::DefaultGroup::kNetwork;

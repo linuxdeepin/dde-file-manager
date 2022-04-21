@@ -196,7 +196,7 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
         if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(curUrl, url) || url.isParentOf(curUrl)) {
             if (count() == 1) {
                 QUrl redirectToWhenDelete;
-                if (isMountedDevPath(url)) {
+                if (isMountedDevPath(url) || url.scheme() != Global::kFile) {
                     redirectToWhenDelete.setScheme(Global::kComputer);
                     redirectToWhenDelete.setPath("/");
                 } else {   // redirect to upper directory
