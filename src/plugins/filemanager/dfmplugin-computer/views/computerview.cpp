@@ -195,15 +195,28 @@ void ComputerView::initConnect()
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideLoopPartitions, this, [this](bool hide) { this->hideLoopPartitions(hide); });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
 
-    QAction *actProperty = new QAction(this);
-    addAction(actProperty);
-    actProperty->setShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL));
-    connect(actProperty, &QAction::triggered, this, [this] {
+    connectShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
+        ComputerControllerInstance->actProperties(ComputerUtils::getWinId(this), info);
+    });
+    connectShortcut(QKeySequence(Qt::Key::Key_N | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
+        ComputerControllerInstance->actOpenInNewWindow(ComputerUtils::getWinId(this), info);
+    });
+    connectShortcut(QKeySequence(Qt::Key::Key_T | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
+        ComputerControllerInstance->actOpenInNewTab(ComputerUtils::getWinId(this), info);
+    });
+}
+
+void ComputerView::connectShortcut(QKeySequence seq, std::function<void(DFMEntryFileInfoPointer)> slot)
+{
+    QAction *act = new QAction(this);
+    addAction(act);
+    act->setShortcut(seq);
+    connect(act, &QAction::triggered, this, [this, slot] {
         QList<QUrl> &&selectedUrls = selectedUrlList();
         if (selectedUrls.isEmpty())
             return;
         DFMEntryFileInfoPointer info(new EntryFileInfo(selectedUrls.first()));
-        ComputerControllerInstance->actProperties(ComputerUtils::getWinId(this), info);
+        slot(info);
     });
 }
 

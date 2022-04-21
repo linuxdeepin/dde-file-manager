@@ -33,6 +33,10 @@
 
 #include <DListView>
 
+DFMBASE_BEGIN_NAMESPACE
+class EntryFileInfo;
+DFMBASE_END_NAMESPACE
+
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
 
@@ -72,6 +76,9 @@ protected:
 private:
     void initView();
     void initConnect();
+
+    typedef QSharedPointer<EntryFileInfo> DFMEntryFileInfoPointer;
+    void connectShortcut(QKeySequence seq, std::function<void(DFMEntryFileInfoPointer)> slot);
 
 private Q_SLOTS:
     void cdTo(const QModelIndex &index);
