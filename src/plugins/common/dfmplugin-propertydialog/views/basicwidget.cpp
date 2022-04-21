@@ -27,6 +27,7 @@
 #include "dfm-base/utils/fileutils.h"
 
 #include "services/common/propertydialog/property_defines.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -197,8 +198,7 @@ void BasicWidget::selectFileUrl(const QUrl &url)
         return;
     QString path;
     if (PropertyDialogHelper::propertyServiceInstance()->isContains(url)) {
-        QUrl selectUrl = UrlRoute::pathToReal(url.path());
-        path = selectUrl.url();
+        path = url.url();
     } else {
         path = url.path();
     }
@@ -219,14 +219,15 @@ void BasicWidget::selectFileUrl(const QUrl &url)
         fileCount->setVisible(false);
 
     if (fileType && fileType->RightValue().isEmpty()) {
-        QMimeType mimeType = MimeDatabase::mimeTypeForUrl(QUrl::fromLocalFile(url.path()));
+        QUrl localUrl = delegateServIns->urlTransform(url);
+        QMimeType mimeType = MimeDatabase::mimeTypeForUrl(localUrl);
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
         switch (static_cast<int>(type)) {
         case MimeDatabase::FileType::kDirectory: {
             fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
             fileCount->setVisible(true);
             fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
-            fileCalculationUtils->start(QList<QUrl>() << url);
+            fileCalculationUtils->start(QList<QUrl>() << localUrl);
             connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
         } break;
         case MimeDatabase::FileType::kDocuments: {
@@ -269,10 +270,10 @@ int BasicWidget::getFileCount()
 
 void BasicWidget::slotFileCountAndSizeChange(qint64 size, int filesCount, int directoryCount)
 {
-    fSize += size;
+    fSize = size;
     fileSize->setRightValue(FileUtils::formatSize(size));
 
-    fCount += filesCount + directoryCount;
+    fCount = filesCount + (directoryCount > 1 ? directoryCount - 1 : 0);
     fileCount->setRightValue(QString::number(fCount));
 }
 

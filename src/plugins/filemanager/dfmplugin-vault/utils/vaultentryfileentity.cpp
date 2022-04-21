@@ -61,7 +61,8 @@ bool VaultEntryFileEntity::showTotalSize() const
 {
     if (VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath()) == VaultState::kUnlocked) {
         showSizeState = true;
-        fileCalculationUtils->start(QList<QUrl>() << VaultHelper::instance()->rootUrl());
+        QUrl url = VaultHelper::instance()->vaultToLocalUrl(VaultHelper::instance()->sourceRootUrl());
+        fileCalculationUtils->start(QList<QUrl>() << url);
         return true;
     }
     return false;

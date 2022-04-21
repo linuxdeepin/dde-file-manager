@@ -25,7 +25,7 @@
 #include "dfm-base/file/local/localdiriterator.h"
 
 DPVAULT_BEGIN_NAMESPACE
-class VaultFileIterator : public DFMBASE_NAMESPACE::LocalDirIterator
+class VaultFileIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
 {
     Q_OBJECT
     friend class VaultFileIteratorPrivate;
@@ -49,6 +49,9 @@ public:
     virtual const AbstractFileInfoPointer fileInfo() const override;
 
     virtual QUrl url() const override;
+
+private:
+    QSharedPointer<QDirIterator> discIterator;
 };
 DPVAULT_END_NAMESPACE
 #endif   // VAULTFILEDIRITERATOR_H

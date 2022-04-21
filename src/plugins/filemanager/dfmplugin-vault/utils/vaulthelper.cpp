@@ -29,11 +29,13 @@
 #include "utils/vaultautolock.h"
 #include "events/vaulteventcaller.h"
 #include "vaultdbusutils.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -58,9 +60,34 @@ QUrl VaultHelper::rootUrl()
 {
     QUrl url;
     url.setScheme(scheme());
-    url.setPath(makeVaultLocalPath(QString(""), kVaultDecryptDirName));
+    QString path = "/";
+    url.setPath(path);
     url.setHost("");
     return url;
+}
+
+QUrl VaultHelper::sourceRootUrl()
+{
+    QUrl url;
+    url.setScheme(scheme());
+    QString path = makeVaultLocalPath(QString(""), kVaultDecryptDirName);
+    url.setPath(path);
+    url.setHost("");
+    return url;
+}
+
+QUrl VaultHelper::pathToVaultVirtualUrl(const QString &path)
+{
+    QString localPath = instance()->sourceRootUrl().path();
+    if (path.contains(localPath)) {
+        QString virtualPath = path;
+        virtualPath = virtualPath.replace(0, localPath.length(), "");
+        QUrl virtualUrl(virtualPath);
+        virtualUrl.setScheme(scheme());
+        virtualUrl.setHost("");
+        return virtualUrl;
+    }
+    return QUrl();
 }
 
 /*!
@@ -152,28 +179,10 @@ QString VaultHelper::makeVaultLocalPath(QString path, QString base)
     if (base.isEmpty()) {
         base = kVaultDecryptDirName;
     }
-    return kVaultBasePath + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
-}
-
-QList<TitleBar::CrumbData> VaultHelper::seprateUrl(const QUrl &url)
-{
-    QList<TitleBar::CrumbData> list;
-    QList<QUrl> urls;
-    QUrl tempUrl = UrlRoute::pathToReal(url.path());
-    tempUrl.setScheme(url.scheme());
-    urls.push_back(tempUrl);
-    UrlRoute::urlParentList(tempUrl, &urls);
-
-    for (int count = urls.size() - 1; count >= 0; count--) {
-        QUrl curUrl { urls.at(count) };
-        QStringList pathList { curUrl.path().split("/") };
-        TitleBar::CrumbData data { curUrl, pathList.isEmpty() ? "" : pathList.last() };
-        if (UrlRoute::isRootUrl(curUrl))
-            data.iconName = UrlRoute::icon(curUrl.scheme()).name();
-        list.append(data);
-    }
-
-    return list;
+    if (path.isEmpty())
+        return kVaultBasePath + QDir::separator() + base;
+    else
+        return kVaultBasePath + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
 }
 
 FileEncryptService *VaultHelper::fileEncryptServiceInstance()
@@ -446,9 +455,7 @@ QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
 {
     static VaultPropertyDialog *vaultDialog = nullptr;
     bool flg = UniversalUtils::urlEquals(VaultHelper::instance()->rootUrl(), url);
-    QUrl tempUrl;
-    tempUrl.setPath("/");
-    tempUrl.setScheme("dfmvault");
+    QUrl tempUrl = UrlRoute::pathToReal(VaultHelper::instance()->rootUrl().path());
     bool flg1 = UniversalUtils::urlEquals(tempUrl, url);
     if (flg || flg1) {
         if (!vaultDialog) {
@@ -467,7 +474,7 @@ bool VaultHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, cons
 
     QList<QUrl> redirectedFileUrls;
     for (const QUrl &url : urls) {
-        QUrl redirectedFileUrl = QUrl::fromLocalFile(url.path());
+        QUrl redirectedFileUrl = delegateServIns->urlTransform(url);
         QFileInfo fileInfo(redirectedFileUrl.path());
         redirectedFileUrls << redirectedFileUrl;
     }
@@ -482,7 +489,7 @@ bool VaultHelper::writeToClipBoardHandle(const quint64 windowId, const ClipBoard
 {
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
-        redirectedFileUrls << QUrl::fromLocalFile(url.path());
+        redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
     dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
@@ -495,7 +502,7 @@ JobHandlePointer VaultHelper::moveToTrashHandle(const quint64 windowId, const QL
     Q_UNUSED(flags)
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : sources) {
-        redirectedFileUrls << QUrl::fromLocalFile(url.path());
+        redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
     dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
@@ -509,7 +516,7 @@ JobHandlePointer VaultHelper::deletesHandle(const quint64 windowId, const QList<
     Q_UNUSED(flags)
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : sources) {
-        redirectedFileUrls << QUrl::fromLocalFile(url.path());
+        redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
     dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
@@ -520,16 +527,56 @@ JobHandlePointer VaultHelper::deletesHandle(const quint64 windowId, const QList<
 
 JobHandlePointer VaultHelper::copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
-    QUrl url = QUrl::fromLocalFile(target.path());
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    QUrl url = delegateServIns->urlTransform(target);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, sources, url, flags, nullptr);
     return {};
 }
 
 JobHandlePointer VaultHelper::cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
-    QUrl url = QUrl::fromLocalFile(target.path());
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, sources, url, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    QUrl url = delegateServIns->urlTransform(target);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, sources, url, flags, nullptr);
     return {};
+}
+
+bool VaultHelper::mkdirHandle(const quint64 windowId, const QUrl url, QString *error)
+{
+    QUrl dirUrl = delegateServIns->urlTransform(url);
+    return dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
+                                                 windowId,
+                                                 dirUrl,
+                                                 Global::kCreateFileTypeFolder);
+}
+
+bool VaultHelper::touchFileHandle(const quint64 windowId, const QUrl url, QString *error)
+{
+    QUrl dirUrl = delegateServIns->urlTransform(url);
+    return dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFile,
+                                                 windowId,
+                                                 dirUrl,
+                                                 Global::kCreateFileTypeText, *error);
+}
+
+bool VaultHelper::renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, QString *)
+{
+
+    QUrl ourl = delegateServIns->urlTransform(oldUrl);
+    QUrl nurl = delegateServIns->urlTransform(newUrl);
+    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, windowId, ourl, nurl);
+}
+
+QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
+{
+    UrlRoute::urlToPath(url);
+    if (url.scheme() != instance()->scheme())
+        return QUrl();
+    if (url.path().contains(instance()->sourceRootUrl().path())) {
+        QUrl localUrl = QUrl::fromLocalFile(url.path());
+        return localUrl;
+    } else {
+        QUrl localUrl = QUrl::fromLocalFile(instance()->sourceRootUrl().path() + url.path());
+        return localUrl;
+    }
 }
 
 void VaultHelper::createVault(QString &password)

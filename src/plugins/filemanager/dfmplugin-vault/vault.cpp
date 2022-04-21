@@ -29,6 +29,8 @@
 #include "events/vaulteventreceiver.h"
 #include "events/vaulteventcaller.h"
 
+#include "services/common/delegate/delegateservice.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
@@ -44,10 +46,7 @@ DPVAULT_USE_NAMESPACE
 
 void Vault::initialize()
 {
-
-    if (VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath()) == VaultState::kUnlocked) {
-        UrlRoute::regScheme(VaultHelper::instance()->scheme(), VaultHelper::instance()->rootUrl().path(), VaultHelper::instance()->icon(), false, tr("My Vault"));
-    }
+    UrlRoute::regScheme(VaultHelper::instance()->scheme(), "/", VaultHelper::instance()->icon(), true, tr("My Vault"));
 
     //注册Scheme为"recent"的扩展的文件信息 本地默认文件的
     InfoFactory::regClass<VaultFileInfo>(VaultHelper::instance()->scheme());
@@ -77,11 +76,10 @@ dpf::Plugin::ShutdownFlag Vault::stop()
 
 void Vault::onWindowOpened(quint64 winID)
 {
+    delegateServIns->registerUrlTransform(VaultHelper::instance()->scheme(), VaultHelper::vaultToLocalUrl);
+
     auto window = VaultHelper::windowServiceInstance()->findWindowById(winID);
-    if (window->titleBar())
-        addCustomCrumbar();
-    else
-        connect(window, &FileManagerWindow::titleBarInstallFinished, this, &Vault::addCustomCrumbar, Qt::DirectConnection);
+
     if (window->sideBar())
         addSideBarVaultItem();
     else
@@ -110,18 +108,6 @@ void Vault::addSideBarVaultItem()
     }
 }
 
-void Vault::addCustomCrumbar()
-{
-    bool vaultEnabled = VaultHelper::instance()->isVaultEnabled();
-    if (vaultEnabled) {
-        TitleBar::CustomCrumbInfo crumb;
-        crumb.scheme = VaultHelper::instance()->scheme();
-        crumb.keepAddressBar = false;
-        crumb.seperateCb = VaultHelper::instance()->seprateUrl;
-        VaultHelper::titleBarServiceInstance()->addCustomCrumbar(crumb);
-    }
-}
-
 void Vault::addComputer()
 {
     bool vaultEnabled = VaultHelper::instance()->isVaultEnabled();
@@ -138,5 +124,8 @@ void Vault::addFileOperations()
     fileOpeationsHandle->deletes = &VaultHelper::deletesHandle;
     fileOpeationsHandle->copy = &VaultHelper::copyHandle;
     fileOpeationsHandle->cut = &VaultHelper::cutHandle;
+    fileOpeationsHandle->makedir = &VaultHelper::mkdirHandle;
+    fileOpeationsHandle->touchFile = &VaultHelper::touchFileHandle;
+    fileOpeationsHandle->renameFile = &VaultHelper::renameHandle;
     VaultHelper::fileOperationsServIns()->registerOperations(VaultHelper::instance()->scheme(), fileOpeationsHandle);
 }

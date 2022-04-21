@@ -20,6 +20,7 @@
  */
 #include "basicwidget.h"
 #include "utils/vaultglobaldefine.h"
+#include "utils/vaulthelper.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/mimetype/mimedatabase.h"
@@ -118,12 +119,12 @@ void BasicWidget::initUI()
 
 void BasicWidget::selectFileUrl(const QUrl &url)
 {
-    QUrl realurl = UrlRoute::fromLocalFile(UrlRoute::urlToPath(url));
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(realurl);
+    QUrl realurl = VaultHelper::instance()->vaultToLocalUrl(url);
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
 
-    QUrl tempUrl = UrlRoute::pathToReal(url.path());
+    QUrl tempUrl = url.url();
 
     Settings setting(kVaultTimeConfigFile);
 

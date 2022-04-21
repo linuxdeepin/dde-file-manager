@@ -100,5 +100,6 @@ void CloseAllDialog::showEvent(QShowEvent *event)
 
     move((geometryWidth - width()) / 2, geometryHeight - height());
 
+    setTotalMessage(0, 0);
     return DAbstractDialog::showEvent(event);
 }

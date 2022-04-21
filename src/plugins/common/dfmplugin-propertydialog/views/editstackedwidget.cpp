@@ -20,6 +20,8 @@
 */
 #include "editstackedwidget.h"
 
+#include "services/common/delegate/delegateservice.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -274,8 +276,8 @@ void EditStackedWidget::showTextShowFrame()
     if (fileNameEdit->isCanceled())
         initTextShowFrame(newName);
     else {
-        QUrl oldUrl = QUrl::fromLocalFile(filerUrl.path());
-        QUrl newUrl = QUrl::fromLocalFile(QFileInfo(filerUrl.path()).absolutePath() + "/" + newName);
+        QUrl oldUrl = delegateServIns->urlTransform(filerUrl);
+        QUrl newUrl = QUrl::fromLocalFile(QFileInfo(oldUrl.path()).absolutePath() + "/" + newName);
 
         if (oldUrl == newUrl) {
             this->setCurrentIndex(1);

@@ -27,57 +27,48 @@
 DFMBASE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 VaultFileWatcher::VaultFileWatcher(const QUrl &url, QObject *parent)
-    : AbstractFileWatcher(new VaultFileWatcherPrivate(url, this), parent)
+    : AbstractFileWatcher(new VaultFileWatcherPrivate(VaultHelper::vaultToLocalUrl(url), this), parent)
 {
     dptr = dynamic_cast<VaultFileWatcherPrivate *>(d.data());
-    QString path = url.path().contains(VaultHelper::instance()->rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url);
-    QUrl localUrl = QUrl::fromLocalFile(path);
+    QUrl localUrl = VaultHelper::vaultToLocalUrl(url);
     dptr->proxyStaging = WatcherFactory::create<AbstractFileWatcher>(localUrl);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileAttributeChanged,
-            this, &VaultFileWatcher::onFileAttributeChanged);
+            this, &VaultFileWatcher::onFileAttributeChanged, Qt::QueuedConnection);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileDeleted,
-            this, &VaultFileWatcher::onFileDeleted);
+            this, &VaultFileWatcher::onFileDeleted, Qt::QueuedConnection);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileRename,
-            this, &VaultFileWatcher::onFileRename);
+            this, &VaultFileWatcher::onFileRename, Qt::QueuedConnection);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::subfileCreated,
-            this, &VaultFileWatcher::onSubfileCreated);
+            this, &VaultFileWatcher::onSubfileCreated, Qt::QueuedConnection);
 }
 
 VaultFileWatcher::~VaultFileWatcher()
 {
+    qInfo() << "VaultFileWatcher :" << dptr->proxyStaging->url();
 }
 
 void VaultFileWatcher::onFileDeleted(const QUrl &url)
 {
-    QUrl vaultUrl = url;
-    vaultUrl.setScheme(VaultHelper::instance()->scheme());
-    vaultUrl.setHost("");
-    emit fileDeleted(vaultUrl);
+    QUrl furl = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    emit fileDeleted(furl);
 }
 
 void VaultFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
-    QUrl vaultUrl = url;
-    vaultUrl.setScheme(VaultHelper::instance()->scheme());
-    vaultUrl.setHost("");
-    emit fileAttributeChanged(vaultUrl);
+    QUrl furl = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    emit fileAttributeChanged(furl);
 }
 
 void VaultFileWatcher::onFileRename(const QUrl &fromUrl, const QUrl &toUrl)
 {
-    QUrl vaultFromUrl = fromUrl;
-    vaultFromUrl.setScheme(VaultHelper::instance()->scheme());
-    vaultFromUrl.setHost("");
-    QUrl vaultToUrl = toUrl;
-    vaultToUrl.setScheme(VaultHelper::instance()->scheme());
-    vaultToUrl.setHost("");
-    emit fileRename(vaultFromUrl, vaultToUrl);
+    QUrl furl = VaultHelper::instance()->pathToVaultVirtualUrl(fromUrl.path());
+    QUrl turl = VaultHelper::instance()->pathToVaultVirtualUrl(toUrl.path());
+    emit fileRename(furl, turl);
 }
 
 void VaultFileWatcher::onSubfileCreated(const QUrl &url)
 {
-    QUrl vaultUrl = url;
-    vaultUrl.setScheme(VaultHelper::instance()->scheme());
-    vaultUrl.setHost("");
-    emit subfileCreated(vaultUrl);
+    QUrl furl = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    qDebug() << url;
+    emit subfileCreated(furl);
 }

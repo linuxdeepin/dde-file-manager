@@ -41,8 +41,7 @@ DPVAULT_BEGIN_NAMESPACE
 VaultFileInfo::VaultFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new VaultFileInfoPrivate(this))
 {
-    QString path = url.path().contains(VaultHelper::instance()->rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url);
-    QUrl tempUrl = QUrl::fromLocalFile(path);
+    QUrl tempUrl = VaultHelper::vaultToLocalUrl(url);
     setProxy(InfoFactory::create<AbstractFileInfo>(tempUrl));
 }
 
@@ -72,6 +71,16 @@ bool VaultFileInfo::operator!=(const VaultFileInfo &fileinfo) const
     return !(operator==(fileinfo));
 }
 
+QString VaultFileInfo::absolutePath() const
+{
+    if(!dptr->proxy)
+        return "";
+
+    QString path = dptr->proxy->path();
+    QUrl virtualUrl = VaultHelper::instance()->pathToVaultVirtualUrl(path);
+    return virtualUrl.path();
+}
+
 bool VaultFileInfo::exists() const
 {
     if (url().isEmpty())
@@ -83,7 +92,7 @@ bool VaultFileInfo::exists() const
 void VaultFileInfo::refresh()
 {
     AbstractFileInfo::refresh();
-    if (dptr->proxy) {
+    if (!dptr->proxy) {
         return;
     }
 
@@ -136,6 +145,17 @@ bool VaultFileInfo::isRoot() const
     return bRootDir;
 }
 
+QUrl VaultFileInfo::url() const
+{
+    if (!dptr->proxy)
+        return QUrl();
+
+    QUrl url = dptr->proxy->url();
+    url.setScheme(VaultHelper::instance()->scheme());
+    url = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
+    return url;
+}
+
 QString VaultFileInfo::iconName() const
 {
     QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
@@ -155,6 +175,22 @@ QVariantHash VaultFileInfo::extraProperties() const
     if (!dptr->proxy)
         AbstractFileInfo::extraProperties();
     return dptr->proxy->extraProperties();
+}
+
+QUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
+{
+    QUrl theUrl = url();
+
+    theUrl.setPath(absolutePath() + QDir::separator() + fileName);
+
+    return theUrl;
+}
+
+QIcon VaultFileInfo::fileIcon() const
+{
+    if (!dptr->proxy)
+        AbstractFileInfo::fileIcon();
+    return dptr->proxy->fileIcon();
 }
 
 qint64 VaultFileInfo::size() const

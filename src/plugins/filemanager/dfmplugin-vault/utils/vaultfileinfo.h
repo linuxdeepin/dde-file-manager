@@ -39,6 +39,7 @@ public:
     virtual bool operator==(const VaultFileInfo &fileinfo) const;
     virtual bool operator!=(const VaultFileInfo &fileinfo) const;
 
+    virtual QString absolutePath() const override;
     virtual bool exists() const override;
     virtual void refresh() override;
     virtual bool isReadable() const override;
@@ -49,11 +50,14 @@ public:
     virtual bool isDir() const override;
     virtual bool isSymLink() const override;
     virtual bool isRoot() const override;
+    virtual QUrl url() const override;
     virtual qint64 size() const override;
     virtual int countChildFile() const override;
     virtual QString sizeFormat() const override;
     virtual QVariantHash extraProperties() const override;
+    virtual QUrl getUrlByNewFileName(const QString &fileName) const override;
 
+    virtual QIcon fileIcon() const override;
     QString iconName() const override;
     virtual QString fileDisplayName() const override;
 };

@@ -72,7 +72,7 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileAccessed { nullptr };
     QCheckBox *hideFile { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
-    int fSize { 0 };
+    qint64 fSize { 0 };
     int fCount { 0 };
     QMultiMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum, DFMBASE_NAMESPACE::KeyValueLabel *> fieldMap;
     QFrame *frameMain { nullptr };

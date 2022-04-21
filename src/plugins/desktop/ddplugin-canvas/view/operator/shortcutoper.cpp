@@ -121,7 +121,8 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             openAction();
             return true;
         case Qt::Key_Space:
-            previewFiles();
+            if (!event->isAutoRepeat())
+                previewFiles();
             break;
         default:
             break;

@@ -73,6 +73,10 @@ public:
 
     QUrl rootUrl();
 
+    QUrl sourceRootUrl();
+
+    QUrl pathToVaultVirtualUrl(const QString &path);
+
     /*!
     * \brief isVaultEnabled
     * \return true vault is available, vice versa.
@@ -149,8 +153,6 @@ public:
 
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 
-    static QList<DSB_FM_NAMESPACE::TitleBar::CrumbData> seprateUrl(const QUrl &url);
-
     static QMenu *createMenu();
 
     static QWidget *createVaultPropertyDialog(const QUrl &url);
@@ -161,22 +163,25 @@ public:
                                        const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
                                        const QList<QUrl> urls);
 
-    static JobHandlePointer moveToTrashHandle(const quint64 windowId,
-                                              const QList<QUrl> sources,
+    static JobHandlePointer moveToTrashHandle(const quint64 windowId, const QList<QUrl> sources,
                                               const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
-    static JobHandlePointer deletesHandle(const quint64 windowId,
-                                          const QList<QUrl> sources,
+    static JobHandlePointer deletesHandle(const quint64 windowId, const QList<QUrl> sources,
                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
-    static JobHandlePointer copyHandle(const quint64 windowId,
-                                       const QList<QUrl> sources,
-                                       const QUrl target,
+    static JobHandlePointer copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    static JobHandlePointer cutHandle(const quint64 windowId,
-                                      const QList<QUrl> sources,
-                                      const QUrl target,
+
+    static JobHandlePointer cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
+    static bool mkdirHandle(const quint64 windowId, const QUrl url, QString *error);
+
+    static bool touchFileHandle(const quint64 windowId, const QUrl url, QString *error);
+
+    static bool renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, QString *);
+
+    static QUrl vaultToLocalUrl(const QUrl &url);
 
 public slots:
     void slotlockVault(int state);

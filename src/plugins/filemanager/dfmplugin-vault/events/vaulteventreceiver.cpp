@@ -9,7 +9,6 @@
 
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 VaultEventReceiver::VaultEventReceiver(QObject *parent)
     : QObject(parent)
@@ -24,7 +23,7 @@ VaultEventReceiver *VaultEventReceiver::instance()
 
 void VaultEventReceiver::connectEvent()
 {
-    dpfInstance.eventDispatcher().subscribe(EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
+    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)

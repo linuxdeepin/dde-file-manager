@@ -21,6 +21,9 @@
 #include "propertydialog.h"
 #include "events/propertyeventreceiver.h"
 #include "utils/propertydialoghelper.h"
+#include "menu/propertymenuscene.h"
+
+#include "services/common/menu/menuservice.h"
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -35,6 +38,9 @@ bool PropertyDialog::start()
 {
 
     PropertyDialogHelper::propertyServiceInstance()->addComputerPropertyToPropertyService();
+
+    MenuService::service()->registerScene(PropertyMenuCreator::name(), new PropertyMenuCreator);
+    MenuService::service()->bind(PropertyMenuCreator::name(), "WorkspaceMenu");
     return true;
 }
 

@@ -23,12 +23,17 @@
 #include "utils/vaulthelper.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <QDirIterator>
+#include <QSharedPointer>
+
 DFMBASE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 
 VaultFileIterator::VaultFileIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
-    : LocalDirIterator(QUrl::fromLocalFile(url.path().contains(VaultHelper::instance()->rootUrl().path()) ? url.path() : UrlRoute::urlToPath(url)), nameFilters, filters, flags)
+    : AbstractDirIterator(VaultHelper::vaultToLocalUrl(url), nameFilters, filters, flags)
 {
+    QUrl localUrl = VaultHelper::vaultToLocalUrl(url);
+    discIterator = QSharedPointer<QDirIterator>(new QDirIterator(localUrl.path(), nameFilters, filters, flags));
 }
 
 VaultFileIterator::~VaultFileIterator()
@@ -37,24 +42,26 @@ VaultFileIterator::~VaultFileIterator()
 
 QUrl VaultFileIterator::next()
 {
-    QUrl url = LocalDirIterator::next();
-    url.setScheme(VaultHelper::instance()->scheme());
-    return url;
+    if (discIterator && discIterator->hasNext()) {
+        return VaultHelper::instance()->pathToVaultVirtualUrl(discIterator->next());
+    }
+
+    return QUrl();
 }
 
 bool VaultFileIterator::hasNext() const
 {
-    return LocalDirIterator::hasNext();
+    return discIterator->hasNext();
 }
 
 QString VaultFileIterator::fileName() const
 {
-    return LocalDirIterator::fileName();
+    return discIterator->fileName();
 }
 
 QUrl VaultFileIterator::fileUrl() const
 {
-    return LocalDirIterator::fileUrl();
+    return QUrl::fromLocalFile(discIterator->filePath());
 }
 
 const AbstractFileInfoPointer VaultFileIterator::fileInfo() const
@@ -64,5 +71,5 @@ const AbstractFileInfoPointer VaultFileIterator::fileInfo() const
 
 QUrl VaultFileIterator::url() const
 {
-    return LocalDirIterator::url();
+    return VaultHelper::instance()->rootUrl();
 }

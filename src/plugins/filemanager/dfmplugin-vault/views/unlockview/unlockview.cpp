@@ -123,8 +123,13 @@ void UnlockView::buttonClicked(int index, const QString &text)
             //! 设置密码输入框颜色
             //! 修复bug-51508 激活密码框警告状态
             passwordEdit->setAlert(true);
+            //! 设置密码输入框颜色,并弹出tooltip
+            passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
+            passwordEdit->showAlertMessage(tr("Wrong password"));
         }
         return;
+    } else {
+        emit sigCloseDialog();
     }
 }
 
@@ -143,7 +148,6 @@ void UnlockView::onVaultUlocked(int state)
 {
     if (unlockByPwd) {
         if (state == 0) {
-            UrlRoute::regScheme(VaultHelper::instance()->scheme(), VaultHelper::instance()->rootUrl().path(), VaultHelper::instance()->icon(), false, tr("My Vault"));
             VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->rootUrl());
             Settings setting(kVaultTimeConfigFile);
             setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));

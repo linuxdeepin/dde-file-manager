@@ -224,12 +224,14 @@ void FilePropertyDialogManager::closeDevicePropertyDialog(const QUrl &url)
 
 void FilePropertyDialogManager::updateCloseIndicator()
 {
-    qint64 size = 0;
-    int fileCount = 0;
+    qint64 size { 0 };
+    int fileCount { 0 };
+
     for (FilePropertyDialog *d : filePropertyDialogs.values()) {
         size += d->getFileSize();
         fileCount += d->getFileCount();
     }
+
     closeAllDialog->setTotalMessage(size, fileCount);
 }
 

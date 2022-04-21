@@ -15,6 +15,7 @@ VaultPropertyDialog::VaultPropertyDialog(QWidget *parent)
     platformWindowHandle->setEnableSystemResize(true);
     setFixedWidth(350);
     initInfoUI();
+    this->setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 VaultPropertyDialog::~VaultPropertyDialog()
