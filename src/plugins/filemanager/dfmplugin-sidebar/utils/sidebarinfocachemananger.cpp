@@ -36,7 +36,7 @@ SideBarInfoCacheMananger *SideBarInfoCacheMananger::instance()
     return &instance;
 }
 
-SideBarInfoCacheMananger::GroupList SideBarInfoCacheMananger::goups() const
+SideBarInfoCacheMananger::GroupList SideBarInfoCacheMananger::groups() const
 {
     return cacheInfoMap.keys();
 }

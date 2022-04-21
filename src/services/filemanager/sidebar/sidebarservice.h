@@ -49,6 +49,7 @@ public:
     void insertItem(int index, const SideBar::ItemInfo &info);
     void updateItem(const QUrl &url, const QString &newName, bool editable);
     void triggerItemEdit(quint64 winId, const QUrl &url);
+    bool registerSortFunc(const QString &subGroup, SideBar::SortFunc);
 
 private:
     explicit SideBarService(QObject *parent = nullptr);

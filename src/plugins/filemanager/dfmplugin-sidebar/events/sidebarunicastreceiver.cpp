@@ -59,6 +59,7 @@ void SideBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("SideBarService::updateItem"), this, &SideBarUnicastReceiver::invokeUpdateItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::insertItem"), this, &SideBarUnicastReceiver::invokeInsertItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::triggerItemEdit"), this, &SideBarUnicastReceiver::invokeTriggerItemEdit);
+    dpfInstance.eventUnicast().connect(topic("SideBarService::registerSortFunc"), this, &SideBarUnicastReceiver::invokeRegisterSortFunc);
 }
 
 void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info)
@@ -130,6 +131,11 @@ void SideBarUnicastReceiver::invokeTriggerItemEdit(quint64 winId, const QUrl &ur
         if (SideBarHelper::windowId(sidebar) == winId)
             sidebar->editItem(url);
     }
+}
+
+bool SideBarUnicastReceiver::invokeRegisterSortFunc(const QString &subGroup, SortFunc func)
+{
+    return SideBarHelper::registerSortFunc(subGroup, func);
 }
 
 SideBarUnicastReceiver::SideBarUnicastReceiver(QObject *parent)

@@ -191,34 +191,10 @@ quint64 ComputerUtils::getWinId(QWidget *widget)
     return winServ->findWindowId(widget);
 }
 
-dfm_service_filemanager::SideBarService *ComputerUtils::sbServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
-
 bool ComputerUtils::isPresetSuffix(const QString &suffix)
 {
     return suffix == SuffixInfo::kBlock || suffix == SuffixInfo::kProtocol || suffix == SuffixInfo::kUserDir
             || suffix == SuffixInfo::kAppEntry || suffix == SuffixInfo::kStashedProtocol;
-}
-
-dfm_service_common::PropertyDialogService *ComputerUtils::propertyDlgServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::PropertyDialogService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::PropertyDialogService>(DSC_NAMESPACE::PropertyDialogService::name());
 }
 
 DeviceController *ComputerUtils::deviceServIns()
@@ -234,6 +210,26 @@ bool ComputerUtils::shouldSystemPartitionHide()
 bool ComputerUtils::shouldLoopPartitionsHide()
 {
     return Application::instance()->genericAttribute(Application::kHideLoopPartitions).toBool();
+}
+
+bool ComputerUtils::sortItem(const QUrl &a, const QUrl &b)
+{
+    if (a.scheme() != Global::kEntry || b.scheme() != Global::kEntry)
+        return false;
+    DFMEntryFileInfoPointer infoA(new EntryFileInfo(a));
+    DFMEntryFileInfoPointer infoB(new EntryFileInfo(b));
+    return sortItem(infoA, infoB);
+}
+
+bool ComputerUtils::sortItem(DFMEntryFileInfoPointer a, DFMEntryFileInfoPointer b)
+{
+    if (a && b) {
+        if (a->order() == b->order())   // then sort by name
+            return a->displayName() < b->displayName();
+        else
+            return a->order() < b->order();
+    }
+    return false;
 }
 
 int ComputerUtils::getUniqueInteger()

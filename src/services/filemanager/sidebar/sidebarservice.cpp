@@ -118,6 +118,11 @@ void SideBarService::triggerItemEdit(quint64 winId, const QUrl &url)
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, winId, url);
 }
 
+bool SideBarService::registerSortFunc(const QString &subGroup, SideBar::SortFunc func)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, subGroup, func).toBool();
+}
+
 void SideBarService::insertItem(int index, const SideBar::ItemInfo &info)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, index, info);

@@ -59,10 +59,9 @@ public:
         u.setPath("/");
         return u;
     }
+
     static quint64 getWinId(QWidget *widget);
 
-    static DSB_FM_NAMESPACE::SideBarService *sbServIns();
-    static DSC_NAMESPACE::PropertyDialogService *propertyDlgServIns();
     static DFMBASE_NAMESPACE::DeviceController *deviceServIns();
 
     static QUrl makeBlockDevUrl(const QString &id);
@@ -81,6 +80,9 @@ public:
     static bool isPresetSuffix(const QString &suffix);
     static bool shouldSystemPartitionHide();
     static bool shouldLoopPartitionsHide();
+
+    static bool sortItem(const QUrl &a, const QUrl &b);
+    static bool sortItem(DFMEntryFileInfoPointer a, DFMEntryFileInfoPointer b);
 
     static int getUniqueInteger();
 

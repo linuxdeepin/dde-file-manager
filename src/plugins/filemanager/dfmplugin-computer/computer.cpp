@@ -40,9 +40,6 @@
 #include "dfm-base/dfm_global_defines.h"
 
 DSB_FM_USE_NAMESPACE
-namespace GlobalPrivate {
-static WindowsService *winServ { nullptr };
-}   // namespace GlobalPrivate
 
 DPCOMPUTER_BEGIN_NAMESPACE
 /*!
@@ -68,13 +65,9 @@ void Computer::initialize()
 
     ComputerUnicastReceiver::instance()->connectService();
 
-    auto &ctx = dpfInstance.serviceContext();
-    DSB_FM_USE_NAMESPACE
-    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "Computer", "WindowService not loaded");
-    GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
-    connect(GlobalPrivate::winServ, &WindowsService::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
-    connect(GlobalPrivate::winServ, &WindowsService::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
-    connect(GlobalPrivate::winServ, &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
+    connect(WindowsService::service(), &WindowsService::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
+    connect(WindowsService::service(), &WindowsService::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
+    connect(WindowsService::service(), &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 }
 
 bool Computer::start()
@@ -96,28 +89,27 @@ void Computer::onWindowCreated(quint64 winId)
 
 void Computer::onWindowOpened(quint64 winId)
 {
-    auto window = GlobalPrivate::winServ->findWindowById(winId);
+    auto window = WindowsService::service()->findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
-    if (window->workSpace())
+    auto regSortAndQueryItems = [] {
+        SideBarService::service()->registerSortFunc(DFMBASE_NAMESPACE::Global::kComputer, [](const QUrl &a, const QUrl &b) { return ComputerUtils::sortItem(a, b); });
         ComputerItemWatcherInstance->startQueryItems();
+    };
+    if (window->workSpace())
+        regSortAndQueryItems();
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [] { ComputerItemWatcherInstance->startQueryItems(); }, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, [regSortAndQueryItems] { regSortAndQueryItems(); }, Qt::DirectConnection);
 
     if (window->sideBar())
         addComputerToSidebar();
     else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addComputerToSidebar(); }, Qt::DirectConnection);
 
-    if (window->titleBar()) {
+    if (window->titleBar())
         regComputerToSearch();
-    } else {
-        connect(window, &FileManagerWindow::titleBarInstallFinished, this,
-                [this] {
-                    regComputerToSearch();
-                },
-                Qt::DirectConnection);
-    }
+    else
+        connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
 }
 
 void Computer::onWindowClosed(quint64 winId)
@@ -127,42 +119,28 @@ void Computer::onWindowClosed(quint64 winId)
 
 void Computer::addComputerToSidebar()
 {
-    auto &ctx = dpfInstance.serviceContext();
-
-    DSB_FM_USE_NAMESPACE
-    if (!ctx.load(SideBarService::name()))
-        abort();
-    auto sidebarServ = ctx.service<SideBarService>(SideBarService::name());
-
     SideBar::ItemInfo entry;
     entry.group = SideBar::DefaultGroup::kDevice;
     entry.iconName = ComputerUtils::icon().name();
     entry.text = tr("Computer");
     entry.url = ComputerUtils::rootUrl();
     entry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
-    sidebarServ->insertItem(0, entry);
+    SideBarService::service()->insertItem(0, entry);
 }
 
 void Computer::regComputerCrumbToTitleBar()
 {
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        auto &ctx = dpfInstance.serviceContext();
-        if (ctx.load(TitleBarService::name())) {
-            auto titleBarServ = ctx.service<TitleBarService>(TitleBarService::name());
-            TitleBar::CustomCrumbInfo info;
-            info.scheme = ComputerUtils::scheme();
-            info.hideIconViewBtn = true;
-            info.hideListViewBtn = true;
-            info.hideDetailSpaceBtn = true;
-            info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == ComputerUtils::scheme(); };
-            info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-                Q_UNUSED(url);
-                return { TitleBar::CrumbData(ComputerUtils::rootUrl(), tr("Computer"), ComputerUtils::icon().name()) };
-            };
-            titleBarServ->addCustomCrumbar(info);
-        }
-    });
+    TitleBar::CustomCrumbInfo info;
+    info.scheme = ComputerUtils::scheme();
+    info.hideIconViewBtn = true;
+    info.hideListViewBtn = true;
+    info.hideDetailSpaceBtn = true;
+    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == ComputerUtils::scheme(); };
+    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
+        Q_UNUSED(url);
+        return { TitleBar::CrumbData(ComputerUtils::rootUrl(), tr("Computer"), ComputerUtils::icon().name()) };
+    };
+    TitleBarService::service()->addCustomCrumbar(info);
 }
 
 void Computer::regComputerToSearch()

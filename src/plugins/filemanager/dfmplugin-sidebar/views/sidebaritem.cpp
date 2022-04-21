@@ -69,6 +69,11 @@ void SideBarItem::setGroup(const QString &group)
     setData(group, Roles::ItemGroupRole);
 }
 
+QString SideBarItem::subGourp() const
+{
+    return info.subGroup;
+}
+
 void SideBarItem::setItemInfo(DSB_FM_NAMESPACE::SideBar::ItemInfo info)
 {
     this->info = info;

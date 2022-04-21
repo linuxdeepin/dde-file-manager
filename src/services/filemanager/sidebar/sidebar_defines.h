@@ -51,6 +51,7 @@ using CdActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
 using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targetUrl)>;
+using SortFunc = std::function<bool(const QUrl &, const QUrl &)>;
 
 struct ItemInfo
 {
@@ -60,6 +61,7 @@ struct ItemInfo
     QUrl url;
     Qt::ItemFlags flags;   //< Qt::ItemFlag
     bool removable { false };   //< item will set actionList(right edge)
+    QString subGroup;   // a custom group name used for sorting items
 
     CdActionCallback cdCb { nullptr };
     ContextMenuCallback contextMenuCb { nullptr };

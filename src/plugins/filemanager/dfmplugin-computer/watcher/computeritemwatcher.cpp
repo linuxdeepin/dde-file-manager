@@ -45,6 +45,7 @@
 #include <QWindow>
 
 DFMBASE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
 using namespace GlobalServerDefines;
 
@@ -101,13 +102,7 @@ ComputerDataList ComputerItemWatcher::getInitedItems()
 
 bool ComputerItemWatcher::typeCompare(const ComputerItemData &a, const ComputerItemData &b)
 {
-    if (a.info && b.info) {
-        if (a.info->order() == b.info->order())   // then sort by name
-            return a.info->displayName() < b.info->displayName();
-        else
-            return a.info->order() < b.info->order();
-    }
-    return false;
+    return ComputerUtils::sortItem(a.info, b.info);
 }
 
 void ComputerItemWatcher::initConn()
@@ -385,6 +380,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         sbItem.iconName = info->fileIcon().name() + "-symbolic";
     sbItem.text = info->displayName();
     sbItem.removable = removable;
+    sbItem.subGroup = Global::kComputer;
 
     sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     sbItem.contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
@@ -397,12 +393,12 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         auto mntUrl = info->targetUrl();
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
-    ComputerUtils::sbServIns()->addItem(sbItem);
+    SideBarService::service()->addItem(sbItem);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
-    ComputerUtils::sbServIns()->removeItem(url);
+    SideBarService::service()->removeItem(url);
 }
 
 void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
@@ -420,7 +416,7 @@ void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntU
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
-    ComputerUtils::sbServIns()->updateItem(url, newName, editable);
+    SideBarService::service()->updateItem(url, newName, editable);
 }
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)

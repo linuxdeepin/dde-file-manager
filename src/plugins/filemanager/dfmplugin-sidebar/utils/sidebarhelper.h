@@ -36,7 +36,6 @@ DPSIDEBAR_BEGIN_NAMESPACE
 class SideBarWidget;
 class SideBarItem;
 class SideBarItemSeparator;
-
 class SideBarHelper
 {
 public:
@@ -51,10 +50,13 @@ public:
     static QString makeItemIdentifier(const QString &group, const QUrl &url);
     static void defaultCdAction(quint64 windowId, const QUrl &url);
     static void defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+    static bool registerSortFunc(const QString &subGroup, DSB_FM_NAMESPACE::SideBar::SortFunc func);
+    static DSB_FM_NAMESPACE::SideBar::SortFunc sortFunc(const QString &subGroup);
 
 private:
     static QMutex &mutex();
     static QMap<quint64, SideBarWidget *> kSideBarMap;
+    static QMap<QString, DSB_FM_NAMESPACE::SideBar::SortFunc> kSortFuncs;
 };
 
 DPSIDEBAR_END_NAMESPACE

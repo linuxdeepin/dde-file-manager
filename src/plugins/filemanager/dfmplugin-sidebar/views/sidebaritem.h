@@ -55,6 +55,7 @@ public:
 
     QString group() const;
     void setGroup(const QString &group = "");
+    QString subGourp() const;
 
     void setItemInfo(DSB_FM_NAMESPACE::SideBar::ItemInfo info);
     DSB_FM_NAMESPACE::SideBar::ItemInfo itemInfo() const;

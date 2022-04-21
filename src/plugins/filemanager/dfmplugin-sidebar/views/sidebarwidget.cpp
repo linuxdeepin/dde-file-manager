@@ -211,7 +211,7 @@ void SideBarWidget::initDefaultModel()
         addItem(SideBarHelper::createSeparatorItem(group));
 
     // use cahce info
-    auto allGroup = SideBarInfoCacheMananger::instance()->goups();
+    auto allGroup = SideBarInfoCacheMananger::instance()->groups();
     std::for_each(allGroup.cbegin(), allGroup.cend(), [this](const QString &name) {
         auto list = SideBarInfoCacheMananger::instance()->indexCacheMap(name);
         for (auto &&info : list) {

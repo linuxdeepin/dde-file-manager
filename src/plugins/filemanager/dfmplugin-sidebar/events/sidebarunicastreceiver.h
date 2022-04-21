@@ -46,6 +46,7 @@ public slots:
     void invokeInsertItem(int index,
                           const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
     void invokeTriggerItemEdit(quint64 winId, const QUrl &url);
+    bool invokeRegisterSortFunc(const QString &subGroup, DSB_FM_NAMESPACE::SideBar::SortFunc func);
 
 private:
     explicit SideBarUnicastReceiver(QObject *parent = nullptr);

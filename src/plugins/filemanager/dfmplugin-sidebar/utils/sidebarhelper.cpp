@@ -38,6 +38,7 @@ DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
+QMap<QString, SideBar::SortFunc> SideBarHelper::kSortFuncs {};
 
 QList<SideBarWidget *> SideBarHelper::allSideBar()
 {
@@ -177,6 +178,21 @@ void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const
     });
     menu->exec(globalPos);
     delete menu;
+}
+
+bool SideBarHelper::registerSortFunc(const QString &subGroup, SideBar::SortFunc func)
+{
+    if (kSortFuncs.contains(subGroup)) {
+        qDebug() << subGroup << "has already been registered";
+        return false;
+    }
+    kSortFuncs.insert(subGroup, func);
+    return true;
+}
+
+SideBar::SortFunc SideBarHelper::sortFunc(const QString &subGroup)
+{
+    return kSortFuncs.value(subGroup, nullptr);
 }
 
 QMutex &SideBarHelper::mutex()

@@ -46,6 +46,7 @@
 #include <QMenu>
 
 DFMBASE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
 DPCOMPUTER_USE_NAMESPACE
 using namespace GlobalServerDefines;
 
@@ -196,7 +197,7 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 
     // update sidebar and computer display
     QString sidebarName = displayAlias.isEmpty() ? info->displayName() : displayAlias;
-    ComputerUtils::sbServIns()->updateItem(info->url(), sidebarName, true);
+    SideBarService::service()->updateItem(info->url(), sidebarName, true);
     Q_EMIT updateItemAlias(info->url());
 }
 
@@ -459,7 +460,7 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
     if (!triggerFromSidebar)
         Q_EMIT requestRename(winId, info->url());
     else
-        ComputerUtils::sbServIns()->triggerItemEdit(winId, info->url());
+        SideBarService::service()->triggerItemEdit(winId, info->url());
 }
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)

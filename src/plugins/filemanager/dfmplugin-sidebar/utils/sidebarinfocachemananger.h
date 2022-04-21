@@ -48,7 +48,7 @@ public:
     static SideBarInfoCacheMananger *instance();
 
     bool contains(const ItemInfo &info) const;
-    GroupList goups() const;
+    GroupList groups() const;
     CacheInfoList indexCacheMap(const Group &name) const;
 
     bool addItemInfoCache(const ItemInfo &info);

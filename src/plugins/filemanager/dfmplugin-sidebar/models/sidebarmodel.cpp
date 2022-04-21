@@ -22,6 +22,7 @@
 #include "sidebarmodel.h"
 #include "views/sidebaritemdelegate.h"
 #include "views/sidebaritem.h"
+#include "utils/sidebarhelper.h"
 
 #include <QMimeData>
 #include <QDebug>
@@ -181,27 +182,36 @@ int SideBarModel::appendRow(SideBarItem *item)
     if (!item)
         return -1;
 
-    QString currentGroup = item->group();
     if (rowCount() == 0) {
         QStandardItemModel::appendRow(item);
         return 0;
     } else {
-        // find insert group
-        for (int row = rowCount() - 1; row >= 0; row--) {
-            auto findedItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
+        const QString &currentGroup = item->group();
+        const QString &subGroup = item->subGourp();
+        auto sortFunc = SideBarHelper::sortFunc(subGroup);
 
-            if (!findedItem)
+        bool foundGroup = false;
+        for (int r = 0; r < rowCount(); r++) {
+            auto tmpItem = dynamic_cast<SideBarItem *>(this->item(r, 0));
+            if (!tmpItem)
                 continue;
-
-            if (findedItem && findedItem->group() == currentGroup) {
-                QStandardItemModel::insertRow(row + 1, item);
-                return row + 1;
+            if (tmpItem->group() == currentGroup) {
+                foundGroup = true;
+                if (sortFunc && sortFunc(item->url(), tmpItem->url())) {
+                    QStandardItemModel::insertRow(r, item);
+                    return r;
+                }
+            } else {
+                if (foundGroup) {   // if already found group, then insert the item after the last same group item's position
+                    QStandardItemModel::insertRow(r, item);
+                    return r;
+                }
             }
         }
-        QStandardItemModel::appendRow(item);
     }
 
-    return 0;
+    QStandardItemModel::appendRow(item);
+    return rowCount() - 1;
 }
 
 bool SideBarModel::removeRow(SideBarItem *item)

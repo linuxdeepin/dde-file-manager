@@ -402,8 +402,9 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
     }
     view->update(this->index(pos, 0));
 
+    DSB_FM_USE_NAMESPACE
     if (key == DeviceProperty::kIdLabel && !val.toString().isEmpty())
-        ComputerUtils::sbServIns()->updateItem(url, val.toString(), true);
+        SideBarService::service()->updateItem(url, val.toString(), true);
 }
 
 DPCOMPUTER_END_NAMESPACE
