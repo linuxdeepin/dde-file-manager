@@ -27,6 +27,7 @@
 
 Q_DECLARE_METATYPE(QRectF *)
 Q_DECLARE_METATYPE(QPainter *)
+Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -47,6 +48,11 @@ bool WorkspaceEventSequence::doPaintListItem(int role, const QUrl &url, QPainter
 bool WorkspaceEventSequence::doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
     return sequence()->run(Workspace::EventType::kPaintIconItem, role, url, painter, rect);
+}
+
+bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
+{
+    return sequence()->run(Workspace::EventType::kCheckDragDropAction, urls, urlTo, action);
 }
 
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)

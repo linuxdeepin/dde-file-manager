@@ -38,6 +38,7 @@ public:
 
     bool doPaintListItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
+    bool doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
 
 private:
     explicit WorkspaceEventSequence(QObject *parent = nullptr);

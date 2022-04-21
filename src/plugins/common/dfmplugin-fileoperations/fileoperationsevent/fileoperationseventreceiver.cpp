@@ -252,6 +252,18 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
                 handleCallback(handle);
             return;
         }
+    } else if (!sources.isEmpty() && !sources.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sources.first().scheme());
+        }
+        if (function && function->moveFromTash) {
+            JobHandlePointer handle = function->moveFromTash(windowId, sources, target, flags);
+            if (handleCallback)
+                handleCallback(handle);
+            return;
+        }
     }
     JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
     if (handleCallback)

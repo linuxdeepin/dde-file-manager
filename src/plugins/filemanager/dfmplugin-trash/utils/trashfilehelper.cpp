@@ -89,6 +89,20 @@ JobHandlePointer TrashFileHelper::moveToTrashHandle(const quint64 windowId, cons
     return {};
 }
 
+JobHandlePointer TrashFileHelper::moveFromTrashHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl &targetUrl, const AbstractJobHandler::JobFlags flags)
+{
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : sources) {
+        redirectedFileUrls << TrashHelper::toLocalFile(url);
+    }
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile,
+                                          windowId,
+                                          redirectedFileUrls,
+                                          targetUrl,
+                                          AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
+    return {};
+}
+
 JobHandlePointer TrashFileHelper::deletesHandle(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
 {
     // Todo(yanghao&lxs):回收站彻底删除

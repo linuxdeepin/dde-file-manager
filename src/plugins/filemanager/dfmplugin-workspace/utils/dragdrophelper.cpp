@@ -25,6 +25,7 @@
 #include "models/filesortfilterproxymodel.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/windowutils.h"
+#include "events/workspaceeventsequence.h"
 
 #include <DFileDragClient>
 
@@ -54,6 +55,18 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
         if (!info || !info->canMoveOrCopy()) {
             event->ignore();
             return true;
+        }
+    }
+
+    Qt::DropAction action = event->dropAction();
+    if (WorkspaceEventSequence::instance()->doCheckDragTarget(currentDragUrls, view->rootUrl(), &action)) {
+        switch (action) {
+        case Qt::IgnoreAction: {
+            event->ignore();
+            return true;
+        }
+        default:
+            event->setDropAction(action);
         }
     }
 
@@ -210,8 +223,11 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
 {
     const QModelIndex &index = view->indexAt(pos);
     if (index.isValid()) {
-        return view->model()->itemFromIndex(index)->fileInfo();
+        const FileViewItem *item = view->model()->itemFromIndex(index);
+        if (item)
+            return view->model()->itemFromIndex(index)->fileInfo();
     } else {
         return view->model()->rootItem()->fileInfo();
     }
+    return nullptr;
 }

@@ -54,6 +54,7 @@ class TrashHelper final : public QObject
 
 public:
     static TrashHelper *instance();
+    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 
     inline static QString scheme()
     {
@@ -75,6 +76,7 @@ public:
     static QUrl toLocalFile(const QUrl &url);
     static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);
+    bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
 
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();

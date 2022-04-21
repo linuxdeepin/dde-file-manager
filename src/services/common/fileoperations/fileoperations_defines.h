@@ -49,6 +49,10 @@ using HandleOperationCut = std::function<JobHandlePointer(const quint64 windowId
 using HandleOperationMoveToTrash = std::function<JobHandlePointer(const quint64 windowId,
                                                                   const QList<QUrl> sources,
                                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
+using HandleOperationMoveFromTrash = std::function<JobHandlePointer(const quint64 windowId,
+                                                                    const QList<QUrl> sources,
+                                                                    const QUrl target,
+                                                                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
 using HandleOperationRestoreFromTrash = std::function<JobHandlePointer(const quint64 windowId,
                                                                        const QList<QUrl> sources,
                                                                        const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)>;
@@ -101,6 +105,7 @@ struct FileOperationsInfo
     HandleOperationCopy copy { nullptr };
     HandleOperationCut cut { nullptr };
     HandleOperationMoveToTrash moveToTash { nullptr };
+    HandleOperationMoveFromTrash moveFromTash { nullptr };
     HandleOperationRestoreFromTrash restoreFromTrash { nullptr };
     HandleOperationDeletes deletes { nullptr };
     HandleOperationOpenFiles openFiles { nullptr };

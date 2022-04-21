@@ -61,6 +61,11 @@ TrashHelper *TrashHelper::instance()
     return &instance;
 }
 
+dpf::EventSequenceManager *TrashHelper::eventSequence()
+{
+    return &dpfInstance.eventSequence();
+}
+
 QUrl TrashHelper::rootUrl()
 {
     QUrl url;
@@ -174,6 +179,24 @@ bool TrashHelper::isEmpty()
 void TrashHelper::emptyTrash(const quint64 windowId)
 {
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Trash::EventType::kEmptyTrash, windowId);
+}
+
+bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
+{
+    if (urls.isEmpty())
+        return false;
+    if (!action)
+        return false;
+
+    const QUrl &urlFrom = urls.first();
+    if (urlFrom.scheme() == Global::kTrash && urlTo.scheme() == Global::kTrash) {
+        *action = Qt::IgnoreAction;
+        return true;
+    } else if (urlFrom.scheme() == Global::kTrash) {
+        *action = Qt::MoveAction;
+        return true;
+    }
+    return false;
 }
 
 DSB_FM_NAMESPACE::WindowsService *TrashHelper::winServIns()

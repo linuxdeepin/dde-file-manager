@@ -33,6 +33,8 @@
 
 #include <dfm-framework/framework.h>
 
+Q_DECLARE_METATYPE(Qt::DropAction *)
+
 DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -53,6 +55,9 @@ bool Trash::start()
 {
     addCustomTopWidget();
     addFileOperations();
+
+    TrashHelper::eventSequence()->follow(Workspace::EventType::kCheckDragDropAction, TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+
     return true;
 }
 
@@ -108,6 +113,7 @@ void Trash::addFileOperations()
     fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &TrashFileHelper::writeToClipBoardHandle;
     fileOpeationsHandle->moveToTash = &TrashFileHelper::moveToTrashHandle;
+    fileOpeationsHandle->moveFromTash = &TrashFileHelper::moveFromTrashHandle;
     fileOpeationsHandle->deletes = &TrashFileHelper::deletesHandle;
     fileOpeationsHandle->copy = &TrashFileHelper::copyHandle;
     fileOpeationsHandle->cut = &TrashFileHelper::cutHandle;

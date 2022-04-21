@@ -43,6 +43,11 @@ public:
                                               const QList<QUrl> sources,
                                               const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
+    static JobHandlePointer moveFromTrashHandle(const quint64 windowId,
+                                                const QList<QUrl> sources,
+                                                const QUrl &targetUrl,
+                                                const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+
     static JobHandlePointer deletesHandle(const quint64 windowId,
                                           const QList<QUrl> sources,
                                           const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);

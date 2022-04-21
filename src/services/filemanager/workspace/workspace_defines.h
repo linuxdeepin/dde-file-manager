@@ -53,6 +53,7 @@ extern const int kCloseTabs;
 extern const int kShowCustomTopWidget;
 extern const int kPaintListItem;
 extern const int kPaintIconItem;
+extern const int kCheckDragDropAction;
 };   // namespace EventType
 
 namespace MenuScene {
