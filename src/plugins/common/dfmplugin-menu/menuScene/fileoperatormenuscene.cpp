@@ -28,6 +28,7 @@
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/utils/properties.h>
+#include <dfm-base/utils/fileutils.h>
 #include <dfm-framework/framework.h>
 
 #include <QMenu>
@@ -48,6 +49,7 @@ FileOperatorMenuScenePrivate::FileOperatorMenuScenePrivate(FileOperatorMenuScene
     predicateName[ActionID::kOpen] = tr("Open");
     predicateName[ActionID::kRename] = tr("Rename");
     predicateName[ActionID::kDelete] = tr("Delete");
+    predicateName[ActionID::kCreateSymlink] = tr("Create link");
 }
 
 FileOperatorMenuScene::FileOperatorMenuScene(QObject *parent)
@@ -69,6 +71,7 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->isEmptyArea) {
         if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
@@ -114,6 +117,12 @@ bool FileOperatorMenuScene::create(QMenu *parent)
     tempAction = parent->addAction(d->predicateName.value(ActionID::kDelete));
     d->predicateAction[ActionID::kDelete] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDelete));
+
+    if (d->selectFiles.count() == 1) {
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kCreateSymlink));
+        d->predicateAction[ActionID::kCreateSymlink] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCreateSymlink));
+    }
 
     return true;
 }
@@ -205,7 +214,12 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // open
     if (actionId == ActionID::kOpen) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
+        if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isDir()) {
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, d->windowId, d->focusFile);
+        } else {
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
+        }
+
         return true;
     }
 
@@ -216,6 +230,17 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // delete
     if (actionId == ActionID::kDelete) {
         dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        return true;
+    }
+
+    // creat link
+    if (actionId == ActionID::kCreateSymlink) {
+        QString linkName = FileUtils::getSymlinkFileName(d->focusFile);
+        QUrl linkUrl = QUrl::fromLocalFile(d->currentDir.path() + "/" + linkName);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
+                                              d->windowId,
+                                              d->focusFile,
+                                              linkUrl);
         return true;
     }
 

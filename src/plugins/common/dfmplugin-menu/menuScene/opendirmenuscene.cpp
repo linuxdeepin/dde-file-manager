@@ -155,7 +155,7 @@ void OpenDirMenuScene::emptyMenu(QMenu *parent)
 
 void OpenDirMenuScene::normalMenu(QMenu *parent)
 {
-    if (d->selectFiles.count() == 1) {
+    if (d->selectFiles.count() == 1 && d->focusFileInfo->isDir()) {
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInNewWindow));
         d->predicateAction[ActionID::kOpenInNewWindow] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInNewWindow);
@@ -164,20 +164,16 @@ void OpenDirMenuScene::normalMenu(QMenu *parent)
         d->predicateAction[ActionID::kOpenInNewTab] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInNewTab);
 
-        if (d->focusFileInfo->isDir()) {
-            tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInTerminal));
-            d->predicateAction[ActionID::kOpenInTerminal] = tempAction;
-            tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInTerminal);
-        }
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenInTerminal));
+        d->predicateAction[ActionID::kOpenInTerminal] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInTerminal);
 
-        if (d->focusFileInfo->isDir()) {
-            if (SysInfoUtils::isRootUser() || SysInfoUtils::isServerSys() || SysInfoUtils::isDeveloperMode()) {
-                // root user, server version user and non developer mode do not need to be opened as an administrator
-            } else {
-                tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
-                d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
-                tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
-            }
+        if (SysInfoUtils::isRootUser() || SysInfoUtils::isServerSys() || !SysInfoUtils::isDeveloperMode()) {
+            // root user, server version user and non developer mode do not need to be opened as an administrator
+        } else {
+            tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
+            d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
         }
     }
 }

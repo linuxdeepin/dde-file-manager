@@ -20,6 +20,7 @@
  */
 #include "workspacemenuscene.h"
 #include "workspacemenuscene_p.h"
+#include "events/workspaceeventcaller.h"
 
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
@@ -38,7 +39,7 @@ DFMGLOBAL_USE_NAMESPACE
 static const char *const kNewCreateMenuSceneName = "NewCreateMenu";
 static const char *const kClipBoardMenuSceneName = "ClipBoardMenu";
 static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
-static const char *const kOpenFileMenuSceneName = "OpenFileMenu";
+static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
 static const char *const kSendToMenuSceneName = "SendToMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 
@@ -57,14 +58,14 @@ WorkspaceMenuScenePrivate::WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq)
 void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &sortRule)
 {
     auto actions = menu->actions();
+    // sort
     qSort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
         const auto &property1 = act1->property(ActionPropertyKey::kActionID).toString();
-        const auto &property2 = act2->property(ActionPropertyKey::kActionID).toString();
-
         auto index1 = sortRule.indexOf(property1);
         if (index1 == -1)
             return false;
 
+        const auto &property2 = act2->property(ActionPropertyKey::kActionID).toString();
         auto index2 = sortRule.indexOf(property2);
         if (index2 == -1)
             return true;
@@ -72,13 +73,38 @@ void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &s
         return index1 < index2;
     });
 
+    // insert separator func
+    std::function<void(int)> insertSeparator;
+    insertSeparator = [&](int index) {
+        if (index >= sortRule.size() || sortRule[index] == ActionID::kSeparator)
+            return;
+
+        auto rule = sortRule[index];
+        auto iter = std::find_if(actions.begin(), actions.end(), [&rule](const QAction *act) {
+            auto p = act->property(ActionPropertyKey::kActionID);
+            if (p == rule)
+                return true;
+
+            return false;
+        });
+
+        if (iter != actions.end()) {
+            QAction *separatorAct = new QAction(menu);
+            separatorAct->setSeparator(true);
+            actions.insert(iter, separatorAct);
+        } else {
+            insertSeparator(++index);
+        }
+    };
+
     // insert separator
     int index = sortRule.indexOf(ActionID::kSeparator);
     while (index != -1) {
-        QAction *separatorAct = new QAction(menu);
-        separatorAct->setSeparator(true);
-        actions.insert(index, separatorAct);
-        index = sortRule.indexOf(ActionID::kSeparator, index + 1);
+        if (++index >= sortRule.size())
+            break;
+
+        insertSeparator(index);
+        index = sortRule.indexOf(ActionID::kSeparator, index);
     }
 
     menu->addActions(actions);
@@ -102,6 +128,8 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (d->currentDir.isEmpty())
         return false;
@@ -125,8 +153,8 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
         if (auto openWithScene = d->menuServer->createScene(kOpenWithMenuSceneName))
             currentScene.append(openWithScene);
 
-        // file (rename)
-        if (auto fileScene = d->menuServer->createScene(kOpenFileMenuSceneName))
+        // file (open, rename, delete)
+        if (auto fileScene = d->menuServer->createScene(kFileOperatorMenuSceneName))
             currentScene.append(fileScene);
 
         if (auto sendToScene = d->menuServer->createScene(kSendToMenuSceneName))
@@ -175,6 +203,8 @@ void WorkspaceMenuScene::updateState(QMenu *parent)
 {
     if (d->isEmptyArea) {
         d->sortMenuAction(parent, d->emptyMenuActionRule());
+    } else {
+        d->sortMenuAction(parent, d->normalMenuActionRule());
     }
     // todo: sort item (liuzhangjian)
     AbstractMenuScene::updateState(parent);
@@ -261,6 +291,28 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
 
 bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
 {
-    // todo (liuzhangjian)
+    const auto &actionId = action->property(ActionPropertyKey::kActionID).toString();
+    auto actionScene = scene(action);
+    if (!actionScene) {
+        qWarning() << actionId << " doesn't belong to any scene.";
+        return false;
+    }
+
+    const QString &sceneName = actionScene->name();
+    if (sceneName == kFileOperatorMenuSceneName) {
+        // rename
+        if (actionId == dfmplugin_menu::ActionID::kRename) {
+            if (1 == d->selectFiles.count()) {
+                const QModelIndex &index = d->view->selectionModel()->currentIndex();
+                if (Q_UNLIKELY(!index.isValid()))
+                    return false;
+                d->view->edit(index);
+            } else {
+                WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::kFile, true);
+            }
+            return true;
+        }
+    }
+
     return AbstractMenuScene::triggered(action);
 }

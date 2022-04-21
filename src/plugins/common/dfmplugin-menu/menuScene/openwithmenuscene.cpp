@@ -23,12 +23,14 @@
 #include "private/openwithmenuscene_p.h"
 
 #include <services/common/menu/menu_defines.h>
+#include <services/common/openwith/openwithservice.h>
 
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/desktopfileinfo.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/utils/properties.h>
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-framework/framework.h>
 
 #include <QMenu>
@@ -37,6 +39,9 @@
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
+
+static const char *const kAppName = "AppName";
+static const char *const kSelectedUrls = "SelectedUrls";
 
 AbstractMenuScene *OpenWithMenuCreator::create()
 {
@@ -47,6 +52,7 @@ OpenWithMenuScenePrivate::OpenWithMenuScenePrivate(OpenWithMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
     predicateName[ActionID::kOpenWith] = tr("Open with");
+    predicateName[ActionID::kOpenWithCustom] = tr("Select default program");
 }
 
 OpenWithMenuScene::OpenWithMenuScene(QObject *parent)
@@ -79,6 +85,7 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
         return false;
     }
 
+    MimesAppsManager::instance()->initMimeTypeApps();
     d->recommendApps = MimesAppsManager::instance()->getRecommendedApps(d->focusFileInfo->redirectedFileUrl());
 
     // why?
@@ -124,18 +131,20 @@ bool OpenWithMenuScene::create(QMenu *parent)
     }
 
     foreach (QString app, d->recommendApps) {
-        app = QUrl::fromLocalFile(app).toString();
-        DesktopFileInfo desktop(app);
+        DesktopFileInfo desktop(QUrl::fromLocalFile(app));
         QAction *action = subMenu->addAction(desktop.fileIcon(), desktop.fileDisplayName());
 
         // TODO(Lee or others): 此种外部注入的未分配谓词
-        d->predicateAction[app] = tempAction;
-
-        // action->setIcon(FileUtils::searchAppIcon(desktopFile));
-        action->setProperty("app", app);
-        action->setProperty("redirectedUrls", QVariant::fromValue(redirectedUrlList));
-        subMenu->addAction(action);
+        d->predicateAction[app] = action;
+        action->setProperty(kAppName, app);
+        action->setProperty(kSelectedUrls, QVariant::fromValue(redirectedUrlList));
+        action->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenWithApp);
     }
+
+    tempAction = subMenu->addAction(d->predicateName.value(ActionID::kOpenWithCustom));
+    d->predicateAction[ActionID::kOpenWithCustom] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenWithCustom);
+    tempAction->setProperty(kSelectedUrls, QVariant::fromValue(redirectedUrlList));
 
     return true;
 }
@@ -199,8 +208,19 @@ void OpenWithMenuScene::updateState(QMenu *parent)
 
 bool OpenWithMenuScene::triggered(QAction *action)
 {
-    Q_UNUSED(action)
-    // TODO(Lee or others):
+    auto actProperty = action->property(ActionPropertyKey::kActionID);
+    if (actProperty == ActionID::kOpenWithApp) {
+        auto appName = action->property(kAppName).toString();
+        auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
+
+        return dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, selectUrls, QList<QString>() << appName);
+    }
+
+    if (actProperty == ActionID::kOpenWithCustom) {
+        auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
+        OpenWithService::service()->showOpenWithDialog(selectUrls);
+        return true;
+    }
 
     return false;
 }

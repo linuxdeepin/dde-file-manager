@@ -28,9 +28,11 @@
 #include "services/common/bluetooth/bluetoothservice.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/standardpaths.h>
 
 #include <dfm-framework/framework.h>
 
@@ -62,6 +64,8 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     for (auto url : d->selectFiles) {
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
@@ -83,6 +87,12 @@ bool SendToMenuScene::create(QMenu *parent)
         return false;
 
     if (!d->isEmptyArea) {
+        if (!d->onDesktop) {
+            auto *act = parent->addAction(d->predicateName[ActionID::kSendToDesktop]);
+            act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
+            d->predicateAction[ActionID::kSendToDesktop] = act;
+        }
+
         QMenu *sendToMenu = new QMenu(parent);
         d->addSubActions(sendToMenu);
         if (sendToMenu->actions().isEmpty()) {
@@ -136,6 +146,7 @@ SendToMenuScenePrivate::SendToMenuScenePrivate(AbstractMenuScene *qq)
 {
     predicateName[ActionID::kSendTo] = tr("Send to");
     predicateName[ActionID::kSendToBluetooth] = tr("Bluetooth");
+    predicateName[ActionID::kSendToDesktop] = tr("Send to desktop");
 }
 
 void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
@@ -208,5 +219,15 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
         dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    } else if (actId == ActionID::kSendToDesktop) {
+        QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
+        for (const auto &url : selectFiles) {
+            QString linkName = FileUtils::getSymlinkFileName(url);
+            QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
+                                                  windowId,
+                                                  url,
+                                                  linkUrl);
+        }
     }
 }

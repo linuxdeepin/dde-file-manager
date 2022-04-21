@@ -72,8 +72,6 @@ void FileViewMenuHelper::showEmptyAreaMenu()
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
-    Q_UNUSED(indexFlags)
-
     auto scene = MenuService::service()->createScene(currentMenuScene());
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
@@ -84,6 +82,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
     params[MenuParamKey::kFocusFile] = view->model()->itemFileInfo(index)->url();
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(view->selectedUrlList());
+    params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kWindowId] = WindowsService::service()->findWindowId(view);

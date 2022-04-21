@@ -47,14 +47,18 @@ static constexpr char kOpenInTerminal[] = "open-in-terminal";
 static constexpr char kOpen[] = "open";
 static constexpr char kRename[] = "rename";
 static constexpr char kDelete[] = "delete";
+static constexpr char kCreateSymlink[] = "create-system-link";
 
 // "OpenWithMenu"
 static constexpr char kOpenWith[] = "open-with";
+static constexpr char kOpenWithCustom[] = "open-with-custom";
+static constexpr char kOpenWithApp[] = "open-with-app";
 
 // SendToMenu
 static constexpr char kSendTo[] = "send-to";
 static constexpr char kSendToBluetooth[] = "send-to-bluetooth";
 static constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
+static constexpr char kSendToDesktop[] = "send-to-desktop";
 }
 }
 

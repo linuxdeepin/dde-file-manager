@@ -52,7 +52,32 @@ public:
             dfmplugin_menu::ActionID::kOpenInTerminal,
             ActionID::kSeparator,
             dfmplugin_menu::ActionID::kPaste,
-            dfmplugin_menu::ActionID::kSelectAll,
+            dfmplugin_menu::ActionID::kSelectAll
+        };
+
+        return actionRule;
+    }
+
+    inline QStringList normalMenuActionRule()
+    {
+        static QStringList actionRule {
+            dfmplugin_menu::ActionID::kOpen,
+            dfmplugin_menu::ActionID::kOpenWith,
+            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kOpenInNewWindow,
+            dfmplugin_menu::ActionID::kOpenInNewTab,
+            dfmplugin_menu::ActionID::kOpenAsAdmin,
+            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kCut,
+            dfmplugin_menu::ActionID::kCopy,
+            dfmplugin_menu::ActionID::kRename,
+            dfmplugin_menu::ActionID::kDelete,
+            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kCreateSymlink,
+            dfmplugin_menu::ActionID::kSendToDesktop,
+            dfmplugin_menu::ActionID::kSendTo,
+            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kOpenInTerminal
         };
 
         return actionRule;
