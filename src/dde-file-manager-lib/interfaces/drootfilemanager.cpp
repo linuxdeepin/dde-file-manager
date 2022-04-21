@@ -41,6 +41,7 @@
 #include "utils.h"
 #include "dfmapplication.h"
 #include "plugins/schemepluginmanager.h"
+#include "utils/grouppolicy.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -70,6 +71,7 @@ DRootFileManager::DRootFileManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DRootFileManagerPrivate())
 {
+    connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, &DRootFileManager::hideSystemPartition);
     connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);
     connect(DFMApplication::instance(), &DFMApplication::reloadComputerModel, this, &DRootFileManager::hideSystemPartition);
 }

@@ -29,6 +29,8 @@
 #include <dfmevent.h>
 #include "testhelper.h"
 #include "stub-ext/stubext.h"
+#include "dabstractfilewatcher.h"
+#include "grouppolicy.h"
 
 #include <QProcess>
 #include <QStandardPaths>
@@ -77,6 +79,29 @@ namespace  {
     };
 }
 
+QVariant getValueTest(const QString &key, const QVariant &fallback = QVariant())
+{
+    Q_UNUSED(key)
+    Q_UNUSED(fallback)
+    return QVariant();
+}
+
+void setValueTest(const QString &key, const QVariant &value)
+{
+    Q_UNUSED(key)
+    Q_UNUSED(value)
+    return ;
+}
+
+bool renameFileTest(const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false)
+{
+    Q_UNUSED(sender)
+    Q_UNUSED(from)
+    Q_UNUSED(to)
+    Q_UNUSED(silent)
+    return true;
+}
+
 TEST_F(TestBookMarkManager, can_touch_a_new_bookmark)
 {
     QProcess::execute("mkdir " + tempDirPath);
@@ -92,6 +117,15 @@ TEST_F(TestBookMarkManager, can_touch_a_new_bookmark)
     DUrl bookMarkFrom = DUrl::fromBookMarkFile(fileUrl, fileUrl.fileName());
     bookMarkFrom.setQuery(query);
     QSharedPointer<DFMTouchFileEvent> event(new DFMTouchFileEvent(nullptr, bookMarkFrom));
+
+    Stub st;
+    bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+    (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) {return true;};
+    st.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher, ghostSignal), ghostSignallamda);
+
+    st.set(ADDR(GroupPolicy, getValue), getValueTest);
+    st.set(ADDR(GroupPolicy, setValue), setValueTest);
 
     EXPECT_TRUE(m_pTester->touch(event));
 }
@@ -149,6 +183,9 @@ TEST_F(TestBookMarkManager, can_rename_bookmark_sidebar_item)
     m_pItem = m_pHandler->createItem(url);
     ASSERT_NE(m_pItem, nullptr);
 
+    Stub tub;
+    tub.set(ADDR(DFileService, renameFile), renameFileTest);
+
     m_pHandler->rename(m_pItem, BOOKMARK_NEW_STR);
 }
 
@@ -160,6 +197,15 @@ TEST_F(TestBookMarkManager, can_rename_bookmark)
 
     QSharedPointer<DFMRenameEvent> event(new DFMRenameEvent(nullptr, bookMarkFrom, bookMarkTo));
 
+    Stub st;
+    bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+    (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) {return true;};
+    st.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher, ghostSignal), ghostSignallamda);
+
+    st.set(ADDR(GroupPolicy, getValue), getValueTest);
+    st.set(ADDR(GroupPolicy, setValue), setValueTest);
+
     EXPECT_TRUE(m_pTester->renameFile(event));
 }
 
@@ -167,6 +213,14 @@ TEST_F(TestBookMarkManager, can_rename_bookmark_file)
 {
     DUrl fromUrl = DUrl::fromLocalFile(tempDirPath);
     DUrl toUrl = DUrl::fromLocalFile(tempDirPath.replace(BOOKMARK_STR, BOOKMARK_NEW_STR));
+
+    Stub st;
+    bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+    (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) {return true;};
+    st.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher, ghostSignal), ghostSignallamda);
+
+    st.set(ADDR(GroupPolicy, getValue), getValueTest);
 
     EXPECT_TRUE(m_pTester->onFileRenamed(fromUrl, toUrl));
 }
@@ -180,6 +234,15 @@ TEST_F(TestBookMarkManager, can_find_bookmark_data)
 
 TEST_F(TestBookMarkManager, can_refresh_bookmark)
 {
+    Stub st;
+    bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+    (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) {return true;};
+    st.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher, ghostSignal), ghostSignallamda);
+
+    st.set(ADDR(GroupPolicy, getValue), getValueTest);
+    st.set(ADDR(GroupPolicy, setValue), setValueTest);
+
     EXPECT_NO_FATAL_FAILURE(m_pTester->refreshBookmark());
 }
 
@@ -193,6 +256,15 @@ TEST_F(TestBookMarkManager, can_remove_bookmark)
     DUrl fileUrl = DUrl::fromBookMarkFile(DUrl::fromLocalFile(tempDirPath.replace(BOOKMARK_STR, BOOKMARK_NEW_STR)), BOOKMARK_NEW_STR);
 
     QSharedPointer<DFMDeleteEvent> event(new DFMDeleteEvent(nullptr, DUrlList{fileUrl}));
+
+    Stub st;
+    bool (*ghostSignallamda)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) = []
+    (const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int) {return true;};
+    st.set((bool (*)(const DUrl &, DAbstractFileWatcher::SignalType3, const DUrl &, const int))\
+            ADDR(DAbstractFileWatcher, ghostSignal), ghostSignallamda);
+
+    st.set(ADDR(GroupPolicy, getValue), getValueTest);
+    st.set(ADDR(GroupPolicy, setValue), setValueTest);
 
     EXPECT_TRUE(m_pTester->deleteFiles(event));
 

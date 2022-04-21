@@ -5,7 +5,8 @@ HEADERS += \
     $$PWD/qobjecthelper.h \
     $$PWD/singleton.h \
     $$PWD/cryptoutils.h \
-    $$PWD/desktopinfo.h
+    $$PWD/desktopinfo.h \
+    $$PWD/grouppolicy.h
 
 SOURCES += \
     $$PWD/utils.cpp \
@@ -13,4 +14,5 @@ SOURCES += \
     $$PWD/debugobejct.cpp \
     $$PWD/qobjecthelper.cpp \
     $$PWD/cryptoutils.cpp \
-    $$PWD/desktopinfo.cpp
+    $$PWD/desktopinfo.cpp \
+    $$PWD/grouppolicy.cpp
