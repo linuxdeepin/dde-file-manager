@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     lanxuesong<lanxuesong@uniontech.com>
  *
- * Maintainer: liuyangming<liuyangming@uniontech.com>
+ * Maintainer: lanxuesong<lanxuesong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,28 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef DFMPLUGIN_TRASH_GLOBAL_H
-#define DFMPLUGIN_TRASH_GLOBAL_H
+ */
 
-#define DPTRASH_BEGIN_NAMESPACE namespace dfmplugin_trash {
-#define DPTRASH_END_NAMESPACE }
-#define DPTRASH_USE_NAMESPACE using namespace dfmplugin_trash;
-#define DPTRASH_NAMESPACE dfmplugin_trash
+#ifndef TRASHMENUSCENE_P_H
+#define TRASHMENUSCENE_P_H
+
+#include "dfmplugin_trash_global.h"
+
+#include <interfaces/private/abstractmenuscene_p.h>
 
 DPTRASH_BEGIN_NAMESPACE
-namespace TrashActionId {
-static constexpr char kRestore[] { "restore" };
-static constexpr char kRestoreAll[] { "restore-all" };
-static constexpr char kEmptyTrash[] { "empty-trash" };
-}
+
+class TrashMenuScene;
+class TrashMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
+{
+    friend class TrashMenuScene;
+
+public:
+    explicit TrashMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
+
+private:
+};
+
 DPTRASH_END_NAMESPACE
 
-#endif   // DFMPLUGIN_TRASH_GLOBAL_H
+#endif   // TRASHMENUSCENE_P_H
