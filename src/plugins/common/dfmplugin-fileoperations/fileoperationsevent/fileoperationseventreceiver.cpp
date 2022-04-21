@@ -710,11 +710,36 @@ QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId
                                                           const QUrl url,
                                                           const CreateFileType fileType)
 {
-    QString newPath = newDocmentName(url.path(), QString(), fileType);
-    if (newPath.isEmpty())
-        return newPath;
+    if (url.isLocalFile()) {
+        QString newPath = newDocmentName(url.path(), QString(), fileType);
+        if (newPath.isEmpty())
+            return newPath;
 
-    return handleOperationMkdir(windowId, QUrl::fromLocalFile(newPath)) ? newPath : QString();
+        QUrl urlNew;
+        urlNew.setScheme(url.scheme());
+        urlNew.setPath(newPath);
+
+        return handleOperationMkdir(windowId, urlNew) ? newPath : QString();
+    } else {
+        QString error;
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(url.scheme());
+        }
+        if (function && function->makeDir) {
+            bool ok = false;
+            ok = function->makeDir(windowId, url, &error, fileType);
+            if (!ok) {
+                dialogManager->showErrorDialog("make dir error", error);
+            }
+            // TODO:: make dir finished need to send make dir finished event
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+                                                  windowId, QList<QUrl>() << url, ok, error);
+            return ok ? url.path() : QString();
+        }
+        return handleOperationMkdir(windowId, url) ? url.path() : QString();
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
@@ -735,23 +760,7 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
     }
 }
 
-void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
-                                                       const QUrl url, const QVariant custom,
-                                                       OperatorCallback callback)
-{
-    bool ok = handleOperationMkdir(windowId, url);
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
-}
-
-bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
-                                                       const QUrl url)
+bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, const QUrl url)
 {
     Q_UNUSED(windowId);
     bool ok = false;
@@ -762,8 +771,8 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
             QMutexLocker lk(functionsMutex.data());
             function = this->functions.value(url.scheme());
         }
-        if (function && function->makedir) {
-            ok = function->makedir(windowId, url, &error);
+        if (function && function->makeDir) {
+            ok = function->makeDir(windowId, url, &error, DFMGLOBAL_NAMESPACE::CreateFileType::kCreateFileTypeUnknow);
             if (!ok) {
                 dialogManager->showErrorDialog("make dir error", error);
             }
@@ -785,6 +794,22 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
     return ok;
 }
 
+void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
+                                                       const QUrl url,
+                                                       const QVariant custom,
+                                                       OperatorCallback callback)
+{
+    bool ok = handleOperationMkdir(windowId, url);
+    if (callback) {
+        CallbackArgus args(new QMap<CallbackKey, QVariant>);
+        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
+        args->insert(CallbackKey::kCustom, custom);
+        callback(args);
+    }
+}
+
 bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                            const QUrl url)
 {
@@ -798,7 +823,7 @@ bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
             function = this->functions.value(url.scheme());
         }
         if (function && function->touchFile) {
-            ok = function->touchFile(windowId, url, &error);
+            ok = function->touchFile(windowId, url, &error, DFMGLOBAL_NAMESPACE::CreateFileType::kCreateFileTypeUnknow);
             if (!ok) {
                 dialogManager->showErrorDialog("touch file error", error);
             }
@@ -837,13 +862,40 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
 
 QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
                                                               const QUrl url,
-                                                              const CreateFileType fileType, const QString suffix)
+                                                              const CreateFileType fileType,
+                                                              const QString suffix)
 {
-    QString newPath = newDocmentName(url.path(), suffix, fileType);
-    if (newPath.isEmpty())
-        return newPath;
+    Q_UNUSED(suffix)
+    if (url.isLocalFile()) {
+        QString newPath = newDocmentName(url.path(), QString(), fileType);
+        if (newPath.isEmpty())
+            return newPath;
 
-    return handleOperationTouchFile(windowId, QUrl::fromLocalFile(newPath)) ? newPath : QString();
+        QUrl urlNew;
+        urlNew.setScheme(url.scheme());
+        urlNew.setPath(newPath);
+
+        return handleOperationTouchFile(windowId, urlNew) ? newPath : QString();
+    } else {
+        QString error;
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(url.scheme());
+        }
+        if (function && function->touchFile) {
+            bool ok = false;
+            ok = function->touchFile(windowId, url, &error, fileType);
+            if (!ok) {
+                dialogManager->showErrorDialog("touch file error", error);
+            }
+            // TODO:: touch file finished need to send touch file finished event
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                                                  windowId, QList<QUrl>() << url, ok, error);
+            return ok ? url.path() : QString();
+        }
+        return handleOperationTouchFile(windowId, url) ? url.path() : QString();
+    }
 }
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,

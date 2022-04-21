@@ -29,6 +29,9 @@
 #include "events/workspaceeventcaller.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/fileutils.h"
+
+#include <dfm-io/dfmio_utils.h>
 
 #include <QAction>
 #include <QDebug>
@@ -248,7 +251,13 @@ void ShortcutHelper::moveToTrash()
     const QList<QUrl> &urls = view->selectedUrlList();
 
     if (!urls.isEmpty()) {
-        FileOperatorHelperIns->moveToTrash(view);
+        const QUrl &rootUrl = view->rootUrl();
+
+        if (FileUtils::isGvfsFile(rootUrl) || DFMIO::DFMUtils::fileIsRemovable(rootUrl)) {
+            deleteFiles();
+        } else {
+            FileOperatorHelperIns->moveToTrash(view);
+        }
     }
 }
 

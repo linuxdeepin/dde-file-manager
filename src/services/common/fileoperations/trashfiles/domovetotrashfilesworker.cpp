@@ -213,7 +213,7 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
     emitCurrentTaskNotify(fileInfo->url(), targetUrl);
 
     bool result = false;
-    if (!WriteTrashInfo(fileInfo, targetPath, &result)) {
+    if (!writeTrashInfo(fileInfo, targetPath, &result)) {
         return result;
     }
     QFile targetFile(fileInfo->symLinkTarget());
@@ -249,7 +249,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 {
     QString targetPath;
     bool result = false;
-    if (!WriteTrashInfo(fileInfo, targetPath, &result)) {
+    if (!writeTrashInfo(fileInfo, targetPath, &result)) {
         return result;
     }
 
@@ -312,7 +312,7 @@ bool DoMoveToTrashFilesWorker::checkFileOutOfLimit(const AbstractFileInfoPointer
     return FileOperationsUtils::isFilesSizeOutLimit(fileInfo->url(), 1024 * 1024 * 1024);
 }
 
-bool DoMoveToTrashFilesWorker::WriteTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool *result)
+bool DoMoveToTrashFilesWorker::writeTrashInfo(const AbstractFileInfoPointer &fileInfo, QString &targetPath, bool *result)
 {
     if (!stateCheck())
         return false;

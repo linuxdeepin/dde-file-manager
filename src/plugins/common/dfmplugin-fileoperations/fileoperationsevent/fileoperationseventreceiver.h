@@ -165,28 +165,32 @@ public slots:
                               const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
                               const QVariant custom,
                               DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+
     bool handleOperationMkdir(const quint64 windowId,
                               const QUrl url);
     void handleOperationMkdir(const quint64 windowId,
                               const QUrl url,
                               const QVariant custom,
                               DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+
     bool handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url);
-    void handleOperationTouchFile(const quint64 windowId,
-                                  const QUrl url,
-                                  const QVariant custom,
-                                  DFMBASE_NAMESPACE::Global::OperatorCallback callback);
     QString handleOperationTouchFile(const quint64 windowId,
                                      const QUrl url,
                                      const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
                                      const QString suffix);
+
+    void handleOperationTouchFile(const quint64 windowId,
+                                  const QUrl url,
+                                  const QVariant custom,
+                                  DFMBASE_NAMESPACE::Global::OperatorCallback callback);
     void handleOperationTouchFile(const quint64 windowId,
                                   const QUrl url,
                                   const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
                                   const QString suffix,
                                   const QVariant custom,
                                   DFMBASE_NAMESPACE::Global::OperatorCallback callback);
+
     bool handleOperationLinkFile(const quint64 windowId,
                                  const QUrl url,
                                  const QUrl link);

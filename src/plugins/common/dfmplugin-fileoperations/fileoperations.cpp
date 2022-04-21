@@ -213,7 +213,8 @@ void FileOperations::initEventHandle()
                                                                                               OperatorCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchFileCallBack,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl,
+                                            static_cast<void (FileOperationsEventReceiver::*)(const quint64,
+                                                                                              const QUrl,
                                                                                               const CreateFileType,
                                                                                               const QString,
                                                                                               const QVariant,

@@ -23,6 +23,7 @@
 #ifndef FILEOPERATIONS_DEFINES_H
 #define FILEOPERATIONS_DEFINES_H
 
+#include "dfm_global_defines.h"
 #include "dfm_common_service_global.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -70,10 +71,12 @@ using HandleOperationRenameFile = std::function<bool(const quint64 windowId,
 
 using HandleOperationMkdir = std::function<bool(const quint64 windowId,
                                                 const QUrl url,
-                                                QString *)>;
+                                                QString *,
+                                                const DFMBASE_NAMESPACE::Global::CreateFileType)>;
 using HandleOperationTouchFile = std::function<bool(const quint64 windowId,
                                                     const QUrl url,
-                                                    QString *)>;
+                                                    QString *,
+                                                    const DFMBASE_NAMESPACE::Global::CreateFileType)>;
 using HandleOperationLinkFile = std::function<bool(const quint64 windowId,
                                                    const QUrl url,
                                                    const QUrl link,
@@ -103,7 +106,7 @@ struct FileOperationsInfo
     HandleOperationOpenFiles openFiles { nullptr };
     HandleOperationOpenFilesByApp openFilesByApp { nullptr };
     HandleOperationRenameFile renameFile { nullptr };
-    HandleOperationMkdir makedir { nullptr };
+    HandleOperationMkdir makeDir { nullptr };
     HandleOperationTouchFile touchFile { nullptr };
     HandleOperationLinkFile linkFile { nullptr };
     HandleOperationSetPermission setPermission { nullptr };
