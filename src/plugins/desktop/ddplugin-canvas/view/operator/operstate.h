@@ -50,7 +50,6 @@ public slots:
 protected slots:
     void selectionChanged();
 protected:
-    // todo(zy) using url to instead index.
     CanvasView *view = nullptr;
     QPersistentModelIndex contBegin; //for shift
 };

@@ -249,6 +249,9 @@ QModelIndex FileInfoModel::index(const QUrl &url, int column) const
         return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
     }
 
+    if (url == rootUrl())
+        return rootIndex();
+
     return QModelIndex();
 }
 

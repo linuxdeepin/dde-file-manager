@@ -204,7 +204,7 @@ void BoxSelecter::updateCurrentIndex()
             view->d->operState().setCurrent(cur);
             view->d->operState().setContBegin(cur);
         } else {
-            // todo(zy) there is no item at end pos. reset all focus index.
+            // there is no item at end pos. reset all focus index.
             // we maybe need to find a greater method to process it.
             view->d->operState().setCurrent(QModelIndex());
             view->d->operState().setContBegin(QModelIndex());

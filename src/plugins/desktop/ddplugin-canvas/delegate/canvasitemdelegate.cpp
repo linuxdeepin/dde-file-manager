@@ -848,8 +848,12 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 QRect CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
 {
     //todo uing extend painter by registering.
-    if (!dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url))
-        qWarning() << "publish `kPaintEmblems` event failed!";
+    if (!dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url)) {
+        static std::once_flag printLog;
+        std::call_once(printLog, [](){
+            qWarning() << "publish `kPaintEmblems` event failed!";
+        });
+    }
     return rect.toRect();
 }
 

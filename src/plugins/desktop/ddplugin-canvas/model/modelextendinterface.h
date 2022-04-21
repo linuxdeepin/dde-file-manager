@@ -41,7 +41,7 @@ public:
     virtual bool dataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData = nullptr) const;
     virtual bool dataRested(QList<QUrl> *urls, void *extData = nullptr) const;   // must return false
     virtual bool dataChanged(const QUrl &url, void *extData = nullptr) const;   // must return false
-    virtual bool dropMimeData(const QMimeData *data, Qt::DropAction action, void *extData = nullptr) const;
+    virtual bool dropMimeData(const QMimeData *data, const QUrl &dir, Qt::DropAction action, void *extData = nullptr) const;
     virtual bool mimeData(const QList<QUrl> &urls, QMimeData *out, void *extData = nullptr) const;
     virtual bool mimeTypes (QStringList *types, void *extData = nullptr) const;
     virtual bool sortData (int role, int order, QList<QUrl> *files, void *extData = nullptr) const; // 待定，还需考虑ui交互问题

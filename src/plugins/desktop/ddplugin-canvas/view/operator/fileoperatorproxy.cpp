@@ -281,6 +281,12 @@ void FileOperatorProxy::sendFilesToBluetooth(const CanvasView *view)
         dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::EventType::kSendFiles, view->selectionModel()->selectedUrls());
 }
 
+void FileOperatorProxy::undoFiles(const CanvasView *view)
+{
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRevocation,
+                                          view->winId());
+}
+
 void FileOperatorProxy::dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
 {
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackPasteFiles, QVariant());

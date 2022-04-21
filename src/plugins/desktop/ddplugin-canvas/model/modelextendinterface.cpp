@@ -62,7 +62,7 @@ bool ModelExtendInterface::dataChanged(const QUrl &url, void *extData) const
     return false;
 }
 
-bool ModelExtendInterface::dropMimeData(const QMimeData *data, Qt::DropAction action, void *extData) const
+bool ModelExtendInterface::dropMimeData(const QMimeData *data, const QUrl &dir, Qt::DropAction action, void *extData) const
 {
     return false;
 }

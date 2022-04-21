@@ -118,7 +118,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
         switch (key) {
         case Qt::Key_Return:
         case Qt::Key_Enter:
-            openAction();
+            FileOperatorProxyIns->openFiles(view);
             return true;
         case Qt::Key_Space:
             if (!event->isAutoRepeat())
@@ -130,7 +130,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
     } else if (modifiers == Qt::ShiftModifier) {
         switch (key) {
         case Qt::Key_Delete:
-            deleteFile();
+            FileOperatorProxyIns->deleteFiles(view);
             break;
         case Qt::Key_T:
             // open terminal. but no need to do it.
@@ -147,7 +147,7 @@ bool ShortcutOper::keyPressed(QKeyEvent *event)
             swichHidden();
             return true;
         case Qt::Key_I:
-            showProperty();
+            FileOperatorProxyIns->showFilesProperty(view);
             return true;
         default:
             break;
@@ -178,16 +178,17 @@ void ShortcutOper::acitonTriggered()
     auto key = actionShortcutKey(ac);
     switch (key) {
     case QKeySequence::Copy:
-        copyFiles();
+        FileOperatorProxyIns->copyFiles(view);
         break;
     case QKeySequence::Cut:
-        cutFiles();
+        FileOperatorProxyIns->cutFiles(view);
         break;
     case QKeySequence::Paste:
-        pasteFiles();
+        FileOperatorProxyIns->pasteFiles(view);
         break;
     case QKeySequence::Undo:
         qDebug() << "Undo";
+        FileOperatorProxyIns->undoFiles(view);
         break;
     default:
         break;
@@ -202,7 +203,7 @@ void ShortcutOper::acitonTriggered()
             view->refresh();
             break;
         case QKeySequence::Delete:
-            moveToTrash();
+            FileOperatorProxyIns->moveToTrash(view);
             break;
         case QKeySequence::SelectAll:
             view->selectAll();
@@ -231,36 +232,6 @@ void ShortcutOper::helpAction()
     qApp->setApplicationName("dde");
     reinterpret_cast<PublicApplication *>(DApplication::instance())->handleHelpAction();
     qApp->setApplicationName(appName);
-}
-
-void ShortcutOper::openAction()
-{
-    FileOperatorProxyIns->openFiles(view);
-}
-
-void ShortcutOper::moveToTrash()
-{
-    FileOperatorProxyIns->moveToTrash(view);
-}
-
-void ShortcutOper::deleteFile()
-{
-    FileOperatorProxyIns->deleteFiles(view);
-}
-
-void ShortcutOper::copyFiles()
-{
-    FileOperatorProxyIns->copyFiles(view);
-}
-
-void ShortcutOper::cutFiles()
-{
-    FileOperatorProxyIns->cutFiles(view);
-}
-
-void ShortcutOper::pasteFiles()
-{
-    FileOperatorProxyIns->pasteFiles(view);
 }
 
 void ShortcutOper::tabToFirst()
@@ -324,10 +295,6 @@ void ShortcutOper::swichHidden()
     model->refresh(model->rootIndex());
 }
 
-void ShortcutOper::showProperty()
-{
-    FileOperatorProxyIns->showFilesProperty(view);
-}
 
 void ShortcutOper::previewFiles()
 {

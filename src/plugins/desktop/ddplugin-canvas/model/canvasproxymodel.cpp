@@ -637,11 +637,6 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     Q_UNUSED(row);
     Q_UNUSED(column);
 
-    if (d->extend && d->extend->dropMimeData(data, action)) {
-        qDebug() << "droped by extend module.";
-        return true;
-    }
-
     QList<QUrl> urlList = data->urls();
     if (urlList.isEmpty())
         return false;
@@ -664,7 +659,16 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         targetFileUrl = itemInfo->symLinkTarget();
     }
 
-    // todo Compress
+    if (d->extend && d->extend->dropMimeData(data, targetFileUrl, action)) {
+        qDebug() << "droped by extend module.";
+        return true;
+    }
+
+    if (itemInfo->canDragCompress()
+            && !itemInfo->isDir()) { // don't compress is itemInfo is dir.
+        qDebug() << "drop to append compress files.";
+        return false;//FileUtils::appendCompress(toUrl, urlList);    // todo Compress
+    }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
         FileOperatorProxyIns->dropToTrash(urlList);

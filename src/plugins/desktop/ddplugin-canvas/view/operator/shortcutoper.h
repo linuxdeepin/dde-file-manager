@@ -39,17 +39,10 @@ public:
 protected slots:
     void acitonTriggered();
     void helpAction();
-    void openAction();
-    void moveToTrash();
-    void deleteFile();
-    void copyFiles();
-    void cutFiles();
-    void pasteFiles();
     void tabToFirst();
     void showMenu();
     void clearClipBoard();
     void swichHidden();
-    void showProperty();
     void previewFiles();
 
 protected:

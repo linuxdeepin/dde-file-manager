@@ -29,6 +29,7 @@
 
 #include <base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <base/standardpaths.h>
 
 #include <DFileDragClient>
 
@@ -90,18 +91,15 @@ bool DragDropOper::move(QDragMoveEvent *event)
                 handleMoveMimeData(event, curUrl);
 
                 // append compress
-                //                if (fileInfo->canDrop() && fileInfo->canDragCompress()) {
-                //                    // Set when dragging and dropping gvfs files, do not support additional compression
-                //                    auto urls = event->mimeData()->urls();
-                //                    if (!urls.isEmpty()) {
-                //                        event->setDropAction(Qt::CopyAction);
-                //                        auto itemInfo = DFMBASE_NAMESPACE::InfoFactory::create<DFMBASE_NAMESPACE::LocalFileInfo>(urls.first());
-                //                        // todo isGvfsMountFile
-                //                        if (itemInfo && itemInfo->isGvfsMountFile()) {
-                //                            event->setDropAction(Qt::MoveAction);
-                //                        }
-                //                    }
-                //                }
+                if (fileInfo->canDrop() && fileInfo->canDragCompress()) {
+                    // Set when dragging and dropping gvfs files, do not support additional compression
+                    auto urls = event->mimeData()->urls();
+                    if (!urls.isEmpty()) {
+                        event->setDropAction(Qt::CopyAction);
+                        if (FileUtils::isGvfsFile(urls.first()))
+                            event->setDropAction(Qt::MoveAction);
+                    }
+                }
                 return false;
             } else {
                 // not support drop
@@ -112,8 +110,8 @@ bool DragDropOper::move(QDragMoveEvent *event)
 
     tryDodge(event);
 
-    // on blank space
-    preproccessDropEvent(event, event->mimeData()->urls(), view->model()->rootUrl());
+    // hover
+    preproccessDropEvent(event, event->mimeData()->urls(), curUrl);
     if (!hoverIndex.isValid())
         handleMoveMimeData(event, curUrl);
 
@@ -171,16 +169,15 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
         if (isAltPressed()) {
             defaultAction = Qt::MoveAction;
         } else if (!isCtrlPressed()) {
-            // todo(zy) //using DStorageInfo::inSameDevice
-            if (targetFileUrl.scheme() == from.scheme()) {
+            if (FileUtils::isSameDevice(targetFileUrl, from)) {
                 defaultAction = Qt::MoveAction;
             }
         }
 
         // is from or to trash or is to trash
         {
-            bool isFromTrash = from.url().contains(".local/share/Trash/");
-            bool isToTrash = false;   //to.isTrashFile(); // todo(zy)
+            bool isFromTrash = from.toLocalFile().startsWith(StandardPaths::location(StandardPaths::kTrashPath));
+            bool isToTrash = false; // there is no  trash dir on desktop.
 
             if (isFromTrash && isToTrash) {
                 event->setDropAction(Qt::IgnoreAction);
@@ -190,10 +187,33 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
             }
         }
 
+//        if (event->possibleActions().testFlag(defaultAction)) {
+//            // todo sameueser
+//            //event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
+//        }
+
+//        if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
+//            QList<Qt::DropAction> actions;
+
+//            actions.reserve(3);
+//            actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
+
+//            for (Qt::DropAction action : actions) {
+//                if (event->possibleActions().testFlag(action) && itemInfo->supportedDropActions().testFlag(action)) {
+//                    // todo sameuser
+//                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
+//                    break;
+//                }
+//            }
+//        }
+
         // todo is from vault
 
-        // is from recent file
-        // todo
+//        // is from recent file
+//        if (from.isRecentFile()) {
+//            defaultAction = isToTrash ? Qt::MoveAction : Qt::CopyAction;
+//            event->setDropAction(defaultAction);
+//        }
 
         event->setDropAction(defaultAction);
     }
