@@ -34,6 +34,7 @@
 #include "dfmapplication.h"
 #include "dfmsettings.h"
 #include "utils.h"
+#include "utils/grouppolicy.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -206,6 +207,8 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
     }
 
+    QStringList hiddenDiskList = GroupPolicy::instance()->getValue("dfm.disk.hidden").toStringList();
+
     QStringList blkds = DDiskManager::blockDevices({});
     for (auto blks : blkds) {
         QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
@@ -215,6 +218,9 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
 
         reloadBlkName(blks, blk);
+
+        if (hiddenDiskList.contains(blk->idUUID()))
+            continue;
 
         using namespace DFM_NAMESPACE;
         if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {

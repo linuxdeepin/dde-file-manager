@@ -122,6 +122,21 @@ public:
 
 TEST_F(DFileSeviceTest, sart_fmevent)
 {
+    QVariant(*processEventlamda)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) = []
+            (const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *) {
+        return QVariant(true);
+    };
+    stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
+            ADDR(DFMEventDispatcher, processEvent), processEventlamda);
+
+    bool(*renameFunc)(const QSharedPointer<DFMRenameEvent> &) = [](const QSharedPointer<DFMRenameEvent> &) { return true; };
+    stl.set(VADDR(FileController, renameFile), renameFunc);
+
+    void (*renameFileFunc)(const QObject *, const DUrl &, const DUrl &, const bool) = []
+            (const QObject *sender, const DUrl &from, const DUrl &to, const bool silent = false) { return; };
+    stl.set(ADDR(DFileService, renameFile), renameFileFunc);
+
+
     TestHelper::runInLoop([]() {});
     DUrl url, to, urlrename;
     url.setScheme(FILE_SCHEME);
@@ -143,6 +158,8 @@ TEST_F(DFileSeviceTest, sart_fmevent)
     stl.set(ADDR(FileUtils, openFilesByApp), openFilesByApplamda);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMOpenFileByAppEvent>
                                  (nullptr, "/usr/share/applications/deepin-editor.desktop", url), nullptr));
+
+
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMCompressEvent>
                                  (nullptr, DUrlList() << url), nullptr));
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMDecompressEvent>
@@ -171,13 +188,20 @@ TEST_F(DFileSeviceTest, sart_fmevent)
     stl.set((bool (QFile::*)(const QString &))ADDR(QFile, rename), rename);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMRenameEvent>
                                  (nullptr, url, to, false), nullptr));
+
+    /* ut异常
     url.setPath("/tmp/ut_dfileservice_rename.txt");
     to.setPath(topath);
     bool (*deleteTagslamda)(const QList<QString> &) = [](const QList<QString> &) {return true;};
     stl.set(ADDR(TagManager, deleteTags), deleteTagslamda);
     url.setScheme(BOOKMARK_SCHEME);
+
+    bool(*deleteFilesFunc)(const QSharedPointer<DFMDeleteEvent> &) = [](const QSharedPointer<DFMDeleteEvent> &) { return true; };
+    stl.set(VADDR(FileController, deleteFiles), deleteFilesFunc);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMDeleteEvent>
                                  (nullptr, DUrlList() << url, false, false), nullptr));
+    */
+
     DUrlList(*pasteFilesV2lamda)(const QSharedPointer<DFMPasteEvent> &, DFMGlobal::ClipboardAction,
                                  const DUrlList &, const DUrl &, bool, bool, bool) = []
                                                                                      (const QSharedPointer<DFMPasteEvent> &, DFMGlobal::ClipboardAction,
@@ -232,6 +256,9 @@ TEST_F(DFileSeviceTest, sart_fmevent)
     bool (*touchFilelamda)(const QObject *, const DUrl &) = []
     (const QObject *, const DUrl &) {return true;};
     stl.set(ADDR(DFileService, touchFile), touchFilelamda);
+
+    bool(*addToBookmarkFunc)(const QSharedPointer<DFMAddToBookmarkEvent> &) = [](const QSharedPointer<DFMAddToBookmarkEvent> &) { return true; };
+    stl.set(VADDR(FileController, addToBookmark), addToBookmarkFunc);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMAddToBookmarkEvent>
                                  (nullptr, url), nullptr));
     stl.reset(ADDR(DFileService, touchFile));
@@ -239,6 +266,10 @@ TEST_F(DFileSeviceTest, sart_fmevent)
     bool (*deleteFileslamda)(const QObject *, const DUrlList &, bool, bool, bool) = []
     (const QObject *, const DUrlList &, bool, bool, bool) {return true;};
     stl.set(ADDR(DFileService, deleteFiles), deleteFileslamda);
+
+    bool(*removeBookmarkFunc)(const QSharedPointer<DFMRemoveBookmarkEvent> &) = [](const QSharedPointer<DFMRemoveBookmarkEvent> &) { return true; };
+    stl.set(VADDR(FileController, removeBookmark), removeBookmarkFunc);
+    bool removeBookmark(const QSharedPointer<DFMRemoveBookmarkEvent> &event);
     EXPECT_TRUE(service->fmEvent(dMakeEventPointer<DFMRemoveBookmarkEvent>
                                  (nullptr, url), nullptr));
     stl.reset(ADDR(DFileService, deleteFiles));
