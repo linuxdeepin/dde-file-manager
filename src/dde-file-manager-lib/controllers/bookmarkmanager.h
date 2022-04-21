@@ -68,6 +68,8 @@ public:
     bool onFileRenamed(const DUrl &from, const DUrl &to);
     void refreshBookmark();
     const DUrlList getBookmarkUrls();
+    bool isEqualBookmarkData(const QMap<QString, QVariant> arg1, const QMap<QString, QVariant> &arg2) const;
+    void mergeList(const QVariantList &oldList, const QVariantList &groupPolicyList, QVariantList &all) const;
 
 private:
     BookMarkPointer findBookmark(const DUrl &url) const;
@@ -77,6 +79,7 @@ private:
 
     void update(const QVariant &value);
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);
+    void variantToBookmarkData(const QMap<QString, QVariant> &item, BookmarkData &data);
 //    std::deque<QExplicitlySharedDataPointer<BookMark>> m_tagBookmarks{};
 };
 
