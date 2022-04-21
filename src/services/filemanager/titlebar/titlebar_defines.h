@@ -63,7 +63,6 @@ struct CustomCrumbInfo
 
 // custom event type
 namespace EventType {
-extern const int kSwitchMode;
 extern const int kDoSearch;
 extern const int kStopSearch;
 extern const int kShowFilterView;

@@ -184,9 +184,9 @@ quint32 FileDialogHandleDBus::windowFlags() const
     return widget()->windowFlags();
 }
 
-void FileDialogHandleDBus::setHeartbeatInterval(int heartbeatInterval)
+void FileDialogHandleDBus::setHeartbeatInterval(int interval)
 {
-    curHeartbeatTimer.setInterval(heartbeatInterval);
+    curHeartbeatTimer.setInterval(interval);
 }
 
 void FileDialogHandleDBus::setWindowFlags(quint32 windowFlags)

@@ -23,10 +23,9 @@
 #ifndef FILEMANAGERWINDOW_P_H
 #define FILEMANAGERWINDOW_P_H
 
-#include "dfm-base/dfm_base_global.h"
-#include "widgets/dfmsplitter/splitter.h"
-#include "interfaces/abstractbaseview.h"
-#include "interfaces/abstractframe.h"
+#include "dfm-base/widgets/dfmsplitter/splitter.h"
+#include "dfm-base/interfaces/abstractbaseview.h"
+#include "dfm-base/interfaces/abstractframe.h"
 
 #include <DTitlebar>
 #include <DButtonBox>
@@ -54,7 +53,7 @@ public:
     int splitterPosition() const;
     void setSplitterPosition(int pos);
 
-private:
+protected:
     QUrl currentUrl;
     static constexpr int kMinimumWindowWidth { 760 };
     static constexpr int kMinimumWindowHeight { 420 };

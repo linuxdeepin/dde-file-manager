@@ -32,7 +32,6 @@
 #include "menus/sortanddisplaymenuscene.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/menu/menuservice.h"
 
@@ -79,7 +78,7 @@ bool Workspace::start()
 {
     DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
-    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kSwitchMode,
+    dpfInstance.eventDispatcher().subscribe(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);

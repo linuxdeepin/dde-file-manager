@@ -25,7 +25,6 @@
 
 #include "services/common/propertydialog/property_defines.h"
 #include "services/common/usershare/usershare_defines.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -78,5 +77,5 @@ void ShareEventsCaller::sendShowProperty(const QList<QUrl> &urls)
 
 void ShareEventsCaller::sendSwitchDisplayMode(quint64 winId, Global::ViewMode mode)
 {
-    dispatcher.publish(DSB_FM_NAMESPACE::TitleBar::EventType::kSwitchMode, winId, mode);
+    dispatcher.publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, winId, mode);
 }

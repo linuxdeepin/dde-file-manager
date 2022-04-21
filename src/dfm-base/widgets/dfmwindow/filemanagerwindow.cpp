@@ -163,6 +163,11 @@ void FileManagerWindow::cd(const QUrl &url)
         d->detailSpace->setCurrentUrl(url);
 }
 
+bool FileManagerWindow::saveClosedSate() const
+{
+    return true;
+}
+
 QUrl FileManagerWindow::currentUrl() const
 {
     return d->currentUrl;

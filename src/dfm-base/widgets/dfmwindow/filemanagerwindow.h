@@ -42,7 +42,9 @@ public:
     explicit FileManagerWindow(const QUrl &url, QWidget *parent = nullptr);
     virtual ~FileManagerWindow() override;
 
-    void cd(const QUrl &url);
+    virtual void cd(const QUrl &url);
+    virtual bool saveClosedSate() const;
+
     QUrl currentUrl() const;
     void moveCenter(const QPoint &cp);
     void installTitleBar(AbstractFrame *w);

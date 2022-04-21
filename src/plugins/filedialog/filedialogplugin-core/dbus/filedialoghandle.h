@@ -36,6 +36,7 @@ public:
     explicit FileDialogHandle(QWidget *parent = nullptr);
     ~FileDialogHandle();
 
+public Q_SLOTS:
     void setParent(QWidget *parent);
     QWidget *widget() const;
 
@@ -92,15 +93,6 @@ public:
     void setHideOnAccept(bool enable);
     bool hideOnAccept() const;
 
-Q_SIGNALS:
-    void finished(int result);
-    void accepted();
-    void rejected();
-    void selectionFilesChanged();
-    void currentUrlChanged();
-    void selectedNameFilterChanged();
-
-public Q_SLOTS:
     void show();
     void hide();
     void accept();
@@ -108,6 +100,14 @@ public Q_SLOTS:
     int exec();
     void open();
     void reject();
+
+Q_SIGNALS:
+    void finished(int result);
+    void accepted();
+    void rejected();
+    void selectionFilesChanged();
+    void currentUrlChanged();
+    void selectedNameFilterChanged();
 
 private:
     QScopedPointer<FileDialogHandlePrivate> d_ptr;

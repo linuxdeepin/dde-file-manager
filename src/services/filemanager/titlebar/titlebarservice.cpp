@@ -32,7 +32,6 @@ DSB_FM_BEGIN_NAMESPACE
 namespace TitleBar {
 // custm event type
 namespace EventType {
-const int kSwitchMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSettingsMenuTriggered = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kDoSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kStopSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();

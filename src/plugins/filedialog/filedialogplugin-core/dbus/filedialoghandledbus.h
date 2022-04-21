@@ -46,6 +46,7 @@ public:
     explicit FileDialogHandleDBus(QWidget *parent = nullptr);
     virtual ~FileDialogHandleDBus();
 
+public slots:
     QString directory() const;
 
     void setDirectoryUrl(const QString &directory);
@@ -84,8 +85,7 @@ public:
 
     quint32 windowFlags() const;
 
-public slots:
-    void setHeartbeatInterval(int heartbeatInterval);
+    void setHeartbeatInterval(int interval);
     void setWindowFlags(quint32 windowFlags);
 
 signals:

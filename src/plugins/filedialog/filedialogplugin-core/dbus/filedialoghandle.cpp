@@ -22,13 +22,20 @@
 */
 #include "filedialoghandle.h"
 #include "views/filedialog.h"
+#include "events/coreeventscaller.h"
 
-#include <DMainWindow>   // TODO(zhangs): repplace it
+#include "services/filemanager/windows/windowsservice.h"
+#include "services/common/delegate/delegateservice.h"
+
+#include "dfm-base/base/urlroute.h"
 
 #include <QPointer>
 #include <QWindow>
 #include <QTimer>
 
+DFMBASE_USE_NAMESPACE
+DSB_FM_USE_NAMESPACE
+DSC_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -37,12 +44,6 @@ class FileDialogHandlePrivate
 public:
     explicit FileDialogHandlePrivate(FileDialogHandle *qq)
         : q_ptr(qq) {}
-
-    ~FileDialogHandlePrivate()
-    {
-        if (dialog)
-            dialog->deleteLater();
-    }
 
     QPointer<FileDialog> dialog;
 
@@ -55,17 +56,21 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
     : QObject(parent),
       d_ptr(new FileDialogHandlePrivate(this))
 {
-    d_func()->dialog = new FileDialog({}, parent);
+    d_func()->dialog = qobject_cast<FileDialog *>(WindowsService::service()->createWindow({}, true));
+    if (!d_func()->dialog) {
+        qCritical() << "Create window failed";
+        abort();
+    }
 
-    //    connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
-    //    connect(d_func()->dialog, &FileDialog::rejected, this, &FileDialogHandle::rejected);
-    //    connect(d_func()->dialog, &FileDialog::finished, this, &FileDialogHandle::finished);
-    //    connect(d_func()->dialog, &FileDialog::selectionFilesChanged,
-    //            this, &FileDialogHandle::selectionFilesChanged);
-    //    connect(d_func()->dialog, &FileDialog::currentUrlChanged,
-    //            this, &FileDialogHandle::currentUrlChanged);
-    //    connect(d_func()->dialog, &FileDialog::selectedNameFilterChanged,
-    //            this, &FileDialogHandle::selectedNameFilterChanged);
+    connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
+    connect(d_func()->dialog, &FileDialog::rejected, this, &FileDialogHandle::rejected);
+    connect(d_func()->dialog, &FileDialog::finished, this, &FileDialogHandle::finished);
+    connect(d_func()->dialog, &FileDialog::selectionFilesChanged,
+            this, &FileDialogHandle::selectionFilesChanged);
+    connect(d_func()->dialog, &FileDialog::currentUrlChanged,
+            this, &FileDialogHandle::currentUrlChanged);
+    connect(d_func()->dialog, &FileDialog::selectedNameFilterChanged,
+            this, &FileDialogHandle::selectedNameFilterChanged);
 }
 
 FileDialogHandle::~FileDialogHandle()
@@ -76,7 +81,7 @@ void FileDialogHandle::setParent(QWidget *parent)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setParent(parent);
+    d->dialog->setParent(parent);
 
     QObject::setParent(parent);
 }
@@ -90,39 +95,35 @@ QWidget *FileDialogHandle::widget() const
 
 void FileDialogHandle::setDirectory(const QString &directory)
 {
-    D_D(FileDialogHandle);
-
-    //    d->dialog->setDirectory(directory);
+    setDirectoryUrl(UrlRoute::fromLocalFile(directory));
 }
 
 void FileDialogHandle::setDirectory(const QDir &directory)
 {
-    D_D(FileDialogHandle);
-
-    //    d->dialog->setDirectory(directory);
+    setDirectoryUrl(UrlRoute::fromLocalFile(directory.absolutePath()));
 }
 
 QDir FileDialogHandle::directory() const
 {
-    D_DC(FileDialogHandle);
-
-    //    return d->dialog->directory();
-    return {};
+    return QDir(directoryUrl().toLocalFile());
 }
 
 void FileDialogHandle::setDirectoryUrl(const QUrl &directory)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setDirectoryUrl(QUrl(directory));
+    d->dialog->cd(directory);
 }
 
 QUrl FileDialogHandle::directoryUrl() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->directoryUrl();
-    return {};
+    QUrl url { d->dialog->currentUrl() };
+    if (DelegateService::service()->isRegisterUrlTransform(url.scheme()))
+        url = DelegateService::service()->urlTransform(url);
+
+    return url;
 }
 
 void FileDialogHandle::selectFile(const QString &filename)
@@ -203,6 +204,7 @@ int FileDialogHandle::selectedNameFilterIndex() const
 {
     D_DC(FileDialogHandle);
 
+    return {};
     //    return d->dialog->selectedNameFilterIndex();
 }
 
@@ -225,16 +227,18 @@ void FileDialogHandle::setViewMode(QFileDialog::ViewMode mode)
 {
     D_D(FileDialogHandle);
 
-    //    if (mode == QFileDialog::Detail)
-    //        d->dialog->setViewMode(DFileView::ListMode);
-    //    else
-    //        d->dialog->setViewMode(DFileView::IconMode);
+    d->dialog->internalWinId();
+    if (mode == QFileDialog::Detail)
+        CoreEventsCaller::sendViewMode(d->dialog, DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
+    else
+        CoreEventsCaller::sendViewMode(d->dialog, DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
 }
 
 QFileDialog::ViewMode FileDialogHandle::viewMode() const
 {
     D_DC(FileDialogHandle);
 
+    // TODO(liuyangming): return mode
     //    if (d->dialog->viewMode() == DFileView::ListMode)
     //        return QFileDialog::Detail;
 
@@ -245,196 +249,190 @@ void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setFileMode(mode);
+    d->dialog->setFileMode(mode);
 }
 
 void FileDialogHandle::setAcceptMode(QFileDialog::AcceptMode mode)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setAcceptMode(mode);
+    d->dialog->setAcceptMode(mode);
 }
 
 QFileDialog::AcceptMode FileDialogHandle::acceptMode() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->acceptMode();
-    return {};
+    return d->dialog->acceptMode();
 }
 
 void FileDialogHandle::setLabelText(QFileDialog::DialogLabel label, const QString &text)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setLabelText(label, text);
+    d->dialog->setLabelText(label, text);
 }
 
 QString FileDialogHandle::labelText(QFileDialog::DialogLabel label) const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->labelText(label);
-    return {};
+    return d->dialog->labelText(label);
 }
 
 void FileDialogHandle::setOptions(QFileDialog::Options options)
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->setOptions(options);
+    return d->dialog->setOptions(options);
 }
 
 void FileDialogHandle::setOption(QFileDialog::Option option, bool on)
 {
     D_DC(FileDialogHandle);
 
-    //    d->dialog->setOption(option, on);
+    d->dialog->setOption(option, on);
 }
 
 QFileDialog::Options FileDialogHandle::options() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->options();
-    return {};
+    return d->dialog->options();
 }
 
 bool FileDialogHandle::testOption(QFileDialog::Option option) const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->testOption(option);
-    return {};
+    return d->dialog->testOption(option);
 }
 
 void FileDialogHandle::setCurrentInputName(const QString &name)
 {
     D_DC(FileDialogHandle);
 
-    //    d->dialog->setCurrentInputName(name);
+    d->dialog->setCurrentInputName(name);
 }
 
 void FileDialogHandle::addCustomWidget(int type, const QString &data)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->addCustomWidget(static_cast<FileDialog::CustomWidgetType>(type), data);
+    d->dialog->addCustomWidget(static_cast<FileDialog::CustomWidgetType>(type), data);
 }
 
 QDBusVariant FileDialogHandle::getCustomWidgetValue(int type, const QString &text) const
 {
     D_DC(FileDialogHandle);
 
-    //    return QDBusVariant(d->dialog->getCustomWidgetValue(static_cast<FileDialog::CustomWidgetType>(type), text));
-    return {};
+    return QDBusVariant(d->dialog->getCustomWidgetValue(static_cast<FileDialog::CustomWidgetType>(type), text));
 }
 
 QVariantMap FileDialogHandle::allCustomWidgetsValue(int type) const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->allCustomWidgetsValue(static_cast<FileDialog::CustomWidgetType>(type));
-    return {};
+    return d->dialog->allCustomWidgetsValue(static_cast<FileDialog::CustomWidgetType>(type));
 }
 
 void FileDialogHandle::beginAddCustomWidget()
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->beginAddCustomWidget();
+    d->dialog->beginAddCustomWidget();
 }
 
 void FileDialogHandle::endAddCustomWidget()
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->endAddCustomWidget();
+    d->dialog->endAddCustomWidget();
 }
 
 void FileDialogHandle::setAllowMixedSelection(bool on)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setAllowMixedSelection(on);
+    d->dialog->setAllowMixedSelection(on);
 }
 
 void FileDialogHandle::setHideOnAccept(bool enable)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setHideOnAccept(enable);
+    d->dialog->setHideOnAccept(enable);
 }
 
 bool FileDialogHandle::hideOnAccept() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->hideOnAccept();
-    return {};
+    return d->dialog->hideOnAccept();
 }
 
 void FileDialogHandle::show()
 {
     D_D(FileDialogHandle);
 
-    d->dialog->show();
-    //    //解决打开文件对话框无焦点问题
-    //    QWindow *window = d->dialog->windowHandle();
-    //    bool isFirst = true;   //仅首次激活
-    //    connect(window, &QWindow::activeChanged, this, [=]() mutable {   //matable使isFisrt可修改
-    //        if (!isFirst)
-    //            return;
-    //        isFirst = false;   //仅首次激活
-    //        //激活窗口
-    //        d->dialog->activateWindow();
-    //        //50毫秒后再次检测
-    //        QTimer::singleShot(50, this, [=]() {
-    //            if (!d->dialog->isActiveWindow())
-    //                d->dialog->activateWindow();
-    //        });
-    //    });
+    WindowsService::service()->showWindow(d->dialog);
+    d->dialog->updateAsDefaultSize();
+
+    // 解决打开文件对话框无焦点问题
+    QWindow *window = d->dialog->windowHandle();
+    bool isFirst = true;   // 仅首次激活
+    connect(window, &QWindow::activeChanged, this, [=]() mutable {   // matable使isFisrt可修改
+        if (!isFirst)
+            return;
+        isFirst = false;   // 仅首次激活
+        // 激活窗口
+        d->dialog->activateWindow();
+        // 50毫秒后再次检测
+        QTimer::singleShot(50, this, [=]() {
+            if (!d->dialog->isActiveWindow())
+                d->dialog->activateWindow();
+        });
+    });
 }
 
 void FileDialogHandle::hide()
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->hide();
+    d->dialog->hide();
 }
 
 void FileDialogHandle::accept()
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->accept();
+    d->dialog->accept();
 }
 
 void FileDialogHandle::done(int r)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->done(r);
+    d->dialog->done(r);
 }
 
 int FileDialogHandle::exec()
 {
     D_D(FileDialogHandle);
 
-    //    return d->dialog->exec();
-    return {};
+    return d->dialog->exec();
 }
 
 void FileDialogHandle::open()
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->open();
+    d->dialog->open();
 }
 
 void FileDialogHandle::reject()
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->reject();
+    d->dialog->reject();
 }

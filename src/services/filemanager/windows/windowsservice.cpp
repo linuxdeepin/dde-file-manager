@@ -169,7 +169,8 @@ void WindowsServicePrivate::onWindowClosed(DFMBASE_NAMESPACE::FileManagerWindow 
     // TODO(zhangs): window can destruct ?
     if (count == 1) {   // last window
         window->deleteLater();
-        saveWindowState(window);
+        if (window->saveClosedSate())
+            saveWindowState(window);
         // TODO(zhangs): close all property dialog
     } else {
         // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
@@ -236,14 +237,7 @@ void WindowsService::setCustomWindowCreator(WindowsService::WindowCreator creato
     d->customCreator = creator;
 }
 
-/*!
- * \brief WindowsService::showWindow
- * \param url
- * \param isNewWindow
- * \param errorString
- * \return
- */
-WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNewWindow, QString *errorString)
+WindowsService::FMWindow *WindowsService::createWindow(const QUrl &url, bool isNewWindow, QString *errorString)
 {
     Q_ASSERT_X(thread() == qApp->thread(), "WindowsService", "Show window must in main thread!");
     QString error;
@@ -272,8 +266,8 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     // you can inherit from FMWindow to implement a custom window (by call `setCustomWindowCreator`)
     FMWindow *window = d->customCreator ? d->customCreator(showedUrl)
                                         : new FMWindow(showedUrl);
+    window->winId();
 
-    window->show();
     d->loadWindowState(window);
     connect(window, &FileManagerWindow::aboutToClose, this, [this, window]() {
         emit windowClosed(window->internalWinId());
@@ -285,19 +279,42 @@ WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNew
     });
 
     // In order for the plugin to cache the current window (before the base frame is installed)
-    emit windowCreated(window->internalWinId());
-
     qInfo() << "New window created: " << window->winId() << showedUrl;
+
     d->windows.insert(window->internalWinId(), window);
     // TODO(zhangs): requestToSelectUrls
 
     if (d->windows.size() == 1)
         d->moveWindowToScreenCenter(window);
-
+    emit windowCreated(window->internalWinId());
     finally.dismiss();
+    return window;
+}
+
+/*!
+ * \brief WindowsService::showWindow
+ * \param url
+ * \param isNewWindow
+ * \param errorString
+ * \return
+ */
+WindowsService::FMWindow *WindowsService::showWindow(const QUrl &url, bool isNewWindow, QString *errorString)
+{
+    auto window = createWindow(url, isNewWindow, errorString);
+
+    if (window)
+        showWindow(window);
+
+    return window;
+}
+
+void WindowsService::showWindow(WindowsService::FMWindow *window)
+{
+    Q_ASSERT(window);
+
+    window->show();
     qApp->setActiveWindow(window);
     emit windowOpened(window->internalWinId());
-    return window;
 }
 
 /*!

@@ -36,7 +36,8 @@ void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Globa
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kSwitchMode, id, int(mode));
+
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
 }
 
 void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)

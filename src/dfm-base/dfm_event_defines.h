@@ -44,9 +44,10 @@ enum GlobalEventType : uint16_t {
     kCleanSaveOperator,   // Ctrl+Z
     kRevocation,
     kOpenAsAdmin,
+    kSwitchViewMode,
 
     // file operations
-    kOpenFiles,
+    kOpenFiles = 200,
     kOpenFilesByApp,
     kRenameFile,
     kRenameFiles,
@@ -67,9 +68,7 @@ enum GlobalEventType : uint16_t {
     kWriteCustomToClipboard,
     kHideFiles,
 
-    kOperationResultStart = 1000,
-
-    kOpenFilesResult,
+    kOpenFilesResult = 1000,
     kOpenFilesByAppResult,
     kRenameFileResult,
     kMkdirResult,
