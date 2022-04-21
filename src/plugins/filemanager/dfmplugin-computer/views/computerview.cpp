@@ -196,13 +196,22 @@ void ComputerView::initConnect()
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
 
     connectShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
-        ComputerControllerInstance->actProperties(ComputerUtils::getWinId(this), info);
+        if (info)
+            ComputerControllerInstance->actProperties(ComputerUtils::getWinId(this), info);
+        else
+            ComputerEventCaller::sendShowFilePropertyDialog(ComputerUtils::rootUrl());
     });
     connectShortcut(QKeySequence(Qt::Key::Key_N | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
-        ComputerControllerInstance->actOpenInNewWindow(ComputerUtils::getWinId(this), info);
+        if (info)
+            ComputerControllerInstance->actOpenInNewWindow(ComputerUtils::getWinId(this), info);
+        else
+            ComputerEventCaller::sendEnterInNewWindow(ComputerUtils::rootUrl());
     });
     connectShortcut(QKeySequence(Qt::Key::Key_T | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
-        ComputerControllerInstance->actOpenInNewTab(ComputerUtils::getWinId(this), info);
+        if (info)
+            ComputerControllerInstance->actOpenInNewTab(ComputerUtils::getWinId(this), info);
+        else
+            ComputerEventCaller::sendEnterInNewTab(ComputerUtils::getWinId(this), ComputerUtils::rootUrl());
     });
 }
 
@@ -213,10 +222,12 @@ void ComputerView::connectShortcut(QKeySequence seq, std::function<void(DFMEntry
     act->setShortcut(seq);
     connect(act, &QAction::triggered, this, [this, slot] {
         QList<QUrl> &&selectedUrls = selectedUrlList();
-        if (selectedUrls.isEmpty())
-            return;
-        DFMEntryFileInfoPointer info(new EntryFileInfo(selectedUrls.first()));
-        slot(info);
+        if (!selectedUrls.isEmpty()) {
+            DFMEntryFileInfoPointer info(new EntryFileInfo(selectedUrls.first()));
+            slot(info);
+        } else {
+            slot(nullptr);
+        }
     });
 }
 

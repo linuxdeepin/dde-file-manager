@@ -107,8 +107,6 @@ bool ComputerItemWatcher::typeCompare(const ComputerItemData &a, const ComputerI
 
 void ComputerItemWatcher::initConn()
 {
-    connect(this, &ComputerItemWatcher::itemRemoved, this, &ComputerItemWatcher::removeSidebarItem);
-
     connect(appEntryWatcher.data(), &LocalFileWatcher::subfileCreated, this, [this](const QUrl &url) {
         auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
         if (!appUrl.isValid())
@@ -119,15 +117,13 @@ void ComputerItemWatcher::initConn()
         auto appUrl = ComputerUtils::makeAppEntryUrl(url.path());
         if (!appUrl.isValid())
             return;
-        Q_EMIT this->itemRemoved(appUrl);
+        removeDevice(appUrl);
     });
 
     connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onAppAttributeChanged);
 
     initDeviceConn();
-    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, [this]() {
-        startQueryItems();
-    });
+    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, [this]() { startQueryItems(); });
 }
 
 void ComputerItemWatcher::initDeviceConn()
@@ -361,6 +357,24 @@ int ComputerItemWatcher::getGroupId(const QString &groupName)
     return id;
 }
 
+void ComputerItemWatcher::cacheItem(const ComputerItemData &in)
+{
+    int insertAt = 0;
+    for (; insertAt < initedDatas.count(); insertAt++) {
+        bool foundGroup = false;
+        const auto &item = initedDatas.at(insertAt);
+        if (item.groupId != in.groupId) {
+            if (foundGroup)
+                break;
+            continue;
+        }
+        foundGroup = true;
+        if (ComputerItemWatcher::typeCompare(in, item))
+            break;
+    }
+    initedDatas.insert(insertAt, in);
+}
+
 void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     // additem to sidebar
@@ -428,6 +442,10 @@ void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)
 void ComputerItemWatcher::removeDevice(const QUrl &url)
 {
     Q_EMIT itemRemoved(url);
+    removeSidebarItem(url);
+    auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [url](const ComputerItemData &item) { return UniversalUtils::urlEquals(url, item.url); });
+    if (ret != initedDatas.cend())
+        initedDatas.removeAt(ret - initedDatas.cbegin());
 }
 
 void ComputerItemWatcher::startQueryItems()
@@ -445,11 +463,18 @@ void ComputerItemWatcher::startQueryItems()
  */
 int ComputerItemWatcher::addGroup(const QString &name)
 {
+    auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [name](const ComputerItemData &item) {
+        return item.shape == ComputerItemData::kSplitterItem && item.groupName == name;
+    });
+    if (ret != initedDatas.cend())
+        return initedDatas.at(ret - initedDatas.cbegin()).groupId;
+
     ComputerItemData data;
     data.shape = ComputerItemData::kSplitterItem;
     data.groupName = name;
     data.groupId = getGroupId(name);
-    emit itemAdded(data);
+    Q_EMIT itemAdded(data);
+    cacheItem(data);
     return data.groupId;
 }
 
@@ -463,13 +488,15 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, bool ne
     data.shape = ComputerItemData::kLargeItem;
     data.info = info;
     data.groupId = groupId;
-    Q_EMIT this->itemAdded(data);
+    Q_EMIT itemAdded(data);
+
+    cacheItem(data);
 
     if (info->suffix() == SuffixInfo::kProtocol) {
         QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
         if (id.startsWith(Global::kSmb)) {
             StashMountsUtils::stashMount(info->url(), info->displayName());
-            Q_EMIT this->itemRemoved(ComputerUtils::makeStashedProtocolDevUrl(id));
+            removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
     }
 
@@ -489,13 +516,13 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
         // if `hintIgnore` changed to TRUE, then remove the display in view, else add it.
         if (propertyName == DeviceProperty::kHintIgnore) {
             if (var.variant().toBool())
-                Q_EMIT itemRemoved(url);
+                removeDevice(url);
             else
                 onDeviceAdded(url, getGroupId(diskGroup()));
         } else {
             auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
             if (propertyName == DeviceProperty::kOptical)
-                Q_EMIT itemUpdated(devUrl);
+                onUpdateBlockItem(id);
             Q_EMIT itemPropertyChanged(devUrl, propertyName, var.variant());
         }
     }
@@ -521,7 +548,7 @@ void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga
             QStringList mounts = StashMountsUtils::stashedMounts().keys();
             for (const auto &mountUrl : mounts) {
                 QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(mountUrl);
-                Q_EMIT itemRemoved(stashedUrl);
+                removeDevice(stashedUrl);
                 removeSidebarItem(stashedUrl);
             }
             StashMountsUtils::clearStashedMounts();
@@ -552,7 +579,7 @@ void ComputerItemWatcher::onBlockDeviceAdded(const QString &id)
 void ComputerItemWatcher::onBlockDeviceRemoved(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeBlockDevUrl(id);
-    Q_EMIT itemRemoved(devUrl);
+    removeDevice(devUrl);
     routeMapper.remove(ComputerUtils::makeBlockDevUrl(id));
 }
 
@@ -560,6 +587,14 @@ void ComputerItemWatcher::onUpdateBlockItem(const QString &id)
 {
     QUrl &&devUrl = ComputerUtils::makeBlockDevUrl(id);
     Q_EMIT this->itemUpdated(devUrl);
+    auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [devUrl](const ComputerItemData &data) { return data.url == devUrl; });
+    if (ret != initedDatas.cend()) {
+        auto item = initedDatas.at(ret - initedDatas.cbegin());
+        if (item.info) {
+            item.info->refresh();
+            updateSidebarItem(devUrl, item.info->displayName(), item.info->renamable());
+        }
+    }
 }
 
 void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QString &mntPath)
@@ -573,11 +608,11 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
     auto &&datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty()) {   // device have been removed
-        Q_EMIT this->itemRemoved(devUrl);
+        removeDevice(devUrl);
         if (id.startsWith(Global::kSmb))
             onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
     } else {
-        Q_EMIT this->itemRemoved(devUrl);
+        removeDevice(devUrl);
     }
 
     routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));
@@ -592,7 +627,7 @@ void ComputerItemWatcher::onDeviceSizeChanged(const QString &id, qlonglong total
 void ComputerItemWatcher::onProtocolDeviceRemoved(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
-    Q_EMIT itemRemoved(devUrl);
+    removeDevice(devUrl);
 }
 
 void ComputerItemWatcher::onBlockDeviceMounted(const QString &id, const QString &mntPath)

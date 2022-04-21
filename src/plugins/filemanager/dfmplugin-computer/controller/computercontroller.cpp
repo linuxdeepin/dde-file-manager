@@ -485,7 +485,7 @@ void ComputerController::actRemove(DFMEntryFileInfoPointer info)
     if (info->suffix() != SuffixInfo::kStashedProtocol)
         return;
     StashMountsUtils::removeStashedMount(info->url());
-    Q_EMIT ComputerItemWatcherInstance->itemRemoved(info->url());
+    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->url());
 }
 
 void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer info)
@@ -514,7 +514,7 @@ void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)
     // 3. remove stashed entry
     QUrl stashedUrl = ComputerUtils::makeStashedProtocolDevUrl(id);
     StashMountsUtils::removeStashedMount(stashedUrl);
-    Q_EMIT ComputerItemWatcherInstance->itemRemoved(info->url());
+    Q_EMIT ComputerItemWatcherInstance->removeDevice(info->url());
 }
 
 void ComputerController::actErase(DFMEntryFileInfoPointer info)

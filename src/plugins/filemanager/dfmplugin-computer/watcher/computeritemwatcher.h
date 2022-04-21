@@ -116,6 +116,7 @@ private:
     static QString userDirGroup();
     static QString diskGroup();
     int getGroupId(const QString &groupName);
+    void cacheItem(const ComputerItemData &in);
 
 private:
     ComputerDataList initedDatas;
