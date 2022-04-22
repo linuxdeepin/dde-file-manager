@@ -302,7 +302,7 @@ bool DeviceControllerHelper::isProtectedBlocDevice(const BlockDeviceData &data)
 {
     QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
 
-    if (gsettings.get("protect-non-media-mounts").toBool()) {
+    if (gsettings.get("protectNonMediaMounts").toBool()) {
         for (auto mountPoint : data.mountpoints) {
             if (!mountPoint.isEmpty() && !mountPoint.endsWith("/"))
                 mountPoint.append("/");
@@ -312,7 +312,7 @@ bool DeviceControllerHelper::isProtectedBlocDevice(const BlockDeviceData &data)
     }
 
     // Warning: monitor only work in main thread
-    if (DFMBASE_NAMESPACE::UniversalUtils::inMainThread() && gsettings.get("protect-root-device-mounts").toBool()) {
+    if (DFMBASE_NAMESPACE::UniversalUtils::inMainThread() && gsettings.get("protectRootDeviceMounts").toBool()) {
         QStorageInfo qsi("/");
         auto manager = DFMMOUNT::DFMDeviceManager::instance();
         auto monitor = manager->getRegisteredMonitor(DFMMOUNT::DeviceType::BlockDevice).staticCast<DFMMOUNT::DFMBlockMonitor>();

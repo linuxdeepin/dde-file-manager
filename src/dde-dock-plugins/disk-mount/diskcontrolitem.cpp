@@ -109,7 +109,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
 {
     QWidget::mouseReleaseEvent(e);
     QGSettings gsettings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
-    if (!gsettings.get("filemanager-integration").toBool()) {
+    if (!gsettings.get("filemanagerIntegration").toBool()) {
         qWarning() << "GSetting `filemanager-integration` is false";
         return;
     }

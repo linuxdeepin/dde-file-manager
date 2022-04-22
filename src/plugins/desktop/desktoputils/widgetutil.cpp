@@ -55,7 +55,7 @@ bool ddplugin_desktop_util::enableScreensaver()
     }
 
     QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
-    if (desktopSettings.keys().contains("show-screen-saver") && !desktopSettings.get("show-screen-saver").toBool()) {
+    if (desktopSettings.keys().contains("showScreenSaver") && !desktopSettings.get("showScreenSaver").toBool()) {
         qWarning() << "Gsetting show-screen-saver is false";
         return false;
     }

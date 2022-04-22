@@ -103,7 +103,7 @@ const QString DiskMountPlugin::itemContextMenu(const QString &itemKey)
 
     QGSettings settings("com.deepin.dde.dock.module.disk-mount", "/com/deepin/dde/dock/module/disk-mount/");
 
-    if (settings.get("filemanager-integration").toBool()) {
+    if (settings.get("filemanagerIntegration").toBool()) {
         QMap<QString, QVariant> open;
         open["itemId"] = kOpen;
         open["itemText"] = tr("Open");

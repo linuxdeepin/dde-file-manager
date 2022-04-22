@@ -779,8 +779,8 @@ bool CanvasViewPrivate::isEmptyArea(const QPoint &pos) const
 bool CanvasViewPrivate::isWaterMaskOn()
 {
     QGSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
-    if (desktopSettings.keys().contains("water-mask"))
-        return desktopSettings.get("water-mask").toBool();
+    if (desktopSettings.keys().contains("waterMask"))
+        return desktopSettings.get("waterMask").toBool();
     return true;
 }
 

@@ -172,7 +172,7 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
 bool TitleBarHelper::displayIcon()
 {
     QGSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
-    return settings.get("context-menu-icons").toBool();
+    return settings.get("contextMenuIcons").toBool();
 }
 
 bool TitleBarHelper::tabAddable(quint64 windowId)
