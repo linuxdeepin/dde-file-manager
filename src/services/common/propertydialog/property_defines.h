@@ -76,6 +76,7 @@ struct DeviceInfo
 {
     QIcon icon;
     QUrl deviceUrl;
+    QUrl mountPoint;
     QString deviceName;
     QString deviceType;
     QString fileSystem;

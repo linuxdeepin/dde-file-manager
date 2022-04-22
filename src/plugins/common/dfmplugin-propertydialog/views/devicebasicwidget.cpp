@@ -104,7 +104,7 @@ void DeviceBasicWidget::selectFileInfo(const Property::DeviceInfo &info)
     freeSize->setRightValue(sizeFreeStr);
     freeSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
-    fileCalculationUtils->start(QList<QUrl>() << info.deviceUrl);
+    fileCalculationUtils->start(QList<QUrl>() << info.mountPoint);
 }
 
 void DeviceBasicWidget::slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount)

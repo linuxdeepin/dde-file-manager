@@ -120,6 +120,7 @@ void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPoi
     DSC_NAMESPACE::Property::DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
     devInfo.deviceUrl = info->url();
+    devInfo.mountPoint = info->targetUrl();
     devInfo.deviceName = info->displayName();
     devInfo.deviceType = ComputerUtils::deviceTypeInfo(info);
     devInfo.fileSystem = info->extraProperty(GlobalServerDefines::DeviceProperty::kFileSystem).toString();
