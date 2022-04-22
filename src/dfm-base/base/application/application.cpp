@@ -57,7 +57,12 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
     if (group == QT_STRINGIFY(ApplicationAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<Application::ApplicationAttribute>();
 
-        Application::ApplicationAttribute aa = static_cast<Application::ApplicationAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData()));
+        bool ok = false;
+        Application::ApplicationAttribute aa = static_cast<Application::ApplicationAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData(), &ok));
+        if (!ok) {
+            qWarning() << "Cannot cast value " << key << " to ApplicationAttribute!";
+            return;
+        }
 
         if (edited)
             Q_EMIT self->appAttributeEdited(aa, value);
@@ -72,7 +77,12 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
     } else if (group == QT_STRINGIFY(GenericAttribute)) {
         const QMetaEnum &me = QMetaEnum::fromType<Application::GenericAttribute>();
 
-        Application::GenericAttribute ga = static_cast<Application::GenericAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData()));
+        bool ok = false;
+        Application::GenericAttribute ga = static_cast<Application::GenericAttribute>(me.keyToValue(QByteArray("k" + key.toLatin1()).constData(), &ok));
+        if (!ok) {
+            qWarning() << "Cannot cast value " << key << " to GenericAttribute!";
+            return;
+        }
 
         if (edited)
             Q_EMIT self->genericAttributeEdited(ga, value);

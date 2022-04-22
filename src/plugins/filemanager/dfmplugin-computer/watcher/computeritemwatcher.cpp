@@ -605,15 +605,10 @@ void ComputerItemWatcher::onProtocolDeviceMounted(const QString &id, const QStri
 
 void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
 {
-    auto &&datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
-    if (datas.value(GlobalServerDefines::DeviceProperty::kId).toString().isEmpty()) {   // device have been removed
-        removeDevice(devUrl);
-        if (id.startsWith(Global::kSmb))
-            onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
-    } else {
-        removeDevice(devUrl);
-    }
+    removeDevice(devUrl);
+    if (id.startsWith(Global::kSmb) && StashMountsUtils::isStashMountsEnabled())
+        onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
 
     routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));
 }

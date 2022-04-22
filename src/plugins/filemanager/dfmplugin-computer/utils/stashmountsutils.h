@@ -44,6 +44,7 @@ class StashMountsUtils
 public:
     static bool isStashMountsEnabled();
     static QString stashedConfigPath();
+
     static QMap<QString, QString> stashedMounts();
     static QString displayName(const QUrl &url);
     static void removeStashedMount(const QUrl &url);

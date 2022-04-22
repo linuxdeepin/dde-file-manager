@@ -71,7 +71,6 @@ QMap<QString, QString> StashMountsUtils::stashedMounts()
 {
     QMap<QString, QString> ret;
 
-    cfgSettings()->reload();
     QStringList keys = cfgSettings()->keys(StashedMountsKeys::kJsonGroup).toList();
     for (const auto &key : keys) {
         if (!key.startsWith(Global::kSmb)) {   // old v1 version, which's key is start with '/run/user...'
@@ -120,9 +119,7 @@ void StashMountsUtils::removeStashedMount(const QUrl &url)
         return;
 
     // remove keyV2
-    cfgSettings()->reload();
     cfgSettings()->remove(StashedMountsKeys::kJsonGroup, urlPath);
-    cfgSettings()->sync();
 
     // remove v1 version
     QJsonObject obj = cfgDoc.object();
@@ -149,7 +146,6 @@ void StashMountsUtils::removeStashedMount(const QUrl &url)
         }
         if (!cfgKeyV1.isEmpty()) {
             cfgSettings()->remove(StashedMountsKeys::kJsonGroup, cfgKeyV1);
-            cfgSettings()->sync();
         }
     }
 }
@@ -161,17 +157,13 @@ void StashMountsUtils::stashMount(const QUrl &protocolUrl, const QString &displa
         return;
     }
 
-    cfgSettings()->reload();
     const QString &id = ComputerUtils::getProtocolDevIdByUrl(protocolUrl);
     cfgSettings()->setValue(StashedMountsKeys::kJsonGroup, id, displayName);
-    cfgSettings()->sync();
 }
 
 void StashMountsUtils::clearStashedMounts()
 {
-    cfgSettings()->reload();
     cfgSettings()->removeGroup(StashedMountsKeys::kJsonGroup);
-    cfgSettings()->sync();
 }
 
 bool StashMountsUtils::isStashedDevExist(const QUrl &stashedUrl)
