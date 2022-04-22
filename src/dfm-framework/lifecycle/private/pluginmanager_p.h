@@ -49,6 +49,7 @@ class PluginManagerPrivate : public QSharedData
     QStringList pluginLoadIIDs;
     QStringList pluginLoadPaths;
     QStringList serviceLoadPaths;
+    QStringList blackPlguinNames;
     QList<PluginMetaObjectPointer> plugins;
     QQueue<PluginMetaObjectPointer> readQueue;
     QQueue<PluginMetaObjectPointer> loadQueue;
@@ -77,7 +78,8 @@ public:
     static QMutex *mutex();
     static void scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
                                const QStringList &pluginPaths,
-                               const QStringList &pluginIIDs);
+                               const QStringList &pluginIIDs,
+                               const QStringList &blackList);
     static void readJsonToMeta(const PluginMetaObjectPointer &metaObject);
     static void dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue,
                             QQueue<PluginMetaObjectPointer> *srcQueue);

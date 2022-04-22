@@ -299,7 +299,8 @@ bool PluginManagerPrivate::readPlugins()
     QFuture<void> scanController = QtConcurrent::run(scanfAllPlugin,
                                                      &readQueue,
                                                      pluginLoadPaths,
-                                                     pluginLoadIIDs);
+                                                     pluginLoadIIDs,
+                                                     blackPlguinNames);
     scanController.waitForFinished();
 
     QMutexLocker lock(PluginManagerPrivate::mutex());
@@ -323,7 +324,8 @@ bool PluginManagerPrivate::readPlugins()
  */
 void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQueue,
                                           const QStringList &pluginPaths,
-                                          const QStringList &pluginIIDs)
+                                          const QStringList &pluginIIDs,
+                                          const QStringList &blackList)
 {
     dpfCheckTimeBegin();
 
@@ -342,11 +344,18 @@ void PluginManagerPrivate::scanfAllPlugin(QQueue<PluginMetaObjectPointer> *destQ
             dirItera.next();
 
             PluginMetaObjectPointer metaObj(new PluginMetaObject);
-            metaObj->d->loader->setFileName(dirItera.path() + "/" + dirItera.fileName());
+            QString fileName { dirItera.path() + "/" + dirItera.fileName() };
+            metaObj->d->loader->setFileName(fileName);
             QJsonObject &&metaJson = metaObj->d->loader->metaData();
+            QJsonObject &&dataJson = metaJson.value("MetaData").toObject();
             QString &&IID = metaJson.value("IID").toString();
+            QString &&name = dataJson.value("Name").toString();
             if (!pluginIIDs.contains(IID))
                 continue;
+            if (blackList.contains(name)) {
+                qInfo() << "Black plugin: " << name << "don't load!";
+                continue;
+            }
 
             destQueue->append(metaObj);
             metaObj->d->state = PluginMetaObject::Readed;
@@ -545,8 +554,7 @@ void PluginManagerPrivate::stopPlugins()
     dpfCheckTimeBegin();
 
     QQueue<PluginMetaObjectPointer> stopQueue = loadQueue;
-    auto itera = stopQueue.rbegin();
-    while (itera != stopQueue.rend()) {
+    for (auto itera = stopQueue.rbegin(); itera != stopQueue.rend(); ++itera) {
         PluginMetaObjectPointer pointer = *itera;
         if (pointer->d->state != PluginMetaObject::State::Started) {
             continue;
@@ -582,8 +590,6 @@ void PluginManagerPrivate::stopPlugins()
             pointer->d->state = PluginMetaObject::State::Shutdown;
             qDebug() << "shutdown" << pointer->d->loader->fileName();
         }
-
-        ++itera;
     }
 
     dpfCheckTimeEnd();

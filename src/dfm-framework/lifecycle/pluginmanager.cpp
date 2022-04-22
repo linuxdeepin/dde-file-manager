@@ -49,6 +49,12 @@ void PluginManager::addPluginIID(const QString &pluginIID)
     d->addPluginIID(pluginIID);
 }
 
+void PluginManager::addBlackPluginName(const QString &name)
+{
+    if (!d->blackPlguinNames.contains(name))
+        d->blackPlguinNames.push_back(name);
+}
+
 /*!
  * \brief setPluginPaths 设置插件加载的路径
  * \param const QStringList &pluginPaths 传入路径列表
@@ -180,4 +186,9 @@ QStringList PluginManager::pluginPaths() const
 QStringList PluginManager::servicePaths() const
 {
     return d->servicePaths();
+}
+
+QStringList PluginManager::blackList() const
+{
+    return d->blackPlguinNames;
 }

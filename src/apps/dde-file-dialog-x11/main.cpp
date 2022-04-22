@@ -82,7 +82,22 @@ static bool singlePluginLoad(const QString &pluginName, const QString &libName)
 
 static bool pluginsLoad()
 {
+    dpfCheckTimeBegin();
+
+    static const QStringList blackNameList {
+        "dfmplugin-burn",
+        "dfmplugin-dirshare",
+        "dfmplugin-myshares",
+        "dfmplugin-propertydialog",
+        "dfmplugin-trashcore",
+        "dfmplugin-smbbrowser",
+        "dfmplugin-filepreview"
+    };
+
     auto &&lifeCycle = dpfInstance.lifeCycle();
+
+    // don't load plugins of blackNameList
+    lifeCycle.addBlackPluginNames(blackNameList);
 
     // set plugin iid from qt style
     lifeCycle.addPluginIID(kDialogPluginInterface);
@@ -117,6 +132,8 @@ static bool pluginsLoad()
     // load plugins without core
     if (!lifeCycle.loadPlugins())
         return false;
+
+    dpfCheckTimeEnd();
 
     return true;
 }

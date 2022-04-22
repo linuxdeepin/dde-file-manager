@@ -36,8 +36,10 @@ class LifeCycle final : public QObject
     Q_OBJECT
 public:
     static void addPluginIID(const QString &pluginIIDs);
+    static void addBlackPluginNames(const QStringList &names);
     static QStringList pluginIIDs();
     static QStringList pluginPaths();
+    static QStringList blackList();
     static void setPluginPaths(const QStringList &pluginPaths);
     static QStringList servicePaths();
     static void setServicePaths(const QStringList &servicePaths);

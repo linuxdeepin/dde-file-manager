@@ -49,7 +49,9 @@ public:
     QStringList pluginIIDs() const;
     QStringList pluginPaths() const;
     QStringList servicePaths() const;
+    QStringList blackList() const;
     void addPluginIID(const QString &pluginIIDs);
+    void addBlackPluginName(const QString &name);
     void setPluginPaths(const QStringList &pluginPaths);
     void setServicePaths(const QStringList &servicePaths);
 

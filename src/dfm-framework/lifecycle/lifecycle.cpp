@@ -38,6 +38,12 @@ void LifeCycle::addPluginIID(const QString &pluginIID)
     return pluginManager->addPluginIID(pluginIID);
 }
 
+void LifeCycle::addBlackPluginNames(const QStringList &names)
+{
+    for (const QString &name : names)
+        pluginManager->addBlackPluginName(name);
+}
+
 /*!
  * \brief LifeCycle::pluginIIDs Get plugin identity
  * \return all id list
@@ -54,6 +60,11 @@ QStringList LifeCycle::pluginIIDs()
 QStringList LifeCycle::pluginPaths()
 {
     return pluginManager->pluginPaths();
+}
+
+QStringList LifeCycle::blackList()
+{
+    return pluginManager->blackList();
 }
 
 /*!
