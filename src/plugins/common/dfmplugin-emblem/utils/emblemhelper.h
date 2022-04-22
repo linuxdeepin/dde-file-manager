@@ -37,9 +37,7 @@ public:
     explicit EmblemHelper(QObject *parent);
 
     QList<QIcon> getSystemEmblems(const AbstractFileInfoPointer &info) const;
-    QList<QIcon> getCustomEmblems(const AbstractFileInfoPointer &info) const;
     QMap<int, QIcon> getGioEmblems(const AbstractFileInfoPointer &info) const;
-    QList<QIcon> getExtendEmblems(const AbstractFileInfoPointer &info) const;
 
     static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 

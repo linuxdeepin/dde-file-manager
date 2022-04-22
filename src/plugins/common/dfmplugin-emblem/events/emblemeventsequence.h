@@ -4,7 +4,7 @@
  * Author:     liuyangming<liuyangming@uniontech.com>
  *
  * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             yanghao<yanghao@uniontech.com>
+ *             max-lv<lvwujun@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +19,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "emblemservice.h"
+#ifndef EMBLEMEVENTSEQUENCE_H
+#define EMBLEMEVENTSEQUENCE_H
 
-#include "dfm-base/utils/universalutils.h"
+#include "dfmplugin_emblem_global.h"
 
-DSC_BEGIN_NAMESPACE
+#include "dfm-base/dfm_global_defines.h"
+#include <dfm-framework/framework.h>
 
-namespace Emblem {
-namespace EventType {
-const int kPaintEmblems = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kFetchCustomEmblems = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kFetchExtendEmblems = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-}
-}
+DPEMBLEM_BEGIN_NAMESPACE
 
-DSC_END_NAMESPACE
-
-DSC_USE_NAMESPACE
-
-EmblemService::EmblemService(QObject *parent)
-    : dpf::PluginService(parent),
-      dpf::AutoServiceRegister<EmblemService>()
+class EmblemEventSequence : public QObject
 {
-}
+    Q_OBJECT
+    Q_DISABLE_COPY(EmblemEventSequence)
+
+public:
+    static EmblemEventSequence *instance();
+
+    bool doFetchExtendEmblems(const QUrl &url, QList<QIcon> *emblems);
+    bool doFetchCustomEmblems(const QUrl &url, QList<QIcon> *emblems);
+
+    static DPF_NAMESPACE::EventSequenceManager *sequence();
+
+private:
+    explicit EmblemEventSequence(QObject *parent = nullptr);
+};
+
+DPEMBLEM_END_NAMESPACE
+
+#endif   // EMBLEMEVENTSEQUENCE_H

@@ -55,16 +55,6 @@ QList<QIcon> EmblemHelper::getSystemEmblems(const AbstractFileInfoPointer &info)
     return emblems;
 }
 
-QList<QIcon> EmblemHelper::getCustomEmblems(const AbstractFileInfoPointer &info) const
-{
-    Q_UNUSED(info)
-    QList<QIcon> emblems;
-
-    // TODO(liuyangming): load custom emblems
-
-    return emblems;
-}
-
 QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info) const
 {
     QMap<int, QIcon> emblemsMap;
@@ -90,13 +80,6 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     }
 
     return emblemsMap;
-}
-
-QList<QIcon> EmblemHelper::getExtendEmblems(const AbstractFileInfoPointer &info) const
-{
-    QList<QIcon> emblems;
-
-    return emblems;
 }
 
 EventSequenceManager *EmblemHelper::eventSequence()

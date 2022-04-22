@@ -21,6 +21,7 @@
  */
 #include "emblemmanager.h"
 #include "emblemhelper.h"
+#include "events/emblemeventsequence.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
@@ -72,6 +73,14 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
 
     emblemList = helper->getSystemEmblems(info);
 
+    QList<QIcon> extendEmblems {};
+    if (EmblemEventSequence::instance()->doFetchExtendEmblems(url, &extendEmblems)) {
+        emblemList.append(extendEmblems);
+        return emblemList;
+    }
+
+    emblemList.append(extendEmblems);
+
     QMap<int, QIcon> gioEmblemsMap = helper->getGioEmblems(info);
 
     QMap<int, QIcon>::const_iterator iter = gioEmblemsMap.begin();
@@ -92,6 +101,8 @@ QList<QIcon> EmblemManager::fetchEmblems(const QUrl &url) const
 
         ++iter;
     }
+
+    EmblemEventSequence::instance()->doFetchCustomEmblems(url, &emblemList);
 
     return emblemList;
 }

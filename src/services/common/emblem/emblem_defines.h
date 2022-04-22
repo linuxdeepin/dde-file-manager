@@ -29,6 +29,8 @@ DSC_BEGIN_NAMESPACE
 namespace Emblem {
 namespace EventType {
 extern const int kPaintEmblems;
+extern const int kFetchCustomEmblems;
+extern const int kFetchExtendEmblems;
 }
 }
 

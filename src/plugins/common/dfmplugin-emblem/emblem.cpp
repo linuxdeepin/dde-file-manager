@@ -21,6 +21,7 @@
  */
 #include "emblem.h"
 #include "events/emblemeventrecevier.h"
+#include "events/emblemeventsequence.h"
 #include "utils/emblemhelper.h"
 #include "utils/emblemmanager.h"
 
@@ -50,6 +51,6 @@ bool Emblem::start()
 
 void Emblem::followPaintEvent()
 {
-    EmblemHelper::eventSequence()->follow(Workspace::EventType::kPaintListItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
-    EmblemHelper::eventSequence()->follow(Workspace::EventType::kPaintIconItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
+    EmblemEventSequence::sequence()->follow(Workspace::EventType::kPaintListItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
+    EmblemEventSequence::sequence()->follow(Workspace::EventType::kPaintIconItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
 }
