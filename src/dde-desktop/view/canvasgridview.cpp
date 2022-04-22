@@ -1186,7 +1186,7 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
             } else {
                 auto tempConfig = DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", QVariant());
                 if (tempConfig.isValid())
-                    if (!tempConfig.toBool())
+                    if (tempConfig.toBool())
                         return;
             }
 
@@ -1872,7 +1872,7 @@ void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
     } else {
         auto tempConfig = DFMApplication::appObtuselySetting()->value("ApplicationAttribute", "DisableDesktopContextMenu", QVariant());
         if (tempConfig.isValid())
-            if (!tempConfig.toBool())
+            if (tempConfig.toBool())
                 return;
     }
 
