@@ -76,7 +76,7 @@ void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &s
     // insert separator func
     std::function<void(int)> insertSeparator;
     insertSeparator = [&](int index) {
-        if (index >= sortRule.size() || sortRule[index] == ActionID::kSeparator)
+        if (index >= sortRule.size() || sortRule[index] == dfmplugin_menu::ActionID::kSeparator)
             return;
 
         auto rule = sortRule[index];
@@ -98,13 +98,13 @@ void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &s
     };
 
     // insert separator
-    int index = sortRule.indexOf(ActionID::kSeparator);
+    int index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator);
     while (index != -1) {
         if (++index >= sortRule.size())
             break;
 
         insertSeparator(index);
-        index = sortRule.indexOf(ActionID::kSeparator, index);
+        index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator, index);
     }
 
     menu->addActions(actions);

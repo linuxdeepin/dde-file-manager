@@ -36,9 +36,6 @@ static constexpr char kSrtType[] = "sort-by-type";
 // display by
 static constexpr char kDisplayIcon[] = "display-as-icon";
 static constexpr char kDisplayList[] = "display-as-list";
-
-// Separator
-static constexpr char kSeparator[] = "separator-line";
 }
 
 }

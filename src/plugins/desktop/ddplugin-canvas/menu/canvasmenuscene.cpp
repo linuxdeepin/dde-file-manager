@@ -106,6 +106,54 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
     }
 }
 
+void CanvasMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &sortRule)
+{
+    auto actions = menu->actions();
+    qSort(actions.begin(), actions.end(), [&sortRule](QAction *act1, QAction *act2) {
+        const auto &property1 = act1->property(ActionPropertyKey::kActionID).toString();
+        const auto &property2 = act2->property(ActionPropertyKey::kActionID).toString();
+
+        auto index1 = sortRule.indexOf(property1);
+        if (index1 == -1)
+            return false;
+
+        auto index2 = sortRule.indexOf(property2);
+        if (index2 == -1)
+            return true;
+
+        return index1 < index2;
+    });
+
+    // insert separator
+    std::function<void(int)> insertSeparator;
+    insertSeparator = [&](int index) {
+        if (index >= sortRule.size() || dfmplugin_menu::ActionID::kSeparator == sortRule[index])
+            return;
+
+        auto rule = sortRule[index];
+        auto iter = std::find_if(actions.begin(), actions.end(), [&rule](const QAction *act) {
+            auto p = act->property(ActionPropertyKey::kActionID);
+            return p == rule;
+        });
+
+        if (iter != actions.end()) {
+            QAction *separatorAct = new QAction(menu);
+            separatorAct->setSeparator(true);
+            actions.insert(iter, separatorAct);
+        } else {
+            insertSeparator(++index);
+        }
+    };
+
+    int index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator);
+    while (-1 != index) {
+        insertSeparator(++index);
+        index = sortRule.indexOf(dfmplugin_menu::ActionID::kSeparator, index);
+    }
+
+    menu->addActions(actions);
+}
+
 CanvasMenuScene::CanvasMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new CanvasMenuScenePrivate(this))
@@ -219,7 +267,11 @@ bool CanvasMenuScene::create(QMenu *parent)
 
 void CanvasMenuScene::updateState(QMenu *parent)
 {
-    // todo:sort
+    if (d->isEmptyArea)
+        d->sortMenuAction(parent, d->emptyMenuActionRules());
+    else
+        d->sortMenuAction(parent, d->normalMenuActionRules());
+
     AbstractMenuScene::updateState(parent);
 }
 
@@ -404,7 +456,6 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     d->predicateAction[ActionID::kAutoArrange] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kAutoArrange));
 
-    parent->addSeparator();
     tempAction = parent->addAction(d->predicateName.value(ActionID::kDisplaySettings));
     d->predicateAction[ActionID::kDisplaySettings] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySettings));

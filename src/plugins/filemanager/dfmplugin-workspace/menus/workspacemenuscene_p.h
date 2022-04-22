@@ -45,12 +45,12 @@ public:
         static QStringList actionRule {
             dfmplugin_menu::ActionID::kNewFolder,
             dfmplugin_menu::ActionID::kNewDoc,
-            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kSeparator,
             ActionID::kDisplayAs,
             ActionID::kSortBy,
             dfmplugin_menu::ActionID::kOpenAsAdmin,
             dfmplugin_menu::ActionID::kOpenInTerminal,
-            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kPaste,
             dfmplugin_menu::ActionID::kSelectAll
         };
@@ -63,20 +63,20 @@ public:
         static QStringList actionRule {
             dfmplugin_menu::ActionID::kOpen,
             dfmplugin_menu::ActionID::kOpenWith,
-            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kOpenInNewWindow,
             dfmplugin_menu::ActionID::kOpenInNewTab,
             dfmplugin_menu::ActionID::kOpenAsAdmin,
-            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kCut,
             dfmplugin_menu::ActionID::kCopy,
             dfmplugin_menu::ActionID::kRename,
             dfmplugin_menu::ActionID::kDelete,
-            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kCreateSymlink,
             dfmplugin_menu::ActionID::kSendToDesktop,
             dfmplugin_menu::ActionID::kSendTo,
-            ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kOpenInTerminal
         };
 
