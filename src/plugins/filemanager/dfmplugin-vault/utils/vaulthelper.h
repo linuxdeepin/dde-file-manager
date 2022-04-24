@@ -134,6 +134,10 @@ public:
 
     void killVaultTasks();
 
+    quint64 currentWindowId();
+
+    void appendWinID(quint64 id);
+
 public:
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
 
@@ -183,6 +187,8 @@ public:
 
     static QUrl vaultToLocalUrl(const QUrl &url);
 
+    static VaultHelper *instance();
+
 public slots:
     void slotlockVault(int state);
 
@@ -192,7 +198,7 @@ public slots:
 
     void lockVault();
 
-    void defaultCdAction(const QUrl &url);
+    void defaultCdAction(const quint64 windowId, const QUrl &url);
 
     void openNewWindow(const QUrl &url);
 
@@ -225,12 +231,10 @@ private:
     explicit VaultHelper();
 
 private:
-    static quint64 winID;
+    QList<quint64> winIDs {};
 
-public:
-    static VaultHelper *instance();
+    quint64 currentWinID { 0 };
 
-private:
     //! 用于记录当前保险箱所处页面标识
     VaultPageMark recordVaultPageMark;
     bool vaultVisiable { true };

@@ -21,6 +21,8 @@
 #include "vaultentryfileentity.h"
 #include "vaulthelper.h"
 
+#include <QApplication>
+
 DFMBASE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 VaultEntryFileEntity::VaultEntryFileEntity(const QUrl &url)
@@ -85,6 +87,7 @@ EntryFileInfo::EntryOrder VaultEntryFileEntity::order() const
 
 QMenu *VaultEntryFileEntity::createMenu()
 {
+    VaultHelper::instance()->appendWinID(QApplication::activeWindow()->winId());
     return VaultHelper::instance()->createMenu();
 }
 
@@ -102,11 +105,7 @@ qint64 VaultEntryFileEntity::sizeTotal() const
 
 QUrl VaultEntryFileEntity::targetUrl() const
 {
-    QUrl url;
-    url.setScheme(VaultHelper::instance()->scheme());
-    url.setHost("");
-    url.setPath("/");
-    return url;
+    return VaultHelper::instance()->rootUrl();
 }
 
 void VaultEntryFileEntity::slotFileDirSizeChange(qint64 size)

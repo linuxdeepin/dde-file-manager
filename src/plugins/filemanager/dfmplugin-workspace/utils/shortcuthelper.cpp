@@ -31,6 +31,8 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
 
+#include "services/common/delegate/delegateservice.h"
+
 #include <dfm-io/dfmio_utils.h>
 
 #include <QAction>
@@ -289,12 +291,12 @@ void ShortcutHelper::previewFiles()
     QList<QUrl> Urls = view->selectedUrlList();
     QList<QUrl> selectUrls;
     for (QUrl &url : Urls) {
-        selectUrls.append(UrlRoute::fromLocalFile(url.path()));
+        selectUrls.append(delegateServIns->urlTransform(url));
     }
     Urls = view->model()->getCurrentDirFileUrls();
     QList<QUrl> currentDirUrls;
     for (QUrl &url : Urls) {
-        currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
+        currentDirUrls.append(delegateServIns->urlTransform(url));
     }
     FileOperatorHelperIns->previewFiles(view, selectUrls, currentDirUrls);
 }

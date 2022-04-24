@@ -148,7 +148,8 @@ void UnlockView::onVaultUlocked(int state)
 {
     if (unlockByPwd) {
         if (state == 0) {
-            VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->rootUrl());
+            VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
+                                                     VaultHelper::instance()->rootUrl());
             Settings setting(kVaultTimeConfigFile);
             setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
             VaultAutoLock::instance()->slotUnlockVault(state);

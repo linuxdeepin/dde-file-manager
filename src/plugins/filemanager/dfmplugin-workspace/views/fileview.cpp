@@ -629,7 +629,11 @@ void FileView::setDetailFileUrl(const QItemSelection &selected, const QItemSelec
         if (!urls.isEmpty())
             WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), urls.back());
         else {
-            WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), rootUrl());
+            QUrl url = rootUrl();
+            if (current != url) {
+                current = url;
+                WorkspaceEventCaller::sendSetSelectDetailFileUrl(this->topLevelWidget()->winId(), url);
+            }
         }
     } else if (!selected.indexes().isEmpty()) {
         QModelIndex index = selected.first().topLeft();

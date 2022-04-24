@@ -29,7 +29,9 @@ void VaultEventReceiver::connectEvent()
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
 {
     if (url.path().contains("vault")) {
-        switch (VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath())) {
+        VaultHelper::instance()->appendWinID(winId);
+        VaultState state = VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath());
+        switch (state) {
         case VaultState::kUnlocked: {
             VaultHelper::instance()->openWidWindow(winId, VaultHelper::instance()->rootUrl());
         } break;
@@ -39,6 +41,8 @@ void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
         case VaultState::kNotExisted: {
             VaultHelper::instance()->creatVaultDialog();
         } break;
+        default:
+            break;
         }
     }
 }

@@ -167,7 +167,7 @@ void VaultActiveFinishedView::slotEncryptVault()
         finishedBtn->setEnabled(false);
     } else {
         // 切换到保险箱主页面
-        VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->rootUrl());
+        VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(), VaultHelper::instance()->rootUrl());
         emit sigAccepted();
     }
 }

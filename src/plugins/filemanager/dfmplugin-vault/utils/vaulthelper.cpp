@@ -31,6 +31,8 @@
 #include "vaultdbusutils.h"
 #include "services/common/delegate/delegateservice.h"
 
+#include "services/common/delegate/delegateservice.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -53,8 +55,6 @@ DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
-
-quint64 VaultHelper::winID = 0;
 
 QUrl VaultHelper::rootUrl()
 {
@@ -98,7 +98,7 @@ QUrl VaultHelper::pathToVaultVirtualUrl(const QString &path)
  */
 void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
-    winID = windowId;
+    VaultHelper::instance()->appendWinID(windowId);
     QMenu *menu = createMenu();
     menu->exec(globalPos);
     delete menu;
@@ -112,7 +112,8 @@ void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QP
 void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
 {
     QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
-    winID = windowId;
+    VaultHelper::instance()->appendWinID(windowId);
+
     switch (instance()->state(instance()->vaultLockPath())) {
     case VaultState::kNotExisted: {
         VaultPageBase *page = new VaultActiveView();
@@ -124,7 +125,7 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
         page->exec();
     } break;
     case VaultState::kUnlocked:
-        instance()->defaultCdAction(url);
+        instance()->defaultCdAction(windowId, url);
         break;
     case VaultState::kUnderProcess:
     case VaultState::kBroken:
@@ -317,9 +318,9 @@ FileOperationsService *VaultHelper::fileOperationsServIns()
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
 }
 
-void VaultHelper::defaultCdAction(const QUrl &url)
+void VaultHelper::defaultCdAction(const quint64 windowId, const QUrl &url)
 {
-    VaultEventCaller::sendItemActived(winID, url);
+    VaultEventCaller::sendItemActived(windowId, url);
 }
 
 void VaultHelper::openNewWindow(const QUrl &url)
@@ -384,6 +385,18 @@ void VaultHelper::removeComputerVaultItem()
 
 void VaultHelper::killVaultTasks()
 {
+}
+
+quint64 VaultHelper::currentWindowId()
+{
+    return currentWinID;
+}
+
+void VaultHelper::appendWinID(quint64 id)
+{
+    currentWinID = id;
+    if (!VaultHelper::instance()->winIDs.contains(id))
+        VaultHelper::instance()->winIDs.append(id);
 }
 
 QMenu *VaultHelper::createMenu()
@@ -539,7 +552,7 @@ JobHandlePointer VaultHelper::cutHandle(const quint64 windowId, const QList<QUrl
     return {};
 }
 
-bool VaultHelper::mkdirHandle(const quint64 windowId, const QUrl url, QString *error, const DFMBASE_NAMESPACE::Global::CreateFileType type)
+bool VaultHelper::mkdirHandle(const quint64 windowId, const QUrl url, QString *error, const Global::CreateFileType type)
 {
     QUrl dirUrl = delegateServIns->urlTransform(url);
     return dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
@@ -548,7 +561,7 @@ bool VaultHelper::mkdirHandle(const quint64 windowId, const QUrl url, QString *e
                                                  type);
 }
 
-bool VaultHelper::touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const DFMBASE_NAMESPACE::Global::CreateFileType type)
+bool VaultHelper::touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const Global::CreateFileType type)
 {
     QUrl dirUrl = delegateServIns->urlTransform(url);
     return dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFile,
@@ -557,7 +570,7 @@ bool VaultHelper::touchFileHandle(const quint64 windowId, const QUrl url, QStrin
                                                  type, *error);
 }
 
-bool VaultHelper::renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, QString *)
+bool VaultHelper::renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, QString *error)
 {
 
     QUrl ourl = delegateServIns->urlTransform(oldUrl);
@@ -572,9 +585,17 @@ QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
         return QUrl();
     if (url.path().contains(instance()->sourceRootUrl().path())) {
         QUrl localUrl = QUrl::fromLocalFile(url.path());
+        QFileInfo info(localUrl.path());
+        if (info.isDir()) {
+            localUrl.setPath(url.path().endsWith("/") ? url.path() : url.path() + "/");
+        }
         return localUrl;
     } else {
         QUrl localUrl = QUrl::fromLocalFile(instance()->sourceRootUrl().path() + url.path());
+        QFileInfo info(localUrl.path());
+        if (info.isDir()) {
+            localUrl.setPath(localUrl.path().endsWith("/") ? localUrl.path() : localUrl.path() + "/");
+        }
         return localUrl;
     }
 }
@@ -630,25 +651,17 @@ void VaultHelper::removeVaultDialog()
 
 void VaultHelper::openWindow()
 {
-    QUrl url;
-    url.setScheme(VaultHelper::scheme());
-    url.setPath("/");
-    url.setHost("");
-    defaultCdAction(rootUrl());
+    defaultCdAction(VaultHelper::instance()->currentWindowId(),
+                    VaultHelper::instance()->rootUrl());
 }
 
 void VaultHelper::openWidWindow(quint64 winID, const QUrl &url)
 {
-    this->winID = winID;
     VaultEventCaller::sendItemActived(winID, url);
 }
 
 void VaultHelper::newOpenWindow()
 {
-    QUrl url;
-    url.setScheme(VaultHelper::scheme());
-    url.setPath("/");
-    url.setHost("");
     openNewWindow(rootUrl());
 }
 
@@ -672,9 +685,9 @@ void VaultHelper::slotVaultPolicy()
             if (vaultVisiable) {
                 lockVault();
                 vaultVisiable = false;
-                VaultHelper::instance()->removeSideBarVaultItem();
-                VaultHelper::instance()->removeComputerVaultItem();
-                VaultHelper::killVaultTasks();
+                removeSideBarVaultItem();
+                removeComputerVaultItem();
+                killVaultTasks();
                 return;
             }
             break;
@@ -682,9 +695,9 @@ void VaultHelper::slotVaultPolicy()
             if (vaultVisiable) {
                 lockVault();
                 vaultVisiable = false;
-                VaultHelper::instance()->removeSideBarVaultItem();
-                VaultHelper::instance()->removeComputerVaultItem();
-                VaultHelper::killVaultTasks();
+                removeSideBarVaultItem();
+                removeComputerVaultItem();
+                killVaultTasks();
                 return;
             }
             break;
@@ -698,15 +711,15 @@ void VaultHelper::slotVaultPolicy()
 
         lockVault();
         vaultVisiable = false;
-        VaultHelper::instance()->removeSideBarVaultItem();
-        VaultHelper::instance()->removeComputerVaultItem();
+        removeSideBarVaultItem();
+        removeComputerVaultItem();
 
     } break;
     case 2:
         if (!vaultVisiable) {
             vaultVisiable = true;
-            VaultHelper::instance()->removeSideBarVaultItem();
-            VaultHelper::instance()->removeComputerVaultItem();
+            removeSideBarVaultItem();
+            removeComputerVaultItem();
         }
         break;
     }
@@ -720,7 +733,9 @@ void VaultHelper::slotlockVault(int state)
         QUrl url;
         url.setScheme(QString(Global::kComputer));
         url.setPath("/");
-        defaultCdAction(url);
+        for (quint64 wid : winIDs) {
+            defaultCdAction(wid, url);
+        }
     }
 }
 
