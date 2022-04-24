@@ -32,6 +32,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QDebug>
 
@@ -240,7 +241,10 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
     Q_UNUSED(windowId);
-    if (!sources.isEmpty() && !target.isLocalFile()) {
+    if (sources.isEmpty())
+        return;
+
+    if (!target.isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
             QMutexLocker lk(functionsMutex.data());
@@ -252,19 +256,20 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
                 handleCallback(handle);
             return;
         }
-    } else if (!sources.isEmpty() && !sources.first().isLocalFile()) {
+    } else if (!sources.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
             QMutexLocker lk(functionsMutex.data());
             function = this->functions.value(sources.first().scheme());
         }
-        if (function && function->moveFromTash) {
-            JobHandlePointer handle = function->moveFromTash(windowId, sources, target, flags);
+        if (function && function->moveFromPlugin) {
+            JobHandlePointer handle = function->moveFromPlugin(windowId, sources, target, flags);
             if (handleCallback)
                 handleCallback(handle);
             return;
         }
     }
+
     JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
     if (handleCallback)
         handleCallback(handle);
@@ -275,7 +280,10 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
 {
     Q_UNUSED(windowId);
 
-    if (!sources.isEmpty() && !sources.first().isLocalFile()) {
+    if (sources.isEmpty())
+        return;
+
+    if (!sources.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };
         {
             QMutexLocker lk(functionsMutex.data());

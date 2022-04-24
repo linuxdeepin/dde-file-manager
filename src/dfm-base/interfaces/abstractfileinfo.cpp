@@ -1036,9 +1036,7 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName() const
 {
     CALL_PROXY(fileTypeDisplayName());
 
-    return QString::number(
-                   MimeTypeDisplayManager::instance()->displayNameToEnum(fileMimeType().name()))
-            .append(suffix());
+    return QString::number(MimeTypeDisplayManager::instance()->displayNameToEnum(fileMimeType().name())).append(suffix());
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canRedirectionFileUrl Can I redirect files

@@ -142,7 +142,6 @@ void TaskWidget::onButtonClicked()
  */
 void TaskWidget::onShowErrors(const JobInfoPointer JobInfo)
 {
-
     AbstractJobHandler::JobErrorType errorType = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
     QString sourceMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
     QString targetMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();

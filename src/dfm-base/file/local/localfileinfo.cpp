@@ -31,6 +31,7 @@
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/utils/sysinfoutils.h"
 
+#include <dfm-io/dfmio_utils.h>
 #include <dfm-io/local/dlocalfileinfo.h>
 
 #include <QDateTime>
@@ -96,6 +97,7 @@ bool LocalFileInfo::operator!=(const LocalFileInfo &fileinfo) const
 {
     return !(operator==(fileinfo));
 }
+
 /*!
  * \brief setFile 设置文件的File，跟新当前的fileinfo
  *
@@ -143,6 +145,7 @@ void LocalFileInfo::refresh()
     d->attributesExtend.clear();
     d->clearIcon();
     d->dfmFileInfo->clearCache();
+    d->dfmFileInfo->flush();
 }
 
 void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
@@ -481,15 +484,28 @@ QDir LocalFileInfo::absoluteDir() const
 QUrl LocalFileInfo::url() const
 {
     QReadLocker locker(&d->lock);
-    QUrl tmp = d->dfmFileInfo->uri();
-    return tmp;
+    return d->url;
 }
 
 bool LocalFileInfo::canRename() const
 {
     if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
         return false;
-    return isWritable();
+
+    QReadLocker locker(&d->lock);
+    bool canRename = false;
+
+    if (d->attributes.count(DFileInfo::AttributeID::AccessCanRename) == 0) {
+        bool success = false;
+        if (d->dfmFileInfo)
+            canRename = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanRename, &success).toBool();
+        if (success)
+            d->attributes.insert(DFileInfo::AttributeID::AccessCanRename, canRename);
+    } else {
+        canRename = d->attributes.value(DFileInfo::AttributeID::AccessCanRename).toBool();
+    }
+
+    return canRename;
 }
 
 bool LocalFileInfo::canTag() const
@@ -510,6 +526,9 @@ bool LocalFileInfo::canTag() const
  */
 bool LocalFileInfo::isReadable() const
 {
+    // todo lanxs
+    // check file isprivate
+
     QReadLocker locker(&d->lock);
     bool isReadable = false;
 
@@ -545,21 +564,17 @@ bool LocalFileInfo::isWritable() const
     bool isWritable = false;
 
     if (d->attributes.count(DFileInfo::AttributeID::AccessCanWrite) == 0) {
-        do {
-            if (SysInfoUtils::isRootUser()) {
-                d->attributes.insert(DFileInfo::AttributeID::AccessCanWrite, true);
-                break;
-            }
-            QByteArray pathBytes(path().toLocal8Bit());
-            int result = access(pathBytes.data(), W_OK);
-            if (result == 0) {
-                d->attributes.insert(DFileInfo::AttributeID::AccessCanWrite, true);
-                break;
-            }
-        } while (false);
-    }
+        bool success = false;
+        if (d->dfmFileInfo)
+            isWritable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanWrite, &success).toBool();
 
-    isWritable = d->attributes.value(DFileInfo::AttributeID::AccessCanWrite).toBool();
+        if (!success)
+            isWritable = QFileInfo(d->url.path()).isWritable();
+
+        d->attributes.insert(DFileInfo::AttributeID::AccessCanWrite, isWritable);
+    } else {
+        isWritable = d->attributes.value(DFileInfo::AttributeID::AccessCanWrite).toBool();
+    }
 
     return isWritable;
 }
@@ -818,6 +833,7 @@ QString LocalFileInfo::owner() const
  * \brief ownerId 获取文件的拥有者ID
  *
  * Returns the id of the owner of the file.
+ * On Windows and on systems where files do not have owners this function returns ((uint) -2).
  *
  * \param
  *
@@ -826,7 +842,7 @@ QString LocalFileInfo::owner() const
 uint LocalFileInfo::ownerId() const
 {
     QReadLocker locker(&d->lock);
-    uint ownerId = 0;
+    uint ownerId = uint(-2);
 
     if (d->attributes.count(DFileInfo::AttributeID::UnixUID) == 0) {
         bool success = false;
@@ -1140,11 +1156,10 @@ bool LocalFileInfo::isBlockDev() const
  */
 QString LocalFileInfo::mountPath() const
 {
-    // TODO::
-    if (!isBlockDev())
-        return "";
+    if (isBlockDev())
+        return DFMIO::DFMUtils::devicePathFromUrl(d->url);
     else
-        return "";
+        return QString();
 }
 /*!
  * \brief isCharDev 获取是否是字符设备

@@ -113,7 +113,7 @@ void Trash::addFileOperations()
     fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &TrashFileHelper::writeToClipBoardHandle;
     fileOpeationsHandle->moveToTash = &TrashFileHelper::moveToTrashHandle;
-    fileOpeationsHandle->moveFromTash = &TrashFileHelper::moveFromTrashHandle;
+    fileOpeationsHandle->moveFromPlugin = &TrashFileHelper::moveFromTrashHandle;
     fileOpeationsHandle->deletes = &TrashFileHelper::deletesHandle;
     fileOpeationsHandle->copy = &TrashFileHelper::copyHandle;
     fileOpeationsHandle->cut = &TrashFileHelper::cutHandle;

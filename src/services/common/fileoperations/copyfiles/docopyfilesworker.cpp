@@ -24,6 +24,7 @@
 #include "storageinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractdiriterator.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/core/diofactory.h>
@@ -213,6 +214,7 @@ bool DoCopyFilesWorker::copyFiles()
                 continue;
             }
         }
+        fileInfo->refresh();
 
         bool workContinue = false;
         if (!doCopyFile(fileInfo, targetInfo, workContinue)) {

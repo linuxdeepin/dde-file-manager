@@ -27,6 +27,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include "dfm-io/core/diofactory.h"
 
@@ -135,6 +136,7 @@ bool DoCutFilesWorker::cutFiles()
                 continue;
             }
         }
+        fileInfo->refresh();
 
         const QUrl &urlFrom = fileInfo->url();
         const QString &fileName = fileInfo->fileName();
@@ -143,10 +145,10 @@ bool DoCutFilesWorker::cutFiles()
         if (!newFileUrl.endsWith("/"))
             newFileUrl.append("/");
         newFileUrl.append(fileName);
-        const auto &newFileInfo = InfoFactory::create<AbstractFileInfo>(QUrl(newFileUrl));
+        DecoratorFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
 
-        if (newFileInfo->url() == fileInfo->url()
-            || (FileUtils::isSameFile(urlFrom, newFileInfo->url()) && !fileInfo->isSymLink())) {
+        if (newFileInfo.url() == fileInfo->url()
+            || (FileUtils::isSameFile(urlFrom, newFileInfo.url()) && !fileInfo->isSymLink())) {
             ++completedFilesCount;
             continue;
         }

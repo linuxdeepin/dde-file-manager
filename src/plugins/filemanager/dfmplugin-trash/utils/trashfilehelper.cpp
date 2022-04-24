@@ -29,6 +29,9 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/fileutils.h"
+
+#include <dfm-io/dfmio_utils.h>
 
 #include <QFileInfo>
 
@@ -120,7 +123,6 @@ JobHandlePointer TrashFileHelper::deletesHandle(const quint64 windowId, const QL
 
 JobHandlePointer TrashFileHelper::copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
-
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
                                           windowId,
                                           sources, nullptr);
@@ -129,9 +131,19 @@ JobHandlePointer TrashFileHelper::copyHandle(const quint64 windowId, const QList
 
 JobHandlePointer TrashFileHelper::cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
-                                          windowId,
-                                          sources, flags, nullptr);
+    if (sources.isEmpty())
+        return nullptr;
+
+    const QUrl &urlSource = sources.first();
+    if (Q_UNLIKELY(FileUtils::isGvfsFile(urlSource) || DFMIO::DFMUtils::fileIsRemovable(urlSource))) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
+                                              windowId,
+                                              sources, flags, nullptr);
+    } else {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
+                                              windowId,
+                                              sources, flags, nullptr);
+    }
     return {};
 }
 

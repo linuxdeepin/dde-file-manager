@@ -80,7 +80,10 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
-    params[MenuParamKey::kFocusFile] = view->model()->itemFileInfo(index)->url();
+
+    const AbstractFileInfoPointer &focusFileInfo = view->model()->itemFileInfo(index);
+    if (focusFileInfo)
+        params[MenuParamKey::kFocusFile] = focusFileInfo->url();
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(view->selectedUrlList());
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[MenuParamKey::kOnDesktop] = false;

@@ -136,6 +136,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
                 continue;
             }
         }
+        fileInfo->refresh();
         if (!clearTrashFile(fileInfo))
             return false;
         cleanTrashFilesCount++;

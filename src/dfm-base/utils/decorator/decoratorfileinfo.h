@@ -40,11 +40,18 @@ public:
 public:
     QSharedPointer<DFMIO::DFileInfo> fileInfoPtr();
 
+    bool isValid() const;
     bool exists() const;
     bool isFile() const;
     bool isDir() const;
     bool isSymLink() const;
     bool isHidden() const;
+    bool isWritable() const;
+
+    QUrl url() const;
+    QUrl parentUrl() const;
+    uint ownerId() const;
+
     QString suffix() const;
     QString completeSuffix() const;
     QString filePath() const;

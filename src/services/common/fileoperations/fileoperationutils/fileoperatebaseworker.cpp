@@ -27,6 +27,7 @@
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
 #include <dfm-io/core/diofactory.h>
 #include <dfm-io/dfmio_register.h>
@@ -407,8 +408,7 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, bool *result)
         const QString &path = enumerator->next();
 
         const QUrl &urlNext = QUrl::fromLocalFile(path);
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlNext);
-        if (info->isDir()) {
+        if (DecoratorFileInfo(urlNext).isDir()) {
             succ = deleteDir(urlNext, result);
         } else {
             succ = deleteFile(urlNext, result);
@@ -703,6 +703,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
         *result = AbstractJobHandler::SupportAction::kSkipAction != action;
         return false;
     }
+    newTargetInfo->refresh();
 
     if (newTargetInfo->exists()) {
         if (!jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyToSelf) && FileOperationsUtils::isAncestorUrl(fromInfo->url(), newTargetUrl)) {
@@ -772,24 +773,24 @@ bool FileOperateBaseWorker::canWriteFile(const QUrl &url) const
     if (getuid() == 0)
         return true;
 
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!info)
+    DecoratorFileInfo info(url);
+    if (!info.isValid())
         return false;
 
-    AbstractFileInfoPointer parentInfo = InfoFactory::create<AbstractFileInfo>(info->parentUrl());
-    if (!parentInfo)
+    DecoratorFileInfo parentInfo(info.parentUrl());
+    if (!parentInfo.isValid())
         return false;
 
-    bool isFolderWritable = parentInfo->isWritable();
+    bool isFolderWritable = parentInfo.isWritable();
     if (!isFolderWritable)
         return false;
 
 #ifdef Q_OS_LINUX
     struct stat statBuffer;
-    if (::lstat(parentInfo->path().toLocal8Bit().data(), &statBuffer) == 0) {
+    if (::lstat(parentInfo.parentPath().toLocal8Bit().data(), &statBuffer) == 0) {
         // 如果父目录拥有t权限，则判断当前用户是不是文件的owner，不是则无法操作文件
-        const auto &fileOwnerId = info->ownerId();
-        const auto &uid = info->ownerId();
+        const auto &fileOwnerId = info.ownerId();
+        const auto &uid = info.ownerId();
         const bool hasTRight = (statBuffer.st_mode & S_ISVTX) == S_ISVTX;
         if (hasTRight && fileOwnerId != uid) {
             return false;

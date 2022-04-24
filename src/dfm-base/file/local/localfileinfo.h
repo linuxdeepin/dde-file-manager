@@ -50,6 +50,7 @@ public:
     LocalFileInfo &operator=(const LocalFileInfo &info);
     virtual bool operator==(const LocalFileInfo &fileinfo) const;
     virtual bool operator!=(const LocalFileInfo &fileinfo) const;
+
     virtual void setFile(const QUrl &url) override;
     virtual bool exists() const override;
     virtual void refresh() override;

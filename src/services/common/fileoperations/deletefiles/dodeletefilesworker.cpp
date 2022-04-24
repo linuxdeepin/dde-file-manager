@@ -133,6 +133,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
                 continue;
             return false;
         }
+        info->refresh();
 
         if (info->isSymLink() || info->isFile()) {
             ok = deleteFileOnOtherDevice(url);

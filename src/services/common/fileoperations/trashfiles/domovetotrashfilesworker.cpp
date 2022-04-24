@@ -124,6 +124,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 continue;
             }
         }
+        fileInfo->refresh();
 
         isInSameDisk(fileInfo);
 
@@ -326,7 +327,7 @@ bool DoMoveToTrashFilesWorker::writeTrashInfo(const AbstractFileInfoPointer &fil
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
     do {
-        if (!doWriteTrashInfo(baseName, fileInfo->path(), delTime))
+        if (!doWriteTrashInfo(baseName, fileInfo->filePath(), delTime))
             // pause and emit error msg
             action = doHandleErrorAndWait(fileInfo->url(), targetUrl, fileInfo->url(), AbstractJobHandler::JobErrorType::kPermissionDeniedError);
 

@@ -22,12 +22,16 @@
 #include "decoratorfileinfo.h"
 
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/sysinfoutils.h"
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/dfmio_register.h>
+#include <dfm-io/dfmio_utils.h>
 #include <dfm-io/core/diofactory.h>
 
 #include <QVariant>
+
+#include <unistd.h>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -77,6 +81,11 @@ QSharedPointer<dfmio::DFileInfo> DecoratorFileInfo::fileInfoPtr()
     return d->dfileInfo;
 }
 
+bool DecoratorFileInfo::isValid() const
+{
+    return d->dfileInfo;
+}
+
 bool DecoratorFileInfo::exists() const
 {
     if (d->dfileInfo)
@@ -121,6 +130,53 @@ bool DecoratorFileInfo::isHidden() const
         return hidden;
 
     return false;
+}
+
+bool DecoratorFileInfo::isWritable() const
+{
+    if (SysInfoUtils::isRootUser()) {
+        return true;
+    }
+    if (!isValid())
+        return false;
+
+    bool success = false;
+    const QVariant &value = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::AccessCanWrite, &success);
+    if (success && value.isValid())
+        return value.toBool();
+
+    return false;
+}
+
+QUrl DecoratorFileInfo::url() const
+{
+    if (!isValid())
+        return QUrl();
+    return d->dfileInfo->uri();
+}
+
+QUrl DecoratorFileInfo::parentUrl() const
+{
+    if (d->dfileInfo)
+        return DFMIO::DFMUtils::directParentUrl(d->dfileInfo->uri());
+    return QUrl();
+}
+
+/*!
+    Returns the id of the owner of the file.
+
+    On Windows and on systems where files do not have owners this
+    function returns ((uint) -2).
+*/
+uint DecoratorFileInfo::ownerId() const
+{
+    if (!d->dfileInfo)
+        return uint(-2);
+    bool success = false;
+    const QVariant &value = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::UnixUID, &success);
+    if (success && value.isValid())
+        return value.toUInt();
+    return uint(-2);
 }
 
 QString DecoratorFileInfo::suffix() const

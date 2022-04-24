@@ -35,6 +35,7 @@ class TrashFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 public:
     explicit TrashFileInfo(const QUrl &url);
     ~TrashFileInfo() override;
+
     virtual QString fileName() const override;
     virtual bool exists() const override;
     bool canRename() const override;
