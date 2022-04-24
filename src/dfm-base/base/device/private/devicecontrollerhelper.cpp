@@ -39,6 +39,7 @@
 #include <QProcess>
 #include <QMutexLocker>
 #include <DDesktopServices>
+#include <QRegularExpression>
 
 static constexpr char kBurnAttribute[] { "BurnAttribute" };
 static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
@@ -57,19 +58,20 @@ DFMBASE_NAMESPACE::Settings *DeviceControllerHelper::getGsGlobal()
     return Application::genericSetting();
 }
 
-void DeviceControllerHelper::openFileManagerToDevice(const DeviceControllerHelper::BlockDevPtr &blkDev)
+void DeviceControllerHelper::openFileManagerToDevice(const QString &blkId, const QString &mpt)
 {
     if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
-        QString root { DFMBASE_NAMESPACE::UrlRoute::rootPath(DFMBASE_NAMESPACE::Global::kEntry) };
-        QString mountUrlStr { /*root + QFileInfo(blkDev->device()).fileName() + "." + DFMBASE_NAMESPACE::SuffixInfo::kBlock */ };   // TODO(xust)
-        QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountUrlStr });
-        qInfo() << "open by dde-file-manager: " << mountUrlStr;
+        QString mountPoint = mpt;
+        // not auto mount for optical for now.
+        //        if (blkId.contains(QRegularExpression("sr[0-9]*$"))) {
+        //            mountPoint = QString("burn:///dev/%1/disc_files/").arg(blkId.mid(blkId.lastIndexOf("/") + 1));
+        //        }
+        QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountPoint });
+        qInfo() << "open by dde-file-manager: " << mountPoint;
         return;
     }
-    QString &&mp = blkDev->mountPoint();
-    qInfo() << "a new device mount to: " << mp;
-    // TODO(xust) seperate server with GUI
-    DDesktopServices::showFolder(QUrl::fromLocalFile(mp));
+
+    DDesktopServices::showFolder(QUrl::fromLocalFile(mpt));
 }
 
 std::once_flag &DeviceControllerHelper::autoMountOnceFlag()

@@ -654,7 +654,8 @@ void FileView::resizeEvent(QResizeEvent *event)
 
     updateHorizontalOffset();
 
-    if (itemDelegate()->editingIndex().isValid())
+    // TODO(liuyangming) crash when launch via command with params.
+    if (itemDelegate() && itemDelegate()->editingIndex().isValid())
         doItemsLayout();
 
     updateModelActiveIndex();

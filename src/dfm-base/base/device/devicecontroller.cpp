@@ -486,13 +486,13 @@ void DeviceMonitorHandler::onBlockDeviceAdded(const QString &deviceId)
         return;
     }
 
-    if (service->mountBlockDevice(deviceId, {}).isEmpty()) {
-        qWarning() << "Mount device failed: " << blkDev->path();
-        return;
-    }
-
-    if (service->isAutoMountAndOpenSetting())
-        DeviceControllerHelper::openFileManagerToDevice(blkDev);
+    service->mountBlockDeviceAsync(deviceId, {}, [deviceId, this](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+        if (ok && service->isAutoMountAndOpenSetting()) {
+            DeviceControllerHelper::openFileManagerToDevice(deviceId, mpt);
+        } else {
+            qDebug() << "mount device error: " << DFMMOUNT::Utils::errorMessage(err) << static_cast<int>(err);
+        }
+    });
 }
 
 void DeviceMonitorHandler::onBlockDeviceRemoved(const QString &deviceId)

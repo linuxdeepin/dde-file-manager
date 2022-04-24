@@ -102,7 +102,7 @@ class DeviceControllerHelper
 private:
     static std::once_flag &autoMountOnceFlag();
     static DFMBASE_NAMESPACE::Settings *getGsGlobal();
-    static void openFileManagerToDevice(const BlockDevPtr &blkDev);
+    static void openFileManagerToDevice(const QString &blkId, const QString &mpt);
 
     static QList<QUrl> makeMountpointsForDrive(const QString &driveName);
     static QList<QUrl> makeMountpointsForAllDrive();
