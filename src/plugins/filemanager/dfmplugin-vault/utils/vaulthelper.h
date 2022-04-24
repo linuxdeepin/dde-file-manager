@@ -175,9 +175,9 @@ public:
     static JobHandlePointer cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
-    static bool mkdirHandle(const quint64 windowId, const QUrl url, QString *error);
+    static bool mkdirHandle(const quint64 windowId, const QUrl url, QString *error, const DFMBASE_NAMESPACE::Global::CreateFileType type);
 
-    static bool touchFileHandle(const quint64 windowId, const QUrl url, QString *error);
+    static bool touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const DFMBASE_NAMESPACE::Global::CreateFileType type);
 
     static bool renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, QString *);
 

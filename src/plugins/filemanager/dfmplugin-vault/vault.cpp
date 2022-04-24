@@ -124,7 +124,7 @@ void Vault::addFileOperations()
     fileOpeationsHandle->deletes = &VaultHelper::deletesHandle;
     fileOpeationsHandle->copy = &VaultHelper::copyHandle;
     fileOpeationsHandle->cut = &VaultHelper::cutHandle;
-    fileOpeationsHandle->makedir = &VaultHelper::mkdirHandle;
+    fileOpeationsHandle->makeDir = &VaultHelper::mkdirHandle;
     fileOpeationsHandle->touchFile = &VaultHelper::touchFileHandle;
     fileOpeationsHandle->renameFile = &VaultHelper::renameHandle;
     VaultHelper::fileOperationsServIns()->registerOperations(VaultHelper::instance()->scheme(), fileOpeationsHandle);

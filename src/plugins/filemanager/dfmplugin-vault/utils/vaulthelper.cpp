@@ -539,22 +539,22 @@ JobHandlePointer VaultHelper::cutHandle(const quint64 windowId, const QList<QUrl
     return {};
 }
 
-bool VaultHelper::mkdirHandle(const quint64 windowId, const QUrl url, QString *error)
+bool VaultHelper::mkdirHandle(const quint64 windowId, const QUrl url, QString *error, const DFMBASE_NAMESPACE::Global::CreateFileType type)
 {
     QUrl dirUrl = delegateServIns->urlTransform(url);
     return dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
                                                  windowId,
                                                  dirUrl,
-                                                 Global::kCreateFileTypeFolder);
+                                                 type);
 }
 
-bool VaultHelper::touchFileHandle(const quint64 windowId, const QUrl url, QString *error)
+bool VaultHelper::touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const DFMBASE_NAMESPACE::Global::CreateFileType type)
 {
     QUrl dirUrl = delegateServIns->urlTransform(url);
     return dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFile,
                                                  windowId,
                                                  dirUrl,
-                                                 Global::kCreateFileTypeText, *error);
+                                                 type, *error);
 }
 
 bool VaultHelper::renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, QString *)
