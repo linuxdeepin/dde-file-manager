@@ -26,7 +26,6 @@
 #include <DPlatformWindowHandle>
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DPFILEPREVIEW_USE_NAMESPACE
 
 PreviewDialogManager *PreviewDialogManager::instance()
@@ -38,19 +37,6 @@ PreviewDialogManager *PreviewDialogManager::instance()
 PreviewDialogManager::PreviewDialogManager(QObject *parent)
     : QObject(parent)
 {
-}
-
-WindowsService *PreviewDialogManager::windowService()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-
-    if (!windowService) {
-        qWarning() << "Invalid window id: ";
-        return nullptr;
-    }
-
-    return windowService;
 }
 
 void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)

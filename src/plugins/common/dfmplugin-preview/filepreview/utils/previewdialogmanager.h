@@ -22,7 +22,6 @@
 #define PREVIEWDIALOGMANAGER_H
 
 #include "dfmplugin_filepreview_global.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "views/filepreviewdialog.h"
 
 #include <QObject>
@@ -36,11 +35,6 @@ public:
 
 private:
     explicit PreviewDialogManager(QObject *parent = nullptr);
-
-signals:
-
-public:
-    DSB_FM_NAMESPACE::WindowsService *windowService();
 
 public slots:
     void showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl);

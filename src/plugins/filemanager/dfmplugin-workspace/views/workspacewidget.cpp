@@ -53,6 +53,20 @@ WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     initConnect();
 }
 
+Global::ViewMode WorkspaceWidget::currentViewMode() const
+{
+    auto scheme = currentUrl().url();
+    auto view = views.value(scheme);
+    if (!view)
+        return Global::ViewMode::kNoneMode;
+
+    auto fileView = dynamic_cast<FileView *>(view.data());
+    if (fileView)
+        return fileView->currentViewMode();
+
+    return Global::ViewMode::kNoneMode;
+}
+
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
     workspaceUrl = url;

@@ -95,6 +95,11 @@ void WorkspaceService::addScheme(const QString &scheme)
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme);
 }
 
+bool WorkspaceService::schemeViewIsFileView(const QString &scheme)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme).toBool();
+}
+
 bool WorkspaceService::tabAddable(const quint64 windowID)
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toBool();
@@ -128,6 +133,11 @@ void WorkspaceService::setWorkspaceMenuScene(const QString &scheme, const QStrin
 void WorkspaceService::setDefaultViewMode(const QString &scheme, const dfmbase::Global::ViewMode mode)
 {
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, mode);
+}
+
+DFMBASE_NAMESPACE::Global::ViewMode WorkspaceService::currentViewMode(const quint64 windowID)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).value<DFMBASE_NAMESPACE::Global::ViewMode>();
 }
 
 DFMBASE_NAMESPACE::Global::ViewMode WorkspaceService::getDefaultViewMode(const QString &scheme)

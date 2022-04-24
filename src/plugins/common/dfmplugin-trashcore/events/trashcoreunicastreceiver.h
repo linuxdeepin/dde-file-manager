@@ -23,7 +23,6 @@
 #define TRASHCOREUNICASTRECEIVER_H
 
 #include "dfmplugin_trashcore_global.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include <QObject>
 

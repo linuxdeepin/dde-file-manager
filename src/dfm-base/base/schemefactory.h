@@ -197,12 +197,22 @@ public:
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
     {
-        return instance().SchemeFactory<AbstractBaseView>::create(url, errorString);
+        auto view = instance().SchemeFactory<AbstractBaseView>::create(url, errorString);
+        if (view)
+            instance().viewMap[url.scheme()] = view.data();
+        return view;
+    }
+
+    static AbstractBaseView *find(const QString &scheme)
+    {
+        return instance().viewMap.value(scheme);
     }
 
 private:
     static ViewFactory &instance();
     explicit ViewFactory() {}
+
+    QMap<QString, AbstractBaseView *> viewMap;
 };
 
 class WatcherFactory final : public SchemeFactory<AbstractFileWatcher>

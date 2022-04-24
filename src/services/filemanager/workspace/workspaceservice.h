@@ -46,6 +46,7 @@ public:
     static WorkspaceService *service();
 
     void addScheme(const QString &scheme);
+    bool schemeViewIsFileView(const QString &scheme);
     bool tabAddable(const quint64 windowID);
     void addCustomTopWidget(const Workspace::CustomTopWidgetInfo &info);
     bool getCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);
@@ -53,6 +54,7 @@ public:
     void setFileViewFilterCallback(const quint64 windowID, const QUrl &url, const Workspace::FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
     void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
+    DFMBASE_NAMESPACE::Global::ViewMode currentViewMode(const quint64 windowID);
     DFMBASE_NAMESPACE::Global::ViewMode getDefaultViewMode(const QString &scheme);
     bool registerFileViewRoutePrehandle(const QString &scheme, const Workspace::FileViewRoutePrehaldler &prehandler);
 

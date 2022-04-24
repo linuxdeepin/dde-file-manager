@@ -69,6 +69,7 @@ public:
     quint64 windowId(const QWidget *sender);
     void switchViewMode(quint64 windowId, int viewMode);
     void addScheme(const QString &scheme);
+    bool schemeViewIsFileView(const QString &scheme);
     void openUrlInNewTab(quint64 windowId, const QUrl &viewMode);
     void actionNewWindow(const QList<QUrl> &urls);
     void actionNewTab(quint64 windowId, const QUrl &url);

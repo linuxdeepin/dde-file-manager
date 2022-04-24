@@ -46,17 +46,29 @@ class FileDialogPrivate : public QObject
 
 public:
     explicit FileDialogPrivate(FileDialog *qq);
+    QStringList stripFilters(const QStringList &filters);
+
+    void handleSaveAcceptBtnClicked();
+    void handleOpenAcceptBtnClicked();
 
 private:
     static constexpr int kMaxFileCharCount { 255 };
     static constexpr int kDefaultWindowWidth { 960 };
     static constexpr int kDefaultWindowHeight { 540 };
 
+    bool isFileView { false };
     bool hideOnAccept { true };
     FileDialogStatusBar *statusBar { nullptr };
     QEventLoop *eventLoop { nullptr };
     QFileDialog::FileMode fileMode { QFileDialog::AnyFile };
     QFileDialog::AcceptMode acceptMode { QFileDialog::AcceptOpen };
+    bool acceptCanOpenOnSave { false };
+    QStringList nameFilters;
+    QDir::Filters filters { nullptr };
+    int currentNameFilterIndex { -1 };
+    QString currentInputName;
+    bool allowMixedSelection { false };
+    QFileDialog::Options options;
 };
 
 DIALOGCORE_END_NAMESPACE

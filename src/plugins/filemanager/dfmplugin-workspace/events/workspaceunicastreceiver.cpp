@@ -31,6 +31,7 @@ WorkspaceUnicastReceiver *WorkspaceUnicastReceiver::instance()
 void WorkspaceUnicastReceiver::connectService()
 {
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::addScheme"), this, &WorkspaceUnicastReceiver::invokeAddScheme);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::schemeViewIsFileView"), this, &WorkspaceUnicastReceiver::invokeSchemeViewIsFileView);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::tabAddable"), this, &WorkspaceUnicastReceiver::invokeTabAddable);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::addCustomTopWidget"), this, &WorkspaceUnicastReceiver::invokeAddCustomTopWidget);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getCustomTopWidgetVisible"), this, &WorkspaceUnicastReceiver::invokeGetCustomTopWidgetVisible);
@@ -39,12 +40,18 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::setWorkspaceMenuScene"), this, &WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::setDefaultViewMode"), this, &WorkspaceUnicastReceiver::invokeSetDefaultViewMode);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getDefaultViewMode"), this, &WorkspaceUnicastReceiver::invokeGetDefaultViewMode);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::currentViewMode"), this, &WorkspaceUnicastReceiver::invokeCurrentViewMode);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::registerFileViewRoutePrehandle"), this, &WorkspaceUnicastReceiver::invokeRegisterFileViewRoutePrehanlder);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
 {
     WorkspaceHelper::instance()->addScheme(scheme);
+}
+
+bool WorkspaceUnicastReceiver::invokeSchemeViewIsFileView(const QString &scheme)
+{
+    return WorkspaceHelper::instance()->schemeViewIsFileView(scheme);
 }
 
 bool WorkspaceUnicastReceiver::invokeTabAddable(const quint64 windowID)
@@ -105,6 +112,16 @@ void WorkspaceUnicastReceiver::invokeSetDefaultViewMode(const QString &scheme, c
 DFMBASE_NAMESPACE::Global::ViewMode WorkspaceUnicastReceiver::invokeGetDefaultViewMode(const QString &scheme)
 {
     return WorkspaceHelper::instance()->findViewMode(scheme);
+}
+
+ViewMode WorkspaceUnicastReceiver::invokeCurrentViewMode(const quint64 windowID)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
+
+    if (workspaceWidget)
+        return workspaceWidget->currentViewMode();
+
+    return ViewMode::kNoneMode;
 }
 
 bool WorkspaceUnicastReceiver::invokeRegisterFileViewRoutePrehanlder(const QString &scheme, const dfm_service_filemanager::Workspace::FileViewRoutePrehaldler &prehandler)

@@ -145,6 +145,14 @@ void WorkspaceHelper::addScheme(const QString &scheme)
     ViewFactory::regClass<FileView>(scheme);
 }
 
+bool WorkspaceHelper::schemeViewIsFileView(const QString &scheme)
+{
+    auto view = ViewFactory::find(scheme);
+    if (!view)
+        return false;
+    return dynamic_cast<FileView *>(view);
+}
+
 void WorkspaceHelper::openUrlInNewTab(quint64 windowId, const QUrl &url)
 {
     emit openNewTab(windowId, url);

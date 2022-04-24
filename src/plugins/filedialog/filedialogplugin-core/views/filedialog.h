@@ -37,6 +37,7 @@ class FileDialogStatusBar;
 class FileDialog : public DFMBASE_NAMESPACE::FileManagerWindow
 {
     Q_OBJECT
+    friend class FileDialogPrivate;
 
 public:
     enum CustomWidgetType {
@@ -47,10 +48,38 @@ public:
     explicit FileDialog(const QUrl &url, QWidget *parent = nullptr);
     virtual ~FileDialog() override;
 
+    void cd(const QUrl &url) override;
     bool saveClosedSate() const override;
     void updateAsDefaultSize();
 
 public:
+    QFileDialog::ViewMode currentViewMode() const;
+
+    void setDirectory(const QString &directory);
+    void setDirectory(const QDir &directory);
+    QDir directory() const;
+
+    void setDirectoryUrl(const QUrl &directory);
+    QUrl directoryUrl() const;
+
+    void selectFile(const QString &filename);
+    QStringList selectedFiles() const;
+
+    void selectUrl(const QUrl &url);
+    QList<QUrl> selectedUrls() const;
+
+    void setNameFilters(const QStringList &filters);
+    QStringList nameFilters() const;
+
+    void selectNameFilter(const QString &filter);
+    QString selectedNameFilter() const;
+
+    void selectNameFilterByIndex(int index);
+    int selectedNameFilterIndex() const;
+
+    QDir::Filters filter() const;
+    void setFilter(QDir::Filters filters);
+
     void setFileMode(QFileDialog::FileMode mode);
     void setAllowMixedSelection(bool on);
 
@@ -65,6 +94,7 @@ public:
     bool testOption(QFileDialog::Option option) const;
     QFileDialog::Options options() const;
 
+    void addDisableUrlScheme(const QString &scheme);
     void setCurrentInputName(const QString &name);
     void addCustomWidget(CustomWidgetType type, const QString &data);
     QVariant getCustomWidgetValue(CustomWidgetType type, const QString &text) const;
@@ -94,13 +124,23 @@ private Q_SLOTS:
     void onAcceptButtonClicked();
     void onRejectButtonClicked();
     void onCurrentInputNameChanged();
-    void selectNameFilter(const QString &filter);
     void updateAcceptButtonState();
+    void handleEnterPressed();
+    void handleUrlChanged(const QUrl &url);
+
+protected:
+    void showEvent(QShowEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void initializeUi();
     void initConnect();
+    void updateViewState(const QString &scheme);
     FileDialogStatusBar *statusBar() const;
+    void adjustPosition(QWidget *w);
+    void installDFMEventFilter();
+    QString modelCurrentNameFilter() const;
 
 private:
     QScopedPointer<FileDialogPrivate> d;

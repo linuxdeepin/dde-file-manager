@@ -381,7 +381,7 @@ void FileManagerWindow::initializeUi()
 
 void FileManagerWindow::initConnect()
 {
-    connect(this, &FileManagerWindow::currentUrlChanged, this, [this]() {
+    connect(this, &FileManagerWindow::changeCurrentUrl, this, [this]() {
         cd(d->currentUrl);
     });
 }

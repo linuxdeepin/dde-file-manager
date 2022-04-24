@@ -24,7 +24,9 @@
 #define WORKSPACEWIDGET_H
 
 #include "dfmplugin_workspace_global.h"
+
 #include "dfm-base/interfaces/abstractframe.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include "dtkwidget_global.h"
 
@@ -59,6 +61,7 @@ class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
 
+    DFMBASE_NAMESPACE::Global::ViewMode currentViewMode() const;
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
 

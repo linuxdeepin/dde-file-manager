@@ -39,7 +39,6 @@ enum GlobalEventType : uint16_t {
     kChangeCurrentUrl = 1,
     kOpenNewWindow,
     kOpenNewTab,
-    kOpenUrl,
     kSaveOperator,   // save operator
     kCleanSaveOperator,   // Ctrl+Z
     kRevocation,

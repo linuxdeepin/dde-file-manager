@@ -25,7 +25,6 @@
 #include "events/coreeventscaller.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/urlroute.h"
 
@@ -35,7 +34,7 @@
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
+
 DIALOGCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
@@ -95,139 +94,134 @@ QWidget *FileDialogHandle::widget() const
 
 void FileDialogHandle::setDirectory(const QString &directory)
 {
-    setDirectoryUrl(UrlRoute::fromLocalFile(directory));
+    D_D(FileDialogHandle);
+
+    d->dialog->setDirectory(directory);
 }
 
 void FileDialogHandle::setDirectory(const QDir &directory)
 {
-    setDirectoryUrl(UrlRoute::fromLocalFile(directory.absolutePath()));
+    D_D(FileDialogHandle);
+
+    d->dialog->setDirectory(directory);
 }
 
 QDir FileDialogHandle::directory() const
 {
-    return QDir(directoryUrl().toLocalFile());
+    D_DC(FileDialogHandle);
+
+    return d->dialog->directory();
 }
 
 void FileDialogHandle::setDirectoryUrl(const QUrl &directory)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->cd(directory);
+    d->dialog->setDirectoryUrl(directory);
 }
 
 QUrl FileDialogHandle::directoryUrl() const
 {
     D_DC(FileDialogHandle);
 
-    QUrl url { d->dialog->currentUrl() };
-    if (DelegateService::service()->isRegisterUrlTransform(url.scheme()))
-        url = DelegateService::service()->urlTransform(url);
-
-    return url;
+    return d->dialog->directoryUrl();
 }
 
 void FileDialogHandle::selectFile(const QString &filename)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->selectFile(filename);
+    d->dialog->selectFile(filename);
 }
 
 QStringList FileDialogHandle::selectedFiles() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->selectedFiles();
-    return {};
+    return d->dialog->selectedFiles();
 }
 
 void FileDialogHandle::selectUrl(const QUrl &url)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->selectUrl(url);
+    d->dialog->selectUrl(url);
 }
 
 QList<QUrl> FileDialogHandle::selectedUrls() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->selectedUrls();
-    return {};
+    return d->dialog->selectedUrls();
 }
 
 void FileDialogHandle::addDisableUrlScheme(const QString &scheme)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->addDisableUrlScheme(scheme);
+    d->dialog->addDisableUrlScheme(scheme);
 }
 
 void FileDialogHandle::setNameFilters(const QStringList &filters)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setNameFilters(filters);
+    d->dialog->setNameFilters(filters);
 }
 
 QStringList FileDialogHandle::nameFilters() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->nameFilters();
-    return {};
+    return d->dialog->nameFilters();
 }
 
 void FileDialogHandle::selectNameFilter(const QString &filter)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->selectNameFilter(filter);
+    d->dialog->selectNameFilter(filter);
 }
 
 QString FileDialogHandle::selectedNameFilter() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->selectedNameFilter();
-    return {};
+    return d->dialog->selectedNameFilter();
 }
 
 void FileDialogHandle::selectNameFilterByIndex(int index)
 {
     D_DC(FileDialogHandle);
 
-    //    d->dialog->selectNameFilterByIndex(index);
+    d->dialog->selectNameFilterByIndex(index);
 }
 
 int FileDialogHandle::selectedNameFilterIndex() const
 {
     D_DC(FileDialogHandle);
 
-    return {};
-    //    return d->dialog->selectedNameFilterIndex();
+    return d->dialog->selectedNameFilterIndex();
 }
 
 QDir::Filters FileDialogHandle::filter() const
 {
     D_DC(FileDialogHandle);
 
-    //    return d->dialog->filter();
-    return {};
+    return d->dialog->filter();
 }
 
 void FileDialogHandle::setFilter(QDir::Filters filters)
 {
     D_D(FileDialogHandle);
 
-    //    d->dialog->setFilter(filters);
+    d->dialog->setFilter(filters);
 }
 
 void FileDialogHandle::setViewMode(QFileDialog::ViewMode mode)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->internalWinId();
     if (mode == QFileDialog::Detail)
         CoreEventsCaller::sendViewMode(d->dialog, DFMBASE_NAMESPACE::Global::ViewMode::kListMode);
     else
@@ -237,12 +231,7 @@ void FileDialogHandle::setViewMode(QFileDialog::ViewMode mode)
 QFileDialog::ViewMode FileDialogHandle::viewMode() const
 {
     D_DC(FileDialogHandle);
-
-    // TODO(liuyangming): return mode
-    //    if (d->dialog->viewMode() == DFileView::ListMode)
-    //        return QFileDialog::Detail;
-
-    return QFileDialog::List;
+    return d->dialog->currentViewMode();
 }
 
 void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)

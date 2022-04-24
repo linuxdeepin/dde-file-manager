@@ -63,10 +63,10 @@ void AbstractBaseView::refresh()
 {
 }
 
-void AbstractBaseView::notifyUrlChanged()
+void AbstractBaseView::notifyChangeUrl()
 {
     if (FileManagerWindow *w = qobject_cast<FileManagerWindow *>(widget()->window()))
-        emit w->currentUrlChanged();
+        emit w->changeCurrentUrl();
 }
 
 void AbstractBaseView::notifyStateChanged()

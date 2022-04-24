@@ -2,7 +2,8 @@
 #define WORKSPACEUNICASTRECEIVER_H
 
 #include "dfmplugin_workspace_global.h"
-#include "dfm_global_defines.h"
+
+#include "dfm-base/dfm_global_defines.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
 
@@ -20,6 +21,7 @@ public:
 
 public slots:
     void invokeAddScheme(const QString &scheme);
+    bool invokeSchemeViewIsFileView(const QString &scheme);
     bool invokeTabAddable(const quint64 windowID);
     bool invokeAddCustomTopWidget(const DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo &info);
     bool invokeGetCustomTopWidgetVisible(const quint64 windowID, const QString &scheme);
@@ -29,6 +31,7 @@ public slots:
     void invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene);
     void invokeSetDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
     DFMBASE_NAMESPACE::Global::ViewMode invokeGetDefaultViewMode(const QString &scheme);
+    DFMBASE_NAMESPACE::Global::ViewMode invokeCurrentViewMode(const quint64 windowID);
     bool invokeRegisterFileViewRoutePrehanlder(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler &prehandler);
 
 private:

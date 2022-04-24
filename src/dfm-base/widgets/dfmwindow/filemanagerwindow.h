@@ -70,7 +70,7 @@ protected:
 signals:
     void aboutToClose();
     void positionChanged(const QPoint &pos);
-    void currentUrlChanged();
+    void changeCurrentUrl();
     void currentViewStateChanged();
     void selectUrlChanged(const QList<QUrl> &urlList);
 
