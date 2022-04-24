@@ -40,8 +40,6 @@
 #include <QMutexLocker>
 #include <DDesktopServices>
 
-Q_GLOBAL_STATIC_WITH_ARGS(DFMBASE_NAMESPACE::Settings, gsGlobal, ("deepin/dde-file-manager", DFMBASE_NAMESPACE::Settings::GenericConfig))
-
 static constexpr char kBurnAttribute[] { "BurnAttribute" };
 static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
 static constexpr char kBurnUsedSize[] { "BurnUsedSize" };
@@ -56,7 +54,7 @@ using namespace GlobalServerDefines;
 
 DFMBASE_NAMESPACE::Settings *DeviceControllerHelper::getGsGlobal()
 {
-    return gsGlobal;
+    return Application::genericSetting();
 }
 
 void DeviceControllerHelper::openFileManagerToDevice(const DeviceControllerHelper::BlockDevPtr &blkDev)
