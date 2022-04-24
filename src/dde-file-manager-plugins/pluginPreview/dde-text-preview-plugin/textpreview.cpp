@@ -90,13 +90,17 @@ bool TextPreview::setFileUrl(const DUrl &url)
 
     m_title = info->fileName();
 
-    vector<char> buf(m_device.seekg(0, ios::end).tellg());
+    long len = m_device.seekg(0, ios::end).tellg();
+    if (len <= 0)
+        return false;
+
+    vector<char> buf(static_cast<unsigned long>(len));
     m_device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
     m_device.close();
 
-    char * txt = new char[buf.size() + 1];
+    char *txt = new char[buf.size() + 1];
     copy(buf.begin(), buf.end(), txt);
-    m_textData = QString::fromLocal8Bit(txt, buf.size());
+    m_textData = QString::fromLocal8Bit(txt, static_cast<int>(buf.size()));
     delete [] txt;
     txt = nullptr;
     m_textSize = m_textData.count();
