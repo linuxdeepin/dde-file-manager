@@ -120,32 +120,52 @@ void ShareInfoFrame::initUI()
     SectionKeyLabel *networkAddLabel = new SectionKeyLabel(tr("Network path"));
     networkAddLabel->setFixedWidth(labelWidth + 5);
     networkAddLabel->setAttribute(Qt::WA_TranslucentBackground, true);
-    QString selfIp;
-    QList<QHostAddress> list = QNetworkInterface::allAddresses();
-    foreach (QHostAddress address, list) {
-        if (address.protocol() == QAbstractSocket::IPv4Protocol) {
-            selfIp = address.toString();
-        }
-    }
-    m_networkAddrLabel = new QLabel(selfIp.prepend(QString("%1://").arg(SMB_SCHEME)), this);
-    m_networkAddrLabel->setAttribute(Qt::WA_TranslucentBackground, true);
-    m_networkAddrLabel->setFont(fontNormal);
+
     QPalette pe;
     pe.setColor(QPalette::Text, QColor("#526A7F"));
+    m_netScheme = new QLabel(QString("%1://").arg(SMB_SCHEME));
+    m_netScheme->setAttribute(Qt::WA_TranslucentBackground, true);
+    m_netScheme->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
+    m_netScheme->setPalette(pe);
+
+    m_networkAddrLabel = new QLineEdit(m_selfIp);
+    m_networkAddrLabel->setReadOnly(true);
+    m_networkAddrLabel->setText("0.0.0.0");
+    m_networkAddrLabel->setAttribute(Qt::WA_TranslucentBackground, true);
+    m_networkAddrLabel->setFont(fontNormal);
     m_networkAddrLabel->setPalette(pe);
     m_networkAddrLabel->setObjectName("NetworkAddress");
+    m_networkAddrLabel->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
+
+    if(m_updateIp == nullptr){
+        m_updateIp = new QTimer();
+        m_updateIp->setInterval(0);
+        connect(m_updateIp,&QTimer::timeout, this, [this](){
+            QList<QHostAddress> list = QNetworkInterface::allAddresses();
+
+            foreach (QHostAddress address, list) {
+                if (address.protocol() == QAbstractSocket::IPv4Protocol) {
+                    m_selfIp = address.toString();
+                }
+            }
+            if(m_networkAddrLabel->text() != m_selfIp)
+                m_networkAddrLabel->setText(m_selfIp);
+
+            m_updateIp->setInterval(2000);
+        });
+        m_updateIp->start();
+    }
 
     SectionKeyLabel *userNameLabel = new SectionKeyLabel(tr("Username"));
     userNameLabel->setFixedWidth(labelWidth + 5);
     userNameLabel->setAttribute(Qt::WA_TranslucentBackground, true);
-    m_userNamelineEdit = new QLineEdit(this);
+    m_userNamelineEdit = new QLineEdit();
     m_userNamelineEdit->setAttribute(Qt::WA_TranslucentBackground, true);
     m_userNamelineEdit->setFont(fontNormal);
     m_userNamelineEdit->setPalette(pe);
     m_userNamelineEdit->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
     m_userNamelineEdit->setObjectName("UserNameEdit");
     m_userNamelineEdit->setText(UserShareManager::getCurrentUserName());
-    m_userNamelineEdit->setDisabled(true);
 
     SectionKeyLabel *sharePasswordLabel = new SectionKeyLabel(tr("Share password"));
     sharePasswordLabel->setFixedWidth(labelWidth + 5);
@@ -202,9 +222,12 @@ void ShareInfoFrame::initUI()
     QPushButton *copyNetAddr = new QPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
     QObject::connect(copyNetAddr, &QPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText(m_networkAddrLabel->text());
+        clipboard->setText(m_netScheme->text() + m_networkAddrLabel->text());
     });
-    networkAddrLayout->addWidget(m_networkAddrLabel);
+    QHBoxLayout *schemeLayout = new QHBoxLayout;
+    schemeLayout->addWidget(m_netScheme);
+    schemeLayout->addWidget(m_networkAddrLabel);
+    networkAddrLayout->addItem(schemeLayout);
     networkAddrLayout->addWidget(copyNetAddr);
     networkAddrLayout->setStretch(0, 1);
     netLayout->addRow(networkAddLabel, networkAddrLayout);
@@ -326,6 +349,9 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
     if (ret) {
         if (checked) {
 //            emit folderShared(m_fileinfo->absoluteFilePath());
+            if(!m_isSharePasswordSet){//if not set share password, then show the settings dialog
+                setOrModifySharePassword();
+            }
             activateWidgets();
         }
     } else {
@@ -554,6 +580,10 @@ bool ShareInfoFrame::eventFilter(QObject *obj, QEvent *event)
 
 ShareInfoFrame::~ShareInfoFrame()
 {
-
+    if(m_updateIp){
+        m_updateIp->stop();
+        m_updateIp->deleteLater();
+        m_updateIp = nullptr;
+    }
 }
 
