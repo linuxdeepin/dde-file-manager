@@ -76,14 +76,17 @@ private:
     QLineEdit *m_shareNamelineEdit = nullptr;
     QComboBox *m_permissoComBox = nullptr;
     QComboBox *m_anonymityCombox = nullptr;
-    QLabel *m_networkAddrLabel = nullptr;
+    QLabel *m_netScheme = nullptr;
+    QLineEdit *m_networkAddrLabel = nullptr;
     QLineEdit *m_userNamelineEdit = nullptr;
     QLineEdit *m_sharePasswordlineEdit = nullptr;
     QPointer<QWidget> m_sharePropertyBkgWidget = nullptr;
     QTextBrowser *m_shareNotes = nullptr;
     QPushButton *splitLineGray = nullptr;
     bool m_isSharePasswordSet = false;
+    QTimer *m_updateIp = nullptr;
     //QTimer *m_jobTimer;
+    QString m_selfIp;
 };
 
 #endif // SHAREINFOFRAME_H
