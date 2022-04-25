@@ -49,7 +49,17 @@ void UserSharePasswordSettingDialog::initUI()
     setDefaultButton(1);
     m_passwordEdit = new DPasswordEdit(this);
     m_passwordEdit->setFocus();
-    addContent(m_passwordEdit);
+    QWidget* widget = new QWidget(this);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    widget->setLayout(layout);
+    layout->addWidget(m_passwordEdit);
+    QPalette pe;
+    pe.setColor(QPalette::WindowText, QColor("#526A7F"));
+    QLabel* notes = new QLabel(tr("Set a password on the shared folder for non-anonymous access"),this);
+    notes->setAttribute(Qt::WA_TranslucentBackground, true);
+    notes->setPalette(pe);
+    layout->addWidget(notes);
+    addContent(widget);
     setContentsMargins(0,0,0,0);
     getButton(1)->setEnabled(false);
 
