@@ -22,16 +22,11 @@
 
 #include "private/canvasmanager_p.h"
 #include "view/canvasview_p.h"
-#include "delegate/canvasitemdelegate.h"
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "view/operator/fileoperatorproxy.h"
-#include "model/fileinfomodel.h"
-#include "extend/canvasmodelextend.h"
-#include "extend/canvasviewextend.h"
 
 #include <services/desktop/event/private/eventhelperfunc.h>
-#include <services/desktop/wallpapersetting/wallpaperservice.h>
 
 #include <dfm-framework/framework.h>
 #include <base/schemefactory.h>
@@ -47,7 +42,8 @@ class CanvasManagerGlobal : public CanvasManager
 Q_GLOBAL_STATIC(CanvasManagerGlobal, canvasManagerGlobal)
 
 CanvasManager::CanvasManager(QObject *parent)
-    : QObject(parent), d(new CanvasManagerPrivate(this))
+    : QObject(parent)
+    , d(new CanvasManagerPrivate(this))
 {
     Q_ASSERT(thread() == qApp->thread());
 }
@@ -93,6 +89,10 @@ void CanvasManager::init()
     connect(d->frameService, &FrameService::availableGeometryChanged, this, &CanvasManager::onGeometryChanged);
     connect(d->frameService, &FrameService::windowAboutToBeBuilded, this, &CanvasManager::onDetachWindows);
     connect(d->frameService, &FrameService::windowBuilded, this, &CanvasManager::onCanvasBuild);
+
+    // self extend
+    d->extend = new CanvasManagerExtend(this);
+    d->extend->init();
 
     d->initModel();
     d->initSetting();
@@ -270,18 +270,7 @@ void CanvasManager::onWallperSetting(CanvasView *view)
     if (screen.isEmpty())
         return;
 
-    // get wallpaper service
-    auto &ctx = dpfInstance.serviceContext();
-    if (auto wallpaperService = ctx.service<WallpaperService>(WallpaperService::name())) {
-        int id = EventHelperFunc::getEventID(wallpaperService->query(EventType::kEventSlot), "WallpaperSetting");
-        if (id > 0) {
-            dpfInstance.eventDispatcher().publish(id, screen);
-        } else {
-            qWarning() << "WallpaperService: invalid eventid WallpaperSetting" << id;
-        }
-    } else {
-        qWarning() << "WallpaperService: no such service.";
-    }
+    d->extend->requestWallpaperSetting(screen);
 }
 
 void CanvasManager::reloadItem()
@@ -351,11 +340,21 @@ void CanvasManagerPrivate::initModel()
 
     // extend interface
     modelExt = new CanvasModelExtend(q);
-    modelExt->initEvent();
+    modelExt->init();
     canvasModel->setModelExtend(modelExt);
 
     viewExt = new CanvasViewExtend(q);
-    viewExt->initEvent();
+    viewExt->init();
+
+    // external interface
+    modelBroker = new CanvasModelBroker(canvasModel, q);
+    modelBroker->init();
+
+    viewBroker = new CanvasViewBroker(q, q);
+    viewBroker->init();
+
+    gridBroker = new CanvasGridBroker(GridIns, q);
+    gridBroker->init();
 }
 
 void CanvasManagerPrivate::initSetting()

@@ -36,7 +36,7 @@ public:
     virtual bool registerEvent(EventProvider *);
     virtual void unRegisterEvent(EventProvider *);
 protected:
-    ~EventInformant();
+    ~EventInformant() override;
     virtual void onEventChanged(int eventType, const QStringList &event);
 protected:
     QList<EventProvider *> providers;

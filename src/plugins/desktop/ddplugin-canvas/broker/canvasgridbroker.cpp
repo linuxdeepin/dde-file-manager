@@ -18,51 +18,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "canvasgridbroker_p.h"
 
-#include "canvasmodelextend_p.h"
-#include "model/canvasproxymodel.h"
-
-#include <QVariant>
-
-// register type for EventSequenceManager
-Q_DECLARE_METATYPE(QVariant *)
+Q_DECLARE_METATYPE(QStringList *)
 
 DDP_CANVAS_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 
-CanvasModelExtendPrivate::CanvasModelExtendPrivate(CanvasModelExtend *qq)
+CanvasGridBrokerPrivate::CanvasGridBrokerPrivate(CanvasGridBroker *qq)
     : QObject(qq)
     , CanvasEventProvider()
     , q(qq)
 {
-    qRegisterMetaType<QVariant *>();
+
 }
 
-CanvasModelExtendPrivate::~CanvasModelExtendPrivate()
+CanvasGridBrokerPrivate::~CanvasGridBrokerPrivate()
 {
 
 }
 
-void CanvasModelExtendPrivate::registerEvent()
+void CanvasGridBrokerPrivate::registerEvent()
 {
-    RegCanvasSeqSigID(this, kFilterCanvasModelData);
+    RegCanvasSlotsID(this, kSlotCanvasGridItems);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasGridItems), q, &CanvasGridBroker::items);
 }
 
-CanvasModelExtend::CanvasModelExtend(QObject *parent)
+CanvasGridBroker::CanvasGridBroker(CanvasGrid *grid, QObject *parent)
     : QObject(parent)
-    , ModelExtendInterface()
-    , d(new CanvasModelExtendPrivate(this))
+    , d(new CanvasGridBrokerPrivate(this))
 {
-
+    d->grid = grid;
 }
 
-bool CanvasModelExtend::init()
+bool CanvasGridBroker::init()
 {
     return d->initEvent();
 }
 
-bool CanvasModelExtend::modelData(const QUrl &url, int role, QVariant *out, void *userData) const
+void CanvasGridBroker::items(int index, QStringList *ret)
 {
-    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasModelData),
-                                    url, role, out, userData);
+    if (ret)
+        *ret = d->grid->items(index);
 }
+

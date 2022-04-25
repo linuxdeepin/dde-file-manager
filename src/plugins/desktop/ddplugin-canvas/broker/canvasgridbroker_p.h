@@ -18,27 +18,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASVIEWEXTEND_H
-#define CANVASVIEWEXTEND_H
+#ifndef CANVASGRIDBROKER_P_H
+#define CANVASGRIDBROKER_P_H
 
-#include "view/viewextendinterface.h"
+#include "canvasgridbroker.h"
+#include "canvaseventprovider.h"
+#include "grid/canvasgrid.h"
 
 DDP_CANVAS_BEGIN_NAMESPACE
-class CanvasViewExtendPrivate;
-class CanvasViewExtend : public QObject, public ViewExtendInterface
+
+static constexpr char kSlotCanvasGridItems[] = "CanvasGrid_Method_items";
+
+class CanvasGridBrokerPrivate : public QObject, public CanvasEventProvider
 {
     Q_OBJECT
-    friend class CanvasViewExtendPrivate;
 public:
-    explicit CanvasViewExtend(QObject *parent = nullptr);
-    ~CanvasViewExtend();
-    bool init();
-    bool contextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData = nullptr) const override;
-    bool dropData(int viewIndex, const QMimeData *, const QPoint &viewPos, void *extData = nullptr) const override;
+    explicit CanvasGridBrokerPrivate(CanvasGridBroker *);
+    ~CanvasGridBrokerPrivate() override;
+protected:
+    void registerEvent() override;
+public:
+    CanvasGrid *grid = nullptr;
 private:
-    CanvasViewExtendPrivate *d;
+    CanvasGridBroker *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASVIEWEXTEND_H
+#endif // CANVASGRIDBROKER_P_H

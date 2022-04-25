@@ -36,23 +36,24 @@ class CanvasProxyModel : public QAbstractProxyModel
 {
     Q_OBJECT
     friend class CanvasProxyModelPrivate;
+    friend class CanvasModelBroker;
 public:
     explicit CanvasProxyModel(QObject *parent = nullptr);
-    Q_INVOKABLE QModelIndex rootIndex() const;
+    QModelIndex rootIndex() const;
     inline QUrl rootUrl() const {return fileUrl(rootIndex());}
-    Q_INVOKABLE QModelIndex index(const QUrl &url, int column = 0) const;
-    Q_INVOKABLE DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
-    Q_INVOKABLE QUrl fileUrl(const QModelIndex &index) const;
-    Q_INVOKABLE QList<QUrl> files() const;
-    Q_INVOKABLE bool showHiddenFiles() const;
-    Q_INVOKABLE Qt::SortOrder sortOrder() const;
-    Q_INVOKABLE void setSortOrder(const Qt::SortOrder &order);
+    QModelIndex index(const QUrl &url, int column = 0) const;
+    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
+    QUrl fileUrl(const QModelIndex &index) const;
+    QList<QUrl> files() const;
+    bool showHiddenFiles() const;
+    Qt::SortOrder sortOrder() const;
+    void setSortOrder(const Qt::SortOrder &order);
 
-    Q_INVOKABLE int sortRole() const;
-    Q_INVOKABLE void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
+    int sortRole() const;
+    void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
 
-    Q_INVOKABLE void setModelExtend(ModelExtendInterface *);
-    Q_INVOKABLE ModelExtendInterface *modelExtend() const;
+    void setModelExtend(ModelExtendInterface *);
+    ModelExtendInterface *modelExtend() const;
 public:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
     Q_INVOKABLE virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;

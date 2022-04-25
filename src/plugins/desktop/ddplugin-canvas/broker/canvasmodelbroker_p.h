@@ -18,27 +18,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASVIEWEXTEND_H
-#define CANVASVIEWEXTEND_H
+#ifndef CANVASMODELBROKER_P_H
+#define CANVASMODELBROKER_P_H
 
-#include "view/viewextendinterface.h"
+#include "canvasmodelbroker.h"
+#include "canvaseventprovider.h"
+#include "model/canvasproxymodel.h"
 
 DDP_CANVAS_BEGIN_NAMESPACE
-class CanvasViewExtendPrivate;
-class CanvasViewExtend : public QObject, public ViewExtendInterface
+
+static constexpr char kSlotCanvasModelData[] = "CanvasModel_Method_data";
+static constexpr char kSlotCanvasModelFetch[] = "CanvasModel_Method_fetch";
+static constexpr char kSlotCanvasModelTake[] = "CanvasModel_Method_take";
+
+class CanvasModelBrokerPrivate : public QObject, public CanvasEventProvider
 {
     Q_OBJECT
-    friend class CanvasViewExtendPrivate;
 public:
-    explicit CanvasViewExtend(QObject *parent = nullptr);
-    ~CanvasViewExtend();
-    bool init();
-    bool contextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData = nullptr) const override;
-    bool dropData(int viewIndex, const QMimeData *, const QPoint &viewPos, void *extData = nullptr) const override;
+    explicit CanvasModelBrokerPrivate(CanvasModelBroker *);
+    ~CanvasModelBrokerPrivate() override;
+public:
+protected:
+    void registerEvent() override;
+public:
+    CanvasProxyModel *model = nullptr;
 private:
-    CanvasViewExtendPrivate *d;
+    CanvasModelBroker *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
-
-#endif // CANVASVIEWEXTEND_H
+#endif // CANVASMODELBROKER_P_H

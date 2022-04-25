@@ -18,51 +18,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include "canvasmodelextend_p.h"
-#include "model/canvasproxymodel.h"
-
-#include <QVariant>
-
-// register type for EventSequenceManager
-Q_DECLARE_METATYPE(QVariant *)
+#include "canvasmanagerextend_p.h"
 
 DDP_CANVAS_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 
-CanvasModelExtendPrivate::CanvasModelExtendPrivate(CanvasModelExtend *qq)
+CanvasManagerExtendPrivate::CanvasManagerExtendPrivate(CanvasManagerExtend *qq)
     : QObject(qq)
     , CanvasEventProvider()
     , q(qq)
 {
-    qRegisterMetaType<QVariant *>();
+
 }
 
-CanvasModelExtendPrivate::~CanvasModelExtendPrivate()
+CanvasManagerExtendPrivate::~CanvasManagerExtendPrivate()
 {
 
 }
 
-void CanvasModelExtendPrivate::registerEvent()
+void CanvasManagerExtendPrivate::registerEvent()
 {
-    RegCanvasSeqSigID(this, kFilterCanvasModelData);
+    RegCanvasSeqSigID(this, kFilterCanvasManagerWallpaperSetting);
 }
 
-CanvasModelExtend::CanvasModelExtend(QObject *parent)
+CanvasManagerExtend::CanvasManagerExtend(QObject *parent)
     : QObject(parent)
-    , ModelExtendInterface()
-    , d(new CanvasModelExtendPrivate(this))
+    , CanvasManagerExtendInterface()
+    , d(new CanvasManagerExtendPrivate(this))
 {
 
 }
 
-bool CanvasModelExtend::init()
+bool CanvasManagerExtend::init()
 {
     return d->initEvent();
 }
 
-bool CanvasModelExtend::modelData(const QUrl &url, int role, QVariant *out, void *userData) const
+void CanvasManagerExtend::requestWallpaperSetting(const QString &screen) const
 {
-    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasModelData),
-                                    url, role, out, userData);
+    dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasManagerWallpaperSetting),
+                                    screen);
 }

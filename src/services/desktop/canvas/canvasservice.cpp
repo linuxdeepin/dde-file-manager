@@ -44,3 +44,12 @@ CanvasService::~CanvasService()
 
 }
 
+void CanvasService::notify(int eventType, const QStringList &eventKeys) const
+{
+    if (!eventKeys.isEmpty()) {
+        EventInformant::notify(eventType, eventKeys);
+        emit sigEventChanged(eventType, eventKeys);
+    }
+}
+
+

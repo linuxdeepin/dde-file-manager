@@ -27,7 +27,7 @@ DSB_D_USE_NAMESPACE
 
 CanvasViewExtendPrivate::CanvasViewExtendPrivate(CanvasViewExtend *qq)
     : QObject(qq)
-    , EventProvider()
+    , CanvasEventProvider()
     , q(qq)
 {
 
@@ -35,23 +35,12 @@ CanvasViewExtendPrivate::CanvasViewExtendPrivate(CanvasViewExtend *qq)
 
 CanvasViewExtendPrivate::~CanvasViewExtendPrivate()
 {
-    service->unRegisterEvent(this);
+
 }
 
-QVariantHash CanvasViewExtendPrivate::query(int type) const
+void CanvasViewExtendPrivate::registerEvent()
 {
-    switch (type) {
-    case EventType::kEventSignal:
-        return eSignals;
-    case EventType::kEventSlot:
-        return eSlots;
-    case EventType::kSeqSignal:
-        return eSeqSig;
-    default:
-        break;
-    }
 
-    return {};
 }
 
 CanvasViewExtend::CanvasViewExtend(QObject *parent)
@@ -67,19 +56,9 @@ CanvasViewExtend::~CanvasViewExtend()
 
 }
 
-bool CanvasViewExtend::initEvent()
+bool CanvasViewExtend::init()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    d->service = ctx.service<CanvasService>(CanvasService::name());
-    Q_ASSERT_X(d->service, "CanvasViewExtend", "CanvasService not found");
-
-    // todo(zy) register filter
-//    d->eSeqSig.insert(,
-//                  DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
-
-    // register filter event
-    d->service->registerEvent(d);
-    return true;
+    return d->initEvent();
 }
 
 bool CanvasViewExtend::contextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData) const

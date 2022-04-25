@@ -23,29 +23,22 @@
 
 #include "ddplugin_canvas_global.h"
 #include "canvasmodelextend.h"
-
-#include <services/desktop/event/eventprovider.h>
-#include <services/desktop/canvas/canvasservice.h>
+#include "canvaseventprovider.h"
 
 #include <QObject>
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kFilterCanvaModelData[] = "CanvaModel_Method_data";
+static constexpr char kFilterCanvasModelData[] = "CanvasModel_Filter_data";
 
-class CanvasModelExtendPrivate : public QObject, public DSB_D_NAMESPACE::EventProvider
+class CanvasModelExtendPrivate : public QObject, public CanvasEventProvider
 {
     Q_OBJECT
 public:
     explicit CanvasModelExtendPrivate(CanvasModelExtend *);
-    ~CanvasModelExtendPrivate();
-public:
-    QVariantHash query(int type) const override;
-public:
-    DSB_D_NAMESPACE::CanvasService *service = nullptr;
-    QVariantHash eSignals;
-    QVariantHash eSlots;
-    QVariantHash eSeqSig;
+    ~CanvasModelExtendPrivate() override;
+protected:
+    void registerEvent() override;
 private:
     CanvasModelExtend *q;
 };

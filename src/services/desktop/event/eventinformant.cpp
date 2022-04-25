@@ -28,7 +28,7 @@ DSB_D_USE_NAMESPACE
         notify(type, es);}
 
 // receive the notification sended by provider.
-static void eventChangedCallback(int eventType, QStringList event, void *ptr)
+static void eventChangedCallback(int eventType, const QStringList &event, void *ptr)
 {
     class HookClass : public EventInformant
     {

@@ -27,7 +27,7 @@
 #include "services/desktop/event/private/eventhelperfunc.h"
 #include <services/desktop/wallpapersetting/wallpaperservice.h>
 #include <services/desktop/screen/screenservice.h>
-
+#include <services/desktop/canvas/canvasservice.h>
 
 DDP_WALLPAERSETTING_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
@@ -74,6 +74,8 @@ bool WlSetPlugin::start()
             qWarning() << "Fail to get EventShowScreenSaver";
     }
 
+    auto &listen = dpfInstance.listener();
+    connect(&listen, &DPF_NAMESPACE::Listener::pluginsStarted, handle, &EventHandle::pluginStarted);
     return true;
 }
 
@@ -104,14 +106,16 @@ QVariantHash EventHandle::query(int type) const
     return {};
 }
 
-void EventHandle::wallpaperSetting(QString name)
+bool EventHandle::wallpaperSetting(QString name)
 {
     show(name, (int)WallpaperSettings::Mode::WallpaperMode);
+    return true;
 }
 
-void EventHandle::screenSaverSetting(QString name)
+bool EventHandle::screenSaverSetting(QString name)
 {
     show(name, (int)WallpaperSettings::Mode::ScreenSaverMode);
+    return true;
 }
 
 void EventHandle::onQuit()
@@ -119,6 +123,26 @@ void EventHandle::onQuit()
     if (wallpaperSettings) {
         wallpaperSettings->deleteLater();
         wallpaperSettings = nullptr;
+    }
+}
+
+void EventHandle::pluginStarted()
+{
+    // receive canvas requsetion.
+    auto &ctx = dpfInstance.serviceContext();
+    auto canvas = ctx.service<CanvasService>(CanvasService::name());
+    Q_ASSERT_X(canvas, "WallpaperSettingPlugin", "CanvasService not found");
+    if (!followEvent(canvas)) {
+        qWarning() << "CanvasService no event: CanvasManager_Signal_wallpaperSetting";
+        connect(canvas, &CanvasService::sigEventChanged, this, [canvas, this](int eventType, const QStringList &event) {
+            if ((eventType == EventType::kEventSignal)
+                    && event.contains("CanvasManager_Signal_wallpaperSetting")) {
+                if (followEvent(canvas)) {
+                    qInfo() << "CanvasManager_Signal_wallpaperSetting has resubscribed.";
+                    disconnect(canvas, &CanvasService::sigEventChanged, this, nullptr);
+                }
+            }
+        });
     }
 }
 
@@ -174,4 +198,17 @@ void EventHandle::show(QString name, int mode)
     auto autoAct = new AutoActivateWindow(wallpaperSettings);
     autoAct->setWatched(wallpaperSettings);
     autoAct->start();
+}
+
+
+bool EventHandle::followEvent(EventProvider *provider)
+{
+    bool ok = false;
+    int eventid = provider->query(EventType::kSeqSignal).value("CanvasManager_Filter_wallpaperSetting").toInt(&ok);
+    if (ok && eventid > 0) {
+        dpfInstance.eventSequence().follow(eventid, this, &EventHandle::wallpaperSetting);
+        return true;
+    }
+
+    return false;
 }

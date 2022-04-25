@@ -41,7 +41,7 @@ bool CanvasPlugin::start()
 {
     auto &ctx = dpfInstance.serviceContext();
 
-    // start screen service.
+    // start service.
     {
         QString error;
         bool ret = ctx.load(CanvasService::name(), &error);
@@ -60,6 +60,13 @@ bool CanvasPlugin::start()
         abort();
         return false;
     }
+
+    // moitor the changes of event
+#ifdef QT_DEBUG
+    connect(service, &CanvasService::sigEventChanged, service, [](int eventType, const QStringList &event) {
+       qDebug() << "CanvasService events :" << eventType << event;
+    });
+#endif
 
     // initialize file creator
     DesktopFileCreator::instance();

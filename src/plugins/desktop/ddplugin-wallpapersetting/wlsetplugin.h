@@ -41,12 +41,15 @@ public:
     explicit EventHandle(QObject *parent = nullptr);
     QVariantHash query(int type) const override;
 public slots:
-    void wallpaperSetting(QString name);
-    void screenSaverSetting(QString name);
+    bool wallpaperSetting(QString name);
+    bool screenSaverSetting(QString name);
     void onQuit();
+    void pluginStarted();
 protected:
     void onChanged();
     void show(QString name, int mode);
+private:
+    bool followEvent(DSB_D_NAMESPACE::EventProvider *);
 private:
     WallpaperSettings *wallpaperSettings = nullptr;
     QVariantHash eSignals;

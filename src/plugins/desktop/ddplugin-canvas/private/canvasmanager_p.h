@@ -24,15 +24,19 @@
 
 #include "canvasmanager.h"
 #include "view/canvasview.h"
+#include "delegate/canvasitemdelegate.h"
+#include "model/fileinfomodel.h"
+#include "extend/canvasmanagerextend.h"
+#include "extend/canvasmodelextend.h"
+#include "extend/canvasviewextend.h"
+#include "broker/canvasmodelbroker.h"
+#include "broker/canvasviewbroker.h"
+#include "broker/canvasgridbroker.h"
 
 #include <services/desktop/frame/frameservice.h>
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-class FileInfoModel;
-class CanvasModelExtend;
-class CanvasViewExtend;
-class CanvasSelectionModel;
 typedef QSharedPointer<CanvasView> CanvasViewPointer;
 
 class CanvasManagerPrivate : public QObject
@@ -64,6 +68,7 @@ public slots:
 protected slots:
 
 public:
+    CanvasManagerExtend *extend = nullptr;
     FileInfoModel *sourceModel = nullptr;
     CanvasProxyModel *canvasModel = nullptr;
     CanvasModelExtend *modelExt = nullptr;
@@ -71,6 +76,10 @@ public:
     DSB_D_NAMESPACE::FrameService *frameService = nullptr;
     CanvasViewExtend *viewExt = nullptr;
     QMap<QString, CanvasViewPointer> viewMap;
+public:
+    CanvasModelBroker *modelBroker = nullptr;
+    CanvasViewBroker *viewBroker = nullptr;
+    CanvasGridBroker *gridBroker = nullptr;
 private:
     CanvasManager *q = nullptr;
 };

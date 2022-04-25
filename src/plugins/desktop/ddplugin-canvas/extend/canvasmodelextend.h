@@ -35,8 +35,8 @@ class CanvasModelExtend : public QObject, public ModelExtendInterface
     friend class CanvasModelExtendPrivate;
 public:
     explicit CanvasModelExtend(QObject *parent = nullptr);
-    bool initEvent();
-    virtual bool modelData(const QUrl &url, int role, QVariant *out, void *userData = nullptr) const override;
+    bool init();
+    bool modelData(const QUrl &url, int role, QVariant *out, void *userData = nullptr) const override;
 signals:
 
 public slots:

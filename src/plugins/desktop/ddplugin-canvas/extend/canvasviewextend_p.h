@@ -23,25 +23,18 @@
 
 #include "ddplugin_canvas_global.h"
 #include "canvasviewextend.h"
-
-#include <services/desktop/event/eventprovider.h>
-#include <services/desktop/canvas/canvasservice.h>
+#include "canvaseventprovider.h"
 
 #include <QObject>
 
 DDP_CANVAS_BEGIN_NAMESPACE
-class CanvasViewExtendPrivate : public QObject, public DSB_D_NAMESPACE::EventProvider
+class CanvasViewExtendPrivate : public QObject, public CanvasEventProvider
 {
 public:
     explicit CanvasViewExtendPrivate(CanvasViewExtend *qq);
-    ~CanvasViewExtendPrivate();
-public:
-    QVariantHash query(int type) const override;
-public:
-    DSB_D_NAMESPACE::CanvasService *service = nullptr;
-    QVariantHash eSignals;
-    QVariantHash eSlots;
-    QVariantHash eSeqSig;
+    ~CanvasViewExtendPrivate() override;
+protected:
+    virtual void registerEvent() override;
 private:
     CanvasViewExtend *q;
 };

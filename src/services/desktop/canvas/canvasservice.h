@@ -43,9 +43,12 @@ public:
     {
         return "org.deepin.service.Desktop.CanvasService";
     }
+signals:
+    void sigEventChanged(int type, const QStringList &events) const;
 protected:
     explicit CanvasService(QObject *parent = nullptr);
     ~CanvasService();
+    void notify(int eventType, const QStringList &eventKeys) const override;
 private:
     CanvasServicePrivate *d;
 };

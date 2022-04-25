@@ -37,7 +37,7 @@ static constexpr int kSeqSignal = 0x3;
 class EventProvider
 {
 public:
-    typedef void (*EventChanged)(int eventType, QStringList eventKeys, void *);
+    typedef void (*EventChanged)(int eventType, const QStringList &eventKeys, void *);
 public:
     virtual QVariantHash query(int type) const = 0;
     virtual bool monitor(EventChanged func, void *data);

@@ -48,8 +48,8 @@ class CanvasView : public QAbstractItemView
     friend class KeySelecter;
     friend class ViewPainter;
     friend class CanvasViewMenuProxy;
+    friend class CanvasViewBroker;
     friend class CanvasViewPrivate;
-
 public:
     using CursorAction = QAbstractItemView::CursorAction;
     explicit CanvasView(QWidget *parent = nullptr);

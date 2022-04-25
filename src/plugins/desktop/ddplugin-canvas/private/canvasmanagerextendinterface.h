@@ -18,27 +18,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASVIEWEXTEND_H
-#define CANVASVIEWEXTEND_H
+#ifndef CANVASMANAGEREXTENDINTERFACE_H
+#define CANVASMANAGEREXTENDINTERFACE_H
 
-#include "view/viewextendinterface.h"
+#include "ddplugin_canvas_global.h"
+
+#include <QString>
 
 DDP_CANVAS_BEGIN_NAMESPACE
-class CanvasViewExtendPrivate;
-class CanvasViewExtend : public QObject, public ViewExtendInterface
+
+class CanvasManagerExtendInterface
 {
-    Q_OBJECT
-    friend class CanvasViewExtendPrivate;
 public:
-    explicit CanvasViewExtend(QObject *parent = nullptr);
-    ~CanvasViewExtend();
-    bool init();
-    bool contextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData = nullptr) const override;
-    bool dropData(int viewIndex, const QMimeData *, const QPoint &viewPos, void *extData = nullptr) const override;
-private:
-    CanvasViewExtendPrivate *d;
+    explicit CanvasManagerExtendInterface();
+    virtual ~CanvasManagerExtendInterface();
+public:
+public:
+    // signals
+    virtual void requestWallpaperSetting(const QString &screen) const;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASVIEWEXTEND_H
+#endif // CANVASMANAGEREXTENDINTERFACE_H
