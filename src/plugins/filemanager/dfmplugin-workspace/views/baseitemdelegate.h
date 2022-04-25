@@ -117,6 +117,8 @@ public:
      */
     virtual void updateItemSizeHint() = 0;
 
+    virtual QRectF itemIconRect(const QRectF &itemRect) const;
+
     virtual QList<QRectF> drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout,
                                    const QRectF &boundingRect, qreal radius, const QBrush &background,
                                    QTextOption::WrapMode wordWrap = QTextOption::WrapAtWordBoundaryOrAnywhere,

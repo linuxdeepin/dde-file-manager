@@ -42,6 +42,8 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getDefaultViewMode"), this, &WorkspaceUnicastReceiver::invokeGetDefaultViewMode);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::currentViewMode"), this, &WorkspaceUnicastReceiver::invokeCurrentViewMode);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::registerFileViewRoutePrehandle"), this, &WorkspaceUnicastReceiver::invokeRegisterFileViewRoutePrehanlder);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::getViewVisibleGeometry"), this, &WorkspaceUnicastReceiver::invokeGetViewVisibleGeometry);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::getItemRect"), this, &WorkspaceUnicastReceiver::invokeGetItemRect);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -127,6 +129,24 @@ ViewMode WorkspaceUnicastReceiver::invokeCurrentViewMode(const quint64 windowID)
 bool WorkspaceUnicastReceiver::invokeRegisterFileViewRoutePrehanlder(const QString &scheme, const dfm_service_filemanager::Workspace::FileViewRoutePrehaldler &prehandler)
 {
     return WorkspaceHelper::instance()->reigsterViewRoutePrehandler(scheme, prehandler);
+}
+
+QRectF WorkspaceUnicastReceiver::invokeGetViewVisibleGeometry(const quint64 windowID)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
+    if (workspaceWidget)
+        return workspaceWidget->viewVisibleGeometry();
+
+    return QRectF();
+}
+
+QRectF WorkspaceUnicastReceiver::invokeGetItemRect(const quint64 windowID, const QUrl &url, const ItemRoles role)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
+    if (workspaceWidget)
+        return workspaceWidget->itemRect(url, role);
+
+    return QRectF();
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)

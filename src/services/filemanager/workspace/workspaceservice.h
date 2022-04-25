@@ -57,6 +57,8 @@ public:
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode(const quint64 windowID);
     DFMBASE_NAMESPACE::Global::ViewMode getDefaultViewMode(const QString &scheme);
     bool registerFileViewRoutePrehandle(const QString &scheme, const Workspace::FileViewRoutePrehaldler &prehandler);
+    QRectF getViewVisibleGeometry(const quint64 windowID);
+    QRectF getItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
 
 private:
     explicit WorkspaceService(QObject *parent = nullptr);

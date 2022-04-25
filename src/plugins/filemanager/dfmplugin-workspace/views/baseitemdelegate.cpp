@@ -155,6 +155,11 @@ void BaseItemDelegate::commitDataAndCloseActiveEditor()
                               Qt::DirectConnection, Q_ARG(QWidget *, editor));
 }
 
+QRectF BaseItemDelegate::itemIconRect(const QRectF &itemRect) const
+{
+    return QRectF(itemRect);
+}
+
 QList<QRectF> BaseItemDelegate::drawText(const QModelIndex &index, QPainter *painter, QTextLayout *layout, const QRectF &boundingRect, qreal radius, const QBrush &background, QTextOption::WrapMode wordWrap, Qt::TextElideMode mode, int flags, const QColor &shadowColor) const
 {
     initTextLayout(index, layout);

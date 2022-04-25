@@ -65,6 +65,8 @@ public:
 
     void hideNotEditingIndexWidget() override;
 
+    QRectF itemIconRect(const QRectF &itemRect) const override;
+
     QString displayFileName(const QModelIndex &index) const;
 
 protected:

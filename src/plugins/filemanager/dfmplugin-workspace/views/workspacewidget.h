@@ -28,6 +28,8 @@
 #include "dfm-base/interfaces/abstractframe.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include "dfm-base/dfm_global_defines.h"
+
 #include "dtkwidget_global.h"
 
 #include <QUrl>
@@ -65,11 +67,16 @@ public:
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;
 
+    DFMBASE_NAMESPACE::AbstractBaseView *currentView();
+
     void openNewTab(const QUrl &url);
     bool canAddNewTab();
     void closeTab(quint64 winId, const QUrl &url);
     void setCustomTopWidgetVisible(const QString &scheme, bool visible);
     bool getCustomTopWidgetVisible(const QString &scheme);
+
+    QRectF viewVisibleGeometry();
+    QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
 
 public slots:
     void onOpenUrlInNewTab(quint64 windowId, const QUrl &url);

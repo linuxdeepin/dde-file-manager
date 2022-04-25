@@ -184,6 +184,16 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
     return static_cast<Global::ViewMode>(Application::instance()->appAttribute(Application::kViewMode).toInt());
 }
 
+void WorkspaceHelper::selectFiles(quint64 windowId, const QList<QUrl> &files)
+{
+    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowId);
+    if (workspaceWidget) {
+        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+        if (view)
+            view->selectFiles(files);
+    }
+}
+
 bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const Workspace::FileViewRoutePrehaldler prehandler)
 {
     if (kPrehandlers.contains(scheme))

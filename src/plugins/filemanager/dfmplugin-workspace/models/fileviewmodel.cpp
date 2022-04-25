@@ -250,6 +250,17 @@ const FileViewItem *FileViewModel::rootItem() const
     return d->root.data();
 }
 
+QModelIndex FileViewModel::findIndex(const QUrl &url) const
+{
+    if (url.isValid()) {
+        QPair<int, FileNodePointer> pair = d->nodeManager->childByUrl(url);
+        if (pair.first >= 0)
+            return createIndex(pair.first, 0, pair.second.data());
+    }
+
+    return QModelIndex();
+}
+
 AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -736,6 +747,18 @@ FileNodePointer FileNodeManagerThread::childByIndex(const int &index)
         child = visibleChildren.at(index);
     }
     return child;
+}
+
+QPair<int, FileNodePointer> FileNodeManagerThread::childByUrl(const QUrl &url)
+{
+    QMutexLocker lk(&childrenMutex);
+    if (children.contains(url)) {
+        FileNodePointer node = children[url];
+        int index = visibleChildren.indexOf(children[url]);
+        return QPair<int, FileNodePointer>(index, node);
+    }
+
+    return QPair<int, FileNodePointer>(-1, nullptr);
 }
 
 bool FileNodeManagerThread::fileQueueEmpty()

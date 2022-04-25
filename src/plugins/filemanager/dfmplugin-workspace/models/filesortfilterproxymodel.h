@@ -60,6 +60,7 @@ public:
     const FileViewItem *itemFromIndex(const QModelIndex &index) const;
     AbstractFileInfoPointer itemFileInfo(const QModelIndex &index) const;
 
+    QModelIndex getIndexByUrl(const QUrl &url) const;
     QUrl getUrlByIndex(const QModelIndex &index) const;
     QList<QUrl> getCurrentDirFileUrls() const;
 

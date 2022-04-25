@@ -109,6 +109,11 @@ QUrl WorkspaceWidget::currentUrl() const
     return workspaceUrl;
 }
 
+AbstractBaseView *WorkspaceWidget::currentView()
+{
+    return tabBar->currentTab()->getCurrentView();
+}
+
 void WorkspaceWidget::openNewTab(const QUrl &url)
 {
     if (!tabBar->tabAddable())
@@ -150,6 +155,32 @@ bool WorkspaceWidget::getCustomTopWidgetVisible(const QString &scheme)
         return topWidgets[scheme]->isVisible();
     }
     return false;
+}
+
+QRectF WorkspaceWidget::viewVisibleGeometry()
+{
+    FileView *view = dynamic_cast<FileView *>(currentView());
+    if (view) {
+        QRectF localRect = view->geometry();
+        QPoint topLeft(static_cast<int>(localRect.x()), static_cast<int>(localRect.y()));
+
+        QRectF globalRect(view->viewport()->mapToGlobal(topLeft), QSizeF(localRect.width(), localRect.height()));
+
+        return globalRect;
+    }
+}
+
+QRectF WorkspaceWidget::itemRect(const QUrl &url, const Global::ItemRoles role)
+{
+    FileView *view = dynamic_cast<FileView *>(currentView());
+    if (view) {
+        QRectF localRect = view->itemRect(url, role);
+        QPoint topLeft(static_cast<int>(localRect.x()), static_cast<int>(localRect.y()));
+
+        QRectF globalRect(view->viewport()->mapToGlobal(topLeft), QSizeF(localRect.width(), localRect.height()));
+
+        return globalRect;
+    }
 }
 
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)

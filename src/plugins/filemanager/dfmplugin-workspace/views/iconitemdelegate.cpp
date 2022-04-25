@@ -244,6 +244,19 @@ void IconItemDelegate::hideNotEditingIndexWidget()
     }
 }
 
+QRectF IconItemDelegate::itemIconRect(const QRectF &itemRect) const
+{
+    // init icon geomerty
+    QRectF iconRect = itemRect;
+    iconRect.setSize(parent()->parent()->iconSize());
+
+    double iconTopOffset = (itemRect.height() - iconRect.height()) / 3.0;
+    iconRect.moveLeft(itemRect.left() + (itemRect.width() - iconRect.width()) / 2.0);
+    iconRect.moveTop(itemRect.top() + iconTopOffset);   // move icon down
+
+    return iconRect;
+}
+
 QString IconItemDelegate::displayFileName(const QModelIndex &index) const
 {
     bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
@@ -349,11 +362,7 @@ QPainterPath IconItemDelegate::paintItemBackgroundAndGeomerty(QPainter *painter,
 QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionViewItem &opt, const QModelIndex &index) const
 {
     // init icon geomerty
-    QRectF iconRect = opt.rect;
-    iconRect.setSize(parent()->parent()->iconSize());
-    double iconTopOffset = (opt.rect.height() - iconRect.height()) / 3.0;
-    iconRect.moveLeft(opt.rect.left() + (opt.rect.width() - iconRect.width()) / 2.0);
-    iconRect.moveTop(opt.rect.top() + iconTopOffset);   // move icon down
+    QRectF iconRect = itemIconRect(opt.rect);
 
     bool isDropTarget = parent()->isDropTarget(index);
     if (isDropTarget) {
@@ -372,6 +381,8 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
 
     const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
     WorkspaceEventSequence::instance()->doPaintIconItem(kItemIconRole, url, painter, &iconRect);
+
+    paintEmblems(painter, iconRect, index);
 
     return iconRect;
 }

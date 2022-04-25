@@ -54,6 +54,7 @@ extern const int kShowCustomTopWidget;
 extern const int kPaintListItem;
 extern const int kPaintIconItem;
 extern const int kCheckDragDropAction;
+extern const int kSelectFiles;
 };   // namespace EventType
 
 namespace MenuScene {

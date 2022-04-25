@@ -89,6 +89,7 @@ public:
     int getHeaderViewWidth() const;
     bool isSelected(const QModelIndex &index) const;
     int selectedIndexCount() const;
+    void selectFiles(const QList<QUrl> &files) const;
 
     inline void setViewModeToList()
     {
@@ -113,6 +114,8 @@ public:
     QModelIndex currentPressIndex() const;
 
     bool isDragTarget(const QModelIndex &index) const;
+
+    QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
 
     using DListView::edit;
     using DListView::updateGeometries;

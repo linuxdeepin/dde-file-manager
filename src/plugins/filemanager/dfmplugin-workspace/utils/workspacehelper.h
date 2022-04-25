@@ -75,6 +75,7 @@ public:
     void actionNewTab(quint64 windowId, const QUrl &url);
     QString findMenuScene(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode findViewMode(const QString &scheme);
+    void selectFiles(quint64 windowId, const QList<QUrl> &files);
 
     bool reigsterViewRoutePrehandler(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler prehandler);
     DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);

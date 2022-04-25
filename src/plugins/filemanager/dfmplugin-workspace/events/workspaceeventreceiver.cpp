@@ -59,3 +59,8 @@ void WorkspaceEventReceiver::handleCloseTabs(const QUrl &url)
 {
     WorkspaceHelper::instance()->closeTab(url);
 }
+
+void WorkspaceEventReceiver::handleSelectFiles(quint64 windowId, const QList<QUrl> &files)
+{
+    WorkspaceHelper::instance()->selectFiles(windowId, files);
+}

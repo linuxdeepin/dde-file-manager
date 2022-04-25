@@ -60,6 +60,7 @@ public:
     void removeChildren(const QUrl &url);
     int childrenCount();
     FileNodePointer childByIndex(const int &index);
+    QPair<int, FileNodePointer> childByUrl(const QUrl &url);
 
     bool fileQueueEmpty();
     int fileQueueCount();

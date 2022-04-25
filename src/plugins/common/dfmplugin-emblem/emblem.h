@@ -36,9 +36,6 @@ class Emblem : public dpf::Plugin
 public:
     virtual void initialize() override;
     virtual bool start() override;
-
-private:
-    void followPaintEvent();
 };
 
 DPEMBLEM_END_NAMESPACE

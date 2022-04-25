@@ -45,6 +45,7 @@ public slots:
     void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
     void handleShowCustomTopWidget(quint64 windowId, const QString &cheme, bool visible);
     void handleCloseTabs(const QUrl &url);
+    void handleSelectFiles(quint64 windowId, const QList<QUrl> &files);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

@@ -84,6 +84,8 @@ public:
     QModelIndex rootIndex() const;
     const FileViewItem *rootItem() const;
 
+    QModelIndex findIndex(const QUrl &url) const;
+
     void beginInsertRows(const QModelIndex &parent, int first, int last);
     void endInsertRows();
     void beginRemoveRows(const QModelIndex &parent, int first, int last);

@@ -40,6 +40,7 @@ const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEven
 const int kPaintListItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kPaintIconItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kCheckDragDropAction = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSelectFiles = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 namespace MenuScene {
@@ -148,4 +149,14 @@ DFMBASE_NAMESPACE::Global::ViewMode WorkspaceService::getDefaultViewMode(const Q
 bool WorkspaceService::registerFileViewRoutePrehandle(const QString &scheme, const Workspace::FileViewRoutePrehaldler &prehandler)
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, prehandler).toBool();
+}
+
+QRectF WorkspaceService::getViewVisibleGeometry(const quint64 windowID)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toRectF();
+}
+
+QRectF WorkspaceService::getItemRect(const quint64 windowID, const QUrl &url, const dfmbase::Global::ItemRoles role)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, url, role).toRectF();
 }

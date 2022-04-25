@@ -459,6 +459,11 @@ int FileView::selectedIndexCount() const
     return static_cast<FileSelectionModel *>(selectionModel())->selectedCount();
 }
 
+void FileView::selectFiles(const QList<QUrl> &files) const
+{
+    d->selectHelper->select(files);
+}
+
 QModelIndex FileView::currentPressIndex() const
 {
     return d->selectHelper->getCurrentPressedIndex();
@@ -467,6 +472,24 @@ QModelIndex FileView::currentPressIndex() const
 bool FileView::isDragTarget(const QModelIndex &index) const
 {
     return d->currentDragHoverIndex == index;
+}
+
+QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
+{
+    QModelIndex index = model()->getIndexByUrl(url);
+
+    switch (role) {
+    case kItemIconRole: {
+        QRectF rect = visualRect(index);
+        return itemDelegate()->itemIconRect(rect);
+    }
+    case kItemBackgroundRole: {
+        QRectF rect = visualRect(index);
+        return rect;
+    }
+    default:
+        return QRectF();
+    }
 }
 
 int FileView::itemCountForRow() const

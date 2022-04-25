@@ -242,6 +242,19 @@ void ListItemDelegate::updateItemSizeHint()
     d->itemSizeHint = QSize(-1, qMax(int(parent()->parent()->iconSize().height() * 1.1), d->textLineHeight));
 }
 
+QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
+{
+    QRectF iconRect = itemRect;
+
+    iconRect += QMargins(-kListModeLeftMargin, 0, -kListModeRightMargin, 0);
+    iconRect.setLeft(iconRect.left() + kListModeLeftPadding);
+    iconRect.setRight(iconRect.right() - kListModeRightPadding);
+
+    iconRect.setSize(parent()->parent()->iconSize());
+
+    return iconRect;
+}
+
 /*!
  * \brief paintItemBackground 绘制listviewitemd的交替绘制和选中时的高亮绘制
  *
@@ -367,12 +380,14 @@ QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     // draw icon
     QRectF iconRect = opt.rect;
     iconRect.setSize(parent()->parent()->iconSize());
-    iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
+    //    iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
 
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
     const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);
     WorkspaceEventSequence::instance()->doPaintListItem(kItemIconRole, url, painter, &iconRect);
+
+    paintEmblems(painter, iconRect, index);
 
     return iconRect;
 }

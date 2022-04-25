@@ -107,6 +107,35 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
     view->selectionModel()->select(newSelection, flags);
 }
 
+void SelectHelper::select(const QList<QUrl> &urls)
+{
+    QModelIndex firstIndex;
+    QModelIndex lastIndex;
+
+    const QModelIndex &root = view->model()->rootIndex();
+    view->selectionModel()->clearSelection();
+    for (const QUrl &url : urls) {
+        const QModelIndex &index = view->model()->getIndexByUrl(url);
+
+        if (!index.isValid() || index == root) {
+            continue;
+        }
+
+        view->selectionModel()->select(index, QItemSelectionModel::Select);
+
+        if (!firstIndex.isValid())
+            firstIndex = index;
+
+        lastIndex = index;
+    }
+
+    if (lastIndex.isValid())
+        view->selectionModel()->setCurrentIndex(lastIndex, QItemSelectionModel::Select);
+
+    if (firstIndex.isValid())
+        view->scrollTo(firstIndex, QAbstractItemView::PositionAtTop);
+}
+
 void SelectHelper::caculateSelection(const QRect &rect, QItemSelection *selection)
 {
     if (view->isIconViewMode()) {

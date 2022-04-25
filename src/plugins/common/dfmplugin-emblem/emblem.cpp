@@ -21,19 +21,7 @@
  */
 #include "emblem.h"
 #include "events/emblemeventrecevier.h"
-#include "events/emblemeventsequence.h"
-#include "utils/emblemhelper.h"
-#include "utils/emblemmanager.h"
 
-#include "dfm-base/dfm_global_defines.h"
-#include "services/filemanager/workspace/workspace_defines.h"
-
-#include <QRectF>
-
-Q_DECLARE_METATYPE(QRectF *)
-
-DPF_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
 
 void Emblem::initialize()
@@ -44,13 +32,5 @@ bool Emblem::start()
 {
     EmblemEventRecevier::instance()->initializeConnections();
 
-    followPaintEvent();
-
     return true;
-}
-
-void Emblem::followPaintEvent()
-{
-    EmblemEventSequence::sequence()->follow(Workspace::EventType::kPaintListItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
-    EmblemEventSequence::sequence()->follow(Workspace::EventType::kPaintIconItem, EmblemManager::instance(), &EmblemManager::paintEmblems);
 }

@@ -101,6 +101,16 @@ AbstractFileInfoPointer FileSortFilterProxyModel::itemFileInfo(const QModelIndex
     return viewModel()->fileInfo(sourceIndex);
 }
 
+QModelIndex FileSortFilterProxyModel::getIndexByUrl(const QUrl &url) const
+{
+    FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
+    QModelIndex sourceIndex = fileModel->findIndex(url);
+    if (sourceIndex.isValid())
+        return mapFromSource(sourceIndex);
+
+    return QModelIndex();
+}
+
 QUrl FileSortFilterProxyModel::getUrlByIndex(const QModelIndex &index) const
 {
     const QModelIndex &sourceIndex = mapToSource(index);
