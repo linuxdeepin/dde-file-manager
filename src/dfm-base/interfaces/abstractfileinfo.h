@@ -238,6 +238,7 @@ public:
     virtual CompareFunction compareFunByKey(const SortKey &sortKey) const;
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
+    virtual QString mimeTypeDisplayName() const;
     virtual QString fileTypeDisplayName() const;
     virtual bool canRedirectionFileUrl() const;
     virtual QUrl redirectedFileUrl() const;

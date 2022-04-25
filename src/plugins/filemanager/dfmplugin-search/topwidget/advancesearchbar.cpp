@@ -200,7 +200,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
     }
 
     if (filter.comboValid[FILE_TYPE]) {
-        QString fileTypeStr = fileInfo->fileTypeDisplayName();
+        QString fileTypeStr = fileInfo->mimeTypeDisplayName();
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }

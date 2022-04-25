@@ -1028,6 +1028,13 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName(const QString &fil
 
     return theUrl;
 }
+
+QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeDisplayName() const
+{
+    CALL_PROXY(mimeTypeDisplayName());
+
+    return MimeTypeDisplayManager::instance()->displayName(mimeTypeName());
+}
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName Display name of the file type
  * \return Display name of the file typ
