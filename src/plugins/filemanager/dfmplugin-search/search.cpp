@@ -25,7 +25,7 @@
 #include "iterator/searchdiriterator.h"
 #include "watcher/searchfilewatcher.h"
 #include "topwidget/advancesearchbar.h"
-#include "menus/searchmenu.h"
+#include "menus/searchmenuscene.h"
 #include "utils/searchfileoperations.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
@@ -54,7 +54,7 @@ void Search::initialize()
     InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
-    MenuService::regClass<SearchMenu>(SearchScene::kSearchMenu);
+    MenuService::service()->registerScene(SearchMenuCreator::name(), new SearchMenuCreator());
 
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
@@ -124,7 +124,7 @@ void Search::regSearchToWorkspaceService()
 {
     WorkspaceService::service()->addScheme(SearchHelper::scheme());
     WorkspaceService::service()->setDefaultViewMode(SearchHelper::scheme(), Global::ViewMode::kListMode);
-    WorkspaceService::service()->setWorkspaceMenuScene(SearchHelper::scheme(), SearchScene::kSearchMenu);
+    WorkspaceService::service()->setWorkspaceMenuScene(SearchHelper::scheme(), SearchMenuCreator::name());
 
     Workspace::CustomTopWidgetInfo info;
     info.scheme = SearchHelper::scheme();

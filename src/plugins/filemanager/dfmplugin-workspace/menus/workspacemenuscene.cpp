@@ -82,10 +82,7 @@ void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &s
         auto rule = sortRule[index];
         auto iter = std::find_if(actions.begin(), actions.end(), [&rule](const QAction *act) {
             auto p = act->property(ActionPropertyKey::kActionID);
-            if (p == rule)
-                return true;
-
-            return false;
+            return p == rule;
         });
 
         if (iter != actions.end()) {
@@ -166,9 +163,7 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     subScene = currentScene;
 
     // 初始化所有子场景
-    AbstractMenuScene::initialize(params);
-
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *WorkspaceMenuScene::scene(QAction *action) const
@@ -195,8 +190,7 @@ bool WorkspaceMenuScene::create(QMenu *parent)
     }
 
     // 创建子场景菜单
-    AbstractMenuScene::create(parent);
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void WorkspaceMenuScene::updateState(QMenu *parent)
@@ -206,7 +200,7 @@ void WorkspaceMenuScene::updateState(QMenu *parent)
     } else {
         d->sortMenuAction(parent, d->normalMenuActionRule());
     }
-    // todo: sort item (liuzhangjian)
+
     AbstractMenuScene::updateState(parent);
 }
 
@@ -310,6 +304,17 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
             } else {
                 WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::kFile, true);
             }
+            return true;
+        }
+    } else if (sceneName == kOpenDirMenuSceneName) {
+        // open in new window
+        if (actionId == dfmplugin_menu::ActionID::kOpenInNewWindow) {
+            WorkspaceEventCaller::sendOpenWindow(d->selectFiles);
+            return true;
+        }
+        // open in new tab
+        if (actionId == dfmplugin_menu::ActionID::kOpenInNewTab) {
+            WorkspaceHelper::instance()->actionNewTab(d->windowId, d->focusFile);
             return true;
         }
     }

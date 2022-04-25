@@ -26,4 +26,8 @@
 #define DPSEARCH_USE_NAMESPACE using namespace dfmplugin_search;
 #define DPSEARCH_NAMESPACE dfmplugin_search
 
+namespace SearchActionId {
+static constexpr char kOpenFileLocation[] { "open-file-location" };
+}
+
 #endif   // DFMPLUGIN_SEARCH_GLOBAL_H

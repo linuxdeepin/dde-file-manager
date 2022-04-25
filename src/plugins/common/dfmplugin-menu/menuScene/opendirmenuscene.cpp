@@ -134,6 +134,12 @@ bool OpenDirMenuScene::triggered(QAction *action)
         return true;
     }
 
+    // open as admin
+    if (actionId == ActionID::kOpenAsAdmin) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenAsAdmin, d->isEmptyArea ? d->currentDir : d->focusFile);
+        return true;
+    }
+
     // TODO(Lee or others):
     return false;
 }
