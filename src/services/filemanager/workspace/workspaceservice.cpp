@@ -151,6 +151,11 @@ bool WorkspaceService::registerFileViewRoutePrehandle(const QString &scheme, con
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, prehandler).toBool();
 }
 
+QList<QUrl> WorkspaceService::selectedUrls(const quint64 windowID)
+{
+    return qvariant_cast<QList<QUrl>>(dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID));
+}
+
 QRectF WorkspaceService::getViewVisibleGeometry(const quint64 windowID)
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toRectF();

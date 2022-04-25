@@ -53,9 +53,15 @@ WorkspaceWidget::WorkspaceWidget(QFrame *parent)
     initConnect();
 }
 
+WorkspaceWidget::ViewPtr WorkspaceWidget::currentViewPtr() const
+{
+    auto scheme = currentUrl().scheme();
+    return views.value(scheme);
+}
+
 Global::ViewMode WorkspaceWidget::currentViewMode() const
 {
-    auto scheme = currentUrl().url();
+    auto scheme = currentUrl().scheme();
     auto view = views.value(scheme);
     if (!view)
         return Global::ViewMode::kNoneMode;

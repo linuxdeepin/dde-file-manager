@@ -33,6 +33,7 @@ public slots:
     DFMBASE_NAMESPACE::Global::ViewMode invokeGetDefaultViewMode(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode invokeCurrentViewMode(const quint64 windowID);
     bool invokeRegisterFileViewRoutePrehanlder(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler &prehandler);
+    QList<QUrl> invokeSelectedUrls(const quint64 windowID);
 
     QRectF invokeGetViewVisibleGeometry(const quint64 windowID);
     QRectF invokeGetItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);

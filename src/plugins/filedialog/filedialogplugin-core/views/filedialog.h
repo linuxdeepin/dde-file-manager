@@ -136,7 +136,7 @@ protected:
 private:
     void initializeUi();
     void initConnect();
-    void updateViewState(const QString &scheme);
+    void updateViewState();
     FileDialogStatusBar *statusBar() const;
     void adjustPosition(QWidget *w);
     void installDFMEventFilter();

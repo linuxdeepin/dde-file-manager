@@ -44,6 +44,8 @@ public:
     explicit FileDialogHandlePrivate(FileDialogHandle *qq)
         : q_ptr(qq) {}
 
+    void invokeProxy(std::function<void()> func);
+
     QPointer<FileDialog> dialog;
 
     FileDialogHandle *q_ptr;
@@ -215,7 +217,9 @@ void FileDialogHandle::setFilter(QDir::Filters filters)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setFilter(filters);
+    d->invokeProxy([d, filters]() {
+        d->dialog->setFilter(filters);
+    });
 }
 
 void FileDialogHandle::setViewMode(QFileDialog::ViewMode mode)
@@ -231,6 +235,7 @@ void FileDialogHandle::setViewMode(QFileDialog::ViewMode mode)
 QFileDialog::ViewMode FileDialogHandle::viewMode() const
 {
     D_DC(FileDialogHandle);
+
     return d->dialog->currentViewMode();
 }
 
@@ -238,14 +243,18 @@ void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setFileMode(mode);
+    d->invokeProxy([d, mode]() {
+        d->dialog->setFileMode(mode);
+    });
 }
 
 void FileDialogHandle::setAcceptMode(QFileDialog::AcceptMode mode)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setAcceptMode(mode);
+    d->invokeProxy([d, mode]() {
+        d->dialog->setAcceptMode(mode);
+    });
 }
 
 QFileDialog::AcceptMode FileDialogHandle::acceptMode() const
@@ -424,4 +433,23 @@ void FileDialogHandle::reject()
     D_D(FileDialogHandle);
 
     d->dialog->reject();
+}
+
+/*!
+ * \brief workspace must exist when invoke some interfaces
+ * \param func
+ */
+void FileDialogHandlePrivate::invokeProxy(std::function<void()> func)
+{
+    DSB_FM_USE_NAMESPACE
+    auto window = WindowsService::service()->findWindowById(dialog->internalWinId());
+    Q_ASSERT(window);
+
+    if (window->workSpace()) {
+        func();
+    } else {
+        QObject::connect(window, &FileManagerWindow::workspaceInstallFinished, q_ptr, [func]() {
+            func();
+        });
+    }
 }

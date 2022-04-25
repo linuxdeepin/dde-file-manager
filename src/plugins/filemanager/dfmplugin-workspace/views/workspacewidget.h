@@ -63,6 +63,7 @@ class WorkspaceWidget : public DFMBASE_NAMESPACE::AbstractFrame
 public:
     explicit WorkspaceWidget(QFrame *parent = nullptr);
 
+    ViewPtr currentViewPtr() const;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode() const;
     void setCurrentUrl(const QUrl &url) override;
     QUrl currentUrl() const override;

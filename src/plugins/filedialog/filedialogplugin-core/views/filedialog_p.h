@@ -57,6 +57,7 @@ private:
     static constexpr int kDefaultWindowHeight { 540 };
 
     bool isFileView { false };
+    bool lastIsFileView { false };
     bool hideOnAccept { true };
     FileDialogStatusBar *statusBar { nullptr };
     QEventLoop *eventLoop { nullptr };

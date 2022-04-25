@@ -1,5 +1,6 @@
 #include "workspaceunicastreceiver.h"
 #include "views/workspacewidget.h"
+#include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 #include "services/filemanager/dfm_filemanager_service_global.h"
@@ -42,6 +43,7 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getDefaultViewMode"), this, &WorkspaceUnicastReceiver::invokeGetDefaultViewMode);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::currentViewMode"), this, &WorkspaceUnicastReceiver::invokeCurrentViewMode);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::registerFileViewRoutePrehandle"), this, &WorkspaceUnicastReceiver::invokeRegisterFileViewRoutePrehanlder);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::selectedUrls"), this, &WorkspaceUnicastReceiver::invokeSelectedUrls);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getViewVisibleGeometry"), this, &WorkspaceUnicastReceiver::invokeGetViewVisibleGeometry);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getItemRect"), this, &WorkspaceUnicastReceiver::invokeGetItemRect);
 }
@@ -129,6 +131,20 @@ ViewMode WorkspaceUnicastReceiver::invokeCurrentViewMode(const quint64 windowID)
 bool WorkspaceUnicastReceiver::invokeRegisterFileViewRoutePrehanlder(const QString &scheme, const dfm_service_filemanager::Workspace::FileViewRoutePrehaldler &prehandler)
 {
     return WorkspaceHelper::instance()->reigsterViewRoutePrehandler(scheme, prehandler);
+}
+
+QList<QUrl> WorkspaceUnicastReceiver::invokeSelectedUrls(const quint64 windowID)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
+    if (workspaceWidget) {
+        auto view = workspaceWidget->currentViewPtr();
+        if (view)
+            return view->selectedUrlList();
+        else
+            return {};
+    }
+
+    return {};
 }
 
 QRectF WorkspaceUnicastReceiver::invokeGetViewVisibleGeometry(const quint64 windowID)

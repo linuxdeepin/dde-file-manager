@@ -49,6 +49,7 @@
 #include <DTitlebar>
 #include <DWidgetUtil>
 
+DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -83,8 +84,9 @@ QStringList FileDialogPrivate::stripFilters(const QStringList &filters)
 void FileDialogPrivate::handleSaveAcceptBtnClicked()
 {
     if (acceptCanOpenOnSave) {
-        // TODO(liuyangming):
-        // cd(getFileView()->selectedUrls().first());
+        auto &&urls = WorkspaceService::service()->selectedUrls(q->internalWinId());
+        if (!urls.isEmpty())
+            q->cd(urls.first());
         return;
     }
 
@@ -104,8 +106,7 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
 
 void FileDialogPrivate::handleOpenAcceptBtnClicked()
 {
-    QList<QUrl> urls;
-    // TODO(liuyangming): urls = getFileView()->selectedUrls();
+    QList<QUrl> urls { WorkspaceService::service()->selectedUrls(q->internalWinId()) };
 
     switch (fileMode) {
     case QFileDialog::AnyFile:
@@ -165,7 +166,6 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
     initConnect();
 
     installDFMEventFilter();
-    setFileMode(d->fileMode);
 }
 
 FileDialog::~FileDialog()
@@ -198,8 +198,6 @@ void FileDialog::updateAsDefaultSize()
 
 QFileDialog::ViewMode FileDialog::currentViewMode() const
 {
-    DSB_FM_USE_NAMESPACE
-
     auto mode = WorkspaceService::service()->currentViewMode(internalWinId());
     if (mode == Global::ViewMode::kListMode)
         return QFileDialog::Detail;
@@ -268,8 +266,43 @@ QList<QUrl> FileDialog::selectedUrls() const
 {
     if (!d->isFileView)
         return {};
-    // TODO(zhangs):
-    return {};
+    // TODO(zhangs): orderedSelectedUrls
+    QList<QUrl> list { WorkspaceService::service()->selectedUrls(internalWinId()) };
+    QList<QUrl>::iterator begin = list.begin();
+    while (begin != list.end()) {
+        QUrl curUrl { *begin };
+        if (DelegateService::service()->isRegisterUrlTransform(curUrl.scheme()))
+            curUrl = DelegateService::service()->urlTransform(curUrl);
+
+        if (!curUrl.isEmpty() && curUrl.isValid())
+            *begin = curUrl;
+
+        ++begin;
+    }
+
+    if (d->acceptMode == QFileDialog::AcceptSave) {
+        // TODO(zhangs):
+
+        //        DUrl fileUrl = list.isEmpty() ? getFileView()->rootUrl() : list.first();
+        //        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(fileUrl);
+
+        //        if (fileInfo) {
+        //            if (list.isEmpty()) {
+        //                fileUrl = fileInfo->getUrlByChildFileName(statusBar()->lineEdit()->text());
+        //            } else {
+        //                fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
+        //            }
+        //        }
+
+        //        return QList<QUrl>() << fileUrl;
+        return {};
+    }
+
+    if (list.isEmpty() && (d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly)) {
+        if (directoryUrl().isLocalFile())
+            list << QUrl(directoryUrl());
+    }
+    return list;
 }
 
 void FileDialog::setNameFilters(const QStringList &filters)
@@ -333,6 +366,9 @@ void FileDialog::setAllowMixedSelection(bool on)
 
 void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
 {
+    if (!d->isFileView)
+        return;
+
     d->acceptMode = mode;
     updateAcceptButtonState();
 
@@ -718,9 +754,26 @@ void FileDialog::handleEnterPressed()
 
 void FileDialog::handleUrlChanged(const QUrl &url)
 {
+    QString scheme { url.scheme() };
     emit currentUrlChanged();
 
-    updateViewState(url.scheme());   // old: handleNewView
+    DSB_FM_USE_NAMESPACE
+    d->lastIsFileView = d->isFileView;
+    d->isFileView = WorkspaceService::service()->schemeViewIsFileView(scheme);
+
+    // init accept mode, worskapce must initialized
+    bool isFirst { false };
+    static std::once_flag flag;
+    std::call_once(flag, [this, &isFirst]() {
+        isFirst = true;
+        setAcceptMode(QFileDialog::AcceptOpen);
+        updateViewState();
+    });
+
+    // view changed
+    if (!isFirst && (d->lastIsFileView != d->isFileView))
+        updateViewState();   // old: handleNewView
+
     updateAcceptButtonState();
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
@@ -818,8 +871,6 @@ void FileDialog::initializeUi()
     centralWidget()->layout()->addWidget(d->statusBar);
     statusBar()->lineEdit()->setMaxLength(FileDialogPrivate::kMaxFileCharCount);
 
-    setAcceptMode(QFileDialog::AcceptOpen);
-
     // TODO(zhangs): whitelist
 
     // 修复bug-45176
@@ -841,11 +892,12 @@ void FileDialog::initConnect()
     connect(this, &FileDialog::selectionFilesChanged, &FileDialog::updateAcceptButtonState);
 }
 
-void FileDialog::updateViewState(const QString &scheme)
+/*!
+ * \brief compiter -> fileview, fileview -> computerview
+ * \param scheme
+ */
+void FileDialog::updateViewState()
 {
-    DSB_FM_USE_NAMESPACE
-
-    d->isFileView = WorkspaceService::service()->schemeViewIsFileView(scheme);
     statusBar()->acceptButton()->setDisabled(!d->isFileView);
 
     if (!d->isFileView) {
@@ -877,6 +929,8 @@ void FileDialog::updateViewState(const QString &scheme)
 
     if (!d->currentInputName.isEmpty())
         setCurrentInputName(d->currentInputName);
+
+    setFileMode(d->fileMode);
 }
 
 FileDialogStatusBar *FileDialog::statusBar() const
