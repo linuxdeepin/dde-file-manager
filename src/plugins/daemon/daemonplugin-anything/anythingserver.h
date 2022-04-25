@@ -20,19 +20,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHARECONTROL_H
-#define SHARECONTROL_H
+#ifndef ANYTHING_H
+#define ANYTHING_H
 
 #include "daemonplugin_anything_global.h"
 
 #include <dfm-framework/framework.h>
-#include <anythingbackend.h>
 
-class ShareControlDBus;
-DAEMONPSHARECONTROL_BEGIN_NAMESPACE
+DAEMONPANYTHING_BEGIN_NAMESPACE
 
-using namespace DAS_NAMESPACE;
-class ShareControl : public DPF_NAMESPACE::Plugin
+class AnythingPlugin : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.daemon" FILE "anything.json")
@@ -42,8 +39,8 @@ public:
     virtual bool start() override;
 
 private:
-    AnythingBackend* anythingBackend = nullptr;
+
 };
 
-DAEMONPSHARECONTROL_END_NAMESPACE
-#endif   // SHARECONTROL_H
+DAEMONPANYTHING_END_NAMESPACE
+#endif   // ANYTHING_H

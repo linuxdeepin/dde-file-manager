@@ -40,7 +40,6 @@ Build-Depends:
  libsecret-1-dev,
  libkf5codecs-dev,
  libpoppler-cpp-dev,
- deepin-anything-server-dev(>=6.0.0),
  deepin-desktop-base | deepin-desktop-server | deepin-desktop-device
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
@@ -53,7 +52,7 @@ Depends:
  libdde-file-manager( =${binary:Version}),
 Conflicts: dde-file-manager-oem
 Replaces: dde-file-manager-oem
-Recommends: dde-qt5integration, avfs, samba
+Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
 Description: File manager front end
  File manager front-end of Deepin OS
 

@@ -22,14 +22,37 @@
 */
 #include "anythingserver.h"
 
-DAEMONPSHARECONTROL_USE_NAMESPACE
+DAEMONPANYTHING_USE_NAMESPACE
 
-void ShareControl::initialize()
+void AnythingPlugin::initialize()
 {
 }
 
-bool ShareControl::start()
+bool AnythingPlugin::start()
 {
-    anythingBackend = new AnythingBackend(this);
+    // define the deepin anything backend share library.
+    QLibrary backendLib("deepin-anything-server-lib");
+
+    // load share library and check status.
+    backendLib.load();
+    if (!backendLib.isLoaded()) {
+        qInfo() << "load deepin-anything-server-lib.so failed!!, maybe the deepin-anything-server has not been installed.";
+        return false;
+    }
+
+    // define the anything backend instance fucntion.
+    typedef void (*AnythingObj)();
+
+    //resolve the anything backend instance fire function.
+    AnythingObj ins = (AnythingObj) backendLib.resolve("fireAnything");
+    if (ins) {
+        ins();
+        qInfo() << "found export func 'fireAnything' and load anything backend OK!!";
+    } else {
+        qInfo() << "Did not find export func 'fireAnything', please check deepin-anything-server lib version(>=6.0.1)";
+    }
+
+    // unload this share library, but donot unload at here.
+    //backendLib.unload();
     return true;
 }
