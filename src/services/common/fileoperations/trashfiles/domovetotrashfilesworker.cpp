@@ -294,14 +294,15 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
     // 检查磁盘空间是否不足
     if (!checkDiskSpaceAvailable(sourceUrl, QUrl::fromLocalFile(targetPath), targetStorageInfo, &result))
         return result;
-    // 拷贝并删除文件
+
     const auto &toInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetPath));
     if (!toInfo) {
         // pause and emit error msg
         return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, toInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
     }
 
-    return doCopyAndDelete(fileInfo, toInfo);
+    // 拷贝并删除文件
+    return copyAndDeleteFile(fileInfo, toInfo, &result);
 }
 /*!
  * \brief DoMoveToTrashFilesWorker::checkFileOutOfLimit Check whether the file size exceeds the limit value
@@ -432,28 +433,4 @@ void DoMoveToTrashFilesWorker::isInSameDisk(const AbstractFileInfoPointer &fileI
                                                               : QStorageInfo(fileInfo->absoluteFilePath());
 
     isSameDisk = sourceStorage.device() == targetStorageInfo->device();
-}
-/*!
- * \brief DoMoveToTrashFilesWorker::doCopyAndDelete Execute file copy and delete source files
- * \param fromInfo File information of source file
- * \param toInfo File information of target file
- * \return Copy and delete successfully
- */
-bool DoMoveToTrashFilesWorker::doCopyAndDelete(const AbstractFileInfoPointer &fromInfo,
-                                               const AbstractFileInfoPointer &toInfo)
-{
-    bool result = false;
-    if (fromInfo->isFile()) {
-        if (!doCopyFile(fromInfo, toInfo, &result))
-            return result;
-        if (!deleteFile(fromInfo->url(), &result))
-            return result;
-    } else {
-        if (!copyDir(fromInfo, toInfo, &result))
-            return result;
-        if (!deleteDir(fromInfo->url(), &result))
-            return result;
-    }
-
-    return true;
 }

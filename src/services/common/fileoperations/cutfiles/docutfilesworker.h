@@ -63,9 +63,6 @@ protected:
     void doOperateWork(AbstractJobHandler::SupportActions actions) override;
 
 private:
-    bool canCutFile(const QUrl &url, bool *ok);
-
-private:
     QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
     int totalMoveFilesCount = 1;
     int completedFilesCount = 0;

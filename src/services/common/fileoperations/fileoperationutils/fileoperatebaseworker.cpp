@@ -393,19 +393,18 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, bool *result)
     *result = action == AbstractJobHandler::SupportAction::kSkipAction
             || action == AbstractJobHandler::SupportAction::kNoAction;
 
-    return action != AbstractJobHandler::SupportAction::kNoAction;
+    return result;
 }
 
 bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, bool *result)
 {
-    QSharedPointer<dfmio::DEnumerator> enumerator = DecoratorFileEnumerator(fromUrl).enumeratorPtr();
-    if (!enumerator) {
+    DecoratorFileEnumerator enumerator(fromUrl);
+    if (!enumerator.isValid())
         return false;
-    }
 
     bool succ = false;
-    while (enumerator->hasNext()) {
-        const QString &path = enumerator->next();
+    while (enumerator.hasNext()) {
+        const QString &path = enumerator.next();
 
         const QUrl &urlNext = QUrl::fromLocalFile(path);
         if (DecoratorFileInfo(urlNext).isDir()) {
@@ -461,6 +460,7 @@ bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, co
             data = nullptr;
             return result;
         }
+        toInfo->refresh(DFMIO::DFileInfo::AttributeID::StandardSize, toDevice->size());
     } while (fromDevice->pos() != fromInfo->size());
 
     delete[] data;
@@ -471,9 +471,6 @@ bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, co
     if (Q_UNLIKELY(!stateCheck())) {
         return false;
     }
-
-    if (!deleteFile(fromInfo->url(), result))
-        return false;
 
     return true;
 }
@@ -524,24 +521,14 @@ bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, con
         const QUrl &url = iterator->next();
         Q_UNUSED(url);
         const AbstractFileInfoPointer &info = iterator->fileInfo();
-        if (!doCopyFile(info, toInfo, result)) {
+        if (!copyFile(info, toInfo, result)) {
             if (result)
                 continue;
             return false;
         }
     }
 
-    handler->setPermissions(toInfo->url(), permissions);
-
-    bool ret = true;
-    if (fromInfo->isDir()) {
-        if (!deleteDir(fromInfo->url(), result))
-            ret = false;
-    } else {
-        if (!deleteFile(fromInfo->url(), result))
-            ret = false;
-    }
-
+    bool ret = handler->setPermissions(toInfo->url(), permissions);
     return ret;
 }
 /*!
@@ -551,7 +538,7 @@ bool FileOperateBaseWorker::copyDir(const AbstractFileInfoPointer &fromInfo, con
  * \param result Output parameter: whether skip
  * \return Is the copy successful
  */
-bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
+bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
 {
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool ok = false;
@@ -566,10 +553,14 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
             ok = deleteFile(fromInfo->url(), result);
     } else if (fromInfo->isDir()) {
         ok = copyDir(fromInfo, newTargetInfo, result);
+        if (ok)
+            ok = deleteDir(fromInfo->url(), result);
     } else {
         const QUrl &url = newTargetInfo->url();
         FileUtils::cacheCopyingFileUrl(url);
         ok = copyFile(fromInfo, newTargetInfo, result);
+        if (ok)
+            ok = deleteFile(fromInfo->url(), result);
         FileUtils::removeCopyingFileUrl(url);
     }
 
@@ -577,6 +568,8 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
         completeFiles.append(fromInfo->url());
         completeFiles.append(newTargetInfo->url());
     }
+
+    toInfo->refresh();
 
     return ok;
 }

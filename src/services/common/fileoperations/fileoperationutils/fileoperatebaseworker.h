@@ -90,7 +90,8 @@ public:
     bool deleteDir(const QUrl &fromUrl, bool *result);
     bool copyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
     bool copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
-    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
+
+    bool copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
     bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                      AbstractFileInfoPointer &newTargetInfo, bool *result);
     bool creatSystemLink(const AbstractFileInfoPointer &fromInfo,

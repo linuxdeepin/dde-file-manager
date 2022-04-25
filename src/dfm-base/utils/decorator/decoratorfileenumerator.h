@@ -48,6 +48,7 @@ public:
 public:
     QSharedPointer<DFMIO::DEnumerator> enumeratorPtr();
 
+    bool isValid() const;
     bool hasNext() const;
     QString next() const;
     QUrl nextUrl() const;

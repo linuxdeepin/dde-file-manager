@@ -60,7 +60,6 @@ protected:
     QString getNotExistsTrashFileName(const QString &fileName);
     bool doWriteTrashInfo(const QString &fileBaseName, const QString &path, const QString &time);
     void isInSameDisk(const AbstractFileInfoPointer &fileInfo);
-    bool doCopyAndDelete(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
 
 private:
     AbstractFileInfoPointer targetFileInfo { nullptr };   // target file information

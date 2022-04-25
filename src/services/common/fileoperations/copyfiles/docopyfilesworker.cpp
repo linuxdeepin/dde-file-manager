@@ -424,7 +424,7 @@ bool DoCopyFilesWorker::doCheckFileFreeSpace(const qint64 &size)
     }
 
     if (targetStorageInfo->bytesTotal() <= 0) {
-        return false;
+        return true;   // invalid size, maybe can not read
     }
     return targetStorageInfo->bytesAvailable() >= size;
 }

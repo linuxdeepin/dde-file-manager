@@ -82,6 +82,11 @@ QSharedPointer<dfmio::DEnumerator> DecoratorFileEnumerator::enumeratorPtr()
     return d->denumerator;
 }
 
+bool DecoratorFileEnumerator::isValid() const
+{
+    return d->denumerator;
+}
+
 bool DecoratorFileEnumerator::hasNext() const
 {
     if (d->denumerator)
