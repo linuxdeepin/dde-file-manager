@@ -276,6 +276,8 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &urls)
     bool ret = false;
     for (const QUrl &url : urls) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        if (!info)
+            continue;
         if (info->suffix() == Global::kDesktop) {
             ret = launchApp(url.path()) || ret;   //有一个成功就成功
             resourceUrls.removeOne(url);

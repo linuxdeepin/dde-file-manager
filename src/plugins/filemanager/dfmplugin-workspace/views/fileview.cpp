@@ -587,6 +587,12 @@ bool FileView::cdUp()
     if (parentUrl.isValid()) {
         FileOperatorHelperIns->openFiles(this, { parentUrl });
         return true;
+    } else {
+        auto windowId = WorkspaceHelper::instance()->windowId(this);
+        QUrl computerRoot;
+        computerRoot.setScheme(Global::kComputer);
+        computerRoot.setPath("/");
+        WorkspaceEventCaller::sendChangeCurrentUrl(windowId, computerRoot);
     }
     return false;
 }
