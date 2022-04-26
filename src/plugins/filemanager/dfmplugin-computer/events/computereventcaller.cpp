@@ -108,26 +108,11 @@ void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
     qDebug() << "send open item: " << url;
 }
 
-void ComputerEventCaller::sendShowFilePropertyDialog(const QUrl &url)
+void ComputerEventCaller::sendShowPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
-}
-
-void ComputerEventCaller::sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info)
-{
-    DSC_NAMESPACE::Property::DeviceInfo devInfo;
-    devInfo.icon = info->fileIcon();
-    devInfo.deviceUrl = info->url();
-    devInfo.mountPoint = info->targetUrl();
-    devInfo.deviceName = info->displayName();
-    devInfo.deviceType = ComputerUtils::deviceTypeInfo(info);
-    devInfo.fileSystem = info->extraProperty(GlobalServerDefines::DeviceProperty::kFileSystem).toString();
-    devInfo.totalCapacity = info->sizeTotal();
-    devInfo.availableSpace = info->sizeFree();
-
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, devInfo);
 }
 
 void ComputerEventCaller::sendErase(const QString &dev)

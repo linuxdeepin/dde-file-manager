@@ -21,7 +21,7 @@
 #ifndef DEVICEBASICWIDGET_H
 #define DEVICEBASICWIDGET_H
 
-#include "dfmplugin_propertydialog_global.h"
+#include "dfmplugin_computer_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "services/common/propertydialog/property_defines.h"
@@ -29,7 +29,7 @@
 
 #include <DArrowLineDrawer>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+DPCOMPUTER_BEGIN_NAMESPACE
 class DeviceBasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -60,5 +60,5 @@ private:
     QFrame *deviceInfoFrame { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+DPCOMPUTER_END_NAMESPACE
 #endif   // DEVICEBASICWIDGET_H

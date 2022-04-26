@@ -42,11 +42,11 @@ enum DetailFilterType : int {
     kIconView = 0x00000002,
     kFileNameField = 0x00000004,
     kFileSizeField = 0x00000008,
-    kFileViewSizeField = 0x00000016,
-    kFileDurationField = 0x00000032,
-    kFileTypeField = 0x00000064,
-    kFileInterviewTimeField = 0x000000128,
-    kFileChangeTImeField = 0x000000256
+    kFileViewSizeField = 0x00000010,
+    kFileDurationField = 0x00000020,
+    kFileTypeField = 0x00000040,
+    kFileInterviewTimeField = 0x00000080,
+    kFileChangeTImeField = 0x000000100
 };
 
 enum BasicFieldExpandEnum : int {

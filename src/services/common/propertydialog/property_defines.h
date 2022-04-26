@@ -44,13 +44,21 @@ namespace EventType {
 extern const int kEvokePropertyDialog;
 }
 
-namespace EventFilePropertyControlFilter {
-extern const int kIconTitle;
-extern const int kBasisInfo;
-extern const int kPermission;
-}
+enum FilePropertyControlFilter {
+    kNotFilter = 0x00000000,
+    kIconTitle = 0x00000001,
+    kBasisInfo = 0x00000002,
+    kPermission = 0x00000004,
+    kFileSizeFiled = 0x00000008,
+    kFileCountFiled = 0x00000010,
+    kFileTypeFiled = 0x00000020,
+    kFilePositionFiled = 0x00000040,
+    kFileCreateTimeFiled = 0x0000080,
+    kFileAccessedTimeFiled = 0x00000100,
+    kFileModifiedTimeFiled = 0x00000200
+};
 
-enum BasicFieldExpandEnum : int {
+enum BasicFieldExpandEnum {
     kNotAll,
     kFileSize,
     kFileCount,
@@ -61,16 +69,16 @@ enum BasicFieldExpandEnum : int {
     kFileModifiedTime,
 };
 
-enum BasicExpandType : int {
-    kFieldFilter,
+enum BasicExpandType {
     kFieldInsert,
     kFieldReplace
 };
 
-struct BasicExpand
-{
-    QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>> expandFieldMap;
-};
+typedef QMultiMap<BasicFieldExpandEnum, QPair<QString, QString>> BasicExpand;
+
+//! 定义创建控件函数类型
+typedef QWidget *(*createControlViewFunc)(const QUrl &url);
+typedef QMap<BasicExpandType, BasicExpand> (*basicViewFieldFunc)(const QUrl &url);
 
 struct DeviceInfo
 {

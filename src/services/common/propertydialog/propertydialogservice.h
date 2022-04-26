@@ -44,19 +44,21 @@ public:
 
     static PropertyDialogService *service();
 
-    bool registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, int index = -1, QString *error = nullptr);
+    bool registerControlExpand(CPY_NAMESPACE::createControlViewFunc view, int index = -1, QString *error = nullptr);
 
-    bool registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, QString scheme);
+    bool registerCustomizePropertyView(CPY_NAMESPACE::createControlViewFunc view, QString scheme);
 
-    bool registerBasicExpand(CPY_NAMESPACE::RegisterCreateProcess::basicViewFieldFunc func, const QString &scheme);
+    bool registerBasicViewFiledExpand(CPY_NAMESPACE::basicViewFieldFunc func, const QString &scheme);
 
-    bool registerPropertyPathShowStyle(QString scheme);
+    bool registerFilterControlField(const QString &scheme, CPY_NAMESPACE::FilePropertyControlFilter filter);
 
     QWidget *createWidget(const QUrl &url);
 
     QMap<int, QWidget *> createControlView(const QUrl &url);
 
     QMap<CPY_NAMESPACE::BasicExpandType, CPY_NAMESPACE::BasicExpand> basicExpandField(const QUrl &url);
+
+    CPY_NAMESPACE::FilePropertyControlFilter contorlFieldFilter(const QUrl &url);
 
     bool isContains(const QUrl &url);
 

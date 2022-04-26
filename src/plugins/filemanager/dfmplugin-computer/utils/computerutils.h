@@ -87,6 +87,8 @@ public:
     static int getUniqueInteger();
 
     static QString deviceTypeInfo(DFMEntryFileInfoPointer info);
+
+    static QWidget *devicePropertyDialog(const QUrl &url);
 };
 
 DPCOMPUTER_END_NAMESPACE

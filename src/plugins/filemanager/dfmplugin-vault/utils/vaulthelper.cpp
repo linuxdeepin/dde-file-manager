@@ -30,8 +30,7 @@
 #include "events/vaulteventcaller.h"
 #include "vaultdbusutils.h"
 #include "services/common/delegate/delegateservice.h"
-
-#include "services/common/delegate/delegateservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
@@ -743,6 +742,17 @@ VaultHelper *VaultHelper::instance()
 {
     static VaultHelper vaultHelper;
     return &vaultHelper;
+}
+
+QMap<Property::BasicExpandType, Property::BasicExpand> VaultHelper::basicViewFieldFunc(const QUrl &url)
+{
+    Property::BasicExpand expandFiledMap;
+
+    expandFiledMap.insert(Property::BasicFieldExpandEnum::kFilePosition, qMakePair(tr("Location"), url.url()));
+
+    QMap<Property::BasicExpandType, Property::BasicExpand> expandMap;
+    expandMap.insert(Property::BasicExpandType::kFieldReplace, expandFiledMap);
+    return expandMap;
 }
 
 VaultHelper::VaultHelper()

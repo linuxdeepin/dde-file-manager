@@ -134,7 +134,7 @@ void Recent::addFileOperations()
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(RecentManager::scheme(), RecentScene::kRecentMenu);
 
-    propertyServIns->registerBasicExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
+    propertyServIns->registerBasicViewFiledExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
 
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->copy = [](const quint64,

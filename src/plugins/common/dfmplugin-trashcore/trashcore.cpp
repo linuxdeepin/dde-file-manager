@@ -40,7 +40,7 @@ bool TrashCore::start()
     dpfInstance.eventDispatcher().subscribe(Trash::EventType::kEmptyTrash,
                                             TrashCoreEventReceiver::instance(),
                                             &TrashCoreEventReceiver::handleEmptyTrash);
-    propertyServIns->registerMethod(TrashCoreHelper::createTrashPropertyDialog, TrashCoreHelper::scheme());
+    propertyServIns->registerCustomizePropertyView(TrashCoreHelper::createTrashPropertyDialog, TrashCoreHelper::scheme());
 
     return true;
 }

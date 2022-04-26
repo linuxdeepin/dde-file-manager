@@ -51,16 +51,18 @@ public:
 private:
     void initInfoUI();
 
-    void createHeadUI(const QUrl &url, int widgetFilter);
+    void createHeadUI(const QUrl &url);
 
-    void createBasicWidget(const QUrl &url, int widgetFilter);
+    void createBasicWidget(const QUrl &url);
 
-    void createPermissionManagerWidget(const QUrl &url, int widgetFilter);
+    void createPermissionManagerWidget(const QUrl &url);
+
+    void viewControlFilter(const QUrl &url);
 
     int contentHeight();
 
 public:
-    void selectFileUrl(const QUrl &url, int widgetFilter);
+    void selectFileUrl(const QUrl &url);
 
     qint64 getFileSize();
 

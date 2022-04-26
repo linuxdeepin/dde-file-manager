@@ -49,25 +49,28 @@ FilePropertyDialogManager::~FilePropertyDialogManager()
     if (closeAllDialog) {
         closeAllDialog->deleteLater();
     }
-
-    devicePropertyDialogs.clear();
 }
 
-void FilePropertyDialogManager::showPropertyDialog(const QList<QUrl> &urls, int widgetFilter)
+void FilePropertyDialogManager::showPropertyDialog(const QList<QUrl> &urls)
 {
     for (const QUrl &url : urls) {
         QWidget *widget = createCustomizeView(url);
         if (widget) {
             widget->show();
             widget->activateWindow();
+            QRect qr = qApp->primaryScreen()->geometry();
+            QPoint pt = qr.center();
+            pt.setX(pt.x() - widget->width() / 2);
+            pt.setY(pt.y() - widget->height() / 2);
+            widget->move(pt);
         } else {
-            showFilePropertyDialog(urls, widgetFilter);
+            showFilePropertyDialog(urls);
             break;
         }
     }
 }
 
-void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls, int widgetFilter)
+void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls)
 {
     int count = urls.count();
     if (count < kMaxPropertyDialogNumber) {
@@ -75,7 +78,7 @@ void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls, 
             int index = urls.indexOf(url);
             if (!filePropertyDialogs.contains(url)) {
                 FilePropertyDialog *dialog = new FilePropertyDialog();
-                dialog->selectFileUrl(url, widgetFilter);
+                dialog->selectFileUrl(url);
                 filePropertyDialogs.insert(url, dialog);
                 createControlView(url);
                 connect(dialog, &FilePropertyDialog::closed, this, &FilePropertyDialogManager::closeFilePropertyDialog);
@@ -172,53 +175,6 @@ void FilePropertyDialogManager::createControlView(const QUrl &url)
         } else {
             insertExtendedControlFileProperty(url, controlView.keys()[i], view);
         }
-    }
-}
-
-void FilePropertyDialogManager::showDevicePropertyDialog(const Property::DeviceInfo &info)
-{
-    if (devicePropertyDialogs.contains(info.deviceUrl)) {
-        devicePropertyDialogs.value(info.deviceUrl)->show();
-        devicePropertyDialogs.value(info.deviceUrl)->activateWindow();
-    } else {
-        DevicePropertyDialog *devicePropertyDialog = new DevicePropertyDialog;
-        devicePropertyDialog->show();
-        devicePropertyDialog->setSelectDeviceInfo(info);
-        devicePropertyDialogs.insert(info.deviceUrl, devicePropertyDialog);
-        connect(devicePropertyDialog, &DevicePropertyDialog::closed, this, &FilePropertyDialogManager::closeDevicePropertyDialog);
-    }
-}
-
-void FilePropertyDialogManager::insertExtendedControlDeviceProperty(const QUrl &url, int index, QWidget *widget)
-{
-    if (devicePropertyDialogs.contains(url) && widget) {
-        devicePropertyDialogs.value(url)->insertExtendedControl(index, widget);
-    } else if (widget) {
-        DevicePropertyDialog *dialog = new DevicePropertyDialog();
-        devicePropertyDialogs.insert(url, dialog);
-        dialog->insertExtendedControl(index, widget);
-        dialog->show();
-        connect(dialog, &DevicePropertyDialog::closed, this, &FilePropertyDialogManager::closeDevicePropertyDialog);
-    }
-}
-
-void FilePropertyDialogManager::addExtendedControlDeviceProperty(const QUrl &url, QWidget *widget)
-{
-    if (devicePropertyDialogs.contains(url) && widget) {
-        devicePropertyDialogs.value(url)->addExtendedControl(widget);
-    } else if (widget) {
-        DevicePropertyDialog *dialog = new DevicePropertyDialog();
-        devicePropertyDialogs.insert(url, dialog);
-        dialog->addExtendedControl(widget);
-        dialog->show();
-        connect(dialog, &DevicePropertyDialog::closed, this, &FilePropertyDialogManager::closeDevicePropertyDialog);
-    }
-}
-
-void FilePropertyDialogManager::closeDevicePropertyDialog(const QUrl &url)
-{
-    if (devicePropertyDialogs.contains(url)) {
-        devicePropertyDialogs.remove(url);
     }
 }
 

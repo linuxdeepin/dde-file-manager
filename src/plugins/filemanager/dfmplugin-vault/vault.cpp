@@ -30,6 +30,7 @@
 #include "events/vaulteventcaller.h"
 
 #include "services/common/delegate/delegateservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -63,8 +64,8 @@ bool Vault::start()
     connect(VaultHelper::windowServiceInstance(), &WindowsService::windowOpened, this, &Vault::onWindowOpened, Qt::DirectConnection);
     VaultEventReceiver::instance()->connectEvent();
 
-    propertyServIns->registerMethod(VaultHelper::createVaultPropertyDialog, VaultHelper::instance()->scheme());
-    propertyServIns->registerPropertyPathShowStyle(VaultHelper::instance()->scheme());
+    propertyServIns->registerCustomizePropertyView(VaultHelper::createVaultPropertyDialog, VaultHelper::instance()->scheme());
+    propertyServIns->registerBasicViewFiledExpand(VaultHelper::basicViewFieldFunc, VaultHelper::instance()->scheme());
     VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
     return true;
 }

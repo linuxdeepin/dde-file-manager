@@ -35,34 +35,92 @@ private:
 public:
     static RegisterCreateProcess *instance();
 
-public:
-    //! 定义创建控件函数类型
-    typedef QWidget *(*createControlViewFunc)(const QUrl &url);
-    typedef QMap<BasicExpandType, BasicExpand> (*basicViewFieldFunc)(const QUrl &url);
-
 protected:
     //创建函数列表
     QHash<int, createControlViewFunc> constructList {};
     QHash<QString, createControlViewFunc> viewCreateFunctionHash {};
     QHash<QString, basicViewFieldFunc> basicViewFieldFuncHash {};
     QList<QString> propertyPathList {};
+    QHash<QString, FilePropertyControlFilter> filePropertyFilterHash {};
 
 public:
-    bool registerFunction(createControlViewFunc view, int index = -1, QString *errorString = nullptr);
+    /*!
+     * /brief Widget extension registration
+     * /param view Function pointer to create widget
+     * /param index position to insert
+     * /return true registration success. false registration failed
+     */
+    bool registerControlExpand(createControlViewFunc view, int index = -1, QString *errorString = nullptr);
 
-    bool registerPropertyPathShowStyle(const QString &scheme);
+    /*!
+     * /brief Cancel widget extension registration
+     * /param index position to insert
+     */
+    void unregisterControlExpand(int index);
 
-    bool registerViewCreateFunction(createControlViewFunc view, const QString &scheme);
+    /*!
+     * /brief Register custom properties dialog creation function
+     * /param view Custom Properties Dialog Creation Function
+     * /param scheme url Url's scheme
+     * /return true registration success. false registration failed
+     */
+    bool registerCustomizePropertyView(createControlViewFunc view, const QString &scheme);
 
-    bool registerBasicViewExpand(basicViewFieldFunc func, const QString &scheme);
+    void unregisterCustomizePropertyView(const QString &scheme);
+
+    /*!
+     * /brief Register the basic information control extension
+     * /param func Get function pointer of extension field
+     * /param scheme url format
+     * /return true registration success. false registration failed
+     */
+    bool registerBasicViewFiledExpand(basicViewFieldFunc func, const QString &scheme);
+
+    /*!
+     * /brief Cancel the basic information control extension registration
+     * /param scheme url format
+     */
+    void unregisterBasicViewFiledExpand(const QString &scheme);
+
+    /*!
+     * /brief Register widgets or basic information field filtering
+     * /param scheme url format
+     * /param filter filter type
+     * /return true registration success. false registration failed
+     */
+    bool registerFilterControlField(const QString &scheme, FilePropertyControlFilter filter);
+
+    void unregisterFilterControlField(const QString &scheme);
 
     bool isContains(const QUrl &url) const;
 
-    QWidget *createWidget(const QUrl &url);
+    /*!
+     * /brief Create Custom Extended Properties Dialog
+     * /param url Need to use the url of the custom properties dialog
+     * /return Return to the Custom Properties dialog
+     */
+    QWidget *createCustomizePropertyWidget(const QUrl &url);
 
+    /*!
+     * @brief Create a property page extension control
+     * @param url Requires the url of the property page extension control
+     * @return Returns extended controls and positions
+     */
     QMap<int, QWidget *> createControlView(const QUrl &url);
 
+    /*!
+     * /brief Basic information extension
+     * /param url The file url that needs to expand the base information field
+     * /return Extension information and extension type
+     */
     QMap<BasicExpandType, BasicExpand> basicExpandField(const QUrl &url);
+
+    /*!
+     * /brief Get DetailFilterType according to the registered scheme
+     * /param url file url
+     * /return Return DetailFilterType
+     */
+    FilePropertyControlFilter contorlFieldFilter(const QUrl &url);
 };
 CPY_END_NAMESPACE
 DSC_END_NAMESPACE

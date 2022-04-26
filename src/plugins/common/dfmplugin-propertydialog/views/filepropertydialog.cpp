@@ -22,7 +22,7 @@
 #include "basicwidget.h"
 #include "permissionmanagerwidget.h"
 #include "dfm-base/base/schemefactory.h"
-#include "services/common/propertydialog/property_defines.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>
@@ -39,6 +39,7 @@
 #include <QFrame>
 
 DSC_USE_NAMESPACE
+CPY_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
@@ -85,45 +86,55 @@ void FilePropertyDialog::initInfoUI()
     widgetlayout->addLayout(vlayout1, 1);
 }
 
-void FilePropertyDialog::createHeadUI(const QUrl &url, int widgetFilter)
+void FilePropertyDialog::createHeadUI(const QUrl &url)
 {
-    if ((widgetFilter & Property::EventFilePropertyControlFilter::kIconTitle) != Property::EventFilePropertyControlFilter::kIconTitle) {
-        QLabel *fileIcon = new QLabel(this);
-        fileIcon->setFixedHeight(128);
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-        if (!info.isNull())
-            fileIcon->setPixmap(info->fileIcon().pixmap(128, 128));
+    QLabel *fileIcon = new QLabel(this);
+    fileIcon->setFixedHeight(128);
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    if (!info.isNull())
+        fileIcon->setPixmap(info->fileIcon().pixmap(128, 128));
 
-        editStackWidget = new EditStackedWidget(this);
-        editStackWidget->selectFile(url);
+    editStackWidget = new EditStackedWidget(this);
+    editStackWidget->selectFile(url);
 
-        QVBoxLayout *vlayout = new QVBoxLayout;
-        vlayout->setContentsMargins(10, 10, 10, 10);
-        vlayout->addWidget(fileIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
-        vlayout->addWidget(editStackWidget, 1, Qt::AlignHCenter | Qt::AlignTop);
+    QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->setContentsMargins(10, 10, 10, 10);
+    vlayout->addWidget(fileIcon, 0, Qt::AlignHCenter | Qt::AlignTop);
+    vlayout->addWidget(editStackWidget, 1, Qt::AlignHCenter | Qt::AlignTop);
 
-        QFrame *frame = new QFrame(this);
-        frame->setLayout(vlayout);
+    QFrame *frame = new QFrame(this);
+    frame->setLayout(vlayout);
 
-        addContent(frame);
-    }
+    addContent(frame);
 }
 
-void FilePropertyDialog::createBasicWidget(const QUrl &url, int widgetFilter)
+void FilePropertyDialog::createBasicWidget(const QUrl &url)
 {
-    if ((widgetFilter & Property::EventFilePropertyControlFilter::kBasisInfo) != Property::EventFilePropertyControlFilter::kBasisInfo) {
-        basicWidget = new BasicWidget(this);
-        basicWidget->selectFileUrl(url);
-        addExtendedControl(basicWidget);
-    }
+    basicWidget = new BasicWidget(this);
+    basicWidget->selectFileUrl(url);
+    addExtendedControl(basicWidget);
 }
 
-void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url, int widgetFilter)
+void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url)
 {
-    if ((widgetFilter & Property::EventFilePropertyControlFilter::kPermission) != Property::EventFilePropertyControlFilter::kPermission) {
-        permissionManagerWidget = new PermissionManagerWidget(this);
-        permissionManagerWidget->selectFileUrl(url);
-        addExtendedControl(permissionManagerWidget);
+    permissionManagerWidget = new PermissionManagerWidget(this);
+    permissionManagerWidget->selectFileUrl(url);
+    addExtendedControl(permissionManagerWidget);
+}
+
+void FilePropertyDialog::viewControlFilter(const QUrl &url)
+{
+    FilePropertyControlFilter controlFilter = propertyServIns->contorlFieldFilter(url);
+    if ((controlFilter & FilePropertyControlFilter::kIconTitle) < 1) {
+        createHeadUI(url);
+    }
+
+    if ((controlFilter & FilePropertyControlFilter::kBasisInfo) < 1) {
+        createBasicWidget(url);
+    }
+
+    if ((controlFilter & FilePropertyControlFilter::kPermission) < 1) {
+        createPermissionManagerWidget(url);
     }
 }
 
@@ -146,12 +157,10 @@ int FilePropertyDialog::contentHeight()
             + 40);
 }
 
-void FilePropertyDialog::selectFileUrl(const QUrl &url, int widgetFilter)
+void FilePropertyDialog::selectFileUrl(const QUrl &url)
 {
     currentFileUrl = url;
-    createHeadUI(url, widgetFilter);
-    createBasicWidget(url, widgetFilter);
-    createPermissionManagerWidget(url, widgetFilter);
+    viewControlFilter(url);
 }
 
 qint64 FilePropertyDialog::getFileSize()

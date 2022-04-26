@@ -23,6 +23,7 @@
 #include "computerutils.h"
 #include "fileentity/entryfileentities.h"
 #include "utils/computerdatastruct.h"
+#include "deviceproperty/devicepropertydialog.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/base/urlroute.h"
@@ -30,6 +31,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -268,4 +270,21 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
     default:
         return QObject::tr("Unknown device");
     }
+}
+
+QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
+{
+    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+    DevicePropertyDialog *dialog = new DevicePropertyDialog;
+    DSC_NAMESPACE::Property::DeviceInfo devInfo;
+    devInfo.icon = info->fileIcon();
+    devInfo.deviceUrl = info->url();
+    devInfo.mountPoint = info->targetUrl();
+    devInfo.deviceName = info->displayName();
+    devInfo.deviceType = ComputerUtils::deviceTypeInfo(info);
+    devInfo.fileSystem = info->extraProperty(GlobalServerDefines::DeviceProperty::kFileSystem).toString();
+    devInfo.totalCapacity = info->sizeTotal();
+    devInfo.availableSpace = info->sizeFree();
+    dialog->setSelectDeviceInfo(devInfo);
+    return dialog;
 }

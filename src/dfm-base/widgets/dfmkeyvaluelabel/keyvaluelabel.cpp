@@ -46,9 +46,9 @@ void KeyValueLabel::initUI()
     glayout = new QGridLayout;
     glayout->setMargin(0);
     glayout->addWidget(leftValueLabel, 0, 0, 1, 2);
-    glayout->addWidget(rightValueLabel, 0, 2, 1, 5);
-    glayout->setColumnStretch(1, 1);
-    glayout->setColumnStretch(2, 2);
+    glayout->addWidget(rightValueLabel, 0, 1, 1, 5);
+    glayout->setColumnStretch(0, 2);
+    glayout->setColumnStretch(1, 3);
     setLayout(glayout);
 }
 
@@ -195,11 +195,11 @@ QString KeyValueLabel::RightValue()
 
 void KeyValueLabel::paintEvent(QPaintEvent *evt)
 {
-    Qt::TextElideMode fontWeight = static_cast<Qt::TextElideMode>(propertyMap.value(kLeftElideMode).toInt());
-    Qt::Alignment alignment = static_cast<Qt::Alignment>(propertyMap.value(kLeftAlignment).toInt());
+    Qt::TextElideMode fontWeight = propertyMap.value(kLeftElideMode).value<Qt::TextElideMode>();
+    Qt::Alignment alignment = propertyMap.value(kLeftAlignment).value<Qt::Alignment>();
     setLeftValue(propertyMap.value(kLeftValue).toString(), fontWeight, alignment, propertyMap.value(kLeftTip).toBool());
     fontWeight = static_cast<Qt::TextElideMode>(propertyMap.value(kRightElideMode).toInt());
-    alignment = static_cast<Qt::Alignment>(propertyMap.value(kRightAlignment).toInt());
+    alignment = propertyMap.value(kRightAlignment).value<Qt::Alignment>();
     setRightValue(propertyMap.value(kRightValue).toString(), fontWeight, alignment, propertyMap.value(kRightTip).toBool());
     if (propertyMap.value(kRowHeight).toInt() > -1) {
         QFontMetrics fontMetrics(font());

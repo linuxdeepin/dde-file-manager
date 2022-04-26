@@ -22,7 +22,7 @@
 #ifndef DEVICEPROPERTYVIEW_H
 #define DEVICEPROPERTYVIEW_H
 
-#include "dfmplugin_propertydialog_global.h"
+#include "dfmplugin_computer_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "devicebasicwidget.h"
@@ -39,7 +39,18 @@ DWIDGET_BEGIN_NAMESPACE
 class DArrowLineDrawer;
 DWIDGET_END_NAMESPACE
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+DPCOMPUTER_BEGIN_NAMESPACE
+
+class DFMRoundBackground : public QObject
+{
+    Q_OBJECT
+public:
+    DFMRoundBackground(QWidget *parent, int radius);
+    ~DFMRoundBackground();
+
+    virtual bool eventFilter(QObject *watched, QEvent *event);
+};
+
 class DevicePropertyDialog : public DDialog
 {
     Q_OBJECT
@@ -83,5 +94,5 @@ private:
     QList<QWidget *> extendedControl {};
     QUrl currentFileUrl {};
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+DPCOMPUTER_END_NAMESPACE
 #endif   // DEVICEPROPERTYVIEW_H

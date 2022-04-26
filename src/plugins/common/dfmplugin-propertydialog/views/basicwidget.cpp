@@ -102,8 +102,6 @@ void BasicWidget::initUI()
     hideFile->setText(tr("Hide this file"));
 
     connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
-
-    initFileMap();
 }
 
 void BasicWidget::basicExpand(const QUrl &url)
@@ -113,17 +111,11 @@ void BasicWidget::basicExpand(const QUrl &url)
     QList<BasicExpandType> keys = fieldCondition.keys();
     for (BasicExpandType key : keys) {
         BasicExpand expand = fieldCondition.value(key);
-        QList<BasicFieldExpandEnum> filterEnumList = expand.expandFieldMap.keys();
+        QList<BasicFieldExpandEnum> filterEnumList = expand.keys();
         switch (key) {
-        case kFieldFilter: {
-            for (BasicFieldExpandEnum k : filterEnumList) {
-                KeyValueLabel *kValue = fieldMap.take(k);
-                kValue->deleteLater();
-            }
-        } break;
         case kFieldInsert: {
             for (BasicFieldExpandEnum k : filterEnumList) {
-                QList<QPair<QString, QString>> fieldlist = expand.expandFieldMap.values(k);
+                QList<QPair<QString, QString>> fieldlist = expand.values(k);
                 for (QPair<QString, QString> field : fieldlist) {
                     KeyValueLabel *expandLabel = new KeyValueLabel(this);
                     expandLabel->setLeftValue(field.first);
@@ -136,7 +128,7 @@ void BasicWidget::basicExpand(const QUrl &url)
         } break;
         case kFieldReplace: {
             for (BasicFieldExpandEnum k : filterEnumList) {
-                QPair<QString, QString> field = expand.expandFieldMap.value(k);
+                QPair<QString, QString> field = expand.value(k);
                 fieldMap.value(k)->setLeftValue(field.first);
                 fieldMap.value(k)->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
             }
@@ -150,9 +142,6 @@ void BasicWidget::basicExpand(const QUrl &url)
     gl->setMargin(0);
     gl->addWidget(label, 0, 0, 1, 2);
     gl->addWidget(hideFile, 0, 2, 1, 4);
-    gl->setColumnStretch(0, 1);
-    gl->setColumnStretch(1, 1);
-    gl->setColumnStretch(2, 2);
     QFrame *tempFrame = new QFrame(frameMain);
     tempFrame->setLayout(gl);
 
@@ -179,34 +168,48 @@ void BasicWidget::basicExpand(const QUrl &url)
     setContent(frameMain);
 }
 
-void BasicWidget::initFileMap()
+void BasicWidget::basicFieldFilter(const QUrl &url)
 {
-    fieldMap.insert(BasicFieldExpandEnum::kFileSize, fileSize);
-    fieldMap.insert(BasicFieldExpandEnum::kFileCount, fileCount);
-    fieldMap.insert(BasicFieldExpandEnum::kFileType, fileType);
-    fieldMap.insert(BasicFieldExpandEnum::kFilePosition, filePosition);
-    fieldMap.insert(BasicFieldExpandEnum::kFileCreateTime, fileCreated);
-    fieldMap.insert(BasicFieldExpandEnum::kFileAccessedTime, fileAccessed);
-    fieldMap.insert(BasicFieldExpandEnum::kFileModifiedTime, fileModified);
+    FilePropertyControlFilter fieldFilter = propertyServIns->contorlFieldFilter(url);
+    if (fieldFilter & FilePropertyControlFilter::kFileSizeFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileSize);
+        fileSize->deleteLater();
+        fileSize = nullptr;
+    } else if (fieldFilter & FilePropertyControlFilter::kFileTypeFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileType);
+        fileType->deleteLater();
+        fileType = nullptr;
+    } else if (fieldFilter & FilePropertyControlFilter::kFileCountFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileCount);
+        fileCount->deleteLater();
+        fileCount = nullptr;
+    } else if (fieldFilter & FilePropertyControlFilter::kFilePositionFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFilePosition);
+        filePosition->deleteLater();
+        filePosition = nullptr;
+    } else if (fieldFilter & FilePropertyControlFilter::kFileCreateTimeFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileCreateTime);
+        fileCreated->deleteLater();
+        fileCreated = nullptr;
+    } else if (fieldFilter & FilePropertyControlFilter::kFileAccessedTimeFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileAccessedTime);
+        fileAccessed->deleteLater();
+        fileAccessed = nullptr;
+    } else if (fieldFilter & FilePropertyControlFilter::kFileModifiedTimeFiled) {
+        fieldMap.remove(BasicFieldExpandEnum::kFileModifiedTime);
+        fileModified->deleteLater();
+        fileModified = nullptr;
+    }
 }
 
-void BasicWidget::selectFileUrl(const QUrl &url)
+void BasicWidget::basicFill(const QUrl &url)
 {
-    currentUrl = url;
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
-    QString path;
-    if (PropertyDialogHelper::propertyServiceInstance()->isContains(url)) {
-        path = url.url();
-    } else {
-        path = url.path();
-    }
-
-    basicExpand(url);
 
     if (filePosition && filePosition->RightValue().isEmpty())
-        filePosition->setRightValue(path, Qt::ElideMiddle, Qt::AlignVCenter, true);
+        filePosition->setRightValue(url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
     if (fileCreated && fileCreated->RightValue().isEmpty())
         fileCreated->setRightValue(info->birthTime().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
     if (fileAccessed && fileAccessed->RightValue().isEmpty())
@@ -225,10 +228,12 @@ void BasicWidget::selectFileUrl(const QUrl &url)
         switch (static_cast<int>(type)) {
         case MimeDatabase::FileType::kDirectory: {
             fileType->setRightValue(tr("Directory") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
-            fileCount->setVisible(true);
-            fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
-            fileCalculationUtils->start(QList<QUrl>() << localUrl);
-            connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
+            if (fileCount && fileCount->RightValue().isEmpty()) {
+                fileCount->setVisible(true);
+                fileCount->setRightValue(QString::number(0), Qt::ElideNone, Qt::AlignVCenter, true);
+                fileCalculationUtils->start(QList<QUrl>() << localUrl);
+                connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &BasicWidget::slotFileCountAndSizeChange);
+            }
         } break;
         case MimeDatabase::FileType::kDocuments: {
             fileType->setRightValue(tr("Documents") + "(" + mimeType.name() + ")", Qt::ElideMiddle, Qt::AlignVCenter, true);
@@ -256,6 +261,30 @@ void BasicWidget::selectFileUrl(const QUrl &url)
         } break;
         }
     }
+}
+
+void BasicWidget::initFileMap()
+{
+    fieldMap.insert(BasicFieldExpandEnum::kFileSize, fileSize);
+    fieldMap.insert(BasicFieldExpandEnum::kFileCount, fileCount);
+    fieldMap.insert(BasicFieldExpandEnum::kFileType, fileType);
+    fieldMap.insert(BasicFieldExpandEnum::kFilePosition, filePosition);
+    fieldMap.insert(BasicFieldExpandEnum::kFileCreateTime, fileCreated);
+    fieldMap.insert(BasicFieldExpandEnum::kFileAccessedTime, fileAccessed);
+    fieldMap.insert(BasicFieldExpandEnum::kFileModifiedTime, fileModified);
+}
+
+void BasicWidget::selectFileUrl(const QUrl &url)
+{
+    currentUrl = url;
+
+    initFileMap();
+
+    basicFieldFilter(url);
+
+    basicExpand(url);
+
+    basicFill(url);
 }
 
 qint64 BasicWidget::getFileSize()

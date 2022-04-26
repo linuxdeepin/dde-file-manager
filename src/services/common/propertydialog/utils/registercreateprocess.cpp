@@ -33,14 +33,13 @@ RegisterCreateProcess *RegisterCreateProcess::instance()
     return &reg;
 }
 
-bool RegisterCreateProcess::registerFunction(RegisterCreateProcess::createControlViewFunc view, int index, QString *errorString)
+bool RegisterCreateProcess::registerControlExpand(createControlViewFunc view, int index, QString *errorString)
 {
     QString error;
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 
     if (constructList.keys().contains(index)) {
-        error = QObject::tr("The current index has registered "
-                            "the associated construction class");
+        error = "The current index has registered the associated construction class";
         qInfo() << error;
         return false;
     }
@@ -50,16 +49,12 @@ bool RegisterCreateProcess::registerFunction(RegisterCreateProcess::createContro
     return true;
 }
 
-bool RegisterCreateProcess::registerPropertyPathShowStyle(const QString &scheme)
+void RegisterCreateProcess::unregisterControlExpand(int index)
 {
-    if (!propertyPathList.contains(scheme)) {
-        propertyPathList.append(scheme);
-        return true;
-    }
-    return false;
+    constructList.remove(index);
 }
 
-bool RegisterCreateProcess::registerViewCreateFunction(RegisterCreateProcess::createControlViewFunc view, const QString &scheme)
+bool RegisterCreateProcess::registerCustomizePropertyView(createControlViewFunc view, const QString &scheme)
 {
     if (!viewCreateFunctionHash.contains(scheme)) {
         viewCreateFunctionHash.insert(scheme, view);
@@ -68,13 +63,40 @@ bool RegisterCreateProcess::registerViewCreateFunction(RegisterCreateProcess::cr
     return false;
 }
 
-bool RegisterCreateProcess::registerBasicViewExpand(RegisterCreateProcess::basicViewFieldFunc func, const QString &scheme)
+void RegisterCreateProcess::unregisterCustomizePropertyView(const QString &scheme)
+{
+    viewCreateFunctionHash.remove(scheme);
+}
+
+bool RegisterCreateProcess::registerBasicViewFiledExpand(basicViewFieldFunc func, const QString &scheme)
 {
     if (!basicViewFieldFuncHash.contains(scheme)) {
         basicViewFieldFuncHash.insert(scheme, func);
         return true;
     }
     return false;
+}
+
+void RegisterCreateProcess::unregisterBasicViewFiledExpand(const QString &scheme)
+{
+    basicViewFieldFuncHash.remove(scheme);
+}
+
+bool RegisterCreateProcess::registerFilterControlField(const QString &scheme, FilePropertyControlFilter filter)
+{
+    if (!filePropertyFilterHash.contains(scheme)) {
+        filePropertyFilterHash.insert(scheme, filter);
+        return true;
+    }
+
+    QString error = "The current scheme has registered the associated construction class";
+    qInfo() << error;
+    return false;
+}
+
+void RegisterCreateProcess::unregisterFilterControlField(const QString &scheme)
+{
+    filePropertyFilterHash.remove(scheme);
 }
 
 bool RegisterCreateProcess::isContains(const QUrl &url) const
@@ -84,13 +106,12 @@ bool RegisterCreateProcess::isContains(const QUrl &url) const
     return false;
 }
 
-QWidget *RegisterCreateProcess::createWidget(const QUrl &url)
+QWidget *RegisterCreateProcess::createCustomizePropertyWidget(const QUrl &url)
 {
     QWidget *widget = nullptr;
-    for (createControlViewFunc func : viewCreateFunctionHash.values()) {
+    if (viewCreateFunctionHash.contains(url.scheme())) {
+        createControlViewFunc func = viewCreateFunctionHash.value(url.scheme());
         widget = func(url);
-        if (widget)
-            break;
     }
     return widget;
 }
@@ -117,4 +138,14 @@ QMap<BasicExpandType, BasicExpand> RegisterCreateProcess::basicExpandField(const
             expandField.unite(field);
     }
     return expandField;
+}
+
+FilePropertyControlFilter RegisterCreateProcess::contorlFieldFilter(const QUrl &url)
+{
+    if (filePropertyFilterHash.isEmpty())
+        return kNotFilter;
+    else if (!filePropertyFilterHash.contains(url.scheme()))
+        return kNotFilter;
+    else
+        return filePropertyFilterHash.value(url.scheme());
 }

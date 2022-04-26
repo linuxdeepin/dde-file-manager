@@ -29,12 +29,6 @@ namespace EventType {
 const int kEvokePropertyDialog = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
 
-namespace EventFilePropertyControlFilter {
-const int kIconTitle { 0x00001 };
-const int kBasisInfo { 0x00002 };
-const int kPermission { 0x00004 };
-}
-
 CPY_END_NAMESPACE
 DSC_END_NAMESPACE
 
@@ -94,9 +88,9 @@ PropertyDialogService *PropertyDialogService::service()
  * QString error;
  * bool flg = service->registerMethod(fun, 1, &error);
  */
-bool PropertyDialogService::registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, int index, QString *error)
+bool PropertyDialogService::registerControlExpand(CPY_NAMESPACE::createControlViewFunc view, int index, QString *error)
 {
-    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerFunction(view, index, error);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerControlExpand(view, index, error);
 }
 
 /*!
@@ -134,24 +128,24 @@ bool PropertyDialogService::registerMethod(CPY_NAMESPACE::RegisterCreateProcess:
  *
  * bool flg = service->registerMethod(fun, scheme);
  */
-bool PropertyDialogService::registerMethod(CPY_NAMESPACE::RegisterCreateProcess::createControlViewFunc view, QString scheme)
+bool PropertyDialogService::registerCustomizePropertyView(CPY_NAMESPACE::createControlViewFunc view, QString scheme)
 {
-    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerViewCreateFunction(view, scheme);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerCustomizePropertyView(view, scheme);
 }
 
-bool PropertyDialogService::registerBasicExpand(dfm_service_common::Property::RegisterCreateProcess::basicViewFieldFunc func, const QString &scheme)
+bool PropertyDialogService::registerBasicViewFiledExpand(CPY_NAMESPACE::basicViewFieldFunc func, const QString &scheme)
 {
-    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerBasicViewExpand(func, scheme);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerBasicViewFiledExpand(func, scheme);
 }
 
-bool PropertyDialogService::registerPropertyPathShowStyle(QString scheme)
+bool PropertyDialogService::registerFilterControlField(const QString &scheme, CPY_NAMESPACE::FilePropertyControlFilter filter)
 {
-    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerPropertyPathShowStyle(scheme);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerFilterControlField(scheme, filter);
 }
 
 QWidget *PropertyDialogService::createWidget(const QUrl &url)
 {
-    return CPY_NAMESPACE::RegisterCreateProcess::instance()->createWidget(url);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->createCustomizePropertyWidget(url);
 }
 
 QMap<int, QWidget *> PropertyDialogService::createControlView(const QUrl &url)
@@ -164,6 +158,11 @@ QMap<dfm_service_common::Property::BasicExpandType, dfm_service_common::Property
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->basicExpandField(url);
 }
 
+dfm_service_common::Property::FilePropertyControlFilter PropertyDialogService::contorlFieldFilter(const QUrl &url)
+{
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->contorlFieldFilter(url);
+}
+
 bool PropertyDialogService::isContains(const QUrl &url)
 {
     return CPY_NAMESPACE::RegisterCreateProcess::instance()->isContains(url);
@@ -171,5 +170,5 @@ bool PropertyDialogService::isContains(const QUrl &url)
 
 void PropertyDialogService::addComputerPropertyToPropertyService()
 {
-    registerMethod(ComputerPropertyHelper::createComputerProperty, ComputerPropertyHelper::scheme());
+    registerCustomizePropertyView(ComputerPropertyHelper::createComputerProperty, ComputerPropertyHelper::scheme());
 }

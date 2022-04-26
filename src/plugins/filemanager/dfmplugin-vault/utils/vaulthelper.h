@@ -31,7 +31,8 @@
 #include "services/filemanager/computer/computerservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/windows/windowsservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
+#include "services/common/propertydialog/property_defines.h"
+//#include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -188,6 +189,8 @@ public:
     static QUrl vaultToLocalUrl(const QUrl &url);
 
     static VaultHelper *instance();
+
+    static QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand> basicViewFieldFunc(const QUrl &url);
 
 public slots:
     void slotlockVault(int state);

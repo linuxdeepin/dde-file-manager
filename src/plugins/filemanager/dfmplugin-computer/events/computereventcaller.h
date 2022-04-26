@@ -46,8 +46,7 @@ public:
 
     static void sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action);
     static void sendOpenItem(quint64 winId, const QUrl &url);
-    static void sendShowFilePropertyDialog(const QUrl &url);
-    static void sendShowDevicePropertyDialog(const DFMEntryFileInfoPointer &info);
+    static void sendShowPropertyDialog(const QUrl &url);
     static void sendErase(const QString &dev);
 };
 

@@ -32,6 +32,7 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/search/searchservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -110,6 +111,8 @@ void Computer::onWindowOpened(quint64 winId)
         regComputerToSearch();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
+
+    propertyServIns->registerCustomizePropertyView(ComputerUtils::devicePropertyDialog, DFMBASE_NAMESPACE::Global::kEntry);
 }
 
 void Computer::onWindowClosed(quint64 winId)

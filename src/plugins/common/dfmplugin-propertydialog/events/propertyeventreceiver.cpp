@@ -44,20 +44,11 @@ PropertyEventReceiver *PropertyEventReceiver::instance()
 
 void PropertyEventReceiver::connectService()
 {
-    dpfInstance.eventDispatcher().subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showFilePropertyControl);
-    dpfInstance.eventDispatcher().subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showDeviceProperty);
+    dpfInstance.eventDispatcher().subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showPropertyControl);
 }
 
-void PropertyEventReceiver::showFilePropertyControl(const QList<QUrl> &url)
+void PropertyEventReceiver::showPropertyControl(const QList<QUrl> &url)
 {
     FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
     fileDialogManager->showPropertyDialog(url);
-}
-
-void PropertyEventReceiver::showDeviceProperty(const Property::DeviceInfo &info)
-{
-    if (!info.deviceUrl.isEmpty()) {
-        FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
-        fileDialogManager->showDevicePropertyDialog(info);
-    }
 }

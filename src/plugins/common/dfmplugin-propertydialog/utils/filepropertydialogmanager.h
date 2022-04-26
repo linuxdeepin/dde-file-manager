@@ -25,7 +25,6 @@
 
 #include "views/filepropertydialog.h"
 #include "views/closealldialog.h"
-#include "views/devicepropertydialog.h"
 
 #include <QObject>
 #include <QMap>
@@ -41,9 +40,9 @@ public:
 
 public slots:
 
-    void showPropertyDialog(const QList<QUrl> &urls, int widgetFilter = 0);
+    void showPropertyDialog(const QList<QUrl> &urls);
 
-    void showFilePropertyDialog(const QList<QUrl> &urls, int widgetFilter);
+    void showFilePropertyDialog(const QList<QUrl> &urls);
 
     void insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget);
 
@@ -54,16 +53,6 @@ public slots:
     void closeAllFilePropertyDialog();
 
     void createControlView(const QUrl &url);
-
-public slots:
-
-    void showDevicePropertyDialog(const DSC_NAMESPACE::Property::DeviceInfo &info);
-
-    void insertExtendedControlDeviceProperty(const QUrl &url, int index, QWidget *widget);
-
-    void addExtendedControlDeviceProperty(const QUrl &url, QWidget *widget);
-
-    void closeDevicePropertyDialog(const QUrl &url);
 
     void updateCloseIndicator();
 
@@ -88,7 +77,7 @@ private:
     CloseAllDialog *closeAllDialog { nullptr };
     QTimer *closeIndicatorTimer { nullptr };
 
-    QMap<QUrl, DevicePropertyDialog *> devicePropertyDialogs;
+    //    QMap<QUrl, DevicePropertyDialog *> devicePropertyDialogs;
 };
 DPPROPERTYDIALOG_END_NAMESPACE
 #endif   // FILEPROPERTYDIALOGMANAGER_H

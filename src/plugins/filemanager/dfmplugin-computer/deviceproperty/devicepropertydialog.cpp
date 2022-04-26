@@ -32,7 +32,7 @@ const static int kArrowExpandSpacing = 10;
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+DPCOMPUTER_USE_NAMESPACE
 DevicePropertyDialog::DevicePropertyDialog(QWidget *parent)
     : DDialog(parent)
 {
@@ -64,9 +64,13 @@ void DevicePropertyDialog::iniUI()
     devicesProgressBar->setTextVisible(false);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
+    vlayout->setMargin(0);
+    vlayout->setContentsMargins(12, 8, 12, 8);
     vlayout->addWidget(basicInfo);
     vlayout->addWidget(devicesProgressBar);
     basicInfoFrame->setLayout(vlayout);
+
+    new DFMRoundBackground(basicInfoFrame, 8);
 
     QVBoxLayout *vlayout1 = new QVBoxLayout();
     vlayout1->setMargin(0);
@@ -130,10 +134,9 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DSC_NAMESPACE::Property::De
 {
     currentFileUrl = info.deviceUrl;
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));
-    basicInfo->setLeftValue(info.deviceName, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignLeft, true);
     deviceName->setText(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
-    basicInfo->setLeftValue(info.deviceName, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignLeft, true);
+    basicInfo->setLeftValue(info.deviceName, Qt::ElideNone, Qt::AlignLeft, true);
     setProgressBar(info.totalCapacity, info.availableSpace);
     addExtendedControl(deviceBasicWidget);
 }
@@ -147,13 +150,11 @@ void DevicePropertyDialog::handleHeight(int height)
 
 void DevicePropertyDialog::setProgressBar(qint64 totalSize, qint64 freeSize)
 {
-    devicesProgressBar->setMaximum(static_cast<int>(totalSize));
-    devicesProgressBar->setValue(totalSize == 0 ? 0 : static_cast<int>(freeSize / totalSize));
-    devicesProgressBar->setMaximumHeight(8);
-    devicesProgressBar->setTextVisible(false);
+    devicesProgressBar->setMaximum(10000);
+    devicesProgressBar->setValue(totalSize && ~totalSize ? int(10000. * (totalSize - freeSize) / totalSize) : 0);
     QString sizeTotalStr = UniversalUtils::sizeFormat(totalSize, 1);
     QString sizeFreeStr = UniversalUtils::sizeFormat(totalSize - freeSize, 1);
-    basicInfo->setRightValue(sizeFreeStr + QString("/") + sizeTotalStr, Qt::ElideNone, Qt::AlignVCenter | Qt::AlignRight, true);
+    basicInfo->setRightValue(sizeFreeStr + QString("/") + sizeTotalStr, Qt::ElideNone, Qt::AlignRight, true);
 
     // 在浅色模式下，手动设置进度条背景色
     if (DGuiApplicationHelper::LightType == DGuiApplicationHelper::instance()->themeType()) {
@@ -215,4 +216,43 @@ void DevicePropertyDialog::keyPressEvent(QKeyEvent *event)
         close();
     }
     DDialog::keyPressEvent(event);
+}
+
+DFMRoundBackground::DFMRoundBackground(QWidget *parent, int radius)
+    : QObject(parent)
+{
+    parent->installEventFilter(this);
+    setProperty("radius", radius);
+}
+
+DFMRoundBackground::~DFMRoundBackground()
+{
+    parent()->removeEventFilter(this);
+}
+
+bool DFMRoundBackground::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == parent() && event->type() == QEvent::Paint) {
+        QWidget *w = dynamic_cast<QWidget *>(watched);
+        if (!w) {
+            return false;
+        }
+        int radius = property("radius").toInt();
+
+        QPainter painter(w);
+        QRectF bgRect;
+        bgRect.setSize(w->size());
+        const QPalette pal = QGuiApplication::palette();
+        QColor bgColor = pal.color(QPalette::Base);
+
+        QPainterPath path;
+        path.addRoundedRect(bgRect, radius, radius);
+        // drawbackground color
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.fillPath(path, bgColor);
+        painter.setRenderHint(QPainter::Antialiasing, false);
+        return true;
+    }
+
+    return QObject::eventFilter(watched, event);
 }

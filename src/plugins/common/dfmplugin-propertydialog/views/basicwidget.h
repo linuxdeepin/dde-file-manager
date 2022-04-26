@@ -42,9 +42,13 @@ public:
 private:
     void initUI();
 
+    void initFileMap();
+
     void basicExpand(const QUrl &url);
 
-    void initFileMap();
+    void basicFieldFilter(const QUrl &url);
+
+    void basicFill(const QUrl &url);
 
 public:
     void selectFileUrl(const QUrl &url);

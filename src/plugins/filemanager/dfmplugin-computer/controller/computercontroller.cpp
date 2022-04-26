@@ -495,11 +495,11 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
         return;
 
     if (info->suffix() == SuffixInfo::kUserDir) {
-        ComputerEventCaller::sendShowFilePropertyDialog(info->targetUrl());
+        ComputerEventCaller::sendShowPropertyDialog(info->targetUrl());
         return;
     }
 
-    ComputerEventCaller::sendShowDevicePropertyDialog(info);
+    ComputerEventCaller::sendShowPropertyDialog(info->url());
 }
 
 void ComputerController::actLogoutAndForgetPasswd(DFMEntryFileInfoPointer info)

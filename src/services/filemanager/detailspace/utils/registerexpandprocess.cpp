@@ -41,8 +41,7 @@ bool RegisterExpandProcess::registerControlExpand(createControlViewFunc view, in
 {
 
     if (constructList.keys().contains(index)) {
-        QString error = QObject::tr("The current index has registered "
-                                    "the associated construction class");
+        QString error = "The current index has registered the associated construction class";
         qInfo() << error;
         return false;
     }
@@ -63,8 +62,7 @@ bool RegisterExpandProcess::registerBasicViewExpand(basicViewFieldFunc func, con
         return true;
     }
 
-    QString error = QObject::tr("The current scheme has registered "
-                                "the associated construction class");
+    QString error = "The current scheme has registered the associated construction class";
     qInfo() << error;
     return false;
 }
@@ -81,8 +79,7 @@ bool RegisterExpandProcess::registerFilterControlField(const QString &scheme, De
         return true;
     }
 
-    QString error = QObject::tr("The current scheme has registered "
-                                "the associated construction class");
+    QString error = "The current scheme has registered the associated construction class";
     qInfo() << error;
     return false;
 }
