@@ -31,6 +31,7 @@
 #include <QEventLoop>
 #include <QFileDialog>
 
+#include <linux/limits.h>
 #include <mutex>
 
 DFMBASE_USE_NAMESPACE
@@ -51,8 +52,10 @@ public:
     void handleSaveAcceptBtnClicked();
     void handleOpenAcceptBtnClicked();
 
+    bool askHiddenFile();
+    bool askReplaceFile(QString fileName);
+
 private:
-    static constexpr int kMaxFileCharCount { 255 };
     static constexpr int kDefaultWindowWidth { 960 };
     static constexpr int kDefaultWindowHeight { 540 };
 

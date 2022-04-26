@@ -90,6 +90,7 @@ static bool pluginsLoad()
         "dfmplugin-myshares",
         "dfmplugin-propertydialog",
         "dfmplugin-trashcore",
+        "dfmplugin-trash",
         "dfmplugin-smbbrowser",
         "dfmplugin-filepreview"
     };

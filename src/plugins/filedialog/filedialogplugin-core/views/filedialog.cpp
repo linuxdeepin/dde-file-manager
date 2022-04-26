@@ -33,6 +33,11 @@
 
 #include <dfm-framework/framework.h>
 
+#include <DDialog>
+#include <DPlatformWindowHandle>
+#include <DTitlebar>
+#include <DWidgetUtil>
+
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -46,14 +51,29 @@
 #include <QWhatsThis>
 #include <QLabel>
 
-#include <DTitlebar>
-#include <DWidgetUtil>
-
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
+
+#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
+static bool pwPluginVersionGreaterThen(const QString &v)
+{
+    const QStringList &versionList = DPlatformWindowHandle::pluginVersion().split(".");
+    const QStringList &vList = v.split(".");
+
+    for (int i = 0; i < versionList.count(); ++i) {
+        if (v.count() <= i)
+            return true;
+
+        if (versionList[i].toInt() > vList[i].toInt())
+            return true;
+    }
+
+    return false;
+}
+#endif
 
 FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
     : QObject(nullptr),
@@ -90,18 +110,25 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
         return;
     }
 
-    if (!q->directoryUrl().isLocalFile()) {
+    if (!q->directoryUrl().isLocalFile())
         return;
-    }
 
-    if (q->directory().exists()) {
+    if (!q->directory().exists())
         return;
-    }
 
     QString fileName = q->statusBar()->lineEdit()->text();   //文件名
-    QString suffix = "";
+    // TODO(zhangs): 检查是否要补充后缀
+    if (!fileName.isEmpty()) {
+        if (fileName.startsWith(".") && askHiddenFile())
+            return;
+        if (!options.testFlag(QFileDialog::DontConfirmOverwrite)) {
+            QFileInfo info(q->directory().absoluteFilePath(fileName));
+            if ((info.exists() || info.isSymLink()) && askReplaceFile(fileName))
+                return;
+        }
 
-    // TODO(zhangs):
+        q->accept();
+    }
 }
 
 void FileDialogPrivate::handleOpenAcceptBtnClicked()
@@ -152,6 +179,60 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
         break;
     }
     }
+}
+
+/*!
+ * \brief Files with filenames starting with a dot are considered as hidden files and need to be checked
+ * \return true if don't save as hidden file
+ */
+bool FileDialogPrivate::askHiddenFile()
+{
+    DDialog dialog(q);
+
+    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+    dialog.setTitle(tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
+    dialog.addButton(tr("Cancel", "button"), true);
+    dialog.addButton(tr("Confirm", "button"), false, DDialog::ButtonWarning);
+
+    if (dialog.exec() != DDialog::Accepted)
+        return true;
+
+    return false;
+}
+
+/*!
+ * \brief FileDialogPrivate::askReplaceFile
+ * \param fileName
+ * \return true if don't replace file
+ */
+bool FileDialogPrivate::askReplaceFile(QString fileName)
+{
+    DDialog dialog(q);
+
+    // NOTE(zccrs): dxcb bug
+    if ((!WindowUtils::isWayLand() && !DPlatformWindowHandle::isEnabledDXcb(q))
+#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
+        || pwPluginVersionGreaterThen("1.1.8.3")
+#endif
+    ) {
+        dialog.setWindowModality(Qt::WindowModal);
+    }
+
+    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
+
+    QLabel *titleLabel = dialog.findChild<QLabel *>("TitleLabel");
+    if (titleLabel)
+        fileName = titleLabel->fontMetrics().elidedText(fileName, Qt::ElideMiddle, 380);
+
+    QString title = tr("%1 already exists, do you want to replace it?").arg(fileName);
+    dialog.setTitle(title);
+    dialog.addButton(tr("Cancel", "button"), true);
+    dialog.addButton(tr("Replace", "button"), false, DDialog::ButtonWarning);
+
+    if (dialog.exec() != DDialog::Accepted)
+        return true;
+
+    return false;
 }
 
 /*!
@@ -281,21 +362,18 @@ QList<QUrl> FileDialog::selectedUrls() const
     }
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
-        // TODO(zhangs):
+        QUrl fileUrl = list.isEmpty() ? currentUrl() : list.first();
+        auto fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
-        //        DUrl fileUrl = list.isEmpty() ? getFileView()->rootUrl() : list.first();
-        //        const DAbstractFileInfoPointer &fileInfo = getFileView()->model()->fileInfo(fileUrl);
+        if (fileInfo) {
+            if (list.isEmpty()) {
+                fileUrl = fileInfo->getUrlByChildFileName(statusBar()->lineEdit()->text());
+            } else {
+                fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
+            }
+        }
 
-        //        if (fileInfo) {
-        //            if (list.isEmpty()) {
-        //                fileUrl = fileInfo->getUrlByChildFileName(statusBar()->lineEdit()->text());
-        //            } else {
-        //                fileUrl = fileInfo->getUrlByNewFileName(statusBar()->lineEdit()->text());
-        //            }
-        //        }
-
-        //        return QList<QUrl>() << fileUrl;
-        return {};
+        return QList<QUrl>() << fileUrl;
     }
 
     if (list.isEmpty() && (d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly)) {
@@ -673,6 +751,7 @@ void FileDialog::onCurrentInputNameChanged()
     if (!d->isFileView)
         return;
     // TODO(zhangs):
+    updateAcceptButtonState();
 }
 
 void FileDialog::selectNameFilter(const QString &filter)
@@ -732,7 +811,26 @@ void FileDialog::updateAcceptButtonState()
 {
     if (!d->isFileView)
         return;
-    // TODO(zhangs):
+    QUrl url = currentUrl();
+    auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+    if (!fileInfo)
+        return;
+
+    bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
+    bool dialogShowMode = d->acceptMode;
+    bool isVirtual = UrlRoute::isVirtual(fileInfo->url().scheme());
+    if (dialogShowMode == QFileDialog::AcceptOpen) {
+        auto size = WorkspaceService::service()->selectedUrls(internalWinId()).size();
+        bool isSelectFiles = size > 0;
+        // 1.打开目录（非虚拟目录） 2.打开文件（选中文件）
+        statusBar()->acceptButton()->setDisabled((isDirMode && isVirtual) || (!isDirMode && !isSelectFiles));
+        return;
+    }
+
+    if (dialogShowMode == QFileDialog::AcceptSave) {
+        statusBar()->acceptButton()->setDisabled(isVirtual || statusBar()->lineEdit()->text().trimmed().isEmpty());
+        return;
+    }
 }
 
 void FileDialog::handleEnterPressed()
@@ -869,7 +967,7 @@ void FileDialog::initializeUi()
     // init status bar
     d->statusBar = new FileDialogStatusBar(this);
     centralWidget()->layout()->addWidget(d->statusBar);
-    statusBar()->lineEdit()->setMaxLength(FileDialogPrivate::kMaxFileCharCount);
+    statusBar()->lineEdit()->setMaxLength(NAME_MAX);
 
     // TODO(zhangs): whitelist
 

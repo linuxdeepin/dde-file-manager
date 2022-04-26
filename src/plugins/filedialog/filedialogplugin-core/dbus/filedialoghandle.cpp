@@ -133,7 +133,9 @@ void FileDialogHandle::selectFile(const QString &filename)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->selectFile(filename);
+    d->invokeProxy([d, filename] {
+        d->dialog->selectFile(filename);
+    });
 }
 
 QStringList FileDialogHandle::selectedFiles() const
@@ -147,7 +149,9 @@ void FileDialogHandle::selectUrl(const QUrl &url)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->selectUrl(url);
+    d->invokeProxy([d, url] {
+        d->dialog->selectUrl(url);
+    });
 }
 
 QList<QUrl> FileDialogHandle::selectedUrls() const
@@ -161,14 +165,18 @@ void FileDialogHandle::addDisableUrlScheme(const QString &scheme)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->addDisableUrlScheme(scheme);
+    d->invokeProxy([d, scheme] {
+        d->dialog->addDisableUrlScheme(scheme);
+    });
 }
 
 void FileDialogHandle::setNameFilters(const QStringList &filters)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setNameFilters(filters);
+    d->invokeProxy([d, filters] {
+        d->dialog->setNameFilters(filters);
+    });
 }
 
 QStringList FileDialogHandle::nameFilters() const
@@ -378,17 +386,14 @@ void FileDialogHandle::show()
 
     // 解决打开文件对话框无焦点问题
     QWindow *window = d->dialog->windowHandle();
-    bool isFirst = true;   // 仅首次激活
-    connect(window, &QWindow::activeChanged, this, [=]() mutable {   // matable使isFisrt可修改
-        if (!isFirst)
-            return;
-        isFirst = false;   // 仅首次激活
-        // 激活窗口
-        d->dialog->activateWindow();
-        // 50毫秒后再次检测
-        QTimer::singleShot(50, this, [=]() {
-            if (!d->dialog->isActiveWindow())
-                d->dialog->activateWindow();
+    connect(window, &QWindow::activeChanged, this, [=]() {
+        static std::once_flag flag;
+        std::call_once(flag, [d, this]() {
+            d->dialog->activateWindow();
+            QTimer::singleShot(50, this, [=]() {
+                if (!d->dialog->isActiveWindow())
+                    d->dialog->activateWindow();
+            });
         });
     });
 }
