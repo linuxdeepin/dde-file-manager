@@ -330,6 +330,34 @@ bool FileUtils::isSmbPath(const QUrl &url)
     return -1 != idx;
 }
 
+bool FileUtils::isFtpPath(const QUrl &url)
+{
+    const QString &&strUrl = url.toString();
+
+    QRegExp reg("/run/user/.+gvfs/ftp:.*host=.+");
+    int idx = reg.indexIn(strUrl);
+
+    if (-1 == idx) {
+        // 传进来的可能是加密的路径
+        idx = reg.indexIn(QUrl::fromPercentEncoding(strUrl.toLocal8Bit()));
+    }
+    return -1 != idx;
+}
+
+bool FileUtils::isSftpPath(const QUrl &url)
+{
+    const QString &&strUrl = url.toString();
+
+    QRegExp reg("/run/user/.+gvfs/sftp:.*host=.+");
+    int idx = reg.indexIn(strUrl);
+
+    if (-1 == idx) {
+        // 传进来的可能是加密的路径
+        idx = reg.indexIn(QUrl::fromPercentEncoding(strUrl.toLocal8Bit()));
+    }
+    return -1 != idx;
+}
+
 bool FileUtils::isLowSpeedDevice(const QUrl &url)
 {
     const QString &path = url.path();
@@ -936,6 +964,48 @@ bool FileUtils::containsCopyingFileUrl(const QUrl &url)
     QMutexLocker locker(&cacheCopyingMutex);
     const QList<QVariant> &listCopying = Application::dataPersistence()->value(DFMBASE_NAMESPACE::kOperateFileGroup, DFMBASE_NAMESPACE::kCopyingFileKey).toList();
     return listCopying.contains(url);
+}
+
+void FileUtils::notifyFileChangeManual(FileNotifyType type, const QUrl &url)
+{
+    if (!url.isValid())
+        return;
+
+    auto isRemoteMount = [=](const QUrl &url) -> bool {
+        if (FileUtils::isSmbPath(url))
+            return true;
+        if (FileUtils::isFtpPath(url))
+            return true;
+        if (FileUtils::isSftpPath(url))
+            return true;
+
+        return false;
+    };
+
+    if (!isRemoteMount(url))
+        return;
+
+    const QUrl &urlParent = DFMIO::DFMUtils::directParentUrl(url);
+    if (!urlParent.isValid())
+        return;
+
+    AbstractFileWatcherPointer watcher = WatcherFactory::create<AbstractFileWatcher>(DFMIO::DFMUtils::directParentUrl(url));
+    if (!watcher)
+        return;
+
+    switch (type) {
+    case DFMBASE_NAMESPACE::FileNotifyType::kFileAdded:
+        watcher->notifyFileAdded(url);
+        return;
+    case DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted:
+        watcher->notifyFileDeleted(url);
+        return;
+    case DFMBASE_NAMESPACE::FileNotifyType::kFileChanged:
+        watcher->notifyFileChanged(url);
+        return;
+    default:
+        return;
+    }
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

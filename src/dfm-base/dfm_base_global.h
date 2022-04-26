@@ -22,10 +22,23 @@
 #ifndef DFM_BASE_GLOBAL_H
 #define DFM_BASE_GLOBAL_H
 
+#include <stdint.h>
+
 #define DFMBASE_NAMESPACE dfmbase
 
 #define DFMBASE_BEGIN_NAMESPACE namespace DFMBASE_NAMESPACE {
 #define DFMBASE_END_NAMESPACE }
 #define DFMBASE_USE_NAMESPACE using namespace DFMBASE_NAMESPACE;
+
+DFMBASE_BEGIN_NAMESPACE
+
+enum class FileNotifyType : uint8_t {
+    kFileNone,
+    kFileChanged,
+    kFileAdded,
+    kFileDeleted
+};
+
+DFMBASE_END_NAMESPACE
 
 #endif   //DFM_BASE_GLOBAL_H

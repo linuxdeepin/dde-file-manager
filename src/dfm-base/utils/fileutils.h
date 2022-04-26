@@ -59,6 +59,8 @@ public:
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
     static bool isSameFile(const QUrl &url1, const QUrl &url2);
     static bool isSmbPath(const QUrl &url);
+    static bool isFtpPath(const QUrl &url);
+    static bool isSftpPath(const QUrl &url);
     static bool isLowSpeedDevice(const QUrl &url);
     static bool isLocalDevice(const QUrl &url);
     static bool isCdRomDevice(const QUrl &url);
@@ -80,6 +82,8 @@ public:
     static void cacheCopyingFileUrl(const QUrl &url);
     static void removeCopyingFileUrl(const QUrl &url);
     static bool containsCopyingFileUrl(const QUrl &url);
+
+    static void notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType type, const QUrl &url);
 
 private:
     static QMutex cacheCopyingMutex;

@@ -528,6 +528,7 @@ bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo,
     FileUtils::removeCopyingFileUrl(targetUrl);
 
     FileOperationsUtils::removeUsingName(toInfo->fileName());
+
     return ok;
 }
 
@@ -629,6 +630,9 @@ bool DoCopyFilesWorker::doCopyFilePractically(const AbstractFileInfoPointer from
     // 校验文件完整性
     bool ret = verifyFileIntegrity(blockSize, sourceCheckSum, fromInfo, toInfo, toDevice);
     toInfo->refresh();
+
+    if (ret)
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, toInfo->url());
     return ret;
 }
 

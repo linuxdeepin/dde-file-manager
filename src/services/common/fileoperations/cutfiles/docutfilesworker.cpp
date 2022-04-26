@@ -147,6 +147,7 @@ bool DoCutFilesWorker::cutFiles()
         if (!doCutFile(fileInfo, targetInfo)) {
             return false;
         }
+
         ++completedFilesCount;
     }
     return true;
@@ -268,10 +269,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             return *ok;
 
         if (sourceInfo->isSymLink()) {
-            // TODO(lanxs)
-
             if (newTargetInfo->exists()) {
-
                 if (!isConvert && targetInfo == this->targetInfo) {
                     completeFiles.append(sourceUrl);
                     completeTargetFiles.append(newTargetInfo->url());

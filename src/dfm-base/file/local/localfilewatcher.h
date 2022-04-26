@@ -39,6 +39,10 @@ public:
     explicit LocalFileWatcher(const QUrl &url, QObject *parent = nullptr);
     ~LocalFileWatcher() override;
 
+    virtual void notifyFileAdded(const QUrl &url) override;
+    virtual void notifyFileChanged(const QUrl &url) override;
+    virtual void notifyFileDeleted(const QUrl &url) override;
+
     //debug function
     static QStringList getMonitorFiles();
 };

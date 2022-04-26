@@ -116,4 +116,20 @@ void LocalFileWatcherPrivate::initConnect()
     connect(watcher.data(), &DWatcher::fileAdded, q, &AbstractFileWatcher::subfileCreated);
     connect(watcher.data(), &DWatcher::fileRenamed, q, &AbstractFileWatcher::fileRename);
 }
+
+void LocalFileWatcher::notifyFileAdded(const QUrl &url)
+{
+    subfileCreated(url);
+}
+
+void LocalFileWatcher::notifyFileChanged(const QUrl &url)
+{
+    fileAttributeChanged(url);
+}
+
+void LocalFileWatcher::notifyFileDeleted(const QUrl &url)
+{
+    fileDeleted(url);
+}
+
 DFMBASE_END_NAMESPACE

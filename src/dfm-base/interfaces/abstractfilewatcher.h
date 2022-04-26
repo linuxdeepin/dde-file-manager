@@ -58,6 +58,10 @@ public:
     //debug function
     static QStringList getMonitorFiles();
 
+    virtual void notifyFileAdded(const QUrl &url);
+    virtual void notifyFileChanged(const QUrl &url);
+    virtual void notifyFileDeleted(const QUrl &url);
+
 Q_SIGNALS:
     /*!
      * \brief fileDeleted 文件删除信号

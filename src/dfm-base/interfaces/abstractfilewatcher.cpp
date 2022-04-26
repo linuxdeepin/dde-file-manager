@@ -184,4 +184,19 @@ void AbstractFileWatcher::reduceCacheInfoConnectSize()
     d->cacheInfoConnectSize--;
 }
 
+void AbstractFileWatcher::notifyFileAdded(const QUrl &url)
+{
+    Q_UNUSED(url);
+}
+
+void AbstractFileWatcher::notifyFileChanged(const QUrl &url)
+{
+    Q_UNUSED(url);
+}
+
+void AbstractFileWatcher::notifyFileDeleted(const QUrl &url)
+{
+    Q_UNUSED(url);
+}
+
 DFMBASE_END_NAMESPACE

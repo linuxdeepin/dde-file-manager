@@ -472,6 +472,7 @@ bool FileOperateBaseWorker::copyFile(const AbstractFileInfoPointer &fromInfo, co
         return false;
     }
 
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, toInfo->url());
     return true;
 }
 

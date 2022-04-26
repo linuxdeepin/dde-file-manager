@@ -496,11 +496,16 @@ bool LocalFileInfo::canRename() const
     bool canRename = false;
 
     if (d->attributes.count(DFileInfo::AttributeID::AccessCanRename) == 0) {
-        bool success = false;
-        if (d->dfmFileInfo)
-            canRename = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanRename, &success).toBool();
-        if (success)
-            d->attributes.insert(DFileInfo::AttributeID::AccessCanRename, canRename);
+        canRename = SysInfoUtils::isRootUser();
+        if (!canRename) {
+            int result = access(d->url.path().toLocal8Bit().data(), W_OK);
+            canRename = result == 0;
+        }
+        if (!canRename) {
+            if (d->dfmFileInfo)
+                canRename = d->dfmFileInfo->attribute(DFileInfo::AttributeID::AccessCanRename, nullptr).toBool();
+        }
+        d->attributes.insert(DFileInfo::AttributeID::AccessCanRename, canRename);
     } else {
         canRename = d->attributes.value(DFileInfo::AttributeID::AccessCanRename).toBool();
     }

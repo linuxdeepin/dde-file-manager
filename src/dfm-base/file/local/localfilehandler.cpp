@@ -130,6 +130,8 @@ bool LocalFileHandler::touchFile(const QUrl &url)
         }
     }
 
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, url);
+
     return true;
 }
 /*!
@@ -160,6 +162,8 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
 
         return false;
     }
+
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, dir);
 
     return true;
 }
@@ -192,6 +196,8 @@ bool LocalFileHandler::rmdir(const QUrl &url)
         return false;
     }
 
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, url);
+
     return true;
 }
 /*!
@@ -211,8 +217,11 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     const QByteArray &sourceFile = url.toLocalFile().toLocal8Bit();
     const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
 
-    if (::rename(sourceFile.constData(), targetFile.constData()) == 0)
+    if (::rename(sourceFile.constData(), targetFile.constData()) == 0) {
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, url);
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
         return true;
+    }
 
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {
@@ -234,6 +243,9 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
 
         return false;
     }
+
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, url);
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
 
     return true;
 }
@@ -438,29 +450,31 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &filePaths, const QStrin
  * \param link 链接文件的url
  * \return bool 创建链接文件是否成功
  */
-bool LocalFileHandler::createSystemLink(const QUrl &sourcfile, const QUrl &link)
+bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link)
 {
-    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourcfile.scheme(), static_cast<QUrl>(sourcfile));
+    QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(sourcefile.scheme(), static_cast<QUrl>(sourcefile));
     if (!factory) {
-        qWarning() << "create factory failed, url: " << sourcfile;
+        qWarning() << "create factory failed, url: " << sourcefile;
         return false;
     }
 
     QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
     if (!oper) {
-        qWarning() << "create operator failed, url: " << sourcfile;
+        qWarning() << "create operator failed, url: " << sourcefile;
         return false;
     }
 
     bool success = oper->createLink(link);
     if (!success) {
-        qWarning() << "create link failed, url: " << sourcfile << " link url: " << link;
+        qWarning() << "create link failed, url: " << sourcefile << " link url: " << link;
 
         DFMIOError error = oper->lastError();
         setError(error.errorMsg());
 
         return false;
     }
+
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, link);
 
     return true;
 }
@@ -502,8 +516,10 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
  */
 bool LocalFileHandler::deleteFile(const QUrl &file)
 {
-    if (::remove(file.toLocalFile().toLocal8Bit()) == 0)
+    if (::remove(file.toLocalFile().toLocal8Bit()) == 0) {
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, file);
         return true;
+    }
 
     setError(QString::fromLocal8Bit(strerror(errno)));
 
