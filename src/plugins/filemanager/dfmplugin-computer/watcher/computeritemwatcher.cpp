@@ -408,6 +408,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
     SideBarService::service()->addItem(sbItem);
+    SideBarService::service()->updateItem(info->url(), info->displayName(), info->renamable());
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
