@@ -35,6 +35,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QIcon>
+#include <QStandardPaths>
 
 #include <unistd.h>
 
@@ -226,14 +227,27 @@ void ShareControlWidget::shareFolder()
     bool writable = sharePermissionSelector->currentIndex() == 0;
     bool anonymous = shareAnonymousSelector->currentIndex() == 1;
     if (anonymous) {   // set the directory's access permission to 777
-        // TODO(xust)
+        // 1. set the permission of shared folder to 777;
         DecoratorFile file(url);
-        if (file.exists()) {
+        if (file.exists() && writable) {
             using namespace DFMIO;
             bool ret = file.setPermissions(file.permissions() | DFile::Permission::WriteGroup | DFile::Permission::ExeGroup
                                            | DFile::Permission::WriteOther | DFile::Permission::ExeOther);
-            if (!ret) {
+            if (!ret)
                 qWarning() << "set permission of " << url << "failed.";
+        }
+
+        // 2. set the mode 'other' of  /home/$USER to r-x when enable anonymous access,
+        // otherwise the anonymous user cannot mount the share successfully.
+        // and never change the mode of /root
+        if (getuid() != 0) {
+            QString homePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+            DecoratorFile home(homePath);
+            if (home.exists()) {
+                using namespace DFMIO;
+                bool ret = home.setPermissions(home.permissions() | DFile::Permission::ReadOther | DFile::Permission::ExeOther);
+                if (!ret)
+                    qWarning() << "set permission for user home failed: " << homePath;
             }
         }
     }
