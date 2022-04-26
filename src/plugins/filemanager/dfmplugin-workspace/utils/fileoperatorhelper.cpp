@@ -29,6 +29,7 @@
 #include "services/common/propertydialog/property_defines.h"
 #include "services/common/preview/preview_defines.h"
 #include "services/common/bluetooth/bluetooth_defines.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
@@ -82,15 +83,19 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     for (const QUrl &url : urls) {
-        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(url);
+        QUrl tmpUrl(url);
+        if (delegateServIns->isRegisterUrlTransform(url.scheme()))
+            tmpUrl = delegateServIns->urlTransform(url);
+
+        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(tmpUrl);
         if (fileInfoPtr && fileInfoPtr->isDir()) {
             if (mode == DirOpenMode::kOpenNewWindow) {
-                WorkspaceEventCaller::sendOpenWindow({ url });
+                WorkspaceEventCaller::sendOpenWindow({ tmpUrl });
             } else {
-                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
+                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, tmpUrl);
             }
         } else {
-            const QList<QUrl> &openUrls = { url };
+            const QList<QUrl> &openUrls = { tmpUrl };
             dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles,
                                                   windowId,
                                                   openUrls);

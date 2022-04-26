@@ -36,6 +36,7 @@
 #include "services/filemanager/search/searchservice.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
@@ -55,6 +56,7 @@ void Search::initialize()
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
     MenuService::service()->registerScene(SearchMenuCreator::name(), new SearchMenuCreator());
+    delegateServIns->registerUrlTransform(SearchHelper::scheme(), SearchHelper::searchedFileUrl);
 
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
