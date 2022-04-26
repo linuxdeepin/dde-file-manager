@@ -55,6 +55,16 @@ extern const int kPaintListItem;
 extern const int kPaintIconItem;
 extern const int kCheckDragDropAction;
 extern const int kSelectFiles;
+
+//slot
+extern const int kSetSelectionMode;
+extern const int kSetEnabledSelectionModes;
+extern const int kSetViewDragEnabled;
+extern const int kSetViewDragDropMode;
+
+//sequence
+extern const int kFetchSelectionModes;
+
 };   // namespace EventType
 
 namespace MenuScene {

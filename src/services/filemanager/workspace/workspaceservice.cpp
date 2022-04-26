@@ -41,6 +41,11 @@ const int kPaintListItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType(
 const int kPaintIconItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kCheckDragDropAction = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSelectFiles = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kFetchSelectionModes = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetSelectionMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetEnabledSelectionModes = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetViewDragEnabled = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetViewDragDropMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 namespace MenuScene {

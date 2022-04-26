@@ -78,17 +78,8 @@ bool Workspace::start()
 {
     DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
-    dpfInstance.eventDispatcher().subscribe(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
 
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::Workspace::EventType::kShowCustomTopWidget,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::Workspace::EventType::kSelectFiles,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
+    WorkspaceEventReceiver::instance()->initConnection();
 
     const QString &scheme = Global::kFile;
 

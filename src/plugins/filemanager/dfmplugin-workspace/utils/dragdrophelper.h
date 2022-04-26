@@ -51,6 +51,9 @@ private:
     void handleDropEvent(QDropEvent *event);
     QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> fileInfoAtPos(const QPoint &pos);
 
+    bool isSameUser(const QMimeData *data);
+    Qt::DropAction checkAction(Qt::DropAction srcAction, bool sameUser);
+
     FileView *view { nullptr };
     QList<QUrl> currentDragUrls;
 };

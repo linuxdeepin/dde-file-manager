@@ -92,6 +92,46 @@ void WorkspaceHelper::setDefaultViewMode(const QString &scheme, const Global::Vi
         defaultViewMode[scheme] = mode;
 }
 
+void WorkspaceHelper::setSelectionMode(const quint64 windowID, const QAbstractItemView::SelectionMode &mode)
+{
+    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
+    if (workspaceWidget) {
+        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+        if (view)
+            view->setSelectionMode(mode);
+    }
+}
+
+void WorkspaceHelper::setEnabledSelectionModes(const quint64 windowID, const QList<QAbstractItemView::SelectionMode> &modes)
+{
+    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
+    if (workspaceWidget) {
+        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+        if (view)
+            view->setEnabledSelectionModes(modes);
+    }
+}
+
+void WorkspaceHelper::setViewDragEnabled(const quint64 windowID, const bool enable)
+{
+    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
+    if (workspaceWidget) {
+        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+        if (view)
+            view->setDragEnabled(enable);
+    }
+}
+
+void WorkspaceHelper::setViewDragDropMode(const quint64 windowID, const QAbstractItemView::DragDropMode mode)
+{
+    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
+    if (workspaceWidget) {
+        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+        if (view)
+            view->setDragDropMode(mode);
+    }
+}
+
 WorkspaceHelper *WorkspaceHelper::instance()
 {
     static WorkspaceHelper helper;

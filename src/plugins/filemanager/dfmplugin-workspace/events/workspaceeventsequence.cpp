@@ -24,10 +24,13 @@
 
 #include <QPainter>
 #include <QRectF>
+#include <QAbstractItemView>
+#include <QList>
 
 Q_DECLARE_METATYPE(QRectF *)
 Q_DECLARE_METATYPE(QPainter *)
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QAbstractItemView::SelectionMode> *)
 
 DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -53,6 +56,11 @@ bool WorkspaceEventSequence::doPaintIconItem(int role, const QUrl &url, QPainter
 bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
 {
     return sequence()->run(Workspace::EventType::kCheckDragDropAction, urls, urlTo, action);
+}
+
+bool WorkspaceEventSequence::doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes)
+{
+    return sequence()->run(Workspace::EventType::kFetchSelectionModes, url, modes);
 }
 
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)

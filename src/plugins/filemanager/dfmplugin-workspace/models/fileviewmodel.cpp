@@ -28,6 +28,7 @@
 #include "workspace/workspace_defines.h"
 
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/sysinfoutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -403,6 +404,10 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     QMimeData *data = new QMimeData();
     data->setUrls(urls);
+
+    QByteArray userID;
+    userID.append(QString::number(SysInfoUtils::getUserId()));
+    data->setData(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey, userID);
 
     return data;
 }

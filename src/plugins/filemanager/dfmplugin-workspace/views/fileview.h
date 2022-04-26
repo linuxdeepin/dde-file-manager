@@ -90,6 +90,8 @@ public:
     bool isSelected(const QModelIndex &index) const;
     int selectedIndexCount() const;
     void selectFiles(const QList<QUrl> &files) const;
+    void setSelectionMode(const SelectionMode mode);
+    void setEnabledSelectionModes(const QList<SelectionMode> &modes);
 
     inline void setViewModeToList()
     {
@@ -202,6 +204,9 @@ private:
 
     bool isIconViewMode() const;
     bool isListViewMode() const;
+
+    void resetSelectionModes();
+    QList<SelectionMode> fetchSupportSelectionModes();
 
     bool cdUp();
 };

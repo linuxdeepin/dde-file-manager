@@ -70,6 +70,7 @@ class FileViewPrivate
     FileViewMenuHelper *viewMenuHelper { nullptr };
     FileViewHelper *fileViewHelper { nullptr };
 
+    QList<FileView::SelectionMode> enabledSelectionModes;
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode = DFMBASE_NAMESPACE::Global::ViewMode::kIconMode;
     int currentIconSizeLevel = 1;
     DFMGLOBAL_NAMESPACE::ItemRoles currentSortRole = DFMGLOBAL_NAMESPACE::kItemNameRole;

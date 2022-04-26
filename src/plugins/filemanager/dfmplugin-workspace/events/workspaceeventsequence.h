@@ -26,6 +26,8 @@
 #include "dfm-base/dfm_global_defines.h"
 #include <dfm-framework/framework.h>
 
+#include <QAbstractItemView>
+
 DPWORKSPACE_BEGIN_NAMESPACE
 
 class WorkspaceEventSequence : public QObject
@@ -39,6 +41,7 @@ public:
     bool doPaintListItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
+    bool doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes);
 
 private:
     explicit WorkspaceEventSequence(QObject *parent = nullptr);

@@ -32,6 +32,7 @@
 #include <QMap>
 #include <QMutex>
 #include <QObject>
+#include <QAbstractItemView>
 
 #include <functional>
 
@@ -61,6 +62,10 @@ public:
     void setFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
     void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
+    void setSelectionMode(const quint64 windowID, const QAbstractItemView::SelectionMode &mode);
+    void setEnabledSelectionModes(const quint64 windowID, const QList<QAbstractItemView::SelectionMode> &modes);
+    void setViewDragEnabled(const quint64 windowID, const bool enable);
+    void setViewDragDropMode(const quint64 windowID, const QAbstractItemView::DragDropMode mode);
 
     WorkspaceWidget *findWorkspaceByWindowId(quint64 windowId);
     void closeTab(const QUrl &url);

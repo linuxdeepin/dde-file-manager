@@ -27,6 +27,9 @@
 #include "dfm-base/utils/windowutils.h"
 #include "events/workspaceeventsequence.h"
 
+#include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/utils/fileutils.h"
+
 #include <DFileDragClient>
 
 #include <QMimeData>
@@ -183,8 +186,9 @@ bool DragDropHelper::handleDFileDrag(const QMimeData *data, const QUrl &url)
 
 void DragDropHelper::handleDropEvent(QDropEvent *event)
 {
+    bool sameUser = isSameUser(event->mimeData());
     if (event->source() == view && !WindowUtils::keyCtrlIsPressed()) {
-        event->setDropAction(Qt::MoveAction);
+        event->setDropAction(checkAction(Qt::MoveAction, sameUser));
     } else {
         if (currentDragUrls.isEmpty())
             return;
@@ -198,11 +202,12 @@ void DragDropHelper::handleDropEvent(QDropEvent *event)
             defaultAction = Qt::MoveAction;
         } else if (!WindowUtils::keyCtrlIsPressed()) {
             // TODO(liuyangming): check same device
-            defaultAction = Qt::MoveAction;
+            if (FileUtils::isSameDevice(currentDragUrls.first(), info->url()))
+                defaultAction = Qt::MoveAction;
         }
 
         if (event->possibleActions().testFlag(defaultAction))
-            event->setDropAction(defaultAction);
+            event->setDropAction(checkAction(defaultAction, sameUser));
 
         if (!info->supportedDropActions().testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
@@ -211,7 +216,7 @@ void DragDropHelper::handleDropEvent(QDropEvent *event)
 
             for (Qt::DropAction action : actions) {
                 if (event->possibleActions().testFlag(action) && info->supportedDropActions().testFlag(action)) {
-                    event->setDropAction(action);
+                    event->setDropAction(checkAction(action, sameUser));
                     break;
                 }
             }
@@ -230,4 +235,22 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
         return view->model()->rootItem()->fileInfo();
     }
     return nullptr;
+}
+
+bool DragDropHelper::isSameUser(const QMimeData *data)
+{
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey)) {
+        QString userID = data->data(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey);
+        return userID == SysInfoUtils::getUserId();
+    }
+
+    return false;
+}
+
+Qt::DropAction DragDropHelper::checkAction(Qt::DropAction srcAction, bool sameUser)
+{
+    if (!sameUser && srcAction == Qt::MoveAction)
+        return Qt::IgnoreAction;
+
+    return srcAction;
 }

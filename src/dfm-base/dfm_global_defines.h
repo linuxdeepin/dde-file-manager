@@ -134,6 +134,8 @@ constexpr char kMimeTypeImagePipeg[] { "image/pipeg" };
 constexpr char kMimeTypeImageVDjvu[] { "image/vnd.djvu" };
 constexpr char kMimeTypeImageSvgXml[] { "image/svg+xml" };
 
+constexpr char kMimeDataUserIDKey[] { "userid_for_drag" };
+
 constexpr uint8_t kMaxFileNameCharCount { 255 };
 
 constexpr char kSmb[] { "smb" };

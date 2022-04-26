@@ -29,6 +29,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QAbstractItemView>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -40,12 +41,20 @@ class WorkspaceEventReceiver final : public QObject
 public:
     static WorkspaceEventReceiver *instance();
 
+    void initConnection();
+
 public slots:
     void handleTileBarSwitchModeTriggered(quint64 windowId, DFMBASE_NAMESPACE::Global::ViewMode mode);
     void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
     void handleShowCustomTopWidget(quint64 windowId, const QString &cheme, bool visible);
     void handleCloseTabs(const QUrl &url);
     void handleSelectFiles(quint64 windowId, const QList<QUrl> &files);
+
+    void handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode);
+    void handleSetEnabledSelectionModes(const quint64 windowId, const QList<QAbstractItemView::SelectionMode> &modes);
+
+    void handleSetViewDragEnabled(const quint64 windowId, const bool enabled);
+    void handleSetViewDragDropMode(const quint64 windowId, const QAbstractItemView::DragDropMode mode);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

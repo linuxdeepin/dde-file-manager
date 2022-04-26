@@ -38,6 +38,7 @@
 #include "utils/shortcuthelper.h"
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
+#include "events/workspaceeventsequence.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
@@ -113,6 +114,8 @@ void FileView::setViewMode(Global::ViewMode mode)
         break;
     case Global::ViewMode::kAllViewMode:
         break;
+    default:
+        break;
     }
 
     d->currentViewMode = mode;
@@ -151,6 +154,8 @@ bool FileView::setRootUrl(const QUrl &url)
     loadViewState(url);
     delayUpdateStatusBar();
     setDefaultViewMode();
+
+    resetSelectionModes();
 
     if (d->sortTimer)
         d->sortTimer->start();
@@ -464,6 +469,19 @@ void FileView::selectFiles(const QList<QUrl> &files) const
     d->selectHelper->select(files);
 }
 
+void FileView::setSelectionMode(const QAbstractItemView::SelectionMode mode)
+{
+    if (d->enabledSelectionModes.contains(mode))
+        QAbstractItemView::setSelectionMode(mode);
+}
+
+void FileView::setEnabledSelectionModes(const QList<QAbstractItemView::SelectionMode> &modes)
+{
+    d->enabledSelectionModes = modes;
+    if (!modes.contains(selectionMode()))
+        resetSelectionModes();
+}
+
 QModelIndex FileView::currentPressIndex() const
 {
     return d->selectHelper->getCurrentPressedIndex();
@@ -576,6 +594,30 @@ bool FileView::isIconViewMode() const
 bool FileView::isListViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kListMode;
+}
+
+void FileView::resetSelectionModes()
+{
+    const QList<SelectionMode> &supportSelectionModes = fetchSupportSelectionModes();
+
+    for (SelectionMode mode : supportSelectionModes) {
+        if (d->enabledSelectionModes.contains(mode)) {
+            setSelectionMode(mode);
+            break;
+        }
+    }
+}
+
+QList<QAbstractItemView::SelectionMode> FileView::fetchSupportSelectionModes()
+{
+    QList<SelectionMode> modes {};
+    WorkspaceEventSequence::instance()->doFetchSelectionModes(rootUrl(), &modes);
+
+    if (modes.isEmpty())
+        modes << ExtendedSelection << SingleSelection << MultiSelection
+              << ContiguousSelection << NoSelection;
+
+    return modes;
 }
 
 bool FileView::cdUp()

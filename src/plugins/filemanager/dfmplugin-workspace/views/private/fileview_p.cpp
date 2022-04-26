@@ -48,6 +48,10 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
     selectHelper = new SelectHelper(qq);
     shortcutHelper = new ShortcutHelper(qq);
     viewMenuHelper = new FileViewMenuHelper(qq);
+
+    enabledSelectionModes << FileView::NoSelection << FileView::SingleSelection
+                          << FileView::MultiSelection << FileView::ExtendedSelection
+                          << FileView::ContiguousSelection;
 }
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
