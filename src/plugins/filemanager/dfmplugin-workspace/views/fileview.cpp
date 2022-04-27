@@ -1146,6 +1146,9 @@ void FileView::initializeConnect()
 
 void FileView::updateStatusBar()
 {
+    if (sourceModel()->state() != FileViewModel::Idle)
+        return;
+
     int count = selectedIndexCount();
     if (count == 0) {
         d->statusBar->itemCounted(model()->rowCount());
