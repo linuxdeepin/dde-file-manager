@@ -346,12 +346,13 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
  */
 void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
 {
-    QString speed = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey).toString();
-    QString rmTime = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey).toString();
-    lbSpeed->setHidden(speed.isEmpty());
-    lbSpeed->setText(speed);
-    lbRmTime->setHidden(rmTime.isEmpty());
-    lbRmTime->setText(rmTime);
+    qint64 speed = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey).toInt();
+    const QString &speedStr = FileUtils::formatSize(speed) + "/s";
+    qint64 rmTime = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey).toInt();
+    const QString &rmTimeStr = formatTime(rmTime);
+
+    lbSpeed->setText(speedStr);
+    lbRmTime->setText(rmTimeStr);
 }
 
 /*!
@@ -622,6 +623,49 @@ void TaskWidget::onMouseHover(const bool hover)
     lbRmTime->setHidden(hover);
 
     update(rect());
+}
+
+QString TaskWidget::formatTime(qint64 second) const
+{
+    quint8 s = second % 60;
+    quint8 m = static_cast<quint8>(second / 60);
+    quint8 h = m / 60;
+    quint8 d = h / 24;
+
+    m = m % 60;
+    h = h % 24;
+
+    QString timeString;
+
+    if (d > 0) {
+        timeString.append(QString::number(d)).append(" d");
+    }
+
+    if (h > 0) {
+        if (!timeString.isEmpty()) {
+            timeString.append(' ');
+        }
+
+        timeString.append(QString::number(h)).append(" h");
+    }
+
+    if (m > 0) {
+        if (!timeString.isEmpty()) {
+            timeString.append(' ');
+        }
+
+        timeString.append(QString::number(m)).append(" m");
+    }
+
+    if (s > 0 || timeString.isEmpty()) {
+        if (!timeString.isEmpty()) {
+            timeString.append(' ');
+        }
+
+        timeString.append(QString::number(s)).append(" s");
+    }
+
+    return timeString;
 }
 
 void TaskWidget::enterEvent(QEvent *event)

@@ -113,7 +113,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), url, AbstractJobHandler::JobErrorType::kProrogramError)) {
+            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
                 compeleteFilesCount++;
@@ -135,7 +135,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         const auto &restoreInfo = InfoFactory::create<AbstractFileInfo>(restoreFileUrl);
         if (!fileInfo) {
             // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, restoreFileUrl, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
+            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, restoreFileUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
                 compeleteFilesCount++;
@@ -199,7 +199,7 @@ bool DoRestoreTrashFilesWorker::getRestoreFileUrl(const AbstractFileInfoPointer 
     }
 
     if (!restoreUrl.isValid()) {
-        *result = AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(trashFileInfo->url(), restoreUrl, restoreUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
+        *result = AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(trashFileInfo->url(), restoreUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
         return false;
     }
 
@@ -223,13 +223,13 @@ bool DoRestoreTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
     if (restoreInfo->exists()) {
-        action = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
+        action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
     } else {
         do {
             QFile targetfile(trashInfo->symLinkTarget());
             if (!targetfile.link(restoreInfo->filePath()))
                 // pause and emit error msg
-                action = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kSymlinkError, targetfile.errorString());
+                action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kSymlinkError, targetfile.errorString());
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     }
     // 清理tashfileinfo
@@ -288,7 +288,6 @@ bool DoRestoreTrashFilesWorker::clearTrashFile(const QUrl &fromUrl, const QUrl &
             resultInfo = handler->deleteFile(QUrl::fromLocalFile(location));
         if (!resultInfo || !resultFile)
             action = doHandleErrorAndWait(fromUrl, toUrl,
-                                          !resultInfo ? trashInfo->url() : QUrl::fromLocalFile(location),
                                           AbstractJobHandler::JobErrorType::kDeleteTrashFileError, handler->errorString());
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -325,9 +324,9 @@ bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPo
     if (restoreInfo->exists()) {
         AbstractJobHandler::SupportAction actionForExist { AbstractJobHandler::SupportAction::kNoAction };
         if (trashInfo->isFile()) {
-            actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, restoreUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
+            actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, AbstractJobHandler::JobErrorType::kFileExistsError);
         } else {
-            actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, restoreUrl, AbstractJobHandler::JobErrorType::kDirectoryExistsError);
+            actionForExist = doHandleErrorAndWait(trashUrl, restoreUrl, AbstractJobHandler::JobErrorType::kDirectoryExistsError);
         }
 
         if (actionForExist == AbstractJobHandler::SupportAction::kSkipAction) {
@@ -337,7 +336,7 @@ bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPo
     }
 
     if (trashInfo->isFile()) {
-        if (!copyFile(trashInfo, restoreInfo, &result))
+        if (!doCopyFilePractically(trashInfo, restoreInfo, &result))
             return result;
     } else {
         if (!copyDir(trashInfo, restoreInfo, &result))
@@ -359,7 +358,7 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
         do {
             if (parentDir.mkpath(UrlRoute::urlParent(toUrl).path()))
                 // pause and emit error msg
-                action = doHandleErrorAndWait(fromUrl, toUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError);
+                action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError);
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (action != AbstractJobHandler::SupportAction::kNoAction) {

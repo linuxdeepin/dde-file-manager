@@ -63,7 +63,6 @@ protected:
     void doOperateWork(AbstractJobHandler::SupportActions actions) override;
 
 private:
-    QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
     int totalMoveFilesCount = 1;
     int completedFilesCount = 0;
     qreal lastProgress = 0.01;

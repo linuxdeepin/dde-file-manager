@@ -75,6 +75,7 @@ private:
     void showBtnByAction(const AbstractJobHandler::SupportActions &actions);
     void showConflictButtons(bool showBtns = true, bool showConflict = true);
     void onMouseHover(const bool hover);
+    QString formatTime(qint64 second) const;
 
 protected:
     virtual void enterEvent(QEvent *event);

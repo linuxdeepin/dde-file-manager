@@ -42,6 +42,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <syscall.h>
 
 DSC_USE_NAMESPACE
 
@@ -62,11 +63,17 @@ bool DoCutFilesWorker::doWork()
     if (!AbstractWorker::doWork())
         return false;
 
+    // check progress notify type
+    determineCountProcessType();
+
     // 执行剪切
     if (!cutFiles()) {
         endWork();
         return false;
     }
+
+    // sync
+    syncFilesToDevice();
 
     // 完成
     endWork();
@@ -81,28 +88,30 @@ void DoCutFilesWorker::stop()
 
 bool DoCutFilesWorker::initArgs()
 {
+    time.start();
+
     AbstractWorker::initArgs();
 
     if (sourceUrls.count() <= 0) {
         // pause and emit error msg
-        doHandleErrorAndWait(QUrl(), QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(QUrl(), QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     if (!targetUrl.isValid()) {
         // pause and emit error msg
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
     targetInfo = InfoFactory::create<AbstractFileInfo>(targetUrl);
     if (!targetInfo) {
         // pause and emit error msg
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kProrogramError);
         return false;
     }
 
     if (!targetInfo->exists()) {
         // pause and emit error msg
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kNonexistenceError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kNonexistenceError);
         return false;
     }
 
@@ -121,7 +130,7 @@ bool DoCutFilesWorker::cutFiles()
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kProrogramError)) {
+            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
                 continue;
@@ -191,6 +200,11 @@ void DoCutFilesWorker::onUpdateProccess()
     }
     // TODO(lanxs) emit signal to update progress
     //Q_EMIT progressChanged(qMin(lastProgress, 1.0), 0);
+
+    qint64 writSize = getWriteDataSize();
+    writSize += skipWritSize;
+    emitProccessChangedNotify(writSize);
+    emitSpeedUpdatedNotify(writSize);
 }
 
 void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
@@ -286,7 +300,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             do {
                 if (!handler->createSystemLink(sourceUrl, newTargetInfo->url()))
                     // pause and emit error msg
-                    action = doHandleErrorAndWait(sourceUrl, targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kSymlinkError);
+                    action = doHandleErrorAndWait(sourceUrl, targetUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
 
             } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 

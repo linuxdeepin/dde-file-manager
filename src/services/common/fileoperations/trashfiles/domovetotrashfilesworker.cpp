@@ -117,7 +117,7 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
         const auto &fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo) {
             // pause and emit error msg
-            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, url, AbstractJobHandler::JobErrorType::kProrogramError)) {
+            if (AbstractJobHandler::SupportAction::kSkipAction != doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kProrogramError)) {
                 return false;
             } else {
                 completeFilesCount++;
@@ -150,14 +150,14 @@ bool DoMoveToTrashFilesWorker::checkTrashDirIsReady()
     QDir trashDir;
 
     if (!trashDir.mkpath(StandardPaths::location(StandardPaths::kTrashFilesPath))) {
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
         qWarning() << " mk " << StandardPaths::location(StandardPaths::kTrashInfosPath) << "failed!";
 
         return false;
     }
 
     if (!trashDir.mkpath(StandardPaths::location(StandardPaths::kTrashInfosPath))) {
-        doHandleErrorAndWait(sourceUrls.first(), targetUrl, QUrl(), AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
+        doHandleErrorAndWait(sourceUrls.first(), targetUrl, AbstractJobHandler::JobErrorType::kMakeStandardTrashError);
         qWarning() << " mk " << StandardPaths::location(StandardPaths::kTrashInfosPath) << "failed!";
 
         return false;
@@ -182,7 +182,7 @@ bool DoMoveToTrashFilesWorker::isCanMoveToTrash(const QUrl &url, bool *result)
     do {
         if (!canWriteFile(url))
             // pause and emit error msg
-            action = doHandleErrorAndWait(url, targetUrl, url, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
+            action = doHandleErrorAndWait(url, targetUrl, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
 
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -224,7 +224,7 @@ bool DoMoveToTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer &
     do {
         if (!targetFile.link(targetPath))
             // pause and emit error msg
-            action = doHandleErrorAndWait(fromUrl, targetUrl, fromUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
+            action = doHandleErrorAndWait(fromUrl, targetUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
 
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -276,7 +276,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
         do {
             if (!handler->renameFile(fileInfo->url(), QUrl::fromLocalFile(targetPath))) {
-                action = doHandleErrorAndWait(sourceUrl, QUrl::fromLocalFile(targetPath), fileInfo->url(), AbstractJobHandler::JobErrorType::kRenameError, handler->errorString());
+                action = doHandleErrorAndWait(sourceUrl, QUrl::fromLocalFile(targetPath), AbstractJobHandler::JobErrorType::kRenameError, handler->errorString());
             }
         } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
@@ -298,7 +298,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
     const auto &toInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetPath));
     if (!toInfo) {
         // pause and emit error msg
-        return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, toInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
+        return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
     }
 
     // 拷贝并删除文件
@@ -330,7 +330,7 @@ bool DoMoveToTrashFilesWorker::writeTrashInfo(const AbstractFileInfoPointer &fil
     do {
         if (!doWriteTrashInfo(baseName, fileInfo->filePath(), delTime))
             // pause and emit error msg
-            action = doHandleErrorAndWait(fileInfo->url(), targetUrl, fileInfo->url(), AbstractJobHandler::JobErrorType::kPermissionDeniedError);
+            action = doHandleErrorAndWait(fileInfo->url(), targetUrl, AbstractJobHandler::JobErrorType::kPermissionDeniedError);
 
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 

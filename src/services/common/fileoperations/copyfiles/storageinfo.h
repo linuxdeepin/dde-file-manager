@@ -54,6 +54,7 @@ class StorageInfo : public QStorageInfo
 {
     friend class DoCopyFilesWorker;
     friend class DoCutFilesWorker;
+    friend class FileOperateBaseWorker;
     friend class DoMoveToTrashFilesWorker;
     friend class DoRestoreTrashFilesWorker;
 

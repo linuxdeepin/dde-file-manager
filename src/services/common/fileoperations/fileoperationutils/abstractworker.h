@@ -48,6 +48,14 @@ class AbstractWorker : public QObject
     Q_OBJECT
     virtual void setWorkArgs(const JobHandlePointer &handle, const QList<QUrl> &sourceUrls, const QUrl &targetUrl = QUrl(),
                              const AbstractJobHandler::JobFlags &flags = AbstractJobHandler::JobFlag::kNoHint);
+
+public:
+    enum class CountWriteSizeType : quint8 {
+        kTidType,   // Read thread IO write size 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
+        kWriteBlockType,   // Read write block device write block size
+        kCustomizeType
+    };
+
 signals:
     /*!
      * @brief proccessChanged 当前任务的进度变化信号，此信号都可能是异步连接，所以所有参数都没有使用引用

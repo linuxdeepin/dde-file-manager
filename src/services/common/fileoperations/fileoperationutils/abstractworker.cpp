@@ -277,7 +277,8 @@ void AbstractWorker::emitProccessChangedNotify(const qint64 &writSize)
 {
     JobInfoPointer info(new QMap<quint8, QVariant>);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
-    if (AbstractJobHandler::JobType::kCopyType == jobType) {
+    if (AbstractJobHandler::JobType::kCopyType == jobType
+        || AbstractJobHandler::JobType::kCutType == jobType) {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesTotalSize)));
     } else {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesCount)));
