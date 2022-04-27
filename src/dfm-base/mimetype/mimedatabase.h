@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef DMIMEDATABASE_H
-#define DMIMEDATABASE_H
+#ifndef MIMEDATABASE_H
+#define MIMEDATABASE_H
 
 #include "dfm-base/dfm_base_global.h"
 
@@ -79,4 +79,4 @@ public:
 
 DFMBASE_END_NAMESPACE
 
-#endif   // DMIMEDATABASE_H
+#endif   // MIMEDATABASE_H
