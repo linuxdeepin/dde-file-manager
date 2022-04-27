@@ -398,15 +398,4 @@ void UniversalUtils::prepareForSleep(QObject *obj, const char *cslot)
             cslot);
 }
 
-void UniversalUtils::lockEventTriggered(QObject *obj, const char *cslot)
-{
-    QDBusConnection::sessionBus().connect(
-            "org.freedesktop.FileManager1",
-            "/org/freedesktop/FileManager1",
-            "org.freedesktop.FileManager1",
-            "lockEventTriggered",
-            obj,
-            cslot);
-}
-
 DFMBASE_END_NAMESPACE

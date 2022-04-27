@@ -21,7 +21,7 @@
 
 #include "retrievepasswordview.h"
 #include "utils/encryption/operatorcenter.h"
-#include "utils/vaulthelper.h"
+#include "utils/policy/policymanager.h"
 
 #include <DFontSizeManager>
 
@@ -92,16 +92,6 @@ RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     mainLayout->addWidget(verificationPrompt);
 
     this->setLayout(mainLayout);
-    //    addContent(selectKeyPage, Qt::AlignVCenter);
-
-    //! 防止点击按钮后界面隐藏
-    //    setOnButtonClickedClose(false);
-
-    //    btnList = QStringList({ tr("Back", "button"), tr("Verify Key", "button"), tr("Go to Unlock", "button"), tr("Close", "button") });
-    //    addButton(btnList[0], false);
-    //    addButton(btnList[1], true, ButtonType::ButtonRecommend);
-
-    //    connect(this, &RetrievePasswordView::buttonClicked, this, &RetrievePasswordView::onButtonClicked);
 
     connect(savePathTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboBoxIndex(int)));
 
@@ -246,7 +236,7 @@ void RetrievePasswordView::slotCheckAuthorizationFinished(PolkitQt1::Authority::
 
 void RetrievePasswordView::showEvent(QShowEvent *event)
 {
-    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kRetrievePassWordPage);
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kRetrievePassWordPage);
     if (QFile::exists(defaultKeyPath)) {
         defaultFilePathEdit->setText(QString(kVaultTRoot) + kRSAPUBKeyFileName + QString(".key"));
         emit sigBtnEnabled(1, true);
@@ -262,6 +252,6 @@ void RetrievePasswordView::showEvent(QShowEvent *event)
 
 void RetrievePasswordView::closeEvent(QCloseEvent *event)
 {
-    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kUnknown);
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
     QFrame::closeEvent(event);
 }

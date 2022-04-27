@@ -137,27 +137,39 @@ void FileBaseInfoView::basicFieldFilter(const QUrl &url)
         fieldMap.remove(BasicFieldExpandEnum::kFileName);
         fileName->deleteLater();
         fileName = nullptr;
-    } else if (fieldFilter & DetailFilterType::kFileSizeField) {
+    }
+
+    if (fieldFilter & DetailFilterType::kFileSizeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileSize);
         fileSize->deleteLater();
         fileSize = nullptr;
-    } else if (fieldFilter & DetailFilterType::kFileTypeField) {
+    }
+
+    if (fieldFilter & DetailFilterType::kFileTypeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileType);
         fileType->deleteLater();
         fileType = nullptr;
-    } else if (fieldFilter & DetailFilterType::kFileDurationField) {
+    }
+
+    if (fieldFilter & DetailFilterType::kFileDurationField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileDuration);
         fileDuration->deleteLater();
         fileDuration = nullptr;
-    } else if (fieldFilter & DetailFilterType::kFileViewSizeField) {
+    }
+
+    if (fieldFilter & DetailFilterType::kFileViewSizeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileViewSize);
         fileViewSize->deleteLater();
         fileViewSize = nullptr;
-    } else if (fieldFilter & DetailFilterType::kFileChangeTImeField) {
+    }
+
+    if (fieldFilter & DetailFilterType::kFileChangeTImeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileChangeTIme);
         fileChangeTime->deleteLater();
         fileChangeTime = nullptr;
-    } else if (fieldFilter & DetailFilterType::kFileInterviewTimeField) {
+    }
+
+    if (fieldFilter & DetailFilterType::kFileInterviewTimeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileInterviewTime);
         fileInterviewTime->deleteLater();
         fileInterviewTime = nullptr;

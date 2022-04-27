@@ -20,6 +20,7 @@
 */
 #include "vaultentryfileentity.h"
 #include "vaulthelper.h"
+#include "pathmanager.h"
 
 #include <QApplication>
 
@@ -61,7 +62,7 @@ bool VaultEntryFileEntity::showProgress() const
 
 bool VaultEntryFileEntity::showTotalSize() const
 {
-    if (VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath()) == VaultState::kUnlocked) {
+    if (VaultHelper::instance()->state(PathManager::vaultLockPath()) == VaultState::kUnlocked) {
         showSizeState = true;
         QUrl url = VaultHelper::instance()->vaultToLocalUrl(VaultHelper::instance()->sourceRootUrl());
         fileCalculationUtils->start(QList<QUrl>() << url);

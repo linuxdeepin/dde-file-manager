@@ -18,23 +18,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "vault.h"
-#include "utils/vaultvisiblemanager.h"
+#ifndef VAULTDBUSUTILS_H
+#define VAULTDBUSUTILS_H
 
-DPVAULT_USE_NAMESPACE
+#include "dfmplugin_vault_global.h"
 
-void Vault::initialize()
+#include <QObject>
+#include <QVariant>
+
+DPVAULT_BEGIN_NAMESPACE
+class VaultDBusUtils
 {
-    VaultVisibleManager::instance()->infoRegister();
-}
+public:
+    static QVariant vaultManagerDBusCall(QString function, const QVariant &vaule = {});
 
-bool Vault::start()
-{
-    VaultVisibleManager::instance()->pluginServiceRegister();
-    return true;
-}
+    static int getVaultPolicy();
 
-dpf::Plugin::ShutdownFlag Vault::stop()
-{
-    return kSync;
-}
+    static bool setVaultPolicyState(int policyState);
+
+    static void lockEventTriggered(QObject *obj, const char *cslot = nullptr);
+
+    static int getLeftoverErrorInputTimes();
+
+    static void leftoverErrorInputTimesMinusOne();
+
+    static void startTimerOfRestorePasswordInput();
+
+    static int getNeedWaitMinutes();
+
+    static void restoreNeedWaitMinutes();
+
+    static void restoreLeftoverErrorInputTimes();
+};
+DPVAULT_END_NAMESPACE
+#endif   // VAULTDBUSUTILS_H

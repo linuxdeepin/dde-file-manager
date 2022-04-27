@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QTimer>
 #include <QMap>
+#include <QDBusMessage>
+#include <QDBusContext>
 
 /**
  * @brief The VaultClock class
@@ -56,6 +58,8 @@ public slots:
      */
     void AddTickTime(qint64 seconds);
 
+    static QString vaultBasePath();
+
 protected slots:
     /**
      * @brief tick 秒针
@@ -71,12 +75,14 @@ private:
     bool isLockEventTriggerd { false };
 };
 
-class VaultManagerDBus : public QObject
+class VaultManagerDBus : public QObject, public QDBusContext
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.VaultManager")
 public:
     explicit VaultManagerDBus(QObject *parent = nullptr);
+
+    void sessionManagerDBusConnect();
 
 public slots:
     /*!
@@ -157,6 +163,20 @@ public slots:
      * \brief  保险箱再次输入密码的等待分钟数还原
      */
     void RestoreNeedWaitMinutes(int userID);
+
+private slots:
+    /**
+     * @brief lockPropertyChanged 锁屏改变事件
+     * @param msg
+     */
+    void lockScreenVaultLock(const QDBusMessage &msg);
+
+signals:
+    /**
+     * @brief lockEventTriggered 锁屏信号
+     * @param user
+     */
+    void lockEventTriggered(QString user);
 
 protected:
     void timerEvent(QTimerEvent *event) override;

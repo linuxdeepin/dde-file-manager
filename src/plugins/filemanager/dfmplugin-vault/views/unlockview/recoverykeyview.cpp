@@ -20,9 +20,10 @@
  */
 
 #include "recoverykeyview.h"
-#include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
-#include "services/filemanager/fileencrypt/fileencryptservice.h"
+#include "utils/pathmanager.h"
+#include "utils/servicemanager.h"
+#include "utils/encryption/interfaceactivevault.h"
 
 #include <DToolTip>
 #include <DFloatingWidget>
@@ -70,7 +71,7 @@ RecoveryKeyView::RecoveryKeyView(QWidget *parent)
 
     //    connect(this, &RecoveryKeyView::buttonClicked, this, &RecoveryKeyView::onButtonClicked);
     connect(recoveryKeyEdit, &QPlainTextEdit::textChanged, this, &RecoveryKeyView::recoveryKeyChanged);
-    connect(VaultHelper::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &RecoveryKeyView::onUnlockVault);
+    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &RecoveryKeyView::onUnlockVault);
 }
 
 RecoveryKeyView::~RecoveryKeyView()
@@ -130,9 +131,9 @@ void RecoveryKeyView::buttonClicked(int index, const QString &text)
         QString strCipher("");
         if (InterfaceActiveVault::checkUserKey(strKey, strCipher)) {
             unlockByKey = true;
-            QString encryptBaseDir = VaultHelper::instance()->vaultLockPath();
-            QString decryptFileDir = VaultHelper::instance()->vaultUnlockPath();
-            VaultHelper::fileEncryptServiceInstance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
+            QString encryptBaseDir = PathManager::vaultLockPath();
+            QString decryptFileDir = PathManager::vaultUnlockPath();
+            ServiceManager::fileEncryptServiceInstance()->unlockVault(encryptBaseDir, decryptFileDir, strCipher);
         } else {
             showAlertMessage(tr("Wrong recovery key"));
         }

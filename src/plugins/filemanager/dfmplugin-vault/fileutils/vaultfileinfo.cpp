@@ -19,12 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "vaultfileinfo.h"
+#include "utils/vaultglobaldefine.h"
+#include "private/vaultfileinfoprivate.h"
+#include "utils/vaulthelper.h"
+
+#include "dfm-base/base/standardpaths.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/base/schemefactory.h"
-#include "vaultglobaldefine.h"
-#include "private/vaultfileinfoprivate.h"
-#include "vaulthelper.h"
-#include "dfm-base/base/standardpaths.h"
 
 #include <DFileIconProvider>
 
@@ -73,7 +74,7 @@ bool VaultFileInfo::operator!=(const VaultFileInfo &fileinfo) const
 
 QString VaultFileInfo::absolutePath() const
 {
-    if(!dptr->proxy)
+    if (!dptr->proxy)
         return "";
 
     QString path = dptr->proxy->path();

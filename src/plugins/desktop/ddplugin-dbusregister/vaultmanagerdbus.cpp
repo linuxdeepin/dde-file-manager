@@ -1,17 +1,24 @@
 #include "vaultmanagerdbus.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <QDateTime>
 #include <QTimer>
+#include <QDir>
 #include <QFileInfo>
 #include <QTimerEvent>
 #include <QDBusContext>
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 
+#include <unistd.h>
+
 constexpr int kErrorInputTime { 6 };   // 错误次数
 constexpr int kTimerOutTime { 60 * 1000 };   // 计时器超时时间/ms
 constexpr int kTotalWaitTime { 10 };   // 需要等待的分钟数
+
+constexpr char kVaultTimeConfigFile[] { "/../dde-file-manager/vaultTimeConfig" };
+constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
 
 DFMBASE_USE_NAMESPACE
 
@@ -63,6 +70,12 @@ void VaultClock::AddTickTime(qint64 seconds)
     selfTime += static_cast<quint64>(seconds);
 }
 
+QString VaultClock::vaultBasePath()
+{
+    static QString path = QString(QDir::homePath() + QString("/.config/Vault"));   //!! 获取保险箱创建的目录地址
+    return path;
+}
+
 void VaultClock::Tick()
 {
     selfTime++;
@@ -78,6 +91,19 @@ VaultManagerDBus::VaultManagerDBus(QObject *parent)
     UniversalUtils::userChange(this, SLOT(sysUserChanged(QString)));
 
     UniversalUtils::prepareForSleep(this, SLOT(computerSleep(bool)));
+
+    sessionManagerDBusConnect();
+}
+
+void VaultManagerDBus::sessionManagerDBusConnect()
+{
+    QDBusConnection::sessionBus().connect(
+            "com.deepin.SessionManager",
+            "/com/deepin/SessionManager",
+            "org.freedesktop.DBus.Properties",
+            "PropertiesChanged", "sa{sv}as",
+            this,
+            SLOT(lockScreenVaultLock(QDBusMessage)));
 }
 
 void VaultManagerDBus::SysUserChanged(const QString &curUser)
@@ -189,6 +215,46 @@ void VaultManagerDBus::RestoreNeedWaitMinutes(int userID)
     mapNeedMinutes[userID] = kTotalWaitTime;
 }
 
+void VaultManagerDBus::lockScreenVaultLock(const QDBusMessage &msg)
+{
+    QList<QVariant> arguments = msg.arguments();
+    if (3 != arguments.count())
+        return;
+
+    QString interfaceName = msg.arguments().at(0).toString();
+    if (interfaceName != "com.deepin.SessionManager")
+        return;
+
+    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+    QStringList keys = changedProps.keys();
+    for (const QString &prop : keys) {
+        if (prop == "Locked") {
+            bool bLocked = changedProps[prop].toBool();
+            if (bLocked) {
+                char *loginUser = getlogin();
+                QString user = loginUser ? loginUser : "";
+                emit lockEventTriggered(user);
+
+                char buf[512] = { 0 };
+                FILE *cmd_pipe = popen("pidof -s dde-file-manager", "r");
+
+                fgets(buf, 512, cmd_pipe);
+                pid_t pid = static_cast<pid_t>(strtoul(buf, nullptr, 10));
+
+                if (pid == 0) {
+                    QString umountCmd = "fusermount -zu " + VaultClock::vaultBasePath() + "/" + kVaultDecryptDirName;
+                    QByteArray umountCmdBytes = umountCmd.toUtf8();
+                    system(umountCmdBytes.data());
+                    //! 记录保险箱上锁时间
+                    Settings setting(kVaultTimeConfigFile);
+                    setting.setValue(QString("VaultTime"), QString("LockTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+                }
+                pclose(cmd_pipe);
+            }
+        }
+    }
+}
+
 void VaultManagerDBus::timerEvent(QTimerEvent *event)
 {
     int timerID = event->timerId();
@@ -209,13 +275,13 @@ void VaultManagerDBus::timerEvent(QTimerEvent *event)
 
 bool VaultManagerDBus::IsValidInvoker()
 {
-    QDBusContext context;
-    static QStringList VaultwhiteProcess = { "/usr/bin/dde-file-manager", "/usr/bin/dde-desktop", "/usr/bin/dde-select-dialog-wayland", "/usr/bin/dde-select-dialog-x11" };
-    uint pid = context.connection().interface()->servicePid(context.message().service()).value();
+    static QStringList VaultwhiteProcess = { "/usr/bin/dde-file-manager" };
+    uint pid = connection().interface()->servicePid(message().service()).value();
     QFileInfo f(QString("/proc/%1/exe").arg(pid));
     if (!f.exists())
         return false;
-    return VaultwhiteProcess.contains(f.canonicalFilePath());
+    QString Path = f.canonicalFilePath();
+    return VaultwhiteProcess.contains(Path);
 }
 
 QString VaultManagerDBus::GetCurrentUser() const

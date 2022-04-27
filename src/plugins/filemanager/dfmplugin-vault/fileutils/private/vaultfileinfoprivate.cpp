@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vaultfileinfoprivate.h"
-#include "utils/vaultfileinfo.h"
+#include "fileutils/vaultfileinfo.h"
 
 DFMBASE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE

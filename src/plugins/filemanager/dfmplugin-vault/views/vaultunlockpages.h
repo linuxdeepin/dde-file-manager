@@ -53,8 +53,6 @@ public:
 private:
     void initUI();
 
-    void setBtnText(int index);
-
 public slots:
     void pageSelect(PageType page);
 

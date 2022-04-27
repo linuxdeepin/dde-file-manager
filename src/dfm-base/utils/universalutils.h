@@ -62,8 +62,6 @@ public:
     static void userChange(QObject *obj, const char *cslot = nullptr);
 
     static void prepareForSleep(QObject *obj, const char *cslot = nullptr);
-
-    static void lockEventTriggered(QObject *obj, const char *cslot = nullptr);
 };
 
 DFMBASE_END_NAMESPACE

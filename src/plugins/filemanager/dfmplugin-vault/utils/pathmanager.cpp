@@ -17,24 +17,33 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef VAULTDBUSUTILS_H
-#define VAULTDBUSUTILS_H
+ */
+#include "pathmanager.h"
+#include "vaultglobaldefine.h"
 
-#include "dfmplugin_vault_global.h"
-
-#include <QObject>
-#include <QVariant>
-
-DPVAULT_BEGIN_NAMESPACE
-class VaultDBusUtils
+DPVAULT_USE_NAMESPACE
+PathManager::PathManager(QObject *parent)
+    : QObject(parent)
 {
-public:
-    static QVariant vaultManagerDBusCall(QString function, const QVariant &vaule = {});
+}
 
-    static int getVaultPolicy();
+QString PathManager::vaultLockPath()
+{
+    return makeVaultLocalPath("", kVaultEncrypyDirName);
+}
 
-    static bool setVaultPolicyState(int policyState);
-};
-DPVAULT_END_NAMESPACE
-#endif   // VAULTDBUSUTILS_H
+QString PathManager::vaultUnlockPath()
+{
+    return makeVaultLocalPath("", kVaultDecryptDirName);
+}
+
+QString PathManager::makeVaultLocalPath(QString path, QString base)
+{
+    if (base.isEmpty()) {
+        base = kVaultDecryptDirName;
+    }
+    if (path.isEmpty())
+        return kVaultBasePath + QDir::separator() + base;
+    else
+        return kVaultBasePath + QDir::separator() + base + (path.startsWith('/') ? "" : "/") + path;
+}

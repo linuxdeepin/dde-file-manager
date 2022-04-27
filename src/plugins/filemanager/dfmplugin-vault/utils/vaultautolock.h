@@ -71,10 +71,12 @@ public:
     static VaultAutoLock *instance();
 
 private:
-    //! auto lock state
-    AutoLockState autoLockState;
     //! auto lock clock
     QTimer alarmClock;
+
+    //! auto lock state
+    AutoLockState autoLockState;
+
     bool isCacheTimeReloaded;
 };
 DPVAULT_END_NAMESPACE

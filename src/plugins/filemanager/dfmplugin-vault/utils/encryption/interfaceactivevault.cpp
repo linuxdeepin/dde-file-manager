@@ -22,6 +22,7 @@
 #include "interfaceactivevault.h"
 #include "operatorcenter.h"
 #include "utils/vaulthelper.h"
+#include "utils/pathmanager.h"
 
 DPVAULT_USE_NAMESPACE
 InterfaceActiveVault::InterfaceActiveVault(QObject *parent)
@@ -70,7 +71,7 @@ QStringList InterfaceActiveVault::getConfigFilePath()
 
 VaultState InterfaceActiveVault::vaultState()
 {
-    return VaultHelper::instance()->state(VaultHelper::instance()->makeVaultLocalPath(QString(""), kVaultEncrypyDirName));
+    return VaultHelper::instance()->state(PathManager::makeVaultLocalPath(QString(""), kVaultEncrypyDirName));
 }
 
 bool InterfaceActiveVault::getRootPassword()

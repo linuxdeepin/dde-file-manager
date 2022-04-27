@@ -22,7 +22,9 @@
 #include "vaultactivefinishedview.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/vaulthelper.h"
-#include "services/filemanager/fileencrypt/fileencryptservice.h"
+#include "utils/servicemanager.h"
+#include "utils/policy/policymanager.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -120,7 +122,7 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
-    connect(VaultHelper::instance()->fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState,
+    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState,
             this, &VaultActiveFinishedView::slotEncryptComplete);
 
     // 初始化定时器
@@ -177,7 +179,7 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
                this, &VaultActiveFinishedView::slotCheckAuthorizationFinished);
     if (isVisible()) {
-        VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kCreateVaultPage1);
+        PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage1);
         if (result == Authority::Yes) {
             if (finishedBtn->text() == tr("Encrypt")) {
                 // 完成按钮灰化
@@ -209,7 +211,7 @@ void VaultActiveFinishedView::slotCheckAuthorizationFinished(PolkitQt1::Authorit
 
 void VaultActiveFinishedView::showEvent(QShowEvent *event)
 {
-    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kCreateVaultPage1);
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage1);
     QWidget::showEvent(event);
 }
 

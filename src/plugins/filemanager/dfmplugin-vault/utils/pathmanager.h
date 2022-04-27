@@ -17,24 +17,29 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#include "vault.h"
-#include "utils/vaultvisiblemanager.h"
+ */
+#ifndef PATHMANAGER_H
+#define PATHMANAGER_H
+#include "dfmplugin_vault_global.h"
 
-DPVAULT_USE_NAMESPACE
-
-void Vault::initialize()
+#include <QObject>
+DPVAULT_BEGIN_NAMESPACE
+class PathManager : public QObject
 {
-    VaultVisibleManager::instance()->infoRegister();
-}
+    Q_OBJECT
+public:
+    explicit PathManager(QObject *parent = nullptr);
 
-bool Vault::start()
-{
-    VaultVisibleManager::instance()->pluginServiceRegister();
-    return true;
-}
+public:
+    static QString vaultLockPath();
 
-dpf::Plugin::ShutdownFlag Vault::stop()
-{
-    return kSync;
-}
+    static QString vaultUnlockPath();
+
+    static QString makeVaultLocalPath(QString path = "", QString base = "");
+
+signals:
+
+public slots:
+};
+DPVAULT_END_NAMESPACE
+#endif   // PATHMANAGER_H

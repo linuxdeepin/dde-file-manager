@@ -1,6 +1,30 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
+  <interface name="local.VaultClock">
+    <method name="SetRefreshTime">
+      <arg name="time" type="t" direction="in"/>
+    </method>
+    <method name="GetLastestTime">
+      <arg type="t" direction="out"/>
+    </method>
+    <method name="GetSelfTime">
+      <arg type="t" direction="out"/>
+    </method>
+    <method name="IsLockEventTriggered">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="TriggerLockEvent">
+    </method>
+    <method name="ClearLockEvent">
+    </method>
+    <method name="AddTickTime">
+      <arg name="seconds" type="x" direction="in"/>
+    </method>
+  </interface>
   <interface name="com.deepin.filemanager.service.VaultManager">
+    <signal name="lockEventTriggered">
+      <arg name="user" type="s" direction="out"/>
+    </signal>
     <method name="SysUserChanged">
       <arg name="curUser" type="s" direction="in"/>
     </method>

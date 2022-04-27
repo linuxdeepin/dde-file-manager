@@ -22,7 +22,7 @@
 #include "vaultactivesavekeyfileview.h"
 #include "utils/vaultglobaldefine.h"
 #include "utils/encryption/operatorcenter.h"
-#include "utils/vaulthelper.h"
+#include "utils/policy/policymanager.h"
 
 #include <DPalette>
 #include <DFontSizeManager>
@@ -235,7 +235,7 @@ void VaultActiveSaveKeyFileView::slotSelectCurrentFile(const QString &file)
 
 void VaultActiveSaveKeyFileView::showEvent(QShowEvent *event)
 {
-    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kCreateVaultPage);
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kCreateVaultPage);
     defaultPathRadioBtn->setChecked(true);
     selectfileSavePathEdit->clear();
     otherRadioBtnHitMsg->hide();

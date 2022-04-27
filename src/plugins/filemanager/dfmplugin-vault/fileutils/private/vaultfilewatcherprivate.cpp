@@ -1,5 +1,5 @@
 #include "vaultfilewatcherprivate.h"
-#include "utils/vaultfilewatcher.h"
+#include "fileutils/vaultfilewatcher.h"
 
 DFMBASE_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE

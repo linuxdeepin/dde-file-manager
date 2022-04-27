@@ -22,6 +22,9 @@
 #include "vaultremovepages.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaulthelper.h"
+#include "utils/policy/policymanager.h"
+#include "utils/pathmanager.h"
+#include "utils/servicemanager.h"
 #include "removevaultview/vaultremoveprogressview.h"
 #include "removevaultview/vaultremovebypasswordview.h"
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
@@ -90,7 +93,7 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
 void VaultRemovePages::initConnect()
 {
     connect(this, &VaultRemovePages::buttonClicked, this, &VaultRemovePages::onButtonClicked);
-    connect(VaultHelper::instance()->fileEncryptServiceInstance(), &FileEncryptService::signalLockVaultState, this, &VaultRemovePages::onLockVault);
+    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalLockVaultState, this, &VaultRemovePages::onLockVault);
     connect(progressView, &VaultRemoveProgressView::removeFinished, this, &VaultRemovePages::onVualtRemoveFinish);
 }
 
@@ -151,7 +154,7 @@ void VaultRemovePages::closeEvent(QCloseEvent *event)
 
 void VaultRemovePages::showEvent(QShowEvent *event)
 {
-    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kDeleteVaultPage);
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kDeleteVaultPage);
     VaultPageBase::showEvent(event);
 }
 
@@ -227,7 +230,7 @@ void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
                this, &VaultRemovePages::slotCheckAuthorizationFinished);
     if (isVisible()) {
-        VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kDeleteVaultPage);
+        PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kDeleteVaultPage);
         if (result == Authority::Yes) {
             removeVault = true;
             // 删除前，先置顶保险箱内拷贝、剪贴、压缩任务
@@ -261,8 +264,8 @@ void VaultRemovePages::onLockVault(int state)
             // 切换至删除界面
             showRemoveWidget();
 
-            QString vaultLockPath = VaultHelper::instance()->vaultLockPath();
-            QString vaultUnlockPath = VaultHelper::instance()->vaultUnlockPath();
+            QString vaultLockPath = PathManager::vaultLockPath();
+            QString vaultUnlockPath = PathManager::vaultUnlockPath();
             progressView->removeVault(vaultLockPath, vaultUnlockPath);
         } else {
             // error tips

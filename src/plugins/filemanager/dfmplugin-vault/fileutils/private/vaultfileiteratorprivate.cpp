@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "vaultfileiteratorprivate.h"
-#include "utils/vaultfileiterator.h"
+#include "fileutils/vaultfileiterator.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 

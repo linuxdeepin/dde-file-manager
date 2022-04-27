@@ -130,6 +130,7 @@ public Q_SLOTS: // METHODS
     }
 
 Q_SIGNALS: // SIGNALS
+    void lockEventTriggered(const QString &user);
 };
 
 namespace com {
@@ -140,5 +141,8 @@ namespace com {
       }
     }
   }
+}
+namespace local {
+  typedef ::VaultManagerInterface VaultClock;
 }
 #endif

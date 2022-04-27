@@ -1,4 +1,5 @@
 #include "vaulteventreceiver.h"
+#include "utils/pathmanager.h"
 #include "utils/vaulthelper.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -30,7 +31,7 @@ void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
 {
     if (url.path().contains("vault")) {
         VaultHelper::instance()->appendWinID(winId);
-        VaultState state = VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath());
+        VaultState state = VaultHelper::instance()->state(PathManager::vaultLockPath());
         switch (state) {
         case VaultState::kUnlocked: {
             VaultHelper::instance()->openWidWindow(winId, VaultHelper::instance()->rootUrl());

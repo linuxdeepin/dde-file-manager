@@ -141,7 +141,9 @@ void BasicWidget::basicExpand(const QUrl &url)
     QGridLayout *gl = new QGridLayout;
     gl->setMargin(0);
     gl->addWidget(label, 0, 0, 1, 2);
-    gl->addWidget(hideFile, 0, 2, 1, 4);
+    gl->addWidget(hideFile, 0, 1, 1, 5);
+    gl->setColumnStretch(0, 2);
+    gl->setColumnStretch(1, 3);
     QFrame *tempFrame = new QFrame(frameMain);
     tempFrame->setLayout(gl);
 

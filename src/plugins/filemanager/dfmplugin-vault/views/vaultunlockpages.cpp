@@ -91,6 +91,7 @@ void VaultUnlockPages::pageSelect(PageType page)
             QWidget *widget = getContent(0);
             widget->hide();
             clearContents(false);
+            widget->deleteLater();
         }
         setTitle(recoveryKeyView->titleText());
         addContent(recoveryKeyView);
@@ -107,6 +108,7 @@ void VaultUnlockPages::pageSelect(PageType page)
             QWidget *widget = getContent(0);
             widget->hide();
             clearContents(false);
+            widget->deleteLater();
         }
         setTitle(retrievePasswordView->titleText());
         addContent(retrievePasswordView);
@@ -124,6 +126,7 @@ void VaultUnlockPages::pageSelect(PageType page)
             QWidget *widget = getContent(0);
             widget->hide();
             clearContents(false);
+            widget->deleteLater();
         }
         setTitle(passwordRecoveryView->titleText());
         addContent(passwordRecoveryView);
@@ -135,14 +138,6 @@ void VaultUnlockPages::pageSelect(PageType page)
         connect(passwordRecoveryView, &PasswordRecoveryView::sigCloseDialog, this, &VaultUnlockPages::close);
         connect(passwordRecoveryView, &PasswordRecoveryView::sigBtnEnabled, this, &VaultUnlockPages::onSetBtnEnabled);
     } break;
-    }
-}
-
-void VaultUnlockPages::setBtnText(int index)
-{
-    if (getContent(0) == unlockView) {
-
-    } else if (stackedWidget->widget(index) == retrievePasswordView) {
     }
 }
 

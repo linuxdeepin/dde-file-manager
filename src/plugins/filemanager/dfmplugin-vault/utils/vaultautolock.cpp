@@ -1,8 +1,8 @@
 #include "vaultautolock.h"
 #include "vaulthelper.h"
-#include "vaultdbusutils.h"
+#include "pathmanager.h"
+#include "dbus/vaultdbusutils.h"
 
-#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -19,7 +19,7 @@ VaultAutoLock::VaultAutoLock(QObject *parent)
 {
     connect(&alarmClock, &QTimer::timeout, this, &VaultAutoLock::processAutoLock);
     alarmClock.setInterval(1000);
-    UniversalUtils::lockEventTriggered(this, SLOT(slotLockEvent(QString)));
+    VaultDBusUtils::lockEventTriggered(this, SLOT(slotLockEvent(QString)));
     loadConfig();
 }
 
@@ -79,7 +79,7 @@ void VaultAutoLock::resetConfig()
 
 void VaultAutoLock::processAutoLock()
 {
-    if (VaultHelper::instance()->state(VaultHelper::instance()->vaultLockPath()) != VaultState::kUnlocked
+    if (VaultHelper::instance()->state(PathManager::vaultLockPath()) != VaultState::kUnlocked
         || autoLockState == kNever) {
 
         return;

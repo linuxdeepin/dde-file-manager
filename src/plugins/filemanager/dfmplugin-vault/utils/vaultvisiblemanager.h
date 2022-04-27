@@ -17,25 +17,51 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef VAULT_H
-#define VAULT_H
-
+ */
+#ifndef VAULTVISIBLEMANAGER_H
+#define VAULTVISIBLEMANAGER_H
 #include "dfmplugin_vault_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QObject>
 
 DPVAULT_BEGIN_NAMESPACE
-class Vault : public dpf::Plugin
+class VaultVisibleManager : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "vault.json")
+public:
+    explicit VaultVisibleManager(QObject *parent = nullptr);
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    /*!
+    * \brief isVaultEnabled
+    * \return true vault is available, vice versa.
+    */
+    bool isVaultEnabled();
+
+    void infoRegister();
+
+    void pluginServiceRegister();
+
+public slots:
+    void onWindowOpened(quint64 winID);
+
+    void addSideBarVaultItem();
+
+    void addComputer();
+
+    void addFileOperations();
+
+    void removeSideBarVaultItem();
+
+    void removeComputerVaultItem();
+
+public:
+    static VaultVisibleManager *instance();
+
+private:
+    //! true为已注册 false未注册
+    bool infoRegisterState { false };
+    bool serviceRegisterState { false };
 };
 DPVAULT_END_NAMESPACE
-
-#endif   // VAULT_H
+#endif   // VAULTVISIBLEMANAGER_H

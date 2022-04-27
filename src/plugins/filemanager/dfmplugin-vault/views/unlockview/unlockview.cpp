@@ -20,9 +20,12 @@
  */
 #include "unlockview.h"
 #include "utils/vaulthelper.h"
+#include "utils/policy/policymanager.h"
 #include "utils/encryption/interfaceactivevault.h"
 #include "utils/vaultglobaldefine.h"
 #include "utils/vaultautolock.h"
+#include "utils/servicemanager.h"
+#include "dbus/vaultdbusutils.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
@@ -35,9 +38,8 @@
 #include <QDateTime>
 #include <QStandardPaths>
 
-DFMBASE_USE_NAMESPACE
-DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
 constexpr int kToolTipShowDuration = 3000;
@@ -101,7 +103,7 @@ void UnlockView::initUI()
     this->setLayout(mainLayout);
 
     connect(passwordEdit, &DPasswordEdit::textChanged, this, &UnlockView::onPasswordChanged);
-    connect(VaultHelper::instance()->fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &UnlockView::onVaultUlocked);
+    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &UnlockView::onVaultUlocked);
     connect(tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {
@@ -109,6 +111,9 @@ void UnlockView::initUI()
             showToolTip(hint, kToolTipShowDuration, ENToolTip::kInformation);
         }
     });
+
+    tooltipTimer = new QTimer(this);
+    connect(tooltipTimer, &QTimer::timeout, this, &UnlockView::slotTooltipTimerTimeout);
 }
 
 void UnlockView::buttonClicked(int index, const QString &text)
@@ -116,19 +121,46 @@ void UnlockView::buttonClicked(int index, const QString &text)
     if (index == 1) {
         emit sigBtnEnabled(1, false);
 
+        int nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
+
+        if (nLeftoverErrorTimes < 1) {
+            int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
+            passwordEdit->showAlertMessage(tr("Please try again %1 minutes later").arg(nNeedWaitMinutes));
+            return;
+        }
+
         QString strPwd = passwordEdit->text();
 
         QString strCipher("");
         if (InterfaceActiveVault::checkPassword(strPwd, strCipher)) {
             unlockByPwd = true;
             VaultHelper::instance()->unlockVault(strCipher);
+            // 密码输入正确后，剩余输入次数还原,需要等待的分钟数还原
+            VaultDBusUtils::restoreLeftoverErrorInputTimes();
+            VaultDBusUtils::restoreNeedWaitMinutes();
         } else {
             //! 设置密码输入框颜色
             //! 修复bug-51508 激活密码框警告状态
             passwordEdit->setAlert(true);
-            //! 设置密码输入框颜色,并弹出tooltip
-            passwordEdit->lineEdit()->setStyleSheet("background-color:rgba(241, 57, 50, 0.15)");
-            passwordEdit->showAlertMessage(tr("Wrong password"));
+
+            // 保险箱剩余错误密码输入次数减1
+            VaultDBusUtils::leftoverErrorInputTimesMinusOne();
+
+            // 显示错误输入提示
+            nLeftoverErrorTimes = VaultDBusUtils::getLeftoverErrorInputTimes();
+
+            if (nLeftoverErrorTimes < 1) {
+                // 计时10分钟后，恢复密码编辑框
+                VaultDBusUtils::startTimerOfRestorePasswordInput();
+                // 错误输入次数超过了限制
+                int nNeedWaitMinutes = VaultDBusUtils::getNeedWaitMinutes();
+                passwordEdit->showAlertMessage(tr("Wrong password, please try again %1 minutes later").arg(nNeedWaitMinutes));
+            } else {
+                if (nLeftoverErrorTimes == 1)
+                    passwordEdit->showAlertMessage(tr("Wrong password, one chance left"));
+                else
+                    passwordEdit->showAlertMessage(tr("Wrong password, %1 chances left").arg(nLeftoverErrorTimes));
+            }
         }
         return;
     } else {
@@ -200,7 +232,7 @@ void UnlockView::slotTooltipTimerTimeout()
 
 void UnlockView::showEvent(QShowEvent *event)
 {
-    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kUnlockVaultPage);
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnlockVaultPage);
     if (extraLockVault) {
         extraLockVault = false;
     }
@@ -221,13 +253,11 @@ void UnlockView::showEvent(QShowEvent *event)
             tipsButton->show();
         }
     }
-
-    QFrame::showEvent(event);
 }
 
 void UnlockView::closeEvent(QCloseEvent *event)
 {
-    VaultHelper::instance()->setVauleCurrentPageMark(VaultHelper::VaultPageMark::kUnknown);
+    PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kUnknown);
     extraLockVault = true;
     QFrame::closeEvent(event);
 }
@@ -253,7 +283,7 @@ void UnlockView::showToolTip(const QString &text, int duration, UnlockView::ENTo
 
     tooltip->setText(text);
     if (floatWidget->parent()) {
-        floatWidget->setGeometry(8, 154, 68, 26);
+        floatWidget->setGeometry(0, 33, 68, 26);
         floatWidget->show();
         floatWidget->adjustSize();
         floatWidget->raise();
