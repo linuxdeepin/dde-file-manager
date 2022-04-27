@@ -82,6 +82,8 @@ public:
 
     void showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList);
 
+    static QUrl redirectTagUrl(const QUrl &url);
+
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();
     static DSB_FM_NAMESPACE::TitleBarService *titleServIns();

@@ -245,6 +245,14 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
     editor->show(showPosX, showPosY);
 }
 
+QUrl TagHelper::redirectTagUrl(const QUrl &url)
+{
+    if (url.fragment().isEmpty())
+        return url;
+
+    return QUrl::fromLocalFile(url.fragment(QUrl::FullyDecoded));
+}
+
 WindowsService *TagHelper::winServIns()
 {
     auto &ctx = dpfInstance.serviceContext();

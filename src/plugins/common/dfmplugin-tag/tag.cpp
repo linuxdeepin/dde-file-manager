@@ -35,6 +35,7 @@
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
 #include "services/common/menu/menuservice.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include <dfm-framework/framework.h>
 
@@ -54,6 +55,7 @@ void Tag::initialize()
     InfoFactory::regClass<TagFileInfo>(TagManager::scheme());
     WatcherFactory::regClass<TagFileWatcher>(TagManager::scheme());
     DirIteratorFactory::regClass<TagDirIterator>(TagManager::scheme());
+    delegateServIns->registerUrlTransform(TagManager::scheme(), TagHelper::redirectTagUrl);
 
     connect(TagHelper::winServIns(), &WindowsService::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
     connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);

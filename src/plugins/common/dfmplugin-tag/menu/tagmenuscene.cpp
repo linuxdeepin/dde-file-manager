@@ -80,10 +80,12 @@ bool TagMenuScene::create(QMenu *parent)
     }
 
     QAction *colorListAction = createColorListAction();
+    colorListAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagColorListKey));
     parent->addAction(colorListAction);
     d->predicateAction.insert(TagActionId::kActTagColorListKey, colorListAction);
 
     QAction *tagAction = createTagAction();
+    tagAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kActTagAddKey));
     parent->addAction(tagAction);
     d->predicateAction.insert(TagActionId::kActTagAddKey, tagAction);
 
@@ -92,6 +94,10 @@ bool TagMenuScene::create(QMenu *parent)
 
 void TagMenuScene::updateState(QMenu *parent)
 {
+    // sort
+    parent->removeAction(d->predicateAction[TagActionId::kActTagAddKey]);
+    parent->insertAction(d->predicateAction[TagActionId::kActTagColorListKey], d->predicateAction[TagActionId::kActTagAddKey]);
+
     AbstractMenuScene::updateState(parent);
 }
 
