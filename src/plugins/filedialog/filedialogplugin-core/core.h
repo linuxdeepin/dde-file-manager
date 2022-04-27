@@ -40,6 +40,7 @@ public:
 
 private slots:
     void onAllPluginsStarted();
+    void bindScene(const QString &parentScene);
 };
 
 DIALOGCORE_END_NAMESPACE

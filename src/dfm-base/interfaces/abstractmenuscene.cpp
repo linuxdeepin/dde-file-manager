@@ -85,11 +85,15 @@ bool AbstractMenuScene::addSubscene(AbstractMenuScene *scene)
     if (!scene)
         return false;
 
+    scene->setParent(this);
     subScene.append(scene);
     return true;
 }
 
 void AbstractMenuScene::removeSubscene(AbstractMenuScene *scene)
 {
+    if (scene && scene->parent() == this)
+        scene->setParent(nullptr);
+
     subScene.removeOne(scene);
 }

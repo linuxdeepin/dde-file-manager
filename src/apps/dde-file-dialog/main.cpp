@@ -81,6 +81,7 @@ static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
 
+    // TODO(zhangs): Configurable, maybe config file ?
     static const QStringList blackNameList {
         "dfmplugin-burn",
         "dfmplugin-dirshare",
@@ -89,7 +90,8 @@ static bool pluginsLoad()
         "dfmplugin-trashcore",
         "dfmplugin-trash",
         "dfmplugin-smbbrowser",
-        "dfmplugin-filepreview"
+        "dfmplugin-filepreview",
+        "dfmplugin-tag"
     };
 
     auto &&lifeCycle = dpfInstance.lifeCycle();

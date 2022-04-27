@@ -92,7 +92,8 @@ static bool pluginsLoad()
         "dfmplugin-trashcore",
         "dfmplugin-trash",
         "dfmplugin-smbbrowser",
-        "dfmplugin-filepreview"
+        "dfmplugin-filepreview",
+        "dfmplugin-tag"
     };
 
     auto &&lifeCycle = dpfInstance.lifeCycle();

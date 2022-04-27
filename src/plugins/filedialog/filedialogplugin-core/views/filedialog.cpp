@@ -25,6 +25,7 @@
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
@@ -427,7 +428,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
         // TODO(zhangsheng, liuyangming)
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         // getFileView()->setNameFilters(QStringList("/"));
-        // getLeftSideBar()->setDisableUrlSchemes({ "recent" });   // 打开目录时禁用recent
+        addDisableUrlScheme("recent");
         // fall through
         [[fallthrough]];
     default:
@@ -460,7 +461,7 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
         statusBar()->setMode(FileDialogStatusBar::kSave);
         // TODO(zhangs):
         // getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
-        // getLeftSideBar()->setDisableUrlSchemes({ "recent" });   // save mode disable recent
+        addDisableUrlScheme("recent");
         setFileMode(QFileDialog::DirectoryOnly);
 
         connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
@@ -548,12 +549,10 @@ QFileDialog::Options FileDialog::options() const
 
 void FileDialog::addDisableUrlScheme(const QString &scheme)
 {
-    // TODO(zhangsheng):
-    //    QSet<QString> schemes = getLeftSideBar()->disableUrlSchemes();
-
-    //    schemes << scheme;
-
-    //    getLeftSideBar()->setDisableUrlSchemes(schemes);
+    QUrl url;
+    url.setScheme(scheme);
+    url.setPath("/");
+    // TODO(zhangs): send disbale sidebar item event
 }
 
 void FileDialog::setCurrentInputName(const QString &name)
@@ -969,8 +968,6 @@ void FileDialog::initializeUi()
     centralWidget()->layout()->addWidget(d->statusBar);
     statusBar()->lineEdit()->setMaxLength(NAME_MAX);
 
-    // TODO(zhangs): whitelist
-
     // 修复bug-45176
     // 如果是wanyland平台，将弹出的文件框居中
     if (WindowUtils::isWayLand())
@@ -1136,12 +1133,6 @@ void FileDialog::installDFMEventFilter()
         return true;
     });
     dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kHideFiles, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kMoveToTrash, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kDeleteFiles, [](EventDispatcher::Listener, const QVariantList &) {
         return true;
     });
 }

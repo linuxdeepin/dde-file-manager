@@ -24,17 +24,23 @@
 #include "dbus/filedialogmanagerdbus.h"
 #include "dbus/filedialogmanager_adaptor.h"
 #include "views/filedialog.h"
+#include "menus/filedialogmenuscene.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/common/menu/menuservice.h"
+
+#include "dfm-base/base/device/devicecontroller.h"
 
 #include <QDBusError>
 #include <QDBusConnection>
 
 DSB_FM_USE_NAMESPACE
+DSC_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
 
 bool Core::start()
 {
+    DFMBASE_NAMESPACE::DeviceController::instance()->disableStorageInfoPoll();
     WindowsService::service()->setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);
     });
@@ -87,4 +93,20 @@ void Core::onAllPluginsStarted()
 {
     if (!registerDialogDBus())
         abort();
+
+    MenuService::service()->registerScene(FileDialogMenuCreator::name(), new FileDialogMenuCreator);
+    bindScene("WorkspaceMenu");
+}
+
+void Core::bindScene(const QString &parentScene)
+{
+    if (MenuService::service()->contains(parentScene)) {
+        MenuService::service()->bind(FileDialogMenuCreator::name(), parentScene);
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+            if (scene == parentScene)
+                MenuService::service()->bind(FileDialogMenuCreator::name(), scene);
+        },
+                Qt::DirectConnection);
+    }
 }

@@ -23,8 +23,8 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include <interfaces/abstractmenuscene.h>
-#include <interfaces/abstractscenecreator.h>
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 DPWORKSPACE_BEGIN_NAMESPACE
 

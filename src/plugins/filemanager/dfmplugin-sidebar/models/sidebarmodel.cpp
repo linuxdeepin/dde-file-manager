@@ -24,6 +24,8 @@
 #include "views/sidebaritem.h"
 #include "utils/sidebarhelper.h"
 
+#include "dfm-base/utils/universalutils.h"
+
 #include <QMimeData>
 #include <QDebug>
 #include <QtConcurrent>
@@ -238,7 +240,8 @@ bool SideBarModel::removeRow(const QUrl &url)
 
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
-        if (item && item->url() == url) {
+        QUrl itemUrl { item->url() };
+        if (item && DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, itemUrl)) {
             QStandardItemModel::removeRow(r);
             return true;
         }

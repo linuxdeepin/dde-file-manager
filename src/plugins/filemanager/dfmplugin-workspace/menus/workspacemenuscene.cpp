@@ -87,6 +87,7 @@ void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &s
 
         if (iter != actions.end()) {
             QAction *separatorAct = new QAction(menu);
+            separatorAct->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kSeparator);
             separatorAct->setSeparator(true);
             actions.insert(iter, separatorAct);
         } else {

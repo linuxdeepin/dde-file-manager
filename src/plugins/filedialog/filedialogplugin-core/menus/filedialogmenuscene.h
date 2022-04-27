@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     xushitong<xushitong@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,41 +20,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SORTANDDISPLAYMENUSCENE_H
-#define SORTANDDISPLAYMENUSCENE_H
+#ifndef FILEDIALOGMENUSCENE_H
+#define FILEDIALOGMENUSCENE_H
 
-#include "dfmplugin_workspace_global.h"
+#include "filedialogplugin_core_global.h"
 
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPWORKSPACE_BEGIN_NAMESPACE
-class SortAndDisplayMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
+DIALOGCORE_BEGIN_NAMESPACE
+
+class FileDialogMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
     {
-        return "SortAndDisplayMenu";
+        return "FileDialogMenu";
     }
     DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
 };
 
-class SortAndDisplayMenuScenePrivate;
-class SortAndDisplayMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+class FileDialogMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
-    explicit SortAndDisplayMenuScene(QObject *parent = nullptr);
-    virtual ~SortAndDisplayMenuScene() override;
-
+    explicit FileDialogMenuScene(QObject *parent = nullptr);
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
-    AbstractMenuScene *scene(QAction *action) const override;
-    bool create(QMenu *parent) override;
     void updateState(QMenu *parent) override;
-    bool triggered(QAction *action) override;
 
 private:
-    QScopedPointer<SortAndDisplayMenuScenePrivate> d;
+    QString findSceneName(QAction *act) const;
+
+private:
+    AbstractMenuScene *workspaceScene { nullptr };
 };
-DPWORKSPACE_END_NAMESPACE
-#endif   // SORTANDDISPLAYMENUSCENE_H
+
+DIALOGCORE_END_NAMESPACE
+
+#endif   // FILEDIALOGMENUSCENE_H
