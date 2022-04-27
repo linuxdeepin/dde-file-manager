@@ -152,6 +152,7 @@ constexpr char kBurn[] { "burn" };
 constexpr char kComputer[] { "computer" };
 constexpr char kDevice[] { "device" };
 constexpr char kTrash[] { "trash" };
+constexpr char kRecent[] { "recent" };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

@@ -29,4 +29,10 @@
 #define DPRECENT_END_NAMESPACE }
 #define DPRECENT_USE_NAMESPACE using namespace DPRECENT_NAMESPACE;
 
+DPRECENT_BEGIN_NAMESPACE
+namespace RecentActionID {
+static constexpr char kRemove[] { "remove" };
+}
+DPRECENT_END_NAMESPACE
+
 #endif   // DFMPLUGIN_RECENT_GLOBAL_H

@@ -25,7 +25,7 @@
 #include "files/recentfilewatcher.h"
 #include "utils/recentmanager.h"
 #include "utils/recentfileshelper.h"
-#include "menus/recentmenu.h"
+#include "menus/recentmenuscene.h"
 
 #include "services/common/menu/menuservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
@@ -49,7 +49,7 @@ void Recent::initialize()
     InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
     WatcherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
-    MenuService::regClass<RecentMenu>(RecentScene::kRecentMenu);
+    DSC_NAMESPACE::MenuService::service()->registerScene(RecentMenuCreator::name(), new RecentMenuCreator());
 
     connect(RecentManager::winServIns(), &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
@@ -132,7 +132,7 @@ void Recent::installToSideBar()
 void Recent::addFileOperations()
 {
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(RecentManager::scheme(), RecentScene::kRecentMenu);
+    WorkspaceService::service()->setWorkspaceMenuScene(Global::kRecent, RecentMenuCreator::name());
 
     propertyServIns->registerBasicViewFiledExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
 
