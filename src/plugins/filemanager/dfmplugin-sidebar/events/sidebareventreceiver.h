@@ -20,25 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef COREEVENTSCALLER_H
-#define COREEVENTSCALLER_H
+#ifndef SIDEBAREVENTRECEIVER_H
+#define SIDEBAREVENTRECEIVER_H
 
-#include "filedialogplugin_core_global.h"
-
-#include "dfm-base/dfm_global_defines.h"
+#include "dfmplugin_sidebar_global.h"
 
 #include <QObject>
 
-DIALOGCORE_BEGIN_NAMESPACE
+DPSIDEBAR_BEGIN_NAMESPACE
 
-class CoreEventsCaller
+class SideBarEventReceiver : public QObject
 {
+    Q_OBJECT
+
 public:
-    static void sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode);
-    static void sendSelectFiles(quint64 windowId, const QList<QUrl> &files);
-    static void setSidebarItemVisible(const QUrl &url, bool visible);
+    static SideBarEventReceiver *instance();
+    void connectService();
+
+public slots:
+    void handleItemVisibleSetting(const QUrl &url, bool visible);
+
+private:
+    explicit SideBarEventReceiver(QObject *parent = nullptr);
 };
 
-DIALOGCORE_END_NAMESPACE
+DPSIDEBAR_END_NAMESPACE
 
-#endif   // COREEVENTSCALLER_H
+#endif   // SIDEBAREVENTRECEIVER_H

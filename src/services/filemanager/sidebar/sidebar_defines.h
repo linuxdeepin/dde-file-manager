@@ -46,6 +46,7 @@ extern const char *const kOther;
 // custom event type
 namespace EventType {
 extern const int kEjectAction;
+extern const int kItemVisibleSetting;
 };   // namespace EventType
 
 using CdActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;

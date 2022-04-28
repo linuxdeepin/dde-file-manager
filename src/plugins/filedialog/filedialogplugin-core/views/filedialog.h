@@ -110,7 +110,6 @@ Q_SIGNALS:
     void accepted();
     void rejected();
     void selectionFilesChanged();
-    void currentUrlChanged();
     void selectedNameFilterChanged();
 
 public Q_SLOTS:
@@ -139,7 +138,6 @@ private:
     void updateViewState();
     FileDialogStatusBar *statusBar() const;
     void adjustPosition(QWidget *w);
-    void installDFMEventFilter();
     QString modelCurrentNameFilter() const;
 
 private:

@@ -93,13 +93,19 @@ int SideBarWidget::addItem(SideBarItem *item)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     // TODO(zhangs): custom group
-    return sidebarModel->appendRow(item);
+    int r { sidebarModel->appendRow(item) };
+    if (r >= 0 && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url()))
+        setItemVisible(item->url(), false);
+    return r;
 }
 
 bool SideBarWidget::insertItem(const int index, SideBarItem *item)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    return sidebarModel->insertRow(index, item);
+    bool r { sidebarModel->insertRow(index, item) };
+    if (r && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url()))
+        setItemVisible(item->url(), false);
+    return r;
 }
 
 bool SideBarWidget::removeItem(SideBarItem *item)
@@ -160,6 +166,14 @@ void SideBarWidget::editItem(const QUrl &url)
     auto idx = sidebarModel->index(pos, 0);
     if (idx.isValid())
         sidebarView->edit(idx);
+}
+
+void SideBarWidget::setItemVisible(const QUrl &url, bool visible)
+{
+    Q_ASSERT(qApp->thread() == QThread::currentThread());
+    int r = sidebarModel->findRowByUrl(url);
+    if (r > 0)
+        sidebarView->setRowHidden(r, !visible);
 }
 
 void SideBarWidget::onItemActived(const QModelIndex &index)

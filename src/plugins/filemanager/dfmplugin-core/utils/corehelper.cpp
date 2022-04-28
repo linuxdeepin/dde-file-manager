@@ -23,6 +23,9 @@
 #include "corehelper.h"
 
 #include "services/filemanager/windows/windowsservice.h"
+#include "services/common/delegate/delegateservice.h"
+
+#include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
 
@@ -46,6 +49,15 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
 
     qInfo() << "cd to " << url;
     window->cd(url);
+
+    QUrl titleUrl { url };
+    if (delegateServIns->isRegisterUrlTransform(titleUrl.scheme()))
+        titleUrl = delegateServIns->urlTransform(url);
+    auto fileInfo = InfoFactory::create<AbstractFileInfo>(titleUrl);
+    if (fileInfo) {
+        QUrl url { fileInfo->url() };
+        window->setWindowTitle(fileInfo->fileDisplayName());
+    }
 }
 
 void CoreHelper::openNewWindow(const QUrl &url)

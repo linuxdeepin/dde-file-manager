@@ -93,6 +93,23 @@ bool SideBarInfoCacheMananger::removeItemInfoCache(const QUrl &url)
     return ret;
 }
 
+bool SideBarInfoCacheMananger::containsHiddenUrl(const QUrl &url)
+{
+    return hiddenUrlList.contains(url);
+}
+
+void SideBarInfoCacheMananger::addHiddenUrl(const QUrl &url)
+{
+    if (!hiddenUrlList.contains(url))
+        hiddenUrlList.append(url);
+}
+
+void SideBarInfoCacheMananger::removeHiddenUrl(const QUrl &url)
+{
+    if (hiddenUrlList.contains(url))
+        hiddenUrlList.removeOne(url);
+}
+
 bool SideBarInfoCacheMananger::contains(const ItemInfo &info) const
 {
     const CacheInfoList &cache = cacheInfoMap.value(info.group);

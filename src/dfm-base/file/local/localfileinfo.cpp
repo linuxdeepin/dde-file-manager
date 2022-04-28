@@ -1318,6 +1318,12 @@ QString LocalFileInfo::sizeFormat() const
  */
 QString LocalFileInfo::fileDisplayName() const
 {
+    QString &&path { filePath() };
+    if (SystemPathUtil::instance()->isSystemPath(path)) {
+        QString displayName { SystemPathUtil::instance()->systemPathDisplayNameByPath(path) };
+        if (!displayName.isEmpty())
+            return displayName;
+    }
     return fileName();
 }
 

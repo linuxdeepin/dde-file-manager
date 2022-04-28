@@ -52,7 +52,6 @@ public:
     virtual void refresh();
 
 protected:
-    void notifyChangeUrl();
     void notifyStateChanged();
     void requestCdTo(const QUrl &url);
     void notifySelectUrlChanged(const QList<QUrl> &urlList);

@@ -56,11 +56,16 @@ public:
     bool removeItemInfoCache(const Group &name, const QUrl &url);
     bool removeItemInfoCache(const QUrl &url);
 
+    bool containsHiddenUrl(const QUrl &url);
+    void addHiddenUrl(const QUrl &url);
+    void removeHiddenUrl(const QUrl &url);
+
 private:
     SideBarInfoCacheMananger();
 
 private:
     GroupCacheMap cacheInfoMap;
+    QList<QUrl> hiddenUrlList;
 };
 
 DPSIDEBAR_END_NAMESPACE

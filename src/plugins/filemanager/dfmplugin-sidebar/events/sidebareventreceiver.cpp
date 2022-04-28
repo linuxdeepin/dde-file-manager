@@ -20,32 +20,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "coreeventscaller.h"
+#include "sidebareventreceiver.h"
+#include "views/sidebarwidget.h"
+#include "utils/sidebarhelper.h"
+#include "utils/sidebarinfocachemananger.h"
 
-#include "services/filemanager/windows/windowsservice.h"
-#include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
 
-#include "dfm-base/dfm_event_defines.h"
+#include <dfm-framework/framework.h>
 
+DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DIALOGCORE_USE_NAMESPACE
 
-void CoreEventsCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)
+SideBarEventReceiver *SideBarEventReceiver::instance()
 {
-    quint64 id = WindowsService::service()->findWindowId(sender);
-    Q_ASSERT(id > 0);
-
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
+    static SideBarEventReceiver ins;
+    return &ins;
 }
 
-void CoreEventsCaller::sendSelectFiles(quint64 windowId, const QList<QUrl> &files)
+void SideBarEventReceiver::connectService()
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSelectFiles, windowId, files);
+    dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kItemVisibleSetting, this, &SideBarEventReceiver::handleItemVisibleSetting);
 }
 
-void CoreEventsCaller::setSidebarItemVisible(const QUrl &url, bool visible)
+void SideBarEventReceiver::handleItemVisibleSetting(const QUrl &url, bool visible)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::SideBar::EventType::kItemVisibleSetting,
-                                          url, visible);
+    if (visible)
+        SideBarInfoCacheMananger::instance()->removeHiddenUrl(url);
+    else
+        SideBarInfoCacheMananger::instance()->addHiddenUrl(url);
+
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar)
+        sidebar->setItemVisible(url, visible);
+}
+
+SideBarEventReceiver::SideBarEventReceiver(QObject *parent)
+    : QObject(parent)
+{
 }

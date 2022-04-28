@@ -41,7 +41,8 @@ const char *const kOther { "Other" };
 
 // custom event type
 namespace EventType {
-extern const int kEjectAction = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kEjectAction = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kItemVisibleSetting = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 }   // namespace Sidebar

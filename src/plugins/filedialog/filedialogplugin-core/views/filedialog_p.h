@@ -47,13 +47,9 @@ class FileDialogPrivate : public QObject
 
 public:
     explicit FileDialogPrivate(FileDialog *qq);
-    QStringList stripFilters(const QStringList &filters);
 
     void handleSaveAcceptBtnClicked();
     void handleOpenAcceptBtnClicked();
-
-    bool askHiddenFile();
-    bool askReplaceFile(QString fileName);
 
 private:
     static constexpr int kDefaultWindowWidth { 960 };

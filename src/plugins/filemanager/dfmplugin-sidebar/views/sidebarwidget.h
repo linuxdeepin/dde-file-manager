@@ -58,6 +58,7 @@ public:
     void updateItem(const QUrl &url, const QIcon &newIcon);
     int findItem(const QUrl &url) const;
     void editItem(const QUrl &url);
+    void setItemVisible(const QUrl &url, bool visible);
 
 private Q_SLOTS:
     void onItemActived(const QModelIndex &index);

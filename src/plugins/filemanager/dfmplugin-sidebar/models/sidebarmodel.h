@@ -50,6 +50,7 @@ public:
     void updateRow(const QUrl &url, const QString &newName, bool editable);
     void updateRow(const QUrl &url, const QIcon &newIcon);
     QStringList groups() const;
+    int findRowByUrl(const QUrl &url);
 };
 
 DPSIDEBAR_END_NAMESPACE

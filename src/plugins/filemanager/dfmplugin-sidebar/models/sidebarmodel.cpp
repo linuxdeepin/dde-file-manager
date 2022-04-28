@@ -310,3 +310,16 @@ QStringList SideBarModel::groups() const
     controller.waitForFinished();
     return list;
 }
+
+int SideBarModel::findRowByUrl(const QUrl &url)
+{
+    int ret { -1 };
+    for (int r = 0; r < rowCount(); r++) {
+        auto item = itemFromIndex(r);
+        if (DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, item->url())) {
+            ret = r;
+            break;
+        }
+    }
+    return ret;
+}

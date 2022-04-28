@@ -161,6 +161,7 @@ void FileManagerWindow::cd(const QUrl &url)
         d->workspace->setCurrentUrl(url);
     if (d->detailSpace)
         d->detailSpace->setCurrentUrl(url);
+    emit currentUrlChanged(url);
 }
 
 bool FileManagerWindow::saveClosedSate() const
@@ -381,9 +382,6 @@ void FileManagerWindow::initializeUi()
 
 void FileManagerWindow::initConnect()
 {
-    connect(this, &FileManagerWindow::changeCurrentUrl, this, [this]() {
-        cd(d->currentUrl);
-    });
 }
 
 DFMBASE_END_NAMESPACE

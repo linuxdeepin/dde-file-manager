@@ -22,17 +22,16 @@
 */
 #include "filedialog.h"
 #include "filedialog_p.h"
+#include "events/coreeventscaller.h"
+#include "utils/corehelper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/delegate/delegateservice.h"
 
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/utils/windowutils.h"
 #include "dfm-base/base/schemefactory.h"
-
-#include <dfm-framework/framework.h>
+#include "dfm-base/dfm_event_defines.h"
 
 #include <DDialog>
 #include <DPlatformWindowHandle>
@@ -52,54 +51,19 @@
 #include <QWhatsThis>
 #include <QLabel>
 
+#include <qpa/qplatformtheme.h>
+#include <qpa/qplatformdialoghelper.h>
+
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
 
-#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
-static bool pwPluginVersionGreaterThen(const QString &v)
-{
-    const QStringList &versionList = DPlatformWindowHandle::pluginVersion().split(".");
-    const QStringList &vList = v.split(".");
-
-    for (int i = 0; i < versionList.count(); ++i) {
-        if (v.count() <= i)
-            return true;
-
-        if (versionList[i].toInt() > vList[i].toInt())
-            return true;
-    }
-
-    return false;
-}
-#endif
-
 FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
     : QObject(nullptr),
       q(qq)
 {
-}
-
-/*!
- * \brief Strip the filters by removing the details, e.g. (*.*).
- */
-QStringList FileDialogPrivate::stripFilters(const QStringList &filters)
-{
-    QStringList strippedFilters;
-    QRegExp r(QString::fromLatin1("^(.*)\\(([^()]*)\\)$"));
-    const int numFilters = filters.count();
-    strippedFilters.reserve(numFilters);
-    for (int i = 0; i < numFilters; ++i) {
-        QString filterName = filters[i];
-        int index = r.indexIn(filterName);
-        if (index >= 0) {
-            filterName = r.cap(1);
-        }
-        strippedFilters.append(filterName.simplified());
-    }
-    return strippedFilters;
 }
 
 void FileDialogPrivate::handleSaveAcceptBtnClicked()
@@ -120,11 +84,11 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
     QString fileName = q->statusBar()->lineEdit()->text();   //文件名
     // TODO(zhangs): 检查是否要补充后缀
     if (!fileName.isEmpty()) {
-        if (fileName.startsWith(".") && askHiddenFile())
+        if (fileName.startsWith(".") && CoreHelper::askHiddenFile(q))
             return;
         if (!options.testFlag(QFileDialog::DontConfirmOverwrite)) {
             QFileInfo info(q->directory().absoluteFilePath(fileName));
-            if ((info.exists() || info.isSymLink()) && askReplaceFile(fileName))
+            if ((info.exists() || info.isSymLink()) && CoreHelper::askReplaceFile(fileName, q))
                 return;
         }
 
@@ -183,60 +147,6 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
 }
 
 /*!
- * \brief Files with filenames starting with a dot are considered as hidden files and need to be checked
- * \return true if don't save as hidden file
- */
-bool FileDialogPrivate::askHiddenFile()
-{
-    DDialog dialog(q);
-
-    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-    dialog.setTitle(tr("This file will be hidden if the file name starts with a dot (.). Do you want to hide it?"));
-    dialog.addButton(tr("Cancel", "button"), true);
-    dialog.addButton(tr("Confirm", "button"), false, DDialog::ButtonWarning);
-
-    if (dialog.exec() != DDialog::Accepted)
-        return true;
-
-    return false;
-}
-
-/*!
- * \brief FileDialogPrivate::askReplaceFile
- * \param fileName
- * \return true if don't replace file
- */
-bool FileDialogPrivate::askReplaceFile(QString fileName)
-{
-    DDialog dialog(q);
-
-    // NOTE(zccrs): dxcb bug
-    if ((!WindowUtils::isWayLand() && !DPlatformWindowHandle::isEnabledDXcb(q))
-#if DTK_VERSION > DTK_VERSION_CHECK(2, 0, 5, 0)
-        || pwPluginVersionGreaterThen("1.1.8.3")
-#endif
-    ) {
-        dialog.setWindowModality(Qt::WindowModal);
-    }
-
-    dialog.setIcon(QIcon::fromTheme("dialog-warning"));
-
-    QLabel *titleLabel = dialog.findChild<QLabel *>("TitleLabel");
-    if (titleLabel)
-        fileName = titleLabel->fontMetrics().elidedText(fileName, Qt::ElideMiddle, 380);
-
-    QString title = tr("%1 already exists, do you want to replace it?").arg(fileName);
-    dialog.setTitle(title);
-    dialog.addButton(tr("Cancel", "button"), true);
-    dialog.addButton(tr("Replace", "button"), false, DDialog::ButtonWarning);
-
-    if (dialog.exec() != DDialog::Accepted)
-        return true;
-
-    return false;
-}
-
-/*!
  * \class FileDialog
  */
 
@@ -247,7 +157,11 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
     initializeUi();
     initConnect();
 
-    installDFMEventFilter();
+    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenFiles, [this](EventDispatcher::Listener, const QVariantList &) {
+        onAcceptButtonClicked();
+        return true;
+    });
+    CoreHelper::installDFMEventFilterForReject();
 }
 
 FileDialog::~FileDialog()
@@ -340,7 +254,8 @@ void FileDialog::selectUrl(const QUrl &url)
 {
     if (!d->isFileView)
         return;
-    // TODO(liuyangming): select
+
+    CoreEventsCaller::sendSelectFiles(this->internalWinId(), { url });
     setCurrentInputName(QFileInfo(url.path()).fileName());
 }
 
@@ -389,7 +304,7 @@ void FileDialog::setNameFilters(const QStringList &filters)
     d->nameFilters = filters;
 
     if (testOption(QFileDialog::HideNameFilterDetails)) {
-        statusBar()->setComBoxItems(d->stripFilters(filters));
+        statusBar()->setComBoxItems(CoreHelper::stripFilters(filters));
     } else {
         statusBar()->setComBoxItems(filters);
     }
@@ -425,7 +340,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
         break;
     case QFileDialog::DirectoryOnly:
     case QFileDialog::Directory:
-        // TODO(zhangsheng, liuyangming)
+        // TODO(liuyangming)
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         // getFileView()->setNameFilters(QStringList("/"));
         addDisableUrlScheme("recent");
@@ -459,7 +374,7 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
                    this, &FileDialog::onCurrentInputNameChanged);
     } else {
         statusBar()->setMode(FileDialogStatusBar::kSave);
-        // TODO(zhangs):
+        // TODO(liuyangming):
         // getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
         addDisableUrlScheme("recent");
         setFileMode(QFileDialog::DirectoryOnly);
@@ -552,7 +467,7 @@ void FileDialog::addDisableUrlScheme(const QString &scheme)
     QUrl url;
     url.setScheme(scheme);
     url.setPath("/");
-    // TODO(zhangs): send disbale sidebar item event
+    CoreEventsCaller::setSidebarItemVisible(url, false);
 }
 
 void FileDialog::setCurrentInputName(const QString &name)
@@ -758,7 +673,7 @@ void FileDialog::selectNameFilter(const QString &filter)
     QString key;
 
     if (testOption(QFileDialog::HideNameFilterDetails)) {
-        key = d->stripFilters(QStringList(filter)).first();
+        key = CoreHelper::stripFilters(QStringList(filter)).first();
     } else {
         key = filter;
     }
@@ -782,7 +697,43 @@ void FileDialog::selectNameFilterByIndex(int index)
 
     statusBar()->comboBox()->setCurrentIndex(index);
 
-    // TODO(zhangs):
+    QStringList nameFilters = d->nameFilters;
+
+    if (index == nameFilters.size()) {
+        QAbstractItemModel *comboModel = statusBar()->comboBox()->model();
+        nameFilters.append(comboModel->index(comboModel->rowCount() - 1, 0).data().toString());
+        setNameFilters(nameFilters);
+    }
+
+    QString nameFilter = nameFilters.at(index);
+    QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
+
+    if (d->acceptMode == QFileDialog::AcceptSave && !newNameFilters.isEmpty()) {
+        QMimeDatabase db;
+        QString fileName = statusBar()->lineEdit()->text();
+        const QString fileNameExtension = db.suffixForFileName(fileName);
+        QString newNameFilterExtension { CoreHelper::findExtensioName(fileName, newNameFilters, &db) };
+
+        if (!newNameFilters.isEmpty())
+            newNameFilterExtension = db.suffixForFileName(newNameFilters.at(0));
+        if (!fileNameExtension.isEmpty() && !newNameFilterExtension.isEmpty()) {
+            const int fileNameExtensionLength = fileNameExtension.count();
+            fileName.replace(fileName.count() - fileNameExtensionLength,
+                             fileNameExtensionLength, newNameFilterExtension);
+            setCurrentInputName(fileName);
+        } else if (fileNameExtension.isEmpty() && !fileName.isEmpty() && !newNameFilterExtension.isEmpty()) {
+            fileName.append('.' + newNameFilterExtension);
+            setCurrentInputName(fileName);
+        }
+    }
+
+    // when d->fileMode == QFileDialog::DirectoryOnly or d->fileMode == QFileDialog::Directory
+    // we use setNameFilters("/") to filter files (can't select file, select dir is ok)
+    if ((d->fileMode == QFileDialog::DirectoryOnly || d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
+        newNameFilters = QStringList("/");
+
+    // TODO(zhangs): liuyangming
+    // getFileView()->setNameFilters(newNameFilters);
 }
 
 int FileDialog::selectedNameFilterIndex() const
@@ -837,22 +788,24 @@ void FileDialog::handleEnterPressed()
     if (!statusBar()->acceptButton()->isEnabled() || !d->isFileView)
         return;
 
-    // TODO(zhangs):
-    if (/*!qobject_cast<DFMAddressBar *>(qApp->focusWidget())*/ false) {
-        //        for (const QModelIndex &index : getFileView()->selectedIndexes()) {
-        //            const DAbstractFileInfoPointer &info = getFileView()->model()->fileInfo(index);
-        //            if (info->isDir()) {
-        //                return;
-        //            }
-        //        }
-        statusBar()->acceptButton()->animateClick();
+    // TODO(zhangs): titlebar edit status
+    bool exit { false };
+    auto &&urls = WorkspaceService::service()->selectedUrls(internalWinId());
+    for (const QUrl &url : urls) {
+        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        if (!info || !info->isDir()) {
+            exit = true;
+            break;
+        }
     }
+
+    if (!exit)
+        statusBar()->acceptButton()->animateClick();
 }
 
 void FileDialog::handleUrlChanged(const QUrl &url)
 {
     QString scheme { url.scheme() };
-    emit currentUrlChanged();
 
     DSB_FM_USE_NAMESPACE
     d->lastIsFileView = d->isFileView;
@@ -936,7 +889,7 @@ bool FileDialog::eventFilter(QObject *watched, QEvent *event)
             return true;
         } else if (e->modifiers() == Qt::NoModifier || e->modifiers() == Qt::KeypadModifier) {
             if (e == QKeySequence::Cancel) {
-                // TODO(zhangs):
+                // TODO(liuyangming):
                 //                DFileView *fileView = d->view;
                 //                if (fileView) {
                 //                    if (fileView->state() == 3) {
@@ -1104,37 +1057,6 @@ void FileDialog::adjustPosition(QWidget *w)
     }
 
     move(p);
-}
-
-void FileDialog::installDFMEventFilter()
-{
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenFiles, [this](EventDispatcher::Listener, const QVariantList &) {
-        onAcceptButtonClicked();
-        return true;
-    });
-
-    // reject follow events
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewWindow, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewTab, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenAsAdmin, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenFilesByApp, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kCreateSymlink, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenInTerminal, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kHideFiles, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
 }
 
 QString FileDialog::modelCurrentNameFilter() const
