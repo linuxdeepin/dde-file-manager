@@ -25,6 +25,9 @@
 #include "utils/trashfilehelper.h"
 
 #include "services/common/menu/menu_defines.h"
+#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menuScene/action_defines.h"
+
 #include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -34,6 +37,12 @@
 #include <dfm-framework/framework.h>
 
 #include <QMenu>
+
+static constexpr char kClipBoardMenuSceneName[] = "ClipBoardMenu";
+static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
+static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
+static constexpr char kPropertyMenuSceneName[] = "Property";
+static constexpr char kTrashMenuSceneName[] = "TrashMenu";
 
 DPTRASH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -80,9 +89,32 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
             qDebug() << errString;
             return false;
         }
+        QList<AbstractMenuScene *> currentScene;
+        if (auto workspaceScene = MenuService::service()->createScene(kFileOperatorMenuSceneName))
+            currentScene.append(workspaceScene);
+        if (auto workspaceScene = MenuService::service()->createScene(kClipBoardMenuSceneName))
+            currentScene.append(workspaceScene);
+        if (auto workspaceScene = MenuService::service()->createScene(kPropertyMenuSceneName))
+            currentScene.append(workspaceScene);
+
+        // the scene added by binding must be initializeed after 'defalut scene'.
+        currentScene.append(subScene);
+        setSubscene(currentScene);
+    } else {
+        QList<AbstractMenuScene *> currentScene;
+        if (auto workspaceScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
+            currentScene.append(workspaceScene);
+
+        if (auto workspaceScene = MenuService::service()->createScene(kPropertyMenuSceneName))
+            currentScene.append(workspaceScene);
+
+        // the scene added by binding must be initializeed after 'defalut scene'.
+        currentScene.append(subScene);
+        setSubscene(currentScene);
     }
 
-    return true;
+    return AbstractMenuScene::initialize(params);
+    ;
 }
 
 bool TrashMenuScene::create(QMenu *parent)
@@ -107,11 +139,13 @@ bool TrashMenuScene::create(QMenu *parent)
         act->setProperty(ActionPropertyKey::kActionID, TrashActionId::kRestore);
         d->predicateAction[TrashActionId::kRestore] = act;
     }
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void TrashMenuScene::updateState(QMenu *parent)
 {
+    AbstractMenuScene::updateState(parent);
+    d->updateMenu(parent);
 }
 
 bool TrashMenuScene::triggered(QAction *action)
@@ -121,14 +155,18 @@ bool TrashMenuScene::triggered(QAction *action)
     if (!d->predicateAction.contains(actId))
         return false;
 
-    if (actId == TrashActionId::kRestore)
+    if (actId == TrashActionId::kRestore) {
         TrashFileHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
-    else if (actId == TrashActionId::kRestoreAll)
+        return true;
+    } else if (actId == TrashActionId::kRestoreAll) {
         TrashFileHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
-    else if (actId == TrashActionId::kEmptyTrash)
+        return true;
+    } else if (actId == TrashActionId::kEmptyTrash) {
         TrashHelper::emptyTrash();
+        return true;
+    }
 
-    return true;
+    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *TrashMenuScene::scene(QAction *action) const
@@ -142,10 +180,66 @@ AbstractMenuScene *TrashMenuScene::scene(QAction *action) const
     return AbstractMenuScene::scene(action);
 }
 
-TrashMenuScenePrivate::TrashMenuScenePrivate(AbstractMenuScene *qq)
-    : AbstractMenuScenePrivate(qq)
+TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
+    : AbstractMenuScenePrivate(qq), q(qq)
 {
     predicateName[TrashActionId::kRestore] = tr("Restore");
     predicateName[TrashActionId::kRestoreAll] = tr("Restore all");
     predicateName[TrashActionId::kEmptyTrash] = tr("Empty trash");
+
+    selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
+    selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopy);
+    selectSupportActions.insert(kFileOperatorMenuSceneName, dfmplugin_menu::ActionID::kDelete);
+    selectSupportActions.insert(kPropertyMenuSceneName, dfmplugin_menu::ActionID::kProperty);
+    selectSupportActions.insert(kTrashMenuSceneName, TrashActionId::kRestore);
+}
+
+void TrashMenuScenePrivate::updateMenu(QMenu *menu)
+{
+    auto actions = menu->actions();
+    if (isEmptyArea) {
+        QString sceneNameCurrent;
+        for (auto act : actions) {
+            if (act->isSeparator())
+                continue;
+
+            auto actionScene = q->scene(act);
+            if (!actionScene) {
+                // no scene,remove it.
+                menu->removeAction(act);
+                continue;
+            }
+
+            auto sceneName = actionScene->name();
+            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+
+            if (sceneNameCurrent.isEmpty())
+                sceneNameCurrent = sceneName;
+
+            if (sceneNameCurrent != sceneName) {
+                menu->insertSeparator(act);
+                sceneNameCurrent = sceneName;
+            }
+        }
+    } else {
+        for (auto act : actions) {
+            if (act->isSeparator())
+                continue;
+
+            auto actionScene = q->scene(act);
+            if (!actionScene) {
+                // no scene,remove it.
+                menu->removeAction(act);
+                continue;
+            }
+
+            auto sceneName = actionScene->name();
+            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            if (!selectSupportActions.contains(sceneName, actId))
+                menu->removeAction(act);
+
+            if (sceneName == kPropertyMenuSceneName)
+                menu->insertSeparator(act);
+        }
+    }
 }

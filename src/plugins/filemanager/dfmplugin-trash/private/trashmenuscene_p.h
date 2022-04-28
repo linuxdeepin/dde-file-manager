@@ -34,9 +34,14 @@ class TrashMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
     friend class TrashMenuScene;
 
 public:
-    explicit TrashMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
+    explicit TrashMenuScenePrivate(TrashMenuScene *qq);
+
+    void updateMenu(QMenu *menu);
 
 private:
+    TrashMenuScene *q;
+
+    QMultiHash<QString, QString> selectSupportActions;
 };
 
 DPTRASH_END_NAMESPACE

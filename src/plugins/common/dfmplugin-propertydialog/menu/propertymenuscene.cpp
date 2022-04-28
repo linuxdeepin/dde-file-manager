@@ -22,6 +22,7 @@
 #include "propertymenuscene_p.h"
 
 #include "services/common/menu/menu_defines.h"
+#include "plugins/common/dfmplugin-menu/menuScene/action_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-base/mimetype/mimesappsmanager.h>
@@ -46,7 +47,7 @@ AbstractMenuScene *PropertyMenuCreator::create()
 PropertyMenuScenePrivate::PropertyMenuScenePrivate(PropertyMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName["Property"] = tr("Property");
+    predicateName[dfmplugin_menu::ActionID::kProperty] = tr("Property");
 }
 
 PropertyMenuScene::PropertyMenuScene(QObject *parent)
@@ -94,9 +95,9 @@ bool PropertyMenuScene::create(QMenu *parent)
     if (d->selectFiles.isEmpty() && !d->focusFile.isValid())
         return false;
 
-    QAction *tempAction = parent->addAction(d->predicateName.value("Property"));
-    d->predicateAction["Property"] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString("Property"));
+    QAction *tempAction = parent->addAction(d->predicateName.value(dfmplugin_menu::ActionID::kProperty));
+    d->predicateAction[dfmplugin_menu::ActionID::kProperty] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kProperty);
 
     QList<QUrl> redirectedUrlList;
     for (const auto &fileUrl : d->selectFiles) {
@@ -118,7 +119,7 @@ void PropertyMenuScene::updateState(QMenu *parent)
         return;
 
     // open with
-    if (auto openWith = d->predicateAction.value("Property")) {
+    if (auto openWith = d->predicateAction.value(dfmplugin_menu::ActionID::kProperty)) {
     }
 }
 
@@ -130,7 +131,7 @@ bool PropertyMenuScene::triggered(QAction *action)
         return false;
 
     QString id = d->predicateAction.key(action);
-    if (id == QString("Property")) {
+    if (id == dfmplugin_menu::ActionID::kProperty) {
         dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
                                               d->selectFiles);
     }

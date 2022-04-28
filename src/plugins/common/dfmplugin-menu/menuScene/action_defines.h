@@ -60,6 +60,9 @@ static constexpr char kSendToBluetooth[] = "send-to-bluetooth";
 static constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
 static constexpr char kSendToDesktop[] = "send-to-desktop";
 
+// property
+static constexpr char kProperty[] = "property";
+
 // Separator
 static constexpr char kSeparator[] = "separator-line";
 }
