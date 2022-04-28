@@ -48,7 +48,8 @@ public:
     {
         return subScene;
     }
-
+protected:
+    virtual void setSubscene(const QList<dfmbase::AbstractMenuScene *> &scenes);
 protected:
     QList<AbstractMenuScene *> subScene;
 };

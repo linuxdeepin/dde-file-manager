@@ -225,7 +225,7 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);
-    subScene = currentScene;
+    setSubscene(currentScene);
 
     // 初始化所有子场景
     AbstractMenuScene::initialize(params);

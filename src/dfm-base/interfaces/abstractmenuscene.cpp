@@ -97,3 +97,12 @@ void AbstractMenuScene::removeSubscene(AbstractMenuScene *scene)
 
     subScene.removeOne(scene);
 }
+
+void AbstractMenuScene::setSubscene(const QList<dfmbase::AbstractMenuScene *> &scenes)
+{
+    //! if these already were subscenes before setting, the caller is responsible for managing their lifecycle
+
+    subScene = scenes;
+    for (auto scene : scenes)
+        scene->setParent(this);
+}
