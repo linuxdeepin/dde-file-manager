@@ -46,6 +46,7 @@ const int kSetSelectionMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventTy
 const int kSetEnabledSelectionModes = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSetViewDragEnabled = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSetViewDragDropMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kViewSelectionChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 namespace MenuScene {

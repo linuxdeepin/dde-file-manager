@@ -99,3 +99,8 @@ void WorkspaceEventCaller::sendPaintEmblems(QPainter *painter, const QRectF &pai
 {
     dispatcher()->publish(Emblem::EventType::kPaintEmblems, painter, paintArea, url);
 }
+
+void WorkspaceEventCaller::sendViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)
+{
+    dispatcher()->publish(Workspace::EventType::kViewSelectionChanged, windowID, selected, deselected);
+}

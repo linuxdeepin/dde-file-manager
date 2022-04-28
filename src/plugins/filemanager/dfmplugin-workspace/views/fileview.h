@@ -130,7 +130,6 @@ public slots:
     void onClicked(const QModelIndex &index);
     void onDoubleClicked(const QModelIndex &index);
     void onScalingValueChanged(const int value);
-    void delayUpdateStatusBar();
     void viewModeChanged(quint64 windowId, int viewMode);
     void onRowCountChanged();
     void onChildrenChanged();
@@ -139,7 +138,6 @@ public slots:
 
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
-    void setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected);
     DirOpenMode currentDirOpenMode() const;
 
 protected:
@@ -177,6 +175,7 @@ private slots:
     void onShowFileSuffixChanged(bool isShow);
     void updateHorizontalOffset();
     void updateView();
+    void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
 private:
     void initializeModel();
@@ -184,6 +183,8 @@ private:
     void initializeStatusBar();
     void initializeConnect();
 
+    void setDetailFileUrl(const QItemSelection &selected, const QItemSelection &deselected);
+    void delayUpdateStatusBar();
     void updateStatusBar();
     void updateLoadingIndicator();
     void updateContentLabel();

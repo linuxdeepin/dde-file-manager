@@ -56,6 +56,9 @@ extern const int kPaintIconItem;
 extern const int kCheckDragDropAction;
 extern const int kSelectFiles;
 
+//signal
+extern const int kViewSelectionChanged;
+
 //slot
 extern const int kSetSelectionMode;
 extern const int kSetEnabledSelectionModes;

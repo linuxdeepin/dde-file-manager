@@ -586,6 +586,17 @@ void FileView::updateView()
     viewport()->update();
 }
 
+void FileView::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    delayUpdateStatusBar();
+
+    // TODO(lixiang):  need remove from workspace
+    setDetailFileUrl(selected, deselected);
+
+    quint64 winId = WorkspaceHelper::instance()->windowId(this);
+    WorkspaceEventCaller::sendViewSelectionChanged(winId, selected, deselected);
+}
+
 bool FileView::isIconViewMode() const
 {
     return d->currentViewMode == Global::ViewMode::kIconMode;
@@ -1166,8 +1177,7 @@ void FileView::initializeConnect()
     connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(sourceModel(), &FileViewModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
-    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::delayUpdateStatusBar);
-    connect(selectionModel(), &FileSelectionModel::selectionChanged, this, &FileView::setDetailFileUrl);
+    connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
     connect(this, &DListView::clicked, this, &FileView::onClicked);

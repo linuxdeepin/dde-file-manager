@@ -30,6 +30,7 @@
 
 #include <QObject>
 #include <QPainter>
+#include <QItemSelection>
 
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -51,6 +52,8 @@ public:
     static void sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url);
 
     static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
+
+    static void sendViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
 };
 
 DPWORKSPACE_END_NAMESPACE
