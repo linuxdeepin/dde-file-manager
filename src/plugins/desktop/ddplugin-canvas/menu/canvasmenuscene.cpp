@@ -34,7 +34,7 @@
 #include <services/common/menu/menu_defines.h>
 #include <services/common/menu/menuservice.h>
 #include <plugins/common/dfmplugin-menu/dfmplugin_menu_global.h>
-#include <plugins/common/dfmplugin-menu/menuScene/action_defines.h>
+#include <plugins/common/dfmplugin-menu/menuscene/action_defines.h>
 
 #include <dfm-framework/framework.h>
 
@@ -55,6 +55,8 @@ static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
 static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
 static const char *const kSendToMenuSceneName = "SendToMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
+static const char *const kExtendMenuSceneName = "ExtendMenu";
+static const char *const kOemMenuSceneName = "OemMenu";
 
 AbstractMenuScene *CanvasMenuCreator::create()
 {
@@ -222,6 +224,14 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     // dir (open in new window,open as admin, open in new tab,open new terminal,select all)
     if (auto dirScene = d->menuServer->createScene(kOpenDirMenuSceneName))
         currentScene.append(dirScene);
+
+    // oem menu
+    if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
+        currentScene.append(oemScene);
+
+    // extend menu.must last
+    if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
+        currentScene.append(extendScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

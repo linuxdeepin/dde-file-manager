@@ -23,7 +23,7 @@
 #ifndef DCUSTOMACTIONPARSER_H
 #define DCUSTOMACTIONPARSER_H
 
-#include "dfmplugin_extend_menu_global.h"
+#include "dfmplugin_menu_global.h"
 #include "dcustomactiondata.h"
 
 #include <QObject>
@@ -34,7 +34,7 @@
 
 class QFileSystemWatcher;
 
-DPEXTENDMENU_BEGIN_NAMESPACE
+DPMENU_BEGIN_NAMESPACE
 
 class RegisterCustomFormat
 {
@@ -67,7 +67,7 @@ signals:
     void customMenuChanged();
 
 private:
-    bool loadDir(const QString &dirPath);
+    bool loadDir(const QStringList &dirPaths);
     bool parseFile(QSettings &actionSetting);
     bool parseFile(QList<DCustomActionData> &childrenActions, QSettings &actionSetting, const QString &group, const DCustomActionDefines::FileBasicInfos &basicInfos, bool &isSort, bool isTop = false);
 
@@ -85,6 +85,7 @@ protected:
 
 private:
     QTimer *refreshTimer = nullptr;
+    QStringList menuPaths;
     QFileSystemWatcher *fileWatcher = nullptr;
     QList<DCustomActionEntry> actionEntry;
     QSettings::Format customFormat;
@@ -96,8 +97,8 @@ private:
     int topActionCount = 0;
 };
 
-#define CustomParserIns DPEXTENDMENU_NAMESPACE::DCustomActionParser::instance()
+#define CustomParserIns DPMENU_NAMESPACE::DCustomActionParser::instance()
 
-DPEXTENDMENU_END_NAMESPACE
+DPMENU_END_NAMESPACE
 
 #endif   // DCUSTOMACTIONPARSER_H

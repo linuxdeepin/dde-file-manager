@@ -25,7 +25,7 @@
 
 #include <QDir>
 
-DPEXTENDMENU_USE_NAMESPACE
+DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 DCustomActionBuilder::DCustomActionBuilder(QObject *parent)

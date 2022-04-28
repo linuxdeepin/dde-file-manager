@@ -19,12 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "menu.h"
-#include "menuScene/clipboardmenuscene.h"
-#include "menuScene/opendirmenuscene.h"
-#include "menuScene/fileoperatormenuscene.h"
-#include "menuScene/openwithmenuscene.h"
-#include "menuScene/newcreatemenuscene.h"
-#include "menuScene/sendtomenuscene.h"
+#include "menuscene/clipboardmenuscene.h"
+#include "menuscene/opendirmenuscene.h"
+#include "menuscene/fileoperatormenuscene.h"
+#include "menuscene/openwithmenuscene.h"
+#include "menuscene/newcreatemenuscene.h"
+#include "menuscene/sendtomenuscene.h"
+#include "extendmenuscene/extendmenuscene.h"
+#include "extendmenuscene/extendmenu/dcustomactionparser.h"
+#include "oemmenuscene/oemmenuscene.h"
+#include "oemmenuscene/oemmenu.h"
 
 #include <services/common/menu/menuservice.h>
 
@@ -35,6 +39,8 @@ DSC_USE_NAMESPACE
 
 void Menu::initialize()
 {
+    CustomParserIns->delayRefresh();
+    OemMenu::instance()->loadDesktopFile();
 }
 
 bool Menu::start()
@@ -69,4 +75,8 @@ void Menu::regDefaultScene()
     menuServer->registerScene(OpenWithMenuCreator::name(), new OpenWithMenuCreator);
 
     menuServer->registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
+
+    menuServer->registerScene(ExtendMenuCreator::name(), new ExtendMenuCreator);
+
+    menuServer->registerScene(OemMenuCreator::name(), new OemMenuCreator);
 }

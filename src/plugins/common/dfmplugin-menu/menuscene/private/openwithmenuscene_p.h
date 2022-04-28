@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     wangchunlin<wangchunlin@uniontech.com>
+ * Author:     liqiang<liqianga@uniontech.com>
  *
- * Maintainer: wangchunlin<wangchunlin@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_EXTEND_MENU_GLOBAL_H
-#define DFMPLUGIN_EXTEND_MENU_GLOBAL_H
+#ifndef OPENWITHMENUSCENE_P_H
+#define OPENWITHMENUSCENE_P_H
 
-#define DPEXTENDMENU_NAMESPACE dfmplugin_extend_menu
+#include "menuscene/openwithmenuscene.h"
 
-#define DPEXTENDMENU_BEGIN_NAMESPACE namespace DPEXTENDMENU_NAMESPACE {
-#define DPEXTENDMENU_END_NAMESPACE }
-#define DPEXTENDMENU_USE_NAMESPACE using namespace DPEXTENDMENU_NAMESPACE;
+#include "interfaces/private/abstractmenuscene_p.h"
 
-#endif   // DFMPLUGIN_EXTEND_MENU_GLOBAL_H
+DPMENU_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+class OpenWithMenuScenePrivate : public AbstractMenuScenePrivate
+{
+public:
+    friend class OpenWithMenuScene;
+    explicit OpenWithMenuScenePrivate(OpenWithMenuScene *qq);
+    QStringList recommendApps;
+};
+
+DPMENU_END_NAMESPACE
+
+#endif   // OPENWITHMENUSCENE_P_H

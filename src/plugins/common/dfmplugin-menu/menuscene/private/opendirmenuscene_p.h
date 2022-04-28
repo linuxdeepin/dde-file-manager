@@ -1,11 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     xushitong<xushitong@uniontech.com>
+ * Author:     liqiang<liqianga@uniontech.com>
  *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             lanxuesong<lanxuesong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
+ * Maintainer: liqiang<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,31 +17,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef SENDTOMENUSCENE_P_H
-#define SENDTOMENUSCENE_P_H
+ */
+#ifndef OPENDIRMENUSCENE_P_H
+#define OPENDIRMENUSCENE_P_H
+#include "menuscene/opendirmenuscene.h"
 
-#include "menuScene/sendtomenuscene.h"
 #include "interfaces/private/abstractmenuscene_p.h"
 
 DPMENU_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-class SendToMenuScenePrivate : public AbstractMenuScenePrivate
+class OpenDirMenuScenePrivate : public AbstractMenuScenePrivate
 {
-    friend class SendToMenuScene;
-
 public:
-    explicit SendToMenuScenePrivate(AbstractMenuScene *qq);
-
-private:
-    void addSubActions(QMenu *subMenu);
-    void handleActionTriggered(QAction *act);
-
-private:
-    bool folderSelected { false };
+    friend class OpenDirMenuScene;
+    explicit OpenDirMenuScenePrivate(OpenDirMenuScene *qq);
 };
 
 DPMENU_END_NAMESPACE
 
-#endif   // SENDTOMENUSCENE_P_H
+#endif   // OPENDIRMENUSCENE_P_H

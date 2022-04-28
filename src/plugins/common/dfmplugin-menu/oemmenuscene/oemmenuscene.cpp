@@ -1,0 +1,127 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
+ *
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#include "private/oemmenuscene_p.h"
+#include "oemmenu.h"
+
+#include <services/common/menu/menu_defines.h>
+
+#include <dfm-base/base/schemefactory.h>
+
+#include <QMenu>
+#include <QDebug>
+
+DPMENU_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
+
+AbstractMenuScene *OemMenuCreator::create()
+{
+    return new OemMenuScene();
+}
+
+OemMenuScenePrivate::OemMenuScenePrivate(OemMenuScene *qq)
+    : AbstractMenuScenePrivate(qq)
+{
+
+}
+
+OemMenuScene::OemMenuScene(QObject *parent)
+    : AbstractMenuScene(parent),
+      d(new OemMenuScenePrivate(this))
+{
+}
+
+QString OemMenuScene::name() const
+{
+    return OemMenuCreator::name();
+}
+
+bool OemMenuScene::initialize(const QVariantHash &params)
+{
+    d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
+    d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
+
+    if (!d->isEmptyArea) {
+        if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
+            qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+            return false;
+        }
+
+        QString errString;
+        d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
+        if (d->focusFileInfo.isNull()) {
+            qDebug() << errString;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+AbstractMenuScene *OemMenuScene::scene(QAction *action) const
+{
+    if (!action)
+        return nullptr;
+
+    if (d->oemActions.contains(action))
+        return const_cast<OemMenuScene *>(this);
+
+    return AbstractMenuScene::scene(action);
+}
+
+bool OemMenuScene::create(QMenu *parent)
+{
+    if (d->isEmptyArea)
+        d->oemActions = OemMenu::instance()->emptyActions(d->currentDir, d->onDesktop);
+    else
+        d->oemActions = OemMenu::instance()->normalActions(d->selectFiles, d->onDesktop);
+
+    for (auto action : d->oemActions) {
+        parent->addAction(action);
+    }
+
+    return true;
+}
+
+void OemMenuScene::updateState(QMenu *parent)
+{
+    if (!parent)
+        return;
+
+    if (d->isEmptyArea)
+        return;
+}
+
+bool OemMenuScene::triggered(QAction *action)
+{
+    if (!d->oemActions.contains(action))
+        return false;
+
+
+    // todo(wangcl)
+
+    return false;
+}

@@ -23,7 +23,7 @@
 #ifndef DCUSTOMACTIONBUILDER_H
 #define DCUSTOMACTIONBUILDER_H
 
-#include "dfmplugin_extend_menu_global.h"
+#include "dfmplugin_menu_global.h"
 #include "dcustomactiondata.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
@@ -35,7 +35,7 @@
 #include <QAction>
 #include <QMenu>
 
-DPEXTENDMENU_BEGIN_NAMESPACE
+DPMENU_BEGIN_NAMESPACE
 
 class DCustomActionBuilder : public QObject
 {
@@ -83,6 +83,6 @@ private:
     dfmbase::DMimeDatabase mimeDatabase;
 };
 
-DPEXTENDMENU_END_NAMESPACE
+DPMENU_END_NAMESPACE
 
 #endif   // DCUSTOMACTIONBUILDER_H

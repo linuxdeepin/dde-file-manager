@@ -18,39 +18,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef EXTENDMENUPLUGIN_H
-#define EXTENDMENUPLUGIN_H
+#ifndef OEMMENUSCENE_P_H
+#define OEMMENUSCENE_P_H
 
-#include "dfmplugin_extend_menu_global.h"
+#include "oemmenuscene/oemmenuscene.h"
 
-#include <services/common/dfm_common_service_global.h>
+#include "interfaces/private/abstractmenuscene_p.h"
 
-#include <dfm-framework/framework.h>
+DPMENU_BEGIN_NAMESPACE
 
-namespace dfm_service_common {
-class MenuService;
-}
-
-DPEXTENDMENU_BEGIN_NAMESPACE
-
-class ExtendMenuPlugin : public dpf::Plugin
+class OemMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "extendmenu.json")
-
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    friend class FileOperatorMenuScene;
+    explicit OemMenuScenePrivate(OemMenuScene *qq);
 
-private:
-    void regDefaultScene();
-    void bindScene(const QString &parentScene);
-
-private:
-    dfm_service_common::MenuService *menuServer = nullptr;
+    QList<QAction*> oemActions;
 };
 
-DPEXTENDMENU_END_NAMESPACE
+DPMENU_END_NAMESPACE
 
-#endif   // EXTENDMENUPLUGIN_H
+#endif   // OEMMENUSCENE_P_H

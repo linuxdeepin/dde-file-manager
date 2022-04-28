@@ -23,12 +23,12 @@
 #ifndef DCUSTOMACTIONDEFINE_H
 #define DCUSTOMACTIONDEFINE_H
 
-#include "dfmplugin_extend_menu_global.h"
+#include "dfmplugin_menu_global.h"
 
 #include <QString>
 #include <QMap>
 
-DPEXTENDMENU_BEGIN_NAMESPACE
+DPMENU_BEGIN_NAMESPACE
 
 namespace DCustomActionDefines {
 // 分割线
@@ -159,9 +159,6 @@ static const QLatin1String kActionCmd("Exec");
 static const QLatin1String kActionGroups("Actions");
 static const QLatin1String kActionPrefix("Menu Action");
 
-//指定路径
-static const QLatin1String kCustomMenuPath("/usr/share/applications/context-menus");
-
 struct FileBasicInfos
 {
     QString package;   //配置文件名
@@ -172,6 +169,6 @@ struct FileBasicInfos
 };
 }
 
-DPEXTENDMENU_END_NAMESPACE
+DPMENU_END_NAMESPACE
 
 #endif   // DCUSTOMACTIONDEFINE_H

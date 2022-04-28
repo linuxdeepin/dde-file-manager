@@ -27,7 +27,7 @@
 #include <QSettings>
 #include <QFileSystemWatcher>
 
-DPEXTENDMENU_USE_NAMESPACE
+DPMENU_USE_NAMESPACE
 
 class GlobalDCustomActionParser : public DCustomActionParser
 {
@@ -110,8 +110,16 @@ DCustomActionParser::DCustomActionParser(QObject *parent)
     //获取注册的自定义方式
     customFormat = RegisterCustomFormat::instance().customFormat();
     fileWatcher = new QFileSystemWatcher;
+
+    menuPaths << QStringLiteral("/usr/etc/deepin/context-menus")
+              << QStringLiteral("/etc/deepin/context-menus")
+              << QStringLiteral("/usr/share/applications/context-menus");
+
     //监听目录
-    fileWatcher->addPath(kCustomMenuPath);
+    QStringList &&failedPaths = fileWatcher->addPaths(menuPaths);
+    for (auto path : failedPaths) {
+        menuPaths.removeAll(path);
+    }
     connect(fileWatcher, &QFileSystemWatcher::directoryChanged, this, &DCustomActionParser::delayRefresh);
     connect(fileWatcher, &QFileSystemWatcher::fileChanged, this, &DCustomActionParser::delayRefresh);
 
@@ -135,27 +143,31 @@ DCustomActionParser::~DCustomActionParser()
     根据给定的文件夹路径\a dirPath 遍历解析该文件夹下的.conf文件,
     返回值 bool* 为是否成功遍历文件夹。
 */
-bool DCustomActionParser::loadDir(const QString &dirPath)
+bool DCustomActionParser::loadDir(const QStringList &dirPaths)
 {
-    if (dirPath.isEmpty())
+    if (dirPaths.isEmpty())
         return false;
-    topActionCount = 0;
-    QDir dir(dirPath);
-    if (!dir.exists())
-        return false;
-    actionEntry.clear();
 
     fileWatcher->removePaths(fileWatcher->files());
 
-    //以时间先后遍历
-    for (const QFileInfo &actionFileInfo : dir.entryInfoList({ "*.conf" }, QDir::Files, QDir::Time)) {
-        //监听每个conf文件的修改
-        fileWatcher->addPath(actionFileInfo.absoluteFilePath());
+    topActionCount = 0;
+    for (auto dirPath : dirPaths) {
 
-        //解析文件字段
-        QSettings actionSetting(actionFileInfo.filePath(), customFormat);
-        actionSetting.setIniCodec("UTF-8");
-        parseFile(actionSetting);
+        QDir dir(dirPath);
+        if (!dir.exists())
+            continue;
+        actionEntry.clear();
+
+        //以时间先后遍历
+        for (const QFileInfo &actionFileInfo : dir.entryInfoList({ "*.conf" }, QDir::Files, QDir::Time)) {
+            //监听每个conf文件的修改
+            fileWatcher->addPath(actionFileInfo.absoluteFilePath());
+
+            //解析文件字段
+            QSettings actionSetting(actionFileInfo.filePath(), customFormat);
+            actionSetting.setIniCodec("UTF-8");
+            parseFile(actionSetting);
+        }
     }
     return true;
 }
@@ -544,7 +556,7 @@ void DCustomActionParser::delayRefresh()
         actionEntry.clear();
 
         qInfo() << "loading custom menus" << this;
-        loadDir(kCustomMenuPath);
+        loadDir(menuPaths);
 
         refreshTimer->stop();
         refreshTimer->deleteLater();

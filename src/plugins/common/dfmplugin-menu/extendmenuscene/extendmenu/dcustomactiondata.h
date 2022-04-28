@@ -23,12 +23,12 @@
 #ifndef DCUSTOMACTIONDATA_H
 #define DCUSTOMACTIONDATA_H
 
-#include "dfmplugin_extend_menu_global.h"
+#include "dfmplugin_menu_global.h"
 #include "dcustomactiondefine.h"
 
 #include <QObject>
 
-DPEXTENDMENU_BEGIN_NAMESPACE
+DPMENU_BEGIN_NAMESPACE
 
 class DCustomActionData
 {
@@ -100,6 +100,6 @@ protected:
     DCustomActionData actionData;   //一级菜单项的数据
 };
 
-DPEXTENDMENU_END_NAMESPACE
+DPMENU_END_NAMESPACE
 
 #endif   // DCUSTOMACTIONDATA_H

@@ -27,7 +27,7 @@
 #include <services/common/dfm_common_service_global.h>
 #include <services/common/menu/menuservice.h>
 #include "services/common/menu/menu_defines.h"
-#include <plugins/common/dfmplugin-menu/menuScene/action_defines.h>
+#include <plugins/common/dfmplugin-menu/menuscene/action_defines.h>
 
 #include <QMap>
 #include <QMultiHash>
@@ -48,16 +48,16 @@ public:
     {
         static QStringList actionRule {
             dfmplugin_menu::ActionID::kNewFolder,
-                    dfmplugin_menu::ActionID::kNewDoc,
-                    ActionID::kSortBy,
-                    ActionID::kIconSize,
-                    ActionID::kAutoArrange,
-                    dfmplugin_menu::ActionID::kPaste,
-                    dfmplugin_menu::ActionID::kSelectAll,
-                    dfmplugin_menu::ActionID::kOpenInTerminal,
-                    dfmplugin_menu::ActionID::kSeparator,
-                    ActionID::kDisplaySettings,
-                    ActionID::kWallpaperSettings,
+            dfmplugin_menu::ActionID::kNewDoc,
+            ActionID::kSortBy,
+            ActionID::kIconSize,
+            ActionID::kAutoArrange,
+            dfmplugin_menu::ActionID::kPaste,
+            dfmplugin_menu::ActionID::kSelectAll,
+            dfmplugin_menu::ActionID::kOpenInTerminal,
+            dfmplugin_menu::ActionID::kSeparator,
+            ActionID::kDisplaySettings,
+            ActionID::kWallpaperSettings,
         };
         return actionRule;
     }
@@ -65,18 +65,18 @@ public:
     {
         static QStringList actionRule {
             dfmplugin_menu::ActionID::kOpen,
-                    dfmplugin_menu::ActionID::kOpenWith,
-                    dfmplugin_menu::ActionID::kSeparator,
-                    dfmplugin_menu::ActionID::kOpenAsAdmin,
-                    dfmplugin_menu::ActionID::kSeparator,
-                    dfmplugin_menu::ActionID::kCut,
-                    dfmplugin_menu::ActionID::kCopy,
-                    dfmplugin_menu::ActionID::kRename,
-                    dfmplugin_menu::ActionID::kDelete,
-                    dfmplugin_menu::ActionID::kSeparator,
-                    dfmplugin_menu::ActionID::kCreateSymlink,
-                    dfmplugin_menu::ActionID::kSeparator,
-                    dfmplugin_menu::ActionID::kOpenInTerminal
+            dfmplugin_menu::ActionID::kOpenWith,
+            dfmplugin_menu::ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kOpenAsAdmin,
+            dfmplugin_menu::ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kCut,
+            dfmplugin_menu::ActionID::kCopy,
+            dfmplugin_menu::ActionID::kRename,
+            dfmplugin_menu::ActionID::kDelete,
+            dfmplugin_menu::ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kCreateSymlink,
+            dfmplugin_menu::ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kOpenInTerminal
         };
         return actionRule;
     }

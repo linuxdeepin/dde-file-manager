@@ -22,7 +22,7 @@
 #include "propertymenuscene_p.h"
 
 #include "services/common/menu/menu_defines.h"
-#include "plugins/common/dfmplugin-menu/menuScene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-base/mimetype/mimesappsmanager.h>

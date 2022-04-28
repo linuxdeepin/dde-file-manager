@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     xushitong<xushitong@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +19,31 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef OPENWITHMENUSCENE_P_H
-#define OPENWITHMENUSCENE_P_H
+*/
+#ifndef SENDTOMENUSCENE_P_H
+#define SENDTOMENUSCENE_P_H
 
-#include "menuScene/openwithmenuscene.h"
-
+#include "menuscene/sendtomenuscene.h"
 #include "interfaces/private/abstractmenuscene_p.h"
 
 DPMENU_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-class OpenWithMenuScenePrivate : public AbstractMenuScenePrivate
+class SendToMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    friend class SendToMenuScene;
+
 public:
-    friend class OpenWithMenuScene;
-    explicit OpenWithMenuScenePrivate(OpenWithMenuScene *qq);
-    QStringList recommendApps;
+    explicit SendToMenuScenePrivate(AbstractMenuScene *qq);
+
+private:
+    void addSubActions(QMenu *subMenu);
+    void handleActionTriggered(QAction *act);
+
+private:
+    bool folderSelected { false };
 };
 
 DPMENU_END_NAMESPACE
 
-#endif   // OPENWITHMENUSCENE_P_H
+#endif   // SENDTOMENUSCENE_P_H

@@ -22,7 +22,7 @@
 
 #include "dcustomactiondata.h"
 
-DPEXTENDMENU_USE_NAMESPACE
+DPMENU_USE_NAMESPACE
 
 DCustomActionData::DCustomActionData()
     : actionPosition(0), actionNameArg(DCustomActionDefines::NoneArg), actionCmdArg(DCustomActionDefines::NoneArg), actionSeparator(DCustomActionDefines::None)

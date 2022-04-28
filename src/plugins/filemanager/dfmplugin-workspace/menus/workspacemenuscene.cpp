@@ -42,6 +42,8 @@ static const char *const kOpenWithMenuSceneName = "OpenWithMenu";
 static const char *const kFileOperatorMenuSceneName = "FileOperatorMenu";
 static const char *const kSendToMenuSceneName = "SendToMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
+static const char *const kExtendMenuSceneName = "ExtendMenu";
+static const char *const kOemMenuSceneName = "OemMenu";
 
 AbstractMenuScene *WorkspaceMenuCreator::create()
 {
@@ -158,6 +160,14 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
         if (auto sendToScene = d->menuServer->createScene(kSendToMenuSceneName))
             currentScene.append(sendToScene);
     }
+
+    // oem menu
+    if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
+        currentScene.append(oemScene);
+
+    // extend menu.must last
+    if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
+        currentScene.append(extendScene);
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

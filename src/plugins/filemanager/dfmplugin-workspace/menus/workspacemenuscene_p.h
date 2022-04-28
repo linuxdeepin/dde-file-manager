@@ -28,7 +28,7 @@
 #include "services/common/dfm_common_service_global.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/menu/menu_defines.h"
-#include <plugins/common/dfmplugin-menu/menuScene/action_defines.h>
+#include <plugins/common/dfmplugin-menu/menuscene/action_defines.h>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 

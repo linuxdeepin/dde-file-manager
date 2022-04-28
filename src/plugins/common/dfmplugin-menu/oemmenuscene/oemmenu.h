@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILEOPERATORMENUSCENE_P_H
-#define FILEOPERATORMENUSCENE_P_H
+#ifndef OEMMENU_H
+#define OEMMENU_H
 
-#include "menuScene/fileoperatormenuscene.h"
+#include "dfmplugin_menu_global.h"
 
-#include "interfaces/private/abstractmenuscene_p.h"
+#include <QObject>
+#include <QAction>
+#include <QScopedPointer>
 
 DPMENU_BEGIN_NAMESPACE
-DFMBASE_USE_NAMESPACE
 
-class FileOperatorMenuScenePrivate : public AbstractMenuScenePrivate
+class OemMenuPrivate;
+class OemMenu : public QObject
 {
+    Q_OBJECT
 public:
-    friend class FileOperatorMenuScene;
-    explicit FileOperatorMenuScenePrivate(FileOperatorMenuScene *qq);
+    static OemMenu *instance();
+    ~OemMenu();
+
+    void loadDesktopFile();
+    QList<QAction *> emptyActions(const QUrl &currentDir, bool onDesktop = false);
+    QList<QAction *> normalActions(const QList<QUrl> &files, bool onDesktop = false);
+
+protected:
+    explicit OemMenu(QObject *parent = nullptr);
+
+private:
+    QScopedPointer<OemMenuPrivate> d;
+
+private:
+    Q_DISABLE_COPY(OemMenu)
 };
 
 DPMENU_END_NAMESPACE
 
-#endif   // FILEOPERATORMENUSCENE_P_H
+#endif   // OEMMENU_H

@@ -21,12 +21,12 @@
 #ifndef EXTENDMENUSCENE_H
 #define EXTENDMENUSCENE_H
 
-#include "dfmplugin_extend_menu_global.h"
+#include "dfmplugin_menu_global.h"
 
 #include <interfaces/abstractmenuscene.h>
 #include <interfaces/abstractscenecreator.h>
 
-DPEXTENDMENU_BEGIN_NAMESPACE
+DPMENU_BEGIN_NAMESPACE
 
 class ExtendMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -54,5 +54,5 @@ private:
     ExtendMenuScenePrivate *const d = nullptr;
 };
 
-DPEXTENDMENU_END_NAMESPACE
+DPMENU_END_NAMESPACE
 #endif   // EXTENDMENUSCENE_H

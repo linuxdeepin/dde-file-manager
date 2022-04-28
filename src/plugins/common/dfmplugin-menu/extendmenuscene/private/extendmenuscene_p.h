@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef NEWCREATEMENUSCENE_P_H
-#define NEWCREATEMENUSCENE_P_H
-#include "menuScene/newcreatemenuscene.h"
+#ifndef EXTENDMENUSCENE_P_H
+#define EXTENDMENUSCENE_P_H
+
+#include "extendmenuscene/extendmenuscene.h"
+#include "extendmenuscene/extendmenu/dcustomactiondefine.h"
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
 DPMENU_BEGIN_NAMESPACE
-DFMBASE_USE_NAMESPACE
 
-class NewCreateMenuScenePrivate : public AbstractMenuScenePrivate
+class ExtendMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
 public:
-    friend class NewCreateMenuScene;
-    explicit NewCreateMenuScenePrivate(NewCreateMenuScene *qq);
+    friend class FileOperatorMenuScene;
+    explicit ExtendMenuScenePrivate(ExtendMenuScene *qq);
+
+    QList<QAction *> extendActions;
+
+    QMap<int, QList<QAction *>> cacheLocateActions;
+    QMap<QAction *, DCustomActionDefines::Separator> cacheActionsSeparator;
 };
 
 DPMENU_END_NAMESPACE
 
-#endif   // NEWCREATEMENUSCENE_P_H
+#endif   // EXTENDMENUSCENE_P_H
