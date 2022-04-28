@@ -130,7 +130,7 @@ void ShareInfoFrame::initUI()
 
     m_networkAddrLabel = new QLineEdit(m_selfIp);
     m_networkAddrLabel->setReadOnly(true);
-    m_networkAddrLabel->setText("0.0.0.0");
+    m_networkAddrLabel->setText("");
     m_networkAddrLabel->setAttribute(Qt::WA_TranslucentBackground, true);
     m_networkAddrLabel->setFont(fontNormal);
     m_networkAddrLabel->setPalette(pe);
@@ -148,8 +148,12 @@ void ShareInfoFrame::initUI()
                     m_selfIp = address.toString();
                 }
             }
-            if(m_networkAddrLabel->text() != m_selfIp)
-                m_networkAddrLabel->setText(m_selfIp);
+            if(m_networkAddrLabel->text() != m_selfIp){
+                if(m_selfIp == "127.0.0.1")
+                    m_networkAddrLabel->setText("");
+                else
+                    m_networkAddrLabel->setText(m_selfIp);
+            }
 
             m_updateIp->setInterval(2000);
         });
