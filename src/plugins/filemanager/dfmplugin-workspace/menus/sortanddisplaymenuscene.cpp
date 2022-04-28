@@ -69,7 +69,9 @@ QString SortAndDisplayMenuScene::name() const
 bool SortAndDisplayMenuScene::initialize(const QVariantHash &params)
 {
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
-    return d->isEmptyArea;
+    if (d->isEmptyArea)
+        return AbstractMenuScene::initialize(params);
+    return false;
 }
 
 AbstractMenuScene *SortAndDisplayMenuScene::scene(QAction *action) const
@@ -87,13 +89,13 @@ bool SortAndDisplayMenuScene::create(QMenu *parent)
 {
     d->view = qobject_cast<FileView *>(parent->parent());
     d->createEmptyMenu(parent);
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void SortAndDisplayMenuScene::updateState(QMenu *parent)
 {
-    Q_UNUSED(parent);
     d->updateEmptyAreaActionState();
+    AbstractMenuScene::updateState(parent);
 }
 
 bool SortAndDisplayMenuScene::triggered(QAction *action)
@@ -146,7 +148,7 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
         }
     }
 
-    return false;
+    return AbstractMenuScene::triggered(action);
 }
 
 SortAndDisplayMenuScenePrivate::SortAndDisplayMenuScenePrivate(AbstractMenuScene *qq)

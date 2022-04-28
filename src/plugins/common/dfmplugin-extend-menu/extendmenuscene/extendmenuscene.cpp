@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "private/extendmenuscene_p.h"
-#include "extendMenuScene/extendMenu/dcustomactionbuilder.h"
-#include "extendMenuScene/extendMenu/dcustomactionparser.h"
+#include "extendmenuscene/extendmenu/dcustomactionbuilder.h"
+#include "extendmenuscene/extendmenu/dcustomactionparser.h"
 
 #include <services/common/menu/menu_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -77,7 +77,7 @@ bool ExtendMenuScene::initialize(const QVariantHash &params)
         }
     }
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *ExtendMenuScene::scene(QAction *action) const
@@ -175,7 +175,7 @@ bool ExtendMenuScene::create(QMenu *parent)
         d->extendActions.append(action);
     }
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void ExtendMenuScene::updateState(QMenu *parent)
@@ -236,6 +236,8 @@ void ExtendMenuScene::updateState(QMenu *parent)
             }
         }
     }
+
+    AbstractMenuScene::updateState(parent);
 }
 
 bool ExtendMenuScene::triggered(QAction *action)
@@ -265,5 +267,5 @@ bool ExtendMenuScene::triggered(QAction *action)
         //            FileUtils::runCommand(runable.first, runable.second);
     }
 
-    return true;
+    return AbstractMenuScene::triggered(action);
 }

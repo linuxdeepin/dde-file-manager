@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "extendmenuplugin.h"
-#include "extendMenuScene/extendmenuscene.h"
-#include "extendMenuScene/extendMenu/dcustomactionparser.h"
+#include "extendmenuscene/extendmenuscene.h"
+#include "extendmenuscene/extendmenu/dcustomactionparser.h"
 
 #include <services/common/menu/menuservice.h>
 

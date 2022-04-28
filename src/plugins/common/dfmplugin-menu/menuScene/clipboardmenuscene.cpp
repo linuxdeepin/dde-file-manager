@@ -80,7 +80,7 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
         }
     }
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *ClipBoardMenuScene::scene(QAction *action) const
@@ -110,7 +110,7 @@ bool ClipBoardMenuScene::create(QMenu *parent)
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCopy));
     }
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void ClipBoardMenuScene::updateState(QMenu *parent)
@@ -136,6 +136,8 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
     } else {
         // todo(wangcl) disable action?
     }
+
+    AbstractMenuScene::updateState(parent);
 }
 
 bool ClipBoardMenuScene::triggered(QAction *action)
@@ -165,5 +167,5 @@ bool ClipBoardMenuScene::triggered(QAction *action)
         dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCopyAction, d->selectFiles);
     }
 
-    return true;
+    return AbstractMenuScene::triggered(action);
 }

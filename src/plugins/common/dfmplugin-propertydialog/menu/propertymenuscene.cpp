@@ -76,7 +76,7 @@ bool PropertyMenuScene::initialize(const QVariantHash &params)
         d->selectFiles << d->currentDir;
     }
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *PropertyMenuScene::scene(QAction *action) const
@@ -110,7 +110,7 @@ bool PropertyMenuScene::create(QMenu *parent)
         redirectedUrlList << fileInfo->redirectedFileUrl();
     }
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void PropertyMenuScene::updateState(QMenu *parent)
@@ -121,6 +121,8 @@ void PropertyMenuScene::updateState(QMenu *parent)
     // open with
     if (auto openWith = d->predicateAction.value(dfmplugin_menu::ActionID::kProperty)) {
     }
+
+    AbstractMenuScene::updateState(parent);
 }
 
 bool PropertyMenuScene::triggered(QAction *action)
@@ -136,5 +138,5 @@ bool PropertyMenuScene::triggered(QAction *action)
                                               d->selectFiles);
     }
 
-    return true;
+    return AbstractMenuScene::triggered(action);
 }

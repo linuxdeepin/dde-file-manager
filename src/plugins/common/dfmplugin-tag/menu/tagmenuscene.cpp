@@ -65,7 +65,7 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     d->predicateName.insert(TagActionId::kActTagColorListKey, "");
     d->predicateName.insert(TagActionId::kActTagAddKey, tr("Add color tags"));
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 bool TagMenuScene::create(QMenu *parent)
@@ -86,11 +86,13 @@ bool TagMenuScene::create(QMenu *parent)
     QAction *tagAction = createTagAction();
     parent->addAction(tagAction);
     d->predicateAction.insert(TagActionId::kActTagAddKey, tagAction);
+
+    return AbstractMenuScene::create(parent);
 }
 
 void TagMenuScene::updateState(QMenu *parent)
 {
-    Q_UNUSED(parent)
+    AbstractMenuScene::updateState(parent);
 }
 
 bool TagMenuScene::triggered(QAction *action)
@@ -103,7 +105,7 @@ bool TagMenuScene::triggered(QAction *action)
 
     TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles);
 
-    return false;
+    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *TagMenuScene::scene(QAction *action) const

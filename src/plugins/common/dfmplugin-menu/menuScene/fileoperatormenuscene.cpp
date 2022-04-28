@@ -247,5 +247,5 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     }
 
     // TODO(Lee or others):
-    return false;
+    return AbstractMenuScene::triggered(action);
 }

@@ -21,8 +21,8 @@
 #ifndef EXTENDMENUSCENE_P_H
 #define EXTENDMENUSCENE_P_H
 
-#include "extendMenuScene/extendmenuscene.h"
-#include "extendMenuScene/extendMenu/dcustomactiondefine.h"
+#include "extendmenuscene/extendmenuscene.h"
+#include "extendmenuscene/extendmenu/dcustomactiondefine.h"
 
 #include "interfaces/private/abstractmenuscene_p.h"
 

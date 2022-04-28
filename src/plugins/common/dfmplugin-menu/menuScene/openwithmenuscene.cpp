@@ -92,8 +92,10 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
     d->recommendApps.removeAll("/usr/share/applications/dde-open.desktop");
     d->recommendApps.removeAll("/usr/share/applications/display-im6.q16.desktop");
     d->recommendApps.removeAll("/usr/share/applications/display-im6.q16hdri.desktop");
+    if (d->recommendApps.isEmpty())
+        return false;
 
-    return !d->recommendApps.isEmpty();
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *OpenWithMenuScene::scene(QAction *action) const
@@ -146,7 +148,7 @@ bool OpenWithMenuScene::create(QMenu *parent)
     tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenWithCustom);
     tempAction->setProperty(kSelectedUrls, QVariant::fromValue(redirectedUrlList));
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void OpenWithMenuScene::updateState(QMenu *parent)
@@ -204,6 +206,8 @@ void OpenWithMenuScene::updateState(QMenu *parent)
             }
         }
     }
+
+    AbstractMenuScene::updateState(parent);
 }
 
 bool OpenWithMenuScene::triggered(QAction *action)
@@ -222,5 +226,5 @@ bool OpenWithMenuScene::triggered(QAction *action)
         return true;
     }
 
-    return false;
+    return AbstractMenuScene::triggered(action);
 }

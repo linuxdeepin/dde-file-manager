@@ -62,7 +62,7 @@ bool SmbBrowserMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     if (d->selectFiles.count() != 1 || d->isEmptyArea)
         return false;
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 bool SmbBrowserMenuScene::create(QMenu *parent)
@@ -77,11 +77,12 @@ bool SmbBrowserMenuScene::create(QMenu *parent)
     act->setProperty(ActionPropertyKey::kActionID, SmbBrowserActionId::kOpenSmbInNewWin);
     d->predicateAction[SmbBrowserActionId::kOpenSmbInNewWin] = act;
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void SmbBrowserMenuScene::updateState(QMenu *parent)
 {
+    AbstractMenuScene::updateState(parent);
 }
 
 bool SmbBrowserMenuScene::triggered(QAction *action)
@@ -107,7 +108,7 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
                 dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, u);
         }
     });
-    return true;
+    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *SmbBrowserMenuScene::scene(QAction *action) const

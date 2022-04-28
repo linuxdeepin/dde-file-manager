@@ -85,7 +85,7 @@ bool OpenDirMenuScene::initialize(const QVariantHash &params)
         }
     }
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *OpenDirMenuScene::scene(QAction *action) const
@@ -106,13 +106,14 @@ bool OpenDirMenuScene::create(QMenu *parent)
     else
         normalMenu(parent);
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void OpenDirMenuScene::updateState(QMenu *parent)
 {
     if (!parent)
         return;
+    AbstractMenuScene::updateState(parent);
 }
 
 bool OpenDirMenuScene::triggered(QAction *action)
@@ -141,7 +142,7 @@ bool OpenDirMenuScene::triggered(QAction *action)
     }
 
     // TODO(Lee or others):
-    return false;
+    return AbstractMenuScene::triggered(action);
 }
 
 void OpenDirMenuScene::emptyMenu(QMenu *parent)

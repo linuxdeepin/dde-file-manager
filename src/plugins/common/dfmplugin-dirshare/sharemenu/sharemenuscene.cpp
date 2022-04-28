@@ -82,7 +82,7 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
     if (!info->isDir())
         return false;
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 bool ShareMenuScene::create(QMenu *parent)
@@ -107,11 +107,12 @@ bool ShareMenuScene::create(QMenu *parent)
         }
     }
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void ShareMenuScene::updateState(QMenu *parent)
 {
+    AbstractMenuScene::updateState(parent);
 }
 
 bool ShareMenuScene::triggered(QAction *action)
@@ -137,9 +138,9 @@ bool ShareMenuScene::triggered(QAction *action)
     } else if (key == ShareActionId::kActRemoveShareKey) {
         UserShareService::service()->removeShare(u.path());
         return true;
-    } else {
-        return false;
     }
+
+    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *ShareMenuScene::scene(QAction *action) const

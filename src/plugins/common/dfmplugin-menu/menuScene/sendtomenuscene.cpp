@@ -78,7 +78,7 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     if (d->selectFiles.isEmpty())
         return false;
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 bool SendToMenuScene::create(QMenu *parent)
@@ -105,12 +105,13 @@ bool SendToMenuScene::create(QMenu *parent)
             d->predicateAction[ActionID::kSendTo] = sendToAct;
         }
     }
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void SendToMenuScene::updateState(QMenu *parent)
 {
     // TODO(xust)
+    AbstractMenuScene::updateState(parent);
 }
 
 bool SendToMenuScene::triggered(QAction *action)
@@ -122,7 +123,7 @@ bool SendToMenuScene::triggered(QAction *action)
         return false;
 
     d->handleActionTriggered(action);
-    return true;
+    return AbstractMenuScene::triggered(action);
 }
 
 dfmbase::AbstractMenuScene *SendToMenuScene::scene(QAction *action) const

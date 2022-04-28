@@ -49,7 +49,7 @@ bool FileDialogMenuScene::initialize(const QVariantHash &params)
 {
     Q_UNUSED(params)
     workspaceScene = dynamic_cast<AbstractMenuScene *>(this->parent());
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 void FileDialogMenuScene::updateState(QMenu *parent)
@@ -71,6 +71,7 @@ void FileDialogMenuScene::updateState(QMenu *parent)
         if (id == lineActId)
             act->setVisible(true);
     });
+    AbstractMenuScene::updateState(parent);
 }
 
 QString FileDialogMenuScene::findSceneName(QAction *act) const

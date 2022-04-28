@@ -87,7 +87,7 @@ bool NewCreateMenuScene::initialize(const QVariantHash &params)
     if (!d->currentDir.isValid())
         return false;
 
-    return true;
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *NewCreateMenuScene::scene(QAction *action) const
@@ -134,12 +134,12 @@ bool NewCreateMenuScene::create(QMenu *parent)
     d->predicateAction[ActionID::kNewPlainText] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kNewPlainText));
 
-    return true;
+    return AbstractMenuScene::create(parent);
 }
 
 void NewCreateMenuScene::updateState(QMenu *parent)
 {
-    Q_UNUSED(parent)
+    AbstractMenuScene::updateState(parent);
 }
 
 bool NewCreateMenuScene::triggered(QAction *action)
@@ -163,5 +163,5 @@ bool NewCreateMenuScene::triggered(QAction *action)
         return true;
     }
 
-    return false;
+    return AbstractMenuScene::triggered(action);
 }
