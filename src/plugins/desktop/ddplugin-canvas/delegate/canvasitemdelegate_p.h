@@ -51,7 +51,7 @@ public:
     }
 
     bool needExpend(const QStyleOptionViewItem &option,
-                    const QModelIndex &index, const QRect &rLabel, QRect *needLabel = nullptr) const;
+                    const QModelIndex &index, const QRect &rText, QRect *needText = nullptr) const;
 public:
     // default icon size is 48px.
     int currentIconLevel = -1;

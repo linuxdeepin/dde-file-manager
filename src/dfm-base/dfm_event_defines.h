@@ -76,6 +76,7 @@ enum GlobalEventType : uint16_t {
     kSetPermissionResult,
     kOpenInTerminalResult,
 
+    kTempDesktopPaintTag = 9998, //! todo(zy) need to delete when find solution
     // first user event id, use UniversalUtils::registerEventType crreate custom event type
     kCustomBase = 10000,   // first user event id
     kMaxCustom = 65535   // last user event id

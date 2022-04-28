@@ -142,6 +142,9 @@ void Tag::followEvent()
 {
     TagHelper::eventSequence()->follow(Workspace::EventType::kPaintListItem, TagManager::instance(), &TagManager::paintListTagsHandle);
     TagHelper::eventSequence()->follow(Workspace::EventType::kPaintIconItem, TagManager::instance(), &TagManager::paintIconTagsHandle);
+
+    // todo(zy) need to delete
+    TagHelper::eventSequence()->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
 }
 
 void Tag::bindScene(const QString &parentScene)
