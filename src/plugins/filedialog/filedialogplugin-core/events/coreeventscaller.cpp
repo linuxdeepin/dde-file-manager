@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "coreeventscaller.h"
+#include "utils/corehelper.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspace_defines.h"
@@ -48,4 +49,25 @@ void CoreEventsCaller::setSidebarItemVisible(const QUrl &url, bool visible)
 {
     dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::SideBar::EventType::kItemVisibleSetting,
                                           url, visible);
+}
+
+void CoreEventsCaller::setSelectionMode(QWidget *sender, const QAbstractItemView::SelectionMode mode)
+{
+    quint64 id = WindowsService::service()->findWindowId(sender);
+    Q_ASSERT(id > 0);
+    auto func = [id, mode]() {
+        dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetSelectionMode, id, mode);
+    };
+    CoreHelper::delayInvokeProxy(func, id, sender);
+}
+
+void CoreEventsCaller::setEnabledSelectionModes(QWidget *sender, const QList<QAbstractItemView::SelectionMode> &modes)
+{
+    quint64 id = WindowsService::service()->findWindowId(sender);
+    Q_ASSERT(id > 0);
+
+    auto func = [id, modes] {
+        dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetEnabledSelectionModes, id, modes);
+    };
+    CoreHelper::delayInvokeProxy(func, id, sender);
 }

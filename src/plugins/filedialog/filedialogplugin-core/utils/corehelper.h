@@ -34,6 +34,7 @@ DIALOGCORE_BEGIN_NAMESPACE
 class CoreHelper
 {
 public:
+    static void delayInvokeProxy(std::function<void()> func, quint64 winID, QObject *parent);
     static void installDFMEventFilterForReject();
     static bool askHiddenFile(QWidget *parent);
     static bool askReplaceFile(QString fileName, QWidget *parent);

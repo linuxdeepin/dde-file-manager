@@ -110,8 +110,8 @@ void Workspace::onWindowOpened(quint64 windId)
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "WorkSpace", "Cannot find window by id");
     WorkspaceWidget *workspace = new WorkspaceWidget;
-    window->installWorkSpace(workspace);
     WorkspaceHelper::instance()->addWorkspace(windId, workspace);
+    window->installWorkSpace(workspace);
 }
 
 void Workspace::onWindowClosed(quint64 windId)

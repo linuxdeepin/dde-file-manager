@@ -23,6 +23,7 @@
 #include "filedialoghandle.h"
 #include "views/filedialog.h"
 #include "events/coreeventscaller.h"
+#include "utils/corehelper.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 
@@ -43,8 +44,6 @@ class FileDialogHandlePrivate
 public:
     explicit FileDialogHandlePrivate(FileDialogHandle *qq)
         : q_ptr(qq) {}
-
-    void invokeProxy(std::function<void()> func);
 
     QPointer<FileDialog> dialog;
 
@@ -133,9 +132,11 @@ void FileDialogHandle::selectFile(const QString &filename)
 {
     D_D(FileDialogHandle);
 
-    d->invokeProxy([d, filename] {
-        d->dialog->selectFile(filename);
-    });
+    CoreHelper::delayInvokeProxy(
+            [d, filename] {
+                d->dialog->selectFile(filename);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 QStringList FileDialogHandle::selectedFiles() const
@@ -149,9 +150,11 @@ void FileDialogHandle::selectUrl(const QUrl &url)
 {
     D_D(FileDialogHandle);
 
-    d->invokeProxy([d, url] {
-        d->dialog->selectUrl(url);
-    });
+    CoreHelper::delayInvokeProxy(
+            [d, url] {
+                d->dialog->selectUrl(url);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 QList<QUrl> FileDialogHandle::selectedUrls() const
@@ -165,18 +168,22 @@ void FileDialogHandle::addDisableUrlScheme(const QString &scheme)
 {
     D_D(FileDialogHandle);
 
-    d->invokeProxy([d, scheme] {
-        d->dialog->addDisableUrlScheme(scheme);
-    });
+    CoreHelper::delayInvokeProxy(
+            [d, scheme] {
+                d->dialog->addDisableUrlScheme(scheme);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 void FileDialogHandle::setNameFilters(const QStringList &filters)
 {
     D_D(FileDialogHandle);
 
-    d->invokeProxy([d, filters] {
-        d->dialog->setNameFilters(filters);
-    });
+    CoreHelper::delayInvokeProxy(
+            [d, filters] {
+                d->dialog->setNameFilters(filters);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 QStringList FileDialogHandle::nameFilters() const
@@ -225,9 +232,11 @@ void FileDialogHandle::setFilter(QDir::Filters filters)
 {
     D_D(FileDialogHandle);
 
-    d->invokeProxy([d, filters]() {
-        d->dialog->setFilter(filters);
-    });
+    CoreHelper::delayInvokeProxy(
+            [d, filters]() {
+                d->dialog->setFilter(filters);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 void FileDialogHandle::setViewMode(QFileDialog::ViewMode mode)
@@ -251,18 +260,21 @@ void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
 {
     D_D(FileDialogHandle);
 
-    d->invokeProxy([d, mode]() {
-        d->dialog->setFileMode(mode);
-    });
+    CoreHelper::delayInvokeProxy(
+            [d, mode]() {
+                d->dialog->setFileMode(mode);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 void FileDialogHandle::setAcceptMode(QFileDialog::AcceptMode mode)
 {
     D_D(FileDialogHandle);
-
-    d->invokeProxy([d, mode]() {
-        d->dialog->setAcceptMode(mode);
-    });
+    CoreHelper::delayInvokeProxy(
+            [d, mode]() {
+                d->dialog->setAcceptMode(mode);
+            },
+            d->dialog->internalWinId(), this);
 }
 
 QFileDialog::AcceptMode FileDialogHandle::acceptMode() const
@@ -438,23 +450,4 @@ void FileDialogHandle::reject()
     D_D(FileDialogHandle);
 
     d->dialog->reject();
-}
-
-/*!
- * \brief workspace must exist when invoke some interfaces
- * \param func
- */
-void FileDialogHandlePrivate::invokeProxy(std::function<void()> func)
-{
-    DSB_FM_USE_NAMESPACE
-    auto window = WindowsService::service()->findWindowById(dialog->internalWinId());
-    Q_ASSERT(window);
-
-    if (window->workSpace()) {
-        func();
-    } else {
-        QObject::connect(window, &FileManagerWindow::workspaceInstallFinished, q_ptr, [func]() {
-            func();
-        });
-    }
 }

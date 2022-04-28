@@ -22,6 +22,8 @@
 */
 #include "corehelper.h"
 
+#include "services/filemanager/windows/windowsservice.h"
+
 #include "dfm-base/dfm_event_defines.h"
 
 #include <DDialog>
@@ -52,6 +54,25 @@ static bool pwPluginVersionGreaterThen(const QString &v)
     return false;
 }
 #endif
+
+/*!
+ * \brief workspace must exist when invoke some interfaces
+ * \param func
+ */
+void CoreHelper::delayInvokeProxy(std::function<void()> func, quint64 winID, QObject *parent)
+{
+    DSB_FM_USE_NAMESPACE
+    auto window = WindowsService::service()->findWindowById(winID);
+    Q_ASSERT(window);
+
+    if (window->workSpace()) {
+        func();
+    } else {
+        QObject::connect(window, &FileManagerWindow::workspaceInstallFinished, parent, [func]() {
+            func();
+        });
+    }
+}
 
 void CoreHelper::installDFMEventFilterForReject()
 {

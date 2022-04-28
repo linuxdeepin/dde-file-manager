@@ -335,8 +335,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
 
     switch (static_cast<int>(mode)) {
     case QFileDialog::ExistingFiles:
-        // TODO(liuyangming)
-        // getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::ExtendedSelection);
+        CoreEventsCaller::setEnabledSelectionModes(this, { QAbstractItemView::ExtendedSelection });
         break;
     case QFileDialog::DirectoryOnly:
     case QFileDialog::Directory:
@@ -347,8 +346,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
         // fall through
         [[fallthrough]];
     default:
-        // TODO(liuyangming)
-        // getFileView()->setEnabledSelectionModes(QSet<DFileView::SelectionMode>() << QAbstractItemView::SingleSelection);
+        CoreEventsCaller::setEnabledSelectionModes(this, { QAbstractItemView::SingleSelection });
         break;
     }
 }
@@ -374,8 +372,7 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
                    this, &FileDialog::onCurrentInputNameChanged);
     } else {
         statusBar()->setMode(FileDialogStatusBar::kSave);
-        // TODO(liuyangming):
-        // getFileView()->setSelectionMode(QAbstractItemView::SingleSelection);
+        CoreEventsCaller::setSelectionMode(this, QAbstractItemView::SingleSelection);
         addDisableUrlScheme("recent");
         setFileMode(QFileDialog::DirectoryOnly);
 
