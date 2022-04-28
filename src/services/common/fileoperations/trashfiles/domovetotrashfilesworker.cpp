@@ -259,8 +259,10 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
     emitCurrentTaskNotify(fileInfo->url(), targetUrl);
 
-    // ToDo:: 不是检查文件是否超过1G，再检查磁盘空间是否够用，再执行拷贝文件，再去删除文件
     if (checkFileOutOfLimit(fileInfo)) {
+        qWarning() << "move to trash big file, use delete way, url: " << sourceUrl;
+
+        // todo lanxs, need tips dialog
         completeFilesCount++;
         // ToDo::大于1G，执行彻底删除代码
         if (fileInfo->isFile() || fileInfo->isSymLink())
@@ -271,7 +273,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
     // ToDo::判断是否同盘，是就直接rename
     if (isSameDisk == 1) {
-
+        qDebug() << "move to trash is on same disk, from url: " << fileInfo->url() << " to url: " << targetUrl;
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
         do {
@@ -302,6 +304,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
     }
 
     // 拷贝并删除文件
+    qDebug() << "rename failed, use copy and delete way, from url :" << fileInfo->url() << " to url: " << toInfo->url();
     return copyAndDeleteFile(fileInfo, toInfo, &result);
 }
 /*!

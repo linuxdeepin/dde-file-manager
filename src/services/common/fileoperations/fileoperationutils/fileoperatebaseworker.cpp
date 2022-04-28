@@ -293,9 +293,13 @@ bool FileOperateBaseWorker::doReadFile(const AbstractFileInfoPointer &fromInfo, 
 
         if (Q_UNLIKELY(readSize <= 0)) {
 
-            if (readSize == 0 && fromDevice->pos() == fromInfo->size()) {
+            const qint64 fromFilePos = fromDevice->pos();
+            const qint64 fromFileInfoSize = fromInfo->size();
+            if (readSize == 0 && fromFilePos == fromFileInfoSize) {
                 return true;
             }
+
+            qWarning() << "read size <=0, size: " << readSize << " from file pos: " << fromFilePos << " from file info size: " << fromFileInfoSize;
 
             AbstractJobHandler::JobErrorType errortype = fromInfo->exists() ? AbstractJobHandler::JobErrorType::kReadError : AbstractJobHandler::JobErrorType::kNonexistenceError;
             QString errorstr = fromInfo->exists() ? QString(QObject::tr("DFileCopyMoveJob", "Failed to read the file, cause: %1")).arg("to something!") : QString();
@@ -347,20 +351,26 @@ bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo,
     qint64 sizeWrite = 0;
     qint64 surplusSize = readSize;
     do {
+        bool writeFinishedOnce = true;
         const char *surplusData = data;
         do {
+            if (!writeFinishedOnce)
+                qDebug() << "write not finished once, current write size: " << sizeWrite << " remain size: " << surplusSize - sizeWrite << " read size: " << readSize;
             surplusData += sizeWrite;
             surplusSize -= sizeWrite;
             sizeWrite = toDevice->write(surplusData, surplusSize);
             if (Q_UNLIKELY(!stateCheck()))
                 return false;
+            writeFinishedOnce = false;
         } while (sizeWrite > 0 && sizeWrite < surplusSize);
 
         // 表示全部数据写入完成
         if (sizeWrite >= 0)
             break;
-        if (sizeWrite == -1 && toDevice->lastError().code() == DFMIOErrorCode::DFM_IO_ERROR_NONE)
+        if (sizeWrite == -1 && toDevice->lastError().code() == DFMIOErrorCode::DFM_IO_ERROR_NONE) {
+            qWarning() << "write failed, but no error, maybe write empty";
             break;
+        }
 
         QString errorStr = QString(QObject::tr("Failed to write the file, cause: %1")).arg(toDevice->lastError().errorMsg());
 
@@ -803,7 +813,9 @@ bool FileOperateBaseWorker::doCheckFileFreeSpace(const qint64 &size)
         targetStorageInfo->refresh();
     }
 
-    if (targetStorageInfo->bytesTotal() <= 0) {
+    const qint64 sizeTotal = targetStorageInfo->bytesTotal();
+    if (sizeTotal <= 0) {
+        qWarning() << "get bytesTotal failed, size: " << sizeTotal;
         return true;   // invalid size, maybe can not read
     }
     return targetStorageInfo->bytesAvailable() >= size;

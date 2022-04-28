@@ -246,6 +246,8 @@ void AbstractWorker::endWork()
     saveOperations();
 
     emit finishedNotify(info);
+
+    qDebug() << "\n=========================nwork end, job: " << jobType << " sources: " << sourceUrls << " target: " << targetUrl << " time elapsed: " << timeElapsed.elapsed() << "\n";
 }
 /*!
  * \brief AbstractWorker::emitStateChangedNotify send state changed signal
@@ -304,6 +306,9 @@ void AbstractWorker::emitErrorNotify(const QUrl &from, const QUrl &to, const Abs
     info->insert(AbstractJobHandler::NotifyInfoKey::kActionsKey, QVariant::fromValue(supportActions(error)));
     info->insert(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey, QVariant::fromValue(from));
     emit errorNotify(info);
+
+    qDebug() << "work error, job: " << jobType << " job error: " << error << " url from: " << from << " url to: " << to
+             << " error msg: " << errorMsg;
 }
 /*!
  * \brief AbstractWorker::isStopped current task is stopped
@@ -353,6 +358,9 @@ JobInfoPointer AbstractWorker::createCopyJobInfo(const QUrl &from, const QUrl &t
  */
 bool AbstractWorker::doWork()
 {
+    timeElapsed.start();
+    qDebug() << "\n=========================\nwork begin, job: " << jobType << " sources: " << sourceUrls << " target: " << targetUrl << "\n";
+
     // 执行拷贝的业务逻辑
     if (!initArgs()) {
         endWork();

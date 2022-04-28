@@ -41,11 +41,11 @@ DoDeleteFilesWorker::~DoDeleteFilesWorker()
 
 bool DoDeleteFilesWorker::doWork()
 {
-    // The endcopy interface function has been called here
     if (!AbstractWorker::doWork())
         return false;
-    // ToDo::执行删除的业务逻辑
+
     deleteAllFiles();
+
     // 完成
     endWork();
 

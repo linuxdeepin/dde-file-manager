@@ -36,6 +36,7 @@
 #include <QWaitCondition>
 #include <QMutex>
 #include <QSharedPointer>
+#include <QTime>
 
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -181,6 +182,7 @@ public:
     bool isSourceFileLocal { false };   // source file on local device
     bool isTargetFileLocal { false };   // target file on local device
     bool isConvert { false };   // is convert operation
+    QTime timeElapsed;
 
     QWaitCondition handlingErrorCondition;
     QMutex handlingErrorQMutex;

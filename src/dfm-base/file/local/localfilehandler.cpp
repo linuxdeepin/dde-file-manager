@@ -516,10 +516,13 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
  */
 bool LocalFileHandler::deleteFile(const QUrl &file)
 {
-    if (::remove(file.toLocalFile().toLocal8Bit()) == 0) {
+    int ret = 0;
+    if ((ret = ::remove(file.toLocalFile().toLocal8Bit())) == 0) {
         FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, file);
+        qDebug() << "delete file success: " << file;
         return true;
     }
+    qDebug() << "try delete file, but failed url: " << file << " ret: " << ret;
 
     setError(QString::fromLocal8Bit(strerror(errno)));
 

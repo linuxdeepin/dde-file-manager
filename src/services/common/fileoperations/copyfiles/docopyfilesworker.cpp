@@ -280,6 +280,8 @@ bool DoCopyFilesWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo,
     cancelThreadProcessingError();
 
     if (isSourceFileLocal && isTargetFileLocal && fromInfo->size() < kBigFileSize) {
+        qDebug() << "use pool copy, url from: " << fromInfo->url() << " url to: " << toInfo->url();
+
         if (!stateCheck())
             return false;
 

@@ -46,12 +46,11 @@ DoCleanTrashFilesWorker::~DoCleanTrashFilesWorker()
 
 bool DoCleanTrashFilesWorker::doWork()
 {
-    // The endcopy interface function has been called here
     if (!AbstractWorker::doWork())
         return false;
-    // ToDo::执行删除的业务逻辑
+
     cleanAllTrashFiles();
-    // 完成
+
     endWork();
 
     return true;
@@ -107,6 +106,13 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
     QList<QUrl>::iterator it = sourceUrls.begin();
     QList<QUrl>::iterator itend = sourceUrls.end();
     if (!allFilesList.isEmpty()) {
+        qDebug() << "sourceUrls has children, use allFilesList replace sourceUrls"
+                 << " sourceUrls: " << sourceUrls;
+        if (allFilesList.size() > 20)
+            qDebug() << "allFilesList size > 20, ignore allFilesList print";
+        else
+            qDebug() << "allFilesList: " << allFilesList;
+
         it = allFilesList.begin();
         itend = allFilesList.end();
     }
@@ -137,6 +143,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
             }
         }
         fileInfo->refresh();
+
         if (!clearTrashFile(fileInfo))
             return false;
         cleanTrashFilesCount++;
@@ -168,9 +175,12 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
         }
         if (!resultInfo)
             resultInfo = handler->deleteFile(QUrl::fromLocalFile(location));
-        if (!resultInfo || !resultFile)
-            action = doHandleErrorAndWait(trashInfo->url(),
-                                          AbstractJobHandler::JobErrorType::kDeleteTrashFileError, handler->errorString());
+
+        if (!resultFile)
+            action = doHandleErrorAndWait(trashInfo->url(), AbstractJobHandler::JobErrorType::kDeleteTrashFileError, handler->errorString());
+        if (!resultInfo)
+            qWarning() << "delete trash info failed";
+
     } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     return action == AbstractJobHandler::SupportAction::kNoAction || AbstractJobHandler::SupportAction::kSkipAction == action;

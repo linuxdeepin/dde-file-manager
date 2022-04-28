@@ -169,6 +169,7 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     if (doRenameFile(fromInfo, toInfo, &ok) || ok) {
         return true;
     }
+    qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->url() << " to url: " << toInfo->url();
 
     bool result = false;
     // check space
