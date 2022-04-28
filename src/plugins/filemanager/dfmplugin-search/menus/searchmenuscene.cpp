@@ -132,8 +132,9 @@ QString SearchMenuScene::name() const
 bool SearchMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
-    d->focusFile = params.value(MenuParamKey::kFocusFile).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
     if (!d->currentDir.isValid())
@@ -159,7 +160,6 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
 
     // 初始化所有子场景
     QVariantHash tmpParams = params;
-    tmpParams[MenuParamKey::kFocusFile] = d->focusFile;
     tmpParams[MenuParamKey::kSelectFiles] = QVariant::fromValue(d->selectFiles);
     return AbstractMenuScene::initialize(tmpParams);
 }

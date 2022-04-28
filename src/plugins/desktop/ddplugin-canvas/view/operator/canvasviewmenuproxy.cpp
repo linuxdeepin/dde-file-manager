@@ -139,7 +139,6 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
 
     QVariantHash params;
     params[MenuParamKey::kCurrentDir] = view->model()->rootUrl().toString();
-    params[MenuParamKey::kFocusFile] = tgUrl;
     params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectUrls);
     params[MenuParamKey::kOnDesktop] = true;
     params[MenuParamKey::kWindowId] = view->winId();

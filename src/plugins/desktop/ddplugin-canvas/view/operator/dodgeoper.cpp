@@ -47,16 +47,18 @@ DodgeOper::~DodgeOper()
 void DodgeOper::updatePrepareDodgeValue(QEvent *event)
 {
     if (event) {
-        QDragEnterEvent *dragEnterEvent = static_cast<QDragEnterEvent *>(event);
-        if (dragEnterEvent) {
-            CanvasView *fromView = qobject_cast<CanvasView *>(dragEnterEvent->source());
-            if (fromView
-                && dragEnterEvent->mimeData()
-                && !isCtrlPressed()
-                && CanvasGrid::Mode::Custom == GridIns->mode()) {
-                prepareDodge = true;
-                qDebug() << "prepare dodge:" << prepareDodge;
-                return;
+        if (QEvent::DragEnter == event->type()) {
+            QDragEnterEvent *dragEnterEvent = static_cast<QDragEnterEvent *>(event);
+            if (dragEnterEvent) {
+                CanvasView *fromView = qobject_cast<CanvasView *>(dragEnterEvent->source());
+                if (fromView
+                    && dragEnterEvent->mimeData()
+                    && !isCtrlPressed()
+                    && CanvasGrid::Mode::Custom == GridIns->mode()) {
+                    prepareDodge = true;
+                    qDebug() << "prepare dodge:" << prepareDodge;
+                    return;
+                }
             }
         }
     }

@@ -28,7 +28,6 @@ DSC_BEGIN_NAMESPACE
 namespace MenuParamKey {
 // file menu params for initialize
 static constexpr char kCurrentDir[] = "currentDir";   // string url
-static constexpr char kFocusFile[] = "focusFile";   // string url
 static constexpr char kSelectFiles[] = "selectFiles";   // string urls
 static constexpr char kOnDesktop[] = "onDesktop";   // bool
 static constexpr char kWindowId[] = "windowId";   // quint64
