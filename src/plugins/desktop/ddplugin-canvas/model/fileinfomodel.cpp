@@ -334,9 +334,9 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     case Global::ItemRoles::kItemFilePinyinNameRole:
         return indexFileInfo->fileDisplayPinyinName();
     case Global::ItemRoles::kItemFileLastModifiedRole:
-        return indexFileInfo->lastModified().toString();   // todo by file info: lastModifiedDisplayName
+        return indexFileInfo->lastModified().toString("yyyy/MM/dd HH:mm:ss");   // todo by file info: lastModifiedDisplayName
     case Global::ItemRoles::kItemFileSizeRole:
-        return indexFileInfo->size();   // todo by file info: sizeDisplayName
+        return indexFileInfo->isDir() ? indexFileInfo->countChildFile() : indexFileInfo->size();
     case Global::ItemRoles::kItemFileMimeTypeRole:
         return indexFileInfo->fileMimeType().name();   // todo by file info: mimeTypeDisplayName
     case Global::ItemRoles::kItemExtraProperties:

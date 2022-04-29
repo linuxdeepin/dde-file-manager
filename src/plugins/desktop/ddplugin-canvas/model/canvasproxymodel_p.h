@@ -26,6 +26,8 @@
 #include "modelextendinterface.h"
 #include "canvasmodelfilter.h"
 
+#include <dfm_global_defines.h>
+
 #include <QTimer>
 
 DDP_CANVAS_BEGIN_NAMESPACE
@@ -38,7 +40,8 @@ public:
     void clearMapping();
     void createMapping();
     QModelIndexList indexs() const;
-    bool doSort(QList<DFMLocalFileInfoPointer> &files) const;
+    bool doSort(QList<QUrl> &files) const;
+    bool lessThan(const QUrl &left, const QUrl &right) const;
 public slots:
     void doRefresh(bool global);
     void sourceDataChanged(const QModelIndex &sourceTopleft,
@@ -53,21 +56,23 @@ public slots:
                                        int start, int end);
     void sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 public:
-    void specialSort(QList<DFMLocalFileInfoPointer> &files) const;
-    void sortMainDesktopFile(QList<DFMLocalFileInfoPointer> &files, Qt::SortOrder order) const;
     bool insertFilter(const QUrl &url);
     bool resetFilter(QList<QUrl> &urls);
     bool updateFilter(const QUrl &url);
     bool removeFilter(const QUrl &url);
     bool renameFilter(const QUrl &oldUrl, const QUrl &newUrl);
-
+protected:
+   void standardSort(QList<QUrl> &files) const;
+   void specialSort(QList<QUrl> &files) const;
+private:
+    void sortMainDesktopFile(QList<QUrl> &files, Qt::SortOrder order) const;
 public:
     QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System;
     QList<QUrl> fileList;
     QMap<QUrl, DFMLocalFileInfoPointer> fileMap;
     FileInfoModel *srcModel = nullptr;
     QSharedPointer<QTimer> refreshTimer;
-    int fileSortRole = DFMBASE_NAMESPACE::AbstractFileInfo::kSortByFileName;
+    int fileSortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;
     Qt::SortOrder fileSortOrder = Qt::AscendingOrder;
     ModelExtendInterface *extend = nullptr;
     QList<QSharedPointer<CanvasModelFilter>> modelFilters;

@@ -84,7 +84,7 @@ public:
     static bool containsCopyingFileUrl(const QUrl &url);
 
     static void notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType type, const QUrl &url);
-
+    static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 private:
     static QMutex cacheCopyingMutex;
 };

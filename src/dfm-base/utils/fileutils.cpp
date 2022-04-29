@@ -49,6 +49,7 @@
 #include <QTextCodec>
 #include <QSet>
 #include <QRegularExpression>
+#include <QCollator>
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -1006,6 +1007,52 @@ void FileUtils::notifyFileChangeManual(FileNotifyType type, const QUrl &url)
     default:
         return;
     }
+}
+
+bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::SortOrder order)
+{
+    class StrCollator : public QCollator
+    {
+    public:
+        explicit StrCollator(const QLocale &locale = QLocale()) : QCollator(locale){
+            setNumericMode(true);
+            setCaseSensitivity(Qt::CaseInsensitive);
+        }
+    };
+
+    thread_local static StrCollator sortCollator;
+    auto startWithSymbol = [](const QString &text) -> bool{
+        if (text.isEmpty())
+            return false;
+
+        // Matches strings beginning with letters, numbers, and Chinese
+        QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
+        return !regExp.exactMatch(text);
+    };
+
+    auto startWithHanzi = [](const QString &text) -> bool{
+        if (text.isEmpty())
+            return false;
+
+        return text.at(0).script() == QChar::Script_Han;
+    };
+
+    // Other symbols need to be ranked last, and judgment needs to be made before Chinese
+    if (startWithSymbol(str1)) {
+        if (!startWithSymbol(str2))
+            return order == Qt::DescendingOrder;
+    } else if (startWithSymbol(str2))
+        return order != Qt::DescendingOrder;
+
+    if (startWithHanzi(str1)) {
+        if (!startWithHanzi(str2)) {
+            return order == Qt::DescendingOrder;
+        }
+    } else if (startWithHanzi(str2)) {
+        return order != Qt::DescendingOrder;
+    }
+
+    return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

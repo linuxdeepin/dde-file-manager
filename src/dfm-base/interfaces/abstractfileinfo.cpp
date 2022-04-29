@@ -30,75 +30,13 @@
 #include <QDateTime>
 #include <QVariant>
 #include <QDir>
-#include <QCollator>
 
 USING_IO_NAMESPACE
-
-namespace FileSortFunction {
-//fix 多线程排序时，该处的全局变量在compareByString函数中可能导致软件崩溃
-//QCollator sortCollator;
-class DCollator : public QCollator
-{
-public:
-    DCollator()
-        : QCollator()
-    {
-        setNumericMode(true);
-        setCaseSensitivity(Qt::CaseInsensitive);
-    }
-};
-
-bool startWithSymbol(const QString &text)
-{
-    if (text.isEmpty())
-        return false;
-
-    //匹配字母、数字和中文开头的字符串
-    QRegExp regExp("^[a-zA-Z0-9\u4e00-\u9fa5].*$");
-    return !regExp.exactMatch(text);
-}
-
-bool startWithCNChar(const QString &text)
-{
-    if (text.isEmpty())
-        return false;
-
-    return text.at(0).script() == QChar::Script_Han;
-}
-
-bool compareByString(const QString &str1, const QString &str2, Qt::SortOrder order)
-{
-    thread_local static DCollator sortCollator;
-    //其他符号要排在最后，需要在中文前先做判断
-    if (startWithSymbol(str1)) {
-        if (!startWithSymbol(str2))
-            return order == Qt::DescendingOrder;
-    } else if (startWithSymbol(str2))
-        return order != Qt::DescendingOrder;
-
-    if (startWithCNChar(str1)) {
-        if (!startWithCNChar(str2)) {
-            return order == Qt::DescendingOrder;
-        }
-    } else if (startWithCNChar(str2)) {
-        return order != Qt::DescendingOrder;
-    }
-
-    return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
-}
-
-COMPARE_FUN_DEFINE(fileName, FileName, DFMBASE_NAMESPACE::AbstractFileInfo)
-COMPARE_FUN_DEFINE(size, Size, DFMBASE_NAMESPACE::AbstractFileInfo)
-COMPARE_FUN_DEFINE(lastModified, Modified, DFMBASE_NAMESPACE::AbstractFileInfo)
-COMPARE_FUN_DEFINE(created, Created, DFMBASE_NAMESPACE::AbstractFileInfo)
-COMPARE_FUN_DEFINE(lastRead, LastRead, DFMBASE_NAMESPACE::AbstractFileInfo)
-COMPARE_FUN_DEFINE(fileTypeDisplayName, MimeType, DFMBASE_NAMESPACE::AbstractFileInfo)
-}   /// end namespace FileSortFunction
 
 #define CALL_PROXY(Fun) \
     if (dptr->proxy) return dptr->proxy->Fun;
 DFMBASE_BEGIN_NAMESPACE
-Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") });
+Q_GLOBAL_STATIC_WITH_ARGS(int, type_id, { qRegisterMetaType<AbstractFileInfoPointer>("AbstractFileInfo") })
 
 /*!
  * \class DAbstractFileInfo 抽象文件信息类
@@ -961,31 +899,6 @@ AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
     return kUnknown;
 }
 
-/*!
- * \brief AbstractFileInfo::compareFunByKey Get sorting function through key
- * \param sortKey Sorted key value
- * \return Sorting function
- */
-DFMBASE_NAMESPACE::AbstractFileInfo::CompareFunction AbstractFileInfo::compareFunByKey(const SortKey &sortKey) const
-{
-    CALL_PROXY(compareFunByKey(sortKey));
-
-    switch (sortKey) {
-    case kSortByFileName:
-        return FileSortFunction::compareFileListByFileName;
-    case kSortByModified:
-        return FileSortFunction::compareFileListByModified;
-    case kSortByFileSize:
-        return FileSortFunction::compareFileListBySize;
-    case kSortByFileCreated:
-        return FileSortFunction::compareFileListByCreated;
-    case kSortByFileLastRead:
-        return FileSortFunction::compareFileListByLastRead;
-    case kSortByFileMimeType:
-        return FileSortFunction::compareFileListByMimeType;
-    }
-    return CompareFunction();
-}
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByChildFileName Get the URL based on the name of the sub file
  * \param fileName Sub file name

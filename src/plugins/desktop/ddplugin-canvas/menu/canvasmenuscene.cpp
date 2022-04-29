@@ -293,15 +293,15 @@ bool CanvasMenuScene::triggered(QAction *action)
     if (d->predicateAction.values().contains(action)) {
         // sort by
         {
-            static const QMap<QString, AbstractFileInfo::SortKey> sortRole = {
-                { ActionID::kSrtName, AbstractFileInfo::SortKey::kSortByFileName },
-                { ActionID::kSrtSize, AbstractFileInfo::SortKey::kSortByFileSize },
-                { ActionID::kSrtType, AbstractFileInfo::SortKey::kSortByFileMimeType },
-                { ActionID::kSrtTimeModified, AbstractFileInfo::SortKey::kSortByModified }
+            static const QMap<QString, Global::ItemRoles> sortRole = {
+                { ActionID::kSrtName, Global::ItemRoles::kItemFileDisplayNameRole },
+                { ActionID::kSrtSize, Global::ItemRoles::kItemFileSizeRole },
+                { ActionID::kSrtType, Global::ItemRoles::kItemFileMimeTypeRole },
+                { ActionID::kSrtTimeModified, Global::ItemRoles::kItemFileLastModifiedRole }
             };
 
             if (sortRole.contains(actionId)) {
-                AbstractFileInfo::SortKey role = sortRole.value(actionId);
+                Global::ItemRoles role = sortRole.value(actionId);
                 Qt::SortOrder order = d->view->model()->sortOrder();
                 if (role == d->view->model()->sortRole())
                     order = order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder;

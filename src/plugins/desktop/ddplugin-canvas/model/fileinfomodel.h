@@ -42,8 +42,8 @@ public:
     Q_INVOKABLE QUrl rootUrl() const;
     Q_INVOKABLE QModelIndex rootIndex() const;
 
-    Q_INVOKABLE void installFilter(QSharedPointer<FileFilter> filter);
-    Q_INVOKABLE void removeFilter(QSharedPointer<FileFilter> filter);
+    void installFilter(QSharedPointer<FileFilter> filter);
+    void removeFilter(QSharedPointer<FileFilter> filter);
 
     Q_INVOKABLE QModelIndex index(const QUrl &url, int column = 0) const;
     Q_INVOKABLE DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;

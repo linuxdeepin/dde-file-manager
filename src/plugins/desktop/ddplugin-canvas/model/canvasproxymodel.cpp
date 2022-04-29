@@ -24,9 +24,11 @@
 #include <dfm-base/utils/fileutils.h>
 
 #include <QMimeData>
+#include <QDateTime>
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
 CanvasProxyModelPrivate::CanvasProxyModelPrivate(CanvasProxyModel *qq)
@@ -164,33 +166,33 @@ void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &
     }
 }
 
-void CanvasProxyModelPrivate::specialSort(QList<DFMLocalFileInfoPointer> &files) const
+void CanvasProxyModelPrivate::specialSort(QList<QUrl> &files) const
 {
-    if (fileSortRole == AbstractFileInfo::kSortByFileMimeType)
+    if (fileSortRole == ItemRoles::kItemFileMimeTypeRole)
         sortMainDesktopFile(files, fileSortOrder);
 }
 
-void CanvasProxyModelPrivate::sortMainDesktopFile(QList<DFMLocalFileInfoPointer> &files, Qt::SortOrder order) const
+void CanvasProxyModelPrivate::sortMainDesktopFile(QList<QUrl> &files, Qt::SortOrder order) const
 {
     // let the main desktop files always on front or back.
 
     //! warrning: the root url and LocalFileInfo::url must be like file://
     QDir dir(q->rootUrl().toString());
-    QList<QPair<QString, DFMLocalFileInfoPointer>> mainDesktop = {{dir.filePath("dde-home.desktop"), DFMLocalFileInfoPointer()},
-        {dir.filePath("dde-trash.desktop"), DFMLocalFileInfoPointer()},
-        {dir.filePath("dde-computer.desktop"), DFMLocalFileInfoPointer()}
+    QList<QPair<QString, QUrl>> mainDesktop = {{dir.filePath("dde-home.desktop"), QUrl()},
+        {dir.filePath("dde-trash.desktop"), QUrl()},
+        {dir.filePath("dde-computer.desktop"), QUrl()}
     };
     auto list = files;
     for (auto it = mainDesktop.begin(); it != mainDesktop.end(); ++it) {
-        for (const DFMLocalFileInfoPointer &info : list)
-        if (info->url().toString() == it->first) {
-            it->second = info;
-            files.removeOne(info);
+        for (const QUrl &url : list)
+        if (url.toString() == it->first) {
+            it->second = url;
+            files.removeOne(url);
         }
     }
 
     for (auto it = mainDesktop.begin(); it != mainDesktop.end(); ++it) {
-        if (it->second) {
+        if (it->second.isValid()) {
             if (order == Qt::AscendingOrder)
                 files.push_front(it->second);
             else
@@ -244,6 +246,68 @@ bool CanvasProxyModelPrivate::renameFilter(const QUrl &oldUrl, const QUrl &newUr
     return ret;
 }
 
+bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) const
+{
+    QModelIndex leftIdx = q->index(left);
+    QModelIndex rightIdx = q->index(right);
+
+    if (!leftIdx.isValid() || !rightIdx.isValid())
+        return false;
+
+    DFMLocalFileInfoPointer leftInfo = q->fileInfo(leftIdx);
+    DFMLocalFileInfoPointer rightInfo = q->fileInfo(rightIdx);
+
+    // The folder is fixed in the front position
+    if (leftInfo->isDir()) {
+        if (!rightInfo->isDir())
+            return true;
+    } else {
+        if (rightInfo->isDir())
+            return false;
+    }
+
+    QVariant leftData = q->data(leftIdx, fileSortRole);
+    QVariant rightData = q->data(rightIdx, fileSortRole);
+
+    // When the selected sort attribute value is the same, sort by file name
+    auto compareByName = [this, leftIdx, rightIdx](){
+        QString leftName = q->data(leftIdx, kItemFileDisplayNameRole).toString();
+        QString rightName = q->data(rightIdx, kItemFileDisplayNameRole).toString();
+        return FileUtils::compareString(leftName, rightName, fileSortOrder);
+    };
+
+    switch (fileSortRole) {
+    case kItemFileLastModifiedRole:
+    case kItemFileMimeTypeRole:
+    case kItemFileDisplayNameRole: {
+        QString leftString = leftData.toString();
+        QString rightString = rightData.toString();
+        return leftString == rightString ? compareByName() : FileUtils::compareString(leftString, rightString, fileSortOrder);
+    }
+    case kItemFileSizeRole: {
+        qint64 leftSize = leftData.toLongLong();
+        qint64 rightSize = rightData.toLongLong();
+        return leftSize == rightSize ? compareByName() : ((fileSortOrder == Qt::DescendingOrder) ^ (leftSize < rightSize)) == 0x01;
+    }
+    default:
+        return false;
+    }
+}
+
+void CanvasProxyModelPrivate::standardSort(QList<QUrl> &files) const
+{
+    if (files.isEmpty())
+        return;
+
+    std::sort(files.begin(), files.end(), [this](const QUrl &left, const QUrl &right) {
+        return lessThan(left, right);
+    });
+
+    // advanced sort for special case.
+    specialSort(files);
+    return;
+}
+
 void CanvasProxyModelPrivate::clearMapping()
 {
     fileList.clear();
@@ -255,8 +319,6 @@ void CanvasProxyModelPrivate::createMapping()
     if (!srcModel)
         return;
 
-    QMap<QUrl, DFMLocalFileInfoPointer> maps;
-
     auto urls = srcModel->files();
     if (extend && extend->dataRested(&urls)) {
         qWarning() << "invalid module: dataRested returns true.";
@@ -265,24 +327,24 @@ void CanvasProxyModelPrivate::createMapping()
     // canvas filter
     resetFilter(urls);
 
-    for (const QUrl &url : urls) {
-        auto idx = srcModel->index(url);
-        if (auto info = srcModel->fileInfo(idx))
-            maps.insert(url, info);
-    }
+    // sort
+    QMap<QUrl, DFMLocalFileInfoPointer> maps;
+    for (const QUrl &url : urls)
+        maps.insert(url, srcModel->fileInfo(srcModel->index(url)));
 
-    // sort and filter
-    urls.clear();
+    // set unsorted files into model to enable create module index that doSort will used.
+    fileList = urls;
+    fileMap = maps;
+
+    doSort(urls);
+
+    // update fileinfo list
     {
-        auto files = maps.values();
         maps.clear();
-        doSort(files);
-
-        for (auto itemInfo : files) {
-            urls.append(itemInfo->url());
-            maps.insert(itemInfo->url(), itemInfo);
-        }
+        for (const QUrl &url : urls)
+            maps.insert(url, srcModel->fileInfo(srcModel->index(url)));
     }
+
 
     fileList = urls;
     fileMap = maps;
@@ -298,25 +360,19 @@ QModelIndexList CanvasProxyModelPrivate::indexs() const
     return results;
 }
 
-bool CanvasProxyModelPrivate::doSort(QList<DFMLocalFileInfoPointer> &files) const
+bool CanvasProxyModelPrivate::doSort(QList<QUrl> &files) const
 {
     if (files.isEmpty())
         return true;
 
-    auto firstInfo = files.first();
-    AbstractFileInfo::CompareFunction sortFunc = firstInfo->compareFunByKey(static_cast<AbstractFileInfo::SortKey>(fileSortRole));
-    if (sortFunc) {
-        // standard sort function
-        std::sort(files.begin(), files.end(), [sortFunc, this](const DFMLocalFileInfoPointer info1, const DFMLocalFileInfoPointer info2) {
-            return sortFunc(info1, info2, fileSortOrder);
-        });
-
-        // advanced sort for special case.
-        specialSort(files);
+    if (extend && extend->sortData(fileSortRole, fileSortOrder, &files)) {
+        qDebug() << "using extend sort";
         return true;
-    } else {
-        return false;
     }
+
+    // standard sort function
+    standardSort(files);
+    return true;
 }
 
 void CanvasProxyModelPrivate::doRefresh(bool global)
@@ -699,40 +755,18 @@ bool CanvasProxyModel::sort()
     if (d->fileList.isEmpty())
         return true;
 
-    QList<QUrl> tempFileList;
     QMap<QUrl, DFMLocalFileInfoPointer> tempFileMap;
+    QList<QUrl> orderFiles = d->fileList;
+    if (!d->doSort(orderFiles))
+        return false;
 
-    auto orderFiles = d->fileList;
-    if (d->extend && d->extend->sortData(d->fileSortRole, d->fileSortOrder, &orderFiles)) {
-        qDebug() << "using extend sort";
-        tempFileList = orderFiles;
-
-        for (const QUrl &url : orderFiles) {
-            auto itemInfo = d->fileMap.value(url);
-            if (Q_UNLIKELY(!itemInfo))
-                continue;
-
-            tempFileMap.insert(url, itemInfo);
-        }
-    } else {
-        auto files = d->fileMap.values();
-        if (!d->doSort(files)) {
-            return false;
-        }
-
-        for (auto itemInfo : files) {
-            if (Q_UNLIKELY(!itemInfo))
-                continue;
-
-            tempFileList.append(itemInfo->url());
-            tempFileMap.insert(itemInfo->url(), itemInfo);
-        }
-    }
+    for (const QUrl &url : orderFiles)
+        tempFileMap.insert(url, d->srcModel->fileInfo(d->srcModel->index(url)));
 
     layoutAboutToBeChanged();
     {
         QModelIndexList from = d->indexs();
-        d->fileList = tempFileList;
+        d->fileList = orderFiles;
         d->fileMap = tempFileMap;
         QModelIndexList to = d->indexs();
         changePersistentIndexList(from, to);

@@ -316,18 +316,11 @@ void CanvasManagerPrivate::initModel()
     // sort
     {
         Qt::SortOrder sortOrder;
-        AbstractFileInfo::SortKey sortKey;
-        // role
-        {
-            int role;
-            DispalyIns->sortMethod(role, sortOrder);
-            if (role < AbstractFileInfo::kSortByFileName || role > AbstractFileInfo::kSortByFileMimeType)
-                sortKey = AbstractFileInfo::kSortByFileMimeType;
-            else
-                sortKey = static_cast<AbstractFileInfo::SortKey>(role);
-        }
-
-        canvasModel->setSortRole(sortKey, sortOrder);
+        int role = -1;
+        DispalyIns->sortMethod(role, sortOrder);
+        if (role < 0)
+            role = Global::ItemRoles::kItemFileMimeTypeRole;
+        canvasModel->setSortRole(role, sortOrder);
     }
 
     selectionModel = new CanvasSelectionModel(canvasModel, q);
