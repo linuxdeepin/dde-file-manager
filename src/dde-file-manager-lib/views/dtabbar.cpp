@@ -59,6 +59,7 @@ DWIDGET_USE_NAMESPACE
 Tab::Tab(QGraphicsObject *parent, DFMBaseView *view):
     QGraphicsObject(parent)
 {
+    if(view)
     m_fileView = view;
 
     if (view)
