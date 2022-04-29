@@ -23,14 +23,10 @@
 
 #include "dfm_common_service_global.h"
 
-#include "dfm-base/base/menufactory.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/widgets/action/actiondatacontainer.h"
-#include "dfm-base/dfm_actiontype_defines.h"
 #include "dfm-base/dfm_event_defines.h"
-#include "dfm-base/interfaces/abstractmenu.h"
 #include "dfm-base/interfaces/abstractmenuscene.h"
-#include "dfm-base/interfaces/abstractscenecreator.h"
+#include <dfm-base/interfaces/abstractscenecreator.h>
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -41,16 +37,6 @@
 
 DSC_BEGIN_NAMESPACE
 
-using ActionCreateCb = std::function<QString(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)>;
-using ActionClickedCb = std::function<void(bool isNormal, const QUrl &currentUrl, const QUrl &focusFile, const QList<QUrl> &selected)>;
-
-struct Q_DECL_DEPRECATED ActionInfo
-{
-    DFMBASE_NAMESPACE::ExtensionType type;
-    ActionCreateCb createCb { nullptr };
-    ActionClickedCb clickedCb { nullptr };
-};
-
 class MenuServicePrivate;
 class MenuService final : public dpf::PluginService, dpf::AutoServiceRegister<MenuService>
 {
@@ -59,34 +45,11 @@ class MenuService final : public dpf::PluginService, dpf::AutoServiceRegister<Me
     friend class dpf::QtClassFactory<dpf::PluginService>;
 
 public:
-    Q_DECLARE_FLAGS(ExtensionFlags, DFMBASE_NAMESPACE::ExtensionType)
-
     static QString name()
     {
         return "org.deepin.service.MenuService";
     }
 
-    template<class T>
-    Q_DECL_DEPRECATED static bool regClass(const QString &name, QString *errorString = nullptr)
-    {
-        return DFMBASE_NAMESPACE::MenuFactory::regClass<T>(name, errorString);
-    }
-
-    Q_DECL_DEPRECATED QMenu *createMenu(QWidget *parent,
-                      const QString &scene,
-                      DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
-                      const QUrl &rootUrl,
-                      const QUrl &focusUrl,
-                      const QList<QUrl> selected,
-                      bool onDesktop = false,
-                      ExtensionFlags flags = DFMBASE_NAMESPACE::ExtensionType::kAllExtensionAction,
-                      QVariant customData = QVariant());
-
-    // TODO(Lee):移植最新的menu后删除
-
-    Q_DECL_DEPRECATED static void regAction(ActionInfo &info);
-
-    // TODO(lee) delete old interface when new menu frame be used
     static MenuService *service();
     bool contains(const QString &name) const;
     bool registerScene(const QString &name, DFMBASE_NAMESPACE::AbstractSceneCreator *creator);

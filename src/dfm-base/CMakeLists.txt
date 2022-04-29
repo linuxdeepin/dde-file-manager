@@ -31,7 +31,7 @@ qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 set(GLOBAL_H dfm_base_global.h
              dfm_event_defines.h
              dfm_global_defines.h
-             dfm_actiontype_defines.h)
+             )
 
 FILE (GLOB INTERFACES_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/interfaces/*.h"
@@ -83,10 +83,6 @@ FILE (GLOB ALL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/entry/*/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/file/fileAction/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/creator/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/file/creator/*.cpp"
 )
@@ -108,8 +104,6 @@ FILE (GLOB WIDGETS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmstatusbar/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmstatusbar/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/widgets/dfmstatusbar/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/action/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/widgets/action/*.cpp"
 )
 
 FILE (GLOB DIALOGS_FILES

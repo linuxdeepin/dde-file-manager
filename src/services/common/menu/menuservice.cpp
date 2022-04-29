@@ -21,8 +21,6 @@
 
 #include "private/menuservice_p.h"
 
-#include "private/menuservicehelper.h"
-
 #include <dfm-framework/framework.h>
 
 DSC_BEGIN_NAMESPACE
@@ -74,65 +72,6 @@ void MenuServicePrivate::createSubscene(AbstractSceneCreator *creator, AbstractM
         if (auto sub = q->createScene(child))
             parent->addSubscene(sub);
     }
-}
-
-QMenu *MenuService::createMenu(QWidget *parent,
-                               const QString &scene,
-                               DFMBASE_NAMESPACE::AbstractMenu::MenuMode mode,
-                               const QUrl &rootUrl,
-                               const QUrl &focusUrl,
-                               const QList<QUrl> selected,
-                               bool onDesktop,
-                               ExtensionFlags flags,
-                               QVariant customData)
-{
-    Q_UNUSED(onDesktop);
-
-    auto topClass = DFMBASE_NAMESPACE::MenuFactory::create(scene);
-    if (!topClass)
-        return nullptr;
-
-    // 获取场景对应前置菜单
-    auto tempMenu = topClass->build(parent, mode, rootUrl, focusUrl, selected, customData);
-
-    // TODO: 暂时直接从menu获取再排序，后续再考虑actions
-
-    // template菜单
-    if (flags.testFlag(DFMBASE_NAMESPACE::kTemplateAction)) {
-        MenuServiceHelper::templateMenu(tempMenu);
-    }
-
-    // 添加oem菜单
-    if (flags.testFlag(DFMBASE_NAMESPACE::kDesktopAction)) {
-        // TODO(Lee):
-        // MenuServiceHelper::desktopFileMenu(tempMenu);
-    }
-
-    // 添加conf菜单
-    if (flags.testFlag(DFMBASE_NAMESPACE::kConfAction)) {
-        // TODO(Lee):
-        // MenuServiceHelper::extendCustomMenu(tempMenu, mode, rootUrl, focusUrl, selected);
-    }
-
-    // 添加第三方扩展so菜单
-    if (flags.testFlag(DFMBASE_NAMESPACE::kSoAction)) {
-        // TODO(Lee):
-        MenuServiceHelper::extensionPluginCustomMenu(tempMenu, mode, rootUrl, focusUrl, selected);
-    }
-
-    // Action业务
-    auto triggeredFunc = [topClass](QAction *action) {
-        topClass->actionBusiness(action);
-    };
-
-    connect(tempMenu, &QMenu::triggered, topClass, triggeredFunc, Qt::QueuedConnection);
-
-    return tempMenu;
-}
-
-void MenuService::regAction(ActionInfo &info)
-{
-    MenuServiceHelper::regAction(info);
 }
 
 MenuService *MenuService::service()

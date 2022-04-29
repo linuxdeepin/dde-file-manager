@@ -45,12 +45,6 @@ void BookMark::initialize()
 
 bool BookMark::start()
 {
-    DSC_NAMESPACE::ActionInfo actionAddBookMark;
-    actionAddBookMark.type = DFMBASE_NAMESPACE::ExtensionType::kSoAction;
-    actionAddBookMark.createCb = BookMarkManager::bookMarkActionCreatedCallBack;
-    actionAddBookMark.clickedCb = BookMarkManager::bookMarkActionClickedCallBack;
-    BookMarkHelper::menuServIns()->regAction(actionAddBookMark);
-
     return true;
 }
 

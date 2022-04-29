@@ -27,7 +27,6 @@
 #include "mastered/masteredmediafilewatcher.h"
 #include "mastered/masteredmediadiriterator.h"
 #include "views/opticalmediawidget.h"
-#include "menus/opticalmenu.h"
 
 #include "services/common/menu/menuservice.h"
 
@@ -98,7 +97,7 @@ void Optical::addOpticalCrumbToTitleBar()
 void Optical::addFileOperations()
 {
     OpticalHelper::workspaceServIns()->addScheme(Global::kBurn);
-    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::kBurn, OpticalScene::kOpticalMenu);
+    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::kBurn, "optical-menu");
 
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;

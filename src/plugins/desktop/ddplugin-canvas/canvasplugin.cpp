@@ -20,7 +20,6 @@
  */
 #include "canvasplugin.h"
 #include "canvasmanager.h"
-#include "menu/canvasmenu.h"
 #include "utils/fileutil.h"
 
 #include <services/common/menu/menuservice.h>
@@ -73,9 +72,6 @@ bool CanvasPlugin::start()
 
     // 初始化剪切板
     ClipBoard::instance();
-
-    // register canvas menu
-    MenuService::regClass<CanvasMenu>(MenuScene::kDesktopMenu);
 
     proxy = CanvasIns->instance();
     QMetaObject::invokeMethod(ptr, "setProxy", Qt::DirectConnection, Q_ARG(QObject *, proxy));

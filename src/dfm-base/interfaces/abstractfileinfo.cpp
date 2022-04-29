@@ -961,17 +961,6 @@ AbstractFileInfo::FileType DFMBASE_NAMESPACE::AbstractFileInfo::fileType() const
     return kUnknown;
 }
 
-QVector<DFMBASE_NAMESPACE::ActionType> DFMBASE_NAMESPACE::AbstractFileInfo::menuActionList(DFMBASE_NAMESPACE::AbstractMenu::MenuType type) const
-{
-    Q_UNUSED(type)
-    return {};
-}
-
-QSet<DFMBASE_NAMESPACE::ActionType> DFMBASE_NAMESPACE::AbstractFileInfo::disableMenuActionList() const
-{
-    return {};
-}
-
 /*!
  * \brief AbstractFileInfo::compareFunByKey Get sorting function through key
  * \param sortKey Sorted key value

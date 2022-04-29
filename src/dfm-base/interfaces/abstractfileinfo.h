@@ -20,25 +20,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef ABSTRACTFILEINFO_H
-#    define ABSTRACTFILEINFO_H
+#define ABSTRACTFILEINFO_H
 
 // todo lanxs deal private
-#    define private public
-#    include <QSharedPointer>
-#    undef private
+#define private public
+#include <QSharedPointer>
+#undef private
 
-#    include "abstractmenu.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/mimetype/mimedatabase.h"
 
-#    include "dfm-base/base/urlroute.h"
-#    include "dfm-base/dfm_base_global.h"
-#    include "dfm-base/mimetype/mimedatabase.h"
-#    include "dfm-base/dfm_actiontype_defines.h"
+#include <dfm-io/core/dfileinfo.h>
 
-#    include <dfm-io/core/dfileinfo.h>
-
-#    include <QSharedData>
-#    include <QFile>
-#    include <QMimeType>
+#include <QSharedData>
+#include <QFile>
+#include <QMimeType>
+#include <QVariant>
 
 class QDir;
 class QDateTime;
@@ -228,8 +226,6 @@ public:
     virtual QMimeType fileMimeType() const;
     virtual QVariantHash extraProperties() const;
     virtual FileType fileType() const;
-    virtual QVector<ActionType> menuActionList(AbstractMenu::MenuType type = AbstractMenu::MenuType::kSingleFile) const;
-    virtual QSet<ActionType> disableMenuActionList() const;
 
     typedef std::function<bool(const QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> &,
                                const QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> &,

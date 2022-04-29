@@ -27,11 +27,11 @@
 #include "model/canvasproxymodel.h"
 #include "model/canvasselectionmodel.h"
 #include "view/operator/fileoperatorproxy.h"
-#include "menu/canvasmenu.h"
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasmenu_defines.h"
 
 #include <services/common/menu/menu_defines.h>
+#include <services/common/menu/menuservice.h>
 
 #include <dfm-base/utils/clipboard.h>
 #include <interfaces/abstractfileinfo.h>
