@@ -72,12 +72,12 @@ bool OpenDirMenuScene::initialize(const QVariantHash &params)
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
-    if (!d->isEmptyArea) {
-        if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
-            qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
-            return false;
-        }
+    if (!d->initializeParamsIsValid()) {
+        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        return false;
+    }
 
+    if (!d->isEmptyArea) {
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
         if (d->focusFileInfo.isNull()) {

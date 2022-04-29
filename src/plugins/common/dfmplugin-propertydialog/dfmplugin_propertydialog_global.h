@@ -26,4 +26,10 @@
 #define DPPROPERTYDIALOG_USE_NAMESPACE using namespace dfmplugin_propertydialog;
 #define DPPROPERTYDIALOG_NAMESPACE dfmplugin_propertydialog
 
+DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace PropertyActionId {
+static constexpr char kProperty[] { "property" };
+}
+DPPROPERTYDIALOG_END_NAMESPACE
+
 #endif   // DFMPLUGIN_PROPERTYDIALOG_GLOBAL_H

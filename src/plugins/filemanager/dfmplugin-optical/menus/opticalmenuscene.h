@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,43 +19,42 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef OPENWITHMENUSCENE_H
-#define OPENWITHMENUSCENE_H
+*/
+#ifndef OPTICALMENUSCENE_H
+#define OPTICALMENUSCENE_H
 
-#include "dfmplugin_propertydialog_global.h"
+#include "dfmplugin_optical_global.h"
 
-#include <interfaces/abstractmenuscene.h>
-#include <interfaces/abstractscenecreator.h>
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+DPOPTICAL_BEGIN_NAMESPACE
 
-class PropertyMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
+class OpticalMenuScenePrivate;
+class OpticalMenuSceneCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
     {
-        return "PropertyMenu";
+        return "OpticalMenu";
     }
     DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
 };
 
-class PropertyMenuScenePrivate;
-class PropertyMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+class OpticalMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
-    explicit PropertyMenuScene(QObject *parent = nullptr);
+    explicit OpticalMenuScene(QObject *parent = nullptr);
+    ~OpticalMenuScene() override;
+
     QString name() const override;
     bool initialize(const QVariantHash &params) override;
-    AbstractMenuScene *scene(QAction *action) const override;
-    bool create(QMenu *parent) override;
     void updateState(QMenu *parent) override;
-    bool triggered(QAction *action) override;
 
 private:
-    PropertyMenuScenePrivate *const d = nullptr;
+    QScopedPointer<OpticalMenuScenePrivate> d;
 };
 
-DPPROPERTYDIALOG_END_NAMESPACE
+DPOPTICAL_END_NAMESPACE
 
-#endif   // OPENWITHMENUSCENE_H
+#endif   // OPTICALMENUSCENE_H

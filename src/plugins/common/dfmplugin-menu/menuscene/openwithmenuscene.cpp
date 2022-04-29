@@ -74,8 +74,8 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
         d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
-    if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
-        qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+    if (!d->initializeParamsIsValid()) {
+        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 

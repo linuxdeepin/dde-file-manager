@@ -78,37 +78,33 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
 
-    if (!d->isEmptyArea) {
-        if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
-            qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
-            return false;
-        }
+    if (!d->initializeParamsIsValid()) {
+        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        return false;
+    }
 
+    QList<AbstractMenuScene *> currentScene;
+    if (!d->isEmptyArea) {
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
         if (d->focusFileInfo.isNull()) {
             qDebug() << errString;
             return false;
         }
-        QList<AbstractMenuScene *> currentScene;
         if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
             currentScene.append(workspaceScene);
-
-        // the scene added by binding must be initializeed after 'defalut scene'.
-        currentScene.append(subScene);
-        setSubscene(currentScene);
     } else {
-        QList<AbstractMenuScene *> currentScene;
         if (auto workspaceScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
             currentScene.append(workspaceScene);
 
         if (auto workspaceScene = MenuService::service()->createScene(kOpenDirMenuSceneName))
             currentScene.append(workspaceScene);
-
-        // the scene added by binding must be initializeed after 'defalut scene'.
-        currentScene.append(subScene);
-        setSubscene(currentScene);
     }
+
+    // the scene added by binding must be initializeed after 'defalut scene'.
+    currentScene.append(subScene);
+    setSubscene(currentScene);
+
     return AbstractMenuScene::initialize(params);
 }
 

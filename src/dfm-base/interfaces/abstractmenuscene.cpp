@@ -27,6 +27,16 @@ AbstractMenuScenePrivate::AbstractMenuScenePrivate(AbstractMenuScene *qq)
 {
 }
 
+bool AbstractMenuScenePrivate::initializeParamsIsValid()
+{
+    if (!isEmptyArea) {
+        if (selectFiles.isEmpty() || !focusFile.isValid() || !currentDir.isValid())
+            return false;
+    }
+
+    return true;
+}
+
 AbstractMenuScene::AbstractMenuScene(QObject *parent)
     : QObject(parent)
 {

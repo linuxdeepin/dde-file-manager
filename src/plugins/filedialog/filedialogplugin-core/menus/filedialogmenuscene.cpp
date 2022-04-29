@@ -48,6 +48,7 @@ QString FileDialogMenuScene::name() const
 bool FileDialogMenuScene::initialize(const QVariantHash &params)
 {
     Q_UNUSED(params)
+
     workspaceScene = dynamic_cast<AbstractMenuScene *>(this->parent());
     return AbstractMenuScene::initialize(params);
 }
@@ -56,7 +57,6 @@ void FileDialogMenuScene::updateState(QMenu *parent)
 {
     Q_ASSERT(parent);
     // TODO(zhangs): add whitelist by global config
-    static QString lineActId { "separator-line" };
     static const QStringList whiteActIdList { "new-folder", "new-document", "display-as", "sort-by",
                                               "open", "rename", "delete", "copy", "cut", "paste" };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
@@ -68,7 +68,7 @@ void FileDialogMenuScene::updateState(QMenu *parent)
         QString sceneName { findSceneName(act) };
         if (!whiteActIdList.contains(id) || !whiteSceneList.contains(sceneName))
             act->setVisible(false);
-        if (id == lineActId)
+        if (act->isSeparator())
             act->setVisible(true);
     });
     AbstractMenuScene::updateState(parent);

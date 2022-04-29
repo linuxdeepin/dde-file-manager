@@ -32,13 +32,15 @@ public:
     friend class AbstractMenuScene;
     explicit AbstractMenuScenePrivate(AbstractMenuScene *qq);
 
+    virtual bool initializeParamsIsValid();
+
 public:
     QUrl currentDir;
     QList<QUrl> selectFiles;
     QUrl focusFile;
-    bool onDesktop;
-    quint64 windowId;
-    bool isEmptyArea;
+    bool onDesktop { false };
+    quint64 windowId { 0 };
+    bool isEmptyArea { false };
     Qt::ItemFlags indexFlags;
 
     AbstractFileInfoPointer focusFileInfo;

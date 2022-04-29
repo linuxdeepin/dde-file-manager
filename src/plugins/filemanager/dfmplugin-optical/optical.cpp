@@ -27,6 +27,7 @@
 #include "mastered/masteredmediafilewatcher.h"
 #include "mastered/masteredmediadiriterator.h"
 #include "views/opticalmediawidget.h"
+#include "menus/opticalmenuscene.h"
 
 #include "services/common/menu/menuservice.h"
 
@@ -50,6 +51,7 @@ void Optical::initialize()
                 addOpticalCrumbToTitleBar();
             },
             Qt::DirectConnection);
+    MenuService::service()->registerScene(OpticalMenuSceneCreator::name(), new OpticalMenuSceneCreator);
 }
 
 bool Optical::start()
@@ -77,16 +79,16 @@ void Optical::addOpticalCrumbToTitleBar()
             QList<TitleBar::CrumbData> ret;
             QUrl curUrl(url);
             while (true) {
-                auto info = InfoFactory::create<AbstractFileInfo>(curUrl);
-                if (!info)
+                auto fileInfo = InfoFactory::create<AbstractFileInfo>(curUrl);
+                if (!fileInfo)
                     break;
-                QString &&displayText = info->fileDisplayName();
+                QString &&displayText = fileInfo->fileDisplayName();
                 ret.push_front(TitleBar::CrumbData(curUrl, displayText));
-                if (info->parentUrl() == QUrl::fromLocalFile(QDir::homePath())) {
+                if (fileInfo->parentUrl() == QUrl::fromLocalFile(QDir::homePath())) {
                     ret.front().iconName = "media-optical-symbolic";
                     break;
                 }
-                curUrl = info->parentUrl();
+                curUrl = fileInfo->parentUrl();
             }
             return ret;
         };
@@ -97,7 +99,7 @@ void Optical::addOpticalCrumbToTitleBar()
 void Optical::addFileOperations()
 {
     OpticalHelper::workspaceServIns()->addScheme(Global::kBurn);
-    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::kBurn, "optical-menu");
+    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::kBurn, OpticalMenuSceneCreator::name());
 
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;

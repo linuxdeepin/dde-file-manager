@@ -64,12 +64,12 @@ bool ExtendMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    if (!d->isEmptyArea) {
-        if (d->selectFiles.isEmpty() || !d->focusFile.isValid() || !d->currentDir.isValid()) {
-            qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
-            return false;
-        }
+    if (!d->initializeParamsIsValid()) {
+        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+        return false;
+    }
 
+    if (!d->isEmptyArea) {
         QString errString;
         d->focusFileInfo = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(d->focusFile, true, &errString);
         if (d->focusFileInfo.isNull()) {

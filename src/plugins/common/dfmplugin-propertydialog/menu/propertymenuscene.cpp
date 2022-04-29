@@ -47,7 +47,7 @@ AbstractMenuScene *PropertyMenuCreator::create()
 PropertyMenuScenePrivate::PropertyMenuScenePrivate(PropertyMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    predicateName[dfmplugin_menu::ActionID::kProperty] = tr("Property");
+    predicateName[PropertyActionId::kProperty] = tr("Properties");
 }
 
 PropertyMenuScene::PropertyMenuScene(QObject *parent)
@@ -63,13 +63,14 @@ QString PropertyMenuScene::name() const
 bool PropertyMenuScene::initialize(const QVariantHash &params)
 {
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
+    d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
-    if (!d->selectFiles.isEmpty() && !d->focusFile.isValid() && !d->currentDir.isValid()) {
-        qDebug() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
+    if (!d->initializeParamsIsValid()) {
+        qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
     }
 
@@ -96,9 +97,9 @@ bool PropertyMenuScene::create(QMenu *parent)
     if (d->selectFiles.isEmpty() && !d->focusFile.isValid())
         return false;
 
-    QAction *tempAction = parent->addAction(d->predicateName.value(dfmplugin_menu::ActionID::kProperty));
-    d->predicateAction[dfmplugin_menu::ActionID::kProperty] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kProperty);
+    QAction *tempAction = parent->addAction(d->predicateName.value(PropertyActionId::kProperty));
+    d->predicateAction[PropertyActionId::kProperty] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, PropertyActionId::kProperty);
 
     QList<QUrl> redirectedUrlList;
     for (const auto &fileUrl : d->selectFiles) {
@@ -120,7 +121,7 @@ void PropertyMenuScene::updateState(QMenu *parent)
         return;
 
     // open with
-    if (auto openWith = d->predicateAction.value(dfmplugin_menu::ActionID::kProperty)) {
+    if (auto openWith = d->predicateAction.value(PropertyActionId::kProperty)) {
     }
 
     AbstractMenuScene::updateState(parent);
@@ -134,7 +135,7 @@ bool PropertyMenuScene::triggered(QAction *action)
         return false;
 
     QString id = d->predicateAction.key(action);
-    if (id == dfmplugin_menu::ActionID::kProperty) {
+    if (id == PropertyActionId::kProperty) {
         dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
                                               d->selectFiles);
     }
