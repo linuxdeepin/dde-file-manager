@@ -256,7 +256,8 @@ HEADERS += \
     $$PWD/plugins/schemeplugininterface.h \
     $$PWD/plugins/schemepluginmanager.h \
     $$PWD/plugins/pluginemblemmanager.h \
-    $$PWD/plugins/private/pluginemblemmanagerprivate.h
+    $$PWD/plugins/private/pluginemblemmanagerprivate.h \
+    $$PWD/dialogs/collectiondelegate.h
 
 SOURCES += \
     $$PWD/controllers/appcontroller.cpp \
@@ -475,7 +476,8 @@ SOURCES += \
     $$PWD/views/dfmvaultretrievepassword.cpp \
     $$PWD/plugins/schemepluginmanager.cpp \
     $$PWD/plugins/pluginemblemmanager.cpp \
-    $$PWD/plugins/private/pluginemblemmanagerprivate.cpp
+    $$PWD/plugins/private/pluginemblemmanagerprivate.cpp \
+    $$PWD/dialogs/collectiondelegate.cpp
 
 !CONFIG(DISABLE_ANYTHING) {
     HEADERS += $$PWD/shutil/danythingmonitor.h
