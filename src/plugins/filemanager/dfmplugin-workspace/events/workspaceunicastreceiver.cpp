@@ -46,6 +46,7 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::selectedUrls"), this, &WorkspaceUnicastReceiver::invokeSelectedUrls);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getViewVisibleGeometry"), this, &WorkspaceUnicastReceiver::invokeGetViewVisibleGeometry);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getItemRect"), this, &WorkspaceUnicastReceiver::invokeGetItemRect);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::getViewFilter"), this, &WorkspaceUnicastReceiver::invokeGetViewFilter);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -163,6 +164,11 @@ QRectF WorkspaceUnicastReceiver::invokeGetItemRect(const quint64 windowID, const
         return workspaceWidget->itemRect(url, role);
 
     return QRectF();
+}
+
+int WorkspaceUnicastReceiver::invokeGetViewFilter(const quint64 windowID)
+{
+    return WorkspaceHelper::instance()->getViewFilter(windowID);
 }
 
 WorkspaceUnicastReceiver::WorkspaceUnicastReceiver(QObject *parent)

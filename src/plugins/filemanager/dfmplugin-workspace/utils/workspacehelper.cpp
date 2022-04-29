@@ -32,6 +32,8 @@
 
 #include <dfm-framework/framework.h>
 
+#include <QDir>
+
 DPWORKSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -94,42 +96,30 @@ void WorkspaceHelper::setDefaultViewMode(const QString &scheme, const Global::Vi
 
 void WorkspaceHelper::setSelectionMode(const quint64 windowID, const QAbstractItemView::SelectionMode &mode)
 {
-    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
-    if (workspaceWidget) {
-        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
-        if (view)
-            view->setSelectionMode(mode);
-    }
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setSelectionMode(mode);
 }
 
 void WorkspaceHelper::setEnabledSelectionModes(const quint64 windowID, const QList<QAbstractItemView::SelectionMode> &modes)
 {
-    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
-    if (workspaceWidget) {
-        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
-        if (view)
-            view->setEnabledSelectionModes(modes);
-    }
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setEnabledSelectionModes(modes);
 }
 
 void WorkspaceHelper::setViewDragEnabled(const quint64 windowID, const bool enable)
 {
-    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
-    if (workspaceWidget) {
-        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
-        if (view)
-            view->setDragEnabled(enable);
-    }
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setDragEnabled(enable);
 }
 
 void WorkspaceHelper::setViewDragDropMode(const quint64 windowID, const QAbstractItemView::DragDropMode mode)
 {
-    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
-    if (workspaceWidget) {
-        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
-        if (view)
-            view->setDragDropMode(mode);
-    }
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setDragDropMode(mode);
 }
 
 WorkspaceHelper *WorkspaceHelper::instance()
@@ -226,12 +216,9 @@ Global::ViewMode WorkspaceHelper::findViewMode(const QString &scheme)
 
 void WorkspaceHelper::selectFiles(quint64 windowId, const QList<QUrl> &files)
 {
-    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowId);
-    if (workspaceWidget) {
-        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
-        if (view)
-            view->selectFiles(files);
-    }
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        view->selectFiles(files);
 }
 
 bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const Workspace::FileViewRoutePrehaldler prehandler)
@@ -247,6 +234,43 @@ Workspace::FileViewRoutePrehaldler WorkspaceHelper::viewRoutePrehandler(const QS
     return kPrehandlers.value(scheme, nullptr);
 }
 
+void WorkspaceHelper::closePersistentEditor(const quint64 windowID, const QModelIndex &index)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->closePersistentEditor(index);
+}
+
+void WorkspaceHelper::setViewFilter(const quint64 windowID, const QDir::Filters filter)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setFilters(filter);
+}
+
+void WorkspaceHelper::setNameFilter(const quint64 windowID, const QStringList &filter)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setNameFilters(filter);
+}
+
+void WorkspaceHelper::setReadOnly(const quint64 windowID, const bool readOnly)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        view->setReadOnly(readOnly);
+}
+
+int WorkspaceHelper::getViewFilter(const quint64 windowID)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view)
+        return view->getFilters();
+
+    return QDir::NoFilter;
+}
+
 WorkspaceHelper::WorkspaceHelper(QObject *parent)
     : QObject(parent)
 {
@@ -256,4 +280,13 @@ QMutex &WorkspaceHelper::mutex()
 {
     static QMutex m;
     return m;
+}
+
+FileView *WorkspaceHelper::findFileViewByWindowID(const quint64 windowID)
+{
+    WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowID);
+    if (workspaceWidget) {
+        FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
+        return view;
+    }
 }

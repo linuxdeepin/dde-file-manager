@@ -29,6 +29,7 @@
 #include "workspace/workspace_defines.h"
 #include "dfm_global_defines.h"
 
+#include <QDir>
 #include <QMap>
 #include <QMutex>
 #include <QObject>
@@ -42,6 +43,7 @@ QT_END_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
 class CustomTopWidgetInterface;
 class WorkspaceWidget;
+class FileView;
 class WorkspaceHelper : public QObject
 {
     Q_OBJECT
@@ -85,6 +87,14 @@ public:
     bool reigsterViewRoutePrehandler(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler prehandler);
     DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);
 
+    void closePersistentEditor(const quint64 windowID, const QModelIndex &index);
+
+    void setViewFilter(const quint64 windowID, const QDir::Filters filter);
+    void setNameFilter(const quint64 windowID, const QStringList &filter);
+    void setReadOnly(const quint64 windowID, const bool readOnly);
+
+    int getViewFilter(const quint64 windowID);
+
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);
@@ -96,6 +106,8 @@ private:
     static QMutex &mutex();
     static QMap<quint64, WorkspaceWidget *> kWorkspaceMap;
     static QMap<QString, DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler> kPrehandlers;
+
+    FileView *findFileViewByWindowID(const quint64 windowID);
 
 private:
     TopWidgetCreatorMap topWidgetCreators;

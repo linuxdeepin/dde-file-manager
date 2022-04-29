@@ -29,6 +29,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QDir>
 #include <QAbstractItemView>
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -55,6 +56,11 @@ public slots:
 
     void handleSetViewDragEnabled(const quint64 windowId, const bool enabled);
     void handleSetViewDragDropMode(const quint64 windowId, const QAbstractItemView::DragDropMode mode);
+    void handleClosePersistentEditor(const quint64 windowId, const QModelIndex &index);
+
+    void handleSetViewFilter(const quint64 windowId, const QDir::Filters &filters);
+    void handleSetNameFilter(const quint64 windowId, const QStringList &filters);
+    void handleSetReadOnly(const quint64 windowId, const bool readOnly);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

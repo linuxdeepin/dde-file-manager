@@ -29,6 +29,7 @@
 #include "workspace/workspace_defines.h"
 
 #include <DListView>
+#include <QDir>
 
 DWIDGET_USE_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -118,6 +119,11 @@ public:
     bool isDragTarget(const QModelIndex &index) const;
 
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
+    void setNameFilters(const QStringList &filters);
+    void setFilters(const QDir::Filters filters);
+    QDir::Filters getFilters();
+
+    void setReadOnly(const bool readOnly);
 
     using DListView::edit;
     using DListView::updateGeometries;

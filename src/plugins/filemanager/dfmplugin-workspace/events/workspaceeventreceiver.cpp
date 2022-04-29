@@ -28,6 +28,8 @@
 #include <dfm-framework/framework.h>
 #include <functional>
 
+Q_DECLARE_METATYPE(QDir::Filters)
+
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
@@ -65,6 +67,12 @@ void WorkspaceEventReceiver::initConnection()
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragEnabled);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetViewDragDropMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragDropMode);
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetViewFilter,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetNameFilter,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetNameFilter);
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetReadOnly,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetReadOnly);
 }
 
 void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, DFMBASE_NAMESPACE::Global::ViewMode mode)
@@ -104,8 +112,30 @@ void WorkspaceEventReceiver::handleSetEnabledSelectionModes(const quint64 window
 
 void WorkspaceEventReceiver::handleSetViewDragEnabled(const quint64 windowId, const bool enabled)
 {
+    WorkspaceHelper::instance()->setViewDragEnabled(windowId, enabled);
 }
 
 void WorkspaceEventReceiver::handleSetViewDragDropMode(const quint64 windowId, const QAbstractItemView::DragDropMode mode)
 {
+    WorkspaceHelper::instance()->setViewDragDropMode(windowId, mode);
+}
+
+void WorkspaceEventReceiver::handleClosePersistentEditor(const quint64 windowId, const QModelIndex &index)
+{
+    WorkspaceHelper::instance()->closePersistentEditor(windowId, index);
+}
+
+void WorkspaceEventReceiver::handleSetViewFilter(const quint64 windowId, const QDir::Filters &filters)
+{
+    WorkspaceHelper::instance()->setViewFilter(windowId, filters);
+}
+
+void WorkspaceEventReceiver::handleSetNameFilter(const quint64 windowId, const QStringList &filters)
+{
+    WorkspaceHelper::instance()->setNameFilter(windowId, filters);
+}
+
+void WorkspaceEventReceiver::handleSetReadOnly(const quint64 windowId, const bool readOnly)
+{
+    WorkspaceHelper::instance()->setReadOnly(windowId, readOnly);
 }

@@ -47,6 +47,11 @@ const int kSetEnabledSelectionModes = DFMBASE_NAMESPACE::UniversalUtils::registe
 const int kSetViewDragEnabled = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSetViewDragDropMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kViewSelectionChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kClosePersistentEditor = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetViewFilter = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kGetViewFilter = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetNameFilter = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSetReadOnly = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 };   // namespace EventType
 
 namespace MenuScene {
@@ -170,4 +175,9 @@ QRectF WorkspaceService::getViewVisibleGeometry(const quint64 windowID)
 QRectF WorkspaceService::getItemRect(const quint64 windowID, const QUrl &url, const dfmbase::Global::ItemRoles role)
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, url, role).toRectF();
+}
+
+int WorkspaceService::getViewFilter(const quint64 windowID)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toInt();
 }

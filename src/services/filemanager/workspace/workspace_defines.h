@@ -64,6 +64,11 @@ extern const int kSetSelectionMode;
 extern const int kSetEnabledSelectionModes;
 extern const int kSetViewDragEnabled;
 extern const int kSetViewDragDropMode;
+extern const int kClosePersistentEditor;
+extern const int kSetViewFilter;
+extern const int kGetViewFilter;
+extern const int kSetNameFilter;
+extern const int kSetReadOnly;
 
 //sequence
 extern const int kFetchSelectionModes;

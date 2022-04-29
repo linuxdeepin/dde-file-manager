@@ -37,6 +37,7 @@ public slots:
 
     QRectF invokeGetViewVisibleGeometry(const quint64 windowID);
     QRectF invokeGetItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
+    int invokeGetViewFilter(const quint64 windowID);
 
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);

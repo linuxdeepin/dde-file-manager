@@ -60,6 +60,7 @@ public:
     QList<QUrl> selectedUrls(const quint64 windowID);
     QRectF getViewVisibleGeometry(const quint64 windowID);
     QRectF getItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
+    int getViewFilter(const quint64 windowID);
 
 private:
     explicit WorkspaceService(QObject *parent = nullptr);

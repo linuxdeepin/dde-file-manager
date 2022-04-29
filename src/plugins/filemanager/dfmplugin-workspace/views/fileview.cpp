@@ -510,6 +510,26 @@ QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
     }
 }
 
+void FileView::setNameFilters(const QStringList &filters)
+{
+    model()->setNameFilters(filters);
+}
+
+void FileView::setFilters(const QDir::Filters filters)
+{
+    model()->setFilters(filters);
+}
+
+QDir::Filters FileView::getFilters()
+{
+    return model()->getFilters();
+}
+
+void FileView::setReadOnly(const bool readOnly)
+{
+    model()->setReadOnly(readOnly);
+}
+
 int FileView::itemCountForRow() const
 {
 

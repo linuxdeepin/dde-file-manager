@@ -67,6 +67,22 @@ bool FileSortFilterProxyModel::dropMimeData(const QMimeData *data, Qt::DropActio
     return viewModel()->dropMimeData(data, action, sourceIndex.row(), sourceIndex.column(), sourceIndex);
 }
 
+Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags flags = QSortFilterProxyModel::flags(index);
+
+    const QModelIndex &sourceIndex = mapToSource(index);
+    const AbstractFileInfoPointer info = viewModel()->itemFromIndex(sourceIndex)->fileInfo();
+
+    if (!passNameFilters(info))
+        flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+
+    if (readOnly)
+        flags &= ~(Qt::ItemIsEditable | Qt::ItemIsDropEnabled | Qt::ItemNeverHasChildren);
+
+    return flags;
+}
+
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
     QModelIndex rootIndex = viewModel()->setRootUrl(url);
@@ -172,7 +188,18 @@ QDir::Filters FileSortFilterProxyModel::getFilters() const
 void FileSortFilterProxyModel::setFilters(const QDir::Filters &filters)
 {
     this->filters = filters;
+
     invalidateFilter();
+}
+
+void FileSortFilterProxyModel::setNameFilters(const QStringList &nameFilters)
+{
+    if (this->nameFilters == nameFilters) {
+        return;
+    }
+
+    nameFiltersMatchResultMap.clear();
+    this->nameFilters = nameFilters;
 }
 
 void FileSortFilterProxyModel::setFilterData(const QVariant &data)
@@ -205,6 +232,11 @@ void FileSortFilterProxyModel::toggleHiddenFiles()
 {
     filters = ~(filters ^ QDir::Filter(~QDir::Hidden));
     setFilters(filters);
+}
+
+void FileSortFilterProxyModel::setReadOnly(const bool readOnly)
+{
+    this->readOnly = readOnly;
 }
 
 bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -315,6 +347,40 @@ bool FileSortFilterProxyModel::passFileFilters(const AbstractFileInfoPointer &fi
         return false;
 
     //Todo(yanghao):
+    return true;
+}
+
+bool FileSortFilterProxyModel::passNameFilters(const AbstractFileInfoPointer &info) const
+{
+    if (nameFilters.isEmpty())
+        return true;
+
+    if (!info)
+        return true;
+
+    const QUrl fileUrl = info->url();
+    if (nameFiltersMatchResultMap.contains(fileUrl))
+        return nameFiltersMatchResultMap.value(fileUrl, false);
+
+    // Check the name regularexpression filters
+    if (!(info->isDir() && (filters & QDir::Dirs))) {
+        const Qt::CaseSensitivity caseSensitive = (filters & QDir::CaseSensitive) ? Qt::CaseSensitive : Qt::CaseInsensitive;
+        const QString &fileDisplayName = info->fileDisplayName();
+        QRegExp re("", caseSensitive, QRegExp::Wildcard);
+
+        for (int i = 0; i < nameFilters.size(); ++i) {
+            re.setPattern(nameFilters.at(i));
+            if (re.exactMatch(fileDisplayName)) {
+                nameFiltersMatchResultMap[fileUrl] = true;
+                return true;
+            }
+        }
+
+        nameFiltersMatchResultMap[fileUrl] = false;
+        return false;
+    }
+
+    nameFiltersMatchResultMap[fileUrl] = true;
     return true;
 }
 
