@@ -1,0 +1,72 @@
+{
+    "magic":"dsg.config.meta",
+    "version":"1.0",
+    "contents":{
+	"dfm.disk.hidden":{
+            "value":[],
+            "serial":0,
+            "flags":[],
+            "name":"磁盘隐藏",
+            "name[zh_CN]":"磁盘隐藏",
+            "description[zh_CN]":"该配置项用于配置磁盘隐藏。该数组中包含了需要隐藏的磁盘的UUID。",
+            "description":"This configuration item is used to configure disk hiding,this array contains the UUID of the disk that you want to hide.",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "bookmark":{
+            "value":[],
+            "serial":0,
+            "flags":[],
+            "name":"书签",
+            "name[zh_CN]":"书签",
+            "description[zh_CN]":"此配置项将需要显示的书签对象存储在数组中。",
+            "description":"This configuration item stores in an array the bookmark objects that need to be displayed by default.",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
+        "dfm.menu.hidden": {
+            "value":[],
+            "serial": 0,
+            "flags": [],
+            "name": "菜单隐藏",
+            "name[zh_CN]": "菜单隐藏",
+            "description": "整体隐藏菜单",
+            "description[zh_CN]": "整体隐藏菜单",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "dfm.menu.action.hidden": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "文管菜单项隐藏",
+            "name[zh_CN]": "文管菜单项隐藏",
+            "description": "隐藏文管指定菜单项",
+            "description[zh_CN]": "隐藏文管指定菜单项",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "dd.menu.action.hidden": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "桌面菜单项隐藏",
+            "name[zh_CN]": "桌面菜单项隐藏",
+            "description": "隐藏桌面指定菜单项",
+            "description[zh_CN]": "隐藏桌面指定菜单项",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "dfd.menu.action.hidden": {
+            "value": [],
+            "serial": 0,
+            "flags": [],
+            "name": "文件对话框菜单项隐藏",
+            "name[zh_CN]": "文件对话框菜单项隐藏",
+            "description": "隐藏文件对话框指定菜单项",
+            "description[zh_CN]": "隐藏文件对话框指定菜单项",
+            "permissions": "readwrite",
+            "visibility": "private"
+        }
+    }
+}
