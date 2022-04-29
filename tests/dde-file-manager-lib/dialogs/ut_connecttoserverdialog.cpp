@@ -55,6 +55,16 @@ namespace  {
 
             m_pMainwindow = new DFileManagerWindow();
             m_pTester = new ConnectToServerDialog(m_pMainwindow);
+
+            int count = m_pTester->m_collectionServerView->model()->rowCount();
+            for(int i=0;i<count;i++){
+                QModelIndex index = m_pTester->m_collectionServerView->model()->index(i,0);
+                if(index.isValid()){
+                    QString compare = m_pTester->m_collectionServerView->model()->index(i,0).data().toString();
+                    if(compare == "127.0.0.1")
+                        m_pTester->m_collectionServerView->removeItem(i);
+                }
+            }
             std::cout << "start TestConnectToServerDialog";
         }
         void TearDown() override
@@ -68,8 +78,8 @@ namespace  {
             std::cout << "end TestConnectToServerDialog";
         }
     public:
-        ConnectToServerDialog *m_pTester;
-        DFileManagerWindow* m_pMainwindow;
+        ConnectToServerDialog *m_pTester = nullptr;
+        DFileManagerWindow* m_pMainwindow = nullptr;
     };
 }
 #ifndef __arm__
@@ -121,10 +131,11 @@ TEST_F(TestConnectToServerDialog, testOnButtonClicked2)
 
 TEST_F(TestConnectToServerDialog, testOnAddButtonClicked)
 {
-    m_pTester->m_serverComboBox->setEditText("123");
+    m_pTester->m_schemeComboBox->setCurrentIndex(0);
+    m_pTester->m_serverComboBox->setEditText("127.0.0.1");
     m_pTester->onAddButtonClicked();
     QString str = m_pTester->m_serverComboBox->currentText();
-    EXPECT_TRUE(str == "123");
+    EXPECT_TRUE(str == "127.0.0.1");
 }
 
 TEST_F(TestConnectToServerDialog, testOnAddButtonClicked2)
@@ -135,27 +146,32 @@ TEST_F(TestConnectToServerDialog, testOnAddButtonClicked2)
 
     Stub stu;
     stu.set(ADDR(DListView, addItem), stub_addItem);
-
-    m_pTester->m_serverComboBox->setEditText("789");
+    m_pTester->m_schemeComboBox->setCurrentIndex(0);
+    m_pTester->m_serverComboBox->setEditText("127.0.0.1");
     m_pTester->onAddButtonClicked();
     QString str = m_pTester->m_serverComboBox->currentText();
-    EXPECT_TRUE(str == "789");
+    EXPECT_TRUE(str == "127.0.0.1");
 }
 
 TEST_F(TestConnectToServerDialog, testOnAddButtonClicked3)
 {
-    m_pTester->m_serverComboBox->setEditText("456");
+    m_pTester->m_serverComboBox->setEditText("127.0.0.1");
     m_pTester->onAddButtonClicked();
     QString str = m_pTester->m_serverComboBox->currentText();
-    EXPECT_TRUE(str == "456");
+    EXPECT_TRUE(str == "127.0.0.1");
 }
 
 TEST_F(TestConnectToServerDialog, testOnDelButtonClicked)
 {
-    m_pTester->m_serverComboBox->setEditText("123");
+    m_pTester->m_schemeComboBox->setCurrentIndex(0);
+    m_pTester->m_serverComboBox->setEditText("127.0.0.1");
+    m_pTester->setFocus(Qt::MouseFocusReason);
+    int countBefore = m_pTester->m_collectionServerView->model()->rowCount();
     m_pTester->onDelButtonClicked();
+    int countAfter = m_pTester->m_collectionServerView->model()->rowCount();
     QString str = m_pTester->m_serverComboBox->currentText();
-    EXPECT_TRUE(str == "");
+    EXPECT_TRUE(countAfter == (countBefore - 1));
+    EXPECT_TRUE(str == "127.0.0.1");
 }
 
 TEST_F(TestConnectToServerDialog, testOnDelButtonClicked2)
@@ -167,24 +183,9 @@ TEST_F(TestConnectToServerDialog, testOnDelButtonClicked2)
     Stub stu;
     stu.set(ADDR(DListView, removeItem), stub_removeItem);
 
-    m_pTester->m_serverComboBox->setEditText("456");
+    m_pTester->m_serverComboBox->setEditText("127.0.0.1");
     m_pTester->onDelButtonClicked();
     QString str = m_pTester->m_serverComboBox->currentText();
-    EXPECT_TRUE(str == "456");
-}
-
-TEST_F(TestConnectToServerDialog, testOnDelButtonClicked3)
-{
-    bool(*stub_isValid)() = []()->bool{
-        return true;
-    };
-
-    Stub stu;
-    stu.set(ADDR(QModelIndex, isValid), stub_isValid);
-
-    m_pTester->m_serverComboBox->setEditText("456");
-    m_pTester->onDelButtonClicked();
-    QString str = m_pTester->m_serverComboBox->currentText();
-    EXPECT_TRUE(str == "");
+    EXPECT_TRUE(str == "127.0.0.1");
 }
 #endif
