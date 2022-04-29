@@ -210,6 +210,13 @@ appentry.files = plugins/.readme
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations appentry \
  icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
 
+meta_file.files += \
+  tacticsconfig/org.deepin.dde.file-manager.json
+meta_file.base = ""
+
+DCONFIG_META_FILES += meta_file
+load(dtk_install_dconfig)
+
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \
     confirm/deepin-vault-authenticateProxy \
