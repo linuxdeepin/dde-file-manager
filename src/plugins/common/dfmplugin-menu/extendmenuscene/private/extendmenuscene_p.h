@@ -34,7 +34,10 @@ public:
     friend class FileOperatorMenuScene;
     explicit ExtendMenuScenePrivate(ExtendMenuScene *qq);
 
+    QList<QAction *> childActions(QAction *action);
+
     QList<QAction *> extendActions;
+    QList<QAction *> extendChildActions;
 
     QMap<int, QList<QAction *>> cacheLocateActions;
     QMap<QAction *, DCustomActionDefines::Separator> cacheActionsSeparator;

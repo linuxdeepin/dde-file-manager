@@ -23,7 +23,7 @@
 
 #include "dfmplugin_menu_global.h"
 
-#include <services/common/dfm_common_service_global.h>
+#include "services/common/dfm_common_service_global.h"
 
 #include <dfm-framework/framework.h>
 

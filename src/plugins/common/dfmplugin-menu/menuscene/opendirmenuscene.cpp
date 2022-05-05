@@ -21,13 +21,13 @@
 #include "private/opendirmenuscene_p.h"
 #include "action_defines.h"
 
-#include <services/common/menu/menu_defines.h>
+#include "services/common/menu/menu_defines.h"
+#include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/utils/sysinfoutils.h"
 
-#include <dfm-base/utils/systempathutil.h>
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/dfm_event_defines.h>
 #include <dfm-framework/framework.h>
-#include <dfm-base/utils/sysinfoutils.h>
 
 #include <QMenu>
 #include <QVariant>

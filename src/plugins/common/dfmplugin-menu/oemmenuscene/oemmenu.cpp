@@ -60,6 +60,9 @@ static const char *const kSingleFile = "SingleFile";
 static const char *const kSingleDir = "SingleDir";
 static const char *const kMultiFileDirs = "MultiFileDirs";
 
+static const char *const kCommandKey = "Exec";
+static const char *const kCommandArg[] = { "%p", "%f", "%F", "%u", "%U" };
+
 class GlobalOemMenu : public OemMenu
 {
 };
@@ -91,7 +94,8 @@ OemMenuPrivate::OemMenuPrivate(OemMenu *qq)
                      << kSupportSchemesKey
                      << kSupportSchemesAliasKey
                      << kSupportSuffixKey
-                     << kSupportSuffixAliasKey;
+                     << kSupportSuffixAliasKey
+                     << kCommandKey;
 
     for (auto path : oemMenuPath) {
         QUrl pathUrl = QUrl::fromLocalFile(path);
@@ -268,27 +272,123 @@ void OemMenuPrivate::setActionProperty(QAction *const action, const DDesktopEntr
     action->setProperty(key.toLatin1(), values);
 }
 
-void OemMenuPrivate::setActionData(QList<QAction *> actions, const QStringList &files) const
+QStringList OemMenuPrivate::splitCommand(const QString &cmd)
 {
-    if (actions.isEmpty() || files.isEmpty())
-        return;
+    QStringList args;
+    bool inQuote = false;
 
-    for (auto action : actions) {
-        setActionData(action, files);
-    }
-}
+    QString arg;
+    for (int i = 0; i < cmd.count(); i++) {
+        const bool isEnd = (cmd.size() == (i + 1));
 
-void OemMenuPrivate::setActionData(QAction *action, const QStringList &files) const
-{
-    if (!action)
-        return;
+        const QChar &ch = cmd.at(i);
+        // quotation marks
+        const bool isQuote = (ch == QLatin1Char('\'') || ch == QLatin1Char('\"'));
 
-    action->setData(files);
-    if (action->menu()) {
-        for (QAction *subAction : action->menu()->actions()) {
-            subAction->setData(files);
+        // encountered quotation mark or last character
+        if (!isEnd && isQuote) {
+            // enter or exit quotation marks
+            inQuote = !inQuote;
+        } else {
+            // use quotation marks or non spaces as an argument
+            if ((!ch.isSpace() || inQuote) && !isQuote) {
+                arg.append(ch);
+            }
+
+            // a space is encountered and a single parameter is no longer resolved in quotation marks
+            if ((ch.isSpace() && !inQuote) || isEnd) {
+                if (!arg.isEmpty()) {
+                    args << arg;
+                }
+                arg.clear();
+            }
         }
     }
+    return args;
+}
+
+OemMenuPrivate::ArgType OemMenuPrivate::execDynamicArg(const QString &cmd) const
+{
+    int firstValidIndex = cmd.indexOf("%");
+    auto cnt = cmd.length() - 1;
+    if (0 == cnt || 0 > firstValidIndex)
+        return kNoneArg;
+
+    static const QHash<QString, ArgType> actionExecArg { { kCommandArg[kDirPath], kDirPath }, { kCommandArg[kFilePath], kFilePath }, { kCommandArg[kFilePaths], kFilePaths }, { kCommandArg[kUrlPath], kUrlPath }, { kCommandArg[kUrlPaths], kUrlPaths } };
+
+    while (cnt > firstValidIndex) {
+        auto tgStr = cmd.mid(firstValidIndex, 2);
+        auto tempValue = actionExecArg.value(tgStr, kNoneArg);
+        if (kNoneArg != tempValue) {
+            return tempValue;
+        }
+        firstValidIndex = cmd.indexOf("%", firstValidIndex + 1);
+        if (-1 == firstValidIndex)
+            break;
+    }
+
+    return kNoneArg;
+}
+
+QStringList OemMenuPrivate::replace(QStringList &args, const QString &before, const QString &after) const
+{
+    QStringList rets;
+    while (!args.isEmpty()) {
+        QString arg = args.takeFirst();
+        // find the first valid "before" matching value in the parameter and replace it with "after"
+        // , and the subsequent will not be processed
+        int index = arg.indexOf(before);
+        if (index >= 0) {
+            rets << arg.replace(index, before.size(), after);
+            rets << args;
+            args.clear();
+        } else {
+            rets << arg;
+        }
+    }
+    return rets;
+}
+
+QStringList OemMenuPrivate::replaceList(QStringList &args, const QString &before, const QStringList &after) const
+{
+    QStringList rets;
+    while (!args.isEmpty()) {
+        QString arg = args.takeFirst();
+        // only independent parameters are supported, and other combinations are not processed
+        if (arg == before) {
+            // file path
+            rets << after;
+            // original parameter
+            rets << args;
+            args.clear();
+        } else {
+            rets << arg;
+        }
+    }
+    return rets;
+}
+
+QStringList OemMenuPrivate::urlListToLocalFile(const QList<QUrl> &files) const
+{
+    QStringList rets;
+    for (auto it = files.begin(); it != files.end(); ++it) {
+        rets << it->toLocalFile();
+    }
+    return rets;
+}
+
+QString OemMenuPrivate::urlToString(const QUrl &file) const
+{
+    return file.toLocalFile().isEmpty() ? QString::fromUtf8(file.toEncoded()) : file.toLocalFile();
+}
+
+QStringList OemMenuPrivate::urlListToString(const QList<QUrl> &files) const
+{
+    QStringList rets;
+    for (auto it = files.begin(); it != files.end(); ++it) {
+        rets << ((!it->toLocalFile().isEmpty()) ? it->toLocalFile() : QString::fromUtf8(it->toEncoded()));
+    }
+    return rets;
 }
 
 void OemMenuPrivate::appendParentMineType(const QStringList &parentmimeTypes, QStringList &mimeTypes) const
@@ -356,14 +456,6 @@ void OemMenu::loadDesktopFile()
                 d->actionListByType[type].append(action);
             }
 
-            // XdgDesktopFile file;
-            //            connect(action, &QAction::triggered, this, [action, file]() {
-            //                QStringList files = action->data().toStringList();
-            //                file.startDetached(files);
-            //            });
-
-            // todo(wangcl):与自定义菜单一致，统一调用fileUtils中的接口
-
             // sub action
             QStringList &&entryActions = entry.stringListValue(kActionsKey, kDesktopEntryGroup);
             entryActions.removeAll("");
@@ -378,14 +470,8 @@ void OemMenu::loadDesktopFile()
                     QString &&subActionNameStr = entry.localizedValue(kNameKey, kLocaleKey, subGroupName);
                     QAction *subAction = new QAction(QIcon(subActionIconStr), subActionNameStr, d->menuActionHolder.data());
 
-                    // XdgDesktopFile file;
-                    //                    connect(subAction, &QAction::triggered, this, [subAction, actionName, file]() {
-                    //                        QStringList files = subAction->data().toStringList();
-                    //                        file.actionActivate(actionName, files);
-                    //                    });
-
-                    // todo(wangcl):与自定义菜单一致，统一调用fileUtils中的接口
-                    //                    QString &&cmd = entry.stringValue(actionName, subGroupName);
+                    QString &&cmd = entry.stringValue(kCommandKey, subGroupName);
+                    subAction->setProperty(kCommandKey, cmd);
 
                     menu->addAction(subAction);
                 }
@@ -407,8 +493,6 @@ QList<QAction *> OemMenu::emptyActions(const QUrl &currentDir, bool onDesktop)
             it = actions.erase(it);
             continue;
         }
-
-        d->setActionData(action, { currentDir.path() });
 
         ++it;
     }
@@ -509,6 +593,51 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
         }
     }
 
-    d->setActionData(actions, filePaths);
     return actions;
+}
+
+QPair<QString, QStringList> OemMenu::makeCommand(const QAction *action, const QUrl &dir, const QUrl &foucs, const QList<QUrl> &files)
+{
+    QPair<QString, QStringList> ret;
+    if (Q_UNLIKELY(!action))
+        return ret;
+
+    QString cmd = action->property(kCommandKey).toString();
+    if (Q_UNLIKELY(cmd.isEmpty()))
+        return ret;
+
+    auto args = d->splitCommand(cmd);
+    if (args.isEmpty())
+        return ret;
+
+    // execution procedure
+    ret.first = args.takeFirst();
+    // no parameters
+    if (args.isEmpty())
+        return ret;
+
+    auto type = d->execDynamicArg(cmd);
+
+    // args
+    switch (type) {
+    case OemMenuPrivate::kDirPath:
+        ret.second = d->replace(args, kCommandArg[type], dir.toLocalFile());
+        break;
+    case OemMenuPrivate::kFilePath:
+        ret.second = d->replace(args, kCommandArg[type], foucs.toLocalFile());
+        break;
+    case OemMenuPrivate::kFilePaths:
+        ret.second = d->replaceList(args, kCommandArg[type], d->urlListToLocalFile(files));
+        break;
+    case OemMenuPrivate::kUrlPath:
+        ret.second = d->replace(args, kCommandArg[type], d->urlToString(foucs));
+        break;
+    case OemMenuPrivate::kUrlPaths:
+        ret.second = d->replaceList(args, kCommandArg[type], d->urlListToString(files));
+        break;
+    default:
+        ret.second = args;
+        break;
+    }
+    return ret;
 }

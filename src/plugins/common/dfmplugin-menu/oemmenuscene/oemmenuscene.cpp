@@ -21,9 +21,9 @@
 #include "private/oemmenuscene_p.h"
 #include "oemmenu.h"
 
-#include <services/common/menu/menu_defines.h>
-
-#include <dfm-base/base/schemefactory.h>
+#include "services/common/menu/menu_defines.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -40,6 +40,21 @@ AbstractMenuScene *OemMenuCreator::create()
 OemMenuScenePrivate::OemMenuScenePrivate(OemMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
+}
+
+QList<QAction *> OemMenuScenePrivate::childActions(QAction *action)
+{
+    QList<QAction *> actions;
+
+    if (action->menu()) {
+        auto tempChildActions = action->menu()->actions();
+        for (auto childAction : tempChildActions) {
+            actions << childAction;
+            actions << childActions(childAction);
+        }
+    }
+
+    return actions;
 }
 
 OemMenuScene::OemMenuScene(QObject *parent)
@@ -86,7 +101,7 @@ AbstractMenuScene *OemMenuScene::scene(QAction *action) const
     if (!action)
         return nullptr;
 
-    if (d->oemActions.contains(action))
+    if (d->oemActions.contains(action) || d->oemChildActions.contains(action))
         return const_cast<OemMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -94,6 +109,9 @@ AbstractMenuScene *OemMenuScene::scene(QAction *action) const
 
 bool OemMenuScene::create(QMenu *parent)
 {
+    d->oemActions.clear();
+    d->oemChildActions.clear();
+
     if (d->isEmptyArea)
         d->oemActions = OemMenu::instance()->emptyActions(d->currentDir, d->onDesktop);
     else
@@ -101,6 +119,7 @@ bool OemMenuScene::create(QMenu *parent)
 
     for (auto action : d->oemActions) {
         parent->addAction(action);
+        d->oemChildActions.append(d->childActions(action));
     }
 
     return AbstractMenuScene::create(parent);
@@ -116,10 +135,12 @@ void OemMenuScene::updateState(QMenu *parent)
 
 bool OemMenuScene::triggered(QAction *action)
 {
-    if (!d->oemActions.contains(action))
-        return false;
+    if (!d->oemActions.contains(action) && !d->oemChildActions.contains(action))
+        return AbstractMenuScene::triggered(action);
 
-    // todo(wangcl)
+    QPair<QString, QStringList> runable = OemMenu::instance()->makeCommand(action, d->currentDir, d->focusFile, d->selectFiles);
+    if (!runable.first.isEmpty())
+        return UniversalUtils::runCommand(runable.first, runable.second);
 
     return AbstractMenuScene::triggered(action);
 }

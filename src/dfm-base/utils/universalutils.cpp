@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QX11Info>
 #include <QFile>
+#include <QProcess>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -257,6 +258,35 @@ bool UniversalUtils::launchAppByDBus(const QString &desktopFile, const QStringLi
     argumentList << QVariant::fromValue(desktopFile) << QVariant::fromValue(static_cast<uint>(QX11Info::getTimestamp())) << QVariant::fromValue(filePaths);
     systemInfo.asyncCallWithArgumentList(QStringLiteral("LaunchApp"), argumentList);
     return true;
+}
+
+bool UniversalUtils::runCommand(const QString &cmd, const QStringList &args, const QString &wd)
+{
+    if (checkLaunchAppInterface()) {
+        qDebug() << "launch cmd by dbus:" << cmd << args;
+        QDBusInterface systemInfo("com.deepin.SessionManager",
+                                  "/com/deepin/StartManager",
+                                  "com.deepin.StartManager",
+                                  QDBusConnection::sessionBus());
+
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(cmd) << QVariant::fromValue(args);
+
+        if (!wd.isEmpty()) {
+            QVariantMap opt = { { "dir", wd } };
+            argumentList << QVariant::fromValue(opt);
+            systemInfo.asyncCallWithArgumentList(QStringLiteral("RunCommandWithOptions"), argumentList);
+        } else {
+            systemInfo.asyncCallWithArgumentList(QStringLiteral("RunCommand"), argumentList);
+        }
+
+        return true;
+    } else {
+        qDebug() << "launch cmd by qt:" << cmd << args;
+        return QProcess::startDetached(cmd, args, wd);
+    }
+
+    return false;
 }
 
 int UniversalUtils::dockHeight()

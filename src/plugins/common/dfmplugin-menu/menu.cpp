@@ -30,7 +30,7 @@
 #include "oemmenuscene/oemmenuscene.h"
 #include "oemmenuscene/oemmenu.h"
 
-#include <services/common/menu/menuservice.h>
+#include "services/common/menu/menuservice.h"
 
 #include <QWidget>
 

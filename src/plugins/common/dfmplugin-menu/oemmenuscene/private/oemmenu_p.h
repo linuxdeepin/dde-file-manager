@@ -37,6 +37,15 @@ class OemMenu;
 class OemMenuPrivate : public QSharedData
 {
 public:
+    enum ArgType {
+        kNoneArg = -1,
+        kDirPath,
+        kFilePath,
+        kFilePaths,
+        kUrlPath,
+        kUrlPaths,
+    };
+
     explicit OemMenuPrivate(OemMenu *qq);
     ~OemMenuPrivate();
 
@@ -52,8 +61,13 @@ public:
 
     void clearSubMenus();
     void setActionProperty(QAction *const action, const Dtk::Core::DDesktopEntry &entry, const QString &key, const QString &section = "Desktop Entry") const;
-    void setActionData(QList<QAction *> actions, const QStringList &files) const;
-    void setActionData(QAction *action, const QStringList &files) const;
+    QStringList splitCommand(const QString &cmd);
+    ArgType execDynamicArg(const QString &cmd) const;
+    QStringList replace(QStringList &args, const QString &before, const QString &after) const;
+    QStringList replaceList(QStringList &args, const QString &before, const QStringList &after) const;
+    QStringList urlListToLocalFile(const QList<QUrl> &files) const;
+    QString urlToString(const QUrl &file) const;
+    QStringList urlListToString(const QList<QUrl> &files) const;
     void appendParentMineType(const QStringList &parentmimeTypes, QStringList &mimeTypes) const;
 
     QSharedPointer<QTimer> delayedLoadFileTimer;

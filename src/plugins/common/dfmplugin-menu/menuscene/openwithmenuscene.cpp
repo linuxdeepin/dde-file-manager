@@ -22,15 +22,15 @@
 #include "action_defines.h"
 #include "private/openwithmenuscene_p.h"
 
-#include <services/common/menu/menu_defines.h>
-#include <services/common/openwith/openwithservice.h>
+#include "services/common/menu/menu_defines.h"
+#include "services/common/openwith/openwithservice.h"
+#include "dfm-base/mimetype/mimesappsmanager.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
+#include "dfm-base/mimetype/mimesappsmanager.h"
+#include "dfm-base/utils/properties.h"
+#include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-base/mimetype/mimesappsmanager.h>
-#include <dfm-base/base/schemefactory.h>
-#include <dfm-base/file/local/desktopfileinfo.h>
-#include <dfm-base/mimetype/mimesappsmanager.h>
-#include <dfm-base/utils/properties.h>
-#include <dfm-base/dfm_event_defines.h>
 #include <dfm-framework/framework.h>
 
 #include <QMenu>

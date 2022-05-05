@@ -25,7 +25,7 @@
 DPMENU_USE_NAMESPACE
 
 DCustomActionData::DCustomActionData()
-    : actionPosition(0), actionNameArg(DCustomActionDefines::NoneArg), actionCmdArg(DCustomActionDefines::NoneArg), actionSeparator(DCustomActionDefines::None)
+    : actionPosition(0), actionNameArg(DCustomActionDefines::kNoneArg), actionCmdArg(DCustomActionDefines::kNoneArg), actionSeparator(DCustomActionDefines::kNone)
 {
 }
 

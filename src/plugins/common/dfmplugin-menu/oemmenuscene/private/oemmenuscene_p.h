@@ -33,7 +33,10 @@ public:
     friend class FileOperatorMenuScene;
     explicit OemMenuScenePrivate(OemMenuScene *qq);
 
-    QList<QAction*> oemActions;
+    QList<QAction *> childActions(QAction *action);
+
+    QList<QAction *> oemActions;
+    QList<QAction *> oemChildActions;
 };
 
 DPMENU_END_NAMESPACE

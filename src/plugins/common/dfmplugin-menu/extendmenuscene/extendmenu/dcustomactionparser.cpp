@@ -149,6 +149,7 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
         return false;
 
     fileWatcher->removePaths(fileWatcher->files());
+    actionEntry.clear();
 
     topActionCount = 0;
     for (auto dirPath : dirPaths) {
@@ -156,7 +157,6 @@ bool DCustomActionParser::loadDir(const QStringList &dirPaths)
         QDir dir(dirPath);
         if (!dir.exists())
             continue;
-        actionEntry.clear();
 
         //以时间先后遍历
         for (const QFileInfo &actionFileInfo : dir.entryInfoList({ "*.conf" }, QDir::Files, QDir::Time)) {
@@ -282,7 +282,7 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
     QString separator = getValue(actionSetting, group, kActionSeparator).toString().simplified();
     if (separator.isEmpty())
         separator = getValue(actionSetting, group, kActionSeparatorAlias).toString().simplified();
-    actData.actionSeparator = separtor.value(separator, None);
+    actData.actionSeparator = separtor.value(separator, kNone);
 
     //actions 父子action级联与动作
 
@@ -400,29 +400,29 @@ bool DCustomActionParser::parseFile(QList<DCustomActionData> &childrenActions, Q
 */
 void DCustomActionParser::initHash()
 {
-    combos.insert("SingleFile", ComboType::SingleFile);
-    combos.insert("SingleDir", ComboType::SingleDir);
-    combos.insert("MultiFiles", ComboType::MultiFiles);
-    combos.insert("MultiDirs", ComboType::MultiDirs);
-    combos.insert("FileAndDir", ComboType::FileAndDir);
-    combos.insert("BlankSpace", ComboType::BlankSpace);
+    combos.insert("SingleFile", ComboType::kSingleFile);
+    combos.insert("SingleDir", ComboType::kSingleDir);
+    combos.insert("MultiFiles", ComboType::kMultiFiles);
+    combos.insert("MultiDirs", ComboType::kMultiDirs);
+    combos.insert("FileAndDir", ComboType::kFileAndDir);
+    combos.insert("BlankSpace", ComboType::kBlankSpace);
 
-    separtor.insert("None", Separator::None);
-    separtor.insert("Top", Separator::Top);
-    separtor.insert("Both", Separator::Both);
-    separtor.insert("Bottom", Separator::Bottom);
+    separtor.insert("None", Separator::kNone);
+    separtor.insert("Top", Separator::kTop);
+    separtor.insert("Both", Separator::kBoth);
+    separtor.insert("Bottom", Separator::kBottom);
 
     //name参数类型仅支持：DirName BaseName FileName
-    actionNameArg.insert(kStrActionArg[DirName], ActionArg::DirName);   //%d
-    actionNameArg.insert(kStrActionArg[BaseName], ActionArg::BaseName);   //%b
-    actionNameArg.insert(kStrActionArg[FileName], ActionArg::FileName);   //"%a",
+    actionNameArg.insert(kStrActionArg[kDirName], ActionArg::kDirName);   //%d
+    actionNameArg.insert(kStrActionArg[kBaseName], ActionArg::kBaseName);   //%b
+    actionNameArg.insert(kStrActionArg[kFileName], ActionArg::kFileName);   //"%a",
 
     //cmd参数类型只支持：DirPath FilePath FilePaths UrlPath UrlPaths
-    actionExecArg.insert(kStrActionArg[DirPath], ActionArg::DirPath);   //"%p"
-    actionExecArg.insert(kStrActionArg[FilePath], ActionArg::FilePath);   //"%f"
-    actionExecArg.insert(kStrActionArg[FilePaths], ActionArg::FilePaths);   //"%F"
-    actionExecArg.insert(kStrActionArg[UrlPath], ActionArg::UrlPath);   //"%u"
-    actionExecArg.insert(kStrActionArg[UrlPaths], ActionArg::UrlPaths);   //"%U"
+    actionExecArg.insert(kStrActionArg[kDirPath], ActionArg::kDirPath);   //"%p"
+    actionExecArg.insert(kStrActionArg[kFilePath], ActionArg::kFilePath);   //"%f"
+    actionExecArg.insert(kStrActionArg[kFilePaths], ActionArg::kFilePaths);   //"%F"
+    actionExecArg.insert(kStrActionArg[kUrlPath], ActionArg::kUrlPath);   //"%u"
+    actionExecArg.insert(kStrActionArg[kUrlPaths], ActionArg::kUrlPaths);   //"%U"
 }
 
 /*!
@@ -468,14 +468,14 @@ void DCustomActionParser::actionNameDynamicArg(DCustomActionData &act)
     int firstValidIndex = act.actionName.indexOf("%");
     auto cnt = act.actionName.length() - 1;
     if (0 == cnt || 0 > firstValidIndex) {
-        act.actionNameArg = NoneArg;
+        act.actionNameArg = kNoneArg;
         return;
     }
 
     while (cnt > firstValidIndex) {
         auto tgStr = act.actionName.mid(firstValidIndex, 2);
-        auto tempValue = actionNameArg.value(tgStr, NoneArg);
-        if (NoneArg != tempValue) {
+        auto tempValue = actionNameArg.value(tgStr, kNoneArg);
+        if (kNoneArg != tempValue) {
             act.actionNameArg = tempValue;
             break;
         }
@@ -494,18 +494,18 @@ void DCustomActionParser::execDynamicArg(DCustomActionData &act)
     int firstValidIndex = act.actionCommand.indexOf("%");
     auto cnt = act.actionCommand.length() - 1;
     if (0 == cnt || 0 > firstValidIndex) {
-        act.actionCmdArg = NoneArg;
+        act.actionCmdArg = kNoneArg;
         return;
     }
 
     while (cnt > firstValidIndex) {
         auto tgStr = act.actionCommand.mid(firstValidIndex, 2);
-        auto tempValue = actionExecArg.value(tgStr, NoneArg);
-        if (NoneArg != tempValue) {
+        auto tempValue = actionExecArg.value(tgStr, kNoneArg);
+        if (kNoneArg != tempValue) {
             act.actionCmdArg = tempValue;
             break;
         }
-        firstValidIndex = act.actionName.indexOf("%", firstValidIndex + 1);
+        firstValidIndex = act.actionCommand.indexOf("%", firstValidIndex + 1);
         if (-1 == firstValidIndex)
             break;
     }
@@ -555,12 +555,12 @@ void DCustomActionParser::delayRefresh()
     connect(refreshTimer, &QTimer::timeout, this, [this]() {
         actionEntry.clear();
 
-        qInfo() << "loading custom menus" << this;
-        loadDir(menuPaths);
-
         refreshTimer->stop();
         refreshTimer->deleteLater();
         refreshTimer = nullptr;
+
+        qInfo() << "loading custom menus" << this;
+        loadDir(menuPaths);
     });
     refreshTimer->start(300);
 }

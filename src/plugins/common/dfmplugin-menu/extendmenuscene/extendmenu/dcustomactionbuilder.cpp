@@ -156,18 +156,18 @@ DCustomActionDefines::ComboType DCustomActionBuilder::checkFileCombo(const QList
 
         //文件夹和文件同时存在
         if (dirCount > 0 && fileCount > 0)
-            return DCustomActionDefines::FileAndDir;
+            return DCustomActionDefines::kFileAndDir;
     }
 
     //文件
     if (fileCount > 0)
-        return fileCount > 1 ? DCustomActionDefines::MultiFiles : DCustomActionDefines::SingleFile;
+        return fileCount > 1 ? DCustomActionDefines::kMultiFiles : DCustomActionDefines::kSingleFile;
 
     //文件夹
     if (dirCount > 0)
-        return dirCount > 1 ? DCustomActionDefines::MultiDirs : DCustomActionDefines::SingleDir;
+        return dirCount > 1 ? DCustomActionDefines::kMultiDirs : DCustomActionDefines::kSingleDir;
 
-    return DCustomActionDefines::BlankSpace;
+    return DCustomActionDefines::kBlankSpace;
 }
 
 /*!
@@ -346,19 +346,19 @@ QPair<QString, QStringList> DCustomActionBuilder::makeCommand(const QString &cmd
 
     //传参
     switch (arg) {
-    case DCustomActionDefines::DirPath:
+    case DCustomActionDefines::kDirPath:
         ret.second = replace(args, DCustomActionDefines::kStrActionArg[arg], dir.toLocalFile());
         break;
-    case DCustomActionDefines::FilePath:
+    case DCustomActionDefines::kFilePath:
         ret.second = replace(args, DCustomActionDefines::kStrActionArg[arg], foucs.toLocalFile());
         break;
-    case DCustomActionDefines::FilePaths:
+    case DCustomActionDefines::kFilePaths:
         ret.second = replaceList(args, DCustomActionDefines::kStrActionArg[arg], urlListToLocalFile(files));
         break;
-    case DCustomActionDefines::UrlPath:
+    case DCustomActionDefines::kUrlPath:
         ret.second = replace(args, DCustomActionDefines::kStrActionArg[arg], foucs.toString());
         break;
-    case DCustomActionDefines::UrlPaths:
+    case DCustomActionDefines::kUrlPaths:
         ret.second = replaceList(args, DCustomActionDefines::kStrActionArg[arg], urlListToString(files));
         break;
     default:
@@ -524,7 +524,7 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
 
         auto separator = it->separator();
         //上分割线
-        if (separator & DCustomActionDefines::Top) {
+        if (separator & DCustomActionDefines::kTop) {
             const QList<QAction *> &actionList = menu->actions();
             if (!actionList.isEmpty()) {
                 auto lastAction = menu->actions().last();
@@ -540,7 +540,7 @@ QAction *DCustomActionBuilder::createMenu(const DCustomActionData &actionData, Q
         menu->addAction(ba);
 
         //下分割线
-        if ((separator & DCustomActionDefines::Bottom) && ((it + 1) != subActions.end())) {
+        if ((separator & DCustomActionDefines::kBottom) && ((it + 1) != subActions.end())) {
             menu->addSeparator();
         }
     }
@@ -628,13 +628,13 @@ QString DCustomActionBuilder::makeName(const QString &name, DCustomActionDefines
 
     QString ret;
     switch (arg) {
-    case DCustomActionDefines::DirName:
+    case DCustomActionDefines::kDirName:
         ret = replace(name, DCustomActionDefines::kStrActionArg[arg], dirName);
         break;
-    case DCustomActionDefines::BaseName:
+    case DCustomActionDefines::kBaseName:
         ret = replace(name, DCustomActionDefines::kStrActionArg[arg], fileBaseName);
         break;
-    case DCustomActionDefines::FileName:
+    case DCustomActionDefines::kFileName:
         ret = replace(name, DCustomActionDefines::kStrActionArg[arg], fileFullName);
         break;
     default:

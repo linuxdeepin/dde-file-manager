@@ -22,8 +22,9 @@
 #include "extendmenuscene/extendmenu/dcustomactionbuilder.h"
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 
-#include <services/common/menu/menu_defines.h>
-#include <dfm-base/base/schemefactory.h>
+#include "services/common/menu/menu_defines.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -40,6 +41,21 @@ AbstractMenuScene *ExtendMenuCreator::create()
 ExtendMenuScenePrivate::ExtendMenuScenePrivate(ExtendMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
+}
+
+QList<QAction *> ExtendMenuScenePrivate::childActions(QAction *action)
+{
+    QList<QAction *> actions;
+
+    if (action->menu()) {
+        auto tempChildActions = action->menu()->actions();
+        for (auto childAction : tempChildActions) {
+            actions << childAction;
+            actions << childActions(childAction);
+        }
+    }
+
+    return actions;
 }
 
 ExtendMenuScene::ExtendMenuScene(QObject *parent)
@@ -86,7 +102,7 @@ AbstractMenuScene *ExtendMenuScene::scene(QAction *action) const
     if (!action)
         return nullptr;
 
-    if (d->extendActions.contains(action))
+    if (d->extendActions.contains(action) || d->extendChildActions.contains(action))
         return const_cast<ExtendMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
@@ -95,6 +111,7 @@ AbstractMenuScene *ExtendMenuScene::scene(QAction *action) const
 bool ExtendMenuScene::create(QMenu *parent)
 {
     d->extendActions.clear();
+    d->extendChildActions.clear();
     d->cacheLocateActions.clear();
     d->cacheActionsSeparator.clear();
 
@@ -110,10 +127,10 @@ bool ExtendMenuScene::create(QMenu *parent)
     builder.setActiveDir(d->currentDir);
 
     //获取文件列表的组合
-    DCustomActionDefines::ComboType fileCombo = DCustomActionDefines::BlankSpace;
+    DCustomActionDefines::ComboType fileCombo = DCustomActionDefines::kBlankSpace;
     if (!d->isEmptyArea) {
         fileCombo = builder.checkFileCombo(d->selectFiles);
-        if (fileCombo == DCustomActionDefines::BlankSpace)
+        if (fileCombo == DCustomActionDefines::kBlankSpace)
             return false;
 
         //右键单击作用的文件
@@ -130,19 +147,6 @@ bool ExtendMenuScene::create(QMenu *parent)
     if (usedEntrys.isEmpty())
         return false;
 
-    //添加菜单响应所需的数据
-    {
-        QVariant var;
-        var.setValue(d->currentDir);
-        parent->setProperty(DCustomActionDefines::kCustomActionDataDir, var);
-
-        var.setValue(d->focusFile);
-        parent->setProperty(DCustomActionDefines::kCustomActionDataFoucsFile, var);
-
-        var.setValue(d->selectFiles);
-        parent->setProperty(DCustomActionDefines::kCustomActionDataSelectedFiles, var);
-    }
-
     //开启tooltips
     parent->setToolTipsVisible(true);
 
@@ -157,7 +161,7 @@ bool ExtendMenuScene::create(QMenu *parent)
         action->setParent(parent);
 
         //记录分隔线
-        if (actionData.separator() != DCustomActionDefines::None)
+        if (actionData.separator() != DCustomActionDefines::kNone)
             d->cacheActionsSeparator.insert(action, actionData.separator());
 
         //根据组合类型获取插入位置
@@ -172,6 +176,9 @@ bool ExtendMenuScene::create(QMenu *parent)
                 temp->append(action);
             }
         }
+
+        auto actions = d->childActions(action);
+        d->extendChildActions.append(actions);
 
         d->extendActions.append(action);
     }
@@ -217,12 +224,12 @@ void ExtendMenuScene::updateState(QMenu *parent)
     //插入分隔线
     for (auto it = d->cacheActionsSeparator.begin(); it != d->cacheActionsSeparator.end(); ++it) {
         //上分割线
-        if (it.value() & DCustomActionDefines::Top) {
+        if (it.value() & DCustomActionDefines::kTop) {
             parent->insertSeparator(it.key());
         }
 
         //下分割线
-        if ((it.value() & DCustomActionDefines::Bottom)) {
+        if ((it.value() & DCustomActionDefines::kBottom)) {
             const QList<QAction *> &actionList = parent->actions();
             int nextIndex = actionList.indexOf(it.key()) + 1;
 
@@ -243,29 +250,24 @@ void ExtendMenuScene::updateState(QMenu *parent)
 
 bool ExtendMenuScene::triggered(QAction *action)
 {
-    if (!d->extendActions.contains(action))
-        return false;
+    if (!d->extendActions.contains(action) && !d->extendChildActions.contains(action))
+        return AbstractMenuScene::triggered(action);
 
-    QMenu *menu = static_cast<QMenu *>(action->parent());
-    if (!menu || !action)
+    if (Q_UNLIKELY(!action))
         return false;
 
     if (action->property(DCustomActionDefines::kCustomActionFlag).isValid()) {
         QString cmd = action->property(DCustomActionDefines::kCustomActionCommand).toString();
         DCustomActionDefines::ActionArg argFlag = static_cast<DCustomActionDefines::ActionArg>(action->property(DCustomActionDefines::kCustomActionCommandArgFlag).toInt());
-        QUrl dir = menu->property(DCustomActionDefines::kCustomActionDataDir).value<QUrl>();
-        QUrl foucs = menu->property(DCustomActionDefines::kCustomActionDataFoucsFile).value<QUrl>();
-        QList<QUrl> selected = menu->property(DCustomActionDefines::kCustomActionDataSelectedFiles).value<QList<QUrl>>();
 
-        qDebug() << "argflag" << argFlag << "dir" << dir << "foucs" << foucs << "selected" << selected;
+        qDebug() << "argflag" << argFlag << "dir" << d->currentDir << "foucs" << d->focusFile << "selected" << d->selectFiles;
         qInfo() << "extend" << action->text() << cmd;
 
-        QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(cmd, argFlag, dir, foucs, selected);
+        QPair<QString, QStringList> runable = DCustomActionBuilder::makeCommand(cmd, argFlag, d->currentDir, d->focusFile, d->selectFiles);
         qInfo() << "exec:" << runable.first << runable.second;
 
-        // todo(wangcl)
-        //        if (!runable.first.isEmpty())
-        //            FileUtils::runCommand(runable.first, runable.second);
+        if (!runable.first.isEmpty())
+            return UniversalUtils::runCommand(runable.first, runable.second);
     }
 
     return AbstractMenuScene::triggered(action);
