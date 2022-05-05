@@ -107,7 +107,6 @@ QStringList NetworkManager::SupportScheme = {
 QMap<DUrl, NetworkNodeList> NetworkManager::NetworkNodes = {};
 GCancellable *NetworkManager::m_networks_fetching_cancellable = NULL;
 QPointer<QEventLoop> NetworkManager::eventLoop;
-
 NetworkManager::NetworkManager(QObject *parent) : QObject(parent)
 {
     qDebug() << "Create NetworkManager";
@@ -134,6 +133,8 @@ void NetworkManager::initConnect()
 
 bool NetworkManager::fetch_networks(gchar *url, DFMEvent *e)
 {
+    if(isFetchingNetworks())
+        return false;
     QPointer<QEventLoop> oldEventLoop = eventLoop;
     QEventLoop event_loop;
 
@@ -184,6 +185,7 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
         if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
                 !g_error_matches(error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED)) {
             qWarning("Failed to fetch network locations: %s", error->message);
+            //event->fileUrl() like:"smb://1.2.3.4/share_folder"
             if (event->fileUrl() == DUrl::fromNetworkFile("/")) {
                 NetworkManager::restartGVFSD();
             }
@@ -327,6 +329,15 @@ void NetworkManager::restartGVFSD()
     } else {
         qDebug() << "killall gvfsd failed";
     }
+}
+
+/**
+ * @brief NetworkManager::isFetchingNetworks 判断网络是否正在获取远程SMB目录列表
+ * @return
+ */
+bool NetworkManager::isFetchingNetworks()
+{
+    return eventLoop && eventLoop->isRunning();
 }
 
 void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)

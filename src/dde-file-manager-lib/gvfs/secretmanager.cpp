@@ -201,11 +201,51 @@ void SecretManager::clearPasswordByLoginObj(const QJsonObject &obj)
     saveCache();
 }
 
+/**
+ * @brief SecretManager::clearPassworkBySmbHost 把smbDevice下的所有smb共享目录忘记密码
+ * @param smbDevice
+ */
+void SecretManager::clearPassworkBySmbHost(const DUrl &smbDevice)
+{
+    for (auto key : m_smbLoginObjs.keys()){
+        if (key.startsWith(smbDevice.scheme()+"://") && key.contains(smbDevice.host())){
+            QJsonObject smbObj = m_smbLoginObjs.value(key).toObject();//取出数据
+            smbObj.insert("key",key);
+
+            QJsonObject obj;
+            obj.insert("user", smbObj.value("username").toString());//注意，相同的smb设备下面的不同共享目录，可能是不同的远端用户共享出来的
+            obj.insert("domain", smbObj.value("domain").toString());
+            obj.insert("protocol", DUrl(smbObj.value("id").toString()).scheme());
+            obj.insert("server", smbDevice.host());
+            obj.insert("key", smbObj.value("key").toString());
+
+            clearPasswordByLoginObj(obj);
+        }
+    }
+}
+
+/**
+ * @brief SecretManager::userCheckedRememberPassword 检查smbDevice下是否有共享目录在鉴权时勾选了记住密码。
+ * @param url
+ */
+bool SecretManager::userCheckedRememberPassword(const DUrl &smbDevice)
+{
+    bool savePasswordChecked = false;
+    for (auto key : m_smbLoginObjs.keys()){
+        if (key.startsWith(smbDevice.toString())) {
+            QJsonObject smbObj = m_smbLoginObjs.value(key).toObject();
+            savePasswordChecked = smbObj.value("savePasswordChecked").toBool();
+            if(savePasswordChecked)
+                break;
+        }
+    }
+    return savePasswordChecked;
+}
+
 QJsonObject SecretManager::getLoginData(const QString &id)
 {
     QMutexLocker lk(&smbMutex);
-    for (auto key : m_smbLoginObjs.keys())
-    {
+    for (auto key : m_smbLoginObjs.keys()){
         if (key.startsWith(id) || id.startsWith(key)) {
             QJsonObject smbObj = m_smbLoginObjs.value(key).toObject();
             smbObj.insert("key", key);

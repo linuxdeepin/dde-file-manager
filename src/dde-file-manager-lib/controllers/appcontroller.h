@@ -144,6 +144,7 @@ public slots:
     void actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBaseEvent> &event);
+    void actionForgetAllSmbPassword(const QSharedPointer<DFMUrlListBaseEvent> &event);
 
     void actionctrlL(quint64 winId);
     void actionctrlF(quint64 winId);
@@ -154,6 +155,7 @@ public slots:
     void actionForward(quint64 winId);
 
     void actionForgetPassword(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void doForgetPassword(const QString& path);
 
     void actionOpenFileByApp();
     void actionSendToRemovableDisk();

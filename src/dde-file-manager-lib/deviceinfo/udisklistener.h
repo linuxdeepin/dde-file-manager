@@ -106,6 +106,7 @@ public:
     int getCountOfMountedSmb(const QString &ip);//获取ip下smb挂载数量
     void setBatchedRemovingSmbMount(bool value);//设置批量卸载smb的标志
     bool isBatchedRemovingSmbMount();
+    void clearLoginData();
 private:
     void initDiskManager();
     void initConnect();

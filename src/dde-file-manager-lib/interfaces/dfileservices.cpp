@@ -58,6 +58,7 @@
 #include <ddialog.h>
 #include "execinfo.h"
 #include "math.h"
+#include "gvfs/networkmanager.h"
 
 #include <QUrl>
 #include <QDebug>
@@ -1003,6 +1004,10 @@ bool DFileService::checkGvfsMountfileBusy(const DUrl &url, const bool showdailog
         }
         rooturl = url;
     } else {
+        if(url.scheme() == SMB_SCHEME && rooturl.isEmpty()){
+            if(networkManager->isFetchingNetworks())//此处若没有此判断，会导致高频访问smb://host卡死
+                return true;
+        }
         static QRegularExpression regExp(GVFS_MATCH_EX,
                                          QRegularExpression::DotMatchesEverythingOption
                                          | QRegularExpression::DontCaptureOption

@@ -34,6 +34,8 @@
 #include "dfmsidebaritemdelegate.h"
 #include "dfmsidebaritem.h"
 #include "dfmopticalmediawidget.h"
+#include "gvfs/secretmanager.h"
+#include "dfmeventdispatcher.h"
 
 #include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
@@ -385,7 +387,7 @@ void DFMSideBar::rootFileResult()
         }
 
         QString smbIp;
-        if(!keepSmb && FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp)){
+        if(!keepSmb && FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp)){//配置为不常驻SMB
             filist.removeOne(r);//过滤移除smb挂载路径，不在sidebar上显示
         }
     }
@@ -460,6 +462,30 @@ void DFMSideBar::removeSmbUrlFromMultipMap(const DUrl &url)
                   break;
               }
           }
+    }
+}
+
+void DFMSideBar::clearSmbMultiMap(const DUrl &url)
+{
+    m_sideBarSmbIpItemNames.remove(url.host());
+}
+
+/**
+ * @brief DFMSideBar::jumpToComputerItem
+ */
+void DFMSideBar::jumpToComputerItem(bool toComputerItem)
+{
+    DUrl urlSkip = DUrl(COMPUTER_ROOT);
+    int index = findItem(urlSkip, groupName(toComputerItem ? Device : Common));
+    DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
+    if (item) {
+        QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
+        QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
+        DAbstractFileWatcher *devicesWatcher = rootFileManager->rootFileWather();
+        if (interface) {
+            if(!(devicesWatcher->property("isBathUnmuntSmb").toBool() && devicesWatcher->property("remainUnmuntSmb").toInt()>0))
+                interface->cdAction(this, item);
+        }
     }
 }
 
@@ -550,24 +576,27 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     QMenu *menu = nullptr;
     if (interface) {
-        if(FileUtils::isSmbIpHost(item->url())){
+        if(FileUtils::isSmbHostOnly(item->url())){//如果用户点击弹出右键菜单的item是SMB设备(item->url() = smb://host)
             QStringList list;
             DUrlList urlList;
             QList<DAbstractFileInfoPointer> filist  = rootFileManager->getRootFile();
             qInfo()<<item->url();
             foreach (DAbstractFileInfoPointer r, filist) {
-                if(!r->fileUrl().toString().contains(item->url().host()) && r->fileUrl().toString().contains(item->url().scheme()))
-                    continue;
+                QString scheme = item->url().scheme()+"://";
+                QString host = item->url().host();
+                QString decodeUrl = DUrl::fromPercentEncoding(r->fileUrl().path().toUtf8());
                 QString smbIp;
+                if(FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp) && !r->fileUrl().toString().contains(host))
+                    continue;
+
                  if(r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted(r->fileUrl())){
-                    list << r->fileUrl().toString();
+                    list << r->fileUrl().toString();//把用户右击的SMB侧边栏子项对应的已挂载的SMB地址筛选出来
                 }
             }
-            if(list.isEmpty()){
-                list << item->url().toString();
+            if(list.isEmpty()){//如果用户右击的SMB侧边栏子项没有对应已挂载的SMB地址
+                list << item->url().toString();//保存smb://host确保list不为空，
             }
             if(!list.isEmpty()){
-//                item->setIcon(QIcon::fromTheme("folder-remote-symbolic"));
                 item->setData(QVariant::fromValue(list),DFMSideBarItem::ItemSmbMountedUrls);
             }
         }
@@ -575,27 +604,6 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
         menu = interface->contextMenu(this, item);
 
         if (menu) {
-//            for (QAction *act : menu->actions()){
-//                if(act->data() == MenuAction::UnmountAllSmbMount){
-//                    static bool connectOneTime = false;
-//                    if(!connectOneTime){
-//                        connectOneTime = true;
-//                        connect(act,&QAction::triggered,[&](){//User remove SMB IP item manually
-//                            DFMSideBarItem *item = m_sidebarModel->itemFromIndex(m_sidebarView->currentIndex());
-//                            if(item){
-//                                DUrl url = item->url();
-//                                QString smbIp;
-//                                if(FileUtils::isSmbRelatedUrl(url,smbIp)){//FileUtils::isSmbIpHost(url)
-//                                    qInfo()<<"item->url()        === "<<item->url();
-//                                    removeSmbUrlFromMultipMap(url);
-//                                    this->removeItem(item->url(),"device");
-//                                    m_sideBarSmbIpItemNames.remove(smbIp);
-//                                }
-//                            }
-//                        });
-//                    }
-//                }
-//            }
             // 如果光驱正在执行刻录/擦除操作，禁用光驱的右键菜单
             QString strVolTag = item->url().path().remove("/").remove(".localdisk"); // /sr0.localdisk 去头去尾
             if (strVolTag.startsWith("sr") && DFMOpticalMediaWidget::g_mapCdStatusInfo[strVolTag].bBurningOrErasing) {
@@ -999,10 +1007,14 @@ void DFMSideBar::initDeviceConnection()
             bool lastOneShareFolderRemved = false;
             removeSmbUrlFromMultipMap(url);
             int remainMountedCount = remainCountOfMountedSmb(smbIp);//剩余SMB挂载目录数量
-            if(remainMountedCount <=0 )//SMB设备已经没有挂载着的共享目录了
-            {
+            if(remainMountedCount <=0 ){//SMB设备已经没有挂载着的共享目录了
                 //标识最后一个SMB挂载目录已被卸载，可以从侧边栏移除（具体是否可以移除，还要看配置GA_AlwaysShowOfflineRemoteConnections）
                 lastOneShareFolderRemved = true;
+                DUrl smbDevice(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
+                if(!secretManager->userCheckedRememberPassword(smbDevice)){//如果挂载共享目录鉴权时，用户没有勾选记住密码
+                   secretManager->clearPassworkBySmbHost(smbDevice);//取消记住密码
+                   deviceListener->clearLoginData();//清除登录数据，以便下次重新弹出鉴权对话框
+                }
             }
             //如果最后一个SMB挂载已被移除 且 配置为无需常驻SMB挂载
             if(lastOneShareFolderRemved && !DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool()){
@@ -1010,7 +1022,6 @@ void DFMSideBar::initDeviceConnection()
                 //The smb ip item data like: smb://xx.xx.xx.xx
                 this->removeItem(DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp)), this->groupName(Device));//Important!remove smb ip item from side bar.
             }
-
         }
          if ((curIndex == index && index != -1)
                 || (!curUrlCanAccess) || jumpToComputerViewAfterUnmountSmb) {
@@ -1040,22 +1051,7 @@ void DFMSideBar::initDeviceConnection()
             } else {
                 urlSkip = DUrl::fromLocalFile(QDir::homePath());
             }
-
-
-            index = findItem(urlSkip, groupName(turnToComputer ? Device : Common));
-            DFMSideBarItem *item = m_sidebarModel->itemFromIndex(index);
-            if (item) {
-                QString identifierStr = item->registeredHandler(SIDEBAR_ID_INTERNAL_FALLBACK);
-                QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
-                if (interface) {
-                    if(devicesWatcher->property("isBathUnmuntSmb").toBool() && devicesWatcher->property("remainUnmuntSmb").toInt()>0)
-                        qInfo()<<"smb not unmount all....1";//<<devicesWatcher->property("remainUnmuntSmb").toInt();
-                    else{
-                        qInfo()<<"smb not unmount all....2";
-                        interface->cdAction(this, item);
-                    }
-                }
-            }
+            this->jumpToComputerItem(turnToComputer);
         }
         //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
         if( !isSmbRelatedPath || jumpToComputerViewAfterUnmountSmb)
