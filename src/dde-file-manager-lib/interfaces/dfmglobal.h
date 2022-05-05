@@ -344,7 +344,9 @@ public:
     static bool isWayLand();
 
     QList<QUrl> clipboardFileUrlList() const;
+    void removeClipboardFileUrl(const QUrl &url);
     QList<quint64> clipboardFileInodeList() const;
+    void removeClipboardFileInode(const QString &localPath);
     ClipboardAction clipboardAction() const;
     QIcon standardIcon(Icon iconType) const;
 
