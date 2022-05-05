@@ -131,8 +131,6 @@ bool RecentMenuScene::triggered(QAction *action)
 {
     DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
-    if (!d->predicateAction.contains(actId))
-        return false;
 
     if (actId == RecentActionID::kRemove) {
         RecentFilesHelper::removeRecent(d->selectFiles);
