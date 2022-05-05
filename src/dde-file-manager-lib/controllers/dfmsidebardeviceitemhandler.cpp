@@ -162,9 +162,12 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
         disabled.remove(MenuAction::Property);
     }
     QVector<MenuAction> av = infoPointer->menuActionList();
-    bool isSmbIp = FileUtils::isSmbIpHost(item->url());
+    bool isSmbIp = FileUtils::isSmbHostOnly(item->url());
     if(isSmbIp){
+        av.removeOne(MenuAction::Open);
+        av.removeOne(MenuAction::OpenInNewWindow);
         av.push_back(MenuAction::UnmountAllSmbMount);
+        av.push_back(MenuAction::ForgetAllSmbPassword);
     }
 
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);

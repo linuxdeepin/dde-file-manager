@@ -24,6 +24,7 @@
 #ifndef SECRETMANAGER_H
 #define SECRETMANAGER_H
 
+#include <durl.h>
 #include <QObject>
 #include <QJsonObject>
 #include <QMutex>
@@ -60,6 +61,8 @@ public:
     DSecureString lookupVaultPassword();
     bool clearVaultPassword();
     void clearPasswordByLoginObj(const QJsonObject& obj);
+    void clearPassworkBySmbHost(const DUrl &smbDevice);
+    bool userCheckedRememberPassword(const DUrl &smbDevice);
     QJsonObject getLoginData(const QString& id);
     QJsonObject getLoginDatas();
     static QString cachePath();

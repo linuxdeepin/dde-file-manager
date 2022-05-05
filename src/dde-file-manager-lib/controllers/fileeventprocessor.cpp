@@ -373,6 +373,9 @@ static bool processMenuEvent(const QSharedPointer<DFMMenuActionEvent> &event)
     case DFMGlobal::UnmountAllSmbMount:
         AppController::instance()->actionUnmountAllSmbMount(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
         break;
+    case DFMGlobal::ForgetAllSmbPassword:
+        AppController::instance()->actionForgetAllSmbPassword(dMakeEventPointer<DFMUrlListBaseEvent>(event->sender(), event->selectedUrls()));
+        break;
     }
 
     return true;

@@ -1892,8 +1892,8 @@ bool FileUtils::isNetworkUrlMounted(const DUrl &url)
 {
     for (auto gvfsmp : DGioVolumeManager::getMounts()) {
         auto rootFile = gvfsmp->getRootFile();
-        if (!rootFile || (!rootFile->uri().contains("smb")
-                && !rootFile->uri().contains("ftp")))
+        if (!rootFile || (!rootFile->uri().contains(SMB_SCHEME)
+                && !rootFile->uri().contains(FTP_SCHEME)))
             continue;
 
         DUrl mountUrl;
@@ -1945,6 +1945,12 @@ bool FileUtils::isSmbPath(const QString &localPath)
     return -1 != idx;
 }
 
+/**
+ * @brief FileUtils::isSmbShareFolder To judge the give url whether is a smb share folder url,
+ * Its format is like smb://host/share_folder or dfmroot://smb://host/share_folder
+ * @param url
+ * @return Return true if the give url is a smb share folder url
+ */
 bool FileUtils::isSmbShareFolder(const DUrl &url)
 {
     DUrl temUrl = url;
@@ -1957,9 +1963,16 @@ bool FileUtils::isSmbShareFolder(const DUrl &url)
     if(path.endsWith('/') || path.endsWith('\\')){
         path.chop(1);
     }
-    return temUrl.scheme() == SMB_SCHEME && !path.isEmpty() && path.startsWith('/') && path.count("/") == 1;
+    bool result = temUrl.scheme() == SMB_SCHEME && !path.isEmpty() && path.startsWith('/') && path.count("/") == 1;
+    return result;
 }
 
+/**
+ * @brief FileUtils::isSmbRelatedUrl 判断url是否是smb相关的url并输出host
+ * @param url
+ * @param host
+ * @return
+ */
 bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
 {
     /*
@@ -1971,12 +1984,11 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
       3、smb ip,such as：
       smb://<host>
     */
-    //添加的侧边栏smb url是否是没挂载的远程地址
     if (isSmbPath(url.path()) || url.toString().startsWith("smb://") ) {//ends with .gvfsmp
         if ( url.path().endsWith( QString( ".%1" ).arg(SUFFIX_GVFSMP)) ){
             QString path = QUrl::fromPercentEncoding(url.path().toUtf8());
             host = path.section( "server=" , -1 ).section( "," , 0, 0 );
-        } else if (url.path().endsWith( QString( ".%1" ).arg(SUFFIX_STASHED_REMOTE)) ){
+        } else if (url.path().endsWith( QString( ".%1" ).arg(SUFFIX_STASHED_REMOTE)) ){//ends with .remote
             QString smbPath = QUrl::fromPercentEncoding( url.path().toUtf8() );
             if (smbPath.startsWith( "/" ))
                 smbPath = smbPath.mid(1);
@@ -1992,12 +2004,17 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
     return false;
 }
 
-bool FileUtils::isSmbIpHost(const DUrl &url)
+/**
+ * @brief FileUtils::isSmbHostOnly 判断url格式是否为smb://host或者smb://domain格式
+ * @param url
+ * @return
+ */
+bool FileUtils::isSmbHostOnly(const DUrl &url)
 {
-    QRegExp rx("(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])");
     QString urlString = url.toString();
-    urlString = urlString.remove(QString("%1://").arg(SMB_SCHEME));
-    bool re = rx.exactMatch(urlString);
+    if(urlString.endsWith("/") || urlString.endsWith("\\"))
+        urlString.chop(1);
+    bool re = url.scheme()+ "://" + url.host() == url.toString();
     return re;
 }
 

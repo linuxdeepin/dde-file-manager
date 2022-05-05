@@ -163,9 +163,9 @@ public:
     static QString getVolTag(GVolume *v);
     //cancell mount_sync
     static void cancellMountSync(GMountOperation *op);
-
+    static void clearLoginData();
     void autoMountAllDisks();
-
+    static int m_clearLoginDataCounter;
 private:
     static bool try_to_get_mounted_point(GVolume *volume);
 
@@ -189,6 +189,8 @@ public slots:
 private:
     GVolumeMonitor* m_gVolumeMonitor = nullptr;
     static bool errorCodeNeedSilent(int errorCode);
+    static QJsonObject m_obj;
+    static QJsonObject m_loginObj;
 };
 
 #endif // GVFSMOUNTMANAGER_H

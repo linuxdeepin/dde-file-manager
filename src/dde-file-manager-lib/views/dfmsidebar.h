@@ -82,6 +82,8 @@ public:
     static const int maximumWidth = 200;
     void rootFileResult();
     void removeSmbUrlFromMultipMap(const DUrl& url);
+    void clearSmbMultiMap(const DUrl& url);
+    void jumpToComputerItem(bool toComputerItem = true);
 private:
     int remainCountOfMountedSmb(const QString& ip);
 signals:

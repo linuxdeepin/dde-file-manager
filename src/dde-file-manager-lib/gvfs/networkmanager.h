@@ -101,7 +101,7 @@ public:
 
     static void populate_networks (GFileEnumerator *enumerator, GList *detected_networks, gpointer user_data);
     static void restartGVFSD();
-
+    static bool isFetchingNetworks();
 signals:
 
 public slots:

@@ -162,17 +162,15 @@ public:
     static bool isSambaServiceRunning();
     // 判断当前的网络挂载路径是否挂载了
     static bool isNetworkUrlMounted(const DUrl &url);
-
     static bool isSmbUnmountedFile(const DUrl &url);
-
     // 判断挂载路径是否是smb路径
     static bool isSmbPath(const QString &localPath);
-    // 判断url是否是smb设备共享目录，即形如：smb://<IP>/<共享目录>
+
     static bool isSmbShareFolder(const DUrl &url);
-    // 判断url是否是smb相关的url并输出host
+
     static bool isSmbRelatedUrl(const DUrl &url, QString &host);
-    // 判断url是否是smb://<IP>格式且不带路径
-    static bool isSmbIpHost(const DUrl &url);
+
+    static bool isSmbHostOnly(const DUrl &url);
 
     // 根据本地路径返回DUrl
     static DUrl durlFromLocalPath(const QString &localPath);
