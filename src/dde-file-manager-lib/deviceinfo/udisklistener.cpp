@@ -623,6 +623,14 @@ bool UDiskListener::isBatchedRemovingSmbMount()
     return m_isBatchedRemovingSmbMount;
 }
 
+/**
+ * @brief UDiskListener::clearLoginData 清除用于SMB重复鉴权的数据
+ */
+void UDiskListener::clearLoginData()
+{
+    gvfsMountManager->clearLoginData();
+}
+
 void UDiskListener::addMountDiskInfo(const QDiskInfo &diskInfo)
 {
     qDebug() << diskInfo;

@@ -223,23 +223,29 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         bool isSmbSharedDir = FileUtils::isSmbShareFolder(currentUrl);
         if (isSmbSharedDir) {
             // /run/user/1000/gvfs/smb-share:server=xx.xx.xx.xx,share=<folderName>
-            QString formatPath("/run/user/%1/gvfs/smb-share:server=%2,share=%3");
+            // todo : 'smb-share:domain=WORKGROUP,server=1.2.3.4,share=draw,user=username'
+            QString prefix("/run/user/%1/gvfs/");
+            QString mountDir("smb-share:server=%2,share=%3");
+            mountDir = mountDir.prepend(prefix);
             QString scheme = currentUrl.scheme();
             QUrl tem = QUrl::fromPercentEncoding(currentUrl.toString().toLocal8Bit());
             QString path = tem.path();
             if(!path.isEmpty()){
                 QString ip = tem.host();
                 QString dirName = path.split("/").last();
-                formatPath = formatPath.arg(getuid()).arg(ip).arg(dirName.toLower());
+                QString formatPath = mountDir.arg(getuid()).arg(ip).arg(dirName.toLower());
                 DUrl mountUrl;
                 mountUrl.setScheme(DFMROOT_SCHEME);
                 mountUrl.setPath("/" + QUrl::toPercentEncoding(formatPath + "." SUFFIX_GVFSMP));
                 bool isMounted = FileUtils::isNetworkUrlMounted(mountUrl);
+
+
                 if (isMounted) {//Menu show unmount item
-                    actions << MenuAction::Unmount << MenuAction::ForgetPassword;
+                    actions << MenuAction::Unmount;
                 } else {//Menu show mount item
                     actions << MenuAction::Mount;
                 }
+                actions << MenuAction::Property;
             }
         }
         //修改在挂载的文件下面，不能删除，但是显示了删除
@@ -956,8 +962,9 @@ void DFileMenuData::initData()
     }
 
     actionKeys[MenuAction::RemoveStashedRemoteConn] = QObject::tr("Remove");
-    actionKeys[MenuAction::UnmountAllSmbMount] = QObject::tr("Remove");
+    actionKeys[MenuAction::UnmountAllSmbMount] = QObject::tr("Unmount");
     actionKeys[MenuAction::RefreshView] = QObject::tr("Refresh");
+    actionKeys[MenuAction::ForgetAllSmbPassword] = QObject::tr("Clear saved password and unmount");
 
     // action predicate
     actionPredicate[MenuAction::Open] =  "Open";

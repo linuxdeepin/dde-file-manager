@@ -289,7 +289,7 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
 
     QDir::setCurrent(currentDir);
 
-    if(FileUtils::isSmbIpHost(inputUrl)){//like: smb://xx.xx.xx.xx
+    if(FileUtils::isSmbHostOnly(inputUrl)){//like: smb://xx.xx.xx.xx
         emit addSmbIpToSideBar(inputUrl);
     }
 

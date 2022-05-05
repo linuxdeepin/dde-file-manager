@@ -109,7 +109,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         if (!historyManager->toStringList().contains(text)) {
             historyManager->writeIntoSearchHistory(text);
         }
-        if(FileUtils::isSmbIpHost(inputUrl)){
+        if(FileUtils::isSmbHostOnly(inputUrl)){
             DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(fileWindow->topLevelWidget());
             if(window){
                 emit window->getToolBar()->addSmbIpToSideBar(inputUrl);

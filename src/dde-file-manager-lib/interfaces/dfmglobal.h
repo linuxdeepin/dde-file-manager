@@ -203,6 +203,7 @@ public:
         Mount,
         Unmount,
         UnmountAllSmbMount,
+        ForgetAllSmbPassword,
         Eject,
         SafelyRemoveDrive,
         Name,

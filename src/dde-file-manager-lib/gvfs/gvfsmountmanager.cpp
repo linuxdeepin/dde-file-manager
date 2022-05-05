@@ -97,7 +97,13 @@ Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr")
 #else
 Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr", QtInfoMsg)
 #endif
-
+//关于SMB只鉴权一次的实现原理：
+//保存SMB共享目录的登录鉴权数据，当打开其它共享目录时，如果有上次的登录鉴权数据则不再弹出鉴权对话框，先使用上次的登录数据；
+//如果没有权限访问其它共享目录，则会反复进入ask_password_cb()函数，通过倒计数器m_clearLoginDataCounter(默认值为3)
+//减小到0时，清空上次的登录鉴权数据，从而再次弹出鉴权对话框让用户重新鉴权
+QJsonObject GvfsMountManager::m_obj;
+QJsonObject GvfsMountManager::m_loginObj;
+int GvfsMountManager::m_clearLoginDataCounter = 3;
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
     m_gVolumeMonitor = g_volume_monitor_get();
@@ -756,9 +762,8 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
 GMountOperation *GvfsMountManager::new_mount_op(bool isDisk = true)
 {
     GMountOperation *op;
-
+    GvfsMountManager::m_clearLoginDataCounter = 3;
     op = g_mount_operation_new();
-
     g_signal_connect(op, "ask_question", G_CALLBACK(ask_question_cb), NULL);
     g_signal_connect(op, "ask_password",
                      isDisk ? G_CALLBACK(ask_disk_password_cb) : G_CALLBACK(ask_password_cb),
@@ -868,13 +873,25 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         askPasswordDialogHash.value(op)->deleteLater();
         askPasswordDialogHash.remove(op);
         if (AskingPasswordHash.value(op))
-            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                        tr("Mounting device error"), tr("Wrong username or password"));
-        //fix bug 63796,是sftp和ftp时，后面不会弹窗，所以这里要弹提示
-        if (!AskingPasswordHash.value(op) && MountEventHash.value(op) && MountEventHash.contains(op) && MountEventHash.value(op)->fileUrl().scheme() != SMB_SCHEME)
-            DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
-                                         tr("Mounting device error"), QString());
-        return;
+            qInfo()<<"password error!!";
+        //下面的代码暂时保留，可能会用到弹出错误提示框。
+//                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+//                                            tr("Mounting device error"), tr("Wrong username or password"));
+//            //fix bug 63796,是sftp和ftp时，后面不会弹窗，所以这里要弹提示
+//            if (!AskingPasswordHash.value(op) && MountEventHash.value(op) && MountEventHash.contains(op) && MountEventHash.value(op)->fileUrl().scheme() != SMB_SCHEME)
+//                DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
+//                                             tr("Mounting device error"), QString());
+            return;
+
+    }
+    m_clearLoginDataCounter--;
+    //正常情况进入一次该函数，成功打开目录后就不会再进入了；
+    //如果用户切换到了需要重新鉴权的目录，而采用上次的登录数据，该函数会反复进入，当达到3次，即会弹出重新鉴权对话框，达到切换访问目录的目的
+    if(m_clearLoginDataCounter == 0){
+        while (!m_loginObj.isEmpty()) {
+            m_loginObj.take(m_loginObj.keys().first());
+        }
+        m_clearLoginDataCounter = 3;
     }
 
     bool anonymous = g_mount_operation_get_anonymous(op);
@@ -890,29 +907,38 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
     qCDebug(mountManager()) << "GAskPasswordFlags" << flags;
     qCDebug(mountManager()) << "passwordSave" << passwordSave;
 
-    QJsonObject obj;
-    obj.insert("message", message);
-    obj.insert("anonymous", anonymous);
-    obj.insert("username", default_user);
-    obj.insert("domain", default_domain);
-    obj.insert("password", default_password);
-    obj.insert("GAskPasswordFlags", flags);
-    obj.insert("passwordSave", passwordSave);
-    QJsonObject loginObj;
-    if (MountTimerHash.contains(op) && MountEventHash.value(op)) {
-        loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
+    m_obj.insert("message", message);
+    m_obj.insert("anonymous", anonymous);
+    m_obj.insert("username", default_user);
+    m_obj.insert("domain", default_domain);
+    m_obj.insert("password", default_password);
+    m_obj.insert("GAskPasswordFlags", flags);
+    m_obj.insert("passwordSave", passwordSave);//传给对话框的
+    if (m_loginObj.isEmpty() && MountTimerHash.contains(op) && MountEventHash.value(op)) {
+        m_loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
                                                 MountEventHash.value(op)->windowId(),
-                                                MountEventHash.value(op)->fileUrl().isSMBFile(), obj, op);
+                                                MountEventHash.value(op)->fileUrl().isSMBFile(), m_obj, op);
     }
+    //1、此后每次都用loginObj的数据登录；
+    //2、如果用户访问的目录发生匿名和密码的切换，上次的登录数据无效，会导致该函数反复进入，引起m_clearLoginDataCounter递减；
+    if (!m_loginObj.isEmpty()) {
+        anonymous = m_loginObj.value("anonymous").toBool();
+        QString username = m_loginObj.value("username").toString();
+        QString domain = m_loginObj.value("domain").toString();
+        QString password = m_loginObj.value("password").toString();
+        GPasswordSave passwordsaveFlag =  static_cast<GPasswordSave>(m_loginObj.value("passwordSave").toInt());
+        bool savePasswordChecked = false;
+        if(!anonymous){
+            if(passwordsaveFlag != GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY){//没有勾选记住密码
+                passwordsaveFlag = GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION;//G_PASSWORD_SAVE_PERMANENTLY;
+                m_loginObj.insert("passwordSave",passwordsaveFlag);
+            }else {//勾选了记住密码
+                savePasswordChecked = true;
+            }
+        }
+        m_loginObj.insert("savePasswordChecked",savePasswordChecked);
+        SMBLoginObjHash.insert(op,new QJsonObject(m_loginObj));
 
-    if (!loginObj.isEmpty()) {
-        anonymous = loginObj.value("anonymous").toBool();
-        QString username = loginObj.value("username").toString();
-        QString domain = loginObj.value("domain").toString();
-        QString password = loginObj.value("password").toString();
-        GPasswordSave passwordsaveFlag =  static_cast<GPasswordSave>(loginObj.value("passwordSave").toInt());
-
-        SMBLoginObjHash.insert(op,new QJsonObject(loginObj));
 
         if ((flags & G_ASK_PASSWORD_ANONYMOUS_SUPPORTED) && anonymous) {
             g_mount_operation_set_anonymous(op, TRUE);
@@ -1399,6 +1425,19 @@ void GvfsMountManager::cancellMountSync(GMountOperation *op)
     }
 }
 
+/**
+ * @brief GvfsMountManager::clearLoginData 清除用于SMB重复鉴权的数据
+ */
+void GvfsMountManager::clearLoginData()
+{
+    while (!m_obj.isEmpty()) {
+        m_obj.take(m_obj.keys().first());
+    }
+    while (!m_loginObj.isEmpty()) {
+        m_loginObj.take(m_loginObj.keys().first());
+    }
+}
+
 void GvfsMountManager::autoMountAllDisks()
 {
     // check if we are in live system, don't do auto mount if we are in live system.
@@ -1568,7 +1607,8 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         qCDebug(mountManager()) << "g_file_mount_enclosing_volume_finish" << succeeded << AskingPasswordHash.value(op);
         if (AskingPasswordHash.value(op) && SMBLoginObjHash.value(op)) {
             SMBLoginObjHash.value(op)->insert("id", rootUri.toString());
-            if (SMBLoginObjHash.value(op)->value("passwordSave").toInt() == 2) {
+            int saveType = SMBLoginObjHash.value(op)->value("passwordSave").toInt();
+            if ( saveType == int(GPasswordSave::G_PASSWORD_SAVE_PERMANENTLY) || saveType == int(GPasswordSave::G_PASSWORD_SAVE_FOR_SESSION)) {
                 SMBLoginObjHash.value(op)->remove("password");
                 emit fileSignalManager->requsetCacheLoginData(*SMBLoginObjHash.value(op));
             }
