@@ -2701,7 +2701,7 @@ bool DFileCopyMoveJobPrivate::doLinkFile(const QSharedPointer<DFileHandler> &han
             return true;
         }
         action = setAndhandleError(DFileCopyMoveJob::SymlinkError, fileInfo, DAbstractFileInfoPointer(nullptr),
-                                   qApp->translate("DFileCopyMoveJob", "Fail to create symlink, cause: %1").arg(handler->errorString()));
+                                   qApp->translate("DFileCopyMoveJob", "Failed to create symlink, cause: %1").arg(handler->errorString()));
         if (action == DFileCopyMoveJob::RetryAction) {// 仅在用户重试时休眠
             q->msleep(THREAD_SLEEP_TIME);
         } // fix bug#30091 文件操作失败的时候，点击对话框的“不再提示+重试”，会导致不停失败不停发送信号通知主线程更新ui，这里加个延时控制响应频率

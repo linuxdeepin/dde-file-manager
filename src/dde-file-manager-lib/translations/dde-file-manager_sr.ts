@@ -2,49 +2,49 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="493"/>
+        <location filename="../controllers/appcontroller.cpp" line="518"/>
         <source>New Folder</source>
         <translation>Нова фасцикла</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="594"/>
+        <location filename="../controllers/appcontroller.cpp" line="618"/>
         <source>Mounting device error</source>
         <translation>Грешка монтирања уређаја</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="637"/>
+        <location filename="../controllers/appcontroller.cpp" line="673"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>Одраз диска је оштећен, тренутно се не може монтирати. Прво обришите диск.</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="679"/>
+        <location filename="../controllers/appcontroller.cpp" line="715"/>
         <source>Mount error: unsupported image format</source>
         <translation>Грешка монтирања: неподржан формат одраза</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="812"/>
-        <location filename="../controllers/appcontroller.cpp" line="852"/>
+        <location filename="../controllers/appcontroller.cpp" line="854"/>
+        <location filename="../controllers/appcontroller.cpp" line="894"/>
         <source>The device was not safely removed</source>
         <translation>Уређај није безбедно уклоњен</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="812"/>
-        <location filename="../controllers/appcontroller.cpp" line="852"/>
+        <location filename="../controllers/appcontroller.cpp" line="854"/>
+        <location filename="../controllers/appcontroller.cpp" line="894"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Следећи пут, кликните на &quot;Безбедно уклони&quot;, затим уклоните уређај</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="822"/>
+        <location filename="../controllers/appcontroller.cpp" line="864"/>
         <source>The device was not ejected</source>
         <translation>Уређај није избачен</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="822"/>
+        <location filename="../controllers/appcontroller.cpp" line="864"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>Диск је у употреби, тренутно се не може избацити</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="833"/>
+        <location filename="../controllers/appcontroller.cpp" line="875"/>
         <source>Authentication timed out</source>
         <translation>Време за идентификацију је истекло</translation>
     </message>
@@ -226,27 +226,27 @@
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="495"/>
+        <location filename="../models/computermodel.cpp" line="504"/>
         <source>Double click to open it</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="839"/>
+        <location filename="../models/computermodel.cpp" line="909"/>
         <source>My Directories</source>
         <translation>Моји директоријуми</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="842"/>
+        <location filename="../models/computermodel.cpp" line="912"/>
         <source>Disks</source>
         <translation>Дискови</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="845"/>
+        <location filename="../models/computermodel.cpp" line="915"/>
         <source>File Vault</source>
         <translation>Трезор датотека</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="848"/>
+        <location filename="../models/computermodel.cpp" line="918"/>
         <source>Quick Access</source>
         <translation type="unfinished"/>
     </message>
@@ -331,30 +331,30 @@
 <context>
     <name>ConnectToServerDialog</name>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="50"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="53"/>
         <source>Connect to Server</source>
         <translation>Повежи се са сервером</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="166"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="175"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Откажи</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="167"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="176"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>Повежи</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="175"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="184"/>
         <source>My Favorites:</source>
         <translation>Моји омиљени:</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="217"/>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="259"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="226"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="268"/>
         <source>Clear History</source>
         <translation>Очисти историју</translation>
     </message>
@@ -1229,6 +1229,11 @@
         <translation>Неуспешно отварање датотеке, узрок: Предугачко име датотеке</translation>
     </message>
     <message>
+        <location filename="../io/dfilecopymovejob.cpp" line="2704"/>
+        <source>Failed to create symlink, cause: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3295"/>
         <location filename="../io/dfilecopymovejob.cpp" line="3379"/>
         <source>Failed to write the file, cause:</source>
@@ -1306,53 +1311,48 @@
         <source>Failed to delete the file, cause: %1</source>
         <translation>Неуспешно брисање датотеке, узрок: %1</translation>
     </message>
-    <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2704"/>
-        <source>Fail to create symlink, cause: %1</source>
-        <translation>Неуспешно прављење симболичке везе, узрок: %1</translation>
-    </message>
 </context>
 <context>
     <name>DFileDialog</name>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1172"/>
-        <location filename="../views/dfiledialog.cpp" line="1469"/>
+        <location filename="../views/dfiledialog.cpp" line="1180"/>
+        <location filename="../views/dfiledialog.cpp" line="1477"/>
         <source>Save</source>
         <comment>button</comment>
         <translation>Сачувај</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1287"/>
-        <location filename="../views/dfiledialog.cpp" line="1334"/>
+        <location filename="../views/dfiledialog.cpp" line="1295"/>
+        <location filename="../views/dfiledialog.cpp" line="1342"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Откажи</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1288"/>
+        <location filename="../views/dfiledialog.cpp" line="1296"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Потврди</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1332"/>
+        <location filename="../views/dfiledialog.cpp" line="1340"/>
         <source>%1 already exists, do you want to replace it?</source>
         <translation>%1 већ постоји, желите ли да замените?</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1335"/>
+        <location filename="../views/dfiledialog.cpp" line="1343"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Замени</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1466"/>
+        <location filename="../views/dfiledialog.cpp" line="1474"/>
         <source>Open</source>
         <comment>button</comment>
         <translation>Отвори</translation>
     </message>
     <message>
-        <location filename="../views/dfiledialog.cpp" line="1286"/>
+        <location filename="../views/dfiledialog.cpp" line="1294"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
         <translation>Ова датотека ће бити сакривена ако име почиње са тачком (.). Заиста желите да је сакријете?</translation>
     </message>
@@ -1401,7 +1401,7 @@
         <translation>Настало</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1614"/>
         <source>Last access</source>
         <translation>Последњи приступ</translation>
@@ -1418,22 +1418,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2880"/>
+        <location filename="../views/dfileview.cpp" line="2883"/>
         <source>Disc mount error</source>
         <translation>Грешка при монтирању диска</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2880"/>
+        <location filename="../views/dfileview.cpp" line="2883"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Диск се користи, окончајте покренуте процесе и поново монтирајте диск.</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2893"/>
+        <location filename="../views/dfileview.cpp" line="2896"/>
         <source>Mounting failed</source>
         <translation>Неуспешно монтирање</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3629"/>
+        <location filename="../views/dfileview.cpp" line="3632"/>
         <source>(Reverse)</source>
         <translation>(Поништи)</translation>
     </message>
@@ -1634,7 +1634,7 @@
     <message>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="117"/>
         <location filename="../devicemanagement/dfmudisks2deviceinfo.cpp" line="132"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="736"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="737"/>
         <source>%1 Volume</source>
         <translation>%1 Логички диск</translation>
     </message>
@@ -1645,17 +1645,17 @@
         <translation>Складиште</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="731"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="732"/>
         <source>%1 Drive</source>
         <translation>%1 Уређај</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="715"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="716"/>
         <source>Blank %1 Disc</source>
         <translation>Празан %1 диск</translation>
     </message>
     <message>
-        <location filename="../models/dfmrootfileinfo.cpp" line="734"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="735"/>
         <source>%1 Encrypted</source>
         <translation>%1 Шифровано</translation>
     </message>
@@ -1799,11 +1799,6 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1063"/>
         <source>Failed, file size must be less than 4GB.</source>
         <translation>Неуспех, величина датотека мора бити мања од 4GB</translation>
-    </message>
-    <message>
-        <location filename="../dialogs/dialogmanager.cpp" line="1072"/>
-        <source>Fail to create symlink, cause:</source>
-        <translation>Неуспешно прављење симболичке везе, узрок: </translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1090"/>
@@ -2001,6 +1996,11 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1051"/>
         <source>Unable to copy. Not enough free space on the target disk.</source>
         <translation>Немогуће копирати. Недовољно простора на одредишном диску.</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/dialogmanager.cpp" line="1072"/>
+        <source>Failed to create symlink, cause:</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
@@ -2992,8 +2992,8 @@
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="67"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="680"/>
-        <location filename="../models/dfmrootfileinfo.cpp" line="708"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="681"/>
+        <location filename="../models/dfmrootfileinfo.cpp" line="709"/>
         <source>System Disk</source>
         <translation>Системски диск</translation>
     </message>
@@ -3080,7 +3080,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="230"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="236"/>
         <source>Size</source>
@@ -3095,7 +3095,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1206"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
         <source>Type</source>
         <translation>Врста</translation>
@@ -3104,7 +3104,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="175"/>
         <location filename="../dialogs/propertydialog.cpp" line="1209"/>
         <location filename="../dialogs/propertydialog.cpp" line="1230"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="359"/>
         <source>Time modified</source>
         <translation>Измењено</translation>
@@ -3185,53 +3185,53 @@
         <translation>Група</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="805"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="808"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
         <source>Open</source>
         <translation>Отвори</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
         <source>Lock</source>
         <translation>Зкључај</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="924"/>
         <source>Auto lock</source>
         <translation>Самозакључавање</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="925"/>
         <source>Never</source>
         <translation>Никад</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="926"/>
         <source>5 minutes</source>
         <translation>5 минута</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="927"/>
         <source>10 minutes</source>
         <translation>10 минута</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="928"/>
         <source>20 minutes</source>
         <translation>20 минута</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
         <source>Delete File Vault</source>
         <translation>Обриши трезор</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="930"/>
         <source>Unlock</source>
         <translation>Откључај</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="931"/>
         <source>Unlock by key</source>
         <translation>Откључај кључем</translation>
     </message>
@@ -3266,8 +3266,8 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="90"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="806"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="809"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
@@ -3277,259 +3277,260 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="94"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="807"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="810"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Отвори у новој картици</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="812"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <source>Open with</source>
         <translation>Отвори са</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="815"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <location filename="../plugins/dfmadditionalmenu.cpp" line="369"/>
         <source>Compress</source>
         <translation>Запакуј</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="816"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Extract</source>
         <translation>Распакуј</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="817"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>Extract here</source>
         <translation>Распакуј овде</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="818"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <source>Cut</source>
         <translation>Исеци</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="819"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>Copy</source>
         <translation>Копирај</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="820"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Paste</source>
         <translation>Убаци</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="100"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="821"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="822"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="915"/>
         <source>Rename</source>
         <translation>Преименуј</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="107"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="922"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="955"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="956"/>
         <source>Remove</source>
         <translation>Уклони</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="824"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <source>Create link</source>
         <translation>Направи везу</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="825"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Send to desktop</source>
         <translation>Пошаљи на радну површину</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="826"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
         <source>Send to</source>
         <translation>Пошаљи у</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="827"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <source>Bluetooth</source>
         <translation>Блутут</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="828"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Add to bookmark</source>
         <translation>Додај у забелешке</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="113"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="831"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>Својства</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="833"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>New folder</source>
         <translation>Нова фасцикла</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="834"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
         <source>New window</source>
         <translation>Нови прозор</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="835"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
         <source>Select all</source>
         <translation>Изабери све</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="98"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="836"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
         <source>Clear recent history</source>
         <translation>Очисти недавну историју</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="837"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
         <location filename="../views/dfilemanagerwindow.cpp" line="1309"/>
         <source>Empty Trash</source>
         <translation>Испразни смеће</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
         <source>Display as</source>
         <translation>Прикажи као</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
         <source>Sort by</source>
         <translation>Поређај по</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
         <source>New document</source>
         <translation>Нови документ</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1207"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
         <source>Time created</source>
         <translation>Настало</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1210"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="377"/>
         <source>Source path</source>
         <translation>Путања</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
         <source>Share folder</source>
         <translation>Дели фасциклу</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
         <source>Cancel sharing</source>
         <translation>Откажи дељење</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
         <source>Connect to Server</source>
         <translation>Повежи се са сервером</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
         <source>Set share password</source>
         <translation>Постави лозинку дељењa</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
         <source>Format</source>
         <translation>Форматирај</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
         <source>Tag information</source>
         <translation>Означи</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="811"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <source>Open as administrator</source>
         <translation>Отвори као адмнистратор</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="813"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
         <source>Select default program</source>
         <translation>Изабери подразумевани програм</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="814"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
         <source>Open file location</source>
         <translation>Отвори локацију датотеке</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="823"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>Remove bookmark</source>
         <translation>Уклони забелешку</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="829"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="830"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="913"/>
         <source>Delete</source>
         <translation>Обриши</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
         <source>Office Text</source>
         <translation>Канцеларијски текст</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
         <source>Spreadsheets</source>
         <translation>Табела</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
         <source>Plain Text</source>
         <translation>Обичан текст</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>Open in terminal</source>
         <translation>Отвори у терминалу</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <source>Restore</source>
         <translation>Врати</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>Restore all</source>
         <translation>Врати све</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
         <source>Clear saved password and unmount</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
         <source>File Vault</source>
         <translation>Трезор датотека</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
         <source>Add to disc</source>
         <translation>Додај на диск</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="957"/>
         <source>Refresh</source>
         <translation type="unfinished"/>
     </message>
@@ -3544,14 +3545,14 @@
         <translation>Отвори након самомонтирања</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="917"/>
         <source>Mount</source>
         <translation>Монтирај</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="50"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>Unmount</source>
         <translation>Демонтирај</translation>
     </message>
@@ -3608,48 +3609,48 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="372"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>Eject</source>
         <translation>Избаци</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
         <source>Safely Remove</source>
         <translation>Безбедно уклони</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
         <source>Name</source>
         <translation>Име</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
         <source>Settings</source>
         <translation>Подешавања</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
         <source>Exit</source>
         <translation>Изађи</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
         <source>Icon</source>
         <translation>Иконице</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
         <source>List</source>
         <translation>Списак</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
         <source>Extend</source>
         <translation>Прошири</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
         <source>Set as wallpaper</source>
         <translation>Постави као позадину</translation>
     </message>
@@ -3729,12 +3730,12 @@
         <translation>Направи симболичку везу</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
         <source>Path</source>
         <translation>Путања</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
         <location filename="../models/trashfileinfo.cpp" line="325"/>
         <location filename="../models/trashfileinfo.cpp" line="333"/>
         <source>Time deleted</source>
@@ -3788,23 +3789,23 @@
         <translation>Путања</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="537"/>
+        <location filename="../controllers/appcontroller.cpp" line="562"/>
         <source>Document</source>
         <translation>Документ</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="546"/>
+        <location filename="../controllers/appcontroller.cpp" line="571"/>
         <source>Spreadsheet</source>
         <translation>Табела</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="555"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
+        <location filename="../controllers/appcontroller.cpp" line="580"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>Presentation</source>
         <translation>Презентација</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="562"/>
+        <location filename="../controllers/appcontroller.cpp" line="587"/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
@@ -4043,7 +4044,7 @@
         <translation>Забелешке</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
         <source>Erase</source>
         <translation>Обриши</translation>
     </message>
@@ -4204,65 +4205,65 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="138"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="163"/>
         <source>Username</source>
         <translation>Корисничко име</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="150"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="174"/>
         <source>Share password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="165"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="189"/>
         <source>None</source>
         <translation>Ништа</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="236"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="263"/>
         <source>Change password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="236"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="263"/>
         <source>Set password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="269"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="296"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="496"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="526"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Име дељења не семе бити две тачке (..) или једна тачка (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="512"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="542"/>
         <source>The share name is used by another user.</source>
         <translation>Име дељења употребљава други корисник.</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="513"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="543"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>У реду</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="516"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="546"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Откажи</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="517"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="547"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Замени</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="515"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="545"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Име дељења већ постоји. Желите ли да замените дељену фасциклу?</translation>
     </message>
@@ -4681,7 +4682,7 @@
 <context>
     <name>UDiskListener</name>
     <message>
-        <location filename="../deviceinfo/udisklistener.cpp" line="235"/>
+        <location filename="../deviceinfo/udisklistener.cpp" line="234"/>
         <source>Failed to rename the label</source>
         <translation>Неуспешно преименовање ознаке</translation>
     </message>
@@ -4689,14 +4690,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1614"/>
+        <location filename="../controllers/appcontroller.cpp" line="1693"/>
         <location filename="../../fileoperations/filejob.cpp" line="789"/>
         <location filename="../../fileoperations/filejob.cpp" line="1052"/>
         <source>The device was not safely unmounted</source>
         <translation>Уређај није безбедно демонтиран</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1621"/>
+        <location filename="../controllers/appcontroller.cpp" line="1700"/>
         <source>The device was not safely removed</source>
         <translation>Уређај није безбедно уклоњен</translation>
     </message>
@@ -4764,6 +4765,11 @@
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Потврди</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="58"/>
+        <source>Set a password on the shared folder for non-anonymous access</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

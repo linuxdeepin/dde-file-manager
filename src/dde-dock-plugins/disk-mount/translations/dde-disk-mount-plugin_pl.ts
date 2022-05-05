@@ -56,7 +56,7 @@
     </message>
     <message>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
-        <translation>Dysk został zamontowany przez użytkownika &quot;%1&quot;, nie możesz go wymontować.</translation>
+        <translation>Dysk został zamontowany przez użytkownika &quot;%1&quot;, nie możesz go odmontować.</translation>
     </message>
     <message>
         <source>Cannot find the mounted device</source>
@@ -94,11 +94,11 @@
     </message>
     <message>
         <source>You do not have permission to access this folder</source>
-        <translation>Nie masz uprawnień do dostępu do tego katalogu</translation>
+        <translation>Nie posiadasz uprawnień dostępu do tego katalogu</translation>
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation>Skanowanie urządzenia, zatrzymać?</translation>
+        <translation>Skanowanie urządzenia, czy chcesz zatrzymać?</translation>
     </message>
     <message>
         <source>Confirm</source>
