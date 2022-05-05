@@ -1069,7 +1069,7 @@ void DialogManager::show4gFat32Dialog()
 void DialogManager::showFailToCreateSymlinkDialog(const QString &errorString)
 {
     DDialog d;
-    d.setTitle(tr("Fail to create symlink, cause:") + errorString);
+    d.setTitle(tr("Failed to create symlink, cause:") + errorString);
     d.setIcon(m_dialogWarningIcon);
     d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
     d.exec();
