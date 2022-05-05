@@ -326,6 +326,15 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
     if (d->viewSetting->isDelayDrag())
         return;
 
+    // close editor before drag.
+    // normally, items in editing status do not enter startDrag.
+    // but if drag and drope one item before editing it, then draging it, startDrag will be called.
+    // the reason is that when one item droped, the d->pressedIndex is setted to invaild.
+    // then in mousePressEvent d->pressedIndex is not updating to preesed index because the state is EditingState.
+    // finally, in mouseMoveEvent state is changed from EditingState to DragSelectingState because d->pressedInde is invaild.
+    if (isPersistentEditorOpen(currentIndex()))
+        closePersistentEditor(currentIndex());
+
     if (d->extend && d->extend->startDrag(screenNum(), supportedActions)) {
         qDebug() << "start drag by extend.";
         return;
@@ -378,9 +387,9 @@ void CanvasView::dragLeaveEvent(QDragLeaveEvent *event)
 
 void CanvasView::dropEvent(QDropEvent *event)
 {
-    setState(NoState);
     if (d->dragDropOper->drop(event)) {
         activateWindow();
+        setState(NoState);
         return;
     }
     QAbstractItemView::dropEvent(event);
@@ -573,8 +582,6 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 
     auto releaseIndex = indexAt(event->pos());
     d->clickSelecter->release(releaseIndex);
-
-    setState(NoState);
 }
 
 void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
