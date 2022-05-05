@@ -23,6 +23,7 @@
 #include "utils/tagmanager.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
 
 DFMBASE_USE_NAMESPACE
 DPTAG_USE_NAMESPACE
@@ -57,9 +58,13 @@ void TagDirIteratorPrivate::loadTagsUrls(const QUrl &url)
 
         for (const QString &path : pathList) {
             QUrl tagUrl;
-            tagUrl.setScheme(TagManager::scheme());
-            tagUrl.setPath("/" + tagName);
-            tagUrl.setFragment(path);
+            // TODO(liuyangming): handle path in sql
+            if (!path.startsWith("/home/")
+                && !path.startsWith("/data/home/")
+                && !path.startsWith("/media/"))
+                continue;
+
+            tagUrl = QUrl::fromLocalFile(path);
 
             const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(tagUrl);
             if (!info->exists())

@@ -83,19 +83,15 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     for (const QUrl &url : urls) {
-        QUrl tmpUrl(url);
-        if (delegateServIns->isRegisterUrlTransform(url.scheme()))
-            tmpUrl = delegateServIns->urlTransform(url);
-
-        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(tmpUrl);
+        const AbstractFileInfoPointer &fileInfoPtr = InfoFactory::create<AbstractFileInfo>(url);
         if (fileInfoPtr && fileInfoPtr->isDir()) {
             if (mode == DirOpenMode::kOpenNewWindow) {
-                WorkspaceEventCaller::sendOpenWindow({ tmpUrl });
+                WorkspaceEventCaller::sendOpenWindow({ url });
             } else {
-                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, tmpUrl);
+                WorkspaceEventCaller::sendChangeCurrentUrl(windowId, url);
             }
         } else {
-            const QList<QUrl> &openUrls = { tmpUrl };
+            const QList<QUrl> &openUrls = { url };
             dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles,
                                                   windowId,
                                                   openUrls);
