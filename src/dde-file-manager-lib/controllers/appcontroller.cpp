@@ -515,7 +515,13 @@ void AppController::actionNewFolder(const QSharedPointer<DFMUrlBaseEvent> &event
 {
     DAbstractFileInfoPointer info = DFileService::instance()->createFileInfo(nullptr, event->url());
 
-    fileService->mkdir(event->sender(), FileUtils::newDocumentUrl(info, tr("New Folder"), QString()));
+    DUrl newUrl = FileUtils::newDocumentUrl(info, tr("New Folder"), QString());
+    fileService->mkdir(event->sender(), newUrl);
+
+    // fix bug#126693
+    // 剪贴状态下，如果新建的文件夹inode已经存在于剪贴板，则清除
+    if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction)
+        DFMGlobal::instance()->removeClipboardFileInode(newUrl.toLocalFile());
 }
 
 void AppController::actionSelectAll(quint64 winId)
@@ -1541,6 +1547,11 @@ QString AppController::createFile(const QString &sourceFile, const QString &targ
 
     if (DFileService::instance()->touchFile(WindowManager::getWindowById(windowId), DUrl::fromLocalFile(targetFile))) {
         QFile target(targetFile);
+
+        // fix bug#126693
+        // 剪贴状态下，如果新建的文件inode已经存在于剪贴板，则清除
+        if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction)
+            DFMGlobal::instance()->removeClipboardFileInode(targetFile);
 
         if (!target.open(QIODevice::WriteOnly)) {
             return QString();
