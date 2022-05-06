@@ -109,9 +109,20 @@ void CanvasManager::openEditor(const QUrl &url)
 {
     QString path = url.toString();
     QPair<int, QPoint> pos;
+
     if (!GridIns->point(path, pos)) {
-        qDebug() << "can not editor,file does not exist:" << url;
-        return;
+        bool find = false;
+        for (auto view : d->viewMap.values()) {
+            if (GridIns->overloadItems(view->screenNum()).contains(path)) {
+                pos.first = view->screenNum();
+                find = true;
+                break;
+            }
+        }
+        if (!find) {
+            qDebug() << "can not editor,file does not exist:" << url;
+            return;
+        }
     }
 
     QModelIndex index = d->canvasModel->index(url);
@@ -123,6 +134,7 @@ void CanvasManager::openEditor(const QUrl &url)
         view->setCurrentIndex(index);
         if (pos.first == view->screenNum()) {
             view->edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+            view->activateWindow();
         }
     }
 }
@@ -429,8 +441,8 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
 
         QString path = url.toString();
         QPair<int, QPoint> pos;
-        if (GridIns->point(path, pos)) {
-            qDebug() << "item:" << path << " existed:" << pos.first << pos.second;
+        if (GridIns->point(path, pos) || GridIns->overloadItems(-1).contains(path)) {
+            qDebug() << "item:" << path << " existed";
             // already hand by call back,but at that time,the index mybe is invalid.
             q->openEditor(url);
         } else {

@@ -180,7 +180,7 @@ QStringList CanvasGrid::overloadItems(int index) const
     auto idxs = d->surfaceIndex();
 
     // overloaded items show on the last screen.
-    if (!idxs.isEmpty() && index == idxs.last())
+    if (!idxs.isEmpty() && (index == idxs.last() || index < 0))
         return d->overload;
 
     return QStringList();
