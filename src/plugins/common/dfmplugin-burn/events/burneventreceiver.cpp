@@ -29,7 +29,8 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
@@ -56,8 +57,8 @@ BurnEventReceiver *BurnEventReceiver::instance()
 
 void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
 {
-    QString devId { DeviceManager::blockDeviceId(dev) };
-    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
+    QString devId { DeviceUtils::getBlockDeviceId(dev) };
+    auto &&map = DevProxyMng->queryBlockInfo(devId);
 
     QString defaultDiscName { qvariant_cast<QString>(map[DeviceProperty::kIdLabel]) };
     QStringList speed { qvariant_cast<QStringList>(map[DeviceProperty::kOpticalWriteSpeed]) };
@@ -92,8 +93,8 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
     if (urls.size() == 1) {
         QDir destDir { BurnHelper::localStagingFile(dev).path() };
         destDir.setFilter(QDir::Filter::AllEntries | QDir::Filter::NoDotAndDotDot);
-        QString devId { DeviceManager::blockDeviceId(dev) };
-        auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
+        QString devId { DeviceUtils::getBlockDeviceId(dev) };
+        auto &&map = DevProxyMng->queryBlockInfo(devId);
         bool isBlank { map[DeviceProperty::kOpticalBlank].toBool() };
         auto fi { InfoFactory::create<AbstractFileInfo>(urls.front()) };
         static const QSet<QString> imageTypes { Global::kMimeTypeCdImage, Global::kMimeTypeISO9660Image };

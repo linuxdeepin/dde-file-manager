@@ -23,7 +23,8 @@
 #include "opticalhelper.h"
 
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -84,8 +85,8 @@ QUrl OpticalHelper::localDiscFile(const QUrl &dest)
     if (devFile.isEmpty())
         return {};
 
-    QString id { DeviceManager::blockDeviceId(devFile) };
-    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    QString id { DeviceUtils::getBlockDeviceId(devFile) };
+    auto &&map = DevProxyMng->queryBlockInfo(id);
     QString mntPoint { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
     if (mntPoint.isEmpty())
         return {};

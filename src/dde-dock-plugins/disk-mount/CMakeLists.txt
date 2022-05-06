@@ -10,49 +10,29 @@ set(CMAKE_AUTORCC ON)
 # generate a compile commands file as complete database for vim-YouCompleteMe or some other similar tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(DBUS_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/dbusservice)
-set(DBUS_INTERFACES_DIR  ${DBUS_DIR}/dbus_interface)
+FILE (GLOB MOUNT_PLUGIN_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
+)
+
+set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../)
+include_directories(${SRC_DIR})
+set(BASE_DEV_DIR ${SRC_DIR}/dfm-base/base/device)
+FILE (GLOB BASE_DEVICE_FILES
+    ${BASE_DEV_DIR}/*.h
+    ${BASE_DEV_DIR}/*.cpp
+    ${BASE_DEV_DIR}/private/*.h
+    ${BASE_DEV_DIR}/private/*.cpp
+)
+
+set(DBUS_DIR ${SRC_DIR}/dfm-base/dbusservice)
 include_directories(${DBUS_DIR})
-
-set(BASE_UTIL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/utils)
-include_directories(${BASE_UTIL_DIR})
-include_directories(${BASE_UTIL_DIR}/../../)
-
-set(BASE_BASE_DEV_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../dfm-base/base/device)
-include_directories(${BASE_BASE_DEV_DIR})
-
-set(MOUNT_PLUGIN_SRC
-    disk-mount.json
-    diskmountplugin.cpp
-    tipswidget.cpp
-    diskpluginitem.cpp
-    diskcontrolwidget.cpp
-    diskcontrolitem.cpp
-    dattachedblockdevice.cpp
-    dattachedprotocoldevice.cpp
-    dattacheddevice.cpp
-    ${BASE_BASE_DEV_DIR}/private/defendercontroller.cpp
-    ${BASE_BASE_DEV_DIR}/private/devicecontrollerhelper.cpp
-    ${BASE_BASE_DEV_DIR}/devicecontroller.cpp
-    ${BASE_UTIL_DIR}/devicemanager.cpp
-    )
-
-set(MOUNT_PLUGIN_HEADER
-    diskmountplugin.h
-    tipswidget.h
-    diskpluginitem.h
-    diskcontrolwidget.h
-    diskcontrolitem.h
-    dattachedblockdevice.h
-    dattachedprotocoldevice.h
-    dattacheddevice.h
-    sizeformathelper.h
-    ${BASE_BASE_DEV_DIR}/private/defendercontroller.h
-    ${BASE_BASE_DEV_DIR}/private/devicecontrollerhelper.h
-    ${BASE_BASE_DEV_DIR}/private/devicemonitorhandler.h
-    ${BASE_BASE_DEV_DIR}/devicecontroller.h
-    ${BASE_UTIL_DIR}/devicemanager.h
-    )
+FILE (GLOB DBUS_INTERFACE_FILES
+    ${DBUS_DIR}/*.h
+    ${DBUS_DIR}/*/devicemanagerdbus_interface.h
+    ${DBUS_DIR}/*/devicemanagerdbus_interface.cpp
+)
 
 set(DBUS_INTERFACES_SRC
     ${DBUS_INTERFACES_DIR}/devicemanagerdbus_interface.cpp
@@ -65,6 +45,7 @@ set(DBUS_INTERFACES_HEADER
 
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5DBus REQUIRED)
+find_package(Qt5 COMPONENTS Concurrent REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(PkgConfig REQUIRED)
 
@@ -80,10 +61,9 @@ qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${MOUNT_PLUGIN_SRC}
-    ${MOUNT_PLUGIN_HEADER}
-    ${DBUS_INTERFACES_SRC}
-    ${DBUS_INTERFACES_HEADER}
+    ${MOUNT_PLUGIN_FILES}
+    ${BASE_DEVICE_FILES}
+    ${DBUS_INTERFACE_FILES}
     ${QRC_RESOURCES}
     )
 
@@ -104,6 +84,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${Gesttings_LIBRARIES}
     ${DdeDockInterface_LIBRARIES}
     PkgConfig::dfm-mount
+    Qt5::Concurrent
 )
 
 set(CMAKE_INSTALL_PREFIX "/usr")
@@ -114,4 +95,3 @@ install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION lib/dde-dock/plugins/system-
 install(FILES com.deepin.dde.dock.module.disk-mount.gschema.xml DESTINATION share/glib-2.0/schemas)
 install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
 
-# TODO(zhangs): translation

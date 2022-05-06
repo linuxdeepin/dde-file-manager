@@ -23,7 +23,7 @@
 #ifndef DEVICEMANAGERDBUS_H
 #define DEVICEMANAGERDBUS_H
 
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
 
 #include <QDBusVariant>
 #include <QVariantMap>
@@ -38,9 +38,6 @@ public:
     explicit DeviceManagerDBus(QObject *parent = nullptr);
 
 signals:
-    void AskStopSacnningWhenUnmount(QString id);
-    void AskStopScanningWhenDetach(QString id);
-    void AskStopScanningWhenDetachAll();
     void SizeUsedChanged(QString id, qint64 total, qint64 free);
     void NotifyDeviceBusy(int action);   // see "dfm-base/dbusservice/global_server_defines.h"
 
@@ -63,37 +60,18 @@ signals:
 
 public slots:
     bool IsMonotorWorking();
-    void SafelyRemoveBlockDevice(QString id);
-    bool DetachBlockDevice(QString id);
-    bool DetachBlockDeviceForced(QString id);
-    bool DetachProtocolDevice(QString id);
-    bool DetachAllMountedDevices();
-    bool DetachAllMountedDevicesForced();
+    void DetachBlockDevice(QString id);
+    void DetachProtocolDevice(QString id);
+    void DetachAllMountedDevices();
 
-    QString MountBlockDevice(QString id);
-    void UnmountBlockDevice(QString id);
-    void UnmountBlockDeviceForced(QString id);
-    bool RenameBlockDevice(QString id, QString newName);
-    void EjectBlockDevice(QString id);
-    void PoweroffBlockDevice(QString id);
-    QString MountProtocolDevice(QString id);
-    void UnmountProtocolDevice(QString id);
-    QString UnlockBlockDevice(QString id, QString passwd);
-    void LockBlockDevice(QString id);
-
-    QStringList GetBlockDevicesIdList(const QVariantMap &opts);
-    QVariantMap QueryBlockDeviceInfo(QString id, bool detail);
+    QStringList GetBlockDevicesIdList(int opts);
+    QVariantMap QueryBlockDeviceInfo(QString id, bool reload);
     QStringList GetProtocolDevicesIdList();
-    QVariantMap QueryProtocolDeviceInfo(QString id, bool detail);
-
-    void GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint);
+    QVariantMap QueryProtocolDeviceInfo(QString id, bool reload);
 
 private:
     void initialize();
     void initConnection();
-
-private:
-    DFMBASE_NAMESPACE::DeviceController *deviceServ;
 };
 
 #endif   // DEVICEMANAGERDBUS_H

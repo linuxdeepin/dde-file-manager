@@ -97,6 +97,11 @@ QString UniversalUtils::userLoginState()
     return state;
 }
 
+bool UniversalUtils::isLogined()
+{
+    return userLoginState() == "active";
+}
+
 /*!
  * \brief register EventType
  * \return -1 if all available values are already taken or the
@@ -323,6 +328,15 @@ QMap<QString, QString> UniversalUtils::getKernelParameters()
     }
 
     return result;
+}
+
+bool UniversalUtils::isInLiveSys()
+{
+    bool ret = false;
+    static const QMap<QString, QString> &cmdline = getKernelParameters();
+    if (cmdline.value("boot", "") == QStringLiteral("live"))
+        ret = true;
+    return ret;
 }
 
 QVariantHash UniversalUtils::convertFromQMap(const QVariantMap map)

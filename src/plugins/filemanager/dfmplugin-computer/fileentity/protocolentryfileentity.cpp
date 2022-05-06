@@ -28,7 +28,7 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -129,11 +129,7 @@ void ProtocolEntryFileEntity::refresh()
     auto encodecId = entryUrl.path().remove("." + QString(SuffixInfo::kProtocol)).toUtf8();
     auto id = QString(QByteArray::fromBase64(encodecId));
 
-    auto queryInfo = [](const QString &id, bool detail) {
-        return DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id, detail);
-    };
-
-    datas = DFMBASE_NAMESPACE::UniversalUtils::convertFromQMap(queryInfo(id, true));
+    datas = DFMBASE_NAMESPACE::UniversalUtils::convertFromQMap(DevProxyMng->queryProtocolInfo(id));
 }
 
 QUrl ProtocolEntryFileEntity::targetUrl() const

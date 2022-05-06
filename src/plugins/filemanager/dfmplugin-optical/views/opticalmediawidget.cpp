@@ -25,10 +25,11 @@
 #include "utils/opticalhelper.h"
 #include "events/opticaleventcaller.h"
 
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-burn/dfmburn_global.h>
@@ -53,8 +54,8 @@ OpticalMediaWidget::OpticalMediaWidget(QWidget *parent)
 bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
 {
     QString dev { OpticalHelper::burnDestDevice(url) };
-    devId = { DeviceManager::blockDeviceId(dev) };
-    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
+    devId = { DeviceUtils::getBlockDeviceId(dev) };
+    auto &&map = DevProxyMng->queryBlockInfo(devId);
     QString &&mnt = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
     bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
 
@@ -72,11 +73,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
     // Acquire blank disc info
     curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
     if (!retry && blank && curAvial == 0) {
-        DeviceController::instance()->mountBlockDeviceAsync(devId, {}, [this, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
-            Q_UNUSED(ok)
-            Q_UNUSED(err)
-            Q_UNUSED(mpt)
-            DeviceManagerInstance.invokeGhostBlockDevMounted(devId, "");
+        DevMngIns->mountBlockDevAsync(devId, {}, [this, url](bool, DFMMOUNT::DeviceError, const QString &) {
             this->updateDiscInfo(url, true);
         });
     }
@@ -246,7 +243,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
 
 void OpticalMediaWidget::onStagingFileStatisticsFinished()
 {
-    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(devId, true);
+    auto &&map = DevProxyMng->queryBlockInfo(devId);
     qint64 avil { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
     qint64 total { statisticWorker->totalSize() };
     if (avil == 0 || total > avil) {

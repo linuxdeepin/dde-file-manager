@@ -24,6 +24,8 @@
 #ifndef GLOBAL_SERVER_DEFINES_H
 #define GLOBAL_SERVER_DEFINES_H
 
+#include <QObject>
+
 namespace GlobalServerDefines {
 
 /*!
@@ -103,13 +105,17 @@ constexpr char kConnectionBus[] { "connectBus" };
  * returning a list of devices with different contents
  * detail in: DeviceService::blockDevicesIdList
  */
-namespace ListOpt {
-constexpr char kUnmountable[] { "unmountable" };
-constexpr char kMountable[] { "mountable" };
-constexpr char kNotIgnorable[] { "not_ignorable" };
-constexpr char kMounted[] { "mounted" };
-constexpr char kRemovable[] { "removable" };
-}   // namespace DeviceProperty
+enum DeviceQueryOption {
+    kNoCondition = 0,
+    kMountable = 1,
+    kMounted = 1 << 1,
+    kRemovable = 1 << 2,
+    kNotIgnored = 1 << 3,
+    kNotMounted = 1 << 4,
+};
+Q_ENUMS(DeviceQueryOption)
+Q_DECLARE_FLAGS(DeviceQueryOptions, DeviceQueryOption)
+Q_DECLARE_OPERATORS_FOR_FLAGS(DeviceQueryOptions)
 
 /*!
  * \brief Options for mount network device, such as smb, ftp etc.

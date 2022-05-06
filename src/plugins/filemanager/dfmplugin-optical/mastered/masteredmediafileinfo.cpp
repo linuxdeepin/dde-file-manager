@@ -25,8 +25,9 @@
 #include "utils/opticalhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
@@ -79,7 +80,7 @@ bool MasteredMediaFileInfo::isWritable() const
 {
     if (!OpticalHelper::burnIsOnDisc(backerUrl))
         return true;
-    QString id { DeviceManager::blockDeviceId(OpticalHelper::burnDestDevice(url())) };
+    QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url())) };
     quint64 avil { qvariant_cast<quint64>(devInfoMap[DeviceProperty::kSizeFree]) };
     return avil > 0;
 }
@@ -92,7 +93,7 @@ bool MasteredMediaFileInfo::isDir() const
 QString MasteredMediaFileInfo::fileDisplayName() const
 {
     if (OpticalHelper::burnFilePath(url()).contains(QRegularExpression("^(/*)$"))) {
-        QString id { DeviceManager::blockDeviceId(OpticalHelper::burnDestDevice(url())) };
+        QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url())) };
         QString idLabel { qvariant_cast<QString>(devInfoMap[DeviceProperty::kIdLabel]) };
         return idLabel;
     }
@@ -173,9 +174,9 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
         return;
 
     if (OpticalHelper::burnIsOnDisc(url)) {
-        QString id { DeviceManager::blockDeviceId(OpticalHelper::burnDestDevice(url)) };
+        QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url)) };
         // TODO(zhangs) optimize the invokation
-        devInfoMap = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+        devInfoMap = DevProxyMng->queryBlockInfo(id);
         bool opticalBlank { qvariant_cast<bool>(devInfoMap[DeviceProperty::kOpticalBlank]) };
         if (opticalBlank)
             return;

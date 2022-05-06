@@ -29,7 +29,7 @@
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -61,8 +61,6 @@ public:
     }
 
     static quint64 getWinId(QWidget *widget);
-
-    static DFMBASE_NAMESPACE::DeviceController *deviceServIns();
 
     static QUrl makeBlockDevUrl(const QString &id);
     static QString getBlockDevIdByUrl(const QUrl &url);

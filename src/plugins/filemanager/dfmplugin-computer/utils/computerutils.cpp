@@ -199,11 +199,6 @@ bool ComputerUtils::isPresetSuffix(const QString &suffix)
             || suffix == SuffixInfo::kAppEntry || suffix == SuffixInfo::kStashedProtocol;
 }
 
-DeviceController *ComputerUtils::deviceServIns()
-{
-    return DeviceController::instance();
-}
-
 bool ComputerUtils::shouldSystemPartitionHide()
 {
     return Application::instance()->genericAttribute(Application::kHiddenSystemPartition).toBool();

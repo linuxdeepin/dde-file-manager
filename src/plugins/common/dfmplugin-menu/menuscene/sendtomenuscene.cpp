@@ -26,11 +26,11 @@
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/bluetooth/bluetoothservice.h"
-#include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/utils/devicemanager.h"
-#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 
@@ -166,11 +166,10 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
 
     using namespace GlobalServerDefines;
     QAction *firstOptical { nullptr };
-    QVariantMap opts { { ListOpt::kMounted, true }, { ListOpt::kRemovable, true } };
-    auto devs = DeviceManagerInstance.invokeBlockDevicesIdList(opts);
+    auto devs = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
     int idx = 0;
     for (const QString &dev : devs) {
-        auto data = DeviceManagerInstance.invokeQueryBlockDeviceInfo(dev);
+        auto data = DevProxyMng->queryBlockInfo(dev);
         QString label = data.value(DeviceProperty::kIdLabel).toString();
         QString mpt = data.value(DeviceProperty::kMountPoint).toString();
         QString devDesc = data.value(DeviceProperty::kDevice).toString();

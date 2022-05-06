@@ -30,7 +30,6 @@
 #include "controller/computercontroller.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -88,7 +87,6 @@ QList<QAction *> ComputerView::toolBarActionList() const
 
 void ComputerView::refresh()
 {
-    // TODO(xust)
 }
 
 QList<QUrl> ComputerView::selectedUrlList() const
@@ -161,7 +159,7 @@ void ComputerView::initView()
     this->setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     this->setEditTriggers(QListView::EditKeyPressed | QListView::SelectedClicked);
     //    this->setIconSize(QSize(iconsizes[m_statusbar->scalingSlider()->value()], iconsizes[m_statusbar->scalingSlider()->value()]));
-    this->setIconSize(QSize(48, 48));   // TODO(xust)
+    this->setIconSize(QSize(48, 48));
     this->setContextMenuPolicy(Qt::ContextMenuPolicy::CustomContextMenu);
     this->setFrameShape(QFrame::Shape::NoFrame);
     this->viewport()->setAutoFillBackground(false);

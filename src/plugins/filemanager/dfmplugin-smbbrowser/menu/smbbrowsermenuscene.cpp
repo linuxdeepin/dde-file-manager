@@ -24,7 +24,7 @@
 #include "private/smbbrowsermenuscene_p.h"
 
 #include "services/common/menu/menu_defines.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 
@@ -97,7 +97,7 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
 
     quint64 winId = d->windowId;
     const QString &smbUrl = d->selectFiles.first().toString();
-    DeviceController::instance()->mountNetworkDevice(smbUrl, [actId, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
+    DeviceManager::instance()->mountNetworkDeviceAsync(smbUrl, [actId, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
         if (!ok && err != DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) {
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {

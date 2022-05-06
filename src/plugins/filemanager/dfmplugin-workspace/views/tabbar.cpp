@@ -27,9 +27,9 @@
 
 #include "global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -485,20 +485,20 @@ void TabBar::initializeConnections()
     QObject::connect(tabCloseButton, &TabCloseButton::unHovered, this, &TabBar::onTabCloseButtonUnHovered);
     QObject::connect(tabCloseButton, &TabCloseButton::clicked, this, &TabBar::onTabCloseButtonClicked);
 
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevMounted, this, &TabBar::cacheMnt);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, &TabBar::cacheMnt);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevAdded, this, [this](const QString &id) { cacheMnt(id, ""); });
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::blockDevRemoved, this, &TabBar::closeTabAndRemoveCachedMnts);
-    QObject::connect(&DeviceManagerInstance, &DeviceManager::protocolDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, &TabBar::cacheMnt);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::protocolDevMounted, this, &TabBar::cacheMnt);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevAdded, this, [this](const QString &id) { cacheMnt(id, ""); });
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &TabBar::closeTabAndRemoveCachedMnts);
+    QObject::connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &TabBar::closeTabAndRemoveCachedMnts);
 
-    for (auto id : DeviceManagerInstance.invokeBlockDevicesIdList({})) {
-        auto datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    for (auto id : DevProxyMng->getAllBlockIds()) {
+        auto datas = DevProxyMng->queryBlockInfo(id);
         const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
         cacheMnt(id, mntPath);
     }
-    for (auto id : DeviceManagerInstance.invokeProtolcolDevicesIdList({})) {
-        auto datas = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(id);
+    for (auto id : DevProxyMng->getAllProtocolIds()) {
+        auto datas = DevProxyMng->queryProtocolInfo(id);
         const QString &&mntPath = datas.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString();
         if (!mntPath.isEmpty())
             allMntedDevs.insert(id, QUrl::fromLocalFile(mntPath));

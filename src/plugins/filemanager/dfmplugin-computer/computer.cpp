@@ -37,7 +37,6 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
 DSB_FM_USE_NAMESPACE

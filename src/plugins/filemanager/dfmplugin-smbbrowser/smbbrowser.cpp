@@ -35,7 +35,8 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 
 DPSMBBROWSER_USE_NAMESPACE
@@ -135,15 +136,15 @@ void SmbBrowser::registerSambaPrehandler()
 void SmbBrowser::sambaPrehandler(const QUrl &url, std::function<void()> after)
 {
     if (url.scheme() == Global::kSmb) {
-        DeviceController::instance()->mountNetworkDevice(url.toString(), [after](bool ok, DFMMOUNT::DeviceError err, const QString &) {
+        DevMngIns->mountNetworkDeviceAsync(url.toString(), [after](bool ok, DFMMOUNT::DeviceError err, const QString &) {
             if ((ok || err == DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) && after) {
                 after();
             } else if (after) {
                 DialogManager::instance()->showErrorDialog(tr("Mount device error"), "");
-                qDebug() << DeviceController::instance()->getErrorMessage(err);
+                qDebug() << DeviceUtils::errMessage(err);
             }
         },
-                                                         10000);
+                                           10000);
     }
 }
 

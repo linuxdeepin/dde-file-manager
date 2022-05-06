@@ -33,13 +33,6 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
     Q_CLASSINFO("D-Bus Interface", "com.deepin.filemanager.service.DeviceManager")
     Q_CLASSINFO("D-Bus Introspection", ""
 "  <interface name=\"com.deepin.filemanager.service.DeviceManager\">\n"
-"    <signal name=\"AskStopSacnningWhenUnmount\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
-"    </signal>\n"
-"    <signal name=\"AskStopScanningWhenDetach\">\n"
-"      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
-"    </signal>\n"
-"    <signal name=\"AskStopScanningWhenDetachAll\"/>\n"
 "    <signal name=\"SizeUsedChanged\">\n"
 "      <arg direction=\"out\" type=\"s\" name=\"id\"/>\n"
 "      <arg direction=\"out\" type=\"x\" name=\"total\"/>\n"
@@ -97,73 +90,22 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"IsMonotorWorking\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
 "    </method>\n"
-"    <method name=\"SafelyRemoveBlockDevice\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
 "    <method name=\"DetachBlockDevice\">\n"
-"      <arg direction=\"out\" type=\"b\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"DetachBlockDeviceForced\">\n"
-"      <arg direction=\"out\" type=\"b\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
 "    <method name=\"DetachProtocolDevice\">\n"
-"      <arg direction=\"out\" type=\"b\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
 "    </method>\n"
-"    <method name=\"DetachAllMountedDevices\">\n"
-"      <arg direction=\"out\" type=\"b\"/>\n"
-"    </method>\n"
-"    <method name=\"DetachAllMountedDevicesForced\">\n"
-"      <arg direction=\"out\" type=\"b\"/>\n"
-"    </method>\n"
-"    <method name=\"MountBlockDevice\">\n"
-"      <arg direction=\"out\" type=\"s\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"UnmountBlockDevice\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"UnmountBlockDeviceForced\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"RenameBlockDevice\">\n"
-"      <arg direction=\"out\" type=\"b\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"newName\"/>\n"
-"    </method>\n"
-"    <method name=\"EjectBlockDevice\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"PoweroffBlockDevice\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"MountProtocolDevice\">\n"
-"      <arg direction=\"out\" type=\"s\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"UnmountProtocolDevice\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
-"    <method name=\"UnlockBlockDevice\">\n"
-"      <arg direction=\"out\" type=\"s\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"passwd\"/>\n"
-"    </method>\n"
-"    <method name=\"LockBlockDevice\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"    </method>\n"
+"    <method name=\"DetachAllMountedDevices\"/>\n"
 "    <method name=\"GetBlockDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
-"      <arg direction=\"in\" type=\"a{sv}\" name=\"opts\"/>\n"
-"      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.In0\"/>\n"
+"      <arg direction=\"in\" type=\"i\" name=\"opts\"/>\n"
 "    </method>\n"
 "    <method name=\"QueryBlockDeviceInfo\">\n"
 "      <arg direction=\"out\" type=\"a{sv}\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"      <arg direction=\"in\" type=\"b\" name=\"detail\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"reload\"/>\n"
 "    </method>\n"
 "    <method name=\"GetProtocolDevicesIdList\">\n"
 "      <arg direction=\"out\" type=\"as\"/>\n"
@@ -172,11 +114,7 @@ class DeviceManagerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"a{sv}\"/>\n"
 "      <annotation value=\"QVariantMap\" name=\"org.qtproject.QtDBus.QtTypeName.Out0\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"id\"/>\n"
-"      <arg direction=\"in\" type=\"b\" name=\"detail\"/>\n"
-"    </method>\n"
-"    <method name=\"GhostBlockDevMounted\">\n"
-"      <arg direction=\"in\" type=\"s\" name=\"deviceId\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"mountPoint\"/>\n"
+"      <arg direction=\"in\" type=\"b\" name=\"reload\"/>\n"
 "    </method>\n"
 "  </interface>\n"
         "")
@@ -189,32 +127,15 @@ public:
 
 public: // PROPERTIES
 public Q_SLOTS: // METHODS
-    bool DetachAllMountedDevices();
-    bool DetachAllMountedDevicesForced();
-    bool DetachBlockDevice(const QString &id);
-    bool DetachBlockDeviceForced(const QString &id);
-    bool DetachProtocolDevice(const QString &id);
-    void EjectBlockDevice(const QString &id);
-    QStringList GetBlockDevicesIdList(const QVariantMap &opts);
+    void DetachAllMountedDevices();
+    void DetachBlockDevice(const QString &id);
+    void DetachProtocolDevice(const QString &id);
+    QStringList GetBlockDevicesIdList(int opts);
     QStringList GetProtocolDevicesIdList();
-    void GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint);
     bool IsMonotorWorking();
-    void LockBlockDevice(const QString &id);
-    QString MountBlockDevice(const QString &id);
-    QString MountProtocolDevice(const QString &id);
-    void PoweroffBlockDevice(const QString &id);
-    QVariantMap QueryBlockDeviceInfo(const QString &id, bool detail);
-    QVariantMap QueryProtocolDeviceInfo(const QString &id, bool detail);
-    bool RenameBlockDevice(const QString &id, const QString &newName);
-    void SafelyRemoveBlockDevice(const QString &id);
-    QString UnlockBlockDevice(const QString &id, const QString &passwd);
-    void UnmountBlockDevice(const QString &id);
-    void UnmountBlockDeviceForced(const QString &id);
-    void UnmountProtocolDevice(const QString &id);
+    QVariantMap QueryBlockDeviceInfo(const QString &id, bool reload);
+    QVariantMap QueryProtocolDeviceInfo(const QString &id, bool reload);
 Q_SIGNALS: // SIGNALS
-    void AskStopSacnningWhenUnmount(const QString &id);
-    void AskStopScanningWhenDetach(const QString &id);
-    void AskStopScanningWhenDetachAll();
     void BlockDeviceAdded(const QString &id);
     void BlockDeviceFilesystemAdded(const QString &id);
     void BlockDeviceFilesystemRemoved(const QString &id);

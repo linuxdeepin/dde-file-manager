@@ -24,12 +24,14 @@
 #include "dattachedblockdevice.h"
 #include "dattachedprotocoldevice.h"
 #include "diskcontrolitem.h"
-#include "devicemanager.h"
 
-#include <global_server_defines.h>
-#include <dbus_interface/devicemanagerdbus_interface.h>
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
+
 #include <DGuiApplicationHelper>
 #include <DDBusSender>
+#include <DDesktopServices>
 #include <QScrollBar>
 #include <QLabel>
 #include <QSharedPointer>
@@ -58,7 +60,7 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 void DiskControlWidget::initListByMonitorState()
 {
-    if (DeviceManagerInstance.invokeIsMonitorWorking()) {
+    if (DevProxyMng->isMonitorWorking()) {
         onDiskListChanged();
     } else {
         // if failed retry once after 3s
@@ -92,35 +94,37 @@ void DiskControlWidget::initConnection()
     DFMBASE_USE_NAMESPACE
     // When the system theme changes,
     // refreshes the list of controls to fit the text color under the new theme
-    connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
-            this, &DiskControlWidget::onDiskListChanged);
-    connect(&DeviceManagerInstance, &DeviceManager::serviceUnregistered, this, [this]() {
+    connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged, this, &DiskControlWidget::onDiskListChanged);
+
+    connect(DevProxyMng, &DeviceProxyManager::devMngDBusRegistered, this, [this]() {
+        qInfo() << "[disk-mount] dde-file-manager-server connect!";
+        QTimer::singleShot(3000, this, &DiskControlWidget::onDiskListChanged);
+    });
+    connect(DevProxyMng, &DeviceProxyManager::devMngDBusUnregistered, this, [this]() {
         qWarning() << "[disk-mount] dde-file-manager-server disconnect!";
         onDiskListChanged();
     });
-    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, [this]() {
-        qInfo() << "[disk-mount] dde-file-manager-server connect!";
-        // wait server initialized
-        QTimer::singleShot(3000, this, [this]() {
-            onDiskListChanged();
-        });
+
+    connect(DevProxyMng->getDBusIFace(), &DeviceManagerInterface::NotifyDeviceBusy, this, &DiskControlWidget::onDeviceBusy);
+
+    connect(DevProxyMng, &DeviceProxyManager::blockDriveAdded, this, [this]() {
+        DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceAdded);
+        onDiskListChanged();
     });
-    connect(&DeviceManagerInstance, &DeviceManager::askStopScanning, this, &DiskControlWidget::onAskStopScanning);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::NotifyDeviceBusy, this, &DiskControlWidget::onDeviceBusy);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveAdded, this, &DiskControlWidget::onDiskListChanged);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDriveRemoved, this, [this]() {
+    connect(DevProxyMng, &DeviceProxyManager::blockDriveRemoved, this, [this]() {
+        DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_DeviceRemoved);
         notifyMessage(QObject::tr("The device has been safely removed"));
         onDiskListChanged();
     });
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemAdded, this, &DiskControlWidget::onDiskListChanged);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::BlockDeviceFilesystemRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevFsAdded, this, &DiskControlWidget::onDiskListChanged);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevFsRemoved, this, &DiskControlWidget::onDiskListChanged);
 
-    //    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceAdded, this, &DiskControlWidget::onDiskListChanged);
-    //    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DiskControlWidget::onDiskListChanged);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceMounted, this, &DiskControlWidget::onDiskListChanged);
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DiskControlWidget::onDiskListChanged);
+    //    connect(DevProxyMng, &DeviceProxyManager::protocolDevAdded, this, &DiskControlWidget::onDiskListChanged);
+    //    connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &DiskControlWidget::onDiskListChanged);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevMounted, this, &DiskControlWidget::onDiskListChanged);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &DiskControlWidget::onDiskListChanged);
 }
 
 void DiskControlWidget::removeWidgets()
@@ -187,7 +191,7 @@ int DiskControlWidget::addBlockDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = DeviceManagerInstance.invokeBlockDevicesIdList({ { ListOpt::kUnmountable, true } });
+    QStringList &&list = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
     mountedCount = addItems(list, true);
 
     return mountedCount;
@@ -197,7 +201,7 @@ int DiskControlWidget::addProtocolDevicesItems()
 {
     int mountedCount = 0;
 
-    QStringList &&list = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
+    QStringList &&list = DevProxyMng->getAllProtocolIds();
     mountedCount = addItems(list, false);
 
     return mountedCount;
@@ -246,12 +250,10 @@ DDialog *DiskControlWidget::showQueryScanningDialog(const QString &title)
 
 void DiskControlWidget::handleWhetherScanning(const QString &method, const QString &id)
 {
-    if (method == "unmount" && !id.isEmpty()) {
-        DeviceManagerInstance.invokeUnmountBlockDeviceForced(id);
-    } else if (method == "detach" && !id.isEmpty()) {
-        DeviceManagerInstance.invokeDetachBlockDeviceForced(id);
+    if (!id.isEmpty() && (method == "unmount" || method == "detach")) {
+        DevProxyMng->detachBlockDevice(id);
     } else if (method == "detach_all") {
-        DeviceManagerInstance.invokeDetachAllMountedDevicesForced();
+        DevProxyMng->detachAllDevices();
     } else {
         qWarning() << "[disk-mount] unknow method: " << method << "or id: " << id;
     }

@@ -25,7 +25,8 @@
 
 #include "utils/opticalhelper.h"
 
-#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
@@ -41,8 +42,8 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     : AbstractDirIterator(url, nameFilters, filters, flags)
 {
     devFile = OpticalHelper::burnDestDevice(url);
-    QString id { DeviceManager::blockDeviceId(devFile) };
-    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    QString id { DeviceUtils::getBlockDeviceId(devFile) };
+    auto &&map = DevProxyMng->queryBlockInfo(id);
     mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
 
     QString stagingPath { OpticalHelper::localStagingFile(url).path() };

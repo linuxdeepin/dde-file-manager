@@ -24,13 +24,17 @@
 #include "utils/burnhelper.h"
 #include "events/burneventcaller.h"
 
-#include "dfm-base/base/device/devicecontroller.h"
-#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 
 #include <QDebug>
 #include <QThread>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonArray>
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -51,7 +55,7 @@ static constexpr char kMapKeyPhase[] { "phase" };
 AbstractBurnJob::AbstractBurnJob(const QString &dev, const JobHandlePointer handler)
     : curDev(dev), jobHandlePtr(handler)
 {
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevicePropertyChanged,
+    connect(DevMngIns, &DeviceManager::blockDevPropertyChanged,
             this, [](const QString &deviceId, const QString &property, const QVariant &val) {
                 // TODO(zhangs): mediaChangeDetected
             });
@@ -134,7 +138,7 @@ void AbstractBurnJob::readFunc(int progressFd, int checkFd)
             emit requestCompletionDialog(tr("Burn process completed"), "dialog-ok");
     }
 
-    DeviceController::instance()->ejectBlockDevice(curDevId);
+    DeviceManager::instance()->ejectBlockDev(curDevId);
 }
 
 void AbstractBurnJob::writeFunc(int progressFd, int checkFd)
@@ -145,7 +149,7 @@ void AbstractBurnJob::writeFunc(int progressFd, int checkFd)
 
 void AbstractBurnJob::run()
 {
-    curDevId = { DeviceManager::blockDeviceId(curDev) };
+    curDevId = { DeviceUtils::getBlockDeviceId(curDev) };
     JobInfoPointer info { new QMap<quint8, QVariant> };
 
     work();
@@ -156,7 +160,7 @@ void AbstractBurnJob::run()
 
 bool AbstractBurnJob::readyToWork()
 {
-    QVariantMap &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(curDevId);
+    QVariantMap &&map = DevProxyMng->queryBlockInfo(curDevId);
     if (map.isEmpty()) {
         qWarning() << "Device info is empty";
         return false;
@@ -168,7 +172,7 @@ bool AbstractBurnJob::readyToWork()
     } else {
         QString mpt { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
         if (!mpt.isEmpty()) {
-            if (!DeviceController::instance()->unmountBlockDevice(curDevId)) {
+            if (!DeviceManager::instance()->unmountBlockDev(curDevId)) {
                 emit requestErrorMessageDialog(tr("The device was not safely unmounted"), tr("Disk is busy, cannot unmount now"));
                 return false;
             }
@@ -340,7 +344,7 @@ void EraseJob::work()
 
     comfort();
 
-    DeviceController::instance()->rescanDevice(curDevId);
+    DeviceManager::instance()->rescanBlockDev(curDevId);
 }
 
 BurnISOFilesJob::BurnISOFilesJob(const QString &dev, const JobHandlePointer handler)

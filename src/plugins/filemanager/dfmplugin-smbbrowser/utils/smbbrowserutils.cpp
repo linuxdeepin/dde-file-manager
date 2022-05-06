@@ -22,7 +22,7 @@
 */
 #include "smbbrowserutils.h"
 
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -63,7 +63,7 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls, Q
     DFMBASE_USE_NAMESPACE
     QUrl url = urls.first();
     QString urlStr = url.toString();
-    DeviceController::instance()->mountNetworkDevice(urlStr, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+    DeviceManager::instance()->mountNetworkDeviceAsync(urlStr, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         if (!ok && err != DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) {
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {

@@ -31,7 +31,7 @@
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -219,7 +219,7 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
         return true;
     }
 
-    DeviceController::instance()->mountNetworkDevice(url.toString(), [sender](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
+    DeviceManager::instance()->mountNetworkDeviceAsync(url.toString(), [sender](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
         if (!ok && err != DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) {
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {

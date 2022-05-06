@@ -27,10 +27,10 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/fileutils.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/urlroute.h"
 
 #include <QMenu>
@@ -166,7 +166,6 @@ bool BlockEntryFileEntity::showUsageSize() const
 
 void BlockEntryFileEntity::onOpen()
 {
-    // TODO(xust)
 }
 
 EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
@@ -201,14 +200,10 @@ void BlockEntryFileEntity::refresh()
     auto id = QString(DeviceId::kBlockDeviceIdPrefix)
             + entryUrl.path().remove("." + QString(SuffixInfo::kBlock));
 
-    auto queryInfo = [](const QString &id, bool detail) {
-        return DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, detail);
-    };
-
-    datas = UniversalUtils::convertFromQMap(queryInfo(id, true));
+    datas = UniversalUtils::convertFromQMap(DevProxyMng->queryBlockInfo(id));
     auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
     if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
-        auto clearBlkData = queryInfo(clearBlkId, true);
+        auto clearBlkData = DevProxyMng->queryBlockInfo(id);
         datas.insert(BlockAdditionalProperty::kClearBlockProperty, clearBlkData);
     }
 }

@@ -35,7 +35,7 @@ DFMBASE_BEGIN_NAMESPACE
 
 class DefenderController : public QObject
 {
-    friend class DeviceController;
+    friend class DeviceHelper;
     Q_OBJECT
     Q_DISABLE_COPY(DefenderController)
 

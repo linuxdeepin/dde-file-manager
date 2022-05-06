@@ -1,14 +1,6 @@
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <node>
   <interface name="com.deepin.filemanager.service.DeviceManager">
-    <signal name="AskStopSacnningWhenUnmount">
-      <arg name="id" type="s" direction="out"/>
-    </signal>
-    <signal name="AskStopScanningWhenDetach">
-      <arg name="id" type="s" direction="out"/>
-    </signal>
-    <signal name="AskStopScanningWhenDetachAll">
-    </signal>
     <signal name="SizeUsedChanged">
       <arg name="id" type="s" direction="out"/>
       <arg name="total" type="x" direction="out"/>
@@ -68,73 +60,23 @@
     <method name="IsMonotorWorking">
       <arg type="b" direction="out"/>
     </method>
-    <method name="SafelyRemoveBlockDevice">
-      <arg name="id" type="s" direction="in"/>
-    </method>
     <method name="DetachBlockDevice">
-      <arg type="b" direction="out"/>
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="DetachBlockDeviceForced">
-      <arg type="b" direction="out"/>
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="DetachProtocolDevice">
-      <arg type="b" direction="out"/>
       <arg name="id" type="s" direction="in"/>
     </method>
     <method name="DetachAllMountedDevices">
-      <arg type="b" direction="out"/>
-    </method>
-    <method name="DetachAllMountedDevicesForced">
-      <arg type="b" direction="out"/>
-    </method>
-    <method name="MountBlockDevice">
-      <arg type="s" direction="out"/>
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="UnmountBlockDevice">
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="UnmountBlockDeviceForced">
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="RenameBlockDevice">
-      <arg type="b" direction="out"/>
-      <arg name="id" type="s" direction="in"/>
-      <arg name="newName" type="s" direction="in"/>
-    </method>
-    <method name="EjectBlockDevice">
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="PoweroffBlockDevice">
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="MountProtocolDevice">
-      <arg type="s" direction="out"/>
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="UnmountProtocolDevice">
-      <arg name="id" type="s" direction="in"/>
-    </method>
-    <method name="UnlockBlockDevice">
-      <arg type="s" direction="out"/>
-      <arg name="id" type="s" direction="in"/>
-      <arg name="passwd" type="s" direction="in"/>
-    </method>
-    <method name="LockBlockDevice">
-      <arg name="id" type="s" direction="in"/>
     </method>
     <method name="GetBlockDevicesIdList">
       <arg type="as" direction="out"/>
-      <arg name="opts" type="a{sv}" direction="in"/>
-      <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+      <arg name="opts" type="i" direction="in"/>
     </method>
     <method name="QueryBlockDeviceInfo">
       <arg type="a{sv}" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
       <arg name="id" type="s" direction="in"/>
-      <arg name="detail" type="b" direction="in"/>
+      <arg name="reload" type="b" direction="in"/>
     </method>
     <method name="GetProtocolDevicesIdList">
       <arg type="as" direction="out"/>
@@ -143,11 +85,7 @@
       <arg type="a{sv}" direction="out"/>
       <annotation name="org.qtproject.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
       <arg name="id" type="s" direction="in"/>
-      <arg name="detail" type="b" direction="in"/>
-    </method>
-    <method name="GhostBlockDevMounted">
-      <arg name="deviceId" type="s" direction="in"/>
-      <arg name="mountPoint" type="s" direction="in"/>
+      <arg name="reload" type="b" direction="in"/>
     </method>
   </interface>
 </node>

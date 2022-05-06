@@ -26,7 +26,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
-#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -174,7 +174,7 @@ bool StashMountsUtils::isStashedDevExist(const QUrl &stashedUrl)
 
 void StashMountsUtils::stashMountedMounts()
 {
-    QStringList &&ids = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
+    QStringList &&ids = DevProxyMng->getAllProtocolIds();
     for (auto id : ids) {
         if (id.startsWith(Global::kSmb)) {
             DFMEntryFileInfoPointer info(new EntryFileInfo(ComputerUtils::makeProtocolDevUrl(id)));

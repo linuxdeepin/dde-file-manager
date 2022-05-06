@@ -39,6 +39,7 @@ public:
     static void notifyMessage(const QString &msg);
     static void notifyMessage(const QString &title, const QString &msg);
     static QString userLoginState();
+    static bool isLogined();
     static void blockShutdown(QDBusReply<QDBusUnixFileDescriptor> &replay);
     static qint64 computerMemory();
     static void computerInformation(QString &cpuinfo, QString &systemType, QString &Edition, QString &version);
@@ -50,6 +51,7 @@ public:
     static bool runCommand(const QString &cmd, const QStringList &args, const QString &wd = QString());
     static int dockHeight();
     static QMap<QString, QString> getKernelParameters();
+    static bool isInLiveSys();
 
     static QVariantHash convertFromQMap(const QVariantMap map);
 

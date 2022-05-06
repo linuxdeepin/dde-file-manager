@@ -30,55 +30,32 @@ DFMBASE_USE_NAMESPACE
 using namespace GlobalServerDefines;
 
 DeviceManagerDBus::DeviceManagerDBus(QObject *parent)
-    : QObject(parent),
-      deviceServ(DeviceController::instance())
+    : QObject(parent)
 {
     initialize();
     initConnection();
+    DevMngIns->doAutoMountAtStart();
 }
 
 bool DeviceManagerDBus::IsMonotorWorking()
 {
-    return deviceServ->isBlockDeviceMonitorWorking() && deviceServ->isProtolDeviceMonitorWorking();
+    return DevMngIns->isMonitoring();
 }
 
-void DeviceManagerDBus::SafelyRemoveBlockDevice(QString id)
+void DeviceManagerDBus::DetachBlockDevice(QString id)
 {
-    DetachBlockDevice(id);
-    // only optical eject
-    connect(deviceServ, &DeviceController::blockDevAsyncEjected, this, [this, id](const QString &deviceId, bool success) {
-        if (deviceId == id && success)
-            deviceServ->poweroffBlockDeviceAsync(id);
-    });
+    DevMngIns->detachBlockDev(id);
 }
 
-bool DeviceManagerDBus::DetachBlockDevice(QString id)
+void DeviceManagerDBus::DetachProtocolDevice(QString id)
 {
-    bool ret = deviceServ->detachBlockDevice(id);
-    if (!ret)
-        emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
-    return ret;
-}
-
-bool DeviceManagerDBus::DetachBlockDeviceForced(QString id)
-{
-    if (deviceServ->stopDefenderScanDrive(id)) {
-        return deviceServ->detachBlockDevice(id);
-    } else {
-        emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
-        return false;
-    }
-}
-
-bool DeviceManagerDBus::DetachProtocolDevice(QString id)
-{
-    return deviceServ->detachProtocolDevice(id);
+    DevMngIns->detachProtoDev(id);
 }
 
 void DeviceManagerDBus::initialize()
 {
-    deviceServ->startMonitor();
-    deviceServ->startAutoMount();
+    DevMngIns->startMonitor();
+    DevMngIns->startPollingDeviceUsage();
 }
 
 /*!
@@ -86,128 +63,44 @@ void DeviceManagerDBus::initialize()
  */
 void DeviceManagerDBus::initConnection()
 {
-    connect(deviceServ, &DeviceController::blockDevicePropertyChanged, this, [this](const QString &deviceId, const QString &property, const QVariant &val) {
-        emit BlockDevicePropertyChanged(deviceId, property, QDBusVariant(val));
+    connect(DevMngIns, &DeviceManager::blockDevUnmountAsyncFailed, this, [this](const QString &deviceId, DFMMOUNT::DeviceError err) {
+        emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
     });
-    connect(deviceServ, &DeviceController::blockDevAsyncUnmounted, this, [this](const QString &deviceId, bool success) {
-        if (!deviceId.isEmpty() && !success)
-            emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
+    connect(DevMngIns, &DeviceManager::blockDevEjectAsyncFailed, this, [this](const QString &deviceId, DFMMOUNT::DeviceError err) {
+        emit NotifyDeviceBusy(DeviceBusyAction::kEject);
     });
-    connect(deviceServ, &DeviceController::blockDevAsyncEjected, this, [this](const QString &deviceId, bool success) {
-        if (!deviceId.isEmpty() && !success)
-            emit NotifyDeviceBusy(DeviceBusyAction::kEject);
-    });
-    connect(deviceServ, &DeviceController::blockDevAsyncPoweroffed, this, [this](const QString &deviceId, bool success) {
-        if (!deviceId.isEmpty() && !success)
-            emit NotifyDeviceBusy(DeviceBusyAction::kRemove);
+    connect(DevMngIns, &DeviceManager::blockDevPoweroffAysncFailed, this, [this](const QString &deviceId, DFMMOUNT::DeviceError err) {
+        emit NotifyDeviceBusy(DeviceBusyAction::kRemove);
     });
 
-    connect(deviceServ, &DeviceController::deviceSizeUsedChanged, this, &DeviceManagerDBus::SizeUsedChanged);
-    connect(deviceServ, &DeviceController::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
-    connect(deviceServ, &DeviceController::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
-    connect(deviceServ, &DeviceController::blockDevAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
-    connect(deviceServ, &DeviceController::blockDevRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
-    connect(deviceServ, &DeviceController::blockDevFilesystemAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
-    connect(deviceServ, &DeviceController::blockDevFilesystemRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
-    connect(deviceServ, &DeviceController::blockDevMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
-    connect(deviceServ, &DeviceController::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
-    connect(deviceServ, &DeviceController::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
-    connect(deviceServ, &DeviceController::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
+    connect(DevMngIns, &DeviceManager::devSizeChanged, this, &DeviceManagerDBus::SizeUsedChanged);
+    connect(DevMngIns, &DeviceManager::blockDriveAdded, this, &DeviceManagerDBus::BlockDriveAdded);
+    connect(DevMngIns, &DeviceManager::blockDriveRemoved, this, &DeviceManagerDBus::BlockDriveRemoved);
+    connect(DevMngIns, &DeviceManager::blockDevAdded, this, &DeviceManagerDBus::BlockDeviceAdded);
+    connect(DevMngIns, &DeviceManager::blockDevRemoved, this, &DeviceManagerDBus::BlockDeviceRemoved);
+    connect(DevMngIns, &DeviceManager::blockDevFsAdded, this, &DeviceManagerDBus::BlockDeviceFilesystemAdded);
+    connect(DevMngIns, &DeviceManager::blockDevFsRemoved, this, &DeviceManagerDBus::BlockDeviceFilesystemRemoved);
+    connect(DevMngIns, &DeviceManager::blockDevMounted, this, &DeviceManagerDBus::BlockDeviceMounted);
+    connect(DevMngIns, &DeviceManager::blockDevUnmounted, this, &DeviceManagerDBus::BlockDeviceUnmounted);
+    connect(DevMngIns, &DeviceManager::blockDevUnlocked, this, &DeviceManagerDBus::BlockDeviceUnlocked);
+    connect(DevMngIns, &DeviceManager::blockDevLocked, this, &DeviceManagerDBus::BlockDeviceLocked);
+    connect(DevMngIns, &DeviceManager::blockDevPropertyChanged, this, [this](const QString &id, const QString &property, const QVariant &val) {
+        emit this->BlockDevicePropertyChanged(id, property, QDBusVariant(val));
+    });
 
-    connect(deviceServ, &DeviceController::protocolDevMounted, this, &DeviceManagerDBus::ProtocolDeviceMounted);
-    connect(deviceServ, &DeviceController::protocolDevUnmounted, this, &DeviceManagerDBus::ProtocolDeviceUnmounted);
-    connect(deviceServ, &DeviceController::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
-    connect(deviceServ, &DeviceController::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
+    connect(DevMngIns, &DeviceManager::protocolDevMounted, this, &DeviceManagerDBus::ProtocolDeviceMounted);
+    connect(DevMngIns, &DeviceManager::protocolDevUnmounted, this, &DeviceManagerDBus::ProtocolDeviceUnmounted);
+    connect(DevMngIns, &DeviceManager::protocolDevAdded, this, &DeviceManagerDBus::ProtocolDeviceAdded);
+    connect(DevMngIns, &DeviceManager::protocolDevRemoved, this, &DeviceManagerDBus::ProtocolDeviceRemoved);
 }
 
 /*!
  * \brief this is convience interface for `disk-mount` plugin
  */
-bool DeviceManagerDBus::DetachAllMountedDevices()
+void DeviceManagerDBus::DetachAllMountedDevices()
 {
-    if (deviceServ->isDefenderScanningDrive()) {
-        // show query dialog
-        emit AskStopScanningWhenDetachAll();
-        return false;
-    }
-
-    bool ret = deviceServ->detachAllMountedBlockDevices()
-            && deviceServ->detachAllMountedProtocolDevices();
-    if (!ret)
-        emit NotifyDeviceBusy(DeviceBusyAction::kUnmount);
-    return ret;
-}
-
-bool DeviceManagerDBus::DetachAllMountedDevicesForced()
-{
-    if (deviceServ->stopDefenderScanAllDrives()) {
-        return deviceServ->detachAllMountedBlockDevices()
-                && deviceServ->detachAllMountedProtocolDevices();
-    } else {
-        emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
-        return false;
-    }
-}
-
-QString DeviceManagerDBus::MountBlockDevice(QString id)
-{
-    return deviceServ->mountBlockDevice(id);
-}
-
-void DeviceManagerDBus::UnmountBlockDevice(QString id)
-{
-    if (deviceServ->isDefenderScanningDrive(id)) {
-        // show query dialog
-        emit AskStopSacnningWhenUnmount(id);
-        return;
-    }
-
-    deviceServ->unmountBlockDeviceAsync(id);
-}
-
-void DeviceManagerDBus::UnmountBlockDeviceForced(QString id)
-{
-    if (deviceServ->stopDefenderScanDrive(id)) {
-        deviceServ->unmountBlockDeviceAsync(id);
-    } else {
-        emit NotifyDeviceBusy(DeviceBusyAction::kSafelyRemove);
-    }
-}
-
-bool DeviceManagerDBus::RenameBlockDevice(QString id, QString newName)
-{
-    // TODO(xust) this may take a long time while renaming ext* series filesystem, consider using async version instead.
-    return deviceServ->renameBlockDevice(id, newName);
-}
-
-void DeviceManagerDBus::EjectBlockDevice(QString id)
-{
-    deviceServ->ejectBlockDeviceAsync(id);
-}
-
-void DeviceManagerDBus::PoweroffBlockDevice(QString id)
-{
-    deviceServ->poweroffBlockDeviceAsync(id);
-}
-
-QString DeviceManagerDBus::MountProtocolDevice(QString id)
-{
-    return deviceServ->mountProtocolDevice(id);
-}
-
-void DeviceManagerDBus::UnmountProtocolDevice(QString id)
-{
-    deviceServ->unmountProtocolDeviceAsync(id);
-}
-
-QString DeviceManagerDBus::UnlockBlockDevice(QString id, QString passwd)
-{
-    return deviceServ->unlockBlockDevice(passwd, id);
-}
-
-void DeviceManagerDBus::LockBlockDevice(QString id)
-{
-    deviceServ->lockBlockDevice(id);
+    DevMngIns->detachAllRemovableBlockDevs();
+    DevMngIns->detachAllProtoDevs();
 }
 
 /*!
@@ -215,27 +108,22 @@ void DeviceManagerDBus::LockBlockDevice(QString id)
  * \param opts: refrecne to DeviceService::blockDevicesIdList
  * \return devices id list
  */
-QStringList DeviceManagerDBus::GetBlockDevicesIdList(const QVariantMap &opts)
+QStringList DeviceManagerDBus::GetBlockDevicesIdList(int opts)
 {
-    return deviceServ->blockDevicesIdList(opts);
+    return DevMngIns->getAllBlockDevID(static_cast<DeviceQueryOptions>(opts));
 }
 
-QVariantMap DeviceManagerDBus::QueryBlockDeviceInfo(QString id, bool detail)
+QVariantMap DeviceManagerDBus::QueryBlockDeviceInfo(QString id, bool reload)
 {
-    return deviceServ->blockDeviceInfo(id, detail);
+    return DevMngIns->getBlockDevInfo(id, reload);
 }
 
 QStringList DeviceManagerDBus::GetProtocolDevicesIdList()
 {
-    return deviceServ->protocolDevicesIdList();
+    return DevMngIns->getAllProtocolDevID();
 }
 
-QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id, bool detail)
+QVariantMap DeviceManagerDBus::QueryProtocolDeviceInfo(QString id, bool reload)
 {
-    return deviceServ->protocolDeviceInfo(id, detail);
-}
-
-void DeviceManagerDBus::GhostBlockDevMounted(const QString &deviceId, const QString &mountPoint)
-{
-    return deviceServ->ghostBlockDevMounted(deviceId, mountPoint);
+    return DevMngIns->getProtocolDevInfo(id, reload);
 }

@@ -21,14 +21,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dattachedblockdevice.h"
-#include "devicemanager.h"
 #include "sizeformathelper.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
-#include <global_server_defines.h>
 #include <QCoreApplication>
 #include <QVariantMap>
+#include <QDebug>
 
 static const char *const kBurnSegOndisc = "disc_files";
 
@@ -81,7 +82,7 @@ bool DAttachedBlockDevice::isValid()
 
 void DAttachedBlockDevice::detach()
 {
-    DeviceManagerInstance.instance().invokeDetachBlockDevice(qvariant_cast<QString>(data.value(DeviceProperty::kId)));
+    DevProxyMng->detachBlockDevice(qvariant_cast<QString>(data.value(DeviceProperty::kId)));
 }
 
 bool DAttachedBlockDevice::detachable()
@@ -178,12 +179,12 @@ QUrl DAttachedBlockDevice::accessPointUrl()
 
 void DAttachedBlockDevice::query()
 {
-    data = DeviceManagerInstance.invokeQueryBlockDeviceInfo(deviceId);
+    data = DevProxyMng->queryBlockInfo(deviceId);
 }
 
 void DAttachedBlockDevice::initializeConnect()
 {
-    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DAttachedBlockDevice::onSizeChanged);
+    //    connect(DeviceManagerInstance.getDeviceInterface(), &DeviceManagerInterface::SizeUsedChanged, this, &DAttachedBlockDevice::onSizeChanged);
 }
 
 void DAttachedBlockDevice::onSizeChanged(const QString &id, qint64 total, qint64 free)

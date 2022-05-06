@@ -57,6 +57,7 @@ void SideBarUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("SideBarService::addItem"), this, &SideBarUnicastReceiver::invokeAddItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::removeItem"), this, &SideBarUnicastReceiver::invokeRemoveItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::updateItem"), this, &SideBarUnicastReceiver::invokeUpdateItem);
+    dpfInstance.eventUnicast().connect(topic("SideBarService::updateItemName"), this, &SideBarUnicastReceiver::invokeUpdateItemName);
     dpfInstance.eventUnicast().connect(topic("SideBarService::updateItemIcon"), this, &SideBarUnicastReceiver::invokeUpdateItemIcon);
     dpfInstance.eventUnicast().connect(topic("SideBarService::insertItem"), this, &SideBarUnicastReceiver::invokeInsertItem);
     dpfInstance.eventUnicast().connect(topic("SideBarService::triggerItemEdit"), this, &SideBarUnicastReceiver::invokeTriggerItemEdit);

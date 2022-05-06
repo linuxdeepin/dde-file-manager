@@ -22,9 +22,13 @@
 */
 #include "discstatemanager.h"
 
-#include "dfm-base/utils/devicemanager.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+
+#include <QTimer>
+
+#include <mutex>
 
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -43,7 +47,7 @@ void DiscStateManager::initilaize()
     static std::once_flag flag;
 
     std::call_once(flag, [this]() {
-        connect(&DeviceManagerInstance, &DeviceManager::blockDevicePropertyChanged,
+        connect(DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged,
                 this, &DiscStateManager::onDevicePropertyChanged, Qt::DirectConnection);
         QTimer::singleShot(1000, this, &DiscStateManager::ghostMountForBlankDisc);
     });
@@ -51,10 +55,10 @@ void DiscStateManager::initilaize()
 
 void DiscStateManager::ghostMountForBlankDisc()
 {
-    auto &&devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
+    auto &&devs = DevProxyMng->getAllBlockIds({});
     for (const auto &dev : devs) {
         if (dev.startsWith(kDiscPrefix))
-            onDevicePropertyChanged(dev, DeviceProperty::kOptical, {});
+            onDevicePropertyChanged(dev, DeviceProperty::kOptical, true);
     }
 }
 
@@ -63,16 +67,13 @@ void DiscStateManager::onDevicePropertyChanged(const QString &id, const QString 
     Q_UNUSED(var);
 
     // Query blank disc size
-    if (id.startsWith(kDiscPrefix) && propertyName == DeviceProperty::kOptical) {
-        auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id, true);
+    if (id.startsWith(kDiscPrefix) && propertyName == DeviceProperty::kOptical && var.toBool()) {
+        auto &&map = DevProxyMng->queryBlockInfo(id);
         bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
         qint64 curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
         if (blank && curAvial == 0) {
-            DeviceController::instance()->mountBlockDeviceAsync(id, {}, [id](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
-                Q_UNUSED(ok)
-                Q_UNUSED(err)
-                Q_UNUSED(mpt)
-                DeviceManagerInstance.invokeGhostBlockDevMounted(id, "");
+            DevMngIns->mountBlockDevAsync(id, {}, [id](bool, DFMMOUNT::DeviceError, const QString &) {
+                DevProxyMng->reloadOpticalInfo(id);
             });
         }
     }

@@ -58,7 +58,7 @@ const char *const kRegPattern { "^[^\\.\\\\/\':\\*\\?\"<>|%&][^\\\\/\':\\*\\?\"<
 static int editorMarginTop(const QString &family)
 {
     int margin = 0;
-    // TODO(xust)
+    // TODO(xust) 一些特殊的字体和 CESI_*_GB* 的字体在计算机页面重命名时，显示位置偏上
     //    if (dfm_util::isContains(family, QString("Unifont"), QString("WenQuanYi Micro Hei")))
     //        margin = 4;
     //    else if (family.startsWith("CESI")) {

@@ -30,12 +30,12 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/utils/clipboard.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -84,9 +84,10 @@ bool Core::start()
     }
 
     // mount business
-    if (!DeviceManagerInstance.connectToServer()) {
-        qCritical() << "device manager cannot connect to server!";
-        DeviceController::instance()->startMonitor();
+    if (!DevProxyMng->connectToService()) {
+        qCritical() << "device manager cannot connect to service!";
+        DevMngIns->startMonitor();
+        DevMngIns->startPollingDeviceUsage();
     }
 
     // show first window when all plugin initialized

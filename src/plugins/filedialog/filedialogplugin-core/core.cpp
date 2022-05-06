@@ -29,8 +29,6 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
 
-#include "dfm-base/base/device/devicecontroller.h"
-
 #include <QDBusError>
 #include <QDBusConnection>
 
@@ -40,7 +38,6 @@ DIALOGCORE_USE_NAMESPACE
 
 bool Core::start()
 {
-    DFMBASE_NAMESPACE::DeviceController::instance()->disableStorageInfoPoll();
     WindowsService::service()->setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);
     });

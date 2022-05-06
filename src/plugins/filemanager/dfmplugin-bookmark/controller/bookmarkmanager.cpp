@@ -26,7 +26,7 @@
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -373,7 +373,7 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
             if (info.attribute(DFileInfo::AttributeID::StandardIsDir).toBool())
                 BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         } else {
-            DeviceController::instance()->mountNetworkDevice(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
+            DeviceManager::instance()->mountNetworkDeviceAsync(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
                 Q_UNUSED(mntPath)
                 if (!ok) {
                     DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);

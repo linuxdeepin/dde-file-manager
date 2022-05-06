@@ -28,7 +28,6 @@
 #include "services/common/menu/menuservice.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 
-#include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"

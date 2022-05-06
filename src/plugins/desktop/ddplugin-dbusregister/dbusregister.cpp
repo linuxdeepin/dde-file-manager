@@ -29,9 +29,9 @@
 #include "dbus_adaptor/filemanager1dbus_adaptor.h"
 
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/device/devicecontroller.h"
+#include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/utils/devicemanager.h"
 
 #include <dfm-framework/framework.h>
 #include <QDBusConnection>
@@ -58,9 +58,9 @@ bool DBusRegister::start()
 
     QTimer::singleShot(1000, []() {
         // mount business
-        if (!DeviceManagerInstance.connectToServer()) {
+        if (!DevProxyMng->connectToService()) {
             qCritical() << "device manager cannot connect to server!";
-            DeviceController::instance()->startMonitor();
+            DevMngIns->startMonitor();
         }
     });
 

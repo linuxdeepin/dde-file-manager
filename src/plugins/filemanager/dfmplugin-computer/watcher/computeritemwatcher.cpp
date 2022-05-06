@@ -29,14 +29,13 @@
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/file/local/localfilewatcher.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/base/device/devicecontroller.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -123,23 +122,23 @@ void ComputerItemWatcher::initConn()
     connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onAppAttributeChanged);
 
     initDeviceConn();
-    connect(&DeviceManagerInstance, &DeviceManager::serviceRegistered, this, [this]() { startQueryItems(); });
+    connect(DevProxyMng, &DeviceProxyManager::devMngDBusRegistered, this, [this]() { startQueryItems(); });
 }
 
 void ComputerItemWatcher::initDeviceConn()
 {
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevUnmounted, this, &ComputerItemWatcher::onBlockDeviceUnmounted);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevLocked, this, &ComputerItemWatcher::onBlockDeviceLocked);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
-    connect(&DeviceManagerInstance, &DeviceManager::blockDevicePropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
-    connect(&DeviceManagerInstance, &DeviceManager::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
-    connect(&DeviceManagerInstance, &DeviceManager::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
-    connect(&DeviceManagerInstance, &DeviceManager::deviceSizeUsedChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
-    //    connect(&DeviceManagerInstance, &DeviceManager::protocolDevAdded, this, &ComputerItemWatcher::); // TODO(xust) seems not needed for now.
-    connect(&DeviceManagerInstance, &DeviceManager::protocolDevRemoved, this, &ComputerItemWatcher::onProtocolDeviceRemoved);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevAdded, this, &ComputerItemWatcher::onBlockDeviceAdded);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved, this, &ComputerItemWatcher::onBlockDeviceRemoved);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevMounted, this, &ComputerItemWatcher::onBlockDeviceMounted);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted, this, &ComputerItemWatcher::onBlockDeviceUnmounted);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevLocked, this, &ComputerItemWatcher::onBlockDeviceLocked);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnlocked, this, &ComputerItemWatcher::onUpdateBlockItem);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this, &ComputerItemWatcher::onDevicePropertyChangedQVar);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevMounted, this, &ComputerItemWatcher::onProtocolDeviceMounted);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &ComputerItemWatcher::onProtocolDeviceUnmounted);
+    connect(DevProxyMng, &DeviceProxyManager::devSizeChanged, this, &ComputerItemWatcher::onDeviceSizeChanged);
+    //    connect(&DeviceManagerInstance, &DeviceManager::protocolDevAdded, this, &ComputerItemWatcher::);
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevRemoved, this, &ComputerItemWatcher::onProtocolDeviceRemoved);
 }
 
 void ComputerItemWatcher::initAppWatcher()
@@ -183,7 +182,7 @@ ComputerDataList ComputerItemWatcher::getBlockDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
-    devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
+    devs = DevProxyMng->getAllBlockIds();
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeBlockDevUrl(dev);
@@ -216,7 +215,7 @@ ComputerDataList ComputerItemWatcher::getProtocolDeviceItems(bool &hasNewItem)
 {
     ComputerDataList ret;
     QStringList devs;
-    devs = DeviceManagerInstance.invokeProtolcolDevicesIdList({});
+    devs = DevProxyMng->getAllProtocolIds();
 
     for (const auto &dev : devs) {
         auto devUrl = ComputerUtils::makeProtocolDevUrl(dev);
@@ -526,6 +525,19 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
                 onUpdateBlockItem(id);
             Q_EMIT itemPropertyChanged(devUrl, propertyName, var.variant());
         }
+
+        // by default if loop device do not have filesystem interface in udisks, it will not be shown in computer,
+        // and for loop devices, no blockAdded signal will be emited cause it's already existed there, so
+        // watch the filesystemAdded/Removed signal to decide whether to show or hide it.
+        if (propertyName == DeviceProperty::kHasFileSystem) {
+            auto blkInfo = DevProxyMng->queryBlockInfo(id);
+            if (blkInfo.value(DeviceProperty::kIsLoopDevice).toBool()) {
+                if (var.variant().toBool())
+                    onDeviceAdded(url, getGroupId(diskGroup()));
+                else
+                    removeDevice(url);
+            }
+        }
     }
 }
 
@@ -629,7 +641,7 @@ void ComputerItemWatcher::onProtocolDeviceRemoved(const QString &id)
 void ComputerItemWatcher::onBlockDeviceMounted(const QString &id, const QString &mntPath)
 {
     Q_UNUSED(mntPath);
-    auto &&datas = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    auto &&datas = DevProxyMng->queryBlockInfo(id);
     auto shellDevId = datas.value(GlobalServerDefines::DeviceProperty::kCryptoBackingDevice).toString();
     onUpdateBlockItem(shellDevId.length() > 1 ? shellDevId : id);
 }

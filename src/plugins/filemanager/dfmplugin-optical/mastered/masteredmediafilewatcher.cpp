@@ -25,7 +25,8 @@
 #include "utils/opticalhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/devicemanager.h"
+#include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 DFMBASE_USE_NAMESPACE
@@ -70,8 +71,8 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
 
     dptr->proxyOnDisk.clear();
     QString devFile { OpticalHelper::burnDestDevice(url) };
-    QString id { DeviceManager::blockDeviceId(devFile) };
-    auto &&map = DeviceManagerInstance.invokeQueryBlockDeviceInfo(id);
+    QString id { DeviceUtils::getBlockDeviceId(devFile) };
+    auto &&map = DevProxyMng->queryBlockInfo(id);
     QString mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
     dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(mntPoint);
 

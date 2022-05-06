@@ -24,7 +24,8 @@
 #include "tipswidget.h"
 #include "diskpluginitem.h"
 #include "diskcontrolwidget.h"
-#include "devicemanager.h"
+
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 #include <DApplication>
 #include <QGSettings>
@@ -67,7 +68,7 @@ void DiskMountPlugin::init(PluginProxyInterface *proxyInter)
 
     std::call_once(DiskMountPlugin::onceFlag(), [this, proxyInter]() {
         setProxyInter(proxyInter);   // `m_proxyInter` from Base class `PluginsItemInterface`
-        DeviceManagerInstance.connectToServer();
+        DevProxyMng->connectToService();
         initCompoments();
         diskPluginItem->setDockDisplayMode(displayMode());
     });
@@ -134,7 +135,7 @@ void DiskMountPlugin::invokedMenuItem(const QString &itemKey, const QString &men
         QProcess::startDetached("gio", QStringList() << "open"
                                                      << "computer:///");
     else if (menuId == kEjectAll)
-        DeviceManagerInstance.invokeDetachAllMountedDevices();
+        DevProxyMng->detachAllDevices();
 }
 
 int DiskMountPlugin::itemSortKey(const QString &itemKey)

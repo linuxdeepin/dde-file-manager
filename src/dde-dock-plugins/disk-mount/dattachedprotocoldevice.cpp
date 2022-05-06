@@ -21,9 +21,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dattachedprotocoldevice.h"
-#include "devicemanager.h"
 
-#include <global_server_defines.h>
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
+
 #include <QVariantMap>
 #include <QIcon>
 
@@ -52,7 +53,7 @@ bool DAttachedProtocolDevice::isValid()
 
 void DAttachedProtocolDevice::detach()
 {
-    DeviceManagerInstance.instance().invokeDetachProtocolDevice(data.value(DeviceProperty::kId).toString());
+    DevProxyMng->detachProtocolDevice(data.value(DeviceProperty::kId).toString());
 }
 
 bool DAttachedProtocolDevice::detachable()
@@ -101,5 +102,5 @@ QUrl DAttachedProtocolDevice::accessPointUrl()
 
 void DAttachedProtocolDevice::query()
 {
-    data = DeviceManagerInstance.invokeQueryProtocolDeviceInfo(deviceId);
+    data = DevProxyMng->queryProtocolInfo(deviceId);
 }

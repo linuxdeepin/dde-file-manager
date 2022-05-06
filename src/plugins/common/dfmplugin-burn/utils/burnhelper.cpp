@@ -23,9 +23,9 @@
 #include "burnhelper.h"
 
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 #include <DDialog>
 #include <QObject>
@@ -177,7 +177,7 @@ QString BurnHelper::firstOptcailDev()
 {
     using namespace GlobalServerDefines;
     QString opticalDevId;
-    auto &&devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
+    auto &&devs = DevProxyMng->getAllBlockIds({});
     for (const auto &dev : devs) {
         if (dev.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
             opticalDevId = dev;
@@ -186,7 +186,7 @@ QString BurnHelper::firstOptcailDev()
     }
 
     if (!opticalDevId.isEmpty()) {
-        auto &&data = DeviceManagerInstance.invokeQueryBlockDeviceInfo(opticalDevId);
+        auto &&data = DevProxyMng->queryBlockInfo(opticalDevId);
         bool isOptical { data.value(DeviceProperty::kOptical).toBool() };
         bool isOpticalDrive { data.value(DeviceProperty::kOpticalDrive).toBool() };
         if (isOptical && isOpticalDrive)
