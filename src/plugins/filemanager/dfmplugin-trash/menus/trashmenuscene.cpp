@@ -148,19 +148,22 @@ bool TrashMenuScene::triggered(QAction *action)
 {
     DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
-
-    if (actId == TrashActionId::kRestore) {
-        TrashFileHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
-        return true;
-    } else if (actId == TrashActionId::kRestoreAll) {
-        TrashFileHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
-        return true;
-    } else if (actId == TrashActionId::kEmptyTrash) {
-        TrashHelper::emptyTrash();
-        return true;
+    if (d->predicateAction.contains(actId)) {
+        if (actId == TrashActionId::kRestore) {
+            TrashFileHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
+            return true;
+        } else if (actId == TrashActionId::kRestoreAll) {
+            TrashFileHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
+            return true;
+        } else if (actId == TrashActionId::kEmptyTrash) {
+            TrashHelper::emptyTrash();
+            return true;
+        }
+        qWarning() << "action not found, id: " << actId;
+        return false;
+    } else {
+        return AbstractMenuScene::triggered(action);
     }
-
-    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *TrashMenuScene::scene(QAction *action) const

@@ -131,13 +131,16 @@ bool RecentMenuScene::triggered(QAction *action)
 {
     DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
-
-    if (actId == RecentActionID::kRemove) {
-        RecentFilesHelper::removeRecent(d->selectFiles);
-        return true;
+    if (d->predicateAction.contains(actId)) {
+        if (actId == RecentActionID::kRemove) {
+            RecentFilesHelper::removeRecent(d->selectFiles);
+            return true;
+        }
+        qWarning() << "action not found, id: " << actId;
+        return false;
+    } else {
+        return AbstractMenuScene::triggered(action);
     }
-
-    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *RecentMenuScene::scene(QAction *action) const

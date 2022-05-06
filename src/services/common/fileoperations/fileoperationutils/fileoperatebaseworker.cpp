@@ -1153,8 +1153,11 @@ void FileOperateBaseWorker::syncFilesToDevice()
     if (CountWriteSizeType::kWriteBlockType != countWriteType)
         return;
 
+    qDebug() << __FUNCTION__ << "syncFilesToDevice begin";
     qint64 writeSize = getWriteDataSize() + skipWritSize;
     while (!isStopped() && sourceFilesTotalSize > 0 && writeSize < sourceFilesTotalSize) {
         QThread::msleep(100);
+        writeSize = getWriteDataSize() + skipWritSize;
     }
+    qDebug() << __FUNCTION__ << "syncFilesToDevice end";
 }
