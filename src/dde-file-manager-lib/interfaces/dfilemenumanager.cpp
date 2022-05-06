@@ -67,6 +67,7 @@
 #include "extensionimpl/dfmextmenuimpl.h"
 #include "extensionimpl/dfmextmendefine.h"
 #include "extensionimpl/private/dfmextmenuimpl_p.h"
+#include "utils/grouppolicy.h"
 
 #include <DSysInfo>
 
@@ -89,7 +90,9 @@
 
 //fix:临时获取光盘刻录前临时的缓存地址路径，便于以后直接获取使用
 
+
 namespace DFileMenuData {
+static QHash<MenuAction, QString> actionPredicate;
 static QMap<MenuAction, QString> actionKeys;
 static QMap<MenuAction, QIcon> actionIcons;
 static QMap<MenuAction, QAction *> actions;
@@ -955,6 +958,96 @@ void DFileMenuData::initData()
     actionKeys[MenuAction::RemoveStashedRemoteConn] = QObject::tr("Remove");
     actionKeys[MenuAction::UnmountAllSmbMount] = QObject::tr("Remove");
     actionKeys[MenuAction::RefreshView] = QObject::tr("Refresh");
+
+    // action predicate
+    actionPredicate[MenuAction::Open] =  "Open";
+    actionPredicate[MenuAction::OpenDisk] =  "OpenDisk";
+    actionPredicate[MenuAction::OpenInNewWindow] =  "OpenInNewWindow";
+    actionPredicate[MenuAction::OpenInNewTab] =  "OpenInNewTab";
+    actionPredicate[MenuAction::OpenDiskInNewWindow] =  "OpenDiskInNewWindow";
+    actionPredicate[MenuAction::OpenDiskInNewTab] =  "OpenDiskInNewTab";
+    actionPredicate[MenuAction::OpenAsAdmin] =  "OpenAsAdmin";
+    actionPredicate[MenuAction::OpenWith] =  "OpenWith";
+    actionPredicate[MenuAction::OpenWithCustom] =  "OpenWithCustom";
+    actionPredicate[MenuAction::OpenFileLocation] = "OpenFileLocation";
+    actionPredicate[MenuAction::Compress] = "Compress";
+    actionPredicate[MenuAction::Decompress] = "Decompress";
+    actionPredicate[MenuAction::DecompressHere] = "DecompressHere";
+    actionPredicate[MenuAction::Cut] = "Cut";
+    actionPredicate[MenuAction::Copy] = "Copy";
+    actionPredicate[MenuAction::Paste] = "Paste";
+    actionPredicate[MenuAction::Rename] = "Rename";
+    actionPredicate[MenuAction::BookmarkRename] = "BookmarkRename";
+    actionPredicate[MenuAction::BookmarkRemove] = "BookmarkRemove";
+    actionPredicate[MenuAction::CreateSymlink] = "CreateSymlink";
+    actionPredicate[MenuAction::SendToDesktop] = "SendToDesktop";
+    actionPredicate[MenuAction::SendToRemovableDisk] = "SendToRemovableDisk";
+    actionPredicate[MenuAction::SendToBluetooth] = "SendToBluetooth";
+    actionPredicate[MenuAction::AddToBookMark] = "AddToBookMark";
+    actionPredicate[MenuAction::Delete] = "Delete";
+    actionPredicate[MenuAction::Property] = "Property";
+    actionPredicate[MenuAction::NewFolder] = "NewFolder";
+    actionPredicate[MenuAction::NewWindow] = "NewWindow";
+    actionPredicate[MenuAction::SelectAll] = "SelectAll";
+    actionPredicate[MenuAction::Separator] = "Separator";
+    actionPredicate[MenuAction::ClearRecent] = "ClearRecent";
+    actionPredicate[MenuAction::ClearTrash] = "ClearTrash";
+    actionPredicate[MenuAction::DisplayAs] = "DisplayAs";
+    actionPredicate[MenuAction::SortBy] = "SortBy";
+    actionPredicate[MenuAction::NewDocument] = "NewDocument";
+    actionPredicate[MenuAction::NewWord] = "NewWord";
+    actionPredicate[MenuAction::NewExcel] = "NewExcel";
+    actionPredicate[MenuAction::NewPowerpoint] = "NewPowerpoint";
+    actionPredicate[MenuAction::NewText] = "NewText";
+    actionPredicate[MenuAction::OpenInTerminal] = "OpenInTerminal";
+    actionPredicate[MenuAction::Restore] = "Restore";
+    actionPredicate[MenuAction::RestoreAll] = "RestoreAll";
+    actionPredicate[MenuAction::CompleteDeletion] = "CompleteDeletion";
+    actionPredicate[MenuAction::Mount] = "Mount";
+    actionPredicate[MenuAction::Unmount] = "Unmount";
+    actionPredicate[MenuAction::Eject] = "Eject";
+    actionPredicate[MenuAction::SafelyRemoveDrive] = "SafelyRemoveDrive";
+    actionPredicate[MenuAction::Name] = "Name";
+    actionPredicate[MenuAction::Size] = "Size";
+    actionPredicate[MenuAction::Type] = "Type";
+    actionPredicate[MenuAction::CreatedDate] = "CreatedDate";
+    actionPredicate[MenuAction::LastModifiedDate] = "LastModifiedDate";
+    actionPredicate[MenuAction::LastRead] = "LastRead";
+    actionPredicate[MenuAction::DeletionDate] = "DeletionDate";
+    actionPredicate[MenuAction::SourcePath] = "SourcePath";
+    actionPredicate[MenuAction::AbsolutePath] = "AbsolutePath";
+    actionPredicate[MenuAction::Settings] = "Settings";
+    actionPredicate[MenuAction::Exit] = "Exit";
+    actionPredicate[MenuAction::IconView] = "IconView";
+    actionPredicate[MenuAction::ListView] = "ListView";
+    actionPredicate[MenuAction::ExtendView] = "ExtendView";
+    actionPredicate[MenuAction::SetAsWallpaper] = "SetAsWallpaper";
+    actionPredicate[MenuAction::ForgetPassword] = "ForgetPassword";
+    actionPredicate[MenuAction::Share] = "Share";
+    actionPredicate[MenuAction::UnShare] = "UnShare";
+    actionPredicate[MenuAction::SetUserSharePassword] = "SetUserSharePassword";
+    actionPredicate[MenuAction::FormatDevice] = "FormatDevice";
+    actionPredicate[MenuAction::OpticalBlank] = "OpticalBlank";
+    actionPredicate[MenuAction::Vault] = "Vault";
+    actionPredicate[MenuAction::TagInfo] = "TagInfo";
+    actionPredicate[MenuAction::TagFilesUseColor] = "TagFilesUseColor";
+    actionPredicate[MenuAction::ChangeTagColor] = "ChangeTagColor";
+    actionPredicate[MenuAction::DeleteTags] = "DeleteTags";
+    actionPredicate[MenuAction::RenameTag] = "RenameTag";
+    actionPredicate[MenuAction::RemoveFromRecent] = "RemoveFromRecent";
+    actionPredicate[MenuAction::MountImage] = "MountImage";
+    actionPredicate[MenuAction::StageFileForBurning] = "StageFileForBurning";
+    actionPredicate[MenuAction::LockNow] = "LockNow";
+    actionPredicate[MenuAction::AutoLock] = "AutoLock";
+    actionPredicate[MenuAction::Never] = "Never";
+    actionPredicate[MenuAction::FiveMinutes] = "FiveMinutes";
+    actionPredicate[MenuAction::TenMinutes] = "TenMinutes";
+    actionPredicate[MenuAction::TwentyMinutes] = "TwentyMinutes";
+    actionPredicate[MenuAction::DeleteVault] = "DeleteVault";
+    actionPredicate[MenuAction::UnLock] = "UnLock";
+    actionPredicate[MenuAction::UnLockByKey] = "UnLockByKey";
+    actionPredicate[MenuAction::RemoveStashedRemoteConn] = "RemoveStashedRemoteConn";
+    actionPredicate[MenuAction::RefreshView] = "RefreshView";
 }
 
 void DFileMenuData::initActions()
@@ -1001,6 +1094,7 @@ void DFileMenuData::initActions()
 
         QAction *action = new QAction(actionIcons.value(key), actionKeys.value(key), nullptr);
         action->setData(key);
+        action->setProperty("predicate", actionPredicate.value(key));
         actions.insert(key, action);
         actionToMenuAction.insert(action, key);
     }
@@ -1090,6 +1184,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             }
 
             tagAction->setData(key);
+            tagAction->setProperty("predicate", getActionPredicateByType(key));
             auto keyAction = DFileMenuData::actions.take(key);
             if (keyAction) {
                 QWidgetAction *widAction = dynamic_cast<QWidgetAction *>(keyAction);
@@ -1112,6 +1207,7 @@ DFileMenu *DFileMenuManager::genereteMenuByKeys(const QVector<MenuAction> &keys,
             if (!action) {
                 action = new QAction(DFileMenuData::actionKeys.value(key), nullptr);
                 action->setData(key);
+                action->setProperty("predicate", getActionPredicateByType(key));
                 DFileMenuData::actions[key] = action;
                 DFileMenuData::actionToMenuAction[action] = key;
             }
@@ -1141,6 +1237,9 @@ QString DFileMenuManager::getActionString(MenuAction type)
 //创建自定义菜单
 void DFileMenuManager::extendCustomMenu(DFileMenu *menu, bool isNormal, const DUrl &dir, const DUrl &focusFile, const DUrlList &selected, bool onDesktop)
 {
+    if (DFileMenuManager::menuHidden("extension-menu"))
+        return;
+
     if (!DFileMenuData::customMenuParser) {
         DFileMenuData::customMenuParser = new DCustomActionParser;
     }
@@ -1274,6 +1373,9 @@ void DFileMenuManager::extensionPluginCustomMenu(DFileMenu *menu,
                                                  const DUrlList &selected,
                                                  bool onDesktop)
 {
+    if (DFileMenuManager::menuHidden("extension-menu"))
+        return;
+
     if(!menu)
         return;
 
@@ -1404,6 +1506,7 @@ void DFileMenuManager::setActionString(MenuAction type, QString actionString)
 
     QAction *action = new QAction(actionString, nullptr);
     action->setData(type);
+    action->setProperty("predicate", getActionPredicateByType(type));
     DFileMenuData::actions.insert(type, action);
     DFileMenuData::actionToMenuAction[action] = type;
 }
@@ -1466,6 +1569,42 @@ bool DFileMenuManager::whetherShowTagActions(const QList<DUrl> &urls)
 void DFileMenuManager::clearActions()
 {
     DFileMenuData::clearActions();
+}
+
+bool DFileMenuManager::menuHidden(const QString &scene)
+{
+    QVariant value = GroupPolicy::instance()->getValue(MENU_HIDDEN, "noSet");
+
+    if (value.toString() == "noSet")
+        return false;
+
+    auto menuHiddenLst = value.toStringList();
+    if (menuHiddenLst.isEmpty())
+        return false;
+    return menuHiddenLst.contains(scene);
+}
+
+void DFileMenuManager::menuFilterHiddenActions(QMenu *menu, const QString &scene)
+{
+    QVariant value = GroupPolicy::instance()->getValue(scene, "noSet");
+    if (value.toString() == "noSet")
+        return;
+
+    QStringList hiddenList =  value.toStringList();
+
+    if (hiddenList.isEmpty())
+        return;
+
+    auto actions = menu->actions();
+    for (QAction *temp : actions) {
+        if (hiddenList.contains(temp->property("predicate").toString()))
+            temp->setVisible(false);
+    }
+}
+
+QString DFileMenuManager::getActionPredicateByType(MenuAction type)
+{
+    return DFileMenuData::actionPredicate.value(type);
 }
 
 void DFileMenuManager::actionTriggered(QAction *action)

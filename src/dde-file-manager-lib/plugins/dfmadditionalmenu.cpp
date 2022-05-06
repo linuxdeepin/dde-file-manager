@@ -23,6 +23,7 @@
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
 #include "shutil/fileutils.h"
+#include "interfaces/dfilemenumanager.h"
 
 #include <QDir>
 #include <QMenu>
@@ -31,6 +32,7 @@
 #include <XdgDesktopFile>
 #include <dabstractfilewatcher.h>
 #include "interfaces/dfilemenu.h"
+
 DFM_BEGIN_NAMESPACE
 
 #define MENUEXTENSIONS_PATH  "/usr/share/deepin/dde-file-manager/oem-menuextensions/"
@@ -322,6 +324,10 @@ void DFMAdditionalMenu::appendParentMineType(const QStringList &parentmimeTypes,
 QList<QAction *> DFMAdditionalMenu::actions(const QStringList &files, const QString &currentDir, bool onDesktop/* = false*/)
 {
     Q_D(DFMAdditionalMenu);
+
+    if (DFileMenuManager::menuHidden("extension-menu"))
+        return {};
+
     QString menuType = "EmptyArea";
     if (files.size() == 0) {
         return d->emptyAreaActoins(currentDir, onDesktop);
