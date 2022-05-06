@@ -55,7 +55,6 @@ bool DoRestoreTrashFilesWorker::doWork()
     if (!AbstractWorker::doWork())
         return false;
 
-    // ToDo::执行从回收站还原的业务逻辑
     doRestoreTrashFiles();
     // 完成
     endWork();
@@ -143,7 +142,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             }
         }
 
-        if (!createParentDir(fileInfo, restoreInfo, &result)) {
+        AbstractFileInfoPointer targetInfo = nullptr;
+        if (!createParentDir(fileInfo, restoreInfo, targetInfo, &result)) {
             if (result) {
                 compeleteFilesCount++;
                 continue;
@@ -157,11 +157,14 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         if (fileInfo->isSymLink()) {
             ok = handleSymlinkFile(fileInfo, restoreInfo);
         } else {
-            ok = handleRestoreTrash(fileInfo, restoreInfo);
+            ok = handleRestoreTrash(fileInfo, targetInfo);
+            if(!ok)
+                emit requestShowRestoreFailedDialog({url});
         }
 
-        if (!ok)
+        if (!ok) {
             return false;
+        }
 
         if (!isConvert) {
             if (!completeFiles.contains(url))
@@ -232,8 +235,8 @@ bool DoRestoreTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer 
                 action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kSymlinkError, targetfile.errorString());
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
     }
-    // 清理tashfileinfo
 
+    // clear tashfileinfo
     return clearTrashFile(fromUrl, toUrl, trashInfo) && (action == AbstractJobHandler::SupportAction::kNoAction || action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kReplaceAction);
 }
 /*!
@@ -260,13 +263,7 @@ bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer
     if (handler->renameFile(fromUrl, toUrl))
         return clearTrashFile(fromUrl, toUrl, trashInfo, true);
 
-    bool result = false;
-    QUrl parent = UrlRoute::urlParent(toUrl);
-    // 检查磁盘空间是否不足
-    if (!checkDiskSpaceAvailable(fromUrl, parent, &result))
-        return result;
-
-    return doCopyAndClearTrashFile(trashInfo, restoreInfo);
+    return false;
 }
 /*!
  * \brief DoRestoreTrashFilesWorker::clearTrashFile
@@ -348,15 +345,24 @@ bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPo
     return clearTrashFile(trashUrl, restoreUrl, trashInfo, false);
 }
 
-bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, bool *result)
+bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
+                                                AbstractFileInfoPointer &targetFileInfo, bool *result)
 {
     const QUrl &fromUrl = trashInfo->url();
     const QUrl &toUrl = restoreInfo->url();
-    QDir parentDir(UrlRoute::urlParent(toUrl).path());
+    const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
+    if(!parentUrl.isValid())
+        return false;
+    targetFileInfo.reset(nullptr);
+    targetFileInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
+    if(!targetFileInfo)
+        return false;
+
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-    if (!parentDir.exists()) {
+    if (!targetFileInfo->exists()) {
         do {
-            if (parentDir.mkpath(UrlRoute::urlParent(toUrl).path()))
+            DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+            if (!fileHandler.mkdir(parentUrl))
                 // pause and emit error msg
                 action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kCreateParentDirError);
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);

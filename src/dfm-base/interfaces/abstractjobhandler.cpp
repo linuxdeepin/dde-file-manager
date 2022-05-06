@@ -21,11 +21,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "abstractjobhandler.h"
+#include "dfm-base/utils/dialogmanager.h"
+
+#include <QUrl>
+#include <QList>
 
 DFMBASE_USE_NAMESPACE
 
 AbstractJobHandler::AbstractJobHandler(QObject *parent)
-    : QObject(parent) {}
+    : QObject(parent)
+{
+    connect(this, &AbstractJobHandler::requestShowRestoreFailedDialog, this, [=](const QList<QUrl> &urls){
+        DialogManagerInstance->showRestoreFailedDialog(urls);
+    });
+}
 
 AbstractJobHandler::~AbstractJobHandler() {}
 /*!

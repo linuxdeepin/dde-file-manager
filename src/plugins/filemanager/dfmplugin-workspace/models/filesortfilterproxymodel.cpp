@@ -76,7 +76,6 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
         const FileViewItem *item = viewModel()->itemFromIndex(sourceIndex);
         if (item) {
             const AbstractFileInfoPointer info = item->fileInfo();
-
             if (!passNameFilters(info))
                 flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         }

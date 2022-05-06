@@ -60,7 +60,7 @@ protected:
     //check disk space available before do move job
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl, bool *result);
     bool doCopyAndClearTrashFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
-    bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo,
+    bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, AbstractFileInfoPointer &targetFileInfo,
                          bool *result);
 
     AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;

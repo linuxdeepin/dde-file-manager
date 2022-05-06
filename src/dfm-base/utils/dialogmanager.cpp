@@ -354,6 +354,20 @@ int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, c
     return code;
 }
 
+void DialogManager::showRestoreFailedDialog(const QList<QUrl> &urlList)
+{
+    DDialog d;
+    d.setTitle(tr("Operation failed!"));
+    if (urlList.count() == 1) {
+        d.setMessage(tr("Failed to restore %1 file, the target folder is read-only").arg(QString::number(1)));
+    } else if (urlList.count() > 1) {
+        d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(urlList.count())));
+    }
+    d.setIcon(QIcon::fromTheme("dialog-warning"));
+    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
+
 DialogManager::DialogManager(QObject *parent)
     : QObject(parent)
 {

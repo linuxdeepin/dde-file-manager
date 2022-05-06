@@ -42,6 +42,7 @@ void AbstractJob::setJobArgs(const JobHandlePointer &handle, const QList<QUrl> &
         return;
     }
     connect(handle.data(), &AbstractJobHandler::userAction, this, &AbstractJob::operateCopy);
+    connect(this, &AbstractJob::requestShowRestoreFailedDialog, handle.data(), &AbstractJobHandler::requestShowRestoreFailedDialog);
     doWorker->setWorkArgs(handle, sources, target, flags);
 }
 
@@ -60,6 +61,7 @@ AbstractJob::AbstractJob(AbstractWorker *doWorker, QObject *parent)
         this->doWorker->moveToThread(&thread);
         connect(this, &AbstractJob::startWork, doWorker, &AbstractWorker::doWork);
         connect(doWorker, &AbstractWorker::finishedNotify, this, &AbstractJob::deleteLater);
+        connect(doWorker, &AbstractWorker::requestShowRestoreFailedDialog, this, &AbstractJob::requestShowRestoreFailedDialog);
     }
 }
 

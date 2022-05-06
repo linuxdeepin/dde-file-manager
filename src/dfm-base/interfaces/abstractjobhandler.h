@@ -231,6 +231,7 @@ signals:   // 发送给任务调用者使用的信号
      * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
      */
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
+    void requestShowRestoreFailedDialog(const QList<QUrl> &urls);
 signals:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作

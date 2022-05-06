@@ -76,6 +76,8 @@ public:
 
     int showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, const bool showEmptyBtText = false);
 
+    void showRestoreFailedDialog(const QList<QUrl> &urlList);
+
 private:
     explicit DialogManager(QObject *parent = nullptr);
     ~DialogManager();

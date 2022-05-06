@@ -110,6 +110,8 @@ signals:
      * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
      */
     void speedUpdatedNotify(const JobInfoPointer JobInfo);
+
+    void requestShowRestoreFailedDialog(const QList<QUrl> &urls);
 signals:   // update proccess timer use
     void startUpdateProccessTimer();
 
