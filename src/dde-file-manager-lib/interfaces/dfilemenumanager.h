@@ -33,6 +33,11 @@
 #include <QMap>
 #include <QSet>
 
+#define MENU_HIDDEN "dfm.menu.hidden"
+#define DFM_MENU_ACTION_HIDDEN "dfm.menu.action.hidden"
+#define DD_MENU_ACTION_HIDDEN "dd.menu.action.hidden"
+#define DFD_MENU_ACTION_HIDDEN "dfd.menu.action.hidden"
+
 class DFileMenu;
 class DUrl;
 typedef DFMGlobal::MenuAction MenuAction;
@@ -108,6 +113,10 @@ public:
     static bool whetherShowTagActions(const QList<DUrl> &urls);
 
     static void clearActions();
+
+    static bool menuHidden(const QString &scene);
+    static void menuFilterHiddenActions(QMenu *menu, const QString &scene);
+    static QString getActionPredicateByType(MenuAction type);
 
 public slots:
     void actionTriggered(QAction *action);

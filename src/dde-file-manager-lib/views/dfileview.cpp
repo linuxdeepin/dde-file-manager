@@ -1752,6 +1752,11 @@ void DFileView::contextMenuEvent(QContextMenuEvent *event)
 {
     D_DC(DFileView);
 
+    auto isDialog = this->property("isFileDialog");
+    if (DFileMenuManager::menuHidden(qAppName()) ||
+            (isDialog.isValid() && isDialog.toBool() && DFileMenuManager::menuHidden("dde-file-dialog")))
+        return;
+
     if (!canShowContextMenu(event))
         return;
 
@@ -3363,6 +3368,7 @@ void DFileView::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags)
     fileViewHelper()->handleMenu(menu);
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<DFileView> me = this;
+    DFileMenuManager::menuFilterHiddenActions(menu, DFM_MENU_ACTION_HIDDEN);
     menu->exec();
     menu->deleteLater(me);
 }
@@ -3472,6 +3478,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
     //在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<QWidget> window = qApp->activeWindow();
     lastTime = QDateTime::currentMSecsSinceEpoch();
+    DFileMenuManager::menuFilterHiddenActions(menu, DFM_MENU_ACTION_HIDDEN);
     menu->exec();
     menu->deleteLater(window);
     lock = false;
