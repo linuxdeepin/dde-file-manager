@@ -38,7 +38,6 @@ void Burn::initialize()
 
 bool Burn::start()
 {
-
     dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handleShowBurnDlg);

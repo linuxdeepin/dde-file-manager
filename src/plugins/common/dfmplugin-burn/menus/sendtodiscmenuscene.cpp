@@ -122,7 +122,24 @@ bool SendToDiscMenuScene::create(QMenu *parent)
 
 void SendToDiscMenuScene::updateState(QMenu *parent)
 {
-    // TODO(zhangs): sort
+    auto actions { parent->actions() };
+    QAction *sendToAct { nullptr };
+    QAction *stageAct { nullptr };
+    for (auto act : actions) {
+        QString &&id { act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString() };
+        if (id == ActionId::kStageKey)
+            stageAct = act;
+        if (id == "send-to")
+            sendToAct = act;
+    }
+
+    if (sendToAct && stageAct) {
+        actions.removeOne(stageAct);
+        parent->insertAction(sendToAct, stageAct);
+        parent->removeAction(sendToAct);
+        parent->insertAction(stageAct, sendToAct);
+    }
+
     return AbstractMenuScene::updateState(parent);
 }
 
