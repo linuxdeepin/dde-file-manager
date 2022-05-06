@@ -20,29 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BURN_H
-#define BURN_H
+#ifndef DISCSTATEMANAGER_H
+#define DISCSTATEMANAGER_H
 
 #include "dfmplugin_burn_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QObject>
 
 DPBURN_BEGIN_NAMESPACE
 
-class Burn : public dpf::Plugin
+class DiscStateManager : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
+    Q_DISABLE_COPY(DiscStateManager)
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    static DiscStateManager *instance();
+
+    void initilaize();
 
 private slots:
-    void bindScene(const QString &parentScene);
+    void ghostMountForBlankDisc();
+    void onDevicePropertyChanged(const QString &id, const QString &propertyName, const QVariant &var);
+
+private:
+    explicit DiscStateManager(QObject *parent = nullptr);
 };
 
 DPBURN_END_NAMESPACE
 
-#endif   // BURN_H
+#endif   // DISCSTATEMANAGER_H

@@ -20,29 +20,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BURN_H
-#define BURN_H
+#ifndef SENDTODISCMENUSCENE_P_H
+#define SENDTODISCMENUSCENE_P_H
 
 #include "dfmplugin_burn_global.h"
 
-#include <dfm-framework/framework.h>
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 DPBURN_BEGIN_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
-class Burn : public dpf::Plugin
+class SendToDiscMenuScene;
+class SendToDiscMenuScenePrivate : public AbstractMenuScenePrivate
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
+    friend class SendToDiscMenuScene;
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    explicit SendToDiscMenuScenePrivate(AbstractMenuScene *qq);
+    void actionStageFileForBurning();
 
-private slots:
-    void bindScene(const QString &parentScene);
+private:
+    QString destDevice;
 };
 
 DPBURN_END_NAMESPACE
 
-#endif   // BURN_H
+#endif   // SENDTODISCMENUSCENE_P_H

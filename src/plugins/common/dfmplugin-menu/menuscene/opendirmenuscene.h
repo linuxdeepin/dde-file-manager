@@ -23,8 +23,8 @@
 
 #include "dfmplugin_menu_global.h"
 
-#include "interfaces/abstractmenuscene.h"
-#include "interfaces/abstractscenecreator.h"
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 DPMENU_BEGIN_NAMESPACE
 

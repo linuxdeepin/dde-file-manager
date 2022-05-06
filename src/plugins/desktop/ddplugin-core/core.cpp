@@ -22,17 +22,17 @@
 
 #include "core.h"
 #include "frame/windowframe.h"
+
+#include "services/desktop/frame/frameservice.h"
+#include "services/desktop/screen/screenservice.h"
+
 #include "dfm-base/dfm_global_defines.h"
-
-#include <services/desktop/frame/frameservice.h>
-#include <services/desktop/screen/screenservice.h>
-
-#include <base/standardpaths.h>
-#include <base/schemefactory.h>
-#include <base/application/application.h>
-#include <file/local/localfileinfo.h>
-#include <file/local/localdiriterator.h>
-#include <file/local/localfilewatcher.h>
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/file/local/localfileinfo.h"
+#include "dfm-base/file/local/localdiriterator.h"
+#include "dfm-base/file/local/localfilewatcher.h"
 
 DFMBASE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
@@ -73,7 +73,6 @@ bool ddplugin_core::Core::start()
     if (!ptr) {
         qCritical() << "can not find dfm_service_desktop::FrameServicePrivate.";
         abort();
-        return false;
     }
 
     frame = new WindowFrame();

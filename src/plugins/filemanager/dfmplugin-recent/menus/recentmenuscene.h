@@ -24,8 +24,8 @@
 
 #include "dfmplugin_recent_global.h"
 
-#include <interfaces/abstractmenuscene.h>
-#include <interfaces/abstractscenecreator.h>
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 DPRECENT_BEGIN_NAMESPACE
 

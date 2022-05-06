@@ -24,7 +24,8 @@
 #define SENDTOMENUSCENE_P_H
 
 #include "menuscene/sendtomenuscene.h"
-#include "interfaces/private/abstractmenuscene_p.h"
+
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
 DPMENU_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE

@@ -25,8 +25,8 @@
 
 #include "dfmplugin_myshares_global.h"
 
-#include <interfaces/abstractmenuscene.h>
-#include <interfaces/abstractscenecreator.h>
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 DPMYSHARES_BEGIN_NAMESPACE
 

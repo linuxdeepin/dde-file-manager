@@ -36,9 +36,11 @@ public:
     static int showOpticalImageOpSelectionDialog();
     static QUrl localStagingFile(QString dev);
     static QUrl localStagingFile(const QUrl &dest);
+    static QUrl fromBurnFile(const QString &dev);
     static QString parseXorrisoErrorMessage(const QStringList &msg);
     static QString burnDestDevice(const QUrl &url);
     static QString burnFilePath(const QUrl &url);
+    static QString firstOptcailDev();
 };
 
 DPBURN_END_NAMESPACE

@@ -23,8 +23,8 @@
 
 #include "dfmplugin_propertydialog_global.h"
 
-#include <interfaces/abstractmenuscene.h>
-#include <interfaces/abstractscenecreator.h>
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
 

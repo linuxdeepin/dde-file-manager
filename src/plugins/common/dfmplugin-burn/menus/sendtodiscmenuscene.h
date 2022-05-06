@@ -1,11 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     xushitong<xushitong@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
  * Maintainer: max-lv<lvwujun@uniontech.com>
  *             lanxuesong<lanxuesong@uniontech.com>
- *             zhangsheng<zhangsheng@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,33 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREMENUSCENE_H
-#define SHAREMENUSCENE_H
+#ifndef SENDTODISCMENUSCENE_H
+#define SENDTODISCMENUSCENE_H
 
-#include "dfmplugin_dirshare_global.h"
+#include "dfmplugin_burn_global.h"
 
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPDIRSHARE_BEGIN_NAMESPACE
+DPBURN_BEGIN_NAMESPACE
 
-class ShareMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
+class SendToDiscMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
 public:
     static QString name()
     {
-        return "ShareMenu";
+        return "SendToDiscMenu";
     }
 
     virtual dfmbase::AbstractMenuScene *create() override;
 };
 
-class ShareMenuScenePrivate;
-class ShareMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+class SendToDiscMenuScenePrivate;
+class SendToDiscMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
 public:
-    explicit ShareMenuScene(QObject *parent = nullptr);
-    virtual ~ShareMenuScene() override;
+    explicit SendToDiscMenuScene(QObject *parent = nullptr);
+    virtual ~SendToDiscMenuScene() override;
 
     virtual QString name() const override;
     virtual bool initialize(const QVariantHash &params) override;
@@ -56,8 +56,9 @@ public:
     virtual DFMBASE_NAMESPACE::AbstractMenuScene *scene(QAction *action) const override;
 
 private:
-    QScopedPointer<ShareMenuScenePrivate> d;
+    QScopedPointer<SendToDiscMenuScenePrivate> d;
 };
 
-DPDIRSHARE_END_NAMESPACE
-#endif   // SHAREMENUSCENE_H
+DPBURN_END_NAMESPACE
+
+#endif   // SENDTODISCMENUSCENE_H

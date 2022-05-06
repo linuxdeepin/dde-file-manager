@@ -24,8 +24,8 @@
 
 #include "dfmplugin_trash_global.h"
 
-#include <interfaces/abstractmenuscene.h>
-#include <interfaces/abstractscenecreator.h>
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 DPTRASH_BEGIN_NAMESPACE
 

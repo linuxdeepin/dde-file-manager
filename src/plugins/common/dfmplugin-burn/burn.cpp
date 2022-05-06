@@ -21,12 +21,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "burn.h"
-
+#include "menus/sendtodiscmenuscene.h"
+#include "utils/discstatemanager.h"
 #include "events/burneventreceiver.h"
+
+#include "services/common/menu/menuservice.h"
 
 #include <QWidget>
 
 DPBURN_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 void Burn::initialize()
 {
@@ -34,6 +38,7 @@ void Burn::initialize()
 
 bool Burn::start()
 {
+
     dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handleShowBurnDlg);
@@ -44,10 +49,31 @@ bool Burn::start()
     dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Burn::EventType::kPasteTo,
                                             BurnEventReceiver::instance(),
                                             &BurnEventReceiver::handlePasteTo);
+
+    DSC_USE_NAMESPACE
+    MenuService::service()->registerScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
+    bindScene("SendToMenu");
+
+    DiscStateManager::instance()->initilaize();
+
     return true;
 }
 
 dpf::Plugin::ShutdownFlag Burn::stop()
 {
     return kSync;
+}
+
+void Burn::bindScene(const QString &parentScene)
+{
+    DSC_USE_NAMESPACE
+    if (MenuService::service()->contains(parentScene)) {
+        MenuService::service()->bind(SendToDiscMenuCreator::name(), parentScene);
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+            if (scene == parentScene)
+                MenuService::service()->bind(SendToDiscMenuCreator::name(), scene);
+        },
+                Qt::DirectConnection);
+    }
 }

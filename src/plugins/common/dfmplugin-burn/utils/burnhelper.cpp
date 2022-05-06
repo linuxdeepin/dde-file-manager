@@ -23,7 +23,9 @@
 #include "burnhelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/devicemanager.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <DDialog>
 #include <QObject>
@@ -112,6 +114,15 @@ QUrl BurnHelper::localStagingFile(const QUrl &dest)
                                + burnFilePath(dest));
 }
 
+QUrl BurnHelper::fromBurnFile(const QString &dev)
+{
+    QString path { dev + "/" BURN_SEG_STAGING "/" };
+    QUrl ret;
+    ret.setScheme(Global::kBurn);
+    ret.setPath(path);
+    return ret;
+}
+
 QString BurnHelper::parseXorrisoErrorMessage(const QStringList &msg)
 {
     QRegularExpression ovrex("While grafting '(.*)'");
@@ -160,4 +171,27 @@ QString BurnHelper::burnFilePath(const QUrl &url)
     if (url.scheme() != Global::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(3);
+}
+
+QString BurnHelper::firstOptcailDev()
+{
+    using namespace GlobalServerDefines;
+    QString opticalDevId;
+    auto &&devs = DeviceManagerInstance.invokeBlockDevicesIdList({});
+    for (const auto &dev : devs) {
+        if (dev.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
+            opticalDevId = dev;
+            break;
+        }
+    }
+
+    if (!opticalDevId.isEmpty()) {
+        auto &&data = DeviceManagerInstance.invokeQueryBlockDeviceInfo(opticalDevId);
+        bool isOptical { data.value(DeviceProperty::kOptical).toBool() };
+        bool isOpticalDrive { data.value(DeviceProperty::kOpticalDrive).toBool() };
+        if (isOptical && isOpticalDrive)
+            return data.value(DeviceProperty::kDevice).toString();
+    }
+
+    return {};
 }

@@ -119,10 +119,11 @@ bool SendToMenuScene::triggered(QAction *action)
     if (!action)
         return false;
 
-    if (d->predicateAction.key(action).isEmpty())
-        return false;
+    if (!d->predicateAction.key(action).isEmpty()) {
+        d->handleActionTriggered(action);
+        return true;
+    }
 
-    d->handleActionTriggered(action);
     return AbstractMenuScene::triggered(action);
 }
 
