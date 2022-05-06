@@ -1855,6 +1855,9 @@ void CanvasGridView::focusOutEvent(QFocusEvent *event)
 
 void CanvasGridView::contextMenuEvent(QContextMenuEvent *event)
 {
+    if (DFileMenuManager::menuHidden(qAppName()))
+        return;
+
     // fix bug94233 在桌面右键,右键菜单缺少选项
     if (!DFileMenuManager::actionWhitelist().isEmpty() || !DFileMenuManager::actionBlacklist().isEmpty()) {
         //! set menu actions filter
@@ -2611,6 +2614,14 @@ void CanvasGridView::initUI()
         d->waterMaskFrame->lower();
         d->waterMaskFrame->updatePosition();
     }
+
+    m_canvasOwnActions.insert("DisplaySettings", ContextMenuAction::DisplaySettings);
+    m_canvasOwnActions.insert("CornerSettings", ContextMenuAction::CornerSettings);
+    m_canvasOwnActions.insert("WallpaperSettings", ContextMenuAction::WallpaperSettings);
+    m_canvasOwnActions.insert("FileManagerProperty", ContextMenuAction::FileManagerProperty);
+    m_canvasOwnActions.insert("AutoMerge", ContextMenuAction::AutoMerge);
+    m_canvasOwnActions.insert("AutoSort", ContextMenuAction::AutoSort);
+    m_canvasOwnActions.insert("IconSize", ContextMenuAction::IconSize);
 }
 
 
@@ -3424,6 +3435,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     //图标大小排列
     QAction iconSizeAction(menu);
     iconSizeAction.setText(tr("Icon size"));
+    iconSizeAction.setProperty("predicate", m_canvasOwnActions.key(ContextMenuAction::IconSize));
     iconSizeAction.setData(IconSize);
     iconSizeAction.setMenu(&iconSizeMenu);
     menu->insertAction(pasteAction, &iconSizeAction);
@@ -3444,6 +3456,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     //自动排序
     QAction autoSort(menu);
     autoSort.setText(tr("Auto arrange"));
+    autoSort.setProperty("predicate", m_canvasOwnActions.key(ContextMenuAction::AutoSort));
     autoSort.setData(AutoSort);
     autoSort.setCheckable(true);
     autoSort.setChecked(GridManager::instance()->autoArrange());
@@ -3472,6 +3485,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     //显示设置
     QAction display(menu);
     display.setText(tr("Display Settings"));
+    display.setProperty("predicate", m_canvasOwnActions.key(ContextMenuAction::DisplaySettings));
     display.setData(DisplaySettings);
     menu->addAction(&display);
 
@@ -3497,6 +3511,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         wallpaper.setText(tr("Set Wallpaper"));
     }
 #endif
+    wallpaper.setProperty("predicate", m_canvasOwnActions.key(ContextMenuAction::WallpaperSettings));
     wallpaper.setData(WallpaperSettings);
     menu->addAction(&wallpaper);
 
@@ -3556,6 +3571,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
     }
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<CanvasGridView> me = this;
+    DFileMenuManager::menuFilterHiddenActions(menu, DD_MENU_ACTION_HIDDEN);
     menu->exec();
     menu->deleteLater(me);
 }
@@ -3673,6 +3689,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     QAction *property = new QAction(menu);
     property->setText(tr("Properties"));
     property->setData(FileManagerProperty);
+    property->setProperty("predicate", DFileMenuManager::getActionPredicateByType(MenuAction::Property));
     menu->addAction(property);
 
     menu->setEventData(model()->rootUrl(), selectedUrls(), winId(), this, index);
@@ -3795,6 +3812,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
     }
     //fix bug 33305 在用右键菜单复制大量文件时，在复制过程中，关闭窗口这时this释放了，在关闭拷贝menu的exec退出，menu的deleteLater崩溃
     QPointer<CanvasGridView> me = this;
+    DFileMenuManager::menuFilterHiddenActions(menu, DD_MENU_ACTION_HIDDEN);
     menu->exec();
     menu->deleteLater(me);
     //断连，防止menu没有释放再次触发信号

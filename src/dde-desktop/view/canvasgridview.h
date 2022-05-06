@@ -234,6 +234,8 @@ private:
 
     DUrl m_currentTargetUrl; //缓存当前目标Url
     int m_paintingLog = 3;
+
+    QHash<QString,  ContextMenuAction> m_canvasOwnActions;
 };
 
 
