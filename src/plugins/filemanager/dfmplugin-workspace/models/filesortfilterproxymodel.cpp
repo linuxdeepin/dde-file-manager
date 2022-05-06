@@ -40,7 +40,7 @@ FileSortFilterProxyModel::~FileSortFilterProxyModel()
 
 int FileSortFilterProxyModel::rowCount(const QModelIndex &parent) const
 {
-    return viewModel()->rowCount(parent);
+    return QSortFilterProxyModel::rowCount(parent);
 }
 
 int FileSortFilterProxyModel::columnCount(const QModelIndex &parent) const
@@ -86,6 +86,8 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
     QModelIndex rootIndex = viewModel()->setRootUrl(url);
+    resetFilter();
+
     return createIndex(0, 0, rootIndex.internalPointer());
 }
 

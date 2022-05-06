@@ -128,8 +128,12 @@ QStringList TagManager::getTagsByUrls(const QList<QUrl> &urlList) const
     if (!urlList.isEmpty()) {
         for (const QUrl &url : urlList) {
             const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
-            dataMap[info->filePath()] = QVariant { QList<QString> {} };
+            if (info)
+                dataMap[info->filePath()] = QVariant { QList<QString> {} };
         }
+
+        if (dataMap.isEmpty())
+            return QList<QString> {};
 
         QVariant var = dbusHelper->sendDataToDBus(dataMap, TagActionType::kGetTagsThroughFile);
         return var.toStringList();
