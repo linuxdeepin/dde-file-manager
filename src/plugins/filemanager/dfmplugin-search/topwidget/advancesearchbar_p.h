@@ -49,13 +49,14 @@ class AdvanceSearchBarPrivate : public DTK_WIDGET_NAMESPACE::DBoxWidget
     Q_OBJECT
 public:
     enum LabelIndex {
-        SEARCH_RANGE,
-        FILE_TYPE,
-        SIZE_RANGE,
-        DATE_RANGE,
-        ACCESS_DATE_RANGE,
-        CREATE_DATE_RANGE,
-        LABEL_COUNT
+        kSearchRange,
+        kFileType,
+        kSizeRange,
+        kDateRange,
+        kAccessDateRange,
+        kCreateDateRange,
+        kLabelCount,
+        kSearchTargetUrl
     };
 
     typedef struct fileFilter
@@ -68,8 +69,9 @@ public:
         QDateTime createDateRangeStart;
         QDateTime createDateRangeEnd;
         QString typeString;
+        QUrl searchTargetUrl;
         bool includeSubDir;
-        bool comboValid[LABEL_COUNT];
+        bool comboValid[kLabelCount];
     } FileFilter;
 
     explicit AdvanceSearchBarPrivate(AdvanceSearchBar *qq);
@@ -80,8 +82,8 @@ public:
     static FileFilter parseFilterData(const QMap<int, QVariant> &data);
 
     QBoxLayout *mainLayout;
-    QLabel *asbLabels[LABEL_COUNT];
-    QComboBox *asbCombos[LABEL_COUNT];
+    QLabel *asbLabels[kLabelCount];
+    QComboBox *asbCombos[kLabelCount];
     DTK_WIDGET_NAMESPACE::DCommandLinkButton *resetBtn;
     bool needSearchAgain = true;
     bool allowUpdateView = true;

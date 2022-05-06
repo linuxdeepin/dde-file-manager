@@ -72,11 +72,10 @@ void SearchDirIteratorPrivate::onMatched(const QString &id)
 {
     if (taskId == id) {
         auto results = SearchService::service()->matchedResults(taskId);
-        for (const auto &result : results) {
-            QUrl url = SearchHelper::setSearchedFileUrl(fileUrl, result.toString());
-            QMutexLocker lk(&mutex);
-            childrens << url;
-        }
+        QMutexLocker lk(&mutex);
+        childrens.append(std::move(results));
+        lk.unlock();
+
         std::call_once(onceFlag, [this]() {
             SearchEventCaller::sendShowAdvanceSearchButton(taskId.toULongLong(), true);
         });
@@ -114,7 +113,7 @@ QUrl SearchDirIterator::next()
 {
     if (!d->childrens.isEmpty()) {
         QMutexLocker lk(&d->mutex);
-        d->currentFileUrl = d->childrens.dequeue();
+        d->currentFileUrl = d->childrens.takeFirst();
         return d->currentFileUrl;
     }
 

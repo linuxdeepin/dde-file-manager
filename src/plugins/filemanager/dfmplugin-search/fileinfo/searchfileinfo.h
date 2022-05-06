@@ -35,27 +35,16 @@ class SearchFileInfo : public AbstractFileInfo
 public:
     explicit SearchFileInfo(const QUrl &url);
     ~SearchFileInfo() override;
-    virtual QString fileName() const override;
-    virtual QString filePath() const override;
-    virtual QIcon fileIcon() const override;
     virtual bool exists() const override;
     virtual bool isHidden() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
     virtual bool isDir() const override;
     virtual qint64 size() const override;
-    virtual QString sizeFormat() const override;
-    virtual QDateTime lastModified() const override;
-    virtual QDateTime lastRead() const override;
-    virtual QDateTime created() const override;
-    virtual QString fileTypeDisplayName() const override;
 
     // property for view
     virtual QString emptyDirectoryTip() const override;
     virtual QString loadingTip() const override;
-
-private:
-    SearchFileInfoPrivate *d;
 };
 
 using SearchFileInfoPointer = QSharedPointer<SearchFileInfo>;

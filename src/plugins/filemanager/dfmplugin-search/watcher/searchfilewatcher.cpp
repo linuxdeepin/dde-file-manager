@@ -66,13 +66,10 @@ SearchFileWatcher::~SearchFileWatcher()
 
 void SearchFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
 {
-    if (subfileUrl.scheme() != SearchHelper::scheme())
-        return;
-
     if (enabled) {
-        addWatcher(SearchHelper::searchedFileUrl(subfileUrl));
+        addWatcher(subfileUrl);
     } else {
-        removeWatcher(SearchHelper::searchedFileUrl(subfileUrl));
+        removeWatcher(subfileUrl);
     }
 }
 
@@ -103,37 +100,29 @@ void SearchFileWatcher::removeWatcher(const QUrl &url)
 void SearchFileWatcher::onFileDeleted(const QUrl &url)
 {
     removeWatcher(url);
-
-    auto newUrl = AbstractFileWatcher::url();
-    newUrl = SearchHelper::setSearchedFileUrl(newUrl, url.toString());
-    emit fileDeleted(newUrl);
+    emit fileDeleted(url);
 }
 
 void SearchFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
-    auto newUrl = SearchHelper::setSearchedFileUrl(AbstractFileWatcher::url(), url.toString());
-    emit fileAttributeChanged(newUrl);
+    emit fileAttributeChanged(url);
 }
 
 void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
 {
-    auto newFromUrl = SearchHelper::setSearchedFileUrl(url(), fromUrl.toString());
-    auto newToUrl = toUrl;
     auto targetUrl = SearchHelper::searchTargetUrl(url());
-
-    if (targetUrl.scheme() == toUrl.scheme() && toUrl.path().startsWith(targetUrl.path())) {
+    if (toUrl.path().startsWith(targetUrl.path())) {
         auto keyword = SearchHelper::searchKeyword(url());
         QRegularExpression regexp(keyword, QRegularExpression::CaseInsensitiveOption);
         const auto &info = InfoFactory::create<AbstractFileInfo>(toUrl);
         auto match = regexp.match(info->fileName());
 
         if (match.hasMatch()) {
-            newToUrl = SearchHelper::setSearchedFileUrl(url(), toUrl.toString());
-            addWatcher(newToUrl);
+            addWatcher(toUrl);
         }
     }
 
-    emit fileRename(newFromUrl, newToUrl);
+    emit fileRename(fromUrl, toUrl);
 }
 
 DPSEARCH_END_NAMESPACE

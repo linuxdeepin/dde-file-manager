@@ -38,125 +38,58 @@ SearchFileInfoPrivate::~SearchFileInfoPrivate()
 SearchFileInfo::SearchFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new SearchFileInfoPrivate(this))
 {
-    d = static_cast<SearchFileInfoPrivate *>(dptr.data());
-    if (!SearchHelper::isRootUrl(url))
-        setProxy(InfoFactory::create<AbstractFileInfo>(SearchHelper::searchedFileUrl(url)));
 }
 
 SearchFileInfo::~SearchFileInfo()
 {
 }
 
-QString SearchFileInfo::fileName() const
-{
-    if (d->proxy)
-        return d->proxy->fileName();
-
-    return {};
-}
-
-QString SearchFileInfo::filePath() const
-{
-    if (d->proxy)
-        return d->proxy->filePath();
-
-    return {};
-}
-
-QIcon SearchFileInfo::fileIcon() const
-{
-    if (d->proxy)
-        return d->proxy->fileIcon();
-
-    return {};
-}
-
 bool SearchFileInfo::exists() const
 {
-    if (!d->proxy)
+    if (SearchHelper::isRootUrl(url()))
         return true;
 
-    return d->proxy->exists();
+    return AbstractFileInfo::exists();
 }
 
 bool SearchFileInfo::isHidden() const
 {
-    if (!d->proxy)
+    if (SearchHelper::isRootUrl(url()))
         return false;
 
-    return d->proxy->isHidden();
+    return AbstractFileInfo::isHidden();
 }
 
 bool SearchFileInfo::isReadable() const
 {
-    if (!d->proxy)
+    if (SearchHelper::isRootUrl(url()))
         return true;
 
-    return d->proxy->isReadable();
+    return AbstractFileInfo::isReadable();
 }
 
 bool SearchFileInfo::isWritable() const
 {
-    if (!d->proxy)
+    if (SearchHelper::isRootUrl(url()))
         return true;
 
-    return d->proxy->isWritable();
+    return AbstractFileInfo::isWritable();
 }
 
 bool SearchFileInfo::isDir() const
 {
-    if (!d->proxy)
+    if (SearchHelper::isRootUrl(url()))
         return true;
 
-    return d->proxy->isDir();
+    return AbstractFileInfo::isDir();
 }
 
 qint64 SearchFileInfo::size() const
 {
-    if (d->proxy)
-        return d->proxy->size();
+    if (SearchHelper::isRootUrl(url()))
+        return -1;
 
-    return -1;
-}
-
-QString SearchFileInfo::sizeFormat() const
-{
-    if (d->proxy)
-        return d->proxy->sizeFormat();
-
-    return {};
-}
-
-QDateTime SearchFileInfo::lastModified() const
-{
-    if (d->proxy)
-        return d->proxy->lastModified();
-
-    return {};
-}
-
-QDateTime SearchFileInfo::lastRead() const
-{
-    if (d->proxy)
-        return d->proxy->lastRead();
-
-    return {};
-}
-
-QDateTime SearchFileInfo::created() const
-{
-    if (d->proxy)
-        return d->proxy->created();
-
-    return {};
-}
-
-QString SearchFileInfo::fileTypeDisplayName() const
-{
-    if (d->proxy)
-        return d->proxy->fileTypeDisplayName();
-
-    return {};
+    return AbstractFileInfo::size();
 }
 
 QString SearchFileInfo::emptyDirectoryTip() const

@@ -48,7 +48,7 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
         if (SearchHelper::searchTaskId(searchUrl).isEmpty())
             searchUrl = SearchHelper::setSearchTaskId(searchUrl, QString::number(winId));
     } else {
-        searchUrl = SearchHelper::fromSearchFile(url, keyword, QString::number(winId), QUrl());
+        searchUrl = SearchHelper::fromSearchFile(url, keyword, QString::number(winId));
     }
 
     SearchEventCaller::sendDoSearch(winId, searchUrl);

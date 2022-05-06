@@ -140,16 +140,6 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     if (!d->currentDir.isValid())
         return false;
 
-    if (!d->isEmptyArea) {
-        if (d->selectFiles.isEmpty())
-            return false;
-
-        // convert to real file url
-        d->focusFile = SearchHelper::searchedFileUrl(d->focusFile);
-        for (auto &url : d->selectFiles)
-            url = SearchHelper::searchedFileUrl(url);
-    }
-
     QList<AbstractMenuScene *> currentScene;
     if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
         currentScene.append(workspaceScene);
@@ -159,9 +149,7 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     setSubscene(currentScene);
 
     // 初始化所有子场景
-    QVariantHash tmpParams = params;
-    tmpParams[MenuParamKey::kSelectFiles] = QVariant::fromValue(d->selectFiles);
-    return AbstractMenuScene::initialize(tmpParams);
+    return AbstractMenuScene::initialize(params);
 }
 
 AbstractMenuScene *SearchMenuScene::scene(QAction *action) const

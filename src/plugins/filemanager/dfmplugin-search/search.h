@@ -43,7 +43,6 @@ private slots:
     void regSearchCrumbToTitleBar();
     void regSearchPlugin();
     void regSearchToWorkspaceService();
-    void regSearchFileOperations();
 };
 
 DPSEARCH_END_NAMESPACE

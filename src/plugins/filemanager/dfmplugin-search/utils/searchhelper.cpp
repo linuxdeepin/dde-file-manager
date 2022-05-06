@@ -24,6 +24,11 @@
 
 DPSEARCH_BEGIN_NAMESPACE
 
+static inline QString parseDecodedComponent(const QString &data)
+{
+    return QString(data).replace(QLatin1Char('%'), QStringLiteral("%25"));
+}
+
 QUrl SearchHelper::rootUrl()
 {
     return fromSearchFile("/");
@@ -37,11 +42,6 @@ bool SearchHelper::isRootUrl(const QUrl &url)
 bool SearchHelper::isSearchFile(const QUrl &url)
 {
     return url.scheme() == scheme();
-}
-
-QUrl SearchHelper::searchedFileUrl(const QUrl &searchUrl)
-{
-    return searchUrl.path(QUrl::FullyDecoded);
 }
 
 QUrl SearchHelper::searchTargetUrl(const QUrl &searchUrl)
@@ -62,19 +62,12 @@ QString SearchHelper::searchTaskId(const QUrl &searchUrl)
     return query.queryItemValue("taskId", QUrl::FullyDecoded);
 }
 
-QUrl SearchHelper::setSearchedFileUrl(const QUrl &searchUrl, const QString &searchedFile)
-{
-    QUrl url(searchUrl);
-    url.setPath(searchedFile, QUrl::DecodedMode);
-    return url;
-}
-
 QUrl SearchHelper::setSearchKeyword(const QUrl &searchUrl, const QString &keyword)
 {
     QUrl url(searchUrl);
     QUrlQuery query(url.query());
     query.removeQueryItem("keyword");
-    query.addQueryItem("keyword", keyword);
+    query.addQueryItem("keyword", parseDecodedComponent(keyword));
     url.setQuery(query);
 
     return url;
@@ -85,7 +78,7 @@ QUrl SearchHelper::setSearchTargetUrl(const QUrl &searchUrl, const QUrl &targetU
     QUrl url(searchUrl);
     QUrlQuery query(url.query());
     query.removeQueryItem("url");
-    query.addQueryItem("url", targetUrl.toString());
+    query.addQueryItem("url", parseDecodedComponent(targetUrl.toString()));
     url.setQuery(query);
 
     return url;
@@ -111,18 +104,15 @@ QUrl SearchHelper::fromSearchFile(const QString &filePath)
     return url;
 }
 
-QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId, const QUrl &searchedFileUrl)
+QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId)
 {
     QUrl url = rootUrl();
     QUrlQuery query;
 
-    query.addQueryItem("url", targetUrl.toString());
-    query.addQueryItem("keyword", keyword);
+    query.addQueryItem("url", parseDecodedComponent(targetUrl.toString()));
+    query.addQueryItem("keyword", parseDecodedComponent(keyword));
     query.addQueryItem("taskId", taskId);
     url.setQuery(query);
-
-    if (searchedFileUrl.isValid())
-        url.setFragment(searchedFileUrl.toString(), QUrl::DecodedMode);
 
     return url;
 }

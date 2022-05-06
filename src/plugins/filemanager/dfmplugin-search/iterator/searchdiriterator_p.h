@@ -56,7 +56,7 @@ private:
     bool searchFinished = false;
     bool searchStoped = false;
     QUrl fileUrl;
-    QQueue<QUrl> childrens;
+    QList<QUrl> childrens;
     QUrl currentFileUrl;
     QString taskId;
     QMutex mutex;

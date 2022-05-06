@@ -36,7 +36,6 @@ class AdvanceSearchBar : public QScrollArea
 public:
     explicit AdvanceSearchBar(QWidget *parent = nullptr);
     void resetForm();
-    void initService();
 
 public slots:
     void onOptionChanged();

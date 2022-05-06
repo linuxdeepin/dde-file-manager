@@ -20,11 +20,12 @@
  */
 #include "advancesearchbar.h"
 #include "advancesearchbar_p.h"
-#include "fileinfo/searchfileinfo.h"
 #include "utils/searchhelper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
+
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
@@ -34,14 +35,10 @@
 #include <QVBoxLayout>
 #include <QApplication>
 
+DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
-
-namespace GlobalPrivate {
-static WindowsService *winServ { nullptr };
-static WorkspaceService *workspaceServ { nullptr };
-}   // namespace GlobalPrivate
 
 AdvanceSearchBarPrivate::AdvanceSearchBarPrivate(AdvanceSearchBar *qq)
     : DBoxWidget(QBoxLayout::LeftToRight, qq),
@@ -65,12 +62,12 @@ void AdvanceSearchBarPrivate::initUI()
         asbLabels[index]->setBuddy(asbCombos[index]);
     };
 
-    createLabelCombo(SEARCH_RANGE, tr("Search:"));
-    createLabelCombo(FILE_TYPE, tr("File Type:"));
-    createLabelCombo(SIZE_RANGE, tr("File Size:"));
-    createLabelCombo(DATE_RANGE, tr("Time Modified:"));
-    createLabelCombo(ACCESS_DATE_RANGE, tr("Time Accessed:"));
-    createLabelCombo(CREATE_DATE_RANGE, tr("Time Created:"));
+    createLabelCombo(kSearchRange, tr("Search:"));
+    createLabelCombo(kFileType, tr("File Type:"));
+    createLabelCombo(kSizeRange, tr("File Size:"));
+    createLabelCombo(kDateRange, tr("Time Modified:"));
+    createLabelCombo(kAccessDateRange, tr("Time Accessed:"));
+    createLabelCombo(kCreateDateRange, tr("Time Created:"));
 
     resetBtn = new DCommandLinkButton(tr("Reset"), this);
 #ifndef ARM_PROCESSOR
@@ -80,26 +77,26 @@ void AdvanceSearchBarPrivate::initUI()
 
     static int labelWidth = 70;
     static int comboMinWidth = 120;
-    asbLabels[SEARCH_RANGE]->setMinimumWidth(labelWidth);
-    asbCombos[SEARCH_RANGE]->setMinimumWidth(comboMinWidth);
-    asbLabels[SIZE_RANGE]->setMinimumWidth(labelWidth);
-    asbCombos[SIZE_RANGE]->setMinimumWidth(comboMinWidth);
-    asbLabels[FILE_TYPE]->setMinimumWidth(labelWidth);
-    asbCombos[FILE_TYPE]->setMinimumWidth(comboMinWidth);
-    asbLabels[DATE_RANGE]->setMinimumWidth(labelWidth);
-    asbCombos[DATE_RANGE]->setMinimumWidth(comboMinWidth);
-    asbLabels[ACCESS_DATE_RANGE]->setMinimumWidth(labelWidth);
-    asbCombos[ACCESS_DATE_RANGE]->setMinimumWidth(comboMinWidth);
-    asbLabels[CREATE_DATE_RANGE]->setMinimumWidth(labelWidth);
-    asbCombos[CREATE_DATE_RANGE]->setMinimumWidth(comboMinWidth);
+    asbLabels[kSearchRange]->setMinimumWidth(labelWidth);
+    asbCombos[kSearchRange]->setMinimumWidth(comboMinWidth);
+    asbLabels[kSizeRange]->setMinimumWidth(labelWidth);
+    asbCombos[kSizeRange]->setMinimumWidth(comboMinWidth);
+    asbLabels[kFileType]->setMinimumWidth(labelWidth);
+    asbCombos[kFileType]->setMinimumWidth(comboMinWidth);
+    asbLabels[kDateRange]->setMinimumWidth(labelWidth);
+    asbCombos[kDateRange]->setMinimumWidth(comboMinWidth);
+    asbLabels[kAccessDateRange]->setMinimumWidth(labelWidth);
+    asbCombos[kAccessDateRange]->setMinimumWidth(comboMinWidth);
+    asbLabels[kCreateDateRange]->setMinimumWidth(labelWidth);
+    asbCombos[kCreateDateRange]->setMinimumWidth(comboMinWidth);
 
-    asbCombos[SEARCH_RANGE]->addItem(tr("All subdirectories"), QVariant::fromValue(true));
-    asbCombos[SEARCH_RANGE]->addItem(tr("Current directory"), QVariant::fromValue(false));
+    asbCombos[kSearchRange]->addItem(tr("All subdirectories"), QVariant::fromValue(true));
+    asbCombos[kSearchRange]->addItem(tr("Current directory"), QVariant::fromValue(false));
     auto addItemToFileTypeCombo = [this](const QString &typeStr) {
-        asbCombos[FILE_TYPE]->addItem(typeStr, QVariant::fromValue(typeStr));
+        asbCombos[kFileType]->addItem(typeStr, QVariant::fromValue(typeStr));
     };
 
-    asbCombos[FILE_TYPE]->addItem("--", QVariant());
+    asbCombos[kFileType]->addItem("--", QVariant());
     addItemToFileTypeCombo(tr("Application"));
     addItemToFileTypeCombo(tr("Video"));
     addItemToFileTypeCombo(tr("Audio"));
@@ -109,13 +106,13 @@ void AdvanceSearchBarPrivate::initUI()
     addItemToFileTypeCombo(tr("Executable"));
     addItemToFileTypeCombo(tr("Backup file"));
 
-    asbCombos[SIZE_RANGE]->addItem("--", QVariant());
-    asbCombos[SIZE_RANGE]->addItem("0 ~ 100 KB", QVariant::fromValue(QPair<quint64, quint64>(0, 100)));
-    asbCombos[SIZE_RANGE]->addItem("100 KB ~ 1 MB", QVariant::fromValue(QPair<quint64, quint64>(100, 1024)));
-    asbCombos[SIZE_RANGE]->addItem("1 MB ~ 10 MB", QVariant::fromValue(QPair<quint64, quint64>(1024, 10 * 1024)));
-    asbCombos[SIZE_RANGE]->addItem("10 MB ~ 100 MB", QVariant::fromValue(QPair<quint64, quint64>(10 * 1024, 100 * 1024)));
-    asbCombos[SIZE_RANGE]->addItem("100 MB ~ 1 GB", QVariant::fromValue(QPair<quint64, quint64>(100 * 1024, 1 << 20)));
-    asbCombos[SIZE_RANGE]->addItem("> 1 GB", QVariant::fromValue(QPair<quint64, quint64>(1 << 20, 1 << 30)));   // here to 1T
+    asbCombos[kSizeRange]->addItem("--", QVariant());
+    asbCombos[kSizeRange]->addItem("0 ~ 100 KB", QVariant::fromValue(QPair<quint64, quint64>(0, 100)));
+    asbCombos[kSizeRange]->addItem("100 KB ~ 1 MB", QVariant::fromValue(QPair<quint64, quint64>(100, 1024)));
+    asbCombos[kSizeRange]->addItem("1 MB ~ 10 MB", QVariant::fromValue(QPair<quint64, quint64>(1024, 10 * 1024)));
+    asbCombos[kSizeRange]->addItem("10 MB ~ 100 MB", QVariant::fromValue(QPair<quint64, quint64>(10 * 1024, 100 * 1024)));
+    asbCombos[kSizeRange]->addItem("100 MB ~ 1 GB", QVariant::fromValue(QPair<quint64, quint64>(100 * 1024, 1 << 20)));
+    asbCombos[kSizeRange]->addItem("> 1 GB", QVariant::fromValue(QPair<quint64, quint64>(1 << 20, 1 << 30)));   // here to 1T
 
     auto createDateCombos = [=](const LabelIndex index) {
         asbCombos[index]->addItem("--", QVariant());
@@ -128,27 +125,27 @@ void AdvanceSearchBarPrivate::initUI()
         asbCombos[index]->addItem(tr("This year"), QVariant::fromValue(365));
         asbCombos[index]->addItem(tr("Last year"), QVariant::fromValue(730));
     };
-    createDateCombos(DATE_RANGE);
-    createDateCombos(ACCESS_DATE_RANGE);
-    createDateCombos(CREATE_DATE_RANGE);
+    createDateCombos(kDateRange);
+    createDateCombos(kAccessDateRange);
+    createDateCombos(kCreateDateRange);
 
-    formLayout->addWidget(asbLabels[SEARCH_RANGE], 0, 0);
-    formLayout->addWidget(asbCombos[SEARCH_RANGE], 0, 1);
+    formLayout->addWidget(asbLabels[kSearchRange], 0, 0);
+    formLayout->addWidget(asbCombos[kSearchRange], 0, 1);
     formLayout->addItem(new QSpacerItem(10, 1), 0, 2);
-    formLayout->addWidget(asbLabels[FILE_TYPE], 0, 3);
-    formLayout->addWidget(asbCombos[FILE_TYPE], 0, 4);
+    formLayout->addWidget(asbLabels[kFileType], 0, 3);
+    formLayout->addWidget(asbCombos[kFileType], 0, 4);
     formLayout->addItem(new QSpacerItem(10, 1), 0, 5);
-    formLayout->addWidget(asbLabels[ACCESS_DATE_RANGE], 0, 6);
-    formLayout->addWidget(asbCombos[ACCESS_DATE_RANGE], 0, 7);
+    formLayout->addWidget(asbLabels[kAccessDateRange], 0, 6);
+    formLayout->addWidget(asbCombos[kAccessDateRange], 0, 7);
     formLayout->addItem(new QSpacerItem(10, 1), 0, 8);
     formLayout->addWidget(resetBtn, 0, 9);
 
-    formLayout->addWidget(asbLabels[SIZE_RANGE], 1, 0);
-    formLayout->addWidget(asbCombos[SIZE_RANGE], 1, 1);
-    formLayout->addWidget(asbLabels[DATE_RANGE], 1, 3);
-    formLayout->addWidget(asbCombos[DATE_RANGE], 1, 4);
-    formLayout->addWidget(asbLabels[CREATE_DATE_RANGE], 1, 6);
-    formLayout->addWidget(asbCombos[CREATE_DATE_RANGE], 1, 7);
+    formLayout->addWidget(asbLabels[kSizeRange], 1, 0);
+    formLayout->addWidget(asbCombos[kSizeRange], 1, 1);
+    formLayout->addWidget(asbLabels[kDateRange], 1, 3);
+    formLayout->addWidget(asbCombos[kDateRange], 1, 4);
+    formLayout->addWidget(asbLabels[kCreateDateRange], 1, 6);
+    formLayout->addWidget(asbCombos[kCreateDateRange], 1, 7);
 
     formLayout->setSpacing(6);
     formLayout->setMargin(6);
@@ -168,7 +165,7 @@ void AdvanceSearchBarPrivate::initConnection()
 {
     connect(resetBtn, &DCommandLinkButton::pressed, q, &AdvanceSearchBar::onResetButtonPressed);
 
-    for (int i = 0; i < LABEL_COUNT; i++) {
+    for (int i = 0; i < kLabelCount; i++) {
         connect(asbCombos[i], static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), q, &AdvanceSearchBar::onOptionChanged);
     }
 }
@@ -183,31 +180,30 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
     const auto &iter = std::find_if(filterData.begin() + 1, filterData.end(), [](const QVariant &value) {
         return value.isValid();
     });
-    if (filterData[SEARCH_RANGE].toBool() && iter == filterData.end())
+    if (filterData[kSearchRange].toBool() && iter == filterData.end())
         return true;
 
-    SearchFileInfo *fileInfo = dynamic_cast<SearchFileInfo *>(info);
-    if (!fileInfo)
+    if (!info)
         return false;
 
     const auto &filter = parseFilterData(filterData);
-    if (filter.comboValid[SEARCH_RANGE] && !filter.includeSubDir) {
-        const QUrl &parentUrl = SearchHelper::searchTargetUrl(fileInfo->url());
-        QString filePath = fileInfo->filePath();
+    if (filter.comboValid[kSearchRange] && !filter.includeSubDir) {
+        const QUrl &parentUrl = filter.searchTargetUrl;
+        QString filePath = info->filePath();
         filePath.remove(parentUrl.toLocalFile().endsWith("/") ? parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
         if (filePath.contains('/'))
             return false;
     }
 
-    if (filter.comboValid[FILE_TYPE]) {
-        QString fileTypeStr = fileInfo->mimeTypeDisplayName();
+    if (filter.comboValid[kFileType]) {
+        QString fileTypeStr = info->mimeTypeDisplayName();
         if (!fileTypeStr.startsWith(filter.typeString))
             return false;
     }
 
-    if (filter.comboValid[SIZE_RANGE]) {
+    if (filter.comboValid[kSizeRange]) {
         // note: FileSizeInKiloByteRole is the size of Byte, not KB!
-        quint64 fileSize = fileInfo->size();
+        quint64 fileSize = static_cast<quint64>(info->size());
         quint32 blockSize = 1 << 10;
         quint64 lower = filter.sizeRange.first * blockSize;
         quint64 upper = filter.sizeRange.second * blockSize;
@@ -216,20 +212,20 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
             return false;
     }
 
-    if (filter.comboValid[DATE_RANGE]) {
-        QDateTime filemtime = fileInfo->lastModified();
+    if (filter.comboValid[kDateRange]) {
+        QDateTime filemtime = info->lastModified();
         if (filemtime < filter.dateRangeStart || filemtime > filter.dateRangeEnd)
             return false;
     }
 
-    if (filter.comboValid[ACCESS_DATE_RANGE]) {
-        QDateTime filemtime = fileInfo->lastRead();
+    if (filter.comboValid[kAccessDateRange]) {
+        QDateTime filemtime = info->lastRead();
         if (filemtime < filter.accessDateRangeStart || filemtime > filter.accessDateRangeEnd)
             return false;
     }
 
-    if (filter.comboValid[CREATE_DATE_RANGE]) {
-        QDateTime filemtime = fileInfo->created();
+    if (filter.comboValid[kCreateDateRange]) {
+        QDateTime filemtime = info->created();
         if (filemtime < filter.createDateRangeStart || filemtime > filter.createDateRangeEnd)
             return false;
     }
@@ -240,13 +236,14 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
 AdvanceSearchBarPrivate::FileFilter AdvanceSearchBarPrivate::parseFilterData(const QMap<int, QVariant> &data)
 {
     FileFilter filter;
-    filter.comboValid[SEARCH_RANGE] = true;
-    filter.includeSubDir = data[SEARCH_RANGE].toBool();
-    filter.typeString = data[FILE_TYPE].toString();
-    filter.comboValid[FILE_TYPE] = !filter.typeString.isEmpty();
-    filter.comboValid[SIZE_RANGE] = data[SIZE_RANGE].canConvert<QPair<quint64, quint64>>();
-    if (filter.comboValid[SIZE_RANGE])
-        filter.sizeRange = data[SIZE_RANGE].value<QPair<quint64, quint64>>();
+    filter.searchTargetUrl = data[kSearchTargetUrl].toUrl();
+    filter.comboValid[kSearchRange] = true;
+    filter.includeSubDir = data[kSearchRange].toBool();
+    filter.typeString = data[kFileType].toString();
+    filter.comboValid[kFileType] = !filter.typeString.isEmpty();
+    filter.comboValid[kSizeRange] = data[kSizeRange].canConvert<QPair<quint64, quint64>>();
+    if (filter.comboValid[kSizeRange])
+        filter.sizeRange = data[kSizeRange].value<QPair<quint64, quint64>>();
 
     // 计算时间过滤条件
     auto calDateFilter = [&filter, &data](LabelIndex labelIndex, QDateTime &startTime, QDateTime &endTime) {
@@ -299,9 +296,9 @@ AdvanceSearchBarPrivate::FileFilter AdvanceSearchBarPrivate::parseFilterData(con
         }
     };
 
-    calDateFilter(DATE_RANGE, filter.dateRangeStart, filter.dateRangeEnd);
-    calDateFilter(ACCESS_DATE_RANGE, filter.accessDateRangeStart, filter.accessDateRangeEnd);
-    calDateFilter(CREATE_DATE_RANGE, filter.createDateRangeStart, filter.createDateRangeEnd);
+    calDateFilter(kDateRange, filter.dateRangeStart, filter.dateRangeEnd);
+    calDateFilter(kAccessDateRange, filter.accessDateRangeStart, filter.accessDateRangeEnd);
+    calDateFilter(kCreateDateRange, filter.createDateRangeStart, filter.createDateRangeEnd);
 
     return filter;
 }
@@ -314,40 +311,32 @@ AdvanceSearchBar::AdvanceSearchBar(QWidget *parent)
 
 void AdvanceSearchBar::resetForm()
 {
-    for (int i = 0; i < AdvanceSearchBarPrivate::LABEL_COUNT; ++i) {
+    for (int i = 0; i < AdvanceSearchBarPrivate::kLabelCount; ++i) {
         QSignalBlocker blocker(d->asbCombos[i]);
         d->asbCombos[i]->setCurrentIndex(0);
     }
     onOptionChanged();
 }
 
-void AdvanceSearchBar::initService()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    GlobalPrivate::winServ = ctx.service<WindowsService>(WindowsService::name());
-    Q_ASSERT(GlobalPrivate::winServ);
-
-    GlobalPrivate::workspaceServ = ctx.service<WorkspaceService>(WorkspaceService::name());
-    Q_ASSERT(GlobalPrivate::workspaceServ);
-}
-
 void AdvanceSearchBar::onOptionChanged()
 {
     QMap<int, QVariant> formData;
-    formData[AdvanceSearchBarPrivate::SEARCH_RANGE] = d->asbCombos[AdvanceSearchBarPrivate::SEARCH_RANGE]->currentData();
-    formData[AdvanceSearchBarPrivate::FILE_TYPE] = d->asbCombos[AdvanceSearchBarPrivate::FILE_TYPE]->currentData();
-    formData[AdvanceSearchBarPrivate::SIZE_RANGE] = d->asbCombos[AdvanceSearchBarPrivate::SIZE_RANGE]->currentData();
-    formData[AdvanceSearchBarPrivate::DATE_RANGE] = d->asbCombos[AdvanceSearchBarPrivate::DATE_RANGE]->currentData();
-    formData[AdvanceSearchBarPrivate::ACCESS_DATE_RANGE] = d->asbCombos[AdvanceSearchBarPrivate::ACCESS_DATE_RANGE]->currentData();
-    formData[AdvanceSearchBarPrivate::CREATE_DATE_RANGE] = d->asbCombos[AdvanceSearchBarPrivate::CREATE_DATE_RANGE]->currentData();
+    formData[AdvanceSearchBarPrivate::kSearchRange] = d->asbCombos[AdvanceSearchBarPrivate::kSearchRange]->currentData();
+    formData[AdvanceSearchBarPrivate::kFileType] = d->asbCombos[AdvanceSearchBarPrivate::kFileType]->currentData();
+    formData[AdvanceSearchBarPrivate::kSizeRange] = d->asbCombos[AdvanceSearchBarPrivate::kSizeRange]->currentData();
+    formData[AdvanceSearchBarPrivate::kDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kDateRange]->currentData();
+    formData[AdvanceSearchBarPrivate::kAccessDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kAccessDateRange]->currentData();
+    formData[AdvanceSearchBarPrivate::kCreateDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kCreateDateRange]->currentData();
 
-    if (!GlobalPrivate::winServ || !GlobalPrivate::workspaceServ)
-        initService();
+    auto winId = WindowsService::service()->findWindowId(this);
+    auto window = WindowsService::service()->findWindowById(winId);
+    if (!window)
+        return;
 
-    auto winId = GlobalPrivate::winServ->findWindowId(this);
-    auto window = GlobalPrivate::winServ->findWindowById(winId);
-    GlobalPrivate::workspaceServ->setFileViewFilterData(winId, window->currentUrl(), QVariant::fromValue(formData));
-    GlobalPrivate::workspaceServ->setFileViewFilterCallback(winId, window->currentUrl(), AdvanceSearchBarPrivate::shouldVisiableByFilterRule);
+    formData[AdvanceSearchBarPrivate::kSearchTargetUrl] = SearchHelper::searchTargetUrl(window->currentUrl());
+
+    WorkspaceService::service()->setFileViewFilterData(winId, window->currentUrl(), QVariant::fromValue(formData));
+    WorkspaceService::service()->setFileViewFilterCallback(winId, window->currentUrl(), AdvanceSearchBarPrivate::shouldVisiableByFilterRule);
 }
 
 void AdvanceSearchBar::onResetButtonPressed()

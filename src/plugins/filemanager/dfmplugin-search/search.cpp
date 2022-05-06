@@ -26,7 +26,6 @@
 #include "watcher/searchfilewatcher.h"
 #include "topwidget/advancesearchbar.h"
 #include "menus/searchmenuscene.h"
-#include "utils/searchfileoperations.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -35,8 +34,6 @@
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/search/searchservice.h"
 #include "services/common/menu/menuservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
@@ -56,7 +53,6 @@ void Search::initialize()
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
     MenuService::service()->registerScene(SearchMenuCreator::name(), new SearchMenuCreator());
-    delegateServIns->registerUrlTransform(SearchHelper::scheme(), SearchHelper::searchedFileUrl);
 
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
@@ -118,7 +114,6 @@ void Search::regSearchPlugin()
     static std::once_flag flag;
     std::call_once(flag, [this]() {
         regSearchToWorkspaceService();
-        regSearchFileOperations();
     });
 }
 
@@ -133,19 +128,6 @@ void Search::regSearchToWorkspaceService()
     info.keepShow = false;
     info.createTopWidgetCb = []() { return new AdvanceSearchBar(); };
     WorkspaceService::service()->addCustomTopWidget(info);
-}
-
-void Search::regSearchFileOperations()
-{
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &SearchFileOperations::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &SearchFileOperations::writeToClipBoardHandle;
-    fileOpeationsHandle->moveToTash = &SearchFileOperations::moveToTrashHandle;
-    fileOpeationsHandle->deletes = &SearchFileOperations::deleteFilesHandle;
-    fileOpeationsHandle->renameFile = &SearchFileOperations::renameFileHandle;
-    fileOpeationsHandle->openInTerminal = &SearchFileOperations::openInTerminalHandle;
-
-    FileOperationsService::service()->registerOperations(SearchHelper::scheme(), fileOpeationsHandle);
 }
 
 DPSEARCH_END_NAMESPACE
