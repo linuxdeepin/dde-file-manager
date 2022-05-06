@@ -1681,10 +1681,7 @@ open_file: {
         //fix 修复vfat格式u盘卡死问题，写入数据后立刻同步
         if (m_isEveryReadAndWritesSnc && size_write > 0) {
             toDevice->inherits("");
-
-            qInfo() << "[SYNC] syncToDisk begin, url: " << toDevice->fileUrl();
             toDevice->syncToDisk(m_isVfat);
-            qInfo() << "[SYNC] syncToDisk end, url: " << toDevice->fileUrl();
         }
         countrefinesize(size_write);
 
@@ -2417,7 +2414,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
                 break;
             }
         }
-        qInfo() << "open file begin, url: " << fromInfo->fileUrl();
         fromfd = open(fromInfo->fileUrl().toLocalFile().toUtf8().toStdString().data(), O_RDONLY);
         if (-1 != fromfd) {
             action = DFileCopyMoveJob::NoAction;
@@ -2437,7 +2433,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
             }
         }
     } while (action == DFileCopyMoveJob::RetryAction && this->isRunning());
-    qInfo() << "open file end, url: " << fromInfo->fileUrl();
 
     if (action == DFileCopyMoveJob::SkipAction) {
         completedProgressDataSize += fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : fromInfo->size();
@@ -2450,10 +2445,9 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
     }
 #ifdef Q_OS_LINUX
     // 开启读取优化，告诉内核，我们将顺序读取此文件
+
     if (fromfd > 0) {
-        qInfo() << "posix_fadvise begin, url: " << fromInfo->fileUrl();
         posix_fadvise(fromfd, 0, 0, POSIX_FADV_SEQUENTIAL);
-        qInfo() << "posix_fadvise end, url: " << fromInfo->fileUrl();
     }
 
 #endif
@@ -2465,8 +2459,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
     copyinfo->toinfo = toInfo;
     lseek(fromfd, 0, SEEK_SET);
     qint64 current_pos = 0;
-
-    qInfo() << "read file begin, url: " << fromInfo->fileUrl();
     while (true) {
         while(checkWritQueueCount()) {
             QThread::msleep(1);
@@ -2480,7 +2472,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
             return false;
         }
 
-        if (skipReadFileDealWriteThread(fromInfo->fileUrl())) {
+        if (skipReadFileDealWriteThread(fromInfo->fileUrl()))
+        {
             completedProgressDataSize += fromInfo->size() <= 0
                     ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos;
             countrefinesize(fromInfo->size() <= 0
@@ -2499,7 +2492,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
         }
 
         if (Q_UNLIKELY(size_read <= 0)) {
-            qInfo() << "read file end, url: " << fromInfo->fileUrl();
             if (size_read == 0 && current_pos == fromInfo->size()) {
                 copyinfo->buffer = buffer;
                 copyinfo->size = size_read;
@@ -2566,7 +2558,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
     }
 
     writeQueueEnqueue(copyinfo);
-    qInfo() << "writeQueueEnqueue end, url: " << fromInfo->fileUrl();
     if (!m_isWriteThreadStart.load()) {
         m_isWriteThreadStart.store(true);
         m_writeResult = QtConcurrent::run([this]() {
@@ -2574,7 +2565,6 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
         });
     }
 
-    qInfo() << "close fromfd, url: " << fromInfo->fileUrl();
     close(fromfd);
 
     return true;
@@ -2982,22 +2972,13 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
     if (totalSize == 0)
         return;
 
-
-    qInfo() << "[UT] updateCopyProgress, dataSize: " << dataSize << " total size: " << totalSize;
-
     if ((fromLocal && m_isCountSizeOver) || fileStatistics->isFinished()) {
-
-        qInfo() << "[UT] updateCopyProgress, before real lastProgress: " << lastProgress;
-
         qreal realProgress = qreal(dataSize) / totalSize;
         if (realProgress > lastProgress)
             lastProgress = realProgress;
         qCDebug(fileJob(), "completed data size: %lld, total data size: %lld,m_refineCopySize = %lld", dataSize, totalSize, completedProgressDataSize);
-
-        qInfo() << "[UT] updateCopyProgress, after real lastProgress: " << lastProgress;
     } else {
         //预设一个总大小，让前期进度平滑一些（目前阈值取1mb）
-        qInfo() << "[UT] updateCopyProgress, before real lastProgress: " << lastProgress;
         qreal virtualSize = totalSize < 1000000 ? 1000000 : totalSize;
         if (dataSize < virtualSize /*&& total_size > 0*/) {
             // 取一个时时的总大小来计算一个模糊进度
@@ -3005,9 +2986,7 @@ void DFileCopyMoveJobPrivate::updateCopyProgress()
             if (fuzzyProgress < 0.3 && fuzzyProgress > lastProgress)
                 lastProgress = fuzzyProgress;
         }
-        qInfo() << "[UT] updateCopyProgress, after real lastProgress: " << lastProgress;
     }
-    qInfo() << "[UT] updateCopyProgress, lastProgress: " << lastProgress;
     // 保证至少出现%1
     if (lastProgress < 0.02) {
         lastProgress = 0.01;
@@ -3457,9 +3436,7 @@ write_data: {
         //关闭文件并加权
         if (info->closeflag) {
             //异步执行同步
-            qInfo() << "[SYNC] info->closeflag begin";
             syncfs(toFd);
-            qInfo() << "[SYNC] info->closeflag end";
 
             close(toFd);
             m_writeOpenFd.remove(info->toinfo->fileUrl());
@@ -3734,12 +3711,10 @@ void DFileCopyMoveJobPrivate::waitRefineThreadFinish()
         }
     }
     qDebug() << "add Permisson to dir!";
-    qInfo() << "add Permisson to dir start!";
     for (auto info : m_dirPermissonList)
     {
         info->handler->setPermissions(info->target, info->permission);
     }
-    qInfo() << "add Permisson to dir end!";
 }
 
 void DFileCopyMoveJobPrivate::setLastErrorAction(const DFileCopyMoveJob::Action &action)
@@ -4486,12 +4461,9 @@ end:
     //等待线程池结束,等待异步写线程结束
     d->waitRefineThreadFinish();
 
-    qInfo() << "[UT] waitRefineThreadFinish end";
     if (!d->m_bDestLocal && d->targetIsRemovable && mayExecSync &&
             d->state != DFileCopyMoveJob::StoppedState) { //主动取消时state已经被设置为stop了
         // 任务完成后执行 sync 同步数据到硬盘, 同时将状态改为 SleepState，用于定时器更新进度和速度信息
-
-        qInfo() << "[UT] check vfat or other begin, mode " << d->mode;
         if (d->m_isVfat) {
             d->setState(IOWaitState);
             int syncRet = 0;
@@ -4523,17 +4495,13 @@ end:
             if (d->state == IOWaitState) {
                 d->setState(RunningState);
             }
-        } else if (d->mode == CopyMode) {
-            qInfo() << "[UT] wait progress begin";
+        }
+        else if (d->mode == CopyMode){
             while (d->state != DFileCopyMoveJob::StoppedState && d->lastProgress < 1) {
-                qInfo() << "[UT] wait progress, value: " << d->lastProgress;
-
                 QThread::msleep(100);
             }
-            qInfo() << "[UT] wait progress end";
         }
     }
-    qInfo() << "[UT] check vfat or other end, mode " << d->mode;
 
     d->fileStatistics->stop();
     d->setState(StoppedState);
@@ -4544,6 +4512,7 @@ end:
         // fix bug 62822 如果进度条显示了，才沉睡0.3秒，来显示进度都100%
         if (d->m_isProgressShow.load())
             QThread::msleep(300);
+
     }
 
     qInfo() << "job finished, error:" << error() << ", message:" << errorString() << QDateTime::currentMSecsSinceEpoch() - timesec;
