@@ -423,7 +423,8 @@ void DFMSideBar::rootFileResult()
                     this->addItem(DFMSideBarDeviceItemHandler::createItem(smbIp.isEmpty() ? url : ("smb://" + smbIp)), this->groupName(Device));
                     if (smbIp.isEmpty())
                         devitems.append(url);
-                } else if (r > devitems.begin() && r < devitems.end()) {
+                } else {
+
                     this->insertItem(this->findLastItem(this->groupName(Device)) - (devitems.end() - r) + 1, DFMSideBarDeviceItemHandler::createItem(url), this->groupName(Device));
                     if (smbIp.isEmpty())
                         devitems.insert(r, url);
