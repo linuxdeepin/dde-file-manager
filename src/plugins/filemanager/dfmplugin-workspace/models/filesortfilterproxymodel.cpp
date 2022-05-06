@@ -72,10 +72,15 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
     Qt::ItemFlags flags = QSortFilterProxyModel::flags(index);
 
     const QModelIndex &sourceIndex = mapToSource(index);
-    const AbstractFileInfoPointer info = viewModel()->itemFromIndex(sourceIndex)->fileInfo();
+    if (sourceIndex.isValid()) {
+        const FileViewItem *item = viewModel()->itemFromIndex(sourceIndex);
+        if (item) {
+            const AbstractFileInfoPointer info = item->fileInfo();
 
-    if (!passNameFilters(info))
-        flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            if (!passNameFilters(info))
+                flags &= ~(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+        }
+    }
 
     if (readOnly)
         flags &= ~(Qt::ItemIsEditable | Qt::ItemIsDropEnabled | Qt::ItemNeverHasChildren);
