@@ -28,8 +28,6 @@
 #include <dfm-framework/framework.h>
 #include <functional>
 
-Q_DECLARE_METATYPE(QDir::Filters)
-
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE

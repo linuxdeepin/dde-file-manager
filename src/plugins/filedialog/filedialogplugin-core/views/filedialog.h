@@ -126,6 +126,7 @@ private Q_SLOTS:
     void updateAcceptButtonState();
     void handleEnterPressed();
     void handleUrlChanged(const QUrl &url);
+    void onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
 
 protected:
     void showEvent(QShowEvent *event) override;

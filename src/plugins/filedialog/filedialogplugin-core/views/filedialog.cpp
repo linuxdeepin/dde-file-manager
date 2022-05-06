@@ -325,9 +325,9 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
 
     if (d->fileMode == QFileDialog::DirectoryOnly
         || d->fileMode == QFileDialog::Directory) {
-        // TODO(liuyangming)
         // 清理只显示目录时对文件名添加的过滤条件
         // getFileView()->setNameFilters(QStringList());
+        dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList());
     }
 
     d->fileMode = mode;
@@ -339,9 +339,8 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
         break;
     case QFileDialog::DirectoryOnly:
     case QFileDialog::Directory:
-        // TODO(liuyangming)
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
-        // getFileView()->setNameFilters(QStringList("/"));
+        dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList("/"));
         addDisableUrlScheme("recent");
         // fall through
         [[fallthrough]];
@@ -427,8 +426,8 @@ void FileDialog::setOptions(QFileDialog::Options options)
 
     d->options = options;
 
-    // TODO(liuyangming):
-    // getFileView()->model()->setReadOnly(options.testFlag(QFileDialog::ReadOnly));
+    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetReadOnly,
+                                          internalWinId(), options.testFlag(QFileDialog::ReadOnly));
 
     if (options.testFlag(QFileDialog::ShowDirsOnly)) {
         // TODO(liuyangming):
@@ -750,8 +749,7 @@ QDir::Filters FileDialog::filter() const
 
 void FileDialog::setFilter(QDir::Filters filters)
 {
-    // TODO(liuyangming):
-    // getFileView()->setFilters(filters);
+    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetViewFilter, internalWinId(), filters);
 }
 
 void FileDialog::updateAcceptButtonState()
@@ -828,6 +826,16 @@ void FileDialog::handleUrlChanged(const QUrl &url)
         d->acceptCanOpenOnSave = false;
         onCurrentInputNameChanged();
     }
+}
+
+void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)
+{
+    Q_UNUSED(windowID)
+    Q_UNUSED(selected)
+    Q_UNUSED(deselected)
+
+    emit selectionFilesChanged();
+    updateAcceptButtonState();
 }
 
 void FileDialog::showEvent(QShowEvent *event)
@@ -956,12 +964,12 @@ void FileDialog::updateViewState()
         return;
     }
 
-    // TODO(liuyangming):
-    // setDragEnabled
-    // setDragDropMode
+    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetViewDragEnabled, internalWinId(), false);
+    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetViewDragDropMode, internalWinId(), QAbstractItemView::NoDragDrop);
 
     // TODO(liuyangming): currentChanged
-    // TODO(liuyangming): selectionChanged
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kViewSelectionChanged, this,
+                                            &FileDialog::onViewSelectionChanged);
 
     if (!d->nameFilters.isEmpty())
         setNameFilters(d->nameFilters);

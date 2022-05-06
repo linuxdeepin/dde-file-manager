@@ -28,6 +28,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QDir>
 
 #include <functional>
 
@@ -100,5 +101,6 @@ Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CustomTopWidgetInfo);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler);
+Q_DECLARE_METATYPE(QDir::Filters);
 
 #endif   // WORKSPACE_DEFINES_H

@@ -174,6 +174,8 @@ QRectF WorkspaceWidget::viewVisibleGeometry()
 
         return globalRect;
     }
+
+    return {};
 }
 
 QRectF WorkspaceWidget::itemRect(const QUrl &url, const Global::ItemRoles role)
@@ -187,6 +189,8 @@ QRectF WorkspaceWidget::itemRect(const QUrl &url, const Global::ItemRoles role)
 
         return globalRect;
     }
+
+    return {};
 }
 
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
