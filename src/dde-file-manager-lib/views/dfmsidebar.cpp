@@ -381,8 +381,6 @@ void DFMSideBar::rootFileResult()
 
         if (r->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_GVFSMP) ) && FileUtils::isNetworkUrlMounted( r->fileUrl() )){
             continue;//已经挂载的url除外
-        } else {
-            filist.removeOne(r);
         }
 
         QString smbIp;
