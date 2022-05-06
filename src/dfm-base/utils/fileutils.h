@@ -56,6 +56,7 @@ public:
     static bool isDesktopFile(const QUrl &url);
     static bool isTrashDesktopFile(const QUrl &url);
     static bool isComputerDesktopFile(const QUrl &url);
+    static bool isHomeDesktopFile(const QUrl &url);
     static bool isSameDevice(const QUrl &url1, const QUrl &url2);
     static bool isSameFile(const QUrl &url1, const QUrl &url2);
     static bool isSmbPath(const QUrl &url);

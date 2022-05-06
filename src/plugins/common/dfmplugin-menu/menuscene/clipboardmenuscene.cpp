@@ -22,8 +22,10 @@
 #include "action_defines.h"
 
 #include "services/common/menu/menu_defines.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
@@ -102,7 +104,9 @@ bool ClipBoardMenuScene::create(QMenu *parent)
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kPaste));
         d->predicateAction[ActionID::kPaste] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kPaste));
-    } else {
+    } else if (!FileUtils::isComputerDesktopFile(d->focusFile)
+               && !FileUtils::isTrashDesktopFile(d->focusFile)
+               && !FileUtils::isHomeDesktopFile(d->focusFile)) {
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kCut));
         d->predicateAction[ActionID::kCut] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCut));

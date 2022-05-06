@@ -48,6 +48,7 @@ static constexpr char kOpen[] = "open";
 static constexpr char kRename[] = "rename";
 static constexpr char kDelete[] = "delete";
 static constexpr char kCreateSymlink[] = "create-system-link";
+static constexpr char kEmptyTrash[] = "empty-trash";
 
 // "OpenWithMenu"
 static constexpr char kOpenWith[] = "open-with";

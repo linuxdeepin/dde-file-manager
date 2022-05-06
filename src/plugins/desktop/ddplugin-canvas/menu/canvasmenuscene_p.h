@@ -69,6 +69,7 @@ public:
             dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kOpenAsAdmin,
             dfmplugin_menu::ActionID::kSeparator,
+            dfmplugin_menu::ActionID::kEmptyTrash,
             dfmplugin_menu::ActionID::kCut,
             dfmplugin_menu::ActionID::kCopy,
             dfmplugin_menu::ActionID::kRename,

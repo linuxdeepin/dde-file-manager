@@ -21,7 +21,7 @@
 #include "private/fileoperatormenuscene_p.h"
 #include "action_defines.h"
 
-#include <services/common/menu/menu_defines.h>
+#include "services/common/menu/menu_defines.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -29,6 +29,7 @@
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <dfm-framework/framework.h>
 
@@ -51,6 +52,7 @@ FileOperatorMenuScenePrivate::FileOperatorMenuScenePrivate(FileOperatorMenuScene
     predicateName[ActionID::kRename] = tr("Rename");
     predicateName[ActionID::kDelete] = tr("Delete");
     predicateName[ActionID::kCreateSymlink] = tr("Create link");
+    predicateName[ActionID::kEmptyTrash] = tr("Empty Trash");
 }
 
 FileOperatorMenuScene::FileOperatorMenuScene(QObject *parent)
@@ -112,18 +114,24 @@ bool FileOperatorMenuScene::create(QMenu *parent)
     d->predicateAction[ActionID::kOpen] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOpen));
 
-    tempAction = parent->addAction(d->predicateName.value(ActionID::kRename));
-    d->predicateAction[ActionID::kRename] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRename));
-
-    tempAction = parent->addAction(d->predicateName.value(ActionID::kDelete));
-    d->predicateAction[ActionID::kDelete] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDelete));
-
     if (d->selectFiles.count() == 1) {
         tempAction = parent->addAction(d->predicateName.value(ActionID::kCreateSymlink));
         d->predicateAction[ActionID::kCreateSymlink] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCreateSymlink));
+    }
+
+    if (FileUtils::isTrashDesktopFile(d->focusFile)) {
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kEmptyTrash));
+        d->predicateAction[ActionID::kEmptyTrash] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kEmptyTrash));
+    } else if (!FileUtils::isComputerDesktopFile(d->focusFile) && !FileUtils::isHomeDesktopFile(d->focusFile)) {
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kRename));
+        d->predicateAction[ActionID::kRename] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRename));
+
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kDelete));
+        d->predicateAction[ActionID::kDelete] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDelete));
     }
 
     return AbstractMenuScene::create(parent);
@@ -137,6 +145,15 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     if (d->isEmptyArea)
         return;
 
+    if (FileUtils::isTrashDesktopFile(d->focusFile)) {
+        if (auto clearTrash = d->predicateAction.value(ActionID::kEmptyTrash)) {
+            auto trashUrl = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath));
+            auto info = InfoFactory::create<AbstractFileInfo>(trashUrl);
+            if (info->countChildFile() <= 0)
+                clearTrash->setDisabled(true);
+        }
+    }
+
     // delete
     if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
         if (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink())
@@ -145,9 +162,10 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
     if (1 == d->selectFiles.count()) {
         // rename
-        if (auto rename = d->predicateAction.value(ActionID::kRename))
+        if (auto rename = d->predicateAction.value(ActionID::kRename)) {
             if (!d->indexFlags.testFlag(Qt::ItemIsEditable))
                 rename->setDisabled(true);
+        }
 
         // todo(wangcl) disable open?
 
@@ -245,6 +263,16 @@ bool FileOperatorMenuScene::triggered(QAction *action)
                                               d->windowId,
                                               d->focusFile,
                                               linkUrl);
+        return true;
+    }
+
+    // clear trash
+    if (actionId == ActionID::kEmptyTrash) {
+        QList<QUrl> trashUrls { QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kTrashFilesPath)) };
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
+                                              d->windowId,
+                                              trashUrls,
+                                              AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
         return true;
     }
 

@@ -24,11 +24,13 @@
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/openwith/openwithservice.h"
+
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/utils/properties.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -93,8 +95,6 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
     d->recommendApps.removeAll("/usr/share/applications/dde-open.desktop");
     d->recommendApps.removeAll("/usr/share/applications/display-im6.q16.desktop");
     d->recommendApps.removeAll("/usr/share/applications/display-im6.q16hdri.desktop");
-    if (d->recommendApps.isEmpty())
-        return false;
 
     return AbstractMenuScene::initialize(params);
 }
@@ -114,6 +114,11 @@ bool OpenWithMenuScene::create(QMenu *parent)
 {
     if (d->selectFiles.isEmpty() || !d->focusFile.isValid())
         return false;
+
+    if (FileUtils::isComputerDesktopFile(d->focusFile)
+        || FileUtils::isTrashDesktopFile(d->focusFile)
+        || FileUtils::isHomeDesktopFile(d->focusFile))
+        return AbstractMenuScene::create(parent);
 
     QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenWith));
     d->predicateAction[ActionID::kOpenWith] = tempAction;
@@ -159,7 +164,6 @@ void OpenWithMenuScene::updateState(QMenu *parent)
 
     // open with
     if (auto openWith = d->predicateAction.value(ActionID::kOpenWith)) {
-
         // app support mime types
         QStringList supportedMimeTypes;
         QMimeType fileMimeType = d->focusFileInfo->fileMimeType();

@@ -63,6 +63,8 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     DSC_USE_NAMESPACE
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
@@ -87,6 +89,11 @@ bool SendToMenuScene::create(QMenu *parent)
         return false;
 
     if (!d->isEmptyArea) {
+        if (FileUtils::isComputerDesktopFile(d->focusFile)
+            || FileUtils::isTrashDesktopFile(d->focusFile)
+            || FileUtils::isHomeDesktopFile(d->focusFile))
+            return AbstractMenuScene::create(parent);
+
         if (!d->onDesktop) {
             auto *act = parent->addAction(d->predicateName[ActionID::kSendToDesktop]);
             act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
