@@ -171,3 +171,8 @@ QStringList MimeTypeDisplayManager::supportVideoMimeTypes()
 {
     return VideoMimeTypes;
 }
+
+QStringList MimeTypeDisplayManager::supportAudioMimeTypes()
+{
+    return AudioMimeTypes;
+}

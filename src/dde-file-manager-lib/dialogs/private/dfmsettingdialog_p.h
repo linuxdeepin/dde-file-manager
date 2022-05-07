@@ -120,6 +120,7 @@ private:
         {"advance.preview.document_file_preview", DFMApplication::GA_PreviewDocumentFile},
         {"advance.preview.image_file_preview", DFMApplication::GA_PreviewImage},
         {"advance.preview.video_file_preview", DFMApplication::GA_PreviewVideo},
+        {"advance.preview.audio_file_preview", DFMApplication::GA_PreviewAudio},
         {"advance.mount.auto_mount", DFMApplication::GA_AutoMount},
         {"advance.mount.auto_mount_and_open", DFMApplication::GA_AutoMountAndOpen},
         {"advance.mount.mtp_show_bottom_info", DFMApplication::GA_MTPShowBottomInfo},

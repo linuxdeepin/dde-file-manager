@@ -63,6 +63,7 @@ public:
         GA_PreviewDocumentFile, // 文档生成缩略图（pdf）
         GA_PreviewImage, // 图片生成缩略图
         GA_PreviewVideo, // 文件生成缩略图
+        GA_PreviewAudio,
         GA_AutoMount, // 自动挂载硬盘设备
         GA_AutoMountAndOpen, // 自动挂载并打开硬盘设备
         GA_MTPShowBottomInfo, // mtp 挂载时显示底部数据统计

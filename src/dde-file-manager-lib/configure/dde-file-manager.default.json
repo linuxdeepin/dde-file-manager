@@ -19,6 +19,7 @@
         "PreviewDocumentFile": true,
         "PreviewImage": true,
         "PreviewVideo": true,
+        "PreviewAudio": true,
         "AutoMount": true,
         "AutoMountAndOpen": false,
         "OverrideFileChooserDialog": true,
