@@ -100,15 +100,6 @@ PluginServiceContext &Framework::serviceContext() const
     return PluginServiceContext::instance();
 }
 
-/*!
- * \brief Get event proxy
- * \return
- */
-EventCallProxy &Framework::eventProxy() const
-{
-    return EventCallProxy::instance();
-}
-
 Listener &Framework::listener() const
 {
     return Listener::instance();

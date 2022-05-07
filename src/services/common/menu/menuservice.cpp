@@ -23,6 +23,11 @@
 
 #include <dfm-framework/framework.h>
 
+#include <QThread>
+#include <QCoreApplication>
+
+#include <mutex>
+
 DSC_BEGIN_NAMESPACE
 
 DFMBASE_USE_NAMESPACE

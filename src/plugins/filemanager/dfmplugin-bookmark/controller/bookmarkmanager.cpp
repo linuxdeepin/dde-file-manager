@@ -38,6 +38,7 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QApplication>
+#include <QStorageInfo>
 
 USING_IO_NAMESPACE
 

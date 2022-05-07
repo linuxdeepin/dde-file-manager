@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QScreen>
+#include <QTimer>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

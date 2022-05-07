@@ -35,6 +35,7 @@
 
 #include <QMenu>
 #include <QVariant>
+#include <QSettings>
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

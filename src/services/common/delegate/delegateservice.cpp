@@ -25,6 +25,8 @@
 
 #include <QUrl>
 
+#include <mutex>
+
 DSC_USE_NAMESPACE
 
 void DelegateService::registerTransparentHandle(const DelegateService::KeyType &scheme, const DelegateService::TransparentHandle &handle)

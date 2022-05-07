@@ -32,6 +32,7 @@
 
 #include <QFile>
 #include <QMenu>
+#include <QCoreApplication>
 
 DPRECENT_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE

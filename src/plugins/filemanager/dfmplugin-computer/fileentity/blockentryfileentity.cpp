@@ -34,6 +34,9 @@
 #include "dfm-base/base/urlroute.h"
 
 #include <QMenu>
+#include <QRegularExpression>
+#include <QStandardPaths>
+#include <QDir>
 
 DFMBASE_USE_NAMESPACE
 DPCOMPUTER_USE_NAMESPACE

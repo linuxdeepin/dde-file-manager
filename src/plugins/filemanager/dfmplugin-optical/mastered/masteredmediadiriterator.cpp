@@ -30,6 +30,8 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
+#include <QStandardPaths>
+
 DFMBASE_USE_NAMESPACE
 DPOPTICAL_USE_NAMESPACE
 

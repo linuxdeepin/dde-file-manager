@@ -42,6 +42,9 @@
 #include <dfm-framework/framework.h>
 #include <dfm-mount/dfmdevicemanager.h>
 
+#include <QTimer>
+#include <QCoreApplication>
+
 DFMBASE_USE_NAMESPACE
 DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE

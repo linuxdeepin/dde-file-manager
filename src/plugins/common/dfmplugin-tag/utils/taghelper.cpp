@@ -29,6 +29,7 @@
 #include <QUrl>
 
 #include <random>
+#include <mutex>
 
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE

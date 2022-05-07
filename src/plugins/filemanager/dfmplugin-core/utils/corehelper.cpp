@@ -30,6 +30,7 @@
 #include <dfm-framework/framework.h>
 
 #include <QDir>
+#include <QProcess>
 
 DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE

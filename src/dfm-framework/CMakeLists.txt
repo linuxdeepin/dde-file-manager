@@ -22,8 +22,6 @@ FILE(GLOB FRAMEWORK_FEATURE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/backtrace/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/pubsub/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/pubsub/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/dispatcher/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/dispatcher/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/unicast/*.h"

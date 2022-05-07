@@ -33,6 +33,8 @@
 #include <QWindow>
 #include <QTimer>
 
+#include <mutex>
+
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 

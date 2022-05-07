@@ -23,6 +23,8 @@
 
 #include "services/common/emblem/emblem_defines.h"
 
+#include <QUrl>
+
 Q_DECLARE_METATYPE(QList<QIcon> *)
 
 DPF_USE_NAMESPACE

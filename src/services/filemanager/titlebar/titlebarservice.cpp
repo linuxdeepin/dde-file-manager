@@ -28,6 +28,8 @@
 
 #include <dfm-framework/framework.h>
 
+#include <mutex>
+
 DSB_FM_BEGIN_NAMESPACE
 namespace TitleBar {
 // custm event type

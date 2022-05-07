@@ -22,6 +22,8 @@
 #include "preview_defines.h"
 #include "dfm-base/utils/universalutils.h"
 
+#include <mutex>
+
 DSC_BEGIN_NAMESPACE
 namespace Preview {
 namespace EventType {

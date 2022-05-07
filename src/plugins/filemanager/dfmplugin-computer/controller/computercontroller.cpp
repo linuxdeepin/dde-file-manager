@@ -45,6 +45,8 @@
 #include <QDebug>
 #include <QApplication>
 #include <QMenu>
+#include <QProcess>
+#include <QThread>
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE

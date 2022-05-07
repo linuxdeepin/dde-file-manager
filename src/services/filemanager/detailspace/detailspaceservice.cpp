@@ -25,6 +25,8 @@
 #include "utils/registerexpandprocess.h"
 #include "dfm-base/utils/universalutils.h"
 
+#include <mutex>
+
 DSB_FM_BEGIN_NAMESPACE
 namespace DetailEventType {
 const int kShowDetailView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();

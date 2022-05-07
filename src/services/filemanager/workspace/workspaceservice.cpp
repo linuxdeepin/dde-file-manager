@@ -25,6 +25,8 @@
 
 #include "dfm-base/utils/universalutils.h"
 
+#include <mutex>
+
 DSB_FM_BEGIN_NAMESPACE
 
 namespace Workspace {

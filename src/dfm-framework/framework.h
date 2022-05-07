@@ -24,12 +24,12 @@
 #include "dfm-framework/dfm_framework_global.h"
 #include "dfm-framework/lifecycle/lifecycle.h"
 #include "dfm-framework/listener/listener.h"
-#include "dfm-framework/event/pubsub/eventcallproxy.h"
 #include "dfm-framework/event/dispatcher/eventdispatcher.h"
 #include "dfm-framework/event/unicast/eventunicast.h"
 #include "dfm-framework/event/sequence/eventsequence.h"
 #include "dfm-framework/service/pluginservicecontext.h"
 #include "dfm-framework/log/framelogmanager.h"
+#include "dfm-framework/log/codetimecheck.h"
 
 #include <QObject>
 
@@ -50,7 +50,6 @@ public:
     bool start();
     LifeCycle &lifeCycle() const;
     [[gnu::hot]] PluginServiceContext &serviceContext() const;
-    EventCallProxy &eventProxy() const;
     [[gnu::hot]] EventDispatcherManager &eventDispatcher() const;
     [[gnu::hot]] EventUnicastManager &eventUnicast() const;
     EventSequenceManager &eventSequence() const;

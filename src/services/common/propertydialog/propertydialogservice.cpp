@@ -23,6 +23,8 @@
 #include "utils/computerpropertyhelper.h"
 #include "dfm-base/utils/universalutils.h"
 
+#include <mutex>
+
 DSC_BEGIN_NAMESPACE
 CPY_BEGIN_NAMESPACE
 namespace EventType {

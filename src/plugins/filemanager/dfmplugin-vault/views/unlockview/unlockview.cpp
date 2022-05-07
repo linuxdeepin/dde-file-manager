@@ -31,6 +31,9 @@
 #include <DDialog>
 
 #include <QMouseEvent>
+#include <QProcess>
+#include <QDateTime>
+#include <QStandardPaths>
 
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE

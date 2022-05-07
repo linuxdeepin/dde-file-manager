@@ -23,6 +23,8 @@
 #include "config.h"   //cmake
 
 #include <DApplication>
+#include <QDir>
+#include <QTextCodec>
 
 #include <dfm-framework/framework.h>
 

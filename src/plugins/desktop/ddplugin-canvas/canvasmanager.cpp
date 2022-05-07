@@ -32,6 +32,8 @@
 #include <base/schemefactory.h>
 #include <base/application/application.h>
 
+#include <QCoreApplication>
+
 DFMBASE_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
@@ -42,8 +44,7 @@ class CanvasManagerGlobal : public CanvasManager
 Q_GLOBAL_STATIC(CanvasManagerGlobal, canvasManagerGlobal)
 
 CanvasManager::CanvasManager(QObject *parent)
-    : QObject(parent)
-    , d(new CanvasManagerPrivate(this))
+    : QObject(parent), d(new CanvasManagerPrivate(this))
 {
     Q_ASSERT(thread() == qApp->thread());
 }
@@ -478,8 +479,6 @@ void CanvasManagerPrivate::onFileAboutToBeRemoved(const QModelIndex &parent, int
                 }
             }
         }
-
-
     }
     q->update();
 }

@@ -20,6 +20,8 @@
  */
 #include "bookmarkhelper.h"
 
+#include <mutex>
+
 DPBOOKMARK_USE_NAMESPACE
 
 BookMarkHelper *BookMarkHelper::instance()
@@ -94,4 +96,5 @@ dfm_service_common::MenuService *BookMarkHelper::menuServIns()
     return ctx.service<DSC_NAMESPACE::MenuService>(DSC_NAMESPACE::MenuService::name());
 }
 
-BookMarkHelper::BookMarkHelper(QObject *parent) : QObject(parent) {}
+BookMarkHelper::BookMarkHelper(QObject *parent)
+    : QObject(parent) {}

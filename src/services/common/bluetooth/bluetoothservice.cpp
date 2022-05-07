@@ -30,6 +30,10 @@
 
 #include <dfm-framework/framework.h>
 
+#include <QUrl>
+
+#include <mutex>
+
 DSC_BEGIN_NAMESPACE
 
 namespace EventType {

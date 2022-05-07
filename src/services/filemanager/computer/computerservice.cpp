@@ -25,7 +25,10 @@
 #include "computer_defines.h"
 
 #include "dfm-base/utils/universalutils.h"
+
 #include <dfm-framework/framework.h>
+
+#include <QUrl>
 
 DSB_FM_BEGIN_NAMESPACE
 

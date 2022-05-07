@@ -29,6 +29,8 @@
 
 #include <dfm-framework/framework.h>
 
+#include <QMimeDatabase>
+
 DIALOGCORE_BEGIN_NAMESPACE
 
 class CoreHelper

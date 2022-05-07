@@ -50,6 +50,8 @@
 #include <QDesktopWidget>
 #include <QWhatsThis>
 #include <QLabel>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 #include <qpa/qplatformtheme.h>
 #include <qpa/qplatformdialoghelper.h>

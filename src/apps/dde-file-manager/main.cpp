@@ -30,6 +30,8 @@
 #include <dfm-base/utils/sysinfoutils.h>
 
 #include <QIcon>
+#include <QDir>
+#include <QTextCodec>
 
 #include <signal.h>
 

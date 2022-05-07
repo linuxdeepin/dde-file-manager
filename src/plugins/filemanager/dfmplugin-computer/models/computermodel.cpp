@@ -31,6 +31,7 @@
 #include "dfm-base/utils/fileutils.h"
 
 #include <QVector>
+#include <QTimer>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 using namespace GlobalServerDefines;

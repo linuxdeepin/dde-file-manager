@@ -23,6 +23,7 @@
 #include "filecopymovejob.h"
 
 #include <QUrl>
+#include <QTimer>
 
 /*!
  * 特殊说明，调用当前服务的5个服务时，返回的JobHandlePointer时就已经启动了线程去处理相应的任务，那么使用JobHandlePointer做信号链接时，

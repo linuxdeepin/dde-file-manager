@@ -39,6 +39,7 @@
 #include <QMenu>
 #include <QFileInfo>
 #include <QApplication>
+#include <QStandardPaths>
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

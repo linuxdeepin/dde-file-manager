@@ -26,6 +26,8 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-framework/framework.h>
 
+#include <mutex>
+
 DSC_BEGIN_NAMESPACE
 
 namespace OpenWith {

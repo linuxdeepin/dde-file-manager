@@ -31,6 +31,8 @@
 #include <QFile>
 #include <QFutureWatcher>
 
+#include <mutex>
+
 DSC_BEGIN_NAMESPACE
 
 #define dispatcher dpfInstance.eventDispatcher()

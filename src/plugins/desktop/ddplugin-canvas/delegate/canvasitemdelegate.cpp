@@ -44,6 +44,8 @@
 #include <private/qtextengine_p.h>
 
 #include <cmath>
+#include <mutex>
+#include <linux/limits.h>
 
 Q_DECLARE_METATYPE(QRectF *)
 
@@ -435,7 +437,7 @@ bool CanvasItemDelegate::isTransparent(const QModelIndex &index) const
 
 void CanvasItemDelegate::drawNormlText(QPainter *painter, const QStyleOptionViewItem &option,
                                        const QModelIndex &index, const QRectF &rText) const
-{    
+{
     painter->save();
     painter->setPen(option.palette.color(QPalette::Text));
 
@@ -853,7 +855,7 @@ QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, c
     //todo uing extend painter by registering.
     if (!dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url)) {
         static std::once_flag printLog;
-        std::call_once(printLog, [](){
+        std::call_once(printLog, []() {
             qWarning() << "publish `kPaintEmblems` event failed!";
         });
     }

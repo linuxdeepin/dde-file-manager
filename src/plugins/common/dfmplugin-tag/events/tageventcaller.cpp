@@ -25,6 +25,8 @@
 
 #include <dfm-framework/framework.h>
 
+#include <QUrl>
+
 DPTAG_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

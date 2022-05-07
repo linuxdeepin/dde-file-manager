@@ -40,6 +40,8 @@
 #include <dfm-framework/framework.h>
 
 #include <QGSettings>
+#include <QStandardPaths>
+#include <QStorageInfo>
 
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE

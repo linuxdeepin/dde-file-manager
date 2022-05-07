@@ -33,6 +33,11 @@
 #include <QX11Info>
 #include <QScreen>
 #include <QWindow>
+#include <QTimer>
+#include <QProcess>
+#include <QDir>
+
+#include <mutex>
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_BEGIN_NAMESPACE

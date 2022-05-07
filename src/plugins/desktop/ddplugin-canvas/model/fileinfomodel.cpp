@@ -28,15 +28,14 @@
 #include <dfm-framework/framework.h>
 
 #include <QMimeData>
+#include <QDateTime>
 
 DFMBASE_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
 FileInfoModelPrivate::FileInfoModelPrivate(FileInfoModel *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
-
 }
 
 void FileInfoModelPrivate::doRefresh()
@@ -116,7 +115,7 @@ void FileInfoModelPrivate::removeData(const QUrl &url)
 }
 
 void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
-{ 
+{
     if (newUrl.isEmpty()) {
         qInfo() << "target url is empty, remove old" << oldUrl;
         removeData(oldUrl);
@@ -172,9 +171,9 @@ void FileInfoModelPrivate::updateData(const QUrl &url)
     emit q->dataChanged(index, index);
 }
 
-FileInfoModel::FileInfoModel(QObject *parent) :
-    QAbstractItemModel(parent),
-    d(new FileInfoModelPrivate(this))
+FileInfoModel::FileInfoModel(QObject *parent)
+    : QAbstractItemModel(parent),
+      d(new FileInfoModelPrivate(this))
 {
     d->fileProvider = new FileProvider(this);
     connect(d->fileProvider, &FileProvider::refreshEnd, d, &FileInfoModelPrivate::resetData);
@@ -187,7 +186,6 @@ FileInfoModel::FileInfoModel(QObject *parent) :
 
 FileInfoModel::~FileInfoModel()
 {
-
 }
 
 QModelIndex FileInfoModel::setRootUrl(QUrl url)
@@ -430,7 +428,7 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         //todo(wcl)
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList{targetFileUrl.toLocalFile()});
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, urlList, QStringList { targetFileUrl.toLocalFile() });
         return true;
     }
 
@@ -443,8 +441,7 @@ bool FileInfoModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
             // default is copy file
             dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, 0, urlList, targetFileUrl, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         }
-    }
-        break;
+    } break;
     case Qt::LinkAction:
         break;
     default:
@@ -471,4 +468,3 @@ Qt::DropActions FileInfoModel::supportedDropActions() const
     // todo
     return Qt::CopyAction | Qt::MoveAction | Qt::LinkAction;
 }
-
