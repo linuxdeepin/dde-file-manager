@@ -2698,6 +2698,16 @@ void DFileView::initConnects()
     connect(DFMApplication::instance(), &DFMApplication::previewAttributeChanged, this, [this] {
         model()->refresh();
     });
+    connect(DFMApplication::instance(), &DFMApplication::appAttributeChanged, this, [this](DFMApplication::ApplicationAttribute aa, const QVariant &value){
+        Q_UNUSED(value);
+        switch (aa) {
+        case DFMApplication::AA_FileAndDirMixedSort:
+            model()->sort();
+            break;
+        default:
+            break;
+        }
+    });
 
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &DFileView::viewStateChanged);
     connect(this, &DFileView::rootUrlChanged, this, &DFileView::loadViewState);

@@ -48,7 +48,8 @@ public:
         AA_OpenFileMode, // 点击/双击[0/1]
         AA_UrlOfNewWindow, // 新窗口默认路径
         AA_UrlOfNewTab, // 新标签页默认路径
-        AA_ThemeName
+        AA_ThemeName,
+        AA_FileAndDirMixedSort  // 普通文件与目录混合排序
     };
 
     Q_ENUM(ApplicationAttribute)

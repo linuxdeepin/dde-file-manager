@@ -750,7 +750,7 @@ void GridManager::initGridItemsInfos()
             t.start();
             if (sortFun) {
                 qSort(infoList.begin(), infoList.end(), [sortFun, sortOrder](const DAbstractFileInfoPointer & node1, const DAbstractFileInfoPointer & node2) {
-                    return sortFun(node1, node2, sortOrder);
+                    return sortFun(node1, node2, sortOrder, DFMApplication::appAttribute(DFMApplication::AA_FileAndDirMixedSort).toBool());
                 });
             }
             qDebug() << "sort complete time " << t.elapsed();
