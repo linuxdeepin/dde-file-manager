@@ -132,6 +132,9 @@ void DThumbnailProviderPrivate::init()
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/jpeg"), 1024 * 1024 * 30);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/png"), 1024 * 1024 * 30);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName("image/pipeg"), 1024 * 1024 * 30);
+
+    // High file limit size only for FLAC files.
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName("audio/flac"), INT64_MAX);
 }
 
 QString DThumbnailProviderPrivate::sizeToFilePath(DThumbnailProvider::Size size) const
@@ -190,6 +193,10 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     if (mime.startsWith("image") && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewImage).toBool())
         return false;
 
+    if ((mime.startsWith("audio") || mimeTypeDisplayManager->supportAudioMimeTypes().contains(mime))
+            && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewAudio).toBool())
+        return false;
+
     if ((mime.startsWith("video") || mimeTypeDisplayManager->supportVideoMimeTypes().contains(mime))
             && !DFMApplication::instance()->genericAttribute(DFMApplication::GA_PreviewVideo).toBool())
         return false;
@@ -207,9 +214,8 @@ bool DThumbnailProvider::hasThumbnail(const QMimeType &mimeType) const
     if (DThumbnailProviderPrivate::hasThumbnailMimeHash.contains(mime))
         return true;
 
-    if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("video/"))) {
+    if (Q_LIKELY(mime.startsWith("image") || mime.startsWith("audio/") || mime.startsWith("video/"))) {
         DThumbnailProviderPrivate::hasThumbnailMimeHash.insert(mime);
-
         return true;
     }
 
@@ -518,6 +524,30 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
         }
 
         *image = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    } else if (mime.name().startsWith("audio/")) {
+        QProcess ffmpeg;
+        ffmpeg.start("ffmpeg", QStringList() << "-nostats"
+                     << "-loglevel" << "0"
+                     << "-i" << QDir::toNativeSeparators(absoluteFilePath)
+                     << "-an"
+                     << "-vf" << "scale='min(" + QString::number(size) + ",iw)':-1"
+                     << "-f" << "image2pipe"
+                     << "-fs" << "9000"
+                     << "-",
+                     QIODevice::ReadOnly);
+
+        if (!ffmpeg.waitForFinished()) {
+            d->errorString = ffmpeg.errorString();
+            goto _return;
+        }
+
+        const QByteArray output = ffmpeg.readAllStandardOutput();
+
+        if (image->loadFromData(output)) {
+            d->errorString.clear();
+        } else {
+            d->errorString = QString("load image failed from the ffmpeg application");
+        }
     } else {
         thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
         d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();

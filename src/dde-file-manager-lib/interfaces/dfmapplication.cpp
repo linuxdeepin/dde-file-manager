@@ -91,6 +91,7 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
         case DFMApplication::GA_PreviewImage:
         case DFMApplication::GA_PreviewTextFile:
         case DFMApplication::GA_PreviewVideo:
+        case DFMApplication::GA_PreviewAudio:
             Q_EMIT self->previewAttributeChanged(ga, value.toBool());
             break;
         case DFMApplication::GA_ShowedHiddenFiles:
