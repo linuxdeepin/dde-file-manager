@@ -61,39 +61,7 @@ public:
 
 TEST_F(TestDFMVaultFileView, tst_setRootUrl)
 {
-<<<<<<< HEAD   (ea7281 fix: 回退代码（该提交分支为临时测试分支）)
-    auto closeWindow = [](DUrl & url) {
-        VaultController::VaultState enState = VaultController::ins()->state();
-        if (enState != VaultController::Unlocked) {
-            switch (enState) {
-            case VaultController::NotAvailable: {
-                qDebug() << "cryfs not installed!";
-                break;
-            }
-            case VaultController::NotExisted: {
-                break;
-            }
-            case VaultController::Encrypted: {
-                if (url.host() == "certificate") {
-                    DFMVaultRecoveryKeyPages::instance()->close();
-                } else {
-                    DFMVaultUnlockPages::instance()->close();
-                }
-                break;
-            }
-            default:
-                ;
-            }
-        } else {
-            if (url.host() == "delete") {
-                DFMVaultRemovePages::instance()->close();
-            }
-        }
-    };
-
-=======
     // 对exec函数打桩
->>>>>>> CHANGE (88ddfd fix: 文管选择框弹出保险箱的窗口，导致文管崩溃问题)
     Stub stl;
     typedef int(*fptr)(QDialog*);
     fptr pQDialogExec = (fptr)(&QDialog::exec);
