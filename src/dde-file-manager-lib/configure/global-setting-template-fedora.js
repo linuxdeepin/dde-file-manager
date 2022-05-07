@@ -227,6 +227,12 @@
                             "type": "checkbox",
                             "default": false,
                             "hide": true
+                        },
+                        {
+                            "key": "audio_file_preview",
+                            "text": qsTranslate("GenerateSettingTranslate", "Music preview"),
+                            "type": "checkbox",
+                            "default": true
                         }
                     ]
                 },

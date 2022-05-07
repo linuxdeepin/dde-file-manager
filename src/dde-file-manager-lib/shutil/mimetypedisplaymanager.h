@@ -52,6 +52,7 @@ public:
     static void loadSupportMimeTypes();
     static QStringList supportArchiveMimetypes();
     static QStringList supportVideoMimeTypes();
+    static QStringList supportAudioMimeTypes();
 
 private:
     QMap<FileType, QString> m_displayNames;
