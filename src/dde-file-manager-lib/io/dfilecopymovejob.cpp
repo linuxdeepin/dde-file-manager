@@ -4024,7 +4024,7 @@ void DFileCopyMoveJobPrivate::initRefineState()
         return;
     }
     // 拷贝到移动设备
-    if (m_isFileOnDiskUrls && !m_bDestLocal && m_isTagFromBlockDevice.load()) {
+    if (!m_bDestLocal && m_isTagFromBlockDevice.load()) {
         m_refineStat = DFileCopyMoveJob::RefineBlock;
         return;
     }
