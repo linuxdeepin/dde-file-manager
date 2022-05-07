@@ -31,6 +31,7 @@
 #include "app/define.h"
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
+#include "dfmapplication.h"
 
 #include "interfaces/dfmstandardpaths.h"
 #include "singleton.h"
@@ -231,7 +232,7 @@ void TrashManager::sortByOriginPath(DUrlList &list) const
     qSort(list.begin(), list.end(), [sortFun, this](const DUrl url1, const DUrl url2) {
         const auto &&event1 = dMakeEventPointer<DFMCreateFileInfoEvent>(this, url1);
         const auto &&event2 = dMakeEventPointer<DFMCreateFileInfoEvent>(this, url2);
-        return sortFun(TrashManager::createFileInfo(event1), TrashManager::createFileInfo(event2), Qt::AscendingOrder);
+        return sortFun(TrashManager::createFileInfo(event1), TrashManager::createFileInfo(event2), Qt::AscendingOrder, DFMApplication::appAttribute(DFMApplication::AA_FileAndDirMixedSort).toBool());
     });
 }
 

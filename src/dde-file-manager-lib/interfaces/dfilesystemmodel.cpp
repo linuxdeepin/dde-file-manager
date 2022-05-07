@@ -65,7 +65,6 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
     int begin = 0;
     int end = list.count();
     int row = (begin + end)/2;
-    bool isDir = needNode->fileInfo->isDir();
     // 先找到文件还是目录
     forever {
 
@@ -76,26 +75,14 @@ static int FindInsertPosInOrderList(const FileSystemNodePointer &needNode,
             break;
 
         const FileSystemNodePointer &node = list.at(row);
-        if (isDir) {
-            if (node->fileInfo->isDir() && !sortFun(needNode->fileInfo, node->fileInfo, order)) {
-                begin = row;
-                row = (end + begin + 1) / 2 ;
-                if (row >= end)
-                    break;
-            } else {
-                end = row;
-                row = (end + begin) / 2 ;
-            }
+        if (!sortFun(needNode->fileInfo, node->fileInfo, order, DFMApplication::appAttribute(DFMApplication::AA_FileAndDirMixedSort).toBool())) {
+            begin = row;
+            row = (end + begin + 1) / 2;
+            if (row >= end)
+                break;
         } else {
-            if (node->fileInfo->isDir() || !sortFun(needNode->fileInfo, node->fileInfo, order)) {
-                begin = row;
-                row = (end + begin + 1) / 2 ;
-                if (row >= end)
-                    break;
-            } else {
-                end = row;
-                row = (end + begin) / 2 ;
-            }
+            end = row;
+            row = (end + begin) / 2;
         }
     }
     return row;

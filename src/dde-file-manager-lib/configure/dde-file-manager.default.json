@@ -9,7 +9,8 @@
         "OpenFileMode": 1,
         "UrlOfNewWindow": "computer:///",
         "UrlOfNewTab": "",
-        "ThemeName": "light"
+        "ThemeName": "light",
+        "FileAndDirMixedSort": false
     },
     "GenericAttribute": {
         "IndexInternal": true,
