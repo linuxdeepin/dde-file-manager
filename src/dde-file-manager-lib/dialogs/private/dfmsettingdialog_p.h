@@ -106,6 +106,7 @@ private:
         {"base.default_view.icon_size", DFMApplication::AA_IconSizeLevel},
         {"base.default_view.view_mode", DFMApplication::AA_ViewMode},
         {"base.default_view.view_size_adjustable", DFMApplication::AA_ViewSizeAdjustable},
+        {"base.default_view.mixed_sort", DFMApplication::AA_FileAndDirMixedSort},
     };
     BidirectionHash<QString, DFMApplication::GenericAttribute> keyToGA {
         {"base.hidden_files.show_hidden", DFMApplication::GA_ShowedHiddenFiles},
