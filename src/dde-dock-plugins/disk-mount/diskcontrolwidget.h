@@ -48,14 +48,15 @@ public:
     ~DiskControlWidget() override;
     void initConnect();
 
-    DDiskManager*  startMonitor();
+    DDiskManager *startMonitor();
     void doStartupAutoMount();
     void unmountAll();
     void doUnMountAll();
 
-    const QList<QExplicitlySharedDataPointer<DGioMount> > getVfsMountList();
+    const QList<QExplicitlySharedDataPointer<DGioMount>> getVfsMountList();
     static void NotifyMsg(QString msg);
     static void NotifyMsg(QString title, QString msg);
+    static void refreshDesktop();
 
 signals:
     void diskCountChanged(const int count) const;
@@ -78,13 +79,13 @@ private slots:
 private:
     QVBoxLayout *m_centralLayout;
     QWidget *m_centralWidget;
-    bool m_isInLiveSystem = false; // 当处于 liveSys 的时候禁用自动挂载（以前的逻辑）
-    bool m_autoMountEnable = false; // 配置项中的自动挂载
-    bool m_autoMountAndOpenEnable = false; // 配置项中的挂载并打开
+    bool m_isInLiveSystem = false;   // 当处于 liveSys 的时候禁用自动挂载（以前的逻辑）
+    bool m_autoMountEnable = false;   // 配置项中的自动挂载
+    bool m_autoMountAndOpenEnable = false;   // 配置项中的挂载并打开
 
     DDiskManager *m_diskManager;
     QScopedPointer<DUMountManager> m_umountManager;
     QScopedPointer<DGioVolumeManager> m_vfsManager;
 };
 
-#endif // DISKCONTROLWIDGET_H
+#endif   // DISKCONTROLWIDGET_H
