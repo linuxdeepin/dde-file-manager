@@ -38,7 +38,7 @@ class FileInfoModel : public QAbstractItemModel
 public:
     explicit FileInfoModel(QObject *parent = nullptr);
     ~FileInfoModel();
-    Q_INVOKABLE QModelIndex setRootUrl(QUrl url);
+    QModelIndex setRootUrl(QUrl url);
     Q_INVOKABLE QUrl rootUrl() const;
     Q_INVOKABLE QModelIndex rootIndex() const;
 

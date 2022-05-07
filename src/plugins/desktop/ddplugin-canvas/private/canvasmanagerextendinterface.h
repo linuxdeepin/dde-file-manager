@@ -32,10 +32,12 @@ class CanvasManagerExtendInterface
 public:
     explicit CanvasManagerExtendInterface();
     virtual ~CanvasManagerExtendInterface();
-public:
+
 public:
     // signals
     virtual void requestWallpaperSetting(const QString &screen) const;
+    virtual void iconSizeChanged(int level) const;
+    virtual void hiddenFlagChanged(bool hidden) const;
 };
 
 DDP_CANVAS_END_NAMESPACE

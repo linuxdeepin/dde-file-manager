@@ -59,8 +59,7 @@ public:
     QSize paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index);
 
 protected:
-    virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const;
-    virtual void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
+    void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     QRect iconRect(const QRect &paintRect) const;
     static QRect labelRect(const QRect &paintRect, const QRect &usedRect);
     QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText, bool elide) const;

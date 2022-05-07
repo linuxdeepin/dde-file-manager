@@ -247,14 +247,20 @@ bool CanvasGrid::remove(int index, const QString &item)
 bool CanvasGrid::replace(const QString &oldItem, const QString &newItem)
 {
     QPair<int, QPoint> pos;
-    if (!point(oldItem, pos))
-        return false;
+    if (point(oldItem, pos)) {
+        d->remove(pos.first, pos.second);
+        d->insert(pos.first, pos.second, newItem);
+        requestSync();
+        return true;
+    }
 
-    d->remove(pos.first, pos.second);
-    d->insert(pos.first, pos.second, newItem);
-    requestSync();
+    int idx = d->overload.indexOf(oldItem);
+    if (idx > -1) {
+        d->overload.replace(idx, newItem);
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 void CanvasGrid::append(const QString &item)

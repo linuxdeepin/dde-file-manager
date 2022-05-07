@@ -36,3 +36,13 @@ void CanvasManagerExtendInterface::requestWallpaperSetting(const QString &screen
 {
     return;
 }
+
+void CanvasManagerExtendInterface::iconSizeChanged(int level) const
+{
+    return;
+}
+
+void CanvasManagerExtendInterface::hiddenFlagChanged(bool hidden) const
+{
+    return;
+}

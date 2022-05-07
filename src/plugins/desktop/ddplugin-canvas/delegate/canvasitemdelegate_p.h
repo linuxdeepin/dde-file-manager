@@ -22,8 +22,6 @@
 #define CANVASITEMDELEGATE_P_H
 
 #include "canvasitemdelegate.h"
-#include "tagtextformat.h"
-#include "filetagobjectinterface.h"
 #include "elidetextlayout.h"
 
 #include <QPointer>
@@ -58,14 +56,9 @@ public:
     int textLineHeight = -1;
     QList<int> iconSizes;
     QStringList iconLevelDescriptions;
-    // 最后一次绘制item是否画了背景
-    mutable bool drawTextBackgroundOnLast { true }; // why?
     QSize itemSizeHint;
 
     QTextDocument *document { nullptr };
-    static int textObjectType ;
-    static FileTagObjectInterface *textObjectInterface;
-
     CanvasItemDelegate *const q;
 };
 

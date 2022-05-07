@@ -41,6 +41,7 @@ public:
     void init();
     void update();
     void openEditor(const QUrl &url);
+    void setIconLevel(int level);
     CanvasProxyModel *model() const;
     CanvasSelectionModel *selectionModel() const;
     QList<QSharedPointer<CanvasView> > views() const;

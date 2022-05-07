@@ -49,10 +49,6 @@ public:
     virtual bool dragLeave(int viewIndex, const QMimeData *, void *extData = nullptr) const;
     virtual bool keyboardSearch(int viewIndex, const QString &search, void *extData = nullptr) const;
     virtual bool drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData = nullptr) const;
-public:
-    // signals
-    virtual void sigIconSizeChanged(int level, void *extData = nullptr) const;
-    virtual void sigHiddenFlagChanged(bool hidden, void *extData = nullptr) const;
 };
 
 DDP_CANVAS_END_NAMESPACE

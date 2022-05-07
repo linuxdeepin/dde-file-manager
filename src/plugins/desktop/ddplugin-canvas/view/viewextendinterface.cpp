@@ -82,16 +82,6 @@ bool ViewExtendInterface::drawFile(int viewIndex, const QUrl &file, QPainter *pa
     return false;
 }
 
-void ViewExtendInterface::sigIconSizeChanged(int level, void *extData) const
-{
-    return;
-}
-
-void ViewExtendInterface::sigHiddenFlagChanged(bool hidden, void *extData) const
-{
-    return;
-}
-
 bool ViewExtendInterface::keyPress(int viewIndex, int key, int modifiers, void *extData) const
 {
     return false;

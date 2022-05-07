@@ -140,6 +140,16 @@ void CanvasManager::openEditor(const QUrl &url)
     }
 }
 
+void CanvasManager::setIconLevel(int level)
+{
+    for (auto v : views()) {
+        v->itemDelegate()->setIconLevel(level);
+        v->updateGrid();
+    }
+
+    DispalyIns->setIconLevel(level);
+}
+
 CanvasProxyModel *CanvasManager::model() const
 {
     return d->canvasModel;
@@ -417,7 +427,7 @@ void CanvasManagerPrivate::onHiddenFlagsChanged(bool show)
         canvasModel->setShowHiddenFiles(show);
         canvasModel->refresh(canvasModel->rootIndex());
 
-        viewExt->sigHiddenFlagChanged(!show);
+        extend->hiddenFlagChanged(!show);
     }
 }
 
@@ -538,6 +548,6 @@ void CanvasManager::onChangeIconLevel(bool increase)
         DispalyIns->setIconLevel(currentLevel);
 
         // notify others that icon size changed
-        d->viewExt->sigIconSizeChanged(currentLevel);
+        d->extend->iconSizeChanged(currentLevel);
     }
 }

@@ -64,9 +64,6 @@ const int CanvasItemDelegate::kIconSpacing = 5;
 const int CanvasItemDelegate::kIconBackRadius = 18;
 const int CanvasItemDelegate::kIconRectRadius = 4;
 
-int CanvasItemDelegatePrivate::textObjectType = QTextFormat::UserObject + 1;
-FileTagObjectInterface *CanvasItemDelegatePrivate::textObjectInterface = new FileTagObjectInterface();
-
 CanvasItemDelegatePrivate::CanvasItemDelegatePrivate(CanvasItemDelegate *qq)
     : q(qq)
 {
@@ -82,10 +79,6 @@ ElideTextLayout *CanvasItemDelegatePrivate::createTextlayout(const QModelIndex &
     QString name = showSuffix ? index.data(Global::ItemRoles::kItemFileDisplayNameRole).toString()
                               : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
-
-    // tag rect
-    q->initTextLayout(index, layout);
-
     layout->setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     layout->setLineHeight(textLineHeight);
     layout->setAlignment(Qt::AlignCenter);
@@ -728,31 +721,6 @@ void CanvasItemDelegate::clipboardDataChanged()
     }
 
     parent()->update();
-}
-
-void CanvasItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
-{
-    // todo(zy) 注释
-    const QVariantHash &ep = index.data(Global::ItemRoles::kItemExtraProperties).toHash();
-    const QList<QColor> &colors = qvariant_cast<QList<QColor>>(ep.value("colored"));
-
-    if (!colors.isEmpty()) {
-        if (!layout->engine()->block.docHandle()) {
-            if (!d->document)
-                const_cast<CanvasItemDelegatePrivate *>(d)->document = new QTextDocument(const_cast<CanvasItemDelegate *>(this));
-
-            d->document->setPlainText(layout->text());
-            d->document->setDefaultFont(layout->font());
-            layout->engine()->block = d->document->firstBlock();
-        }
-
-        layout->engine()->docLayout()->registerHandler(d->textObjectType, d->textObjectInterface);
-        QTextCursor cursor(layout->engine()->docLayout()->document());
-        TagTextFormat format(d->textObjectType, colors, (d->drawTextBackgroundOnLast || colors.size() > 1) ? Qt::white : QColor(0, 0, 0, 25));
-
-        cursor.setPosition(0);
-        cursor.insertText(QString(QChar::ObjectReplacementCharacter), format);
-    }
 }
 
 void CanvasItemDelegate::initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const

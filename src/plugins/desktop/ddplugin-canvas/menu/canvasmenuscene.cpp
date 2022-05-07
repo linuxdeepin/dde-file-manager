@@ -316,13 +316,7 @@ bool CanvasMenuScene::triggered(QAction *action)
 
         // icon size
         if (d->iconSizeAction.contains(action)) {
-            int iconLv = d->iconSizeAction.value(action);
-            for (auto v : ddplugin_canvas::CanvasIns->views()) {
-                v->itemDelegate()->setIconLevel(iconLv);
-                v->updateGrid();
-            }
-
-            DispalyIns->setIconLevel(iconLv);
+            CanvasIns->setIconLevel(d->iconSizeAction.value(action));
             return true;
         }
 
