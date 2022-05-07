@@ -21,6 +21,7 @@
 #include "openwithmenuscene.h"
 #include "action_defines.h"
 #include "private/openwithmenuscene_p.h"
+#include "menuutils.h"
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/openwith/openwithservice.h"
@@ -30,7 +31,6 @@
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/utils/properties.h"
-#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -77,6 +77,10 @@ bool OpenWithMenuScene::initialize(const QVariantHash &params)
         d->focusFile = d->selectFiles.first();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
 
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
@@ -116,9 +120,7 @@ bool OpenWithMenuScene::create(QMenu *parent)
     if (d->selectFiles.isEmpty() || !d->focusFile.isValid())
         return false;
 
-    if (FileUtils::isComputerDesktopFile(d->focusFile)
-        || FileUtils::isTrashDesktopFile(d->focusFile)
-        || FileUtils::isHomeDesktopFile(d->focusFile))
+    if (d->isFocusOnDDEDesktopFile || d->isSystemPathIncluded)
         return AbstractMenuScene::create(parent);
 
     QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenWith));

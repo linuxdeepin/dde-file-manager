@@ -28,8 +28,12 @@
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
-#include "services/common/menu/menu_defines.h"
-#include "dfm-framework/framework.h"
+#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
+
+#include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/fileutils.h"
+
+#include <dfm-framework/framework.h>
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -96,6 +100,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kWindowId] = WindowsService::service()->findWindowId(view);
+    params = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
 
     if (!scene->initialize(params)) {
         delete scene;

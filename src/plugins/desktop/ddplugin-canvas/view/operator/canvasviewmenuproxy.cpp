@@ -30,14 +30,15 @@
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasmenu_defines.h"
 
-#include <services/common/menu/menu_defines.h>
-#include <services/common/menu/menuservice.h>
+#include "services/common/menu/menu_defines.h"
+#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 
-#include <dfm-base/utils/clipboard.h>
-#include <interfaces/abstractfileinfo.h>
-#include <dfm-base/dfm_global_defines.h>
-#include <base/application/application.h>
-#include <base/application/settings.h>
+#include "dfm-base/utils/clipboard.h"
+#include "interfaces/abstractfileinfo.h"
+#include "dfm-base/dfm_global_defines.h"
+#include "base/application/application.h"
+#include "base/application/settings.h"
 
 #include <QGSettings>
 
@@ -145,6 +146,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     params[MenuParamKey::kIsEmptyArea] = false;
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[CanvasMenuParams::kDesktopGridPos] = QVariant::fromValue(gridPos);
+    params = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
 
     if (!canvasScene->initialize(params)) {
         delete canvasScene;

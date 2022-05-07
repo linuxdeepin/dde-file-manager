@@ -27,6 +27,7 @@
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperatorhelper.h"
+#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 
 #include "dfm-base/dfm_global_defines.h"
 
@@ -132,6 +133,9 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
+
     if (d->currentDir.isEmpty())
         return false;
 
@@ -162,13 +166,15 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
             currentScene.append(sendToScene);
     }
 
-    // oem menu
-    if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
-        currentScene.append(oemScene);
+    if (!d->isDDEDesktopFileIncluded) {
+        // oem menu
+        if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
+            currentScene.append(oemScene);
 
-    // extend menu.must last
-    if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
-        currentScene.append(extendScene);
+        // extend menu.must last
+        if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
+            currentScene.append(extendScene);
+    }
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

@@ -39,8 +39,11 @@ public:
     QList<QUrl> selectFiles;
     QUrl focusFile;
     bool onDesktop { false };
-    quint64 windowId { 0 };
     bool isEmptyArea { false };
+    bool isFocusOnDDEDesktopFile { false };
+    bool isDDEDesktopFileIncluded { false };
+    bool isSystemPathIncluded { false };
+    quint64 windowId { 0 };
     Qt::ItemFlags indexFlags;
 
     AbstractFileInfoPointer focusFileInfo;

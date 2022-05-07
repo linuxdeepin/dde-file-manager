@@ -33,6 +33,9 @@ static constexpr char kOnDesktop[] = "onDesktop";   // bool
 static constexpr char kWindowId[] = "windowId";   // quint64
 static constexpr char kIsEmptyArea[] = "isEmptyArea";   // bool
 static constexpr char kIndexFlags[] = "indexFlags";   // Qt::ItemFlags
+static constexpr char kIsSystemPathIncluded[] = "isSystemPathIncluded";   // bool, true if 'SystemPathUtil::isSystemPath' return true
+static constexpr char kIsDDEDesktopFileIncluded[] = "isDDEDesktopFileIncluded";   // bool, contains 'dde-computer.desktop','dde-trash.desktop' and 'dde-home.desktop'
+static constexpr char kIsFocusOnDDEDesktopFile[] = "isFocusOnDDEDesktopFile";   // bool
 }
 
 namespace ActionPropertyKey {

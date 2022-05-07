@@ -31,10 +31,11 @@
 #include "view/operator/fileoperatorproxy.h"
 #include "utils/renamedialog.h"
 
-#include <services/common/menu/menu_defines.h>
-#include <services/common/menu/menuservice.h>
-#include <plugins/common/dfmplugin-menu/dfmplugin_menu_global.h>
-#include <plugins/common/dfmplugin-menu/menuscene/action_defines.h>
+#include "services/common/menu/menu_defines.h"
+#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/dfmplugin_menu_global.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -189,6 +190,9 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->gridPos = params.value(CanvasMenuParams::kDesktopGridPos).toPoint();
 
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
+
     if (d->currentDir.isEmpty())
         return false;
 
@@ -226,13 +230,15 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     if (auto dirScene = d->menuServer->createScene(kOpenDirMenuSceneName))
         currentScene.append(dirScene);
 
-    // oem menu
-    if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
-        currentScene.append(oemScene);
+    if (!d->isDDEDesktopFileIncluded) {
+        // oem menu
+        if (auto oemScene = d->menuServer->createScene(kOemMenuSceneName))
+            currentScene.append(oemScene);
 
-    // extend menu.must last
-    if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
-        currentScene.append(extendScene);
+        // extend menu.must last
+        if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
+            currentScene.append(extendScene);
+    }
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);

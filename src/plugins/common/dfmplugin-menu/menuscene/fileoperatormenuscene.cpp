@@ -20,6 +20,7 @@
  */
 #include "private/fileoperatormenuscene_p.h"
 #include "action_defines.h"
+#include "menuutils.h"
 
 #include "services/common/menu/menu_defines.h"
 
@@ -79,6 +80,10 @@ bool FileOperatorMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
@@ -126,7 +131,7 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         tempAction = parent->addAction(d->predicateName.value(ActionID::kEmptyTrash));
         d->predicateAction[ActionID::kEmptyTrash] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kEmptyTrash));
-    } else if (!FileUtils::isComputerDesktopFile(d->focusFile) && !FileUtils::isHomeDesktopFile(d->focusFile)) {
+    } else if (!d->isFocusOnDDEDesktopFile && !d->isSystemPathIncluded) {
         tempAction = parent->addAction(d->predicateName.value(ActionID::kRename));
         d->predicateAction[ActionID::kRename] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRename));

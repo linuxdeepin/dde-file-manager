@@ -25,11 +25,12 @@
 #include "utils/tagmanager.h"
 #include "widgets/tagcolorlistwidget.h"
 
+#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 #include "services/common/menu/menu_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "dfm-base/dfm_global_defines.h"
-#include <dfm-base/base/schemefactory.h>
+#include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
 
@@ -63,6 +64,10 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+
     d->predicateName.insert(TagActionId::kActTagColorListKey, "");
     d->predicateName.insert(TagActionId::kActTagAddKey, tr("Add color tags"));
 
@@ -72,6 +77,9 @@ bool TagMenuScene::initialize(const QVariantHash &params)
 bool TagMenuScene::create(QMenu *parent)
 {
     if (!parent)
+        return false;
+
+    if (d->isDDEDesktopFileIncluded || d->isSystemPathIncluded)
         return false;
 
     for (const QUrl &url : d->selectFiles) {

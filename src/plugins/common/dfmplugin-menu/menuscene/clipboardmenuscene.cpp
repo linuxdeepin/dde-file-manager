@@ -20,12 +20,12 @@
  */
 #include "private/clipboardmenuscene_p.h"
 #include "action_defines.h"
+#include "menuutils.h"
 
 #include "services/common/menu/menu_defines.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/clipboard.h"
-#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
@@ -70,6 +70,10 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
         d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
 
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+    d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
         return false;
@@ -104,14 +108,14 @@ bool ClipBoardMenuScene::create(QMenu *parent)
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kPaste));
         d->predicateAction[ActionID::kPaste] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kPaste));
-    } else if (!FileUtils::isComputerDesktopFile(d->focusFile)
-               && !FileUtils::isTrashDesktopFile(d->focusFile)
-               && !FileUtils::isHomeDesktopFile(d->focusFile)) {
-        QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kCut));
-        d->predicateAction[ActionID::kCut] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCut));
+    } else if (!d->isFocusOnDDEDesktopFile) {
+        if (!d->isSystemPathIncluded) {
+            QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kCut));
+            d->predicateAction[ActionID::kCut] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCut));
+        }
 
-        tempAction = parent->addAction(d->predicateName.value(ActionID::kCopy));
+        QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kCopy));
         d->predicateAction[ActionID::kCopy] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCopy));
     }

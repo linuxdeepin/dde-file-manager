@@ -23,17 +23,18 @@
 #include "sendtomenuscene.h"
 #include "private/sendtomenuscene_p.h"
 #include "action_defines.h"
+#include "menuutils.h"
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/bluetooth/bluetoothservice.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -71,6 +72,10 @@ bool SendToMenuScene::initialize(const QVariantHash &params)
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
+    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    d->isFocusOnDDEDesktopFile = tmpParams.value(MenuParamKey::kIsFocusOnDDEDesktopFile, false).toBool();
+    d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
+
     for (auto url : d->selectFiles) {
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
         if (f->isDir()) {
@@ -91,9 +96,7 @@ bool SendToMenuScene::create(QMenu *parent)
         return false;
 
     if (!d->isEmptyArea) {
-        if (FileUtils::isComputerDesktopFile(d->focusFile)
-            || FileUtils::isTrashDesktopFile(d->focusFile)
-            || FileUtils::isHomeDesktopFile(d->focusFile))
+        if (d->isFocusOnDDEDesktopFile)
             return AbstractMenuScene::create(parent);
 
         if (!d->onDesktop) {
@@ -102,16 +105,18 @@ bool SendToMenuScene::create(QMenu *parent)
             d->predicateAction[ActionID::kSendToDesktop] = act;
         }
 
-        QMenu *sendToMenu = new QMenu(parent);
-        d->addSubActions(sendToMenu);
-        if (sendToMenu->actions().isEmpty()) {
-            delete sendToMenu;
-            sendToMenu = nullptr;
-        } else {
-            auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
-            sendToAct->setMenu(sendToMenu);
-            sendToAct->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendTo);
-            d->predicateAction[ActionID::kSendTo] = sendToAct;
+        if (!d->isSystemPathIncluded) {
+            QMenu *sendToMenu = new QMenu(parent);
+            d->addSubActions(sendToMenu);
+            if (sendToMenu->actions().isEmpty()) {
+                delete sendToMenu;
+                sendToMenu = nullptr;
+            } else {
+                auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
+                sendToAct->setMenu(sendToMenu);
+                sendToAct->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendTo);
+                d->predicateAction[ActionID::kSendTo] = sendToAct;
+            }
         }
     }
     return AbstractMenuScene::create(parent);
