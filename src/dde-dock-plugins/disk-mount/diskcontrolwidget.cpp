@@ -49,7 +49,7 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <DDBusSender>
-#define WIDTH           300
+#define WIDTH 300
 
 DWIDGET_BEGIN_NAMESPACE
 class DDialog;
@@ -90,7 +90,6 @@ DiskControlWidget::DiskControlWidget(QWidget *parent)
 
 DiskControlWidget::~DiskControlWidget()
 {
-
 }
 
 void DiskControlWidget::initConnect()
@@ -104,15 +103,15 @@ void DiskControlWidget::initConnect()
     connect(m_diskManager, &DDiskManager::fileSystemRemoved, this, &DiskControlWidget::onVolumeRemoved);
 
     connect(m_vfsManager.data(), &DGioVolumeManager::mountAdded, this, &DiskControlWidget::onVfsMountChanged);
-//    connect(m_vfsManager.data(), &DGioVolumeManager::mountChanged, this, &DiskControlWidget::onVfsMountChanged);
+    //    connect(m_vfsManager.data(), &DGioVolumeManager::mountChanged, this, &DiskControlWidget::onVfsMountChanged);
     connect(m_vfsManager.data(), &DGioVolumeManager::mountRemoved, this, &DiskControlWidget::onVfsMountChanged);
 
     // 系统主题改变，重新刷新控件列表以适应新主题下的文字颜色
     connect(Dtk::Gui::DGuiApplicationHelper::instance(), &Dtk::Gui::DGuiApplicationHelper::themeTypeChanged,
-            this, [this]{ this->onDiskListChanged(); });
+            this, [this] { this->onDiskListChanged(); });
 }
 
-DDiskManager*  DiskControlWidget::startMonitor()
+DDiskManager *DiskControlWidget::startMonitor()
 {
     m_diskManager->setWatchChanges(true);
     onDiskListChanged();
@@ -161,6 +160,7 @@ void DiskControlWidget::doStartupAutoMount()
         return;
     }
 
+    bool blkMounted = false;
     QStringList blDevList = m_diskManager->blockDevices({});
     for (const QString &blDevStr : blDevList) {
         QScopedPointer<DBlockDevice> blDev(DDiskManager::createBlockDevice(blDevStr));
@@ -173,9 +173,13 @@ void DiskControlWidget::doStartupAutoMount()
 
         QList<QByteArray> mountPoints = blDev->mountPoints();
         if (blDev->mountPoints().isEmpty()) {
-            blDev->mount({{"auth.no_user_interaction", true}});
+            blDev->mount({ { "auth.no_user_interaction", true } });
+            blkMounted = true;
         }
     }
+
+    if (blkMounted)
+        refreshDesktop();
 }
 
 bool isProtectedDevice(DBlockDevice *blk)
@@ -207,18 +211,18 @@ bool isProtectedDevice(DBlockDevice *blk)
 void DiskControlWidget::popQueryScanningDialog(QObject *object, std::function<void()> onStop)
 {
     DDialog *d = new DDialog;
-    d->setTitle(QObject::tr("Scanning the device, stop it?")); // 正在扫描当前设备，是否终止扫描？
+    d->setTitle(QObject::tr("Scanning the device, stop it?"));   // 正在扫描当前设备，是否终止扫描？
     d->setAttribute(Qt::WA_DeleteOnClose);
     Qt::WindowFlags flags = d->windowFlags();
     d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
     d->setIcon(QIcon::fromTheme("dialog-warning"));
-    d->addButton(QObject::tr("Cancel","button"));
-    d->addButton(QObject::tr("Stop","button"), true, DDialog::ButtonWarning); // 终止
+    d->addButton(QObject::tr("Cancel", "button"));
+    d->addButton(QObject::tr("Stop", "button"), true, DDialog::ButtonWarning);   // 终止
     d->setMaximumWidth(640);
     d->show();
 
     QPointer<QObject> pobject = object;
-    QObject::connect(d, &DDialog::buttonClicked, d, [=](int index, const QString &text){
+    QObject::connect(d, &DDialog::buttonClicked, d, [=](int index, const QString &text) {
         qInfo() << "index:" << index << ", Text:" << text;
         // 用户点击终止扫描
         if (index == 1) {
@@ -242,7 +246,7 @@ void DiskControlWidget::unmountAll()
             if (m_umountManager->stopScanAllDrive())
                 doUnMountAll();
             else
-                NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
+                NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
         });
         return;
     }
@@ -260,28 +264,26 @@ void DiskControlWidget::doUnMountAll()
             if (blDev->hasFileSystem() /* && DFMSetting*/ && !blDev->mountPoints().isEmpty() && !blDev->hintIgnore() && !blDev->hintSystem()) {
                 QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
                 blDev->unmount({});
-                qDebug() << "unmountAll" << "removable" <<  diskDev->removable() <<
-                         "optical" << diskDev->optical() <<
-                         "canPowerOff" << diskDev->canPowerOff() <<
-                         "ejectable" << diskDev->ejectable();
+                qDebug() << "unmountAll"
+                         << "removable" << diskDev->removable() << "optical" << diskDev->optical() << "canPowerOff" << diskDev->canPowerOff() << "ejectable" << diskDev->ejectable();
 
                 if (diskDev->removable()) {
                     diskDev->eject({});
                     qDebug() << "unmountAll";
                     if (diskDev->lastError().isValid()) {
                         qWarning() << diskDev->lastError().name() << blockDevices;
-                        NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
+                        NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
                         continue;
                     }
                 }
-                if (diskDev->optical()) { // is optical
+                if (diskDev->optical()) {   // is optical
                     if (diskDev->ejectable()) {
                         diskDev->eject({});
                         if (diskDev->lastError().isValid()) {
                             qWarning() << diskDev->lastError().name() << blockDevices;
-                            NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time") );
+                            NotifyMsg(tr("The device was not safely removed"), tr("Click \"Safely Remove\" and then disconnect it next time"));
                         }
-                        continue; // fix bug#16936 在 dock 上选择了卸载全部后，还会有U盘未被卸载
+                        continue;   // fix bug#16936 在 dock 上选择了卸载全部后，还会有U盘未被卸载
                     }
                 }
 
@@ -292,7 +294,7 @@ void DiskControlWidget::doUnMountAll()
         }
     });
 
-    QList<QExplicitlySharedDataPointer<DGioMount> > vfsMounts = getVfsMountList();
+    QList<QExplicitlySharedDataPointer<DGioMount>> vfsMounts = getVfsMountList();
     for (auto mount : vfsMounts) {
         if (mount->isShadowed()) {
             continue;
@@ -308,10 +310,10 @@ void DiskControlWidget::doUnMountAll()
     }
 }
 
-const QList<QExplicitlySharedDataPointer<DGioMount> > DiskControlWidget::getVfsMountList()
+const QList<QExplicitlySharedDataPointer<DGioMount>> DiskControlWidget::getVfsMountList()
 {
-    QList<QExplicitlySharedDataPointer<DGioMount> > result;
-    const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = m_vfsManager->getMounts();
+    QList<QExplicitlySharedDataPointer<DGioMount>> result;
+    const QList<QExplicitlySharedDataPointer<DGioMount>> mounts = m_vfsManager->getMounts();
     for (auto mount : mounts) {
         QExplicitlySharedDataPointer<DGioFile> file = mount->getRootFile();
         QString uriStr = file->uri();
@@ -322,7 +324,7 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > DiskControlWidget::getVfsM
             qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
             //qFatal("See the above warning for reason");
         }
-#endif // QT_DEBUG
+#endif   // QT_DEBUG
 
         if (url.scheme() == "file") continue;
 
@@ -334,7 +336,7 @@ const QList<QExplicitlySharedDataPointer<DGioMount> > DiskControlWidget::getVfsM
 
 void DiskControlWidget::onDiskListChanged()
 {
-    auto addSeparateLine = [this](int width = 1){
+    auto addSeparateLine = [this](int width = 1) {
         QFrame *line = new QFrame(this);
         line->setLineWidth(width);
         line->setFrameStyle(QFrame::HLine);
@@ -386,7 +388,8 @@ void DiskControlWidget::onDiskListChanged()
             class ErrHandle : public ErrorHandleInfc, public QObject
             {
             public:
-                explicit ErrHandle(QObject *parent): QObject(parent) {}
+                explicit ErrHandle(QObject *parent)
+                    : QObject(parent) {}
                 virtual void onError(DAttachedDeviceInterface *device)
                 {
                     DAttachedUdisks2Device *drv = dynamic_cast<DAttachedUdisks2Device *>(device);
@@ -405,7 +408,7 @@ void DiskControlWidget::onDiskListChanged()
         }
     }
 
-    const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getVfsMountList();
+    const QList<QExplicitlySharedDataPointer<DGioMount>> mounts = getVfsMountList();
     for (auto mount : mounts) {
         if (mount->isShadowed()) {
             continue;
@@ -422,7 +425,7 @@ void DiskControlWidget::onDiskListChanged()
             connect(item, &DiskControlItem::umountClicked, this, &DiskControlWidget::onItemUmountClicked);
         } else {
             delete dad;
-            dad = nullptr; //指针指空 防止野指针崩溃不好找
+            dad = nullptr;   //指针指空 防止野指针崩溃不好找
         }
     }
 
@@ -464,6 +467,7 @@ void DiskControlWidget::onDriveDisconnected()
 void DiskControlWidget::onMountAdded()
 {
     qDebug() << "changed from mount_add";
+    refreshDesktop();
     onDiskListChanged();
 }
 
@@ -475,12 +479,13 @@ void DiskControlWidget::onMountRemoved(const QString &blockDevicePath, const QBy
     if (blDev) {
         QScopedPointer<DDiskDevice> diskDev(DDiskManager::createDiskDevice(blDev->drive()));
         if (diskDev && diskDev->removable()) {
-            qDebug() << "removable device" << blockDevicePath;// << mountPoint;
+            qDebug() << "removable device" << blockDevicePath;   // << mountPoint;
             //return; // removable device emit onDiskListChanged too
         }
     }
 
     qDebug() << "unmounted," << mountPoint;
+    refreshDesktop();
     onDiskListChanged();
 }
 
@@ -508,7 +513,7 @@ void DiskControlWidget::onVfsMountChanged(QExplicitlySharedDataPointer<DGioMount
         qWarning() << "Gio uri is not a vaild QUrl!" << uriStr;
         //qFatal("See the above warning for reason");
     }
-#endif // QT_DEBUG
+#endif   // QT_DEBUG
 
     if (url.scheme() == "file") return;
 
@@ -541,7 +546,7 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
         }
     }
 
-    qInfo() << "try to convert blkdev from path: " << path ;
+    qInfo() << "try to convert blkdev from path: " << path;
 
     QScopedPointer<DBlockDevice> blkDev(DDiskManager::createBlockDevice(path));
 
@@ -568,7 +573,7 @@ void DiskControlWidget::onBlockDeviceAdded(const QString &path)
     if (m_autoMountAndOpenEnable) {
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
             QString mountUrlStr = DFMROOT_ROOT + QFileInfo(blkDev->device()).fileName() + "." SUFFIX_UDISKS;
-            QProcess::startDetached(QStringLiteral("dde-file-manager"), {mountUrlStr});
+            QProcess::startDetached(QStringLiteral("dde-file-manager"), { mountUrlStr });
             qDebug() << "open by dde-file-manager: " << mountUrlStr;
             return;
         }
@@ -604,33 +609,47 @@ void DiskControlWidget::onItemUmountClicked(DiskControlItem *item)
 void DiskControlWidget::NotifyMsg(QString msg)
 {
     DDBusSender()
-    .service("org.freedesktop.Notifications")
-    .path("/org/freedesktop/Notifications")
-    .interface("org.freedesktop.Notifications")
-    .method(QString("Notify"))
-    .arg(tr("dde-file-manager"))
-    .arg(static_cast<uint>(0))
-    .arg(QString("media-eject"))
-    .arg(msg)
-    .arg(QString())
-    .arg(QStringList())
-    .arg(QVariantMap())
-    .arg(5000).call();
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method(QString("Notify"))
+            .arg(tr("dde-file-manager"))
+            .arg(static_cast<uint>(0))
+            .arg(QString("media-eject"))
+            .arg(msg)
+            .arg(QString())
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(5000)
+            .call();
 }
 
 void DiskControlWidget::NotifyMsg(QString title, QString msg)
 {
     DDBusSender()
-    .service("org.freedesktop.Notifications")
-    .path("/org/freedesktop/Notifications")
-    .interface("org.freedesktop.Notifications")
-    .method(QString("Notify"))
-    .arg(tr("dde-file-manager"))
-    .arg(static_cast<uint>(0))
-    .arg(QString("media-eject"))
-    .arg(title)
-    .arg(msg)
-    .arg(QStringList())
-    .arg(QVariantMap())
-    .arg(5000).call();
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method(QString("Notify"))
+            .arg(tr("dde-file-manager"))
+            .arg(static_cast<uint>(0))
+            .arg(QString("media-eject"))
+            .arg(title)
+            .arg(msg)
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(5000)
+            .call();
+}
+
+void DiskControlWidget::refreshDesktop()
+{
+    qDebug() << "call desktop.canvas.reFresh";
+    // call desktop.canvas.reFresh
+    DDBusSender()
+            .service("com.deepin.dde.desktop")
+            .path("/com/deepin/dde/desktop")
+            .interface("com.deepin.dde.desktop")
+            .method(QString("Refresh"))
+            .call();
 }
