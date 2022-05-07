@@ -31,6 +31,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/urlroute.h"
 
 #include <QMenu>
@@ -70,17 +71,7 @@ BlockEntryFileEntity::BlockEntryFileEntity(const QUrl &url)
 
 QString BlockEntryFileEntity::displayName() const
 {
-    QString label = datas.value(DeviceProperty::kIdLabel).toString();
-    long size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
-
-    if (datas.value(DeviceProperty::kHintSystem).toBool())
-        return getNameOrAlias();
-    else if (datas.value(DeviceProperty::kIsEncrypted).toBool())
-        return getNameOfEncrypted();
-    else if (datas.value(DeviceProperty::kOpticalDrive).toBool())
-        return getNameOfOptical();
-    else
-        return getDefaultLabel(label, size);
+    return DeviceUtils::convertSuitableDisplayName(datas);
 }
 
 QIcon BlockEntryFileEntity::icon() const
@@ -295,99 +286,6 @@ bool BlockEntryFileEntity::renamable() const
             return true;
         return false;
     }
-}
-
-QString BlockEntryFileEntity::getNameOrAlias() const
-{
-    const auto &lst = Application::genericSetting()->value(BlockAdditionalProperty::kAliasGroupName, BlockAdditionalProperty::kAliasItemName).toList();
-
-    for (const QVariant &v : lst) {
-        const QVariantMap &map = v.toMap();
-        if (map.value(BlockAdditionalProperty::kAliasItemUUID).toString() == datas.value(DeviceProperty::kUUID).toString()) {
-            return map.value(BlockAdditionalProperty::kAliasItemAlias).toString();
-        }
-    }
-
-    QString label = datas.value(DeviceProperty::kIdLabel).toString();
-    qlonglong size = datas.value(DeviceProperty::kSizeTotal).toLongLong();
-
-    // get system disk name if there is no alias
-    if (datas.value(DeviceProperty::kMountPoint).toString() == "/")
-        return tr("System Disk");
-    if (datas.value(DeviceProperty::kIdLabel).toString().startsWith("_dde_"))
-        return tr("Data Disk");
-    return getDefaultLabel(label, size);
-}
-
-QString BlockEntryFileEntity::getNameOfOptical() const
-{
-    QString label = datas.value(DeviceProperty::kIdLabel).toString();
-    if (!label.isEmpty())
-        return label;
-
-    static const std::initializer_list<std::pair<QString, QString>> opticalMedias {
-        { "optical", "Optical" },
-        { "optical_cd", "CD-ROM" },
-        { "optical_cd_r", "CD-R" },
-        { "optical_cd_rw", "CD-RW" },
-        { "optical_dvd", "DVD-ROM" },
-        { "optical_dvd_r", "DVD-R" },
-        { "optical_dvd_rw", "DVD-RW" },
-        { "optical_dvd_ram", "DVD-RAM" },
-        { "optical_dvd_plus_r", "DVD+R" },
-        { "optical_dvd_plus_rw", "DVD+RW" },
-        { "optical_dvd_plus_r_dl", "DVD+R/DL" },
-        { "optical_dvd_plus_rw_dl", "DVD+RW/DL" },
-        { "optical_bd", "BD-ROM" },
-        { "optical_bd_r", "BD-R" },
-        { "optical_bd_re", "BD-RE" },
-        { "optical_hddvd", "HD DVD-ROM" },
-        { "optical_hddvd_r", "HD DVD-R" },
-        { "optical_hddvd_rw", "HD DVD-RW" },
-        { "optical_mo", "MO" }
-    };
-    static const QMap<QString, QString> discMapper(opticalMedias);
-    static const QVector<std::pair<QString, QString>> discVector(opticalMedias);
-
-    qlonglong totalSize = datas.value(DeviceProperty::kSizeTotal).toLongLong();
-
-    if (datas.value(DeviceProperty::kOptical).toBool()) {   // medium loaded
-        if (datas.value(DeviceProperty::kOpticalBlank).toBool()) {   // show empty disc name
-            QString mediaType = datas.value(DeviceProperty::kMedia).toString();
-            return tr("Blank %1 Disc").arg(discMapper.value(mediaType, tr("Unknown")));
-        } else {
-            return getDefaultLabel(label, totalSize);
-        }
-    } else {   // show drive name, medium is not loaded
-        auto medias = datas.value(DeviceProperty::kMediaCompatibility).toStringList();
-        QString maxCompatibility;
-        for (auto iter = discVector.crbegin(); iter != discVector.crend(); ++iter) {
-            if (medias.contains(iter->first))
-                return tr("%1 Drive").arg(iter->second);
-        }
-    }
-
-    return getDefaultLabel(label, totalSize);
-}
-
-QString BlockEntryFileEntity::getNameOfEncrypted() const
-{
-    if (datas.value(DeviceProperty::kCleartextDevice).toString().length() > 1
-        && !datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap().isEmpty()) {
-        auto clearDevData = datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
-        QString clearDevLabel = clearDevData.value(DeviceProperty::kIdLabel).toString();
-        qlonglong clearDevSize = clearDevData.value(DeviceProperty::kSizeTotal).toLongLong();
-        return getDefaultLabel(clearDevLabel, clearDevSize);
-    } else {
-        return tr("%1 Encrypted").arg(FileUtils::formatSize(datas.value(DeviceProperty::kSizeTotal).toLongLong()));
-    }
-}
-
-QString BlockEntryFileEntity::getDefaultLabel(const QString &label, qlonglong size) const
-{
-    if (label.isEmpty())
-        return tr("%1 Volume").arg(FileUtils::formatSize(size));
-    return label;
 }
 
 QVariant BlockEntryFileEntity::getProperty(const char *const key) const

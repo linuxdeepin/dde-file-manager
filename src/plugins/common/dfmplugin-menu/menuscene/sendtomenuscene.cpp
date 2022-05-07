@@ -31,6 +31,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 
@@ -175,15 +176,15 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
     using namespace GlobalServerDefines;
     QAction *firstOptical { nullptr };
     auto devs = DevProxyMng->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+    devs << DevProxyMng->getAllBlockIds(DeviceQueryOption::kOptical);
+    auto dedupedDevs = devs.toSet();
     int idx = 0;
-    for (const QString &dev : devs) {
+    for (const QString &dev : dedupedDevs) {
         auto data = DevProxyMng->queryBlockInfo(dev);
-        QString label = data.value(DeviceProperty::kIdLabel).toString();
+        QString label = DeviceUtils::convertSuitableDisplayName(data);
         QString mpt = data.value(DeviceProperty::kMountPoint).toString();
         QString devDesc = data.value(DeviceProperty::kDevice).toString();
 
-        if (label.isEmpty())
-            ;   // TODO(xust) label might be empty, use size instead
         QAction *act { nullptr };
         if (data.value(DeviceProperty::kOptical).toBool()) {
             act = subMenu->addAction(label);

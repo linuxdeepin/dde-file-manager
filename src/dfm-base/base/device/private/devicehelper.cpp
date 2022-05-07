@@ -125,11 +125,6 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevPtr &dev)
     datas[kCleartextDevice] = getNullStrIfNotValid(Property::EncryptedCleartextDevice);
     datas[kConnectionBus] = getNullStrIfNotValid(Property::DriveConnectionBus);
 
-    // if idlabel is not empty then this equals to idLabel otherwise it's like '8GB Volume'
-    datas[kDisplayName] = datas[kIdLabel].toString().isEmpty()
-            ? DeviceUtils::convertSizeToLabel(dev->sizeTotal())
-            : dev->idLabel();
-
     auto eType = dev->partitionEType();
     datas[kHasExtendedPatition] = eType == PartitionType::MbrWin95_Extended_LBA
             || eType == PartitionType::MbrLinux_extended

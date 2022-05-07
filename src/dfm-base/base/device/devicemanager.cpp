@@ -64,6 +64,8 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
             continue;
         if (opts.testFlag(DeviceQueryOption::kNotMounted) && !data.value(DeviceProperty::kMountPoint).toString().isEmpty())
             continue;
+        if (opts.testFlag(DeviceQueryOption::kOptical) && !data.value(DeviceProperty::kOptical).toBool())
+            continue;
         filteredRet << id;
     }
     return filteredRet;

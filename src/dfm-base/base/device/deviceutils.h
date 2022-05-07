@@ -31,6 +31,14 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
+namespace BlockAdditionalProperty {
+static constexpr char kClearBlockProperty[] { "ClearBlockDeviceInfo" };
+static constexpr char kAliasGroupName[] { "LocalDiskAlias" };
+static constexpr char kAliasItemName[] { "Items" };
+static constexpr char kAliasItemUUID[] { "uuid" };
+static constexpr char kAliasItemAlias[] { "alias" };
+}   // namespace BlockAdditionalProperty
+
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
 /*!
@@ -42,9 +50,17 @@ class DeviceUtils
 public:
     static QString getBlockDeviceId(const QString &deviceDesc);
     static QString errMessage(DFMMOUNT::DeviceError err);
-    static QString convertSizeToLabel(quint64 size);
+    static QString convertSuitableDisplayName(const QVariantMap &devInfo);
+    static QString convertSuitableDisplayName(const QVariantHash &devInfo);
     static bool isAutoMountEnable();
     static bool isAutoMountAndOpenEnable();
+
+private:
+    static QString nameOfSystemDisk(const QVariantMap &datas);
+    static QString nameOfOptical(const QVariantMap &datas);
+    static QString nameOfEncrypted(const QVariantMap &datas);
+    static QString nameOfDefault(const QString &label, const quint64 &size);
+    static QString nameOfSize(const quint64 &size);
 };
 
 DFMBASE_END_NAMESPACE

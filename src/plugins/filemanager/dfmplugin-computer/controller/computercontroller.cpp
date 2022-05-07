@@ -35,6 +35,7 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -142,7 +143,7 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
         DevMngIns->renameBlockDevAsync(devId, name, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             setCursorStatus();
             if (!ok) {
-                qInfo() << "rename block device failed: " << devId << static_cast<int>(err);
+                qInfo() << "rename block device failed: " << devId << err;
             }
         });
         return;
@@ -247,7 +248,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
                     this->mountDevice(winId, newId, shellId, act);
                 } else {
                     DialogManagerInstance->showErrorDialog(tr("Unlock device failed"), tr("Wrong password is inputed"));
-                    qInfo() << "unlock device failed: " << shellId << static_cast<int>(err);
+                    qInfo() << "unlock device failed: " << shellId << err;
                 }
             });
         } else {
@@ -296,7 +297,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
 
             cdTo(id, u, winId, act);
         } else {
-            qDebug() << "mount device failed: " << id << static_cast<int>(err);
+            qDebug() << "mount device failed: " << id << err;
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         }
         setCursorStatus();
@@ -353,7 +354,7 @@ void ComputerController::actEject(const QUrl &url)
         id = ComputerUtils::getProtocolDevIdByUrl(url);
         DevMngIns->unmountProtocolDevAsync(id, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok) {
-                qWarning() << "unmount protocol device failed: " << id << static_cast<int>(err);
+                qWarning() << "unmount protocol device failed: " << id << err;
                 DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
             }
         });
@@ -425,17 +426,17 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                 if (ok) {
                     DevMngIns->lockBlockDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                         if (!ok)
-                            qInfo() << "lock device failed: " << devId << static_cast<int>(err);
+                            qInfo() << "lock device failed: " << devId << err;
                     });
                 } else {
-                    qInfo() << "unmount cleartext device failed: " << cleartextId << static_cast<int>(err);
+                    qInfo() << "unmount cleartext device failed: " << cleartextId << err;
                     DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
                 }
             });
         } else {
             DevMngIns->unmountBlockDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                 if (!ok) {
-                    qInfo() << "unlock device failed: " << devId << static_cast<int>(err);
+                    qInfo() << "unlock device failed: " << devId << err;
                     DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
                 }
             });
@@ -444,7 +445,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         devId = ComputerUtils::getProtocolDevIdByUrl(info->url());
         DevMngIns->unmountProtocolDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok) {
-                qWarning() << "unmount protocol device failed: " << devId << static_cast<int>(err);
+                qWarning() << "unmount protocol device failed: " << devId << err;
                 DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
             }
         });

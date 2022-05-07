@@ -53,10 +53,6 @@ public:
     virtual bool renamable() const override;
 
 private:
-    QString getNameOrAlias() const;
-    QString getNameOfOptical() const;
-    QString getNameOfEncrypted() const;
-    QString getDefaultLabel(const QString &label, qlonglong size) const;
     QVariant getProperty(const char *const key) const;
     bool showSizeAndProgress() const;
 };

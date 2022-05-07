@@ -22,7 +22,7 @@
 #ifndef FILEUTILS_H
 #define FILEUTILS_H
 
-#include "dfm_global_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -86,6 +86,7 @@ public:
 
     static void notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType type, const QUrl &url);
     static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
+
 private:
     static QMutex cacheCopyingMutex;
 };

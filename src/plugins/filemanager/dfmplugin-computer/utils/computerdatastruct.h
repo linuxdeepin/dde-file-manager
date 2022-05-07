@@ -69,14 +69,6 @@ namespace DeviceId {
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 }
 
-namespace BlockAdditionalProperty {
-static constexpr char kClearBlockProperty[] { "ClearBlockDeviceInfo" };
-static constexpr char kAliasGroupName[] { "LocalDiskAlias" };
-static constexpr char kAliasItemName[] { "Items" };
-static constexpr char kAliasItemUUID[] { "uuid" };
-static constexpr char kAliasItemAlias[] { "alias" };
-}   // namespace BlockAdditionalProperty
-
 namespace ContextMenuActionTrs {
 extern QString trOpenInNewWin();
 extern QString trOpenInNewTab();
