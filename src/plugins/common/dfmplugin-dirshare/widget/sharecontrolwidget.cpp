@@ -188,7 +188,7 @@ bool ShareControlWidget::validateShareName()
             DDialog dlg(this);
             dlg.setIcon(QIcon::fromTheme("dialog-warning"));
 
-            if (shareFile.isWritable()) {
+            if (!shareFile.isWritable()) {
                 dlg.setTitle(tr("The share name is used by another user."));
                 dlg.addButton(tr("OK", "button"), true);
             } else {
@@ -219,8 +219,12 @@ void ShareControlWidget::shareFolder()
     if (!shareSwitcher->isChecked())
         return;
 
-    if (!validateShareName())
+    if (!validateShareName()) {
+        shareSwitcher->setChecked(false);
+        sharePermissionSelector->setEnabled(false);
+        shareAnonymousSelector->setEnabled(false);
         return;
+    }
 
     shareSwitcher->setEnabled(false);
 
