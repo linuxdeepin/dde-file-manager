@@ -700,7 +700,7 @@ void BluetoothTransDialog::sendFiles()
         }
 
         if (!info->exists()) {
-            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgErr, TXT_FILE_OVERSIZ, "", TXT_OKAY);
+            DialogManagerInstance->showMessageDialog(DFMBASE_NAMESPACE::DialogManager::kMsgErr, TXT_FILE_NOEXIST, "", TXT_OKAY);
             close();   // 与产品经理沟通后，为避免文件不存在时的retry可能引起的一系列问题，当用户点击retry的确认时，直接终止流程
             return;
         } else if (info->size() > kFileTransferSizeLimits) {
