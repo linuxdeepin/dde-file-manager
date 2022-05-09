@@ -67,19 +67,3 @@ void CoreHelper::openNewWindow(const QUrl &url)
     auto windowService = ctx.service<WindowsService>(WindowsService::name());
     windowService->showWindow(url, true);
 }
-
-void CoreHelper::openAsAdmin(const QUrl &url)
-{
-    if (url.isEmpty() || !url.isValid()) {
-        qWarning() << "Invalid Url: " << url;
-        return;
-    }
-
-    QString localPath { url.toLocalFile() };
-    if (!QDir(localPath).exists()) {
-        qWarning() << "Url path not exists: " << localPath;
-        return;
-    }
-
-    QProcess::startDetached("dde-file-manager-pkexec", { localPath });
-}

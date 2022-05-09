@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,41 +20,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "coreeventreceiver.h"
-#include "utils/corehelper.h"
+#ifndef GLOBALEVENTRECEIVER_H
+#define GLOBALEVENTRECEIVER_H
 
-#include "dfm-base/base/urlroute.h"
+#include "dfmplugin_utils_global.h"
 
-#include <QDebug>
-#include <QUrl>
+#include <QObject>
 
-#include <functional>
+DPUTILS_BEGIN_NAMESPACE
 
-DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-
-CoreEventReceiver::CoreEventReceiver(QObject *parent)
-    : QObject(parent)
+class GlobalEventReceiver : public QObject
 {
-}
+    Q_OBJECT
+    Q_DISABLE_COPY(GlobalEventReceiver)
 
-CoreEventReceiver *CoreEventReceiver::instance()
-{
-    static CoreEventReceiver receiver;
-    return &receiver;
-}
+public:
+    static GlobalEventReceiver *instance();
+    void initEventConnect();
 
-void CoreEventReceiver::handleChangeUrl(quint64 windowId, const QUrl &url)
-{
-    if (!url.isValid()) {
-        qWarning() << "Invalid Url: " << url;
-        return;
-    }
-    CoreHelper::cd(windowId, url);
-}
+public slots:
+    void handleOpenAsAdmin(const QUrl &url);
 
-void CoreEventReceiver::handleOpenWindow(const QUrl &url)
-{
-    CoreHelper::openNewWindow(url);
-}
+private:
+    explicit GlobalEventReceiver(QObject *parent = nullptr);
+};
+
+DPUTILS_END_NAMESPACE
+
+#endif   // GLOBALEVENTRECEIVER_H

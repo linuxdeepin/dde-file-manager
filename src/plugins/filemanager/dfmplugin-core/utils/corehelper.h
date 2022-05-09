@@ -34,7 +34,6 @@ class CoreHelper
 public:
     static void cd(quint64 windowId, const QUrl &url);
     static void openNewWindow(const QUrl &url);
-    static void openAsAdmin(const QUrl &url);
 };
 
 DPCORE_END_NAMESPACE

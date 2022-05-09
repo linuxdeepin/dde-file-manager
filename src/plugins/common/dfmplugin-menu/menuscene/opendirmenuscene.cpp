@@ -148,11 +148,8 @@ bool OpenDirMenuScene::triggered(QAction *action)
 
 void OpenDirMenuScene::emptyMenu(QMenu *parent)
 {
-    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
-    d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
-
-    tempAction = parent->addAction(d->predicateName.value(ActionID::kSelectAll));
+    openAsAdminAction(parent);
+    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kSelectAll));
     d->predicateAction[ActionID::kSelectAll] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kSelectAll);
 
@@ -176,12 +173,16 @@ void OpenDirMenuScene::normalMenu(QMenu *parent)
         d->predicateAction[ActionID::kOpenInTerminal] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenInTerminal);
 
-        if (SysInfoUtils::isRootUser() || SysInfoUtils::isServerSys() || !SysInfoUtils::isDeveloperMode()) {
-            // root user, server version user and non developer mode do not need to be opened as an administrator
-        } else {
-            tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
-            d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
-            tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
-        }
+        openAsAdminAction(parent);
+    }
+}
+
+void OpenDirMenuScene::openAsAdminAction(QMenu *parent)
+{
+    // root user, server version user and non developer mode do not need to be opened as an administrator
+    if (!SysInfoUtils::isRootUser() && !SysInfoUtils::isServerSys() && SysInfoUtils::isDeveloperMode()) {
+        QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
+        d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
     }
 }

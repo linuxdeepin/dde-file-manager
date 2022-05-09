@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,41 +20,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "coreeventreceiver.h"
-#include "utils/corehelper.h"
+#include "utils.h"
+#include "events/globaleventreceiver.h"
 
-#include "dfm-base/base/urlroute.h"
-
-#include <QDebug>
-#include <QUrl>
-
-#include <functional>
-
-DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
-
-CoreEventReceiver::CoreEventReceiver(QObject *parent)
-    : QObject(parent)
+bool dfmplugin_utils::Utils::start()
 {
-}
-
-CoreEventReceiver *CoreEventReceiver::instance()
-{
-    static CoreEventReceiver receiver;
-    return &receiver;
-}
-
-void CoreEventReceiver::handleChangeUrl(quint64 windowId, const QUrl &url)
-{
-    if (!url.isValid()) {
-        qWarning() << "Invalid Url: " << url;
-        return;
-    }
-    CoreHelper::cd(windowId, url);
-}
-
-void CoreEventReceiver::handleOpenWindow(const QUrl &url)
-{
-    CoreHelper::openNewWindow(url);
+    GlobalEventReceiver::instance()->initEventConnect();
+    return true;
 }

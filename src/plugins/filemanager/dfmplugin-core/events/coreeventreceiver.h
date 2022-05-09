@@ -42,7 +42,6 @@ public:
 public slots:
     void handleChangeUrl(quint64 windowId, const QUrl &url);
     void handleOpenWindow(const QUrl &url);
-    void handleOpenAsAdmin(const QUrl &url);
 
 private:
     explicit CoreEventReceiver(QObject *parent = nullptr);

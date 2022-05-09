@@ -53,6 +53,7 @@ public:
 private:
     void emptyMenu(QMenu *parent);
     void normalMenu(QMenu *parent);
+    void openAsAdminAction(QMenu *parent);
 
 private:
     OpenDirMenuScenePrivate *const d = nullptr;

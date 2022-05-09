@@ -32,10 +32,6 @@
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-void Burn::initialize()
-{
-}
-
 bool Burn::start()
 {
     dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg,
@@ -56,11 +52,6 @@ bool Burn::start()
     DiscStateManager::instance()->initilaize();
 
     return true;
-}
-
-dpf::Plugin::ShutdownFlag Burn::stop()
-{
-    return kSync;
 }
 
 void Burn::bindScene(const QString &parentScene)

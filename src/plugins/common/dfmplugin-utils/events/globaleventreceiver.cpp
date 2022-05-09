@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,41 +20,48 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "coreeventreceiver.h"
-#include "utils/corehelper.h"
+#include "globaleventreceiver.h"
 
-#include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_event_defines.h"
 
-#include <QDebug>
+#include <dfm-framework/framework.h>
+
 #include <QUrl>
+#include <QDir>
+#include <QProcess>
 
-#include <functional>
-
-DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+DPUTILS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-CoreEventReceiver::CoreEventReceiver(QObject *parent)
+GlobalEventReceiver::GlobalEventReceiver(QObject *parent)
     : QObject(parent)
 {
 }
 
-CoreEventReceiver *CoreEventReceiver::instance()
+GlobalEventReceiver *GlobalEventReceiver::instance()
 {
-    static CoreEventReceiver receiver;
+    static GlobalEventReceiver receiver;
     return &receiver;
 }
 
-void CoreEventReceiver::handleChangeUrl(quint64 windowId, const QUrl &url)
+void GlobalEventReceiver::initEventConnect()
 {
-    if (!url.isValid()) {
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenAsAdmin,
+                                            GlobalEventReceiver::instance(), &GlobalEventReceiver::handleOpenAsAdmin);
+}
+
+void GlobalEventReceiver::handleOpenAsAdmin(const QUrl &url)
+{
+    if (url.isEmpty() || !url.isValid()) {
         qWarning() << "Invalid Url: " << url;
         return;
     }
-    CoreHelper::cd(windowId, url);
-}
 
-void CoreEventReceiver::handleOpenWindow(const QUrl &url)
-{
-    CoreHelper::openNewWindow(url);
+    QString localPath { url.toLocalFile() };
+    if (!QDir(localPath).exists()) {
+        qWarning() << "Url path not exists: " << localPath;
+        return;
+    }
+
+    QProcess::startDetached("dde-file-manager-pkexec", { localPath });
 }

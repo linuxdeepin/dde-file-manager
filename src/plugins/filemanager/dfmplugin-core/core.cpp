@@ -119,8 +119,6 @@ void Core::onAllPluginsInitialized()
                                             CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewWindow,
                                             CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenAsAdmin,
-                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenAsAdmin);
 }
 
 void Core::onAllPluginsStarted()

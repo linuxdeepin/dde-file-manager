@@ -29,15 +29,13 @@
 
 DPBURN_BEGIN_NAMESPACE
 
-class Burn : public dpf::Plugin
+class Burn : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
 
 public:
-    virtual void initialize() override;
     virtual bool start() override;
-    virtual ShutdownFlag stop() override;
 
 private slots:
     void bindScene(const QString &parentScene);
