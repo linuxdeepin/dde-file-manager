@@ -37,7 +37,11 @@ public:
     ~TrashFileInfo() override;
 
     virtual QString fileName() const override;
+    virtual QString fileDisplayName() const override;
+    virtual QString baseName() const override;
+    virtual QString completeBaseName() const override;
     virtual bool exists() const override;
+    virtual void refresh() override;
     bool canRename() const override;
     virtual QFile::Permissions permissions() const override;
     virtual bool isReadable() const override;

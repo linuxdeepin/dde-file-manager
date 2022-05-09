@@ -1024,14 +1024,16 @@ bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::Sort
     class StrCollator : public QCollator
     {
     public:
-        explicit StrCollator(const QLocale &locale = QLocale()) : QCollator(locale){
+        explicit StrCollator(const QLocale &locale = QLocale())
+            : QCollator(locale)
+        {
             setNumericMode(true);
             setCaseSensitivity(Qt::CaseInsensitive);
         }
     };
 
     thread_local static StrCollator sortCollator;
-    auto startWithSymbol = [](const QString &text) -> bool{
+    auto startWithSymbol = [](const QString &text) -> bool {
         if (text.isEmpty())
             return false;
 
@@ -1040,7 +1042,7 @@ bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::Sort
         return !regExp.exactMatch(text);
     };
 
-    auto startWithHanzi = [](const QString &text) -> bool{
+    auto startWithHanzi = [](const QString &text) -> bool {
         if (text.isEmpty())
             return false;
 
@@ -1063,6 +1065,12 @@ bool FileUtils::compareString(const QString &str1, const QString &str2, Qt::Sort
     }
 
     return ((order == Qt::DescendingOrder) ^ (sortCollator.compare(str1, str2) < 0)) == 0x01;
+}
+
+QString FileUtils::dateTimeFormat()
+{
+    static QString format = "yyyy/MM/dd HH:mm:ss";
+    return format;
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

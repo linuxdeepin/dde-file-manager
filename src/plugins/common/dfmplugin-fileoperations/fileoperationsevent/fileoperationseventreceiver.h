@@ -250,6 +250,8 @@ private:
                        const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair2,
                        const RenameTypes type,
                        QMap<QUrl, QUrl> &successUrls, QString &errorMsg);
+    JobHandlePointer doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };

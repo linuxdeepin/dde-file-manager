@@ -34,6 +34,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QDebug>
 
 DFMGLOBAL_USE_NAMESPACE
@@ -200,6 +202,43 @@ bool FileOperationsEventReceiver::doRenameFiles(const QList<QUrl> urls, const QP
     return ok;
 }
 
+JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                            DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
+{
+    Q_UNUSED(windowId);
+
+    if (sources.isEmpty())
+        return nullptr;
+
+    const QUrl &sourceFirst = sources.first();
+
+    if (!sourceFirst.isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sourceFirst.scheme());
+        }
+        if (function && function->moveToTash) {
+            JobHandlePointer handle = function->moveToTash(windowId, sources, flags);
+            if (handleCallback)
+                handleCallback(handle);
+            return handle;
+        }
+    }
+
+    JobHandlePointer handle = nullptr;
+    if (FileUtils::isGvfsFile(sourceFirst) || DFMIO::DFMUtils::fileIsRemovable(sourceFirst)) {
+        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
+            return nullptr;
+        handle = copyMoveJob->deletes(sources, flags);
+    } else {
+        handle = copyMoveJob->moveToTrash(sources, flags);
+    }
+    if (handleCallback)
+        handleCallback(handle);
+    return handle;
+}
+
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
@@ -278,28 +317,7 @@ void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QLi
 void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                              DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
-    Q_UNUSED(windowId);
-
-    if (sources.isEmpty())
-        return;
-
-    if (!sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->moveToTash) {
-            JobHandlePointer handle = function->moveToTash(windowId, sources, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return;
-        }
-    }
-
-    JobHandlePointer handle = copyMoveJob->moveToTrash(sources, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    doMoveToTrash(windowId, sources, flags, handleCallback);
 }
 
 void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
@@ -430,9 +448,8 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
                                                              const QVariant custom,
                                                              DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
-    JobHandlePointer handle = copyMoveJob->moveToTrash(sources, flags);
-    if (handleCallback)
-        handleCallback(handle);
+
+    JobHandlePointer handle = doMoveToTrash(windowId, sources, flags, handleCallback);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));

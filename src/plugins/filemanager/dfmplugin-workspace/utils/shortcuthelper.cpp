@@ -247,20 +247,13 @@ void ShortcutHelper::deleteFiles()
 
 void ShortcutHelper::moveToTrash()
 {
-    // Todo(yanghao): QUrl to LocalFile
+    // Todo(lanxs): QUrl to LocalFile
     // complete deletion eg: gvfs, vault
     // only support trash on root url
     const QList<QUrl> &urls = view->selectedUrlList();
 
-    if (!urls.isEmpty()) {
-        const QUrl &rootUrl = view->rootUrl();
-
-        if (FileUtils::isGvfsFile(rootUrl) || DFMIO::DFMUtils::fileIsRemovable(rootUrl)) {
-            deleteFiles();
-        } else {
-            FileOperatorHelperIns->moveToTrash(view);
-        }
-    }
+    if (!urls.isEmpty())
+        FileOperatorHelperIns->moveToTrash(view);
 }
 
 void ShortcutHelper::touchFolder()

@@ -87,6 +87,8 @@ public:
     static void notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType type, const QUrl &url);
     static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 
+    static QString dateTimeFormat();
+
 private:
     static QMutex cacheCopyingMutex;
 };
