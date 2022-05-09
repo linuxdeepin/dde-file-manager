@@ -125,6 +125,7 @@ void Optical::addFileOperations()
     fileOpeationsHandle->openInTerminal = &OpticalFilesHelper::openInTerminalHandle;
     fileOpeationsHandle->deletes = &OpticalFilesHelper::deleteFilesHandle;
     fileOpeationsHandle->moveToTash = &OpticalFilesHelper::deleteFilesHandle;
+    fileOpeationsHandle->linkFile = &OpticalFilesHelper::linkFileHandle;
     OpticalHelper::fileOperationsServIns()->registerOperations(Global::kBurn, fileOpeationsHandle);
 }
 

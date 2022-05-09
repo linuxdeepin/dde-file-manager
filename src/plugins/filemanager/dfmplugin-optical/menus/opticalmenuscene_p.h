@@ -40,6 +40,7 @@ public:
 
 private:
     OpticalMenuScene *q;
+    bool isBlankDisc { false };
 };
 
 DPOPTICAL_END_NAMESPACE

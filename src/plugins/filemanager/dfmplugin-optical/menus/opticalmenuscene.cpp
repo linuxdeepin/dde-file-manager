@@ -23,6 +23,7 @@
 #include "opticalmenuscene.h"
 #include "opticalmenuscene_p.h"
 #include "utils/opticalhelper.h"
+#include "mastered/masteredmediafileinfo.h"
 
 #include "services/common/menu/menuservice.h"
 #include "services/common/menu/menu_defines.h"
@@ -59,6 +60,9 @@ bool OpticalMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
+    QString backer { MasteredMediaFileInfo(d->currentDir).extraProperties()["mm_backer"].toString() };
+    if (backer.isEmpty())
+        d->isBlankDisc = true;
 
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
@@ -107,11 +111,20 @@ void OpticalMenuScene::updateState(QMenu *parent)
         QString id { act->property(ActionPropertyKey::kActionID).toString() };
         QString sceneName { d->findSceneName(act) };
 
+        // scene filter
         if (!whiteSceneList.contains(sceneName))
             act->setVisible(false);
-        if (d->isEmptyArea && !whiteEmptyActIdList.contains(id))
-            act->setVisible(false);
 
+        // empty area filter
+        if (d->isEmptyArea) {
+            if (!whiteEmptyActIdList.contains(id))
+                act->setVisible(false);
+            static const QStringList blankActBlackList { "open-as-administrator", "open-in-terminal" };
+            if (d->isBlankDisc && blankActBlackList.contains(id))
+                act->setVisible(false);
+        }
+
+        // normal filter
         if (!d->isEmptyArea) {
             if (!whiteNormalActIdList.contains(id))
                 act->setVisible(false);

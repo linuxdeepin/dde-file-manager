@@ -102,3 +102,16 @@ JobHandlePointer OpticalFilesHelper::deleteFilesHandle(const quint64 windowId, c
     dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, windowId, redirectedFileUrls, flags, nullptr);
     return {};
 }
+
+bool OpticalFilesHelper::linkFileHandle(const quint64 windowId, const QUrl url, const QUrl link, QString *error)
+{
+    Q_UNUSED(error)
+
+    QString backer { MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString() };
+    if (backer.isEmpty())
+        return false;
+
+    QUrl redirectedFileUrl { QUrl::fromLocalFile(backer) };
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink, windowId, redirectedFileUrl, link);
+    return true;
+}

@@ -36,6 +36,7 @@
 #include <QMenu>
 #include <QVariant>
 #include <QSettings>
+#include <QFileDialog>
 
 DPMENU_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -259,11 +260,13 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // creat link
     if (actionId == ActionID::kCreateSymlink) {
         QString linkName = FileUtils::getSymlinkFileName(d->focusFile);
-        QUrl linkUrl = QUrl::fromLocalFile(d->currentDir.path() + "/" + linkName);
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
-                                              d->windowId,
-                                              d->focusFile,
-                                              linkUrl);
+        QString linkPath { QFileDialog::getSaveFileName(nullptr, QObject::tr("Create symlink"), linkName) };
+        if (!linkPath.isEmpty()) {
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
+                                                  d->windowId,
+                                                  d->focusFile,
+                                                  QUrl::fromLocalFile(linkPath));
+        }
         return true;
     }
 
