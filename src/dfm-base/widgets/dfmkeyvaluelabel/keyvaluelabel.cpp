@@ -74,12 +74,15 @@ void KeyValueLabel::initPropertyMap()
  * \param aligment              信息显示对齐方式
  * \param toolTipVisibility     是否设置toolTip
  */
-void KeyValueLabel::setLeftValue(QString value, Qt::TextElideMode elideMode, Qt::Alignment aligment, bool toolTipVisibility)
+void KeyValueLabel::setLeftValue(QString value, Qt::TextElideMode elideMode, Qt::Alignment aligment, bool toolTipVisibility, int fontMinWidth)
 {
     QString elideNote = value;
     leftValueLabel->setAlignment(aligment);
     QFontMetrics fontWidth(leftValueLabel->font());
-    elideNote = fontWidth.elidedText(value, elideMode, leftValueLabel->width());
+    int fontW = leftValueLabel->width();
+    if (fontW > fontMinWidth)
+        fontW = fontMinWidth;
+    elideNote = fontWidth.elidedText(value, elideMode, fontW);
     leftValueLabel->setText(elideNote);
     if (toolTipVisibility)
         leftValueLabel->setToolTip(value);

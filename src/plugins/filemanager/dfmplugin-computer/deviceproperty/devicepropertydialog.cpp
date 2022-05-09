@@ -136,7 +136,7 @@ void DevicePropertyDialog::setSelectDeviceInfo(const DSC_NAMESPACE::Property::De
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));
     deviceName->setText(info.deviceName);
     deviceBasicWidget->selectFileInfo(info);
-    basicInfo->setLeftValue(info.deviceName, Qt::ElideNone, Qt::AlignLeft, true);
+    basicInfo->setLeftValue(info.deviceName, Qt::ElideMiddle, Qt::AlignLeft, true);
     setProgressBar(info.totalCapacity, info.availableSpace);
     addExtendedControl(deviceBasicWidget);
 }
