@@ -29,10 +29,11 @@
 
 DPF_BEGIN_NAMESPACE
 
-class PluginService : public QObject
+class Q_DECL_DEPRECATED PluginService : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(PluginService)
+
 public:
     explicit PluginService(QObject *parent = nullptr)
         : QObject(parent) {}

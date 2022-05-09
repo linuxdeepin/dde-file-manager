@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "event/unicast/eventunicast.h"
+#include "event/channel/eventchannel.h"
 #include "testqobject.h"
 #include "framework.h"
 
@@ -28,7 +28,7 @@
 
 DPF_USE_NAMESPACE
 
-class UT_EventUnicast : public testing::Test
+class UT_EventChannel : public testing::Test
 {
 public:
     virtual void SetUp() override
@@ -40,41 +40,41 @@ public:
     }
 };
 
-TEST_F(UT_EventUnicast, test_sync_send)
+TEST_F(UT_EventChannel, test_sync_send)
 {
     TestQObject b;
-    EventUnicast unicast;
-    unicast.setReceiver(&b, &TestQObject::test1);
-    QVariant value = unicast.send(8);
+    EventChannel Channel;
+    Channel.setReceiver(&b, &TestQObject::test1);
+    QVariant value = Channel.send(8);
     EXPECT_EQ(value.toInt(), 18);
 }
 
-TEST_F(UT_EventUnicast, test_async_send)
+TEST_F(UT_EventChannel, test_async_send)
 {
     TestQObject b;
-    EventUnicast unicast;
-    unicast.setReceiver(&b, &TestQObject::test1);
-    EventUnicastFuture future = unicast.asyncSend(8);
+    EventChannel Channel;
+    Channel.setReceiver(&b, &TestQObject::test1);
+    EventChannelFuture future = Channel.asyncSend(8);
     future.waitForFinished();
     QVariant value = future.result();
     EXPECT_EQ(value.toInt(), 18);
 }
 
-TEST_F(UT_EventUnicast, test_manager_push)
+TEST_F(UT_EventChannel, test_manager_push)
 {
     TestQObject b;
-    EventUnicastManager &manager = dpfInstance.eventUnicast();
-    manager.connect("test_send", &b, &TestQObject::test1);
-    QVariant value = manager.push("test_send", 10);
+    EventChannelManager &manager = dpfInstance.eventChannel();
+    manager.connect(123456, &b, &TestQObject::test1);
+    QVariant value = manager.push(123456, 10);
     EXPECT_EQ(value.toInt(), 20);
 }
 
-TEST_F(UT_EventUnicast, test_manager_post)
+TEST_F(UT_EventChannel, test_manager_post)
 {
     TestQObject b;
-    EventUnicastManager &manager = dpfInstance.eventUnicast();
-    manager.connect("test_send", &b, &TestQObject::test1);
-    EventUnicastFuture future = manager.post("test_send", 10);
+    EventChannelManager &manager = dpfInstance.eventChannel();
+    manager.connect(123456, &b, &TestQObject::test1);
+    EventChannelFuture future = manager.post(123456, 10);
     future.waitForFinished();
     QVariant value = future.result();
     EXPECT_EQ(value.toInt(), 20);

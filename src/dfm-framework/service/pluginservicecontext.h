@@ -32,9 +32,9 @@
 
 DPF_BEGIN_NAMESPACE
 
-class PluginServiceContext final : public QObject,
-                                   public QtClassFactory<PluginService>,
-                                   public QtClassManager<PluginService>
+class Q_DECL_DEPRECATED PluginServiceContext final : public QObject,
+                                                     public QtClassFactory<PluginService>,
+                                                     public QtClassManager<PluginService>
 {
     Q_OBJECT
     Q_DISABLE_COPY(PluginServiceContext)
@@ -59,7 +59,7 @@ private:
 
 // auto register all services
 template<typename T>
-class AutoServiceRegister
+class Q_DECL_DEPRECATED AutoServiceRegister
 {
 public:
     AutoServiceRegister()

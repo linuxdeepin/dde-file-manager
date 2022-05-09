@@ -26,6 +26,8 @@ FILE(GLOB FRAMEWORK_FEATURE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/event/dispatcher/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/unicast/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/unicast/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/channel/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/event/channel/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/sequence/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/sequence/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/lifecycle/*.h"

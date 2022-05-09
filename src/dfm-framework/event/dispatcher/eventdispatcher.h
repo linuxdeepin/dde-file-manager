@@ -34,8 +34,6 @@
 
 DPF_BEGIN_NAMESPACE
 
-using EventType = int;
-
 class EventDispatcher
 {
 public:
@@ -139,7 +137,7 @@ public:
 
 private:
     using DispatcherPtr = QSharedPointer<EventDispatcher>;
-    using EventDispatcherMap = QMap<int, DispatcherPtr>;
+    using EventDispatcherMap = QMap<EventType, DispatcherPtr>;
 
     EventDispatcherManager() = default;
     ~EventDispatcherManager() = default;

@@ -30,6 +30,8 @@
 
 DPF_BEGIN_NAMESPACE
 
+using EventType = int;
+
 template<typename T>
 struct ReturnTypeHelper;
 
@@ -389,7 +391,6 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
         : s(self), f(func) {}
     QVariant invoke(const QVariantList &args)
     {
-
         QVariant ret = resultGenerator<Result>();
         if (args.count() == 9) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),

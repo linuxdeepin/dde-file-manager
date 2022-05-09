@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
@@ -20,8 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef EVENTUNICAST_H
-#define EVENTUNICAST_H
+#ifndef EVENTCHANNEL_H
+#define EVENTCHANNEL_H
 
 #include "dfm-framework/dfm_framework_global.h"
 #include "dfm-framework/event/eventhelper.h"
@@ -32,10 +32,10 @@
 
 DPF_BEGIN_NAMESPACE
 
-class Q_DECL_DEPRECATED EventUnicastFuture
+class EventChannelFuture
 {
 public:
-    explicit EventUnicastFuture(const QFuture<QVariant> &future);
+    explicit EventChannelFuture(const QFuture<QVariant> &future);
 
     void cancel();
     bool isCanceled() const;
@@ -51,7 +51,7 @@ private:
     QFuture<QVariant> curFuture;
 };
 
-class Q_DECL_DEPRECATED EventUnicast
+class EventChannel
 {
 public:
     using Connector = std::function<QVariant(const QVariantList &)>;
@@ -66,10 +66,10 @@ public:
         return send(ret);
     }
 
-    EventUnicastFuture asyncSend();
-    EventUnicastFuture asyncSend(const QVariantList &params);
+    EventChannelFuture asyncSend();
+    EventChannelFuture asyncSend(const QVariantList &params);
     template<class T, class... Args>
-    inline EventUnicastFuture asyncSend(T param, Args &&... args)
+    inline EventChannelFuture asyncSend(T param, Args &&... args)
     {
         QVariantList ret;
         makeVariantList(&ret, param, std::forward<Args>(args)...);
@@ -94,74 +94,74 @@ private:
     QMutex receiverMutex;
 };
 
-class Q_DECL_DEPRECATED EventUnicastManager
+class EventChannelManager
 {
-    Q_DISABLE_COPY(EventUnicastManager)
+    Q_DISABLE_COPY(EventChannelManager)
 
 public:
-    static EventUnicastManager &instance();
+    static EventChannelManager &instance();
 
     template<class T, class Func>
-    [[gnu::hot]] inline void connect(const QString &topic, T *obj, Func method)
+    [[gnu::hot]] inline void connect(EventType type, T *obj, Func method)
     {
         QWriteLocker guard(&rwLock);
-        if (unicastMap.contains(topic)) {
-            unicastMap[topic]->setReceiver(obj, method);
+        if (ChannelMap.contains(type)) {
+            ChannelMap[type]->setReceiver(obj, method);
         } else {
-            UnicastPtr unicast { new EventUnicast };
-            unicast->setReceiver(obj, method);
-            unicastMap.insert(topic, unicast);
+            ChannelPtr Channel { new EventChannel };
+            Channel->setReceiver(obj, method);
+            ChannelMap.insert(type, Channel);
         }
     }
 
-    void disconnect(const QString &topic);
+    void disconnect(const EventType &type);
 
     template<class T, class... Args>
-    [[gnu::hot]] inline QVariant push(const QString &topic, T param, Args &&... args)
+    [[gnu::hot]] inline QVariant push(EventType type, T param, Args &&... args)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(unicastMap.contains(topic))) {
-            auto unicast = unicastMap.value(topic);
+        if (Q_LIKELY(ChannelMap.contains(type))) {
+            auto Channel = ChannelMap.value(type);
             guard.unlock();
-            return unicast->send(param, std::forward<Args>(args)...);
+            return Channel->send(param, std::forward<Args>(args)...);
         }
         return QVariant();
     }
 
-    inline QVariant push(const QString &topic)
+    inline QVariant push(const EventType &type)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(unicastMap.contains(topic))) {
-            auto unicast = unicastMap.value(topic);
+        if (Q_LIKELY(ChannelMap.contains(type))) {
+            auto Channel = ChannelMap.value(type);
             guard.unlock();
-            if (unicast)
-                return unicast->send();
+            if (Channel)
+                return Channel->send();
         }
 
         return QVariant();
     }
 
     template<class T, class... Args>
-    inline EventUnicastFuture post(const QString &topic, T param, Args &&... args)
+    inline EventChannelFuture post(EventType type, T param, Args &&... args)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(unicastMap.contains(topic)))
-            return unicastMap[topic]->asyncSend(param, std::forward<Args>(args)...);
-        return EventUnicastFuture(QFuture<QVariant>());
+        if (Q_LIKELY(ChannelMap.contains(type)))
+            return ChannelMap[type]->asyncSend(param, std::forward<Args>(args)...);
+        return EventChannelFuture(QFuture<QVariant>());
     }
 
 private:
-    using UnicastPtr = QSharedPointer<EventUnicast>;
-    using EventUnicastMap = QMap<QString, UnicastPtr>;
+    using ChannelPtr = QSharedPointer<EventChannel>;
+    using EventChannelMap = QMap<EventType, ChannelPtr>;
 
-    EventUnicastManager() = default;
-    ~EventUnicastManager() = default;
+    EventChannelManager() = default;
+    ~EventChannelManager() = default;
 
 private:
-    EventUnicastMap unicastMap;
+    EventChannelMap ChannelMap;
     QReadWriteLock rwLock;
 };
 
 DPF_END_NAMESPACE
 
-#endif   // EVENTUNICAST_H
+#endif   // EVENTCHANNEL_H

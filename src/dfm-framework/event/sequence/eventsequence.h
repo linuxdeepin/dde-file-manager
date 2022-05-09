@@ -35,8 +35,6 @@
 
 DPF_BEGIN_NAMESPACE
 
-using EventType = int;
-
 class EventSequence
 {
 public:
@@ -114,7 +112,7 @@ public:
 
 private:
     using SequencePtr = QSharedPointer<EventSequence>;
-    using EventSequenceMap = QMap<int, SequencePtr>;
+    using EventSequenceMap = QMap<EventType, SequencePtr>;
 
     EventSequenceManager() = default;
     ~EventSequenceManager() = default;

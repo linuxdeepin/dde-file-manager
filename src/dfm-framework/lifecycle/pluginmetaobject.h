@@ -68,7 +68,6 @@ public:
 
 class Plugin;
 class PluginContext;
-class PluginService;
 
 /*!
  * \brief The PluginMetaObject class

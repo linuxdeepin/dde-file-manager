@@ -120,6 +120,11 @@ EventUnicastManager &Framework::eventUnicast() const
     return EventUnicastManager::instance();
 }
 
+EventChannelManager &Framework::eventChannel() const
+{
+    return EventChannelManager::instance();
+}
+
 EventSequenceManager &Framework::eventSequence() const
 {
     return EventSequenceManager::instance();
