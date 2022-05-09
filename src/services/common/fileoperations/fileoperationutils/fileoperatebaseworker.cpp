@@ -592,8 +592,8 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
     }
 
     if (!isConvert && !oldExist && newTargetInfo->exists() && targetInfo == toInfo) {
-        completeFiles.append(fromInfo->url());
-        completeFiles.append(newTargetInfo->url());
+        completeSourceFiles.append(fromInfo->url());
+        completeSourceFiles.append(newTargetInfo->url());
     }
 
     toInfo->refresh();

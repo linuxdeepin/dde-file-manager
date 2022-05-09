@@ -224,7 +224,7 @@ bool AbstractWorker::initArgs()
     setStat(AbstractJobHandler::JobState::kRunningState);
     if (!handler)
         handler.reset(new LocalFileHandler);
-    completeFiles.clear();
+    completeSourceFiles.clear();
     completeTargetFiles.clear();
 
     return true;
@@ -239,7 +239,7 @@ void AbstractWorker::endWork()
     // send finish signal
     JobInfoPointer info(new QMap<quint8, QVariant>);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
-    info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey, QVariant::fromValue(completeFiles));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey, QVariant::fromValue(completeSourceFiles));
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey, QVariant::fromValue(completeTargetFiles));
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
 
@@ -501,11 +501,11 @@ void AbstractWorker::saveOperations()
             switch (jobType) {
             case AbstractJobHandler::JobType::kCopyType:
                 operatorType = GlobalEventType::kDeleteFiles;
-                targetUrl = UrlRoute::urlParent(completeFiles.first());
+                targetUrl = UrlRoute::urlParent(completeSourceFiles.first());
                 break;
             case AbstractJobHandler::JobType::kCutType:
                 operatorType = GlobalEventType::kCutFile;
-                targetUrl = UrlRoute::urlParent(completeFiles.first());
+                targetUrl = UrlRoute::urlParent(completeSourceFiles.first());
                 break;
             case AbstractJobHandler::JobType::kMoveToTrashType:
                 operatorType = GlobalEventType::kRestoreFromTrash;

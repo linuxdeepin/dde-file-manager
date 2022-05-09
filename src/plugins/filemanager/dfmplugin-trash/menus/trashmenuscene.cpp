@@ -236,6 +236,9 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
 
             if (sceneName == kPropertyMenuSceneName)
                 menu->insertSeparator(act);
+
+            if(actId == dfmplugin_menu::ActionID::kCut)
+                act->setEnabled(true); // cut enable in trash
         }
     }
 }

@@ -150,8 +150,10 @@ void DoCopyFilesWorker::endWork()
 
     // deal target files
     for (AbstractFileInfoPointer info : precompleteTargetFileInfo) {
-        if (info->exists())
+        if (info->exists()) {
             completeTargetFiles.append(info->url());
+            info->refresh();
+        }
     }
     precompleteTargetFileInfo.clear();
 
@@ -208,7 +210,7 @@ bool DoCopyFilesWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, cons
     }
 
     if (targetInfo == toInfo && !oldExist) {
-        completeFiles.append(fromInfo->url());
+        completeSourceFiles.append(fromInfo->url());
         precompleteTargetFileInfo.append(newTargetInfo);
     }
 

@@ -286,7 +286,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
         if (sourceInfo->isSymLink()) {
             if (newTargetInfo->exists()) {
                 if (!isConvert && targetInfo == this->targetInfo) {
-                    completeFiles.append(sourceUrl);
+                    completeSourceFiles.append(sourceUrl);
                     completeTargetFiles.append(newTargetInfo->url());
                 }
                 bool succ = deleteFile(sourceUrl, ok);
@@ -310,7 +310,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
             }
 
             if (!isConvert && targetInfo == this->targetInfo) {
-                completeFiles.append(sourceUrl);
+                completeSourceFiles.append(sourceUrl);
                 completeTargetFiles.append(newTargetInfo->url());
             }
             // remove old link file

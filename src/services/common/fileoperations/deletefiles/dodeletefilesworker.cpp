@@ -106,7 +106,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
 
         if (sourceUrls.contains(url)) {
             if (action != AbstractJobHandler::SupportAction::kNoAction)
-                completeFiles.append(url);
+                completeSourceFiles.append(url);
             deleteFilesCount++;
         }
 
@@ -146,7 +146,7 @@ bool DoDeleteFilesWorker::deleteFilesOnOtherDevice()
         if (!ok)
             return false;
 
-        completeFiles.append(url);
+        completeSourceFiles.append(url);
     }
     return true;
 }
