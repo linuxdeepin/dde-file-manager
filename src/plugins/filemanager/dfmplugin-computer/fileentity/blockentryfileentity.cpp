@@ -179,14 +179,14 @@ EntryFileInfo::EntryOrder BlockEntryFileEntity::order() const
     return EntryFileInfo::EntryOrder::kOrderRemovableDisks;
 }
 
-qint64 BlockEntryFileEntity::sizeTotal() const
+quint64 BlockEntryFileEntity::sizeTotal() const
 {
-    return getProperty(DeviceProperty::kSizeTotal).toLongLong();
+    return getProperty(DeviceProperty::kSizeTotal).toULongLong();
 }
 
-qint64 BlockEntryFileEntity::sizeUsage() const
+quint64 BlockEntryFileEntity::sizeUsage() const
 {
-    return getProperty(DeviceProperty::kSizeUsed).toLongLong();
+    return getProperty(DeviceProperty::kSizeUsed).toULongLong();
 }
 
 void BlockEntryFileEntity::refresh()

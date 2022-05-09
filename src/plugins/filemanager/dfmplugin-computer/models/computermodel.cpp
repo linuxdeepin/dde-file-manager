@@ -94,10 +94,10 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return item->info ? item->info->fileIcon() : QIcon();
 
     case kSizeTotalRole:
-        return item->info ? QVariant::fromValue<long>(item->info->sizeTotal()) : 0;
+        return item->info ? QVariant::fromValue<qulonglong>(item->info->sizeTotal()) : 0;
 
     case kSizeUsageRole:
-        return item->info ? QVariant::fromValue<long>(item->info->sizeUsage()) : 0;
+        return item->info ? QVariant::fromValue<qulonglong>(item->info->sizeUsage()) : 0;
 
     case kFileSystemRole: {
         if (!item->info)

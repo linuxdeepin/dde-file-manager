@@ -36,6 +36,7 @@
 #include <QString>
 #include <QIcon>
 #include <QUrl>
+#include <QWaitCondition>
 
 DPCOMPUTER_BEGIN_NAMESPACE
 
@@ -82,11 +83,16 @@ public:
     static bool sortItem(const QUrl &a, const QUrl &b);
     static bool sortItem(DFMEntryFileInfoPointer a, DFMEntryFileInfoPointer b);
 
-    static int getUniqueInteger();
-
     static QString deviceTypeInfo(DFMEntryFileInfoPointer info);
-
     static QWidget *devicePropertyDialog(const QUrl &url);
+
+    static int getUniqueInteger();
+    static bool checkGvfsMountExist(const QUrl &url, int timeout = 2000);
+    static void setCursorState(bool busy = false);
+
+private:
+    static QMutex mtxForCheckGvfs;
+    static QWaitCondition condForCheckGvfs;
 };
 
 DPCOMPUTER_END_NAMESPACE

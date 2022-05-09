@@ -114,14 +114,14 @@ DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() co
     return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderFiles;
 }
 
-qint64 ProtocolEntryFileEntity::sizeTotal() const
+quint64 ProtocolEntryFileEntity::sizeTotal() const
 {
-    return datas.value(DeviceProperty::kSizeTotal).toLongLong();
+    return datas.value(DeviceProperty::kSizeTotal).toULongLong();
 }
 
-qint64 ProtocolEntryFileEntity::sizeUsage() const
+quint64 ProtocolEntryFileEntity::sizeUsage() const
 {
-    return datas.value(DeviceProperty::kSizeUsed).toLongLong();
+    return datas.value(DeviceProperty::kSizeUsed).toULongLong();
 }
 
 void ProtocolEntryFileEntity::refresh()

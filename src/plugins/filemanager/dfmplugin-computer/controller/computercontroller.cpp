@@ -54,11 +54,6 @@ DSB_FM_USE_NAMESPACE
 DPCOMPUTER_USE_NAMESPACE
 using namespace GlobalServerDefines;
 
-static void setCursorStatus(bool busy = false)
-{
-    QApplication::setOverrideCursor(busy ? Qt::WaitCursor : Qt::ArrowCursor);
-}
-
 ComputerController *ComputerController::instance()
 {
     static ComputerController instance;
@@ -70,7 +65,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     if (!info) {
         qDebug() << "cannot create info of " << url;
-        setCursorStatus();
+        ComputerUtils::setCursorState();
         return;
     }
 
@@ -92,7 +87,7 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
             if (DialogManagerInstance->askForFormat())
                 actFormat(winId, info);
         }
-        setCursorStatus();
+        ComputerUtils::setCursorState();
         return;
     }
 
@@ -138,10 +133,10 @@ void ComputerController::doRename(quint64 winId, const QUrl &url, const QString 
     if (removable && info->suffix() == SuffixInfo::kBlock) {
         if (info->displayName() == name)
             return;
-        setCursorStatus(true);
+        ComputerUtils::setCursorState(true);
         QString devId = ComputerUtils::getBlockDevIdByUrl(url);   // for now only block devices can be renamed.
         DevMngIns->renameBlockDevAsync(devId, name, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
-            setCursorStatus();
+            ComputerUtils::setCursorState();
             if (!ok) {
                 qInfo() << "rename block device failed: " << devId << err;
             }
@@ -233,16 +228,16 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
 
     if (isEncrypted) {
         if (!isUnlocked) {
-            setCursorStatus();
+            ComputerUtils::setCursorState();
             QString passwd = DialogManagerInstance->askPasswordForLockedDevice();
             if (passwd.isEmpty()) {
-                setCursorStatus();
+                ComputerUtils::setCursorState();
                 return;
             }
-            setCursorStatus(true);
+            ComputerUtils::setCursorState(true);
 
             DevMngIns->unlockBlockDevAsync(passwd, shellId, {}, [=](bool ok, DFMMOUNT::DeviceError err, const QString &newId) {
-                setCursorStatus();
+                ComputerUtils::setCursorState();
 
                 if (ok) {
                     this->mountDevice(winId, newId, shellId, act);
@@ -282,7 +277,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
         }
     }
 
-    setCursorStatus(true);
+    ComputerUtils::setCursorState(true);
     DevMngIns->mountBlockDevAsync(id, {}, [=](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         bool isOpticalDevice = id.contains(QRegularExpression("/sr[0-9]*$"));
         if (ok || isOpticalDevice) {
@@ -300,7 +295,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
             qDebug() << "mount device failed: " << id << err;
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         }
-        setCursorStatus();
+        ComputerUtils::setCursorState();
     });
 }
 
@@ -403,8 +398,9 @@ void ComputerController::actMount(quint64 winId, DFMEntryFileInfoPointer info, b
     if (sfx == SuffixInfo::kStashedProtocol) {
         QString devId = ComputerUtils::getProtocolDevIdByStashedUrl(info->url());
         DevMngIns->mountNetworkDeviceAsync(devId, [devId, enterAfterMounted, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
+            if (ok)
+                ComputerItemWatcherInstance->insertUrlMapper(devId, QUrl::fromLocalFile(mntPath));
             onNetworkDeviceMountFinished(ok, err, mntPath, winId, enterAfterMounted);
-            ComputerItemWatcherInstance->insertUrlMapper(devId, QUrl::fromLocalFile(mntPath));
         });
         return;
     } else if (sfx == SuffixInfo::kBlock) {

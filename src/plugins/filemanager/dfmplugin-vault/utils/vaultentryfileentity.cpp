@@ -96,7 +96,7 @@ void VaultEntryFileEntity::refresh()
 {
 }
 
-qint64 VaultEntryFileEntity::sizeTotal() const
+quint64 VaultEntryFileEntity::sizeTotal() const
 {
     if (vaultTotal > 0)
         return vaultTotal;

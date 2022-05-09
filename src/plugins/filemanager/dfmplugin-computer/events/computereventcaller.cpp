@@ -74,6 +74,9 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QString &path)
 
 void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
 {
+    if (!ComputerUtils::checkGvfsMountExist(url))
+        return;
+
     DFMBASE_USE_NAMESPACE
     dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 }
@@ -88,11 +91,17 @@ void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
 
 void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url)
 {
+    if (!ComputerUtils::checkGvfsMountExist(url))
+        return;
+
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
 }
 
 void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
 {
+    if (!ComputerUtils::checkGvfsMountExist(url))
+        return;
+
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, winId, url);
 }
 

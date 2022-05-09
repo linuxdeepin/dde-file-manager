@@ -26,14 +26,20 @@
 #include "deviceproperty/devicepropertydialog.h"
 
 #include "services/filemanager/windows/windowsservice.h"
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/standardpaths.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <dfm-framework/framework.h>
+
+#include <QtConcurrent>
+#include <QApplication>
+
+#include <unistd.h>
 
 DPCOMPUTER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -233,6 +239,45 @@ int ComputerUtils::getUniqueInteger()
 {
     static int idx = 0;
     return ++idx;
+}
+
+QMutex ComputerUtils::mtxForCheckGvfs;
+QWaitCondition ComputerUtils::condForCheckGvfs;
+bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
+{
+    if (!url.path().startsWith(QString("/run/user/%1/gvfs/").arg(getuid())))
+        return true;
+    setCursorState(true);
+
+    std::string path = url.path().toStdString();
+    bool exist = false;
+    auto &&fu = QtConcurrent::run([path, &exist, timeout] {
+        QTime t;
+        t.start();
+        int ret = access(path.c_str(), F_OK);
+        qDebug() << "gvfs path: " << path.c_str() << ", exist: " << (ret == 0) << ", error: " << strerror(ret);
+        if (t.elapsed() < timeout) {
+            exist = (ret == 0);
+            condForCheckGvfs.wakeAll();
+        }
+    });
+
+    QMutexLocker lk(&mtxForCheckGvfs);
+    condForCheckGvfs.wait(&mtxForCheckGvfs, timeout);
+    fu.cancel();
+    setCursorState(false);
+
+    if (!exist) {
+        auto dirName = url.path().mid(url.path().lastIndexOf("/") + 1);
+        DialogManagerInstance->showErrorDialog(QObject::tr("Cannot access"), dirName);
+    }
+
+    return exist;
+}
+
+void ComputerUtils::setCursorState(bool busy)
+{
+    QApplication::setOverrideCursor(busy ? Qt::WaitCursor : Qt::ArrowCursor);
 }
 
 QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)

@@ -103,7 +103,7 @@ void DialogManager::showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError e
         break;
     default:
         showErrorDialog(tr("Mount error"), tr("Error occured while mounting device"));
-        qWarning() << "mount device failed: " << static_cast<int>(err);
+        qWarning() << "mount device failed: " << err;
         break;
     }
 }
@@ -364,7 +364,7 @@ void DialogManager::showRestoreFailedDialog(const QList<QUrl> &urlList)
         d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(urlList.count())));
     }
     d.setIcon(QIcon::fromTheme("dialog-warning"));
-    d.addButton(tr("OK","button"), true, DDialog::ButtonRecommend);
+    d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
     d.exec();
 }
 

@@ -110,17 +110,17 @@ QString EntryFileInfo::displayName() const
     return d->entity ? d->entity->displayName() : "";
 }
 
-qint64 EntryFileInfo::sizeTotal() const
+quint64 EntryFileInfo::sizeTotal() const
 {
     return d->entity ? d->entity->sizeTotal() : 0;
 }
 
-qint64 EntryFileInfo::sizeUsage() const
+quint64 EntryFileInfo::sizeUsage() const
 {
     return d->entity ? d->entity->sizeUsage() : 0;
 }
 
-qint64 EntryFileInfo::sizeFree() const
+quint64 EntryFileInfo::sizeFree() const
 {
     return d->entity ? sizeTotal() - sizeUsage() : 0;
 }

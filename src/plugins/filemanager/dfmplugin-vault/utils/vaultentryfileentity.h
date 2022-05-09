@@ -46,7 +46,7 @@ public:
 
     virtual QMenu *createMenu() override;
     virtual void refresh() override;
-    virtual qint64 sizeTotal() const override;
+    virtual quint64 sizeTotal() const override;
     virtual QUrl targetUrl() const override;
 
 public slots:
