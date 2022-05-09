@@ -34,7 +34,7 @@ Build-Depends:
  qtdeclarative5-dev,
  deepin-gettext-tools,
  libkf5codecs-dev,
- libdtkcore-dev(>=5.5.18),
+ libdtkcore-dev(>=5.5.28),
  libdtkcore5-bin,
  libdmr-dev,
  dh-systemd,
