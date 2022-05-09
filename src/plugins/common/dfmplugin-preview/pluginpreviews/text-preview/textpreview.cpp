@@ -84,7 +84,11 @@ bool TextPreview::setFileUrl(const QUrl &url)
 
     titleStr = QFileInfo(url.toLocalFile()).fileName();
 
-    vector<char> buf(device.seekg(0, ios::end).tellg());
+    long len = device.seekg(0, ios::end).tellg();
+    if (len <= 0)
+        return false;
+
+    vector<char> buf(static_cast<unsigned long>(len));
     device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
     device.close();
 
