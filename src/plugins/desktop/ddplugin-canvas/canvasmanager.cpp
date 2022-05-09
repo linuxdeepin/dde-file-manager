@@ -142,12 +142,21 @@ void CanvasManager::openEditor(const QUrl &url)
 
 void CanvasManager::setIconLevel(int level)
 {
-    for (auto v : views()) {
-        v->itemDelegate()->setIconLevel(level);
-        v->updateGrid();
-    }
+    auto allView = views();
+    if (allView.isEmpty())
+        return;
 
-    DispalyIns->setIconLevel(level);
+    CanvasItemDelegate *delegate = allView.first()->itemDelegate();
+    if (level >= delegate->minimumIconLevel() && level <= delegate->maximumIconLevel()) {
+        for (auto v : allView) {
+            v->itemDelegate()->setIconLevel(level);
+            v->updateGrid();
+        }
+
+        DispalyIns->setIconLevel(level);
+        // notify others that icon size changed
+        d->extend->iconSizeChanged(level);
+    }
 }
 
 CanvasProxyModel *CanvasManager::model() const
@@ -402,7 +411,6 @@ CanvasViewPointer CanvasManagerPrivate::createView(QWidget *root, int index)
     view->setProperty(FrameProperty::kPropWidgetName, "canvas");
     view->setProperty(FrameProperty::kPropWidgetLevel, 10.0);
     view->setGeometry(avRect);
-    view->raise();
     return view;
 }
 
@@ -414,7 +422,7 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, QWidget *ro
     view->clearSelection();
     view->setScreenNum(index);
     view->setParent(root);
-    view->raise();
+
     view->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
     auto avRect = relativeRect(root->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
                                root->property(FrameProperty::kPropScreenGeometry).toRect());
@@ -539,15 +547,5 @@ void CanvasManager::onChangeIconLevel(bool increase)
 
     int currentLevel = delegate->iconLevel();
     currentLevel = increase ? currentLevel + 1 : currentLevel - 1;
-
-    if (currentLevel >= delegate->minimumIconLevel() && currentLevel <= delegate->maximumIconLevel()) {
-        for (const CanvasViewPointer &v : d->viewMap.values()) {
-            v->itemDelegate()->setIconLevel(currentLevel);
-            v->updateGrid();
-        }
-        DispalyIns->setIconLevel(currentLevel);
-
-        // notify others that icon size changed
-        d->extend->iconSizeChanged(currentLevel);
-    }
+    setIconLevel(currentLevel);
 }

@@ -58,6 +58,12 @@ QList<QWidget *> FrameService::rootWindows() const
     return {};
 }
 
+void FrameService::layoutWidget() const
+{
+    if (d->proxy)
+        return d->proxy->layoutChildren();
+}
+
 FrameService::FrameService(QObject *parent)
     : PluginService(parent)
     , AutoServiceRegister<FrameService>()

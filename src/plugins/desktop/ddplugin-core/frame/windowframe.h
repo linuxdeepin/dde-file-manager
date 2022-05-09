@@ -35,6 +35,7 @@ public:
     explicit WindowFrame(QObject *parent = nullptr);
     bool init();
     QList<QWidget *> rootWindows() const override;
+    void layoutChildren() override;
 public slots:
     void buildBaseWindow();
     void onGeometryChanged();

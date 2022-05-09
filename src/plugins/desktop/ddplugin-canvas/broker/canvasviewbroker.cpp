@@ -39,11 +39,9 @@ CanvasViewBrokerPrivate::~CanvasViewBrokerPrivate()
 QSharedPointer<CanvasView> CanvasViewBrokerPrivate::view(int idx)
 {
     // screen num is start with 1
-    idx -= 1;
-    auto views = mrg->views();
-    if (idx > -1 && idx < views.size()) {
-        return views.at(idx);
-    }
+    for (auto v : mrg->views())
+        if (v->screenNum() == idx)
+            return v;
 
     return nullptr;
 }
@@ -84,5 +82,15 @@ void CanvasViewBroker::update(int idx)
 {
     if (auto view = d->view(idx))
         view->update();
+}
+
+void CanvasViewBroker::select(const QList<QUrl> &urls)
+{
+
+}
+
+void CanvasViewBroker::selectedUrls(QList<QUrl> *urls)
+{
+
 }
 

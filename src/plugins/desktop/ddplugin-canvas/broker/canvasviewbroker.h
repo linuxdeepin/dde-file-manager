@@ -39,6 +39,8 @@ public slots:
     void visualRect(int idx, const QUrl &url, QRect *rect);
     void refresh(int idx);
     void update(int idx);
+    void select(const QList<QUrl> &urls);
+    void selectedUrls(QList<QUrl> *urls);
 private:
     CanvasViewBrokerPrivate *d;
 };

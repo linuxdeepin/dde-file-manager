@@ -56,9 +56,11 @@ public:
     }
 
     QList<QWidget *> rootWindows() const;
+    void layoutWidget() const;
 signals: //must connect with Qt::DirectConnection
     void windowAboutToBeBuilded();
     void windowBuilded();
+    void windowShowed();
     void geometryChanged();
     void availableGeometryChanged();
 protected:

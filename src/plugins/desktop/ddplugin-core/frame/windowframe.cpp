@@ -99,6 +99,39 @@ QList<QWidget *> WindowFrame::rootWindows() const
     return ret;
 }
 
+void WindowFrame::layoutChildren()
+{
+    for (const BaseWindowPointer &root : d->windows.values()) {
+        QList<QWidget *> subWidgets;
+        const QString screen = d->windows.key(root);
+        // find subwidgets
+        for (QObject *obj : root->children()) {
+            if (QWidget *wid = qobject_cast<QWidget *>(obj)) {
+                auto var = wid->property(FrameProperty::kPropWidgetLevel);
+                if (var.isValid()) {
+                    subWidgets.append(wid);
+                    qDebug() << screen << "subwidget" << wid->property(FrameProperty::kPropWidgetName).toString() << "level" << var.toDouble();
+                } else {
+                    qWarning() << screen << "subwidget" << wid << "no WidgetLevel property ";
+                }
+            }
+        }
+
+        // sort by level
+        std::sort(subWidgets.begin(), subWidgets.end(), [](const QWidget *before, const QWidget *after)->bool {
+            QVariant var1 = before->property(FrameProperty::kPropWidgetLevel);
+            QVariant var2 = after->property(FrameProperty::kPropWidgetLevel);
+            return var1.toDouble() < var2.toDouble();
+        });
+
+        for (int i = 1; i < subWidgets.size(); ++i) {
+            QWidget *top = subWidgets.at(i);
+            QWidget *bottom = subWidgets.at(i - 1);
+            bottom->stackUnder(top);
+        }
+    }
+}
+
 void WindowFrame::buildBaseWindow()
 {
     if (!d->screen) {
@@ -169,8 +202,12 @@ void WindowFrame::buildBaseWindow()
 
     emit windowBuilded();
 
+    layoutChildren();
+
     for (auto win : d->windows)
         win->show();
+
+    emit windowShowed();
 }
 
 void WindowFrame::onGeometryChanged()

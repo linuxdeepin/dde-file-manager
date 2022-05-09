@@ -262,7 +262,6 @@ void BackgroundManager::onBackgroundBuild()
             if (bwp->geometry() != geometry)
                 bwp->setGeometry(geometry);
             bwp->setParent(primary);
-            bwp->lower();
         } else {
             bwp = createBackgroundWidget(primary);
         }
@@ -286,7 +285,6 @@ void BackgroundManager::onBackgroundBuild()
                 if (bwp->geometry() != geometry)
                     bwp->setGeometry(geometry);
                 bwp->setParent(win);
-                bwp->lower();
             } else {
                 // add new widget
                 qInfo() << "screen:" << screenName << "  added, create it.";
@@ -506,7 +504,6 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
     bwp->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
     bwp->setProperty(FrameProperty::kPropWidgetName, "background");
     bwp->setProperty(FrameProperty::kPropWidgetLevel, 5.0);
-    bwp->lower();
 
     QRect geometry = d->relativeGeometry(root->geometry()); // scaled area
     bwp->setGeometry(geometry);
