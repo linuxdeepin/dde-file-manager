@@ -16,6 +16,10 @@ FILE(GLOB BOOKMARK_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/views/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/controller/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/controller/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/private/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/menu/private/*.cpp"
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

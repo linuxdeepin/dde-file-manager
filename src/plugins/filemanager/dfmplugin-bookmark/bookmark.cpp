@@ -22,13 +22,16 @@
 #include "utils/bookmarkhelper.h"
 #include "controller/bookmarkmanager.h"
 #include "events/bookmarkeventreceiver.h"
+#include "menu/bookmarkmenuscene.h"
 
 #include "dfm-base/dfm_event_defines.h"
+#include "services/common/menu/menuservice.h"
 
 #include "services/filemanager/bookmark/bookmark_defines.h"
 
 DPBOOKMARK_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 
 void BookMark::initialize()
 {
@@ -45,6 +48,9 @@ void BookMark::initialize()
 
 bool BookMark::start()
 {
+    MenuService::service()->registerScene(BookmarkMenuCreator::name(), new BookmarkMenuCreator);
+    bindScene("FileOperatorMenu");
+
     return true;
 }
 
@@ -61,4 +67,17 @@ void BookMark::onWindowCreated(quint64 winId)
     connect(window, &FileManagerWindow::sideBarInstallFinished, this,
             []() { BookMarkManager::instance()->addBookMarkItemsFromConfig(); },
             Qt::DirectConnection);
+}
+
+void BookMark::bindScene(const QString &parentScene)
+{
+    if (MenuService::service()->contains(parentScene)) {
+        MenuService::service()->bind(BookmarkMenuCreator::name(), parentScene);
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+            if (scene == parentScene)
+                MenuService::service()->bind(BookmarkMenuCreator::name(), scene);
+        },
+                Qt::DirectConnection);
+    }
 }

@@ -69,13 +69,13 @@ public:
     void fileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
 
     void addSchemeOfBookMarkDisabled(const QString &scheme);
+    QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
 
 private:
     explicit BookMarkManager(QObject *parent = nullptr);
     void update(const QVariant &value);
     void removeAllBookMarkSidebarItems();
     void bookMarkRename(const QUrl &url, const QString &newName);
-    QMap<QUrl, BookmarkData> getBookMarkDataMap() const;
     int showRemoveBookMarkDialog(quint64 winId);
     void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
     QSet<QString> getBookMarkDisabledSchemes();
@@ -90,4 +90,4 @@ private:
 
 DPBOOKMARK_END_NAMESPACE
 
-#endif // BOOKMARKMANAGER_H
+#endif   // BOOKMARKMANAGER_H

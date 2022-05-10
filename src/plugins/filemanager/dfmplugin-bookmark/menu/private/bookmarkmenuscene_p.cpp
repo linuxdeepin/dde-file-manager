@@ -1,9 +1,10 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     gongheng <gongheng@uniontech.com>
+ * Author:     liuyangming<liuyangming@uniontech.com>
  *
- * Maintainer: zhengyouge <zhengyouge@uniontech.com>
+ * Maintainer: zhengyouge<zhengyouge@uniontech.com>
+ *             max-lv<lvwujun@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,22 +19,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DFMPLUGIN_BOOKMARK_GLOBAL_H
-#define DFMPLUGIN_BOOKMARK_GLOBAL_H
+#include "bookmarkmenuscene_p.h"
 
-#define DPBOOKMARK_NAMESPACE dfmplugin_bookmark
+DPBOOKMARK_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
-#define DPBOOKMARK_BEGIN_NAMESPACE namespace DPBOOKMARK_NAMESPACE {
-#define DPBOOKMARK_END_NAMESPACE }
-#define DPBOOKMARK_USE_NAMESPACE using namespace DPBOOKMARK_NAMESPACE;
-
-DPBOOKMARK_BEGIN_NAMESPACE
-
-namespace BookmarkActionId {
-static constexpr char kActAddBookmarkKey[] { "add-bookmark" };
-static constexpr char kActRemoveBookmarkKey[] { "remove-bookmark" };
+BookmarkMenuScenePrivate::BookmarkMenuScenePrivate(AbstractMenuScene *qq)
+    : AbstractMenuScenePrivate(qq)
+{
 }
-
-DPBOOKMARK_END_NAMESPACE
-
-#endif   // DFMPLUGIN_BOOKMARK_GLOBAL_H

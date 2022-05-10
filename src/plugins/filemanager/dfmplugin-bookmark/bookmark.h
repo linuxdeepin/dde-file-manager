@@ -39,8 +39,11 @@ public:
 
 private slots:
     void onWindowCreated(quint64 winId);
+
+private:
+    void bindScene(const QString &parentScene);
 };
 
 DPBOOKMARK_END_NAMESPACE
 
-#endif // BOOKMARK_H
+#endif   // BOOKMARK_H
