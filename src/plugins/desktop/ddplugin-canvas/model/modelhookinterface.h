@@ -26,6 +26,7 @@
 #include <QObject>
 
 class QMimeData;
+
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class ModelHookInterface

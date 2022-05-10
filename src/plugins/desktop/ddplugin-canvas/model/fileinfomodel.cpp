@@ -94,7 +94,6 @@ void FileInfoModelPrivate::insertData(const QUrl &url)
 
 void FileInfoModelPrivate::removeData(const QUrl &url)
 {
-
     int position = -1;
     {
         QReadLocker lk(&lock);
@@ -143,17 +142,22 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
         } else {
             if (fileList.contains(newUrl)) {
                 // e.g. a mv to b(b is existed)
+                //! emit replace signal first.
+                emit q->dataReplaced(oldUrl, newUrl);
+
+                // then remove and emit remove signal.
                 lk.unlock();
                 removeData(oldUrl);
                 lk.relock();
                 position = fileList.indexOf(newUrl);
+                lk.unlock();
             } else {
                 fileList.replace(position, newUrl);
-            }
-
-            fileMap.remove(oldUrl);
-            fileMap.insert(newUrl, newInfo);
-            emit q->dataReplaced(oldUrl, newUrl);
+                fileMap.remove(oldUrl);
+                fileMap.insert(newUrl, newInfo);
+                lk.unlock();
+                emit q->dataReplaced(oldUrl, newUrl);
+            }          
 
             auto index = q->index(position);
             emit q->dataChanged(index, index);

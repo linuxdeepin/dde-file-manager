@@ -157,20 +157,21 @@ void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &
             return;
         }
     } else {
-        if (fileList.contains(newUrl)) {
-            // e.g. a mv to b(b is existed)
+        // e.g. a mv to b(b is existed)
+        if (fileMap.contains(newUrl)) {
+            //! treat as removing if newurl is existed in canvas.
             q->beginRemoveRows(q->rootIndex(), row, row);
             fileList.removeAt(row);
+            fileMap.remove(oldUrl);
             q->endRemoveRows();
 
             row = fileList.indexOf(newUrl);
         } else {
             fileList.replace(row, newUrl);
+            fileMap.remove(oldUrl);
+            fileMap.insert(newUrl, newInfo);
+            emit q->dataReplaced(oldUrl, newUrl);
         }
-
-        fileMap.remove(oldUrl);
-        fileMap.insert(newUrl, newInfo);
-        emit q->dataReplaced(oldUrl, newUrl);
 
         auto index = q->index(row);
         emit q->dataChanged(index, index);
@@ -527,8 +528,10 @@ void CanvasProxyModel::setSourceModel(QAbstractItemModel *model)
     d->srcModel = fileModel;
     beginResetModel();
 
-    if (auto oldModel = sourceModel())
+    if (auto oldModel = sourceModel()) {
         oldModel->disconnect(this);
+        oldModel->disconnect(d);
+    }
 
     d->clearMapping();
 

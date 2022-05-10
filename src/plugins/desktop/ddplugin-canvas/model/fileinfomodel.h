@@ -64,6 +64,7 @@ public:
     Qt::DropActions supportedDragActions() const override;
     Qt::DropActions supportedDropActions() const override;
 signals:
+    //! the receiver must resolve the case that newurl has been existed if connecting with Qt::DirectConnection
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 private:
     FileInfoModelPrivate *d;

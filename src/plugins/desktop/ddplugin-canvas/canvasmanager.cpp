@@ -364,12 +364,14 @@ void CanvasManagerPrivate::initModel()
     }
 
     selectionModel = new CanvasSelectionModel(canvasModel, q);
-    connect(canvasModel, &CanvasProxyModel::rowsInserted, this, &CanvasManagerPrivate::onFileInserted, Qt::QueuedConnection);
+    // using DirectConnection to keep signals are sequential.
+    connect(canvasModel, &CanvasProxyModel::rowsInserted, this, &CanvasManagerPrivate::onFileInserted, Qt::DirectConnection);
     connect(canvasModel, &CanvasProxyModel::rowsAboutToBeRemoved, this, &CanvasManagerPrivate::onFileAboutToBeRemoved, Qt::DirectConnection);
+    connect(canvasModel, &CanvasProxyModel::dataReplaced, this, &CanvasManagerPrivate::onFileRenamed, Qt::DirectConnection);
+
     connect(canvasModel, &CanvasProxyModel::dataChanged, this, &CanvasManagerPrivate::onFileDataChanged, Qt::QueuedConnection);
     connect(canvasModel, &CanvasProxyModel::modelReset, this, &CanvasManagerPrivate::onFileModelReset, Qt::QueuedConnection);
     connect(canvasModel, &CanvasProxyModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
-    connect(canvasModel, &CanvasProxyModel::dataReplaced, this, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
 
     // hook interface
     modelHook = new CanvasModelHook(q);
@@ -528,17 +530,7 @@ void CanvasManagerPrivate::onFileAboutToBeRemoved(const QModelIndex &parent, int
 void CanvasManagerPrivate::onFileDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
     Q_UNUSED(roles)
-
-    if (Q_UNLIKELY(!topLeft.isValid() || !bottomRight.isValid()))
-        return;
-    for (int i = topLeft.row(); i <= bottomRight.row(); i++) {
-        QModelIndex index = canvasModel->index(i);
-        if (Q_LIKELY(index.isValid())) {
-            // update all.
-            q->update();
-            break;
-        }
-    }
+    q->update();
 }
 
 void CanvasManagerPrivate::onFileModelReset()
