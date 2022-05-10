@@ -297,7 +297,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
         return;
     }
 
-    QUrl oldUrl = QUrl::fromLocalFile(fileInfo->url().path());
+    QUrl oldUrl = fileInfo->getUrlByNewFileName(fileInfo->fileName());
     QUrl newUrl = fileInfo->getUrlByNewFileName(newFileName);
     //Todo(yanghao): tag
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);

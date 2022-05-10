@@ -81,6 +81,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
     if (!filePreviewDialog) {
         filePreviewDialog = new FilePreviewDialog(selecturls, nullptr);
         DPlatformWindowHandle::enableDXcbForWindow(filePreviewDialog, true);
+        filePreviewDialog->setCurrentWinID(winId);
     }
 
     if (selecturls.count() == 1)

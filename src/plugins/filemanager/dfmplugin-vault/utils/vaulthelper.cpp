@@ -81,9 +81,9 @@ QUrl VaultHelper::pathToVaultVirtualUrl(const QString &path)
     if (path.contains(localPath)) {
         QString virtualPath = path;
         virtualPath = virtualPath.replace(0, localPath.length(), "");
-        QUrl virtualUrl(virtualPath);
+        QUrl virtualUrl;
+        virtualUrl.setPath(virtualPath);
         virtualUrl.setScheme(scheme());
-        virtualUrl.setHost("");
         return virtualUrl;
     }
     return QUrl();
@@ -285,16 +285,10 @@ QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
     if (url.path().contains(instance()->sourceRootUrl().path())) {
         QUrl localUrl = QUrl::fromLocalFile(url.path());
         QFileInfo info(localUrl.path());
-        if (info.isDir()) {
-            localUrl.setPath(url.path().endsWith("/") ? url.path() : url.path() + "/");
-        }
         return localUrl;
     } else {
         QUrl localUrl = QUrl::fromLocalFile(instance()->sourceRootUrl().path() + url.path());
         QFileInfo info(localUrl.path());
-        if (info.isDir()) {
-            localUrl.setPath(localUrl.path().endsWith("/") ? localUrl.path() : localUrl.path() + "/");
-        }
         return localUrl;
     }
 }

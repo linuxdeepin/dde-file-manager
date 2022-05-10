@@ -27,6 +27,8 @@
 #include "utils/fileoperatorhelper.h"
 #include "workspace/workspace_defines.h"
 
+#include "services/common/delegate/delegateservice.h"
+
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 
@@ -37,6 +39,7 @@
 #include <QList>
 #include <QMimeData>
 
+DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
@@ -422,7 +425,10 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     QUrl targetUrl = itemFromIndex(parent)->url();
     AbstractFileInfoPointer targetFileInfo = itemFromIndex(parent)->fileInfo();
-    const QList<QUrl> dropUrls = data->urls();
+    QList<QUrl> dropUrls;
+    for (QUrl &url : data->urls()) {
+        dropUrls << delegateServIns->urlTransform(url);
+    }
 
     if (targetFileInfo->isSymLink()) {
         // TODO: trans 'targetUrl' to source url

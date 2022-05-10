@@ -152,7 +152,6 @@ QUrl VaultFileInfo::url() const
         return QUrl();
 
     QUrl url = dptr->proxy->url();
-    url.setScheme(VaultHelper::instance()->scheme());
     url = VaultHelper::instance()->pathToVaultVirtualUrl(url.path());
     return url;
 }
@@ -183,6 +182,8 @@ QUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     QUrl theUrl = url();
 
     theUrl.setPath(absolutePath() + QDir::separator() + fileName);
+
+    theUrl.setHost("");
 
     return theUrl;
 }

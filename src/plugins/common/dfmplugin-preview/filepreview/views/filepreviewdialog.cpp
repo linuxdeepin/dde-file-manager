@@ -19,10 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filepreviewdialog.h"
-#include "dfm-base/file/local/localfilehandler.h"
-#include "dfm-base/base/schemefactory.h"
 #include "pluginInterface/filepreviewfactory.h"
 #include "unknowfilepreview.h"
+#include "utils/previewfileoperation.h"
+
+#include "dfm-base/file/local/localfilehandler.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <DWindowCloseButton>
@@ -107,6 +109,11 @@ void FilePreviewDialog::done(int r)
     }
 }
 
+void FilePreviewDialog::setCurrentWinID(quint64 winID)
+{
+    currentWinID = winID;
+}
+
 void FilePreviewDialog::playCurrentPreviewFile()
 {
     if (preview) {
@@ -120,6 +127,13 @@ void FilePreviewDialog::playCurrentPreviewFile()
         }
         preview->play();
     }
+}
+
+void FilePreviewDialog::openFile()
+{
+
+    PreviewFileOperation::openFileHandle(currentWinID, fileList.at(currentPageIndex));
+    close();
 }
 
 void FilePreviewDialog::childEvent(QChildEvent *event)
@@ -242,17 +256,7 @@ void FilePreviewDialog::initUI()
 
     connect(statusBar->preButton(), &QPushButton::clicked, this, &FilePreviewDialog::previousPage);
     connect(statusBar->nextButton(), &QPushButton::clicked, this, &FilePreviewDialog::nextPage);
-    connect(statusBar->openButton(), &QPushButton::clicked, this, [this] {
-        /*fix bug 47136 在回收站预览打开不了，url传入错误，因为在回收站里面实现了openfile，所以这里倒回到以前代码*/
-        DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-        bool ok = fileHandler.openFile(fileList.at(currentPageIndex));
-        if (!ok) {
-            QString error;
-            error = fileHandler.errorString();
-            dialogManager->showErrorDialog("open file error", error);
-        }
-        close();
-    });
+    connect(statusBar->openButton(), &QPushButton::clicked, this, &FilePreviewDialog::openFile);
 }
 
 void FilePreviewDialog::switchToPage(int index)

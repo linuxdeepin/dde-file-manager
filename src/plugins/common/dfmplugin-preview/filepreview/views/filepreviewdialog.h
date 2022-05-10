@@ -48,13 +48,15 @@ public:
 
     void done(int r) override;
 
-    void DoneCurrent();
+    void setCurrentWinID(quint64 winID);
 
 signals:
     void signalCloseEvent();
 
 public slots:
     void playCurrentPreviewFile();
+
+    void openFile();
 
 private:
     void childEvent(QChildEvent *event) override;
@@ -80,6 +82,7 @@ private:
     bool playingVideo { false };
     bool firstEnterSwitchToPage { false };
     int currentPageIndex { -1 };
+    quint64 currentWinID { 0 };
     DFMBASE_NAMESPACE::AbstractBasePreview *preview { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
 };
