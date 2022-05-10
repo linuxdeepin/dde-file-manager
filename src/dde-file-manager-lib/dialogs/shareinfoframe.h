@@ -52,7 +52,6 @@ public:
 signals:
     void folderShared(const QString &filePath);
     void unfolderShared();
-
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 public slots:
@@ -69,7 +68,7 @@ public slots:
     void disactivateWidgets();
 private slots:
     void setOrModifySharePassword();
-
+    void showShareInfo(bool value);
 private:
     DAbstractFileInfoPointer m_fileinfo;
     QCheckBox *m_shareCheckBox = nullptr;

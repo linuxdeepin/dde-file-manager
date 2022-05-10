@@ -41,6 +41,7 @@
 #include <QTextBrowser>
 #include <QApplication>
 #include <QClipboard>
+#include <DPushButton>
 
 #include <unistd.h>
 
@@ -48,9 +49,6 @@ ShareInfoFrame::ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *pa
     QFrame(parent),
     m_fileinfo(info)
 {
-//    m_jobTimer = new QTimer();
-//    m_jobTimer->setInterval(1000);
-//    ->setSingleShot(true);
     initUI();
     updateShareInfo(m_fileinfo->absoluteFilePath());
     initConnect();
@@ -78,6 +76,7 @@ void ShareInfoFrame::initUI()
     m_shareCheckBox = new QCheckBox(this);
     m_shareCheckBox->setFixedWidth(fieldWidth);
     m_shareCheckBox->setText(tr("Share this folder"));
+    connect(m_shareCheckBox,&QCheckBox::clicked,this,&ShareInfoFrame::showShareInfo);
 
     QWidget *centerAlignContainer = new QWidget();
     QHBoxLayout *centerAlignLayout = new QHBoxLayout(centerAlignContainer);
@@ -170,6 +169,7 @@ void ShareInfoFrame::initUI()
     m_userNamelineEdit->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
     m_userNamelineEdit->setObjectName("UserNameEdit");
     m_userNamelineEdit->setText(UserShareManager::getCurrentUserName());
+    m_userNamelineEdit->setReadOnly(true);
 
     SectionKeyLabel *sharePasswordLabel = new SectionKeyLabel(tr("Share password"));
     sharePasswordLabel->setFixedWidth(labelWidth + 5);
@@ -223,8 +223,9 @@ void ShareInfoFrame::initUI()
     //Layout: network
     QHBoxLayout *networkAddrLayout = new QHBoxLayout;
     networkAddrLayout->setContentsMargins(0, 0, 0, 0);
-    QPushButton *copyNetAddr = new QPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
-    QObject::connect(copyNetAddr, &QPushButton::clicked, [=]() {
+    DPushButton *copyNetAddr = new DPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
+    copyNetAddr->setToolTip(tr("Copy"));
+    QObject::connect(copyNetAddr, &DPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(m_netScheme->text() + m_networkAddrLabel->text());
     });
@@ -238,8 +239,9 @@ void ShareInfoFrame::initUI()
     //Layout: user name
     QHBoxLayout *userNameLayout = new QHBoxLayout();
     userNameLayout->setContentsMargins(0, 0, 0, 0);
-    QPushButton *copyUserName = new QPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
-    QObject::connect(copyUserName, &QPushButton::clicked, [=]() {
+    DPushButton *copyUserName = new DPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
+    copyUserName->setToolTip(tr("Copy"));
+    QObject::connect(copyUserName, &DPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(m_userNamelineEdit->text());
     });
@@ -349,7 +351,6 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
     //为了避免在高速点击时引发ui错乱，只有在share流程完全结束后才允许用户再次修改共享状态
     m_shareCheckBox->setEnabled(false);
     bool ret = doShareInfoSetting();
-
     if (ret) {
         if (checked) {
 //            emit folderShared(m_fileinfo->absoluteFilePath());
@@ -458,18 +459,14 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
 
     if (!m_fileinfo->fileSharedName().isEmpty()) {
         m_shareCheckBox->setChecked(true);
+        showShareInfo(true);
         activateWidgets();
-        //disconnect(m_shareNamelineEdit, &QLineEdit::editingFinished, this, &ShareInfoFrame::handleShareNameChanged);
-        //int cursorPos = m_shareNamelineEdit->cursorPosition();
         m_shareNamelineEdit->setText(m_fileinfo->fileSharedName());
-        //m_shareNamelineEdit->setCursorPosition(cursorPos);
-        //connect(m_shareNamelineEdit, &QLineEdit::editingFinished, this, &ShareInfoFrame::handleShareNameChanged);
         if (m_fileinfo->isWritableShared()) {
             m_permissoComBox->setCurrentIndex(0);
         } else {
             m_permissoComBox->setCurrentIndex(1);
         }
-
         if (m_fileinfo->isAllowGuestShared()) {
             m_anonymityCombox->setCurrentIndex(1);
         } else {
@@ -477,6 +474,7 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
         }
     } else {
         m_shareCheckBox->setChecked(false);
+        showShareInfo(false);
         m_permissoComBox->setCurrentIndex(0);
         m_anonymityCombox->setCurrentIndex(0);
 
@@ -490,14 +488,12 @@ void ShareInfoFrame::updateShareInfo(const QString &filePath)
 
 void ShareInfoFrame::activateWidgets()
 {
-    //m_shareNamelineEdit->setEnabled(true);
     m_permissoComBox->setEnabled(true);
     m_anonymityCombox->setEnabled(true);
 }
 
 void ShareInfoFrame::disactivateWidgets()
 {
-//    m_shareNamelineEdit->setEnabled(false);
     m_permissoComBox->setEnabled(false);
     m_anonymityCombox->setEnabled(false);
 }
@@ -505,6 +501,20 @@ void ShareInfoFrame::disactivateWidgets()
 void ShareInfoFrame::setOrModifySharePassword()
 {
     dialogManager->showSharePasswordSettingDialog(this);
+}
+
+void ShareInfoFrame::showShareInfo(bool value)
+{
+    if(value){
+        m_sharePropertyBkgWidget->show();
+        m_shareNotes->show();
+        splitLineGray->show();
+    }
+    else{
+        m_sharePropertyBkgWidget->hide();
+        m_shareNotes->hide();
+        splitLineGray->hide();
+    }
 }
 
 void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
