@@ -47,6 +47,7 @@ void WorkspaceUnicastReceiver::connectService()
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getViewVisibleGeometry"), this, &WorkspaceUnicastReceiver::invokeGetViewVisibleGeometry);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getItemRect"), this, &WorkspaceUnicastReceiver::invokeGetItemRect);
     dpfInstance.eventUnicast().connect(topic("WorkspaceService::getViewFilter"), this, &WorkspaceUnicastReceiver::invokeGetViewFilter);
+    dpfInstance.eventUnicast().connect(topic("WorkspaceService::findMenuScene"), this, &WorkspaceUnicastReceiver::invokeFindMenuScene);
 }
 
 void WorkspaceUnicastReceiver::invokeAddScheme(const QString &scheme)
@@ -107,6 +108,11 @@ void WorkspaceUnicastReceiver::invokeSetFileViewFilterCallback(const quint64 win
 void WorkspaceUnicastReceiver::invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene)
 {
     WorkspaceHelper::instance()->setWorkspaceMenuScene(scheme, scene);
+}
+
+QString WorkspaceUnicastReceiver::invokeFindMenuScene(const QString &scheme)
+{
+    return WorkspaceHelper::instance()->findMenuScene(scheme);
 }
 
 void WorkspaceUnicastReceiver::invokeSetDefaultViewMode(const QString &scheme, const dfmbase::Global::ViewMode mode)

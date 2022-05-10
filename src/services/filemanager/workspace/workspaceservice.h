@@ -54,6 +54,7 @@ public:
     void setFileViewFilterCallback(const quint64 windowID, const QUrl &url, const Workspace::FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
     void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
+    QString findMenuScene(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode currentViewMode(const quint64 windowID);
     DFMBASE_NAMESPACE::Global::ViewMode getDefaultViewMode(const QString &scheme);
     bool registerFileViewRoutePrehandle(const QString &scheme, const Workspace::FileViewRoutePrehaldler &prehandler);

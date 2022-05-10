@@ -29,6 +29,7 @@ public slots:
     void invokeSetFileViewFilterCallback(const quint64 windowID, const QUrl &url,
                                          const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
     void invokeSetWorkspaceMenuScene(const QString &scheme, const QString &scene);
+    QString invokeFindMenuScene(const QString &scheme);
     void invokeSetDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
     DFMBASE_NAMESPACE::Global::ViewMode invokeGetDefaultViewMode(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode invokeCurrentViewMode(const quint64 windowID);

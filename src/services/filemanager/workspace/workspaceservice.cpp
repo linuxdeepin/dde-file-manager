@@ -149,6 +149,11 @@ void WorkspaceService::setDefaultViewMode(const QString &scheme, const dfmbase::
     dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme, mode);
 }
 
+QString WorkspaceService::findMenuScene(const QString &scheme)
+{
+    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, scheme).toString();
+}
+
 DFMBASE_NAMESPACE::Global::ViewMode WorkspaceService::currentViewMode(const quint64 windowID)
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).value<DFMBASE_NAMESPACE::Global::ViewMode>();

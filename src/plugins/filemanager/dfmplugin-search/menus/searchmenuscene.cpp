@@ -25,6 +25,7 @@
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "services/common/menu/menu_defines.h"
 #include "services/common/menu/menuservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
 
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -33,6 +34,7 @@
 
 #include <QProcess>
 
+DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DPSEARCH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -141,8 +143,15 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
         return false;
 
     QList<AbstractMenuScene *> currentScene;
-    if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
-        currentScene.append(workspaceScene);
+    const auto &parentUrl = SearchHelper::searchTargetUrl(d->currentDir);
+    if (Global::kFile == parentUrl.scheme()) {
+        if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
+            currentScene.append(workspaceScene);
+    } else {
+        auto parentSceneName = WorkspaceService::service()->findMenuScene(parentUrl.scheme());
+        if (auto scene = MenuService::service()->createScene(parentSceneName))
+            currentScene.append(scene);
+    }
 
     // the scene added by binding must be initializeed after 'defalut scene'.
     currentScene.append(subScene);
