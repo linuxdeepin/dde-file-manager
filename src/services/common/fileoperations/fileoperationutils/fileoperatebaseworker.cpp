@@ -100,7 +100,8 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
     // 发送错误处理 阻塞自己
-    emitErrorNotify(urlFrom, urlTo, error, AbstractJobHandler::errorToString(error) + errorMsg);
+    const QString &errorMsgAll = errorMsg.isEmpty() ? AbstractJobHandler::errorToString(error) : (AbstractJobHandler::errorToString(error) + ":" + errorMsg);
+    emitErrorNotify(urlFrom, urlTo, error, errorMsgAll);
     QMutex lock;
     handlingErrorCondition.wait(&lock);
     lock.unlock();

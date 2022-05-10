@@ -192,6 +192,7 @@ TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
 
 void TrashMenuScenePrivate::updateMenu(QMenu *menu)
 {
+    const QUrl &curDir = this->currentDir;
     auto actions = menu->actions();
     if (isEmptyArea) {
         QString sceneNameCurrent;
@@ -208,6 +209,9 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
 
             auto sceneName = actionScene->name();
             auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            if (actId == TrashActionId::kRestoreAll
+                || actId == TrashActionId::kEmptyTrash)
+                act->setEnabled(curDir == TrashHelper::rootUrl());
 
             if (sceneNameCurrent.isEmpty())
                 sceneNameCurrent = sceneName;
@@ -237,8 +241,10 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
             if (sceneName == kPropertyMenuSceneName)
                 menu->insertSeparator(act);
 
-            if(actId == dfmplugin_menu::ActionID::kCut)
-                act->setEnabled(true); // cut enable in trash
+            if (actId == TrashActionId::kRestore
+                || actId == dfmplugin_menu::ActionID::kDelete
+                || actId == dfmplugin_menu::ActionID::kCut)
+                act->setEnabled(curDir == TrashHelper::rootUrl());
         }
     }
 }

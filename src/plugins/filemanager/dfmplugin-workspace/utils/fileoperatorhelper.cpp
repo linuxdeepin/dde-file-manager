@@ -134,7 +134,6 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 
 void FileOperatorHelper::cutFiles(const FileView *view)
 {
-    // Todo(yanghao): 只支持回收站根目录下的文件执行剪切
     qInfo() << "cut shortcut key to clipboard";
     const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(view->rootUrl());
     if (!fileInfo || !fileInfo->isWritable())

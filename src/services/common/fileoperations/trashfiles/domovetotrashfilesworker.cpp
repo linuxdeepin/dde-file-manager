@@ -289,7 +289,9 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
             completeTargetFiles.append(QUrl::fromLocalFile(targetPath));
         }
 
-        if (action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kNoAction)
+        if (action == AbstractJobHandler::SupportAction::kSkipAction
+            || action == AbstractJobHandler::SupportAction::kNoAction
+            || action == AbstractJobHandler::SupportAction::kCancelAction)
             return true;
     }
 

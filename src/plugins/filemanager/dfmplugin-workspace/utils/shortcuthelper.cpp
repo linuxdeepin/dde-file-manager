@@ -54,7 +54,7 @@ void ShortcutHelper::registerShortcut()
 {
     registerAction(QKeySequence::Copy, false);
     registerAction(QKeySequence::Cut, false);
-    registerAction(QKeySequence::Paste);
+    registerAction(QKeySequence::Paste, false);
     registerAction(QKeySequence::Undo);
 }
 
