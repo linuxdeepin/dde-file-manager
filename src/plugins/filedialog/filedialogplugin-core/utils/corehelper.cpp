@@ -27,6 +27,9 @@
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/urlroute.h"
+
+#include <dfm-io/dfmio_utils.h>
 
 #include <DDialog>
 #include <DPlatformWindowHandle>
@@ -226,4 +229,16 @@ void CoreHelper::urlTransform(QList<QUrl> *urls)
             urls->replace(i, url);
         }
     }
+}
+
+bool CoreHelper::isVirtualUrl(const QUrl &url)
+{
+    bool isVirtual { UrlRoute::isVirtual(url.scheme()) };
+    bool isTransform { delegateServIns->isRegisterUrlTransform(url.scheme()) };
+    bool isRemovable { false };
+    if (isTransform) {
+        isRemovable = DFMIO::DFMUtils::fileIsRemovable(delegateServIns->urlTransform(url));
+        return isRemovable && isVirtual;
+    }
+    return isVirtual && !isTransform;
 }

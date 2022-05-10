@@ -169,6 +169,7 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
 
 FileDialog::~FileDialog()
 {
+    dpfInstance.eventDispatcher().unsubscribe(Workspace::EventType::kViewSelectionChanged);
 }
 
 void FileDialog::cd(const QUrl &url)
@@ -766,7 +767,7 @@ void FileDialog::updateAcceptButtonState()
 
     bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
     bool dialogShowMode = d->acceptMode;
-    bool isVirtual = UrlRoute::isVirtual(fileInfo->url().scheme());
+    bool isVirtual = CoreHelper::isVirtualUrl(fileInfo->url());
     if (dialogShowMode == QFileDialog::AcceptOpen) {
         auto size = WorkspaceService::service()->selectedUrls(internalWinId()).size();
         bool isSelectFiles = size > 0;
@@ -834,12 +835,13 @@ void FileDialog::handleUrlChanged(const QUrl &url)
 
 void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)
 {
-    Q_UNUSED(windowID)
     Q_UNUSED(selected)
     Q_UNUSED(deselected)
 
-    emit selectionFilesChanged();
-    updateAcceptButtonState();
+    if (windowID == internalWinId()) {
+        emit selectionFilesChanged();
+        updateAcceptButtonState();
+    }
 }
 
 void FileDialog::showEvent(QShowEvent *event)
