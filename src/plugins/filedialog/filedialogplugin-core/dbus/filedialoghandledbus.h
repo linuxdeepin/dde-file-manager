@@ -74,7 +74,7 @@ public slots:
     int options() const;
     bool testOption(int option) const;
 
-    WId winId() const;
+    qulonglong winId() const;
     void setWindowTitle(const QString &title);
     bool windowActive() const;
 

@@ -63,6 +63,7 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
         qCritical() << "Create window failed";
         abort();
     }
+    d_func()->dialog->hide();
 
     connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
     connect(d_func()->dialog, &FileDialog::rejected, this, &FileDialogHandle::rejected);

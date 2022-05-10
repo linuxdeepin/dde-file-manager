@@ -46,8 +46,11 @@ FileDialogHandleDBus::FileDialogHandleDBus(QWidget *parent)
 
 FileDialogHandleDBus::~FileDialogHandleDBus()
 {
-    if (widget())
-        widget()->close();
+    // app exit later when last windo closed
+    QTimer::singleShot(1000, [this]() {
+        if (widget())
+            widget()->close();
+    });
 }
 
 QString FileDialogHandleDBus::directory() const
@@ -149,7 +152,7 @@ bool FileDialogHandleDBus::testOption(int option) const
     return FileDialogHandle::testOption(static_cast<QFileDialog::Option>(option));
 }
 
-WId FileDialogHandleDBus::winId() const
+qulonglong FileDialogHandleDBus::winId() const
 {
     return widget()->winId();
 }
