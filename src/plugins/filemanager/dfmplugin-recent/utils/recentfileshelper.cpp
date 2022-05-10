@@ -24,11 +24,17 @@
 #include "events/recenteventcaller.h"
 
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/sysinfoutils.h"
+
+#include "services/common/delegate/delegateservice.h"
 
 #include <DDialog>
 #include <DRecentManager>
 
+#include <DDesktopServices>
+#include <QProcess>
+
+DFMBASE_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DPRECENT_USE_NAMESPACE
@@ -95,5 +101,27 @@ void RecentFilesHelper::removeRecent(const QList<QUrl> &urls)
         }
 
         DRecentManager::removeItems(list);
+    }
+}
+
+bool RecentFilesHelper::openFileLocation(const QUrl &url)
+{
+    if (SysInfoUtils::isRootUser()) {
+        QStringList urls { QStringList() << url.toLocalFile() };
+        // call by platform 'mips', but file-manager.sh not ready, todo:max
+        //        if (QProcess::startDetached("file-manager.sh", QStringList() << "--show-item" << urls << "--raw"))
+        //            return true;
+
+        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << urls << "--raw");
+    }
+
+    return DDesktopServices::showFileItem(delegateServIns->urlTransform(url));
+}
+
+void RecentFilesHelper::openFileLocation(const QList<QUrl> &urls)
+{
+    foreach (const QUrl &url, urls) {
+        if (!openFileLocation(url))
+            qWarning() << "failed to open: " << url.path();
     }
 }

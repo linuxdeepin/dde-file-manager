@@ -32,6 +32,7 @@
 DPRECENT_BEGIN_NAMESPACE
 namespace RecentActionID {
 static constexpr char kRemove[] { "remove" };
+static constexpr char kOpenFileLocation[] { "open-file-location" };
 }
 DPRECENT_END_NAMESPACE
 

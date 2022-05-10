@@ -112,9 +112,13 @@ bool RecentMenuScene::create(QMenu *parent)
     DSC_USE_NAMESPACE
 
     if (!d->isEmptyArea) {
-        auto act = parent->addAction(d->predicateName[RecentActionID::kRemove]);
-        act->setProperty(ActionPropertyKey::kActionID, RecentActionID::kRemove);
-        d->predicateAction[RecentActionID::kRemove] = act;
+        auto actRemove = parent->addAction(d->predicateName[RecentActionID::kRemove]);
+        actRemove->setProperty(ActionPropertyKey::kActionID, RecentActionID::kRemove);
+        d->predicateAction[RecentActionID::kRemove] = actRemove;
+
+        auto actOpenFileLocation = parent->addAction(d->predicateName[RecentActionID::kOpenFileLocation]);
+        actOpenFileLocation->setProperty(ActionPropertyKey::kActionID, RecentActionID::kOpenFileLocation);
+        d->predicateAction[RecentActionID::kOpenFileLocation] = actOpenFileLocation;
     }
 
     return AbstractMenuScene::create(parent);
@@ -133,6 +137,9 @@ bool RecentMenuScene::triggered(QAction *action)
     if (d->predicateAction.contains(actId)) {
         if (actId == RecentActionID::kRemove) {
             RecentFilesHelper::removeRecent(d->selectFiles);
+            return true;
+        } else if (actId == RecentActionID::kOpenFileLocation) {
+            RecentFilesHelper::openFileLocation(d->selectFiles);
             return true;
         }
         qWarning() << "action not found, id: " << actId;
@@ -157,6 +164,7 @@ RecentMenuScenePrivate::RecentMenuScenePrivate(RecentMenuScene *qq)
     : AbstractMenuScenePrivate(qq), q(qq)
 {
     predicateName[RecentActionID::kRemove] = tr("Remove");
+    predicateName[RecentActionID::kOpenFileLocation] = tr("Open file location");
 
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kPaste);
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
@@ -203,6 +211,8 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
     } else {
         QAction *removeAct = nullptr;
         QAction *copyAct = nullptr;
+        QAction *openWithAct = nullptr;
+        QAction *openFileLocationAct = nullptr;
         for (auto act : actions) {
             if (act->isSeparator())
                 continue;
@@ -224,14 +234,21 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
                 removeAct = act;
             } else if (p == dfmplugin_menu::ActionID::kCopy) {
                 copyAct = act;
+            } else if (p == dfmplugin_menu::ActionID::kOpenWith) {
+                openWithAct = act;
+            } else if (p == RecentActionID::kOpenFileLocation) {
+                openFileLocationAct = act;
             }
         }
 
         actions = menu->actions();
 
         if (removeAct) {
+            actions.removeOne(openFileLocationAct);
             actions.removeOne(removeAct);
             menu->addActions(actions);
+            menu->insertAction(openWithAct, openFileLocationAct);
+
             menu->insertAction(copyAct, removeAct);
             menu->removeAction(copyAct);
             menu->insertAction(removeAct, copyAct);

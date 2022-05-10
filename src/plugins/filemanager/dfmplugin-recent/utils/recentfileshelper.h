@@ -48,6 +48,10 @@ public:
                                               const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
     static void removeRecent(const QList<QUrl> &urls);
+
+    static bool openFileLocation(const QUrl &url);
+
+    static void openFileLocation(const QList<QUrl> &urls);
 };
 
 DPRECENT_END_NAMESPACE
