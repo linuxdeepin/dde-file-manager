@@ -46,11 +46,8 @@ FileDialogHandleDBus::FileDialogHandleDBus(QWidget *parent)
 
 FileDialogHandleDBus::~FileDialogHandleDBus()
 {
-    // app exit later when last windo closed
-    QTimer::singleShot(1000, [this]() {
-        if (widget())
-            widget()->close();
-    });
+    if (widget())
+        widget()->close();
 }
 
 QString FileDialogHandleDBus::directory() const

@@ -42,6 +42,7 @@ public:
     static bool askReplaceFile(QString fileName, QWidget *parent);
     static QStringList stripFilters(const QStringList &filters);
     static QString findExtensioName(const QString &fileName, const QStringList &newNameFilters, QMimeDatabase *db);
+    static void urlTransform(QList<QUrl> *urls);
 };
 
 DIALOGCORE_END_NAMESPACE

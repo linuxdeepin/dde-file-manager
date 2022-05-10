@@ -29,6 +29,7 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
+#include <QApplication>
 #include <QDBusConnection>
 #include <QMimeDatabase>
 #include <QUuid>
@@ -39,6 +40,13 @@ DFMBASE_USE_NAMESPACE
 FileDialogManagerDBus::FileDialogManagerDBus(QObject *parent)
     : QObject(parent)
 {
+    connect(qApp, &QApplication::lastWindowClosed, this, [this]() {
+        // NOTE: must run after ileDialogHandleDBus::destroyed
+        QTimer::singleShot(1000, this, [this]() {
+            if (curDialogObjectMap.size() == 0)
+                exit(0);
+        });
+    });
 }
 
 QDBusObjectPath FileDialogManagerDBus::createDialog(QString key)

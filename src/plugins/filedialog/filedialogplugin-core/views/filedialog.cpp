@@ -101,6 +101,7 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
 void FileDialogPrivate::handleOpenAcceptBtnClicked()
 {
     QList<QUrl> urls { WorkspaceService::service()->selectedUrls(q->internalWinId()) };
+    CoreHelper::urlTransform(&urls);
 
     switch (fileMode) {
     case QFileDialog::AnyFile:

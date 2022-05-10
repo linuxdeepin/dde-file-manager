@@ -29,6 +29,7 @@
 
 #include "services/common/menu/menuservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -60,6 +61,7 @@ void Recent::initialize()
 bool Recent::start()
 {
     addFileOperations();
+    addDelegateSettings();
     return true;
 }
 
@@ -162,5 +164,14 @@ void Recent::addFileOperations()
     fileOpeationsHandle->writeUrlsToClipboard = &RecentFilesHelper::writeUrlToClipboardHandle;
 
     RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
+}
+
+void Recent::addDelegateSettings()
+{
+    DelegateService::service()->registerUrlTransform(Global::kRecent, [](const QUrl &in) -> QUrl {
+        auto out { in };
+        out.setScheme(Global::kFile);
+        return out;
+    });
 }
 DPRECENT_END_NAMESPACE

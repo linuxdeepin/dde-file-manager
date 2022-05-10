@@ -45,6 +45,7 @@ private slots:
 private:
     void installToSideBar();
     void addFileOperations();
+    void addDelegateSettings();
     void addRecentItem();
     void removeRecentItem();
 };

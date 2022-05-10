@@ -152,6 +152,7 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    a.setQuitOnLastWindowClosed(false);
     // TODO(zhangs): installTranslator
 
     dpfInstance.initialize();
