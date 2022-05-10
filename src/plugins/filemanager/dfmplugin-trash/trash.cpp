@@ -26,6 +26,7 @@
 #include "utils/trashfilehelper.h"
 #include "menus/trashmenuscene.h"
 
+#include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/menu/menuservice.h"
 #include "dfm-base/base/urlroute.h"
@@ -46,6 +47,7 @@ void Trash::initialize()
     InfoFactory::regClass<TrashFileInfo>(TrashHelper::scheme());
     WatcherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
+    delegateServIns->registerUrlTransform(TrashHelper::scheme(), TrashHelper::toLocalFile);
     DSC_NAMESPACE::MenuService::service()->registerScene(TrashMenuCreator::name(), new TrashMenuCreator());
 
     connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
