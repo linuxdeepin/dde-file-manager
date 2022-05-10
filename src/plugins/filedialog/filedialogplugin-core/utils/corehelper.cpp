@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "corehelper.h"
+#include "views/filedialog.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 
@@ -62,13 +63,13 @@ static bool pwPluginVersionGreaterThen(const QString &v)
 void CoreHelper::delayInvokeProxy(std::function<void()> func, quint64 winID, QObject *parent)
 {
     DSB_FM_USE_NAMESPACE
-    auto window = WindowsService::service()->findWindowById(winID);
+    auto window = qobject_cast<FileDialog *>(WindowsService::service()->findWindowById(winID));
     Q_ASSERT(window);
 
     if (window->workSpace()) {
         func();
     } else {
-        QObject::connect(window, &FileManagerWindow::workspaceInstallFinished, parent, [func]() {
+        QObject::connect(window, &FileDialog::initialized, parent, [func]() {
             func();
         });
     }

@@ -828,6 +828,7 @@ void FileDialog::handleUrlChanged(const QUrl &url)
         d->acceptCanOpenOnSave = false;
         onCurrentInputNameChanged();
     }
+    emit initialized();
 }
 
 void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)

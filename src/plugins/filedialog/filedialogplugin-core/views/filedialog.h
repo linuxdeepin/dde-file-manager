@@ -111,6 +111,7 @@ Q_SIGNALS:
     void rejected();
     void selectionFilesChanged();
     void selectedNameFilterChanged();
+    void initialized();
 
 public Q_SLOTS:
     void accept();
