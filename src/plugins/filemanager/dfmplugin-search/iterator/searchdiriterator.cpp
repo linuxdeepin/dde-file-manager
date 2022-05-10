@@ -54,18 +54,22 @@ void SearchDirIteratorPrivate::initConnect()
 
 void SearchDirIteratorPrivate::doSearch()
 {
-    auto searchUrl = SearchHelper::searchTargetUrl(fileUrl);
-    auto regInfos = SearchService::service()->regInfos();
-    if (UrlRoute::isVirtual(searchUrl) && regInfos.contains(searchUrl.scheme())) {
-        auto path = searchUrl.path();
-        auto regPath = regInfos[searchUrl.scheme()];
-        if (regPath.endsWith('/') && !path.isEmpty())
-            regPath = regPath.left(regPath.length() - 1);
-        searchUrl = QUrl::fromLocalFile(regPath + path);
+    auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
+    const auto &info = SearchService::service()->findCustomSearchInfo(targetUrl.scheme());
+
+    if (info.isDisableSearch)
+        return;
+
+    if (!info.redirectedPath.isEmpty()) {
+        auto targetPath = targetUrl.path();
+        auto redirectedPath = info.redirectedPath;
+        if (redirectedPath.endsWith('/') && !targetPath.isEmpty())
+            redirectedPath = redirectedPath.left(redirectedPath.length() - 1);
+        targetUrl = QUrl::fromLocalFile(redirectedPath + targetPath);
     }
 
     taskId = SearchHelper::searchTaskId(fileUrl);
-    SearchService::service()->search(taskId, searchUrl, SearchHelper::searchKeyword(fileUrl));
+    SearchService::service()->search(taskId, targetUrl, SearchHelper::searchKeyword(fileUrl));
 }
 
 void SearchDirIteratorPrivate::onMatched(const QString &id)

@@ -87,9 +87,9 @@ void Search::onWindowOpened(quint64 windId)
     Q_ASSERT_X(window, "Search", "Cannot find window by id");
 
     if (window->workSpace())
-        regSearchPlugin();
+        regSearchToWorkspace();
     else
-        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Search::regSearchPlugin, Qt::DirectConnection);
+        connect(window, &FileManagerWindow::workspaceInstallFinished, this, &Search::regSearchToWorkspace, Qt::DirectConnection);
 
     if (window->titleBar())
         regSearchCrumbToTitleBar();
@@ -99,25 +99,14 @@ void Search::onWindowOpened(quint64 windId)
 
 void Search::regSearchCrumbToTitleBar()
 {
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        TitleBar::CustomCrumbInfo info;
-        info.scheme = SearchHelper::scheme();
-        info.keepAddressBar = true;
-        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == SearchHelper::scheme(); };
-        TitleBarService::service()->addCustomCrumbar(info);
-    });
+    TitleBar::CustomCrumbInfo info;
+    info.scheme = SearchHelper::scheme();
+    info.keepAddressBar = true;
+    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == SearchHelper::scheme(); };
+    TitleBarService::service()->addCustomCrumbar(info);
 }
 
-void Search::regSearchPlugin()
-{
-    static std::once_flag flag;
-    std::call_once(flag, [this]() {
-        regSearchToWorkspaceService();
-    });
-}
-
-void Search::regSearchToWorkspaceService()
+void Search::regSearchToWorkspace()
 {
     WorkspaceService::service()->addScheme(SearchHelper::scheme());
     WorkspaceService::service()->setDefaultViewMode(SearchHelper::scheme(), Global::ViewMode::kListMode);

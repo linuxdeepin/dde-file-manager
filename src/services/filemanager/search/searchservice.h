@@ -22,6 +22,7 @@
 #define SEARCHSERVICE_H
 
 #include "dfm_filemanager_service_global.h"
+#include "search_defines.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -42,11 +43,12 @@ public:
 
     static SearchService *service();
 
-    bool regSearchPath(const QString &scheme, const QString &path, QString *errMsg = nullptr);
-    QHash<QString, QString> regInfos();
     bool search(const QString &taskId, const QUrl &url, const QString &keyword);
     QList<QUrl> matchedResults(const QString &taskId);
     void stop(const QString &taskId);
+
+    bool regCustomSearchInfo(const Search::CustomSearchInfo &info);
+    Search::CustomSearchInfo findCustomSearchInfo(const QString &scheme);
 
 signals:
     void matched(const QString &taskId);

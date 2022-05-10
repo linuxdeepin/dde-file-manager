@@ -22,10 +22,13 @@
 #include "searchfilewatcher_p.h"
 #include "utils/searchhelper.h"
 
+#include "services/filemanager/search/utils/searchhelper.h"
+
 #include "dfm-base/base/schemefactory.h"
 
 #include <algorithm>
 
+DSB_FM_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
 SearchFileWatcherPrivate::SearchFileWatcherPrivate(const QUrl &fileUrl, SearchFileWatcher *qq)
@@ -112,10 +115,10 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
 {
     auto targetUrl = SearchHelper::searchTargetUrl(url());
     if (toUrl.path().startsWith(targetUrl.path())) {
-        auto keyword = SearchHelper::searchKeyword(url());
+        auto keyword = RegularExpression::checkWildcardAndToRegularExpression(SearchHelper::searchKeyword(url()));
         QRegularExpression regexp(keyword, QRegularExpression::CaseInsensitiveOption);
         const auto &info = InfoFactory::create<AbstractFileInfo>(toUrl);
-        auto match = regexp.match(info->fileName());
+        auto match = regexp.match(info->fileDisplayName());
 
         if (match.hasMatch()) {
             addWatcher(toUrl);

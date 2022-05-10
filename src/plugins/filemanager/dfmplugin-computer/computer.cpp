@@ -147,10 +147,10 @@ void Computer::regComputerCrumbToTitleBar()
 
 void Computer::regComputerToSearch()
 {
-    static std::once_flag flag;
-    std::call_once(flag, []() {
-        SearchService::service()->regSearchPath(ComputerUtils::scheme(), "/");
-    });
+    Search::CustomSearchInfo info;
+    info.scheme = ComputerUtils::scheme();
+    info.redirectedPath = "/";
+    SearchService::service()->regCustomSearchInfo(info);
 }
 
 DPCOMPUTER_END_NAMESPACE

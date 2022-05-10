@@ -124,8 +124,7 @@ void IteratorSearcher::doSearch()
                     searchPathList << fileUrl;
             }
 
-            // fileName -> fileDisplayName
-            QRegularExpressionMatch match = regex.match(info->fileName());
+            QRegularExpressionMatch match = regex.match(info->fileDisplayName());
             if (match.hasMatch()) {
                 const auto &fileUrl = info->url();
                 {

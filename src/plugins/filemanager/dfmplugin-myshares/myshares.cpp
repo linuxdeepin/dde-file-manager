@@ -34,6 +34,7 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/filemanager/search/searchservice.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/usershare/usershareservice.h"
 #include "services/common/fileoperations/fileoperations_defines.h"
@@ -104,6 +105,11 @@ void MyShares::onWindowOpened(quint64 winId)
         addToSidebar();
     else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addToSidebar(); }, Qt::DirectConnection);
+
+    if (window->titleBar())
+        regMyShareToSearch();
+    else
+        connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regMyShareToSearch(); }, Qt::DirectConnection);
 }
 
 void MyShares::onWindowClosed(quint64 winId)
@@ -126,6 +132,15 @@ void MyShares::addToSidebar()
     shareEntry.url = ShareUtils::rootUrl();
     shareEntry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
     SideBarService::service()->addItem(shareEntry);
+}
+
+void MyShares::regMyShareToSearch()
+{
+    DSB_FM_USE_NAMESPACE
+    Search::CustomSearchInfo info;
+    info.scheme = ShareUtils::scheme();
+    info.isDisableSearch = true;
+    SearchService::service()->regCustomSearchInfo(info);
 }
 
 void MyShares::bindSubScene(const QString &scene)

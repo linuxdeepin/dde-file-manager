@@ -28,6 +28,7 @@
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
+#include "services/filemanager/search/searchservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -200,6 +201,16 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         qInfo() << "jump :" << text;
         TitleBarEventCaller::sendCd(sender, url);
     } else {
+        auto &ctx = dpfInstance.serviceContext();
+        auto windowService = ctx.service<WindowsService>(WindowsService::name());
+        auto winId = windowService->findWindowId(sender);
+        auto window = windowService->findWindowById(winId);
+        auto searchInfo = SearchService::service()->findCustomSearchInfo(window->currentUrl().scheme());
+        if (searchInfo.isDisableSearch) {
+            qInfo() << "search : curent directory enable to search! " << window->currentUrl();
+            return;
+        }
+
         search = true;
         qInfo() << "search :" << text;
         TitleBarEventCaller::sendSearch(sender, text);

@@ -55,35 +55,6 @@ SearchService *SearchService::service()
     return ctx.service<DSB_FM_NAMESPACE::SearchService>(DSB_FM_NAMESPACE::SearchService::name());
 }
 
-bool SearchService::regSearchPath(const QString &scheme, const QString &path, QString *errMsg)
-{
-    if (!UrlRoute::hasScheme(scheme)) {
-        if (errMsg)
-            *errMsg = QString("the scheme \"%1\" has not register!").arg(scheme);
-        return false;
-    }
-
-    if (!QFile::exists(path)) {
-        if (errMsg)
-            *errMsg = QString("the path \"%1\" is not exists!").arg(path);
-        return false;
-    }
-
-    if (d->registerInfos.contains(scheme)) {
-        if (errMsg)
-            *errMsg = QString("the scheme \"%1\" already registered!").arg(scheme);
-        return false;
-    }
-
-    d->registerInfos.insert(scheme, path);
-    return true;
-}
-
-QHash<QString, QString> SearchService::regInfos()
-{
-    return d->registerInfos;
-}
-
 bool SearchService::search(const QString &taskId, const QUrl &url, const QString &keyword)
 {
     if (d->mainController)
@@ -106,6 +77,35 @@ void SearchService::stop(const QString &taskId)
         d->mainController->stop(taskId);
 
     emit searchStoped(taskId);
+}
+
+bool SearchService::regCustomSearchInfo(const Search::CustomSearchInfo &info)
+{
+    if (info.scheme.isEmpty() || !UrlRoute::hasScheme(info.scheme)) {
+        qWarning() << QString("the scheme \"%1\" has not register!").arg(info.scheme);
+        return false;
+    }
+
+    if (!info.redirectedPath.isEmpty() && !QFile::exists(info.redirectedPath)) {
+        qWarning() << QString("the redirectedPath \"%1\" is not exists!").arg(info.redirectedPath);
+        return false;
+    }
+
+    if (d->customSearchInfoHash.contains(info.scheme)) {
+        qWarning() << QString("the scheme \"%1\" has already registered!").arg(info.scheme);
+        return false;
+    }
+
+    d->customSearchInfoHash.insert(info.scheme, info);
+    return true;
+}
+
+Search::CustomSearchInfo SearchService::findCustomSearchInfo(const QString &scheme)
+{
+    if (!d->customSearchInfoHash.contains(scheme))
+        return {};
+
+    return d->customSearchInfoHash[scheme];
 }
 
 SearchService::SearchService(QObject *parent)

@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuzhangjian<liuzhangjian@uniontech.com>
+ * Author:     liuzhangjian<liqianga@uniontech.com>
  *
- * Maintainer: liuzhangjian<liuzhangjian@uniontech.com>
+ * Maintainer: liuzhangjian<liqianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,30 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHSERVICE_P_H
-#define SEARCHSERVICE_P_H
+#ifndef SEARCH_DEFINES_H
+#define SEARCH_DEFINES_H
 
-#include "search/searchservice.h"
-#include "search/maincontroller/maincontroller.h"
+#include "dfm_filemanager_service_global.h"
 
-#include <QFuture>
+#include <QObject>
 
 DSB_FM_BEGIN_NAMESPACE
 
-class SearchServicePrivate : public QObject
+namespace Search {
+
+struct CustomSearchInfo
 {
-    Q_OBJECT
-    friend class SearchService;
-
-public:
-    explicit SearchServicePrivate(SearchService *parent);
-    ~SearchServicePrivate();
-
-private:
-    MainController *mainController = nullptr;
-    QHash<QString, Search::CustomSearchInfo> customSearchInfoHash;
+    QString scheme;
+    QString redirectedPath;
+    bool isDisableSearch { false };
 };
+
+}
 
 DSB_FM_END_NAMESPACE
 
-#endif   // SEARCHSERVICE_P_H
+Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Search::CustomSearchInfo);
+
+#endif   // SEARCH_DEFINES_H
