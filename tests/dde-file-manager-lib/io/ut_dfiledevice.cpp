@@ -19,14 +19,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtest/gtest.h>
-#include <QDateTime>
-
 #include "dfiledevice.h"
 #include "dfmglobal.h"
 #include "testhelper.h"
+#include "stubext.h"
+
+#include <DDialog>
+
 #include <QThread>
 #include <QProcess>
+#include <QDateTime>
+
+#include <gtest/gtest.h>
 
 using namespace testing;
 DFM_USE_NAMESPACE
@@ -68,6 +72,12 @@ public:
 
 #ifndef __arm__ // arm崩溃 暂时干掉
 TEST_F(DFileDeviceTest,can_fileUrl) {
+    int(*stub_exec)() = []()->int{
+        return 0;
+    };
+    stub_ext::StubExt stu;
+    stu.set(VADDR(Dtk::Widget::DDialog, exec), stub_exec);
+
     TestHelper::runInLoop([](){});
     DUrl url;
     url.fromLocalFile("~/");
