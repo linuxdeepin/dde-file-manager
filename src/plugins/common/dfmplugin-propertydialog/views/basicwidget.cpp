@@ -100,8 +100,6 @@ void BasicWidget::initUI()
 
     hideFile = new QCheckBox(frameMain);
     hideFile->setText(tr("Hide this file"));
-
-    connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
 }
 
 void BasicWidget::basicExpand(const QUrl &url)
@@ -209,6 +207,11 @@ void BasicWidget::basicFill(const QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     if (info.isNull())
         return;
+
+    if (info->isHidden())
+        hideFile->setChecked(true);
+
+    connect(hideFile, &QCheckBox::stateChanged, this, &BasicWidget::slotFileHide);
 
     if (filePosition && filePosition->RightValue().isEmpty())
         filePosition->setRightValue(url.path(), Qt::ElideMiddle, Qt::AlignVCenter, true);
