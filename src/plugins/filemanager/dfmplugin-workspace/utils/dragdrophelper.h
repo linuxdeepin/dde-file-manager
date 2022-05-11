@@ -48,7 +48,7 @@ public:
 
 private:
     bool handleDFileDrag(const QMimeData *data, const QUrl &url);
-    void handleDropEvent(QDropEvent *event);
+    void handleDropEvent(QDropEvent *event, bool *fall = nullptr);
     QSharedPointer<DFMBASE_NAMESPACE::AbstractFileInfo> fileInfoAtPos(const QPoint &pos);
 
     bool isSameUser(const QMimeData *data);

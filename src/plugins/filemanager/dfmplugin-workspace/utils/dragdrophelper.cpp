@@ -61,20 +61,11 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
         }
     }
 
-    Qt::DropAction action = event->dropAction();
-    if (WorkspaceEventSequence::instance()->doCheckDragTarget(currentDragUrls, view->rootUrl(), &action)) {
-        switch (action) {
-        case Qt::IgnoreAction: {
-            event->ignore();
-            return true;
-        }
-        default:
-            event->setDropAction(action);
-        }
-    }
-
-    handleDropEvent(event);
+    bool fall = true;
+    handleDropEvent(event, &fall);
     qInfo() << event << event->dropAction();
+    if (!fall)
+        return true;
 
     if (event->mimeData()->hasFormat("XdndDirectSave0")) {
         event->setDropAction(Qt::CopyAction);
@@ -90,7 +81,11 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
     AbstractFileInfoPointer hoverFileInfo = fileInfoAtPos(event->pos());
 
     if (hoverFileInfo) {
-        handleDropEvent(event);
+        bool fall = true;
+        handleDropEvent(event, &fall);
+        qInfo() << event << event->dropAction();
+        if (!fall)
+            return true;
 
         if (!hoverFileInfo->canDrop()
             || !hoverFileInfo->supportedDropActions().testFlag(event->dropAction())
@@ -120,7 +115,11 @@ bool DragDropHelper::dragLeave(QDragLeaveEvent *event)
 
 bool DragDropHelper::drop(QDropEvent *event)
 {
-    handleDropEvent(event);
+    bool fall = true;
+    handleDropEvent(event, &fall);
+    qInfo() << event << event->dropAction();
+    if (!fall)
+        return true;
 
     if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
         event->setDropAction(Qt::CopyAction);
@@ -182,11 +181,32 @@ bool DragDropHelper::handleDFileDrag(const QMimeData *data, const QUrl &url)
     return false;
 }
 
-void DragDropHelper::handleDropEvent(QDropEvent *event)
+void DragDropHelper::handleDropEvent(QDropEvent *event, bool *fall)
 {
-    bool sameUser = isSameUser(event->mimeData());
+    const bool sameUser = isSameUser(event->mimeData());
+
+    auto checkEventCustom = [this, sameUser](QDropEvent *event, const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action) {
+        if (WorkspaceEventSequence::instance()->doCheckDragTarget(urls, urlTo, action)) {
+            switch (*action) {
+            case Qt::IgnoreAction: {
+                event->ignore();
+                return true;
+            }
+            default:
+                event->setDropAction(checkAction(*action, sameUser));
+            }
+        }
+        return false;
+    };
+
     if (event->source() == view && !WindowUtils::keyCtrlIsPressed()) {
-        event->setDropAction(checkAction(Qt::MoveAction, sameUser));
+        Qt::DropAction defaultAction = Qt::MoveAction;
+        if (checkEventCustom(event, currentDragUrls, view->rootUrl(), &defaultAction)) {
+            *fall = false;
+            return;
+        } else {
+            event->setDropAction(checkAction(defaultAction, sameUser));
+        }
     } else {
         if (currentDragUrls.isEmpty())
             return;
@@ -198,9 +218,14 @@ void DragDropHelper::handleDropEvent(QDropEvent *event)
         Qt::DropAction defaultAction = Qt::CopyAction;
         if (WindowUtils::keyAltIsPressed()) {
             defaultAction = Qt::MoveAction;
-        } else if (!WindowUtils::keyCtrlIsPressed()) {
-            if (FileUtils::isSameDevice(currentDragUrls.first(), info->url()))
-                defaultAction = Qt::MoveAction;
+        } else if (!WindowUtils::keyCtrlIsPressed()
+                   && FileUtils::isSameDevice(currentDragUrls.first(), info->url())) {
+            defaultAction = Qt::MoveAction;
+        }
+
+        if (checkEventCustom(event, currentDragUrls, view->rootUrl(), &defaultAction)) {
+            *fall = false;
+            return;
         }
 
         if (event->possibleActions().testFlag(defaultAction))

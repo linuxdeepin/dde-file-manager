@@ -185,6 +185,8 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
 {
     if (urls.isEmpty())
         return false;
+    if (!urlTo.isValid())
+        return false;
     if (!action)
         return false;
 
@@ -192,7 +194,10 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     if (urlFrom.scheme() == Global::kTrash && urlTo.scheme() == Global::kTrash) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlFrom.scheme() == Global::kTrash) {
+    } else if (urlTo.scheme() == Global::kTrash && urlTo != TrashHelper::rootUrl()) {
+        *action = Qt::IgnoreAction;
+        return true;
+    } else if (urlFrom.scheme() == Global::kTrash || urlTo.scheme() == Global::kTrash) {
         *action = Qt::MoveAction;
         return true;
     }

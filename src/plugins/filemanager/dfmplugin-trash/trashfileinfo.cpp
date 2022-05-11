@@ -165,6 +165,11 @@ bool TrashFileInfo::isDir() const
     return AbstractFileInfo::isDir();
 }
 
+bool TrashFileInfo::canDrop() const
+{
+    return false;
+}
+
 void TrashFileInfoPrivate::updateInfo()
 {
     const QString &filePath = proxy->absoluteFilePath();
