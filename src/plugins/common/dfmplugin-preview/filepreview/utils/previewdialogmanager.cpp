@@ -53,7 +53,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         if (info && (info->url().isLocalFile() || info->exists())) {
             //判断链接文件的源文件是否存在
             if (info->isSymLink()) {
-                QUrl targetUrl = UrlRoute::pathToReal(info->symLinkTarget());
+                QUrl targetUrl = QUrl::fromLocalFile(info->symLinkTarget());
                 if (!targetUrl.isValid()) {
                     hasInvalidSymlink = true;
                     continue;
@@ -71,6 +71,7 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
     //链接文件源文件不存在或找不到的情况，弹错误提示窗
     if (hasInvalidSymlink) {
         DialogManager::instance()->showErrorDialog(tr("Unable to find the original file"), QString());
+        return;
     }
 
     if (filePreviewDialog) {
