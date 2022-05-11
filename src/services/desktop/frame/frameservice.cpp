@@ -44,6 +44,7 @@ bool FrameServicePrivate::setProxy(QObject *ptr)
     // all the signals are non interruptible, so using Qt::DirectConnection.
     connect(proxy, &AbstractDesktopFrame::windowAboutToBeBuilded, q, &FrameService::windowAboutToBeBuilded, Qt::DirectConnection);
     connect(proxy, &AbstractDesktopFrame::windowBuilded, q, &FrameService::windowBuilded, Qt::DirectConnection);
+    connect(proxy, &AbstractDesktopFrame::windowShowed, q, &FrameService::windowShowed, Qt::DirectConnection);
     connect(proxy, &AbstractDesktopFrame::geometryChanged, q, &FrameService::geometryChanged, Qt::DirectConnection);
     connect(proxy, &AbstractDesktopFrame::availableGeometryChanged, q, &FrameService::availableGeometryChanged, Qt::DirectConnection);
 

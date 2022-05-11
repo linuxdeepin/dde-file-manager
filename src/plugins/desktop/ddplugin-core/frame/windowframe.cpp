@@ -124,7 +124,8 @@ void WindowFrame::layoutChildren()
             return var1.toDouble() < var2.toDouble();
         });
 
-        for (int i = 1; i < subWidgets.size(); ++i) {
+        // must stack from top to bottom
+        for (int i = subWidgets.size() - 1; i > 0; --i) {
             QWidget *top = subWidgets.at(i);
             QWidget *bottom = subWidgets.at(i - 1);
             bottom->stackUnder(top);
