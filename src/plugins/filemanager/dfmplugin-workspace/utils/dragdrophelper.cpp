@@ -169,8 +169,6 @@ bool DragDropHelper::drop(QDropEvent *event)
         }
     }
 
-    // TODO(liuyangming): handle dfiledrag
-
     return false;
 }
 
@@ -201,7 +199,6 @@ void DragDropHelper::handleDropEvent(QDropEvent *event)
         if (WindowUtils::keyAltIsPressed()) {
             defaultAction = Qt::MoveAction;
         } else if (!WindowUtils::keyCtrlIsPressed()) {
-            // TODO(liuyangming): check same device
             if (FileUtils::isSameDevice(currentDragUrls.first(), info->url()))
                 defaultAction = Qt::MoveAction;
         }
@@ -241,7 +238,7 @@ bool DragDropHelper::isSameUser(const QMimeData *data)
 {
     if (data->hasFormat(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey)) {
         QString userID = data->data(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey);
-        return userID == SysInfoUtils::getUserId();
+        return userID == QString::number(SysInfoUtils::getUserId());
     }
 
     return false;
