@@ -536,14 +536,14 @@ TEST_F(DFileSeviceTest, start_deleteFiles)
     stl.set((QVariant(DFMEventDispatcher::*)(const QSharedPointer<DFMEvent> &, DFMAbstractEventHandler *))\
             ADDR(DFMEventDispatcher, processEventWithEventLoop), processEventWithEventLooplamda);
 
-    EXPECT_FALSE(service->deleteFiles(nullptr, DUrlList(), true));
+    EXPECT_FALSE(service->deleteFiles(nullptr, DUrlList(), false));
 
-    EXPECT_FALSE(service->deleteFiles(nullptr, DUrlList() << url, true));
+    EXPECT_FALSE(service->deleteFiles(nullptr, DUrlList() << url, false));
     bool (*isSystemPathlamda)(QString) = [](QString) {return true;};
     stl.set(ADDR(PathManager, isSystemPath), isSystemPathlamda);
     void (*showDeleteSystemPathWarnDialoglamda)(quint64) = [](quint64) {};
     stl.set(ADDR(DialogManager, showDeleteSystemPathWarnDialog), showDeleteSystemPathWarnDialoglamda);
-    EXPECT_FALSE(service->deleteFiles(nullptr, DUrlList() << url, true));
+    EXPECT_FALSE(service->deleteFiles(nullptr, DUrlList() << url, false));
 
     DUrlList rmd;
     EXPECT_TRUE(service->moveToTrash(nullptr, DUrlList()).isEmpty());

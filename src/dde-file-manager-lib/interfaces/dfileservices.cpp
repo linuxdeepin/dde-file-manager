@@ -271,18 +271,10 @@ bool DFileService::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant *resu
 
             const DAbstractFileInfoPointer &f = createFileInfo(this, durl);
             if (f && f->exists()) {
-                // 如果传入的 event 中 silent 为 true，就不再弹框询问是否删除
-                auto delEvent = dynamic_cast<DFMDeleteEvent *>(event.data());
-                bool deleteFileSilently = delEvent && delEvent->silent();
-                if (deleteFileSilently || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(nullptr, event->fileUrlList())) == DDialog::Accepted) {
-                    // 这里已经确认删除了，同次调用走静默删除，避免二次弹窗
-                    if (delEvent)
-                        delEvent->setProperty(QT_STRINGIFY(DFMDeleteEvent::silent), true);
-                    result = CALL_CONTROLLER(deleteFiles);
-                    if (result.toBool()) {
-                        for (const DUrl &r : event->fileUrlList()) {
-                            emit fileDeleted(r);
-                        }
+                result = CALL_CONTROLLER(deleteFiles);
+                if (result.toBool()) {
+                    for (const DUrl &r : event->fileUrlList()) {
+                        emit fileDeleted(r);
                     }
                 }
 
@@ -612,12 +604,11 @@ bool DFileService::deleteFiles(const QObject *sender, const DUrlList &list, bool
         }
     }
 
-//    if (!confirmationDialog || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(sender, list)) == DDialog::Accepted) {
-//    if (!confirmationDialog ) {
-    return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force)).toBool();
-//    }
+    if (!confirmationDialog || DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog, DFMUrlListBaseEvent(sender, list)) == DDialog::Accepted) {
+        return DFMEventDispatcher::instance()->processEventWithEventLoop(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force)).toBool();
+    }
 
-//    return false;
+    return false;
 }
 
 DUrlList DFileService::moveToTrash(const QObject *sender, const DUrlList &list) const

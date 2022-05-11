@@ -484,7 +484,10 @@ void AppController::actionCompleteDeletion(const QSharedPointer<DFMUrlListBaseEv
 
     bool slient { false };
     bool force { false };
-    DFMEventDispatcher::instance()->processEventAsync(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force));
+    if (DThreadUtil::runInMainThread(dialogManager, &DialogManager::showDeleteFilesClearTrashDialog,
+                                     DFMUrlListBaseEvent(sender, list)) == DDialog::Accepted) {
+        DFMEventDispatcher::instance()->processEventAsync(dMakeEventPointer<DFMDeleteEvent>(sender, list, slient, force));
+    }
 }
 
 void AppController::actionCreateSymlink(const QSharedPointer<DFMUrlBaseEvent> &event)

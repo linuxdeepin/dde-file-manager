@@ -459,7 +459,7 @@ bool VaultController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
 
     const_cast<VaultController *>(this)->setVauleCurrentPageMark(VaultPageMark::DELETEFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList, true, event->silent());
+    bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList, false, event->silent());
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
     }
@@ -477,7 +477,7 @@ DUrlList VaultController::moveToTrash(const QSharedPointer<DFMMoveToTrashEvent> 
     const_cast<VaultController *>(this)->slotFinishedCopyFileTotalSize();
     const_cast<VaultController *>(this)->setVauleCurrentPageMark(VaultPageMark::DELETEFILEPAGE);
     DUrlList urlList = vaultToLocalUrls(event->urlList());
-    bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList);
+    bool bDeletedSuccess = DFileService::instance()->deleteFiles(event->sender(), urlList, true, event->silent());
     if (bDeletedSuccess) {
         const_cast<VaultController *>(this)->updateFileInfo(urlList);
     }
