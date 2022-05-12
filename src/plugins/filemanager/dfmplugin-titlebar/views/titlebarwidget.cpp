@@ -136,6 +136,9 @@ void TitleBarWidget::initConnect()
     connect(this, &TitleBarWidget::currentUrlChanged, crumbBar, &CrumbBar::onUrlChanged);
     connect(this, &TitleBarWidget::currentUrlChanged, curNavWidget, &NavWidget::onUrlChanged);
     connect(crumbBar, &CrumbBar::showAddressBarText, addressBar, [this](const QString &text) {
+        crumbBar->hide();
+        addressBar->show();
+        addressBar->setFocus();
         addressBar->setText(text);
         searchBarActivated();
     });

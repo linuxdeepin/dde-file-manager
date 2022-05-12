@@ -52,7 +52,6 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
     }
 
     SearchEventCaller::sendDoSearch(winId, searchUrl);
-    SearchEventCaller::sendStartSpinner(winId);
 }
 
 void SearchEventReceiver::handleStopSearch(quint64 winId)

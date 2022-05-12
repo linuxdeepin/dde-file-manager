@@ -39,8 +39,8 @@ public:
 
         QVariantHash tmpParams = params;
         if (!params.contains(DSC_NAMESPACE::MenuParamKey::kIsSystemPathIncluded)
-            || !params.contains(DSC_NAMESPACE::MenuParamKey::kIsSystemPathIncluded)
-            || !params.contains(DSC_NAMESPACE::MenuParamKey::kIsSystemPathIncluded)) {
+            || !params.contains(DSC_NAMESPACE::MenuParamKey::kIsDDEDesktopFileIncluded)
+            || !params.contains(DSC_NAMESPACE::MenuParamKey::kIsFocusOnDDEDesktopFile)) {
 
             bool isFocusOnDDEDesktopFile = (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(selectUrls.first())
                                             || DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(selectUrls.first())

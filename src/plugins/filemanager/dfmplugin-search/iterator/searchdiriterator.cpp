@@ -69,6 +69,7 @@ void SearchDirIteratorPrivate::doSearch()
     }
 
     taskId = SearchHelper::searchTaskId(fileUrl);
+    SearchEventCaller::sendStartSpinner(taskId.toULongLong());
     SearchService::service()->search(taskId, targetUrl, SearchHelper::searchKeyword(fileUrl));
 }
 
