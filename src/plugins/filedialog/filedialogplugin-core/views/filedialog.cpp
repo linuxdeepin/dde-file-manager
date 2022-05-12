@@ -31,6 +31,7 @@
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <DDialog>
@@ -149,6 +150,12 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
     }
 }
 
+void FileDialogPrivate::handleOpenNewWindow(const QUrl &url)
+{
+    if (url.isValid() && !url.isEmpty() && !UniversalUtils::urlEquals(url, q->currentUrl()))
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, q->internalWinId(), url);
+}
+
 /*!
  * \class FileDialog
  */
@@ -164,6 +171,12 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
         onAcceptButtonClicked();
         return true;
     });
+    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewWindow, [this](EventDispatcher::Listener, const QVariantList &params) {
+        if (params.size() > 0)
+            d->handleOpenNewWindow(params.at(0).toUrl());
+        return true;
+    });
+
     CoreHelper::installDFMEventFilterForReject();
 }
 

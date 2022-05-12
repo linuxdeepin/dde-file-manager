@@ -82,9 +82,6 @@ void CoreHelper::delayInvokeProxy(std::function<void()> func, quint64 winID, QOb
 void CoreHelper::installDFMEventFilterForReject()
 {
     // reject follow events
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewWindow, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
     dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewTab, [](EventDispatcher::Listener, const QVariantList &) {
         return true;
     });

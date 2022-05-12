@@ -50,6 +50,7 @@ public:
 
     void handleSaveAcceptBtnClicked();
     void handleOpenAcceptBtnClicked();
+    void handleOpenNewWindow(const QUrl &url);
 
 private:
     static constexpr int kDefaultWindowWidth { 960 };

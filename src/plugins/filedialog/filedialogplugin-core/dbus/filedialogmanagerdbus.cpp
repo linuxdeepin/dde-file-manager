@@ -104,10 +104,10 @@ bool FileDialogManagerDBus::isUseFileChooserDialog() const
 
 bool FileDialogManagerDBus::canUseFileChooserDialog(const QString &group, const QString &executableFileName) const
 {
-    const QString &group_name = QStringLiteral("DBusFileDialog");
-    const QVariantMap &black_map = Application::appObtuselySetting()->value(group_name, "disable").toMap();
+    const QString &groupName = QStringLiteral("DBusFileDialog");
+    const QVariantMap &blackMap = Application::appObtuselySetting()->value(groupName, "disable").toMap();
 
-    return !black_map.value(group).toStringList().contains(executableFileName);
+    return !blackMap.value(group).toStringList().contains(executableFileName);
 }
 
 QStringList FileDialogManagerDBus::globPatternsForMime(const QString &mimeType) const
