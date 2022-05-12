@@ -41,11 +41,8 @@ FileDialogManagerDBus::FileDialogManagerDBus(QObject *parent)
     : QObject(parent)
 {
     connect(qApp, &QApplication::lastWindowClosed, this, [this]() {
-        // NOTE: must run after ileDialogHandleDBus::destroyed
-        QTimer::singleShot(1000, this, [this]() {
-            if (curDialogObjectMap.size() == 0)
-                exit(0);
-        });
+        lastWindowClosed = true;
+        onAppExit();
     });
 }
 
@@ -143,4 +140,12 @@ void FileDialogManagerDBus::onDialogDestroy()
 
     if (!path.path().isEmpty())
         curDialogObjectMap.remove(path);
+
+    onAppExit();
+}
+
+void FileDialogManagerDBus::onAppExit()
+{
+    if (lastWindowClosed && curDialogObjectMap.size() == 0)
+        exit(0);
 }

@@ -53,8 +53,10 @@ public slots:
 
 private:
     void onDialogDestroy();
+    void onAppExit();
 
     QMap<QDBusObjectPath, QObject *> curDialogObjectMap;
+    bool lastWindowClosed { false };
 };
 
 #endif   // FILEDIALOGMANAGERDBUS_H
