@@ -50,6 +50,31 @@ PropertyMenuScenePrivate::PropertyMenuScenePrivate(PropertyMenuScene *qq)
     predicateName[PropertyActionId::kProperty] = tr("Properties");
 }
 
+void PropertyMenuScenePrivate::updateMenu(QMenu *menu)
+{
+    QList<QAction *> actions = menu->actions();
+    if (!actions.isEmpty()) {
+        QAction *propertyAct = nullptr;
+        for (auto act : actions) {
+            if (act->isSeparator())
+                continue;
+
+            if (predicateAction.values().contains(act)) {
+                propertyAct = act;
+                break;
+            }
+        }
+
+        if (propertyAct) {
+            actions.removeOne(propertyAct);
+            QAction *act = menu->addSeparator();
+            actions.append(act);
+            actions.append(propertyAct);
+            menu->addActions(actions);
+        }
+    }
+}
+
 PropertyMenuScene::PropertyMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new PropertyMenuScenePrivate(this))
 {
@@ -99,7 +124,7 @@ bool PropertyMenuScene::create(QMenu *parent)
 
     QAction *tempAction = parent->addAction(d->predicateName.value(PropertyActionId::kProperty));
     d->predicateAction[PropertyActionId::kProperty] = tempAction;
-    tempAction->setProperty(ActionPropertyKey::kActionID, PropertyActionId::kProperty);
+    tempAction->setProperty(PropertyActionId::kProperty, PropertyActionId::kProperty);
 
     QList<QUrl> redirectedUrlList;
     for (const auto &fileUrl : d->selectFiles) {
@@ -120,9 +145,7 @@ void PropertyMenuScene::updateState(QMenu *parent)
     if (!parent)
         return;
 
-    // open with
-    if (auto openWith = d->predicateAction.value(PropertyActionId::kProperty)) {
-    }
+    d->updateMenu(parent);
 
     AbstractMenuScene::updateState(parent);
 }

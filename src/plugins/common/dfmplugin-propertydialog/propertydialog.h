@@ -36,6 +36,9 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
+private:
+    void bindScene(const QString &parentScene);
 };
 
 DPPROPERTYDIALOG_END_NAMESPACE

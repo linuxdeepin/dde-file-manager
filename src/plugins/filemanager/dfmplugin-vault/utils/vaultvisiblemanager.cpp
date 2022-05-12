@@ -24,7 +24,7 @@
 #include "utils/vaulthelper.h"
 #include "fileutils/vaultfileiterator.h"
 #include "fileutils/vaultfilewatcher.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 #include "utils/vaultentryfileentity.h"
 #include "events/vaulteventreceiver.h"
 #include "events/vaulteventcaller.h"

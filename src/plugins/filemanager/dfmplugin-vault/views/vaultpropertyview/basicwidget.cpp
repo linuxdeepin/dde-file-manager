@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "basicwidget.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 
 #include "dfm-base/base/schemefactory.h"

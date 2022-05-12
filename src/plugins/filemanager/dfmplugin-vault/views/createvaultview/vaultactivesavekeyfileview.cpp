@@ -20,7 +20,7 @@
  */
 
 #include "vaultactivesavekeyfileview.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 #include "utils/encryption/operatorcenter.h"
 #include "utils/policy/policymanager.h"
 

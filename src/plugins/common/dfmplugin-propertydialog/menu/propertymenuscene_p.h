@@ -31,8 +31,11 @@ DFMBASE_USE_NAMESPACE
 class PropertyMenuScenePrivate : public AbstractMenuScenePrivate
 {
 public:
-    friend class OpenWithMenuScene;
+    friend class PropertyMenuScene;
     explicit PropertyMenuScenePrivate(PropertyMenuScene *qq = nullptr);
+
+private:
+    void updateMenu(QMenu *menu);
 };
 
 DPPROPERTYDIALOG_END_NAMESPACE

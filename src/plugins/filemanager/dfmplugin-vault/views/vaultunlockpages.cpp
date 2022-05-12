@@ -23,7 +23,7 @@
 #include "unlockview/retrievepasswordview.h"
 #include "unlockview/retrievepasswordview.h"
 #include "utils/encryption/interfaceactivevault.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 #include "utils/vaultautolock.h"
 #include "services/filemanager/fileencrypt/fileencryptservice.h"

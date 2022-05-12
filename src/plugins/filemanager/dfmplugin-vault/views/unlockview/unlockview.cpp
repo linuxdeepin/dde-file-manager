@@ -22,7 +22,7 @@
 #include "utils/vaulthelper.h"
 #include "utils/policy/policymanager.h"
 #include "utils/encryption/interfaceactivevault.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
 #include "dbus/vaultdbusutils.h"
@@ -185,8 +185,7 @@ void UnlockView::onVaultUlocked(int state)
         if (state == 0) {
             VaultHelper::instance()->defaultCdAction(VaultHelper::instance()->currentWindowId(),
                                                      VaultHelper::instance()->rootUrl());
-            Settings setting(kVaultTimeConfigFile);
-            setting.setValue(QString("VaultTime"), QString("InterviewTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+            VaultHelper::recordTime(kjsonGroupName, kjsonKeyInterviewItme);
             VaultAutoLock::instance()->slotUnlockVault(state);
             emit sigCloseDialog();
         } else if (state == 1) {   //! cryfs没有成功卸载挂载目录

@@ -20,7 +20,7 @@
  */
 
 #include "vaultconfig.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 
 #include <QDir>
 #include <QSettings>

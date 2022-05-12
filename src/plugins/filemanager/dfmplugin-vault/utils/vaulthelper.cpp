@@ -20,7 +20,7 @@
 */
 
 #include "vaulthelper.h"
-#include "vaultglobaldefine.h"
+#include "vaultdefine.h"
 #include "pathmanager.h"
 #include "views/vaultcreatepage.h"
 #include "views/vaultunlockpages.h"
@@ -40,6 +40,7 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <dfm-framework/framework.h>
 
@@ -122,6 +123,7 @@ void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
     } break;
     case VaultState::kUnlocked:
         instance()->defaultCdAction(windowId, url);
+        recordTime(kjsonGroupName, kjsonKeyInterviewItme);
         break;
     case VaultState::kUnderProcess:
     case VaultState::kBroken:
@@ -270,6 +272,7 @@ QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
         if (!vaultDialog) {
             vaultDialog = new VaultPropertyDialog();
             vaultDialog->selectFileUrl(url);
+            connect(vaultDialog, &VaultPropertyDialog::finished, []() { vaultDialog = nullptr; });
             return vaultDialog;
         }
         return vaultDialog;
@@ -372,6 +375,7 @@ void VaultHelper::slotlockVault(int state)
         for (quint64 wid : winIDs) {
             defaultCdAction(wid, url);
         }
+        recordTime(kjsonGroupName, kjsonKeyLockTime);
     }
 }
 
@@ -379,6 +383,12 @@ VaultHelper *VaultHelper::instance()
 {
     static VaultHelper vaultHelper;
     return &vaultHelper;
+}
+
+void VaultHelper::recordTime(const QString &group, const QString &key)
+{
+    Settings setting(kVaultTimeConfigFile);
+    setting.setValue(group, key, QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
 }
 
 VaultHelper::VaultHelper()

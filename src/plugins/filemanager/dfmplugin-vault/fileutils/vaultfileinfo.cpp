@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "vaultfileinfo.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 #include "private/vaultfileinfoprivate.h"
 #include "utils/vaulthelper.h"
 

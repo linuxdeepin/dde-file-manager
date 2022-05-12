@@ -148,8 +148,7 @@ void VaultActiveFinishedView::slotEncryptComplete(int nState)
         repaint();
         timer->setSingleShot(true);
         timer->start(500);
-        Settings setting(kVaultTimeConfigFile);
-        setting.setValue(QString("VaultTime"), QString("CreateTime"), QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+        VaultHelper::recordTime(kjsonGroupName, kjsonKeyCreateTime);
     } else {
         QMessageBox::warning(this, QString(), QString(tr("Failed to create file vault: %1").arg(nState)));
     }

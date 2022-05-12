@@ -20,7 +20,7 @@
  */
 
 #include "vaultremoveprogressview.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 #include "dfm-base/base/application/settings.h"
 
 #include <DWaterProgress>

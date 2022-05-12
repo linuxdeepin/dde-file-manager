@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "pathmanager.h"
-#include "vaultglobaldefine.h"
+#include "vaultdefine.h"
 
 DPVAULT_USE_NAMESPACE
 PathManager::PathManager(QObject *parent)

@@ -40,11 +40,25 @@ bool PropertyDialog::start()
     PropertyDialogHelper::propertyServiceInstance()->addComputerPropertyToPropertyService();
 
     MenuService::service()->registerScene(PropertyMenuCreator::name(), new PropertyMenuCreator);
-    MenuService::service()->bind(PropertyMenuCreator::name(), "WorkspaceMenu");
+    bindScene("CanvasMenu");
+    bindScene("WorkspaceMenu");
     return true;
 }
 
 dpf::Plugin::ShutdownFlag PropertyDialog::stop()
 {
     return kSync;
+}
+
+void PropertyDialog::bindScene(const QString &parentScene)
+{
+    if (MenuService::service()->contains(parentScene)) {
+        MenuService::service()->bind(PropertyMenuCreator::name(), parentScene);
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+            if (scene == parentScene)
+                MenuService::service()->bind(PropertyMenuCreator::name(), scene);
+        },
+                Qt::DirectConnection);
+    }
 }

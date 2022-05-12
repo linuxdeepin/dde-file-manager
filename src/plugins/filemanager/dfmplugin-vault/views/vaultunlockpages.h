@@ -29,7 +29,7 @@
 #include "unlockview/retrievepasswordview.h"
 #include "unlockview/recoverykeyview.h"
 #include "unlockview/passwordrecoveryview.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 
 #include <QStackedWidget>
 

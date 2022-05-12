@@ -67,6 +67,11 @@ static const QString getCompressorPidShell(QString value)
 constexpr char kVaultTimeConfigFileSuffix[] { "/../dde-file-manager/vaultTimeConfig.json" };
 constexpr char kVaultTimeConfigFile[] { "/../dde-file-manager/vaultTimeConfig" };
 
+constexpr char kjsonGroupName[] { "VaultTime" };
+constexpr char kjsonKeyInterviewItme[] { "InterviewTime" };
+constexpr char kjsonKeyLockTime[] { "LockTime" };
+constexpr char kjsonKeyCreateTime[] { "CreateTime" };
+
 enum class VaultState : int {
     kNotExisted = 0,
     kEncrypted,

@@ -23,7 +23,7 @@
 #define VAULTHELPER_H
 
 #include "dfmplugin_vault_global.h"
-#include "utils/vaultglobaldefine.h"
+#include "utils/vaultdefine.h"
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
@@ -80,6 +80,8 @@ public:
     static QUrl vaultToLocalUrl(const QUrl &url);
 
     static VaultHelper *instance();
+
+    static void recordTime(const QString &group, const QString &key);
 
 public slots:
     void slotlockVault(int state);
