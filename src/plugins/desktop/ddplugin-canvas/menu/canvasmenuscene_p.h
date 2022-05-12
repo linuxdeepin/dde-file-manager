@@ -76,6 +76,7 @@ public:
             dfmplugin_menu::ActionID::kDelete,
             dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kCreateSymlink,
+            dfmplugin_menu::ActionID::kSetAsWallpaper,
             dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kOpenInTerminal
         };

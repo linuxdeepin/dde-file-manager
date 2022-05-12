@@ -21,6 +21,7 @@
  */
 #include "utils/fileutils.h"
 #include "desktopfile.h"
+#include "windowutils.h"
 #include "dfm_global_defines.h"
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/base/urlroute.h"
@@ -50,6 +51,10 @@
 #include <QSet>
 #include <QRegularExpression>
 #include <QCollator>
+#include <QDBusInterface>
+#include <QDBusConnection>
+#include <QDBusReply>
+#include <QScreen>
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -1071,6 +1076,50 @@ QString FileUtils::dateTimeFormat()
 {
     static QString format = "yyyy/MM/dd HH:mm:ss";
     return format;
+}
+
+bool FileUtils::setBackGround(const QString &pictureFilePath)
+{
+    QDBusMessage msgIntrospect = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance",
+                                                                "/com/deepin/daemon/Appearance",
+                                                                "org.freedesktop.DBus.Introspectable",
+                                                                "Introspect");
+    QDBusPendingCall call = QDBusConnection::sessionBus().asyncCall(msgIntrospect);
+    call.waitForFinished();
+    if (call.isFinished()) {
+        QDBusReply<QString> reply = call.reply();
+        QString value = reply.value();
+
+        if (value.contains("SetMonitorBackground")) {
+            QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance",
+                                                              "/com/deepin/daemon/Appearance",
+                                                              "com.deepin.daemon.Appearance",
+                                                              "SetMonitorBackground");
+            if (WindowUtils::isWayLand()) {
+                QDBusInterface interface("com.deepin.daemon.Display",
+                                         "/com/deepin/daemon/Display",
+                                         "com.deepin.daemon.Display");
+                QString screenname = qvariant_cast<QString>(interface.property("Primary"));
+                msg.setArguments({ screenname, pictureFilePath });
+            } else {
+                msg.setArguments({ qApp->primaryScreen()->name(), pictureFilePath });
+            }
+
+            QDBusConnection::sessionBus().asyncCall(msg);
+            qDebug() << "FileUtils::setBackground call Appearance SetMonitorBackground";
+            return true;
+        }
+    }
+
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.daemon.Appearance",
+                                                      "/com/deepin/daemon/Appearance",
+                                                      "com.deepin.daemon.Appearance",
+                                                      "Set");
+    msg.setArguments({ "Background", pictureFilePath });
+    QDBusConnection::sessionBus().asyncCall(msg);
+    qDebug() << "FileUtils::setBackground call Appearance Set";
+
+    return true;
 }
 
 QUrl DesktopAppUrl::trashDesktopFileUrl()

@@ -77,6 +77,7 @@ public:
             dfmplugin_menu::ActionID::kCreateSymlink,
             dfmplugin_menu::ActionID::kSendToDesktop,
             dfmplugin_menu::ActionID::kSendTo,
+            dfmplugin_menu::ActionID::kSetAsWallpaper,
             dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kOpenInTerminal
         };

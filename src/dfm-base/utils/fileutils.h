@@ -88,6 +88,7 @@ public:
     static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 
     static QString dateTimeFormat();
+    static bool setBackGround(const QString &pictureFilePath);
 
 private:
     static QMutex cacheCopyingMutex;

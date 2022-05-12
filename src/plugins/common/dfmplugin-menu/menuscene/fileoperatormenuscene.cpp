@@ -56,6 +56,7 @@ FileOperatorMenuScenePrivate::FileOperatorMenuScenePrivate(FileOperatorMenuScene
     predicateName[ActionID::kDelete] = tr("Delete");
     predicateName[ActionID::kCreateSymlink] = tr("Create link");
     predicateName[ActionID::kEmptyTrash] = tr("Empty Trash");
+    predicateName[ActionID::kSetAsWallpaper] = tr("Set as wallpaper");
 }
 
 FileOperatorMenuScene::FileOperatorMenuScene(QObject *parent)
@@ -125,6 +126,23 @@ bool FileOperatorMenuScene::create(QMenu *parent)
         tempAction = parent->addAction(d->predicateName.value(ActionID::kCreateSymlink));
         d->predicateAction[ActionID::kCreateSymlink] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCreateSymlink));
+
+        auto focusFileInfo = d->focusFileInfo;
+        if (d->focusFileInfo->isSymLink()) {
+            const auto &targetFile = d->focusFileInfo->symLinkTarget();
+            auto targetFileInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetFile));
+            if (targetFileInfo && targetFileInfo->exists())
+                focusFileInfo = targetFileInfo;
+        }
+
+        const auto mimeType = focusFileInfo->mimeTypeName();
+        if (mimeType.startsWith("image") && focusFileInfo->isReadable()
+            && !mimeType.endsWith("svg+xml") && !mimeType.endsWith("raf")
+            && !mimeType.endsWith("crw")) {
+            tempAction = parent->addAction(d->predicateName.value(ActionID::kSetAsWallpaper));
+            d->predicateAction[ActionID::kSetAsWallpaper] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kSetAsWallpaper));
+        }
     }
 
     if (FileUtils::isTrashDesktopFile(d->focusFile)) {
@@ -282,6 +300,17 @@ bool FileOperatorMenuScene::triggered(QAction *action)
                                               d->windowId,
                                               trashUrls,
                                               AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
+        return true;
+    }
+
+    // set as wallpaper
+    if (actionId == ActionID::kSetAsWallpaper) {
+        if (UrlRoute::isVirtual(d->focusFile)) {
+            const auto &localFile = d->focusFileInfo->absoluteFilePath();
+            FileUtils::setBackGround(localFile);
+        } else {
+            FileUtils::setBackGround(d->focusFile.toLocalFile());
+        }
         return true;
     }
 
