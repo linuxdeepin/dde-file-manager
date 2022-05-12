@@ -204,19 +204,19 @@ QMenu *VaultHelper::createMenu()
         menu->addAction(QObject::tr("Create Vault"), VaultHelper::instance(), &VaultHelper::creatVaultDialog);
         break;
     case VaultState::kEncrypted:
-        menu->addAction(QObject::tr("Unlock Vault"), VaultHelper::instance(), &VaultHelper::unlockVaultDialog);
+        menu->addAction(QObject::tr("Unlock"), VaultHelper::instance(), &VaultHelper::unlockVaultDialog);
         break;
     case VaultState::kUnlocked: {
-        menu->addAction(QObject::tr("Open window"), VaultHelper::instance(), &VaultHelper::openWindow);
+        menu->addAction(QObject::tr("Open"), VaultHelper::instance(), &VaultHelper::openWindow);
 
         menu->addAction(QObject::tr("Open in new window"), VaultHelper::instance(), &VaultHelper::newOpenWindow);
 
         menu->addSeparator();
 
-        menu->addAction(QObject::tr("Lock Now"), VaultHelper::instance(), &VaultHelper::lockVault);
+        menu->addAction(QObject::tr("Lock"), VaultHelper::instance(), &VaultHelper::lockVault);
 
         QAction *timeLock = new QAction;
-        timeLock->setText(QObject::tr("Time Lock"));
+        timeLock->setText(QObject::tr("Auto lock"));
         VaultAutoLock::AutoLockState autoState = VaultAutoLock::instance()->getAutoLockState();
         QAction *actionNever = timeMenu->addAction(QObject::tr("Never"), []() {
             VaultAutoLock::instance()->autoLock(VaultAutoLock::AutoLockState::kNever);
@@ -247,7 +247,7 @@ QMenu *VaultHelper::createMenu()
 
         menu->addAction(QObject::tr("Delete File Vault"), VaultHelper::instance(), &VaultHelper::removeVaultDialog);
 
-        menu->addAction(QObject::tr("Property"), []() {
+        menu->addAction(QObject::tr("Properties"), []() {
             VaultEventCaller::sendVaultProperty(VaultHelper::instance()->rootUrl());
         });
     } break;
