@@ -127,25 +127,9 @@ void ConnectToServerDialog::collectionOperate()
         onDelButtonClicked();
 }
 
-bool ConnectToServerDialog::eventFilter(QObject *o, QEvent *e)
-{
-    if(m_addButton &&  ((m_schemeComboBox && o == m_schemeComboBox)||(m_serverComboBox && o == m_serverComboBox))
-            && e->type() == QEvent::FocusIn){
-        if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
-            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect.svg").scaled(16,16)));
-        else if(DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
-            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect.svg").scaled(16,16)));
-        m_isAddState = true;
-        m_addButton->setToolTip(tr("Favorite"));
-    }
-
-    return DDialog::eventFilter(o,e);
-}
-
 void ConnectToServerDialog::onAddButtonClicked()
 {
     QStringList serverList = static_cast<QStringListModel *>(m_collectionServerView->model())->stringList();
-
     const QString &text = m_schemeComboBox->currentText() + m_serverComboBox->currentText();
     if (!m_schemeComboBox->currentText().isEmpty()
         && !m_serverComboBox->currentText().isEmpty()
@@ -170,13 +154,42 @@ void ConnectToServerDialog::onAddButtonClicked()
             }
         }
     }
-    m_serverComboBox->setFocus(Qt::FocusReason::MouseFocusReason);
+    upateState();
 }
 
 void ConnectToServerDialog::onDelButtonClicked()
 {
     const QString &text = m_schemeComboBox->currentText() + m_serverComboBox->currentText();
     doDeleteCollection(text);
+}
+
+void ConnectToServerDialog::upateState()
+{
+    //检查是否已经收藏
+    const QList<QVariant> &serverData = DFMApplication::genericSetting()->value("ConnectServer", "URL").toList();
+    QStringList dataList;
+    for (const QVariant &data : serverData) {
+        dataList << data.toString();
+    }
+    const QString &text = m_schemeComboBox->currentText() + m_serverComboBox->currentText();
+    if (dataList.contains(text)) {
+        //已经收藏，显示取消收藏
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect_cancel.svg").scaled(16,16)));
+        else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect_cancel.svg").scaled(16,16)));
+        m_isAddState = false;
+        m_addButton->setToolTip(tr("Unfavorite"));
+    }else {//没有收藏，显示收藏
+        if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
+            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect.svg").scaled(16,16)));
+        else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType)
+            m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/dark/icons/collect.svg").scaled(16,16)));
+        m_isAddState = true;
+        m_addButton->setToolTip(tr("Favorite"));
+    }
+    bool hasCollections = m_collectionServerView->count() > 0;
+    m_collectionLabel->setText(hasCollections?tr("My Favorites"):tr("No favorites yet"));
 }
 
 void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
@@ -209,7 +222,7 @@ void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
             DFMApplication::genericSetting()->setValue("ConnectServer", "URL", dataList);
         }
     }
-    m_isAddState = false;
+    upateState();
 }
 
 void ConnectToServerDialog::initUI()
@@ -234,14 +247,12 @@ void ConnectToServerDialog::initUI()
 
     QFrame *contentFrame = new QFrame(this);
     m_serverComboBox = new QComboBox();
-    m_serverComboBox->installEventFilter(this);
     m_schemeComboBox = new QComboBox();
-    m_schemeComboBox->installEventFilter(this);
     m_addButton = new QPushButton();
-    QLabel * collectionLabel = new QLabel(tr("My Favorites:"));
+    m_addButton->setToolTip(tr("Favorite"));
+    m_collectionLabel = new QLabel(tr("My Favorites"));
     m_collectionServerView = new DListView();
     m_delegate = new CollectionDelegate(m_collectionServerView);
-    m_delegate->installEventFilter(this);
     connect (m_delegate,&CollectionDelegate::removeItemManually,[this](const QString& text,int row){
         doDeleteCollection(text,row);
     });
@@ -265,7 +276,7 @@ void ConnectToServerDialog::initUI()
     QVBoxLayout *contentLayout = new QVBoxLayout();
     contentLayout->addLayout(comboButtonLayout);
     contentLayout->addSpacing(5);
-    contentLayout->addWidget(collectionLabel, 0, Qt::AlignVCenter);
+    contentLayout->addWidget(m_collectionLabel, 0, Qt::AlignVCenter);
     contentLayout->addSpacing(5);
     contentLayout->addWidget(m_collectionServerView, 0, Qt::AlignVCenter);
     contentLayout->setContentsMargins(5, 0, 0, 0);
@@ -329,6 +340,7 @@ void ConnectToServerDialog::initUI()
     listModel->setStringList(dataList);
 
     setContentsMargins(0,0,0,0);
+    upateState();
 }
 
 void ConnectToServerDialog::initConnect()
@@ -344,6 +356,11 @@ void ConnectToServerDialog::initConnect()
             m_serverComboBox->completer()->setModel(new QStringListModel());
             Singleton<SearchHistroyManager>::instance()->clearHistory();
         }
+        upateState();
+    });
+    connect(m_schemeComboBox, &QComboBox::currentTextChanged,this,[=](const QString &string){
+        Q_UNUSED(string)
+        upateState();
     });
 
     connect(m_addButton, &QPushButton::clicked, this, &ConnectToServerDialog::collectionOperate);
