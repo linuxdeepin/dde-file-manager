@@ -637,7 +637,7 @@ int DAbstractFileInfo::filesCount() const
 qint64 DAbstractFileInfo::fileSize() const
 {
     if (isDir()) {
-        return filesCount();
+        return -1;
     }
 
     return size();
