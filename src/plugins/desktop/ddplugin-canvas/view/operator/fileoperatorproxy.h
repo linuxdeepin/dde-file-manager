@@ -23,7 +23,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <dfm-base/dfm_global_defines.h>
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 #include <QPoint>

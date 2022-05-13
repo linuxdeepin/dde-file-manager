@@ -52,11 +52,10 @@ static QMap<QString, QWidget *> rootMap(FrameService *srv)
 }
 
 BackgroundManagerPrivate::BackgroundManagerPrivate(BackgroundManager *qq)
-    : QObject (qq)
+    : QObject(qq)
     , q(qq)
     , windowManagerHelper(DWindowManagerHelper::instance())
 {
-
 }
 
 BackgroundManagerPrivate::~BackgroundManagerPrivate()
@@ -92,7 +91,7 @@ QString BackgroundManagerPrivate::getBackgroundFormWm(const QString &screen)
         reply.waitForFinished();
 
         if (reply.error().type() != QDBusError::NoError) {
-            qWarning() << "Get background failed by wmDBus and times:" << (5-retry)
+            qWarning() << "Get background failed by wmDBus and times:" << (5 - retry)
                        << reply.error().type() << reply.error().name() << reply.error().message();
         } else {
             path = reply.argumentAt<0>();
@@ -103,7 +102,7 @@ QString BackgroundManagerPrivate::getBackgroundFormWm(const QString &screen)
 
     wmInter->setTimeout(oldTimeOut);
 
-    return  path;
+    return path;
 }
 
 QString BackgroundManagerPrivate::getBackgroundFormConfig(const QString &screen)
@@ -119,17 +118,17 @@ QString BackgroundManagerPrivate::getBackgroundFormConfig(const QString &screen)
             QString line = wmFile.readLine();
             int index = line.indexOf("@");
             int indexEQ = line.indexOf("=");
-            if (index <= 0 || indexEQ <= index+1) {
+            if (index <= 0 || indexEQ <= index + 1) {
                 continue;
             }
 
             int workspaceIndex = line.left(index).toInt();
-            QString screenName = line.mid(index+1, indexEQ-index-1);
+            QString screenName = line.mid(index + 1, indexEQ - index - 1);
             if (workspaceIndex != currentWorkspaceIndex || screenName != screen) {
                 continue;
             }
 
-            path = line.mid(indexEQ+1).trimmed();
+            path = line.mid(indexEQ + 1).trimmed();
             break;
         }
 
@@ -173,7 +172,7 @@ BackgroundManager::BackgroundManager(QObject *parent)
     QDBusConnection::sessionBus().connect("org.freedesktop.DBus"
                                           , "/org/freedesktop/DBus"
                                           , "org.freedesktop.DBus"
-                                          ,  "NameOwnerChanged"
+                                          , "NameOwnerChanged"
                                           , this
                                           , SLOT(onWmDbusStarted(QString, QString, QString)));
 }
@@ -258,7 +257,7 @@ void BackgroundManager::onBackgroundBuild()
         BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screeName);
         d->backgroundWidgets.clear();
         if (!bwp.isNull()) {
-            QRect geometry = d->relativeGeometry(primary->geometry()); // scaled area
+            QRect geometry = d->relativeGeometry(primary->geometry());   // scaled area
             if (bwp->geometry() != geometry)
                 bwp->setGeometry(geometry);
             bwp->setParent(primary);
@@ -267,6 +266,7 @@ void BackgroundManager::onBackgroundBuild()
         }
 
         d->backgroundWidgets.insert(screeName, bwp);
+
         bwp->show();
     } else {
         // check whether to add
@@ -281,7 +281,7 @@ void BackgroundManager::onBackgroundBuild()
             BackgroundWidgetPointer bwp = d->backgroundWidgets.value(screenName);
             if (!bwp.isNull()) {
                 // update widget
-                QRect geometry = d->relativeGeometry(win->geometry()); // scaled area
+                QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
                 if (bwp->geometry() != geometry)
                     bwp->setGeometry(geometry);
                 bwp->setParent(win);
@@ -291,6 +291,7 @@ void BackgroundManager::onBackgroundBuild()
                 bwp = createBackgroundWidget(win);
                 d->backgroundWidgets.insert(screenName, bwp);
             }
+
             bwp->show();
         }
 
@@ -354,7 +355,7 @@ void BackgroundManager::onGeometryChanged()
         }
 
         if (bw.get() != nullptr) {
-            QRect geometry = d->relativeGeometry(win->geometry()); // scaled area
+            QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
             if (bw->geometry() == geometry) {
                 qDebug() << "background geometry is equal to root widget geometry,and discard changes" << bw->geometry()
                          << win->geometry() << win->property(FrameProperty::kPropScreenName).toString()
@@ -384,7 +385,7 @@ void BackgroundManager::onWmDbusStarted(QString name, QString oldOwner, QString 
         QDBusConnection::sessionBus().disconnect("org.freedesktop.DBus"
                                                  , "/org/freedesktop/DBus"
                                                  , "org.freedesktop.DBus"
-                                                 ,  "NameOwnerChanged"
+                                                 , "NameOwnerChanged"
                                                  , this
                                                  , SLOT(onWmDbusStarted(QString, QString, QString)));
     }
@@ -437,7 +438,7 @@ void BackgroundManager::updateBackgroundPaths()
 void BackgroundManager::resetBackgroundImage()
 {
     if (d->isEnableBackground()) {
-        QMap<QString, QString> recorder; // 记录有效的壁纸
+        QMap<QString, QString> recorder;   // 记录有效的壁纸
         for (auto screenName : d->backgroundWidgets.keys()) {
             QString userPath;
             if (!d->backgroundPaths.contains(screenName)) {
@@ -505,10 +506,9 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
     bwp->setProperty(FrameProperty::kPropWidgetName, "background");
     bwp->setProperty(FrameProperty::kPropWidgetLevel, 5.0);
 
-    QRect geometry = d->relativeGeometry(root->geometry()); // scaled area
+    QRect geometry = d->relativeGeometry(root->geometry());   // scaled area
     bwp->setGeometry(geometry);
     qDebug() << "screen name" << screenName << "geometry" << geometry << root->geometry() << bwp.get();
 
     return bwp;
 }
-

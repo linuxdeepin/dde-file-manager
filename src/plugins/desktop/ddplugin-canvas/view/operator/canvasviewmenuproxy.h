@@ -23,7 +23,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <services/common/dfm_common_service_global.h>
+#include "services/common/dfm_common_service_global.h"
 
 #include <QObject>
 
@@ -44,6 +44,7 @@ public:
     void showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos);
 public slots:
     void changeIconLevel(bool increase);
+
 private:
     CanvasView *view;
     dfm_service_common::MenuService *extensionMenuServer = nullptr;

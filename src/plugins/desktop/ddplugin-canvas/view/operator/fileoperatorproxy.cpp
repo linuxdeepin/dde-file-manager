@@ -26,12 +26,12 @@
 #include "grid/canvasgrid.h"
 #include "model/canvasselectionmodel.h"
 
-#include <dfm-base/dfm_event_defines.h>
-#include <dfm-base/utils/clipboard.h>
-#include <dfm-framework/framework.h>
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/utils/clipboard.h"
+#include "services/common/propertydialog/property_defines.h"
+#include "services/common/bluetooth/bluetooth_defines.h"
 
-#include <services/common/propertydialog/property_defines.h>
-#include <services/common/bluetooth/bluetooth_defines.h>
+#include <dfm-framework/framework.h>
 
 #include <functional>
 
@@ -128,8 +128,6 @@ void FileOperatorProxyPrivate::doSelectUrls(const QList<QUrl> &urls)
         return;
     }
 
-    QModelIndex topLeft;
-    QModelIndex bottomRight;
     QModelIndexList indexs;
     for (auto url : urls) {
         QModelIndex index = view->model()->index(url);
@@ -141,19 +139,17 @@ void FileOperatorProxyPrivate::doSelectUrls(const QList<QUrl> &urls)
         return;
     }
 
-    topLeft = indexs.first();
-    bottomRight = indexs.first();
+    /*!
+     * File pasting is an asynchronous operation.
+     * The actual order of creating files (index) is inconsistent with the last file in the callback function.
+     * Topleft and bottomright cannot be directly selected from the last file.
+     * Only can empty the original selection and then select new files one by one
+    */
 
-    for (int i = 1; i < indexs.count(); i++) {
-        QModelIndex tempIndex = indexs.at(i);
-        if (topLeft.row() > tempIndex.row())
-            topLeft = tempIndex;
-        if (bottomRight.row() < tempIndex.row())
-            bottomRight = tempIndex;
+    view->selectionModel()->clearSelection();
+    for (auto index : indexs) {
+        view->selectionModel()->select(index, QItemSelectionModel::Select);
     }
-
-    QItemSelection selection(topLeft, bottomRight);
-    view->selectionModel()->select(selection, QItemSelectionModel::Select);
 }
 
 FileOperatorProxy::FileOperatorProxy(QObject *parent)

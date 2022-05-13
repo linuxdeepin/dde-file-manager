@@ -30,18 +30,16 @@
 #include "menu/canvasmenuscene.h"
 #include "menu/canvasmenu_defines.h"
 
+#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 #include "services/common/menu/menu_defines.h"
 #include "services/common/menu/menuservice.h"
-#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
-
 #include "dfm-base/utils/clipboard.h"
-#include "interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "base/application/application.h"
-#include "base/application/settings.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <QGSettings>
-
 #include <QMenu>
 #include <QtDebug>
 
