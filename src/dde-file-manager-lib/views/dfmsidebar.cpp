@@ -380,7 +380,6 @@ void DFMSideBar::rootFileResult()
     qDebug() << "DFileService::instance()->getRootFile() filist:" << filist.size();
     foreach (DAbstractFileInfoPointer r, filist) {
         bool keepSmb = DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool();
-
         if (r->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_GVFSMP) ) && FileUtils::isNetworkUrlMounted( r->fileUrl() )){
             continue;//已经挂载的url除外
         }
