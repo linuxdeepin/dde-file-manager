@@ -37,14 +37,13 @@ USING_DFMEXT_NAMESPACE
 DFMExtActionImpl::DFMExtActionImpl(QAction *action)
     : DFMExtAction(new DFMExtActionImplPrivate(this, action))
 {
-
 }
 
 DFMExtActionImplPrivate::DFMExtActionImplPrivate(DFMExtActionImpl *qImpl, QAction *ac)
-    : DFMExtActionPrivate()
-    , interiorEntity (ac != nullptr)    //action存在实体则表明文管内部导出impl对象
-    , action(ac ? ac : new QAction())
-    , q(qImpl)
+    : DFMExtActionPrivate(), interiorEntity(ac != nullptr)   //action存在实体则表明文管内部导出impl对象
+      ,
+      action(ac ? ac : new QAction()),
+      q(qImpl)
 {
     Q_ASSERT(q);
     //设置当前壳入口
@@ -53,7 +52,7 @@ DFMExtActionImplPrivate::DFMExtActionImplPrivate(DFMExtActionImpl *qImpl, QActio
     connect(action, &QAction::hovered, this, &DFMExtActionImplPrivate::onActionHovered);
     connect(action, &QAction::triggered, this, &DFMExtActionImplPrivate::onActionTriggered);
     //应用于接口actions批量获取时，随qAction释放，将匿名函数挂载到action对象上，避免循环的释放冲突
-    connect(action, &QAction::destroyed, action, [=](){
+    connect(action, &QAction::destroyed, action, [=]() {
         if (interiorEntity)
             delete q;
     });
@@ -61,9 +60,9 @@ DFMExtActionImplPrivate::DFMExtActionImplPrivate(DFMExtActionImpl *qImpl, QActio
 
 DFMExtActionImplPrivate::~DFMExtActionImplPrivate()
 {
-    if (interiorEntity) {//文管内部创建的impl采用逆向释放
+    if (interiorEntity) {   //文管内部创建的impl采用逆向释放
         return;
-    } else {//! 非文管创建正向释放
+    } else {   //! 非文管创建正向释放
         if (action) {
             delete action;
             action = nullptr;
@@ -152,7 +151,7 @@ void DFMExtActionImplPrivate::setMenu(DFMExtMenu *menu)
     if (interiorEntity)
         return;
 
-    DFMExtMenuImpl *menuImpl = dynamic_cast<DFMExtMenuImpl *>(menu);
+    DFMExtMenuImpl *menuImpl = static_cast<DFMExtMenuImpl *>(menu);
     if (action && menuImpl) {
         auto menuImpl_d = dynamic_cast<DFMExtMenuImplPrivate *>(menuImpl->d);
 
@@ -204,7 +203,7 @@ void DFMExtActionImplPrivate::setCheckable(bool b)
     if (interiorEntity)
         return;
 
-    if(action)
+    if (action)
         action->setCheckable(b);
 }
 
@@ -238,7 +237,7 @@ void DFMExtActionImplPrivate::setEnabled(bool b)
     if (interiorEntity)
         return;
 
-    if(action)
+    if (action)
         action->setEnabled(b);
 }
 
@@ -276,4 +275,3 @@ void DFMExtActionImplPrivate::deleteParent()
     delete q;
     q = nullptr;
 }
-
