@@ -53,15 +53,12 @@ public slots:
 private slots:
     void collectionOperate();
     void doDeleteCollection(const QString& text, int row = -1);
-protected:
-    bool eventFilter(QObject *o, QEvent *e);
-
 private:
     void initUI();
     void initConnect();
     void onAddButtonClicked();
     void onDelButtonClicked();
-
+    void upateState();
     enum DialogButton {
         CannelButton,
         ConnectButton
@@ -73,6 +70,7 @@ private:
     DListView *m_collectionServerView = nullptr;
     bool m_isAddState = true;
     CollectionDelegate* m_delegate = nullptr;
+    QLabel * m_collectionLabel = nullptr;
 };
 
 #endif // CONNECTTOSERVERDIALOG_H
