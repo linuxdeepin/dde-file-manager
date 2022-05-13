@@ -57,8 +57,8 @@ public:
     virtual QVariantHash extraProperties() const override;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const override;
 
-    virtual QIcon fileIcon() const override;
-    QString iconName() const override;
+    virtual QIcon fileIcon() override;
+    QString iconName() override;
     virtual QString fileDisplayName() const override;
 };
 DPVAULT_END_NAMESPACE

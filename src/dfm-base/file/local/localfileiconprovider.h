@@ -45,7 +45,7 @@ public:
     QIcon icon(const QString &path) const;
     QIcon icon(const QFileInfo &info, const QIcon &feedback) const;
     QIcon icon(const QString &path, const QIcon &feedback) const;
-    QIcon icon(const AbstractFileInfoPointer &info, const QIcon &feedback = QIcon()) const;
+    QIcon icon(AbstractFileInfo *info, const QIcon &feedback = QIcon());
 
 private:
     QScopedPointer<LocalFileIconProviderPrivate> d;

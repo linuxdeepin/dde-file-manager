@@ -47,7 +47,7 @@ public:
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
     bool isDir() const override;
-    bool canDrop() const override;
+    bool canDrop() override;
 
 private:
     TrashFileInfoPrivate *d;

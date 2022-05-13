@@ -82,7 +82,7 @@ public:
     virtual QString baseName() const override;
     virtual QString suffix() const override;
     virtual QString path() const override;
-    virtual QIcon fileIcon() const override;
+    virtual QIcon fileIcon() override;
     virtual void refresh() override;
     virtual QVariantHash extraProperties() const override;
 

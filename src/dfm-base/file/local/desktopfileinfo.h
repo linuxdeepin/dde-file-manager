@@ -44,7 +44,7 @@ public:
     QString desktopType() const;
     QStringList desktopCategories() const;
 
-    QIcon fileIcon() const override;
+    QIcon fileIcon() override;
     QString fileDisplayName() const override;
     QString fileNameOfRename() const override;
     QString baseNameOfRename() const override;
@@ -52,15 +52,15 @@ public:
 
     void refresh() override;
 
-    QString iconName() const override;
-    QString genericIconName() const override;
+    QString iconName() override;
+    QString genericIconName() override;
 
     //QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     //QSet<MenuAction> disableMenuActionList() const override;
     QList<QIcon> additionalIcon() const override;
     Qt::DropActions supportedDragActions() const override;
 
-    bool canDrop() const override;
+    bool canDrop() override;
     bool canTag() const override;
     bool canMoveOrCopy() const override;
     bool canRename() const override;

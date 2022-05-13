@@ -138,7 +138,7 @@ QUrl MasteredMediaFileInfo::parentUrl() const
     return UrlRoute::urlParent(url());
 }
 
-bool MasteredMediaFileInfo::canDrop() const
+bool MasteredMediaFileInfo::canDrop()
 {
     return isWritable();
 }

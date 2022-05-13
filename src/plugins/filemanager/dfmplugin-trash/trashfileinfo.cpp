@@ -165,7 +165,7 @@ bool TrashFileInfo::isDir() const
     return AbstractFileInfo::isDir();
 }
 
-bool TrashFileInfo::canDrop() const
+bool TrashFileInfo::canDrop()
 {
     return false;
 }

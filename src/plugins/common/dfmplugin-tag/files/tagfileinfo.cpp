@@ -116,7 +116,7 @@ AbstractFileInfo::FileType TagFileInfo::fileType() const
     return FileType::kDirectory;
 }
 
-QIcon TagFileInfo::fileIcon() const
+QIcon TagFileInfo::fileIcon()
 {
     if (d->proxy)
         return d->proxy->fileIcon();

@@ -47,7 +47,7 @@ QString SmbShareFileInfo::fileDisplayName() const
     return fileName();
 }
 
-QIcon SmbShareFileInfo::fileIcon() const
+QIcon SmbShareFileInfo::fileIcon()
 {
     auto dp = dynamic_cast<SmbShareFileInfoPrivate *>(dptr.data());
     return QIcon::fromTheme(dp->node.iconType);

@@ -931,7 +931,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::getUrlByNewFileName(const QString &fil
     return theUrl;
 }
 
-QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeDisplayName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeDisplayName()
 {
     CALL_PROXY(mimeTypeDisplayName());
 
@@ -941,7 +941,7 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeDisplayName() const
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName Display name of the file type
  * \return Display name of the file typ
  */
-QString DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::fileTypeDisplayName()
 {
     CALL_PROXY(fileTypeDisplayName());
 
@@ -981,7 +981,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::canDrop
  * \return
  */
-bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop() const
+bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
 {
     // todo lanxs
     /*if (isPrivate()) {
@@ -1042,7 +1042,7 @@ Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedDragActions() cons
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::supportedDropActions
  * \return
  */
-Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedDropActions() const
+Qt::DropActions DFMBASE_NAMESPACE::AbstractFileInfo::supportedDropActions()
 {
     CALL_PROXY(supportedDropActions());
 
@@ -1099,7 +1099,7 @@ bool dfmbase::AbstractFileInfo::notifyAttributeChanged()
     return false;
 }
 
-QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName()
 {
     CALL_PROXY(mimeTypeName());
 
@@ -1109,7 +1109,7 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::mimeTypeName() const
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon
  * \return
  */
-QIcon DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon() const
+QIcon DFMBASE_NAMESPACE::AbstractFileInfo::fileIcon()
 {
     CALL_PROXY(fileIcon());
 
@@ -1155,27 +1155,23 @@ QList<QIcon> AbstractFileInfo::additionalIcon() const
     return icons;
 }
 
-QString DFMBASE_NAMESPACE::AbstractFileInfo::iconName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::iconName()
 {
-    CALL_PROXY(iconName());
-
-    return QString();
+    return fileMimeType().iconName();
 }
 
-QString DFMBASE_NAMESPACE::AbstractFileInfo::genericIconName() const
+QString DFMBASE_NAMESPACE::AbstractFileInfo::genericIconName()
 {
-    CALL_PROXY(genericIconName());
-
-    return QString();
+    return fileMimeType().genericIconName();
 }
 
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType
  * \return
  */
-QMimeType DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType() const
+QMimeType DFMBASE_NAMESPACE::AbstractFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
-    CALL_PROXY(fileMimeType());
+    CALL_PROXY(fileMimeType(mode));
 
     return QMimeType();
 }

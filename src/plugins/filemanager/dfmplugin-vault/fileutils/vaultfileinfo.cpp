@@ -156,7 +156,7 @@ QUrl VaultFileInfo::url() const
     return url;
 }
 
-QString VaultFileInfo::iconName() const
+QString VaultFileInfo::iconName()
 {
     QString iconName = "dfm_safebox";   // 如果是根目录，用保险柜图标
     if (isRoot())
@@ -188,7 +188,7 @@ QUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     return theUrl;
 }
 
-QIcon VaultFileInfo::fileIcon() const
+QIcon VaultFileInfo::fileIcon()
 {
     if (!dptr->proxy)
         AbstractFileInfo::fileIcon();

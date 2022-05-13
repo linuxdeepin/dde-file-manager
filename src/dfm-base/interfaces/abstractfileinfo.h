@@ -165,28 +165,28 @@ public:
     virtual QDateTime lastRead() const;
     virtual QDateTime fileTime(QFile::FileTime time) const;
     virtual int countChildFile() const;
-    virtual QIcon fileIcon() const;
+    virtual QIcon fileIcon();
     virtual QList<QIcon> additionalIcon() const;
-    virtual QString iconName() const;
-    virtual QString genericIconName() const;
-    virtual QMimeType fileMimeType() const;
+    virtual QString iconName();
+    virtual QString genericIconName();
+    virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);
     virtual QVariantHash extraProperties() const;
     virtual FileType fileType() const;
     virtual QUrl getUrlByChildFileName(const QString &fileName) const;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
-    virtual QString mimeTypeDisplayName() const;
-    virtual QString fileTypeDisplayName() const;
+    virtual QString mimeTypeDisplayName();
+    virtual QString fileTypeDisplayName();
     virtual bool canRedirectionFileUrl() const;
     virtual QUrl redirectedFileUrl() const;
     virtual bool canMoveOrCopy() const;
-    virtual bool canDrop() const;
+    virtual bool canDrop();
     virtual bool canTag() const;
     virtual QUrl parentUrl() const;
     virtual Qt::DropActions supportedDragActions() const;
-    virtual Qt::DropActions supportedDropActions() const;
+    virtual Qt::DropActions supportedDropActions();
     virtual bool canDragCompress() const;
     virtual bool isDragCompressFileFormat() const;
-    virtual QString mimeTypeName() const;
+    virtual QString mimeTypeName();
 
     // property for view
     virtual QString emptyDirectoryTip() const;

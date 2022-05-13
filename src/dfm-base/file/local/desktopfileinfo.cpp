@@ -130,7 +130,7 @@ QStringList DesktopFileInfo::desktopCategories() const
     return d->categories;
 }
 
-QIcon DesktopFileInfo::fileIcon() const
+QIcon DesktopFileInfo::fileIcon()
 {
     if (Q_LIKELY(!d->icon.isNull())) {
         if (Q_LIKELY(!d->icon.availableSizes().isEmpty()))
@@ -221,12 +221,12 @@ void DesktopFileInfo::refresh()
     d->updateInfo(url());
 }
 
-QString DesktopFileInfo::iconName() const
+QString DesktopFileInfo::iconName()
 {
     return desktopIconName();
 }
 
-QString DesktopFileInfo::genericIconName() const
+QString DesktopFileInfo::genericIconName()
 {
     return QStringLiteral("application-default-icon");
 }
@@ -245,7 +245,7 @@ Qt::DropActions DesktopFileInfo::supportedDragActions() const
     return LocalFileInfo::supportedDragActions();
 }
 
-bool DesktopFileInfo::canDrop() const
+bool DesktopFileInfo::canDrop()
 {
     if (d->deepinID == "dde-computer")
         return false;

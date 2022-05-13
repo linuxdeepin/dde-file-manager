@@ -170,7 +170,7 @@ QString EntryFileInfo::path() const
     return url().path();
 }
 
-QIcon EntryFileInfo::fileIcon() const
+QIcon EntryFileInfo::fileIcon()
 {
     return d->entity ? d->entity->icon() : QIcon();
 }

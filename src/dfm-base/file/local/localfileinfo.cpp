@@ -30,6 +30,7 @@
 #include "dfm-base/utils/dthumbnailprovider.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/local/dlocalfileinfo.h>
@@ -143,6 +144,8 @@ void LocalFileInfo::refresh()
     QWriteLocker locker(&d->lock);
     d->attributes.clear();
     d->attributesExtend.clear();
+    d->mimeType = QMimeType();
+    d->mimeTypeMode = QMimeDatabase::MatchDefault;
     d->clearIcon();
     d->dfmFileInfo->clearCache();
     d->dfmFileInfo->flush();
@@ -1349,7 +1352,7 @@ QVariantHash LocalFileInfo::extraProperties() const
     return d->extraProperties;
 }
 
-QIcon LocalFileInfo::fileIcon() const
+QIcon LocalFileInfo::fileIcon()
 {
     const QUrl &fileUrl = this->url();
 
@@ -1448,34 +1451,32 @@ QIcon LocalFileInfo::fileIcon() const
         }
     }
 
-    d->setIcon(LocalFileIconProvider::globalProvider()->icon(filePath));
+    d->setIcon(LocalFileIconProvider::globalProvider()->icon(this));
     d->iconFromTheme = true;
 
     return d->fileIcon();
 }
 
-QString LocalFileInfo::iconName() const
+QString LocalFileInfo::iconName()
 {
     QReadLocker locker(&d->lock);
-    QString iconName = genericIconName();
-
+    QString iconNameValue;
     if (d->attributes.count(DFileInfo::AttributeID::StandardIcon) == 0) {
-        bool success = false;
-        QList<QString> data;
-        if (d->dfmFileInfo) {
-            data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::StandardIcon, &success).value<QList<QString>>();
+        if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
+            iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(absoluteFilePath());
+        if (iconNameValue.isEmpty()) {
+            iconNameValue = AbstractFileInfo::iconName();
         }
-        if (!data.empty())
-            iconName = data.first();
-        d->attributes.insert(DFileInfo::AttributeID::StandardIcon, iconName);
+
+        d->attributes.insert(DFileInfo::AttributeID::StandardIcon, iconNameValue);
     } else {
-        iconName = d->attributes.value(DFileInfo::AttributeID::StandardIcon).toString();
+        iconNameValue = d->attributes.value(DFileInfo::AttributeID::StandardIcon).toString();
     }
 
-    return iconName;
+    return iconNameValue;
 }
 
-QString LocalFileInfo::genericIconName() const
+QString LocalFileInfo::genericIconName()
 {
     return fileMimeType().genericIconName();
 }
@@ -1501,9 +1502,17 @@ quint64 LocalFileInfo::inode() const
     return d->inode;
 }
 
-QMimeType LocalFileInfo::fileMimeType() const
+QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDatabase::MatchDefault*/)
 {
-    return MimeDatabase::mimeTypeForUrl(d->url);
+    const QUrl &url = this->url();
+
+    QReadLocker locker(&d->lock);
+    if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
+        d->mimeType = this->mimeType(url.path(), mode);
+        d->mimeTypeMode = mode;
+    }
+
+    return d->mimeType;
 }
 
 QString LocalFileInfo::emptyDirectoryTip() const
@@ -1524,7 +1533,8 @@ bool LocalFileInfo::canDragCompress() const
 {
     return isDragCompressFileFormat()
             && isWritable()
-            && isReadable();
+            && isReadable()
+            && !FileUtils::isGvfsFile(this->url());
 }
 
 bool LocalFileInfo::isDragCompressFileFormat() const
@@ -1565,7 +1575,7 @@ bool LocalFileInfo::notifyAttributeChanged()
     return false;
 }
 
-QString LocalFileInfo::mimeTypeName() const
+QString LocalFileInfo::mimeTypeName()
 {
     QReadLocker locker(&d->lock);
     QString type;
@@ -1586,6 +1596,7 @@ QString LocalFileInfo::mimeTypeName() const
 
 void LocalFileInfo::init(const QUrl &url)
 {
+    d->mimeTypeMode = QMimeDatabase::MatchDefault;
     if (url.isEmpty()) {
         qWarning("Failed, can't use empty url init fileinfo");
         abort();
@@ -1614,6 +1625,15 @@ void LocalFileInfo::init(const QUrl &url)
         qWarning("Failed, dfm-io use factory create fileinfo");
         abort();
     }
+}
+
+QMimeType LocalFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchMode mode, const QString inod, const bool isGvfs)
+{
+    static DFMBASE_NAMESPACE::DMimeDatabase db;
+    if (isGvfs) {
+        return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
+    }
+    return db.mimeTypeForFile(filePath, mode);
 }
 
 DFMBASE_END_NAMESPACE

@@ -46,7 +46,7 @@ public:
     bool canRedirectionFileUrl() const override;
     QUrl redirectedFileUrl() const override;
     QUrl parentUrl() const override;
-    bool canDrop() const override;
+    bool canDrop() override;
     bool canRename() const override;
     void refresh() override;
     bool canDragCompress() const override;

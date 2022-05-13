@@ -96,9 +96,9 @@ public:
     virtual QDateTime lastRead() const override;
     virtual QDateTime fileTime(QFile::FileTime time) const override;
     virtual QVariantHash extraProperties() const override;
-    virtual QIcon fileIcon() const override;
-    virtual QString iconName() const override;
-    virtual QString genericIconName() const override;
+    virtual QIcon fileIcon() override;
+    virtual QString iconName() override;
+    virtual QString genericIconName() override;
 
     virtual bool isBlockDev() const;
     virtual QString mountPath() const;
@@ -111,8 +111,8 @@ public:
     virtual QString sizeFormat() const override;
     virtual QString fileDisplayName() const override;
     virtual QFileInfo toQFileInfo() const;
-    virtual QMimeType fileMimeType() const override;
-    virtual QString mimeTypeName() const override;
+    virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) override;
+    virtual QString mimeTypeName() override;
 
     virtual QString emptyDirectoryTip() const override;
 
@@ -128,6 +128,7 @@ public:
 
 private:
     void init(const QUrl &url);
+    QMimeType mimeType(const QString &filePath, QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault, const QString inod = QString(), const bool isGvfs = false);
 };
 DFMBASE_END_NAMESPACE
 typedef QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> DFMLocalFileInfoPointer;
