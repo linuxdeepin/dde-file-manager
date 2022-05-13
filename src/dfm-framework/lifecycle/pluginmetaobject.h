@@ -77,8 +77,6 @@ class PluginContext;
 class PluginMetaObjectPrivate;
 class PluginMetaObject final : public PluginMetaT1<Plugin>
 {
-    QSharedPointer<PluginMetaObjectPrivate> d;
-
     friend class PluginManager;
     friend class PluginManagerPrivate;
     friend Q_CORE_EXPORT QDebug operator<<(QDebug, const PluginMetaObject &);
@@ -114,9 +112,13 @@ public:
     State pluginState() const;
     QSharedPointer<Plugin> plugin();
     QString errorString();
+
+private:
+    QSharedPointer<PluginMetaObjectPrivate> d;
 };
 
-typedef QSharedPointer<DPF_NAMESPACE::PluginMetaObject> PluginMetaObjectPointer;
+using PluginMetaObjectPointer = QSharedPointer<DPF_NAMESPACE::PluginMetaObject>;
+using PluginDependGroup = QList<QPair<PluginMetaObjectPointer, PluginMetaObjectPointer>>;
 
 QT_BEGIN_NAMESPACE
 #ifndef QT_NO_DEBUG_STREAM

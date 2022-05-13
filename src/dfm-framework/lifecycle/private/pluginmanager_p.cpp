@@ -610,11 +610,40 @@ void PluginManagerPrivate::dependsSort(QQueue<PluginMetaObjectPointer> *dstQueue
                                        QQueue<PluginMetaObjectPointer> *srcQueue)
 {
     dpfCheckTimeBegin();
+    Q_ASSERT(dstQueue);
+    Q_ASSERT(srcQueue);
 
     QMutexLocker lock(PluginManagerPrivate::mutex());
 
-    *dstQueue = (*srcQueue);
-    std::sort(dstQueue->begin(), dstQueue->end(), PluginManagerPrivate::doDependSort);
+    PluginDependGroup dependGroup;   // list of pair<depended plugin, plugin>
+    QMap<QString, PluginMetaObjectPointer> srcMap;   // key: plugin name
+
+    std::for_each(srcQueue->cbegin(), srcQueue->cend(), [&srcMap](PluginMetaObjectPointer ptr) {
+        srcMap[ptr->name()] = ptr;
+    });
+
+    // make depends pair group
+    std::for_each(srcQueue->begin(), srcQueue->end(), [&dependGroup, srcMap](PluginMetaObjectPointer ptr) {
+        for (const PluginDepend &depend : ptr->depends()) {
+            QString &&name { depend.name() };
+            if (srcMap.contains(name)) {
+                qInfo() << name << "->" << ptr->name();
+                dependGroup.append({ srcMap.value(name), ptr });
+            } else {
+                qWarning("Plugin `%s` cannot depend a unkonw plugin: `%s`", qUtf8Printable(ptr->name()), qUtf8Printable(name));
+            }
+        }
+    });
+
+    // sort
+    dstQueue->clear();
+    if (!doPluginSort(dependGroup, srcMap, dstQueue)) {
+        qCritical() << "Sort depnd group failed";
+        *dstQueue = *srcQueue;
+        dpfCheckTimeEnd();
+        return;
+    }
+
     dpfCheckTimeEnd();
 }
 
@@ -629,9 +658,9 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer &pointer)
 
     // 必须执行了读取操作
     if (pointer->d->state != PluginMetaObject::State::Readed) {
-        qDebug() << "Failed load plugin: "
-                 << pointer->d->name
-                 << pointer->fileName();
+        qCritical() << "Failed load plugin: "
+                    << pointer->d->name
+                    << pointer->fileName();
         return false;
     }
 
@@ -653,7 +682,7 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer &pointer)
     }
 
     pointer->d->state = PluginMetaObject::State::Loaded;
-    qDebug() << "Loaded plugin: " << pointer->d->name;
+    qInfo() << "Loaded plugin: " << pointer->d->name;
 
     return true;
 }
@@ -666,38 +695,49 @@ void PluginManagerPrivate::doUnloadPlugin(PluginMetaObjectPointer &pointer)
         qDebug() << pointer->d->loader->errorString();
     }
 
-    pointer->d->state = PluginMetaObject::State::Shutdown;
+    pointer->d->state = PluginMetaObject::State::
+            Shutdown;
     qDebug() << "shutdown" << pointer->d->loader->fileName();
 }
 
-// TODO(zhangs): fix me!
-bool PluginManagerPrivate::doDependSort(PluginMetaObjectPointer after, PluginMetaObjectPointer befor)
+bool PluginManagerPrivate::doPluginSort(const PluginDependGroup &group, QMap<QString, PluginMetaObjectPointer> src, QQueue<PluginMetaObjectPointer> *dest)
 {
-    //    qDebug() << after->d->name << befor->d->name;
-    //    if (after->depends().isEmpty()) {
-    //        //前节点没有依赖则保持顺序
-    //        return true;
-    //    } else {   //前节点存在依赖
-    //        if (befor->depends().isEmpty()) {
-    //            //后节点为空则调整顺序
-    //            return false;
-    //        } else {   //后节点存在依赖
-    //            //遍历后节点依赖
-    //            for (auto depend : befor->d->depends) {
-    //                //后节点依赖存在前节点
-    //                if (depend.name() == after->name())
-    //                    return true;
-    //            }
-    //            //遍历前节点依赖
-    //            for (auto depend : after->d->depends) {
-    //                //前节点依赖存在后节点
-    //                if (depend.name() == befor->name())
-    //                    return false;
-    //            }
-    //        }
-    //    }
-    //    qDebug() << "Unknown Error from" << Q_FUNC_INFO;
-    return false;
+    if (!group.isEmpty() && src.isEmpty()) {
+        qWarning() << "Maybe circle depends occured";
+        return false;
+    }
+
+    if (group.isEmpty() && src.isEmpty())
+        return true;
+
+    PluginDependGroup nextGroup;
+    QMap<QString, PluginMetaObjectPointer> nextSrc;
+
+    for (const auto &pair : group) {
+        const QString &rname = pair.second->name();
+        if (src.contains(rname)) {
+            src.remove(rname);
+            if (!nextSrc.contains(rname))
+                nextSrc.insert(rname, pair.second);
+        }
+    }
+
+    for (auto itor = src.cbegin(); itor != src.cend(); ++itor)
+        dest->push_back(itor.value());
+
+    const QStringList &keys = src.keys();
+    for (const auto &pair : group) {
+        const QString &lname = pair.first->name();
+        if (!keys.contains(lname))
+            nextGroup.push_back(pair);
+    }
+
+    if (!nextGroup.isEmpty() && nextGroup.size() == group.size()) {
+        qWarning() << "Maybe circle depends occured, header circle";
+        return false;
+    }
+
+    return doPluginSort(nextGroup, nextSrc, dest);
 }
 
 DPF_END_NAMESPACE

@@ -20,6 +20,5 @@
     "Description" : "The accesscontrol plugin for the dde-file-manager-daemon.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-        {"Name" : "core", "Version": "1.0.0"}
     ]
 }

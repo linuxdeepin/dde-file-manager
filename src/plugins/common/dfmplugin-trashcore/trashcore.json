@@ -20,6 +20,5 @@
     "Description" : "The trash core plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
- 	{"Name" : "core", "Version": "1.0.0"}
     ]
 }

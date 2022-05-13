@@ -20,6 +20,6 @@
     "Description" : "The trash plugin for the filemanager.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-        {"Name" : "trashcore", "Version": "1.0.0"}
+        {"Name" : "dfmplugin-trashcore", "Version": "1.0.0"}
     ]
 }

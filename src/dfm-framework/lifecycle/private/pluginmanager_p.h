@@ -87,7 +87,9 @@ public:
 private:
     bool doLoadPlugin(PluginMetaObjectPointer &pointer);
     void doUnloadPlugin(PluginMetaObjectPointer &pointer);
-    static bool doDependSort(PluginMetaObjectPointer after, PluginMetaObjectPointer befor);
+    static bool doPluginSort(const PluginDependGroup &group,
+                             QMap<QString, PluginMetaObjectPointer> src,
+                             QQueue<PluginMetaObjectPointer> *dest);
 };
 
 DPF_END_NAMESPACE

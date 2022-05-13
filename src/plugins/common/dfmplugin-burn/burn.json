@@ -20,6 +20,5 @@
     "Description" : "The common plugin for the filemanager and desktop.",
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
-        {"Name" : "core", "Version": "1.0.0"}
     ]
 }
