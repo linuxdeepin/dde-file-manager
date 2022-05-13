@@ -5,7 +5,9 @@ unix {
     top_srcdir = $$PWD/../
 
     CONFIG(release, debug|release) {
-        LIB_INSTALL_DIR = $$[QT_INSTALL_LIBS]
+        isEmpty(LIB_INSTALL_DIR) {
+       	    LIB_INSTALL_DIR = $$[QT_INSTALL_LIBS]
+        }
     }
 
     ARCH = $$QMAKE_HOST.arch
