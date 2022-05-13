@@ -841,6 +841,7 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
         // 对文件加权
         setTargetPermissions(fromInfo, toInfo);
         skipWritSize += dirSize;
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, toInfo->url());
         return true;
     }
     // resize target file

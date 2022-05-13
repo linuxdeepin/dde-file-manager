@@ -58,10 +58,8 @@ DoMoveToTrashFilesWorker::~DoMoveToTrashFilesWorker()
  */
 bool DoMoveToTrashFilesWorker::doWork()
 {
-    // The endcopy interface function has been called here
     if (!AbstractWorker::doWork())
         return false;
-    // ToDo::执行移动到回收站的业务逻辑
 
     doMoveToTrash();
 
@@ -124,7 +122,6 @@ bool DoMoveToTrashFilesWorker::doMoveToTrash()
                 continue;
             }
         }
-        fileInfo->refresh();
 
         isInSameDisk(fileInfo);
 

@@ -182,7 +182,7 @@ void FileOperatorHelper::undoFiles(const FileView *view)
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     dpfInstance.eventDispatcher().publish(GlobalEventType::kRevocation,
-                                          windowId);
+                                          windowId, nullptr);
 }
 
 void FileOperatorHelper::moveToTrash(const FileView *view)

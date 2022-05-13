@@ -321,6 +321,12 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
         } else {
             *ok = renameFileByHandler(sourceInfo, newTargetInfo);
+            if (*ok) {
+                if (!isConvert && targetInfo == this->targetInfo) {
+                    completeSourceFiles.append(sourceUrl);
+                    completeTargetFiles.append(newTargetInfo->url());
+                }
+            }
             return *ok;
         }
     }

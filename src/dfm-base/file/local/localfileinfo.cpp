@@ -1263,8 +1263,8 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
 int LocalFileInfo::countChildFile() const
 {
     if (isDir()) {
-        QReadLocker locker(&d->lock);
         QDir dir(absoluteFilePath());
+        QReadLocker locker(&d->lock);
         QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
                                               | QDir::NoDotAndDotDot | QDir::Hidden);
         return entryList.size();
