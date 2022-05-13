@@ -36,14 +36,10 @@ USING_DFMEXT_NAMESPACE
 DFMExtMenuImpl::DFMExtMenuImpl(QMenu *menu)
     : DFMExtMenu(new DFMExtMenuImplPrivate(this, menu))
 {
-
 }
 
 DFMExtMenuImplPrivate::DFMExtMenuImplPrivate(DFMExtMenuImpl *qImpl, QMenu *m)
-    : DFMExtMenuPrivate()
-    , interiorEntity (m != nullptr)
-    , menu(m ? m : new QMenu())
-    , q(qImpl)
+    : DFMExtMenuPrivate(), interiorEntity(m != nullptr), menu(m ? m : new QMenu()), q(qImpl)
 {
     Q_ASSERT(q);
     //用于限制操作外部传入的QMenu
@@ -55,7 +51,7 @@ DFMExtMenuImplPrivate::DFMExtMenuImplPrivate(DFMExtMenuImpl *qImpl, QMenu *m)
     QObject::connect(menu, &QMenu::triggered,
                      this, &DFMExtMenuImplPrivate::onActionTriggered);
     //应用于actions获取implmenu时自动释放，将匿名函数挂载到menu以屏蔽循环的释放冲突
-    QObject::connect(menu, &QObject::destroyed, menu, [=](){
+    QObject::connect(menu, &QObject::destroyed, menu, [=]() {
         if (interiorEntity) {
             delete q;
         }
@@ -64,9 +60,9 @@ DFMExtMenuImplPrivate::DFMExtMenuImplPrivate(DFMExtMenuImpl *qImpl, QMenu *m)
 
 DFMExtMenuImplPrivate::~DFMExtMenuImplPrivate()
 {
-    if (interiorEntity) { //文管内部创建采用逆向释放，信号槽绑定
+    if (interiorEntity) {   //文管内部创建采用逆向释放，信号槽绑定
         return;
-    } else { //! 非文管创建的impl正向释放
+    } else {   //! 非文管创建的impl正向释放
         if (menu) {
             delete menu;
             menu = nullptr;
@@ -101,7 +97,7 @@ void DFMExtMenuImplPrivate::setTitle(const std::string &title)
 {
     if (interiorEntity)
         return;
-    if(menu)
+    if (menu)
         menu->setTitle(QString::fromStdString(title));
 }
 
@@ -135,9 +131,9 @@ void DFMExtMenuImplPrivate::setIcon(const std::string &iconName)
 
 bool DFMExtMenuImplPrivate::addAction(DFMExtAction *action)
 {
-    DFMExtActionImpl *impl = dynamic_cast<DFMExtActionImpl *>(action);
+    DFMExtActionImpl *impl = static_cast<DFMExtActionImpl *>(action);
     if (menu && impl) {
-        DFMExtActionImplPrivate *actionImpl_d =  dynamic_cast<DFMExtActionImplPrivate*>(impl->d);
+        DFMExtActionImplPrivate *actionImpl_d = dynamic_cast<DFMExtActionImplPrivate *>(impl->d);
 
         //文管内部创建的不允许添加
         if (actionImpl_d->isInterior())
@@ -152,15 +148,15 @@ bool DFMExtMenuImplPrivate::addAction(DFMExtAction *action)
 
 bool DFMExtMenuImplPrivate::insertAction(DFMExtAction *before, DFMExtAction *action)
 {
-    DFMExtActionImpl *beforeImpl = dynamic_cast<DFMExtActionImpl *>(before);
-    DFMExtActionImpl *impl = dynamic_cast<DFMExtActionImpl *>(action);
+    DFMExtActionImpl *beforeImpl = static_cast<DFMExtActionImpl *>(before);
+    DFMExtActionImpl *impl = static_cast<DFMExtActionImpl *>(action);
     DFMExtActionImplPrivate *beforeImpl_d = dynamic_cast<DFMExtActionImplPrivate *>(beforeImpl->d);
     DFMExtActionImplPrivate *impl_d = dynamic_cast<DFMExtActionImplPrivate *>(impl->d);
     if (menu != nullptr
-            && impl != nullptr && impl_d != nullptr
-            && beforeImpl != nullptr && beforeImpl_d != nullptr) {
+        && impl != nullptr && impl_d != nullptr
+        && beforeImpl != nullptr && beforeImpl_d != nullptr) {
 
-        QAction *beforeAc =  beforeImpl_d->qaction();
+        QAction *beforeAc = beforeImpl_d->qaction();
 
         // 文管内部创建的不允许添加
         if (impl_d->isInterior())
@@ -183,7 +179,7 @@ DFMExtAction *DFMExtMenuImplPrivate::menuAction() const
             //文管自身的创建的菜单，为其创建warpper
             if (impl_d == nullptr) {
                 auto bindAciton = new DFMExtActionImpl(qaction);
-                impl_d =  dynamic_cast<DFMExtActionImplPrivate *>(bindAciton->d);
+                impl_d = dynamic_cast<DFMExtActionImplPrivate *>(bindAciton->d);
             }
             return impl_d->actionImpl();
         }

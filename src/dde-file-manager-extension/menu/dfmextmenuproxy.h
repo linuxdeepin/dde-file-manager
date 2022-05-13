@@ -37,7 +37,7 @@ class DFMExtMenuProxy
 {
 public:
     explicit DFMExtMenuProxy(DFMExtMenuProxyPrivate *d_ptr);
-    virtual ~DFMExtMenuProxy();
+    ~DFMExtMenuProxy();
 
     DFMExtMenu *createMenu();
     bool deleteMenu(DFMExtMenu *menu);

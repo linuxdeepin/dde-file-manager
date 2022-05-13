@@ -35,16 +35,16 @@ class DFMExtMenuPlugin
 {
     DFM_DISABLE_COPY(DFMExtMenuPlugin)
 public:
-    using InitializeFunc = std::function<void (DFMEXT::DFMExtMenuProxy *proxy)>;
-    using BuildNormalMenuFunc = std::function<bool (DFMExtMenu *, 
-                                const std::string &,
-                                const std::string &,
-                                const std::list<std::string> &, bool)>;
-    using BuildEmptyAreaMenuFunc = std::function<bool (DFMEXT::DFMExtMenu *, const std::string &, bool)>;
+    using InitializeFunc = std::function<void(DFMEXT::DFMExtMenuProxy *proxy)>;
+    using BuildNormalMenuFunc = std::function<bool(DFMExtMenu *,
+                                                   const std::string &,
+                                                   const std::string &,
+                                                   const std::list<std::string> &, bool)>;
+    using BuildEmptyAreaMenuFunc = std::function<bool(DFMEXT::DFMExtMenu *, const std::string &, bool)>;
 
 public:
     DFMExtMenuPlugin();
-    virtual ~DFMExtMenuPlugin();
+    ~DFMExtMenuPlugin();
 
     DFM_FAKE_VIRTUAL void initialize(DFMEXT::DFMExtMenuProxy *proxy);
     DFM_FAKE_VIRTUAL bool buildNormalMenu(DFMEXT::DFMExtMenu *main,
@@ -65,4 +65,4 @@ private:
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTMENUPLUGIN_H
+#endif   // DFMEXTMENUPLUGIN_H

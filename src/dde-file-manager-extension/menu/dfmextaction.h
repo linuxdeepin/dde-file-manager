@@ -34,10 +34,11 @@ class DFMExtActionPrivate;
 class DFMExtAction
 {
     friend class DFMExtActionPrivate;
+
 public:
-    using TriggeredFunc = std::function<void (DFMExtAction *, bool)>;
-    using HoveredFunc = std::function<void (DFMExtAction *)>;
-    using DeletedFunc = std::function<void (DFMExtAction *)>;
+    using TriggeredFunc = std::function<void(DFMExtAction *, bool)>;
+    using HoveredFunc = std::function<void(DFMExtAction *)>;
+    using DeletedFunc = std::function<void(DFMExtAction *)>;
 
 public:
     void setIcon(const std::string &icon);
@@ -75,10 +76,10 @@ public:
 
 protected:
     explicit DFMExtAction(DFMExtActionPrivate *d_ptr);
-    virtual ~DFMExtAction();
+    ~DFMExtAction();
     DFMExtActionPrivate *d;
 };
 
 END_DFMEXT_NAMESPACE
 
-#endif // DFMEXTACTION_H
+#endif   // DFMEXTACTION_H

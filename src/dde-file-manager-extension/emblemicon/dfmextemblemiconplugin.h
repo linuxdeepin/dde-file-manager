@@ -36,11 +36,11 @@ class DFMExtEmblemIconPlugin
 public:
     using IconsType = std::vector<std::string>;
     using EmblemIcons = std::function<IconsType(const std::string &)>;
-    using LocationEmblemIcons = std::function<DFMExtEmblem (const std::string &, int)>;
+    using LocationEmblemIcons = std::function<DFMExtEmblem(const std::string &, int)>;
 
 public:
     DFMExtEmblemIconPlugin();
-    virtual ~DFMExtEmblemIconPlugin();
+    ~DFMExtEmblemIconPlugin();
 
     // Note: If the corner mark set by emblemIcons conflicts with the corner mark position set by locationEmblemIcons,
     // the conflict position will only display the corner mark set by locationEmblemIcons
