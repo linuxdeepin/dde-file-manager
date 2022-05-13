@@ -29,7 +29,9 @@
 #include "durl.h"
 #include <dgiomount.h>
 #include <dblockdevice.h>
+#include <ddiskdevice.h>
 
+#define DISK_HIDDEN "dfm.disk.hidden"
 class DFMRootFileInfo;
 class DFMRootFileWatcherPrivate;
 class DFMRootFileWatcher : public DAbstractFileWatcher
@@ -54,6 +56,8 @@ public:
 
     const DAbstractFileInfoPointer createFileInfo(const QSharedPointer<DFMCreateFileInfoEvent> &event) const override;
     DAbstractFileWatcher *createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const override;
+
+    static QStringList systemDiskList();
 
 private:
     void reloadBlkName(const QString& blkPath, QSharedPointer<DBlockDevice> blk) const;

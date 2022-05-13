@@ -35,6 +35,7 @@
 #include "dfmsettings.h"
 #include "utils.h"
 #include "utils/grouppolicy.h"
+#include "app/define.h"
 
 #include <dgiofile.h>
 #include <dgiofileinfo.h>
@@ -207,7 +208,11 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
     }
 
-    QStringList hiddenDiskList = GroupPolicy::instance()->getValue("dfm.disk.hidden").toStringList();
+    bool hasSetDiskPolicy = GroupPolicy::instance()->containKey(DISK_HIDDEN);
+    QStringList diskPolicyList;
+    if (hasSetDiskPolicy)
+        diskPolicyList = GroupPolicy::instance()->getValue(DISK_HIDDEN).toStringList();
+    QStringList hintSystemDisks;
 
     QStringList blkds = DDiskManager::blockDevices({});
     for (auto blks : blkds) {
@@ -219,11 +224,13 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
 
         reloadBlkName(blks, blk);
 
-        if (hiddenDiskList.contains(blk->idUUID()))
+        if (hasSetDiskPolicy && blk->hintSystem() && diskPolicyList.contains(blk->idUUID()))
             continue;
 
-        using namespace DFM_NAMESPACE;
-        if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
+        if (blk->hintSystem())
+            hintSystemDisks << blk->idUUID();
+
+        if (!hasSetDiskPolicy && DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
             qDebug()  << "block device is ignored by hintSystem&HiddenSystemPartition:"  << blks;
             continue;
         }
@@ -326,6 +333,28 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         qInfo() << item->fileUrl();
     }
 
+    if (hasSetDiskPolicy) {
+        if (diskPolicyList.isEmpty()) {
+            // 同步组策略到老配置(不选中隐藏)
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, false);
+            return ret;
+        }
+
+        bool allSet = true;
+        for (auto blk : hintSystemDisks) {
+            if (!diskPolicyList.contains(blk))
+                allSet = false;
+        }
+
+        // 同步组策略到老配置(选中隐藏)
+
+        if (allSet) {
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, true);
+        } else {
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, false);
+        }
+    }
+
     return ret;
 }
 
@@ -337,6 +366,23 @@ const DAbstractFileInfoPointer DFMRootController::createFileInfo(const QSharedPo
 DAbstractFileWatcher *DFMRootController::createFileWatcher(const QSharedPointer<DFMCreateFileWatcherEvent> &event) const
 {
     return new DFMRootFileWatcher(event->url());
+}
+
+QStringList DFMRootController::systemDiskList()
+{
+    QStringList tempList;
+    QStringList blkds = DDiskManager::blockDevices({});
+
+    for (auto blks : blkds) {
+        QSharedPointer<DBlockDevice> blk(DDiskManager::createBlockDevice(blks));
+        QSharedPointer<DDiskDevice> drv(DDiskManager::createDiskDevice(blk->drive()));
+        if(ignoreBlkDevice(blks, blk, drv))
+            continue;
+
+        if (blk->hintSystem())
+            tempList << blk->idUUID();
+    }
+    return tempList;
 }
 
 void DFMRootController::loadDiskInfo(const QString &jsonPath) const

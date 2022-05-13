@@ -71,6 +71,7 @@ signals:
 
 public Q_SLOTS:
     void hideSystemPartition();
+    void policyHideSystemPartition(const QString &key);
 
 private:
     explicit DRootFileManager(QObject *parent = nullptr);
