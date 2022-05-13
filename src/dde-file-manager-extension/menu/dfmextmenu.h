@@ -66,7 +66,7 @@ public:
 
 protected:
     explicit DFMExtMenu(DFMExtMenuPrivate *d_ptr);
-    virtual ~DFMExtMenu();
+    ~DFMExtMenu();
     DFMExtMenuPrivate *d;
 };
 

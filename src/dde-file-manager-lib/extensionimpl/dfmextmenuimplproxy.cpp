@@ -34,10 +34,10 @@ USING_DFMEXT_NAMESPACE
 DFMExtMenuImplProxy::DFMExtMenuImplProxy()
     : DFMExtMenuProxy(new DFMExtMenuImplProxyPrivate)
 {
-
 }
 
-DFMExtMenu *DFMExtMenuImplProxyPrivate::createMenu(){
+DFMExtMenu *DFMExtMenuImplProxyPrivate::createMenu()
+{
     auto menu = new DFMExtMenuImpl();
     return menu;
 }
@@ -45,7 +45,7 @@ DFMExtMenu *DFMExtMenuImplProxyPrivate::createMenu(){
 bool DFMExtMenuImplProxyPrivate::deleteMenu(DFMExtMenu *menu)
 {
     if (menu) {
-        DFMExtMenuImpl *impl = dynamic_cast<DFMExtMenuImpl *>(menu);
+        DFMExtMenuImpl *impl = static_cast<DFMExtMenuImpl *>(menu);
         if (impl == nullptr)
             return false;
 
@@ -72,7 +72,7 @@ bool DFMExtMenuImplProxyPrivate::deleteAction(DFMExtAction *action)
 {
     if (action) {
 
-        DFMExtActionImpl *impl = dynamic_cast<DFMExtActionImpl *>(action);
+        DFMExtActionImpl *impl = static_cast<DFMExtActionImpl *>(action);
         if (impl == nullptr)
             return false;
 
