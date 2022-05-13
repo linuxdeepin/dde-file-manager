@@ -30,6 +30,7 @@
 #include "delegate/canvasitemdelegate.h"
 #include "view/operator/fileoperatorproxy.h"
 #include "utils/renamedialog.h"
+#include "desktoputils/widgetutil.h"
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/menu/menuservice.h"
@@ -165,7 +166,10 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     d->predicateName[ActionID::kIconSize] = tr("Icon size");
     d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
     d->predicateName[ActionID::kDisplaySettings] = tr("Display Settings");
-    d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
+    if (ddplugin_desktop_util::enableScreensaver())
+        d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
+    else
+        d->predicateName[ActionID::kWallpaperSettings] = tr("Set Wallpaper");
 
     // 排序子菜单
     d->predicateName[ActionID::kSrtName] = tr("Name");
