@@ -42,6 +42,10 @@
 #include "dfmapplication.h"
 #include "plugins/schemepluginmanager.h"
 #include "utils/grouppolicy.h"
+#include "controllers/dfmrootcontroller.h"
+
+#include <ddiskmanager.h>
+#include <dblockdevice.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -71,7 +75,7 @@ DRootFileManager::DRootFileManager(QObject *parent)
     : QObject(parent)
     , d_ptr(new DRootFileManagerPrivate())
 {
-    connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, &DRootFileManager::hideSystemPartition);
+    connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, &DRootFileManager::policyHideSystemPartition);
     connect(fileSignalManager, &FileSignalManager::requestHideSystemPartition, this, &DRootFileManager::hideSystemPartition);
     connect(DFMApplication::instance(), &DFMApplication::reloadComputerModel, this, &DRootFileManager::hideSystemPartition);
 }
@@ -301,9 +305,64 @@ bool DRootFileManager::isRootFileContainSmb(const DUrl &smburl)
 
 // sometimes we can use this function to relaod computer model.
 // and i think this function called reloadComputerModel could be better.
-
 void DRootFileManager::hideSystemPartition()
 {
+    bool isSetPolicy = GroupPolicy::instance()->containKey(DISK_HIDDEN);
+    if (isSetPolicy) {
+        bool isHidden = DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool();
+        auto policyList = GroupPolicy::instance()->getValue(DISK_HIDDEN).toList();
+
+        if (isHidden) {
+            QStringList systemDisks = DFMRootController::systemDiskList();
+            bool allHidden = true;
+            for (auto dk : systemDisks){
+                if (!policyList.contains(dk)) {
+                    allHidden = false;
+                    policyList << dk;
+                }
+            }
+
+            if (!allHidden)
+                GroupPolicy::instance()->setValue(DISK_HIDDEN, policyList);
+        } else {
+            if (!policyList.isEmpty())
+                GroupPolicy::instance()->setValue(DISK_HIDDEN, QVariantList());
+        }
+    }
+
+    QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
+            getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
+    d_ptr->rootfileMtx.lock();
+    d_ptr->rootfilelist.clear();
+    d_ptr->rootfileMtx.unlock();
+    changRootFile(fileist);
+
+    emit serviceHideSystemPartition();
+
+    // sync disk policy
+}
+
+void DRootFileManager::policyHideSystemPartition(const QString &key)
+{
+    if (key != DISK_HIDDEN)
+        return;
+    QStringList policyList = GroupPolicy::instance()->getValue(DISK_HIDDEN).toStringList();
+    QStringList systemDisks = DFMRootController::systemDiskList();
+    bool allHidden = true;
+    for (auto dk : systemDisks){
+        if (!policyList.contains(dk)) {
+            allHidden = false;
+            break;
+        }
+    }
+
+    bool isHidden = DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool();
+    if (allHidden && !isHidden)
+        DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, true);
+    if (!allHidden && isHidden)
+        DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, false);
+
+
     QList<DAbstractFileInfoPointer> fileist = DFileService::instance()->\
                                               getChildren(this, DUrl(DFMROOT_ROOT), QStringList(), QDir::AllEntries, QDirIterator::NoIteratorFlags, false);
     d_ptr->rootfileMtx.lock();
