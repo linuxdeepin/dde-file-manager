@@ -26,6 +26,7 @@
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QUrl>
+#include <QWidget>
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -55,6 +56,7 @@ public:
 
     static QUrl fromSearchFile(const QString &filePath);
     static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId);
+    static bool showTopWidget(QWidget *w, const QUrl &url);
 
     bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
     bool customRoleDisplayName(const QUrl &rootUrl, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);

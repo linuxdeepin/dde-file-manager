@@ -38,7 +38,6 @@ DWIDGET_END_NAMESPACE
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QComboBox;
-class QVBoxLayout;
 QT_END_NAMESPACE
 
 DPSEARCH_BEGIN_NAMESPACE
@@ -56,7 +55,7 @@ public:
         kAccessDateRange,
         kCreateDateRange,
         kLabelCount,
-        kSearchTargetUrl
+        kCurrentUrl
     };
 
     typedef struct fileFilter
@@ -69,7 +68,7 @@ public:
         QDateTime createDateRangeStart;
         QDateTime createDateRangeEnd;
         QString typeString;
-        QUrl searchTargetUrl;
+        QUrl currentUrl;
         bool includeSubDir;
         bool comboValid[kLabelCount];
     } FileFilter;
@@ -77,6 +76,7 @@ public:
     explicit AdvanceSearchBarPrivate(AdvanceSearchBar *qq);
     void initUI();
     void initConnection();
+    void refreshOptions(const QUrl &url);
 
     static bool shouldVisiableByFilterRule(DFMBASE_NAMESPACE::AbstractFileInfo *info, QVariant data);
     static FileFilter parseFilterData(const QMap<int, QVariant> &data);
@@ -85,8 +85,10 @@ public:
     QLabel *asbLabels[kLabelCount];
     QComboBox *asbCombos[kLabelCount];
     DTK_WIDGET_NAMESPACE::DCommandLinkButton *resetBtn;
-    bool needSearchAgain = true;
-    bool allowUpdateView = true;
+
+    using FilterData = QMap<int, QVariant>;
+    using FilterInfoCache = QHash<QUrl, FilterData>;
+    FilterInfoCache filterInfoCache;
 
     AdvanceSearchBar *q;
 };

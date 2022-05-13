@@ -170,12 +170,86 @@ void AdvanceSearchBarPrivate::initConnection()
     }
 }
 
+void AdvanceSearchBarPrivate::refreshOptions(const QUrl &url)
+{
+    if (!filterInfoCache.contains(url)) {
+        q->resetForm();
+        return;
+    }
+
+    static QMap<QVariant, int> dateRangeMap { { 1, 1 },
+                                              { 2, 2 },
+                                              { 7, 3 },
+                                              { 14, 4 },
+                                              { 30, 5 },
+                                              { 60, 6 },
+                                              { 365, 7 },
+                                              { 730, 8 } };
+
+    static QMap<QPair<quint64, quint64>, int> sizeRangeMap { { QPair<quint64, quint64>(0, 100), 1 },
+                                                             { QPair<quint64, quint64>(100, 1024), 2 },
+                                                             { QPair<quint64, quint64>(1024, 10 * 1024), 3 },
+                                                             { QPair<quint64, quint64>(10 * 1024, 100 * 1024), 4 },
+                                                             { QPair<quint64, quint64>(100 * 1024, 1 << 20), 5 },
+                                                             { QPair<quint64, quint64>(1 << 20, 1 << 30), 6 } };
+
+    blockSignals(true);
+    FilterData filter = filterInfoCache[url];
+    // 搜索范围
+    const auto &searchRange = filter[kSearchRange];
+    asbCombos[kSearchRange]->setCurrentIndex(searchRange.toBool() ? 0 : 1);
+
+    // 文件类型
+    const auto &fileType = filter[kFileType];
+    if (fileType.isValid()) {
+        asbCombos[kFileType]->setCurrentText(fileType.toString());
+    } else {
+        asbCombos[kFileType]->setCurrentIndex(0);
+    }
+
+    // 文件大小
+    const auto &sizeRange = filter[kSizeRange];
+    if (sizeRange.isValid() && sizeRange.canConvert<QPair<quint64, quint64>>()) {
+        auto range = sizeRange.value<QPair<quint64, quint64>>();
+        asbCombos[kSizeRange]->setCurrentIndex(sizeRangeMap[range]);
+    } else {
+        asbCombos[kSizeRange]->setCurrentIndex(0);
+    }
+
+    // 修改时间
+    const auto &dateRange = filter[kDateRange];
+    if (dateRange.isValid()) {
+        asbCombos[kDateRange]->setCurrentIndex(dateRangeMap[dateRange]);
+    } else {
+        asbCombos[kDateRange]->setCurrentIndex(0);
+    }
+
+    // 访问时间
+    const auto &accessDateRange = filter[kAccessDateRange];
+    if (accessDateRange.isValid()) {
+        asbCombos[kAccessDateRange]->setCurrentIndex(dateRangeMap[accessDateRange]);
+    } else {
+        asbCombos[kAccessDateRange]->setCurrentIndex(0);
+    }
+
+    // 创建时间
+    const auto &createDateRange = filter[kCreateDateRange];
+    if (createDateRange.isValid()) {
+        asbCombos[kCreateDateRange]->setCurrentIndex(dateRangeMap[createDateRange]);
+    } else {
+        asbCombos[kCreateDateRange]->setCurrentIndex(0);
+    }
+
+    blockSignals(false);
+    q->onOptionChanged();
+}
+
 bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info, QVariant data)
 {
     if (!data.isValid())
         return true;
 
-    auto filterData = data.value<QMap<int, QVariant>>();
+    auto filterData = data.value<FilterData>();
     // 如果是重置过滤条件，则都显示
     const auto &iter = std::find_if(filterData.begin() + 1, filterData.end(), [](const QVariant &value) {
         return value.isValid();
@@ -188,7 +262,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
 
     const auto &filter = parseFilterData(filterData);
     if (filter.comboValid[kSearchRange] && !filter.includeSubDir) {
-        const QUrl &parentUrl = filter.searchTargetUrl;
+        const QUrl &parentUrl = SearchHelper::searchTargetUrl(filter.currentUrl);
         QString filePath = info->filePath();
         filePath.remove(parentUrl.toLocalFile().endsWith("/") ? parentUrl.toLocalFile() : parentUrl.toLocalFile() + '/');
         if (filePath.contains('/'))
@@ -236,7 +310,7 @@ bool AdvanceSearchBarPrivate::shouldVisiableByFilterRule(AbstractFileInfo *info,
 AdvanceSearchBarPrivate::FileFilter AdvanceSearchBarPrivate::parseFilterData(const QMap<int, QVariant> &data)
 {
     FileFilter filter;
-    filter.searchTargetUrl = data[kSearchTargetUrl].toUrl();
+    filter.currentUrl = data[kCurrentUrl].toUrl();
     filter.comboValid[kSearchRange] = true;
     filter.includeSubDir = data[kSearchRange].toBool();
     filter.typeString = data[kFileType].toString();
@@ -318,6 +392,11 @@ void AdvanceSearchBar::resetForm()
     onOptionChanged();
 }
 
+void AdvanceSearchBar::refreshOptions(const QUrl &url)
+{
+    d->refreshOptions(url);
+}
+
 void AdvanceSearchBar::onOptionChanged()
 {
     QMap<int, QVariant> formData;
@@ -333,10 +412,12 @@ void AdvanceSearchBar::onOptionChanged()
     if (!window)
         return;
 
-    formData[AdvanceSearchBarPrivate::kSearchTargetUrl] = SearchHelper::searchTargetUrl(window->currentUrl());
+    const QUrl &curUrl = window->currentUrl();
+    formData[AdvanceSearchBarPrivate::kCurrentUrl] = curUrl;
+    d->filterInfoCache[curUrl] = formData;
 
-    WorkspaceService::service()->setFileViewFilterData(winId, window->currentUrl(), QVariant::fromValue(formData));
-    WorkspaceService::service()->setFileViewFilterCallback(winId, window->currentUrl(), AdvanceSearchBarPrivate::shouldVisiableByFilterRule);
+    WorkspaceService::service()->setFileViewFilterData(winId, curUrl, QVariant::fromValue(formData));
+    WorkspaceService::service()->setFileViewFilterCallback(winId, curUrl, AdvanceSearchBarPrivate::shouldVisiableByFilterRule);
 }
 
 void AdvanceSearchBar::onResetButtonPressed()
@@ -346,7 +427,13 @@ void AdvanceSearchBar::onResetButtonPressed()
 
 void AdvanceSearchBar::hideEvent(QHideEvent *event)
 {
-    resetForm();
+    auto winId = WindowsService::service()->findWindowId(this);
+    auto window = WindowsService::service()->findWindowById(winId);
+    if (window && !window->isMinimized()) {
+        resetForm();
+        d->filterInfoCache.clear();
+    }
+
     QScrollArea::hideEvent(event);
 }
 

@@ -118,6 +118,7 @@ void Search::regSearchToWorkspace()
     info.scheme = SearchHelper::scheme();
     info.keepShow = false;
     info.createTopWidgetCb = []() { return new AdvanceSearchBar(); };
+    info.showTopWidgetCb = SearchHelper::showTopWidget;
     WorkspaceService::service()->addCustomTopWidget(info);
 }
 

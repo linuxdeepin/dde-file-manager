@@ -88,8 +88,6 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     if (!tabBar->currentTab())
         tabBar->createTab(nullptr);
 
-    initCustomTopWidgets(url);
-
     // NOTE: In the function `initCustomTopWidgets` the `cd` event may be
     // called causing this function to reentrant!!!
     if (workspaceUrl != url)
@@ -110,6 +108,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         views.insert(url.scheme(), fileView);
         tabBar->setCurrentView(fileView.get());
         tabBar->setCurrentUrl(url);
+        initCustomTopWidgets(url);
         return;
     }
 
@@ -117,6 +116,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
     viewStackLayout->setCurrentWidget(views[scheme]->widget());
     tabBar->setCurrentView(views[scheme].get());
     tabBar->setCurrentUrl(url);
+    initCustomTopWidgets(url);
 }
 
 QUrl WorkspaceWidget::currentUrl() const

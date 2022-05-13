@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "searchhelper.h"
+#include "topwidget/advancesearchbar.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
 
@@ -131,6 +132,19 @@ QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword,
     url.setQuery(query);
 
     return url;
+}
+
+bool SearchHelper::showTopWidget(QWidget *w, const QUrl &url)
+{
+    auto topWidget = qobject_cast<AdvanceSearchBar *>(w);
+    if (!topWidget)
+        return false;
+
+    bool visible = w->isVisible();
+    if (visible)
+        topWidget->refreshOptions(url);
+
+    return visible;
 }
 
 bool SearchHelper::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleList)
