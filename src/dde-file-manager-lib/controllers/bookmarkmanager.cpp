@@ -142,6 +142,7 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
             list[i] = map;
 
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
+            GroupPolicy::instance()->setValue(BOOKMARK, list);
 
             data.m_url = event->toUrl();
             data.m_lastModified = QDateTime::currentDateTime();
@@ -429,6 +430,7 @@ bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             map["url"] = bookMarkTo.path();
             list[i] = map;
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
+            GroupPolicy::instance()->setValue(BOOKMARK, list);
 
             BookmarkData newData;
             newData.m_url = bookMarkTo;
