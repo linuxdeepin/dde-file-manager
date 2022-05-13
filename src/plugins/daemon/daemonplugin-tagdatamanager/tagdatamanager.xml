@@ -1,0 +1,33 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+    <interface name="com.deepin.filemanager.daemon.TagManagerDaemon">
+        <method name="disposeClientData">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+            <arg type="a{sv}" name="filesAndTags" direction="in"/>
+            <arg type="t" name="type" direction="in"/>
+            <arg type="v" name="result" direction="out"/>
+        </method>
+        <signal name="filesWereTagged">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+            <arg type="a{sv}" name="tagged_files" direction="out"/>
+        </signal>
+        <signal name="untagFiles">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+            <arg type="a{sv}" name="file_be_removed_tags" direction="out"/>
+        </signal>
+        <signal name="addNewTags">
+            <arg type="v" name="new_tags" direction="out"/>
+        </signal>
+        <signal name="deleteTags">
+            <arg type="v" name="be_deleted_tags" direction="out"/>
+        </signal>
+        <signal name="changeTagName">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+            <arg type="a{sv}" name="old_and_new_name" direction="out"/>
+        </signal>
+        <signal name="changeTagColor">
+            <annotation name="org.qtproject.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+            <arg type="a{sv}" name="old_and_new_color" direction="out"/>
+        </signal>
+    </interface>
+</node>
