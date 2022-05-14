@@ -25,6 +25,8 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <QObject>
+#include <QKeySequence>
+#include <QKeyEvent>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 

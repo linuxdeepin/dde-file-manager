@@ -21,6 +21,7 @@
 #include "elidetextlayout.h"
 
 #include <QtMath>
+#include <QPainterPath>
 
 #include <private/qtextengine_p.h>
 

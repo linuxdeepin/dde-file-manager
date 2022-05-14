@@ -27,6 +27,9 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 
 DFMBASE_BEGIN_NAMESPACE
 class AbstractFileInfo;

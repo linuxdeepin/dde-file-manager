@@ -29,6 +29,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <QHBoxLayout>
+#include <QEvent>
 
 DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

@@ -25,6 +25,7 @@
 #include <QPainter>
 #include <QApplication>
 #include <QTextCodec>
+#include <QPainterPath>
 #include <private/qtextengine_p.h>
 
 #include <cmath>

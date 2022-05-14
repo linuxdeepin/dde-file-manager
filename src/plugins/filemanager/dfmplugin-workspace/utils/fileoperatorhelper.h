@@ -26,6 +26,7 @@
 #include "dfm_global_defines.h"
 
 #include <QObject>
+#include <QUrl>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 class FileView;

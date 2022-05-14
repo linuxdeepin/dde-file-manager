@@ -27,6 +27,7 @@
 #include <DApplicationHelper>
 
 #include <QKeyEvent>
+#include <QPainterPath>
 
 const static int kArrowExpandSpacing = 10;
 

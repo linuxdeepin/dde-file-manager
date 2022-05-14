@@ -34,6 +34,7 @@
 #include <QPainter>
 #include <QFileInfo>
 #include <QLabel>
+#include <QPainterPath>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

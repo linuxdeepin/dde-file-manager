@@ -27,7 +27,7 @@
 #include <QObject>
 
 namespace GlobalServerDefines {
-
+Q_NAMESPACE
 /*!
  * \brief Content categories
  * for 'Device Busy'-related messages sent to the Notification Center

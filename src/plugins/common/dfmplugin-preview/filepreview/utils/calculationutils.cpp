@@ -22,6 +22,7 @@
 
 #include <QDebug>
 #include <QThread>
+#include <QUrl>
 
 #include <sys/vfs.h>
 #include <sys/stat.h>

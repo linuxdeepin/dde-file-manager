@@ -23,7 +23,9 @@
 #include "grid/canvasgrid.h"
 #include "boxselecter.h"
 
-#include "base/schemefactory.h"
+#include "dfm-base/base/schemefactory.h"
+
+#include <QPainterPath>
 
 DDP_CANVAS_USE_NAMESPACE
 

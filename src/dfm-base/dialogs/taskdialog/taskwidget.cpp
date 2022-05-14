@@ -37,6 +37,7 @@
 #include <QUrl>
 #include <QApplication>
 #include <QPointer>
+#include <QPainterPath>
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

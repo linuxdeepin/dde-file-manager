@@ -25,6 +25,7 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <QModelIndex>
+#include <QSize>
 #include <QtGlobal>
 
 QT_BEGIN_NAMESPACE

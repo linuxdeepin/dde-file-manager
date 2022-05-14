@@ -25,6 +25,8 @@
 #include "dfmplugin_workspace_global.h"
 
 #include <QPair>
+#include <QUrl>
+
 #include <tuple>
 
 QT_BEGIN_NAMESPACE

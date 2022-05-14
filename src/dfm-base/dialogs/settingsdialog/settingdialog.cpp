@@ -34,6 +34,7 @@
 #include <dsettingsbackend.h>
 
 #include <QWindow>
+#include <QFile>
 #include <QFrame>
 #include <QVBoxLayout>
 #include <QCheckBox>
