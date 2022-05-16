@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3426"/>
+        <location filename="../view/canvasgridview.cpp" line="3437"/>
         <source>Icon size</source>
         <translation>Dimensiune pictogramă</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3434"/>
+        <location filename="../view/canvasgridview.cpp" line="3446"/>
         <source>Auto merge</source>
         <translation>Îmbinare automată</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3446"/>
+        <location filename="../view/canvasgridview.cpp" line="3458"/>
         <source>Auto arrange</source>
         <translation>Aranjare automată</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3483"/>
+        <location filename="../view/canvasgridview.cpp" line="3497"/>
         <source>Corner Settings</source>
         <translation>Setări Colţuri</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3492"/>
-        <location filename="../view/canvasgridview.cpp" line="3497"/>
+        <location filename="../view/canvasgridview.cpp" line="3506"/>
+        <location filename="../view/canvasgridview.cpp" line="3511"/>
         <source>Set Wallpaper</source>
         <translation>Setează Imagine de fundal</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3495"/>
+        <location filename="../view/canvasgridview.cpp" line="3509"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Imagine de fundal şi economisitor de ecran</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3674"/>
+        <location filename="../view/canvasgridview.cpp" line="3690"/>
         <source>Properties</source>
         <translation>Proprietăți</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3474"/>
+        <location filename="../view/canvasgridview.cpp" line="3487"/>
         <source>Display Settings</source>
         <translation>Setări Afișare</translation>
     </message>
