@@ -19,9 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "vaultfilewatcher.h"
-#include "dfm-base/base/urlroute.h"
 #include "utils/vaulthelper.h"
 #include "private/vaultfilewatcherprivate.h"
+
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
 
 DFMBASE_USE_NAMESPACE

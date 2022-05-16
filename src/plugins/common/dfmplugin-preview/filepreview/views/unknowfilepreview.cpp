@@ -63,9 +63,8 @@ UnknowFilePreview::UnknowFilePreview(QObject *parent)
     hlayout->addLayout(vlayout);
     hlayout->addStretch();
 
-    fileCalculationUtils = new CalculationUtils;
-    connect(fileCalculationUtils, &CalculationUtils::sigTotalChange, this, &UnknowFilePreview::updateFolderSize);
-    connect(fileCalculationUtils, &CalculationUtils::sigFileChange, this, &UnknowFilePreview::updateFileCount);
+    fileCalculationUtils = new FileStatisticsJob;
+    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &UnknowFilePreview::updateFolderSizeCount);
 }
 
 UnknowFilePreview::~UnknowFilePreview()
@@ -115,7 +114,7 @@ void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
     nameLabel->setText(elidedText);
 
     if (info->isDir()) {
-        fileCalculationUtils->startThread(QList<QUrl>() << info->url());
+        fileCalculationUtils->start(QList<QUrl>() << info->url());
         sizeLabel->setText(QObject::tr("Size: 0"));
     } else if (info->isFile()) {
         sizeLabel->setText(QObject::tr("Size: %1").arg(info->sizeDisplayName()));
@@ -125,12 +124,8 @@ void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
     }
 }
 
-void UnknowFilePreview::updateFolderSize(qint64 size)
+void UnknowFilePreview::updateFolderSizeCount(qint64 size, int filesCount, int directoryCount)
 {
     sizeLabel->setText(QObject::tr("Size: %1").arg(FileUtils::formatSize(size)));
-}
-
-void UnknowFilePreview::updateFileCount(int count)
-{
-    typeLabel->setText(QObject::tr("Items: %1").arg(count));
+    typeLabel->setText(QObject::tr("Items: %1").arg(filesCount));
 }

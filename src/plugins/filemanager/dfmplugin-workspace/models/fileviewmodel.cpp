@@ -197,6 +197,14 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         d->canFetchMoreFlag = true;
         //        fetchMore(root);
 
+        //! The watcher is restarted after being suspended to solve the problem that
+        //! the same file in the same path cannot be monitored after being deleted and recreated.
+        d->watcher = WatcherFactory::create<AbstractFileWatcher>(url);
+        if (!d->watcher.isNull()) {
+            d->watcher->stopWatcher();
+            d->watcher->startWatcher();
+        }
+
         return root;
     }
 
@@ -220,6 +228,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
                    d.data(), &FileViewModelPrivate::doFileUpdated);
         disconnect(d->watcher.data(), &AbstractFileWatcher::fileRename,
                    d.data(), &FileViewModelPrivate::dofileMoved);
+        d->watcher->stopWatcher();
     }
     d->watcher = WatcherFactory::create<AbstractFileWatcher>(url);
     if (!d->watcher.isNull()) {

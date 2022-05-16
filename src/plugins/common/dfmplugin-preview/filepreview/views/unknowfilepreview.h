@@ -23,7 +23,7 @@
 #include "dfmplugin_filepreview_global.h"
 #include "dfm-base/interfaces/abstractbasepreview.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
-#include "utils/calculationutils.h"
+#include "dfm-base/utils/filestatisticsjob.h"
 
 #include <QLabel>
 #include <QUrl>
@@ -49,9 +49,7 @@ signals:
     void requestStartFolderSize();
 
 public slots:
-    void updateFolderSize(qint64 size);
-
-    void updateFileCount(int count);
+    void updateFolderSizeCount(qint64 size, int filesCount, int directoryCount);
 
 private:
     QUrl url;
@@ -60,7 +58,7 @@ private:
     QLabel *nameLabel { nullptr };
     QLabel *sizeLabel { nullptr };
     QLabel *typeLabel { nullptr };
-    CalculationUtils *fileCalculationUtils { nullptr };
+    DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
 DPFILEPREVIEW_END_NAMESPACE
 #endif   // UNKNOWFILEPREVIEW_H
