@@ -95,6 +95,10 @@ void CanvasManager::init()
     d->extend = new CanvasManagerExtend(this);
     d->extend->init();
 
+    // self borker
+    d->broker = new CanvasManagerBroker(this, this);
+    d->broker->init();
+
     d->initModel();
     d->initSetting();
 }
@@ -157,6 +161,11 @@ void CanvasManager::setIconLevel(int level)
         // notify others that icon size changed
         d->extend->iconSizeChanged(level);
     }
+}
+
+FileInfoModel *CanvasManager::fileModel() const
+{
+    return d->sourceModel;
 }
 
 CanvasProxyModel *CanvasManager::model() const
@@ -372,6 +381,9 @@ void CanvasManagerPrivate::initModel()
     viewExt->init();
 
     // external interface
+    sourceModelBroker = new FileInfoModelBroker(sourceModel, q);
+    sourceModelBroker->init();
+
     modelBroker = new CanvasModelBroker(canvasModel, q);
     modelBroker->init();
 

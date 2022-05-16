@@ -28,8 +28,9 @@
 #include "utils/fileutil.h"
 
 #include <base/schemefactory.h>
-#include <dfm-base/utils/fileutils.h>
 #include <base/standardpaths.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/sysinfoutils.h>
 
 #include <DFileDragClient>
 
@@ -157,8 +158,6 @@ bool DragDropOper::drop(QDropEvent *event)
 
 void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &urls, const QUrl &targetFileUrl) const
 {
-    // todo sameuser.
-
     CanvasView *fromView = qobject_cast<CanvasView *>(event->source());
     if (fromView) {
         auto action = isCtrlPressed() ? Qt::CopyAction : Qt::MoveAction;
@@ -196,27 +195,26 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
             }
         }
 
-//        if (event->possibleActions().testFlag(defaultAction)) {
-//            // todo sameueser
-//            //event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
-//        }
-
-//        if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
-//            QList<Qt::DropAction> actions;
-
-//            actions.reserve(3);
-//            actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
-
-//            for (Qt::DropAction action : actions) {
-//                if (event->possibleActions().testFlag(action) && itemInfo->supportedDropActions().testFlag(action)) {
-//                    // todo sameuser
-//                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
-//                    break;
-//                }
-//            }
-//        }
+        const bool sameUser = isSameUser(event->mimeData());
+        if (event->possibleActions().testFlag(defaultAction))
+            event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
 
         // todo is from vault
+
+
+        if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
+            QList<Qt::DropAction> actions;
+
+            actions.reserve(3);
+            actions << Qt::CopyAction << Qt::MoveAction << Qt::LinkAction;
+
+            for (Qt::DropAction action : actions) {
+                if (event->possibleActions().testFlag(action) && itemInfo->supportedDropActions().testFlag(action)) {
+                    event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
+                    break;
+                }
+            }
+        }
 
 //        // is from recent file
 //        if (from.isRecentFile()) {
@@ -479,6 +477,16 @@ void DragDropOper::handleMoveMimeData(QDropEvent *event, const QUrl &url)
     } else {
         event->accept();
     }
+}
+
+bool DragDropOper::isSameUser(const QMimeData *data) const
+{
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey)) {
+        QString userID = data->data(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey);
+        return userID == QString::number(SysInfoUtils::getUserId());
+    }
+
+    return false;
 }
 
 void DragDropOper::updatePrepareDodgeValue(QEvent *event)

@@ -29,6 +29,8 @@
 #include "extend/canvasmanagerextend.h"
 #include "extend/canvasmodelextend.h"
 #include "extend/canvasviewextend.h"
+#include "broker/canvasmanagerbroker.h"
+#include "broker/fileinfomodelbroker.h"
 #include "broker/canvasmodelbroker.h"
 #include "broker/canvasviewbroker.h"
 #include "broker/canvasgridbroker.h"
@@ -69,6 +71,7 @@ protected slots:
 
 public:
     CanvasManagerExtend *extend = nullptr;
+    CanvasManagerBroker *broker = nullptr;
     FileInfoModel *sourceModel = nullptr;
     CanvasProxyModel *canvasModel = nullptr;
     CanvasModelExtend *modelExt = nullptr;
@@ -77,6 +80,7 @@ public:
     CanvasViewExtend *viewExt = nullptr;
     QMap<QString, CanvasViewPointer> viewMap;
 public:
+    FileInfoModelBroker *sourceModelBroker = nullptr;
     CanvasModelBroker *modelBroker = nullptr;
     CanvasViewBroker *viewBroker = nullptr;
     CanvasGridBroker *gridBroker = nullptr;
