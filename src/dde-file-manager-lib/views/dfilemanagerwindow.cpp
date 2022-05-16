@@ -695,6 +695,18 @@ DFileManagerWindow::~DFileManagerWindow()
         delete menu;
         menu = nullptr;
     }
+
+    int count = d_ptr->viewStackLayout->count();
+    for (int i = 0; i < count; ++i) {
+        QWidget *p = d_ptr->viewStackLayout->widget(i);
+        if (p) {
+            DFileView *fileview = qobject_cast<DFileView *>(p);
+            if (fileview)
+                fileview->setDestroyFlag(true);
+            p->deleteLater();
+            p = nullptr;
+        }
+    }
 }
 
 void DFileManagerWindow::onRequestCloseTab(const int index, const bool &remainState)
