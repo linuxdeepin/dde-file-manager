@@ -55,6 +55,7 @@
 #include "dtoolbar.h"
 #include "utils.h"
 #include "controllers/bookmarkmanager.h"
+#include "grouppolicy.h"
 
 
 #include <DApplicationHelper>
@@ -73,6 +74,7 @@
 #include "plugins/schemepluginmanager.h"
 
 #define SIDEBAR_ITEMORDER_KEY "SideBar/ItemOrder"
+#define RECENT_HIDDEN "dfm.recent.hidden"
 
 DFM_BEGIN_NAMESPACE
 
@@ -828,8 +830,41 @@ void DFMSideBar::initRecentItem()
         }
     };
 
-    recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
-    connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, this, recentLambda);
+    auto oldWayRecentLambda = [=](bool var) {
+        recentLambda(var);
+        // sync policy recent
+        auto policyV = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
+        if (policyV.isValid() && policyV.toBool() != var)
+            GroupPolicy::instance()->setValue(RECENT_HIDDEN, var);
+    };
+
+    auto policyWayRecentLambda = [=](QVariant var){
+        auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
+        auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
+        if (var.isValid() && (var.toString() == RECENT_HIDDEN) && (tempValue != oldV)) {
+            recentLambda(var.toBool());
+
+            // sync old recent
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, tempValue);
+        }
+    };
+
+    if (!GroupPolicy::instance()->containKey(RECENT_HIDDEN)) {
+        recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
+    } else {
+        auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
+        if (tempValue.isValid()) {
+            recentLambda(tempValue.toBool());
+            // sync old recent
+            auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
+            if (tempValue.isValid() && tempValue.toBool() != oldV.toBool())
+                DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, tempValue.toBool());
+        } else {
+            recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
+        }
+    }
+    connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, this, oldWayRecentLambda);
+    connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, policyWayRecentLambda);
 }
 
 void DFMSideBar::initBookmarkConnection()
