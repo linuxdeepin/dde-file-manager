@@ -29,7 +29,7 @@
 #include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
-#include <dfm-burn/dfmburn_global.h>
+#include <dfm-burn/dburn_global.h>
 
 #include <QCoreApplication>
 #include <QRegularExpressionMatch>

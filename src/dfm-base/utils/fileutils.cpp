@@ -922,12 +922,12 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app, const QIcon &defaultIcon)
 
     // Last chance
     const QUrl &pixmapUrl = QUrl::fromLocalFile(QString(kSharePixmapPath));
-    QSharedPointer<DFMIO::DEnumerator> enumerator = DecoratorFileEnumerator(pixmapUrl, {}, DFMIO::DEnumerator::DirFilter::Files | DFMIO::DEnumerator::DirFilter::NoDotAndDotDot).enumeratorPtr();
+    QSharedPointer<DFMIO::DEnumerator> enumerator = DecoratorFileEnumerator(pixmapUrl, {}, DFMIO::DEnumerator::DirFilter::kFiles | DFMIO::DEnumerator::DirFilter::kNoDotAndDotDot).enumeratorPtr();
     if (enumerator) {
         while (enumerator->hasNext()) {
             QSharedPointer<DFMIO::DFileInfo> fileinfo = enumerator->fileInfo();
             if (fileinfo) {
-                const QString &fileName = fileinfo->attribute(DFMIO::DFileInfo::AttributeID::StandardName).toString();
+                const QString &fileName = fileinfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardName).toString();
                 if (fileName.contains(name)) {
                     return QIcon(QString(kSharePixmapPath) + QDir::separator() + fileName);
                 }

@@ -98,7 +98,7 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
     quint64 winId = d->windowId;
     const QString &smbUrl = d->selectFiles.first().toString();
     DeviceManager::instance()->mountNetworkDeviceAsync(smbUrl, [actId, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
-        if (!ok && err != DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) {
+        if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {
             QUrl u = QUrl::fromLocalFile(mntPath);

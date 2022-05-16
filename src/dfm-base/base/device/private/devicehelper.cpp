@@ -38,8 +38,8 @@
 #include <QStandardPaths>
 #include <QProcess>
 
-#include <dfm-mount/dfm-mount.h>
-#include <dfm-burn/dfmburn_global.h>
+#include <dfm-mount/dmount.h>
+#include <dfm-burn/dburn_global.h>
 
 static constexpr char kBurnAttribute[] { "BurnAttribute" };
 static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
@@ -52,7 +52,7 @@ DFM_MOUNT_USE_NS
 
 DevPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType type)
 {
-    auto manager = DFMDeviceManager::instance();
+    auto manager = DDeviceManager::instance();
     auto monitor = manager->getRegisteredMonitor(type);
     Q_ASSERT_X(monitor, "DeviceServiceHelper", "dfm-mount return a NULL monitor!");
     return monitor->createDeviceById(devId);
@@ -60,13 +60,13 @@ DevPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType typ
 
 BlockDevPtr DeviceHelper::createBlockDevice(const QString &id)
 {
-    auto devPtr = createDevice(id, DeviceType::BlockDevice);
+    auto devPtr = createDevice(id, DeviceType::kBlockDevice);
     return qobject_cast<BlockDevPtr>(devPtr);
 }
 
 ProtocolDevPtr DeviceHelper::createProtocolDevice(const QString &id)
 {
-    auto devPtr = createDevice(id, DeviceType::ProtocolDevice);
+    auto devPtr = createDevice(id, DeviceType::kProtocolDevice);
     return qobject_cast<ProtocolDevPtr>(devPtr);
 }
 
@@ -97,17 +97,17 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevPtr &dev)
     datas[kFileSystem] = dev->fileSystem();
     datas[kSizeTotal] = dev->sizeTotal();
 
-    datas[kUUID] = getNullStrIfNotValid(Property::BlockIDUUID);
-    datas[kFsVersion] = getNullStrIfNotValid(Property::BlockIDVersion);
+    datas[kUUID] = getNullStrIfNotValid(Property::kBlockIDUUID);
+    datas[kFsVersion] = getNullStrIfNotValid(Property::kBlockIDVersion);
     datas[kDevice] = dev->device();
     datas[kIdLabel] = dev->idLabel();
-    datas[kMedia] = getNullStrIfNotValid(Property::DriveMedia);
-    datas[kReadOnly] = getNullStrIfNotValid(Property::BlockReadOnly);
+    datas[kMedia] = getNullStrIfNotValid(Property::kDriveMedia);
+    datas[kReadOnly] = getNullStrIfNotValid(Property::kBlockReadOnly);
     datas[kRemovable] = dev->removable();
-    datas[kMediaRemovable] = getNullStrIfNotValid(Property::DriveMediaRemovable);
+    datas[kMediaRemovable] = getNullStrIfNotValid(Property::kDriveMediaRemovable);
     datas[kOptical] = dev->optical();
     datas[kOpticalBlank] = dev->opticalBlank();
-    datas[kMediaAvailable] = getNullStrIfNotValid(Property::DriveMediaAvailable);
+    datas[kMediaAvailable] = getNullStrIfNotValid(Property::kDriveMediaAvailable);
     datas[kCanPowerOff] = dev->canPowerOff();
     datas[kEjectable] = dev->ejectable();
     datas[kIsEncrypted] = dev->isEncrypted();
@@ -117,20 +117,20 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevPtr &dev)
     datas[kHasPartition] = dev->hasPartition();
     datas[kHintSystem] = dev->hintSystem();
     datas[kHintIgnore] = dev->hintIgnore();
-    datas[kCryptoBackingDevice] = getNullStrIfNotValid(Property::BlockCryptoBackingDevice);
+    datas[kCryptoBackingDevice] = getNullStrIfNotValid(Property::kBlockCryptoBackingDevice);
     datas[kDrive] = dev->drive();
     datas[kMountPoints] = dev->mountPoints();
     datas[kMediaCompatibility] = dev->mediaCompatibility();
     datas[kOpticalDrive] = dev->mediaCompatibility().join(", ").contains("optical");
-    datas[kCleartextDevice] = getNullStrIfNotValid(Property::EncryptedCleartextDevice);
-    datas[kConnectionBus] = getNullStrIfNotValid(Property::DriveConnectionBus);
+    datas[kCleartextDevice] = getNullStrIfNotValid(Property::kEncryptedCleartextDevice);
+    datas[kConnectionBus] = getNullStrIfNotValid(Property::kDriveConnectionBus);
 
     auto eType = dev->partitionEType();
-    datas[kHasExtendedPatition] = eType == PartitionType::MbrWin95_Extended_LBA
-            || eType == PartitionType::MbrLinux_extended
-            || eType == PartitionType::MbrExtended
-            || eType == PartitionType::MbrDRDOS_sec_extend
-            || eType == PartitionType::MbrMultiuser_DOS_extend;
+    datas[kHasExtendedPatition] = eType == PartitionType::kMbrWin95_Extended_LBA
+            || eType == PartitionType::kMbrLinux_extended
+            || eType == PartitionType::kMbrExtended
+            || eType == PartitionType::kMbrDRDOS_sec_extend
+            || eType == PartitionType::kMbrMultiuser_DOS_extend;
 
     if (datas[kOpticalDrive].toBool() && datas[kOptical].toBool())
         readOpticalInfo(datas);
@@ -282,24 +282,24 @@ QString DeviceHelper::castFromDFMMountProperty(dfmmount::Property property)
 #define item(a, b) std::make_pair<Property, QString>(Property::a, DeviceProperty::b)
     // these are only mutable properties
     static QMap<Property, QString> mapper {
-        item(BlockSize, kSizeTotal),
-        item(BlockIDUUID, kUUID),
-        item(BlockIDType, kFileSystem),
-        item(BlockIDVersion, kFsVersion),
-        item(BlockIDLabel, kIdLabel),
-        item(DriveMedia, kMedia),
-        item(BlockReadOnly, kReadOnly),
-        item(DriveMediaRemovable, kMediaRemovable),
-        item(DriveOptical, kOptical),
-        item(DriveOpticalBlank, kOpticalBlank),
-        item(DriveMediaAvailable, kMediaAvailable),
-        item(DriveCanPowerOff, kCanPowerOff),
-        item(DriveEjectable, kEjectable),
-        item(BlockHintIgnore, kHintIgnore),
-        item(BlockCryptoBackingDevice, kCryptoBackingDevice),
-        item(FileSystemMountPoint, kMountPoints),
-        item(DriveMediaCompatibility, kMediaCompatibility),
-        item(EncryptedCleartextDevice, kCleartextDevice),
+        item(kBlockSize, kSizeTotal),
+        item(kBlockIDUUID, kUUID),
+        item(kBlockIDType, kFileSystem),
+        item(kBlockIDVersion, kFsVersion),
+        item(kBlockIDLabel, kIdLabel),
+        item(kDriveMedia, kMedia),
+        item(kBlockReadOnly, kReadOnly),
+        item(kDriveMediaRemovable, kMediaRemovable),
+        item(kDriveOptical, kOptical),
+        item(kDriveOpticalBlank, kOpticalBlank),
+        item(kDriveMediaAvailable, kMediaAvailable),
+        item(kDriveCanPowerOff, kCanPowerOff),
+        item(kDriveEjectable, kEjectable),
+        item(kBlockHintIgnore, kHintIgnore),
+        item(kBlockCryptoBackingDevice, kCryptoBackingDevice),
+        item(kFileSystemMountPoint, kMountPoints),
+        item(kDriveMediaCompatibility, kMediaCompatibility),
+        item(kEncryptedCleartextDevice, kCleartextDevice),
     };
     return mapper.value(property, "");
 }

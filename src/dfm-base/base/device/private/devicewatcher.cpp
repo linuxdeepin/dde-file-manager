@@ -33,9 +33,9 @@
 #include <QStorageInfo>
 #include <QtConcurrent>
 
-#include <dfm-mount/dfm-mount.h>
-#include <dfm-burn/opticaldiscinfo.h>
-#include <dfm-burn/opticaldiscmanager.h>
+#include <dfm-mount/dmount.h>
+#include <dfm-burn/dopticaldiscinfo.h>
+#include <dfm-burn/dopticaldiscmanager.h>
 
 DFMBASE_USE_NAMESPACE
 DFM_MOUNT_USE_NS
@@ -68,8 +68,8 @@ void DeviceWatcher::stopPollingUsage()
 void DeviceWatcherPrivate::queryUsage()
 {
     QtConcurrent::run([this] {
-        queryUsage(DeviceType::BlockDevice, allBlockInfos);
-        queryUsage(DeviceType::ProtocolDevice, allProtocolInfos);
+        queryUsage(DeviceType::kBlockDevice, allBlockInfos);
+        queryUsage(DeviceType::kProtocolDevice, allProtocolInfos);
     });
 }
 
@@ -88,7 +88,7 @@ void DeviceWatcherPrivate::queryUsage(const QString &id, const QString &mpt, Dev
         return;
 
     using namespace GlobalServerDefines;
-    if (type == DeviceType::BlockDevice) {
+    if (type == DeviceType::kBlockDevice) {
         if (!allBlockInfos.contains(id))
             return;
 
@@ -113,7 +113,7 @@ void DeviceWatcherPrivate::queryUsage(const QString &id, const QString &mpt, Dev
             if (notifyIfChanged)
                 emit DevMngIns->devSizeChanged(id, info.value(DeviceProperty::kSizeTotal).toULongLong(), bytesAvai);
         }
-    } else if (type == DeviceType::ProtocolDevice) {
+    } else if (type == DeviceType::kProtocolDevice) {
         if (!allProtocolInfos.contains(id))
             return;
 
@@ -140,11 +140,11 @@ void DeviceWatcherPrivate::queryUsage(const QString &id, const QString &mpt, Dev
 
 void DeviceWatcher::initDevDatas()
 {
-    auto mng = DFMDeviceManager::instance();
+    auto mng = DDeviceManager::instance();
     auto &&devs = mng->devices();
-    for (const auto &dev : devs.value(DeviceType::BlockDevice))
+    for (const auto &dev : devs.value(DeviceType::kBlockDevice))
         d->allBlockInfos.insert(dev, DeviceHelper::loadBlockInfo(dev));
-    for (const auto &dev : devs.value(DeviceType::ProtocolDevice))
+    for (const auto &dev : devs.value(DeviceType::kProtocolDevice))
         d->allProtocolInfos.insert(dev, DeviceHelper::loadProtocolInfo(dev));
 }
 
@@ -161,7 +161,7 @@ void DeviceWatcher::queryOpticalDevUsage(const QString &id)
 {
     bool sizeChanged = false;
     QVariantMap data = DeviceHelper::loadBlockInfo(id);
-    QScopedPointer<DFMBURN::OpticalDiscInfo> info { DFMBURN::OpticalDiscManager::createOpticalInfo(data.value(DeviceProperty::kDevice).toString()) };
+    QScopedPointer<DFMBURN::DOpticalDiscInfo> info { DFMBURN::DOpticalDiscManager::createOpticalInfo(data.value(DeviceProperty::kDevice).toString()) };
     if (info && !data.value(DeviceProperty::kId).toString().isEmpty()) {
         sizeChanged = true;
         data[DeviceProperty::kSizeTotal] = static_cast<quint64>(info->totalSize());
@@ -184,37 +184,37 @@ void DeviceWatcher::startWatch()
         return;
     }
 
-    auto mng = DFMDeviceManager::instance();
+    auto mng = DDeviceManager::instance();
     mng->startMonitorWatch();
-    auto blkMonitor = mng->getRegisteredMonitor(DeviceType::BlockDevice).objectCast<DFMBlockMonitor>();
+    auto blkMonitor = mng->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DBlockMonitor>();
     if (!blkMonitor) {
         qWarning() << "block monitor is not valid!!!";
     } else {
         auto ptr = blkMonitor.data();
-        d->connections << connect(ptr, &DFMBlockMonitor::driveAdded, DeviceManager::instance(), &DeviceManager::blockDriveAdded);
-        d->connections << connect(ptr, &DFMBlockMonitor::driveRemoved, DeviceManager::instance(), &DeviceManager::blockDriveRemoved);
-        d->connections << connect(ptr, &DFMBlockMonitor::deviceAdded, this, &DeviceWatcher::onBlkDevAdded);
-        d->connections << connect(ptr, &DFMBlockMonitor::deviceRemoved, this, &DeviceWatcher::onBlkDevRemoved);
-        d->connections << connect(ptr, &DFMBlockMonitor::mountAdded, this, &DeviceWatcher::onBlkDevMounted);
-        d->connections << connect(ptr, &DFMBlockMonitor::mountRemoved, this, &DeviceWatcher::onBlkDevUnmounted);
-        d->connections << connect(ptr, &DFMBlockMonitor::blockLocked, this, &DeviceWatcher::onBlkDevLocked);
-        d->connections << connect(ptr, &DFMBlockMonitor::blockUnlocked, this, &DeviceWatcher::onBlkDevUnlocked);
-        d->connections << connect(ptr, &DFMBlockMonitor::fileSystemAdded, this, &DeviceWatcher::onBlkDevFsAdded);
-        d->connections << connect(ptr, &DFMBlockMonitor::fileSystemRemoved, this, &DeviceWatcher::onBlkDevFsRemoved);
-        d->connections << connect(ptr, &DFMBlockMonitor::propertyChanged, this, &DeviceWatcher::onBlkDevPropertiesChanged);
+        d->connections << connect(ptr, &DBlockMonitor::driveAdded, DeviceManager::instance(), &DeviceManager::blockDriveAdded);
+        d->connections << connect(ptr, &DBlockMonitor::driveRemoved, DeviceManager::instance(), &DeviceManager::blockDriveRemoved);
+        d->connections << connect(ptr, &DBlockMonitor::deviceAdded, this, &DeviceWatcher::onBlkDevAdded);
+        d->connections << connect(ptr, &DBlockMonitor::deviceRemoved, this, &DeviceWatcher::onBlkDevRemoved);
+        d->connections << connect(ptr, &DBlockMonitor::mountAdded, this, &DeviceWatcher::onBlkDevMounted);
+        d->connections << connect(ptr, &DBlockMonitor::mountRemoved, this, &DeviceWatcher::onBlkDevUnmounted);
+        d->connections << connect(ptr, &DBlockMonitor::blockLocked, this, &DeviceWatcher::onBlkDevLocked);
+        d->connections << connect(ptr, &DBlockMonitor::blockUnlocked, this, &DeviceWatcher::onBlkDevUnlocked);
+        d->connections << connect(ptr, &DBlockMonitor::fileSystemAdded, this, &DeviceWatcher::onBlkDevFsAdded);
+        d->connections << connect(ptr, &DBlockMonitor::fileSystemRemoved, this, &DeviceWatcher::onBlkDevFsRemoved);
+        d->connections << connect(ptr, &DBlockMonitor::propertyChanged, this, &DeviceWatcher::onBlkDevPropertiesChanged);
 
         d->isWatching = true;
     }
 
-    auto protoMonitor = mng->getRegisteredMonitor(DeviceType::ProtocolDevice).objectCast<DFMProtocolMonitor>();
+    auto protoMonitor = mng->getRegisteredMonitor(DeviceType::kProtocolDevice).objectCast<DProtocolMonitor>();
     if (!protoMonitor) {
         qWarning() << "protocol monitor is not valid!!!";
     } else {
         auto ptr = protoMonitor.data();
-        d->connections << connect(ptr, &DFMProtocolMonitor::deviceAdded, this, &DeviceWatcher::onProtoDevAdded);
-        d->connections << connect(ptr, &DFMProtocolMonitor::deviceRemoved, this, &DeviceWatcher::onProtoDevRemoved);
-        d->connections << connect(ptr, &DFMProtocolMonitor::mountAdded, this, &DeviceWatcher::onProtoDevMounted);
-        d->connections << connect(ptr, &DFMProtocolMonitor::mountRemoved, this, &DeviceWatcher::onProtoDevUnmounted);
+        d->connections << connect(ptr, &DProtocolMonitor::deviceAdded, this, &DeviceWatcher::onProtoDevAdded);
+        d->connections << connect(ptr, &DProtocolMonitor::deviceRemoved, this, &DeviceWatcher::onProtoDevRemoved);
+        d->connections << connect(ptr, &DProtocolMonitor::mountAdded, this, &DeviceWatcher::onProtoDevMounted);
+        d->connections << connect(ptr, &DProtocolMonitor::mountRemoved, this, &DeviceWatcher::onProtoDevUnmounted);
 
         d->isWatching = true;
     }
@@ -226,7 +226,7 @@ void DeviceWatcher::stopWatch()
         disconnect(conn);
     d->connections.clear();
     d->isWatching = false;
-    DFMDeviceManager::instance()->stopMonitorWatch();
+    DDeviceManager::instance()->stopMonitorWatch();
 }
 
 void DeviceWatcher::onBlkDevAdded(const QString &id)
@@ -239,7 +239,7 @@ void DeviceWatcher::onBlkDevAdded(const QString &id)
     }
 
     emit DevMngIns->blockDevAdded(id);
-    DevMngIns->doAutoMount(id, DeviceType::BlockDevice);
+    DevMngIns->doAutoMount(id, DeviceType::kBlockDevice);
 }
 
 void DeviceWatcher::onBlkDevRemoved(const QString &id)
@@ -254,7 +254,7 @@ void DeviceWatcher::onBlkDevRemoved(const QString &id)
 
 void DeviceWatcher::onBlkDevMounted(const QString &id, const QString &mpt)
 {
-    d->queryUsage(id, mpt, DeviceType::BlockDevice, true);
+    d->queryUsage(id, mpt, DeviceType::kBlockDevice, true);
     emit DevMngIns->blockDevMounted(id, mpt);
 }
 
@@ -340,7 +340,7 @@ void DeviceWatcher::onProtoDevAdded(const QString &id)
     }
 
     emit DevMngIns->protocolDevAdded(id);
-    DevMngIns->doAutoMount(id, DeviceType::ProtocolDevice);
+    DevMngIns->doAutoMount(id, DeviceType::kProtocolDevice);
 }
 
 void DeviceWatcher::onProtoDevRemoved(const QString &id)
@@ -378,13 +378,13 @@ void DeviceWatcher::onProtoDevUnmounted(const QString &id)
 
 QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType type, bool reload)
 {
-    if (type == DFMMOUNT::DeviceType::BlockDevice) {
+    if (type == DFMMOUNT::DeviceType::kBlockDevice) {
         if (reload) {
             QMutexLocker lk(&d->blkMtx);
             d->allBlockInfos.insert(id, DeviceHelper::loadBlockInfo(id));
         }
         return d->allBlockInfos.value(id);
-    } else if (type == DFMMOUNT::DeviceType::ProtocolDevice) {
+    } else if (type == DFMMOUNT::DeviceType::kProtocolDevice) {
         if (reload) {
             QMutexLocker lk(&d->protoMtx);
             d->allProtocolInfos.insert(id, DeviceHelper::loadProtocolInfo(id));
@@ -396,9 +396,9 @@ QVariantMap DeviceWatcher::getDevInfo(const QString &id, dfmmount::DeviceType ty
 
 QStringList DeviceWatcher::getDevIds(dfmmount::DeviceType type)
 {
-    if (type == DeviceType::BlockDevice)
+    if (type == DeviceType::kBlockDevice)
         return d->allBlockInfos.keys();
-    else if (type == DeviceType::ProtocolDevice)
+    else if (type == DeviceType::kProtocolDevice)
         return d->allProtocolInfos.keys();
     return {};
 }
@@ -413,8 +413,8 @@ QStringList DeviceWatcher::getSiblings(const QString &id)
     if (!id.startsWith(kBlockDeviceIdPrefix))
         return {};
 
-    auto mng = DFMMOUNT::DFMDeviceManager::instance();
-    auto blkMonitor = mng->getRegisteredMonitor(DeviceType::BlockDevice).objectCast<DFMMOUNT::DFMBlockMonitor>();
+    auto mng = DFMMOUNT::DDeviceManager::instance();
+    auto blkMonitor = mng->getRegisteredMonitor(DeviceType::kBlockDevice).objectCast<DFMMOUNT::DBlockMonitor>();
     if (!blkMonitor)
         return {};
 

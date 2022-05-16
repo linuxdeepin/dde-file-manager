@@ -57,7 +57,7 @@ public:
         if (!dfile)
             return;
 
-        if (dfile->open(DFMIO::DFile::OpenFlag::ReadOnly)) {
+        if (dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
             QByteArray data = dfile->readAll();
             const QString &dataStr = QString::fromLocal8Bit(data);
             hideList = QSet<QString>::fromList(dataStr.split('\n', QString::SkipEmptyParts));
@@ -123,7 +123,7 @@ bool HideFileHelper::save() const
     QByteArray data;
     data.append(dataStr);
 
-    if (d->dfile->open(DFMIO::DFile::OpenFlag::WriteOnly)) {
+    if (d->dfile->open(DFMIO::DFile::OpenFlag::kWriteOnly)) {
         d->dfile->write(data);
         d->dfile->close();
     }

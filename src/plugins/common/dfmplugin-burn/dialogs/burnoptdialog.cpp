@@ -27,8 +27,8 @@
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 
-#include <dfm-burn/opticaldiscmanager.h>
-#include <dfm-burn/opticaldiscinfo.h>
+#include <dfm-burn/dopticaldiscmanager.h>
+#include <dfm-burn/dopticaldiscinfo.h>
 
 #include <DSysInfo>
 #include <QWindow>
@@ -81,7 +81,7 @@ void BurnOptDialog::setISOImage(const QUrl &image)
     volnameEdit->setEnabled(false);
 
     // we are seemingly abusing dfm-burn here. However that's actually not the case.
-    QScopedPointer<DFMBURN::OpticalDiscInfo> info { DFMBURN::OpticalDiscManager::createOpticalInfo(QString("stdio:") + image.toLocalFile()) };
+    QScopedPointer<DFMBURN::DOpticalDiscInfo> info { DFMBURN::DOpticalDiscManager::createOpticalInfo(QString("stdio:") + image.toLocalFile()) };
     if (info)
         volnameEdit->setText(info->volumeName());
 }

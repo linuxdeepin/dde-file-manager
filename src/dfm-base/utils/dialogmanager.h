@@ -27,7 +27,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
-#include <dfm-mount/base/dfmmount_global.h>
+#include <dfm-mount/base/dmount_global.h>
 
 #include <QObject>
 #include <DDialog>

@@ -203,11 +203,11 @@ bool FileOperateBaseWorker::openFiles(const AbstractFileInfoPointer &fromInfo, c
                                       const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
                                       bool *result)
 {
-    if (fromInfo->size() > 0 && !openFile(fromInfo, toInfo, fromeFile, DFile::OpenFlag::ReadOnly, result)) {
+    if (fromInfo->size() > 0 && !openFile(fromInfo, toInfo, fromeFile, DFile::OpenFlag::kReadOnly, result)) {
         return false;
     }
 
-    if (!openFile(fromInfo, toInfo, toFile, DFile::OpenFlag::WriteOnly | DFile::OpenFlag::Truncate, result)) {
+    if (!openFile(fromInfo, toInfo, toFile, DFile::OpenFlag::kWriteOnly | DFile::OpenFlag::kTruncate, result)) {
         return false;
     }
 
@@ -870,7 +870,7 @@ bool FileOperateBaseWorker::doCopyFilePractically(const AbstractFileInfoPointer 
             sourceCheckSum = adler32(sourceCheckSum, reinterpret_cast<Bytef *>(data), static_cast<uInt>(sizeRead));
         }
 
-        toInfo->refresh(DFMIO::DFileInfo::AttributeID::StandardSize, toDevice->size());
+        toInfo->refresh(DFMIO::DFileInfo::AttributeID::kStandardSize, toDevice->size());
 
     } while (fromDevice->pos() != fromInfo->size());
 

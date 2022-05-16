@@ -28,8 +28,8 @@
 #include <QTimer>
 #include <QHash>
 
-#include <dfm-mount/base/dfmmount_global.h>
-#include <dfm-mount/dfmprotocoldevice.h>
+#include <dfm-mount/base/dmount_global.h>
+#include <dfm-mount/dprotocoldevice.h>
 
 DFMBASE_BEGIN_NAMESPACE
 

@@ -93,13 +93,13 @@ int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, co
 void DialogManager::showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError err)
 {
     switch (err) {
-    case DFMMOUNT::DeviceError::UserErrorNetworkAnonymousNotAllowed:
+    case DFMMOUNT::DeviceError::kUserErrorNetworkAnonymousNotAllowed:
         showErrorDialog(tr("Mount error"), tr("Anonymous mount is not allowed"));
         break;
-    case DFMMOUNT::DeviceError::UserErrorNetworkWrongPasswd:
+    case DFMMOUNT::DeviceError::kUserErrorNetworkWrongPasswd:
         showErrorDialog(tr("Mount error"), tr("Wrong password is inputed"));
         break;
-    case DFMMOUNT::DeviceError::UserErrorUserCancelled:
+    case DFMMOUNT::DeviceError::kUserErrorUserCancelled:
         break;
     default:
         showErrorDialog(tr("Mount error"), tr("Error occured while mounting device"));
@@ -111,7 +111,7 @@ void DialogManager::showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError e
 void DialogManager::showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError err)
 {
     switch (err) {
-    case DFMMOUNT::DeviceError::UDisksErrorDeviceBusy:
+    case DFMMOUNT::DeviceError::kUDisksErrorDeviceBusy:
         showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
         break;
     default:

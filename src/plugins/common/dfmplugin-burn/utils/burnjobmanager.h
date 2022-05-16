@@ -25,7 +25,7 @@
 
 #include "dfmplugin_burn_global.h"
 
-#include <dfm-burn/opticaldiscmanager.h>
+#include <dfm-burn/dopticaldiscmanager.h>
 
 #include <QObject>
 

@@ -25,22 +25,22 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-#include <dfm-mount/base/dfmmount_global.h>
-#include <dfm-mount/dfmprotocoldevice.h>
+#include <dfm-mount/base/dmount_global.h>
+#include <dfm-mount/dprotocoldevice.h>
 
 #include <QSharedPointer>
 
 DFM_MOUNT_BEGIN_NS
-class DFMDevice;
-class DFMBlockDevice;
-class DFMProtocolDevice;
+class DDevice;
+class DBlockDevice;
+class DProtocolDevice;
 DFM_MOUNT_END_NS
 
 DFMBASE_BEGIN_NAMESPACE
 
-using DevPtr = QSharedPointer<DFMMOUNT::DFMDevice>;
-using BlockDevPtr = QSharedPointer<DFMMOUNT::DFMBlockDevice>;
-using ProtocolDevPtr = QSharedPointer<DFMMOUNT::DFMProtocolDevice>;
+using DevPtr = QSharedPointer<DFMMOUNT::DDevice>;
+using BlockDevPtr = QSharedPointer<DFMMOUNT::DBlockDevice>;
+using ProtocolDevPtr = QSharedPointer<DFMMOUNT::DProtocolDevice>;
 
 /*!
  * \brief The DeviceHelper class

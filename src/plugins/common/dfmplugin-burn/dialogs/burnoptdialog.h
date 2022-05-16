@@ -25,7 +25,7 @@
 
 #include "dfmplugin_burn_global.h"
 
-#include <dfm-burn/dfmburn_global.h>
+#include <dfm-burn/dburn_global.h>
 
 #include <DDialog>
 #include <DLineEdit>

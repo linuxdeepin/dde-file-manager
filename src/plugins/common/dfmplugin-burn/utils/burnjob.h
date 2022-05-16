@@ -26,7 +26,7 @@
 #include "dfmplugin_burn_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
-#include <dfm-burn/opticaldiscmanager.h>
+#include <dfm-burn/dopticaldiscmanager.h>
 
 #include <QThread>
 
@@ -75,7 +75,7 @@ protected:
     void run() override;
     bool readyToWork();
     void workingInSubProcess();
-    DFMBURN::OpticalDiscManager *createManager(int fd);
+    DFMBURN::DOpticalDiscManager *createManager(int fd);
     QByteArray updatedInSubProcess(DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message);
     void comfort();
     void deleteStagingFiles();

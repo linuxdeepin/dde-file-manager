@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-#include <dfm-mount/base/dfmmount_global.h>
+#include <dfm-mount/base/dmount_global.h>
 
 DFMBASE_BEGIN_NAMESPACE
 

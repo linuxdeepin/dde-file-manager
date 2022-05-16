@@ -30,7 +30,7 @@
 #include <QHash>
 #include <qt5/QtCore/qobjectdefs.h>
 
-#include <dfm-mount/base/dfmmount_global.h>
+#include <dfm-mount/base/dmount_global.h>
 
 DFMBASE_BEGIN_NAMESPACE
 

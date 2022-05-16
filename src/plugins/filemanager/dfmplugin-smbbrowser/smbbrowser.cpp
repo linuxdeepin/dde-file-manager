@@ -137,7 +137,7 @@ void SmbBrowser::sambaPrehandler(const QUrl &url, std::function<void()> after)
 {
     if (url.scheme() == Global::kSmb) {
         DevMngIns->mountNetworkDeviceAsync(url.toString(), [after](bool ok, DFMMOUNT::DeviceError err, const QString &) {
-            if ((ok || err == DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) && after) {
+            if ((ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) && after) {
                 after();
             } else if (after) {
                 DialogManager::instance()->showErrorDialog(tr("Mount device error"), "");

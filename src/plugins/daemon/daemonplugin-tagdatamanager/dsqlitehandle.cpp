@@ -611,11 +611,11 @@ DSqliteHandle::ReturnCode DSqliteHandle::checkDBFileExist(const QString &path, c
 void DSqliteHandle::initializeConnect()
 {
     //    DFM_MOUNT_USE_NS
-    //    monitor.reset(new DFMBlockMonitor(this));
+    //    monitor.reset(new DBlockMonitor(this));
     //    monitor->startMonitor();
 
-    //    connect(monitor, &DFMBlockMonitor::mountAdded, this, &DSqliteHandle::onMountAdded);
-    //    connect(monitor, &DFMBlockMonitor::mountRemoved, this, &DSqliteHandle::onMountRemoved);
+    //    connect(monitor, &DBlockMonitor::mountAdded, this, &DSqliteHandle::onMountAdded);
+    //    connect(monitor, &DBlockMonitor::mountRemoved, this, &DSqliteHandle::onMountRemoved);
 }
 
 void DSqliteHandle::connectToSqlite(const QString &path, const QString &db_name)

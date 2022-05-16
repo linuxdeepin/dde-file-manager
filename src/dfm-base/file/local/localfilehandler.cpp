@@ -115,7 +115,7 @@ bool LocalFileHandler::touchFile(const QUrl &url)
     QString templateFile;
     DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
     while (enumerator.hasNext()) {
-        if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::StandardSuffix) == suffix) {
+        if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
             templateFile = enumerator.next();
             break;
         }
@@ -685,7 +685,7 @@ QString LocalFileHandler::getFileMimetypeFromGio(const QUrl &url)
     }
 
     bool succ = false;
-    auto mimeType = dfileinfo->attribute(DFMIO::DFileInfo::AttributeID::StandardContentType, &succ);
+    auto mimeType = dfileinfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardContentType, &succ);
     if (succ)
         return mimeType.toString();
 

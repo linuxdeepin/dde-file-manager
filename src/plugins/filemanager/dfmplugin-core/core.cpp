@@ -40,7 +40,7 @@
 #include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
-#include <dfm-mount/dfmdevicemanager.h>
+#include <dfm-mount/ddevicemanager.h>
 
 #include <QTimer>
 #include <QCoreApplication>
@@ -101,7 +101,7 @@ bool Core::start()
     // the object must be initialized in main thread, otherwise the GVolumeMonitor do not have an event loop.
     static std::once_flag flg;
     std::call_once(flg, [this] {
-        QTimer::singleShot(500, this, [] { DFMMOUNT::DFMDeviceManager::instance(); });
+        QTimer::singleShot(500, this, [] { DFMMOUNT::DDeviceManager::instance(); });
     });
 
     return true;

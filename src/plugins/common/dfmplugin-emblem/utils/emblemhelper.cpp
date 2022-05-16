@@ -60,7 +60,7 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     QMap<int, QIcon> emblemsMap;
 
     DFileInfo fileInfo(info->url());
-    QStringList emblemData = fileInfo.customAttribute("metadata::emblem", DFileInfo::DFileAttributeType::TypeStringV).toStringList();
+    QStringList emblemData = fileInfo.customAttribute("metadata::emblem", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
 
     if (emblemData.isEmpty())
         return emblemsMap;
@@ -132,10 +132,10 @@ bool EmblemHelper::parseEmblemString(QIcon &emblem, QString &pos, const QString 
         DFileInfo fileInfo(imgPath);
 
         if (fileInfo.exists()) {
-            if (fileInfo.attribute(DFileInfo::AttributeID::StandardSize).toInt() > 102400)   // size small than 100kb
+            if (fileInfo.attribute(DFileInfo::AttributeID::kStandardSize).toInt() > 102400)   // size small than 100kb
                 return false;
 
-            QString suffix = fileInfo.attribute(DFileInfo::AttributeID::StandardCompleteSuffix).toString();
+            QString suffix = fileInfo.attribute(DFileInfo::AttributeID::kStandardCompleteSuffix).toString();
             // check support type
             if (suffix != "svg" && suffix != "png" && suffix != "gif" && suffix != "bmp" && suffix != "jpg")
                 return false;

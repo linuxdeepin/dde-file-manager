@@ -365,7 +365,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             }
 
             auto dfile = DFMBASE_NAMESPACE::DecoratorFile(saveImage).filePtr();
-            if (dfile && dfile->open(DFMIO::DFile::OpenFlag::ReadOnly)) {
+            if (dfile && dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
                 QByteArray output = dfile->readAll();
                 Q_ASSERT(!output.isEmpty());
 
@@ -418,7 +418,7 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
     } else if (mime.name() == DFMGLOBAL_NAMESPACE::kMimeTypeTextPlain) {
         //FIXME(zccrs): This should be done using the image plugin?
         auto dfile = DFMBASE_NAMESPACE::DecoratorFile(filePath).filePtr();
-        if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::ReadOnly)) {
+        if (!dfile || !dfile->open(DFMIO::DFile::OpenFlag::kReadOnly)) {
             d->errorString = dfile->lastError().errorMsg();
             goto _return;
         }

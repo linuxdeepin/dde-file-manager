@@ -91,7 +91,7 @@ QByteArray DecoratorFile::readAll() const
 {
     if (d->dfile) {
         if (!d->dfile->isOpen())
-            d->dfile->open(DFMIO::DFile::OpenFlag::ReadOnly);
+            d->dfile->open(DFMIO::DFile::OpenFlag::kReadOnly);
         QByteArray ret = d->dfile->readAll();
         d->dfile->close();
 
@@ -104,7 +104,7 @@ qint64 DecoratorFile::writeAll(const QByteArray &byteArray)
 {
     if (d->dfile) {
         if (!d->dfile->isOpen()) {
-            bool ok = d->dfile->open(DFMIO::DFile::OpenFlag::WriteOnly);
+            bool ok = d->dfile->open(DFMIO::DFile::OpenFlag::kWriteOnly);
             if (!ok)
                 return -1;
         }
@@ -120,7 +120,7 @@ DFMIO::DFile::Permissions DecoratorFile::permissions() const
 {
     if (d->dfile)
         return d->dfile->permissions();
-    return DFMIO::DFile::Permission::NoPermission;
+    return DFMIO::DFile::Permission::kNoPermission;
 }
 
 bool DecoratorFile::setPermissions(DFMIO::DFile::Permissions permission)

@@ -60,10 +60,10 @@ QUrl SmbShareIterator::next()
     d->enumerator->next();
     auto info = d->enumerator->fileInfo();
     // TODO(xust) TODO(lanxs) if url contains '#', wrong info is returned
-    QUrl url = info->attribute(DFileInfo::AttributeID::StandardTargetUri).toUrl();
-    QStringList icons = info->attribute(DFileInfo::AttributeID::StandardIcon).toStringList();
+    QUrl url = info->attribute(DFileInfo::AttributeID::kStandardTargetUri).toUrl();
+    QStringList icons = info->attribute(DFileInfo::AttributeID::kStandardIcon).toStringList();
     QString icon = icons.count() > 0 ? icons.first() : "folder-remote";
-    QString name = info->attribute(DFileInfo::AttributeID::StandardDisplayName).toString();
+    QString name = info->attribute(DFileInfo::AttributeID::kStandardDisplayName).toString();
 
     {
         QMutexLocker locker(&SmbBrowserUtils::mutex);

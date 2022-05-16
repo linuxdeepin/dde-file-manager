@@ -34,12 +34,12 @@ class DecoratorFileEnumerator
 public:
     explicit DecoratorFileEnumerator(const QString &filePath,
                                      const QStringList &nameFilters = QStringList(),
-                                     DFMIO::DEnumerator::DirFilters filters = DFMIO::DEnumerator::DirFilter::NoFilter,
-                                     DFMIO::DEnumerator::IteratorFlags flags = DFMIO::DEnumerator::IteratorFlag::NoIteratorFlags);
+                                     DFMIO::DEnumerator::DirFilters filters = DFMIO::DEnumerator::DirFilter::kNoFilter,
+                                     DFMIO::DEnumerator::IteratorFlags flags = DFMIO::DEnumerator::IteratorFlag::kNoIteratorFlags);
     explicit DecoratorFileEnumerator(const QUrl &url,
                                      const QStringList &nameFilters = QStringList(),
-                                     DFMIO::DEnumerator::DirFilters filters = DFMIO::DEnumerator::DirFilter::NoFilter,
-                                     DFMIO::DEnumerator::IteratorFlags flags = DFMIO::DEnumerator::IteratorFlag::NoIteratorFlags);
+                                     DFMIO::DEnumerator::DirFilters filters = DFMIO::DEnumerator::DirFilter::kNoFilter,
+                                     DFMIO::DEnumerator::IteratorFlags flags = DFMIO::DEnumerator::IteratorFlag::kNoIteratorFlags);
 
     explicit DecoratorFileEnumerator(QSharedPointer<DFMIO::DEnumerator> dfileEnumerator);
 

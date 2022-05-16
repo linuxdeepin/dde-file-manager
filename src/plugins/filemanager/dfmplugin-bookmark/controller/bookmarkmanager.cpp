@@ -371,7 +371,7 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         || bookmarkMap[url].deviceUrl.startsWith(Global::kSFtp)) {
         DFileInfo info(url);
         if (info.exists()) {
-            if (info.attribute(DFileInfo::AttributeID::StandardIsDir).toBool())
+            if (info.attribute(DFileInfo::AttributeID::kStandardIsDir).toBool())
                 BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         } else {
             DeviceManager::instance()->mountNetworkDeviceAsync(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {

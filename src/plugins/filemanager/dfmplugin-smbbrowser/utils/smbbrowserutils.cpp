@@ -64,7 +64,7 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls, Q
     QUrl url = urls.first();
     QString urlStr = url.toString();
     DeviceManager::instance()->mountNetworkDeviceAsync(urlStr, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
-        if (!ok && err != DFMMOUNT::DeviceError::GIOErrorAlreadyMounted) {
+        if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
             DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
         } else {
             QUrl u = mpt.isEmpty() ? url : QUrl::fromLocalFile(mpt);

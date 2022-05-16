@@ -343,7 +343,7 @@ void ComputerController::actEject(const QUrl &url)
         id = ComputerUtils::getBlockDevIdByUrl(url);
         DevMngIns->detachBlockDev(id, [](bool ok, DFMMOUNT::DeviceError) {
             if (!ok)
-                DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError::UDisksErrorDeviceBusy);
+                DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError::kUDisksErrorDeviceBusy);
         });
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);

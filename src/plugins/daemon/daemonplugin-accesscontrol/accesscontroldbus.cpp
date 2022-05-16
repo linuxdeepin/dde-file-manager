@@ -29,9 +29,9 @@
 #include <QDBusVariant>
 #include <QtConcurrent>
 
-#include <dfm-mount/dfmblockmonitor.h>
-#include <dfm-mount/dfmblockdevice.h>
-#include <dfm-mount/base/dfmmountutils.h>
+#include <dfm-mount/dblockmonitor.h>
+#include <dfm-mount/dblockdevice.h>
+#include <dfm-mount/base/dmountutils.h>
 
 #include <sys/mount.h>
 
@@ -213,14 +213,14 @@ QString AccessControlDBus::FileManagerReply(int policystate)
 void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
 {
     DFM_MOUNT_USE_NS
-    auto dev = monitor->createDeviceById(deviceId).objectCast<DFMBlockDevice>();
+    auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
     if (!dev) {
         qWarning() << "cannot craete device handler for " << deviceId;
         return;
     }
 
     bool canPowerOff { dev->canPowerOff() };
-    QString connectionDBus { dev->getProperty(Property::DriveConnectionBus).toString() };
+    QString connectionDBus { dev->getProperty(Property::kDriveConnectionBus).toString() };
 
     if (!canPowerOff || connectionDBus != "usb")   // 不能断电的通常为内置光驱
         return;
@@ -248,7 +248,7 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
 {
     if (globalDevPolicies.contains(kTypeBlock)) {
         DFM_MOUNT_USE_NS
-        auto dev = monitor->createDeviceById(deviceId).objectCast<DFMBlockDevice>();
+        auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
         if (!dev) {
             qWarning() << "cannot craete device handler for " << deviceId;
             return;
@@ -287,10 +287,10 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
 void AccessControlDBus::initConnect()
 {
     DFM_MOUNT_USE_NS
-    monitor.reset(new DFMBlockMonitor(this));
+    monitor.reset(new DBlockMonitor(this));
     monitor->startMonitor();
-    connect(monitor.data(), &DFMBlockMonitor::deviceAdded, this, &AccessControlDBus::onBlockDevAdded);
-    connect(monitor.data(), &DFMBlockMonitor::mountAdded, this, &AccessControlDBus::onBlockDevMounted);
+    connect(monitor.data(), &DBlockMonitor::deviceAdded, this, &AccessControlDBus::onBlockDevAdded);
+    connect(monitor.data(), &DBlockMonitor::mountAdded, this, &AccessControlDBus::onBlockDevMounted);
 }
 
 void AccessControlDBus::changeMountedOnInit()
@@ -314,7 +314,7 @@ void AccessControlDBus::changeMountedBlock(int mode, const QString &device)
     QStringList blockIdGroup { monitor->getDevices() };
     QList<MountArgs> waitToHandle;
     for (const auto &id : blockIdGroup) {
-        auto dev = monitor->createDeviceById(id).objectCast<DFMBlockDevice>();
+        auto dev = monitor->createDeviceById(id).objectCast<DBlockDevice>();
         if (!dev)
             continue;
 
@@ -379,7 +379,7 @@ void AccessControlDBus::changeMountedOptical(int mode, const QString &device)
     QStringList blockIdGroup { monitor->getDevices() };
 
     for (const QString &id : blockIdGroup) {
-        auto dev = monitor->createDeviceById(id).objectCast<DFMBlockDevice>();
+        auto dev = monitor->createDeviceById(id).objectCast<DBlockDevice>();
         if (!dev)
             continue;
 

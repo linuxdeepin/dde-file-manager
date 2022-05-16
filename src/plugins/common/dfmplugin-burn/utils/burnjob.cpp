@@ -224,10 +224,10 @@ void AbstractBurnJob::workingInSubProcess()
     }
 }
 
-OpticalDiscManager *AbstractBurnJob::createManager(int fd)
+DOpticalDiscManager *AbstractBurnJob::createManager(int fd)
 {
-    OpticalDiscManager *manager = new OpticalDiscManager(curDev, this);
-    connect(manager, &OpticalDiscManager::jobStatusChanged, this,
+    DOpticalDiscManager *manager = new DOpticalDiscManager(curDev, this);
+    connect(manager, &DOpticalDiscManager::jobStatusChanged, this,
             [=](DFMBURN::JobStatus status, int progress, const QString &speed, const QStringList &message) {
                 QByteArray bytes(updatedInSubProcess(status, progress, speed, message));
                 if (bytes.size() < kPipeBufferSize) {
@@ -334,9 +334,9 @@ void EraseJob::work()
     if (!readyToWork())
         return;
 
-    OpticalDiscManager *manager = new OpticalDiscManager(curDev, this);
+    DOpticalDiscManager *manager = new DOpticalDiscManager(curDev, this);
     onJobUpdated(JobStatus::kIdle, 0, {}, {});
-    connect(manager, &OpticalDiscManager::jobStatusChanged, this, &AbstractBurnJob::onJobUpdated, Qt::DirectConnection);
+    connect(manager, &DOpticalDiscManager::jobStatusChanged, this, &AbstractBurnJob::onJobUpdated, Qt::DirectConnection);
 
     if (!manager->erase())
         qWarning() << "Erase Failed: " << manager->lastError();

@@ -235,8 +235,8 @@ void ShareControlWidget::shareFolder()
         DecoratorFile file(url);
         if (file.exists() && writable) {
             using namespace DFMIO;
-            bool ret = file.setPermissions(file.permissions() | DFile::Permission::WriteGroup | DFile::Permission::ExeGroup
-                                           | DFile::Permission::WriteOther | DFile::Permission::ExeOther);
+            bool ret = file.setPermissions(file.permissions() | DFile::Permission::kWriteGroup | DFile::Permission::kExeGroup
+                                           | DFile::Permission::kWriteOther | DFile::Permission::kExeOther);
             if (!ret)
                 qWarning() << "set permission of " << url << "failed.";
         }
@@ -249,7 +249,7 @@ void ShareControlWidget::shareFolder()
             DecoratorFile home(homePath);
             if (home.exists()) {
                 using namespace DFMIO;
-                bool ret = home.setPermissions(home.permissions() | DFile::Permission::ReadOther | DFile::Permission::ExeOther);
+                bool ret = home.setPermissions(home.permissions() | DFile::Permission::kReadOther | DFile::Permission::kExeOther);
                 if (!ret)
                     qWarning() << "set permission for user home failed: " << homePath;
             }

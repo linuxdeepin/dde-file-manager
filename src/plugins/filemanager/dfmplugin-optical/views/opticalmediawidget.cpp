@@ -32,7 +32,7 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
-#include <dfm-burn/dfmburn_global.h>
+#include <dfm-burn/dburn_global.h>
 
 #include <DSysInfo>
 

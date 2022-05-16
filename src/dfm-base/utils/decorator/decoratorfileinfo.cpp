@@ -96,28 +96,28 @@ bool DecoratorFileInfo::exists() const
 bool DecoratorFileInfo::isFile() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardIsFile).toBool();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardIsFile).toBool();
     return false;
 }
 
 bool DecoratorFileInfo::isDir() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardIsDir).toBool();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardIsDir).toBool();
     return false;
 }
 
 bool DecoratorFileInfo::isSymLink() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardIsSymlink).toBool();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool();
     return false;
 }
 
 bool DecoratorFileInfo::isHidden() const
 {
     if (d->dfileInfo) {
-        const bool hidden = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardIsHidden).toBool();
+        const bool hidden = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardIsHidden).toBool();
         if (hidden)
             return true;
     }
@@ -141,7 +141,7 @@ bool DecoratorFileInfo::isWritable() const
         return false;
 
     bool success = false;
-    const QVariant &value = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::AccessCanWrite, &success);
+    const QVariant &value = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kAccessCanWrite, &success);
     if (success && value.isValid())
         return value.toBool();
 
@@ -173,7 +173,7 @@ uint DecoratorFileInfo::ownerId() const
     if (!d->dfileInfo)
         return uint(-2);
     bool success = false;
-    const QVariant &value = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::UnixUID, &success);
+    const QVariant &value = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kUnixUID, &success);
     if (success && value.isValid())
         return value.toUInt();
     return uint(-2);
@@ -182,42 +182,42 @@ uint DecoratorFileInfo::ownerId() const
 QString DecoratorFileInfo::suffix() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardSuffix).toString();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix).toString();
     return QString();
 }
 
 QString DecoratorFileInfo::completeSuffix() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardCompleteSuffix).toString();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardCompleteSuffix).toString();
     return QString();
 }
 
 QString DecoratorFileInfo::filePath() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardFilePath).toString();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardFilePath).toString();
     return QString();
 }
 
 QString DecoratorFileInfo::parentPath() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardParentPath).toString();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardParentPath).toString();
     return QString();
 }
 
 QString DecoratorFileInfo::fileName() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardFileName).toString();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardFileName).toString();
     return QString();
 }
 
 QList<QString> DecoratorFileInfo::standardIconNames() const
 {
     if (d->dfileInfo)
-        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::StandardIcon).toStringList();
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardIcon).toStringList();
     return {};
 }
 
@@ -225,13 +225,13 @@ DFMIO::DFile::Permissions DecoratorFileInfo::permissions() const
 {
     if (d->dfileInfo)
         return d->dfileInfo->permissions();
-    return DFMIO::DFile::Permission::NoPermission;
+    return DFMIO::DFile::Permission::kNoPermission;
 }
 
 bool DecoratorFileInfo::notifyAttributeChanged()
 {
     if (d->dfileInfo) {
-        return d->dfileInfo->setCustomAttribute("xattr::update", DFMIO::DFileInfo::DFileAttributeType::TypeString, "");
+        return d->dfileInfo->setCustomAttribute("xattr::update", DFMIO::DFileInfo::DFileAttributeType::kTypeString, "");
     }
 
     return false;

@@ -26,7 +26,7 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
-#include <dfm-mount/base/dfmmount_global.h>
+#include <dfm-mount/base/dmount_global.h>
 
 #include <QObject>
 #include <QVariantMap>

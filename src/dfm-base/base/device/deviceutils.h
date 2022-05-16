@@ -27,7 +27,7 @@
 
 #include <QString>
 
-#include <dfm-mount/base/dfmmountutils.h>
+#include <dfm-mount/base/dmountutils.h>
 
 DFMBASE_BEGIN_NAMESPACE
 
