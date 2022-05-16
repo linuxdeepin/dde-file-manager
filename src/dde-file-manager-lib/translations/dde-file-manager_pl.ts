@@ -7,44 +7,44 @@
         <translation>Nowy katalog</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="618"/>
+        <location filename="../controllers/appcontroller.cpp" line="624"/>
         <source>Mounting device error</source>
         <translation>Błąd montowania urządzenia</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="673"/>
+        <location filename="../controllers/appcontroller.cpp" line="679"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>Obraz dysku jest uszkodzony, nie można go teraz zamontować, najpierw usuń dysk</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="715"/>
+        <location filename="../controllers/appcontroller.cpp" line="721"/>
         <source>Mount error: unsupported image format</source>
         <translation>Błąd montowania: nieobsługiwany format obrazu</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="854"/>
-        <location filename="../controllers/appcontroller.cpp" line="894"/>
+        <location filename="../controllers/appcontroller.cpp" line="860"/>
+        <location filename="../controllers/appcontroller.cpp" line="900"/>
         <source>The device was not safely removed</source>
         <translation>Urządzenie nie zostało bezpiecznie usunięte</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="854"/>
-        <location filename="../controllers/appcontroller.cpp" line="894"/>
+        <location filename="../controllers/appcontroller.cpp" line="860"/>
+        <location filename="../controllers/appcontroller.cpp" line="900"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>Kliknij „Bezpieczne usuwanie”, a następnie odłącz go następnym razem</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="864"/>
+        <location filename="../controllers/appcontroller.cpp" line="870"/>
         <source>The device was not ejected</source>
         <translation>Urządzenie nie zostało wysunięte</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="864"/>
+        <location filename="../controllers/appcontroller.cpp" line="870"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>Dysk jest zajęty, nie można go teraz wysunąć</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="875"/>
+        <location filename="../controllers/appcontroller.cpp" line="881"/>
         <source>Authentication timed out</source>
         <translation>Upłynął limit czasu uwierzytelniania</translation>
     </message>
@@ -331,32 +331,42 @@
 <context>
     <name>ConnectToServerDialog</name>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="53"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="56"/>
         <source>Connect to Server</source>
         <translation>Połącz z serwerem</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="175"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="139"/>
+        <source>Favorite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="230"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuluj</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="176"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="231"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>Połącz</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="184"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="241"/>
         <source>My Favorites:</source>
         <translation>Moje ulubione:</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="226"/>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="268"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="298"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="342"/>
         <source>Clear History</source>
         <translation>Wyczyść historię</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="361"/>
+        <source>Unfavorite</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1231,7 +1241,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="2704"/>
         <source>Failed to create symlink, cause: %1</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się utworzyć dowiązania symbolicznego, powód: %1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="3295"/>
@@ -1373,41 +1383,41 @@
 <context>
     <name>DFileSystemModel</name>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1604"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1591"/>
         <location filename="../models/trashfileinfo.cpp" line="321"/>
         <source>Name</source>
         <translation>Nazwa</translation>
     </message>
     <message>
         <location filename="../interfaces/dabstractfileinfo.cpp" line="1122"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1606"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1593"/>
         <location filename="../models/searchfileinfo.cpp" line="156"/>
         <source>Time modified</source>
         <translation>Data modyfikacji</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1608"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1595"/>
         <source>Size</source>
         <translation>Rozmiar</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1610"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1597"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1612"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1599"/>
         <source>Time created</source>
         <translation>Data utworzenia</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1614"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1601"/>
         <source>Last access</source>
         <translation>Ostatni dostęp</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilesystemmodel.cpp" line="1616"/>
+        <location filename="../interfaces/dfilesystemmodel.cpp" line="1603"/>
         <location filename="../models/recentfileinfo.cpp" line="212"/>
         <location filename="../models/searchfileinfo.cpp" line="154"/>
         <location filename="../models/searchfileinfo.cpp" line="159"/>
@@ -1418,22 +1428,22 @@
 <context>
     <name>DFileView</name>
     <message>
-        <location filename="../views/dfileview.cpp" line="2883"/>
+        <location filename="../views/dfileview.cpp" line="2898"/>
         <source>Disc mount error</source>
         <translation>Błąd montowania dysku</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2883"/>
+        <location filename="../views/dfileview.cpp" line="2898"/>
         <source>The disc is in use, please end the running process and remount the disc.</source>
         <translation>Dysk jest w użyciu, zakończ trwający proces i zamontuj dysk od nowa</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="2896"/>
+        <location filename="../views/dfileview.cpp" line="2911"/>
         <source>Mounting failed</source>
         <translation>Błąd montowania</translation>
     </message>
     <message>
-        <location filename="../views/dfileview.cpp" line="3632"/>
+        <location filename="../views/dfileview.cpp" line="3649"/>
         <source>(Reverse)</source>
         <translation>(Odwróć)</translation>
     </message>
@@ -1819,7 +1829,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1212"/>
         <source>Failed to restore %1 file, the source file does not exist</source>
-        <translation>Nie udało się przywrócić pliku %1, plik docelowy nie istnieje</translation>
+        <translation>Nie udało się przywrócić %1 pliku, plik źródłowy nie istnieje</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1254"/>
@@ -2000,22 +2010,22 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1072"/>
         <source>Failed to create symlink, cause:</source>
-        <translation type="unfinished"/>
+        <translation>Nie udało się utworzyć dowiązania symbolicznego, powód:</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1187"/>
         <source>Failed to restore %1 file, the target folder is read-only</source>
-        <translation>Nie udało się przywrócić pliku %1, katalog docelowy jest tylko do odczytu</translation>
+        <translation>Nie udało się przywrócić %1 pliku, katalog docelowy jest tylko-do-odczytu</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1189"/>
         <source>Failed to restore %1 files, the target folder is read-only</source>
-        <translation>Nie udało się przywrócić plików %1, katalog docelowy jest tylko do odczytu</translation>
+        <translation>Nie udało się przywrócić %1 plików, katalog docelowy jest tylko-do-odczytu</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1214"/>
         <source>Failed to restore %1 files, the source files do not exist</source>
-        <translation>Nie udało się przywrócić pliku %1, pliki docelowe nie istnieją</translation>
+        <translation>Nie udało się przywrócić %1 plików, pliki źródłowe nie istnieją</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1526"/>
@@ -2055,13 +2065,13 @@
         <translation>Najpierw zainstaluj File Roller, a następnie kontynuuj</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1218"/>
-        <location filename="../controllers/filecontroller.cpp" line="1238"/>
+        <location filename="../controllers/filecontroller.cpp" line="1226"/>
+        <location filename="../controllers/filecontroller.cpp" line="1246"/>
         <source>Unable to create files here: %1</source>
         <translation>Brak możliwości utworzenia tutaj plików: %1</translation>
     </message>
     <message>
-        <location filename="../controllers/filecontroller.cpp" line="1220"/>
+        <location filename="../controllers/filecontroller.cpp" line="1228"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Potwierdź</translation>
@@ -2413,202 +2423,216 @@
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="129"/>
-        <location filename="../configure/global-setting-template-pro.js" line="129"/>
-        <location filename="../configure/global-setting-template.js" line="129"/>
-        <source>Hidden files</source>
-        <translation>Ukryte pliki</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="127"/>
+        <location filename="../configure/global-setting-template-pro.js" line="127"/>
+        <location filename="../configure/global-setting-template.js" line="127"/>
+        <source>Mix sorting of files and folders</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="133"/>
-        <location filename="../configure/global-setting-template-pro.js" line="133"/>
-        <location filename="../configure/global-setting-template.js" line="133"/>
-        <source>Show hidden files</source>
-        <translation>Wyświetlaj ukryte pliki</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="135"/>
+        <location filename="../configure/global-setting-template-pro.js" line="135"/>
+        <location filename="../configure/global-setting-template.js" line="135"/>
+        <source>Hidden files</source>
+        <translation>Ukryte pliki</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
-        <source>Show file extensions</source>
-        <translation>Pokaż rozszerzenia plików</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="156"/>
-        <location filename="../configure/global-setting-template-pro.js" line="157"/>
-        <location filename="../configure/global-setting-template.js" line="157"/>
-        <source>Advanced</source>
-        <translation>Zaawansowane</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="160"/>
-        <location filename="../configure/global-setting-template-pro.js" line="161"/>
-        <location filename="../configure/global-setting-template.js" line="161"/>
-        <source>Index</source>
-        <translation>Indeksowanie</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="164"/>
-        <location filename="../configure/global-setting-template-pro.js" line="165"/>
-        <location filename="../configure/global-setting-template.js" line="165"/>
-        <source>Auto index internal disk</source>
-        <translation>Automatycznie indeksuj dysk wewnętrzny</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="170"/>
-        <location filename="../configure/global-setting-template-pro.js" line="171"/>
-        <location filename="../configure/global-setting-template.js" line="171"/>
-        <source>Index external storage device after connected to computer</source>
-        <translation>Indeksuj zewnętrzne urządzenia z nośnikiem danych po podłączeniu do komputera</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="176"/>
-        <location filename="../configure/global-setting-template-pro.js" line="177"/>
-        <location filename="../configure/global-setting-template.js" line="177"/>
-        <source>Full-Text search</source>
-        <translation>Wyszukiwanie Full-Text</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="251"/>
-        <location filename="../configure/global-setting-template-pro.js" line="251"/>
-        <location filename="../configure/global-setting-template.js" line="250"/>
-        <source>Show item counts and sizes in the path of mounted MTP devices</source>
-        <translation>Pokaż liczbę i rozmiar plików w ścieżce zamontowanych urządzeń MTP</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="257"/>
-        <location filename="../configure/global-setting-template-pro.js" line="257"/>
-        <location filename="../configure/global-setting-template.js" line="256"/>
-        <source>Keep showing the mounted Samba shares</source>
-        <translation>Pokaż zamontowane katalogi współdzielone Samba</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="269"/>
-        <location filename="../configure/global-setting-template-pro.js" line="269"/>
-        <location filename="../configure/global-setting-template.js" line="268"/>
-        <source>Use the file chooser dialog of File Manager</source>
-        <translation>Używaj okna wyboru plików Menedżera Plików</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="275"/>
-        <location filename="../configure/global-setting-template-pro.js" line="275"/>
-        <location filename="../configure/global-setting-template.js" line="274"/>
-        <source>Ask for my confirmation when deleting files</source>
-        <translation>Zapytaj mnie o potwierdzenie podczas usuwania plików</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="283"/>
-        <location filename="../configure/global-setting-template-pro.js" line="283"/>
-        <location filename="../configure/global-setting-template.js" line="282"/>
-        <source>Other</source>
-        <translation>Inne</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="287"/>
-        <location filename="../configure/global-setting-template-pro.js" line="287"/>
-        <location filename="../configure/global-setting-template.js" line="286"/>
-        <source>Hide system disk</source>
-        <translation>Ukryj dysk systemowy</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="293"/>
-        <location filename="../configure/global-setting-template-pro.js" line="293"/>
-        <location filename="../configure/global-setting-template.js" line="299"/>
-        <source>Hide loop partitions</source>
-        <translation>Ukryj partycje zapętlone (loop partitions)</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="306"/>
-        <location filename="../configure/global-setting-template-pro.js" line="306"/>
-        <location filename="../configure/global-setting-template.js" line="305"/>
-        <source>Show file system on disk icon</source>
-        <translation>Pokazuj system plików na ikonie dysku</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="188"/>
-        <location filename="../configure/global-setting-template-pro.js" line="189"/>
-        <location filename="../configure/global-setting-template.js" line="189"/>
-        <source>Show hidden files in search results</source>
-        <translation>Wyświetlaj ukryte pliki w wynikach wyszukiwania</translation>
+        <source>Show hidden files</source>
+        <translation>Wyświetlaj ukryte pliki</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="145"/>
         <location filename="../configure/global-setting-template-pro.js" line="145"/>
         <location filename="../configure/global-setting-template.js" line="145"/>
-        <source>Display recent file entry in left panel</source>
-        <translation>Wyświetlaj ostatnie pliki w panelu po lewej stronie</translation>
+        <source>Show file extensions</source>
+        <translation>Pokaż rozszerzenia plików</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="197"/>
-        <location filename="../configure/global-setting-template-pro.js" line="198"/>
-        <location filename="../configure/global-setting-template.js" line="198"/>
-        <source>Preview</source>
-        <translation>Podgląd</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="162"/>
+        <location filename="../configure/global-setting-template-pro.js" line="163"/>
+        <location filename="../configure/global-setting-template.js" line="163"/>
+        <source>Advanced</source>
+        <translation>Zaawansowane</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="201"/>
-        <location filename="../configure/global-setting-template-pro.js" line="202"/>
-        <source>Compress file preview</source>
-        <translation>Podgląd plików skompresowanych</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="166"/>
+        <location filename="../configure/global-setting-template-pro.js" line="167"/>
+        <location filename="../configure/global-setting-template.js" line="167"/>
+        <source>Index</source>
+        <translation>Indeksowanie</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="208"/>
-        <location filename="../configure/global-setting-template-pro.js" line="209"/>
-        <location filename="../configure/global-setting-template.js" line="208"/>
-        <source>Text preview</source>
-        <translation>Podgląd tekstów</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="170"/>
+        <location filename="../configure/global-setting-template-pro.js" line="171"/>
+        <location filename="../configure/global-setting-template.js" line="171"/>
+        <source>Auto index internal disk</source>
+        <translation>Automatycznie indeksuj dysk wewnętrzny</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="214"/>
-        <location filename="../configure/global-setting-template-pro.js" line="215"/>
-        <location filename="../configure/global-setting-template.js" line="214"/>
-        <source>Document preview</source>
-        <translation>Podgląd dokumentów</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="176"/>
+        <location filename="../configure/global-setting-template-pro.js" line="177"/>
+        <location filename="../configure/global-setting-template.js" line="177"/>
+        <source>Index external storage device after connected to computer</source>
+        <translation>Indeksuj zewnętrzne urządzenia z nośnikiem danych po podłączeniu do komputera</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="220"/>
-        <location filename="../configure/global-setting-template-pro.js" line="221"/>
-        <location filename="../configure/global-setting-template.js" line="220"/>
-        <source>Image preview</source>
-        <translation>Podgląd obrazów</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="226"/>
-        <location filename="../configure/global-setting-template-pro.js" line="227"/>
-        <location filename="../configure/global-setting-template.js" line="226"/>
-        <source>Video preview</source>
-        <translation>Podgląd filmów</translation>
-    </message>
-    <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="235"/>
-        <location filename="../configure/global-setting-template-pro.js" line="235"/>
-        <location filename="../configure/global-setting-template.js" line="234"/>
-        <source>Mount</source>
-        <translation>Montowanie</translation>
+        <location filename="../configure/global-setting-template-fedora.js" line="182"/>
+        <location filename="../configure/global-setting-template-pro.js" line="183"/>
+        <location filename="../configure/global-setting-template.js" line="183"/>
+        <source>Full-Text search</source>
+        <translation>Wyszukiwanie Full-Text</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="239"/>
         <location filename="../configure/global-setting-template-pro.js" line="239"/>
         <location filename="../configure/global-setting-template.js" line="238"/>
+        <source>Music preview</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="263"/>
+        <location filename="../configure/global-setting-template-pro.js" line="263"/>
+        <location filename="../configure/global-setting-template.js" line="262"/>
+        <source>Show item counts and sizes in the path of mounted MTP devices</source>
+        <translation>Pokaż liczbę i rozmiar plików w ścieżce zamontowanych urządzeń MTP</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="269"/>
+        <location filename="../configure/global-setting-template-pro.js" line="269"/>
+        <location filename="../configure/global-setting-template.js" line="268"/>
+        <source>Keep showing the mounted Samba shares</source>
+        <translation>Pokaż zamontowane katalogi współdzielone Samba</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="281"/>
+        <location filename="../configure/global-setting-template-pro.js" line="281"/>
+        <location filename="../configure/global-setting-template.js" line="280"/>
+        <source>Use the file chooser dialog of File Manager</source>
+        <translation>Używaj okna wyboru plików Menedżera Plików</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="287"/>
+        <location filename="../configure/global-setting-template-pro.js" line="287"/>
+        <location filename="../configure/global-setting-template.js" line="286"/>
+        <source>Ask for my confirmation when deleting files</source>
+        <translation>Zapytaj mnie o potwierdzenie podczas usuwania plików</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="295"/>
+        <location filename="../configure/global-setting-template-pro.js" line="295"/>
+        <location filename="../configure/global-setting-template.js" line="294"/>
+        <source>Other</source>
+        <translation>Inne</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="299"/>
+        <location filename="../configure/global-setting-template-pro.js" line="299"/>
+        <location filename="../configure/global-setting-template.js" line="298"/>
+        <source>Hide system disk</source>
+        <translation>Ukryj dysk systemowy</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="305"/>
+        <location filename="../configure/global-setting-template-pro.js" line="305"/>
+        <location filename="../configure/global-setting-template.js" line="311"/>
+        <source>Hide loop partitions</source>
+        <translation>Ukryj partycje zapętlone (loop partitions)</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="318"/>
+        <location filename="../configure/global-setting-template-pro.js" line="318"/>
+        <location filename="../configure/global-setting-template.js" line="317"/>
+        <source>Show file system on disk icon</source>
+        <translation>Pokazuj system plików na ikonie dysku</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="194"/>
+        <location filename="../configure/global-setting-template-pro.js" line="195"/>
+        <location filename="../configure/global-setting-template.js" line="195"/>
+        <source>Show hidden files in search results</source>
+        <translation>Wyświetlaj ukryte pliki w wynikach wyszukiwania</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="151"/>
+        <location filename="../configure/global-setting-template-pro.js" line="151"/>
+        <location filename="../configure/global-setting-template.js" line="151"/>
+        <source>Display recent file entry in left panel</source>
+        <translation>Wyświetlaj ostatnie pliki w panelu po lewej stronie</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="203"/>
+        <location filename="../configure/global-setting-template-pro.js" line="204"/>
+        <location filename="../configure/global-setting-template.js" line="204"/>
+        <source>Preview</source>
+        <translation>Podgląd</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="207"/>
+        <location filename="../configure/global-setting-template-pro.js" line="208"/>
+        <source>Compress file preview</source>
+        <translation>Podgląd plików skompresowanych</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="214"/>
+        <location filename="../configure/global-setting-template-pro.js" line="215"/>
+        <location filename="../configure/global-setting-template.js" line="214"/>
+        <source>Text preview</source>
+        <translation>Podgląd tekstów</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="220"/>
+        <location filename="../configure/global-setting-template-pro.js" line="221"/>
+        <location filename="../configure/global-setting-template.js" line="220"/>
+        <source>Document preview</source>
+        <translation>Podgląd dokumentów</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="226"/>
+        <location filename="../configure/global-setting-template-pro.js" line="227"/>
+        <location filename="../configure/global-setting-template.js" line="226"/>
+        <source>Image preview</source>
+        <translation>Podgląd obrazów</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="232"/>
+        <location filename="../configure/global-setting-template-pro.js" line="233"/>
+        <location filename="../configure/global-setting-template.js" line="232"/>
+        <source>Video preview</source>
+        <translation>Podgląd filmów</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="247"/>
+        <location filename="../configure/global-setting-template-pro.js" line="247"/>
+        <location filename="../configure/global-setting-template.js" line="246"/>
+        <source>Mount</source>
+        <translation>Montowanie</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="251"/>
+        <location filename="../configure/global-setting-template-pro.js" line="251"/>
+        <location filename="../configure/global-setting-template.js" line="250"/>
         <source>Auto mount</source>
         <translation>Automatyczne montowanie</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="245"/>
-        <location filename="../configure/global-setting-template-pro.js" line="245"/>
-        <location filename="../configure/global-setting-template.js" line="244"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="257"/>
+        <location filename="../configure/global-setting-template-pro.js" line="257"/>
+        <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Open after auto mount</source>
         <translation>Otwórz po automatycznym zamontowaniu</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template-fedora.js" line="265"/>
-        <location filename="../configure/global-setting-template-pro.js" line="265"/>
-        <location filename="../configure/global-setting-template.js" line="264"/>
+        <location filename="../configure/global-setting-template-fedora.js" line="277"/>
+        <location filename="../configure/global-setting-template-pro.js" line="277"/>
+        <location filename="../configure/global-setting-template.js" line="276"/>
         <source>Dialog</source>
         <translation>Okno dialogowe</translation>
     </message>
     <message>
-        <location filename="../configure/global-setting-template.js" line="202"/>
+        <location filename="../configure/global-setting-template.js" line="208"/>
         <source>Compressed file preview</source>
         <translation>Podgląd plików skompresowanych</translation>
     </message>
@@ -2754,7 +2778,7 @@
         <location filename="../shutil/mimetypedisplaymanager.cpp" line="54"/>
         <location filename="../views/dfmadvancesearchbar.cpp" line="202"/>
         <source>Video</source>
-        <translation>Film</translation>
+        <translation>Wideo</translation>
     </message>
     <message>
         <location filename="../controllers/mergeddesktopcontroller.cpp" line="441"/>
@@ -3080,7 +3104,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="230"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="236"/>
         <source>Size</source>
@@ -3095,7 +3119,7 @@
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1206"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
         <source>Type</source>
         <translation>Typ</translation>
@@ -3104,7 +3128,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="175"/>
         <location filename="../dialogs/propertydialog.cpp" line="1209"/>
         <location filename="../dialogs/propertydialog.cpp" line="1230"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="359"/>
         <source>Time modified</source>
         <translation>Data modyfikacji</translation>
@@ -3185,53 +3209,53 @@
         <translation>Grupa</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="838"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
         <source>Open</source>
         <translation>Otwórz</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="926"/>
         <source>Lock</source>
         <translation>Zablokuj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="924"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="927"/>
         <source>Auto lock</source>
         <translation>Automatyczne blokowanie</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="925"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="928"/>
         <source>Never</source>
         <translation>Nigdy</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="926"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
         <source>5 minutes</source>
         <translation>5 minut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="927"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="930"/>
         <source>10 minutes</source>
         <translation>10 minut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="928"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="931"/>
         <source>20 minutes</source>
         <translation>20 minut</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="932"/>
         <source>Delete File Vault</source>
         <translation>Usuń Skarbiec Plików</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="930"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="933"/>
         <source>Unlock</source>
         <translation>Odblokuj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="931"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="934"/>
         <source>Unlock by key</source>
         <translation>Odblokuj przy użyciu Klucza</translation>
     </message>
@@ -3266,8 +3290,8 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="90"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="839"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
@@ -3277,260 +3301,260 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="94"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="840"/>
         <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
         <translation>Otwórz w nowej karcie</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
         <source>Open with</source>
         <translation>Otwórz za pomocą</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
-        <location filename="../plugins/dfmadditionalmenu.cpp" line="369"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../plugins/dfmadditionalmenu.cpp" line="375"/>
         <source>Compress</source>
         <translation>Skompresuj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <source>Extract</source>
         <translation>Rozpakuj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Extract here</source>
         <translation>Rozpakuj tutaj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Cut</source>
         <translation>Wytnij</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <source>Copy</source>
         <translation>Kopiuj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>Paste</source>
         <translation>Wklej</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="100"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="915"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="918"/>
         <source>Rename</source>
         <translation>Zmień nazwę</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="107"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="955"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="956"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="958"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="959"/>
         <source>Remove</source>
         <translation>Usuń</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <source>Create link</source>
         <translation>Utwórz dowiązanie</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Send to desktop</source>
         <translation>Wyślij na pulpit</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>Send to</source>
         <translation>Wyślij do</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
         <source>Bluetooth</source>
         <translation>Bluetooth</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
         <source>Add to bookmark</source>
         <translation>Dodaj do zakładek</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="113"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>Właściwości</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
         <source>New folder</source>
         <translation>Nowy katalog</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
         <source>New window</source>
         <translation>Nowe okno</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
         <source>Select all</source>
         <translation>Zaznacz wszystko</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="98"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
         <source>Clear recent history</source>
         <translation>Wyczyść ostatnią historię</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
         <location filename="../views/dfilemanagerwindow.cpp" line="1309"/>
         <source>Empty Trash</source>
         <translation>Opróżnij kosz</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
         <source>Display as</source>
         <translation>Wyświetl jako</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
         <source>Sort by</source>
         <translation>Sortuj według</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>New document</source>
         <translation>Nowy dokument</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1207"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
         <source>Time created</source>
         <translation>Data utworzenia</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1210"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="377"/>
         <source>Source path</source>
         <translation>Ścieżka źródłowa</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
         <source>Share folder</source>
         <translation>Współdziel katalog</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
         <source>Cancel sharing</source>
         <translation>Przestań współdzielić</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
         <source>Connect to Server</source>
         <translation>Połącz się z serwerem</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="909"/>
         <source>Set share password</source>
         <translation>Ustaw hasło współdzielenia</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
         <source>Format</source>
         <translation>Format</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="914"/>
         <source>Tag information</source>
         <translation>Utwórz znacznik</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
         <source>Open as administrator</source>
         <translation>Otwórz jako administrator</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
         <source>Select default program</source>
         <translation>Wybierz program domyślny</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>Open file location</source>
         <translation>Otwórz położenie pliku</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
         <source>Remove bookmark</source>
         <translation>Usuń zakładkę</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="913"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="916"/>
         <source>Delete</source>
         <translation>Usuń</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
         <source>Office Text</source>
         <translation>Tekst biurowy</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>Spreadsheets</source>
         <translation>Arkusz kalkulacyjny</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>Plain Text</source>
         <translation>Zwykły tekst</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <source>Open in terminal</source>
         <translation>Otwórz w terminalu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>Restore</source>
         <translation>Przywróć</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>Restore all</source>
         <translation>Przywróć wszystkie</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
         <source>Clear saved password and unmount</source>
         <translation>Wyczyść zapisane hasło i odmontuj</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
         <source>File Vault</source>
         <translation>Skarbiec Plików</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
         <source>Add to disc</source>
         <translation>Dodaj do dysku</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="957"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="960"/>
         <source>Refresh</source>
         <translation>Odśwież</translation>
     </message>
@@ -3545,14 +3569,14 @@
         <translation>Otwórz po automatycznym zamontowaniu</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="917"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
         <source>Mount</source>
         <translation>Zamontuj</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="50"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
         <source>Unmount</source>
         <translation>Odmontuj</translation>
     </message>
@@ -3609,48 +3633,48 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="372"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
         <source>Eject</source>
         <translation>Wysuń</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
         <source>Safely Remove</source>
         <translation>Bezpieczne usunięcie</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
         <source>Name</source>
         <translation>Nazwa</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
         <source>Settings</source>
         <translation>Ustawienia</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
         <source>Exit</source>
         <translation>Wyjście</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
         <source>Icon</source>
         <translation>Ikona</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
         <source>List</source>
         <translation>Lista</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
         <source>Extend</source>
         <translation>Rozwiń</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
         <source>Set as wallpaper</source>
         <translation>Ustaw jako tapetę</translation>
     </message>
@@ -3730,12 +3754,12 @@
         <translation>Utwórz dowiązanie symboliczne</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
         <source>Path</source>
         <translation>Ścieżka</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
         <location filename="../models/trashfileinfo.cpp" line="325"/>
         <location filename="../models/trashfileinfo.cpp" line="333"/>
         <source>Time deleted</source>
@@ -3789,23 +3813,23 @@
         <translation>Ścieżka źródłowa</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="562"/>
+        <location filename="../controllers/appcontroller.cpp" line="568"/>
         <source>Document</source>
         <translation>Dokument</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="571"/>
+        <location filename="../controllers/appcontroller.cpp" line="577"/>
         <source>Spreadsheet</source>
         <translation>Arkusz kalkulacyjny</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="580"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
+        <location filename="../controllers/appcontroller.cpp" line="586"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <source>Presentation</source>
         <translation>Prezentacja</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="587"/>
+        <location filename="../controllers/appcontroller.cpp" line="593"/>
         <source>Text</source>
         <translation>Tekst</translation>
     </message>
@@ -4044,7 +4068,7 @@
         <translation>Zakładki</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
         <source>Erase</source>
         <translation>Wymaż</translation>
     </message>
@@ -4160,52 +4184,52 @@
 <context>
     <name>ShareInfoFrame</name>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="80"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="78"/>
         <source>Share this folder</source>
         <translation>Współdziel katalog</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="108"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="107"/>
         <source>Read and write</source>
         <translation>Odczyt i zapis</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="108"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="107"/>
         <source>Read only</source>
         <translation>Tylko do odczytu</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="89"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="88"/>
         <source>Share name</source>
         <translation>Nazwa współdzielenia</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="102"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="101"/>
         <source>Permission</source>
         <translation>Uprawnienia</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="111"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="110"/>
         <source>Anonymous</source>
         <translation>Anonimowo</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="117"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="116"/>
         <source>Not allow</source>
         <translation>Nie pozwalaj</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="117"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="116"/>
         <source>Allow</source>
         <translation>Pozwól</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="120"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="119"/>
         <source>Network path</source>
         <translation>Ścieżka sieciowa</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="163"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="162"/>
         <source>Username</source>
         <translation>Nazwa użytkownika</translation>
     </message>
@@ -4220,50 +4244,56 @@
         <translation>Brak</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="263"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="227"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="243"/>
+        <source>Copy</source>
+        <translation>Kopiuj</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/shareinfoframe.cpp" line="265"/>
         <source>Change password</source>
         <translation>Zmień hasło</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="263"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="265"/>
         <source>Set password</source>
         <translation>Ustaw hasło</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="296"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="298"/>
         <source>This password will be applied to all shared folders, and users without the password can only access shared folders that allow anonymous access. </source>
         <translation>Hasło zostanie zastosowane dla wszystkich współdzielonych katalogów, a użytkownicy nie posiadający hasła będą w stanie uzyskać dostęp tylko do katalogów, które umożliwiają dostęp anonimom. </translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="526"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="536"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>Nazwa współdzielenia nie może zawierać wyłącznie dwóch kropek (..) lub jednej kropki (.)</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="542"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="552"/>
         <source>The share name is used by another user.</source>
         <translation>Nazwa współdzielenia jest już w użyciu przez innego użytkownika</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="543"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="553"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="546"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="556"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Anuluj</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="547"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="557"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Zastąp</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="545"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="555"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>Nazwa współdzielenia już istnieje. Czy chcesz zastąpić katalog współdzielenia?</translation>
     </message>
@@ -4650,8 +4680,8 @@
 <context>
     <name>TrashManager</name>
     <message>
-        <location filename="../controllers/trashmanager.cpp" line="203"/>
-        <location filename="../controllers/trashmanager.cpp" line="216"/>
+        <location filename="../controllers/trashmanager.cpp" line="204"/>
+        <location filename="../controllers/trashmanager.cpp" line="217"/>
         <source>Unable to open items in the trash, please restore it first</source>
         <translation>Brak możliwości otwierania przedmiotów w koszu, najpierw je przywróć</translation>
     </message>
@@ -4690,14 +4720,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1693"/>
+        <location filename="../controllers/appcontroller.cpp" line="1704"/>
         <location filename="../../fileoperations/filejob.cpp" line="789"/>
         <location filename="../../fileoperations/filejob.cpp" line="1052"/>
         <source>The device was not safely unmounted</source>
         <translation>Urządzenie nie zostało bezpiecznie usunięte</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1700"/>
+        <location filename="../controllers/appcontroller.cpp" line="1711"/>
         <source>The device was not safely removed</source>
         <translation>Urządzenie nie zostało bezpiecznie usunięte</translation>
     </message>
@@ -4769,7 +4799,7 @@
     <message>
         <location filename="../dialogs/usersharepasswordsettingdialog.cpp" line="58"/>
         <source>Set a password on the shared folder for non-anonymous access</source>
-        <translation type="unfinished"/>
+        <translation>Ustaw hasło katalogu współdzielonego dla użytkowników nie anonimowych </translation>
     </message>
 </context>
 </TS>
