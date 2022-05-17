@@ -1766,6 +1766,10 @@ open_file: {
     }
     delete[] data;
     data = nullptr;
+
+    // 拷贝完成后同步一下，避免长时间等待系统同步
+    toDevice->syncToDisk(m_isVfat);
+
     fromDevice->close();
     toDevice->close();
     countrefinesize(fromInfo->size() <= 0 ? FileUtils::getMemoryPageSize() : 0);
@@ -4024,7 +4028,7 @@ void DFileCopyMoveJobPrivate::initRefineState()
         return;
     }
     // 拷贝到移动设备
-    if (!m_bDestLocal && m_isTagFromBlockDevice.load()) {
+    if (m_isFileOnDiskUrls && !m_bDestLocal && m_isTagFromBlockDevice.load()) {
         m_refineStat = DFileCopyMoveJob::RefineBlock;
         return;
     }
