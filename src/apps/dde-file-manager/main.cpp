@@ -32,6 +32,7 @@
 #include <QIcon>
 #include <QDir>
 #include <QTextCodec>
+#include <QProcess>
 
 #include <signal.h>
 
@@ -51,6 +52,41 @@ static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
 static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
 static constexpr char kPluginCore[] { "dfmplugin-core" };
 static constexpr char kLibCore[] { "libdfmplugin-core.so" };
+
+/* Within an SSH session, I can use gvfs-mount provided that
+ * dbus-daemon is launched first and the environment variable DBUS_SESSION_BUS_ADDRESS is set.
+ *
+ * gvfs-mount and other GVFS utilities must all talk to the same D-Bus session. Hence,
+ * if you use multiple SSH sessions or otherwise use mounts across login sessions, you must:
+ * - start D-Bus the first time it is needed, at the latest;
+ * - take care not to let D-Bus end with the session, as long as there are mounted GVFS filesystems;
+ * - reuse the existing D-Bus session at login time if there is one.
+ * see https://unix.stackexchange.com/questions/44317/reuse-d-bus-sessions-across-login-sessions for that.
+ */
+static void setEnvForRoot()
+{
+    QProcess p;
+    p.start("bash", QStringList() << "-c"
+                                  << "echo $(dbus-launch --autolaunch $(cat /var/lib/dbus/machine-id))");
+    p.waitForFinished();
+    QString envName("DBUS_SESSION_BUS_ADDRESS");
+    QString output(p.readAllStandardOutput());
+    QStringList group(output.split(" "));
+    for (const QString &vals : group) {
+        const QStringList &envGroup = vals.split(",");
+        for (const QString &env : envGroup) {
+            int mid = env.indexOf("=");
+            if (env.startsWith(envName) && mid >= envName.size()) {
+                QString v(env.mid(mid + 1));
+                QByteArray nameBytes(envName.toLocal8Bit());
+                QByteArray vBytes(v.toLocal8Bit());
+                int ret = setenv(nameBytes.data(), vBytes.data(), 1);
+                qDebug() << "set " << env << "=" << v << "ret=" << ret;
+                return;
+            }
+        }
+    }
+}
 
 static bool pluginsLoad()
 {
@@ -119,6 +155,9 @@ static void initEnv()
     if (qEnvironmentVariable("CLUTTER_IM_MODULE") == QStringLiteral("fcitx")) {
         setenv("QT_IM_MODULE", "fcitx", 1);
     }
+
+    if (SysInfoUtils::isOpenAsAdmin())
+        setEnvForRoot();
 }
 
 static void initLog()
