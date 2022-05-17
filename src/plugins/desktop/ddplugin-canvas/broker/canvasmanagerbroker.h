@@ -25,10 +25,11 @@
 
 #include <QObject>
 
+class QAbstractItemModel;
+
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasManager;
 class CanvasManagerBrokerPrivate;
-class FileInfoModel;
 class CanvasManagerBroker : public QObject
 {
     Q_OBJECT
@@ -40,7 +41,7 @@ signals:
 public slots:
     void update();
     void edit(const QUrl &url);
-    void fileInfoModel(FileInfoModel *model);
+    void fileInfoModel(QAbstractItemModel **model);
 private:
     CanvasManagerBrokerPrivate *d;
 };

@@ -21,7 +21,7 @@
 #include "canvasmanagerbroker_p.h"
 
 DDP_CANVAS_USE_NAMESPACE
-Q_DECLARE_METATYPE(FileInfoModel *)
+Q_DECLARE_METATYPE(QAbstractItemModel **)
 
 CanvasManagerBrokerPrivate::CanvasManagerBrokerPrivate(CanvasManagerBroker *qq)
     : QObject(qq)
@@ -65,10 +65,10 @@ void CanvasManagerBroker::edit(const QUrl &url)
     d->canvas->openEditor(url);
 }
 
-void CanvasManagerBroker::fileInfoModel(FileInfoModel *model)
+void CanvasManagerBroker::fileInfoModel(QAbstractItemModel **model)
 {
     if (model)
-        model = d->canvas->fileModel();
+        *model = d->canvas->fileModel();
 }
 
 

@@ -4,6 +4,10 @@ project(ddplugin-canvas)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+set(EXT_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.cpp
+    )
 
 FILE(GLOB_RECURSE CANVAS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
@@ -19,6 +23,7 @@ pkg_check_modules(DtkWidget REQUIRED dtkwidget )
 add_library(${PROJECT_NAME}
     SHARED
     ${CANVAS_FILES}
+    ${EXT_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)

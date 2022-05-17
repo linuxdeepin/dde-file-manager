@@ -69,7 +69,7 @@ FileInfoModelBroker::FileInfoModelBroker(FileInfoModel *model, QObject *parent)
     : QObject(parent)
     , d(new FileInfoModelBrokerPrivate(this))
 {
-
+    d->model = model;
 }
 
 bool FileInfoModelBroker::init()
