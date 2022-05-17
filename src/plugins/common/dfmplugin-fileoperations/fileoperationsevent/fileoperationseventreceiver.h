@@ -252,6 +252,7 @@ private:
                        QMap<QUrl, QUrl> &successUrls, QString &errorMsg);
     JobHandlePointer doMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                    DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+    void saveRenameOperate(const QString &sourcesUrl, const QString &targetUrl);
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };

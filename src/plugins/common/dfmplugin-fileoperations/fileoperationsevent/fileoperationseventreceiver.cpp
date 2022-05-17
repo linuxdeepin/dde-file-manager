@@ -156,6 +156,8 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     QStringList listUrls = ret.value("sources").value<QStringList>();
     for (const auto &url : listUrls)
         sources.append(QUrl(url));
+    if (sources.isEmpty())
+        return true;
 
     QUrl target = QUrl(ret.value("target").value<QString>());
     switch (eventType) {
@@ -170,6 +172,9 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
         break;
     case kRestoreFromTrash:
         handleOperationRestoreFromTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
+        break;
+    case kRenameFile:
+        handleOperationRenameFile(windowId, sources.first(), target);
         break;
     default:
         return false;
@@ -237,6 +242,16 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
     if (handleCallback)
         handleCallback(handle);
     return handle;
+}
+
+void FileOperationsEventReceiver::saveRenameOperate(const QString &sourcesUrl, const QString &targetUrl)
+{
+    QVariantMap values;
+    values.insert("event", QVariant::fromValue(static_cast<uint16_t>(GlobalEventType::kRenameFile)));
+    QStringList sources { sourcesUrl };
+    values.insert("sources", QVariant::fromValue(sources));
+    values.insert("target", targetUrl);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kSaveOperator, values);
 }
 
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
@@ -349,8 +364,10 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
 {
     Q_UNUSED(windowId);
     //Delete local file with shift+delete, show a confirm dialog.
-    if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
-        return;
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
+        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
+            return;
+    }
 
     if (!sources.isEmpty() && !sources.first().isLocalFile()) {
         FileOperationsFunctions function { nullptr };
@@ -639,6 +656,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
             // TODO:: file renameFile finished need to send file renameFile finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                                   windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+            saveRenameOperate(newUrl.toString(), oldUrl.toString());
             return ok;
         }
     }
@@ -651,6 +669,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     // TODO:: file renameFile finished need to send file renameFile finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+    saveRenameOperate(newUrl.toString(), oldUrl.toString());
     return ok;
 }
 
@@ -683,6 +702,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, successUrls.values(), ok, error);
+    if (!successUrls.isEmpty())
+        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
     return ok;
 }
 
@@ -698,6 +719,8 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     const QList<QUrl> &lists = successUrls.values();
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, lists, ok, error);
+    if (!successUrls.isEmpty())
+        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
 
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
@@ -719,6 +742,8 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, successUrls.values(), ok, error);
+    if (!successUrls.isEmpty())
+        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
     return ok;
 }
 
@@ -731,6 +756,8 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, lists, ok, error);
+    if (!successUrls.isEmpty())
+        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
 
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
