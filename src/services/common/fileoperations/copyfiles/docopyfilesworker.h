@@ -53,12 +53,6 @@ class DoCopyFilesWorker : public FileOperateBaseWorker
     Q_OBJECT
     explicit DoCopyFilesWorker(QObject *parent = nullptr);
 
-    struct SmallFileThreadCopyInfo
-    {
-        AbstractFileInfoPointer fromInfo { nullptr };
-        AbstractFileInfoPointer toInfo { nullptr };
-    };
-
 public:
     virtual ~DoCopyFilesWorker() override;
 
@@ -72,20 +66,9 @@ protected:
 
 protected:
     bool copyFiles();
-    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                    bool *workContinue);
-    bool creatSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *workContinue);
-    bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *workContinue);
-    bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *workContinue);
-    bool doThreadPoolCopyFile();
 
 private slots:
     void onUpdateProccess() override;
-
-private:
-    QSharedPointer<QQueue<QSharedPointer<SmallFileThreadCopyInfo>>> smallFileThreadCopyInfoQueue;   // copy small file thread information Queue
-    QSharedPointer<QMutex> smallFileThreadCopyInfoQueueMutex { nullptr };   // copy small file thread information Queue's mutex
-    QSharedPointer<QThreadPool> threadPool { nullptr };   // copy small file thread pool
 };
 
 DSC_END_NAMESPACE

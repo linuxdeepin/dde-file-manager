@@ -112,6 +112,7 @@ private:
 
     QAtomicInteger<bool> isPauseState { false };   // 是否是暂停状态
     QAtomicInteger<bool> isBtnHidden { false };   // 暂停、停止按钮隐藏
+    QAtomicInteger<bool> isShowError { false };   // 处于错误提示状态
 };
 
 DFMBASE_END_NAMESPACE

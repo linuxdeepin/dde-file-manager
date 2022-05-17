@@ -30,6 +30,7 @@
 #include <dfm-io/core/dfile.h>
 
 #include <QTime>
+#include <QThreadPool>
 
 class QObject;
 
@@ -46,6 +47,12 @@ public:
     {
         QFileDevice::Permissions permission;
         QUrl target;
+    };
+
+    struct SmallFileThreadCopyInfo
+    {
+        AbstractFileInfoPointer fromInfo { nullptr };
+        AbstractFileInfoPointer toInfo { nullptr };
     };
 
 public:
@@ -97,13 +104,18 @@ public:
 
     bool deleteFile(const QUrl &fromUrl, bool *result);
     bool deleteDir(const QUrl &fromUrl, bool *result);
-    bool copyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result);
 
     bool copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                            bool *result);
     bool creatSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                          bool *result);
     bool canWriteFile(const QUrl &url) const;
+
+    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                    bool *workContinue);
+    bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *workContinue);
+    bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *workContinue);
+    bool doThreadPoolCopyFile();
 
 protected:
     QTime time;   // time eslape
@@ -120,6 +132,10 @@ protected:
     qint8 targetIsRemovable { 1 };   // 目标磁盘设备是不是可移除或者热插拔设备
     DThreadList<QSharedPointer<DirSetPermissonInfo>> dirPermissonList;   // dir set Permisson list
     std::atomic_bool needSyncEveryRW { false };
+
+    QSharedPointer<QQueue<QSharedPointer<SmallFileThreadCopyInfo>>> smallFileThreadCopyInfoQueue;   // copy small file thread information Queue
+    QSharedPointer<QMutex> smallFileThreadCopyInfoQueueMutex { nullptr };   // copy small file thread information Queue's mutex
+    QSharedPointer<QThreadPool> threadPool { nullptr };   // copy small file thread pool
 };
 
 DSC_END_NAMESPACE

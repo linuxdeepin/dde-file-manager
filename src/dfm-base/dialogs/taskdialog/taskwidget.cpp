@@ -130,6 +130,7 @@ void TaskWidget::onButtonClicked()
         qWarning() << "the button is null or the button is release!";
         return;
     }
+    isShowError.store(false);
     AbstractJobHandler::SupportActions actions = obj->property(kBtnPropertyActionName).value<AbstractJobHandler::SupportAction>();
     showConflictButtons(actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction));
     actions = chkboxNotAskAgain && chkboxNotAskAgain->isChecked() ? actions | AbstractJobHandler::SupportAction::kRememberAction : actions;
@@ -143,6 +144,8 @@ void TaskWidget::onButtonClicked()
  */
 void TaskWidget::onShowErrors(const JobInfoPointer JobInfo)
 {
+    isShowError.store(true);
+
     AbstractJobHandler::JobErrorType errorType = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
     QString sourceMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
     QString targetMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
@@ -318,6 +321,8 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 {
     if (isPauseState)
         return;
+    if (isShowError.load())
+        return;
 
     qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProccessKey).value<qint64>();
     qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
@@ -351,6 +356,8 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
 {
     if (isPauseState)
+        return;
+    if (isShowError.load())
         return;
 
     qint64 speed = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey).toInt();

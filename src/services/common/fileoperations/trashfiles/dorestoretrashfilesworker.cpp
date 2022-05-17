@@ -158,8 +158,8 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             ok = handleSymlinkFile(fileInfo, restoreInfo);
         } else {
             ok = handleRestoreTrash(fileInfo, targetInfo);
-            if(!ok)
-                emit requestShowRestoreFailedDialog({url});
+            if (!ok)
+                emit requestShowRestoreFailedDialog({ url });
         }
 
         if (!ok) {
@@ -336,7 +336,7 @@ bool DoRestoreTrashFilesWorker::doCopyAndClearTrashFile(const AbstractFileInfoPo
         if (!doCopyFilePractically(trashInfo, restoreInfo, &result))
             return result;
     } else {
-        if (!copyDir(trashInfo, restoreInfo, &result))
+        if (!checkAndCopyDir(trashInfo, restoreInfo, &result))
             return result;
     }
 
@@ -351,11 +351,11 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
     const QUrl &fromUrl = trashInfo->url();
     const QUrl &toUrl = restoreInfo->url();
     const QUrl &parentUrl = UrlRoute::urlParent(toUrl);
-    if(!parentUrl.isValid())
+    if (!parentUrl.isValid())
         return false;
     targetFileInfo.reset(nullptr);
     targetFileInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
-    if(!targetFileInfo)
+    if (!targetFileInfo)
         return false;
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
