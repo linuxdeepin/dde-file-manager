@@ -131,17 +131,25 @@ bool DeviceProxyManager::isMonitorWorking()
     return reply.value();
 }
 
-DeviceProxyManager::DeviceProxyManager(QObject *parent)
-    : QObject(parent), d(new DeviceProxyManagerPrivate(this))
+bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 {
+    const QStringList &&mpts = d->externalMounts.values();
+    auto ret = std::find_if(mpts.cbegin(), mpts.cend(), [filePath](const QString &mpt) { return filePath.startsWith(mpt); });
+    return ret != mpts.cend();
+}
+
+DeviceProxyManager::DeviceProxyManager(QObject *parent)
+    : QObject(parent), d(new DeviceProxyManagerPrivate(this, parent))
+{
+    QTimer::singleShot(1000, this, [this] { d->initExternalMounts(); });
 }
 
 DeviceProxyManager::~DeviceProxyManager()
 {
 }
 
-DeviceProxyManagerPrivate::DeviceProxyManagerPrivate(DeviceProxyManager *qq)
-    : q(qq)
+DeviceProxyManagerPrivate::DeviceProxyManagerPrivate(DeviceProxyManager *qq, QObject *parent)
+    : QObject(parent), q(qq)
 {
 }
 
@@ -172,6 +180,24 @@ void DeviceProxyManagerPrivate::initConnection()
         connectToAPI();
 }
 
+void DeviceProxyManagerPrivate::initExternalMounts()
+{
+    using namespace GlobalServerDefines;
+
+    auto func = [this](const QStringList &devs, std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query) {
+        for (const auto &dev : devs) {
+            auto &&info = query(q, dev, false);
+            if (!info.value(DeviceProperty::kMountPoint).toString().isEmpty())
+                externalMounts.insert(dev, info.value(DeviceProperty::kMountPoint).toString());
+        }
+    };
+
+    auto blks = q->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+    auto protos = q->getAllProtocolIds();
+    func(blks, &DeviceProxyManager::queryBlockInfo);
+    func(protos, &DeviceProxyManager::queryProtocolInfo);
+}
+
 void DeviceProxyManagerPrivate::connectToDBus()
 {
     if (currentConnectionType == kDBusConnecting)
@@ -199,6 +225,13 @@ void DeviceProxyManagerPrivate::connectToDBus()
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceRemoved, q, &DeviceProxyManager::protocolDevRemoved);
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, q, &DeviceProxyManager::protocolDevMounted);
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, q, &DeviceProxyManager::protocolDevUnmounted);
+
+    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
 
     currentConnectionType = kDBusConnecting;
 }
@@ -229,6 +262,13 @@ void DeviceProxyManagerPrivate::connectToAPI()
     connections << q->connect(ptr, &DeviceManager::protocolDevMounted, q, &DeviceProxyManager::protocolDevMounted);
     connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, q, &DeviceProxyManager::protocolDevUnmounted);
 
+    connections << q->connect(ptr, &DeviceManager::blockDevRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManager::blockDevMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
+    connections << q->connect(ptr, &DeviceManager::blockDevUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManager::protocolDevRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManager::protocolDevMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
+    connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+
     currentConnectionType = kAPIConnecting;
 
     DevMngIns->startMonitor();
@@ -240,4 +280,14 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
         q->disconnect(connection);
     connections.clear();
     currentConnectionType = kNoneConnection;
+}
+
+void DeviceProxyManagerPrivate::addExternalMounts(const QString &id, const QString &mpt)
+{
+    externalMounts.insert(id, mpt);
+}
+
+void DeviceProxyManagerPrivate::removeExternalMounts(const QString &id)
+{
+    externalMounts.remove(id);
 }

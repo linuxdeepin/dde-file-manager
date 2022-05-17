@@ -34,20 +34,26 @@ class QDBusServiceWatcher;
 DFMBASE_BEGIN_NAMESPACE
 
 class DeviceProxyManager;
-class DeviceProxyManagerPrivate
+class DeviceProxyManagerPrivate : public QObject
 {
     friend class DeviceProxyManager;
+    Q_OBJECT
 
 public:
-    explicit DeviceProxyManagerPrivate(DeviceProxyManager *qq);
+    explicit DeviceProxyManagerPrivate(DeviceProxyManager *qq, QObject *parent = nullptr);
     ~DeviceProxyManagerPrivate();
 
     bool isDBusRuning();
     void initConnection();
+    void initExternalMounts();
 
     void connectToDBus();
     void connectToAPI();
     void disconnCurrentConnections();
+
+private Q_SLOTS:
+    void addExternalMounts(const QString &id, const QString &mpt);
+    void removeExternalMounts(const QString &id);
 
 private:
     DeviceProxyManager *q { nullptr };
@@ -55,6 +61,7 @@ private:
     QScopedPointer<QDBusServiceWatcher> dbusWatcher;
     QList<QMetaObject::Connection> connections;
     int currentConnectionType = kNoneConnection;   // 0 for API connection and 1 for DBus connection
+    QMap<QString, QString> externalMounts;
 
     enum {
         kNoneConnection = -1,

@@ -22,6 +22,7 @@
 */
 #include "sharemenuscene.h"
 #include "private/sharemenuscene_p.h"
+#include "private/shareutils.h"
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/usershare/usershareservice.h"
@@ -102,9 +103,11 @@ bool ShareMenuScene::create(QMenu *parent)
             act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActRemoveShareKey);
             d->predicateAction.insert(ShareActionId::kActRemoveShareKey, act);
         } else {
-            auto act = parent->addAction(d->predicateName[ShareActionId::kActAddShareKey]);
-            act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActAddShareKey);
-            d->predicateAction.insert(ShareActionId::kActAddShareKey, act);
+            if (ShareUtils::canShare(info)) {
+                auto act = parent->addAction(d->predicateName[ShareActionId::kActAddShareKey]);
+                act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActAddShareKey);
+                d->predicateAction.insert(ShareActionId::kActAddShareKey, act);
+            }
         }
     }
 

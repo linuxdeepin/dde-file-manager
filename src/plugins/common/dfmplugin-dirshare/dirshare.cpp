@@ -23,6 +23,7 @@
 #include "dirshare.h"
 #include "sharemenu/sharemenuscene.h"
 #include "widget/sharecontrolwidget.h"
+#include "private/shareutils.h"
 
 #include "services/common/menu/menuservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
@@ -63,7 +64,7 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
         return nullptr;
 
     auto info = InfoFactory::create<AbstractFileInfo>(url);
-    if (!info->isDir())
+    if (!ShareUtils::canShare(info))
         return nullptr;
 
     return new ShareControlWidget(url);

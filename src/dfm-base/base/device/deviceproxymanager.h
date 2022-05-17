@@ -69,6 +69,8 @@ public:
     bool connectToService();
     bool isMonitorWorking();
 
+    bool isFileOfExternalMounts(const QString &filePath);
+
     // device signals
 signals:
     void devSizeChanged(const QString &id, qint64 total, qint64 avai);
