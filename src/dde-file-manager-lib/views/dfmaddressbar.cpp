@@ -658,11 +658,11 @@ void DFMAddressBar::updateCompletionState(const QString &text)
         }
         crumbController->requestCompletionList(url);
     } else {
-        // set completion prefix.
-        urlCompleter->setCompletionPrefix(text);
-
         // Update Icon
         setIndicator(IndicatorType::Search);
+
+        // set completion prefix.
+        urlCompleter->setCompletionPrefix(text);
 
         // Check if we already loaded history list in model
         if (isHistoryInCompleterModel) {
