@@ -256,7 +256,12 @@ void ShareControlWidget::shareFolder()
         }
     }
     ShareInfo info(shareNameEditor->text().trimmed(), url.path(), "", writable, anonymous);
-    UserShareService::service()->addShare(info);
+    if (!UserShareService::service()->addShare(info)) {
+        shareSwitcher->setChecked(false);
+        shareSwitcher->setEnabled(true);
+        sharePermissionSelector->setEnabled(false);
+        shareAnonymousSelector->setEnabled(false);
+    }
 }
 
 void ShareControlWidget::unshareFolder()
