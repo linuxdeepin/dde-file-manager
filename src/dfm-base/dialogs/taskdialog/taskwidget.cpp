@@ -316,6 +316,9 @@ void TaskWidget::onShowTaskInfo(const JobInfoPointer JobInfo)
  */
 void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 {
+    if (isPauseState)
+        return;
+
     qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProccessKey).value<qint64>();
     qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
     qint64 value = total <= 0 ? 1 : current * 100 / total;
@@ -347,6 +350,9 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
  */
 void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
 {
+    if (isPauseState)
+        return;
+
     qint64 speed = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey).toInt();
     const QString &speedStr = FileUtils::formatSize(speed) + "/s";
     qint64 rmTime = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey).toInt();
