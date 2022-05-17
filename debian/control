@@ -48,99 +48,24 @@ Package: dde-file-manager
 Architecture: any
 Depends:
  ${shlibs:Depends},
- ${misc:Depends},
- libdde-file-manager( =${binary:Version}),
-Conflicts: dde-file-manager-oem
+ ${misc:Depends}
+Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
 Replaces: dde-file-manager-oem
-Recommends: dde-qt5integration, avfs, samba, deepin-anything-server
+Recommends: dde-qt5integration, avfs, samba, deepin-anything-server,
+ qt5dxcb-plugin, deepin-screensaver, cryfs
 Description: File manager front end
  File manager front-end of Deepin OS
 
-Package: libdde-file-manager
+Package: dde-file-manager-dev
 Architecture: any
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- ${dist:Depends},
-Multi-Arch: same
-Description: DDE File Manager library
- This package contains the shared libraries.
-
-Package: libdde-file-manager-dev
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdde-file-manager( =${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager( =${binary:Version}),
+ libdfm-io-dev, libdfm-mount-dev, libdfm-burn-dev
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
- of libdde-file-manager
-
-Package: dde-desktop
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
-Replaces: dde-file-manager-oem
-Recommends: qt5dxcb-plugin, deepin-screensaver
-Description: deepin desktop-environment - desktop module
- Deepin Desktop Environment (DDE) - desktop module.
+ of dde-file-manager
 
 Package: dde-disk-mount-plugin
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: plugin of dde-dock
- Disk mount plugin of dde-dock which is created by libdde-file-manager
-
-Package: dfm-plugins
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, cryfs
-Description: File manager plugins
- File manager plugins of Deepin OS
-
-Package: libdfm-base
-Architecture: any
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
-Multi-Arch: same
-Description: DDE File Manager Base library
- This package contains the shared libraries.
-
-Package: libdfm-base-dev
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-base( =${binary:Version})
-Description: DDE File Manager Base Devel library
- This package contains the header files and static libraries
- of libdfm-base
-
-Package: libdfm-framework
-Architecture: any
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
-Multi-Arch: same
-Description: DDE File Manager Framework library
- This package contains the shared libraries.
-
-Package: libdfm-framework-dev
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-framework( =${binary:Version})
-Description: DDE File Manager Framework Devel library
- This package contains the header files and static libraries
- of libdfm-framework
-
-Package: libdfm-services
-Architecture: any
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- libdocparser,
- liblucene++0v5,
- liblucene++-contrib0v5
-Multi-Arch: same
-Description: DDE File Manager Service library
- This package contains the shared libraries.
-
-Package: libdfm-services-dev
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-services( =${binary:Version})
-Description: DDE File Manager Service Devel library
- This package contains the header files and static libraries
- of libdfm-services
+ Disk mount plugin of dde-dock which is created by dde-file-manager

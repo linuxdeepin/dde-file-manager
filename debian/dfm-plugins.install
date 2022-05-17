@@ -1,4 +1,0 @@
-usr/lib/*/dde-file-manager/plugins/*.so
-usr/lib/*/dde-file-manager/plugins/previews/*.so
-usr/share/dde-file-manager/extensions/appEntry/.readme
-usr/share/polkit-1/actions/*.policy

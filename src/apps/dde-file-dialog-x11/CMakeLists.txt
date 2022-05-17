@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(dde-file-dialog-x11)
+# Compatibility history issues, GTK check app name
+project(dde-select-dialog-x11)
 
 configure_file(
     "config.h.in"

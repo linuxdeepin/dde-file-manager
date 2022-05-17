@@ -3,23 +3,37 @@ usr/bin/dde-file-manager-pkexec
 usr/bin/dde-file-manager-daemon
 usr/bin/dde-property-dialog
 usr/bin/dde-file-dialog
-usr/bin/dde-file-dialog-x11
-usr/bin/dde-file-dialog-wayland
+usr/bin/dde-select-dialog-x11
+usr/bin/dde-select-dialog-wayland
+usr/bin/dde-desktop
 
+usr/lib/*/dde-file-manager/plugins/*.so
+usr/lib/*/dde-file-manager/plugins/previews/*.so
+usr/lib/*/libdfm-base.so.*
+usr/lib/*/libdfm-framework.so.*
+usr/lib/*/libdfmservice-common.so.*
+usr/lib/*/libdfmservice-filemanager.so.*
+usr/lib/*/libdfmservice-desktop.so.*
 
 usr/share/applications/dde-file-manager.desktop
 usr/share/applications/dde-open.desktop
-
-usr/share/deepin-manual/manual-assets/application
-
-etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
+usr/share/applications/dde-computer.desktop
+usr/share/applications/dde-trash.desktop
 
 usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialog.xml
 usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialogmanager.xml
+usr/share/dbus-1/services/com.deepin.dde.desktop.service
 usr/share/dbus-1/services/com.deepin.filemanager.filedialog.service
 usr/share/dbus-1/services/com.deepin.filemanager.filedialog_x11.service
 usr/share/dbus-1/services/com.deepin.filemanager.filedialog_wayland.service
 usr/share/dbus-1/services/org.freedesktop.FileManager.service
 usr/share/dbus-1/system-services/com.deepin.filemanager.daemon.service
 
+usr/share/deepin-manual/manual-assets/application
+usr/share/dde-file-manager/extensions/appEntry/.readme
+usr/share/polkit-1/actions/*.policy
+usr/share/glib-2.0/schemas/*.filemanager.gschema.xml
+
 usr/lib/systemd/system/ lib/systemd/
+
+etc/dbus-1/system.d/com.deepin.filemanager.daemon.conf
