@@ -358,7 +358,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
         dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList("/"));
-        addDisableUrlScheme("recent");
+        urlSchemeEnable("recent", false);
         // fall through
         [[fallthrough]];
     default:
@@ -383,13 +383,14 @@ void FileDialog::setAcceptMode(QFileDialog::AcceptMode mode)
     if (mode == QFileDialog::AcceptOpen) {
         statusBar()->setMode(FileDialogStatusBar::kOpen);
         setFileMode(d->fileMode);
+        urlSchemeEnable("recent", true);
 
         disconnect(statusBar()->lineEdit(), &QLineEdit::textChanged,
                    this, &FileDialog::onCurrentInputNameChanged);
     } else {
         statusBar()->setMode(FileDialogStatusBar::kSave);
         CoreEventsCaller::setSelectionMode(this, QAbstractItemView::SingleSelection);
-        addDisableUrlScheme("recent");
+        urlSchemeEnable("recent", false);
         setFileMode(QFileDialog::DirectoryOnly);
 
         connect(statusBar()->lineEdit(), &QLineEdit::textChanged,
@@ -475,12 +476,12 @@ QFileDialog::Options FileDialog::options() const
     return d->options;
 }
 
-void FileDialog::addDisableUrlScheme(const QString &scheme)
+void FileDialog::urlSchemeEnable(const QString &scheme, bool enable)
 {
     QUrl url;
     url.setScheme(scheme);
     url.setPath("/");
-    CoreEventsCaller::setSidebarItemVisible(url, false);
+    CoreEventsCaller::setSidebarItemVisible(url, enable);
 }
 
 void FileDialog::setCurrentInputName(const QString &name)

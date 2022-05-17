@@ -94,7 +94,7 @@ public:
     bool testOption(QFileDialog::Option option) const;
     QFileDialog::Options options() const;
 
-    void addDisableUrlScheme(const QString &scheme);
+    void urlSchemeEnable(const QString &scheme, bool enable);
     void setCurrentInputName(const QString &name);
     void addCustomWidget(CustomWidgetType type, const QString &data);
     QVariant getCustomWidgetValue(CustomWidgetType type, const QString &text) const;

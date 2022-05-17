@@ -173,7 +173,7 @@ void FileDialogHandle::addDisableUrlScheme(const QString &scheme)
 
     CoreHelper::delayInvokeProxy(
             [d, scheme] {
-                d->dialog->addDisableUrlScheme(scheme);
+                d->dialog->urlSchemeEnable(scheme, false);
             },
             d->dialog->internalWinId(), this);
 }
@@ -398,26 +398,14 @@ void FileDialogHandle::show()
 
     WindowsService::service()->showWindow(d->dialog);
     d->dialog->updateAsDefaultSize();
-
-    // 解决打开文件对话框无焦点问题
-    QWindow *window = d->dialog->windowHandle();
-    connect(window, &QWindow::activeChanged, this, [=]() {
-        static std::once_flag flag;
-        std::call_once(flag, [d, this]() {
-            d->dialog->activateWindow();
-            QTimer::singleShot(50, this, [=]() {
-                if (!d->dialog->isActiveWindow())
-                    d->dialog->activateWindow();
-            });
-        });
-    });
 }
 
 void FileDialogHandle::hide()
 {
     D_D(FileDialogHandle);
 
-    d->dialog->hide();
+    if (d->dialog)
+        d->dialog->hide();
 }
 
 void FileDialogHandle::accept()

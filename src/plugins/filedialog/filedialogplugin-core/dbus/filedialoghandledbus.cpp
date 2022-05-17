@@ -161,12 +161,13 @@ void FileDialogHandleDBus::setWindowTitle(const QString &title)
 
 bool FileDialogHandleDBus::windowActive() const
 {
-    return widget()->isActiveWindow();
+    return widget() ? widget()->isActiveWindow() : false;
 }
 
 void FileDialogHandleDBus::activateWindow()
 {
-    widget()->activateWindow();
+    if (widget())
+        widget()->activateWindow();
 }
 
 int FileDialogHandleDBus::heartbeatInterval() const
