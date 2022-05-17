@@ -39,6 +39,8 @@
 #include "services/common/usershare/usershareservice.h"
 #include "services/common/fileoperations/fileoperations_defines.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+#include "services/common/delegate/delegateservice.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -82,6 +84,11 @@ bool MyShares::start()
         return true;
     };
     DSC_NAMESPACE::FileOperationsService::service()->registerOperations(ShareUtils::scheme(), fileOpeationsHandle);
+
+    delegateServIns->registerUrlTransform(ShareUtils::scheme(), [](QUrl in) {
+        in.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+        return in;
+    });
 
     return true;
 }

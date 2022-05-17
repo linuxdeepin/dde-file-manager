@@ -40,6 +40,8 @@ public:
     virtual QString fileDisplayName() const override;
     virtual QString fileName() const override;
     virtual bool isDir() const override;
+    virtual bool canRename() const override;
+    virtual bool isShared() const override;
 };
 
 DPMYSHARES_END_NAMESPACE
