@@ -652,7 +652,7 @@ void FileNodeManagerThread::insertChild(const QUrl &url)
             return;
         row = children.count();
     }
-    model()->beginInsertRows(QModelIndex(), row, row);
+    model()->beginInsertRows(model()->rootIndex(), row, row);
     FileNodePointer item(new FileViewItem(root.data(), url));
     {
         QMutexLocker lk(&childrenMutex);
