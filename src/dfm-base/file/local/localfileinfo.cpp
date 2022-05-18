@@ -797,6 +797,14 @@ QString LocalFileInfo::symLinkTarget() const
         if (d->dfmFileInfo) {
             symLinkTarget = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget, &success).toString();
         }
+        // the link target may be a relative path.
+        if (!symLinkTarget.startsWith("/")) {
+            auto currPath = path();
+            if (currPath.right(1) != "/")
+                currPath += "/";
+            symLinkTarget.prepend(currPath);
+        }
+
         if (!success)
             symLinkTarget = QFileInfo(d->url.path()).symLinkTarget();
         d->attributes.insert(DFileInfo::AttributeID::kStandardSymlinkTarget, symLinkTarget);
