@@ -116,6 +116,25 @@ bool ShareMenuScene::create(QMenu *parent)
 
 void ShareMenuScene::updateState(QMenu *parent)
 {
+    DSC_USE_NAMESPACE
+    auto actLst = parent->actions();
+    QAction *shareOrUnshare = nullptr;
+    QAction *symlinkAct = nullptr;
+
+    for (const auto act : actLst) {
+        if (act->property(ActionPropertyKey::kActionID).toString() == "create-system-link")
+            symlinkAct = act;
+        if (d->predicateAction.values().contains(act))
+            shareOrUnshare = act;
+    }
+
+    if (shareOrUnshare && symlinkAct) {
+        parent->removeAction(shareOrUnshare);
+        parent->insertSeparator(symlinkAct);
+        parent->insertAction(symlinkAct, shareOrUnshare);
+        parent->insertSeparator(symlinkAct);
+    }
+
     AbstractMenuScene::updateState(parent);
 }
 
