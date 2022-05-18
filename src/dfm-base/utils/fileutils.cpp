@@ -32,6 +32,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 
 #include <KCodecs>
@@ -417,6 +418,18 @@ bool FileUtils::isLocalDevice(const QUrl &url)
 bool FileUtils::isCdRomDevice(const QUrl &url)
 {
     return DFMIO::DFMUtils::devicePathFromUrl(url).startsWith("/dev/sr");
+}
+
+bool FileUtils::trashIsEmpty()
+{
+    const QString &path = StandardPaths::location(StandardPaths::kTrashFilesPath);
+    DecoratorFileInfo fileInfo(path);
+    if (!fileInfo.exists())
+        return true;
+
+    DecoratorFileEnumerator enumerator(path, QStringList(),
+                                       DFMIO::DEnumerator::DirFilter::kAllEntries | DFMIO::DEnumerator::DirFilter::kHidden | DFMIO::DEnumerator::DirFilter::kSystem | DFMIO::DEnumerator::DirFilter::kNoDotAndDotDot);
+    return !enumerator.hasNext();
 }
 
 QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)

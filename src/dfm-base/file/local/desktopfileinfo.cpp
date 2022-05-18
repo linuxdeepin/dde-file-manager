@@ -24,6 +24,7 @@
 #include "desktopfileinfo.h"
 #include "dfm-base/utils/desktopfile.h"
 #include "dfm-base/utils/properties.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QDir>
 #include <QSettings>
@@ -112,9 +113,8 @@ QString DesktopFileInfo::desktopIconName() const
 {
     //special handling for trash desktop file which has tash datas
     if (d->iconName == "user-trash") {
-        // todo lanxs
-        /*if (!TrashManager::isEmpty())
-            return "user-trash-full";*/
+        if (!FileUtils::trashIsEmpty())
+            return "user-trash-full";
     }
 
     return d->iconName;

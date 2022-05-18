@@ -65,6 +65,7 @@ public:
     static bool isLowSpeedDevice(const QUrl &url);
     static bool isLocalDevice(const QUrl &url);
     static bool isCdRomDevice(const QUrl &url);
+    static bool trashIsEmpty();
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
     static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair);
