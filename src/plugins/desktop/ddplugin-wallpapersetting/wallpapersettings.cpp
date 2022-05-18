@@ -22,8 +22,8 @@
 #include "thumbnailmanager.h"
 #include "private/wallpapersettings_p.h"
 #include "desktoputils/widgetutil.h"
-
-#include <dfm-base/utils/windowutils.h>
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/windowutils.h"
 
 #include <DApplicationHelper>
 #include <DSysInfo>
@@ -339,8 +339,27 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         auto wallapers = processListReply(value);
         QString currentPath = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
         if (currentPath.contains("/usr/share/backgrounds/default_background.jpg")) {
-            QFileInfo tempInfo(currentPath);
-            currentPath = tempInfo.symLinkTarget();
+            QString errString;
+            QUrl currentUrl;
+            if (currentPath.startsWith("/"))
+                currentUrl = QUrl::fromLocalFile(currentPath);
+            else
+                currentUrl = QUrl(currentPath);
+
+            AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(currentUrl, true, &errString);
+            while (fileInfo && fileInfo->isSymLink()) {
+                QUrl targetUrl = QUrl::fromLocalFile(fileInfo->symLinkTarget());
+                if (targetUrl == fileInfo->url())
+                    break;
+
+                fileInfo = InfoFactory::create<AbstractFileInfo>(targetUrl, true, &errString);
+            }
+
+            if (!fileInfo) {
+                qDebug() << errString << "get final file info failed:" << currentUrl << currentPath;
+            } else {
+                currentPath = fileInfo->url().toString();
+            }
         }
 
         for (auto iter = wallapers.begin(); iter != wallapers.end(); ++iter) {
