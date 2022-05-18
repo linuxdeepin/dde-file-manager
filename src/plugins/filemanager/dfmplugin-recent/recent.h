@@ -48,6 +48,8 @@ private:
     void addDelegateSettings();
     void addRecentItem();
     void removeRecentItem();
+
+    void followEvent();
 };
 
 DPRECENT_END_NAMESPACE

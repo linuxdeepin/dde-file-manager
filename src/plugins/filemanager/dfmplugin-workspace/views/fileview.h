@@ -87,6 +87,8 @@ public:
     int horizontalOffset() const override;
 
     FileViewModel *sourceModel() const;
+
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
     int getColumnWidth(const int &column) const;
     int getHeaderViewWidth() const;
     bool isSelected(const QModelIndex &index) const;
@@ -133,6 +135,7 @@ public:
 public slots:
     void onHeaderViewMouseReleased();
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
+    void onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
     void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
     void onClicked(const QModelIndex &index);
     void onDoubleClicked(const QModelIndex &index);
@@ -195,6 +198,7 @@ private:
     void updateStatusBar();
     void updateLoadingIndicator();
     void updateContentLabel();
+    void updateListHeaderView();
     void setDefaultViewMode();
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);

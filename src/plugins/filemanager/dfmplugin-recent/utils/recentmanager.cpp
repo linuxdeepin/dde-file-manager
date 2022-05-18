@@ -29,6 +29,7 @@
 #include "services/filemanager/workspace/workspaceservice.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <QFile>
 #include <QMenu>
@@ -36,6 +37,8 @@
 
 DPRECENT_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DPF_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 static constexpr char kEmptyRecentFile[] =
         R"|(<?xml version="1.0" encoding="UTF-8"?>
@@ -127,6 +130,63 @@ bool RecentManager::removeRecentFile(const QUrl &url)
         recentNodes.remove(url);
         return true;
     }
+    return false;
+}
+
+bool RecentManager::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleList)
+{
+    if (rootUrl.scheme() == scheme()) {
+        roleList->append(kItemNameRole);
+        roleList->append(kItemFilePathRole);
+        roleList->append(kItemFileLastReadRole);
+        roleList->append(kItemFileSizeRole);
+        roleList->append(kItemFileMimeTypeRole);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool RecentManager::customRoleDisplayName(const QUrl &url, const ItemRoles role, QString *displayName)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    if (role == kItemFilePathRole) {
+        displayName->append(tr("Path"));
+        return true;
+    }
+
+    if (role == kItemFileLastReadRole) {
+        displayName->append(tr("Last access"));
+        return true;
+    }
+
+    return false;
+}
+
+bool RecentManager::customRoleData(const QUrl &url, const ItemRoles role, QVariant *data)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    if (role == kItemFilePathRole) {
+        QSharedPointer<RecentFileInfo> info = InfoFactory::create<RecentFileInfo>(url);
+        if (info) {
+            data->setValue(info->redirectedFileUrl().path());
+            return true;
+        }
+    }
+
+    if (role == kItemFileLastReadRole) {
+        QSharedPointer<RecentFileInfo> info = InfoFactory::create<RecentFileInfo>(url);
+        if (info) {
+            data->setValue(info->lastRead().toString(FileUtils::dateTimeFormat()));
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -260,4 +320,9 @@ dfm_service_common::FileOperationsService *RecentManager::fileOperationsServIns(
     });
 
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}
+
+EventSequenceManager *RecentManager::eventSequence()
+{
+    return &dpfInstance.eventSequence();
 }

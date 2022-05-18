@@ -36,11 +36,20 @@ enum class DirOpenMode : uint8_t {
     kOpenNewWindow,
     //kForceOpenNewWindow // Todo(yanghao): ???
 };
+
 // view defines
 const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
 const int kIconViewSpacing = 5;
 const int kListViewSpacing = 0;
 const int kIconModeColumnPadding = 10;
+const int kDefualtHeaderSectionWidth = 140;
+const int kMinimumHeaderSectionWidth = 120;
+const int kListViewIconSize = 24;
+const int kLeftPadding = 10;
+const int kRightPadding = 10;
+const int kListModeLeftMargin = 20;
+const int kListModeRightMargin = 20;
+const int kColumnPadding = 10;
 
 // tab defines
 const int kMaxTabCount = 8;

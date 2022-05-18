@@ -25,6 +25,7 @@
 #include "dfmplugin_workspace_global.h"
 #include "workspace/workspace_defines.h"
 #include "views/fileviewitem.h"
+#include "events/workspaceeventsequence.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -91,6 +92,8 @@ private:
     FileViewModel *viewModel() const;
 
     QString roleDisplayString(int role) const;
+
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
 
 private:
     QVariant filterData;

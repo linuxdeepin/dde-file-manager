@@ -37,7 +37,6 @@
 namespace GlobalPrivate {
 const int kListViewMinimumWidth { 80 };
 const int kListViewDefaultWidth { 120 };
-const int kListViewIconSize { 24 };
 }   // namespace GlobalPrivate
 
 DPWORKSPACE_BEGIN_NAMESPACE
@@ -84,6 +83,10 @@ class FileViewPrivate
     QModelIndex currentDragHoverIndex;
 
     int horizontalOffset { 0 };
+
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> columnRoles;
+    QMap<QString, bool> columnForRoleHiddenMap;
+
     explicit FileViewPrivate(FileView *qq);
     int iconModeColumnCount(int itemWidth = 0) const;
     QUrl modelIndexUrl(const QModelIndex &index) const;

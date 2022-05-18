@@ -62,6 +62,9 @@ bool Recent::start()
 {
     addFileOperations();
     addDelegateSettings();
+
+    followEvent();
+
     return true;
 }
 
@@ -109,6 +112,13 @@ void Recent::addRecentItem()
 void Recent::removeRecentItem()
 {
     RecentManager::sideBarServIns()->removeItem(RecentManager::rootUrl());
+}
+
+void Recent::followEvent()
+{
+    RecentManager::eventSequence()->follow(Workspace::EventType::kFetchCustomColumnRoles, RecentManager::instance(), &RecentManager::customColumnRole);
+    RecentManager::eventSequence()->follow(Workspace::EventType::kFetchCustomRoleDisplayName, RecentManager::instance(), &RecentManager::customRoleDisplayName);
+    RecentManager::eventSequence()->follow(Workspace::EventType::kFetchCustomRoleData, RecentManager::instance(), &RecentManager::customRoleData);
 }
 
 void Recent::regRecentCrumbToTitleBar()

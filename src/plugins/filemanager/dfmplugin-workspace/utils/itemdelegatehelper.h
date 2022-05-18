@@ -37,8 +37,6 @@ static const int kIconModeRectRadius = kIconModeTextPadding;
 static const int kIconModeBackRadius = 18;
 // end
 // begin file view item list delegate global define
-static const int kListModeLeftMargin = 10;
-static const int kListModeRightMargin = 10;
 static const int kListModeRectRadius = 8;
 static const int kListModeLeftPadding = 10;
 static const int kListModeIconSpacing = 6;

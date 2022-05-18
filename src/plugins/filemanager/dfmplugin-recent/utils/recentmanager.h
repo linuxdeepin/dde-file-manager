@@ -80,6 +80,10 @@ public:
     QMap<QUrl, AbstractFileInfoPointer> getRecentNodes() const;
     bool removeRecentFile(const QUrl &url);
 
+    bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
+    bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
+    bool customRoleData(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
+
 signals:
     void asyncHandleFileChanged();
 
@@ -100,6 +104,7 @@ public:
     static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
+    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 
 private:
     QTimer updateRecentTimer;

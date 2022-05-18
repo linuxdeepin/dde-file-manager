@@ -42,6 +42,9 @@ public:
     bool doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes);
+    bool doFetchCustomColumnRoles(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
+    bool doFetchCustomRoleDiaplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
+    bool doFetchCustomRoleData(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
 
 private:
     explicit WorkspaceEventSequence(QObject *parent = nullptr);

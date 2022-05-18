@@ -63,6 +63,21 @@ bool WorkspaceEventSequence::doFetchSelectionModes(const QUrl &url, QList<QAbstr
     return sequence()->run(Workspace::EventType::kFetchSelectionModes, url, modes);
 }
 
+bool WorkspaceEventSequence::doFetchCustomColumnRoles(const QUrl &rootUrl, QList<ItemRoles> *roleList)
+{
+    return sequence()->run(Workspace::EventType::kFetchCustomColumnRoles, rootUrl, roleList);
+}
+
+bool WorkspaceEventSequence::doFetchCustomRoleDiaplayName(const QUrl &url, const ItemRoles role, QString *displayName)
+{
+    return sequence()->run(Workspace::EventType::kFetchCustomRoleDisplayName, url, role, displayName);
+}
+
+bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &url, const ItemRoles role, QVariant *data)
+{
+    return sequence()->run(Workspace::EventType::kFetchCustomRoleData, url, role, data);
+}
+
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)
     : QObject(parent)
 {

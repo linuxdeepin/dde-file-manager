@@ -87,6 +87,7 @@ enum ItemRoles {
     kItemFileSuffixOfRenameRole = Qt::UserRole + 19,
     kItemExtraProperties = Qt::UserRole + 20,
     kItemFileIconModelToolTipRole = Qt::UserRole + 21,   // 用于返回图标视图下的tooltip
+    kItemFileLastReadRole = Qt::UserRole + 22,
 
     kItemUnknowRole = Qt::UserRole + 999
 };

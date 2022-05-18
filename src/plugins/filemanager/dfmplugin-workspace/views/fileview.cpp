@@ -39,6 +39,7 @@
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
 #include "events/workspaceeventsequence.h"
+#include "views/private/delegatecommon.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/application.h"
@@ -117,6 +118,7 @@ void FileView::setViewMode(Global::ViewMode mode)
         if (model())
             setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
         d->initListModeView();
+        updateListHeaderView();
         break;
     case Global::ViewMode::kExtendMode:
         break;
@@ -164,6 +166,7 @@ bool FileView::setRootUrl(const QUrl &url)
     setDefaultViewMode();
 
     resetSelectionModes();
+    updateListHeaderView();
 
     if (d->sortTimer)
         d->sortTimer->start();
@@ -249,7 +252,15 @@ void FileView::onHeaderViewMouseReleased()
     if (d->headerView->sectionsTotalWidth() != width())
         d->allowedAdjustColumnSize = false;
 
-    // TODO(liuyangming): save data to config
+    QList<ItemRoles> roleList = d->columnRoles;
+    QVariantMap state;
+    for (const ItemRoles role : roleList) {
+        int colWidth = getColumnWidth(model()->getColumnByRole(role));
+
+        if (colWidth > 0)
+            state[QString::number(role)] = colWidth;
+    }
+    Application::appObtuselySetting()->setValue("WindowManager", "ViewColumnState", state);
 }
 
 void FileView::onHeaderSectionResized(int logicalIndex, int oldSize, int newSize)
@@ -258,8 +269,31 @@ void FileView::onHeaderSectionResized(int logicalIndex, int oldSize, int newSize
     Q_UNUSED(oldSize)
     Q_UNUSED(newSize)
 
-    // TODO(liuyangming): save data to config
+    d->headerView->adjustSize();
+    updateGeometries();
+    update();
+}
 
+void FileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex)
+{
+    Q_UNUSED(logicalIndex)
+    Q_UNUSED(oldVisualIndex)
+    Q_UNUSED(newVisualIndex)
+
+    QVariantList logicalIndexList;
+    for (int i = 0; i < d->headerView->count(); ++i) {
+        int logicalIndex = d->headerView->logicalIndex(i);
+        logicalIndexList << model()->getRoleByColumn(logicalIndex);
+    }
+
+    QUrl rootUrl = this->rootUrl();
+
+    setFileViewStateValue(rootUrl, "headerList", logicalIndexList);
+    // sync data to config file.
+    Application::appObtuselySetting()->sync();
+
+    // refresh
+    updateListHeaderView();
     update();
 }
 
@@ -759,11 +793,12 @@ void FileView::resizeEvent(QResizeEvent *event)
 {
     DListView::resizeEvent(event);
 
-    if (d->headerView) {
-        if (qAbs(d->headerView->sectionsTotalWidth() - width()) < 10)
+    if (isListViewMode() && d->headerView) {
+        if (!d->allowedAdjustColumnSize && qAbs(d->headerView->sectionsTotalWidth() - width()) < 10)
             d->allowedAdjustColumnSize = true;
 
-        d->updateListModeColumnWidth();
+        if (d->allowedAdjustColumnSize)
+            d->headerView->updataFirstColumnWidth(width());
     }
 
     updateHorizontalOffset();
@@ -939,9 +974,13 @@ FileViewModel *FileView::sourceModel() const
     return nullptr;
 }
 
+QList<ItemRoles> FileView::getColumnRoles() const
+{
+    return d->columnRoles;
+}
+
 void FileView::updateGeometries()
 {
-
     if (!d->headerView || !d->allowedAdjustColumnSize) {
         return DListView::updateGeometries();
     }
@@ -1281,6 +1320,59 @@ void FileView::updateContentLabel()
     }
 
     d->contentLabel->setText(QString());
+}
+
+void FileView::updateListHeaderView()
+{
+    if (!d->headerView)
+        return;
+
+    d->headerView->setModel(Q_NULLPTR);
+    d->headerView->setModel(model());
+
+    d->headerView->setDefaultSectionSize(kDefualtHeaderSectionWidth);
+    if (d->allowedAdjustColumnSize) {
+        d->headerView->setSectionResizeMode(QHeaderView::Interactive);
+        d->headerView->setMinimumSectionSize(kMinimumHeaderSectionWidth);
+    } else {
+        d->headerView->setSectionResizeMode(QHeaderView::Fixed);
+        d->headerView->setMinimumSectionSize(kDefualtHeaderSectionWidth);
+    }
+
+    d->headerView->setSortIndicator(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
+    d->columnRoles.clear();
+
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+
+    for (int i = 0; i < d->headerView->count(); ++i) {
+        int logicalIndex = d->headerView->logicalIndex(i);
+        d->columnRoles << model()->getRoleByColumn(i);
+
+        if (d->allowedAdjustColumnSize) {
+            int colWidth = state.value(QString::number(d->columnRoles.last()), -1).toInt();
+            if (colWidth > 0) {
+                d->headerView->resizeSection(model()->getColumnByRole(d->columnRoles.last()), colWidth);
+            }
+        } else {
+            int columnWidth = model()->getColumnWidth(i);
+            if (columnWidth >= 0) {
+                d->headerView->resizeSection(logicalIndex, columnWidth + kColumnPadding * 2);
+            } else {
+                d->headerView->setSectionResizeMode(logicalIndex, QHeaderView::Stretch);
+            }
+        }
+
+        const QString &columnName = model()->headerData(i, Qt::Horizontal, Qt::DisplayRole).toString();
+
+        if (!d->columnForRoleHiddenMap.contains(columnName)) {
+            d->headerView->setSectionHidden(logicalIndex, false);
+        } else {
+            d->headerView->setSectionHidden(logicalIndex, d->columnForRoleHiddenMap.value(columnName));
+        }
+    }
+
+    if (!d->allowedAdjustColumnSize)
+        d->headerView->updateColumnWidth();
 }
 
 void FileView::setDefaultViewMode()

@@ -59,8 +59,8 @@ DPWORKSPACE_USE_NAMESPACE
 ListItemDelegate::ListItemDelegate(FileViewHelper *parent)
     : BaseItemDelegate(*new ListItemDelegatePrivate(this), parent)
 {
-    parent->parent()->setIconSize(QSize(GlobalPrivate::kListViewIconSize,
-                                        GlobalPrivate::kListViewIconSize));
+    parent->parent()->setIconSize(QSize(kListViewIconSize,
+                                        kListViewIconSize));
 }
 
 ListItemDelegate::~ListItemDelegate()
@@ -401,7 +401,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
 {
     D_DC(ListItemDelegate);
     // 绘制需要绘制的项，计算每一项绘制的宽度
-    const QList<QPair<int, int>> &columnRoleList = index.data(kItemColumListRole).value<QList<QPair<int, int>>>();
+    const QList<ItemRoles> &columnRoleList = parent()->parent()->getColumnRoles();
     if (columnRoleList.isEmpty())
         return;
 
@@ -437,7 +437,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
             columnX = opt.rect.right();
         columnRect.setRight(columnX - kListModeRightPadding);
 
-        int rol = columnRoleList.at(i).first;
+        int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
 
         const QUrl &url = parent()->parent()->model()->getUrlByIndex(index);

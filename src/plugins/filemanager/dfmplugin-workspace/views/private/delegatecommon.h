@@ -33,15 +33,10 @@ const int kIconModeRectRadius = 4;
 const int kTextPadding = 4;
 const int kIconModeIconSpacing = 5;
 const int kIconModeBackRadius = 18;
-const int kColumnPadding = 10;
 const int kListModeRectRadius = 8;
 const int kListEditorHeight = 22;
 const int kListModeEditorLeftPadding = -3;
-const int kListViewIconSize = 24;
-const int kListModeLeftMargin = 20;
-const int kListModeRightMargin = 20;
-const int kLeftPadding = 10;
-const int kRightPadding = 10;
+
 static QString replaceChars = "";
 
 void joinLeftCorner(const QRectF &rect, const QRectF &prevRect, const QRectF &nextRect,

@@ -93,13 +93,8 @@ void FileViewPrivate::initListModeView()
     if (!headerView) {
         headerView = new HeaderView(Qt::Orientation::Horizontal, q);
 
-        headerView->setHighlightSections(false);
-        headerView->setSectionsClickable(true);
-        headerView->setSortIndicatorShown(true);
-        headerView->setSectionResizeMode(QHeaderView::Interactive);
         headerView->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        headerView->setCascadingSectionResizes(false);
-        headerView->setFixedHeight(GlobalPrivate::kListViewIconSize);
+        headerView->setFixedHeight(kListViewIconSize);
         headerView->setMinimumSectionSize(GlobalPrivate::kListViewMinimumWidth);
 
         headerView->setModel(q->model());
@@ -113,9 +108,11 @@ void FileViewPrivate::initListModeView()
     QObject::connect(headerView, &HeaderView::mouseReleased, q, &FileView::onHeaderViewMouseReleased);
     QObject::connect(headerView, &HeaderView::sectionResized, q, &FileView::onHeaderSectionResized);
     QObject::connect(headerView, &HeaderView::sortIndicatorChanged, q, &FileView::onSortIndicatorChanged);
+    QObject::connect(headerView, &HeaderView::sectionMoved, q, &FileView::onHeaderSectionMoved);
 
-    q->setIconSize(QSize(GlobalPrivate::kListViewIconSize, GlobalPrivate::kListViewIconSize));
-    updateListModeColumnWidth();
+    q->setIconSize(QSize(kListViewIconSize, kListViewIconSize));
+    if (allowedAdjustColumnSize)
+        headerView->updataFirstColumnWidth(q->width());
 
     if (statusBar)
         statusBar->setScalingVisible(false);

@@ -25,10 +25,13 @@
 
 #include "dfmplugin_workspace_global.h"
 
+#include "dfm-base/dfm_global_defines.h"
+
 #include <QHeaderView>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class FileSortFilterProxyModel;
 class HeaderView : public QHeaderView
 {
     Q_OBJECT
@@ -38,6 +41,8 @@ public:
     using QHeaderView::updateGeometries;
 
     int sectionsTotalWidth() const;
+    void updateColumnWidth();
+    void updataFirstColumnWidth(const int totalWidth);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
@@ -46,6 +51,12 @@ protected:
 Q_SIGNALS:
     void mouseReleased();
     void viewResized();
+
+private:
+    FileSortFilterProxyModel *proxyModel() const;
+
+    int firstVisibleColumn = -1;
+    int lastVisibleColumn = -1;
 };
 
 DPWORKSPACE_END_NAMESPACE

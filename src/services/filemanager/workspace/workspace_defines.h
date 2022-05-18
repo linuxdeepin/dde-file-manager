@@ -25,6 +25,7 @@
 
 #include "services/filemanager/dfm_filemanager_service_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 #include <QVariant>
@@ -73,7 +74,9 @@ extern const int kSetReadOnly;
 
 //sequence
 extern const int kFetchSelectionModes;
-
+extern const int kFetchCustomColumnRoles;
+extern const int kFetchCustomRoleDisplayName;
+extern const int kFetchCustomRoleData;
 };   // namespace EventType
 
 namespace MenuScene {
@@ -102,5 +105,8 @@ Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback);
 Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler);
 Q_DECLARE_METATYPE(QDir::Filters);
+Q_DECLARE_METATYPE(QVariant *);
+Q_DECLARE_METATYPE(QList<DFMGLOBAL_NAMESPACE::ItemRoles> *)
+Q_DECLARE_METATYPE(QString *);
 
 #endif   // WORKSPACE_DEFINES_H

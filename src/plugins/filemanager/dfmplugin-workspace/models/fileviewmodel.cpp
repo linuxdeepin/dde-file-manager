@@ -250,7 +250,10 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
 QUrl FileViewModel::rootUrl() const
 {
-    return d->root->fileInfo()->url();
+    if (d->root && d->root->fileInfo())
+        return d->root->fileInfo()->url();
+
+    return QUrl();
 }
 
 QModelIndex FileViewModel::rootIndex() const
@@ -810,8 +813,10 @@ void FileNodeManagerThread::run()
     if (stoped)
         return;
 
-    if (!insertChildrenByCeiled())
+    if (!insertChildrenByCeiled()) {
+        model()->setState(FileViewModel::Idle);
         return;
+    }
 
     QUrl url;
 

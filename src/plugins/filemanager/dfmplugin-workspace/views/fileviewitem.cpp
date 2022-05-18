@@ -23,6 +23,7 @@
 #include "fileviewitem.h"
 #include "utils/fileutils.h"
 #include "private/fileviewitem_p.h"
+#include "events/workspaceeventsequence.h"
 
 #include "dfm-base/dfm_global_defines.h"
 
@@ -217,6 +218,10 @@ QVariant FileViewItem::data(int role) const
 {
     if (d->fileinfo.isNull())
         return QVariant();
+
+    QVariant data;
+    if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(url(), static_cast<ItemRoles>(role), &data))
+        return data;
 
     switch (role) {
     case kItemFileLastModifiedRole:
