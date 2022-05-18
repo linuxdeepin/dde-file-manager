@@ -295,6 +295,9 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
         {
             const QModelIndex &idx = m_view->selectionModel()->currentIndex();
             DUrl url = idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>();
+            if (url.scheme() == APPENTRY_SCHEME)
+                return; // no property for appentry item.
+
             if (url.path().endsWith(SUFFIX_USRDIR)) {
                 appController->actionProperty(dMakeEventPointer<DFMUrlListBaseEvent>(this, DUrlList() << idx.data(ComputerModel::DataRoles::OpenUrlRole).value<DUrl>()));
             } else {
