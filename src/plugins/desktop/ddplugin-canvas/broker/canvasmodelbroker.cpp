@@ -25,6 +25,10 @@
 
 Q_DECLARE_METATYPE(bool *)
 Q_DECLARE_METATYPE(QVariant *)
+Q_DECLARE_METATYPE(QUrl *)
+Q_DECLARE_METATYPE(QModelIndex *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(int *)
 
 DDP_CANVAS_USE_NAMESPACE
 
@@ -44,6 +48,42 @@ CanvasModelBrokerPrivate::~CanvasModelBrokerPrivate()
 
 void CanvasModelBrokerPrivate::registerEvent()
 {
+    RegCanvasSlotsID(this, kSlotCanvasModelRootUrl);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelRootUrl), q, &CanvasModelBroker::rootUrl);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelUrlIndex);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelUrlIndex), q, &CanvasModelBroker::urlIndex);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelIndex);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelIndex), q, &CanvasModelBroker::index);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelFileUrl);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelFileUrl), q, &CanvasModelBroker::fileUrl);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelFiles);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelFiles), q, &CanvasModelBroker::files);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelShowHiddenFiles);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelShowHiddenFiles), q, &CanvasModelBroker::showHiddenFiles);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelsetShowHiddenFiles);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelsetShowHiddenFiles), q, &CanvasModelBroker::setShowHiddenFiles);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelSortOrder);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSortOrder), q, &CanvasModelBroker::sortOrder);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelSetSortOrder);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSetSortOrder), q, &CanvasModelBroker::setSortOrder);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelSortRole);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSortRole), q, &CanvasModelBroker::sortRole);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelSetSortRole);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSetSortRole), q, &CanvasModelBroker::setSortRole);
+
+    RegCanvasSlotsID(this, kSlotCanvasModelRowCount);
+    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelRowCount), q, &CanvasModelBroker::rowCount);
+
     RegCanvasSlotsID(this, kSlotCanvasModelData);
     dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelData), q, &CanvasModelBroker::data);
 

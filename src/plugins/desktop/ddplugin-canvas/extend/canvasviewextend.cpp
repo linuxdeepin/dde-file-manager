@@ -22,6 +22,16 @@
 
 #include <dfm-base/utils/universalutils.h>
 
+#include <QUrl>
+#include <QMimeData>
+#include <QPoint>
+#include <QPainter>
+#include <QStyleOptionViewItem>
+
+Q_DECLARE_METATYPE(const QMimeData *)
+Q_DECLARE_METATYPE(QMimeData *)
+Q_DECLARE_METATYPE(const QStyleOptionViewItem *)
+
 DDP_CANVAS_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
 
@@ -40,7 +50,19 @@ CanvasViewExtendPrivate::~CanvasViewExtendPrivate()
 
 void CanvasViewExtendPrivate::registerEvent()
 {
-
+    RegCanvasSeqSigID(this, kFilterCanvasViewContextMenu);
+    RegCanvasSeqSigID(this, kFilterCanvasViewDropData);
+    RegCanvasSeqSigID(this, kFilterCanvasViewKeyPress);
+    RegCanvasSeqSigID(this, kFilterCanvasViewMousePress);
+    RegCanvasSeqSigID(this, kFilterCanvasViewMouseRelease);
+    RegCanvasSeqSigID(this, kFilterCanvasViewMouseDoubleClick);
+    RegCanvasSeqSigID(this, kFilterCanvasViewWheel);
+    RegCanvasSeqSigID(this, kFilterCanvasViewStartDrag);
+    RegCanvasSeqSigID(this, kFilterCanvasViewDragEnter);
+    RegCanvasSeqSigID(this, kFilterCanvasViewDragMove);
+    RegCanvasSeqSigID(this, kFilterCanvasViewDragLeave);
+    RegCanvasSeqSigID(this, kFilterCanvasViewKeyboardSearch);
+    RegCanvasSeqSigID(this, kFilterCanvasViewDrawFile);
 }
 
 CanvasViewExtend::CanvasViewExtend(QObject *parent)
@@ -63,12 +85,80 @@ bool CanvasViewExtend::init()
 
 bool CanvasViewExtend::contextMenu(int viewIndex, const QUrl &dir, const QList<QUrl> &files, const QPoint &pos, void *extData) const
 {
-    return false;
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewContextMenu),
+                                           viewIndex, dir, files, pos, extData);
 }
 
 bool CanvasViewExtend::dropData(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData) const
 {
-    return false;
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewDropData),
+                                           viewIndex, md, viewPos, extData);
+}
+
+bool CanvasViewExtend::keyPress(int viewIndex, int key, int modifiers, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewKeyPress),
+                                           viewIndex, key, modifiers, extData);
+}
+
+bool CanvasViewExtend::mousePress(int viewIndex, int button, const QPoint &viewPos, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewMousePress),
+                                           viewIndex, button, viewPos, extData);
+}
+
+bool CanvasViewExtend::mouseRelease(int viewIndex, int button, const QPoint &viewPos, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewMouseRelease),
+                                           viewIndex, button, viewPos, extData);
+}
+
+bool CanvasViewExtend::mouseDoubleClick(int viewIndex, int button, const QPoint &viewPos, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewMouseDoubleClick),
+                                           viewIndex, button, viewPos, extData);
+}
+
+bool CanvasViewExtend::wheel(int viewIndex, const QPoint &angleDelta, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewWheel),
+                                           viewIndex, angleDelta, extData);
+}
+
+bool CanvasViewExtend::startDrag(int viewIndex, int supportedActions, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewStartDrag),
+                                           viewIndex, supportedActions, extData);
+}
+
+bool CanvasViewExtend::dragEnter(int viewIndex, const QMimeData *mime, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewDragEnter),
+                                           viewIndex, mime, extData);
+}
+
+bool CanvasViewExtend::dragMove(int viewIndex, const QMimeData *mime, const QPoint &viewPos, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewDragMove),
+                                           viewIndex, mime, viewPos, extData);
+}
+
+bool CanvasViewExtend::dragLeave(int viewIndex, const QMimeData *mime, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewDragLeave),
+                                           viewIndex, mime, extData);
+}
+
+bool CanvasViewExtend::keyboardSearch(int viewIndex, const QString &search, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewKeyboardSearch),
+                                           viewIndex, search, extData);
+}
+
+bool CanvasViewExtend::drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData) const
+{
+    return dpfInstance.eventSequence().run(GetCanvasSeqSigID(d, kFilterCanvasViewDrawFile),
+                                           viewIndex, file, painter, option, extData);
 }
 
 

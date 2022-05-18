@@ -28,7 +28,11 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
+static constexpr char kSlotCanvasViewVisualRect[] = "CanvasView_Method_visualRect";
 static constexpr char kSlotCanvasViewRefresh[] = "CanvasView_Method_refresh";
+static constexpr char kSlotCanvasViewUpdate[] = "CanvasView_Method_update";
+static constexpr char kSlotCanvasViewSelect[] = "CanvasView_Method_select";
+static constexpr char kSlotCanvasViewSelectedUrls[] = "CanvasView_Method_selectedUrls";
 
 class CanvasViewBrokerPrivate : public QObject, public CanvasEventProvider
 {

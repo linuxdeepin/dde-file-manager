@@ -40,7 +40,7 @@ public slots:
     void refresh(int idx);
     void update(int idx);
     void select(const QList<QUrl> &urls);
-    void selectedUrls(QList<QUrl> *urls);
+    void selectedUrls(int idx, QList<QUrl> *urls);
 private:
     CanvasViewBrokerPrivate *d;
 };
