@@ -76,7 +76,7 @@ bool TextPreview::setFileUrl(const QUrl &url)
 
         textBrowser->setReadOnly(true);
         textBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
-        textBrowser->setWordWrapMode(QTextOption::NoWrap);
+        textBrowser->setLineWrapMode(QPlainTextEdit::WidgetWidth);
         textBrowser->setFixedSize(800, 500);
         textBrowser->setFocusPolicy(Qt::NoFocus);
         textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
