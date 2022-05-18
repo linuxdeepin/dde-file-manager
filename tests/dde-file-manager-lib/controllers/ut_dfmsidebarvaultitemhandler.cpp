@@ -40,7 +40,7 @@ namespace  {
     };
 }
 
-
+#ifndef __arm__
 TEST_F(TestDFMSideBarVaultItemHandler, tst_contextMenu)
 {
     DFMSideBarItem item;
@@ -66,6 +66,7 @@ TEST_F(TestDFMSideBarVaultItemHandler, tst_lockNow)
     m_controller->lockNow(&window);
     window.clearActions();
 }
+#endif
 
 TEST_F(TestDFMSideBarVaultItemHandler, tst_autoLock)
 {
@@ -79,6 +80,7 @@ TEST_F(TestDFMSideBarVaultItemHandler, tst_autoLock)
     m_controller->autoLock(0);
 }
 
+#ifndef __arm__
 TEST_F(TestDFMSideBarVaultItemHandler, tst_showView)
 {
     Stub stub;
@@ -96,3 +98,4 @@ TEST_F(TestDFMSideBarVaultItemHandler, tst_showView)
 
     window.clearActions();
 }
+#endif

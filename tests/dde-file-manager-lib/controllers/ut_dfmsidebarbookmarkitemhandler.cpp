@@ -62,6 +62,7 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_createItem)
     EXPECT_NE(pItem.data(), nullptr);
 }
 
+#ifndef __arm__
 TEST_F(TestDFMSideBarBookmarkItemHandler, test_cdAction)
 {
     ASSERT_NE(m_handler, nullptr);
@@ -133,6 +134,7 @@ TEST_F(TestDFMSideBarBookmarkItemHandler, test_contextMenu)
     window->clearActions();
     FreePointer(window);
 }
+#endif
 
 TEST_F(TestDFMSideBarBookmarkItemHandler, test_rename)
 {
