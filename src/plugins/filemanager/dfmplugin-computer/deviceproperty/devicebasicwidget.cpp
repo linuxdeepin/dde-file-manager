@@ -97,6 +97,8 @@ void DeviceBasicWidget::selectFileInfo(const Property::DeviceInfo &info)
     deviceTotalSize->setRightValue(sizeTotalStr);
     deviceTotalSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
+    if (info.fileSystem.isEmpty())
+        fileSystem->hide();
     fileSystem->setRightValue(info.fileSystem);
     fileSystem->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
 
