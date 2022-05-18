@@ -65,6 +65,7 @@ public:
     };
 
     explicit FileView(const QUrl &url, QWidget *parent = nullptr);
+    ~FileView() override;
 
     QWidget *widget() const override;
     bool setRootUrl(const QUrl &url) override;

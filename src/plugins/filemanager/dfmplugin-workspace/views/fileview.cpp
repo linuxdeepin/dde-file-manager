@@ -79,6 +79,14 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setRootUrl(url);
 }
 
+FileView::~FileView()
+{
+    disconnect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
+    disconnect(sourceModel(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
+    disconnect(sourceModel(), &FileViewModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
+    disconnect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
+}
+
 QWidget *FileView::widget() const
 {
     return const_cast<FileView *>(this);

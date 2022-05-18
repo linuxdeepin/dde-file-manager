@@ -117,7 +117,8 @@ QUrl WorkspaceWidget::currentUrl() const
 
 AbstractBaseView *WorkspaceWidget::currentView()
 {
-    return tabBar->currentTab()->getCurrentView();
+    auto tab { tabBar->currentTab() };
+    return tab ? tab->getCurrentView() : nullptr;
 }
 
 void WorkspaceWidget::openNewTab(const QUrl &url)
