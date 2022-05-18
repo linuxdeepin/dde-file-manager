@@ -19,14 +19,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filebaseinfoview.h"
+#include "services/filemanager/detailspace/detailspaceservice.h"
+#include "services/common/delegate/delegateservice.h"
+
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include "services/filemanager/detailspace/detailspaceservice.h"
+#include <dfm-framework/framework.h>
 
+USING_IO_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPDETAILSPACE_USE_NAMESPACE
+
+const int kImageExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kVideoExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kAudioExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 FileBaseInfoView::FileBaseInfoView(QWidget *parent)
     : QFrame(parent)
 {
@@ -34,6 +43,9 @@ FileBaseInfoView::FileBaseInfoView(QWidget *parent)
 
 FileBaseInfoView::~FileBaseInfoView()
 {
+    dpfInstance.eventDispatcher().unsubscribe(kImageExten);
+    dpfInstance.eventDispatcher().unsubscribe(kVideoExten);
+    dpfInstance.eventDispatcher().unsubscribe(kAudioExten);
 }
 
 void FileBaseInfoView::initUI()
@@ -202,6 +214,10 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     if (fileDuration && fileDuration->RightValue().isEmpty())
         fileDuration->setVisible(false);
 
+    QUrl localUrl = delegateServIns->urlTransform(url);
+
+    AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
+
     if (fileType && fileType->RightValue().isEmpty()) {
         QMimeType mimeType = MimeDatabase::mimeTypeForUrl(url);
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
@@ -214,43 +230,21 @@ void FileBaseInfoView::basicFill(const QUrl &url)
         } break;
         case MimeDatabase::FileType::kVideos: {
             fileType->setRightValue(tr("Videos"), Qt::ElideNone, Qt::AlignLeft, true);
-
-            if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
-                fileViewSize->setVisible(true);
-                QVariant dimension = info->extraProperties().value(QString("Dimension"));
-                fileViewSize->setRightValue(dimension.toString(), Qt::ElideNone, Qt::AlignLeft, true);
-            }
-
-            if (fileDuration && fileDuration->RightValue().isEmpty()) {
-                fileDuration->setVisible(true);
-                QVariant duration = info->extraProperties().value(QString("Duration"));
-                fileDuration->setRightValue(duration.toString(), Qt::ElideNone, Qt::AlignLeft, true);
-            }
+            QList<DFileInfo::AttributeExtendID> extenList;
+            extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight << DFileInfo::AttributeExtendID::kExtendMediaDuration;
+            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kVideo, extenList, FileBaseInfoView::videoExtenInfo);
         } break;
         case MimeDatabase::FileType::kImages: {
             fileType->setRightValue(tr("Images"), Qt::ElideNone, Qt::AlignLeft, true);
-
-            if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
-                fileViewSize->setVisible(true);
-                QVariant dimension = info->extraProperties().value(QString("Dimension"));
-                fileViewSize->setRightValue(dimension.toString(), Qt::ElideNone, Qt::AlignLeft, true);
-            }
-
-            if (fileDuration && fileDuration->RightValue().isEmpty()) {
-                fileDuration->setVisible(true);
-                QVariant duration = info->extraProperties().value(QString("Duration"));
-                fileDuration->setRightValue(duration.toString(), Qt::ElideNone, Qt::AlignLeft, true);
-            }
-
+            QList<DFileInfo::AttributeExtendID> extenList;
+            extenList << DFileInfo::AttributeExtendID::kExtendMediaWidth << DFileInfo::AttributeExtendID::kExtendMediaHeight;
+            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kImage, extenList, FileBaseInfoView::imageExtenInfo);
         } break;
         case MimeDatabase::FileType::kAudios: {
             fileType->setRightValue(tr("Audios"), Qt::ElideNone, Qt::AlignLeft, true);
-
-            if (fileDuration && fileDuration->RightValue().isEmpty()) {
-                fileDuration->setVisible(true);
-                QVariant duration = info->extraProperties().value(QString("Duration"));
-                fileDuration->setRightValue(duration.toString(), Qt::ElideNone, Qt::AlignLeft, true);
-            }
+            QList<DFileInfo::AttributeExtendID> extenList;
+            extenList << DFileInfo::AttributeExtendID::kExtendMediaDuration;
+            localinfo->mediaInfoAttributes(DFileInfo::MediaType::kAudio, extenList, FileBaseInfoView::audioExtenInfo);
         } break;
         case MimeDatabase::FileType::kExecutable:
             fileType->setRightValue(tr("Executable"), Qt::ElideNone, Qt::AlignLeft, true);
@@ -276,6 +270,128 @@ void FileBaseInfoView::clearField()
     }
 }
 
+void FileBaseInfoView::connectEvent()
+{
+    dpfInstance.eventDispatcher().subscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
+    dpfInstance.eventDispatcher().subscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
+    dpfInstance.eventDispatcher().subscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
+}
+
+void FileBaseInfoView::connectInit()
+{
+    connect(this, &FileBaseInfoView::sigImageExtenInfo, this, &FileBaseInfoView::slotImageExtenInfo, Qt::QueuedConnection);
+    connect(this, &FileBaseInfoView::sigVideoExtenInfo, this, &FileBaseInfoView::slotVideoExtenInfo, Qt::QueuedConnection);
+    connect(this, &FileBaseInfoView::sigAudioExtenInfo, this, &FileBaseInfoView::slotAudioExtenInfo, Qt::QueuedConnection);
+}
+
+void FileBaseInfoView::imageExtenInfoReceiver(const QStringList &properties)
+{
+    const QStringList pr = properties;
+    emit sigImageExtenInfo(pr);
+}
+
+void FileBaseInfoView::videoExtenInfoReceiver(const QStringList &properties)
+{
+    const QStringList pr = properties;
+    emit sigVideoExtenInfo(pr);
+}
+
+void FileBaseInfoView::audioExtenInfoReceiver(const QStringList &properties)
+{
+    const QStringList pr = properties;
+    emit sigAudioExtenInfo(pr);
+}
+
+void FileBaseInfoView::slotImageExtenInfo(const QStringList &properties)
+{
+    if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
+        fileViewSize->setVisible(true);
+        fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
+    }
+}
+
+void FileBaseInfoView::slotVideoExtenInfo(const QStringList &properties)
+{
+    if (fileViewSize && fileViewSize->RightValue().isEmpty()) {
+        fileViewSize->setVisible(true);
+        fileViewSize->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
+    }
+
+    if (fileDuration && fileDuration->RightValue().isEmpty()) {
+        fileDuration->setVisible(true);
+        fileDuration->setRightValue(properties.count() > 1 ? properties[1] : " ", Qt::ElideNone, Qt::AlignLeft, true);
+    }
+}
+
+void FileBaseInfoView::slotAudioExtenInfo(const QStringList &properties)
+{
+    if (fileDuration && fileDuration->RightValue().isEmpty()) {
+        fileDuration->setVisible(true);
+        fileDuration->setRightValue(properties.isEmpty() ? " " : properties.first(), Qt::ElideNone, Qt::AlignLeft, true);
+    }
+}
+
+void FileBaseInfoView::imageExtenInfo(bool flg, QMap<DFileInfo::AttributeExtendID, QVariant> properties)
+{
+    if (flg) {
+        QStringList property;
+        if (!properties.isEmpty()) {
+            int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
+            int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
+            QString viewSize = QString::number(width) + "x" + QString::number(height);
+            property << viewSize;
+            dpfInstance.eventDispatcher().publish(kImageExten, property);
+        }
+    }
+}
+
+void FileBaseInfoView::videoExtenInfo(bool flg, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
+{
+    if (flg) {
+        QStringList property;
+        if (!properties.isEmpty()) {
+            int width = properties[DFileInfo::AttributeExtendID::kExtendMediaWidth].toInt();
+            int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
+            QString viewSize = QString::number(width) + "x" + QString::number(height);
+            property << viewSize;
+
+            QVariant duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration];
+
+            int s = duration.toInt();
+
+            QTime t(0, 0, 0);
+            t = t.addMSecs(s);
+
+            QString durationStr = t.toString("hh:mm:ss");
+
+            property << durationStr;
+
+            dpfInstance.eventDispatcher().publish(kVideoExten, property);
+        }
+    }
+}
+
+void FileBaseInfoView::audioExtenInfo(bool flg, QMap<dfmio::DFileInfo::AttributeExtendID, QVariant> properties)
+{
+    if (flg) {
+        QStringList property;
+        if (!properties.isEmpty()) {
+            QVariant duration = properties[DFileInfo::AttributeExtendID::kExtendMediaDuration];
+
+            int s = duration.toInt();
+
+            QTime t(0, 0, 0);
+            t = t.addMSecs(s);
+
+            QString durationStr = t.toString("hh:mm:ss");
+
+            property << durationStr;
+
+            dpfInstance.eventDispatcher().publish(kAudioExten, property);
+        }
+    }
+}
+
 /*!
  * \brief           通过文件url获取文件fileinfo对象，在通过MimDatabase获取文件类型。最后根据文件类型对不同文件设置信息
  * \param[in] url       文件url
@@ -287,6 +403,10 @@ void FileBaseInfoView::setFileUrl(const QUrl &url)
     clearField();
 
     initUI();
+
+    connectEvent();
+
+    connectInit();
 
     initFileMap();
 

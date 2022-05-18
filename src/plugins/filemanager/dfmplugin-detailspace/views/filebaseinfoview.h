@@ -25,6 +25,7 @@
 #include "services/filemanager/detailspace/detailspace_defines.h"
 
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QUrl>
 #include <QFrame>
@@ -49,6 +50,37 @@ private:
 
     void clearField();
 
+    void connectEvent();
+
+    void connectInit();
+
+    void imageExtenInfoReceiver(const QStringList &properties);
+
+    void videoExtenInfoReceiver(const QStringList &properties);
+
+    void audioExtenInfoReceiver(const QStringList &properties);
+
+signals:
+    void sigImageExtenInfo(const QStringList &properties);
+
+    void sigVideoExtenInfo(const QStringList &properties);
+
+    void sigAudioExtenInfo(const QStringList &properties);
+
+public slots:
+    void slotImageExtenInfo(const QStringList &properties);
+
+    void slotVideoExtenInfo(const QStringList &properties);
+
+    void slotAudioExtenInfo(const QStringList &properties);
+
+public:
+    static void imageExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+
+    static void videoExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+
+    static void audioExtenInfo(bool flg, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> properties);
+
 public:
     void setFileUrl(const QUrl &url);
 
@@ -65,5 +97,6 @@ private:
 
     QUrl currentUrl;
 };
+
 DPDETAILSPACE_END_NAMESPACE
 #endif   // FILEBASEINFOVIEW_H

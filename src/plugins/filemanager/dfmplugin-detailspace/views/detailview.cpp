@@ -99,7 +99,7 @@ void DetailView::removeControl()
         expandList.removeOne(w);
         QVBoxLayout *layout = qobject_cast<QVBoxLayout *>(expandFrame->layout());
         layout->removeWidget(w);
-        w->deleteLater();
+        delete w;
     }
 }
 
