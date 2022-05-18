@@ -23,8 +23,22 @@
 #include "utils.h"
 #include "events/globaleventreceiver.h"
 
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/file/local/desktopfileinfo.h"
+
+static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
+{
+    if (fileInfo->suffix() == DFMBASE_NAMESPACE::Global::kDesktop && fileInfo->mimeTypeName() == "application/x-desktop") {
+        return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(fileInfo->url()));
+    }
+    return fileInfo;
+}
+
 bool dfmplugin_utils::Utils::start()
 {
     GlobalEventReceiver::instance()->initEventConnect();
+
+    DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::AbstractFileInfo>(DFMBASE_NAMESPACE::Global::kFile, transFileInfo);
     return true;
 }

@@ -60,10 +60,13 @@ class SchemeFactory
 public:
     // 定义创建函数类型
     typedef std::function<QSharedPointer<T>(const QUrl &url)> CreateFunc;
+    using TransFunc = std::function<QSharedPointer<T>(QSharedPointer<T>)>;
 
 protected:
     // 构造函数列表
     QHash<QString, CreateFunc> constructList {};
+    // 转换函数列表
+    QHash<QString, TransFunc> transList {};
 
 public:
     /*!
@@ -82,6 +85,21 @@ public:
             return QSharedPointer<T>(new CT(url));
         };
         return regCreator(scheme, foo, errorString);
+    }
+
+    bool transClass(const QString &scheme, TransFunc func, QString *errorString = nullptr)
+    {
+        QString error;
+        FinallyUtil finally([&]() { if (errorString) *errorString = error; });
+
+        if (transList[scheme]) {
+            error = QObject::tr("The current scheme trans func has registered");
+            return false;
+        }
+
+        transList.insert(scheme, func);
+        finally.dismiss();
+        return true;
     }
 
     /*!
@@ -140,7 +158,13 @@ public:
             return nullptr;
         }
         finally.dismiss();
-        return QSharedPointer<T>(constantFunc(url));
+        QSharedPointer<T> info = QSharedPointer<T>(constantFunc(url));
+
+        TransFunc func = transList.value(scheme);
+        if (func)
+            info = func(info);
+
+        return info;
     }
 };
 
@@ -155,6 +179,12 @@ public:
     static bool regClass(const QString &scheme, QString *errorString = nullptr)
     {
         return instance().SchemeFactory<AbstractFileInfo>::regClass<CT>(scheme, errorString);
+    }
+
+    template<class CT>
+    static bool regInfoTransFunc(const QString &scheme, std::function<QSharedPointer<CT>(QSharedPointer<CT>)> func)
+    {
+        return instance().SchemeFactory<AbstractFileInfo>::transClass(scheme, func);
     }
 
     static bool regCreator(const QString &scheme, CreateFunc creator, QString *errorString = nullptr)
