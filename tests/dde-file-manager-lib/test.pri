@@ -34,11 +34,8 @@ SOURCES += \
     $$PWD/controllers/ut_appcontroller.cpp \
     $$PWD/io/ut_dlocalfilehandler.cpp \
     $$PWD/log/ut_dfmlogmanager.cpp \
-    $$PWD/views/ut_computerviewitemdelegate.cpp \
     $$PWD/views/ut_dcomputerlistview.cpp \
     $$PWD/views/ut_ddetailview.cpp \
-    $$PWD/views/ut_dfiledialog.cpp \
-    $$PWD/views/ut_computerview.cpp \
     #$$PWD/views/ut_dfilemanagerwindow.cpp \ # 该用例内部使用了大量线程，大概率造成随机崩溃，暂时注释
     #$$PWD/views/ut_dfileview.cpp \ # 该用例内部使用了大量线程，大概率造成随机崩溃，暂时注释
     $$PWD/views/ut_dfmactionbutton.cpp \
@@ -46,13 +43,10 @@ SOURCES += \
     $$PWD/views/ut_dfmadvancesearchbar.cpp \
     $$PWD/views/ut_dtagactionwidget.cpp \
     $$PWD/views/ut_dtagedit.cpp \
-    $$PWD/views/ut_dtoolbar.cpp \
     $$PWD/views/ut_extendview.cpp \
     $$PWD/views/ut_filedialogstatusbar.cpp\
     $$PWD/views/ut_fileiconitem.cpp\
-    $$PWD/views/ut_fileviewhelper.cpp\
     $$PWD/views/ut_historystack.cpp\
-    $$PWD/views/ut_windowmanager.cpp\
     $$PWD/controllers/ut_masteredmediacontroller.cpp \
     $$PWD/controllers/ut_mergeddesktopcontroller.cpp \
     $$PWD/controllers/ut_mountcontroller.cpp \
@@ -83,7 +77,14 @@ SOURCES += \
 isEqual(ARCH, x86_64) {
 SOURCES += \
     $$PWD/io/ut_dgiofiledevice.cpp \
-    $$PWD/io/ut_dlocalfiledevice.cpp
+    $$PWD/io/ut_dlocalfiledevice.cpp \
+    # TODO 下面casse在ARM上存在严重内存泄露
+    $$PWD/views/ut_computerviewitemdelegate.cpp \
+    $$PWD/views/ut_dfiledialog.cpp \
+    $$PWD/views/ut_computerview.cpp \
+    $$PWD/views/ut_dtoolbar.cpp \
+    $$PWD/views/ut_fileviewhelper.cpp \
+    $$PWD/views/ut_windowmanager.cpp
 }
 
 SOURCES += \
@@ -133,7 +134,6 @@ SOURCES += \
     $$PWD/dialogs/ut_shareinfoframe.cpp \
     $$PWD/dialogs/ut_trashpropertydialog.cpp \
     $$PWD/dialogs/ut_usersharepasswordsettingdialog.cpp \
-    $$PWD/interfaces/ut_dfmcrumbbar.cpp \
     ###
     $$PWD/plugins/ut_dfmadditionalmenu.cpp \
     $$PWD/plugins/ut_pluginmanager.cpp \
@@ -194,7 +194,6 @@ SOURCES += \
     $$PWD/models/ut_vaultfileinfo.cpp \
     $$PWD/interfaces/ut_dfmsettings.cpp \
     $$PWD/interfaces/ut_dfmviewmanager.cpp \
-    $$PWD/controllers/ut_bookmarkmanager.cpp \
     $$PWD/gvfs/ut_mountaskpassworddialog.cpp \
     $$PWD/gvfs/ut_mountsecretdiskaskpassworddialog.cpp \
     $$PWD/gvfs/ut_qdrive.cpp \
@@ -240,7 +239,9 @@ isEqual(ARCH, x86_64) {
 SOURCES += \
     $$PWD/controllers/ut_recentcontroller.cpp \ # 此用例在arm下会导致进程卡主 暂时注释 后期整改
     $$PWD/interfaces/ut_diconitemdelegate.cpp \
-    $$PWD/interfaces/ut_dlistitemdelegate.cpp
+    $$PWD/interfaces/ut_dlistitemdelegate.cpp \
+    $$PWD/interfaces/ut_dfmcrumbbar.cpp \
+    $$PWD/controllers/ut_bookmarkmanager.cpp
 }
 
 SOURCES += \
