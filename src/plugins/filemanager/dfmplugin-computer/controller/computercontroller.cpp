@@ -360,25 +360,37 @@ void ComputerController::actEject(const QUrl &url)
 
 void ComputerController::actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info)
 {
-    auto target = info->targetUrl();
-    if (target.isValid()) {
-        if (info->extraProperty(DeviceProperty::kOptical).toBool())
-            target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->url()));
-        ComputerEventCaller::sendEnterInNewWindow(target);
+    if (info->order() == EntryFileInfo::kOrderApps) {
+        onOpenItem(winId, info->url());
+    } else if (info->order() > EntryFileInfo::kOrderCustom) {
+        ComputerEventCaller::sendCtrlNOnItem(winId, info->url());
     } else {
-        mountDevice(winId, info, kEnterInNewWindow);
+        auto target = info->targetUrl();
+        if (target.isValid()) {
+            if (info->extraProperty(DeviceProperty::kOptical).toBool())
+                target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->url()));
+            ComputerEventCaller::sendEnterInNewWindow(target);
+        } else {
+            mountDevice(winId, info, kEnterInNewWindow);
+        }
     }
 }
 
 void ComputerController::actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info)
 {
-    auto target = info->targetUrl();
-    if (target.isValid()) {
-        if (info->extraProperty(DeviceProperty::kOptical).toBool())
-            target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->url()));
-        ComputerEventCaller::sendEnterInNewTab(winId, target);
+    if (info->order() == EntryFileInfo::kOrderApps) {
+        onOpenItem(winId, info->url());
+    } else if (info->order() > EntryFileInfo::kOrderCustom) {
+        ComputerEventCaller::sendCtrlTOnItem(winId, info->url());
     } else {
-        mountDevice(winId, info, kEnterInNewTab);
+        auto target = info->targetUrl();
+        if (target.isValid()) {
+            if (info->extraProperty(DeviceProperty::kOptical).toBool())
+                target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(info->url()));
+            ComputerEventCaller::sendEnterInNewTab(winId, target);
+        } else {
+            mountDevice(winId, info, kEnterInNewTab);
+        }
     }
 }
 
@@ -502,6 +514,9 @@ void ComputerController::actProperties(quint64 winId, DFMEntryFileInfoPointer in
 {
     Q_UNUSED(winId);
     if (!info)
+        return;
+
+    if (info->order() == EntryFileInfo::EntryOrder::kOrderApps)
         return;
 
     if (info->suffix() == SuffixInfo::kUserDir) {

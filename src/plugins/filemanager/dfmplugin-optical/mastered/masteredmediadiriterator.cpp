@@ -61,7 +61,8 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     }
 
     QString realpath { mntPoint + OpticalHelper::burnFilePath(url) };
-    discIterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filters, flags));
+    if (realpath != "/")
+        discIterator = QSharedPointer<QDirIterator>(new QDirIterator(realpath, nameFilters, filters, flags));
 }
 
 QUrl MasteredMediaDirIterator::next()

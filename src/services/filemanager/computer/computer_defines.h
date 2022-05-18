@@ -31,6 +31,8 @@ DSB_FM_BEGIN_NAMESPACE
 namespace EventType {
 extern const int kContextActionTriggered;   // (quint64 winId, QUrl, QString actionText)
 extern const int kOnOpenItem;   // (quint64, QUrl)
+extern const int kOnCtrlNTriggered;   //  (quint64, QUrl)
+extern const int kOnCtrlTTriggered;   // (quint64, QUrl)
 };   // namespace EventType
 
 DSB_FM_END_NAMESPACE

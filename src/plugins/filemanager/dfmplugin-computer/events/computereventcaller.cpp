@@ -117,6 +117,18 @@ void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
     qDebug() << "send open item: " << url;
 }
 
+void ComputerEventCaller::sendCtrlNOnItem(quint64 winId, const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnCtrlNTriggered, winId, url);
+    qDebug() << "send ctrl n at item: " << url;
+}
+
+void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
+{
+    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnCtrlTTriggered, winId, url);
+    qDebug() << "send ctrl t at item: " << url;
+}
+
 void ComputerEventCaller::sendShowPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
