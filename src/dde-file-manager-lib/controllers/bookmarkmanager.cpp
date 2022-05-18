@@ -230,7 +230,7 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
         {BOOKMARK_CREATED, bookmarkData.m_created.toString(Qt::ISODate)},
         {BOOKMARK_LASTMODIFIED, bookmarkData.m_lastModified.toString(Qt::ISODate)},
         {BOOKMARK_MOUNTPOINT, bookmarkData.mountPoint},
-        {BOOKMARK_MOUNTPOINT, bookmarkData.locateUrl}
+        {BOOKMARK_LOCATEURL, bookmarkData.locateUrl}
     };
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
