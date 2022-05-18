@@ -50,7 +50,7 @@ namespace  {
             wm.clearWindowActions();
             WindowManager::m_count = 0;
             for (const QWidget *w : WindowManager::m_windows.keys()){
-                    delete w;
+                delete w;
             }
             WindowManager::m_windows.clear();
         }
