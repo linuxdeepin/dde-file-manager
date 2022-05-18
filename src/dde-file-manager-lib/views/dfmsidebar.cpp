@@ -833,18 +833,18 @@ void DFMSideBar::initRecentItem()
         recentLambda(var);
         // sync policy recent
         auto policyV = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
-        if (policyV.isValid() && policyV.toBool() != var)
-            GroupPolicy::instance()->setValue(RECENT_HIDDEN, var);
+        if (policyV.isValid() && policyV.toBool() == var)
+            GroupPolicy::instance()->setValue(RECENT_HIDDEN, !var);
     };
 
     auto policyWayRecentLambda = [=](QVariant var){
         auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
         auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
-        if (var.isValid() && (var.toString() == RECENT_HIDDEN) && (tempValue != oldV)) {
-            recentLambda(var.toBool());
+        if (var.isValid() && (var.toString() == RECENT_HIDDEN) && (tempValue.toBool() == oldV.toBool())) {
+            recentLambda(!tempValue.toBool());
 
             // sync old recent
-            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, tempValue);
+            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, !tempValue.toBool());
         }
     };
 
@@ -853,11 +853,11 @@ void DFMSideBar::initRecentItem()
     } else {
         auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
         if (tempValue.isValid()) {
-            recentLambda(tempValue.toBool());
+            recentLambda(!tempValue.toBool());
             // sync old recent
             auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
-            if (tempValue.isValid() && tempValue.toBool() != oldV.toBool())
-                DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, tempValue.toBool());
+            if (tempValue.isValid() && tempValue.toBool() == oldV.toBool())
+                DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, !tempValue.toBool());
         } else {
             recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
         }
