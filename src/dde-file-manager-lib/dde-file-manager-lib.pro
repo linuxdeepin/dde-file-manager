@@ -199,6 +199,7 @@ appentry.files = plugins/.readme
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations appentry \
  icon includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
 
+greaterThan(QT.dtkcore.VERSION, 5.5.18) {
 meta_file.files += \
   policyconfig/org.deepin.dde.file-manager.json
 meta_file.appid = org.deepin.dde.file-manager
@@ -206,6 +207,7 @@ meta_file.base = policyconfig
 
 DCONFIG_META_FILES += meta_file
 load(dtk_install_dconfig)
+}
 
 DISTFILES += \
     mimetypeassociations/mimetypeassociations.json \

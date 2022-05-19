@@ -21,10 +21,16 @@
 #ifndef GROUPPOLICY_H
 #define GROUPPOLICY_H
 
-#include <DConfig>
+#include <dtkcore_global.h>
+
+#define DTK_POLICY_SUPPORT (DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 30, 0))
+#if (DTK_POLICY_SUPPORT)
+    #include <DConfig>
+#define ENABLE_GROUP_POLICY
+#endif
 
 #include <QObject>
-#include <QMutex>
+#include <QVariant>
 
 class GroupPolicy : public QObject
 {
@@ -42,7 +48,9 @@ signals:
 protected:
     explicit GroupPolicy(QObject *parent = nullptr);
 private:
-    Dtk::Core::DConfig *m_config;
-};
 
+#if (DTK_POLICY_SUPPORT)
+    Dtk::Core::DConfig *m_config;
+#endif
+};
 #endif // GROUPPOLICY_H

@@ -208,11 +208,14 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         }
     }
 
-    bool hasSetDiskPolicy = GroupPolicy::instance()->containKey(DISK_HIDDEN);
+    bool hasSetDiskPolicy;
     QStringList diskPolicyList;
-    if (hasSetDiskPolicy)
-        diskPolicyList = GroupPolicy::instance()->getValue(DISK_HIDDEN).toStringList();
     QStringList hintSystemDisks;
+    if (DTK_POLICY_SUPPORT) {
+        hasSetDiskPolicy = GroupPolicy::instance()->containKey(DISK_HIDDEN);
+        if (hasSetDiskPolicy)
+            diskPolicyList = GroupPolicy::instance()->getValue(DISK_HIDDEN).toStringList();
+    }
 
     QStringList blkds = DDiskManager::blockDevices({});
     for (auto blks : blkds) {
@@ -224,15 +227,22 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
 
         reloadBlkName(blks, blk);
 
-        if (hasSetDiskPolicy && blk->hintSystem() && diskPolicyList.contains(blk->idUUID()))
-            continue;
+        if (DTK_POLICY_SUPPORT) {
+            if (hasSetDiskPolicy && blk->hintSystem() && diskPolicyList.contains(blk->idUUID()))
+                continue;
 
-        if (blk->hintSystem())
-            hintSystemDisks << blk->idUUID();
+            if (blk->hintSystem())
+                hintSystemDisks << blk->idUUID();
 
-        if (!hasSetDiskPolicy && DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
-            qDebug()  << "block device is ignored by hintSystem&HiddenSystemPartition:"  << blks;
-            continue;
+            if (!hasSetDiskPolicy && DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
+                qDebug()  << "block device is ignored by hintSystem&HiddenSystemPartition:"  << blks;
+                continue;
+            }
+        } else {
+            if (DFMApplication::genericAttribute(DFMApplication::GA_HiddenSystemPartition).toBool() && blk->hintSystem()) {
+                qDebug()  << "block device is ignored by hintSystem&HiddenSystemPartition:"  << blks;
+                continue;
+            }
         }
 
         DAbstractFileInfoPointer fp(new DFMRootFileInfo(DUrl(DFMROOT_ROOT + QString(blk->device()).mid(QString("/dev/").length()) + "." SUFFIX_UDISKS)));
@@ -333,7 +343,7 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
         qInfo() << item->fileUrl();
     }
 
-    if (hasSetDiskPolicy) {
+    if (DTK_POLICY_SUPPORT && hasSetDiskPolicy) {
         if (diskPolicyList.isEmpty()) {
             // 同步组策略到老配置(不选中隐藏)
             DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_HiddenSystemPartition, false);
