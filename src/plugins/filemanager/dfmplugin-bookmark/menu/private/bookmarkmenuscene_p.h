@@ -36,7 +36,7 @@ class BookmarkMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePriv
 public:
     explicit BookmarkMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
 
-    bool showBookMarkMenu;
+    bool showBookMarkMenu = true;
 };
 
 DPBOOKMARK_END_NAMESPACE

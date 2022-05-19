@@ -59,6 +59,7 @@ bool BookmarkMenuScene::initialize(const QVariantHash &params)
     if (d->selectFiles.count() != 1) {
         d->showBookMarkMenu = false;
     } else {
+        d->showBookMarkMenu = true;
         const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
         d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
