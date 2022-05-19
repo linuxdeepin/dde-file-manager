@@ -107,12 +107,9 @@ bool UniversalUtils::isLogined()
  * \return -1 if all available values are already taken or the
  *  program is shutting down.
  */
-[[gnu::hot]] int UniversalUtils::registerEventType() noexcept
+Q_DECL_DEPRECATED int UniversalUtils::registerEventType() noexcept
 {
-    static int type = GlobalEventType::kCustomBase;
-    if (type > GlobalEventType::kMaxCustom)
-        return -1;
-    return type++;
+    return DPF_NAMESPACE::genCustomEventId();
 }
 
 /*!

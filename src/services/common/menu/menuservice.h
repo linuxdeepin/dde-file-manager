@@ -26,7 +26,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractmenuscene.h"
-#include <dfm-base/interfaces/abstractscenecreator.h>
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
@@ -60,6 +60,7 @@ public:
 signals:
     void sceneAdded(const QString &scene);
     void sceneRemoved(const QString &scene);
+
 private:
     explicit MenuService(QObject *parent = nullptr);
     virtual ~MenuService() override;

@@ -25,7 +25,7 @@
 
 #include "dfmplugin_burn_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPBURN_BEGIN_NAMESPACE
 
@@ -34,11 +34,17 @@ class Burn : public DPF_NAMESPACE::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
 
+    DPF_EVENT_NAMESPACE(DPBURN_NAMESPACE)
+    DPF_EVENT_REG_SLOT(slot_ShowBurnDialog)
+    DPF_EVENT_REG_SLOT(slot_Erase)
+    DPF_EVENT_REG_SLOT(slot_PasteTo)
+
 public:
     virtual bool start() override;
 
 private slots:
     void bindScene(const QString &parentScene);
+    void bindEvent();
 };
 
 DPBURN_END_NAMESPACE

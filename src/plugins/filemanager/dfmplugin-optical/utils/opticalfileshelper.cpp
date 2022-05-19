@@ -25,11 +25,9 @@
 #include "mastered/masteredmediafileinfo.h"
 #include "events/opticaleventcaller.h"
 
-#include "services/common/burn/burn_defines.h"
-
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDir>
 
@@ -43,14 +41,14 @@ bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> url
     for (const QUrl &url : urls) {
         redirectedFileUrls << QUrl::fromLocalFile(MasteredMediaFileInfo(url).extraProperties()["mm_backer"].toString());
     }
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, windowId, redirectedFileUrls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, windowId, redirectedFileUrls);
     return true;
 }
 
 void OpticalFilesHelper::pasteFilesHandle(const QList<QUrl> sources, const QUrl target, bool isCopy)
 {
-    DSC_USE_NAMESPACE
-    dpfInstance.eventDispatcher().publish(Burn::EventType::kPasteTo, sources, target, isCopy);
+    auto type = DPF_EVENT_TYPE_SLOT("dfmplugin_burn", "slot_PasteTo");
+    dpfSlotChannel->push(type, sources, target, isCopy);
 }
 
 bool OpticalFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
@@ -65,7 +63,7 @@ bool OpticalFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const
         if (!OpticalHelper::localStagingRoot().isParentOf(backerUrl))
             redirectedFileUrls.push_back(backerUrl);
     }
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
     return !redirectedFileUrls.isEmpty();
 }
 
@@ -83,7 +81,7 @@ bool OpticalFilesHelper::openInTerminalHandle(const quint64 windowId, const QLis
         redirectedFileUrls << QUrl::fromLocalFile(backer);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, windowId, redirectedFileUrls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenInTerminal, windowId, redirectedFileUrls);
     QDir::setCurrent(currentDir);
     return true;
 }
@@ -99,7 +97,7 @@ JobHandlePointer OpticalFilesHelper::deleteFilesHandle(const quint64 windowId, c
             redirectedFileUrls.push_back(backer);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles, windowId, redirectedFileUrls, flags, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, windowId, redirectedFileUrls, flags, nullptr);
     return {};
 }
 
@@ -112,6 +110,6 @@ bool OpticalFilesHelper::linkFileHandle(const quint64 windowId, const QUrl url, 
         return false;
 
     QUrl redirectedFileUrl { QUrl::fromLocalFile(backer) };
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink, windowId, redirectedFileUrl, link);
+    dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, windowId, redirectedFileUrl, link);
     return true;
 }

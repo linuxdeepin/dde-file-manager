@@ -25,7 +25,7 @@
 
 #include "filedialogplugin_core_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DIALOGCORE_BEGIN_NAMESPACE
 

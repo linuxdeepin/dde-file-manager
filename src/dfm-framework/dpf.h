@@ -20,33 +20,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BURNSERVICE_H
-#define BURNSERVICE_H
+#ifndef DPF_H
+#define DPF_H
 
-#include "burn_defines.h"
+#include <dfm-framework/backtrace/backtrace.h>
+#include <dfm-framework/event/event.h>
+#include <dfm-framework/lifecycle/lifecycle.h>
+#include <dfm-framework/listener/listener.h>
+#include <dfm-framework/service/pluginservicecontext.h>   // TODO(zhangs): remove it
+#include <dfm-framework/log/framelogmanager.h>
+#include <dfm-framework/log/codetimecheck.h>
 
-#include <QObject>
-
-#include <dfm-framework/framework.h>
-
-DSC_BEGIN_NAMESPACE
-
-class BurnService final : public dpf::PluginService, dpf::AutoServiceRegister<BurnService>
-{
-    Q_OBJECT
-    Q_DISABLE_COPY(BurnService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
-
-public:
-    static QString name()
-    {
-        return "org.deepin.service.BurnService";
-    }
-
-private:
-    explicit BurnService(QObject *parent = nullptr);
-};
-
-DSC_END_NAMESPACE
-
-#endif   // BURNSERVICE_H
+#endif   // DPF_H

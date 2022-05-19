@@ -38,12 +38,13 @@ class Listener final : public QObject
 
 public:
     explicit Listener(QObject *parent = nullptr);
-    static Listener &instance();
+    static Listener *instance();
 signals:
     void pluginsInitialized();
     void pluginsStarted();
 };
 
 DPF_END_NAMESPACE
+#define dpfListener ::DPF_NAMESPACE::Listener::instance()
 
 #endif   // LISTENER_H

@@ -24,7 +24,7 @@
 
 #include "ddplugin_core_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DDPCORE_BEGIN_NAMESPACE
 class WindowFrame;

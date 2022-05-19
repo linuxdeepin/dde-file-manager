@@ -102,8 +102,13 @@ public:
     static EventChannelManager &instance();
 
     template<class T, class Func>
-    [[gnu::hot]] inline void connect(EventType type, T *obj, Func method)
+    [[gnu::hot]] inline bool connect(EventType type, T *obj, Func method)
     {
+        if (!isValidEventType(type)) {
+            qWarning() << "Event " << type << "is invalid";
+            return false;
+        }
+
         QWriteLocker guard(&rwLock);
         if (ChannelMap.contains(type)) {
             ChannelMap[type]->setReceiver(obj, method);
@@ -112,6 +117,7 @@ public:
             Channel->setReceiver(obj, method);
             ChannelMap.insert(type, Channel);
         }
+        return true;
     }
 
     void disconnect(const EventType &type);

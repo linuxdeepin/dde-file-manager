@@ -25,8 +25,6 @@
 
 #include "dfmplugin_burn_global.h"
 
-#include "services/common/burn/burn_defines.h"
-
 #include <QObject>
 
 DPBURN_BEGIN_NAMESPACE

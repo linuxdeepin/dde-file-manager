@@ -37,7 +37,7 @@
 #include "services/common/menu/menuservice.h"
 #include "services/common/delegate/delegateservice.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QRectF>
 
@@ -58,7 +58,7 @@ void Tag::initialize()
     delegateServIns->registerUrlTransform(TagManager::scheme(), TagHelper::redirectTagUrl);
 
     connect(TagHelper::winServIns(), &WindowsService::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);
+    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);
 
     TagManager::instance();
 }

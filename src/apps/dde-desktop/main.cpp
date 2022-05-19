@@ -21,8 +21,6 @@
 
 #include "config.h"   //cmake
 
-#include <dfm-framework/framework.h>
-
 #include <DApplication>
 #include <DMainWindow>
 
@@ -34,6 +32,8 @@
 #include <QFile>
 #include <QtGlobal>
 #include <QDBusInterface>
+
+#include <dfm-framework/dpf.h>
 
 #include <iostream>
 #include <algorithm>
@@ -57,11 +57,9 @@ static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
 
-    auto &&lifeCycle = dpfInstance.lifeCycle();
-
     // set plugin iid from qt style
-    lifeCycle.addPluginIID(kFmPluginInterface);
-    lifeCycle.addPluginIID(kCommonPluginInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kFmPluginInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
 
     QDir dir(qApp->applicationDirPath());
     QString pluginsDir;
@@ -73,28 +71,28 @@ static bool pluginsLoad()
     }
     qDebug() << "using plugins dir:" << pluginsDir;
 
-    lifeCycle.setPluginPaths({ pluginsDir });
+    DPF_NAMESPACE::LifeCycle::setPluginPaths({ pluginsDir });
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!lifeCycle.readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
         return false;
 
     // We should make sure that the core plugin is loaded first
-    auto corePlugin = lifeCycle.pluginMetaObj(kPluginCore);
+    auto corePlugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(kPluginCore);
     if (corePlugin.isNull())
         return false;
     if (!corePlugin->fileName().contains(kLibCore)) {
         qWarning() << corePlugin->fileName() << "is not" << kLibCore;
         return false;
     }
-    if (!lifeCycle.loadPlugin(corePlugin))
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
         return false;
 
     // load plugins without core
-    if (!lifeCycle.loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
 
     dpfCheckTimeEnd();
@@ -120,9 +118,9 @@ static void registerDDESession()
 static void initLog()
 {
     const QString logFormat = "%{time}{yyyyMMdd.HH:mm:ss.zzz}[%{type:1}][%{function:-35} %{line:-4} %{threadid} ] %{message}\n";
-    dpfInstance.log().setLogFormat(logFormat);
-    dpfInstance.log().registerConsoleAppender();
-    dpfInstance.log().registerFileAppender();
+    dpfLogManager->setLogFormat(logFormat);
+    dpfLogManager->registerConsoleAppender();
+    dpfLogManager->registerFileAppender();
 }
 
 constexpr char kDesktopServiceName[] { "com.deepin.dde.desktop" };
@@ -137,7 +135,7 @@ int main(int argc, char *argv[])
     //a.setApplicationVersion(DApplication::buildVersion((GIT_VERSION))); //todo(zs)
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    dpfInstance.initialize();
+    DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();
 
     // Notify dde-desktop start up

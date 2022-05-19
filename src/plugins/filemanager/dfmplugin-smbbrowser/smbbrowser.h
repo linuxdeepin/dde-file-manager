@@ -25,7 +25,7 @@
 
 #include "dfmplugin_smbbrowser_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPSMBBROWSER_BEGIN_NAMESPACE
 

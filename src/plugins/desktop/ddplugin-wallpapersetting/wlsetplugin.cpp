@@ -25,9 +25,9 @@
 #include <dfm-base/utils/universalutils.h>
 
 #include "services/desktop/event/private/eventhelperfunc.h"
-#include <services/desktop/wallpapersetting/wallpaperservice.h>
-#include <services/desktop/screen/screenservice.h>
-#include <services/desktop/canvas/canvasservice.h>
+#include "services/desktop/wallpapersetting/wallpaperservice.h"
+#include "services/desktop/screen/screenservice.h"
+#include "services/desktop/canvas/canvasservice.h"
 
 DDP_WALLPAERSETTING_USE_NAMESPACE
 DSB_D_USE_NAMESPACE
@@ -74,8 +74,7 @@ bool WlSetPlugin::start()
             qWarning() << "Fail to get EventShowScreenSaver";
     }
 
-    auto &listen = dpfInstance.listener();
-    connect(&listen, &DPF_NAMESPACE::Listener::pluginsStarted, handle, &EventHandle::pluginStarted);
+    connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, handle, &EventHandle::pluginStarted);
     return true;
 }
 
@@ -85,13 +84,12 @@ dpf::Plugin::ShutdownFlag WlSetPlugin::stop()
 }
 
 EventHandle::EventHandle(QObject *parent)
-    : QObject(parent)
-    , EventProvider()
+    : QObject(parent), EventProvider()
 {
     eSignals.insert(kEventWallpaperChanged,
                     DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
     eSlots.insert(kEventWallpaperSetting,
-                    DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
+                  DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
     eSlots.insert(kEventScreenSaverSetting,
                   DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
 }
@@ -136,7 +134,7 @@ void EventHandle::pluginStarted()
         qWarning() << "CanvasService no event: CanvasManager_Signal_wallpaperSetting";
         connect(canvas, &CanvasService::sigEventChanged, this, [canvas, this](int eventType, const QStringList &event) {
             if ((eventType == EventType::kEventSignal)
-                    && event.contains("CanvasManager_Signal_wallpaperSetting")) {
+                && event.contains("CanvasManager_Signal_wallpaperSetting")) {
                 if (followEvent(canvas)) {
                     qInfo() << "CanvasManager_Signal_wallpaperSetting has resubscribed.";
                     disconnect(canvas, &CanvasService::sigEventChanged, this, nullptr);
@@ -199,7 +197,6 @@ void EventHandle::show(QString name, int mode)
     autoAct->setWatched(wallpaperSettings);
     autoAct->start();
 }
-
 
 bool EventHandle::followEvent(EventProvider *provider)
 {

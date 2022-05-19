@@ -42,7 +42,7 @@ bool Core::start()
         return new FileDialog(url);
     });
 
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
+    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
 
     return true;
 }

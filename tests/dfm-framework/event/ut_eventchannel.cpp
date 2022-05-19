@@ -22,7 +22,8 @@
 */
 #include "event/channel/eventchannel.h"
 #include "testqobject.h"
-#include "framework.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <gtest/gtest.h>
 
@@ -63,18 +64,16 @@ TEST_F(UT_EventChannel, test_async_send)
 TEST_F(UT_EventChannel, test_manager_push)
 {
     TestQObject b;
-    EventChannelManager &manager = dpfInstance.eventChannel();
-    manager.connect(123456, &b, &TestQObject::test1);
-    QVariant value = manager.push(123456, 10);
+    dpfSlotChannel->connect(12345, &b, &TestQObject::test1);
+    QVariant value = dpfSlotChannel->push(12345, 10);
     EXPECT_EQ(value.toInt(), 20);
 }
 
 TEST_F(UT_EventChannel, test_manager_post)
 {
     TestQObject b;
-    EventChannelManager &manager = dpfInstance.eventChannel();
-    manager.connect(123456, &b, &TestQObject::test1);
-    EventChannelFuture future = manager.post(123456, 10);
+    dpfSlotChannel->connect(12345, &b, &TestQObject::test1);
+    EventChannelFuture future = dpfSlotChannel->post(12345, 10);
     future.waitForFinished();
     QVariant value = future.result();
     EXPECT_EQ(value.toInt(), 20);

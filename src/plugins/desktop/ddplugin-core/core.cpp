@@ -48,8 +48,7 @@ static void registerFileSystem()
 void ddplugin_core::Core::initialize()
 {
     registerFileSystem();
-    auto &listen = dpfInstance.listener();
-    connect(&listen, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Core::onStart);
+    connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, this, &Core::onStart);
 }
 
 bool ddplugin_core::Core::start()

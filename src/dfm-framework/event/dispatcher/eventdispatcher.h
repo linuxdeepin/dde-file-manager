@@ -93,8 +93,13 @@ public:
     static EventDispatcherManager &instance();
 
     template<class T, class Func>
-    [[gnu::hot]] inline void subscribe(EventType type, T *obj, Func method)
+    [[gnu::hot]] inline bool subscribe(EventType type, T *obj, Func method)
     {
+        if (!isValidEventType(type)) {
+            qWarning() << "Event " << type << "is invalid";
+            return false;
+        }
+
         QWriteLocker lk(&rwLock);
         if (dispatcherMap.contains(type)) {
             dispatcherMap[type]->append(obj, method);
@@ -103,6 +108,7 @@ public:
             dispatcher->append(obj, method);
             dispatcherMap.insert(type, dispatcher);
         }
+        return true;
     }
 
     void unsubscribe(EventType type);

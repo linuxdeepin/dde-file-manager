@@ -29,7 +29,7 @@
 DPF_BEGIN_NAMESPACE
 
 namespace GlobalPrivate {
-static QMutex mutex;
+static QMutex kMutex;
 }   // namespace GlobalPrivate
 
 PluginManagerPrivate::PluginManagerPrivate(PluginManager *qq)
@@ -496,7 +496,7 @@ void PluginManagerPrivate::initPlugins()
     }
 
     // 私有类转发进行Sendler闭包
-    emit Listener::instance().d->pluginsInitialized();
+    emit Listener::instance()->d->pluginsInitialized();
 
     dpfCheckTimeEnd();
 }
@@ -541,7 +541,7 @@ void PluginManagerPrivate::startPlugins()
     }
 
     // 私有类转发进行Sendler闭包
-    emit Listener::instance().d->pluginsStarted();
+    emit Listener::instance()->d->pluginsStarted();
 
     dpfCheckTimeEnd();
 }
@@ -666,7 +666,6 @@ bool PluginManagerPrivate::doLoadPlugin(PluginMetaObjectPointer &pointer)
 
     //设置当前正在加载的标志位
     pointer->d->state = PluginMetaObject::State::Loading;
-
     if (!pointer->d->loader->load()) {
         pointer->d->error = "Failed load plugin: " + pointer->d->loader->errorString();
         qCritical() << pointer->errorString();

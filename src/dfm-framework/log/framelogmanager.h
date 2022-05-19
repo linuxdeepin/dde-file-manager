@@ -44,7 +44,7 @@ class FrameLogManager : public QObject
     Q_DISABLE_COPY(FrameLogManager)
 
 public:
-    static FrameLogManager &instance();
+    static FrameLogManager *instance();
 
     void registerConsoleAppender();
     void registerFileAppender();
@@ -63,5 +63,7 @@ private:
 };
 
 DPF_END_NAMESPACE
+
+#define dpfLogManager ::DPF_NAMESPACE::FrameLogManager::instance()
 
 #endif   // LOGMANAGER_H

@@ -58,10 +58,10 @@ FilterAppender *FrameLogManagerPrivate::filterAppender()
  * re-wrap the log function of dtk, add filter function
  */
 
-FrameLogManager &FrameLogManager::instance()
+FrameLogManager *FrameLogManager::instance()
 {
     static FrameLogManager ins;
-    return ins;
+    return &ins;
 }
 
 /*!

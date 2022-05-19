@@ -22,20 +22,15 @@
 */
 #include "opticaleventcaller.h"
 
-#include "services/common/burn/burn_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPOPTICAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
-
 void OpticalEventCaller::sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
 {
-    dispatcher()->publish(DSC_NAMESPACE::Burn::EventType::kShowBurnDlg, dev, isSupportedUDF, parent);
+    auto type = DPF_EVENT_TYPE_SLOT("dfmplugin_burn", "slot_ShowBurnDialog");
+    dpfSlotChannel->push(type, dev, isSupportedUDF, parent);
 }

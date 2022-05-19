@@ -22,11 +22,12 @@
 */
 #include "config.h"   // cmake
 
-#include <dfm-framework/framework.h>
-
 #include <QCoreApplication>
+
 #include <QDebug>
 #include <QDir>
+
+#include <dfm-framework/dpf.h>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -64,16 +65,15 @@ static void initLog()
     if (!logDir.exists())
         QDir().mkpath(logPath);
 
-    dpfInstance.log().setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
-    dpfInstance.log().registerConsoleAppender();
-    dpfInstance.log().registerFileAppender();
+    dpfLogManager->setlogFilePath(logPath + QCoreApplication::applicationName() + ".log");
+    dpfLogManager->registerConsoleAppender();
+    dpfLogManager->registerFileAppender();
 }
 
 static bool pluginsLoad()
 {
-    auto &&lifeCycle = dpfInstance.lifeCycle();
     // set plugin iid from qt style
-    lifeCycle.addPluginIID(kDaemonInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kDaemonInterface);
 
     QDir dir(qApp->applicationDirPath());
     QString pluginsDir;
@@ -84,28 +84,28 @@ static bool pluginsLoad()
         pluginsDir = dir.absolutePath();
     }
     qDebug() << "using plugins dir:" << pluginsDir;
-    lifeCycle.setPluginPaths({ pluginsDir });
+    DPF_NAMESPACE::LifeCycle::setPluginPaths({ pluginsDir });
 
     qInfo() << "Depend library paths:" << QCoreApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!lifeCycle.readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
         return false;
 
     // We should make sure that the core plugin is loaded first
-    auto corePlugin = lifeCycle.pluginMetaObj(kPluginCore);
+    auto corePlugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(kPluginCore);
     if (corePlugin.isNull())
         return false;
     if (!corePlugin->fileName().contains(kLibCore)) {
         qWarning() << corePlugin->fileName() << "is not" << kLibCore;
         return false;
     }
-    if (!lifeCycle.loadPlugin(corePlugin))
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
         return false;
 
     // load plugins without core
-    if (!lifeCycle.loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
 
     return true;
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
 
-    dpfInstance.initialize();
+    DPF_NAMESPACE::backtrace::initbacktrace();
 
     initLog();
     if (!pluginsLoad()) {

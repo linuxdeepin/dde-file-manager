@@ -29,40 +29,28 @@
 #include "dfm-framework/event/channel/eventchannel.h"
 #include "dfm-framework/event/sequence/eventsequence.h"
 #include "dfm-framework/service/pluginservicecontext.h"
-#include "dfm-framework/log/framelogmanager.h"
 #include "dfm-framework/log/codetimecheck.h"
 
 #include <QObject>
 
 DPF_BEGIN_NAMESPACE
 
-class FrameworkPrivate;
-
 /*!
  * \brief The Framework class
  */
-class DPF_EXPORT Framework
+class DPF_EXPORT Q_DECL_DEPRECATED_X("include <dfm-framework/dpf.h>") Framework
 {
     Q_DISABLE_COPY(Framework)
 public:
     static Framework &instance();
 
-    bool initialize();
-    bool start();
-    LifeCycle &lifeCycle() const;
     Q_DECL_DEPRECATED PluginServiceContext &serviceContext() const;
     [[gnu::hot]] EventDispatcherManager &eventDispatcher() const;
     Q_DECL_DEPRECATED EventUnicastManager &eventUnicast() const;
-    EventChannelManager &eventChannel() const;
     EventSequenceManager &eventSequence() const;
-    Listener &listener() const;
-    FrameLogManager &log() const;
 
 private:
     Framework();
-
-    Q_DECLARE_PRIVATE_D(qGetPtrHelper(d), Framework)
-    QScopedPointer<FrameworkPrivate> d;
 };
 
 DPF_END_NAMESPACE

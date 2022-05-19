@@ -30,10 +30,10 @@ Listener::Listener(QObject *parent)
 {
 }
 
-Listener &Listener::instance()
+Listener *Listener::instance()
 {
     static dpf::Listener listener;
-    return listener;
+    return &listener;
 }
 
 ListenerPrivate::ListenerPrivate(Listener *parent)

@@ -22,7 +22,8 @@
 */
 #include "event/dispatcher/eventdispatcher.h"
 #include "testqobject.h"
-#include "framework.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <gtest/gtest.h>
 

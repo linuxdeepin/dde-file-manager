@@ -25,7 +25,7 @@
 
 #include <services/desktop/event/eventprovider.h>
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DDP_WALLPAERSETTING_BEGIN_NAMESPACE
 
@@ -45,11 +45,14 @@ public slots:
     bool screenSaverSetting(QString name);
     void onQuit();
     void pluginStarted();
+
 protected:
     void onChanged();
     void show(QString name, int mode);
+
 private:
     bool followEvent(DSB_D_NAMESPACE::EventProvider *);
+
 private:
     WallpaperSettings *wallpaperSettings = nullptr;
     QVariantHash eSignals;
@@ -64,9 +67,10 @@ public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
 private:
     EventHandle *handle = nullptr;
 };
 
 DDP_WALLPAERSETTING_END_NAMESPACE
-#endif // WLSETPLUGIN_H
+#endif   // WLSETPLUGIN_H

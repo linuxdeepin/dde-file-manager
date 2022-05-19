@@ -23,6 +23,8 @@
 #include <qlogging.h>
 #include <QCoreApplication>
 
+#include <mutex>
+
 #include <csignal>
 #include <execinfo.h>
 #include <cxxabi.h>
@@ -142,12 +144,15 @@ void regSignal(int sig)
  */
 void initbacktrace()
 {
-    regSignal(SIGINT); /* Interactive attention signal.  */
-    regSignal(SIGILL); /* Illegal instruction.  */
-    regSignal(SIGABRT); /* Abnormal termination.  */
-    regSignal(SIGFPE); /* Erroneous arithmetic operation.  */
-    regSignal(SIGSEGV); /* Invalid access to storage.  */
-    regSignal(SIGTERM); /* Termination request.  */
+    static std::once_flag flag;
+    std::call_once(flag, []() {
+        regSignal(SIGINT); /* Interactive attention signal.  */
+        regSignal(SIGILL); /* Illegal instruction.  */
+        regSignal(SIGABRT); /* Abnormal termination.  */
+        regSignal(SIGFPE); /* Erroneous arithmetic operation.  */
+        regSignal(SIGSEGV); /* Invalid access to storage.  */
+        regSignal(SIGTERM); /* Termination request.  */
+    });
 }
 }
 DPF_END_NAMESPACE

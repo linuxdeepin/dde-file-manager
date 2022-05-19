@@ -83,8 +83,13 @@ public:
     static EventSequenceManager &instance();
 
     template<class T, class Func>
-    inline void follow(EventType type, T *obj, Func method)
+    inline bool follow(EventType type, T *obj, Func method)
     {
+        if (!isValidEventType(type)) {
+            qWarning() << "Event " << type << "is invalid";
+            return false;
+        }
+
         QWriteLocker lk(&rwLock);
         if (sequenceMap.contains(type)) {
             sequenceMap[type]->append(obj, method);
@@ -93,6 +98,7 @@ public:
             sequence->append(obj, method);
             sequenceMap.insert(type, sequence);
         }
+        return true;
     }
 
     void unfollow(EventType type);

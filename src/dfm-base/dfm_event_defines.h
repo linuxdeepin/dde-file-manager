@@ -27,14 +27,16 @@
 
 #include <QObject>
 
+#include <dfm-framework/event/event.h>
+
 DFMBASE_BEGIN_NAMESPACE
 
 /*!
  * \brief The PublicEventType enum define Event type
  * that can be used in multiple plugins
  */
-enum GlobalEventType : uint16_t {
-    kUnknowType = 0,
+enum GlobalEventType : DPF_NAMESPACE::EventType {
+    kUnknowType = DPF_NAMESPACE::EventTypeScope::kWellKnownEventBase,
 
     kChangeCurrentUrl = 1,
     kOpenNewWindow,
@@ -76,10 +78,9 @@ enum GlobalEventType : uint16_t {
     kSetPermissionResult,
     kOpenInTerminalResult,
 
-    kTempDesktopPaintTag = 9998, //! todo(zy) need to delete when find solution
-    // first user event id, use UniversalUtils::registerEventType crreate custom event type
-    kCustomBase = 10000,   // first user event id
-    kMaxCustom = 65535   // last user event id
+    kTempDesktopPaintTag = 9998,   //! todo(zy) need to delete when find solution
+
+    kMaxEventType = DPF_NAMESPACE::EventTypeScope::kWellKnownEventTop
 };
 DFMBASE_END_NAMESPACE
 

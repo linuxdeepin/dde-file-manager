@@ -26,14 +26,13 @@
 #include "services/filemanager/computer/computer_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/burn/burn_defines.h"
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QWidget>
 
@@ -50,8 +49,7 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QUrl &url)
         return;
 
     DSB_FM_USE_NAMESPACE
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowServ = ctx.service<WindowsService>(WindowsService::name());
+    auto windowServ = WindowsService::service();
     quint64 winId = windowServ->findWindowId(sender);
 
     cdTo(winId, url);
@@ -78,7 +76,7 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
         return;
 
     DFMBASE_USE_NAMESPACE
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 }
 
 void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
@@ -94,7 +92,7 @@ void ComputerEventCaller::sendEnterInNewWindow(const QUrl &url)
     if (!ComputerUtils::checkGvfsMountExist(url))
         return;
 
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
 }
 
 void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
@@ -102,30 +100,30 @@ void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
     if (!ComputerUtils::checkGvfsMountExist(url))
         return;
 
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, winId, url);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, winId, url);
 }
 
 void ComputerEventCaller::sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kContextActionTriggered, winId, url, action);
+    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kContextActionTriggered, winId, url, action);
     qDebug() << "action triggered: " << url << action;
 }
 
 void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, winId, url);
+    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, winId, url);
     qDebug() << "send open item: " << url;
 }
 
 void ComputerEventCaller::sendCtrlNOnItem(quint64 winId, const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnCtrlNTriggered, winId, url);
+    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnCtrlNTriggered, winId, url);
     qDebug() << "send ctrl n at item: " << url;
 }
 
 void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::EventType::kOnCtrlTTriggered, winId, url);
+    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnCtrlTTriggered, winId, url);
     qDebug() << "send ctrl t at item: " << url;
 }
 
@@ -133,12 +131,13 @@ void ComputerEventCaller::sendShowPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 
 void ComputerEventCaller::sendErase(const QString &dev)
 {
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Burn::EventType::kErase, dev);
+    auto type = DPF_EVENT_TYPE_SLOT("dfmplugin_burn", "slot_Erase");
+    dpfSlotChannel->push(type, dev);
 }
 
 DPCOMPUTER_END_NAMESPACE

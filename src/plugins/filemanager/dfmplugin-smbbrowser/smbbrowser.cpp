@@ -64,7 +64,7 @@ void SmbBrowser::initialize()
     DSB_FM_USE_NAMESPACE
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
 
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerSambaPrehandler, Qt::DirectConnection);
+    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerSambaPrehandler, Qt::DirectConnection);
 }
 
 bool SmbBrowser::start()

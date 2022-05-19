@@ -39,7 +39,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 #include <dfm-mount/ddevicemanager.h>
 
 #include <QTimer>
@@ -94,9 +94,9 @@ bool Core::start()
     }
 
     // show first window when all plugin initialized
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
+    connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Core::onAllPluginsInitialized);
 
-    connect(&dpfInstance.listener(), &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
+    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &Core::onAllPluginsStarted);
 
     // the object must be initialized in main thread, otherwise the GVolumeMonitor do not have an event loop.
     static std::once_flag flg;

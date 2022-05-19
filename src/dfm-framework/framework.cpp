@@ -24,22 +24,6 @@
 
 DPF_BEGIN_NAMESPACE
 
-class FrameworkPrivate
-{
-    friend class Framework;
-    Framework *const q;
-    // Plugin lifeCycle manager.
-    QScopedPointer<LifeCycle> lifeCycle;
-    bool bInitialized = false;
-
-    explicit FrameworkPrivate(Framework *dd);
-};
-
-FrameworkPrivate::FrameworkPrivate(Framework *dd)
-    : q(dd)
-{
-}
-
 /*!
  * \brief Get framework instance.
  * \return
@@ -51,63 +35,12 @@ Framework &Framework::instance()
 }
 
 /*!
- * \brief Framework inner modules will be initialized
- * when it invoked,same for plugins.
- * \return
- */
-bool Framework::initialize()
-{
-    if (d->bInitialized) {
-        qDebug() << "Frame work has been initialized!";
-        return true;
-    }
-
-    backtrace::initbacktrace();
-
-    // It will be true after all inner moudules initialized
-    // successfully.
-    d->bInitialized = true;
-
-    return true;
-}
-
-/*!
- * \brief Start framework after initialized.
- * \return
- */
-bool Framework::start()
-{
-    // TODO(anyone):Start plugin after initialized,
-    // thus plugin logic will be run
-    return true;
-}
-
-/*!
- * \brief Get plugin life cycle manager
- * \return
- */
-LifeCycle &Framework::lifeCycle() const
-{
-    return *d->lifeCycle;
-}
-
-/*!
  * \brief Get plugin service context
  * \return
  */
 PluginServiceContext &Framework::serviceContext() const
 {
     return PluginServiceContext::instance();
-}
-
-Listener &Framework::listener() const
-{
-    return Listener::instance();
-}
-
-FrameLogManager &Framework::log() const
-{
-    return FrameLogManager::instance();
 }
 
 EventDispatcherManager &Framework::eventDispatcher() const
@@ -120,20 +53,13 @@ EventUnicastManager &Framework::eventUnicast() const
     return EventUnicastManager::instance();
 }
 
-EventChannelManager &Framework::eventChannel() const
-{
-    return EventChannelManager::instance();
-}
-
 EventSequenceManager &Framework::eventSequence() const
 {
     return EventSequenceManager::instance();
 }
 
 Framework::Framework()
-    : d(new FrameworkPrivate(this))
 {
-    d->lifeCycle.reset(new LifeCycle());
 }
 
 DPF_END_NAMESPACE

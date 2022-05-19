@@ -26,7 +26,7 @@
 #include <QDir>
 #include <QTextCodec>
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DGUI_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -48,8 +48,8 @@ static constexpr char kDFMCoreLibName[] { "libdfmplugin-core.so" };
 
 static void initLog()
 {
-    dpfInstance.log().registerConsoleAppender();
-    dpfInstance.log().registerFileAppender();
+    dpfLogManager->registerConsoleAppender();
+    dpfLogManager->registerFileAppender();
 }
 
 static void initEnv()
@@ -69,14 +69,12 @@ static void initEnv()
 
 static bool singlePluginLoad(const QString &pluginName, const QString &libName)
 {
-    auto &&lifeCycle = dpfInstance.lifeCycle();
-
-    auto plugin = lifeCycle.pluginMetaObj(pluginName);
+    auto plugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(pluginName);
     if (plugin.isNull())
         return false;
     if (!plugin->fileName().contains(libName))
         return false;
-    if (!lifeCycle.loadPlugin(plugin))
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(plugin))
         return false;
 
     return true;
@@ -98,15 +96,13 @@ static bool pluginsLoad()
         "dfmplugin-tag"
     };
 
-    auto &&lifeCycle = dpfInstance.lifeCycle();
-
     // don't load plugins of blackNameList
-    lifeCycle.addBlackPluginNames(blackNameList);
+    DPF_NAMESPACE::LifeCycle::addBlackPluginNames(blackNameList);
 
     // set plugin iid from qt style
-    lifeCycle.addPluginIID(kDialogPluginInterface);
-    lifeCycle.addPluginIID(kFmPluginInterface);
-    lifeCycle.addPluginIID(kCommonPluginInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kDialogPluginInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kFmPluginInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     if (!QDir(pluginsDir).exists()) {
@@ -114,13 +110,13 @@ static bool pluginsLoad()
     }
     qDebug() << "using plugins dir:" << pluginsDir;
 
-    lifeCycle.setPluginPaths({ pluginsDir });
+    DPF_NAMESPACE::LifeCycle::setPluginPaths({ pluginsDir });
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!lifeCycle.readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
         return false;
 
     // We should make sure that the core plugin is loaded first
@@ -134,7 +130,7 @@ static bool pluginsLoad()
     }
 
     // load plugins without core
-    if (!lifeCycle.loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
 
     dpfCheckTimeEnd();
@@ -155,7 +151,7 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
     // TODO(zhangs): installTranslator
 
-    dpfInstance.initialize();
+    DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();
 
     if (!pluginsLoad()) {

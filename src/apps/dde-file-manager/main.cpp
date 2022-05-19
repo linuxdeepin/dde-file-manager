@@ -26,8 +26,9 @@
 
 #include "services/filemanager/command/commandservice.h"
 
-#include <dfm-framework/framework.h>
-#include <dfm-base/utils/sysinfoutils.h>
+#include "dfm-base/utils/sysinfoutils.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QIcon>
 #include <QDir>
@@ -92,11 +93,9 @@ static bool pluginsLoad()
 {
     dpfCheckTimeBegin();
 
-    auto &&lifeCycle = dpfInstance.lifeCycle();
-
     // set plugin iid from qt style
-    lifeCycle.addPluginIID(kFmPluginInterface);
-    lifeCycle.addPluginIID(kCommonPluginInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kFmPluginInterface);
+    DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
 
     QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
     if (!QDir(pluginsDir).exists()) {
@@ -104,26 +103,26 @@ static bool pluginsLoad()
     }
     qDebug() << "using plugins dir:" << pluginsDir;
 
-    lifeCycle.setPluginPaths({ pluginsDir });
+    DPF_NAMESPACE::LifeCycle::setPluginPaths({ pluginsDir });
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();
 
     // read all plugins in setting paths
-    if (!lifeCycle.readPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::readPlugins())
         return false;
 
     // We should make sure that the core plugin is loaded first
-    auto corePlugin = lifeCycle.pluginMetaObj(kPluginCore);
+    auto corePlugin = DPF_NAMESPACE::LifeCycle::pluginMetaObj(kPluginCore);
     if (corePlugin.isNull())
         return false;
     if (!corePlugin->fileName().contains(kLibCore))
         return false;
-    if (!lifeCycle.loadPlugin(corePlugin))
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugin(corePlugin))
         return false;
 
     // load plugins without core
-    if (!lifeCycle.loadPlugins())
+    if (!DPF_NAMESPACE::LifeCycle::loadPlugins())
         return false;
 
     dpfCheckTimeEnd();
@@ -162,8 +161,8 @@ static void initEnv()
 
 static void initLog()
 {
-    dpfInstance.log().registerConsoleAppender();
-    dpfInstance.log().registerFileAppender();
+    dpfLogManager->registerConsoleAppender();
+    dpfLogManager->registerFileAppender();
 }
 
 int main(int argc, char *argv[])
@@ -188,7 +187,7 @@ int main(int argc, char *argv[])
                                                            "and other useful functions."));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    dpfInstance.initialize();
+    DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();
 
     commandServIns->process();
