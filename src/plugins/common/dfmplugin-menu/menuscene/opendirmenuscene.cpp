@@ -124,6 +124,12 @@ bool OpenDirMenuScene::triggered(QAction *action)
 
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
 
+    // open in new window
+    if (actionId == ActionID::kOpenInNewWindow) {
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+        return true;
+    }
+
     // Open in terminal
     if (actionId == ActionID::kOpenInTerminal) {
         QList<QUrl> urls;

@@ -43,6 +43,7 @@ const int kPaintListItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType(
 const int kPaintIconItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kCheckDragDropAction = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSelectFiles = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
+const int kSelectAll = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kFetchSelectionModes = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kFetchCustomColumnRoles = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kFetchCustomRoleDisplayName = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();

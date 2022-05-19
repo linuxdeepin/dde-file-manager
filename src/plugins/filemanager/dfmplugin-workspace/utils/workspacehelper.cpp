@@ -221,6 +221,13 @@ void WorkspaceHelper::selectFiles(quint64 windowId, const QList<QUrl> &files)
         view->selectFiles(files);
 }
 
+void WorkspaceHelper::selectAll(quint64 windowId)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        view->selectAll();
+}
+
 bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const Workspace::FileViewRoutePrehaldler prehandler)
 {
     if (kPrehandlers.contains(scheme))

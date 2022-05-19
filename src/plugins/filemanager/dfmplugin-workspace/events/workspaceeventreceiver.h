@@ -50,6 +50,7 @@ public slots:
     void handleShowCustomTopWidget(quint64 windowId, const QString &cheme, bool visible);
     void handleCloseTabs(const QUrl &url);
     void handleSelectFiles(quint64 windowId, const QList<QUrl> &files);
+    void handleSelectAll(quint64 windowId);
 
     void handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode);
     void handleSetEnabledSelectionModes(const quint64 windowId, const QList<QAbstractItemView::SelectionMode> &modes);

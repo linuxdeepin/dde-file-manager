@@ -115,6 +115,7 @@ WorkspaceMenuScene::WorkspaceMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new WorkspaceMenuScenePrivate(this))
 {
+    d->predicateName[ActionID::kRefresh] = tr("Refresh");
 }
 
 QString WorkspaceMenuScene::name() const
@@ -203,8 +204,12 @@ bool WorkspaceMenuScene::create(QMenu *parent)
     d->view = qobject_cast<FileView *>(parent->parent());
     Q_ASSERT(d->view);
 
-    if (!d->isEmptyArea) {
-        this->createNormalMenu(parent);
+    if (d->isEmptyArea) {
+        if (d->isRefreshOn()) {
+            auto tempAction = parent->addAction(d->predicateName.value(ActionID::kRefresh));
+            d->predicateAction[ActionID::kRefresh] = tempAction;
+            tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
+        }
     }
 
     // 创建子场景菜单
@@ -228,12 +233,6 @@ bool WorkspaceMenuScene::triggered(QAction *action)
         return emptyMenuTriggered(action);
 
     return normalMenuTriggered(action);
-}
-
-void WorkspaceMenuScene::createNormalMenu(QMenu *parent)
-{
-    // todo (liuzhangjian)
-    Q_UNUSED(parent);
 }
 
 bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
@@ -298,6 +297,14 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
         }
     }
 
+    if (sceneName == WorkspaceMenuCreator::name()) {
+        // refresh
+        if (actionId == ActionID::kRefresh) {
+            d->view->refresh();
+            return true;
+        }
+    }
+
     return AbstractMenuScene::triggered(action);
 }
 
@@ -325,12 +332,6 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
             return true;
         }
     } else if (sceneName == kOpenDirMenuSceneName) {
-        // open in new window
-        if (actionId == dfmplugin_menu::ActionID::kOpenInNewWindow) {
-            WorkspaceEventCaller::sendOpenWindow(d->selectFiles);
-            return true;
-        }
-        // open in new tab
         if (actionId == dfmplugin_menu::ActionID::kOpenInNewTab) {
             WorkspaceHelper::instance()->actionNewTab(d->windowId, d->focusFile);
             return true;

@@ -40,8 +40,10 @@
 static constexpr char kClipBoardMenuSceneName[] = "ClipBoardMenu";
 static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
-static constexpr char kPropertyMenuSceneName[] = "Property";
+static constexpr char kPropertyMenuSceneName[] = "PropertyMenu";
 static constexpr char kTrashMenuSceneName[] = "TrashMenu";
+static const char *const kOemMenuSceneName = "OemMenu";
+static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 
 DPTRASH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -93,10 +95,14 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
         }
         if (auto workspaceScene = MenuService::service()->createScene(kFileOperatorMenuSceneName))
             currentScene.append(workspaceScene);
+        if (auto dirScene = MenuService::service()->createScene(kOpenDirMenuSceneName))
+            currentScene.append(dirScene);
         if (auto workspaceScene = MenuService::service()->createScene(kClipBoardMenuSceneName))
             currentScene.append(workspaceScene);
         if (auto workspaceScene = MenuService::service()->createScene(kPropertyMenuSceneName))
             currentScene.append(workspaceScene);
+        if (auto oemScene = MenuService::service()->createScene(kOemMenuSceneName))
+            currentScene.append(oemScene);
     } else {
         if (auto workspaceScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
             currentScene.append(workspaceScene);
@@ -186,8 +192,10 @@ TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopy);
     selectSupportActions.insert(kFileOperatorMenuSceneName, dfmplugin_menu::ActionID::kDelete);
+    selectSupportActions.insert(kFileOperatorMenuSceneName, dfmplugin_menu::ActionID::kOpen);
     selectSupportActions.insert(kPropertyMenuSceneName, "property");
     selectSupportActions.insert(kTrashMenuSceneName, TrashActionId::kRestore);
+    selectSupportActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInNewWindow);
 }
 
 void TrashMenuScenePrivate::updateMenu(QMenu *menu)
@@ -229,11 +237,19 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
 
             auto sceneName = actionScene->name();
             auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
-            if (!selectSupportActions.contains(sceneName, actId))
+            if (!selectSupportActions.contains(sceneName, actId) && sceneName != kOemMenuSceneName)
                 menu->removeAction(act);
+
+            if (sceneName == kOemMenuSceneName)
+                menu->insertSeparator(act);
 
             if (sceneName == kPropertyMenuSceneName)
                 menu->insertSeparator(act);
+
+            if (sceneName == kFileOperatorMenuSceneName
+                && focusFileInfo->isFile()
+                && actId == dfmplugin_menu::ActionID::kOpen)
+                menu->removeAction(act);
 
             if (actId == TrashActionId::kRestore
                 || actId == dfmplugin_menu::ActionID::kDelete

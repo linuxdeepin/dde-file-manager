@@ -57,6 +57,8 @@ void WorkspaceEventReceiver::initConnection()
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectFiles,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
+    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectAll,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectAll);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetSelectionMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSelectionMode);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetEnabledSelectionModes,
@@ -96,6 +98,11 @@ void WorkspaceEventReceiver::handleCloseTabs(const QUrl &url)
 void WorkspaceEventReceiver::handleSelectFiles(quint64 windowId, const QList<QUrl> &files)
 {
     WorkspaceHelper::instance()->selectFiles(windowId, files);
+}
+
+void WorkspaceEventReceiver::handleSelectAll(quint64 windowId)
+{
+    WorkspaceHelper::instance()->selectAll(windowId);
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)

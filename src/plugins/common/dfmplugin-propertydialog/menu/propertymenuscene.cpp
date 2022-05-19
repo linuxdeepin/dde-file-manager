@@ -124,7 +124,7 @@ bool PropertyMenuScene::create(QMenu *parent)
 
     QAction *tempAction = parent->addAction(d->predicateName.value(PropertyActionId::kProperty));
     d->predicateAction[PropertyActionId::kProperty] = tempAction;
-    tempAction->setProperty(PropertyActionId::kProperty, PropertyActionId::kProperty);
+    tempAction->setProperty(ActionPropertyKey::kActionID, PropertyActionId::kProperty);
 
     QList<QUrl> redirectedUrlList;
     for (const auto &fileUrl : d->selectFiles) {

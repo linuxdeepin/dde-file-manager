@@ -40,7 +40,6 @@ private:
     bool openFileLocation(const QString &path);
 
 private:
-    QMultiHash<QString, QString> emptyDisableActions;
     SearchMenuScene *q;
 };
 

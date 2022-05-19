@@ -28,7 +28,9 @@
 #include "services/common/dfm_common_service_global.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/menu/menu_defines.h"
-#include <plugins/common/dfmplugin-menu/menuscene/action_defines.h>
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+
+#include <QGSettings>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -50,6 +52,7 @@ public:
             ActionID::kSortBy,
             dfmplugin_menu::ActionID::kOpenAsAdmin,
             dfmplugin_menu::ActionID::kOpenInTerminal,
+            ActionID::kRefresh,
             dfmplugin_menu::ActionID::kSeparator,
             dfmplugin_menu::ActionID::kPaste,
             dfmplugin_menu::ActionID::kSelectAll
@@ -83,6 +86,21 @@ public:
         };
 
         return actionRule;
+    }
+
+    inline bool isRefreshOn() const
+    {
+        // the gsetting control for refresh action
+        if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
+            const QGSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
+                                        "/com/deepin/dde/filemanager/contextmenu/");
+            if (menuSwitch.keys().contains("refresh")) {
+                auto showRefreh = menuSwitch.get("refresh");
+                if (showRefreh.isValid())
+                    return showRefreh.toBool();
+            }
+        }
+        return false;
     }
 
 public:

@@ -26,6 +26,7 @@ namespace dfmplugin_workspace {
 namespace ActionID {
 static constexpr char kSortBy[] = "sort-by";
 static constexpr char kDisplayAs[] = "display-as";
+static constexpr char kRefresh[] = "refresh";
 
 // sort by
 static constexpr char kSrtName[] = "sort-by-name";

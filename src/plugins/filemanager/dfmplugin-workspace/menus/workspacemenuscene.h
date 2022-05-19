@@ -51,7 +51,6 @@ public:
     bool triggered(QAction *action) override;
 
 private:
-    void createNormalMenu(QMenu *parent);
     bool emptyMenuTriggered(QAction *action);
     bool normalMenuTriggered(QAction *action);
 

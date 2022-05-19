@@ -41,9 +41,7 @@ DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 static constexpr char kWorkspaceMenuSceneName[] = "WorkspaceMenu";
-static constexpr char kOpenDirMenuSceneName[] = "OpenDirMenu";
-static constexpr char kNewCreateMenuSceneName[] = "NewCreateMenu";
-static constexpr char kClipBoardMenuSceneName[] = "ClipBoardMenu";
+static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 
 AbstractMenuScene *SearchMenuCreator::create()
 {
@@ -54,29 +52,29 @@ SearchMenuScenePrivate::SearchMenuScenePrivate(SearchMenuScene *qq)
     : AbstractMenuScenePrivate(qq),
       q(qq)
 {
-    emptyDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenAsAdmin);
-    emptyDisableActions.insert(kOpenDirMenuSceneName, dfmplugin_menu::ActionID::kOpenInTerminal);
-    emptyDisableActions.insert(kNewCreateMenuSceneName, dfmplugin_menu::ActionID::kNewFolder);
-    emptyDisableActions.insert(kNewCreateMenuSceneName, dfmplugin_menu::ActionID::kNewDoc);
-    emptyDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kPaste);
 }
 
 void SearchMenuScenePrivate::updateMenu(QMenu *menu)
 {
     auto actions = menu->actions();
     if (isEmptyArea) {
+        QAction *selAllAct = nullptr;
         for (auto act : actions) {
             if (act->isSeparator())
                 continue;
 
-            auto actionScene = q->scene(act);
-            if (!actionScene)
-                continue;
+            const auto &p = act->property(ActionPropertyKey::kActionID);
+            if (p == dfmplugin_menu::ActionID::kSelectAll) {
+                selAllAct = act;
+                break;
+            }
+        }
 
-            auto sceneName = actionScene->name();
-            auto actId = act->property(ActionPropertyKey::kActionID).toString();
-            if (emptyDisableActions.contains(sceneName, actId))
-                menu->removeAction(act);
+        if (selAllAct) {
+            actions.removeOne(selAllAct);
+            actions.append(selAllAct);
+            menu->addActions(actions);
+            menu->insertSeparator(selAllAct);
         }
     } else {
         QAction *openLocalAct = nullptr;
@@ -117,6 +115,7 @@ SearchMenuScene::SearchMenuScene(QObject *parent)
       d(new SearchMenuScenePrivate(this))
 {
     d->predicateName[SearchActionId::kOpenFileLocation] = tr("Open file location");
+    d->predicateName[dfmplugin_menu::ActionID::kSelectAll] = tr("Select all");
 }
 
 SearchMenuScene::~SearchMenuScene()
@@ -135,19 +134,29 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->currentDir.isValid())
         return false;
 
+    QVariantHash tmpParams = params;
     QList<AbstractMenuScene *> currentScene;
-    const auto &parentUrl = SearchHelper::searchTargetUrl(d->currentDir);
-    if (Global::kFile == parentUrl.scheme()) {
-        if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
-            currentScene.append(workspaceScene);
+    if (d->isEmptyArea) {
+        if (auto sortAndDisplayScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
+            currentScene.append(sortAndDisplayScene);
     } else {
-        auto parentSceneName = WorkspaceService::service()->findMenuScene(parentUrl.scheme());
-        if (auto scene = MenuService::service()->createScene(parentSceneName))
-            currentScene.append(scene);
+        const auto &parentUrl = SearchHelper::searchTargetUrl(d->currentDir);
+        if (Global::kFile == parentUrl.scheme()) {
+            if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
+                currentScene.append(workspaceScene);
+        } else {
+            auto parentSceneName = WorkspaceService::service()->findMenuScene(parentUrl.scheme());
+            if (auto scene = MenuService::service()->createScene(parentSceneName))
+                currentScene.append(scene);
+
+            const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);
+            tmpParams[MenuParamKey::kCurrentDir] = targetUrl;
+        }
     }
 
     // the scene added by binding must be initializeed after 'defalut scene'.
@@ -155,7 +164,7 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     setSubscene(currentScene);
 
     // 初始化所有子场景
-    return AbstractMenuScene::initialize(params);
+    return AbstractMenuScene::initialize(tmpParams);
 }
 
 AbstractMenuScene *SearchMenuScene::scene(QAction *action) const
@@ -174,7 +183,11 @@ bool SearchMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
-    if (!d->isEmptyArea) {
+    if (d->isEmptyArea) {
+        QAction *tempAction = parent->addAction(d->predicateName.value(dfmplugin_menu::ActionID::kSelectAll));
+        d->predicateAction[dfmplugin_menu::ActionID::kSelectAll] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(dfmplugin_menu::ActionID::kSelectAll));
+    } else {
         QAction *tempAction = parent->addAction(d->predicateName.value(SearchActionId::kOpenFileLocation));
         d->predicateAction[SearchActionId::kOpenFileLocation] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(SearchActionId::kOpenFileLocation));
@@ -193,13 +206,22 @@ void SearchMenuScene::updateState(QMenu *parent)
 bool SearchMenuScene::triggered(QAction *action)
 {
     auto actionId = action->property(ActionPropertyKey::kActionID).toString();
-    if (actionId == SearchActionId::kOpenFileLocation) {
-        for (const auto &file : d->selectFiles) {
-            auto info = InfoFactory::create<AbstractFileInfo>(file);
-            d->openFileLocation(info->absoluteFilePath());
+    if (d->predicateAction.contains(actionId)) {
+        // open file location
+        if (actionId == SearchActionId::kOpenFileLocation) {
+            for (const auto &file : d->selectFiles) {
+                auto info = InfoFactory::create<AbstractFileInfo>(file);
+                d->openFileLocation(info->absoluteFilePath());
+            }
+
+            return true;
         }
 
-        return true;
+        // select all
+        if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
+            dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSelectAll, d->windowId);
+            return true;
+        }
     }
 
     return AbstractMenuScene::triggered(action);

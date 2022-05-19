@@ -83,6 +83,7 @@ public:
     QString findMenuScene(const QString &scheme);
     DFMBASE_NAMESPACE::Global::ViewMode findViewMode(const QString &scheme);
     void selectFiles(quint64 windowId, const QList<QUrl> &files);
+    void selectAll(quint64 windowId);
 
     bool reigsterViewRoutePrehandler(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler prehandler);
     DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);
