@@ -29,6 +29,7 @@
 #define private public
 #include "views/fileitem.h"
 
+#ifndef __arm__
 TEST(FileIconItemTest,init)
 {
     FileIconItem w;
@@ -36,6 +37,7 @@ TEST(FileIconItemTest,init)
     EXPECT_NE(nullptr,w.icon);
     EXPECT_NE(nullptr,w.edit);
 }
+#endif
 
 TEST(FileIconItemTest,get_icon_label)
 {

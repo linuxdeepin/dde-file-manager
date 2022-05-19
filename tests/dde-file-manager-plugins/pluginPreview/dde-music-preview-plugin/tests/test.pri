@@ -14,9 +14,13 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/test-main.cpp \
-    $$PWD/ut_musicmessageview.cpp \
     $$PWD/ut_musicpreview.cpp \
     $$PWD/ut_musicpreviewplugin.cpp
+
+isEqual(ARCH, x86_64) {
+SOURCES += \
+    $$PWD/ut_musicmessageview.cpp \
+}
 
 !CONFIG(DISABLE_TSAN_TOOL) {
     #DEFINES += TSAN_THREAD #互斥
