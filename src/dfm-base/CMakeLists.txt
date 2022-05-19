@@ -64,6 +64,8 @@ FILE (GLOB BASE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/grouppolicy/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/grouppolicy/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/device/*.h"
