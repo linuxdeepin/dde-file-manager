@@ -69,6 +69,7 @@ public:
     int getColumnWidth(const int &column) const;
     DFMGLOBAL_NAMESPACE::ItemRoles getRoleByColumn(const int &column) const;
     int getColumnByRole(const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
+    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
 
     // Filter
     QDir::Filters getFilters() const;
@@ -92,8 +93,6 @@ private:
     FileViewModel *viewModel() const;
 
     QString roleDisplayString(int role) const;
-
-    QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
 
 private:
     QVariant filterData;

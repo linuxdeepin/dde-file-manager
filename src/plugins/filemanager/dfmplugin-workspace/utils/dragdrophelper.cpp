@@ -52,7 +52,6 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
     }
 
     currentDragUrls = data->urls();
-    qInfo() << currentDragUrls;
     for (const QUrl &url : currentDragUrls) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
         if (!info || !info->canMoveOrCopy()) {
@@ -63,7 +62,7 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
 
     bool fall = true;
     handleDropEvent(event, &fall);
-    qInfo() << event << event->dropAction();
+
     if (!fall)
         return true;
 
@@ -83,7 +82,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
     if (hoverFileInfo) {
         bool fall = true;
         handleDropEvent(event, &fall);
-        qInfo() << event << event->dropAction();
+
         if (!fall)
             return true;
 
@@ -117,7 +116,7 @@ bool DragDropHelper::drop(QDropEvent *event)
 {
     bool fall = true;
     handleDropEvent(event, &fall);
-    qInfo() << event << event->dropAction();
+
     if (!fall)
         return true;
 

@@ -197,7 +197,7 @@ int IconItemDelegate::minimumIconSizeLevel() const
 
 int IconItemDelegate::maximumIconSizeLevel() const
 {
-    return kIconSizeList.count() - 1;
+    return iconSizeList().count() - 1;
 }
 
 int IconItemDelegate::increaseIcon()
@@ -473,7 +473,7 @@ QSize IconItemDelegate::iconSizeByIconSizeLevel() const
 {
     Q_D(const IconItemDelegate);
 
-    int size = kIconSizeList.at(d->currentIconSizeIndex);
+    int size = iconSizeList().at(d->currentIconSizeIndex);
 
     return QSize(size, size);
 }

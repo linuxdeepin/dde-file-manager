@@ -274,6 +274,55 @@ void FileView::onHeaderSectionResized(int logicalIndex, int oldSize, int newSize
     update();
 }
 
+void FileView::onSectionHandleDoubleClicked(int logicalIndex)
+{
+    if (sourceModel()->state() != FileViewModel::Idle)
+        return;
+
+    int rowCount = model()->rowCount();
+
+    if (rowCount < 1)
+        return;
+
+    QStyleOptionViewItem option = viewOptions();
+
+    option.rect.setWidth(QWIDGETSIZE_MAX);
+    option.rect.setHeight(itemSizeHint().height());
+
+    int columnMaxWidth = 0;
+
+    for (int i = 0; i < rowCount; ++i) {
+        const QModelIndex &index = model()->index(i, 0);
+        const QList<QRect> &list = itemDelegate()->paintGeomertys(option, index, true);
+
+        // 第0列为文件名列，此列比较特殊，因为前面还有文件图标占用了一部分空间
+        int width = 0;
+
+        if (logicalIndex == 0) {
+            width = list.at(1).right() + kColumnPadding / 2;
+        } else {
+            width = list.at(logicalIndex + 1).width() + kColumnPadding * 2;
+        }
+
+        if (width > columnMaxWidth) {
+            columnMaxWidth = width;
+        }
+    }
+
+    for (int i = d->headerView->count() - 1; i >= 0; --i) {
+        if (d->headerView->isSectionHidden(i))
+            continue;
+
+        // 最后一列要多加上视图的右margin
+        if (i == logicalIndex)
+            columnMaxWidth += kListModeRightMargin;
+
+        break;
+    }
+
+    d->headerView->resizeSection(logicalIndex, columnMaxWidth);
+}
+
 void FileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex)
 {
     Q_UNUSED(logicalIndex)
@@ -1223,7 +1272,7 @@ void FileView::initializeDelegate()
 void FileView::initializeStatusBar()
 {
     d->statusBar = new FileViewStatusBar(this);
-    d->statusBar->resetScalingSlider(kIconSizeList.length() - 1);
+    d->statusBar->resetScalingSlider(iconSizeList().length() - 1);
 
     d->updateStatusBarTimer = new QTimer(this);
     d->updateStatusBarTimer->setInterval(100);

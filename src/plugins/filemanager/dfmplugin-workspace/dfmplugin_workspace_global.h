@@ -38,21 +38,25 @@ enum class DirOpenMode : uint8_t {
 };
 
 // view defines
-const QList<int> kIconSizeList { 48, 64, 96, 128, 256 };
-const int kIconViewSpacing = 5;
-const int kListViewSpacing = 0;
-const int kIconModeColumnPadding = 10;
-const int kDefualtHeaderSectionWidth = 140;
-const int kMinimumHeaderSectionWidth = 120;
-const int kListViewIconSize = 24;
-const int kLeftPadding = 10;
-const int kRightPadding = 10;
-const int kListModeLeftMargin = 20;
-const int kListModeRightMargin = 20;
-const int kColumnPadding = 10;
+inline QList<int> iconSizeList()
+{
+    return { 48, 64, 96, 128, 256 };
+}
+
+inline constexpr int kIconViewSpacing { 5 };
+inline constexpr int kListViewSpacing { 0 };
+inline constexpr int kIconModeColumnPadding { 10 };
+inline constexpr int kDefualtHeaderSectionWidth { 140 };
+inline constexpr int kMinimumHeaderSectionWidth { 120 };
+inline constexpr int kListViewIconSize { 24 };
+inline constexpr int kLeftPadding { 10 };
+inline constexpr int kRightPadding { 10 };
+inline constexpr int kListModeLeftMargin { 10 };
+inline constexpr int kListModeRightMargin { 10 };
+inline constexpr int kColumnPadding { 10 };
 
 // tab defines
-const int kMaxTabCount = 8;
+inline constexpr int kMaxTabCount { 8 };
 
 DPWORKSPACE_END_NAMESPACE
 

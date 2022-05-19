@@ -38,7 +38,8 @@
 #include <DListView>
 #include <DArrowRectangle>
 #include <DPalette>
-#include <DApplicationHelper>
+#include <DPaletteHelper>
+#include <DGuiApplicationHelper>
 
 #include <QLabel>
 #include <QPainter>
@@ -142,7 +143,8 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
 
 void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(index);
+    Q_UNUSED(index)
+
     const QSize &iconSize = parent()->parent()->iconSize();
     int columnX = 0;
 
@@ -150,12 +152,12 @@ void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     QRect iconRect = optRect;
     iconRect.setSize(iconSize);
 
-    const QList<QPair<int, int>> &columnRoleList = index.data(kItemColumListRole).value<QList<QPair<int, int>>>();
+    const QList<ItemRoles> &columnRoleList = parent()->parent()->model()->getColumnRoles();
     if (columnRoleList.isEmpty())
         return;
     QRect rect = optRect;
     for (int i = 0; i < columnRoleList.length(); ++i) {
-        int rol = columnRoleList.at(i).first;
+        int rol = columnRoleList.at(i);
         if (rol == kItemNameRole) {
             int iconOffset = i == 0 ? iconRect.right() + 1 : 0;
 
@@ -228,11 +230,63 @@ bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
 
 QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
 {
-    Q_UNUSED(option)
-    Q_UNUSED(index)
-    Q_UNUSED(sizeHintMode)
+    QList<QRect> geomertys;
+    const QList<ItemRoles> &columnRoleList = parent()->parent()->model()->getColumnRoles();
+    int columnX = 0;
 
-    return QList<QRect>();
+    /// draw icon
+    const QRect &optRect = option.rect + QMargins(-kListModeLeftMargin - kLeftPadding, 0, -kListModeRightMargin - kRightPadding, 0);
+
+    QRect iconRect = optRect;
+    iconRect.setSize(parent()->parent()->iconSize());
+
+    geomertys << iconRect;
+
+    columnX = iconRect.right() + GlobalPrivate::kIconSpacing;
+
+    QRect rect = optRect;
+    rect.setLeft(columnX);
+
+    int role = columnRoleList.at(0);
+
+    if (sizeHintMode) {
+        rect.setWidth(dataWidth(option, index, role));
+        columnX = rect.right();
+    } else {
+        columnX = parent()->parent()->getColumnWidth(0) - 1 - parent()->fileViewViewportMargins().left();
+
+        rect.setRight(qMin(columnX, optRect.right()));
+        /// draw file name label
+        rect.setWidth(qMin(rect.width(), dataWidth(option, index, role)));
+    }
+
+    geomertys << rect;
+
+    for (int i = 1; i < columnRoleList.count(); ++i) {
+        QRect rec = optRect;
+
+        rec.setLeft(columnX + kColumnPadding);
+
+        if (rec.left() >= optRect.right()) {
+            return geomertys;
+        }
+
+        int rol = columnRoleList.at(i);
+
+        if (sizeHintMode) {
+            rec.setWidth(dataWidth(option, index, rol));
+            columnX += rec.width();
+        } else {
+            columnX += parent()->parent()->getColumnWidth(i) - 1;
+
+            rec.setRight(qMin(columnX, optRect.right()));
+            rec.setWidth(qMin(rec.width(), dataWidth(option, index, rol)));
+        }
+
+        geomertys << rec;
+    }
+
+    return geomertys;
 }
 
 void ListItemDelegate::updateItemSizeHint()
@@ -263,103 +317,62 @@ QRectF ListItemDelegate::itemIconRect(const QRectF &itemRect) const
  **/
 void ListItemDelegate::paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    painter->save();   // 保存之前的绘制样式
-    // 反走样抗锯齿
-    painter->setRenderHints(QPainter::Antialiasing
-                            | QPainter::TextAntialiasing
-                            | QPainter::SmoothPixmapTransform);
+    painter->save();
 
     FileView *view = parent()->parent();
     if (!view)
         return;
 
-    // 获取item范围
-    auto itemRect = view->visualRect(index);
-    int totalWidth = view->getHeaderViewWidth();
-    // 左右间隔10 px UI设计要求 选中与交替渐变背景
-    QRect dstRect(itemRect.x() + kListModeLeftMargin,
-                  itemRect.y(),
-                  totalWidth - (kListModeLeftMargin + kListModeRightMargin),
-                  itemRect.height());
+    int totalWidth = view->getHeaderViewWidth() - (kListModeLeftMargin + kListModeRightMargin);
+
+    QRectF rect = option.rect;
+    rect.setLeft(rect.left() + kListModeLeftMargin);
+    rect.setWidth(totalWidth);
 
     // draw background
     if (option.widget) {
-        // 调色板获取
-        DPalette pl(DApplicationHelper::instance()->palette(option.widget));
-        // 背板颜色获取
+        DPalette pl(DPaletteHelper::instance()->palette(option.widget));
         QColor baseColor = pl.color(DPalette::ColorGroup::Active, DPalette::ColorType::ItemBackground);
 
-        // 取模设置当前的交替变化
-        if (index.row() % 2 == 1) {
-            // 如果hover则设置高亮，不绘制交替色
-            if (option.state & QStyle::StateFlag::State_MouseOver) {
-                // hover色保持背板%10
-                QColor adjustHoverItemColor = baseColor;
-                adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
-                QPainterPath path;
-                path.addRoundedRect(dstRect, kListModeRectRadius, kListModeRectRadius);
-                painter->fillPath(path, adjustHoverItemColor);
-            } else {   // 绘制交替色
-                // 交替色保持背板色%5
-                QColor adjustItemAlterColor = baseColor;
-                adjustItemAlterColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
-                QPainterPath path;
-                path.addRoundedRect(dstRect, kListModeRectRadius, kListModeRectRadius);   //圆角8 UI要求
-                painter->fillPath(path, adjustItemAlterColor);
-            }
+        QColor adjustColor = baseColor;
+
+        bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
+        bool isDropTarget = parent()->isDropTarget(index);
+
+        if (isSelected || isDropTarget) {
+            // set highlight color
+            QPalette::ColorGroup colorGroup = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
+                    ? QPalette::Normal
+                    : QPalette::Disabled;
+
+            if (colorGroup == QPalette::Normal && !(option.state & QStyle::State_Active))
+                colorGroup = QPalette::Inactive;
+
+            adjustColor = option.palette.color(colorGroup, QPalette::Highlight);
+        } else if (option.state & QStyle::StateFlag::State_MouseOver) {
+            // hover color
+            adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
         } else {
-            // 如果hover则设置高亮，不保持默认背板
-            if (option.state & QStyle::StateFlag::State_MouseOver) {   //设置hover高亮
-                // hover色 默认调整色保持背板颜色
-                QColor adjustHoverItemColor = baseColor;
-                adjustHoverItemColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +10);
-                QPainterPath path;
-                path.addRoundedRect(dstRect, kListModeRectRadius, kListModeRectRadius);
-                // hover色保持背板%10
-                painter->fillPath(path, adjustHoverItemColor);
-            } else {   // 保持默认背板颜色
-                painter->setBrush(baseColor);
-            }
+            // alternately background color
+            if (index.row() % 2 == 1)
+                adjustColor = DGuiApplicationHelper::adjustColor(baseColor, 0, 0, 0, 0, 0, 0, +5);
         }
-    }
-    painter->restore();   // 恢复之前的绘制，防止在此逻辑前的绘制丢失
 
-    //列表拖拽时要绘制活动色
-    bool drawBackground = /* !isDragMode &&*/ (option.state & QStyle::State_Selected) && option.showDecorationSelected;
-    QPalette::ColorGroup cg = (option.widget ? option.widget->isEnabled() : (option.state & QStyle::State_Enabled))
-            ? QPalette::Normal
-            : QPalette::Disabled;
-    if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
-        cg = QPalette::Inactive;
-
-    bool isSelected = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
-    bool isDropTarget = parent()->isDropTarget(index);
-
-    QPalette::ColorRole colorRole = QPalette::Background;
-
-    if ((isSelected || isDropTarget)) {
-        colorRole = QPalette::Highlight;
-    }
-    QRectF rect = option.rect;
-    rect += QMargins(-kListModeLeftMargin, 0, -kListModeRightMargin, 0);
-    if (drawBackground) {
+        // set paint path
         QPainterPath path;
+        path.addRoundedRect(rect, kListModeRectRadius, kListModeRectRadius);
 
-        path.addRoundedRect(rect, kListModeRectRadius, kListModeRectRadius);
-        painter->save();
-        painter->setOpacity(1);
-        painter->setRenderHint(QPainter::Antialiasing);
-        painter->fillPath(path, option.palette.color(cg, colorRole));
-        painter->restore();
-    } else if (isDropTarget) {
-        QPainterPath path;
-        rect += QMarginsF(-0.5, -0.5, -0.5, -0.5);
-        path.addRoundedRect(rect, kListModeRectRadius, kListModeRectRadius);
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->fillPath(path, option.palette.color(cg, colorRole));
-        painter->setRenderHint(QPainter::Antialiasing, false);
+        // set render antialiasing
+        painter->setRenderHints(QPainter::Antialiasing
+                                | QPainter::TextAntialiasing
+                                | QPainter::SmoothPixmapTransform);
+
+        painter->fillPath(path, adjustColor);
     }
+
+    painter->restore();
 }
+
 /*!
  * \brief paintItemIcon 绘制listviewitemd的icon
  *
@@ -491,7 +504,7 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
             if (suffix == ".")
                 break;
             fileName = ItemDelegateHelper::elideText(index.data(kItemFileBaseNameRole).toString().remove('\n'),
-                                                     QSize(rect.width() - option.fontMetrics.width(suffix), rect.height()),
+                                                     QSize(static_cast<int>(rect.width()) - option.fontMetrics.width(suffix), static_cast<int>(rect.height())),
                                                      QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                      option.font, Qt::ElideRight,
                                                      d->textLineHeight);
@@ -539,4 +552,28 @@ bool ListItemDelegate::setEditorData(ListItemEditor *editor)
         editor->select(name);
     }
     return true;
+}
+
+int ListItemDelegate::dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role) const
+{
+    const QVariant &data = index.data(role);
+    Qt::Alignment alignment = Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt());
+
+    if (data.canConvert<QString>()) {
+        return option.fontMetrics.width(data.toString(), -1, static_cast<int>(alignment));
+    }
+
+    if (data.canConvert<QPair<QString, QString>>()) {
+        const QPair<QString, QString> &string_string = qvariant_cast<QPair<QString, QString>>(data);
+
+        return qMax(option.fontMetrics.width(string_string.first, -1, static_cast<int>(alignment)), option.fontMetrics.width(string_string.second, -1, static_cast<int>(alignment)));
+    }
+
+    if (data.canConvert<QPair<QString, QPair<QString, QString>>>()) {
+        const QPair<QString, QPair<QString, QString>> &string_p_string = qvariant_cast<QPair<QString, QPair<QString, QString>>>(data);
+
+        return option.fontMetrics.width(string_p_string.first, -1, static_cast<int>(alignment));
+    }
+
+    return -1;
 }

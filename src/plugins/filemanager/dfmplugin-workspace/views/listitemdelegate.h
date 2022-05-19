@@ -64,6 +64,8 @@ private:
 
     bool setEditorData(ListItemEditor *editor);
 
+    int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role) const;
+
     Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };
 

@@ -137,6 +137,7 @@ public slots:
     void onHeaderSectionResized(int logicalIndex, int oldSize, int newSize);
     void onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
     void onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order);
+    void onSectionHandleDoubleClicked(int logicalIndex);
     void onClicked(const QModelIndex &index);
     void onDoubleClicked(const QModelIndex &index);
     void onScalingValueChanged(const int value);

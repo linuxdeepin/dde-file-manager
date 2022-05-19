@@ -82,8 +82,8 @@ void FileViewPrivate::initIconModeView()
 
     if (statusBar) {
         statusBar->setScalingVisible(true);
-        q->setIconSize(QSize(kIconSizeList[currentIconSizeLevel],
-                             kIconSizeList[currentIconSizeLevel]));
+        q->setIconSize(QSize(iconSizeList()[currentIconSizeLevel],
+                             iconSizeList()[currentIconSizeLevel]));
         statusBar->scalingSlider()->setValue(currentIconSizeLevel);
     }
 }
@@ -109,6 +109,7 @@ void FileViewPrivate::initListModeView()
     QObject::connect(headerView, &HeaderView::sectionResized, q, &FileView::onHeaderSectionResized);
     QObject::connect(headerView, &HeaderView::sortIndicatorChanged, q, &FileView::onSortIndicatorChanged);
     QObject::connect(headerView, &HeaderView::sectionMoved, q, &FileView::onHeaderSectionMoved);
+    QObject::connect(headerView, &HeaderView::sectionHandleDoubleClicked, q, &FileView::onSectionHandleDoubleClicked);
 
     q->setIconSize(QSize(kListViewIconSize, kListViewIconSize));
     if (allowedAdjustColumnSize)
