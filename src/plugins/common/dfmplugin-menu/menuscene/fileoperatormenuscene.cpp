@@ -179,16 +179,16 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         }
     }
 
-    // delete
-    if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-        if (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink())
-            delAction->setDisabled(true);
-    }
-
     if (1 == d->selectFiles.count()) {
+        // delete
+        if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
+            if (!d->focusFileInfo->canRename() || (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink()))
+                delAction->setDisabled(true);
+        }
+
         // rename
         if (auto rename = d->predicateAction.value(ActionID::kRename)) {
-            if (!d->indexFlags.testFlag(Qt::ItemIsEditable))
+            if (!d->focusFileInfo->canRename() || !d->indexFlags.testFlag(Qt::ItemIsEditable))
                 rename->setDisabled(true);
         }
 
@@ -196,6 +196,30 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
 
     } else {
         // todo(wangcl) disable rename?
+        bool disableRename = false;
+        bool disableDelete = false;
+        for (const auto &url : d->selectFiles) {
+            auto info = InfoFactory::create<AbstractFileInfo>(url);
+            if (!info)
+                continue;
+
+            if (!info->canRename()) {
+                auto rename = d->predicateAction.value(ActionID::kRename);
+                if (!disableRename && rename) {
+                    rename->setDisabled(true);
+                    disableRename = true;
+                }
+
+                auto delAction = d->predicateAction.value(ActionID::kDelete);
+                if (!disableDelete && delAction) {
+                    delAction->setDisabled(true);
+                    disableDelete = true;
+                }
+
+                if (disableRename && disableDelete)
+                    break;
+            }
+        }
 
         // open
         if (auto open = d->predicateAction.value(ActionID::kOpen)) {

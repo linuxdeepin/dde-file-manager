@@ -501,7 +501,7 @@ bool LocalFileInfo::canRename() const
     if (d->attributes.count(DFileInfo::AttributeID::kAccessCanRename) == 0) {
         canRename = SysInfoUtils::isRootUser();
         if (!canRename) {
-            int result = access(d->url.path().toLocal8Bit().data(), W_OK);
+            int result = access(this->absolutePath().toLocal8Bit().data(), W_OK);
             canRename = result == 0;
         }
         if (!canRename) {

@@ -145,6 +145,18 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
                 cut->setDisabled(true);
         }
     } else {
+        for (const auto &file : d->selectFiles) {
+            auto info = InfoFactory::create<AbstractFileInfo>(file);
+            if (!info)
+                continue;
+
+            if (auto cut = d->predicateAction.value(ActionID::kCut)) {
+                if (!info->canRename()) {
+                    cut->setDisabled(true);
+                    break;
+                }
+            }
+        }
         // todo(wangcl) disable action?
     }
 
