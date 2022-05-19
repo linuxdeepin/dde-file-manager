@@ -677,7 +677,8 @@ QString DFMRootFileInfo::udisksDisplayName()
         return ret;
     }
 
-    if (d->mps.contains(QByteArray("/\0", 2))) {
+    // feat: in Dedicated OS, /lower is the root, should be displayed as 'System Disk' in computer view.
+    if (d->mps.contains(QByteArray("/\0", 2)) || d->mps.contains(QByteArray("/lower\0", 7))) {
         return QCoreApplication::translate("PathManager", "System Disk");
     } else if (!d->idUUID.isEmpty()) {
         if (d->currentUUID.isEmpty() || d->backupUUID.isEmpty()) {
