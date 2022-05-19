@@ -93,11 +93,8 @@ void CanvasMenuScenePrivate::filterDisableAction(QMenu *menu)
                 continue;
 
             auto actionScene = q->scene(action);
-            if (!actionScene) {
-                // no scene,remove it.
-                menu->removeAction(action);
+            if (!actionScene)
                 continue;
-            }
 
             auto sceneName = actionScene->name();
             auto actionId = action->property(ActionPropertyKey::kActionID).toString();
@@ -166,6 +163,8 @@ CanvasMenuScene::CanvasMenuScene(QObject *parent)
     d->predicateName[ActionID::kIconSize] = tr("Icon size");
     d->predicateName[ActionID::kAutoArrange] = tr("Auto arrange");
     d->predicateName[ActionID::kDisplaySettings] = tr("Display Settings");
+    d->predicateName[ActionID::kRefresh] = tr("Refresh");
+
     if (ddplugin_desktop_util::enableScreensaver())
         d->predicateName[ActionID::kWallpaperSettings] = tr("Wallpaper and Screensaver");
     else
@@ -337,6 +336,12 @@ bool CanvasMenuScene::triggered(QAction *action)
             return true;
         }
 
+        // refresh
+        if (actionId == ActionID::kRefresh) {
+            d->view->refresh();
+            return true;
+        }
+
         // Wallpaper and Screensaver
         if (actionId == ActionID::kWallpaperSettings) {
             CanvasIns->onWallperSetting(d->view);
@@ -474,6 +479,12 @@ void CanvasMenuScene::emptyMenu(QMenu *parent)
     tempAction = parent->addAction(d->predicateName.value(ActionID::kDisplaySettings));
     d->predicateAction[ActionID::kDisplaySettings] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kDisplaySettings));
+
+    if (d->isRefreshOn()) {
+        tempAction = parent->addAction(d->predicateName.value(ActionID::kRefresh));
+        d->predicateAction[ActionID::kRefresh] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kRefresh));
+    }
 
     //todo update text when screensaver is disbale.
     tempAction = parent->addAction(d->predicateName.value(ActionID::kWallpaperSettings));

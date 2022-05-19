@@ -31,6 +31,7 @@
 
 #include <QMap>
 #include <QMultiHash>
+#include <QGSettings>
 
 DSC_USE_NAMESPACE
 DDP_CANVAS_BEGIN_NAMESPACE
@@ -55,6 +56,7 @@ public:
             dfmplugin_menu::ActionID::kPaste,
             dfmplugin_menu::ActionID::kSelectAll,
             dfmplugin_menu::ActionID::kOpenInTerminal,
+            ActionID::kRefresh,
             dfmplugin_menu::ActionID::kSeparator,
             ActionID::kDisplaySettings,
             ActionID::kWallpaperSettings,
@@ -83,6 +85,20 @@ public:
         return actionRule;
     }
 
+    inline bool isRefreshOn() const
+    {
+        // the gsetting control for refresh action
+        if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
+            const QGSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
+                                               "/com/deepin/dde/filemanager/contextmenu/");
+            if (menuSwitch.keys().contains("refresh")) {
+                auto showRefreh = menuSwitch.get("refresh");
+                if (showRefreh.isValid())
+                    return showRefreh.toBool();
+            }
+        }
+        return false;
+    }
 public:
     QMap<QAction *, int> iconSizeAction;
     QPoint gridPos;

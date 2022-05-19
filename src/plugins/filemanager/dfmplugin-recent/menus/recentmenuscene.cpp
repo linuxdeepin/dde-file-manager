@@ -187,11 +187,8 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto actionScene = q->scene(act);
-            if (!actionScene) {
-                // no scene,remove it.
-                menu->removeAction(act);
+            if (!actionScene)
                 continue;
-            }
 
             auto sceneName = actionScene->name();
             auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
@@ -218,11 +215,8 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto actionScene = q->scene(act);
-            if (!actionScene) {
-                // no scene,remove it.
-                menu->removeAction(act);
+            if (!actionScene)
                 continue;
-            }
 
             auto sceneName = actionScene->name();
             auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();

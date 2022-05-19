@@ -31,7 +31,7 @@ static constexpr char kIconSize[] = "icon-size";
 static constexpr char kAutoArrange[] = "auto-arrange";
 static constexpr char kDisplaySettings[] = "display-settings";
 static constexpr char kWallpaperSettings[] = "wallpaper-settings";
-
+static constexpr char kRefresh[] = "refresh";
 // sort by
 static constexpr char kSrtName[] = "sort-by-name";
 static constexpr char kSrtTimeModified[] = "sort-by-time-modified";
