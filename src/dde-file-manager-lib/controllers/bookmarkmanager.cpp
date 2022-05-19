@@ -143,7 +143,6 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
 
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
             GroupPolicy::instance()->setValue(BOOKMARK, list);
-
             data.m_url = event->toUrl();
             data.m_lastModified = QDateTime::currentDateTime();
             m_bookmarkDataMap[event->toUrl().bookmarkTargetUrl()] = data;
@@ -173,12 +172,15 @@ bool BookMarkManager::renameFile(const QSharedPointer<DFMRenameEvent> &event) co
 bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
     QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
-
-    // task:6200: policy priority,policy and old config are synchronized at here
-    QVariantList groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
-
     QVariantList allList;
-    this->mergeList(list, groupPolicyList, allList);
+    if (DTK_POLICY_SUPPORT) {
+        // task:6200: policy priority,policy and old config are synchronized at here
+        QVariantList groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
+        QVariantList allList;
+        this->mergeList(list, groupPolicyList, allList);
+    } else {
+        allList = list;
+    }
 
     for (const DUrl &url : event->urlList()) {
 
@@ -201,8 +203,9 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
     }
 
     DFMApplication::genericSetting()->setValue("BookMark", "Items", allList);
-    GroupPolicy::instance()->setValue(BOOKMARK, allList);
 
+    if (DTK_POLICY_SUPPORT)
+        GroupPolicy::instance()->setValue(BOOKMARK, allList);
     return true;
 }
 
@@ -236,14 +239,13 @@ bool BookMarkManager::touch(const QSharedPointer<DFMTouchFileEvent> &event) cons
     DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
     DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, bookmarkData.m_url);
 
-    // update to GroupPolicy
-    auto groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
-
-
-    QVariantList allList;
-    this->mergeList(list, groupPolicyList, allList);
-
-    GroupPolicy::instance()->setValue(BOOKMARK, allList);
+    if (DTK_POLICY_SUPPORT) {
+        // update to GroupPolicy
+        auto groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
+        QVariantList allList;
+        this->mergeList(list, groupPolicyList, allList);
+        GroupPolicy::instance()->setValue(BOOKMARK, allList);
+    }
     return true;
 }
 
@@ -285,53 +287,23 @@ BookmarkData BookMarkManager::findBookmarkData(const DUrl &url) const
  */
 void BookMarkManager::update(const QVariant &value)
 {
-    auto groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
     DUrlList bookmarkUrlList = m_bookmarkDataMap.keys();
+    if (DTK_POLICY_SUPPORT) {
+        auto groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
 
-    // Policy priority and syncing legacy profile information
-    QMap<DUrl, BookmarkData> groupPolicyMap;
-    QVariantList allList = groupPolicyList;
-    for (const auto &temp : groupPolicyList) {
-        BookmarkData data;
-        const QVariantMap &item = temp.toMap();
-        this->variantToBookmarkData(item, data);
-        const DUrl &url = DUrl::fromUserInput(item.value(BOOKMARK_URL).toString());
-        groupPolicyMap[url] = data;
+        // Policy priority and syncing legacy profile information
+        QMap<DUrl, BookmarkData> groupPolicyMap;
+        QVariantList allList = groupPolicyList;
+        for (const auto &temp : groupPolicyList) {
+            BookmarkData data;
+            const QVariantMap &item = temp.toMap();
+            this->variantToBookmarkData(item, data);
+            const DUrl &url = DUrl::fromUserInput(item.value(BOOKMARK_URL).toString());
+            groupPolicyMap[url] = data;
 
-        // Sync cache information
-        const QString &name = item.value(BOOKMARK_NAME).toString();
-        if (m_bookmarkDataMap.contains(url)) {
-            const BookmarkData oldData = m_bookmarkDataMap.value(url);
-            m_bookmarkDataMap[url] = data;
-            // If the same url information exists, update the cache information
-            if (oldData.m_url.fragment() != name) {
-                DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, oldData.m_url, data.m_url);
-            }
-        } else {
-            // If not the same url information exists, add to cache information
-            m_bookmarkDataMap[url] = data;
-            DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, data.m_url);
-        }
-        bookmarkUrlList.removeOne(url);
-    }
-
-    const QVariantList &list = value.toList();
-    for (int i = 0; i < list.count(); ++i) {
-        BookmarkData data;
-        const QVariantMap &item = list.at(i).toMap();
-        this->variantToBookmarkData(item, data);
-        const DUrl &url = DUrl::fromUserInput(item.value(BOOKMARK_URL).toString());
-
-        // Policy priority
-        if (groupPolicyMap.contains(url)) {
-            continue;
-        } else{
             // Sync cache information
             const QString &name = item.value(BOOKMARK_NAME).toString();
             if (m_bookmarkDataMap.contains(url)) {
-                groupPolicyMap[url] = data;
-                allList.append(item);
-
                 const BookmarkData oldData = m_bookmarkDataMap.value(url);
                 m_bookmarkDataMap[url] = data;
                 // If the same url information exists, update the cache information
@@ -340,18 +312,91 @@ void BookMarkManager::update(const QVariant &value)
                 }
             } else {
                 // If not the same url information exists, add to cache information
-
-                groupPolicyMap[url] = data;
-                allList.append(item);
                 m_bookmarkDataMap[url] = data;
                 DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, data.m_url);
             }
             bookmarkUrlList.removeOne(url);
         }
-    }
 
-    GroupPolicy::instance()->setValue(BOOKMARK, allList);
-    DFMApplication::genericSetting()->setValue("BookMark", "Items", allList);
+        const QVariantList &list = value.toList();
+        for (int i = 0; i < list.count(); ++i) {
+            BookmarkData data;
+            const QVariantMap &item = list.at(i).toMap();
+            this->variantToBookmarkData(item, data);
+            const DUrl &url = DUrl::fromUserInput(item.value(BOOKMARK_URL).toString());
+
+            // Policy priority
+            if (groupPolicyMap.contains(url)) {
+                continue;
+            } else{
+                // Sync cache information
+                const QString &name = item.value(BOOKMARK_NAME).toString();
+                if (m_bookmarkDataMap.contains(url)) {
+                    groupPolicyMap[url] = data;
+                    allList.append(item);
+
+                    const BookmarkData oldData = m_bookmarkDataMap.value(url);
+                    m_bookmarkDataMap[url] = data;
+                    // If the same url information exists, update the cache information
+                    if (oldData.m_url.fragment() != name) {
+                        DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, oldData.m_url, data.m_url);
+                    }
+                } else {
+                    // If not the same url information exists, add to cache information
+
+                    groupPolicyMap[url] = data;
+                    allList.append(item);
+                    m_bookmarkDataMap[url] = data;
+                    DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, data.m_url);
+                }
+                bookmarkUrlList.removeOne(url);
+            }
+        }
+
+        GroupPolicy::instance()->setValue(BOOKMARK, allList);
+        DFMApplication::genericSetting()->setValue("BookMark", "Items", allList);
+    } else {
+        const QVariantList &list = value.toList();
+
+        for (int i = 0; i < list.count(); ++i) {
+            const QVariantMap &item = list.at(i).toMap();
+            const QString &name = item.value("name").toString();
+            const DUrl &url = DUrl::fromUserInput(item.value("url").toString());
+            const QDateTime &create_time = QDateTime::fromString(item.value("created").toString(), Qt::ISODate);
+            const QDateTime &last_modified_time = QDateTime::fromString(item.value("lastModified").toString(), Qt::ISODate);
+            const QString &mount_point = item.value("mountPoint").toString();
+            //兼容以前未转base64版本（sp2update2之前），先判断locateUrl，保证存入bookmark中的是base64
+            QByteArray ba;
+            if (item.value("locateUrl").toString().startsWith("/")) {   //转base64的路径不会以'/'开头
+                ba = item.value("locateUrl").toString().toLocal8Bit().toBase64();
+            } else {
+                ba = item.value("locateUrl").toString().toLocal8Bit();
+            }
+            const QString &locate_url = QString(ba);
+
+            BookmarkData data;
+            data.m_url = DUrl::fromBookMarkFile(url, name);
+            data.m_created = create_time;
+            data.m_lastModified = last_modified_time;
+            data.mountPoint = mount_point;
+            data.locateUrl = locate_url;
+
+            if (m_bookmarkDataMap.contains(url)) {
+                const BookmarkData oldData = m_bookmarkDataMap.value(url);
+                m_bookmarkDataMap[url] = data;
+
+                if (oldData.m_url.fragment() != name) {
+                    DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::fileMoved, oldData.m_url, data.m_url);
+
+                }
+            } else {
+                m_bookmarkDataMap[url] = data;
+                DAbstractFileWatcher::ghostSignal(DUrl(BOOKMARK_ROOT), &DAbstractFileWatcher::subfileCreated, data.m_url);
+            }
+
+            bookmarkUrlList.removeOne(url);
+        }
+    }
 
     // 清空缓存中已不存在的书签
     for (const DUrl &url : bookmarkUrlList) {
@@ -430,7 +475,9 @@ bool BookMarkManager::onFileRenamed(const DUrl &from, const DUrl &to)
             map["url"] = bookMarkTo.path();
             list[i] = map;
             DFMApplication::genericSetting()->setValue("BookMark", "Items", list);
-            GroupPolicy::instance()->setValue(BOOKMARK, list);
+
+            if (DTK_POLICY_SUPPORT)
+                GroupPolicy::instance()->setValue(BOOKMARK, list);
 
             BookmarkData newData;
             newData.m_url = bookMarkTo;

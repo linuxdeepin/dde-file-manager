@@ -829,52 +829,68 @@ void DFMSideBar::initUserShareItem()
 
 void DFMSideBar::initRecentItem()
 {
-    auto recentLambda = [ = ](bool enable) {
-        int index = findItem(DUrl(RECENT_ROOT), groupName(Common));
-        if (index) {
-            m_sidebarView->setRowHidden(index, !enable);
-            if (!enable) {
-                // jump out of recent:///
-                DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl(RECENT_ROOT));
+    if (DTK_POLICY_SUPPORT) {
+        auto recentLambda = [ = ](bool enable) {
+            int index = findItem(DUrl(RECENT_ROOT), groupName(Common));
+            if (index) {
+                m_sidebarView->setRowHidden(index, !enable);
+                if (!enable) {
+                    // jump out of recent:///
+                    DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl(RECENT_ROOT));
+                }
+            }
+        };
+
+        auto oldWayRecentLambda = [=](bool var) {
+            recentLambda(var);
+            // sync policy recent
+            auto policyV = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
+            if (policyV.isValid() && policyV.toBool() == var)
+                GroupPolicy::instance()->setValue(RECENT_HIDDEN, !var);
+        };
+
+        auto policyWayRecentLambda = [=](QVariant var){
+            auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
+            auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
+            if (var.isValid() && (var.toString() == RECENT_HIDDEN) && (tempValue.toBool() == oldV.toBool())) {
+                recentLambda(!tempValue.toBool());
+
+                // sync old recent
+                DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, !tempValue.toBool());
+            }
+        };
+
+        if (!GroupPolicy::instance()->containKey(RECENT_HIDDEN)) {
+            recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
+        } else {
+            auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
+            if (tempValue.isValid()) {
+                recentLambda(!tempValue.toBool());
+                // sync old recent
+                auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
+                if (tempValue.isValid() && tempValue.toBool() == oldV.toBool())
+                    DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, !tempValue.toBool());
+            } else {
+                recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
             }
         }
-    };
-
-    auto oldWayRecentLambda = [=](bool var) {
-        recentLambda(var);
-        // sync policy recent
-        auto policyV = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
-        if (policyV.isValid() && policyV.toBool() == var)
-            GroupPolicy::instance()->setValue(RECENT_HIDDEN, !var);
-    };
-
-    auto policyWayRecentLambda = [=](QVariant var){
-        auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
-        auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
-        if (var.isValid() && (var.toString() == RECENT_HIDDEN) && (tempValue.toBool() == oldV.toBool())) {
-            recentLambda(!tempValue.toBool());
-
-            // sync old recent
-            DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, !tempValue.toBool());
-        }
-    };
-
-    if (!GroupPolicy::instance()->containKey(RECENT_HIDDEN)) {
-        recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
+        connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, this, oldWayRecentLambda);
+        connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, policyWayRecentLambda);
     } else {
-        auto tempValue = GroupPolicy::instance()->getValue(RECENT_HIDDEN);
-        if (tempValue.isValid()) {
-            recentLambda(!tempValue.toBool());
-            // sync old recent
-            auto oldV = DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry);
-            if (tempValue.isValid() && tempValue.toBool() == oldV.toBool())
-                DFMApplication::instance()->setGenericAttribute(DFMApplication::GA_ShowRecentFileEntry, !tempValue.toBool());
-        } else {
-            recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
-        }
+        auto recentLambda = [ = ](bool enable) {
+            int index = findItem(DUrl(RECENT_ROOT), groupName(Common));
+            if (index) {
+                m_sidebarView->setRowHidden(index, !enable);
+                if (!enable) {
+                    // jump out of recent:///
+                    DAbstractFileWatcher::ghostSignal(DUrl(RECENT_ROOT), &DAbstractFileWatcher::fileDeleted, DUrl(RECENT_ROOT));
+                }
+            }
+        };
+
+        recentLambda(DFMApplication::instance()->genericAttribute(DFMApplication::GA_ShowRecentFileEntry).toBool());
+        connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, this, recentLambda);
     }
-    connect(DFMApplication::instance(), &DFMApplication::recentDisplayChanged, this, oldWayRecentLambda);
-    connect(GroupPolicy::instance(), &GroupPolicy::valueChanged, this, policyWayRecentLambda);
 }
 
 void DFMSideBar::initBookmarkConnection()
