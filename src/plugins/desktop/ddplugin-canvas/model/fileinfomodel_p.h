@@ -24,6 +24,8 @@
 #include "fileinfomodel.h"
 #include "fileprovider.h"
 
+#include <QReadWriteLock>
+
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class FileInfoModelPrivate : public QObject

@@ -22,7 +22,6 @@
 #define FILEINFOMODEL_H
 
 #include "ddplugin_canvas_global.h"
-#include "utils/fileutil.h"
 
 #include <file/local/localfileinfo.h>
 

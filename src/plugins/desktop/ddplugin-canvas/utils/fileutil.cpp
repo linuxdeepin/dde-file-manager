@@ -39,7 +39,7 @@ DesktopFileCreator *DesktopFileCreator::instance()
 DFMLocalFileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, bool cache)
 {
     QString errString;
-    auto itemInfo = createLocalFileInfo(url, cache, &errString);
+    auto itemInfo =  InfoFactory::create<LocalFileInfo>(url, cache, &errString);
     if (Q_UNLIKELY(!itemInfo)) {
         qInfo() << "create LocalFileInfo error: " << errString << url;
         return nullptr;
@@ -50,5 +50,5 @@ DFMLocalFileInfoPointer DesktopFileCreator::createFileInfo(const QUrl &url, bool
 
 DesktopFileCreator::DesktopFileCreator()
 {
-    registerConvertor(&LocalFileInfoCreator::tryCovertDesktopFileInfo, nullptr);
+
 }

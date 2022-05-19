@@ -20,6 +20,7 @@
  */
 #include "canvasproxymodel_p.h"
 #include "view/operator/fileoperatorproxy.h"
+#include "utils/fileutil.h"
 
 #include <dfm-base/utils/fileutils.h>
 

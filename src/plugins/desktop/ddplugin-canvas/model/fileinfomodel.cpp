@@ -20,6 +20,7 @@
  */
 #include "fileinfomodel_p.h"
 #include "fileprovider.h"
+#include "utils/fileutil.h"
 
 #include <base/standardpaths.h>
 #include <dfm-base/dfm_event_defines.h>

@@ -25,7 +25,6 @@
 
 #include <base/urlroute.h>
 #include <file/local/localfileinfo.h>
-#include <file/creator/localfileinfocreator.h>
 
 #include <QUrl>
 
@@ -45,7 +44,7 @@ static inline QUrl covertFileUrlToDesktop(const QUrl &fileUrl){
 }
 #endif
 
-class DesktopFileCreator : protected DFMBASE_NAMESPACE::LocalFileInfoCreator
+class DesktopFileCreator
 {
 public:
     static DesktopFileCreator *instance();
