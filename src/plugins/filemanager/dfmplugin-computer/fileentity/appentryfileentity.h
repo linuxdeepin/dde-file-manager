@@ -34,7 +34,7 @@ DFMBASE_END_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
 
 namespace ExtraPropertyName {
-static constexpr char kExecuteCommand[] { "execute_command" };
+inline constexpr char kExecuteCommand[] { "execute_command" };
 }   // namespace ExtraPropertyName
 
 class AppEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity

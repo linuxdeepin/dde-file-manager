@@ -28,7 +28,7 @@
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
 namespace PropertyActionId {
-static constexpr char kProperty[] { "property" };
+inline constexpr char kProperty[] { "property" };
 }
 DPPROPERTYDIALOG_END_NAMESPACE
 

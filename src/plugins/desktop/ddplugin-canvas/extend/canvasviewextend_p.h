@@ -29,31 +29,33 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kFilterCanvasViewContextMenu[] = "CanvasView_Filter_contextMenu";
-static constexpr char kFilterCanvasViewDropData[] = "CanvasView_Filter_dropData";
-static constexpr char kFilterCanvasViewKeyPress[] = "CanvasView_Filter_keyPress";
-static constexpr char kFilterCanvasViewMousePress[] = "CanvasView_Filter_mousePress";
-static constexpr char kFilterCanvasViewMouseRelease[] = "CanvasView_Filter_mouseRelease";
-static constexpr char kFilterCanvasViewMouseDoubleClick[] = "CanvasView_Filter_mouseDoubleClick";
-static constexpr char kFilterCanvasViewWheel[] = "CanvasView_Filter_wheel";
-static constexpr char kFilterCanvasViewStartDrag[] = "CanvasView_Filter_startDrag";
-static constexpr char kFilterCanvasViewDragEnter[] = "CanvasView_Filter_dragEnter";
-static constexpr char kFilterCanvasViewDragMove[] = "CanvasView_Filter_dragMove";
-static constexpr char kFilterCanvasViewDragLeave[] = "CanvasView_Filter_dragLeave";
-static constexpr char kFilterCanvasViewKeyboardSearch[] = "CanvasView_Filter_keyboardSearch";
-static constexpr char kFilterCanvasViewDrawFile[] = "CanvasView_Filter_drawFile";
+inline constexpr char kFilterCanvasViewContextMenu[] = "CanvasView_Filter_contextMenu";
+inline constexpr char kFilterCanvasViewDropData[] = "CanvasView_Filter_dropData";
+inline constexpr char kFilterCanvasViewKeyPress[] = "CanvasView_Filter_keyPress";
+inline constexpr char kFilterCanvasViewMousePress[] = "CanvasView_Filter_mousePress";
+inline constexpr char kFilterCanvasViewMouseRelease[] = "CanvasView_Filter_mouseRelease";
+inline constexpr char kFilterCanvasViewMouseDoubleClick[] = "CanvasView_Filter_mouseDoubleClick";
+inline constexpr char kFilterCanvasViewWheel[] = "CanvasView_Filter_wheel";
+inline constexpr char kFilterCanvasViewStartDrag[] = "CanvasView_Filter_startDrag";
+inline constexpr char kFilterCanvasViewDragEnter[] = "CanvasView_Filter_dragEnter";
+inline constexpr char kFilterCanvasViewDragMove[] = "CanvasView_Filter_dragMove";
+inline constexpr char kFilterCanvasViewDragLeave[] = "CanvasView_Filter_dragLeave";
+inline constexpr char kFilterCanvasViewKeyboardSearch[] = "CanvasView_Filter_keyboardSearch";
+inline constexpr char kFilterCanvasViewDrawFile[] = "CanvasView_Filter_drawFile";
 
 class CanvasViewExtendPrivate : public QObject, public CanvasEventProvider
 {
 public:
     explicit CanvasViewExtendPrivate(CanvasViewExtend *qq);
     ~CanvasViewExtendPrivate() override;
+
 protected:
     virtual void registerEvent() override;
+
 private:
     CanvasViewExtend *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASVIEWEXTEND_P_H
+#endif   // CANVASVIEWEXTEND_P_H

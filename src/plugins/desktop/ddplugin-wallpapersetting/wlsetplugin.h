@@ -29,9 +29,9 @@
 
 DDP_WALLPAERSETTING_BEGIN_NAMESPACE
 
-static constexpr char kEventWallpaperSetting[] = "WallpaperSetting";
-static constexpr char kEventScreenSaverSetting[] = "ScreenSaverSetting";
-static constexpr char kEventWallpaperChanged[] = "WallpaperChanged";
+inline constexpr char kEventWallpaperSetting[] = "WallpaperSetting";
+inline constexpr char kEventScreenSaverSetting[] = "ScreenSaverSetting";
+inline constexpr char kEventWallpaperChanged[] = "WallpaperChanged";
 
 class WallpaperSettings;
 class EventHandle : public QObject, public DSB_D_NAMESPACE::EventProvider

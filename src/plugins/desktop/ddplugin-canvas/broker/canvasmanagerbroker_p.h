@@ -28,23 +28,26 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kSlotCanvasManagerFileModel[] = "CanvasManager_Method_fileInfoModel";
-static constexpr char kSlotCanvasManagerUpdate[] = "CanvasManager_Method_update";
-static constexpr char kSlotCanvasManagerEdit[] = "CanvasManager_Method_edit";
+inline constexpr char kSlotCanvasManagerFileModel[] = "CanvasManager_Method_fileInfoModel";
+inline constexpr char kSlotCanvasManagerUpdate[] = "CanvasManager_Method_update";
+inline constexpr char kSlotCanvasManagerEdit[] = "CanvasManager_Method_edit";
 
 class CanvasManagerBrokerPrivate : public QObject, public CanvasEventProvider
 {
     Q_OBJECT
 public:
     explicit CanvasManagerBrokerPrivate(CanvasManagerBroker *);
+
 protected:
     void registerEvent() override;
+
 public:
     CanvasManager *canvas = nullptr;
+
 private:
     CanvasManagerBroker *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASBROKER_P_H
+#endif   // CANVASBROKER_P_H

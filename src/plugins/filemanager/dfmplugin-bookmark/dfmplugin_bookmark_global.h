@@ -30,8 +30,8 @@
 DPBOOKMARK_BEGIN_NAMESPACE
 
 namespace BookmarkActionId {
-static constexpr char kActAddBookmarkKey[] { "add-bookmark" };
-static constexpr char kActRemoveBookmarkKey[] { "remove-bookmark" };
+inline constexpr char kActAddBookmarkKey[] { "add-bookmark" };
+inline constexpr char kActRemoveBookmarkKey[] { "remove-bookmark" };
 }
 
 DPBOOKMARK_END_NAMESPACE

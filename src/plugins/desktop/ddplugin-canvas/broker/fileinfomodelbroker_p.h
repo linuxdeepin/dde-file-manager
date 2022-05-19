@@ -26,28 +26,31 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kSlotFileInfoModelRootUrl[] = "FileInfoModel_Method_rootUrl";
-static constexpr char kSlotFileInfoModelRootIndex[] = "FileInfoModel_Method_rootIndex";
-static constexpr char kSlotFileInfoModelUrlIndex[] = "FileInfoModel_Method_urlIndex";
-static constexpr char kSlotFileInfoModelIndexUrl[] = "FileInfoModel_Method_indexUrl";
-static constexpr char kSlotFileInfoModelFiles[] = "FileInfoModel_Method_files";
-static constexpr char kSlotFileInfoModelFileInfo[] = "FileInfoModel_Method_fileInfo";
-static constexpr char kSlotFileInfoModelRefresh[] = "FileInfoModel_Method_refresh";
-static constexpr char kSignalFileInfoModelDataReplaced[] = "FileInfoModel_Signal_dataReplaced";
+inline constexpr char kSlotFileInfoModelRootUrl[] = "FileInfoModel_Method_rootUrl";
+inline constexpr char kSlotFileInfoModelRootIndex[] = "FileInfoModel_Method_rootIndex";
+inline constexpr char kSlotFileInfoModelUrlIndex[] = "FileInfoModel_Method_urlIndex";
+inline constexpr char kSlotFileInfoModelIndexUrl[] = "FileInfoModel_Method_indexUrl";
+inline constexpr char kSlotFileInfoModelFiles[] = "FileInfoModel_Method_files";
+inline constexpr char kSlotFileInfoModelFileInfo[] = "FileInfoModel_Method_fileInfo";
+inline constexpr char kSlotFileInfoModelRefresh[] = "FileInfoModel_Method_refresh";
+inline constexpr char kSignalFileInfoModelDataReplaced[] = "FileInfoModel_Signal_dataReplaced";
 
 class FileInfoModelBrokerPrivate : public QObject, public CanvasEventProvider
 {
     Q_OBJECT
 public:
     explicit FileInfoModelBrokerPrivate(FileInfoModelBroker *);
+
 protected:
     void registerEvent() override;
+
 public:
     FileInfoModel *model = nullptr;
+
 private:
     FileInfoModelBroker *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // FILEINFOMODELBROKER_P_H
+#endif   // FILEINFOMODELBROKER_P_H

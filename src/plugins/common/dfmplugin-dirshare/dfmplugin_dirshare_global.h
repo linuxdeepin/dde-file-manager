@@ -32,8 +32,8 @@
 DPDIRSHARE_BEGIN_NAMESPACE
 
 namespace ShareActionId {
-static constexpr char kActAddShareKey[] { "add-share" };
-static constexpr char kActRemoveShareKey[] { "remove-share" };
+inline constexpr char kActAddShareKey[] { "add-share" };
+inline constexpr char kActRemoveShareKey[] { "remove-share" };
 }
 
 DPDIRSHARE_END_NAMESPACE

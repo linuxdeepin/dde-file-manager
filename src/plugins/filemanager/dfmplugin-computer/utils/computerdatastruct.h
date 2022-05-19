@@ -58,15 +58,15 @@ struct ComputerItemData
 };
 
 namespace SuffixInfo {
-static constexpr char kAppEntry[] { "appentry" };
-static constexpr char kBlock[] { "blockdev" };
-static constexpr char kProtocol[] { "protodev" };
-static constexpr char kStashedProtocol[] { "protodevstashed" };
-static constexpr char kUserDir[] { "userdir" };
+inline constexpr char kAppEntry[] { "appentry" };
+inline constexpr char kBlock[] { "blockdev" };
+inline constexpr char kProtocol[] { "protodev" };
+inline constexpr char kStashedProtocol[] { "protodevstashed" };
+inline constexpr char kUserDir[] { "userdir" };
 }
 
 namespace DeviceId {
-static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
+inline constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 }
 
 namespace ContextMenuActionTrs {

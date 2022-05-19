@@ -28,9 +28,9 @@
 
 DPTRASH_BEGIN_NAMESPACE
 namespace TrashActionId {
-static constexpr char kRestore[] { "restore" };
-static constexpr char kRestoreAll[] { "restore-all" };
-static constexpr char kEmptyTrash[] { "empty-trash" };
+inline constexpr char kRestore[] { "restore" };
+inline constexpr char kRestoreAll[] { "restore-all" };
+inline constexpr char kEmptyTrash[] { "empty-trash" };
 }
 DPTRASH_END_NAMESPACE
 

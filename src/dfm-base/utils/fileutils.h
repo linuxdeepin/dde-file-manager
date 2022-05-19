@@ -30,8 +30,8 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-static constexpr char kOperateFileGroup[] { "CopyingFileGroup" };
-static constexpr char kCopyingFileKey[] { "CopyingFile" };
+inline constexpr char kOperateFileGroup[] { "CopyingFileGroup" };
+inline constexpr char kCopyingFileKey[] { "CopyingFile" };
 
 class FileUtils
 {

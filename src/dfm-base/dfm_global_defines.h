@@ -107,55 +107,55 @@ enum CreateFileType : uint8_t {
     kCreateFileTypeDefault = 0xff,
 };
 
-constexpr char kMimetypeAppDesktop[] { "application/x-desktop" };
-constexpr char kMimeTypeCdImage[] { "application/x-cd-image" };
-constexpr char kMimeTypeISO9660Image[] { "application/x-iso9660-image" };
-constexpr char kMimeTypeAppXml[] { "application/xml" };
-constexpr char kMimeTypeAppPdf[] { "application/pdf" };
-constexpr char kMimeTypeAppMxf[] { "application/mxf" };
-constexpr char kMimeTypeAppVMAsf[] { "application/vnd.ms-asf" };
-constexpr char kMimeTypeAppCRRMedia[] { "application/cnd.rn-realmedia" };
-constexpr char kMimeTypeAppVRRMedia[] { "application/vnd.rn-realmedia" };
-constexpr char kMimeTypeTextHtml[] { "text/html" };
-constexpr char kMimeTypeAppXhtmlXml[] { "application/xhtml+xml" };
-constexpr char kMimeTypeTextXPython[] { "text/x-python" };
-constexpr char kMimeTypeTextPlain[] { "text/plain" };
-constexpr char kMimeTypeAppXOleStorage[] { "application/x-ole-storage" };
-constexpr char kMimeTypeAppZip[] { "application/zip" };
-constexpr char kMimeTypeAppXDesktop[] { "application/x-desktop" };
+inline constexpr char kMimetypeAppDesktop[] { "application/x-desktop" };
+inline constexpr char kMimeTypeCdImage[] { "application/x-cd-image" };
+inline constexpr char kMimeTypeISO9660Image[] { "application/x-iso9660-image" };
+inline constexpr char kMimeTypeAppXml[] { "application/xml" };
+inline constexpr char kMimeTypeAppPdf[] { "application/pdf" };
+inline constexpr char kMimeTypeAppMxf[] { "application/mxf" };
+inline constexpr char kMimeTypeAppVMAsf[] { "application/vnd.ms-asf" };
+inline constexpr char kMimeTypeAppCRRMedia[] { "application/cnd.rn-realmedia" };
+inline constexpr char kMimeTypeAppVRRMedia[] { "application/vnd.rn-realmedia" };
+inline constexpr char kMimeTypeTextHtml[] { "text/html" };
+inline constexpr char kMimeTypeAppXhtmlXml[] { "application/xhtml+xml" };
+inline constexpr char kMimeTypeTextXPython[] { "text/x-python" };
+inline constexpr char kMimeTypeTextPlain[] { "text/plain" };
+inline constexpr char kMimeTypeAppXOleStorage[] { "application/x-ole-storage" };
+inline constexpr char kMimeTypeAppZip[] { "application/zip" };
+inline constexpr char kMimeTypeAppXDesktop[] { "application/x-desktop" };
 // image
-constexpr char kMimeTypeImageIef[] { "image/ief" };
-constexpr char kMimeTypeImageTiff[] { "image/tiff" };
-constexpr char kMimeTypeImageXTMultipage[] { "image/x-tiff-multipage" };
-constexpr char kMimeTypeImageVDMultipage[] { "image/vnd.djvu+multipage" };
-constexpr char kMimeTypeImageXADng[] { "image/x-adobe-dng" };
-constexpr char kMimeTypeImageJpeg[] { "image/jpeg" };
-constexpr char kMimeTypeImagePng[] { "image/png" };
-constexpr char kMimeTypeImagePipeg[] { "image/pipeg" };
-constexpr char kMimeTypeImageVDjvu[] { "image/vnd.djvu" };
-constexpr char kMimeTypeImageSvgXml[] { "image/svg+xml" };
+inline constexpr char kMimeTypeImageIef[] { "image/ief" };
+inline constexpr char kMimeTypeImageTiff[] { "image/tiff" };
+inline constexpr char kMimeTypeImageXTMultipage[] { "image/x-tiff-multipage" };
+inline constexpr char kMimeTypeImageVDMultipage[] { "image/vnd.djvu+multipage" };
+inline constexpr char kMimeTypeImageXADng[] { "image/x-adobe-dng" };
+inline constexpr char kMimeTypeImageJpeg[] { "image/jpeg" };
+inline constexpr char kMimeTypeImagePng[] { "image/png" };
+inline constexpr char kMimeTypeImagePipeg[] { "image/pipeg" };
+inline constexpr char kMimeTypeImageVDjvu[] { "image/vnd.djvu" };
+inline constexpr char kMimeTypeImageSvgXml[] { "image/svg+xml" };
 
-constexpr char kMimeDataUserIDKey[] { "userid_for_drag" };
+inline constexpr char kMimeDataUserIDKey[] { "userid_for_drag" };
 
-constexpr uint8_t kMaxFileNameCharCount { 255 };
+inline constexpr uint8_t kMaxFileNameCharCount { 255 };
 
-constexpr char kSmb[] { "smb" };
-constexpr char kSmbShare[] { "smb-share" };
-constexpr char kFtp[] { "ftp" };
-constexpr char kSFtp[] { "sftp" };
-constexpr char kGPhoto[] { "gphoto" };
-constexpr char kGPhoto2[] { "gphoto2" };
-constexpr char kFile[] { "file" };
-constexpr char kDesktop[] { "desktop" };
-constexpr char kMtp[] { "mtp" };
-constexpr char kAfc[] { "afc" };
-constexpr char kDav[] { "dav" };
-constexpr char kEntry[] { "entry" };
-constexpr char kBurn[] { "burn" };
-constexpr char kComputer[] { "computer" };
-constexpr char kDevice[] { "device" };
-constexpr char kTrash[] { "trash" };
-constexpr char kRecent[] { "recent" };
+inline constexpr char kSmb[] { "smb" };
+inline constexpr char kSmbShare[] { "smb-share" };
+inline constexpr char kFtp[] { "ftp" };
+inline constexpr char kSFtp[] { "sftp" };
+inline constexpr char kGPhoto[] { "gphoto" };
+inline constexpr char kGPhoto2[] { "gphoto2" };
+inline constexpr char kFile[] { "file" };
+inline constexpr char kDesktop[] { "desktop" };
+inline constexpr char kMtp[] { "mtp" };
+inline constexpr char kAfc[] { "afc" };
+inline constexpr char kDav[] { "dav" };
+inline constexpr char kEntry[] { "entry" };
+inline constexpr char kBurn[] { "burn" };
+inline constexpr char kComputer[] { "computer" };
+inline constexpr char kDevice[] { "device" };
+inline constexpr char kTrash[] { "trash" };
+inline constexpr char kRecent[] { "recent" };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

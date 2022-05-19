@@ -29,30 +29,30 @@
 
 DAEMONPAC_BEGIN_NAMESPACE
 
-static constexpr char kKeyInvoker[] { "invoker" };
-static constexpr char kKeyType[] { "type" };
-static constexpr char kKeyDevice[] { "device" };
-static constexpr char kKeyPolicy[] { "policy" };
-static constexpr char kKeyTstamp[] { "timestamp" };
-static constexpr char kKeyGlobal[] { "global" };
+inline constexpr char kKeyInvoker[] { "invoker" };
+inline constexpr char kKeyType[] { "type" };
+inline constexpr char kKeyDevice[] { "device" };
+inline constexpr char kKeyPolicy[] { "policy" };
+inline constexpr char kKeyTstamp[] { "timestamp" };
+inline constexpr char kKeyGlobal[] { "global" };
 
-static constexpr char kKeyErrstr[] { "errstr" };
-static constexpr char kKeyErrno[] { "errno" };
+inline constexpr char kKeyErrstr[] { "errstr" };
+inline constexpr char kKeyErrno[] { "errno" };
 
-static constexpr char kPolicyType[] { "policytype" };
-static constexpr char kVaultHideState[] { "vaulthidestate" };
-static constexpr char kPolicyState[] { "policystate" };
+inline constexpr char kPolicyType[] { "policytype" };
+inline constexpr char kVaultHideState[] { "vaulthidestate" };
+inline constexpr char kPolicyState[] { "policystate" };
 
-static constexpr int kTypeInvalid { 0x00 };
-static constexpr int kTypeBlock { 0x01 };
-static constexpr int kTypeOptical { 0x02 };
-static constexpr int kTypeProtocol { 0x04 };
+inline constexpr int kTypeInvalid { 0x00 };
+inline constexpr int kTypeBlock { 0x01 };
+inline constexpr int kTypeOptical { 0x02 };
+inline constexpr int kTypeProtocol { 0x04 };
 
-static constexpr int kPolicyDisable { 0 };
-static constexpr int kPolicyRonly { 1 };
-static constexpr int kPolicyRw { 2 };
+inline constexpr int kPolicyDisable { 0 };
+inline constexpr int kPolicyRonly { 1 };
+inline constexpr int kPolicyRw { 2 };
 
-static constexpr int kMaxRetry { 5 };
+inline constexpr int kMaxRetry { 5 };
 
 using DevPolicyType = QMap<int, QPair<QString, int>>;
 using VaultPolicyType = QMap<QString, int>;

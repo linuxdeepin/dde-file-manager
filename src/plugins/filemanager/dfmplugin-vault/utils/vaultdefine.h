@@ -29,48 +29,48 @@
 
 DPVAULT_BEGIN_NAMESPACE
 
-constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
-constexpr char kVaultEncrypyDirName[] { "vault_encrypted" };
+inline constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
+inline constexpr char kVaultEncrypyDirName[] { "vault_encrypted" };
 
-constexpr char kCryfsConfigFileName[] { "cryfs.config" };
+inline constexpr char kCryfsConfigFileName[] { "cryfs.config" };
 
-constexpr char kPasswordFileName[] { "pbkdf2clipher" };
-constexpr char kRSAPUBKeyFileName[] { "rsapubkey" };
-constexpr char kRSACiphertextFileName[] { "rsaclipher" };
-constexpr char kPasswordHintFileName[] { "passwordHint" };
-constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
+inline constexpr char kPasswordFileName[] { "pbkdf2clipher" };
+inline constexpr char kRSAPUBKeyFileName[] { "rsapubkey" };
+inline constexpr char kRSACiphertextFileName[] { "rsaclipher" };
+inline constexpr char kPasswordHintFileName[] { "passwordHint" };
+inline constexpr char kVaultConfigFileName[] { "vaultConfig.ini" };
 
-constexpr int kRandomSaltLength { 10 };   //! 随机盐的字节数
-constexpr int kIteration { 1024 };   //! pbkdf2迭代次数
-constexpr int kIterationTwo { 10000 };   //! pbkdf2迭代次数
-constexpr int kPasswordCipherLength { 50 };   //! 密码密文长度
-constexpr int kUserKeyLength { 32 };   //! 用户密钥长度
-constexpr int kUserKeyInterceptIndex { 50 };   //! 用户密钥从公钥中截取的起始点索引
+inline constexpr int kRandomSaltLength { 10 };   //! 随机盐的字节数
+inline constexpr int kIteration { 1024 };   //! pbkdf2迭代次数
+inline constexpr int kIterationTwo { 10000 };   //! pbkdf2迭代次数
+inline constexpr int kPasswordCipherLength { 50 };   //! 密码密文长度
+inline constexpr int kUserKeyLength { 32 };   //! 用户密钥长度
+inline constexpr int kUserKeyInterceptIndex { 50 };   //! 用户密钥从公钥中截取的起始点索引
 
-constexpr char kRootProxy[] { "pkexec deepin-vault-authenticateProxy" };
+inline constexpr char kRootProxy[] { "pkexec deepin-vault-authenticateProxy" };
 
-constexpr char kPolkitVaultCreate[] { "com.deepin.filemanager.daemon.VaultManager.Create" };
-constexpr char kPolkitVaultRemove[] { "com.deepin.filemanager.daemon.VaultManager.Remove" };
+inline constexpr char kPolkitVaultCreate[] { "com.deepin.filemanager.daemon.VaultManager.Create" };
+inline constexpr char kPolkitVaultRemove[] { "com.deepin.filemanager.daemon.VaultManager.Remove" };
 
-constexpr int kBuffterMaxLine { 1024 };   //! shell命令输出每行最大的字符个数
+inline constexpr int kBuffterMaxLine { 1024 };   //! shell命令输出每行最大的字符个数
 
-const QString kVaultBasePath(QDir::homePath() + QString("/.config/Vault"));   //!! 获取保险箱创建的目录地址
+inline const QString kVaultBasePath(QDir::homePath() + QString("/.config/Vault"));   //!! 获取保险箱创建的目录地址
 
-const QString kVaultBasePathOld(QDir::homePath() + QString("/.local/share/applications"));   //!! 获取保险箱创建的旧目录地址
+inline const QString kVaultBasePathOld(QDir::homePath() + QString("/.local/share/applications"));   //!! 获取保险箱创建的旧目录地址
 
-static const QString getCompressorPidShell(QString value)
+inline const QString getCompressorPidShell(QString value)
 {
     return QString("ps -xo pid,cmd | grep /usr/bin/deepin-compressor | grep ") + value + QString(" | grep -v grep | awk '{print $1}'");
 }
 
 //!! 保险箱时间配置文件
-constexpr char kVaultTimeConfigFileSuffix[] { "/../dde-file-manager/vaultTimeConfig.json" };
-constexpr char kVaultTimeConfigFile[] { "/../dde-file-manager/vaultTimeConfig" };
+inline constexpr char kVaultTimeConfigFileSuffix[] { "/../dde-file-manager/vaultTimeConfig.json" };
+inline constexpr char kVaultTimeConfigFile[] { "/../dde-file-manager/vaultTimeConfig" };
 
-constexpr char kjsonGroupName[] { "VaultTime" };
-constexpr char kjsonKeyInterviewItme[] { "InterviewTime" };
-constexpr char kjsonKeyLockTime[] { "LockTime" };
-constexpr char kjsonKeyCreateTime[] { "CreateTime" };
+inline constexpr char kjsonGroupName[] { "VaultTime" };
+inline constexpr char kjsonKeyInterviewItme[] { "InterviewTime" };
+inline constexpr char kjsonKeyLockTime[] { "LockTime" };
+inline constexpr char kjsonKeyCreateTime[] { "CreateTime" };
 
 enum class VaultState : int {
     kNotExisted = 0,

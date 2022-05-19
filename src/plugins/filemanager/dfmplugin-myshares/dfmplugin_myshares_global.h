@@ -31,11 +31,11 @@
 DPMYSHARES_BEGIN_NAMESPACE
 
 namespace MySharesActionId {
-static constexpr char kOpenShareFolder[] { "open-share-folder" };
-static constexpr char kOpenShareInNewWin[] { "open-share-in-new-win" };
-static constexpr char kOpenShareInNewTab[] { "open-share-in-new-tab" };
-static constexpr char kCancleSharing[] { "cancel-sharing" };
-static constexpr char kShareProperty[] { "share-property" };
+inline constexpr char kOpenShareFolder[] { "open-share-folder" };
+inline constexpr char kOpenShareInNewWin[] { "open-share-in-new-win" };
+inline constexpr char kOpenShareInNewTab[] { "open-share-in-new-tab" };
+inline constexpr char kCancleSharing[] { "cancel-sharing" };
+inline constexpr char kShareProperty[] { "share-property" };
 }
 
 DPMYSHARES_END_NAMESPACE

@@ -35,9 +35,9 @@
 #include <QIcon>
 #include <QRegularExpression>
 
-static constexpr char kDiscburnStaging[] { "discburn" };
-static constexpr char kBurnSegOndisc[] { "disc_files" };
-static constexpr char kBurnSegStaging[] { "staging_files" };
+inline constexpr char kDiscburnStaging[] { "discburn" };
+inline constexpr char kBurnSegOndisc[] { "disc_files" };
+inline constexpr char kBurnSegStaging[] { "staging_files" };
 
 DPOPTICAL_BEGIN_NAMESPACE
 

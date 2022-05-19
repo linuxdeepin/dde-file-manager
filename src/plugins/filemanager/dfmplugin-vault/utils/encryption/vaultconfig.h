@@ -30,11 +30,11 @@ QT_BEGIN_NAMESPACE class QSettings;
 QT_END_NAMESPACE
 
 DPVAULT_BEGIN_NAMESPACE
-constexpr char kConfigNodeName[] { "INFO" };
-constexpr char kConfigKeyCipher[] { "pbkgcipher" };
-constexpr char kConfigKeyVersion[] { "version" };
-constexpr char kConfigVaultVersion[] { "new" };
-constexpr char kConfigVaultVersion1050[] { "1050" };
+inline constexpr char kConfigNodeName[] { "INFO" };
+inline constexpr char kConfigKeyCipher[] { "pbkgcipher" };
+inline constexpr char kConfigKeyVersion[] { "version" };
+inline constexpr char kConfigVaultVersion[] { "new" };
+inline constexpr char kConfigVaultVersion1050[] { "1050" };
 class VaultConfig
 {
 public:

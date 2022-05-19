@@ -29,24 +29,28 @@
 DSB_D_BEGIN_NAMESPACE
 
 namespace EventType {
-static constexpr int kEventSignal = 0x1;
-static constexpr int kEventSlot = 0x2;
-static constexpr int kSeqSignal = 0x3;
+inline constexpr int kEventSignal = 0x1;
+inline constexpr int kEventSlot = 0x2;
+inline constexpr int kSeqSignal = 0x3;
 }
 
 class EventProvider
 {
 public:
     typedef void (*EventChanged)(int eventType, const QStringList &eventKeys, void *);
+
 public:
     virtual QVariantHash query(int type) const = 0;
     virtual bool monitor(EventChanged func, void *data);
     virtual void unmonitor(EventChanged func);
+
 protected:
     virtual void notify(int eventType, const QStringList &eventKeys) const;
+
 protected:
     explicit EventProvider();
     virtual ~EventProvider();
+
 protected:
     QMap<EventChanged, void *> monitors;
     mutable QReadWriteLock locker;
@@ -54,4 +58,4 @@ protected:
 
 DSB_D_END_NAMESPACE
 
-#endif // EVENTPROVIDER_H
+#endif   // EVENTPROVIDER_H

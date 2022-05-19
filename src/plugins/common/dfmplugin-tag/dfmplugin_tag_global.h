@@ -49,8 +49,8 @@ enum class TagActionType : uint8_t {
 };
 
 namespace TagActionId {
-static constexpr char kActTagColorListKey[] { "tag-color-list" };
-static constexpr char kActTagAddKey[] { "tag-add" };
+inline constexpr char kActTagColorListKey[] { "tag-color-list" };
+inline constexpr char kActTagAddKey[] { "tag-add" };
 }
 
 DPTAG_END_NAMESPACE

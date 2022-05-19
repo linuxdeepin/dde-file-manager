@@ -24,19 +24,19 @@
 namespace dfmplugin_workspace {
 
 namespace ActionID {
-static constexpr char kSortBy[] = "sort-by";
-static constexpr char kDisplayAs[] = "display-as";
-static constexpr char kRefresh[] = "refresh";
+inline constexpr char kSortBy[] = "sort-by";
+inline constexpr char kDisplayAs[] = "display-as";
+inline constexpr char kRefresh[] = "refresh";
 
 // sort by
-static constexpr char kSrtName[] = "sort-by-name";
-static constexpr char kSrtTimeModified[] = "sort-by-time-modified";
-static constexpr char kSrtSize[] = "sort-by-size";
-static constexpr char kSrtType[] = "sort-by-type";
+inline constexpr char kSrtName[] = "sort-by-name";
+inline constexpr char kSrtTimeModified[] = "sort-by-time-modified";
+inline constexpr char kSrtSize[] = "sort-by-size";
+inline constexpr char kSrtType[] = "sort-by-type";
 
 // display by
-static constexpr char kDisplayIcon[] = "display-as-icon";
-static constexpr char kDisplayList[] = "display-as-list";
+inline constexpr char kDisplayIcon[] = "display-as-icon";
+inline constexpr char kDisplayList[] = "display-as-list";
 }
 
 }

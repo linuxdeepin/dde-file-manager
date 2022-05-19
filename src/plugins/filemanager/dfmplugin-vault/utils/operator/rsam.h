@@ -24,8 +24,8 @@
 
 #include <QString>
 
-constexpr int kKeyLength { 2048 };   // 密钥的长度
-constexpr char kKeyBegin[] { "BEGIN RSA PUBLIC KEY" };   // 代码生成key
+inline constexpr int kKeyLength { 2048 };   // 密钥的长度
+inline constexpr char kKeyBegin[] { "BEGIN RSA PUBLIC KEY" };   // 代码生成key
 
 class rsam
 {

@@ -32,14 +32,14 @@
 DFMBASE_BEGIN_NAMESPACE
 
 namespace BlockAdditionalProperty {
-static constexpr char kClearBlockProperty[] { "ClearBlockDeviceInfo" };
-static constexpr char kAliasGroupName[] { "LocalDiskAlias" };
-static constexpr char kAliasItemName[] { "Items" };
-static constexpr char kAliasItemUUID[] { "uuid" };
-static constexpr char kAliasItemAlias[] { "alias" };
+inline constexpr char kClearBlockProperty[] { "ClearBlockDeviceInfo" };
+inline constexpr char kAliasGroupName[] { "LocalDiskAlias" };
+inline constexpr char kAliasItemName[] { "Items" };
+inline constexpr char kAliasItemUUID[] { "uuid" };
+inline constexpr char kAliasItemAlias[] { "alias" };
 }   // namespace BlockAdditionalProperty
 
-static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
+inline constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
 /*!
  * \brief The DeviceUtils class

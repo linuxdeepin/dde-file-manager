@@ -37,8 +37,8 @@
 #include <memory>
 #include <unordered_map>
 
-static constexpr const char *const kDataBasePath { "/usr/share/dde-file-manager/" };
-static constexpr const char *const kDataBaseName { "database" };
+inline constexpr const char *const kDataBasePath { "/usr/share/dde-file-manager/" };
+inline constexpr const char *const kDataBaseName { "database" };
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 namespace std {

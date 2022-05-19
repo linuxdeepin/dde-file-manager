@@ -27,7 +27,7 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kSlotCanvasGridItems[] = "CanvasGrid_Method_items";
+inline constexpr char kSlotCanvasGridItems[] = "CanvasGrid_Method_items";
 
 class CanvasGridBrokerPrivate : public QObject, public CanvasEventProvider
 {
@@ -35,14 +35,17 @@ class CanvasGridBrokerPrivate : public QObject, public CanvasEventProvider
 public:
     explicit CanvasGridBrokerPrivate(CanvasGridBroker *);
     ~CanvasGridBrokerPrivate() override;
+
 protected:
     void registerEvent() override;
+
 public:
     CanvasGrid *grid = nullptr;
+
 private:
     CanvasGridBroker *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASGRIDBROKER_P_H
+#endif   // CANVASGRIDBROKER_P_H

@@ -27,23 +27,23 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kSlotCanvasModelRootUrl[] = "CanvasModel_Method_rootUrl";
-static constexpr char kSlotCanvasModelUrlIndex[] = "CanvasModel_Method_urlIndex";
-static constexpr char kSlotCanvasModelIndex[] = "CanvasModel_Method_index";
-static constexpr char kSlotCanvasModelFileUrl[] = "CanvasModel_Method_fileUrl";
-static constexpr char kSlotCanvasModelFiles[] = "CanvasModel_Method_files";
-static constexpr char kSlotCanvasModelShowHiddenFiles[] = "CanvasModel_Method_showHiddenFiles";
-static constexpr char kSlotCanvasModelsetShowHiddenFiles[] = "CanvasModel_Method_setShowHiddenFiles";
-static constexpr char kSlotCanvasModelSortOrder[] = "CanvasModel_Method_sortOrder";
-static constexpr char kSlotCanvasModelSetSortOrder[] = "CanvasModel_Method_setSortOrder";
-static constexpr char kSlotCanvasModelSortRole[] = "CanvasModel_Method_sortRole";
-static constexpr char kSlotCanvasModelSetSortRole[] = "CanvasModel_Method_SetSortRole";
-static constexpr char kSlotCanvasModelRowCount[] = "CanvasModel_Method_rowCount";
-static constexpr char kSlotCanvasModelData[] = "CanvasModel_Method_data";
-static constexpr char kSlotCanvasModelSort[] = "CanvasModel_Method_sort";
-static constexpr char kSlotCanvasModelRefresh[] = "CanvasModel_Method_refresh";
-static constexpr char kSlotCanvasModelFetch[] = "CanvasModel_Method_fetch";
-static constexpr char kSlotCanvasModelTake[] = "CanvasModel_Method_take";
+inline constexpr char kSlotCanvasModelRootUrl[] = "CanvasModel_Method_rootUrl";
+inline constexpr char kSlotCanvasModelUrlIndex[] = "CanvasModel_Method_urlIndex";
+inline constexpr char kSlotCanvasModelIndex[] = "CanvasModel_Method_index";
+inline constexpr char kSlotCanvasModelFileUrl[] = "CanvasModel_Method_fileUrl";
+inline constexpr char kSlotCanvasModelFiles[] = "CanvasModel_Method_files";
+inline constexpr char kSlotCanvasModelShowHiddenFiles[] = "CanvasModel_Method_showHiddenFiles";
+inline constexpr char kSlotCanvasModelsetShowHiddenFiles[] = "CanvasModel_Method_setShowHiddenFiles";
+inline constexpr char kSlotCanvasModelSortOrder[] = "CanvasModel_Method_sortOrder";
+inline constexpr char kSlotCanvasModelSetSortOrder[] = "CanvasModel_Method_setSortOrder";
+inline constexpr char kSlotCanvasModelSortRole[] = "CanvasModel_Method_sortRole";
+inline constexpr char kSlotCanvasModelSetSortRole[] = "CanvasModel_Method_SetSortRole";
+inline constexpr char kSlotCanvasModelRowCount[] = "CanvasModel_Method_rowCount";
+inline constexpr char kSlotCanvasModelData[] = "CanvasModel_Method_data";
+inline constexpr char kSlotCanvasModelSort[] = "CanvasModel_Method_sort";
+inline constexpr char kSlotCanvasModelRefresh[] = "CanvasModel_Method_refresh";
+inline constexpr char kSlotCanvasModelFetch[] = "CanvasModel_Method_fetch";
+inline constexpr char kSlotCanvasModelTake[] = "CanvasModel_Method_take";
 
 class CanvasModelBrokerPrivate : public QObject, public CanvasEventProvider
 {
@@ -51,14 +51,17 @@ class CanvasModelBrokerPrivate : public QObject, public CanvasEventProvider
 public:
     explicit CanvasModelBrokerPrivate(CanvasModelBroker *);
     ~CanvasModelBrokerPrivate() override;
+
 public:
 protected:
     void registerEvent() override;
+
 public:
     CanvasProxyModel *model = nullptr;
+
 private:
     CanvasModelBroker *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
-#endif // CANVASMODELBROKER_P_H
+#endif   // CANVASMODELBROKER_P_H

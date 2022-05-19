@@ -26,7 +26,7 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kFilterCanvasManagerWallpaperSetting[] = "CanvasManager_Filter_wallpaperSetting";
+inline constexpr char kFilterCanvasManagerWallpaperSetting[] = "CanvasManager_Filter_wallpaperSetting";
 
 class CanvasManagerExtendPrivate : public QObject, public CanvasEventProvider
 {
@@ -34,12 +34,14 @@ class CanvasManagerExtendPrivate : public QObject, public CanvasEventProvider
 public:
     explicit CanvasManagerExtendPrivate(CanvasManagerExtend *);
     ~CanvasManagerExtendPrivate() override;
+
 protected:
     void registerEvent() override;
+
 private:
     CanvasManagerExtend *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASMANAGEREXTEND_P_H
+#endif   // CANVASMANAGEREXTEND_P_H

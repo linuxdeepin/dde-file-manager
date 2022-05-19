@@ -28,11 +28,11 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-static constexpr char kSlotCanvasViewVisualRect[] = "CanvasView_Method_visualRect";
-static constexpr char kSlotCanvasViewRefresh[] = "CanvasView_Method_refresh";
-static constexpr char kSlotCanvasViewUpdate[] = "CanvasView_Method_update";
-static constexpr char kSlotCanvasViewSelect[] = "CanvasView_Method_select";
-static constexpr char kSlotCanvasViewSelectedUrls[] = "CanvasView_Method_selectedUrls";
+inline constexpr char kSlotCanvasViewVisualRect[] = "CanvasView_Method_visualRect";
+inline constexpr char kSlotCanvasViewRefresh[] = "CanvasView_Method_refresh";
+inline constexpr char kSlotCanvasViewUpdate[] = "CanvasView_Method_update";
+inline constexpr char kSlotCanvasViewSelect[] = "CanvasView_Method_select";
+inline constexpr char kSlotCanvasViewSelectedUrls[] = "CanvasView_Method_selectedUrls";
 
 class CanvasViewBrokerPrivate : public QObject, public CanvasEventProvider
 {
@@ -41,13 +41,16 @@ public:
     explicit CanvasViewBrokerPrivate(CanvasViewBroker *);
     ~CanvasViewBrokerPrivate();
     QSharedPointer<CanvasView> view(int idx);
+
 protected:
     void registerEvent() override;
+
 public:
     CanvasManager *mrg = nullptr;
+
 private:
     CanvasViewBroker *q;
 };
 
 DDP_CANVAS_END_NAMESPACE
-#endif // CANVASVIEWBROKER_P_H
+#endif   // CANVASVIEWBROKER_P_H

@@ -33,10 +33,10 @@ Q_NAMESPACE
  * for 'Device Busy'-related messages sent to the Notification Center
  */
 namespace DeviceBusyAction {
-constexpr int kSafelyRemove { 0 };
-constexpr int kUnmount { 1 };
-constexpr int kRemove { 2 };
-constexpr int kEject { 3 };
+inline constexpr int kSafelyRemove { 0 };
+inline constexpr int kUnmount { 1 };
+inline constexpr int kRemove { 2 };
+inline constexpr int kEject { 3 };
 }   // namespace DeviceBusyAction
 
 /*!
@@ -45,11 +45,11 @@ constexpr int kEject { 3 };
  * for changes are listed here
  */
 namespace DeviceAttribute {
-constexpr char kIdLabel[] { "IdLabel" };
-constexpr char kMountPoints[] { "MountPoints" };
-constexpr char kBlockSize[] { "BlockSize" };
-constexpr char kSize[] { "Size" };
-constexpr char kCleartextDevice[] { "CleartextDevice" };
+inline constexpr char kIdLabel[] { "IdLabel" };
+inline constexpr char kMountPoints[] { "MountPoints" };
+inline constexpr char kBlockSize[] { "BlockSize" };
+inline constexpr char kSize[] { "Size" };
+inline constexpr char kCleartextDevice[] { "CleartextDevice" };
 }   // namespace DeviceAttribute
 
 /*!
@@ -57,47 +57,46 @@ constexpr char kCleartextDevice[] { "CleartextDevice" };
  */
 namespace DeviceProperty {
 // common
-constexpr char kId[] { "Id" };
-constexpr char kMountPoint[] { "MountPoint" };
-constexpr char kFileSystem[] { "IdType" };
-constexpr char kSizeTotal[] { "SizeTotal" };
-constexpr char kSizeFree[] { "SizeFree" };
-constexpr char kSizeUsed[] { "SizeUsed" };
+inline constexpr char kId[] { "Id" };
+inline constexpr char kMountPoint[] { "MountPoint" };
+inline constexpr char kFileSystem[] { "IdType" };
+inline constexpr char kSizeTotal[] { "SizeTotal" };
+inline constexpr char kSizeFree[] { "SizeFree" };
+inline constexpr char kSizeUsed[] { "SizeUsed" };
 
 // block
-constexpr char kUUID[] { "IdUUID" };
-constexpr char kFsVersion[] { "IdVersion" };
-constexpr char kDevice[] { "Device" };
-constexpr char kIdLabel[] { "IdLabel" };
-constexpr char kMedia[] { "Media" };
-constexpr char kReadOnly[] { "ReadOnly" };
-constexpr char kRemovable[] { "Removable" };
-constexpr char kMediaRemovable[] { "MediaRemovable" };
-constexpr char kOptical[] { "Optical" };
-constexpr char kOpticalDrive[] { "OpticalDrive" };
-constexpr char kOpticalBlank[] { "OpticalBlank" };
-constexpr char kOpticalMediaType[] { "OpticalMediaType" };
-constexpr char kOpticalWriteSpeed[] { "OpticalWriteSpeed" };
-constexpr char kMediaAvailable[] { "MediaAvailable" };
-constexpr char kCanPowerOff[] { "CanPowerOff" };
-constexpr char kEjectable[] { "Ejectable" };
-constexpr char kIsEncrypted[] { "IsEncrypted" };
-constexpr char kIsLoopDevice[] { "IsLoopDevice" };
-constexpr char kHasFileSystem[] { "HasFileSystem" };
-constexpr char kHasPartitionTable[] { "HasPartitionTable" };
-constexpr char kHasPartition[] { "HasPartition" };
-constexpr char kHasExtendedPatition[] { "HasExtendedPartition" };
-constexpr char kHintSystem[] { "HintSystem" };
-constexpr char kHintIgnore[] { "HintIgnore" };
-constexpr char kCryptoBackingDevice[] { "CryptoBackingDevice" };
-constexpr char kDrive[] { "Drive" };
-constexpr char kMountPoints[] { "MountPoints" };
-constexpr char kMediaCompatibility[] { "MediaCompatibility" };
-constexpr char kCleartextDevice[] { "CleartextDevice" };
-constexpr char kDisplayName[] { "DisplayName" };
-constexpr char kDeviceIcon[] { "DeviceIcon" };
-constexpr char kConnectionBus[] { "connectBus" };
-
+inline constexpr char kUUID[] { "IdUUID" };
+inline constexpr char kFsVersion[] { "IdVersion" };
+inline constexpr char kDevice[] { "Device" };
+inline constexpr char kIdLabel[] { "IdLabel" };
+inline constexpr char kMedia[] { "Media" };
+inline constexpr char kReadOnly[] { "ReadOnly" };
+inline constexpr char kRemovable[] { "Removable" };
+inline constexpr char kMediaRemovable[] { "MediaRemovable" };
+inline constexpr char kOptical[] { "Optical" };
+inline constexpr char kOpticalDrive[] { "OpticalDrive" };
+inline constexpr char kOpticalBlank[] { "OpticalBlank" };
+inline constexpr char kOpticalMediaType[] { "OpticalMediaType" };
+inline constexpr char kOpticalWriteSpeed[] { "OpticalWriteSpeed" };
+inline constexpr char kMediaAvailable[] { "MediaAvailable" };
+inline constexpr char kCanPowerOff[] { "CanPowerOff" };
+inline constexpr char kEjectable[] { "Ejectable" };
+inline constexpr char kIsEncrypted[] { "IsEncrypted" };
+inline constexpr char kIsLoopDevice[] { "IsLoopDevice" };
+inline constexpr char kHasFileSystem[] { "HasFileSystem" };
+inline constexpr char kHasPartitionTable[] { "HasPartitionTable" };
+inline constexpr char kHasPartition[] { "HasPartition" };
+inline constexpr char kHasExtendedPatition[] { "HasExtendedPartition" };
+inline constexpr char kHintSystem[] { "HintSystem" };
+inline constexpr char kHintIgnore[] { "HintIgnore" };
+inline constexpr char kCryptoBackingDevice[] { "CryptoBackingDevice" };
+inline constexpr char kDrive[] { "Drive" };
+inline constexpr char kMountPoints[] { "MountPoints" };
+inline constexpr char kMediaCompatibility[] { "MediaCompatibility" };
+inline constexpr char kCleartextDevice[] { "CleartextDevice" };
+inline constexpr char kDisplayName[] { "DisplayName" };
+inline constexpr char kDeviceIcon[] { "DeviceIcon" };
+inline constexpr char kConnectionBus[] { "connectBus" };
 }   // namespace DeviceProperty
 
 /*!
@@ -123,12 +122,12 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(DeviceQueryOptions)
  * detail in DeviceService::mountNetworkDevice
  */
 namespace NetworkMountParamKey {
-constexpr char kUser[] { "user" };
-constexpr char kDomain[] { "domain" };
-constexpr char kPasswd[] { "passwd" };
-constexpr char kPasswdSaveMode[] { "savePasswd" };
-constexpr char kAnonymous[] { "anonymous" };
-constexpr char kMessage[] { "message" };
+inline constexpr char kUser[] { "user" };
+inline constexpr char kDomain[] { "domain" };
+inline constexpr char kPasswd[] { "passwd" };
+inline constexpr char kPasswdSaveMode[] { "savePasswd" };
+inline constexpr char kAnonymous[] { "anonymous" };
+inline constexpr char kMessage[] { "message" };
 }   // namespace NetworkMountParamKey
 
 }   // namespace GlobalServerDefines

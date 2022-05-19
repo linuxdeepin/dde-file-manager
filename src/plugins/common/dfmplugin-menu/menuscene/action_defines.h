@@ -24,46 +24,46 @@
 namespace dfmplugin_menu {
 namespace ActionID {
 // NewCreateMenu
-static constexpr char kNewFolder[] = "new-folder";
-static constexpr char kNewDoc[] = "new-document";
-static constexpr char kNewOfficeText[] = "new-office-text";
-static constexpr char kNewSpreadsheets[] = "new-spreadsheets";
-static constexpr char kNewPresentation[] = "new-presentation";
-static constexpr char kNewPlainText[] = "new-plain-text";
+inline constexpr char kNewFolder[] = "new-folder";
+inline constexpr char kNewDoc[] = "new-document";
+inline constexpr char kNewOfficeText[] = "new-office-text";
+inline constexpr char kNewSpreadsheets[] = "new-spreadsheets";
+inline constexpr char kNewPresentation[] = "new-presentation";
+inline constexpr char kNewPlainText[] = "new-plain-text";
 
 // ClipBoardMenu
-static constexpr char kPaste[] = "paste";
-static constexpr char kCut[] = "cut";
-static constexpr char kCopy[] = "copy";
+inline constexpr char kPaste[] = "paste";
+inline constexpr char kCut[] = "cut";
+inline constexpr char kCopy[] = "copy";
 
 // OpenDirMenu
-static constexpr char kOpenAsAdmin[] = "open-as-administrator";
-static constexpr char kSelectAll[] = "select-all";
-static constexpr char kOpenInNewWindow[] = "open-in-new-window";
-static constexpr char kOpenInNewTab[] = "open-in-new-tab";
-static constexpr char kOpenInTerminal[] = "open-in-terminal";
+inline constexpr char kOpenAsAdmin[] = "open-as-administrator";
+inline constexpr char kSelectAll[] = "select-all";
+inline constexpr char kOpenInNewWindow[] = "open-in-new-window";
+inline constexpr char kOpenInNewTab[] = "open-in-new-tab";
+inline constexpr char kOpenInTerminal[] = "open-in-terminal";
 
 // FileOperatorMenu
-static constexpr char kOpen[] = "open";
-static constexpr char kRename[] = "rename";
-static constexpr char kDelete[] = "delete";
-static constexpr char kCreateSymlink[] = "create-system-link";
-static constexpr char kEmptyTrash[] = "empty-trash";
-static constexpr char kSetAsWallpaper[] = "set-as-wallpaper";
+inline constexpr char kOpen[] = "open";
+inline constexpr char kRename[] = "rename";
+inline constexpr char kDelete[] = "delete";
+inline constexpr char kCreateSymlink[] = "create-system-link";
+inline constexpr char kEmptyTrash[] = "empty-trash";
+inline constexpr char kSetAsWallpaper[] = "set-as-wallpaper";
 
 // "OpenWithMenu"
-static constexpr char kOpenWith[] = "open-with";
-static constexpr char kOpenWithCustom[] = "open-with-custom";
-static constexpr char kOpenWithApp[] = "open-with-app";
+inline constexpr char kOpenWith[] = "open-with";
+inline constexpr char kOpenWithCustom[] = "open-with-custom";
+inline constexpr char kOpenWithApp[] = "open-with-app";
 
 // SendToMenu
-static constexpr char kSendTo[] = "send-to";
-static constexpr char kSendToBluetooth[] = "send-to-bluetooth";
-static constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
-static constexpr char kSendToDesktop[] = "send-to-desktop";
+inline constexpr char kSendTo[] = "send-to";
+inline constexpr char kSendToBluetooth[] = "send-to-bluetooth";
+inline constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
+inline constexpr char kSendToDesktop[] = "send-to-desktop";
 
 // Separator
-static constexpr char kSeparator[] = "separator-line";
+inline constexpr char kSeparator[] = "separator-line";
 }
 }
 

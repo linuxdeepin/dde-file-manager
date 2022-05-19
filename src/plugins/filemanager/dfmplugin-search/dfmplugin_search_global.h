@@ -28,7 +28,7 @@
 
 DPSEARCH_BEGIN_NAMESPACE
 namespace SearchActionId {
-static constexpr char kOpenFileLocation[] { "open-file-location" };
+inline constexpr char kOpenFileLocation[] { "open-file-location" };
 }
 DPSEARCH_END_NAMESPACE
 

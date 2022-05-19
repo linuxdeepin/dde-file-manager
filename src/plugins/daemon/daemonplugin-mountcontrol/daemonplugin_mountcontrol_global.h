@@ -31,11 +31,11 @@
 DAEMONPMOUNTCONTROL_BEGIN_NAMESPACE
 
 namespace MountOpts {
-static constexpr char kUser[] { "user" };
-static constexpr char kPasswd[] { "passwd" };
-static constexpr char kDomain[] { "domain" };
-//static constexpr char kFsType[] { "fsType" };
-static constexpr char kMountName[] { "mntName" };
+inline constexpr char kUser[] { "user" };
+inline constexpr char kPasswd[] { "passwd" };
+inline constexpr char kDomain[] { "domain" };
+//inline constexpr char kFsType[] { "fsType" };
+inline constexpr char kMountName[] { "mntName" };
 }
 
 DAEMONPMOUNTCONTROL_END_NAMESPACE

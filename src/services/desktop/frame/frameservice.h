@@ -30,15 +30,15 @@ class Core;
 DSB_D_BEGIN_NAMESPACE
 namespace FrameProperty {
 // property for window
-static constexpr char kPropScreenName[] = "ScreenName";
-static constexpr char kPropIsPrimary[] = "IsPrimary";
-static constexpr char kPropScreenGeometry[] = "ScreenGeometry";
-static constexpr char kPropScreenAvailableGeometry[] = "ScreenAvailableGeometry";
-static constexpr char kPropScreenHandleGeometry[] = "ScreenHandleGeometry";
+inline constexpr char kPropScreenName[] = "ScreenName";
+inline constexpr char kPropIsPrimary[] = "IsPrimary";
+inline constexpr char kPropScreenGeometry[] = "ScreenGeometry";
+inline constexpr char kPropScreenAvailableGeometry[] = "ScreenAvailableGeometry";
+inline constexpr char kPropScreenHandleGeometry[] = "ScreenHandleGeometry";
 
 // property for window and all sub widgets
-static constexpr char kPropWidgetName[] = "WidgetName";
-static constexpr char kPropWidgetLevel[] = "WidgetLevel";
+inline constexpr char kPropWidgetName[] = "WidgetName";
+inline constexpr char kPropWidgetLevel[] = "WidgetLevel";
 }
 
 class FrameServicePrivate;
@@ -49,6 +49,7 @@ class FrameService : public dpf::PluginService, dpf::AutoServiceRegister<FrameSe
     friend class dpf::QtClassFactory<dpf::PluginService>;
     friend class ::Core;
     friend class FrameServicePrivate;
+
 public:
     static QString name()
     {
@@ -57,18 +58,20 @@ public:
 
     QList<QWidget *> rootWindows() const;
     void layoutWidget() const;
-signals: //must connect with Qt::DirectConnection
+signals:   //must connect with Qt::DirectConnection
     void windowAboutToBeBuilded();
     void windowBuilded();
     void windowShowed();
     void geometryChanged();
     void availableGeometryChanged();
+
 protected:
     explicit FrameService(QObject *parent = nullptr);
+
 private:
     FrameServicePrivate *d;
 };
 
 DSB_D_END_NAMESPACE
 
-#endif // FRAMESERVICE_H
+#endif   // FRAMESERVICE_H
