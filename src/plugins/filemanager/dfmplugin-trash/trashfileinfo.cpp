@@ -167,7 +167,7 @@ bool TrashFileInfo::isDir() const
 
 bool TrashFileInfo::canDrop()
 {
-    return false;
+    return url() == TrashHelper::rootUrl();
 }
 
 void TrashFileInfoPrivate::updateInfo()
