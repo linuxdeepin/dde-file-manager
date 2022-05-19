@@ -106,6 +106,9 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
         }
         break;
     }
+    case Qt::Key_Escape:
+        ClipBoard::clearClipboard();
+        return true;
     default:
         break;
     }
