@@ -439,9 +439,9 @@ QModelIndex CanvasProxyModel::index(const QUrl &url, int column) const
     if (!url.isValid())
         return QModelIndex();
 
-    if (auto fileInfo = d->fileMap.value(url)) {
+    if (d->fileMap.contains(url)) {
         int row = d->fileList.indexOf(url);
-        return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
+        return createIndex(row, column);
     }
 
     return QModelIndex();
@@ -613,8 +613,8 @@ QModelIndex CanvasProxyModel::index(int row, int column, const QModelIndex &pare
         return QModelIndex();
 
     auto url = d->fileList.at(row);
-    if (auto fileInfo = d->fileMap.value(url))
-        return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
+    if (d->fileMap.contains(url))
+        return createIndex(row, column);
 
     return QModelIndex();
 }

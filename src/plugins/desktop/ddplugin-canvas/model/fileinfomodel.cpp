@@ -199,7 +199,7 @@ QModelIndex FileInfoModel::setRootUrl(QUrl url)
     //! FileInfoModel should get all files
     d->filters = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
 
-    // root url changed,refresh data as soon as
+    // root url changed,refresh data as soon
     d->doRefresh();
 
     return rootIndex();
@@ -232,8 +232,8 @@ QModelIndex FileInfoModel::index(int row, int column, const QModelIndex &parent)
         return QModelIndex();
 
     auto url = d->fileList.at(row);
-    if (auto fileInfo = d->fileMap.value(url))
-        return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
+    if (d->fileMap.contains(url))
+        return createIndex(row, column);
 
     return QModelIndex();
 }
@@ -243,9 +243,9 @@ QModelIndex FileInfoModel::index(const QUrl &url, int column) const
     if (url.isEmpty())
         return QModelIndex();
 
-    if (auto fileInfo = d->fileMap.value(url)) {
+    if (d->fileMap.contains(url)) {
         int row = d->fileList.indexOf(url);
-        return createIndex(row, column, const_cast<LocalFileInfo *>(fileInfo.data()));
+        return createIndex(row, column);
     }
 
     if (url == rootUrl())
@@ -318,7 +318,7 @@ QVariant FileInfoModel::data(const QModelIndex &index, int itemRole) const
     if (!index.isValid() || index.model() != this || index == rootIndex())
         return QVariant();
 
-    auto indexFileInfo = static_cast<LocalFileInfo *>(index.internalPointer());
+    auto indexFileInfo = fileInfo(index);
     if (!indexFileInfo) {
         return QVariant();
     }
