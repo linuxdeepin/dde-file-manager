@@ -83,3 +83,8 @@ SmbShareFileInfoPrivate::SmbShareFileInfoPrivate(const QUrl &url, AbstractFileIn
 SmbShareFileInfoPrivate::~SmbShareFileInfoPrivate()
 {
 }
+
+bool dfmplugin_smbbrowser::SmbShareFileInfo::canDrag()
+{
+    return false;
+}

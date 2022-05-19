@@ -85,3 +85,8 @@ ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq
 ShareFileInfoPrivate::~ShareFileInfoPrivate()
 {
 }
+
+bool dfmplugin_myshares::ShareFileInfo::canDrag()
+{
+    return false;
+}

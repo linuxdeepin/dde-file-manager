@@ -42,6 +42,7 @@ public:
     virtual bool isDir() const override;
     virtual bool canRename() const override;
     virtual bool isShared() const override;
+    virtual bool canDrag() override;
 };
 
 DPMYSHARES_END_NAMESPACE

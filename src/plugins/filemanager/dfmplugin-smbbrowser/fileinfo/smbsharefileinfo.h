@@ -41,6 +41,7 @@ public:
     virtual bool isDir() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
+    virtual bool canDrag() override;
 };
 
 DPSMBBROWSER_END_NAMESPACE

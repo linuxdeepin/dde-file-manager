@@ -180,6 +180,7 @@ public:
     virtual QUrl redirectedFileUrl() const;
     virtual bool canMoveOrCopy() const;
     virtual bool canDrop();
+    virtual bool canDrag();
     virtual bool canTag() const;
     virtual QUrl parentUrl() const;
     virtual Qt::DropActions supportedDragActions() const;

@@ -377,8 +377,6 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
     if (!item)
         return flags;
 
-    flags |= Qt::ItemIsDragEnabled;
-
     const AbstractFileInfoPointer &fileInfo = item->fileInfo();
     if (fileInfo && fileInfo->canRename()) {
         flags |= Qt::ItemIsEditable;
@@ -389,6 +387,8 @@ Qt::ItemFlags FileViewModel::flags(const QModelIndex &index) const
         else
             flags |= Qt::ItemNeverHasChildren;
     }
+    if (fileInfo && fileInfo->canDrag())
+        flags |= Qt::ItemIsDragEnabled;
 
     return flags;
 }

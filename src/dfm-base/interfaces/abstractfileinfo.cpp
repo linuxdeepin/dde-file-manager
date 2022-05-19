@@ -1012,6 +1012,12 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     return info->canDrop();
 }
 
+bool dfmbase::AbstractFileInfo::canDrag()
+{
+    CALL_PROXY(canDrag());
+    return true;
+}
+
 bool AbstractFileInfo::canTag() const
 {
     CALL_PROXY(canTag());
