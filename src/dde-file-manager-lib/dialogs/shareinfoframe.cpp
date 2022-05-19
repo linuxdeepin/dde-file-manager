@@ -262,7 +262,7 @@ void ShareInfoFrame::initUI()
     QHBoxLayout *passwordLayout = new QHBoxLayout;
     passwordLayout->setSpacing(6);
     passwordLayout->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
-    QPushButton *passwordOperation = new QPushButton(m_isSharePasswordSet ? tr("Change password") : tr("Set password"));
+    passwordOperation = new QPushButton(m_isSharePasswordSet ? tr("Change password") : tr("Set password"));
     passwordOperation->setAttribute(Qt::WA_TranslucentBackground, true);
     passwordOperation->setFont(fontMedium);
     passwordOperation->setStyleSheet("QPushButton{color:#0082FA;background-color:rgba(0,0,0,0)}");
@@ -517,6 +517,23 @@ void ShareInfoFrame::showShareInfo(bool value)
     }
 }
 
+/**
+ * @brief ShareInfoFrame::updatePasswordState 设置SMB共享密码后，及时更新界面显示状态
+ */
+void ShareInfoFrame::updatePasswordState()
+{
+    m_isSharePasswordSet = userShareManager->isSharePasswordSet(UserShareManager::getCurrentUserName());
+    if(m_isSharePasswordSet){
+        QFont font = this->font();
+        int defaultFontSize = font.pointSize();
+        font.setPointSize(m_isSharePasswordSet ? 7 : defaultFontSize);
+        m_sharePasswordlineEdit->setFont(font);
+        m_sharePasswordlineEdit->setEchoMode(m_isSharePasswordSet ? QLineEdit::Password : QLineEdit::Normal);
+        m_sharePasswordlineEdit->setText(m_isSharePasswordSet ? "------" : tr("None"));
+        passwordOperation->setText(m_isSharePasswordSet ? tr("Change password") : tr("Set password"));
+    }
+}
+
 void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
 {
     m_fileinfo = fileinfo;
@@ -598,6 +615,19 @@ ShareInfoFrame::~ShareInfoFrame()
         m_updateIp->stop();
         m_updateIp->deleteLater();
         m_updateIp = nullptr;
+    }
+}
+
+bool ShareInfoFrame::getUserSharePwdSetDlgShow() const
+{
+    return m_userSharePwdSettingDialogShown;
+}
+
+void ShareInfoFrame::setUserSharePwdSetDlgShow(bool value)
+{
+    m_userSharePwdSettingDialogShown = value;
+    if(!value){
+        updatePasswordState();
     }
 }
 
