@@ -148,7 +148,7 @@ void LocalFileInfo::refresh()
     d->mimeTypeMode = QMimeDatabase::MatchDefault;
     d->clearIcon();
     d->dfmFileInfo->clearCache();
-    d->dfmFileInfo->flush();
+    d->dfmFileInfo->refresh();
 }
 
 void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
