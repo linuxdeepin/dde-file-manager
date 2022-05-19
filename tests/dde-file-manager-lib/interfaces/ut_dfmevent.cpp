@@ -164,6 +164,7 @@ TEST_F(TestDFMEvent, setCutData)
     EXPECT_EQ(DFMStandardPaths::location(DFMStandardPaths::TrashFilesPath) + "/test.txt", path);
 }
 
+#ifndef __arm__
 TEST_F(TestDFMEvent, fromJson)
 {
     QJsonObject json;
@@ -225,3 +226,4 @@ TEST_F(TestDFMEvent, fromJson)
     EXPECT_TRUE(event->fromJson(DFMEvent::Back, json) != nullptr);
     EXPECT_TRUE(event->fromJson(DFMEvent::Forward, json) != nullptr);
 }
+#endif

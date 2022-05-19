@@ -228,9 +228,10 @@ TEST_F(AppControllerTest,start_openAction_one) {
     recenturl.setScheme(RECENT_SCHEME);
     searchurl.setScheme(SEARCH_SCHEME);
     burnurl.setScheme(BURN_SCHEME);
-
+#ifndef __arm__
     EXPECT_NO_FATAL_FAILURE(controller->actionOpen(dMakeEventPointer<DFMUrlListBaseEvent>(nullptr,DUrlList() << url
                                                                                           << burnurl << recenturl << searchurl)));
+#endif
     class testFileInfo : public DFileInfo {
     public:
         explicit testFileInfo(const DUrl &fileUrl) :
@@ -326,7 +327,7 @@ TEST_F(AppControllerTest,start_actionOpenDisk){
                                 dMakeEventPointer<DFMUrlBaseEvent>(nullptr, rooturl)));
 
 }
-
+#ifndef __arm__
 TEST_F(AppControllerTest,start_asyncOpenDisk){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Music");
@@ -338,7 +339,7 @@ TEST_F(AppControllerTest,start_asyncOpenDisk){
     stl.set(ADDR(AppController,actionOpen),actionOpenlamda);
     EXPECT_NO_FATAL_FAILURE(controller->asyncOpenDisk(url.toString()));
 }
-
+#endif
 TEST_F(AppControllerTest,start_actionOpenInNewWindow){
     url.setScheme(FILE_SCHEME);
     url.setPath("~/Music");
@@ -670,6 +671,7 @@ TEST_F(AppControllerTest,start_actionNewFile){
     url = DUrl("dfmroots:///fakeDisk.gvfsmp");
     EXPECT_NO_FATAL_FAILURE(controller->actionSafelyRemoveDrive(dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url)));
 
+#ifndef __arm__
     url = DUrl("dfmroot:///fakeDisk.localdisk");
     QWidget w;
     auto e = dMakeEventPointer<DFMUrlBaseEvent>(nullptr, url);
@@ -677,6 +679,7 @@ TEST_F(AppControllerTest,start_actionNewFile){
     TestHelper::runInLoop([=](){
         EXPECT_NO_FATAL_FAILURE(controller->actionFormatDevice(e));
     },1000);
+#endif
 
     TestHelper::deleteTmpFile(tmp.toLocalFile());
 }

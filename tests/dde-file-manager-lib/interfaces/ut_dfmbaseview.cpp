@@ -119,16 +119,17 @@ TEST_F(DfmBaseViewTest,start_other) {
     stub_ext::StubExt stu;
     stu.set_lamda(ADDR(DFileMenuManager, needDeleteAction), [](){return true;});
 
-    DFileManagerWindow testbaseview;
-
-    stu.set_lamda(ADDR(QWidget, window), [&testbaseview](){ return qobject_cast<QWidget*>(&testbaseview);});
-
     bool (*cd)(const DUrl &) = [](const DUrl &){return true;};
     bool (*cdForTab)(int , const DUrl &) = [](int ,const DUrl &){return true;};
     bool (*cdForTabByView)(DFMBaseView *, const DUrl &) = [](DFMBaseView *, const DUrl &){return true;};
     stu.set(ADDR(DFileManagerWindow,cd),cd);
     stu.set(ADDR(DFileManagerWindow,cdForTab),cdForTab);
     stu.set(ADDR(DFileManagerWindow,cdForTabByView),cdForTabByView);
+
+    DFileManagerWindow testbaseview;
+
+    stu.set_lamda(ADDR(QWidget, window), [&testbaseview](){ return qobject_cast<QWidget*>(&testbaseview);});
+
     TestHelper::runInLoop([=]{
         ASSERT_NO_FATAL_FAILURE(baseview->notifyUrlChanged());
     });

@@ -160,7 +160,6 @@ SOURCES += \
     $$PWD/views/ut_dfmvaultactivesetunlockmethodview.cpp \
     $$PWD/views/ut_dfmvaultactivestartview.cpp \
     $$PWD/views/ut_dfmvaultactiveview.cpp \
-    $$PWD/views/ut_dfmvaultfileview.cpp \
     $$PWD/views/ut_dfmvaultpagebase.cpp \
     $$PWD/views/ut_dfmvaultrecoverykeypages.cpp \
     $$PWD/views/ut_dfmvaultremovebypasswordview.cpp \
@@ -241,7 +240,8 @@ SOURCES += \
     $$PWD/interfaces/ut_diconitemdelegate.cpp \
     $$PWD/interfaces/ut_dlistitemdelegate.cpp \
     $$PWD/interfaces/ut_dfmcrumbbar.cpp \
-    $$PWD/controllers/ut_bookmarkmanager.cpp
+    $$PWD/controllers/ut_bookmarkmanager.cpp \
+    $$PWD/views/ut_dfmvaultfileview.cpp \
 }
 
 SOURCES += \

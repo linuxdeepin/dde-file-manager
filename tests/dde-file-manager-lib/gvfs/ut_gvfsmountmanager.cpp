@@ -35,6 +35,8 @@
 
 #include <DDialog>
 
+#include <QStringList>
+
 static bool inited = false;
 
 namespace {
@@ -772,13 +774,13 @@ TEST_F(TestGvfsMountManager, eject_with_mounted_file_cb)
     stub.reset(g_mount_eject_with_operation_finish);
 }
 
+#ifndef __arm__
 TEST_F(TestGvfsMountManager, stop_device)
 {
     QString drive_unix_device = "/dev/sdno";
     GvfsMountManager::stop_device(drive_unix_device);
 }
 
-#include <QStringList>
 TEST_F(TestGvfsMountManager, ask_question_cb)
 {
     GMountOperation *op = nullptr;
@@ -790,6 +792,7 @@ TEST_F(TestGvfsMountManager, ask_question_cb)
      message = "Can’t verify the identity of “.*?” If you want to be absolutely sure it is safe to continue, contact the system administrator.";
      GvfsMountManager::ask_question_cb(op, message, choices);
 }
+#endif
 
 QJsonObject stub_SecretManager_getLoginData(void*, const QString &id)
 {

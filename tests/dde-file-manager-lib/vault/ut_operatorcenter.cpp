@@ -82,7 +82,7 @@ TEST_F(TestOperatorCenter, createDirAndFile)
 
     EXPECT_FALSE(m_opCenter->createDirAndFile());
 }
-
+#ifndef __arm__
 /**
  * @brief TEST_F 保存密码文件
  */
@@ -109,7 +109,7 @@ TEST_F(TestOperatorCenter, saveSaltAndClipher)
 
     EXPECT_TRUE(m_opCenter->saveSaltAndCiphertext(pswd, hint));
 }
-
+#endif
 /**
  * @brief TEST_F 生成密钥对
  */
