@@ -130,8 +130,9 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
 
     if (d->isEmptyArea) {
         if (auto paste = d->predicateAction.value(ActionID::kPaste)) {
-            bool clipBoardUnknow = ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction;
-            paste->setEnabled(clipBoardUnknow ? false : true);
+            auto curDirInfo = InfoFactory::create<AbstractFileInfo>(d->currentDir);
+            bool disabled = (ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction) || !curDirInfo->isWritable();
+            paste->setDisabled(disabled);
         }
     } else if (1 == d->selectFiles.count()) {
         if (auto copy = d->predicateAction.value(ActionID::kCopy)) {

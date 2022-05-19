@@ -45,6 +45,8 @@
 
 #include "services/common/menu/menu_defines.h"
 
+#include "dfm-base/base/schemefactory.h"
+
 #include <QMenu>
 #include <QVariant>
 
@@ -139,6 +141,22 @@ bool NewCreateMenuScene::create(QMenu *parent)
 
 void NewCreateMenuScene::updateState(QMenu *parent)
 {
+    if (!parent)
+        return;
+
+    auto curDirInfo = InfoFactory::create<AbstractFileInfo>(d->currentDir);
+    if (curDirInfo && !curDirInfo->isWritable()) {
+        auto actions = parent->actions();
+        for (auto act : actions) {
+            const auto &actId = act->property(ActionPropertyKey::kActionID);
+            if (ActionID::kNewFolder == actId) {
+                act->setDisabled(true);
+            } else if (ActionID::kNewDoc == actId) {
+                act->setDisabled(true);
+            }
+        }
+    }
+
     AbstractMenuScene::updateState(parent);
 }
 
