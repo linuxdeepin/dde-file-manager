@@ -401,7 +401,15 @@ bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo,
     }
 
     if (needSyncEveryRW && sizeWrite > 0) {
-        toDevice->flush();
+        if (isFsTypeVfat) {
+            // FAT and VFAT file systems ignore the "sync" option
+            toDevice->close();
+            if (!openFile(fromInfo, toInfo, toDevice, DFile::OpenFlag::kWriteOnly | DFile::OpenFlag::kAppend, result)) {
+                return false;
+            }
+        } else {
+            toDevice->flush();
+        }
     }
     currentWritSize += readSize;
 

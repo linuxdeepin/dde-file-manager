@@ -131,6 +131,7 @@ bool DoCopyFilesWorker::initArgs()
     needSyncEveryRW = FileUtils::isGvfsFile(targetUrl);
     if (!needSyncEveryRW) {
         const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(targetUrl);
+        isFsTypeVfat = fsType.contains("vfat");
         needSyncEveryRW = fsType == "cifs" || fsType == "vfat";
     }
 
