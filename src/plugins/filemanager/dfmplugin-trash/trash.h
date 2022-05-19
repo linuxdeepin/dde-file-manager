@@ -23,7 +23,7 @@
 
 #include "dfmplugin_trash_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPTRASH_BEGIN_NAMESPACE
 class Trash : public dpf::Plugin

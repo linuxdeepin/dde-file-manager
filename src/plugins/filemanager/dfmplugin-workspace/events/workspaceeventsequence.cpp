@@ -22,6 +22,8 @@
 
 #include "services/filemanager/workspace/workspace_defines.h"
 
+#include <dfm-framework/dpf.h>
+
 #include <QPainter>
 #include <QRectF>
 #include <QAbstractItemView>
@@ -36,6 +38,8 @@ DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
+
+static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
 
 WorkspaceEventSequence *WorkspaceEventSequence::instance()
 {
@@ -55,7 +59,8 @@ bool WorkspaceEventSequence::doPaintIconItem(int role, const QUrl &url, QPainter
 
 bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
 {
-    return sequence()->run(Workspace::EventType::kCheckDragDropAction, urls, urlTo, action);
+    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_CheckDragDropAction");
+    return dpfHookSequence->run(type, urls, urlTo, action);
 }
 
 bool WorkspaceEventSequence::doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes)
@@ -65,17 +70,20 @@ bool WorkspaceEventSequence::doFetchSelectionModes(const QUrl &url, QList<QAbstr
 
 bool WorkspaceEventSequence::doFetchCustomColumnRoles(const QUrl &rootUrl, QList<ItemRoles> *roleList)
 {
-    return sequence()->run(Workspace::EventType::kFetchCustomColumnRoles, rootUrl, roleList);
+    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_FetchCustomColumnRoles");
+    return dpfHookSequence->run(type, rootUrl, roleList);
 }
 
 bool WorkspaceEventSequence::doFetchCustomRoleDiaplayName(const QUrl &url, const ItemRoles role, QString *displayName)
 {
-    return sequence()->run(Workspace::EventType::kFetchCustomRoleDisplayName, url, role, displayName);
+    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_FetchCustomRoleDisplayName");
+    return dpfHookSequence->run(type, url, role, displayName);
 }
 
 bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &url, const ItemRoles role, QVariant *data)
 {
-    return sequence()->run(Workspace::EventType::kFetchCustomRoleData, url, role, data);
+    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_FetchCustomRoleData");
+    return dpfHookSequence->run(type, url, role, data);
 }
 
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)

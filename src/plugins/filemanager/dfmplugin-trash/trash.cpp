@@ -32,8 +32,6 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include <dfm-framework/framework.h>
-
 Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DSC_USE_NAMESPACE
@@ -58,7 +56,13 @@ bool Trash::start()
     addCustomTopWidget();
     addFileOperations();
 
-    TrashHelper::eventSequence()->follow(Workspace::EventType::kCheckDragDropAction, TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+    auto type = DPF_EVENT_TYPE_HOOK("dfmplugin_workspace", "hook_CheckDragDropAction");
+    Q_ASSERT(type > 0);
+    dpfHookSequence->follow(type, TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+
+    type = DPF_EVENT_TYPE_HOOK("dfmplugin_detailspace", "hook_DetailViewIcon");
+    Q_ASSERT(type > 0);
+    dpfHookSequence->follow(type, TrashHelper::instance(), &TrashHelper::detailViewIcon);
 
     return true;
 }

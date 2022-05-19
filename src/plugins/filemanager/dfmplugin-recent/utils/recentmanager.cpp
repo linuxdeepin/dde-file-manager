@@ -30,6 +30,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/systempathutil.h"
 
 #include <QFile>
 #include <QMenu>
@@ -187,6 +188,16 @@ bool RecentManager::customRoleData(const QUrl &url, const ItemRoles role, QVaria
         }
     }
 
+    return false;
+}
+
+bool RecentManager::detailViewIcon(const QUrl &url, QString *iconName)
+{
+    if (url == rootUrl()) {
+        *iconName = SystemPathUtil::instance()->systemPathIconName("Recent");
+        if (!iconName->isEmpty())
+            return true;
+    }
     return false;
 }
 

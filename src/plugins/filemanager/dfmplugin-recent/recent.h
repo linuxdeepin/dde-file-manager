@@ -24,7 +24,7 @@
 
 #include "dfmplugin_recent_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPRECENT_BEGIN_NAMESPACE
 class Recent : public dpf::Plugin

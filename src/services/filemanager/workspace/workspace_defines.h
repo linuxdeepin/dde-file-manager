@@ -55,7 +55,6 @@ extern const int kCloseTabs;
 extern const int kShowCustomTopWidget;
 extern const int kPaintListItem;
 extern const int kPaintIconItem;
-extern const int kCheckDragDropAction;
 extern const int kSelectFiles;
 extern const int kSelectAll;
 
@@ -75,9 +74,6 @@ extern const int kSetReadOnly;
 
 //sequence
 extern const int kFetchSelectionModes;
-extern const int kFetchCustomColumnRoles;
-extern const int kFetchCustomRoleDisplayName;
-extern const int kFetchCustomRoleData;
 };   // namespace EventType
 
 namespace MenuScene {

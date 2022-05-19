@@ -133,6 +133,7 @@ void SystemPathUtil::initialize()
     systemPathIconNamesMap["Downloads"] = "folder-downloads";
     systemPathIconNamesMap["Trash"] = "user-trash";
     systemPathIconNamesMap["System Disk"] = "drive-harddisk-root";
+    systemPathIconNamesMap["Recent"] = "document-open-recent";
 }
 
 void SystemPathUtil::mkPath(const QString &path)

@@ -39,6 +39,7 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/file/local/localfilewatcher.h"
+#include "dfm-base/utils/systempathutil.h"
 
 #include <DHorizontalLine>
 #include <DApplicationHelper>
@@ -200,6 +201,16 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     } else if (urlFrom.scheme() == Global::kTrash || urlTo.scheme() == Global::kTrash) {
         *action = Qt::MoveAction;
         return true;
+    }
+    return false;
+}
+
+bool TrashHelper::detailViewIcon(const QUrl &url, QString *iconName)
+{
+    if (url == rootUrl()) {
+        *iconName = SystemPathUtil::instance()->systemPathIconName("Trash");
+        if (!iconName->isEmpty())
+            return true;
     }
     return false;
 }

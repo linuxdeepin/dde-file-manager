@@ -24,6 +24,8 @@
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "services/filemanager/detailspace/detailspace_defines.h"
 
+#include <dfm-framework/dpf.h>
+
 #include <QLabel>
 #include <QGridLayout>
 #include <QPushButton>
@@ -31,9 +33,13 @@
 #include <QFileSystemModel>
 #include <QTreeView>
 
+Q_DECLARE_METATYPE(QString *)
+
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPDETAILSPACE_USE_NAMESPACE
+
+static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE) };
 
 DetailView::DetailView(QWidget *parent)
     : QFrame(parent)
@@ -153,7 +159,28 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
         iconLabel = new QLabel(this);
         iconLabel->setFixedSize(160, 160);
         QSize targetSize = iconLabel->size().scaled(iconLabel->width(), iconLabel->height(), Qt::KeepAspectRatio);
-        iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
+
+        auto findPluginIcon = [](const QUrl &url) -> QString {
+            QString iconName;
+            auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_DetailViewIcon");
+            bool ok = dpfHookSequence->run(type, url, &iconName);
+            if (ok && !iconName.isEmpty())
+                return iconName;
+
+            type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_DetailViewIcon");
+            ok = dpfHookSequence->run(type, url, &iconName);
+            if (ok && !iconName.isEmpty())
+                return iconName;
+
+            return QString();
+        };
+
+        // get icon from plugin
+        const QString &iconName = findPluginIcon(info->url());
+        if (!iconName.isEmpty())
+            iconLabel->setPixmap(QIcon::fromTheme(iconName).pixmap(targetSize));
+        else
+            iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
         iconLabel->setAlignment(Qt::AlignCenter);
 
         mainLayout->insertWidget(0, iconLabel, 1, Qt::AlignCenter);

@@ -26,6 +26,7 @@
 #include "dfmplugin_detailspace_global.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPDETAILSPACE_BEGIN_NAMESPACE
 
@@ -33,6 +34,9 @@ class DetailSpace : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "detailspace.json")
+
+    DPF_EVENT_NAMESPACE(DPDETAILSPACE_NAMESPACE)
+    DPF_EVENT_REG_HOOK(hook_DetailViewIcon)
 
 public:
     virtual void initialize() override;

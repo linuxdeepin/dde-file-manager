@@ -25,6 +25,7 @@
 
 #include "dfmplugin_workspace_global.h"
 #include <dfm-framework/framework.h>
+#include "dfm-framework/dpf.h"
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
@@ -32,6 +33,12 @@ class Workspace : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "workspace.json")
+
+    DPF_EVENT_NAMESPACE(DPWORKSPACE_NAMESPACE)
+    DPF_EVENT_REG_HOOK(hook_FetchCustomColumnRoles)
+    DPF_EVENT_REG_HOOK(hook_FetchCustomRoleDisplayName)
+    DPF_EVENT_REG_HOOK(hook_FetchCustomRoleData)
+    DPF_EVENT_REG_HOOK(hook_CheckDragDropAction)
 
 public:
     virtual void initialize() override;

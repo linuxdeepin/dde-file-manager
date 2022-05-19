@@ -77,6 +77,7 @@ public:
     static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
+    bool detailViewIcon(const QUrl &url, QString *iconName);
 
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();
