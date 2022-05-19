@@ -367,11 +367,10 @@ void FileView::viewModeChanged(quint64 windowId, int viewMode)
         } else if (mode == Global::ViewMode::kListMode) {
             setViewModeToList();
         }
+
+        setFocus();
+        saveViewModeState();
     }
-
-    setFocus();
-
-    saveViewModeState();
 }
 
 void FileView::updateModelActiveIndex()
