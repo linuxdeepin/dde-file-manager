@@ -47,7 +47,7 @@ TEST(Tab, tab_text)
     EXPECT_TRUE(temp.m_tabText == temp.tabText());
 }
 
-
+#ifndef __arm__
 TEST(Tab, file_view)
 {
     DFileView *testView = new DFileView();
@@ -66,6 +66,7 @@ TEST(Tab, set_file_view)
     EXPECT_TRUE(testView == temp.fileView());
     delete testView;
 }
+#endif
 
 TEST(Tab, current_url)
 {
