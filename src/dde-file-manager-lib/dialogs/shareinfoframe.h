@@ -40,10 +40,12 @@ QT_END_NAMESPACE
 class ShareInfoFrame : public QFrame
 {
     Q_OBJECT
+    Q_PROPERTY(bool UserSharePwdSettingDialogShown READ getUserSharePwdSetDlgShow WRITE setUserSharePwdSetDlgShow)
 public:
     explicit ShareInfoFrame(const DAbstractFileInfoPointer &info, QWidget *parent = 0);
     ~ShareInfoFrame();
-
+    bool getUserSharePwdSetDlgShow() const;
+    void setUserSharePwdSetDlgShow(bool value);
     void initUI();
     void initConnect();
     void setFileinfo(const DAbstractFileInfoPointer &fileinfo);
@@ -69,6 +71,7 @@ public slots:
 private slots:
     void setOrModifySharePassword();
     void showShareInfo(bool value);
+    void updatePasswordState();
 private:
     DAbstractFileInfoPointer m_fileinfo;
     QCheckBox *m_shareCheckBox = nullptr;
@@ -82,10 +85,12 @@ private:
     QPointer<QWidget> m_sharePropertyBkgWidget = nullptr;
     QTextBrowser *m_shareNotes = nullptr;
     QPushButton *splitLineGray = nullptr;
+    QPushButton *passwordOperation = nullptr;
     bool m_isSharePasswordSet = false;
     QTimer *m_updateIp = nullptr;
     //QTimer *m_jobTimer;
     QString m_selfIp;
+    bool m_userSharePwdSettingDialogShown = false;
 };
 
 #endif // SHAREINFOFRAME_H
