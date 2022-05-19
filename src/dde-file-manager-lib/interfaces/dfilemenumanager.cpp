@@ -1580,32 +1580,38 @@ void DFileMenuManager::clearActions()
 
 bool DFileMenuManager::menuHidden(const QString &scene)
 {
-    QVariant value = GroupPolicy::instance()->getValue(MENU_HIDDEN, "noSet");
+    if (DTK_POLICY_SUPPORT) {
+        QVariant value = GroupPolicy::instance()->getValue(MENU_HIDDEN, "noSet");
 
-    if (value.toString() == "noSet")
-        return false;
+        if (value.toString() == "noSet")
+            return false;
 
-    auto menuHiddenLst = value.toStringList();
-    if (menuHiddenLst.isEmpty())
+        auto menuHiddenLst = value.toStringList();
+        if (menuHiddenLst.isEmpty())
+            return false;
+        return menuHiddenLst.contains(scene);
+    } else {
         return false;
-    return menuHiddenLst.contains(scene);
+    }
 }
 
 void DFileMenuManager::menuFilterHiddenActions(QMenu *menu, const QString &scene)
 {
-    QVariant value = GroupPolicy::instance()->getValue(scene, "noSet");
-    if (value.toString() == "noSet")
-        return;
+    if (DTK_POLICY_SUPPORT) {
+        QVariant value = GroupPolicy::instance()->getValue(scene, "noSet");
+        if (value.toString() == "noSet")
+            return;
 
-    QStringList hiddenList =  value.toStringList();
+        QStringList hiddenList =  value.toStringList();
 
-    if (hiddenList.isEmpty())
-        return;
+        if (hiddenList.isEmpty())
+            return;
 
-    auto actions = menu->actions();
-    for (QAction *temp : actions) {
-        if (hiddenList.contains(temp->property("predicate").toString()))
-            temp->setVisible(false);
+        auto actions = menu->actions();
+        for (QAction *temp : actions) {
+            if (hiddenList.contains(temp->property("predicate").toString()))
+                temp->setVisible(false);
+        }
     }
 }
 
