@@ -56,13 +56,8 @@ bool Trash::start()
     addCustomTopWidget();
     addFileOperations();
 
-    auto type = DPF_EVENT_TYPE_HOOK("dfmplugin_workspace", "hook_CheckDragDropAction");
-    Q_ASSERT(type > 0);
-    dpfHookSequence->follow(type, TrashHelper::instance(), &TrashHelper::checkDragDropAction);
-
-    type = DPF_EVENT_TYPE_HOOK("dfmplugin_detailspace", "hook_DetailViewIcon");
-    Q_ASSERT(type > 0);
-    dpfHookSequence->follow(type, TrashHelper::instance(), &TrashHelper::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", TrashHelper::instance(), &TrashHelper::detailViewIcon);
 
     return true;
 }

@@ -136,8 +136,7 @@ void ComputerEventCaller::sendShowPropertyDialog(const QUrl &url)
 
 void ComputerEventCaller::sendErase(const QString &dev)
 {
-    auto type = DPF_EVENT_TYPE_SLOT("dfmplugin_burn", "slot_Erase");
-    dpfSlotChannel->push(type, dev);
+    dpfSlotChannel->push("dfmplugin_burn", "slot_Erase", dev);
 }
 
 DPCOMPUTER_END_NAMESPACE

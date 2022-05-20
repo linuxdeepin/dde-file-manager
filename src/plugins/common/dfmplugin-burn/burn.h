@@ -44,7 +44,7 @@ public:
 
 private slots:
     void bindScene(const QString &parentScene);
-    void bindEvent();
+    void bindEvents();
 };
 
 DPBURN_END_NAMESPACE

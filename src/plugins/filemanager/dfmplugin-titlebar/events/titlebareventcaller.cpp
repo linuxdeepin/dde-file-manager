@@ -27,7 +27,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -37,14 +37,14 @@ void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Globa
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
 
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
 }
 
 void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView, id, checked);
+    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView, id, checked);
 }
 
 void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
@@ -62,7 +62,7 @@ void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
     } else {
         if (Q_UNLIKELY(TitleBarHelper::handleConnection(sender, url)))
             return;
-        dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
     }
 }
 
@@ -70,36 +70,36 @@ void TitleBarEventCaller::sendOpenFile(QWidget *sender, const QUrl &url)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFiles, id, QList<QUrl>() << url);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFiles, id, QList<QUrl>() << url);
 }
 
 void TitleBarEventCaller::sendOpenWindow(const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewWindow, url);
 }
 
 void TitleBarEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void TitleBarEventCaller::sendSearch(QWidget *sender, const QString &keyword)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kDoSearch, id, keyword);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_StartSearch", id, keyword);
 }
 
 void TitleBarEventCaller::sendStopSearch(QWidget *sender)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kStopSearch, id);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_StopSearch", id);
 }
 
 void TitleBarEventCaller::sendShowFilterView(QWidget *sender, bool visible)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfInstance.eventDispatcher().publish(TitleBar::EventType::kShowFilterView, id, visible);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_ShowFilterView", id, visible);
 }

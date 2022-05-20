@@ -29,9 +29,21 @@
 #include <QVariant>
 #include <QObject>
 
+#include <mutex>
+
 DPF_BEGIN_NAMESPACE
 
 using EventType = int;
+using EventConverterFunc = std::function<EventType(const QString & /* space */, const QString & /* topic */)>;
+
+enum class EventStratege {
+    kSignal,
+    kSlot,
+    kHook
+};
+inline constexpr char kSignalStrategePrefix[] { "signal" };
+inline constexpr char kSlotStrategePrefix[] { "slot" };
+inline constexpr char kHookStrategePrefix[] { "hook" };
 
 enum EventTypeScope : EventType {
     // default invalid id
@@ -58,6 +70,25 @@ inline bool isValidEventType(EventType type)
 {
     return type > EventTypeScope::kInValid && type <= EventTypeScope::kCustomTop;
 }
+
+class EventConverter
+{
+public:
+    static inline EventConverterFunc convertFunc {};
+    static void registerConverter(const EventConverterFunc &func)
+    {
+        static std::once_flag flag;
+        std::call_once(flag, [&func]() {
+            convertFunc = func;
+        });
+    }
+    static EventType convert(const QString &space, const QString &topic)
+    {
+        if (convertFunc)
+            return convertFunc(space, topic);
+        return EventTypeScope::kInValid;
+    }
+};
 
 /*
  * Check return value type

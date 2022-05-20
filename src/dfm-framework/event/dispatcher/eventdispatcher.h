@@ -93,10 +93,17 @@ public:
     static EventDispatcherManager &instance();
 
     template<class T, class Func>
+    inline bool subscribe(const QString &space, const QString &topic, T *obj, Func method)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        return subscribe(EventConverter::convert(space, topic), obj, std::move(method));
+    }
+
+    template<class T, class Func>
     [[gnu::hot]] inline bool subscribe(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qWarning() << "Event " << type << "is invalid";
+            qCritical() << "Event " << type << "is invalid";
             return false;
         }
 
@@ -111,7 +118,15 @@ public:
         return true;
     }
 
+    void unsubscribe(const QString &space, const QString &topic);
     void unsubscribe(EventType type);
+
+    template<class T, class... Args>
+    inline bool publish(const QString &space, const QString &topic, T param, Args &&... args)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        return publish(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
+    }
 
     template<class T, class... Args>
     [[gnu::hot]] inline bool publish(EventType type, T param, Args &&... args)
@@ -129,6 +144,13 @@ public:
     }
 
     template<class T, class... Args>
+    inline QFuture<void> asyncPublish(const QString &space, const QString &topic, T param, Args &&... args)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        return asyncPublish(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
+    }
+
+    template<class T, class... Args>
     inline QFuture<void> asyncPublish(EventType type, T param, Args &&... args)
     {
         QReadLocker lk(&rwLock);
@@ -138,7 +160,9 @@ public:
         return QFuture<void>();
     }
 
+    bool installEventFilter(const QString &space, const QString &topic, EventDispatcher::Filter filter);
     bool installEventFilter(EventType type, EventDispatcher::Filter filter);
+    bool removeEventFilter(const QString &space, const QString &topic);
     bool removeEventFilter(EventType type);
 
 private:

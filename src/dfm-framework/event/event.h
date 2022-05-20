@@ -38,10 +38,7 @@
 #define DPF_EVENT_REG_HOOK(topicMacro)   // use sequence
 
 // acquire event type
-#define DPF_EVENT_TYPE(stratege, spaceStr, topicStr)
-#define DPF_EVENT_TYPE_SIGNAL(spaceStr, topicStr)   // use dispatcher
-#define DPF_EVENT_TYPE_SLOT(spaceStr, topicStr)   // use channel
-#define DPF_EVENT_TYPE_HOOK(spaceStr, topicStr)   // use sequence
+#define DPF_EVENT_TYPE(spaceStr, topicStr)
 
 // event instance
 #define dpfEvent
@@ -52,12 +49,6 @@
 // ====== Event API Statement ======
 
 DPF_BEGIN_NAMESPACE
-
-enum class EventStratege {
-    kSignal,
-    kSlot,
-    kHook
-};
 
 class EventPrivate;
 class Event
@@ -72,7 +63,10 @@ public:
     [[gnu::hot]] EventChannelManager *channel();
 
     [[gnu::hot]] void registerEventType(EventStratege stratege, const QString &space, const QString &topic);
-    [[gnu::hot]] EventType eventType(EventStratege stratege, const QString &space, const QString &topic);
+    [[gnu::hot]] EventType eventType(const QString &space, const QString &topic);
+
+    QStringList pluginTopics(const QString &space);
+    QStringList pluginTopics(const QString &space, EventStratege stratege);
 
 private:
     Event();
@@ -117,16 +111,7 @@ DPF_END_NAMESPACE
 
 // acquire event type
 #undef DPF_EVENT_TYPE
-#define DPF_EVENT_TYPE(stratege, spaceStr, topicStr) dpfEvent->eventType(stratege, spaceStr, topicStr)
-
-#undef DPF_EVENT_TYPE_SIGNAL
-#define DPF_EVENT_TYPE_SIGNAL(spaceStr, topicStr) DPF_EVENT_TYPE(DPF_NAMESPACE::EventStratege::kSignal, spaceStr, topicStr)
-
-#undef DPF_EVENT_TYPE_SLOT
-#define DPF_EVENT_TYPE_SLOT(spaceStr, topicStr) DPF_EVENT_TYPE(DPF_NAMESPACE::EventStratege::kSlot, spaceStr, topicStr)
-
-#undef DPF_EVENT_TYPE_HOOK
-#define DPF_EVENT_TYPE_HOOK(spaceStr, topicStr) DPF_EVENT_TYPE(DPF_NAMESPACE::EventStratege::kHook, spaceStr, topicStr)
+#define DPF_EVENT_TYPE(spaceStr, topicStr) dpfEvent->eventType(spaceStr, topicStr)
 
 // dispatcher
 #undef dpfSignalDispatcher

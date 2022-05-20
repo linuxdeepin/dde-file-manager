@@ -65,10 +65,7 @@ void TitleBar::initialize()
     });
 
     // event has been sended before the Window showed
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabAdded,
-                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabAdded);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabChanged,
-                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabChanged);
+    bindEvents();
 
     UrlRoute::regScheme(Global::kSmb, "/", {}, true);
     UrlRoute::regScheme(Global::kFtp, "/", {}, true);
@@ -79,18 +76,7 @@ void TitleBar::initialize()
 
 bool TitleBar::start()
 {
-    DSB_FM_USE_NAMESPACE
 
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabMoved,
-                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabMoved);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kTabRemoved,
-                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabRemovd);
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kStartSpinner,
-                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStartSpinner);
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kStopSpinner,
-                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStopSpinner);
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::TitleBar::EventType::kShowFilterButton,
-                                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleShowFilterButton);
     return true;
 }
 
@@ -127,4 +113,26 @@ void TitleBar::onWindowOpened(quint64 windId)
 void TitleBar::onWindowClosed(quint64 windId)
 {
     TitleBarHelper::removeTitleBar(windId);
+}
+
+void TitleBar::bindEvents()
+{
+    DSB_FM_USE_NAMESPACE
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabAdded,
+                                   TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabAdded);
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabChanged,
+                                   TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabChanged);
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabMoved,
+                                   TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabMoved);
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabRemoved,
+                                   TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabRemovd);
+
+    // bind self slot events  slot_StartSpinner
+    static constexpr auto curSpace { DPF_MACRO_TO_STR(DPTITLEBAR_NAMESPACE) };
+    dpfSlotChannel->connect(curSpace, "slot_StartSpinner",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStartSpinner);
+    dpfSlotChannel->connect(curSpace, "slot_StopSpinner",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleStopSpinner);
+    dpfSlotChannel->connect(curSpace, "slot_ShowFilterButton",
+                            TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleShowFilterButton);
 }

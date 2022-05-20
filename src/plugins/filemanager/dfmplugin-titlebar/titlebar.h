@@ -25,7 +25,7 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPTITLEBAR_BEGIN_NAMESPACE
 
@@ -33,6 +33,17 @@ class TitleBar : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "titlebar.json")
+
+    DPF_EVENT_NAMESPACE(DPTITLEBAR_NAMESPACE)
+    // singnal events
+    DPF_EVENT_REG_SIGNAL(signal_StartSearch)
+    DPF_EVENT_REG_SIGNAL(signal_StopSearch)
+    DPF_EVENT_REG_SIGNAL(signal_ShowFilterView)
+
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_StartSpinner)
+    DPF_EVENT_REG_SLOT(slot_StopSpinner)
+    DPF_EVENT_REG_SLOT(slot_ShowFilterButton)
 
 public:
     virtual void initialize() override;
@@ -43,6 +54,7 @@ private slots:
     void onWindowCreated(quint64 windId);
     void onWindowOpened(quint64 windId);
     void onWindowClosed(quint64 windId);
+    void bindEvents();
 };
 
 DPTITLEBAR_END_NAMESPACE

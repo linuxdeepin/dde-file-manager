@@ -102,10 +102,17 @@ public:
     static EventChannelManager &instance();
 
     template<class T, class Func>
+    inline bool connect(const QString &space, const QString &topic, T *obj, Func method)
+    {
+        Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+        return connect(EventConverter::convert(space, topic), obj, std::move(method));
+    }
+
+    template<class T, class Func>
     [[gnu::hot]] inline bool connect(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qWarning() << "Event " << type << "is invalid";
+            qCritical() << "Event " << type << "is invalid";
             return false;
         }
 
@@ -120,7 +127,15 @@ public:
         return true;
     }
 
+    void disconnect(const QString &space, const QString &topic);
     void disconnect(const EventType &type);
+
+    template<class T, class... Args>
+    inline QVariant push(const QString &space, const QString &topic, T param, Args &&... args)
+    {
+        Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+        return push(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
+    }
 
     template<class T, class... Args>
     [[gnu::hot]] inline QVariant push(EventType type, T param, Args &&... args)
@@ -134,6 +149,12 @@ public:
         return QVariant();
     }
 
+    inline QVariant push(const QString &space, const QString &topic)
+    {
+        Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+        return push(EventConverter::convert(space, topic));
+    }
+
     inline QVariant push(const EventType &type)
     {
         QReadLocker guard(&rwLock);
@@ -145,6 +166,13 @@ public:
         }
 
         return QVariant();
+    }
+
+    template<class T, class... Args>
+    inline EventChannelFuture post(const QString &space, const QString &topic, T param, Args &&... args)
+    {
+        Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+        return post(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
     }
 
     template<class T, class... Args>

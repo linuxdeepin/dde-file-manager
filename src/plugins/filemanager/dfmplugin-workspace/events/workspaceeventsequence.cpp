@@ -59,8 +59,7 @@ bool WorkspaceEventSequence::doPaintIconItem(int role, const QUrl &url, QPainter
 
 bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
 {
-    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_CheckDragDropAction");
-    return dpfHookSequence->run(type, urls, urlTo, action);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_CheckDragDropAction", urls, urlTo, action);
 }
 
 bool WorkspaceEventSequence::doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes)
@@ -70,20 +69,17 @@ bool WorkspaceEventSequence::doFetchSelectionModes(const QUrl &url, QList<QAbstr
 
 bool WorkspaceEventSequence::doFetchCustomColumnRoles(const QUrl &rootUrl, QList<ItemRoles> *roleList)
 {
-    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_FetchCustomColumnRoles");
-    return dpfHookSequence->run(type, rootUrl, roleList);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomColumnRoles", rootUrl, roleList);
 }
 
 bool WorkspaceEventSequence::doFetchCustomRoleDiaplayName(const QUrl &url, const ItemRoles role, QString *displayName)
 {
-    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_FetchCustomRoleDisplayName");
-    return dpfHookSequence->run(type, url, role, displayName);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomRoleDisplayName", url, role, displayName);
 }
 
 bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &url, const ItemRoles role, QVariant *data)
 {
-    auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_FetchCustomRoleData");
-    return dpfHookSequence->run(type, url, role, data);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomRoleData", url, role, data);
 }
 
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)

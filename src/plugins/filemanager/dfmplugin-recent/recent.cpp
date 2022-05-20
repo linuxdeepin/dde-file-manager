@@ -114,21 +114,10 @@ void Recent::removeRecentItem()
 
 void Recent::followEvent()
 {
-    auto type = DPF_EVENT_TYPE_HOOK("dfmplugin_workspace", "hook_FetchCustomColumnRoles");
-    Q_ASSERT(type > 0);
-    dpfHookSequence->follow(type, RecentManager::instance(), &RecentManager::customColumnRole);
-
-    type = DPF_EVENT_TYPE_HOOK("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName");
-    Q_ASSERT(type > 0);
-    dpfHookSequence->follow(type, RecentManager::instance(), &RecentManager::customRoleDisplayName);
-
-    type = DPF_EVENT_TYPE_HOOK("dfmplugin_workspace", "hook_FetchCustomRoleData");
-    Q_ASSERT(type > 0);
-    dpfHookSequence->follow(type, RecentManager::instance(), &RecentManager::customRoleData);
-
-    type = DPF_EVENT_TYPE_HOOK("dfmplugin_detailspace", "hook_DetailViewIcon");
-    Q_ASSERT(type > 0);
-    dpfHookSequence->follow(type, RecentManager::instance(), &RecentManager::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", RecentManager::instance(), &RecentManager::detailViewIcon);
 }
 
 void Recent::regRecentCrumbToTitleBar()

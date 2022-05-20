@@ -44,6 +44,12 @@ EventSequenceManager &EventSequenceManager::instance()
     return instance;
 }
 
+void EventSequenceManager::unfollow(const QString &space, const QString &topic)
+{
+    Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+    unfollow(EventConverter::convert(space, topic));
+}
+
 void EventSequenceManager::unfollow(EventType type)
 {
     QWriteLocker guard(&rwLock);

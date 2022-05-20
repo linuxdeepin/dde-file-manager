@@ -26,43 +26,38 @@
 
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPSEARCH_BEGIN_NAMESPACE
-
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
 
 void dfmplugin_search::SearchEventCaller::sendDoSearch(quint64 winId, const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE
-    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 }
 
 void SearchEventCaller::sendShowAdvanceSearchBar(quint64 winId, bool visible)
 {
     DSB_FM_USE_NAMESPACE
-    dispatcher()->publish(Workspace::EventType::kShowCustomTopWidget, winId, SearchHelper::scheme(), visible);
+    dpfSignalDispatcher->publish(Workspace::EventType::kShowCustomTopWidget, winId, SearchHelper::scheme(), visible);
 }
 
 void SearchEventCaller::sendShowAdvanceSearchButton(quint64 winId, bool visible)
 {
     DSB_FM_USE_NAMESPACE
-    dispatcher()->publish(TitleBar::EventType::kShowFilterButton, winId, visible);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_ShowFilterButton", winId, visible);
 }
 
 void SearchEventCaller::sendStartSpinner(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
-    dispatcher()->publish(TitleBar::EventType::kStartSpinner, winId);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_StartSpinner", winId);
 }
 
 void SearchEventCaller::sendStopSpinner(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
-    dispatcher()->publish(TitleBar::EventType::kStopSpinner, winId);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_StopSpinner", winId);
 }
 
 DPSEARCH_END_NAMESPACE

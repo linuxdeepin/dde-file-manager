@@ -107,6 +107,12 @@ EventChannelManager &EventChannelManager::instance()
     return instance;
 }
 
+void EventChannelManager::disconnect(const QString &space, const QString &topic)
+{
+    Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+    disconnect(EventConverter::convert(space, topic));
+}
+
 void EventChannelManager::disconnect(const EventType &type)
 {
     QWriteLocker guard(&rwLock);

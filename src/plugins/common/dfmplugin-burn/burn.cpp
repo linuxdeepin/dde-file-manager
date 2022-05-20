@@ -36,7 +36,7 @@ static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPBURN_NAMESPACE) 
 
 bool Burn::start()
 {
-    bindEvent();
+    bindEvents();
     DSC_USE_NAMESPACE
     MenuService::service()->registerScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
     bindScene("SendToMenu");
@@ -60,17 +60,9 @@ void Burn::bindScene(const QString &parentScene)
     }
 }
 
-void Burn::bindEvent()
+void Burn::bindEvents()
 {
-    auto type = DPF_EVENT_TYPE_SLOT(kCurrentEventSpace, "slot_ShowBurnDialog");
-    Q_ASSERT(type > 0);
-    dpfSlotChannel->connect(type, BurnEventReceiver::instance(), &BurnEventReceiver::handleShowBurnDlg);
-
-    type = DPF_EVENT_TYPE_SLOT(kCurrentEventSpace, "slot_Erase");
-    Q_ASSERT(type > 0);
-    dpfSlotChannel->connect(type, BurnEventReceiver::instance(), &BurnEventReceiver::handleErase);
-
-    type = DPF_EVENT_TYPE_SLOT(kCurrentEventSpace, "slot_PasteTo");
-    Q_ASSERT(type > 0);
-    dpfSlotChannel->connect(type, BurnEventReceiver::instance(), &BurnEventReceiver::handlePasteTo);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_ShowBurnDialog", BurnEventReceiver::instance(), &BurnEventReceiver::handleShowBurnDlg);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Erase", BurnEventReceiver::instance(), &BurnEventReceiver::handleErase);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_PasteTo", BurnEventReceiver::instance(), &BurnEventReceiver::handlePasteTo);
 }

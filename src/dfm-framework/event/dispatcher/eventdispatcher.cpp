@@ -88,11 +88,23 @@ EventDispatcherManager &EventDispatcherManager::instance()
     return instance;
 }
 
+void EventDispatcherManager::unsubscribe(const QString &space, const QString &topic)
+{
+    Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+    unsubscribe(EventConverter::convert(space, topic));
+}
+
 void EventDispatcherManager::unsubscribe(EventType type)
 {
     QWriteLocker guard(&rwLock);
     if (dispatcherMap.contains(type))
         dispatcherMap.remove(type);
+}
+
+bool EventDispatcherManager::installEventFilter(const QString &space, const QString &topic, EventDispatcher::Filter filter)
+{
+    Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+    return installEventFilter(EventConverter::convert(space, topic), filter);
 }
 
 bool EventDispatcherManager::installEventFilter(EventType type, EventDispatcher::Filter filter)
@@ -105,6 +117,12 @@ bool EventDispatcherManager::installEventFilter(EventType type, EventDispatcher:
         return true;
     }
     return false;
+}
+
+bool EventDispatcherManager::removeEventFilter(const QString &space, const QString &topic)
+{
+    Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+    return removeEventFilter(EventConverter::convert(space, topic));
 }
 
 bool EventDispatcherManager::removeEventFilter(EventType type)

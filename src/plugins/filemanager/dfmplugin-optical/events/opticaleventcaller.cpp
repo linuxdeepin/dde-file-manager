@@ -31,6 +31,5 @@ DFMBASE_USE_NAMESPACE
 
 void OpticalEventCaller::sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)
 {
-    auto type = DPF_EVENT_TYPE_SLOT("dfmplugin_burn", "slot_ShowBurnDialog");
-    dpfSlotChannel->push(type, dev, isSupportedUDF, parent);
+    dpfSlotChannel->push("dfmplugin_burn", "slot_ShowBurnDialog", dev, isSupportedUDF, parent);
 }

@@ -162,13 +162,11 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
 
         auto findPluginIcon = [](const QUrl &url) -> QString {
             QString iconName;
-            auto type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_DetailViewIcon");
-            bool ok = dpfHookSequence->run(type, url, &iconName);
+            bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_DetailViewIcon", url, &iconName);
             if (ok && !iconName.isEmpty())
                 return iconName;
 
-            type = DPF_EVENT_TYPE_HOOK(kCurrentEventSpace, "hook_DetailViewIcon");
-            ok = dpfHookSequence->run(type, url, &iconName);
+            ok = dpfHookSequence->run(kCurrentEventSpace, "hook_DetailViewIcon", url, &iconName);
             if (ok && !iconName.isEmpty())
                 return iconName;
 

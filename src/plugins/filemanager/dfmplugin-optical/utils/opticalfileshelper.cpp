@@ -47,8 +47,7 @@ bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> url
 
 void OpticalFilesHelper::pasteFilesHandle(const QList<QUrl> sources, const QUrl target, bool isCopy)
 {
-    auto type = DPF_EVENT_TYPE_SLOT("dfmplugin_burn", "slot_PasteTo");
-    dpfSlotChannel->push(type, sources, target, isCopy);
+    dpfSlotChannel->push("dfmplugin_burn", "slot_PasteTo", sources, target, isCopy);
 }
 
 bool OpticalFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)

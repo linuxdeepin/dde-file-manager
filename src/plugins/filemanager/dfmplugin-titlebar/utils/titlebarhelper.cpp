@@ -38,7 +38,7 @@
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/dialogmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QGSettings>
 #include <QStandardPaths>

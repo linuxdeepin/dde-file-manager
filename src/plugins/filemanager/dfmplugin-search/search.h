@@ -23,7 +23,7 @@
 
 #include "dfmplugin_search_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPSEARCH_BEGIN_NAMESPACE
 

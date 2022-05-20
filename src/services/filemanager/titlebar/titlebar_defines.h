@@ -61,16 +61,6 @@ struct CustomCrumbInfo
     seprateUrlCallback seperateCb { nullptr };
 };
 
-// custom event type
-namespace EventType {
-extern const int kDoSearch;
-extern const int kStopSearch;
-extern const int kShowFilterView;
-extern const int kStartSpinner;
-extern const int kStopSpinner;
-extern const int kShowFilterButton;
-};   // namespace EventType
-
 // setting menu action list
 enum MenuAction {
     kNewWindow,

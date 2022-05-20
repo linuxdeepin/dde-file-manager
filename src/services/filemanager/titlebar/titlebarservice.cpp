@@ -30,22 +30,6 @@
 
 #include <mutex>
 
-DSB_FM_BEGIN_NAMESPACE
-namespace TitleBar {
-// custm event type
-namespace EventType {
-const int kSettingsMenuTriggered = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kDoSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kStopSearch = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kShowFilterView = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kStartSpinner = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kStopSpinner = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kShowFilterButton = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-};   // namespace EventType
-
-}   // namespace TitleBar
-DSB_FM_END_NAMESPACE
-
 DSB_FM_USE_NAMESPACE
 
 TitleBarService *TitleBarService::service()

@@ -70,15 +70,15 @@ dpf::Plugin::ShutdownFlag Search::stop()
 
 void Search::subscribeEvent()
 {
-    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kDoSearch,
-                                            SearchEventReceiverIns,
-                                            &SearchEventReceiver::handleSearch);
-    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kStopSearch,
-                                            SearchEventReceiverIns,
-                                            &SearchEventReceiver::handleStopSearch);
-    dpfInstance.eventDispatcher().subscribe(TitleBar::EventType::kShowFilterView,
-                                            SearchEventReceiverIns,
-                                            &SearchEventReceiver::handleShowAdvanceSearchBar);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StartSearch",
+                                   SearchEventReceiverIns,
+                                   &SearchEventReceiver::handleSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StopSearch",
+                                   SearchEventReceiverIns,
+                                   &SearchEventReceiver::handleStopSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_ShowFilterView",
+                                   SearchEventReceiverIns,
+                                   &SearchEventReceiver::handleShowAdvanceSearchBar);
 }
 
 void Search::onWindowOpened(quint64 windId)

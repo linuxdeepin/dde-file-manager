@@ -83,10 +83,17 @@ public:
     static EventSequenceManager &instance();
 
     template<class T, class Func>
+    inline bool follow(const QString &space, const QString &topic, T *obj, Func method)
+    {
+        Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+        return follow(EventConverter::convert(space, topic), obj, std::move(method));
+    }
+
+    template<class T, class Func>
     inline bool follow(EventType type, T *obj, Func method)
     {
         if (!isValidEventType(type)) {
-            qWarning() << "Event " << type << "is invalid";
+            qCritical() << "Event " << type << "is invalid";
             return false;
         }
 
@@ -101,7 +108,15 @@ public:
         return true;
     }
 
+    void unfollow(const QString &space, const QString &topic);
     void unfollow(EventType type);
+
+    template<class T, class... Args>
+    inline bool run(const QString &space, const QString &topic, T param, Args &&... args)
+    {
+        Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+        return run(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
+    }
 
     template<class T, class... Args>
     inline bool run(EventType type, T param, Args &&... args)
