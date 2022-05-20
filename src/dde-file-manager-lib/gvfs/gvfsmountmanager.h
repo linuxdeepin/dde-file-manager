@@ -166,6 +166,7 @@ public:
     static void clearLoginData();
     void autoMountAllDisks();
     static int m_clearLoginDataCounter;
+    static QString m_mountScheme;
 private:
     static bool try_to_get_mounted_point(GVolume *volume);
 

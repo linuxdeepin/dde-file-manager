@@ -755,6 +755,8 @@ void DFMSideBar::initConnection()
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
     if (window) {
         connect(window->getToolBar(),&DToolBar::addSmbIpToSideBar,this,[&](const DUrl& url){
+            if(url.scheme() != SMB_SCHEME)
+                return;
             QString smbIp;
             bool needAddSmbItem = FileUtils::isSmbRelatedUrl(url, smbIp);
             if (needAddSmbItem && m_sideBarSmbIpItemNames.keys().contains(smbIp)) {
