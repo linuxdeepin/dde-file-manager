@@ -23,13 +23,20 @@
 
 #include "dfmplugin_search_global.h"
 
+#include "dfm-base/dfm_global_defines.h"
+
 #include <QUrl>
 
 DPSEARCH_BEGIN_NAMESPACE
 
-class SearchHelper final
+class SearchHelper final : public QObject
 {
+    Q_OBJECT
+    Q_DISABLE_COPY(SearchHelper)
+
 public:
+    static SearchHelper *instance();
+
     inline static QString scheme()
     {
         return "search";
@@ -49,8 +56,13 @@ public:
     static QUrl fromSearchFile(const QString &filePath);
     static QUrl fromSearchFile(const QUrl &targetUrl, const QString &keyword, const QString &taskId);
 
+    bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
+    bool customRoleDisplayName(const QUrl &rootUrl, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
+    bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
+
 private:
-    SearchHelper() = delete;
+    explicit SearchHelper(QObject *parent = nullptr);
+    ~SearchHelper() override;
 };
 
 DPSEARCH_END_NAMESPACE

@@ -31,7 +31,6 @@
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/search/searchservice.h"
 #include "services/common/menu/menuservice.h"
 
@@ -54,12 +53,13 @@ void Search::initialize()
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
     MenuService::service()->registerScene(SearchMenuCreator::name(), new SearchMenuCreator());
 
+    subscribeEvent();
+
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Search::start()
 {
-    subscribeEvent();
     return true;
 }
 
@@ -79,6 +79,8 @@ void Search::subscribeEvent()
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_ShowFilterView",
                                    SearchEventReceiverIns,
                                    &SearchEventReceiver::handleShowAdvanceSearchBar);
+
+    followEvent();
 }
 
 void Search::onWindowOpened(quint64 windId)
@@ -117,6 +119,13 @@ void Search::regSearchToWorkspace()
     info.keepShow = false;
     info.createTopWidgetCb = []() { return new AdvanceSearchBar(); };
     WorkspaceService::service()->addCustomTopWidget(info);
+}
+
+void Search::followEvent()
+{
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", SearchHelper::instance(), &SearchHelper::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", SearchHelper::instance(), &SearchHelper::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", SearchHelper::instance(), &SearchHelper::customRoleData);
 }
 
 DPSEARCH_END_NAMESPACE

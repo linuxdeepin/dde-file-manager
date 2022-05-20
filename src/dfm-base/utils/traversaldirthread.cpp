@@ -50,7 +50,12 @@ TraversalDirThread::~TraversalDirThread()
 
 void TraversalDirThread::stop()
 {
+    if (stopFlag)
+        return;
+
     stopFlag = true;
+    if (dirIterator)
+        dirIterator->close();
     wait();
 }
 

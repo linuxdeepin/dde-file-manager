@@ -26,11 +26,13 @@
 #include "utils/workspacehelper.h"
 #include "utils/fileoperatorhelper.h"
 #include "workspace/workspace_defines.h"
+#include "events/workspaceeventsequence.h"
 
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -39,6 +41,7 @@
 #include <QList>
 #include <QMimeData>
 
+DFMGLOBAL_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
@@ -313,8 +316,13 @@ int FileViewModel::columnCount(const QModelIndex &parent) const
 QVariant FileViewModel::data(const QModelIndex &index, int role) const
 {
     auto item = itemFromIndex(index);
-    if (item)
+    if (item) {
+        QVariant data;
+        if (WorkspaceEventSequence::instance()->doFetchCustomRoleData(rootUrl(), item->url(), static_cast<ItemRoles>(role), &data))
+            return data;
         return item->data(role);
+    }
+
     return QVariant();
 }
 
@@ -571,6 +579,11 @@ void FileViewModel::traversCurrDir()
 
     setState(Busy);
     d->traversalThread->start();
+}
+
+void FileViewModel::stopTraversWork()
+{
+    d->traversalThread->stop();
 }
 
 void FileViewModel::onFilesUpdated()

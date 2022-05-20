@@ -28,17 +28,15 @@
 
 #include <dfm-framework/framework.h>
 
-#include <QUuid>
-
 DSB_FM_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
-SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, QObject *parent)
-    : QObject(parent),
-      fileUrl(url)
+SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, SearchDirIterator *qq)
+    : QObject(qq),
+      fileUrl(url),
+      q(qq)
 {
     initConnect();
-    doSearch();
 }
 
 SearchDirIteratorPrivate::~SearchDirIteratorPrivate()
@@ -47,6 +45,10 @@ SearchDirIteratorPrivate::~SearchDirIteratorPrivate()
 
 void SearchDirIteratorPrivate::initConnect()
 {
+    connect(q, &SearchDirIterator::sigSearch, this, &SearchDirIteratorPrivate::doSearch);
+    connect(q, &SearchDirIterator::sigStopSearch, this, [this]() {
+        SearchEventCaller::sendStopSpinner(taskId.toULongLong());
+    });
     connect(SearchService::service(), &SearchService::matched, this, &SearchDirIteratorPrivate::onMatched);
     connect(SearchService::service(), &SearchService::searchCompleted, this, &SearchDirIteratorPrivate::onSearchCompleted);
     connect(SearchService::service(), &SearchService::searchStoped, this, &SearchDirIteratorPrivate::onSearchStoped);
@@ -127,15 +129,20 @@ QUrl SearchDirIterator::next()
 
 bool SearchDirIterator::hasNext() const
 {
+    std::call_once(d->searchOnceFlag, [this]() {
+        d->searchStoped = false;
+        emit this->sigSearch();
+    });
+
     if (d->searchStoped) {
-        SearchEventCaller::sendStopSpinner(d->taskId.toULongLong());
+        emit sigStopSearch();
         return false;
     }
 
     QMutexLocker lk(&d->mutex);
     bool hasNext = !(d->childrens.isEmpty() && d->searchFinished);
     if (!hasNext)
-        SearchEventCaller::sendStopSpinner(d->taskId.toULongLong());
+        emit sigStopSearch();
     return hasNext;
 }
 
@@ -157,6 +164,14 @@ const AbstractFileInfoPointer SearchDirIterator::fileInfo() const
 QUrl SearchDirIterator::url() const
 {
     return SearchHelper::rootUrl();
+}
+
+void SearchDirIterator::close()
+{
+    if (d->taskId.isEmpty())
+        return;
+
+    SearchService::service()->stop(d->taskId);
 }
 
 DPSEARCH_END_NAMESPACE

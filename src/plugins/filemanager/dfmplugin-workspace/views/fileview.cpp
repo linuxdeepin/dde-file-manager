@@ -225,6 +225,13 @@ void FileView::setModel(QAbstractItemModel *model)
     DListView::setModel(model);
 }
 
+void FileView::stopWork()
+{
+    auto model = sourceModel();
+    if (model)
+        model->stopTraversWork();
+}
+
 int FileView::getColumnWidth(const int &column) const
 {
     if (d->headerView)

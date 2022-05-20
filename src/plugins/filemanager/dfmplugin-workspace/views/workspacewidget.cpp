@@ -75,6 +75,13 @@ Global::ViewMode WorkspaceWidget::currentViewMode() const
 
 void WorkspaceWidget::setCurrentUrl(const QUrl &url)
 {
+    auto curView = currentViewPtr();
+    if (curView) {
+        FileView *view = qobject_cast<FileView *>(curView->widget());
+        if (view)
+            view->stopWork();
+    }
+
     workspaceUrl = url;
 
     if (!tabBar->currentTab())
@@ -96,6 +103,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             qWarning() << "Cannot create view for " << url << "Reason: " << error;
             return;
         }
+
         viewStackLayout->addWidget(fileView->widget());
         viewStackLayout->setCurrentWidget(fileView->widget());
         views.insert(url.scheme(), fileView);

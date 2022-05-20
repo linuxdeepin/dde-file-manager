@@ -167,8 +167,10 @@ bool RecentManager::customRoleDisplayName(const QUrl &url, const ItemRoles role,
     return false;
 }
 
-bool RecentManager::customRoleData(const QUrl &url, const ItemRoles role, QVariant *data)
+bool RecentManager::customRoleData(const QUrl &rootUrl, const QUrl &url, const ItemRoles role, QVariant *data)
 {
+    Q_UNUSED(rootUrl)
+
     if (url.scheme() != scheme())
         return false;
 

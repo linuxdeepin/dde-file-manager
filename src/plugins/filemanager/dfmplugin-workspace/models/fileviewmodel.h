@@ -98,6 +98,7 @@ public:
     void childrenUpdated();
 
     void traversCurrDir();
+    void stopTraversWork();
 
 public slots:
     void onFilesUpdated();

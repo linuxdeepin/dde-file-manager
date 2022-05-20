@@ -46,6 +46,11 @@ public:
     virtual QUrl fileUrl() const override;
     virtual const AbstractFileInfoPointer fileInfo() const override;
     virtual QUrl url() const override;
+    virtual void close() override;
+
+signals:
+    void sigSearch() const;
+    void sigStopSearch() const;
 
 private:
     SearchDirIteratorPrivate *const d { nullptr };

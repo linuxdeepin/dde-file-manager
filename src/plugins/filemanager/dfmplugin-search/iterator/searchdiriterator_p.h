@@ -41,13 +41,13 @@ class SearchDirIteratorPrivate : public QObject
     friend class SearchDirIterator;
 
 public:
-    explicit SearchDirIteratorPrivate(const QUrl &url, QObject *parent = nullptr);
+    explicit SearchDirIteratorPrivate(const QUrl &url, SearchDirIterator *qq);
     ~SearchDirIteratorPrivate();
 
     void initConnect();
-    void doSearch();
 
 public slots:
+    void doSearch();
     void onMatched(const QString &id);
     void onSearchCompleted(const QString &id);
     void onSearchStoped(const QString &id);
@@ -61,6 +61,9 @@ private:
     QString taskId;
     QMutex mutex;
     std::once_flag onceFlag;
+    std::once_flag searchOnceFlag;
+
+    SearchDirIterator *q;
 };
 
 DPSEARCH_END_NAMESPACE

@@ -72,14 +72,14 @@ bool WorkspaceEventSequence::doFetchCustomColumnRoles(const QUrl &rootUrl, QList
     return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomColumnRoles", rootUrl, roleList);
 }
 
-bool WorkspaceEventSequence::doFetchCustomRoleDiaplayName(const QUrl &url, const ItemRoles role, QString *displayName)
+bool WorkspaceEventSequence::doFetchCustomRoleDiaplayName(const QUrl &rootUrl, const ItemRoles role, QString *displayName)
 {
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomRoleDisplayName", url, role, displayName);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomRoleDisplayName", rootUrl, role, displayName);
 }
 
-bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &url, const ItemRoles role, QVariant *data)
+bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &rootUrl, const QUrl &url, const ItemRoles role, QVariant *data)
 {
-    return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomRoleData", url, role, data);
+    return dpfHookSequence->run(kCurrentEventSpace, "hook_FetchCustomRoleData", rootUrl, url, role, data);
 }
 
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)

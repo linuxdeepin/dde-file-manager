@@ -80,6 +80,7 @@ public:
     void setDelegate(DFMBASE_NAMESPACE::Global::ViewMode mode, BaseItemDelegate *view);
     FileSortFilterProxyModel *model() const;
     void setModel(QAbstractItemModel *model) override;
+    void stopWork();
 
     QModelIndex indexAt(const QPoint &pos) const override;
     virtual QRect visualRect(const QModelIndex &index) const override;

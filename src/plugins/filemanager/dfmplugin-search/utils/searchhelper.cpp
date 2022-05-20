@@ -20,13 +20,29 @@
  */
 #include "searchhelper.h"
 
+#include "services/filemanager/workspace/workspace_defines.h"
+
+#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/base/schemefactory.h"
+
+#include <dfm-framework/dpf.h>
+
 #include <QUrlQuery>
 
+DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
 static inline QString parseDecodedComponent(const QString &data)
 {
     return QString(data).replace(QLatin1Char('%'), QStringLiteral("%25"));
+}
+
+SearchHelper *SearchHelper::instance()
+{
+    static SearchHelper ins;
+    return &ins;
 }
 
 QUrl SearchHelper::rootUrl()
@@ -115,6 +131,69 @@ QUrl SearchHelper::fromSearchFile(const QUrl &targetUrl, const QString &keyword,
     url.setQuery(query);
 
     return url;
+}
+
+bool SearchHelper::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleList)
+{
+    if (rootUrl.scheme() != scheme())
+        return false;
+
+    const QUrl &targetUrl = searchTargetUrl(rootUrl);
+    if (!dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomColumnRoles", targetUrl, roleList)) {
+        roleList->append(kItemNameRole);
+        roleList->append(kItemFilePathRole);
+        roleList->append(kItemFileLastModifiedRole);
+        roleList->append(kItemFileSizeRole);
+        roleList->append(kItemFileMimeTypeRole);
+    }
+
+    return true;
+}
+
+bool SearchHelper::customRoleDisplayName(const QUrl &rootUrl, const ItemRoles role, QString *displayName)
+{
+    if (rootUrl.scheme() != scheme())
+        return false;
+
+    const QUrl &targetUrl = searchTargetUrl(rootUrl);
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", targetUrl, role, displayName))
+        return true;
+
+    if (role == kItemFilePathRole) {
+        displayName->append(tr("Path"));
+        return true;
+    }
+
+    return false;
+}
+
+bool SearchHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const ItemRoles role, QVariant *data)
+{
+    if (rootUrl.scheme() != scheme())
+        return false;
+
+    const QUrl &targetUrl = searchTargetUrl(rootUrl);
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomRoleData", targetUrl, url, role, data))
+        return true;
+
+    if (role == kItemFilePathRole) {
+        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info) {
+            data->setValue(info->redirectedFileUrl().path());
+            return true;
+        }
+    }
+
+    return false;
+}
+
+SearchHelper::SearchHelper(QObject *parent)
+    : QObject(parent)
+{
+}
+
+SearchHelper::~SearchHelper()
+{
 }
 
 DPSEARCH_END_NAMESPACE
