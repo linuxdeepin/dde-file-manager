@@ -39,7 +39,7 @@
 #include <libmount/libmount.h>
 
 static constexpr char kMountControlObjPath[] { "/com/deepin/filemanager/daemon/MountControl" };
-static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.UserShareManager" };   // TODO(xust) add MountControl policy file.
+static constexpr char kPolicyKitActionId[] { "com.deepin.filemanager.daemon.MountController" };
 
 DAEMONPMOUNTCONTROL_USE_NAMESPACE
 

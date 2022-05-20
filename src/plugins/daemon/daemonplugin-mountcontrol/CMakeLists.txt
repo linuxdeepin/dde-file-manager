@@ -11,7 +11,7 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.xml"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.policy"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.policy"
     )
 
 find_package(PkgConfig REQUIRED)
