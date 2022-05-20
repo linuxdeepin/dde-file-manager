@@ -205,14 +205,6 @@ void FileOperations::initEventHandle()
                                                                                                  const QString)>(&FileOperationsEventReceiver::handleOperationTouchFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchFile,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<bool (FileOperationsEventReceiver::*)(const quint64, const QUrl)>(&FileOperationsEventReceiver::handleOperationTouchFile));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchFileCallBack,
-                                            FileOperationsEventReceiver::instance(),
-                                            static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl,
-                                                                                              const QVariant,
-                                                                                              OperatorCallback)>(&FileOperationsEventReceiver::handleOperationTouchFile));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchFileCallBack,
-                                            FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
                                                                                               const CreateFileType,

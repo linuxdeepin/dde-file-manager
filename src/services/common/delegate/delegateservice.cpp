@@ -79,6 +79,18 @@ QUrl DelegateService::urlTransform(const QUrl &url)
     return urlTransformHandles.value(scheme)(url);
 }
 
+QList<QUrl> DelegateService::urlsTransform(const QList<QUrl> &urls)
+{
+    QList<QUrl> urlsTrans;
+    for (const QUrl &url : urls) {
+        if (isRegisterUrlTransform(url.scheme())) {
+            QUrl urlTemp = urlTransform(url);
+            urlsTrans.push_back(urlTemp);
+        }
+    }
+    return urlsTrans.isEmpty() ? urls : urlsTrans;
+}
+
 DelegateService *DelegateService::service()
 {
     auto &ctx = dpfInstance.serviceContext();

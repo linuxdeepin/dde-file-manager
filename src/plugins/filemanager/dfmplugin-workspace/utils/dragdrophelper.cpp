@@ -23,15 +23,16 @@
 #include "views/fileview.h"
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/utils/windowutils.h"
 #include "events/workspaceeventsequence.h"
 
+#include "services/common/delegate/delegateservice.h"
+
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/windowutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <DFileDragClient>
-
 #include <QMimeData>
 
 DFMBASE_USE_NAMESPACE
@@ -59,6 +60,9 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
             return true;
         }
     }
+
+    currentDragUrls = delegateServIns->urlsTransform(currentDragUrls);
+    const_cast<QMimeData *>(event->mimeData())->setUrls(currentDragUrls);
 
     bool fall = true;
     handleDropEvent(event, &fall);

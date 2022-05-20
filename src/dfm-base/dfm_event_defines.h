@@ -55,7 +55,6 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
     kMkdir,
     kMkdirCallBack,
     kTouchFile,
-    kTouchFileCallBack,
     kCreateSymlink,
     kSetPermission,
     kCopy,

@@ -55,6 +55,7 @@ public:
     void registerUrlTransform(const KeyType &scheme, const UrlTransformHandle &handle);
     bool isRegisterUrlTransform(const KeyType &scheme);
     QUrl urlTransform(const QUrl &url);
+    QList<QUrl> urlsTransform(const QList<QUrl> &urls);
 
     static DelegateService *service();
 

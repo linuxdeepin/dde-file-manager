@@ -62,6 +62,8 @@ public:
     QString defaultTerminalPath();
     QString errorString();
 
+    bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);
+
 private:
     bool launchApp(const QString &desktopFile, const QStringList &filePaths = {});
     bool launchAppByDBus(const QString &desktopFile, const QStringList &filePaths = {});
@@ -73,7 +75,6 @@ private:
     QString getFileMimetypeFromGio(const QUrl &url);
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     QString getFileMimetype(const QString &path);
-    bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);
 
 private:
     void setError(const QString &error);

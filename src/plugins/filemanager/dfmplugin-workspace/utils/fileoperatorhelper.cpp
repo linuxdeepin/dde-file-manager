@@ -117,6 +117,9 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 {
 
     QList<QUrl> selectedUrls = view->selectedUrlList();
+    // trans url to local
+    selectedUrls = delegateServIns->urlsTransform(selectedUrls);
+
     if (selectedUrls.size() == 1) {
         const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(selectedUrls.first());
         if (!fileInfo || !fileInfo->isReadable())
@@ -139,6 +142,8 @@ void FileOperatorHelper::cutFiles(const FileView *view)
     if (!fileInfo || !fileInfo->isWritable())
         return;
     QList<QUrl> selectedUrls = view->selectedUrlList();
+    selectedUrls = delegateServIns->urlsTransform(selectedUrls);
+
     qInfo() << "selected urls: " << selectedUrls
             << " currentUrl: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);

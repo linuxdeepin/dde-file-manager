@@ -28,6 +28,7 @@
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/core/diofactory.h>
+#include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
 #include <QDebug>
@@ -292,15 +293,18 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
             return true;
     }
 
-    // 检查磁盘空间是否不足
-    if (!checkDiskSpaceAvailable(sourceUrl, QUrl::fromLocalFile(targetPath), targetStorageInfo, &result))
-        return result;
+    const QUrl &parentUrl = DFMUtils::directParentUrl(targetUrl);
+    if (!parentUrl.isValid())
+        return false;
 
-    const auto &toInfo = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetPath));
+    const auto &toInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
     if (!toInfo) {
         // pause and emit error msg
         return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
     }
+    // 检查磁盘空间是否不足
+    if (!checkDiskSpaceAvailable(sourceUrl, parentUrl, targetStorageInfo, &result))
+        return result;
 
     // 拷贝并删除文件
     qDebug() << "rename failed, use copy and delete way, from url :" << fileInfo->url() << " to url: " << toInfo->url();

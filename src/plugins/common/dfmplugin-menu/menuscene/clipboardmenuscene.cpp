@@ -23,6 +23,7 @@
 #include "menuutils.h"
 
 #include "services/common/menu/menu_defines.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/clipboard.h"
@@ -170,24 +171,27 @@ bool ClipBoardMenuScene::triggered(QAction *action)
 
     QString id = d->predicateAction.key(action);
 
+    // trans url to local
+    const QList<QUrl> &selectedUrlsTemp = delegateServIns->urlsTransform(d->selectFiles);
+
     if (id == ActionID::kPaste) {
         ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
         if (ClipBoard::kCopyAction == action) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, d->windowId, d->selectFiles, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
         } else if (ClipBoard::kCutAction == action) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, d->windowId, d->selectFiles, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
+            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
             //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
 
             // clear clipboard after cutting files from clipboard
             ClipBoard::instance()->clearClipboard();
         } else {
-            qWarning() << "clipboard action:" << action << "    urls:" << d->selectFiles;
+            qWarning() << "clipboard action:" << action << "    urls:" << selectedUrlsTemp;
         }
 
     } else if (id == ActionID::kCut) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCutAction, d->selectFiles);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCutAction, selectedUrlsTemp);
     } else if (id == ActionID::kCopy) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCopyAction, d->selectFiles);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCopyAction, selectedUrlsTemp);
     }
 
     return AbstractMenuScene::triggered(action);

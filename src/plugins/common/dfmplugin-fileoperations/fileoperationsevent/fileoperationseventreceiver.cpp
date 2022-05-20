@@ -21,10 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileoperationseventreceiver.h"
-
 #include "fileoperations/filecopymovejob.h"
-#include "dfm-base/utils/hidefilehelper.h"
 
+#include "services/common/delegate/delegateservice.h"
+
+#include "dfm-base/utils/hidefilehelper.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/utils/windowutils.h"
@@ -107,9 +108,7 @@ QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
     return newDocmentName(targetdir, baseName, suffixex);
 }
 
-QString FileOperationsEventReceiver::newDocmentName(QString targetdir,
-                                                    const QString &baseName,
-                                                    const QString &suffix)
+QString FileOperationsEventReceiver::newDocmentName(QString targetdir, const QString &baseName, const QString &suffix)
 {
     if (targetdir.isEmpty())
         return QString();
@@ -183,22 +182,53 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     return true;
 }
 
-bool FileOperationsEventReceiver::doRenameFiles(const QList<QUrl> urls, const QPair<QString, QString> pair,
+bool FileOperationsEventReceiver::doRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair,
                                                 const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> pair2,
-                                                const RenameTypes type, QMap<QUrl, QUrl> &successUrls, QString &errorMsg)
+                                                const RenameTypes type, QMap<QUrl, QUrl> &successUrls, QString &errorMsg,
+                                                const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     bool ok = false;
     switch (type) {
-    case RenameTypes::kBatchRepalce:
-        ok = fileHandler.renameFileBatchReplace(urls, pair, successUrls);
+    case RenameTypes::kBatchRepalce: {
+        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchReplaceText(urls, pair);
+        if (callback) {
+            CallbackArgus args(new QMap<CallbackKey, QVariant>);
+            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(CallbackKey::kCustom, custom);
+            callback(args);
+        }
+        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
         break;
-    case RenameTypes::kBatchCustom:
-        ok = fileHandler.renameFileBatchCustom(urls, pair, successUrls);
+    }
+    case RenameTypes::kBatchCustom: {
+        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchCustomText(urls, pair);
+        if (callback) {
+            CallbackArgus args(new QMap<CallbackKey, QVariant>);
+            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(CallbackKey::kCustom, custom);
+            callback(args);
+        }
+        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
         break;
-    case RenameTypes::kBatchAppend:
-        ok = fileHandler.renameFileBatchAppend(urls, pair2, successUrls);
+    }
+    case RenameTypes::kBatchAppend: {
+        QMap<QUrl, QUrl> needDealUrls = FileUtils::fileBatchAddText(urls, pair2);
+        if (callback) {
+            CallbackArgus args(new QMap<CallbackKey, QVariant>);
+            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << needDealUrls.keys()));
+            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << needDealUrls.values()));
+            args->insert(CallbackKey::kCustom, custom);
+            callback(args);
+        }
+        ok = fileHandler.renameFilesBatch(needDealUrls, successUrls);
         break;
+    }
     }
     if (!ok) {
         errorMsg = fileHandler.errorString();
@@ -244,6 +274,216 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
     return handle;
 }
 
+JobHandlePointer FileOperationsEventReceiver::doRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+{
+    if (sources.isEmpty())
+        return nullptr;
+    if (!sources.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sources.first().scheme());
+        }
+        if (function && function->restoreFromTrash) {
+            JobHandlePointer handle = function->restoreFromTrash(windowId, sources, flags);
+            if (handleCallback)
+                handleCallback(handle);
+            return handle;
+        }
+    }
+    JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
+    if (handleCallback)
+        handleCallback(handle);
+    return handle;
+}
+
+JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
+                                                         const AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle)
+{
+    if (sources.isEmpty())
+        return nullptr;
+
+    const QList<QUrl> &sourcesTrans = delegateServIns->urlsTransform(sources);
+
+    if (!target.isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(target.scheme());
+        }
+        if (function && function->copy) {
+            JobHandlePointer handle = function->copy(windowId, sourcesTrans, target, flags);
+            if (callbaskHandle)
+                callbaskHandle(handle);
+            return handle;
+        }
+    } else if (!sourcesTrans.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sourcesTrans.first().scheme());
+        }
+        if (function && function->copy) {
+            JobHandlePointer handle = function->copy(windowId, sourcesTrans, target, flags);
+            if (callbaskHandle)
+                callbaskHandle(handle);
+            return handle;
+        }
+    }
+
+    JobHandlePointer handle = copyMoveJob->copy(sourcesTrans, target, flags);
+    if (callbaskHandle)
+        callbaskHandle(handle);
+    return handle;
+}
+
+JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+{
+    if (sources.isEmpty())
+        return nullptr;
+
+    const QList<QUrl> &sourcesTrans = delegateServIns->urlsTransform(sources);
+
+    if (!target.isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(target.scheme());
+        }
+        if (function && function->cut) {
+            JobHandlePointer handle = function->cut(windowId, sourcesTrans, target, flags);
+            if (handleCallback)
+                handleCallback(handle);
+            return handle;
+        }
+    } else if (!sourcesTrans.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sourcesTrans.first().scheme());
+        }
+        if (function && function->moveFromPlugin) {
+            JobHandlePointer handle = function->moveFromPlugin(windowId, sourcesTrans, target, flags);
+            if (handleCallback)
+                handleCallback(handle);
+            return handle;
+        }
+    }
+
+    JobHandlePointer handle = copyMoveJob->cut(sourcesTrans, target, flags);
+    if (handleCallback)
+        handleCallback(handle);
+
+    return handle;
+}
+
+JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
+{
+    //Delete local file with shift+delete, show a confirm dialog.
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
+        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
+            return nullptr;
+    }
+
+    if (sources.isEmpty())
+        return nullptr;
+
+    if (!sources.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sources.first().scheme());
+        }
+        if (function && function->deletes) {
+            JobHandlePointer handle = function->deletes(windowId, sources, flags);
+            if (handleCallback)
+                handleCallback(handle);
+            return handle;
+        }
+    }
+    JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
+    if (handleCallback)
+        handleCallback(handle);
+
+    return handle;
+}
+
+JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType, OperatorHandleCallback handleCallback)
+{
+    //清空回收站操作弹框提示（这里只会显示Emtpy按钮）
+    const bool isFileAlreadyInTrash = (deleteNoticeType == AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);   //检查用户是否从回收站内部删除文件
+    //在此处理从回收站内部选择文件的删除操作(若不在这里处理，会进入到handleOperationCleanTrash()中，导致弹框提示无法区分"Delete"和"Empty"按钮的显示)
+    if (!sources.isEmpty()) {
+        //Show clear trash dialog
+        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources, !isFileAlreadyInTrash) != QDialog::Accepted)
+            return nullptr;
+    }
+
+    if (sources.isEmpty())
+        return nullptr;
+
+    if (!sources.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(sources.first().scheme());
+        }
+        if (function && function->cleanTrash) {
+            JobHandlePointer handle = function->cleanTrash(windowId, sources);
+            if (handleCallback)
+                handleCallback(handle);
+            return handle;
+        }
+    }
+    JobHandlePointer handle = copyMoveJob->cleanTrash(sources);
+    if (handleCallback)
+        handleCallback(handle);
+    return handle;
+}
+
+QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const CreateFileType fileType, const QString suffix,
+                                                          const QVariant custom, OperatorCallback callbackImmediately)
+{
+    if (url.isLocalFile()) {
+        QString newPath = newDocmentName(url.path(), suffix, fileType);
+        if (newPath.isEmpty())
+            return newPath;
+
+        QUrl urlNew;
+        urlNew.setScheme(url.scheme());
+        urlNew.setPath(newPath);
+
+        if (callbackImmediately) {
+            CallbackArgus args(new QMap<CallbackKey, QVariant>);
+            args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
+            args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+            args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
+            args->insert(CallbackKey::kCustom, custom);
+            callbackImmediately(args);
+        }
+
+        return doTouchFilePractically(windowId, urlNew) ? newPath : QString();
+    } else {
+        QString error;
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(url.scheme());
+        }
+        if (function && function->touchFile) {
+            bool ok = false;
+            ok = function->touchFile(windowId, url, &error, fileType);
+            if (!ok) {
+                dialogManager->showErrorDialog("touch file error", error);
+            }
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                                                  windowId, QList<QUrl>() << url, ok, error);
+            return ok ? url.path() : QString();
+        }
+        return doTouchFilePractically(windowId, url) ? url.path() : QString();
+    }
+}
+
 void FileOperationsEventReceiver::saveRenameOperate(const QString &sourcesUrl, const QString &targetUrl)
 {
     QVariantMap values;
@@ -272,61 +512,13 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                       DFMGLOBAL_NAMESPACE::OperatorHandleCallback callbaskHandle)
 {
-    Q_UNUSED(windowId);
-    if (!sources.isEmpty() && !target.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(target.scheme());
-        }
-        if (function && function->copy) {
-            JobHandlePointer handle = function->copy(windowId, sources, target, flags);
-            if (callbaskHandle)
-                callbaskHandle(handle);
-            return;
-        }
-    }
-    JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
-    if (callbaskHandle)
-        callbaskHandle(handle);
+    doCopyFile(windowId, sources, target, flags, callbaskHandle);
 }
 
 void FileOperationsEventReceiver::handleOperationCut(quint64 windowId, const QList<QUrl> sources, const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                      DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
-    Q_UNUSED(windowId);
-    if (sources.isEmpty())
-        return;
-
-    if (!target.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(target.scheme());
-        }
-        if (function && function->cut) {
-            JobHandlePointer handle = function->cut(windowId, sources, target, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return;
-        }
-    } else if (!sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->moveFromPlugin) {
-            JobHandlePointer handle = function->moveFromPlugin(windowId, sources, target, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return;
-        }
-    }
-
-    JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    doCutFile(windowId, sources, target, flags, handleCallback);
 }
 
 void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
@@ -338,23 +530,7 @@ void FileOperationsEventReceiver::handleOperationMoveToTrash(const quint64 windo
 void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
-    Q_UNUSED(windowId);
-    if (!sources.isEmpty() && !sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->restoreFromTrash) {
-            JobHandlePointer handle = function->restoreFromTrash(windowId, sources, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return;
-        }
-    }
-    JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    doRestoreFromTrash(windowId, sources, flags, handleCallback);
 }
 
 void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
@@ -362,60 +538,13 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                                          DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
-    Q_UNUSED(windowId);
-    //Delete local file with shift+delete, show a confirm dialog.
-    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
-        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
-            return;
-    }
-
-    if (!sources.isEmpty() && !sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->deletes) {
-            JobHandlePointer handle = function->deletes(windowId, sources, flags);
-            if (handleCallback)
-                handleCallback(handle);
-            return;
-        }
-    }
-    JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    doDeleteFile(windowId, sources, flags, handleCallback);
 }
 
 void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback)
 {
-    //清空回收站操作弹框提示（这里只会显示Emtpy按钮）
-    bool isFileAlreadyInTrash = (deleteNoticeType == AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles);   //检查用户是否从回收站内部删除文件
-    //在此处理从回收站内部选择文件的删除操作(若不在这里处理，会进入到handleOperationCleanTrash()中，导致弹框提示无法区分"Delete"和"Empty"按钮的显示)
-    if (!sources.isEmpty()) {
-        //Show clear trash dialog
-        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources, !isFileAlreadyInTrash) != QDialog::Accepted)
-            return;
-    }
-
-    Q_UNUSED(windowId);
-    if (!sources.isEmpty() && !sources.first().isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(sources.first().scheme());
-        }
-        if (function && function->cleanTrash) {
-            JobHandlePointer handle = function->cleanTrash(windowId, sources);
-            if (handleCallback)
-                handleCallback(handle);
-            return;
-        }
-    }
-    JobHandlePointer handle = copyMoveJob->cleanTrash(sources);
-    if (handleCallback)
-        handleCallback(handle);
+    doCleanTrash(windowId, sources, deleteNoticeType, handleCallback);
 }
 
 void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
@@ -426,9 +555,7 @@ void FileOperationsEventReceiver::handleOperationCopy(const quint64 windowId,
                                                       const QVariant custom,
                                                       DFMGLOBAL_NAMESPACE::OperatorCallback callback)
 {
-    JobHandlePointer handle = copyMoveJob->copy(sources, target, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    JobHandlePointer handle = doCopyFile(windowId, sources, target, flags, handleCallback);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
@@ -446,9 +573,7 @@ void FileOperationsEventReceiver::handleOperationCut(const quint64 windowId,
                                                      const QVariant custom,
                                                      DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
-    JobHandlePointer handle = copyMoveJob->cut(sources, target, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    JobHandlePointer handle = doCutFile(windowId, sources, target, flags, handleCallback);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
@@ -483,9 +608,7 @@ void FileOperationsEventReceiver::handleOperationRestoreFromTrash(const quint64 
                                                                   const QVariant custom,
                                                                   DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
-    JobHandlePointer handle = copyMoveJob->restoreFromTrash(sources, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    JobHandlePointer handle = doRestoreFromTrash(windowId, sources, flags, handleCallback);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
@@ -502,9 +625,7 @@ void FileOperationsEventReceiver::handleOperationDeletes(const quint64 windowId,
                                                          const QVariant custom,
                                                          DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
-    JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
-    if (handleCallback)
-        handleCallback(handle);
+    JobHandlePointer handle = doDeleteFile(windowId, sources, flags, handleCallback);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
@@ -518,9 +639,7 @@ void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 window
                                                             DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback,
                                                             const QVariant custom, OperatorCallback callback)
 {
-    JobHandlePointer handle = copyMoveJob->deletes(sources);
-    if (handleCallback)
-        handleCallback(handle);
+    JobHandlePointer handle = doCleanTrash(windowId, sources, AbstractJobHandler::DeleteDialogNoticeType::kEmptyTrash, handleCallback);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
@@ -697,7 +816,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     RenameTypes type = RenameTypes::kBatchRepalce;
     if (!replace)
         type = RenameTypes::kBatchCustom;
-    bool ok = doRenameFiles(urls, pair, {}, type, successUrls, error);
+    bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error);
 
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -714,7 +833,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     RenameTypes type = RenameTypes::kBatchRepalce;
     if (!replace)
         type = RenameTypes::kBatchCustom;
-    bool ok = doRenameFiles(urls, pair, {}, type, successUrls, error);
+    bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error, custom, callback);
     // publish result
     const QList<QUrl> &lists = successUrls.values();
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -737,7 +856,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 {
     QMap<QUrl, QUrl> successUrls;
     QString error;
-    bool ok = doRenameFiles(urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
+    bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
 
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -751,7 +870,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 {
     QMap<QUrl, QUrl> successUrls;
     QString error;
-    bool ok = doRenameFiles(urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
+    bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error, custom, callback);
     const QList<QUrl> &lists = successUrls.values();
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -874,54 +993,19 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
     }
 }
 
-bool FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
-                                                           const QUrl url)
+bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId, const QUrl url)
 {
-    Q_UNUSED(windowId);
-    bool ok = false;
     QString error;
-    if (!url.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
-        }
-        if (function && function->touchFile) {
-            ok = function->touchFile(windowId, url, &error, DFMGLOBAL_NAMESPACE::CreateFileType::kCreateFileTypeUnknow);
-            if (!ok) {
-                dialogManager->showErrorDialog("touch file error", error);
-            }
-            // TODO:: touch file finished need to send touch file finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
-            return ok;
-        }
-    }
+
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.touchFile(url);
+    bool ok = fileHandler.touchFile(url);
     if (!ok) {
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("touch file error", error);
     }
-    // TODO:: touch file finished need to send touch file finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
                                           windowId, QList<QUrl>() << url, ok, error);
     return ok;
-}
-
-void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
-                                                           const QUrl url, const QVariant custom,
-                                                           OperatorCallback callback)
-{
-    bool ok = handleOperationTouchFile(windowId, url);
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
 }
 
 QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
@@ -929,37 +1013,7 @@ QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 wind
                                                               const CreateFileType fileType,
                                                               const QString suffix)
 {
-    Q_UNUSED(suffix)
-    if (url.isLocalFile()) {
-        QString newPath = newDocmentName(url.path(), QString(), fileType);
-        if (newPath.isEmpty())
-            return newPath;
-
-        QUrl urlNew;
-        urlNew.setScheme(url.scheme());
-        urlNew.setPath(newPath);
-
-        return handleOperationTouchFile(windowId, urlNew) ? newPath : QString();
-    } else {
-        QString error;
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
-        }
-        if (function && function->touchFile) {
-            bool ok = false;
-            ok = function->touchFile(windowId, url, &error, fileType);
-            if (!ok) {
-                dialogManager->showErrorDialog("touch file error", error);
-            }
-            // TODO:: touch file finished need to send touch file finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
-            return ok ? url.path() : QString();
-        }
-        return handleOperationTouchFile(windowId, url) ? url.path() : QString();
-    }
+    doTouchFilePremature(windowId, url, fileType, suffix, QVariant(), nullptr);
 }
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
@@ -967,18 +1021,9 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
                                                            const CreateFileType fileType,
                                                            const QString suffix,
                                                            const QVariant custom,
-                                                           OperatorCallback callback)
+                                                           OperatorCallback callbackImmediately)
 {
-    QString newPath = handleOperationTouchFile(windowId, url, fileType, suffix);
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(!newPath.isEmpty()));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
+    doTouchFilePremature(windowId, url, fileType, suffix, custom, callbackImmediately);
 }
 
 bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
@@ -1232,7 +1277,8 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
     return true;
 }
 
-void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls, const QVariant custom, OperatorCallback callback)
+void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
+                                                           const QVariant custom, OperatorCallback callback)
 {
     bool ok = handleOperationHideFiles(windowId, urls);
     if (callback) {
