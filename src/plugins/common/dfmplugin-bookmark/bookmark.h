@@ -30,7 +30,7 @@ DPBOOKMARK_BEGIN_NAMESPACE
 class BookMark : public DPF_NAMESPACE::Plugin
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "bookmark.json")
+    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "bookmark.json")
 
 public:
     virtual void initialize() override;
