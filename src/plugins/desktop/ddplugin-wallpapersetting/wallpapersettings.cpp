@@ -202,28 +202,21 @@ void WallpaperSettingsPrivate::adjustModeSwitcher()
     switchModeControl->adjustSize();
 
     int toolsWidth = 0;
-    {
+    if (WallpaperSettings::Mode::ScreenSaverMode == mode) {
         auto margins = toolLayout->contentsMargins();
         int width = waitControlLabel->sizeHint().width() +
                     waitControl->sizeHint().width() +
                     lockScreenBox->sizeHint().width();
 
         toolsWidth = margins.left() + width + toolLayout->count() * toolLayout->spacing();
-    }
+    } else if (WallpaperSettings::Mode::WallpaperMode == mode) {
+        toolsWidth = carouselCheckBox->sizeHint().width() +
+                     carouselLayout->contentsMargins().left() +
+                     carouselLayout->contentsMargins().right() +
+                     carouselLayout->spacing();
 
-    {
-        int width = carouselCheckBox->sizeHint().width() +
-                    carouselControl->sizeHint().width() +
-                    carouselLayout->contentsMargins().left() +
-                    carouselLayout->contentsMargins().right() +
-                    carouselLayout->spacing();
-
-        bool visble = carouselControl->isVisible();
-        if (visble && width > toolsWidth) {
-            toolsWidth = width;
-        } else if (!visble && mode == WallpaperSettings::Mode::WallpaperMode) {
-            toolsWidth = 0; // if the wallpaper mode is unchecked, it can be centered when changing wallpaper automatically
-        }
+        if (carouselCheckBox->isChecked())
+            toolsWidth += carouselControl->sizeHint().width();
     }
 
     // prevent the toggle control from overlapping the toolbar on the left at low resolution
