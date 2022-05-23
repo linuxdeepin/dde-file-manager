@@ -197,11 +197,13 @@ public:
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
     {
+        if (Q_UNLIKELY(!cache))
+            return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileInfo>::create(url, errorString));
+
         QSharedPointer<AbstractFileInfo> info = InfoCache::instance().getCacheInfo(url);
         if (!info) {
             info = instance().SchemeFactory<AbstractFileInfo>::create(url, errorString);
-            if (cache)
-                InfoCache::instance().cacheInfo(url, info);
+            InfoCache::instance().cacheInfo(url, info);
         }
         return qSharedPointerDynamicCast<T>(info);
     }

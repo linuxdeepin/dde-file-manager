@@ -81,7 +81,7 @@ void Tab::setCurrentUrl(const QUrl &url)
         fileName = UrlRoute::rootDisplayName(url.scheme());
 
     if (fileName.isEmpty()) {
-        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        auto info = InfoFactory::create<AbstractFileInfo>(url, false);
         if (info)
             fileName = info->fileName();
         else
