@@ -465,10 +465,8 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
         }
     }
 
-    if (d->crumbView.selectionModel() && d->crumbModel) {
-        qInfo() << d->crumbModel->lastIndex();
+    if (d->crumbView.selectionModel() && d->crumbModel)
         d->crumbView.selectionModel()->select(d->crumbModel->lastIndex(), QItemSelectionModel::Select);
-    }
 
     d->checkArrowVisiable();
     d->crumbView.horizontalScrollBar()->triggerAction(QScrollBar::SliderToMaximum);

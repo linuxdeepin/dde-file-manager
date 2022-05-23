@@ -37,7 +37,6 @@ const int kTabAdded = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kTabChanged = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kTabMoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kTabRemoved = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kCloseTabs = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kPaintListItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kPaintIconItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();

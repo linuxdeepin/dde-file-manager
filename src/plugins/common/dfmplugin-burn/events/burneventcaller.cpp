@@ -25,7 +25,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -33,7 +33,12 @@ DFMBASE_USE_NAMESPACE
 void BurnEventCaller::sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, bool isCopy)
 {
     if (isCopy)
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint, nullptr);
     else
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kCutFile, 0, urls, dest, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+}
+
+void BurnEventCaller::sendCloseTab(const QUrl &url)
+{
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", url);
 }

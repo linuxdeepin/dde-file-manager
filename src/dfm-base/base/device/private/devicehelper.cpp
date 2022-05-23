@@ -45,7 +45,7 @@ static constexpr char kBurnAttribute[] { "BurnAttribute" };
 static constexpr char kBurnTotalSize[] { "BurnTotalSize" };
 static constexpr char kBurnUsedSize[] { "BurnUsedSize" };
 static constexpr char kBurnMediaType[] { "BurnMediaType" };
-static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeede" };
+static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeed" };
 
 DFMBASE_USE_NAMESPACE
 DFM_MOUNT_USE_NS

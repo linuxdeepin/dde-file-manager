@@ -30,9 +30,11 @@
 #include "menus/opticalmenuscene.h"
 
 #include "services/common/menu/menuservice.h"
+#include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 DPOPTICAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -51,6 +53,21 @@ void Optical::initialize()
                 addOpticalCrumbToTitleBar();
             },
             Qt::DirectConnection);
+
+    connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted,
+            this, &Optical::onDeviceUnmounted, Qt::DirectConnection);
+    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved,
+            this, &Optical::onDeviceUnmounted, Qt::DirectConnection);
+    // for blank disc
+    connect(DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this,
+            [this](const QString &id, const QString &property, const QVariant &val) {
+                if (id.contains(QRegularExpression("/sr[0-9]*$"))
+                    && property == GlobalServerDefines::DeviceProperty::kOptical && !val.toBool()) {
+                    onDeviceUnmounted(id);
+                }
+            },
+            Qt::DirectConnection);
+
     MenuService::service()->registerScene(OpticalMenuSceneCreator::name(), new OpticalMenuSceneCreator);
 }
 
@@ -155,4 +172,13 @@ void Optical::addDelegateSettings()
         return !OpticalHelper::burnIsOnDisc(url);
     });
     OpticalHelper::dlgateServIns()->registerUrlTransform(Global::kBurn, &OpticalHelper::tansToLocalFile);
+}
+
+void Optical::onDeviceUnmounted(const QString &id)
+{
+    if (id.contains(QRegularExpression("sr[0-9]*$"))) {
+        const QString &&volTag { id.mid(id.lastIndexOf("/") + 1) };
+        QUrl url { QString("burn:///dev/%1/disc_files/").arg(volTag) };
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", url);
+    }
 }

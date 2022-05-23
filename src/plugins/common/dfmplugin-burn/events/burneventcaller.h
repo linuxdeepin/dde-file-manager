@@ -35,6 +35,7 @@ class BurnEventCaller
 
 public:
     static void sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, bool isCopy);
+    static void sendCloseTab(const QUrl &url);
 };
 
 DPBURN_END_NAMESPACE

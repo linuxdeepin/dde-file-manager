@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
-    //a.setApplicationVersion(DApplication::buildVersion((GIT_VERSION))); //todo(zs)
+    a.setApplicationVersion(DApplication::buildVersion(DPF_MACRO_TO_STR(VERSION)));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     DPF_NAMESPACE::backtrace::initbacktrace();

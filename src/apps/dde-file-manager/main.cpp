@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName(ORGANIZATION_NAME);
     a.loadTranslator();
     a.setApplicationDisplayName(a.translate("Application", "File Manager"));
-    // a.setApplicationVersion(DApplication::buildVersion((GIT_VERSION))); // TODO(zhangs): imple me
+    a.setApplicationVersion(DApplication::buildVersion(DPF_MACRO_TO_STR(VERSION)));
     a.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     a.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     a.setApplicationDescription(a.translate("Application", "File Manager is a powerful and "

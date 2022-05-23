@@ -4,7 +4,11 @@
 //  #undef DFM_PLUGIN_PATH
 //  #define DFM_PLUGIN_PATH xxx
 #ifndef DFM_PLUGIN_PATH
-#define DFM_PLUGIN_PATH "${DFM_PLUGIN_DIR}"
+#    define DFM_PLUGIN_PATH "${DFM_PLUGIN_DIR}"
 #elif
-    #warning "cmake unseting definition DFM_PLUGIN_PATH"
+#    warning "cmake unseting definition DFM_PLUGIN_PATH"
+#endif
+
+#ifndef VERSION
+#    define VERSION 0.0.0
 #endif

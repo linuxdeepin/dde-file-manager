@@ -167,8 +167,15 @@ bool AbstractBurnJob::readyToWork()
     }
 
     bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
+    // for dvd+rw disc, erase operation only overwrite some blocks which used to present filesystem,
+    // so the blank field is still false even if it can be write datas from the beginning,
+    if (static_cast<MediaType>(map[DeviceProperty::kOpticalMediaType].toUInt()) == MediaType::kDVD_PLUS_RW)
+        blank |= map[DeviceProperty::kSizeTotal].toULongLong() == map[DeviceProperty::kSizeFree].toULongLong();
+
     if (blank) {
-        // TODO(zhangs): jump to computer
+        QString tag = curDevId.mid(curDevId.lastIndexOf("/") + 1);
+        QUrl url(QString("burn:///dev/%1/disc_files/").arg(tag));
+        BurnEventCaller::sendCloseTab(url);
     } else {
         QString mpt { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
         if (!mpt.isEmpty()) {
@@ -345,6 +352,11 @@ void EraseJob::work()
     comfort();
 
     DeviceManager::instance()->rescanBlockDev(curDevId);
+
+    // Due to disc don't ejected after erase, we must readlod optical info again
+    DevMngIns->mountBlockDevAsync(curDevId, {}, [this](bool, DFMMOUNT::DeviceError, const QString &) {
+        DevProxyMng->reloadOpticalInfo(curDevId);
+    });
 }
 
 BurnISOFilesJob::BurnISOFilesJob(const QString &dev, const JobHandlePointer handler)

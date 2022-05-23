@@ -44,6 +44,9 @@ private:
     void addFileOperations();
     void addCustomTopWidget();
     void addDelegateSettings();
+
+private slots:
+    void onDeviceUnmounted(const QString &id);
 };
 
 DPOPTICAL_END_NAMESPACE

@@ -33,6 +33,8 @@ DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
+static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
+
 WorkspaceEventReceiver::WorkspaceEventReceiver(QObject *parent)
     : QObject(parent)
 {
@@ -46,6 +48,9 @@ WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
 
 void WorkspaceEventReceiver::initConnection()
 {
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_CloseTab",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
+
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSwitchViewMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
@@ -53,8 +58,6 @@ void WorkspaceEventReceiver::initConnection()
 
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kShowCustomTopWidget,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kCloseTabs,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectFiles,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectAll,

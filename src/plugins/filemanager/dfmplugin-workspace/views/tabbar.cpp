@@ -32,8 +32,6 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
-
 #include <QUrl>
 #include <QEvent>
 #include <QMouseEvent>
@@ -209,7 +207,7 @@ void TabBar::closeTab(quint64 winId, const QUrl &url)
                     redirectToWhenDelete.setScheme(Global::kFile);
                     redirectToWhenDelete.setPath(localPath);
                 }
-                dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
+                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, redirectToWhenDelete);
             } else {
                 removeTab(i);
             }

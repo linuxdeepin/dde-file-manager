@@ -35,11 +35,15 @@ class Workspace : public dpf::Plugin
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "workspace.json")
 
     DPF_EVENT_NAMESPACE(DPWORKSPACE_NAMESPACE)
+
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_CloseTab)
+
+    // hook events
     DPF_EVENT_REG_HOOK(hook_FetchCustomColumnRoles)
     DPF_EVENT_REG_HOOK(hook_FetchCustomRoleDisplayName)
     DPF_EVENT_REG_HOOK(hook_FetchCustomRoleData)
     DPF_EVENT_REG_HOOK(hook_CheckDragDropAction)
-
     DPF_EVENT_REG_HOOK(hook_PasteFilesShortcut)
     DPF_EVENT_REG_HOOK(hook_DeleteFilesShortcut)
     DPF_EVENT_REG_HOOK(hook_MoveToTrashShortcut)

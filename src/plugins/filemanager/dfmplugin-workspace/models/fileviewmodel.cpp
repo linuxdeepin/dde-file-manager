@@ -32,7 +32,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <QApplication>
 #include <QPointer>
@@ -138,7 +138,7 @@ void FileViewModelPrivate::doWatcherEvent()
             nodeManager->insertChild(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
-            dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kCloseTabs, fileUrl);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
         }
     }
     q->childrenUpdated();
