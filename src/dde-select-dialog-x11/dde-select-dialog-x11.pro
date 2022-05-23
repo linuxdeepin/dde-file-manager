@@ -14,7 +14,7 @@ TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += dtkwidget dtkgui dtkcore
 
-include($$PWD/../dde-desktop/dbus/filedialog/filedialog.pri)
+include($$PWD/../dde-desktop/dbus/filedialog/selectdialog.pri)
 
 INCLUDEPATH += $$PWD/../dde-file-manager-lib \
                $$PWD/../dde-file-manager-lib/interfaces \
