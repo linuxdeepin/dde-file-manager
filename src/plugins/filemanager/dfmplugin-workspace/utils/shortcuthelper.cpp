@@ -33,6 +33,7 @@
 
 #include "services/common/delegate/delegateservice.h"
 
+#include <dfm-framework/dpf.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <QAction>
@@ -42,6 +43,7 @@ DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 static constexpr char kViewShortcutKey[] = "_view_shortcut_key";
+static constexpr char kCurrentEventSpace[] = { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
 
 ShortcutHelper::ShortcutHelper(FileView *parent)
     : QObject(parent),
@@ -229,6 +231,10 @@ void ShortcutHelper::cutFiles()
 
 void ShortcutHelper::pasteFiles()
 {
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_PasteFilesShortcut", windowId, view->rootUrl()))
+        return;
+
     FileOperatorHelperIns->pasteFiles(view);
 }
 
@@ -241,6 +247,11 @@ void ShortcutHelper::deleteFiles()
 {
     if (view->selectedUrlList().isEmpty())
         return;
+
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_DeleteFilesShortcut", windowId, view->selectedUrlList()))
+        return;
+
     // Todo(yanghao):only support trash on root url
     // 共享文件夹不用弹出彻底删除对话框
     // 网络邻居目录不用弹出彻底删除对话框
@@ -250,6 +261,9 @@ void ShortcutHelper::deleteFiles()
 
 void ShortcutHelper::moveToTrash()
 {
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_MoveToTrashShortcut", windowId, view->selectedUrlList()))
+        return;
     // Todo(lanxs): QUrl to LocalFile
     // complete deletion eg: gvfs, vault
     // only support trash on root url

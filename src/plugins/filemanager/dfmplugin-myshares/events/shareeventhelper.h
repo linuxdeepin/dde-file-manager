@@ -1,5 +1,5 @@
-﻿/*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     xushitong<xushitong@uniontech.com>
  *
@@ -20,35 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef MYSHARESPLUGIN_H
-#define MYSHARESPLUGIN_H
+#ifndef SHAREEVENTHELPER_H
+#define SHAREEVENTHELPER_H
 
 #include "dfmplugin_myshares_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QUrl>
+#include <QList>
+#include <QObject>
 
 DPMYSHARES_BEGIN_NAMESPACE
-class MyShares : public dpf::Plugin
+
+class ShareEventHelper : public QObject
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "myshares.json")
-
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    static ShareEventHelper *instance();
+    bool blockPaste(quint64 winId, const QUrl &to);
+    bool blockDelete(quint64 winId, const QList<QUrl> &urls);
+    bool blockMoveToTrash(quint64 winId, const QList<QUrl> &urls);
 
-protected Q_SLOTS:
-    void onWindowCreated(quint64 winId);
-    void onWindowOpened(quint64 windd);
-    void onWindowClosed(quint64 winId);
-
-private:
-    void addToSidebar();
-    void regMyShareToSearch();
-    void bindSubScene(const QString &scene);
-    void hookEvent();
+protected:
+    explicit ShareEventHelper(QObject *parent = nullptr);
+    bool containsShareUrl(const QList<QUrl> &urls);
 };
 
 DPMYSHARES_END_NAMESPACE
-#endif   // MYSHARESPLUGIN_H
+
+#endif   // SHAREEVENTHELPER_H

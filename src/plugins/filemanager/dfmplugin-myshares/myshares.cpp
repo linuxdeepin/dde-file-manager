@@ -29,6 +29,7 @@
 #include "watcher/sharewatcher.h"
 #include "menu/mysharemenuscene.h"
 #include "events/shareeventscaller.h"
+#include "events/shareeventhelper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/windows/windowsservice.h"
@@ -43,6 +44,8 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+
+#include <dfm-framework/dpf.h>
 
 DPMYSHARES_USE_NAMESPACE
 
@@ -89,6 +92,8 @@ bool MyShares::start()
         in.setScheme(DFMBASE_NAMESPACE::Global::kFile);
         return in;
     });
+
+    hookEvent();
 
     return true;
 }
@@ -164,4 +169,11 @@ void MyShares::bindSubScene(const QString &scene)
         },
                 Qt::DirectConnection);
     }
+}
+
+void MyShares::hookEvent()
+{
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DeleteFilesShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockDelete);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_MoveToTrashShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockMoveToTrash);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_PasteFilesShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockPaste);
 }

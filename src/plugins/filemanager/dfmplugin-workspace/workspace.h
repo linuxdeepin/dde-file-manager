@@ -40,6 +40,10 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_FetchCustomRoleData)
     DPF_EVENT_REG_HOOK(hook_CheckDragDropAction)
 
+    DPF_EVENT_REG_HOOK(hook_PasteFilesShortcut)
+    DPF_EVENT_REG_HOOK(hook_DeleteFilesShortcut)
+    DPF_EVENT_REG_HOOK(hook_MoveToTrashShortcut)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
