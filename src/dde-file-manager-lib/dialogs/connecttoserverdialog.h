@@ -35,6 +35,7 @@ DWIDGET_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 class QComboBox;
+class QCompleter;
 QT_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
@@ -53,6 +54,7 @@ public slots:
 private slots:
     void collectionOperate();
     void doDeleteCollection(const QString& text, int row = -1);
+    void onCompleterActivated(const QString& text);
 private:
     void initUI();
     void initConnect();
@@ -70,7 +72,9 @@ private:
     DListView *m_collectionServerView = nullptr;
     bool m_isAddState = true;
     CollectionDelegate* m_delegate = nullptr;
-    QLabel * m_collectionLabel = nullptr;
+    QLabel *m_collectionLabel = nullptr;
+    QLabel *m_centerNotes = nullptr;
+    QCompleter *m_completer = nullptr;
 };
 
 #endif // CONNECTTOSERVERDIALOG_H
