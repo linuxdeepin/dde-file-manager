@@ -68,16 +68,22 @@ void MultiFilePropertyDialog::initHeadUi()
     totalSizeLabel = new KeyValueLabel(this);
     totalSizeLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     totalSizeLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    totalSizeLabel->setLeftValue(tr("Total size"), Qt::ElideNone, Qt::AlignRight);
+    totalSizeLabel->setLeftValue(tr("Total size"), Qt::ElideNone, Qt::AlignLeft);
     fileCountLabel = new KeyValueLabel(this);
     fileCountLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileCountLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileCountLabel->setLeftValue(tr("Number of files"), Qt::ElideNone, Qt::AlignRight);
+    fileCountLabel->setLeftValue(tr("Number of files"), Qt::ElideNone, Qt::AlignLeft);
     QPushButton *btn = new QPushButton(this);
     btn->setMaximumHeight(1);
 
     QHBoxLayout *hlayout = new QHBoxLayout;
     hlayout->addWidget(basicInfoLabel, 0, Qt::AlignLeft);
+
+    QGridLayout *gridLayout = new QGridLayout;
+    gridLayout->setContentsMargins(15, 15, 5, 10);
+    gridLayout->setSpacing(16);
+    gridLayout->addWidget(totalSizeLabel, 0, 0, 1, 6);
+    gridLayout->addWidget(fileCountLabel, 1, 0, 1, 6);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
     vlayout->setContentsMargins(10, 0, 10, 10);
@@ -86,8 +92,7 @@ void MultiFilePropertyDialog::initHeadUi()
     vlayout->setSpacing(10);
     vlayout->addWidget(btn);
     vlayout->addLayout(hlayout);
-    vlayout->addWidget(totalSizeLabel, 0, Qt::AlignTop);
-    vlayout->addWidget(fileCountLabel, 0, Qt::AlignTop);
+    vlayout->addLayout(gridLayout);
 
     QFrame *frame = new QFrame(this);
     frame->setLayout(vlayout);
