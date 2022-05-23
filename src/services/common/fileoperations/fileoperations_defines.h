@@ -84,6 +84,8 @@ using HandleOperationTouchFile = std::function<bool(const quint64 windowId,
 using HandleOperationLinkFile = std::function<bool(const quint64 windowId,
                                                    const QUrl url,
                                                    const QUrl link,
+                                                   const bool force,
+                                                   const bool silence,
                                                    QString *)>;
 using HandleOperationSetPermission = std::function<bool(const quint64 windowId,
                                                         const QUrl url,

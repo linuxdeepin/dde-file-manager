@@ -90,6 +90,7 @@ public:
 
     static QString dateTimeFormat();
     static bool setBackGround(const QString &pictureFilePath);
+    static QString nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck = nullptr);
 
 private:
     static QMutex cacheCopyingMutex;

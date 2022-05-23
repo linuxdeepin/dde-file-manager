@@ -72,7 +72,7 @@ public:
     static QFrame *createEmptyTrashTopWidget();
     static bool showTopWidget(QWidget *w, const QUrl &url);
     static QUrl fromTrashFile(const QString &filePath);
-    static QUrl fromLocalFile(const QString &filePath);
+    static QUrl fromLocalFile(const QUrl &url);
     static QUrl toLocalFile(const QUrl &url);
     static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);

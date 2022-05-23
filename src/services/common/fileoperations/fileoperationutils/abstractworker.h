@@ -151,7 +151,6 @@ protected:
     void initHandleConnects(const JobHandlePointer &handle);
     explicit AbstractWorker(QObject *parent = nullptr);
     QString formatFileName(const QString &fileName);
-    QString getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir);
     void saveOperations();
 
 public:

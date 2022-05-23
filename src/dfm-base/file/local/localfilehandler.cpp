@@ -78,10 +78,6 @@ LocalFileHandler::LocalFileHandler()
 
 LocalFileHandler::~LocalFileHandler()
 {
-    if (errorStr) {
-        delete errorStr;
-        errorStr = nullptr;
-    }
 }
 /*!
  * \brief LocalFileHandler::touchFile 创建文件，创建文件时会使用Truncate标志，清理掉文件的内容
@@ -103,8 +99,7 @@ bool LocalFileHandler::touchFile(const QUrl &url)
     if (!success) {
         qWarning() << "touch file failed, url: " << url;
 
-        DFMIOError error = oper->lastError();
-        setError(error.errorMsg());
+        setError(oper->lastError());
 
         return false;
     }
@@ -160,8 +155,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
     if (!success) {
         qWarning() << "make directory failed, url: " << dir;
 
-        DFMIOError error = oper->lastError();
-        setError(error.errorMsg());
+        setError(oper->lastError());
 
         return false;
     }
@@ -196,8 +190,7 @@ bool LocalFileHandler::rmdir(const QUrl &url)
     if (!success) {
         qWarning() << "trash file failed, url: " << url;
 
-        DFMIOError error = oper->lastError();
-        setError(error.errorMsg());
+        setError(oper->lastError());
 
         return false;
     }
@@ -247,8 +240,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     if (!success) {
         qWarning() << "rename file failed, url: " << url;
 
-        DFMIOError error = oper->lastError();
-        setError(error.errorMsg());
+        setError(oper->lastError());
 
         return false;
     }
@@ -480,8 +472,7 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
     if (!success) {
         qWarning() << "create link failed, url: " << sourcefile << " link url: " << link;
 
-        DFMIOError error = oper->lastError();
-        setError(error.errorMsg());
+        setError(oper->lastError());
 
         return false;
     }
@@ -513,8 +504,7 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
     if (!success) {
         qWarning() << "set permissions failed, url: " << url;
 
-        DFMIOError error = dfile->lastError();
-        setError(error.errorMsg());
+        setError(dfile->lastError());
 
         return false;
     }
@@ -536,7 +526,7 @@ bool LocalFileHandler::deleteFile(const QUrl &file)
     }
     qDebug() << "try delete file, but failed url: " << file << " ret: " << ret;
 
-    setError(QString::fromLocal8Bit(strerror(errno)));
+    setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
 
     return false;
 }
@@ -556,7 +546,7 @@ bool LocalFileHandler::setFileTime(const QUrl &url, const QDateTime &accessDateT
         return true;
     }
 
-    setError(QString::fromLocal8Bit(strerror(errno)));
+    setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
 
     return false;
 }
@@ -764,19 +754,18 @@ bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl,
  */
 QString LocalFileHandler::errorString()
 {
-    if (errorStr)
-        return *errorStr;
+    return lastError.errorMsg();
+}
 
-    return QString();
+DFMIOErrorCode LocalFileHandler::errorCode()
+{
+    return lastError.code();
 }
 /*!
  * \brief LocalFileHandler::setError 设置当前的错误信息
  * \param error 错误信息
  */
-void LocalFileHandler::setError(const QString &error)
+void LocalFileHandler::setError(DFMIOError error)
 {
-    if (!errorStr)
-        errorStr = new QString;
-
-    *errorStr = error;
+    lastError = error;
 }

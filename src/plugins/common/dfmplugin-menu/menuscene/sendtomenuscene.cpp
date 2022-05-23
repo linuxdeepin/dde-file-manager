@@ -27,6 +27,8 @@
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/bluetooth/bluetoothservice.h"
+#include "services/common/delegate/delegateservice.h"
+
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -236,13 +238,16 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else if (actId == ActionID::kSendToDesktop) {
         QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
-        for (const auto &url : selectFiles) {
+        const QList<QUrl> &urlsTrans = delegateServIns->urlsTransform(selectFiles);
+        for (const auto &url : urlsTrans) {
             QString linkName = FileUtils::getSymlinkFileName(url);
             QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
             dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
                                                   windowId,
                                                   url,
-                                                  linkUrl);
+                                                  linkUrl,
+                                                  false,
+                                                  true);
         }
     }
 }

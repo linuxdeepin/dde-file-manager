@@ -152,10 +152,12 @@ QUrl TrashHelper::fromTrashFile(const QString &filePath)
     return url;
 }
 
-QUrl TrashHelper::fromLocalFile(const QString &filePath)
+QUrl TrashHelper::fromLocalFile(const QUrl &url)
 {
-    QString path = filePath;
-    return TrashHelper::fromTrashFile(path.remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+    if (url.scheme() == Global::kFile && url.path().startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))) {
+        return TrashHelper::fromTrashFile(url.path().remove(StandardPaths::location(StandardPaths::kTrashFilesPath)));
+    }
+    return url;
 }
 
 QUrl TrashHelper::toLocalFile(const QUrl &url)
@@ -191,14 +193,19 @@ bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo
     if (!action)
         return false;
 
-    const QUrl &urlFrom = urls.first();
-    if (urlFrom.scheme() == Global::kTrash && urlTo.scheme() == Global::kTrash) {
+    QUrl urlFrom = urls.first();
+    QUrl urlToTemp = urlTo;
+    // restore url to trash
+    urlFrom = fromLocalFile(urlFrom);
+    urlToTemp = fromLocalFile(urlTo);
+
+    if (urlFrom.scheme() == Global::kTrash && urlToTemp.scheme() == Global::kTrash) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlTo.scheme() == Global::kTrash && urlTo != TrashHelper::rootUrl()) {
+    } else if (urlToTemp.scheme() == Global::kTrash && urlToTemp != TrashHelper::rootUrl()) {
         *action = Qt::IgnoreAction;
         return true;
-    } else if (urlFrom.scheme() == Global::kTrash || urlTo.scheme() == Global::kTrash) {
+    } else if (urlFrom.scheme() == Global::kTrash || urlToTemp.scheme() == Global::kTrash) {
         *action = Qt::MoveAction;
         return true;
     }

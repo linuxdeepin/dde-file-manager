@@ -100,7 +100,7 @@ JobHandlePointer OpticalFilesHelper::deleteFilesHandle(const quint64 windowId, c
     return {};
 }
 
-bool OpticalFilesHelper::linkFileHandle(const quint64 windowId, const QUrl url, const QUrl link, QString *error)
+bool OpticalFilesHelper::linkFileHandle(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence, QString *error)
 {
     Q_UNUSED(error)
 
@@ -109,6 +109,6 @@ bool OpticalFilesHelper::linkFileHandle(const quint64 windowId, const QUrl url, 
         return false;
 
     QUrl redirectedFileUrl { QUrl::fromLocalFile(backer) };
-    dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, windowId, redirectedFileUrl, link);
+    dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink, windowId, redirectedFileUrl, link, force, silence);
     return true;
 }

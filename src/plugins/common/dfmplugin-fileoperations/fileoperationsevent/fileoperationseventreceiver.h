@@ -187,10 +187,14 @@ public slots:
 
     bool handleOperationLinkFile(const quint64 windowId,
                                  const QUrl url,
-                                 const QUrl link);
+                                 const QUrl link,
+                                 const bool force,
+                                 const bool silence);
     void handleOperationLinkFile(const quint64 windowId,
                                  const QUrl url,
                                  const QUrl link,
+                                 const bool force,
+                                 const bool silence,
                                  const QVariant custom,
                                  DFMBASE_NAMESPACE::Global::OperatorCallback callback);
     bool handleOperationSetPermission(const quint64 windowId,
@@ -262,6 +266,7 @@ private:
                                  const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);
     bool doTouchFilePractically(const quint64 windowId, const QUrl url);
     void saveRenameOperate(const QString &sourcesUrl, const QString &targetUrl);
+    QUrl checkTargetUrl(const QUrl &url);
 
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };

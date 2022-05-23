@@ -85,20 +85,20 @@ TrashFileWatcher::~TrashFileWatcher()
 
 void TrashFileWatcher::onFileDeleted(const QUrl &url)
 {
-    QUrl newUrl = TrashHelper::fromLocalFile(url.path());
+    QUrl newUrl = TrashHelper::fromLocalFile(url);
 
     emit fileDeleted(newUrl);
 }
 
 void TrashFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
-    QUrl newUrl = TrashHelper::fromLocalFile(url.path());
+    QUrl newUrl = TrashHelper::fromLocalFile(url);
     emit fileAttributeChanged(newUrl);
 }
 
 void TrashFileWatcher::onSubfileCreated(const QUrl &url)
 {
-    QUrl newUrl = TrashHelper::fromLocalFile(url.path());
+    QUrl newUrl = TrashHelper::fromLocalFile(url);
     emit subfileCreated(newUrl);
 }
 

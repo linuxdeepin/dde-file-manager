@@ -312,7 +312,9 @@ bool FileOperatorMenuScene::triggered(QAction *action)
             dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
                                                   d->windowId,
                                                   d->focusFile,
-                                                  QUrl::fromLocalFile(linkPath));
+                                                  QUrl::fromLocalFile(linkPath),
+                                                  true,
+                                                  false);
         }
         return true;
     }

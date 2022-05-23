@@ -24,9 +24,11 @@
 #ifndef LOCALFILEHANDLER_H
 #define LOCALFILEHANDLER_H
 
-#include "dfm-base/dfm_base_global.h"
 #include "dfm_global_defines.h"
+#include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
+
+#include <dfm-io/error/error.h>
 
 #include <QString>
 #include <QFileDevice>
@@ -61,6 +63,7 @@ public:
 
     QString defaultTerminalPath();
     QString errorString();
+    DFMIOErrorCode errorCode();
 
     bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);
 
@@ -77,8 +80,9 @@ private:
     QString getFileMimetype(const QString &path);
 
 private:
-    void setError(const QString &error);
-    QString *errorStr = nullptr;
+    void setError(DFMIOError error);
+
+    DFMIOError lastError;
 };
 
 DFMBASE_END_NAMESPACE

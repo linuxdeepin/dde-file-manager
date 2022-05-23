@@ -494,6 +494,19 @@ void FileOperationsEventReceiver::saveRenameOperate(const QString &sourcesUrl, c
     dpfInstance.eventDispatcher().publish(GlobalEventType::kSaveOperator, values);
 }
 
+QUrl FileOperationsEventReceiver::checkTargetUrl(const QUrl &url)
+{
+    const QUrl &urlParent = DFMIO::DFMUtils::directParentUrl(url);
+    if (!urlParent.isValid())
+        return url;
+
+    const QString &nameValid = FileUtils::getSymlinkFileName(url, urlParent);
+    if (!nameValid.isEmpty())
+        return urlParent.toString() + QDir::separator() + nameValid;
+
+    return url;
+}
+
 FileOperationsEventReceiver *FileOperationsEventReceiver::instance()
 {
     static FileOperationsEventReceiver receiver;
@@ -1028,7 +1041,9 @@ void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowI
 
 bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
                                                           const QUrl url,
-                                                          const QUrl link)
+                                                          const QUrl link,
+                                                          const bool force,
+                                                          const bool silence)
 {
     bool ok = false;
     QString error;
@@ -1039,11 +1054,10 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
             function = this->functions.value(url.scheme());
         }
         if (function && function->linkFile) {
-            ok = function->linkFile(windowId, url, link, &error);
+            ok = function->linkFile(windowId, url, link, force, silence, &error);
             if (!ok) {
                 dialogManager->showErrorDialog("link file error", error);
             }
-            // TODO:: link file finished need to send link file finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
                                                   windowId, QList<QUrl>() << url << link, ok, error);
             return ok;
@@ -1051,23 +1065,37 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
     }
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.createSystemLink(url, link);
+    // check link
+    if (force) {
+        AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(link);
+        if (toInfo && toInfo->exists()) {
+            DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
+            fileHandlerDelete.deleteFile(link);
+        }
+    }
+    QUrl urlValid = link;
+    if (silence) {
+        urlValid = checkTargetUrl(link);
+    }
+    ok = fileHandler.createSystemLink(url, urlValid);
     if (!ok) {
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("link file error", error);
     }
-    // TODO:: link file finished need to send link file finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                          windowId, QList<QUrl>() << url << link, ok, error);
+                                          windowId, QList<QUrl>() << url << urlValid, ok, error);
     return ok;
 }
 
 void FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId,
                                                           const QUrl url,
-                                                          const QUrl link, const QVariant custom,
+                                                          const QUrl link,
+                                                          const bool force,
+                                                          const bool silence,
+                                                          const QVariant custom,
                                                           DFMBASE_NAMESPACE::Global::OperatorCallback callback)
 {
-    bool ok = handleOperationLinkFile(windowId, url, link);
+    bool ok = handleOperationLinkFile(windowId, url, link, force, silence);
 
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);

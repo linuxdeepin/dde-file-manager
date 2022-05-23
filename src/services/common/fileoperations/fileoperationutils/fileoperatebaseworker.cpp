@@ -761,7 +761,13 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
             *workContinue = AbstractJobHandler::SupportAction::kSkipAction == action;
             return false;
         case AbstractJobHandler::SupportAction::kCoexistAction: {
-            fileNewName = getNonExistFileName(fromInfo, toInfo);
+
+            auto nameCheckFunc = [](const QString &name) -> bool {
+                return FileOperationsUtils::fileNameUsing.contains(name);
+            };
+            fileNewName = FileUtils::nonExistFileName(fromInfo, toInfo, nameCheckFunc);
+            FileOperationsUtils::addUsingName(fileNewName);
+
             if (fileNewName.isEmpty()) {
                 cancelThreadProcessingError();
                 return false;

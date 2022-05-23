@@ -52,6 +52,8 @@ public:
     static bool linkFileHandle(const quint64 windowId,
                                const QUrl url,
                                const QUrl link,
+                               const bool force,
+                               const bool silence,
                                QString *error);
 };
 

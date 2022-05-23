@@ -215,12 +215,16 @@ void FileOperations::initEventHandle()
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
-                                                                                              const QUrl)>(&FileOperationsEventReceiver::handleOperationLinkFile));
+                                                                                              const QUrl,
+                                                                                              const bool force,
+                                                                                              const bool silence)>(&FileOperationsEventReceiver::handleOperationLinkFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCreateSymlink,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
                                                                                               const QUrl,
+                                                                                              const bool force,
+                                                                                              const bool silence,
                                                                                               const QVariant,
                                                                                               OperatorCallback)>(&FileOperationsEventReceiver::handleOperationLinkFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSetPermission,

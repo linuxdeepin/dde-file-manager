@@ -225,7 +225,8 @@ void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
                                               windowId,
                                               fileUrl,
                                               linkUrl,
-                                              AbstractJobHandler::JobFlag::kNoHint);
+                                              false,
+                                              false);
     }
 }
 

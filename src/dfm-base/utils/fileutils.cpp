@@ -1135,6 +1135,50 @@ bool FileUtils::setBackGround(const QString &pictureFilePath)
     return true;
 }
 
+QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFileInfoPointer targetDir, std::function<bool(const QString &)> functionCheck)
+{
+    if (!targetDir || !targetDir->exists()) {
+        return QString();
+    }
+
+    if (!targetDir->isDir()) {
+        return QString();
+    }
+
+    const QString &copyText = QCoreApplication::translate("DoCopyFilesWorker", "copy",
+                                                          "Extra name added to new file name when used for file name.");
+
+    AbstractFileInfoPointer targetFileInfo { nullptr };
+    QString fileBaseName = fromInfo->completeBaseName();
+    QString suffix = fromInfo->suffix();
+    QString fileName = fromInfo->fileName();
+    //在7z分卷压缩后的名称特殊处理7z.003
+    if (fileName.contains(QRegularExpression(".7z.[0-9]{3,10}$"))) {
+        fileBaseName = fileName.left(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")));
+        suffix = fileName.mid(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")) + 1);
+    }
+
+    int number = 0;
+
+    QString newFileName;
+
+    do {
+        newFileName = number > 0 ? QString("%1(%2 %3)").arg(fileBaseName, copyText).arg(number) : QString("%1(%2)").arg(fileBaseName, copyText);
+
+        if (!suffix.isEmpty()) {
+            newFileName.append('.').append(suffix);
+        }
+
+        ++number;
+        QUrl newUrl;
+        newUrl = targetDir->url();
+        newUrl.setPath(newUrl.path() + "/" + newFileName);
+        targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+    } while ((targetFileInfo && targetFileInfo->exists()) || (functionCheck ? functionCheck(newFileName) : false));
+
+    return newFileName;
+}
+
 QUrl DesktopAppUrl::trashDesktopFileUrl()
 {
     static QUrl trash = QUrl::fromLocalFile(StandardPaths::location(StandardPaths::kDesktopPath) + "/dde-trash.desktop");

@@ -437,56 +437,6 @@ QString AbstractWorker::formatFileName(const QString &fileName)
 
     return fileName;
 }
-/*!
- * \brief DoCopyFilesWorker::getNonExistFileName Gets the name of a file that does not exist
- * \param fromInfo Source file information
- * \param targetDir Target directory information
- * \return file name
- */
-QString AbstractWorker::getNonExistFileName(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer targetDir)
-{
-    if (!targetDir || !targetDir->exists()) {
-        return QString();
-    }
-
-    if (!targetDir->isDir()) {
-        return QString();
-    }
-
-    const QString &copy_text = QCoreApplication::translate("DoCopyFilesWorker", "copy",
-                                                           "Extra name added to new file name when used for file name.");
-
-    AbstractFileInfoPointer targetFileInfo { nullptr };
-    QString fileBaseName = fromInfo->completeBaseName();
-    QString suffix = fromInfo->suffix();
-    QString fileName = fromInfo->fileName();
-    //在7z分卷压缩后的名称特殊处理7z.003
-    if (fileName.contains(QRegularExpression(".7z.[0-9]{3,10}$"))) {
-        fileBaseName = fileName.left(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")));
-        suffix = fileName.mid(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")) + 1);
-    }
-
-    int number = 0;
-
-    QString newFileName;
-
-    do {
-        newFileName = number > 0 ? QString("%1(%2 %3)").arg(fileBaseName, copy_text).arg(number) : QString("%1(%2)").arg(fileBaseName, copy_text);
-
-        if (!suffix.isEmpty()) {
-            newFileName.append('.').append(suffix);
-        }
-
-        ++number;
-        QUrl newUrl;
-        newUrl = targetDir->url();
-        newUrl.setPath(newUrl.path() + "/" + newFileName);
-        targetFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
-    } while ((targetFileInfo && targetFileInfo->exists()) || FileOperationsUtils::fileNameUsing.contains(newFileName));
-
-    FileOperationsUtils::addUsingName(newFileName);
-    return newFileName;
-}
 
 void AbstractWorker::saveOperations()
 {
