@@ -51,6 +51,7 @@
 #include <QRegExpValidator>
 #include <QListWidget>
 
+#define Max_HISTORY_ITEM 10
 ConnectToServerDialog::ConnectToServerDialog(QWidget *parent) : DDialog(parent)
 {
     setWindowTitle(tr("Connect to Server"));
@@ -189,7 +190,10 @@ void ConnectToServerDialog::upateState()
         m_addButton->setToolTip(tr("Favorite"));
     }
     bool hasCollections = m_collectionServerView->count() > 0;
-    m_collectionLabel->setText(hasCollections?tr("My Favorites"):tr("No favorites yet"));
+    if(m_centerNotes)
+        m_centerNotes->setVisible(!hasCollections);
+    if(m_collectionServerView)
+        m_collectionServerView->setVisible(hasCollections);
 }
 
 void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
@@ -223,6 +227,12 @@ void ConnectToServerDialog::doDeleteCollection(const QString &text, int row)
         }
     }
     upateState();
+}
+
+void ConnectToServerDialog::onCompleterActivated(const QString &text)
+{
+    QString scheme = text.section("://",0,0);
+    m_schemeComboBox->setCurrentText(scheme + "://");
 }
 
 void ConnectToServerDialog::initUI()
@@ -287,9 +297,12 @@ void ConnectToServerDialog::initUI()
     QStringList hostList;
     foreach (const QString& hisString, stringList) {
         DUrl testUrl(hisString);
-        if(testUrl.scheme().isEmpty() || testUrl.host().isEmpty())
+        QString host = testUrl.host();
+        QString scheme = testUrl.scheme();
+        if(scheme.isEmpty() || host.isEmpty())
             continue;
-        hostList << testUrl.host();
+
+        hostList << QString("%1://%2").arg(scheme).arg(host);
     }
 
     QStringList schemeList;
@@ -297,18 +310,22 @@ void ConnectToServerDialog::initUI()
     schemeList << QString("%1://").arg(FTP_SCHEME);
     schemeList << QString("%1://").arg(SFTP_SCHEME);
 
-    QCompleter *completer = new QCompleter(hostList,this);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    completer->setCompletionMode(QCompleter::PopupCompletion);
-    completer->setMaxVisibleItems(10);//这里一定要先设置最大值
-    m_serverComboBox->setEditable(true);
-    m_serverComboBox->setMaxVisibleItems(10);
-    while(hostList.count()>10)
+    while(hostList.count() > Max_HISTORY_ITEM - 1 )
         hostList.takeLast();
-    m_serverComboBox->addItems(hostList);//再进行下拉列表数据的添加
+
+    m_completer = new QCompleter(hostList,this);
+    m_completer->setCaseSensitivity(Qt::CaseInsensitive);
+    m_completer->setFilterMode(Qt::MatchContains);
+    m_completer->setCompletionMode(QCompleter::PopupCompletion);
+    m_completer->setMaxVisibleItems(Max_HISTORY_ITEM);
+
+    m_serverComboBox->setEditable(true);
+    m_serverComboBox->setMaxVisibleItems(Max_HISTORY_ITEM);
+
+    m_serverComboBox->addItems(hostList);
     m_serverComboBox->insertItem(m_serverComboBox->count(), tr("Clear History"));
     m_serverComboBox->setEditable(true);
-    m_serverComboBox->setCompleter(completer);
+    m_serverComboBox->setCompleter(m_completer);
     m_serverComboBox->clearEditText();
     static QString regExpStr = "(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])";
     m_serverComboBox->setValidator(new QRegExpValidator(QRegExp(regExpStr),this));
@@ -341,6 +358,15 @@ void ConnectToServerDialog::initUI()
 
     setContentsMargins(0,0,0,0);
     upateState();
+
+    const bool hasCollections = m_collectionServerView->count() > 0;
+    QHBoxLayout *centerNotesLayout = new QHBoxLayout();
+    m_centerNotes = new QLabel(tr("No favorites yet"),this);
+    centerNotesLayout->addWidget(m_centerNotes,0,Qt::AlignHCenter);
+    m_centerNotes->setVisible(false);
+    contentLayout->addLayout(centerNotesLayout,Qt::AlignVCenter);
+    m_centerNotes->setVisible(!hasCollections);
+    m_collectionServerView->setVisible(hasCollections);
 }
 
 void ConnectToServerDialog::initConnect()
@@ -356,8 +382,18 @@ void ConnectToServerDialog::initConnect()
             m_serverComboBox->completer()->setModel(new QStringListModel());
             Singleton<SearchHistroyManager>::instance()->clearHistory();
         }
+
+        QString scheme = string.section("://",0,0);
+        if(!scheme.isEmpty()){
+            m_serverComboBox->setEditText(string.section("//",-1));
+            m_schemeComboBox->setCurrentText(scheme + "://");
+        }
+
         upateState();
     });
+
+    connect(m_completer, SIGNAL(activated(const QString&)),this, SLOT(onCompleterActivated(const QString&)));
+
     connect(m_schemeComboBox, &QComboBox::currentTextChanged,this,[=](const QString &string){
         Q_UNUSED(string)
         upateState();
