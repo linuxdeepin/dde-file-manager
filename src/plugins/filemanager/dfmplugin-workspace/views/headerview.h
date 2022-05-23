@@ -31,18 +31,19 @@
 
 DPWORKSPACE_BEGIN_NAMESPACE
 
+class FileView;
 class FileSortFilterProxyModel;
 class HeaderView : public QHeaderView
 {
     Q_OBJECT
 public:
-    explicit HeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+    explicit HeaderView(Qt::Orientation orientation, FileView *parent = nullptr);
     QSize sizeHint() const override;
     using QHeaderView::updateGeometries;
 
     int sectionsTotalWidth() const;
     void updateColumnWidth();
-    void updataFirstColumnWidth(const int totalWidth);
+    void doFileNameColumnResize(const int totalWidth);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
@@ -55,6 +56,7 @@ Q_SIGNALS:
 private:
     FileSortFilterProxyModel *proxyModel() const;
 
+    FileView *view { nullptr };
     int firstVisibleColumn = -1;
     int lastVisibleColumn = -1;
 };

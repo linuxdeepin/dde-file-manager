@@ -37,6 +37,8 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/schemefactory.h"
 
+#include <QScrollBar>
+
 DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
@@ -52,6 +54,8 @@ FileViewPrivate::FileViewPrivate(FileView *qq)
     enabledSelectionModes << FileView::NoSelection << FileView::SingleSelection
                           << FileView::MultiSelection << FileView::ExtendedSelection
                           << FileView::ContiguousSelection;
+
+    allowedAdjustColumnSize = Application::instance()->appAttribute(Application::kViewSizeAdjustable).toBool();
 }
 
 int FileViewPrivate::iconModeColumnCount(int itemWidth) const
@@ -112,27 +116,9 @@ void FileViewPrivate::initListModeView()
     QObject::connect(headerView, &HeaderView::sectionHandleDoubleClicked, q, &FileView::onSectionHandleDoubleClicked);
 
     q->setIconSize(QSize(kListViewIconSize, kListViewIconSize));
-    if (allowedAdjustColumnSize)
-        headerView->updataFirstColumnWidth(q->width());
 
     if (statusBar)
         statusBar->setScalingVisible(false);
-}
-
-void FileViewPrivate::updateListModeColumnWidth()
-{
-    if (!allowedAdjustColumnSize)
-        return;
-    if (!headerView)
-        return;
-
-    int nameColumnWidth = q->width();
-    for (int i = 1; i < headerView->model()->columnCount(); ++i) {
-        int columnWidth = q->model()->getColumnWidth(i);
-        headerView->resizeSection(i, columnWidth);
-        nameColumnWidth -= columnWidth;
-    }
-    headerView->resizeSection(0, nameColumnWidth);
 }
 
 QModelIndexList FileViewPrivate::selectedDraggableIndexes()
@@ -170,5 +156,25 @@ void FileViewPrivate::initContentLabel()
         contentLabel->setStyleSheet(q->styleSheet());
         contentLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
         contentLabel->show();
+    }
+}
+
+void FileViewPrivate::updateHorizontalScrollBarPosition()
+{
+    QWidget *widget = qobject_cast<QWidget *>(q->horizontalScrollBar()->parentWidget());
+
+    widget->move(widget->x(), q->height() - statusBar->height() - widget->height());
+}
+
+void FileViewPrivate::pureResizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event)
+
+    if (currentViewMode == Global::ViewMode::kListMode) {
+        if (q->width() >= headerView->width())
+            adjustFileNameColumn = true;
+
+        if (adjustFileNameColumn)
+            headerView->doFileNameColumnResize(q->width());
     }
 }

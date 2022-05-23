@@ -53,6 +53,8 @@ class FileViewPrivate
     FileView *const q;
 
     QAtomicInteger<bool> allowedAdjustColumnSize { true };
+    QAtomicInteger<bool> adjustFileNameColumn { true };
+
     QHash<int, BaseItemDelegate *> delegates;
     FileViewStatusBar *statusBar { nullptr };
     HeaderView *headerView { nullptr };
@@ -83,6 +85,7 @@ class FileViewPrivate
     QModelIndex currentDragHoverIndex;
 
     int horizontalOffset { 0 };
+    int cachedViewWidth { -1 };
 
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> columnRoles;
     QMap<QString, bool> columnForRoleHiddenMap;
@@ -94,11 +97,11 @@ class FileViewPrivate
     void initIconModeView();
     void initListModeView();
 
-    void updateListModeColumnWidth();
-
     QModelIndexList selectedDraggableIndexes();
 
     void initContentLabel();
+    void updateHorizontalScrollBarPosition();
+    void pureResizeEvent(QResizeEvent *event);
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -70,6 +70,7 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     setDefaultDropAction(Qt::CopyAction);
     setDragDropOverwriteMode(true);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     setDragEnabled(true);
 
     initializeModel();
@@ -118,7 +119,14 @@ void FileView::setViewMode(Global::ViewMode mode)
         if (model())
             setMinimumWidth(model()->columnCount() * GlobalPrivate::kListViewMinimumWidth);
         d->initListModeView();
-        updateListHeaderView();
+
+        if (d->allowedAdjustColumnSize) {
+            horizontalScrollBar()->parentWidget()->installEventFilter(this);
+
+            d->cachedViewWidth = this->width();
+            d->adjustFileNameColumn = true;
+            updateListHeaderView();
+        }
         break;
     case Global::ViewMode::kExtendMode:
         break;
@@ -243,7 +251,7 @@ int FileView::getColumnWidth(const int &column) const
 int FileView::getHeaderViewWidth() const
 {
     if (d->headerView)
-        return d->headerView->sectionsTotalWidth();
+        return d->headerView->length();
 
     return 0;
 }
@@ -256,8 +264,9 @@ void FileView::setAlwaysOpenInCurrentWindow(bool openInCurrentWindow)
 
 void FileView::onHeaderViewMouseReleased()
 {
-    if (d->headerView->sectionsTotalWidth() != width())
-        d->allowedAdjustColumnSize = false;
+    if (d->headerView->width() != width()) {
+        d->adjustFileNameColumn = false;
+    }
 
     QList<ItemRoles> roleList = d->columnRoles;
     QVariantMap state;
@@ -848,14 +857,6 @@ void FileView::resizeEvent(QResizeEvent *event)
 {
     DListView::resizeEvent(event);
 
-    if (isListViewMode() && d->headerView) {
-        if (!d->allowedAdjustColumnSize && qAbs(d->headerView->sectionsTotalWidth() - width()) < 10)
-            d->allowedAdjustColumnSize = true;
-
-        if (d->allowedAdjustColumnSize)
-            d->headerView->updataFirstColumnWidth(width());
-    }
-
     updateHorizontalOffset();
 
     // TODO(liuyangming) crash when launch via command with params.
@@ -1237,7 +1238,7 @@ bool FileView::event(QEvent *e)
         }
     } break;
     case QEvent::Resize:
-        //Todo(yanghao):
+        d->pureResizeEvent(static_cast<QResizeEvent *>(e));
         break;
     case QEvent::ParentChange:
         window()->installEventFilter(this);
@@ -1251,6 +1252,37 @@ bool FileView::event(QEvent *e)
     }
 
     return DListView::event(e);
+}
+
+bool FileView::eventFilter(QObject *obj, QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::Move:
+        if (obj != horizontalScrollBar()->parentWidget())
+            return DListView::eventFilter(obj, event);
+        d->updateHorizontalScrollBarPosition();
+        break;
+    case QEvent::WindowStateChange:
+        if (d->headerView) {
+            d->adjustFileNameColumn = true;
+            d->headerView->doFileNameColumnResize(width());
+        }
+        break;
+    // blumia: 这里通过给横向滚动条加事件过滤器并监听其显示隐藏时间来判断是否应当进入吸附状态。
+    //         不过其实可以通过 Resize 事件的 size 和 oldSize 判断是否由于窗口调整大小而进入了吸附状态。
+    //         鉴于已经实现完了，如果当前的实现方式实际发现了较多问题，则应当调整为使用 Resize 事件来标记吸附状态的策略。
+    case QEvent::ShowToParent:
+    case QEvent::HideToParent:
+        if (d->headerView && d->cachedViewWidth != this->width()) {
+            d->cachedViewWidth = this->width();
+            d->adjustFileNameColumn = true;
+        }
+        break;
+    default:
+        break;
+    }
+
+    return DListView::eventFilter(obj, event);
 }
 
 void FileView::initializeModel()
@@ -1426,8 +1458,9 @@ void FileView::updateListHeaderView()
         }
     }
 
-    if (!d->allowedAdjustColumnSize)
-        d->headerView->updateColumnWidth();
+    if (d->adjustFileNameColumn) {
+        d->headerView->doFileNameColumnResize(width());
+    }
 }
 
 void FileView::setDefaultViewMode()

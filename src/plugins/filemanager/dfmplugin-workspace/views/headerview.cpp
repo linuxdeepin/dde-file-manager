@@ -21,12 +21,15 @@
  */
 
 #include "headerview.h"
+#include "views/fileview.h"
 #include "models/filesortfilterproxymodel.h"
 
+DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
-HeaderView::HeaderView(Qt::Orientation orientation, QWidget *parent)
-    : QHeaderView(orientation, parent)
+HeaderView::HeaderView(Qt::Orientation orientation, FileView *parent)
+    : QHeaderView(orientation, parent),
+      view(parent)
 {
     setHighlightSections(false);
     setSectionsClickable(true);
@@ -96,20 +99,23 @@ void HeaderView::updateColumnWidth()
     }
 }
 
-void HeaderView::updataFirstColumnWidth(const int totalWidth)
+void HeaderView::doFileNameColumnResize(const int totalWidth)
 {
-    auto proxyModel = this->proxyModel();
+    int fileNameColumn = proxyModel()->getColumnByRole(kItemNameRole);
+    int columnCount = count();
+    int columnWidthSumOmitFileName = 0;
 
-    if (proxyModel) {
-        int tailWidth = 0;
-        for (int i = 1; i < proxyModel->columnCount(); ++i) {
-            if (i < count()) {
-                int columnWidth = proxyModel->getColumnWidth(i);
-                resizeSection(i, columnWidth);
-                tailWidth += columnWidth;
-            }
-        }
-        resizeSection(0, totalWidth - tailWidth);
+    for (int i = 0; i < columnCount; ++i) {
+        if (i == fileNameColumn || isSectionHidden(i))
+            continue;
+        columnWidthSumOmitFileName += view->getColumnWidth(i);
+    }
+
+    int targetWidth = totalWidth - columnWidthSumOmitFileName;
+    if (targetWidth >= minimumSectionSize()) {
+        resizeSection(fileNameColumn, targetWidth);
+    } else {
+        resizeSection(fileNameColumn, minimumSectionSize());
     }
 }
 

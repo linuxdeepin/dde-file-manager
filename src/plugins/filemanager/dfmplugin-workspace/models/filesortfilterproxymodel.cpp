@@ -155,6 +155,14 @@ QList<QUrl> FileSortFilterProxyModel::getCurrentDirFileUrls() const
 
 int FileSortFilterProxyModel::getColumnWidth(const int &column) const
 {
+    const ItemRoles role = getRoleByColumn(column);
+
+    const QVariantMap &state = Application::appObtuselySetting()->value("WindowManager", "ViewColumnState").toMap();
+    int colWidth = state.value(QString::number(role), -1).toInt();
+    if (colWidth > 0) {
+        return colWidth;
+    }
+
     return 120;
 }
 
