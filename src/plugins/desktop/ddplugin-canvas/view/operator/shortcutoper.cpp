@@ -257,8 +257,16 @@ void ShortcutOper::showMenu()
             return;
     } else {
         index = view->currentIndex();
+
+        // the current index may be not in selected indexs."
+        if (!indexList.contains(index)) {
+            qDebug() << "current index is not selected.";
+            index = indexList.last();
+        }
+
         flags = view->model()->flags(index);
         if (!flags.testFlag(Qt::ItemIsEnabled)) {
+            qInfo() << "file is disbale, switch to empty area" << view->model()->fileUrl(index);
             isEmptyArea = true;
             flags = view->rootIndex().flags();
         }
