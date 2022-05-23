@@ -26,10 +26,13 @@
 #include "utils/searchhistroymanager.h"
 #include "utils/titlebarhelper.h"
 
+#include "services/filemanager/windows/windowsservice.h"
+
 #include "dfm-base/base/schemefactory.h"
 
 #include <QCompleter>
 
+DSB_FM_USE_NAMESPACE
 DPTITLEBAR_USE_NAMESPACE
 
 /*!
@@ -193,7 +196,14 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
     bool hasSlash = (slashIndex != -1);
     QString strLocalPath(text);
     strLocalPath = hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath;
-    const QUrl &url = UrlRoute::fromUserInput(strLocalPath);
+
+    const auto &currentDir = QDir::currentPath();
+    QUrl curUrl = q->currentUrl();
+    if (curUrl.isLocalFile())
+        QDir::setCurrent(curUrl.toLocalFile());
+
+    const QUrl &url = UrlRoute::fromUserInput(strLocalPath, false);
+    QDir::setCurrent(currentDir);
 
     // Check if the entered text is a string to search or a url to complete.
     if (hasSlash && url.isValid() && !url.scheme().isEmpty()) {
@@ -228,11 +238,11 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
         // URL completion.
         requestCompleteByUrl(url);
     } else {
-        // set completion prefix.
-        urlCompleter->setCompletionPrefix(text);
-
         // Update Icon
         setIndicator(AddressBar::IndicatorType::Search);
+
+        // set completion prefix.
+        urlCompleter->setCompletionPrefix(text);
 
         // Check if we already loaded history list in model
         if (isHistoryInCompleterModel)
@@ -478,6 +488,15 @@ void AddressBar::setCurrentUrl(const QUrl &url)
     QString text = url.isLocalFile() ? url.toLocalFile() : UrlRoute::urlToLocalPath(url.toString());
     this->setText(text);
     this->setSelection(0, text.length());
+}
+
+QUrl AddressBar::currentUrl()
+{
+    auto id = WindowsService::service()->findWindowId(this);
+    auto window = WindowsService::service()->findWindowById(id);
+    if (window)
+        return window->currentUrl();
+    return {};
 }
 
 bool AddressBar::event(QEvent *e)

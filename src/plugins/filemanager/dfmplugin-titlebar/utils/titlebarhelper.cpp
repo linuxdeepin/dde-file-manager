@@ -24,6 +24,7 @@
 #include "events/titlebareventcaller.h"
 #include "dialogs/connecttoserverdialog.h"
 #include "dialogs/usersharepasswordsettingdialog.h"
+#include "views/titlebarwidget.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
@@ -180,7 +181,6 @@ bool TitleBarHelper::displayIcon()
 
 bool TitleBarHelper::tabAddable(quint64 windowId)
 {
-
     auto &ctx = dpfInstance.serviceContext();
     auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
     if (workspaceService)
@@ -191,9 +191,22 @@ bool TitleBarHelper::tabAddable(quint64 windowId)
 
 void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *isSearch)
 {
+    const auto &currentDir = QDir::currentPath();
+    QUrl currentUrl;
+    auto curTitleBar = findTileBarByWindowId(windowId(sender));
+    if (curTitleBar)
+        currentUrl = curTitleBar->currentUrl();
+
+    if (currentUrl.isLocalFile())
+        QDir::setCurrent(currentUrl.toLocalFile());
+
     bool search { false };
     FinallyUtil finally([&]() {if (isSearch) *isSearch = search; });
-    QUrl url(UrlRoute::fromUserInput(text));
+
+    // here, judge whether the text is a local file path.
+    QUrl url(UrlRoute::fromUserInput(text, false));
+    QDir::setCurrent(currentDir);
+
     QString scheme { url.scheme() };
     if (!url.scheme().isEmpty() && UrlRoute::hasScheme(scheme)) {
         if (url.path().isEmpty())
@@ -201,14 +214,12 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         qInfo() << "jump :" << text;
         TitleBarEventCaller::sendCd(sender, url);
     } else {
-        auto &ctx = dpfInstance.serviceContext();
-        auto windowService = ctx.service<WindowsService>(WindowsService::name());
-        auto winId = windowService->findWindowId(sender);
-        auto window = windowService->findWindowById(winId);
-        auto searchInfo = SearchService::service()->findCustomSearchInfo(window->currentUrl().scheme());
-        if (searchInfo.isDisableSearch) {
-            qInfo() << "search : curent directory enable to search! " << window->currentUrl();
-            return;
+        if (currentUrl.isValid()) {
+            auto searchInfo = SearchService::service()->findCustomSearchInfo(currentUrl.scheme());
+            if (searchInfo.isDisableSearch) {
+                qInfo() << "search : current directory disable to search! " << currentUrl;
+                return;
+            }
         }
 
         search = true;

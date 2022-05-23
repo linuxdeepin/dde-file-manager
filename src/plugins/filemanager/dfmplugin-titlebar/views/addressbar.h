@@ -44,6 +44,7 @@ public:
     explicit AddressBar(QWidget *parent = nullptr);
     bool completerViewVisible();
     void setCurrentUrl(const QUrl &url);
+    QUrl currentUrl();
 
 protected:
     bool event(QEvent *e) override;
