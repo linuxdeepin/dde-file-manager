@@ -324,14 +324,14 @@ ComputerItemData ComputerItemWatcher::getGroup(ComputerItemWatcher::GroupType ty
     splitter.shape = ComputerItemData::kSplitterItem;
     switch (type) {
     case kGroupDirs:
-        splitter.groupName = userDirGroup();
+        splitter.itemName = userDirGroup();
         break;
     case kGroupDisks:
-        splitter.groupName = diskGroup();
+        splitter.itemName = diskGroup();
         break;
     }
 
-    splitter.groupId = getGroupId(splitter.groupName);
+    splitter.groupId = getGroupId(splitter.itemName);
 
     return splitter;
 }
@@ -464,14 +464,14 @@ void ComputerItemWatcher::startQueryItems()
 int ComputerItemWatcher::addGroup(const QString &name)
 {
     auto ret = std::find_if(initedDatas.cbegin(), initedDatas.cend(), [name](const ComputerItemData &item) {
-        return item.shape == ComputerItemData::kSplitterItem && item.groupName == name;
+        return item.shape == ComputerItemData::kSplitterItem && item.itemName == name;
     });
     if (ret != initedDatas.cend())
         return initedDatas.at(ret - initedDatas.cbegin()).groupId;
 
     ComputerItemData data;
     data.shape = ComputerItemData::kSplitterItem;
-    data.groupName = name;
+    data.itemName = name;
     data.groupId = getGroupId(name);
     Q_EMIT itemAdded(data);
     cacheItem(data);
@@ -488,6 +488,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, bool ne
     data.shape = ComputerItemData::kLargeItem;
     data.info = info;
     data.groupId = groupId;
+    data.itemName = info->displayName();
     Q_EMIT itemAdded(data);
 
     cacheItem(data);

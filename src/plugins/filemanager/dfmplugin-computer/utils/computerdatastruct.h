@@ -50,7 +50,7 @@ struct ComputerItemData
 
     QUrl url;   // entry://desktop.userdir
     ShapeType shape;
-    QString groupName;
+    mutable QString itemName;
     int groupId;
     QWidget *widget { nullptr };
     bool isEditing = false;

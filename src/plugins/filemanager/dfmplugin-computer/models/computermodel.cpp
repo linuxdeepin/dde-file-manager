@@ -26,6 +26,7 @@
 #include "controller/computercontroller.h"
 #include "fileentity/blockentryfileentity.h"
 
+#include "services/filemanager/sidebar/sidebarservice.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/fileutils.h"
@@ -85,10 +86,20 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
         return {};
 
     switch (role) {
-    case Qt::DisplayRole:
+    case Qt::DisplayRole: {
         if (item->shape == ComputerItemData::kSplitterItem)
-            return item->groupName;
-        return item->info ? item->info->displayName() : "";
+            return item->itemName;
+        if (!item->info)
+            return "";
+
+        QString &&itemName = item->info->displayName();
+        if (itemName != item->itemName) {
+            DSB_FM_USE_NAMESPACE;
+            SideBarService::service()->updateItemName(item->url, itemName, item->info->renamable());
+            item->itemName = itemName;
+        }
+        return itemName;
+    }
 
     case Qt::DecorationRole:
         return item->info ? item->info->fileIcon() : QIcon();
@@ -221,7 +232,7 @@ int ComputerModel::findItemByClearDeviceId(const QString &id)
 int ComputerModel::findSplitter(const QString &group)
 {
     auto iter = std::find_if(items.cbegin(), items.cend(), [=](const ComputerItemData &item) {
-        if (item.shape == ComputerItemData::kSplitterItem && item.groupName == group)
+        if (item.shape == ComputerItemData::kSplitterItem && item.itemName == group)
             return true;
         return false;
     });
@@ -254,7 +265,7 @@ void ComputerModel::onItemAdded(const ComputerItemData &data)
     ComputerItemData::ShapeType shape = data.shape;
     int pos = -1;
     if (shape == ComputerItemData::kSplitterItem) {
-        pos = findSplitter(data.groupName);
+        pos = findSplitter(data.itemName);
         if (pos >= 0)
             return;
     }
