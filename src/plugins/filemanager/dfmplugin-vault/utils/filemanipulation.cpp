@@ -107,13 +107,12 @@ JobHandlePointer FileManipulation::cutHandle(const quint64 windowId, const QList
     return {};
 }
 
-bool FileManipulation::mkdirHandle(const quint64 windowId, const QUrl url, QString *error, const Global::CreateFileType type)
+bool FileManipulation::mkdirHandle(const quint64 windowId, const QUrl url, QString *errore)
 {
     QUrl dirUrl = delegateServIns->urlTransform(url);
     return dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
                                                  windowId,
-                                                 dirUrl,
-                                                 type);
+                                                 dirUrl);
 }
 
 bool FileManipulation::touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const Global::CreateFileType type)

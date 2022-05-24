@@ -119,7 +119,7 @@ bool LocalFileHandler::touchFile(const QUrl &url)
     if (!templateFile.isEmpty()) {
         QByteArray arr = DecoratorFile(templateFile).readAll();
         if (!arr.isEmpty()) {
-            qint64 writeCount = DecoratorFile(url).writeAll(arr);
+            qint64 writeCount = DecoratorFile(url).writeAll(arr, DFMIO::DFile::OpenFlag::kTruncate);
             if (writeCount <= 0)
                 qWarning() << "file touch succ, but write template failed";
         }

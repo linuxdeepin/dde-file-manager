@@ -100,11 +100,11 @@ QByteArray DecoratorFile::readAll() const
     return QByteArray();
 }
 
-qint64 DecoratorFile::writeAll(const QByteArray &byteArray)
+qint64 DecoratorFile::writeAll(const QByteArray &byteArray, DFMIO::DFile::OpenFlag flag)
 {
     if (d->dfile) {
         if (!d->dfile->isOpen()) {
-            bool ok = d->dfile->open(DFMIO::DFile::OpenFlag::kWriteOnly);
+            bool ok = d->dfile->open(flag);
             if (!ok)
                 return -1;
         }

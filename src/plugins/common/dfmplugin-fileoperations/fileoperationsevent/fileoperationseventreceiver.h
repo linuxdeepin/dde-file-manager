@@ -158,15 +158,6 @@ public slots:
                                     const QVariant custom,
                                     DFMBASE_NAMESPACE::Global::OperatorCallback callback);
 
-    QString handleOperationMkdir(const quint64 windowId,
-                                 const QUrl url,
-                                 const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
-    void handleOperationMkdir(const quint64 windowId,
-                              const QUrl url,
-                              const DFMBASE_NAMESPACE::Global::CreateFileType fileType,
-                              const QVariant custom,
-                              DFMBASE_NAMESPACE::Global::OperatorCallback callback);
-
     bool handleOperationMkdir(const quint64 windowId,
                               const QUrl url);
     void handleOperationMkdir(const quint64 windowId,

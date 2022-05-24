@@ -1065,6 +1065,13 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress() const
 
     return false;
 }
+
+bool dfmbase::AbstractFileInfo::canFetch() const
+{
+    CALL_PROXY(canFetch());
+
+    return isDir() && !isPrivate();
+}
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat
  * \return
@@ -1072,6 +1079,13 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDragCompress() const
 bool DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat() const
 {
     CALL_PROXY(isDragCompressFileFormat());
+
+    return false;
+}
+
+bool dfmbase::AbstractFileInfo::isPrivate() const
+{
+    CALL_PROXY(isPrivate());
 
     return false;
 }

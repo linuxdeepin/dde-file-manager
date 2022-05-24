@@ -31,6 +31,8 @@
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
+#include "dfm-base/mimetype/mimetypedisplaymanager.h"
+#include "dfm-base/base/application/application.h"
 
 #include <dfm-io/dfmio_utils.h>
 #include <dfm-io/local/dlocalfileinfo.h>
@@ -765,6 +767,30 @@ bool LocalFileInfo::isBundle() const
     QReadLocker locker(&d->lock);
     bool isBundle = QFileInfo(d->url.path()).isBundle();
     return isBundle;
+}
+
+bool LocalFileInfo::isPrivate() const
+{
+    const QString &path = absolutePath();
+    const QString &name = fileName();
+
+    static DFMBASE_NAMESPACE::Match match("PrivateFiles");
+
+    QReadLocker locker(&d->lock);
+    return match.match(path, name);
+}
+
+bool LocalFileInfo::canFetch() const
+{
+    if (isPrivate())
+        return false;
+
+    const QString &path = filePath();
+    bool isArchive = false;
+    QFileInfo f(path);
+    if (f.exists())
+        isArchive = DFMBASE_NAMESPACE::MimeTypeDisplayManager::supportArchiveMimetypes().contains(DMimeDatabase().mimeTypeForFile(f).name());
+    return isDir() || (isArchive && Application::instance()->genericAttribute(Application::kPreviewCompressFile).toBool());
 }
 
 /*!

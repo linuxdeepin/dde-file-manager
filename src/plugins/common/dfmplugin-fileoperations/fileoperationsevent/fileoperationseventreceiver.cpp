@@ -882,63 +882,8 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
         saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
 }
 
-QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
-                                                          const QUrl url,
-                                                          const CreateFileType fileType)
-{
-    if (url.isLocalFile()) {
-        QString newPath = newDocmentName(url.path(), QString(), fileType);
-        if (newPath.isEmpty())
-            return newPath;
-
-        QUrl urlNew;
-        urlNew.setScheme(url.scheme());
-        urlNew.setPath(newPath);
-
-        return handleOperationMkdir(windowId, urlNew) ? newPath : QString();
-    } else {
-        QString error;
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
-        }
-        if (function && function->makeDir) {
-            bool ok = false;
-            ok = function->makeDir(windowId, url, &error, fileType);
-            if (!ok) {
-                dialogManager->showErrorDialog("make dir error", error);
-            }
-            // TODO:: make dir finished need to send make dir finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
-            return ok ? url.path() : QString();
-        }
-        return handleOperationMkdir(windowId, url) ? url.path() : QString();
-    }
-}
-
-void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
-                                                       const QUrl url,
-                                                       CreateFileType fileType,
-                                                       const QVariant custom,
-                                                       OperatorCallback callback)
-{
-    QString newPath = handleOperationMkdir(windowId, url, fileType);
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << QUrl::fromLocalFile(newPath)));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(!newPath.isEmpty()));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
-}
-
 bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, const QUrl url)
 {
-    Q_UNUSED(windowId);
     bool ok = false;
     QString error;
     if (!url.isLocalFile()) {
@@ -948,7 +893,7 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, c
             function = this->functions.value(url.scheme());
         }
         if (function && function->makeDir) {
-            ok = function->makeDir(windowId, url, &error, DFMGLOBAL_NAMESPACE::CreateFileType::kCreateFileTypeUnknow);
+            ok = function->makeDir(windowId, url, &error);
             if (!ok) {
                 dialogManager->showErrorDialog("make dir error", error);
             }
@@ -957,9 +902,19 @@ bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, c
                                                   windowId, QList<QUrl>() << url, ok, error);
             return ok;
         }
+        return handleOperationMkdir(windowId, url);
     }
+
+    QString newPath = newDocmentName(url.path(), QString(), CreateFileType::kCreateFileTypeFolder);
+    if (newPath.isEmpty())
+        return false;
+
+    QUrl urlNew;
+    urlNew.setScheme(url.scheme());
+    urlNew.setPath(newPath);
+
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.mkdir(url);
+    ok = fileHandler.mkdir(urlNew);
     if (!ok) {
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("make dir error", error);

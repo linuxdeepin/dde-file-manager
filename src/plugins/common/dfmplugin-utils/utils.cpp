@@ -29,8 +29,11 @@
 
 static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
 {
-    if (fileInfo->suffix() == DFMBASE_NAMESPACE::Global::kDesktop && fileInfo->mimeTypeName() == "application/x-desktop") {
-        return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(fileInfo->url()));
+    const QString &suffix = fileInfo->suffix();
+    const QString &mimeTypeName = fileInfo->mimeTypeName();
+    if (suffix == DFMBASE_NAMESPACE::Global::kDesktop && mimeTypeName == "application/x-desktop") {
+        const QUrl &url = fileInfo->url();
+        return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
     }
     return fileInfo;
 }

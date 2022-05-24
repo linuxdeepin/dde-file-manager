@@ -75,8 +75,7 @@ using HandleOperationRenameFile = std::function<bool(const quint64 windowId,
 
 using HandleOperationMkdir = std::function<bool(const quint64 windowId,
                                                 const QUrl url,
-                                                QString *,
-                                                const DFMBASE_NAMESPACE::Global::CreateFileType)>;
+                                                QString *)>;
 using HandleOperationTouchFile = std::function<bool(const quint64 windowId,
                                                     const QUrl url,
                                                     QString *,

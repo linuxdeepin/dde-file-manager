@@ -50,8 +50,7 @@ void FileOperatorHelper::touchFolder(const FileView *view)
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
                                           windowId,
-                                          view->rootUrl(),
-                                          kCreateFileTypeFolder);
+                                          view->rootUrl());
 }
 
 void FileOperatorHelper::touchFiles(const FileView *view, const CreateFileType type, QString suffix)

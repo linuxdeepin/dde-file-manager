@@ -182,7 +182,7 @@ void FileOperatorProxy::touchFolder(const CanvasView *view, const QPoint pos)
     QPair<FileOperatorProxyPrivate::CallBackFunc, QVariant> funcData(FileOperatorProxyPrivate::kCallBackTouchFolder, data);
     QVariant custom = QVariant::fromValue(funcData);
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdirCallBack, view->winId(), view->model()->rootUrl(), kCreateFileTypeFolder, custom, d->callBack);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir, view->winId(), view->model()->rootUrl(), custom, d->callBack);
 }
 
 void FileOperatorProxy::copyFiles(const CanvasView *view)

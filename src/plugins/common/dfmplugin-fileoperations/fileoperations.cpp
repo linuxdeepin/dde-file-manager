@@ -183,18 +183,10 @@ void FileOperations::initEventHandle()
 
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdir,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<QString (FileOperationsEventReceiver::*)(const quint64, const QUrl, const CreateFileType)>(&FileOperationsEventReceiver::handleOperationMkdir));
+                                            static_cast<bool (FileOperationsEventReceiver::*)(const quint64, const QUrl)>(&FileOperationsEventReceiver::handleOperationMkdir));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdir,
                                             FileOperationsEventReceiver::instance(),
-                                            static_cast<bool (FileOperationsEventReceiver::*)(const quint64, const QUrl)>(&FileOperationsEventReceiver::handleOperationMkdir));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdirCallBack,
-                                            FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl,
-                                                                                              const QVariant,
-                                                                                              OperatorCallback)>(&FileOperationsEventReceiver::handleOperationMkdir));
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kMkdirCallBack,
-                                            FileOperationsEventReceiver::instance(),
-                                            static_cast<void (FileOperationsEventReceiver::*)(const quint64, const QUrl, const CreateFileType,
                                                                                               const QVariant,
                                                                                               OperatorCallback)>(&FileOperationsEventReceiver::handleOperationMkdir));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kTouchFile,

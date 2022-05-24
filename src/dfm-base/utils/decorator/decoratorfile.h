@@ -43,7 +43,7 @@ public:
     qint64 size() const;
 
     QByteArray readAll() const;
-    qint64 writeAll(const QByteArray &byteArray);
+    qint64 writeAll(const QByteArray &byteArray, DFMIO::DFile::OpenFlag = DFMIO::DFile::OpenFlag::kWriteOnly);
 
     DFMIO::DFile::Permissions permissions() const;
     bool setPermissions(DFMIO::DFile::Permissions permission);
