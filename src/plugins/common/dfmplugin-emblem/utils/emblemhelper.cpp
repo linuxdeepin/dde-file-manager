@@ -21,6 +21,8 @@
  */
 #include "emblemhelper.h"
 
+#include "services/common/usershare/usershareservice.h"
+
 #include <dfm-io/core/dfileinfo.h>
 
 #include <QDebug>
@@ -49,7 +51,8 @@ QList<QIcon> EmblemHelper::getSystemEmblems(const AbstractFileInfoPointer &info)
     if (!info->isReadable())
         emblems << QIcon::fromTheme("emblem-unreadable", standardEmblem(SystemEmblemType::kUnreadable));
 
-    if (info->isShared())
+    DSC_USE_NAMESPACE;
+    if (UserShareService::service()->isSharedPath(info->absoluteFilePath()))
         emblems << QIcon::fromTheme("emblem-shared", standardEmblem(SystemEmblemType::kShare));
 
     return emblems;

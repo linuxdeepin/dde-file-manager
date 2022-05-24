@@ -132,6 +132,10 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
     if (d->isEmptyArea) {
         if (auto paste = d->predicateAction.value(ActionID::kPaste)) {
             auto curDirInfo = InfoFactory::create<AbstractFileInfo>(d->currentDir);
+            if (!curDirInfo)
+                return;
+
+            curDirInfo->refresh();
             bool disabled = (ClipBoard::instance()->clipboardAction() == ClipBoard::kUnknownAction) || !curDirInfo->isWritable();
             paste->setDisabled(disabled);
         }
@@ -142,6 +146,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
         }
 
         if (auto cut = d->predicateAction.value(ActionID::kCut)) {
+            d->focusFileInfo->refresh();
             if (!d->focusFileInfo->canRename())
                 cut->setDisabled(true);
         }
@@ -150,6 +155,7 @@ void ClipBoardMenuScene::updateState(QMenu *parent)
             auto info = InfoFactory::create<AbstractFileInfo>(file);
             if (!info)
                 continue;
+            info->refresh();
 
             if (auto cut = d->predicateAction.value(ActionID::kCut)) {
                 if (!info->canRename()) {

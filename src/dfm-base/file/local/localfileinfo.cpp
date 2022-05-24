@@ -767,11 +767,6 @@ bool LocalFileInfo::isBundle() const
     return isBundle;
 }
 
-bool LocalFileInfo::isShared() const
-{
-    // todo lanxs
-    return false;
-}
 /*!
  * \brief isBundle 获取文件的链接目标文件
  *

@@ -524,10 +524,12 @@ bool LocalFileHandler::deleteFile(const QUrl &file)
         qDebug() << "delete file success: " << file;
         return true;
     }
-    qDebug() << "try delete file, but failed url: " << file << " ret: " << ret;
-
-    setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
-
+    int sysErrno = errno;
+    qDebug() << "try delete file, but failed url: " << file << " ret: " << ret << sysErrno << strerror(sysErrno);
+    if (sysErrno == EROFS)
+        setError(DFMIOError(DFM_IO_ERROR_PERMISSION_DENIED));
+    else
+        setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
     return false;
 }
 /*!

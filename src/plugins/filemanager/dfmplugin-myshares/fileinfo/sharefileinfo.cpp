@@ -69,11 +69,6 @@ bool ShareFileInfo::canRename() const
     return false;
 }
 
-bool ShareFileInfo::isShared() const
-{
-    return true;
-}
-
 ShareFileInfoPrivate::ShareFileInfoPrivate(const QUrl &url, AbstractFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
 {

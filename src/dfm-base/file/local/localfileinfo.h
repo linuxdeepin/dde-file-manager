@@ -79,7 +79,6 @@ public:
     virtual bool isSymLink() const override;
     virtual bool isRoot() const override;
     virtual bool isBundle() const override;
-    virtual bool isShared() const override;
     virtual quint64 inode() const override;
     virtual QString symLinkTarget() const override;
     virtual QString owner() const override;

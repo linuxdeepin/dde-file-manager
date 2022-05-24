@@ -119,6 +119,7 @@ void FileViewItem::setUrl(const QUrl url)
     if (!d->fileinfo)
         abort();
 
+    d->fileinfo->refresh();
     d->mimeType = MimeDatabase::mimeTypeForUrl(url);
     if (!d->mimeType.isValid())
         abort();

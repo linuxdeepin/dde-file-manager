@@ -231,11 +231,6 @@ QString DesktopFileInfo::genericIconName()
     return QStringLiteral("application-default-icon");
 }
 
-QList<QIcon> DesktopFileInfo::additionalIcon() const
-{
-    return QList<QIcon>();
-}
-
 Qt::DropActions DesktopFileInfo::supportedDragActions() const
 {
     if (d->deepinID == "dde-trash" || d->deepinID == "dde-computer") {

@@ -180,6 +180,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
     }
 
     if (1 == d->selectFiles.count()) {
+        d->focusFileInfo->refresh();
         // delete
         if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
             if (!d->focusFileInfo->canRename() || (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink()))
@@ -202,6 +203,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
             auto info = InfoFactory::create<AbstractFileInfo>(url);
             if (!info)
                 continue;
+            info->refresh();
 
             if (!info->canRename()) {
                 auto rename = d->predicateAction.value(ActionID::kRename);

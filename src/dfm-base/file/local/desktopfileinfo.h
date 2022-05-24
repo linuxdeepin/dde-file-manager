@@ -57,7 +57,6 @@ public:
 
     //QVector<MenuAction> menuActionList(MenuType type = SingleFile) const override;
     //QSet<MenuAction> disableMenuActionList() const override;
-    QList<QIcon> additionalIcon() const override;
     Qt::DropActions supportedDragActions() const override;
 
     bool canDrop() override;

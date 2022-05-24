@@ -144,7 +144,6 @@ public:
     virtual bool isSymLink() const;
     virtual bool isRoot() const;
     virtual bool isBundle() const;
-    virtual bool isShared() const;
     virtual quint64 inode() const;
     virtual QString symLinkTarget() const;
     virtual QString owner() const;
@@ -166,7 +165,6 @@ public:
     virtual QDateTime fileTime(QFile::FileTime time) const;
     virtual int countChildFile() const;
     virtual QIcon fileIcon();
-    virtual QList<QIcon> additionalIcon() const;
     virtual QString iconName();
     virtual QString genericIconName();
     virtual QMimeType fileMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault);

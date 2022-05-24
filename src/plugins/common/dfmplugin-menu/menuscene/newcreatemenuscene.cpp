@@ -145,7 +145,10 @@ void NewCreateMenuScene::updateState(QMenu *parent)
         return;
 
     auto curDirInfo = InfoFactory::create<AbstractFileInfo>(d->currentDir);
-    if (curDirInfo && !curDirInfo->isWritable()) {
+    if (!curDirInfo)
+        return;
+    curDirInfo->refresh();
+    if (!curDirInfo->isWritable()) {
         auto actions = parent->actions();
         for (auto act : actions) {
             const auto &actId = act->property(ActionPropertyKey::kActionID);
