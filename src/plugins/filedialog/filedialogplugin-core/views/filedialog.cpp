@@ -806,7 +806,7 @@ void FileDialog::handleEnterPressed()
     auto &&urls = WorkspaceService::service()->selectedUrls(internalWinId());
     for (const QUrl &url : urls) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
-        if (!info || !info->isDir()) {
+        if (!info || info->isDir()) {
             exit = true;
             break;
         }
