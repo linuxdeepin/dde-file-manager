@@ -101,7 +101,7 @@ Description: extension library of dde-file-manager
 
 Package: libdfm-extension-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdfm-extension( =${binary:Version})
 Description: Development package for libdfm-extension
  This package contains the header files and pkgconfig
  of libdfm-extension
@@ -115,7 +115,7 @@ Depends:
  gvfs-backends(>=1.27.3),
  cryptsetup,
  deepin-anything-libs[i386 amd64],
- libdfm-extension
+ libdfm-extension( =${binary:Version})
 Recommends:
  libudfburn
 Breaks: dde-file-manager(<=1.2.3-3)
