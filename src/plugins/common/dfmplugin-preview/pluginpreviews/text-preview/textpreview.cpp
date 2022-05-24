@@ -22,45 +22,32 @@
 #include "textpreview.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfileservices.h"
+#include "textbrowseredit.h"
 
 #include <QProcess>
-#include <QMimeType>
-#include <QMimeDatabase>
 #include <QUrl>
 #include <QFileInfo>
-#include <QPlainTextEdit>
 #include <QDebug>
-#include <QScrollBar>
-#include <QTimer>
 
 using namespace std;
 DFMBASE_USE_NAMESPACE
 PREVIEW_USE_NAMESPACE
-#define READTEXTSIZE 100000
 
 TextPreview::TextPreview(QObject *parent)
     : AbstractBasePreview(parent)
 {
-    timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &TextPreview::appendText);
 }
 
 TextPreview::~TextPreview()
 {
     if (textBrowser)
         textBrowser->deleteLater();
-
-    if (timer) {
-        timer->stop();
-    }
 }
 
 bool TextPreview::setFileUrl(const QUrl &url)
 {
     if (selectUrl == url)
         return true;
-
-    timer->stop();
 
     selectUrl = url;
 
@@ -72,8 +59,7 @@ bool TextPreview::setFileUrl(const QUrl &url)
     }
 
     if (!textBrowser) {
-        textBrowser = new QPlainTextEdit();
-
+        textBrowser = new TextBrowserEdit;
         textBrowser->setReadOnly(true);
         textBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
         textBrowser->setLineWrapMode(QPlainTextEdit::WidgetWidth);
@@ -92,20 +78,7 @@ bool TextPreview::setFileUrl(const QUrl &url)
     device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
     device.close();
 
-    char *txt = new char[buf.size()];
-    copy(buf.begin(), buf.end(), txt);
-    m_textData = QString::fromLocal8Bit(txt, static_cast<int>(buf.size()));
-    delete[] txt;
-    txt = nullptr;
-    textSize = m_textData.count();
-    readSize = textSize > READTEXTSIZE ? READTEXTSIZE : textSize;
-    if (textSize > readSize) {
-        textSize = textSize - readSize;
-        textBrowser->setPlainText(m_textData.mid(0, readSize));
-        timer->start(500);
-    } else {
-        textBrowser->setPlainText(m_textData);
-    }
+    textBrowser->setFileData(buf);
 
     Q_EMIT titleChanged();
 
@@ -130,19 +103,4 @@ QString TextPreview::title() const
 bool TextPreview::showStatusBarSeparator() const
 {
     return true;
-}
-
-void TextPreview::appendText()
-{
-    if (textSize > 0) {
-        if (textSize < READTEXTSIZE) {
-            textSize = 0;
-            textBrowser->appendPlainText(m_textData.mid(readSize));
-            timer->stop();
-        } else {
-            textSize = textSize - READTEXTSIZE;
-            textBrowser->appendPlainText(m_textData.mid(readSize, READTEXTSIZE));
-            readSize += READTEXTSIZE;
-        }
-    }
 }

@@ -18,50 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#ifndef TEXTPREVIEW_H
-#define TEXTPREVIEW_H
-
+#ifndef TEXTBROWSER_H
+#define TEXTBROWSER_H
 #include "preview_plugin_global.h"
-#include "dfm-base/interfaces/abstractbasepreview.h"
 
-#include <QWidget>
-#include <QPointer>
-#include <QTimer>
-#include <QString>
+#include <QPlainTextEdit>
 
-#include <fstream>
+#include <vector>
 
 PREVIEW_BEGIN_NAMESPACE
-class TextBrowserEdit;
-class TextPreview : public DFMBASE_NAMESPACE::AbstractBasePreview
+class TextBrowserEdit : public QPlainTextEdit
 {
     Q_OBJECT
-
 public:
-    explicit TextPreview(QObject *parent = nullptr);
-    ~TextPreview() override;
+    explicit TextBrowserEdit(QWidget *parent = nullptr);
 
-    bool setFileUrl(const QUrl &url) override;
-    QUrl fileUrl() const override;
+    void setFileData(std::vector<char> &data);
 
-    QWidget *contentWidget() const override;
-
-    QString title() const override;
-    bool showStatusBarSeparator() const override;
+private slots:
+    void scrollbarVauleChange(int value);
 
 private:
-    QUrl selectUrl;
-    QString titleStr;
+    int verifyEndOfStrIntegrity(const char *s, int l);
 
-    TextBrowserEdit *textBrowser { nullptr };
+    void appendText(std::vector<char>::iterator &data);
 
-    //! 操作文件的对象
-    std::ifstream device;
-
-    int textSize = 0;
-
-    int readSize = 0;
+    std::vector<char> fileData;
 };
 PREVIEW_END_NAMESPACE
-#endif   // TEXTPREVIEW_H
+#endif   // TEXTBROWSER_H

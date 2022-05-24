@@ -117,7 +117,6 @@ void FilePreviewDialog::setCurrentWinID(quint64 winID)
 void FilePreviewDialog::playCurrentPreviewFile()
 {
     if (preview) {
-        // 修复bug-63504 bug-63352
         if (preview->metaObject()->className() == QStringLiteral("VideoPreview")) {
             playingVideo = true;
             // 1s 后才能重新预览视频，原因是快速切换预览视频会因为视频插件内部的崩溃引起文管崩溃
@@ -167,7 +166,7 @@ void FilePreviewDialog::closeEvent(QCloseEvent *event)
 void FilePreviewDialog::resizeEvent(QResizeEvent *event)
 {
     DAbstractDialog::resizeEvent(event);
-    QTimer::singleShot(50, this, [=]() {   //fix 32985 【文件管理器】【5.1.1.86-1】【sp2】空格预览界面展示异常。50ms这个时间视机器性能而定
+    QTimer::singleShot(50, this, [=]() {   //! 50ms这个时间视机器性能而定
         repaint();   //通过重绘来解决调整大小前的窗口残留的问题
     });
 }
@@ -401,7 +400,7 @@ void FilePreviewDialog::updateTitle()
     QString elidedText;
 
     if (!statusBar->preButton()->isVisible()) {
-        /*fix bug 46804 smb 中一直按着空格预览，preview 已经析构了，但是定时器的timeout事件已经执行，这里使用智能指针进行判断*/
+        /*smb 中一直按着空格预览，preview 已经析构了，但是定时器的timeout事件已经执行，这里使用智能指针进行判断*/
         if (!preview) {
             qDebug() << "preview is null,so exit";
             return;

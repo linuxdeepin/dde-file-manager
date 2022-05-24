@@ -68,11 +68,11 @@ void MultiFilePropertyDialog::initHeadUi()
     totalSizeLabel = new KeyValueLabel(this);
     totalSizeLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     totalSizeLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    totalSizeLabel->setLeftValue(tr("Total size"), Qt::ElideNone, Qt::AlignLeft);
+    totalSizeLabel->setLeftValue(tr("Total size"), Qt::ElideMiddle, Qt::AlignLeft, true, 80);
     fileCountLabel = new KeyValueLabel(this);
     fileCountLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileCountLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileCountLabel->setLeftValue(tr("Number of files"), Qt::ElideNone, Qt::AlignLeft);
+    fileCountLabel->setLeftValue(tr("Number of files"), Qt::ElideMiddle, Qt::AlignLeft, true, 80);
     QPushButton *btn = new QPushButton(this);
     btn->setMaximumHeight(1);
 
@@ -80,13 +80,13 @@ void MultiFilePropertyDialog::initHeadUi()
     hlayout->addWidget(basicInfoLabel, 0, Qt::AlignLeft);
 
     QGridLayout *gridLayout = new QGridLayout;
-    gridLayout->setContentsMargins(15, 15, 5, 10);
     gridLayout->setSpacing(16);
-    gridLayout->addWidget(totalSizeLabel, 0, 0, 1, 6);
-    gridLayout->addWidget(fileCountLabel, 1, 0, 1, 6);
+    gridLayout->addWidget(totalSizeLabel, 0, 0, 1, 8);
+    gridLayout->addWidget(fileCountLabel, 1, 0, 1, 8);
+    gridLayout->setColumnStretch(0, 1);
 
     QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(10, 0, 10, 10);
+    vlayout->setContentsMargins(10, 0, 0, 10);
     vlayout->addWidget(iconLabel, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout->addWidget(multiFileLable, 0, Qt::AlignHCenter | Qt::AlignTop);
     vlayout->setSpacing(10);
@@ -114,10 +114,10 @@ void MultiFilePropertyDialog::calculateFileCount()
             ++fileCount;
     }
 
-    fileCountLabel->setRightValue(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount), Qt::ElideNone, Qt::AlignLeft, false);
+    fileCountLabel->setRightValue(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount), Qt::ElideMiddle, Qt::AlignVCenter, true);
 }
 
 void MultiFilePropertyDialog::updateFolderSizeLabel(qint64 size)
 {
-    totalSizeLabel->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignLeft, false);
+    totalSizeLabel->setRightValue(FileUtils::formatSize(size), Qt::ElideMiddle, Qt::AlignVCenter, true);
 }
