@@ -62,6 +62,7 @@ void TaskDialog::addTask(const JobHandlePointer taskHandler)
     wid = new TaskWidget(this);
 
     connect(wid, &TaskWidget::heightChanged, this, &TaskDialog::adjustSize, Qt::QueuedConnection);
+    connect(this, &TaskDialog::closed, wid, &TaskWidget::parentClose, Qt::QueuedConnection);
     taskHandler->connect(taskHandler.data(), &AbstractJobHandler::finishedNotify, this, &TaskDialog::removeTask);
 
     wid->setTaskHandle(taskHandler);

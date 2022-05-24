@@ -120,6 +120,12 @@ void TaskWidget::setTaskHandle(const JobHandlePointer &handle)
 
     connect(this, &TaskWidget::buttonClicked, handle.data(), &AbstractJobHandler::operateTaskJob, Qt::QueuedConnection);
 }
+
+void TaskWidget::resetPauseStute()
+{
+    if (btnPause)
+        btnPause->setEnabled(true);
+}
 /*!
  * \brief TaskWidget::onButtonClicked 处理所有按钮按下
  */
@@ -130,11 +136,18 @@ void TaskWidget::onButtonClicked()
         qWarning() << "the button is null or the button is release!";
         return;
     }
+    if (btnPause)
+        btnPause->setEnabled(true);
     isShowError.store(false);
     AbstractJobHandler::SupportActions actions = obj->property(kBtnPropertyActionName).value<AbstractJobHandler::SupportAction>();
     showConflictButtons(actions.testFlag(AbstractJobHandler::SupportAction::kPauseAction));
     actions = chkboxNotAskAgain && chkboxNotAskAgain->isChecked() ? actions | AbstractJobHandler::SupportAction::kRememberAction : actions;
     emit buttonClicked(actions);
+}
+void TaskWidget::parentClose()
+{
+    if (btnPause)
+        btnPause->setEnabled(true);
 }
 /*!
  * \brief TaskWidget::onShowErrors 处理和显示错误信息
@@ -176,6 +189,9 @@ void TaskWidget::onShowErrors(const JobInfoPointer JobInfo)
 
     showBtnByAction(actions);
     showConflictButtons(true, false);
+
+    if (btnPause)
+        btnPause->setEnabled(false);
 }
 /*!
  * \brief TaskWidget::onShowConflictInfo 显示冲突界面信息

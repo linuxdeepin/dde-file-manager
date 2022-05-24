@@ -54,10 +54,13 @@ class TaskWidget : public QWidget
     explicit TaskWidget(QWidget *parent = nullptr);
     ~TaskWidget();
     void setTaskHandle(const JobHandlePointer &handle);
+    void resetPauseStute();
 
 signals:
     void buttonClicked(AbstractJobHandler::SupportActions actions);
     void heightChanged();
+public slots:
+    void parentClose();
 private slots:
     void onButtonClicked();
     void onShowErrors(const JobInfoPointer JobInfo);
