@@ -133,7 +133,7 @@ ComputerView::ComputerView(QWidget *parent) : QWidget(parent)
     setLayout(new QVBoxLayout);
     layout()->addWidget(m_view);
     layout()->addWidget(m_statusbar);
-    layout()->setMargin(0);
+    layout()->setContentsMargins(10, 0, 0, 0);
 
     m_model = new ComputerModel(this);
     m_view->setModel(m_model);
