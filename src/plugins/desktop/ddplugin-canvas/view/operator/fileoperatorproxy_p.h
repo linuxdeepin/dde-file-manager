@@ -58,6 +58,8 @@ public:
     FileOperatorProxy *const q;
     QSharedPointer<QTimer> selectTimer;
     DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
+
+    QPair<QString, QPair<int, QPoint>> touchFileData;
 };
 
 DDP_CANVAS_END_NAMESPACE

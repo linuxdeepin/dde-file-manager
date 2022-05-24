@@ -140,7 +140,14 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
                 return;
             }
         } else {
-            fileList.replace(position, newUrl);
+            if (fileList.contains(newUrl)) {
+                // e.g. a mv to b(b is existed)
+                removeData(oldUrl);
+                position = fileList.indexOf(newUrl);
+            } else {
+                fileList.replace(position, newUrl);
+            }
+
             fileMap.remove(oldUrl);
             fileMap.insert(newUrl, newInfo);
             emit q->dataReplaced(oldUrl, newUrl);

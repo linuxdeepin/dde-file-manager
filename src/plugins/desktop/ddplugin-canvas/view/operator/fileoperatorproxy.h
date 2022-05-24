@@ -57,6 +57,8 @@ public:
     void dropToTrash(const QList<QUrl> &urls);
     void dropToApp(const QList<QUrl> &urls, const QString &app);
 
+    QPair<QString, QPair<int, QPoint>> touchFileData() const;
+    void clearTouchFileData();
 public:
     void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
 

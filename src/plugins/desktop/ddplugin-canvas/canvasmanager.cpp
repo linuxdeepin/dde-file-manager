@@ -470,11 +470,17 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
             continue;
         QUrl url = canvasModel->fileUrl(index);
 
-        QString path = url.toString();
-        QPair<int, QPoint> pos;
-        if (GridIns->point(path, pos) || GridIns->overloadItems(-1).contains(path)) {
-            qDebug() << "item:" << path << " existed";
-            // already hand by call back,but at that time,the index mybe is invalid.
+        const QString &&path = url.toString();
+        const auto &touchFileData= FileOperatorProxyIns->touchFileData();
+        if (path == touchFileData.first) {
+            if (CanvasGrid::Mode::Custom == GridIns->mode()) {
+                GridIns->tryAppendAfter({ path }, touchFileData.second.first, touchFileData.second.second);
+            } else {
+                GridIns->append(path);
+            }
+            FileOperatorProxyIns->clearTouchFileData();
+
+            // need open editor,only by menu create file
             q->openEditor(url);
         } else {
             GridIns->append(path);

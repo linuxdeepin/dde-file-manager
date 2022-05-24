@@ -54,6 +54,8 @@ FileOperatorProxyPrivate::FileOperatorProxyPrivate(FileOperatorProxy *q_ptr)
 
 void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVariantMap &customData)
 {
+    q->clearTouchFileData();
+
     QString path = target.toString();
     int screenNum = customData.value(KEY_SCREENNUMBER).toInt();
     QPoint pos = customData.value(KEY_POINT).value<QPoint>();
@@ -61,7 +63,7 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
     // befor call back,recive file created signal
     QPair<int, QPoint> oriPoint;
     if (Q_UNLIKELY(GridIns->point(path, oriPoint))) {
-
+        qInfo() << "note:file existed!must check code!" << path << oriPoint << pos;;
         if (CanvasGrid::Mode::Align == GridIns->mode())
             return;
 
@@ -74,15 +76,10 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
     } else if (Q_UNLIKELY(GridIns->overloadItems(-1).contains(path))) {
         qDebug() << "item:" << path << " is overload";
     } else {
-        if (CanvasGrid::Mode::Align == GridIns->mode())
-            GridIns->append(path);
-        else
-            GridIns->tryAppendAfter({ path }, screenNum, pos);
+        // record the location and move the file after the real file is created
+        if (CanvasGrid::Mode::Align != GridIns->mode())
+            touchFileData = qMakePair(path, qMakePair(screenNum, pos));
     }
-
-    CanvasIns->update();
-    // need open editor,only by call back(by menu create file)
-    CanvasIns->openEditor(target);
 }
 
 void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
@@ -317,6 +314,16 @@ void FileOperatorProxy::dropToApp(const QList<QUrl> &urls, const QString &app)
     dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, view->winId(), urls, apps);
 }
 
+QPair<QString, QPair<int, QPoint> > FileOperatorProxy::touchFileData() const
+{
+    return d->touchFileData;
+}
+
+void FileOperatorProxy::clearTouchFileData()
+{
+    d->touchFileData = qMakePair(QString(), qMakePair(-1, QPoint(-1, -1)));
+}
+
 void FileOperatorProxy::callBackFunction(const CallbackArgus args)
 {
     const QVariant &customValue = args->value(CallbackKey::kCustom);
@@ -329,15 +336,9 @@ void FileOperatorProxy::callBackFunction(const CallbackArgus args)
         // Folder also belong to files
         // touch file is sync operation
 
-        if (!args->value(CallbackKey::kSuccessed, false).toBool()) {
-            qWarning() << "call back function by:" << funcKey << ".And it is failed.";
-            return;
-        }
-
         auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
         if (Q_UNLIKELY(targets.count() != 1)) {
-            qWarning() << "unknow error.touch folder successed,target url is:" << targets;
-            return;
+            qWarning() << "unknow error.touch file successed,target urls is:" << targets;
         }
 
         d->callBackTouchFile(targets.first(), custom.second.toMap());

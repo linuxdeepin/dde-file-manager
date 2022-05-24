@@ -149,7 +149,7 @@ void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &
 
     auto newInfo = srcModel->fileInfo(srcModel->index(newUrl));
     if (Q_LIKELY(row < 0)) { // no old data, need to insert
-        if (!fileMap.contains(newUrl)) { // insert it if it does not exist.           
+        if (!fileMap.contains(newUrl)) { // insert it if it does not exist.
             row = fileList.count();
             q->beginInsertRows(q->rootIndex(), row, row);
             fileList.append(newUrl);
@@ -158,7 +158,17 @@ void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &
             return;
         }
     } else {
-        fileList.replace(row, newUrl);
+        if (fileList.contains(newUrl)) {
+            // e.g. a mv to b(b is existed)
+            q->beginRemoveRows(q->rootIndex(), row, row);
+            fileList.removeAt(row);
+            q->endRemoveRows();
+
+            row = fileList.indexOf(newUrl);
+        } else {
+            fileList.replace(row, newUrl);
+        }
+
         fileMap.remove(oldUrl);
         fileMap.insert(newUrl, newInfo);
         emit q->dataReplaced(oldUrl, newUrl);

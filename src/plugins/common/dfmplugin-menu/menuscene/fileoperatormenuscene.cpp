@@ -193,10 +193,7 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
                 rename->setDisabled(true);
         }
 
-        // todo(wangcl) disable open?
-
     } else {
-        // todo(wangcl) disable rename?
         bool disableRename = false;
         bool disableDelete = false;
         for (const auto &url : d->selectFiles) {
