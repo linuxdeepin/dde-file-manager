@@ -1117,6 +1117,8 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("set file permissions error", error);
     }
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    info->refresh();
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
                                           windowId, QList<QUrl>() << url, ok, error);
