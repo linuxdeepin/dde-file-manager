@@ -236,7 +236,7 @@ void ComputerController::mountDevice(quint64 winId, const DFMEntryFileInfoPointe
             }
             ComputerUtils::setCursorState(true);
 
-            DevMngIns->unlockBlockDevAsync(passwd, shellId, {}, [=](bool ok, DFMMOUNT::DeviceError err, const QString &newId) {
+            DevMngIns->unlockBlockDevAsync(shellId, passwd, {}, [=](bool ok, DFMMOUNT::DeviceError err, const QString &newId) {
                 ComputerUtils::setCursorState();
 
                 if (ok) {

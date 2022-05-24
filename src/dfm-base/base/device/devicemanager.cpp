@@ -581,6 +581,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
 
     auto func = [this, id, isOptical, cb](bool allUnmounted) {
         if (allUnmounted) {
+            QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a 'device busy' error.
             if (isOptical)
                 ejectBlockDevAsync(id, {}, cb);
             else
@@ -688,10 +689,17 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type)
         };
     }
 
-    if (type == DeviceType::kBlockDevice)
+    if (type == DeviceType::kBlockDevice) {
+        auto &&info = getBlockDevInfo(id);
+        if (info.value(DeviceProperty::kIsEncrypted).toBool() || info.value(DeviceProperty::kCryptoBackingDevice).toString() != "/")
+            return;
+        if (info.value(DeviceProperty::kHintIgnore).toBool())
+            return;
+
         mountBlockDevAsync(id, {}, cb);
-    else if (type == DeviceType::kProtocolDevice)
+    } else if (type == DeviceType::kProtocolDevice) {
         mountProtocolDevAsync(id);
+    }
 }
 
 DeviceManagerPrivate::DeviceManagerPrivate(DeviceManager *qq)

@@ -197,7 +197,7 @@ void BlockEntryFileEntity::refresh()
     datas = UniversalUtils::convertFromQMap(DevProxyMng->queryBlockInfo(id));
     auto clearBlkId = datas.value(DeviceProperty::kCleartextDevice).toString();
     if (datas.value(DeviceProperty::kIsEncrypted).toBool() && clearBlkId.length() > 1) {
-        auto clearBlkData = DevProxyMng->queryBlockInfo(id);
+        auto clearBlkData = DevProxyMng->queryBlockInfo(clearBlkId);
         datas.insert(BlockAdditionalProperty::kClearBlockProperty, clearBlkData);
     }
 }
