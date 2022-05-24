@@ -652,7 +652,7 @@ QString FileUtils::cutString(const QString &text, int dataByteSize, const QTextC
     return newText;
 }
 
-QString FileUtils::getSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)
+QString FileUtils::nonExistSymlinkFileName(const QUrl &fileUrl, const QUrl &parentUrl)
 {
     const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(fileUrl);
 
@@ -1153,15 +1153,15 @@ QString FileUtils::nonExistFileName(AbstractFileInfoPointer fromInfo, AbstractFi
     QString suffix = fromInfo->suffix();
     QString fileName = fromInfo->fileName();
     //在7z分卷压缩后的名称特殊处理7z.003
-    if (fileName.contains(QRegularExpression(".7z.[0-9]{3,10}$"))) {
-        fileBaseName = fileName.left(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")));
-        suffix = fileName.mid(fileName.indexOf(QRegularExpression(".7z.[0-9]{3,10}$")) + 1);
+    const QString &reg = ".7z.[0-9]{3,10}$";
+    if (fileName.contains(QRegularExpression(reg))) {
+        const int &index = fileName.indexOf(QRegularExpression(reg));
+        fileBaseName = fileName.left(index);
+        suffix = fileName.mid(index + 1);
     }
 
     int number = 0;
-
     QString newFileName;
-
     do {
         newFileName = number > 0 ? QString("%1(%2 %3)").arg(fileBaseName, copyText).arg(number) : QString("%1(%2)").arg(fileBaseName, copyText);
 

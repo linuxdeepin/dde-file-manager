@@ -306,7 +306,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // creat link
     if (actionId == ActionID::kCreateSymlink) {
-        QString linkName = FileUtils::getSymlinkFileName(d->focusFile);
+        QString linkName = FileUtils::nonExistSymlinkFileName(d->focusFile);
         QString linkPath { QFileDialog::getSaveFileName(nullptr, QObject::tr("Create symlink"), linkName) };
         if (!linkPath.isEmpty()) {
             dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,

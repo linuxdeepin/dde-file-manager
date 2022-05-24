@@ -240,7 +240,7 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
         const QList<QUrl> &urlsTrans = delegateServIns->urlsTransform(selectFiles);
         for (const auto &url : urlsTrans) {
-            QString linkName = FileUtils::getSymlinkFileName(url);
+            QString linkName = FileUtils::nonExistSymlinkFileName(url);
             QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
             dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
                                                   windowId,

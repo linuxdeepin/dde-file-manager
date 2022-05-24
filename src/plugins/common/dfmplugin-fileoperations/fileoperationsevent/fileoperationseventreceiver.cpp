@@ -500,7 +500,7 @@ QUrl FileOperationsEventReceiver::checkTargetUrl(const QUrl &url)
     if (!urlParent.isValid())
         return url;
 
-    const QString &nameValid = FileUtils::getSymlinkFileName(url, urlParent);
+    const QString &nameValid = FileUtils::nonExistSymlinkFileName(url, urlParent);
     if (!nameValid.isEmpty())
         return urlParent.toString() + QDir::separator() + nameValid;
 
@@ -853,16 +853,6 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
                                           windowId, urls, lists, ok, error);
     if (!successUrls.isEmpty())
         saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
-
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << lists));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
 }
 
 bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
@@ -890,16 +880,6 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
                                           windowId, urls, lists, ok, error);
     if (!successUrls.isEmpty())
         saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
-
-    if (callback) {
-        CallbackArgus args(new QMap<CallbackKey, QVariant>);
-        args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
-        args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << urls));
-        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << lists));
-        args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
-        args->insert(CallbackKey::kCustom, custom);
-        callback(args);
-    }
 }
 
 QString FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
