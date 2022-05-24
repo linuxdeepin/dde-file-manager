@@ -643,7 +643,6 @@ void AddressBar::paintEvent(QPaintEvent *e)
 void AddressBar::showEvent(QShowEvent *event)
 {
     d->timer.start();
-    stopSpinner();
     d->updateIndicatorIcon();
     return QLineEdit::showEvent(event);
 }

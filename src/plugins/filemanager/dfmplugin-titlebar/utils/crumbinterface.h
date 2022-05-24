@@ -52,6 +52,7 @@ public:
     explicit CrumbInterface(QObject *parent = nullptr);
 
     void setKeepAddressBar(bool keep);
+    bool isKeepAddressBar();
     void processAction(ActionType type);
     void crumbUrlChangedBehavior(const QUrl &url);
     FAKE_VIRTUAL bool supportedUrl(const QUrl &url);

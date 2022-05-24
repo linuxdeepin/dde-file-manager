@@ -145,6 +145,7 @@ void TitleBarWidget::initConnect()
     });
     connect(crumbBar, &CrumbBar::hideAddressBar, this, [this](bool cd) {
         addressBar->hide();
+        crumbBar->show();
         searchBarDeactivated();
         if (cd)
             TitleBarEventCaller::sendCd(this, crumbBar->lastUrl());
@@ -217,7 +218,7 @@ bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)
         return false;
     }
 
-    if (watched == addressBar && event->type() == QEvent::Hide) {
+    if (watched == addressBar && event->type() == QEvent::Hide && !crumbBar->controller()->isKeepAddressBar()) {
         showCrumbBar();
         return true;
     }

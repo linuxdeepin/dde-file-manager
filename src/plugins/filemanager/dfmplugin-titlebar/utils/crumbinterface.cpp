@@ -38,6 +38,11 @@ void CrumbInterface::setKeepAddressBar(bool keep)
     keepAddr = keep;
 }
 
+bool CrumbInterface::isKeepAddressBar()
+{
+    return keepAddr;
+}
+
 void CrumbInterface::processAction(CrumbInterface::ActionType type)
 {
     switch (type) {
