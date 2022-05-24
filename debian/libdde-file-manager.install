@@ -5,6 +5,7 @@ usr/share/dde-file-manager/mimetypes/*
 usr/share/dde-file-manager/mimetypeassociations/*
 usr/share/dde-file-manager/extensions/appEntry/.readme
 usr/share/icons/*
+usr/share/dsg/configs/org.deepin.dde.file-manager/*.json
 
 usr/lib/*/dde-file-manager/plugins/*
 usr/lib/*/dde-file-manager/tools/*

@@ -200,8 +200,9 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
  icon includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
 
 meta_file.files += \
-  tacticsconfig/org.deepin.dde.file-manager.json
-meta_file.base = ""
+  policyconfig/org.deepin.dde.file-manager.json
+meta_file.appid = org.deepin.dde.file-manager
+meta_file.base = policyconfig
 
 DCONFIG_META_FILES += meta_file
 load(dtk_install_dconfig)
