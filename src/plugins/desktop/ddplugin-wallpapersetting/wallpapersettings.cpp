@@ -50,6 +50,8 @@ const int WallpaperSettingsPrivate::kHeaderSwitcherHeight = 45;
 const int WallpaperSettingsPrivate::kFrameHeight = 130;
 const int WallpaperSettingsPrivate::kListHeight = 100;
 
+static constexpr char kDefaultWallpaperPath[] { "/usr/share/backgrounds/default_background.jpg" };
+
 static inline QString covertUrlToLocalPath(const QString &url) {
     if (url.startsWith("/"))
         return url;
@@ -330,14 +332,14 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
         QDBusReply<QString> reply = call.reply();
         QString value = reply.value();
         auto wallapers = processListReply(value);
-        QString currentPath = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
-        if (currentPath.contains("/usr/share/backgrounds/default_background.jpg")) {
+        actualEffectivedWallpaper = wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName);
+        if (actualEffectivedWallpaper.contains(kDefaultWallpaperPath)) {
             QString errString;
             QUrl currentUrl;
-            if (currentPath.startsWith("/"))
-                currentUrl = QUrl::fromLocalFile(currentPath);
+            if (actualEffectivedWallpaper.startsWith("/"))
+                currentUrl = QUrl::fromLocalFile(actualEffectivedWallpaper);
             else
-                currentUrl = QUrl(currentPath);
+                currentUrl = QUrl(actualEffectivedWallpaper);
 
             AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(currentUrl, true, &errString);
             while (fileInfo && fileInfo->isSymLink()) {
@@ -349,11 +351,13 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             }
 
             if (!fileInfo) {
-                qDebug() << errString << "get final file info failed:" << currentUrl << currentPath;
+                qDebug() << errString << "get final file info failed:" << currentUrl << actualEffectivedWallpaper;
             } else {
-                currentPath = fileInfo->url().toString();
+                actualEffectivedWallpaper = fileInfo->url().toString();
             }
         }
+        if (actualEffectivedWallpaper.startsWith("file://"))
+            actualEffectivedWallpaper.remove("file://");
 
         for (auto iter = wallapers.begin(); iter != wallapers.end(); ++iter) {
             QString path = iter->first;
@@ -362,6 +366,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
 
             WallpaperItem *item = wallpaperList->addItem(covertUrlToLocalPath(path));
             item->setSketch(path);
+            // only item is greeterbackground,deletable is false.
             item->setDeletable(iter->second);
             item->addButton(DESKTOP_BUTTON_ID, tr("Desktop","button"), BUTTON_NARROW_WIDTH, 0, 0, 1, 1);
             item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Lock Screen","button"), BUTTON_NARROW_WIDTH, 0, 1, 1, 1);
@@ -371,7 +376,7 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             connect(item, &WallpaperItem::tab, this, &WallpaperSettingsPrivate::onItemTab);
             connect(item, &WallpaperItem::backtab, this, &WallpaperSettingsPrivate::onItemBacktab);
 
-            if (path.remove("file://") == currentPath.remove("file://")) { //均有机会出现头部为file:///概率
+            if (path.remove("file://") == actualEffectivedWallpaper) { //均有机会出现头部为file:///概率
                 emit item->pressed(item);
             }
         }
@@ -388,21 +393,12 @@ void WallpaperSettingsPrivate::onItemPressed(const QString &itemData)
     if (mode == WallpaperSettings::Mode::WallpaperMode) {
         wmInter->SetTransientBackground(itemData);
         wallpaperPrview->setWallpaper(screenName, itemData);
-        cureentWallpaper = itemData;
+        currentSelectedWallpaper = itemData;
 
         // 点击当前壁纸不显示删除按钮
         if (closeButton && closeButton->isVisible())
             closeButton->hide();
 
-        QStringList used = wallpaperPrview->wallpaper().values();
-        {
-            for (int i = 0; i < wallpaperList->count(); ++i) {
-                if (WallpaperItem *item = dynamic_cast<WallpaperItem *>(wallpaperList->itemAt(i))) {
-                    if (item->itemData().contains("custom-wallpapers"))
-                        item->setDeletable(!used.contains(item->itemData()));
-                }
-            }
-        }
     } else {
         screenSaverIfs->Preview(itemData, 1);
         qDebug() << "screensaver start" << itemData;
@@ -453,7 +449,9 @@ void WallpaperSettingsPrivate::onItemBacktab(WallpaperItem *item)
 void WallpaperSettingsPrivate::handleNeedCloseButton(const QString &itemData, const QPoint &pos)
 {
     closeButton->setProperty("background", itemData);
-    if (!itemData.isEmpty()) {
+    if (!itemData.isEmpty()
+        && itemData != currentSelectedWallpaper
+        && itemData != actualEffectivedWallpaper) {
         closeButton->adjustSize();
         closeButton->move(pos.x() - 10, pos.y() - 10);
         closeButton->show();
@@ -841,7 +839,7 @@ void WallpaperSettings::refreshList()
 
 QPair<QString, QString> WallpaperSettings::currentWallpaper() const
 {
-    return QPair<QString, QString>(d->screenName, d->cureentWallpaper);
+    return QPair<QString, QString>(d->screenName, d->currentSelectedWallpaper);
 }
 
 void WallpaperSettings::onGeometryChanged()
@@ -880,7 +878,7 @@ void WallpaperSettings::hideEvent(QHideEvent *event)
     d->regionMonitor->unregisterRegion();
 
     if (d->mode == Mode::WallpaperMode) {
-        if (!d->cureentWallpaper.isEmpty())
+        if (!d->currentSelectedWallpaper.isEmpty())
             d->wmInter->SetTransientBackground("");
 
         if (ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF()))
@@ -1113,14 +1111,14 @@ void WallpaperSettings::applyToDesktop()
         return;
     }
 
-    if (d->cureentWallpaper.isEmpty()) {
+    if (d->currentSelectedWallpaper.isEmpty()) {
         qWarning() << "cureentWallpaper is empty";
         return;
     }
 
-    qInfo() << "dbus Appearance SetMonitorBackground is called " << d->screenName << " " << d->cureentWallpaper;
+    qInfo() << "dbus Appearance SetMonitorBackground is called " << d->screenName << " " << d->currentSelectedWallpaper;
     QList<QVariant> argumentList;
-    argumentList << QVariant::fromValue(d->screenName) << QVariant::fromValue(d->cureentWallpaper);
+    argumentList << QVariant::fromValue(d->screenName) << QVariant::fromValue(d->currentSelectedWallpaper);
     d->appearanceIfs->asyncCallWithArgumentList(QStringLiteral("SetMonitorBackground"), argumentList);
     qInfo() << "dbus Appearance SetMonitorBackground end";
 
@@ -1134,13 +1132,13 @@ void WallpaperSettings::applyToGreeter()
         return;
     }
 
-    if (d->cureentWallpaper.isEmpty()) {
+    if (d->currentSelectedWallpaper.isEmpty()) {
         qWarning() << "cureentWallpaper is empty";
         return;
     }
 
-    qInfo() << "dbus Appearance greeterbackground is called " << d->cureentWallpaper;
-    d->appearanceIfs->Set("greeterbackground", d->cureentWallpaper);
+    qInfo() << "dbus Appearance greeterbackground is called " << d->currentSelectedWallpaper;
+    d->appearanceIfs->Set("greeterbackground", d->currentSelectedWallpaper);
     qInfo() << "dbus Appearance greeterbackground end ";
 }
 

@@ -88,7 +88,8 @@ public:
 public:
     WallpaperSettings::Mode mode;
     QString screenName;
-    QString cureentWallpaper;
+    QString actualEffectivedWallpaper;
+    QString currentSelectedWallpaper;
     WallpaperList *wallpaperList = nullptr;
     WMInter *wmInter = nullptr;
     AppearanceIfs *appearanceIfs = nullptr;
