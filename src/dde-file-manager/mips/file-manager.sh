@@ -14,7 +14,7 @@ target=$XDG_RUNTIME_DIR/dde-file-manager
 if [ ! -S $target ];then
         target=/tmp/dde-file-manager
         if [ ! -S $target ];then
-                dde-file-manager "$@"
+                dde-file-manager "$@" &
                 exit "$?"
         fi
 fi
@@ -22,5 +22,5 @@ fi
 echo $data | socat - $target
 
 if [ $? != 0 ]; then
-        dde-file-manager "$@"
+        dde-file-manager "$@" &
 fi
