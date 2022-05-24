@@ -27,6 +27,7 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QLabel>
+#include <QAbstractButton>
 #include <DPasswordEdit>
 
 DFMBASE_USE_NAMESPACE
@@ -74,6 +75,9 @@ void MountSecretDiskAskPasswordDialog::initUI()
 
     addContent(content);
     addButtons(buttonTexts);
+    auto unlockBtn = getButton(1);
+    if (unlockBtn)
+        unlockBtn->setEnabled(false);
     setSpacing(10);
     setDefaultButton(1);
     setIcon(QIcon::fromTheme("dialog-warning"));
@@ -81,7 +85,12 @@ void MountSecretDiskAskPasswordDialog::initUI()
 
 void MountSecretDiskAskPasswordDialog::initConnect()
 {
-    connect(this, SIGNAL(buttonClicked(int, QString)), this, SLOT(handleButtonClicked(int, QString)));
+    connect(this, &DDialog::buttonClicked, this, &MountSecretDiskAskPasswordDialog::handleButtonClicked);
+    connect(passwordLineEdit, &DPasswordEdit::textChanged, this, [this](const QString &txt) {
+        auto unlockBtn = getButton(1);
+        if (unlockBtn)
+            unlockBtn->setEnabled(txt.length() != 0);
+    });
 }
 
 void MountSecretDiskAskPasswordDialog::handleButtonClicked(int index, QString text)
