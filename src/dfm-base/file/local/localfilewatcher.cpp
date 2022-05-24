@@ -119,17 +119,17 @@ void LocalFileWatcherPrivate::initConnect()
 
 void LocalFileWatcher::notifyFileAdded(const QUrl &url)
 {
-    subfileCreated(url);
+    emit subfileCreated(url);
 }
 
 void LocalFileWatcher::notifyFileChanged(const QUrl &url)
 {
-    fileAttributeChanged(url);
+    emit fileAttributeChanged(url);
 }
 
 void LocalFileWatcher::notifyFileDeleted(const QUrl &url)
 {
-    fileDeleted(url);
+    emit fileDeleted(url);
 }
 
 DFMBASE_END_NAMESPACE

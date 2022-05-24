@@ -28,6 +28,7 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/utils/universalutils.h"
 
 DFMBASE_USE_NAMESPACE
 DPOPTICAL_USE_NAMESPACE
@@ -75,37 +76,38 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     auto &&map = DevProxyMng->queryBlockInfo(id);
     QString mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
     dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(mntPoint);
-
-    // TODO(zhangs):
-    /*
-     * blank disc doesn't mount
-     * ejecting disc by pressing the eject button doesn't properly remove the mount point
-     * therefore this is always needed as a "last resort".
-     */
 }
 
 void MasteredMediaFileWatcher::onFileDeleted(const QUrl &url)
 {
-    QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
-    emit fileDeleted(realUrl);
+    if (!UniversalUtils::urlEquals(url, dptr->proxyStaging->url())) {
+        QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
+        emit fileDeleted(realUrl);
+    }
 }
 
 void MasteredMediaFileWatcher::onFileAttributeChanged(const QUrl &url)
 {
-    QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
-    emit fileAttributeChanged(realUrl);
+    if (!UniversalUtils::urlEquals(url, dptr->proxyStaging->url())) {
+        QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
+        emit fileAttributeChanged(realUrl);
+    }
 }
 
 void MasteredMediaFileWatcher::onFileRename(const QUrl &fromUrl, const QUrl &toUrl)
 {
-    QUrl realFromUrl { OpticalHelper::tansToBurnFile(fromUrl) };
-    QUrl realToUrl { OpticalHelper::tansToBurnFile(toUrl) };
-
-    emit fileRename(realFromUrl, realToUrl);
+    auto &&stagingUrl { dptr->proxyStaging->url() };
+    if (!UniversalUtils::urlEquals(fromUrl, stagingUrl) || !UniversalUtils::urlEquals(toUrl, stagingUrl)) {
+        QUrl realFromUrl { OpticalHelper::tansToBurnFile(fromUrl) };
+        QUrl realToUrl { OpticalHelper::tansToBurnFile(toUrl) };
+        emit fileRename(realFromUrl, realToUrl);
+    }
 }
 
 void MasteredMediaFileWatcher::onSubfileCreated(const QUrl &url)
 {
-    QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
-    emit subfileCreated(realUrl);
+    if (!UniversalUtils::urlEquals(url, dptr->proxyStaging->url())) {
+        QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
+        emit subfileCreated(realUrl);
+    }
 }

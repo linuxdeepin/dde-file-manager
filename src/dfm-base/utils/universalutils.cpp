@@ -23,8 +23,10 @@
 #include "universalutils.h"
 #include "dfm_event_defines.h"
 
-#include <QUrl>
 #include <DDBusSender>
+
+#include <QDir>
+#include <QUrl>
 #include <QCoreApplication>
 #include <QApplication>
 #include <QThread>
@@ -349,7 +351,13 @@ QVariantHash UniversalUtils::convertFromQMap(const QVariantMap map)
 
 bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
 {
-    return url1 == url2 || (url1.scheme() == url2.scheme() && url1.path() == url2.path());
+    if (url1 == url2)
+        return true;
+    if ((url1.scheme() == url2.scheme() && url1.path() == url2.path()))
+        return true;
+    if (url1.scheme() == url2.scheme() && QDir(url1.path()) == QDir(url2.path()))
+        return true;
+    return false;
 }
 
 QString UniversalUtils::getCurrentUser()

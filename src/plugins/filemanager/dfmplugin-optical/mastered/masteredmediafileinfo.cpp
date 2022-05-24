@@ -145,6 +145,9 @@ bool MasteredMediaFileInfo::canDrop()
 
 bool MasteredMediaFileInfo::canRename() const
 {
+    if (dptr->proxy)
+        return dptr->proxy->canRename();
+
     return false;
 }
 

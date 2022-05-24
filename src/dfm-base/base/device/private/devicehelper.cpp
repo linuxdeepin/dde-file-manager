@@ -318,7 +318,7 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
     Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
     Application::dataPersistence()->sync();
 
-    qDebug() << "optical usage persistented: " << datas;
+    qInfo() << "optical usage persistented: " << datas;
 }
 
 void DeviceHelper::readOpticalInfo(QVariantMap &datas)
@@ -335,11 +335,11 @@ void DeviceHelper::readOpticalInfo(QVariantMap &datas)
         datas[DeviceProperty::kOpticalMediaType] = info.value(kBurnMediaType).toInt();
         datas[DeviceProperty::kOpticalWriteSpeed] = info.value(kBurnWriteSpeed).toStringList();
 
-        qDebug() << "optical usage loaded: " << tag << endl
-                 << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << endl
-                 << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << endl
-                 << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << endl
-                 << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << endl
-                 << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
+        qInfo() << "optical usage loaded: " << tag << endl
+                << "sizeTotal: " << datas.value(DeviceProperty::kSizeTotal) << endl
+                << "sizeUsed: " << datas.value(DeviceProperty::kSizeUsed) << endl
+                << "sizeFree: " << datas.value(DeviceProperty::kSizeFree) << endl
+                << "mediaType: " << datas.value(DeviceProperty::kOpticalMediaType) << endl
+                << "speed: " << datas.value(DeviceProperty::kOpticalWriteSpeed);
     }
 }
