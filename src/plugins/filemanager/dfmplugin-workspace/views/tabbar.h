@@ -52,6 +52,7 @@ public:
     void setCurrentUrl(const QUrl &url);
     void setCurrentView(DFMBASE_NAMESPACE::AbstractBaseView *view);
     void closeTab(quint64 winId, const QUrl &url);
+    int count() const;
 
 public slots:
     void onTabCloseButtonHovered(int closingIndex);
@@ -93,7 +94,6 @@ private:
     void updateScreen();
     QSize tabSizeHint(const int &index);
     void setTabText(const int &index, const QString &text);
-    int count() const;
     void handleTabAnimationFinished(const int index);
     bool isMountedDevPath(const QUrl &url);
 

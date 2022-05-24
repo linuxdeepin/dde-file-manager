@@ -107,11 +107,18 @@ dpf::Plugin::ShutdownFlag Workspace::stop()
 
 void Workspace::onWindowOpened(quint64 windId)
 {
+    DFMBASE_USE_NAMESPACE
+
     auto window = GlobalPrivate::windowService->findWindowById(windId);
     Q_ASSERT_X(window, "WorkSpace", "Cannot find window by id");
     WorkspaceWidget *workspace = new WorkspaceWidget;
     WorkspaceHelper::instance()->addWorkspace(windId, workspace);
     window->installWorkSpace(workspace);
+
+    connect(window, &FileManagerWindow::reqActivateNextTab, workspace, &WorkspaceWidget::onNextTab);
+    connect(window, &FileManagerWindow::reqActivatePreviousTab, workspace, &WorkspaceWidget::onPreviousTab);
+    connect(window, &FileManagerWindow::reqCloseCurrentTab, workspace, &WorkspaceWidget::onCloseCurrentTab);
+    connect(window, &FileManagerWindow::reqActivateTabByIndex, workspace, &WorkspaceWidget::onSetCurrentTabIndex);
 }
 
 void Workspace::onWindowClosed(quint64 windId)

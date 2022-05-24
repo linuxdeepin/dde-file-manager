@@ -28,8 +28,6 @@
 #include "dfm-base/interfaces/abstractframe.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include "dfm-base/dfm_global_defines.h"
-
 #include "dtkwidget_global.h"
 
 #include <QUrl>
@@ -87,6 +85,10 @@ public slots:
     void showNewTabButton();
     void hideNewTabButton();
     void onNewTabButtonClicked();
+    void onNextTab();
+    void onPreviousTab();
+    void onCloseCurrentTab();
+    void onSetCurrentTabIndex(const int index);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

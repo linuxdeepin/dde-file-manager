@@ -405,8 +405,18 @@ void FileView::wheelEvent(QWheelEvent *event)
 
 void FileView::keyPressEvent(QKeyEvent *event)
 {
-    if (!d->shortcutHelper->processKeyPressEvent(event))
+    if (!d->shortcutHelper->processKeyPressEvent(event)) {
+        switch (event->modifiers()) {
+        case Qt::AltModifier:
+        case Qt::AltModifier | Qt::KeypadModifier:
+            switch (event->key()) {
+            case Qt::Key_Left:
+            case Qt::Key_Right:
+                return QWidget::keyPressEvent(event);
+            }
+        }
         return DListView::keyPressEvent(event);
+    }
 }
 
 void FileView::onScalingValueChanged(const int value)

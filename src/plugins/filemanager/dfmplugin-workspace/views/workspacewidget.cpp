@@ -202,6 +202,17 @@ QRectF WorkspaceWidget::itemRect(const QUrl &url, const Global::ItemRoles role)
     return {};
 }
 
+void WorkspaceWidget::onCloseCurrentTab()
+{
+    if (tabBar->count() > 1)
+        tabBar->removeTab(tabBar->getCurrentIndex());
+}
+
+void WorkspaceWidget::onSetCurrentTabIndex(const int index)
+{
+    tabBar->setCurrentIndex(index);
+}
+
 void WorkspaceWidget::onOpenUrlInNewTab(quint64 windowId, const QUrl &url)
 {
     quint64 thisWindowID = WorkspaceHelper::instance()->windowId(this);
@@ -248,6 +259,16 @@ void WorkspaceWidget::onNewTabButtonClicked()
 {
     QUrl url = currentUrl();
     openNewTab(url);
+}
+
+void WorkspaceWidget::onNextTab()
+{
+    tabBar->activateNextTab();
+}
+
+void WorkspaceWidget::onPreviousTab()
+{
+    tabBar->activatePreviousTab();
 }
 
 void WorkspaceWidget::keyPressEvent(QKeyEvent *event)
