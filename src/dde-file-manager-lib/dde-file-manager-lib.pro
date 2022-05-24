@@ -117,17 +117,6 @@ isEmpty(INCLUDE_INSTALL_DIR) {
 
 includes.files += $$PWD/interfaces/*.h $$PWD/interfaces/plugins/*.h
 
-includes_private.path = $${includes.path}/private
-includes_private.files += $$PWD/interfaces/private/*.h
-
-isEmpty(INCLUDE_INSTALL_DIR) {
-    gvfs_includes.path = $$PREFIX/include/dde-file-manager/gvfs
-} else {
-    gvfs_includes.path = $$INCLUDE_INSTALL_DIR/dde-file-manager/gvfs
-}
-
-gvfs_includes.files += $$PWD/gvfs/*.h
-
 isEmpty(INCLUDE_INSTALL_DIR) {
     plugin_includes.path = $$PREFIX/include/dde-file-manager/dde-file-manager-plugins
 } else {
@@ -208,7 +197,7 @@ appentry.path = $$APPSHAREDIR/extensions/appEntry
 appentry.files = plugins/.readme
 
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations appentry \
- icon includes includes_private gvfs_includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
+ icon includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
 
 meta_file.files += \
   tacticsconfig/org.deepin.dde.file-manager.json
