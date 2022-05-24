@@ -40,6 +40,7 @@
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <DHorizontalLine>
 #include <DApplicationHelper>
@@ -135,7 +136,8 @@ bool TrashHelper::showTopWidget(QWidget *w, const QUrl &url)
 {
     Q_UNUSED(w)
 
-    if (url == TrashHelper::fromTrashFile("/") && !TrashHelper::isEmpty()) {
+    auto rootUrl = TrashHelper::fromTrashFile("/");
+    if (UniversalUtils::urlEquals(url, rootUrl) && !TrashHelper::isEmpty()) {
         return true;
     } else {
         return false;
