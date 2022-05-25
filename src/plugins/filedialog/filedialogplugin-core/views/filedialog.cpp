@@ -950,6 +950,8 @@ void FileDialog::initializeUi()
     // 如果是wanyland平台，将弹出的文件框居中
     if (WindowUtils::isWayLand())
         Dtk::Widget::moveToCenter(this);
+
+    CoreEventsCaller::setMenuDisbaled();
 }
 
 void FileDialog::initConnect()

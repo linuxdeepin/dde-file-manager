@@ -53,6 +53,9 @@ public:
     static bool registerSortFunc(const QString &subGroup, DSB_FM_NAMESPACE::SideBar::SortFunc func);
     static DSB_FM_NAMESPACE::SideBar::SortFunc sortFunc(const QString &subGroup);
 
+public:
+    static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.
+
 private:
     static QMutex &mutex();
     static QMap<quint64, SideBarWidget *> kSideBarMap;

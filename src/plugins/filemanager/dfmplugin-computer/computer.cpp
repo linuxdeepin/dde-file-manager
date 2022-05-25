@@ -68,12 +68,13 @@ void Computer::initialize()
     connect(WindowsService::service(), &WindowsService::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
     connect(WindowsService::service(), &WindowsService::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
     connect(WindowsService::service(), &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
+
+    bindEvents();
 }
 
 bool Computer::start()
 {
     dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
-    bindEvents();
     return true;
 }
 

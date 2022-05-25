@@ -25,7 +25,7 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
@@ -34,6 +34,11 @@ class SideBar : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "sidebar.json")
+
+    DPF_EVENT_NAMESPACE(DPSIDEBAR_NAMESPACE)
+
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_SetContextMenuEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
 
 public:
     virtual void initialize() override;

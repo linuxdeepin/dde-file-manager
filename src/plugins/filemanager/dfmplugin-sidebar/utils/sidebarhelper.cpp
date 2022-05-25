@@ -39,6 +39,7 @@ DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
 QMap<QString, SideBar::SortFunc> SideBarHelper::kSortFuncs {};
+bool SideBarHelper::contextMenuEnabled { true };
 
 QList<SideBarWidget *> SideBarHelper::allSideBar()
 {

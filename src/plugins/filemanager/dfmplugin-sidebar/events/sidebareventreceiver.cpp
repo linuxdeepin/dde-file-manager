@@ -27,7 +27,7 @@
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPSIDEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -40,7 +40,11 @@ SideBarEventReceiver *SideBarEventReceiver::instance()
 
 void SideBarEventReceiver::connectService()
 {
-    dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kItemVisibleSetting, this, &SideBarEventReceiver::handleItemVisibleSetting);
+    static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPSIDEBAR_NAMESPACE) };
+    // TODO(zhangs): use slot event
+    dpfSignalDispatcher->subscribe(SideBar::EventType::kItemVisibleSetting, this, &SideBarEventReceiver::handleItemVisibleSetting);
+
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetContextMenuEnable", this, &SideBarEventReceiver::handleSetContextMenuEnable);
 }
 
 void SideBarEventReceiver::handleItemVisibleSetting(const QUrl &url, bool visible)
@@ -53,6 +57,11 @@ void SideBarEventReceiver::handleItemVisibleSetting(const QUrl &url, bool visibl
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar)
         sidebar->setItemVisible(url, visible);
+}
+
+void SideBarEventReceiver::handleSetContextMenuEnable(bool enable)
+{
+    SideBarHelper::contextMenuEnabled = enable;
 }
 
 SideBarEventReceiver::SideBarEventReceiver(QObject *parent)

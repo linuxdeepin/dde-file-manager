@@ -40,6 +40,7 @@ public:
     static void setSidebarItemVisible(const QUrl &url, bool visible);
     static void setSelectionMode(QWidget *sender, const QAbstractItemView::SelectionMode mode);
     static void setEnabledSelectionModes(QWidget *sender, const QList<QAbstractItemView::SelectionMode> &modes);
+    static void setMenuDisbaled();
 };
 
 DIALOGCORE_END_NAMESPACE

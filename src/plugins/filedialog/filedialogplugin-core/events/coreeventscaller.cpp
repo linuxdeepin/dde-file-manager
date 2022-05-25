@@ -71,3 +71,9 @@ void CoreEventsCaller::setEnabledSelectionModes(QWidget *sender, const QList<QAb
     };
     CoreHelper::delayInvokeProxy(func, id, sender);
 }
+
+void CoreEventsCaller::setMenuDisbaled()
+{
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_SetContextMenuEnable", false);
+    dpfSlotChannel->push("dfmplugin_computer", "slot_SetContextMenuEnable", false);
+}

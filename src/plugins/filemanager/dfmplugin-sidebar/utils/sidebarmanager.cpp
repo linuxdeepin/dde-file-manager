@@ -48,6 +48,9 @@ void SideBarManager::runCd(SideBarItem *item, quint64 windowId)
 
 void SideBarManager::runContextMenu(SideBarItem *item, quint64 windowId, const QPoint &globalPos)
 {
+    if (!SideBarHelper::contextMenuEnabled)
+        return;
+
     if (!item)
         return;
 

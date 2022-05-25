@@ -39,6 +39,7 @@ public:
 
 public slots:
     void handleItemVisibleSetting(const QUrl &url, bool visible);
+    void handleSetContextMenuEnable(bool enable);
 
 private:
     explicit SideBarEventReceiver(QObject *parent = nullptr);
