@@ -783,7 +783,7 @@ bool FileView::cdUp()
     QUrl parentUrl = UrlRoute::urlParent(oldCurrentUrl);
 
     if (parentUrl.isValid()) {
-        FileOperatorHelperIns->openFiles(this, { parentUrl });
+        FileOperatorHelperIns->openFilesByMode(this, { parentUrl }, DirOpenMode::kOpenInCurrentWindow);
         return true;
     } else {
         auto windowId = WorkspaceHelper::instance()->windowId(this);
