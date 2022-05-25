@@ -161,7 +161,6 @@ void FileView::setDelegate(Global::ViewMode mode, BaseItemDelegate *view)
 
 bool FileView::setRootUrl(const QUrl &url)
 {
-    model()->resetFilter();
     clearSelection();
 
     //Todo(yanghao&lzj):!url.isSearchFile()
@@ -586,6 +585,16 @@ void FileView::setEnabledSelectionModes(const QList<QAbstractItemView::Selection
     d->enabledSelectionModes = modes;
     if (!modes.contains(selectionMode()))
         resetSelectionModes();
+}
+
+void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
+{
+    if (role == model()->sortRole() && order == model()->sortOrder())
+        return;
+
+    int column = model()->getColumnByRole(role);
+
+    d->headerView->setSortIndicator(column, order);
 }
 
 QModelIndex FileView::currentPressIndex() const
