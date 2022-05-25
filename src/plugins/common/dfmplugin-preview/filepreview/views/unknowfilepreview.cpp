@@ -127,5 +127,5 @@ void UnknowFilePreview::setFileInfo(const AbstractFileInfoPointer &info)
 void UnknowFilePreview::updateFolderSizeCount(qint64 size, int filesCount, int directoryCount)
 {
     sizeLabel->setText(QObject::tr("Size: %1").arg(FileUtils::formatSize(size)));
-    typeLabel->setText(QObject::tr("Items: %1").arg(filesCount));
+    typeLabel->setText(QObject::tr("Items: %1").arg(filesCount + directoryCount));
 }
