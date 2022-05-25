@@ -29,6 +29,8 @@
 #include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/menu/menuservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
+
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -109,6 +111,8 @@ void Trash::addFileOperations()
 {
     TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(Global::kTrash, TrashMenuCreator::name());
+
+    propertyServIns->registerBasicViewFiledExpand(TrashHelper::propetyExtensionFunc, TrashHelper::scheme());
 
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;

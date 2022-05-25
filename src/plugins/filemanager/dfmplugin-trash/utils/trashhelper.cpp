@@ -184,6 +184,32 @@ void TrashHelper::emptyTrash(const quint64 windowId)
     dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Trash::EventType::kEmptyTrash, windowId);
 }
 
+TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
+{
+    using BasicExpandType = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType;
+    using BasicExpand = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand;
+    using BasicFieldExpandEnum = DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum;
+
+    const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+
+    ExpandFieldMap map;
+    {
+        // source path
+        BasicExpand expand;
+        const QString &sourcePath = info->redirectedFileUrl().path();
+        expand.insert(BasicFieldExpandEnum::kFileModifiedTime, qMakePair(QObject::tr("Source path"), sourcePath));
+        map[BasicExpandType::kFieldInsert] = expand;
+    }
+    {
+        // trans trash path
+        BasicExpand expand;
+        expand.insert(BasicFieldExpandEnum::kFilePosition, qMakePair(QObject::tr("Location"), TrashHelper::toLocalFile(url).path()));
+        map[BasicExpandType::kFieldReplace] = expand;
+    }
+
+    return map;
+}
+
 bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
 {
     if (urls.isEmpty())

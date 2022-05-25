@@ -170,6 +170,13 @@ bool TrashFileInfo::canDrop()
     return url() == TrashHelper::rootUrl();
 }
 
+QUrl TrashFileInfo::redirectedFileUrl() const
+{
+    if (!d->originalFilePath.isEmpty())
+        return QUrl::fromLocalFile(d->originalFilePath);
+    return url();
+}
+
 void TrashFileInfoPrivate::updateInfo()
 {
     const QString &filePath = proxy->absoluteFilePath();

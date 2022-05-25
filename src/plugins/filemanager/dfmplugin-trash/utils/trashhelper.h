@@ -29,6 +29,7 @@
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+#include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -51,6 +52,7 @@ class TrashHelper final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(TrashHelper)
+    using ExpandFieldMap = QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand>;
 
 public:
     static TrashHelper *instance();
@@ -76,6 +78,8 @@ public:
     static QUrl toLocalFile(const QUrl &url);
     static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);
+    static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
+
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool detailViewIcon(const QUrl &url, QString *iconName);
 

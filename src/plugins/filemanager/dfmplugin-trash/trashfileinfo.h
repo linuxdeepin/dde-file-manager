@@ -48,6 +48,7 @@ public:
     virtual bool isWritable() const override;
     bool isDir() const override;
     bool canDrop() override;
+    QUrl redirectedFileUrl() const override;
 
 private:
     TrashFileInfoPrivate *d;
