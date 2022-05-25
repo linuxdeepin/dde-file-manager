@@ -446,6 +446,50 @@ JobHandlePointer FileOperationsEventReceiver::doCleanTrash(const quint64 windowI
     return handle;
 }
 
+bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url, QUrl &targetUrl)
+{
+    bool ok = false;
+    QString error;
+    if (!url.isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(url.scheme());
+        }
+        if (function && function->makeDir) {
+            ok = function->makeDir(windowId, url, &error);
+            if (!ok) {
+                dialogManager->showErrorDialog("make dir error", error);
+            }
+            // TODO:: make dir finished need to send make dir finished event
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+                                                  windowId, QList<QUrl>() << url, ok, error);
+            return ok;
+        }
+        return handleOperationMkdir(windowId, url);
+    }
+
+    QString newPath = newDocmentName(url.path(), QString(), CreateFileType::kCreateFileTypeFolder);
+    if (newPath.isEmpty())
+        return false;
+
+    QUrl urlNew;
+    urlNew.setScheme(url.scheme());
+    urlNew.setPath(newPath);
+
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    ok = fileHandler.mkdir(urlNew);
+    if (!ok) {
+        error = fileHandler.errorString();
+        dialogManager->showErrorDialog("make dir error", error);
+    }
+    targetUrl = urlNew;
+
+    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+                                          windowId, QList<QUrl>() << url, ok, error);
+    return ok;
+}
+
 QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId, const QUrl url, const CreateFileType fileType, const QString suffix,
                                                           const QVariant custom, OperatorCallback callbackImmediately)
 {
@@ -889,45 +933,8 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 
 bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, const QUrl url)
 {
-    bool ok = false;
-    QString error;
-    if (!url.isLocalFile()) {
-        FileOperationsFunctions function { nullptr };
-        {
-            QMutexLocker lk(functionsMutex.data());
-            function = this->functions.value(url.scheme());
-        }
-        if (function && function->makeDir) {
-            ok = function->makeDir(windowId, url, &error);
-            if (!ok) {
-                dialogManager->showErrorDialog("make dir error", error);
-            }
-            // TODO:: make dir finished need to send make dir finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
-            return ok;
-        }
-        return handleOperationMkdir(windowId, url);
-    }
-
-    QString newPath = newDocmentName(url.path(), QString(), CreateFileType::kCreateFileTypeFolder);
-    if (newPath.isEmpty())
-        return false;
-
-    QUrl urlNew;
-    urlNew.setScheme(url.scheme());
-    urlNew.setPath(newPath);
-
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    ok = fileHandler.mkdir(urlNew);
-    if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog("make dir error", error);
-    }
-    // TODO:: make dir finished need to send make dir finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                          windowId, QList<QUrl>() << url, ok, error);
-    return ok;
+    QUrl targetUrl;
+    return doMkdir(windowId, url, targetUrl);
 }
 
 void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
@@ -935,11 +942,13 @@ void FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId,
                                                        const QVariant custom,
                                                        OperatorCallback callback)
 {
-    bool ok = handleOperationMkdir(windowId, url);
+    QUrl targetUrl;
+    bool ok = doMkdir(windowId, url, targetUrl);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));
         args->insert(CallbackKey::kSourceUrls, QVariant::fromValue(QList<QUrl>() << url));
+        args->insert(CallbackKey::kTargets, QVariant::fromValue(QList<QUrl>() << targetUrl));
         args->insert(CallbackKey::kSuccessed, QVariant::fromValue(ok));
         args->insert(CallbackKey::kCustom, custom);
         callback(args);

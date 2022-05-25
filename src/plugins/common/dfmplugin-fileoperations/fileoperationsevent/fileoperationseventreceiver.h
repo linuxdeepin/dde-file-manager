@@ -252,6 +252,7 @@ private:
                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
     JobHandlePointer doCleanTrash(const quint64 windowId, const QList<QUrl> sources, const DFMBASE_NAMESPACE::AbstractJobHandler::DeleteDialogNoticeType deleteNoticeType,
                                   DFMGLOBAL_NAMESPACE::OperatorHandleCallback handleCallback);
+    bool doMkdir(const quint64 windowId, const QUrl url, QUrl &targetUrl);
     QString doTouchFilePremature(const quint64 windowId, const QUrl url,
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType, const QString suffix,
                                  const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);
