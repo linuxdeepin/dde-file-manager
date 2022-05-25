@@ -43,9 +43,10 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
-#define regAction(shortcut)                                                         \
+#define regAction(shortcut, autoRepeat)                                             \
     {                                                                               \
         QAction *action = new QAction(view);                                        \
+        action->setAutoRepeat(autoRepeat);                                          \
         action->setShortcut(shortcut);                                              \
         action->setProperty("_view_shortcut_key", shortcut);                        \
         view->addAction(action);                                                    \
@@ -61,16 +62,16 @@ ShortcutOper::ShortcutOper(CanvasView *parent)
 
 void ShortcutOper::regShortcut()
 {
-    regAction(QKeySequence::HelpContents);   // F1
-    regAction(QKeySequence::Refresh);   // F5
-    regAction(QKeySequence::Delete);   // Del
-    regAction(QKeySequence::SelectAll);   // ctrl+a
-    regAction(QKeySequence::ZoomIn);   // ctrl+-
-    regAction(QKeySequence::ZoomOut);   // ctrl++(c_s_=)
-    regAction(QKeySequence::Copy);   // ctrl+c
-    regAction(QKeySequence::Cut);   // ctrl+x
-    regAction(QKeySequence::Paste);   // ctrl+v
-    regAction(QKeySequence::Undo);   // ctrl+z
+    regAction(QKeySequence::HelpContents, true);   // F1
+    regAction(QKeySequence::Refresh, true);   // F5
+    regAction(QKeySequence::Delete, true);   // Del
+    regAction(QKeySequence::SelectAll, true);   // ctrl+a
+    regAction(QKeySequence::ZoomIn, true);   // ctrl+-
+    regAction(QKeySequence::ZoomOut, true);   // ctrl++(c_s_=)
+    regAction(QKeySequence::Copy, false);   // ctrl+c
+    regAction(QKeySequence::Cut, false);   // ctrl+x
+    regAction(QKeySequence::Paste, false);   // ctrl+v
+    regAction(QKeySequence::Undo, true);   // ctrl+z
     //regAction(QKeySequence::New, [this](){qDebug() << "New";});// ctrl+n
     //regAction(QKeySequence::Open, &ShortcutOper::openAction); // ctrl+o
 }
