@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             lixiang<lixianga@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,100 +17,68 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include "textpreview.h"
 #include "dabstractfileinfo.h"
 #include "dfileservices.h"
+#include "textbrowseredit.h"
+
+#include "durl.h"
 
 #include <QProcess>
-#include <QMimeType>
-#include <QMimeDatabase>
 #include <QUrl>
 #include <QFileInfo>
-#include <QPlainTextEdit>
 #include <QDebug>
-#include <QScrollBar>
-#include <QTimer>
 
 using namespace std;
-DFM_USE_NAMESPACE
 
-#define READTEXTSIZE 100000
-
-TextPreview::TextPreview(QObject *parent):
-    DFMFilePreview(parent)
+TextPreview::TextPreview(QObject *parent)
+    : DFMFilePreview(parent)
 {
-    m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, &TextPreview::appendText);
 }
 
 TextPreview::~TextPreview()
 {
-    if (m_textBrowser)
-        m_textBrowser->deleteLater();
-
-    if(m_timer){
-        m_timer->stop();
-    }
+    if (textBrowser)
+        textBrowser->deleteLater();
 }
 
 bool TextPreview::setFileUrl(const DUrl &url)
 {
-    if (m_url == url)
+    if (selectUrl == url)
         return true;
 
-    m_timer->stop();
+    selectUrl = url;
 
-    m_url = url;
+    device.open(url.path().toLocal8Bit().data(), ios::binary);
 
-    const DAbstractFileInfoPointer &info = DFileService::instance()->createFileInfo(this, url);
-
-    if (!info)
-        return false;
-
-    m_device.open(info->toLocalFile().toLocal8Bit().data(), ios::binary);
-
-    if(!m_device.is_open()){
-        qWarning() << "open file failed :" << m_url;
+    if (!device.is_open()) {
+        qInfo() << "File open failed";
         return false;
     }
 
-    if (!m_textBrowser) {
-        m_textBrowser = new QPlainTextEdit();
-
-        m_textBrowser->setReadOnly(true);
-        m_textBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
-        m_textBrowser->setWordWrapMode(QTextOption::NoWrap);
-        m_textBrowser->setFixedSize(800, 500);
-        m_textBrowser->setFocusPolicy(Qt::NoFocus);
-        m_textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
+    if (!textBrowser) {
+        textBrowser = new TextBrowserEdit;
+        textBrowser->setReadOnly(true);
+        textBrowser->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+        textBrowser->setLineWrapMode(QPlainTextEdit::WidgetWidth);
+        textBrowser->setFixedSize(800, 500);
+        textBrowser->setFocusPolicy(Qt::NoFocus);
+        textBrowser->setContextMenuPolicy(Qt::NoContextMenu);
     }
 
-    m_title = info->fileName();
+    titleStr = QFileInfo(url.toLocalFile()).fileName();
 
-    long len = m_device.seekg(0, ios::end).tellg();
+    long len = device.seekg(0, ios::end).tellg();
     if (len <= 0)
         return false;
 
     vector<char> buf(static_cast<unsigned long>(len));
-    m_device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
-    m_device.close();
+    device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
+    device.close();
 
-    char *txt = new char[buf.size() + 1];
-    copy(buf.begin(), buf.end(), txt);
-    m_textData = QString::fromLocal8Bit(txt, static_cast<int>(buf.size()));
-    delete [] txt;
-    txt = nullptr;
-    m_textSize = m_textData.count();
-    m_readSize = m_textSize > READTEXTSIZE ? READTEXTSIZE : m_textSize;
-    if(m_textSize > m_readSize) {
-        m_textSize = m_textSize - m_readSize;
-        m_textBrowser->setPlainText(m_textData.mid(0, m_readSize));
-        m_timer->start(500);
-    } else {
-        m_textBrowser->setPlainText(m_textData);
-    }
+    textBrowser->setFileData(buf);
 
     Q_EMIT titleChanged();
 
@@ -120,35 +87,20 @@ bool TextPreview::setFileUrl(const DUrl &url)
 
 DUrl TextPreview::fileUrl() const
 {
-    return m_url;
+    return selectUrl;
 }
 
 QWidget *TextPreview::contentWidget() const
 {
-    return m_textBrowser;
+    return textBrowser;
 }
 
 QString TextPreview::title() const
 {
-    return m_title;
+    return titleStr;
 }
 
 bool TextPreview::showStatusBarSeparator() const
 {
     return true;
-}
-
-void TextPreview::appendText()
-{
-    if(m_textSize > 0) {
-        if(m_textSize < READTEXTSIZE) {
-            m_textSize = 0;
-            m_textBrowser->appendPlainText(m_textData.mid(m_readSize));
-            m_timer->stop();
-        } else {
-            m_textSize = m_textSize - READTEXTSIZE;
-            m_textBrowser->appendPlainText(m_textData.mid(m_readSize, READTEXTSIZE));
-            m_readSize += READTEXTSIZE;
-        }
-    }
 }
