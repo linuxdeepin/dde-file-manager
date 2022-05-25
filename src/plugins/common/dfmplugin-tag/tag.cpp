@@ -66,7 +66,7 @@ void Tag::initialize()
 bool Tag::start()
 {
     PropertyDialogService::service()->registerControlExpand(Tag::createTagWidget, 0, nullptr);
-    DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget, 0);
+    DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget, 1);
 
     followEvent();
 
