@@ -22,6 +22,7 @@
 */
 #include "computerunicastreceiver.h"
 #include "watcher/computeritemwatcher.h"
+#include "utils/computerutils.h"
 
 #include "services/filemanager/dfm_filemanager_service_global.h"
 
@@ -65,4 +66,9 @@ bool ComputerUnicastReceiver::doAddDevice(const QString &name, const QUrl &url)
 void ComputerUnicastReceiver::doRemoveDevice(const QUrl &url)
 {
     ComputerItemWatcherInstance->removeDevice(url);
+}
+
+void ComputerUnicastReceiver::setContextMenuEnable(bool enable)
+{
+    ComputerUtils::contextMenuEnabled = enable;
 }

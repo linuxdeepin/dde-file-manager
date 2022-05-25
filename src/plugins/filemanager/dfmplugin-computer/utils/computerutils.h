@@ -90,6 +90,9 @@ public:
     static bool checkGvfsMountExist(const QUrl &url, int timeout = 2000);
     static void setCursorState(bool busy = false);
 
+public:
+    static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.
+
 private:
     static QMutex mtxForCheckGvfs;
     static QWaitCondition condForCheckGvfs;

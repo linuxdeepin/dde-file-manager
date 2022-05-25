@@ -73,6 +73,7 @@ void Computer::initialize()
 bool Computer::start()
 {
     dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
+    bindEvents();
     return true;
 }
 
@@ -151,6 +152,12 @@ void Computer::regComputerToSearch()
     info.scheme = ComputerUtils::scheme();
     info.redirectedPath = "/";
     SearchService::service()->regCustomSearchInfo(info);
+}
+
+void Computer::bindEvents()
+{
+    static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPCOMPUTER_NAMESPACE) };
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetContextMenuEnable", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::setContextMenuEnable);
 }
 
 DPCOMPUTER_END_NAMESPACE

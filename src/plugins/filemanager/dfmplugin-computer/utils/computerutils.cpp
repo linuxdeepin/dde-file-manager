@@ -44,6 +44,8 @@
 DPCOMPUTER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
+bool ComputerUtils::contextMenuEnabled = true;
+
 QUrl ComputerUtils::makeBlockDevUrl(const QString &id)
 {
     QUrl devUrl;

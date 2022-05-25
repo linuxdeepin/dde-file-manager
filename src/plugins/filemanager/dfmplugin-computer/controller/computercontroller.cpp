@@ -112,6 +112,9 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
 
 void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool triggerFromSidebar)
 {
+    if (!ComputerUtils::contextMenuEnabled)
+        return;
+
     DFMEntryFileInfoPointer info(new EntryFileInfo(url));
     QMenu *menu = info->createMenu();
     if (menu) {

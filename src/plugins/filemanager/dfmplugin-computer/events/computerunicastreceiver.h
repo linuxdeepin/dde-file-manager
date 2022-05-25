@@ -39,6 +39,7 @@ class ComputerUnicastReceiver : public QObject
 public:
     static ComputerUnicastReceiver *instance();
     void connectService();
+    void setContextMenuEnable(bool enable);
 
 protected:
     bool doAddDevice(const QString &name, const QUrl &url);
