@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2020 ~ 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: zhengyouge<zhengyouge@uniontech.com>
- *             lixiang<lixianga@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +17,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef TEXTPREVIEW_H
 #define TEXTPREVIEW_H
 
-#include <QObject>
+#include "dfmfilepreview.h"
+
 #include <QWidget>
 #include <QPointer>
-
-#include "dfmfilepreview.h"
-#include "durl.h"
+#include <QTimer>
+#include <QString>
 
 #include <fstream>
 
-QT_BEGIN_NAMESPACE
-class QPlainTextEdit;
-QT_END_NAMESPACE
-
+class TextBrowserEdit;
 class TextPreview : public DFM_NAMESPACE::DFMFilePreview
 {
     Q_OBJECT
@@ -52,27 +48,17 @@ public:
     QString title() const override;
     bool showStatusBarSeparator() const override;
 
-    QWidget *previewWidget();
-
-public slots:
-    void appendText();
-
 private:
-    DUrl m_url;
-    QString m_title;
+    DUrl selectUrl;
+    QString titleStr;
 
-    QPointer<QPlainTextEdit> m_textBrowser;
+    TextBrowserEdit *textBrowser { nullptr };
 
     //! 操作文件的对象
-    std::ifstream m_device;
+    std::ifstream device;
 
-    QTimer *m_timer {nullptr};
+    int textSize = 0;
 
-    int m_textSize = 0;
-
-    int m_readSize = 0;
-
-    QString m_textData {};
+    int readSize = 0;
 };
-
-#endif // TEXTPREVIEW_H
+#endif   // TEXTPREVIEW_H

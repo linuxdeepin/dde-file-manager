@@ -20,13 +20,11 @@
  */
 #ifndef TEXTBROWSER_H
 #define TEXTBROWSER_H
-#include "preview_plugin_global.h"
 
 #include <QPlainTextEdit>
 
 #include <vector>
 
-PREVIEW_BEGIN_NAMESPACE
 class TextBrowserEdit : public QPlainTextEdit
 {
     Q_OBJECT
@@ -45,5 +43,4 @@ private:
 
     std::vector<char> fileData;
 };
-PREVIEW_END_NAMESPACE
 #endif   // TEXTBROWSER_H
