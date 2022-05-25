@@ -25,11 +25,13 @@ QMAKE_LFLAGS += -g -Wall -fprofile-arcs -ftest-coverage  -O0
 
 SOURCES += \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textpreview.cpp \
-    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textpreviewplugin.cpp
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textpreviewplugin.cpp \
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textbrowseredit.cpp
 
 HEADERS += \
     $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textpreview.h \
-    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textpreviewplugin.h
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textpreviewplugin.h \
+    $$PWD/../../../../src/dde-file-manager-plugins/pluginPreview/dde-text-preview-plugin/textbrowseredit.h
 
 #include(../../../../3rdparty/googletest/gtest_dependency.pri)
 include(../../../../3rdparty/cpp-stub/stub.pri)
