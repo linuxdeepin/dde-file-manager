@@ -37,7 +37,7 @@ class QPainter;
 
 DPTAG_BEGIN_NAMESPACE
 
-static const int kTagDiameter = 10;
+inline constexpr int kTagDiameter { 10 };
 
 struct TagColorDefine
 {

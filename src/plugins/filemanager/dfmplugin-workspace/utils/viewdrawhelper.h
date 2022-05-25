@@ -30,12 +30,12 @@
 #include <QStyleOptionViewItem>
 
 namespace GlobalPrivate {
-const int kDragIconMaxCount = 99;
-const int kDragIconSize = 128;
-const int kDragIconOutline = 30;
-const int kDragIconMax = 4;
-const qreal kDragIconRotate = 10.0;
-const qreal kDragIconOpacity = 0.1;
+inline constexpr int kDragIconMaxCount { 99 };
+inline constexpr int kDragIconSize { 128 };
+inline constexpr int kDragIconOutline { 30 };
+inline constexpr int kDragIconMax { 4 };
+inline constexpr qreal kDragIconRotate { 10.0 };
+inline constexpr qreal kDragIconOpacity { 0.1 };
 }
 
 DPWORKSPACE_BEGIN_NAMESPACE

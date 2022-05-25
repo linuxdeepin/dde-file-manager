@@ -28,16 +28,14 @@
 
 namespace GlobalPrivate {
 
-const int kIconSpacing = 16;
-const int kIconModeRectRadius = 4;
-const int kTextPadding = 4;
-const int kIconModeIconSpacing = 5;
-const int kIconModeBackRadius = 18;
-const int kListModeRectRadius = 8;
-const int kListEditorHeight = 22;
-const int kListModeEditorLeftPadding = -3;
-
-static QString replaceChars = "";
+inline constexpr int kIconSpacing { 16 };
+inline constexpr int kIconModeRectRadius { 4 };
+inline constexpr int kTextPadding { 4 };
+inline constexpr int kIconModeIconSpacing { 5 };
+inline constexpr int kIconModeBackRadius { 18 };
+inline constexpr int kListModeRectRadius { 8 };
+inline constexpr int kListEditorHeight { 22 };
+inline constexpr int kListModeEditorLeftPadding { -3 };
 
 void joinLeftCorner(const QRectF &rect, const QRectF &prevRect, const QRectF &nextRect,
                     const qreal &radius, const qreal &padding, QPainterPath *path);
@@ -45,11 +43,6 @@ void joinRightCorner(const QRectF &rect, const QRectF &prevRect, const QRectF &n
                      const qreal &radius, const qreal &padding, QPainterPath *path);
 QRectF boundingRect(const QList<QRectF> &rects);
 QPainterPath boundingPath(QList<QRectF> rects, qreal radius, qreal padding);
-QString replaceFileName(QString name, QString chars = replaceChars);
-void setFileNameReplaceChars(const QString &rep);
-QString fileNameReplaceChars();
-void showAlertMessage(QPoint globalPoint, const QColor &backgroundColor,
-                      const QString &text, int duration = 3000);
 
 }   // namespace GlobalPrivate
 

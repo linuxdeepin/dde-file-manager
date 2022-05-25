@@ -248,10 +248,10 @@ bool FileUtils::isGvfsFile(const QUrl &url)
         return false;
 
     const QString &path = url.toLocalFile();
-
-    QRegExp reg(QString("/run/user/%1/.?gvfs/.+").arg(getuid()));
-
-    return -1 != reg.indexIn(path);
+    static const QString gvfsMatch { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)" };
+    QRegularExpression re { gvfsMatch };
+    QRegularExpressionMatch match { re.match(path) };
+    return match.hasMatch();
 }
 
 QString FileUtils::preprocessingFileName(QString name)

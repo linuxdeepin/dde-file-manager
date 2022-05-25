@@ -35,8 +35,8 @@
 #include <QLabel>
 
 namespace GlobalPrivate {
-const int kListViewMinimumWidth { 80 };
-const int kListViewDefaultWidth { 120 };
+inline constexpr int kListViewMinimumWidth { 80 };
+inline constexpr int kListViewDefaultWidth { 120 };
 }   // namespace GlobalPrivate
 
 DPWORKSPACE_BEGIN_NAMESPACE

@@ -109,50 +109,6 @@ QPainterPath boundingPath(QList<QRectF> rects, qreal radius, qreal padding)
     return path;
 }
 
-QString replaceFileName(QString name, QString chars)
-{
-    if (name.isEmpty() || chars.isEmpty())
-        return name;
-
-    return name.remove(QRegularExpression(chars));
-}
-
-void showAlertMessage(QPoint globalPoint, const QColor &backgroundColor, const QString &text, int duration)
-{
-    static DArrowRectangle *tooltip = nullptr;
-    if (!tooltip) {
-        tooltip = new DArrowRectangle(DArrowRectangle::ArrowTop, nullptr);
-        tooltip->setObjectName("AlertTooltip");
-        QLabel *label = new QLabel(tooltip);
-        label->setWordWrap(true);
-        label->setMaximumWidth(500);
-        tooltip->setContent(label);
-        tooltip->setBackgroundColor(backgroundColor);
-        tooltip->setArrowX(15);
-        tooltip->setArrowHeight(5);
-
-        QTimer::singleShot(duration, [=] {
-            delete tooltip;
-            tooltip = nullptr;
-        });
-
-        label->setText(text);
-        label->adjustSize();
-
-        tooltip->show(static_cast<int>(globalPoint.x()), static_cast<int>(globalPoint.y()));
-    }
-}
-
-void setFileNameReplaceChars(const QString &rep)
-{
-    replaceChars = rep;
-}
-
-QString fileNameReplaceChars()
-{
-    return replaceChars;
-}
-
 void joinLeftCorner(const QRectF &rect, const QRectF &prevRect, const QRectF &nextRect,
                     const qreal &radius, const qreal &padding, QPainterPath *path)
 {

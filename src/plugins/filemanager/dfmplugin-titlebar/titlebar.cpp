@@ -76,7 +76,6 @@ void TitleBar::initialize()
 
 bool TitleBar::start()
 {
-
     return true;
 }
 
