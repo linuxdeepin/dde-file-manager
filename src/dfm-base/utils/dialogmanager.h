@@ -75,6 +75,7 @@ public:
     int showRunExcutableFileDialog(const QUrl &url);
 
     int showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, const bool showEmptyBtText = false);
+    int showNormalDeleteConfirmDialog(const QList<QUrl> &urls);
 
     void showRestoreFailedDialog(const QList<QUrl> &urlList);
 

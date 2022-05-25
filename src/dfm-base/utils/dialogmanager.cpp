@@ -354,6 +354,44 @@ int DialogManager::showDeleteFilesClearTrashDialog(const QList<QUrl> &urlList, c
     return code;
 }
 
+int DialogManager::showNormalDeleteConfirmDialog(const QList<QUrl> &urls)
+{
+    DDialog d;
+
+    if (!d.parentWidget()) {
+        d.setWindowFlags(d.windowFlags() | Qt::WindowStaysOnTopHint);
+    }
+
+    QFontMetrics fm(d.font());
+    d.setIcon(QIcon::fromTheme("user-trash-full-opened"));
+
+    QString deleteFileName = tr("Do you want to delete %1?");
+    QString deleteFileItems = tr("Do you want to delete the selected %1 items?");
+
+    const QUrl &urlFirst = urls.first();
+    if (urlFirst.isLocalFile()) {   // delete local file
+        if (urls.size() == 1) {
+            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(urlFirst);
+            d.setTitle(deleteFileName.arg(fm.elidedText(info->fileDisplayName(), Qt::ElideMiddle, Global::kMaxFileNameCharCount)));
+        } else {
+            d.setTitle(deleteFileItems.arg(urls.size()));
+        }
+    } else {
+        d.setTitle(deleteFileItems.arg(urls.size()));
+    }
+
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Cancel", "button"));
+    buttonTexts.append(tr("Delete", "button"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonNormal);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonWarning);
+    d.setDefaultButton(1);
+    d.getButton(1)->setFocus();
+    d.moveToCenter();
+
+    return d.exec();
+}
+
 void DialogManager::showRestoreFailedDialog(const QList<QUrl> &urlList)
 {
     DDialog d;

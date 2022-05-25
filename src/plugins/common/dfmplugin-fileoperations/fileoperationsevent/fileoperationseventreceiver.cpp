@@ -34,6 +34,7 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/application/application.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -267,6 +268,10 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
             return nullptr;
         handle = copyMoveJob->deletes(sources, flags);
     } else {
+        if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
+            if (DialogManagerInstance->showNormalDeleteConfirmDialog(sources) != QDialog::Accepted)
+                return nullptr;
+        }
         handle = copyMoveJob->moveToTrash(sources, flags);
     }
     if (handleCallback)
