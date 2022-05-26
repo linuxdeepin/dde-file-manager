@@ -91,7 +91,7 @@ static bool pluginsLoad()
         "dfmplugin-trash",
         "dfmplugin-smbbrowser",
         "dfmplugin-filepreview",
-        "dfmplugin-tag"
+        "dfmplugin-vault"
     };
 
     // don't load plugins of blackNameList
