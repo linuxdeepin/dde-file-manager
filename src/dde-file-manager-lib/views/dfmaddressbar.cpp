@@ -461,6 +461,8 @@ void DFMAddressBar::initConnections()
         QString str = VaultController::toInternalPath(text());
 
         if (!DUrl::fromUserInput(str).isLocalFile()) {
+            //从配置文件中更新historyList，因为搜索历史列表可能在连接到服务器对话框中有改变
+            historyList = Singleton<SearchHistroyManager>::instance()->toStringList();
             if (!historyList.contains(str)) {
                 historyList.append(str);
                 Singleton<SearchHistroyManager>::instance()->writeIntoSearchHistory(str);
