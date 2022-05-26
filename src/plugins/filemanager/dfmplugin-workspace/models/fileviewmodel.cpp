@@ -214,7 +214,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         QModelIndex root = createIndex(0, 0, d->root.data());
 
         d->canFetchMoreFlag = true;
-        //        fetchMore(root);
+        fetchMore(root);
 
         //! The watcher is restarted after being suspended to solve the problem that
         //! the same file in the same path cannot be monitored after being deleted and recreated.
@@ -264,6 +264,7 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
     }
 
     d->canFetchMoreFlag = true;
+    fetchMore(root);
     return root;
 }
 
