@@ -579,7 +579,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
     const auto &&me = DeviceHelper::loadBlockInfo(id);
     bool isOptical = me.value(DeviceProperty::kOpticalDrive).toBool();
 
-    auto func = [this, id, isOptical, cb](bool allUnmounted) {
+    auto func = [this, id, isOptical, cb](bool allUnmounted, DeviceError err) {
         if (allUnmounted) {
             QThread::msleep(500);   // make a short delay to eject/powerOff, other wise may raise a 'device busy' error.
             if (isOptical)
@@ -588,7 +588,7 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
                 powerOffBlockDevAsync(id, {}, cb);
         } else {
             if (cb)
-                cb(false, DeviceError::kUserErrorFailed);
+                cb(false, err);
         }
     };
 
@@ -600,9 +600,9 @@ QStringList DeviceManager::detachBlockDev(const QString &id, CallbackType2 cb)
         unmountBlockDevAsync(dev, {}, [allUnmounted, func, opCount, dev](bool ok, DeviceError err) {
             *allUnmounted &= ok;
             *opCount -= 1;
-            qDebug() << "detach device: " << dev << ", siblings last: " << *opCount << ", current result: " << ok << DeviceUtils::errMessage(err);
+            qDebug() << "detach device: " << dev << ", siblings remain: " << *opCount << ", success? " << ok << DeviceUtils::errMessage(err);
             if (*opCount == 0) {
-                func(*allUnmounted);
+                func(*allUnmounted, err);
                 delete opCount;
                 delete allUnmounted;
             }

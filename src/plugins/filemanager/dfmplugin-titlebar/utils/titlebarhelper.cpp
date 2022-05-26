@@ -245,7 +245,7 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
 
     DeviceManager::instance()->mountNetworkDeviceAsync(url.toString(), [sender](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
         if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
-            DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         } else {
             QUrl u;
             u.setScheme(Global::kFile);

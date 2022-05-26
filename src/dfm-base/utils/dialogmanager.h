@@ -58,8 +58,13 @@ public:
     DDialog *showQueryScanningDialog(const QString &title);
 
     void showErrorDialog(const QString &title, const QString &message);
-    void showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError err);
-    void showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError err);
+
+    enum OperateType {
+        kMount,
+        kUnmount,
+        kRemove,
+    };
+    void showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::DeviceError err);
     void showNoPermissionDialog(const QList<QUrl> &urls);
 
     int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));

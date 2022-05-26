@@ -91,34 +91,80 @@ int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, co
     return code;
 }
 
-void DialogManager::showErrorDialogWhenMountDeviceFailed(DFMMOUNT::DeviceError err)
+void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::DeviceError err)
 {
-    switch (err) {
-    case DFMMOUNT::DeviceError::kUserErrorNetworkAnonymousNotAllowed:
-        showErrorDialog(tr("Mount error"), tr("Anonymous mount is not allowed"));
-        break;
-    case DFMMOUNT::DeviceError::kUserErrorNetworkWrongPasswd:
-        showErrorDialog(tr("Mount error"), tr("Wrong password is inputed"));
-        break;
-    case DFMMOUNT::DeviceError::kUserErrorUserCancelled:
-        break;
-    default:
-        showErrorDialog(tr("Mount error"), tr("Error occured while mounting device"));
-        qWarning() << "mount device failed: " << err;
-        break;
-    }
-}
+    static const QString kOpFailed = tr("Operating failed");
+    static const QString kMountFailed = tr("Mount failed");
+    static const QString kUnmountFailed = tr("Unmount failed");
 
-void DialogManager::showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError err)
-{
+    DFM_MOUNT_USE_NS
     switch (err) {
-    case DFMMOUNT::DeviceError::kUDisksErrorDeviceBusy:
-        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
-        break;
+    case DeviceError::kUDisksBusyFileSystemUnmounting:
+        showErrorDialog(kOpFailed, tr("Unmounting device now..."));
+        return;
+    case DeviceError::kUDisksBusyFileSystemMounting:
+        showErrorDialog(kOpFailed, tr("Mounting device now..."));
+        return;
+    case DeviceError::kUDisksBusyFormatErasing:
+        showErrorDialog(kOpFailed, tr("Erasing device now..."));
+        return;
+    case DeviceError::kUDisksBusyFormatMkfsing:
+        showErrorDialog(kOpFailed, tr("Making filesystem for device now..."));
+        return;
+    case DeviceError::kUDisksBusyEncryptedLocking:
+        showErrorDialog(kOpFailed, tr("Locking device now..."));
+        return;
+    case DeviceError::kUDisksBusyEncryptedUnlocking:
+        showErrorDialog(kOpFailed, tr("Unlocking device now..."));
+        return;
+
+    case DeviceError::kUDisksBusySMARTSelfTesting:
+    case DeviceError::kUDisksBusyDriveEjecting:
+    case DeviceError::kUDisksBusyEncryptedModifying:
+    case DeviceError::kUDisksBusyEncryptedResizing:
+    case DeviceError::kUDisksBusySwapSpaceStarting:
+    case DeviceError::kUDisksBusySwapSpaceStoping:
+    case DeviceError::kUDisksBusySwpaSpaceModifying:
+    case DeviceError::kUDisksBusyFileSystemModifying:
+    case DeviceError::kUDisksBusyFileSystemResizing:
+    case DeviceError::kUDisksBusyLoopSetuping:
+    case DeviceError::kUDisksBusyPartitionModifying:
+    case DeviceError::kUDisksBusyPartitionDeleting:
+    case DeviceError::kUDisksBusyPartitionCreating:
+    case DeviceError::kUDisksBusyCleanuping:
+    case DeviceError::kUDisksBusyATASecureErasing:
+    case DeviceError::kUDisksBusyATAEnhancedSecureErasing:
+    case DeviceError::kUDisksBusyMdRaidStarting:
+    case DeviceError::kUDisksBusyMdRaidStoping:
+    case DeviceError::kUDisksBusyMdRaidFaultingDevice:
+    case DeviceError::kUDisksBusyMdRaidRemovingDevice:
+    case DeviceError::kUDisksBusyMdRaidCreating:
+        showErrorDialog(kOpFailed, tr("The device is busy now"));
+        return;
     default:
-        showErrorDialog(tr("The device was not safely unmounted"), tr("The device is busy, cannot remove now"));
         break;
     }
+
+    if (type == OperateType::kMount) {
+        switch (err) {
+        case DeviceError::kUserErrorNetworkAnonymousNotAllowed:
+            showErrorDialog(kMountFailed, tr("Anonymous mount is not allowed"));
+            return;
+        case DeviceError::kUserErrorNetworkWrongPasswd:
+            showErrorDialog(kMountFailed, tr("Wrong password is inputed"));
+            return;
+        case DeviceError::kUserErrorUserCancelled:
+            return;
+        default:
+            showErrorDialog(kMountFailed, tr("Error occured while mounting device"));
+            qWarning() << "mount device failed: " << err;
+            return;
+        }
+    } else if (type == OperateType::kRemove || type == OperateType::kUnmount) {
+        showErrorDialog(kUnmountFailed, tr("The device is busy, cannot remove now"));
+        return;
+    }
+    return;
 }
 
 void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)

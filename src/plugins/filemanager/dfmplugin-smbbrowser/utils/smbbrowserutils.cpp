@@ -65,7 +65,7 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls, Q
     QString urlStr = url.toString();
     DeviceManager::instance()->mountNetworkDeviceAsync(urlStr, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
         if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
-            DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         } else {
             QUrl u = mpt.isEmpty() ? url : QUrl::fromLocalFile(mpt);
             dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, windowId, u);

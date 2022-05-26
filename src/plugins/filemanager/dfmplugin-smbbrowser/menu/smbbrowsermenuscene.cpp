@@ -99,7 +99,7 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
     const QString &smbUrl = d->selectFiles.first().toString();
     DeviceManager::instance()->mountNetworkDeviceAsync(smbUrl, [actId, winId](bool ok, dfmmount::DeviceError err, const QString &mntPath) {
         if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
-            DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         } else {
             QUrl u = QUrl::fromLocalFile(mntPath);
             if (actId == SmbBrowserActionId::kOpenSmb)

@@ -296,7 +296,7 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
             cdTo(id, u, winId, act);
         } else {
             qDebug() << "mount device failed: " << id << err;
-            DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
+            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         }
         ComputerUtils::setCursorState();
     });
@@ -344,16 +344,16 @@ void ComputerController::actEject(const QUrl &url)
     QString id;
     if (url.path().endsWith(SuffixInfo::kBlock)) {
         id = ComputerUtils::getBlockDevIdByUrl(url);
-        DevMngIns->detachBlockDev(id, [](bool ok, DFMMOUNT::DeviceError) {
+        DevMngIns->detachBlockDev(id, [](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok)
-                DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(DFMMOUNT::DeviceError::kUDisksErrorDeviceBusy);
+                DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
         });
     } else if (url.path().endsWith(SuffixInfo::kProtocol)) {
         id = ComputerUtils::getProtocolDevIdByUrl(url);
         DevMngIns->unmountProtocolDevAsync(id, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok) {
                 qWarning() << "unmount protocol device failed: " << id << err;
-                DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
+                DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
         });
     } else {
@@ -403,7 +403,7 @@ static void onNetworkDeviceMountFinished(bool ok, DFMMOUNT::DeviceError err, con
         if (enterAfterMounted)
             ComputerEventCaller::cdTo(winId, mntPath);
     } else {
-        DialogManagerInstance->showErrorDialogWhenMountDeviceFailed(err);
+        DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
     }
 }
 
@@ -441,14 +441,14 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
                     });
                 } else {
                     qInfo() << "unmount cleartext device failed: " << cleartextId << err;
-                    DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
+                    DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
                 }
             });
         } else {
             DevMngIns->unmountBlockDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
                 if (!ok) {
                     qInfo() << "unlock device failed: " << devId << err;
-                    DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
+                    DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
                 }
             });
         }
@@ -457,7 +457,7 @@ void ComputerController::actUnmount(DFMEntryFileInfoPointer info)
         DevMngIns->unmountProtocolDevAsync(devId, {}, [=](bool ok, DFMMOUNT::DeviceError err) {
             if (!ok) {
                 qWarning() << "unmount protocol device failed: " << devId << err;
-                DialogManagerInstance->showErrorDialogWhenUnmountDeviceFailed(err);
+                DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kUnmount, err);
             }
         });
     } else {
