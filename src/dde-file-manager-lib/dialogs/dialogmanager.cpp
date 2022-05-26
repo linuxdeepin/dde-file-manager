@@ -1004,7 +1004,7 @@ void DialogManager::showUserSharePasswordSettingDialog(quint64 winId)
 
 void DialogManager::showSharePasswordSettingDialog(QFrame *parent)
 {
-    if (!parent || parent->property("ConnectToServerDialogShown").toBool()) {
+    if (!parent || parent->property("UserSharePwdSettingDialogShown").toBool()) {
         return;
     }
     UserSharePasswordSettingDialog *dialog = new UserSharePasswordSettingDialog(parent);
