@@ -382,12 +382,14 @@ void ConnectToServerDialog::initConnect()
             m_serverComboBox->completer()->setModel(new QStringListModel());
             Singleton<SearchHistroyManager>::instance()->clearHistory();
         }
-
-        QString scheme = string.section("://",0,0);
-        if(!scheme.isEmpty()){
-            m_serverComboBox->setEditText(string.section("//",-1));
-            m_schemeComboBox->setCurrentText(scheme + "://");
+        if(string.contains("://")){
+            QString scheme = string.section("://",0,0);
+            if(!scheme.isEmpty()){
+                m_serverComboBox->setEditText(string.section("//",-1));
+                m_schemeComboBox->setCurrentText(scheme + "://");
+            }
         }
+
 
         upateState();
     });
