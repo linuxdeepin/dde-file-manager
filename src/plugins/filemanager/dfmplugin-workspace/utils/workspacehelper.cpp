@@ -296,4 +296,5 @@ FileView *WorkspaceHelper::findFileViewByWindowID(const quint64 windowID)
         FileView *view = dynamic_cast<FileView *>(workspaceWidget->currentView());
         return view;
     }
+    return {};
 }

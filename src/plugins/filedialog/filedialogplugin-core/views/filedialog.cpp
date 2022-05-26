@@ -893,9 +893,10 @@ void FileDialog::closeEvent(QCloseEvent *event)
 #endif
     if (isVisible()) {
         QPointer<QObject> that = this;
-        reject();
-        if (that && isVisible()) {
-            event->ignore();
+        if (that) {
+            reject();
+            if (isVisible())
+                event->ignore();
         }
     } else {
         event->accept();

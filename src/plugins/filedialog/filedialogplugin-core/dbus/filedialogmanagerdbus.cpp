@@ -146,6 +146,11 @@ void FileDialogManagerDBus::onDialogDestroy()
 
 void FileDialogManagerDBus::onAppExit()
 {
+    QString &&curAppName { qApp->applicationName() };
+    // TEMP: nativce filedialog is daemon
+    // TODO(zhangs): fix crash
+    if (curAppName == "dde-file-dialog")
+        return;
     if (lastWindowClosed && curDialogObjectMap.size() == 0)
         exit(0);
 }

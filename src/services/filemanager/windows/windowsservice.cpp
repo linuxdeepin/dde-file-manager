@@ -171,20 +171,14 @@ void WindowsServicePrivate::onWindowClosed(DFMBASE_NAMESPACE::FileManagerWindow 
     if (!window)
         return;
 
-    // TODO(zhangs): window can destruct ?
     if (count == 1) {   // last window
-        window->deleteLater();
         if (window->saveClosedSate())
             saveWindowState(window);
-        // TODO(zhangs): close all property dialog
+        qInfo() << "Last window deletelater" << window->internalWinId();
+        window->deleteLater();
     } else {
-        // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
-        // 析构本窗口，检查当前窗口是否可以析构
-        QPointer<FileManagerWindow> pwindow = window;
-        QTimer::singleShot(1000, this, [=]() {
-            pwindow->deleteLater();
-        });
-        qInfo() << "window deletelater !";
+        qInfo() << "Window deletelater !";
+        window->deleteLater();
     }
 
     windows.remove(window->internalWinId());
@@ -319,7 +313,9 @@ void WindowsService::showWindow(WindowsService::FMWindow *window)
 
     window->show();
     qApp->setActiveWindow(window);
-    emit windowOpened(window->internalWinId());
+    auto &&id { window->internalWinId() };
+    qInfo() << "Window showed" << id;
+    emit windowOpened(id);
 }
 
 /*!
@@ -369,6 +365,7 @@ WindowsService::FMWindow *WindowsService::findWindowById(quint64 winId)
         if (top->internalWinId() == winId)
             return qobject_cast<WindowsService::FMWindow *>(top);
     }
+    qWarning() << "Null window returned!";
 
     return nullptr;
 }

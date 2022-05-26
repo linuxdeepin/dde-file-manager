@@ -100,35 +100,43 @@ void FileDialogHandle::setDirectory(const QString &directory)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setDirectory(directory);
+    if (d->dialog)
+        d->dialog->setDirectory(directory);
 }
 
 void FileDialogHandle::setDirectory(const QDir &directory)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setDirectory(directory);
+    if (d->dialog)
+        d->dialog->setDirectory(directory);
 }
 
 QDir FileDialogHandle::directory() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->directory();
+    if (d->dialog)
+        return d->dialog->directory();
+
+    return {};
 }
 
 void FileDialogHandle::setDirectoryUrl(const QUrl &directory)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setDirectoryUrl(directory);
+    if (d->dialog)
+        d->dialog->setDirectoryUrl(directory);
 }
 
 QUrl FileDialogHandle::directoryUrl() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->directoryUrl();
+    if (d->dialog)
+        return d->dialog->directoryUrl();
+    return {};
 }
 
 void FileDialogHandle::selectFile(const QString &filename)
@@ -146,7 +154,9 @@ QStringList FileDialogHandle::selectedFiles() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->selectedFiles();
+    if (d->dialog)
+        return d->dialog->selectedFiles();
+    return {};
 }
 
 void FileDialogHandle::selectUrl(const QUrl &url)
@@ -164,7 +174,9 @@ QList<QUrl> FileDialogHandle::selectedUrls() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->selectedUrls();
+    if (d->dialog)
+        return d->dialog->selectedUrls();
+    return {};
 }
 
 void FileDialogHandle::addDisableUrlScheme(const QString &scheme)
@@ -193,42 +205,55 @@ QStringList FileDialogHandle::nameFilters() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->nameFilters();
+    if (d->dialog)
+        return d->dialog->nameFilters();
+    return {};
 }
 
 void FileDialogHandle::selectNameFilter(const QString &filter)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->selectNameFilter(filter);
+    if (d->dialog)
+        d->dialog->selectNameFilter(filter);
 }
 
 QString FileDialogHandle::selectedNameFilter() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->selectedNameFilter();
+    if (d->dialog)
+        return d->dialog->selectedNameFilter();
+
+    return {};
 }
 
 void FileDialogHandle::selectNameFilterByIndex(int index)
 {
     D_DC(FileDialogHandle);
 
-    d->dialog->selectNameFilterByIndex(index);
+    if (d->dialog)
+        d->dialog->selectNameFilterByIndex(index);
 }
 
 int FileDialogHandle::selectedNameFilterIndex() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->selectedNameFilterIndex();
+    if (d->dialog)
+        return d->dialog->selectedNameFilterIndex();
+
+    return {};
 }
 
 QDir::Filters FileDialogHandle::filter() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->filter();
+    if (d->dialog)
+        return d->dialog->filter();
+
+    return {};
 }
 
 void FileDialogHandle::setFilter(QDir::Filters filters)
@@ -256,7 +281,10 @@ QFileDialog::ViewMode FileDialogHandle::viewMode() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->currentViewMode();
+    if (d->dialog)
+        return d->dialog->currentViewMode();
+
+    return {};
 }
 
 void FileDialogHandle::setFileMode(QFileDialog::FileMode mode)
@@ -284,120 +312,151 @@ QFileDialog::AcceptMode FileDialogHandle::acceptMode() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->acceptMode();
+    if (d->dialog)
+        return d->dialog->acceptMode();
+
+    return {};
 }
 
 void FileDialogHandle::setLabelText(QFileDialog::DialogLabel label, const QString &text)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setLabelText(label, text);
+    if (d->dialog)
+        d->dialog->setLabelText(label, text);
 }
 
 QString FileDialogHandle::labelText(QFileDialog::DialogLabel label) const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->labelText(label);
+    if (d->dialog)
+        return d->dialog->labelText(label);
+
+    return {};
 }
 
 void FileDialogHandle::setOptions(QFileDialog::Options options)
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->setOptions(options);
+    if (d->dialog)
+        d->dialog->setOptions(options);
 }
 
 void FileDialogHandle::setOption(QFileDialog::Option option, bool on)
 {
     D_DC(FileDialogHandle);
 
-    d->dialog->setOption(option, on);
+    if (d->dialog)
+        d->dialog->setOption(option, on);
 }
 
 QFileDialog::Options FileDialogHandle::options() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->options();
+    if (d->dialog)
+        return d->dialog->options();
+
+    return {};
 }
 
 bool FileDialogHandle::testOption(QFileDialog::Option option) const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->testOption(option);
+    if (d->dialog)
+        return d->dialog->testOption(option);
+
+    return {};
 }
 
 void FileDialogHandle::setCurrentInputName(const QString &name)
 {
     D_DC(FileDialogHandle);
 
-    d->dialog->setCurrentInputName(name);
+    if (d->dialog)
+        d->dialog->setCurrentInputName(name);
 }
 
 void FileDialogHandle::addCustomWidget(int type, const QString &data)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->addCustomWidget(static_cast<FileDialog::CustomWidgetType>(type), data);
+    if (d->dialog)
+        d->dialog->addCustomWidget(static_cast<FileDialog::CustomWidgetType>(type), data);
 }
 
 QDBusVariant FileDialogHandle::getCustomWidgetValue(int type, const QString &text) const
 {
     D_DC(FileDialogHandle);
 
-    return QDBusVariant(d->dialog->getCustomWidgetValue(static_cast<FileDialog::CustomWidgetType>(type), text));
+    if (d->dialog)
+        return QDBusVariant(d->dialog->getCustomWidgetValue(static_cast<FileDialog::CustomWidgetType>(type), text));
+
+    return {};
 }
 
 QVariantMap FileDialogHandle::allCustomWidgetsValue(int type) const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->allCustomWidgetsValue(static_cast<FileDialog::CustomWidgetType>(type));
+    if (d->dialog)
+        return d->dialog->allCustomWidgetsValue(static_cast<FileDialog::CustomWidgetType>(type));
+
+    return {};
 }
 
 void FileDialogHandle::beginAddCustomWidget()
 {
     D_D(FileDialogHandle);
 
-    d->dialog->beginAddCustomWidget();
+    if (d->dialog)
+        d->dialog->beginAddCustomWidget();
 }
 
 void FileDialogHandle::endAddCustomWidget()
 {
     D_D(FileDialogHandle);
 
-    d->dialog->endAddCustomWidget();
+    if (d->dialog)
+        d->dialog->endAddCustomWidget();
 }
 
 void FileDialogHandle::setAllowMixedSelection(bool on)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setAllowMixedSelection(on);
+    if (d->dialog)
+        d->dialog->setAllowMixedSelection(on);
 }
 
 void FileDialogHandle::setHideOnAccept(bool enable)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->setHideOnAccept(enable);
+    if (d->dialog)
+        d->dialog->setHideOnAccept(enable);
 }
 
 bool FileDialogHandle::hideOnAccept() const
 {
     D_DC(FileDialogHandle);
 
-    return d->dialog->hideOnAccept();
+    if (d->dialog)
+        return d->dialog->hideOnAccept();
+
+    return {};
 }
 
 void FileDialogHandle::show()
 {
     D_D(FileDialogHandle);
-
-    WindowsService::service()->showWindow(d->dialog);
-    d->dialog->updateAsDefaultSize();
+    if (d->dialog) {
+        WindowsService::service()->showWindow(d->dialog);
+        d->dialog->updateAsDefaultSize();
+    }
 }
 
 void FileDialogHandle::hide()
@@ -412,33 +471,40 @@ void FileDialogHandle::accept()
 {
     D_D(FileDialogHandle);
 
-    d->dialog->accept();
+    if (d->dialog)
+        d->dialog->accept();
 }
 
 void FileDialogHandle::done(int r)
 {
     D_D(FileDialogHandle);
 
-    d->dialog->done(r);
+    if (d->dialog)
+        d->dialog->done(r);
 }
 
 int FileDialogHandle::exec()
 {
     D_D(FileDialogHandle);
 
-    return d->dialog->exec();
+    if (d->dialog)
+        return d->dialog->exec();
+
+    return {};
 }
 
 void FileDialogHandle::open()
 {
     D_D(FileDialogHandle);
 
-    d->dialog->open();
+    if (d->dialog)
+        d->dialog->open();
 }
 
 void FileDialogHandle::reject()
 {
     D_D(FileDialogHandle);
 
-    d->dialog->reject();
+    if (d->dialog)
+        d->dialog->reject();
 }
