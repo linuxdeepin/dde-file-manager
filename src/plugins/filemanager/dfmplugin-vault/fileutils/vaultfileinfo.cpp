@@ -92,12 +92,13 @@ bool VaultFileInfo::exists() const
 
 void VaultFileInfo::refresh()
 {
-    AbstractFileInfo::refresh();
     if (!dptr->proxy) {
         return;
     }
 
-    setProxy(InfoFactory::create<AbstractFileInfo>(url()));
+    dptr->proxy->refresh();
+
+    setProxy(InfoFactory::create<AbstractFileInfo>(dptr->proxy->url()));
 }
 
 bool VaultFileInfo::isReadable() const
