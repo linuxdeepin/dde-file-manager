@@ -267,6 +267,7 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
 
 FilePreviewDialog::~FilePreviewDialog()
 {
+    emit signalCloseEvent();
     if (m_preview) {
         m_preview->deleteLater();
         m_preview = nullptr;
