@@ -45,6 +45,7 @@ public:
     QStringList desktopCategories() const;
 
     QIcon fileIcon() override;
+    virtual QString fileName() const override;
     QString fileDisplayName() const override;
     QString fileNameOfRename() const override;
     QString baseNameOfRename() const override;

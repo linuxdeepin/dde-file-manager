@@ -463,7 +463,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
         if (rol == kItemNameRole || rol == kItemFileDisplayNameRole) {
             cGroup = QPalette::Active;
             elideMode = Qt::ElideMiddle;
-            paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight);
+            paintFileName(painter, opt, index, rol, columnRect, d->textLineHeight, url);
         } else {
             if (!isSelected)
                 painter->setPen(opt.palette.color(cGroup, QPalette::Text));
@@ -480,7 +480,8 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     }
 }
 
-void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRectF &rect, const int &textLineHeight) const
+void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const int &role, const QRectF &rect, const int &textLineHeight,
+                                     const QUrl &url) const
 {
     bool drawBackground = (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     const QVariant &data = index.data(role);
@@ -488,31 +489,33 @@ void ListItemDelegate::paintFileName(QPainter *painter, const QStyleOptionViewIt
     if (data.canConvert<QString>()) {
         QString fileName;
 
-        do {
-            if (role != kItemNameRole && role != kItemFileDisplayNameRole)
-                break;
-
-            if (role == kItemFileDisplayNameRole) {
-                const auto itemFileName = index.data(kItemNameRole);
-                const auto itemFileDisplayName = index.data(kItemFileDisplayNameRole);
-
-                if (itemFileName != itemFileDisplayName)
+        if (Q_LIKELY(!FileUtils::isDesktopFile(url))) {
+            do {
+                if (role != kItemNameRole && role != kItemFileDisplayNameRole)
                     break;
-            }
 
-            const QString &suffix = "." + index.data(kItemFileSuffixRole).toString();
-            if (suffix == ".")
-                break;
-            fileName = ItemDelegateHelper::elideText(index.data(kItemFileBaseNameRole).toString().remove('\n'),
-                                                     QSize(static_cast<int>(rect.width()) - option.fontMetrics.width(suffix), static_cast<int>(rect.height())),
-                                                     QTextOption::WrapAtWordBoundaryOrAnywhere,
-                                                     option.font, Qt::ElideRight,
-                                                     d->textLineHeight);
+                if (role == kItemFileDisplayNameRole) {
+                    const auto itemFileName = index.data(kItemNameRole);
+                    const auto itemFileDisplayName = index.data(kItemFileDisplayNameRole);
 
-            bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
-            if (showSuffix)
-                fileName.append(suffix);
-        } while (false);
+                    if (itemFileName != itemFileDisplayName)
+                        break;
+                }
+
+                const QString &suffix = "." + index.data(kItemFileSuffixRole).toString();
+                if (suffix == ".")
+                    break;
+                fileName = ItemDelegateHelper::elideText(index.data(kItemFileBaseNameRole).toString().remove('\n'),
+                                                         QSize(static_cast<int>(rect.width()) - option.fontMetrics.width(suffix), static_cast<int>(rect.height())),
+                                                         QTextOption::WrapAtWordBoundaryOrAnywhere,
+                                                         option.font, Qt::ElideRight,
+                                                         d->textLineHeight);
+
+                bool showSuffix { Application::instance()->genericAttribute(Application::kShowedFileSuffix).toBool() };
+                if (showSuffix)
+                    fileName.append(suffix);
+            } while (false);
+        }
 
         if (fileName.isEmpty()) {
             fileName = ItemDelegateHelper::elideText(index.data(role).toString().remove('\n'),

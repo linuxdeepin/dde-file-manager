@@ -190,6 +190,11 @@ QIcon DesktopFileInfo::fileIcon()
     return d->icon;
 }
 
+QString DesktopFileInfo::fileName() const
+{
+    return fileDisplayName();
+}
+
 QString DesktopFileInfo::fileDisplayName() const
 {
     if (desktopName().isEmpty()) {
