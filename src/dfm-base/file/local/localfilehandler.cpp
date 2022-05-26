@@ -128,7 +128,7 @@ bool LocalFileHandler::touchFile(const QUrl &url)
     AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
     fileInfo->refresh();
 
-    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, url);
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, url);
 
     return true;
 }
@@ -163,7 +163,7 @@ bool LocalFileHandler::mkdir(const QUrl &dir)
     AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(dir);
     fileInfo->refresh();
 
-    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, dir);
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, dir);
 
     return true;
 }
@@ -195,7 +195,7 @@ bool LocalFileHandler::rmdir(const QUrl &url)
         return false;
     }
 
-    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, url);
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileDeleted, url);
 
     return true;
 }
@@ -217,8 +217,8 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
 
     if (::rename(sourceFile.constData(), targetFile.constData()) == 0) {
-        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, url);
-        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileDeleted, url);
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, newUrl);
 
         AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
         fileInfo->refresh();
@@ -248,8 +248,8 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
     fileInfo->refresh();
 
-    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, url);
-    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, newUrl);
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileDeleted, url);
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, newUrl);
 
     return true;
 }
@@ -477,7 +477,7 @@ bool LocalFileHandler::createSystemLink(const QUrl &sourcefile, const QUrl &link
         return false;
     }
 
-    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileAdded, link);
+    FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded, link);
 
     return true;
 }
@@ -520,7 +520,7 @@ bool LocalFileHandler::deleteFile(const QUrl &file)
 {
     int ret = 0;
     if ((ret = ::remove(file.toLocalFile().toLocal8Bit())) == 0) {
-        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted, file);
+        FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType::kFileDeleted, file);
         qDebug() << "delete file success: " << file;
         return true;
     }

@@ -47,7 +47,7 @@ signals:   // 对线程协同的worker使用
      */
     void operateWork(AbstractJobHandler::SupportActions actions);
     void startWork();
-    void requestShowRestoreFailedDialog(const QList<QUrl> &urls);
+    void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
 
 protected slots:
     void operateCopy(AbstractJobHandler::SupportActions actions);

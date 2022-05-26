@@ -181,6 +181,15 @@ bool DoCopyFilesWorker::copyFiles()
         }
         fileInfo->refresh();
 
+        // check self
+        if (fileInfo->isDir()) {
+            const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
+            if (higher) {
+                emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});
+                return false;
+            }
+        }
+
         bool workContinue = false;
         if (!doCopyFile(fileInfo, targetInfo, &workContinue)) {
             if (workContinue)

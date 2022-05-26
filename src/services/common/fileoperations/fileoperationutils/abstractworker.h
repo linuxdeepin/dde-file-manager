@@ -111,7 +111,7 @@ signals:
      */
     void speedUpdatedNotify(const JobInfoPointer JobInfo);
 
-    void requestShowRestoreFailedDialog(const QList<QUrl> &urls);
+    void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
 signals:   // update proccess timer use
     void startUpdateProccessTimer();
 

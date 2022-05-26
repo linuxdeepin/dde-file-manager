@@ -31,8 +31,15 @@ DFMBASE_USE_NAMESPACE
 AbstractJobHandler::AbstractJobHandler(QObject *parent)
     : QObject(parent)
 {
-    connect(this, &AbstractJobHandler::requestShowRestoreFailedDialog, this, [=](const QList<QUrl> &urls){
-        DialogManagerInstance->showRestoreFailedDialog(urls);
+    connect(this, &AbstractJobHandler::requestShowTipsDialog, this, [=](DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> urls) {
+        switch (type) {
+        case DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kRestoreFailed:
+            DialogManagerInstance->showRestoreFailedDialog(urls);
+            break;
+        case DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf:
+            DialogManagerInstance->showCopyMoveToSelfDialog();
+            break;
+        }
     });
 }
 

@@ -153,6 +153,15 @@ bool DoCutFilesWorker::cutFiles()
             continue;
         }
 
+        // check self
+        if (fileInfo->isDir()) {
+            const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
+            if (higher) {
+                emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kCopyMoveToSelf, {});
+                return false;
+            }
+        }
+
         if (!doCutFile(fileInfo, targetInfo)) {
             return false;
         }

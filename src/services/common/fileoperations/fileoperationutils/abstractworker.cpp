@@ -413,6 +413,7 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
 AbstractWorker::AbstractWorker(QObject *parent)
     : QObject(parent)
 {
+    qRegisterMetaType<DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType>();
     Application::dataPersistence()->autoSyncExclude(DFMBASE_NAMESPACE::kOperateFileGroup);
 }
 /*!

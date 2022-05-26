@@ -32,12 +32,14 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
+namespace Global {
 enum class FileNotifyType : uint8_t {
     kFileNone,
     kFileChanged,
     kFileAdded,
     kFileDeleted
 };
+}
 
 DFMBASE_END_NAMESPACE
 

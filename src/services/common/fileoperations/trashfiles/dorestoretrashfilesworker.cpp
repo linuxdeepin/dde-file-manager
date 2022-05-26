@@ -159,7 +159,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         } else {
             ok = handleRestoreTrash(fileInfo, restoreInfo, targetInfo);
             if (!ok)
-                emit requestShowRestoreFailedDialog({ url });
+                emit requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType::kRestoreFailed, { url });
         }
 
         if (!ok) {

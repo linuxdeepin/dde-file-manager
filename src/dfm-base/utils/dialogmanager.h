@@ -54,18 +54,19 @@ public:
         kMsgWarn = 2,
         kMsgErr = 3
     };
-
-    DDialog *showQueryScanningDialog(const QString &title);
-
-    void showErrorDialog(const QString &title, const QString &message);
-
     enum OperateType {
         kMount,
         kUnmount,
         kRemove,
     };
+
+    DDialog *showQueryScanningDialog(const QString &title);
+
+    void showErrorDialog(const QString &title, const QString &message);
+
     void showErrorDialogWhenOperateDeviceFailed(OperateType type, DFMMOUNT::DeviceError err);
     void showNoPermissionDialog(const QList<QUrl> &urls);
+    void showCopyMoveToSelfDialog();
 
     int showMessageDialog(MessageType messageLevel, const QString &title, const QString &message = "", QString btnTxt = tr("Confirm", "button"));
 

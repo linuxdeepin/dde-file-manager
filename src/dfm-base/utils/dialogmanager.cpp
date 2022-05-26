@@ -232,6 +232,19 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
     d.exec();
 }
 
+void DialogManager::showCopyMoveToSelfDialog()
+{
+    DDialog d;
+    d.setTitle(tr("Operation failed!"));
+    d.setMessage(tr("Target folder is inside the source folder!"));
+    QStringList buttonTexts;
+    buttonTexts.append(tr("OK", "button"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    d.setIcon(warningIcon);
+    d.exec();
+}
+
 /*!
  * \brief DialogService::addTask 添加一个文件操作任务，当收到这个任务的线程结束时，自己移除掉这个任务
  *

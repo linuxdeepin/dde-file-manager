@@ -167,6 +167,11 @@ public:
     };
     Q_ENUM(DeleteDialogNoticeType)
 
+    enum class ShowDialogType : uint8_t {
+        kRestoreFailed,
+        kCopyMoveToSelf,
+    };
+
     explicit AbstractJobHandler(QObject *parent = nullptr);
     virtual ~AbstractJobHandler();
     virtual qreal currentJobProcess() const;
@@ -231,7 +236,7 @@ signals:   // 发送给任务调用者使用的信号
      * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
      */
     void speedUpdatedNotify(const JobInfoPointer jobInfo);
-    void requestShowRestoreFailedDialog(const QList<QUrl> &urls);
+    void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
 signals:   // 发送给任务使用的信号
     /*!
      * \brief userAction 用户当前动作
@@ -260,6 +265,7 @@ DFMBASE_END_NAMESPACE
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::SupportActions)
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)
+Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType)
 typedef QSharedPointer<DFMBASE_NAMESPACE::AbstractJobHandler> JobHandlePointer;
 Q_DECLARE_METATYPE(JobHandlePointer)
 

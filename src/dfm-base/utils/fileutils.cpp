@@ -432,6 +432,17 @@ bool FileUtils::trashIsEmpty()
     return !enumerator.hasNext();
 }
 
+bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
+{
+    QUrl url = urlCompare;
+    while (url != QUrl::fromLocalFile(R"(/)")) {
+        if (urlBase.isParentOf(url))
+            return true;
+        url = DFMIO::DFMUtils::directParentUrl(url);
+    }
+    return false;
+}
+
 QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair)
 {
     if (originUrls.isEmpty()) {
@@ -995,7 +1006,7 @@ bool FileUtils::containsCopyingFileUrl(const QUrl &url)
     return listCopying.contains(url);
 }
 
-void FileUtils::notifyFileChangeManual(FileNotifyType type, const QUrl &url)
+void FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType type, const QUrl &url)
 {
     if (!url.isValid())
         return;
@@ -1023,13 +1034,13 @@ void FileUtils::notifyFileChangeManual(FileNotifyType type, const QUrl &url)
         return;
 
     switch (type) {
-    case DFMBASE_NAMESPACE::FileNotifyType::kFileAdded:
+    case DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded:
         watcher->notifyFileAdded(url);
         return;
-    case DFMBASE_NAMESPACE::FileNotifyType::kFileDeleted:
+    case DFMBASE_NAMESPACE::Global::FileNotifyType::kFileDeleted:
         watcher->notifyFileDeleted(url);
         return;
-    case DFMBASE_NAMESPACE::FileNotifyType::kFileChanged:
+    case DFMBASE_NAMESPACE::Global::FileNotifyType::kFileChanged:
         watcher->notifyFileChanged(url);
         return;
     default:

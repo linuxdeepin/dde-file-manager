@@ -66,6 +66,7 @@ public:
     static bool isLocalDevice(const QUrl &url);
     static bool isCdRomDevice(const QUrl &url);
     static bool trashIsEmpty();
+    static bool isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare);
 
     static QMap<QUrl, QUrl> fileBatchReplaceText(const QList<QUrl> &originUrls, const QPair<QString, QString> &pair);
     static QMap<QUrl, QUrl> fileBatchAddText(const QList<QUrl> &originUrls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &pair);
@@ -85,7 +86,7 @@ public:
     static void removeCopyingFileUrl(const QUrl &url);
     static bool containsCopyingFileUrl(const QUrl &url);
 
-    static void notifyFileChangeManual(DFMBASE_NAMESPACE::FileNotifyType type, const QUrl &url);
+    static void notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType type, const QUrl &url);
     static bool compareString(const QString &str1, const QString &str2, Qt::SortOrder order);
 
     static QString dateTimeFormat();
