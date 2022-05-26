@@ -375,7 +375,15 @@ void WorkspaceWidget::handleCtrlN()
         qWarning() << "Cannot find view by url: " << workspaceUrl;
         return;
     }
-    WorkspaceEventCaller::sendOpenWindow(fileView->selectedUrlList());
+
+    QList<QUrl> urlList;
+    for (const auto &url : fileView->selectedUrlList()) {
+        const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info && info->canFetch())
+            urlList << url;
+    }
+
+    WorkspaceEventCaller::sendOpenWindow(urlList);
 }
 
 void WorkspaceWidget::initCustomTopWidgets(const QUrl &url)
