@@ -75,6 +75,17 @@ void FileViewModelPrivate::doFileDeleted(const QUrl &url)
     metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
 }
 
+void FileViewModelPrivate::dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
+{
+    doFileDeleted(fromUrl);
+
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(toUrl);
+    if (info)
+        info->refresh();
+
+    dofileCreated(toUrl);
+}
+
 void FileViewModelPrivate::dofileCreated(const QUrl &url)
 {
     {
@@ -84,6 +95,7 @@ void FileViewModelPrivate::dofileCreated(const QUrl &url)
     // Todo(liyigang):isUpdatedChildren
     //    if (isUpdatedChildren)
     //        return;
+
     metaObject()->invokeMethod(this, QT_STRINGIFY(doWatcherEvent), Qt::QueuedConnection);
 }
 
@@ -92,6 +104,10 @@ void FileViewModelPrivate::doFileUpdated(const QUrl &url)
     //     Todo(yanghao): filter .hidden file update
     if (!updateUrlList.containsByLock(url))
         updateUrlList.appendByLock(url);
+
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+    if (info)
+        info->refresh();
 
     if (!updateTimer.isActive())
         updateTimer.start();

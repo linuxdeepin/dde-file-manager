@@ -132,11 +132,7 @@ private Q_SLOTS:
         Q_UNUSED(isExternalSource);
     }
 
-    void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl)
-    {
-        doFileDeleted(fromUrl);
-        dofileCreated(toUrl);
-    }
+    void dofileMoved(const QUrl &fromUrl, const QUrl &toUrl);
 
     void dofileCreated(const QUrl &url);
     void doFileUpdated(const QUrl &url);
