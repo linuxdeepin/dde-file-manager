@@ -45,15 +45,15 @@ public:
 
     bool isDBusRuning();
     void initConnection();
-    void initExternalMounts();
+    void initMounts();
 
     void connectToDBus();
     void connectToAPI();
     void disconnCurrentConnections();
 
 private Q_SLOTS:
-    void addExternalMounts(const QString &id, const QString &mpt);
-    void removeExternalMounts(const QString &id);
+    void addMounts(const QString &id, const QString &mpt);
+    void removeMounts(const QString &id);
 
 private:
     DeviceProxyManager *q { nullptr };
@@ -62,6 +62,7 @@ private:
     QList<QMetaObject::Connection> connections;
     int currentConnectionType = kNoneConnection;   // 0 for API connection and 1 for DBus connection
     QMap<QString, QString> externalMounts;
+    QMap<QString, QString> allMounts;
 
     enum {
         kNoneConnection = -1,

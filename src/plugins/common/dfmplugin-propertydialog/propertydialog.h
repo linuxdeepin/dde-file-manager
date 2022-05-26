@@ -24,6 +24,7 @@
 #include "dfmplugin_propertydialog_global.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE
 
@@ -31,6 +32,9 @@ class PropertyDialog : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "propertydialog.json")
+
+    DPF_EVENT_NAMESPACE(DPPROPERTYDIALOG_NAMESPACE)
+    DPF_EVENT_REG_HOOK(hook_ShowPropertyDialog)
 
 public:
     virtual void initialize() override;

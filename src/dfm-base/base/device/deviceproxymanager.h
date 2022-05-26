@@ -70,6 +70,9 @@ public:
     bool isMonitorWorking();
 
     bool isFileOfExternalMounts(const QString &filePath);
+    bool isFileOfProtocolMounts(const QString &filePath);
+    bool isFileFromOptical(const QString &filePath);
+    bool isMptOfDevice(const QString &filePath, QString &id);
 
     // device signals
 signals:

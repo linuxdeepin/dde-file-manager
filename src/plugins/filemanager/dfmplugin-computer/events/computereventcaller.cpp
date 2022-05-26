@@ -127,10 +127,8 @@ void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
     qDebug() << "send ctrl t at item: " << url;
 }
 
-void ComputerEventCaller::sendShowPropertyDialog(const QUrl &url)
+void ComputerEventCaller::sendShowPropertyDialog(const QList<QUrl> &urls)
 {
-    QList<QUrl> urls;
-    urls << url;
     dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 

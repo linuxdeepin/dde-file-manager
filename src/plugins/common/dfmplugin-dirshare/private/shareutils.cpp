@@ -22,6 +22,7 @@
 */
 #include "shareutils.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 
@@ -39,7 +40,10 @@ bool ShareUtils::canShare(AbstractFileInfoPointer info)
     if (info->ownerId() != SysInfoUtils::getUserId() && !SysInfoUtils::isRootUser())
         return false;
 
-    if (DevProxyMng->isFileOfExternalMounts(info->filePath()))
+    if (DevProxyMng->isFileOfProtocolMounts(info->filePath()))
+        return false;
+
+    if (info->url().scheme() == Global::kBurn || DevProxyMng->isFileFromOptical(info->filePath()))
         return false;
 
     return true;

@@ -70,6 +70,7 @@ void Computer::initialize()
     connect(WindowsService::service(), &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 
     bindEvents();
+    followEvents();
 }
 
 bool Computer::start()
@@ -159,6 +160,11 @@ void Computer::bindEvents()
 {
     static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPCOMPUTER_NAMESPACE) };
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetContextMenuEnable", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::setContextMenuEnable);
+}
+
+void Computer::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_propertydialog", "hook_ShowPropertyDialog", ComputerEventReceiverIns, &ComputerEventReceiver::handleShowPropertyDialog);
 }
 
 DPCOMPUTER_END_NAMESPACE

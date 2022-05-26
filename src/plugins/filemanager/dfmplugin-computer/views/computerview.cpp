@@ -197,7 +197,7 @@ void ComputerView::initConnect()
         if (info)
             ComputerControllerInstance->actProperties(ComputerUtils::getWinId(this), info);
         else
-            ComputerEventCaller::sendShowPropertyDialog(ComputerUtils::rootUrl());
+            ComputerEventCaller::sendShowPropertyDialog({ ComputerUtils::rootUrl() });
     });
     connectShortcut(QKeySequence(Qt::Key::Key_N | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
         if (info)

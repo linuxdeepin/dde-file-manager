@@ -22,6 +22,7 @@
 */
 #include "deviceproxymanager.h"
 #include "devicemanager.h"
+#include "deviceutils.h"
 #include "private/deviceproxymanager_p.h"
 
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
@@ -134,14 +135,42 @@ bool DeviceProxyManager::isMonitorWorking()
 bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 {
     const QStringList &&mpts = d->externalMounts.values();
-    auto ret = std::find_if(mpts.cbegin(), mpts.cend(), [filePath](const QString &mpt) { return filePath.startsWith(mpt); });
+    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    auto ret = std::find_if(mpts.cbegin(), mpts.cend(), [path](const QString &mpt) { return path.startsWith(mpt); });
     return ret != mpts.cend();
+}
+
+bool DeviceProxyManager::isFileOfProtocolMounts(const QString &filePath)
+{
+    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
+        if (!iter.base().key().startsWith(kBlockDeviceIdPrefix) && path.startsWith(iter.base().value()))
+            return true;
+    }
+    return false;
+}
+
+bool DeviceProxyManager::isFileFromOptical(const QString &filePath)
+{
+    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    for (auto iter = d->allMounts.constKeyValueBegin(); iter != d->allMounts.constKeyValueEnd(); ++iter) {
+        if (iter.base().key().startsWith(QString(kBlockDeviceIdPrefix) + "sr") && path.startsWith(iter.base().value()))
+            return true;
+    }
+    return false;
+}
+
+bool DeviceProxyManager::isMptOfDevice(const QString &filePath, QString &id)
+{
+    QString path = filePath.endsWith("/") ? filePath : filePath + "/";
+    id = d->allMounts.key(path, "");
+    return !id.isEmpty();
 }
 
 DeviceProxyManager::DeviceProxyManager(QObject *parent)
     : QObject(parent), d(new DeviceProxyManagerPrivate(this, parent))
 {
-    QTimer::singleShot(1000, this, [this] { d->initExternalMounts(); });
+    QTimer::singleShot(1000, this, [this] { d->initMounts(); });
 }
 
 DeviceProxyManager::~DeviceProxyManager()
@@ -180,19 +209,24 @@ void DeviceProxyManagerPrivate::initConnection()
         connectToAPI();
 }
 
-void DeviceProxyManagerPrivate::initExternalMounts()
+void DeviceProxyManagerPrivate::initMounts()
 {
     using namespace GlobalServerDefines;
 
     auto func = [this](const QStringList &devs, std::function<QVariantMap(DeviceProxyManager *, const QString &, bool)> query) {
         for (const auto &dev : devs) {
             auto &&info = query(q, dev, false);
-            if (!info.value(DeviceProperty::kMountPoint).toString().isEmpty())
-                externalMounts.insert(dev, info.value(DeviceProperty::kMountPoint).toString());
+            auto mpt = info.value(DeviceProperty::kMountPoint).toString();
+            if (!mpt.isEmpty()) {
+                mpt = mpt.endsWith("/") ? mpt : mpt + "/";
+                if (info.value(DeviceProperty::kRemovable).toBool())
+                    externalMounts.insert(dev, mpt);
+                allMounts.insert(dev, mpt);
+            }
         }
     };
 
-    auto blks = q->getAllBlockIds(DeviceQueryOption::kMounted | DeviceQueryOption::kRemovable);
+    auto blks = q->getAllBlockIds();
     auto protos = q->getAllProtocolIds();
     func(blks, &DeviceProxyManager::queryBlockInfo);
     func(protos, &DeviceProxyManager::queryProtocolInfo);
@@ -226,12 +260,12 @@ void DeviceProxyManagerPrivate::connectToDBus()
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, q, &DeviceProxyManager::protocolDevMounted);
     connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, q, &DeviceProxyManager::protocolDevUnmounted);
 
-    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
-    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
-    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
-    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
-    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
-    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceMounted, this, &DeviceProxyManagerPrivate::addMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::BlockDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceMounted, this, &DeviceProxyManagerPrivate::addMounts);
+    connections << q->connect(ptr, &DeviceManagerInterface::ProtocolDeviceUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
 
     currentConnectionType = kDBusConnecting;
 }
@@ -262,12 +296,12 @@ void DeviceProxyManagerPrivate::connectToAPI()
     connections << q->connect(ptr, &DeviceManager::protocolDevMounted, q, &DeviceProxyManager::protocolDevMounted);
     connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, q, &DeviceProxyManager::protocolDevUnmounted);
 
-    connections << q->connect(ptr, &DeviceManager::blockDevRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
-    connections << q->connect(ptr, &DeviceManager::blockDevMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
-    connections << q->connect(ptr, &DeviceManager::blockDevUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
-    connections << q->connect(ptr, &DeviceManager::protocolDevRemoved, this, &DeviceProxyManagerPrivate::removeExternalMounts);
-    connections << q->connect(ptr, &DeviceManager::protocolDevMounted, this, &DeviceProxyManagerPrivate::addExternalMounts);
-    connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, this, &DeviceProxyManagerPrivate::removeExternalMounts);
+    connections << q->connect(ptr, &DeviceManager::blockDevRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManager::blockDevMounted, this, &DeviceProxyManagerPrivate::addMounts);
+    connections << q->connect(ptr, &DeviceManager::blockDevUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManager::protocolDevRemoved, this, &DeviceProxyManagerPrivate::removeMounts);
+    connections << q->connect(ptr, &DeviceManager::protocolDevMounted, this, &DeviceProxyManagerPrivate::addMounts);
+    connections << q->connect(ptr, &DeviceManager::protocolDevUnmounted, this, &DeviceProxyManagerPrivate::removeMounts);
 
     currentConnectionType = kAPIConnecting;
 
@@ -282,12 +316,21 @@ void DeviceProxyManagerPrivate::disconnCurrentConnections()
     currentConnectionType = kNoneConnection;
 }
 
-void DeviceProxyManagerPrivate::addExternalMounts(const QString &id, const QString &mpt)
+void DeviceProxyManagerPrivate::addMounts(const QString &id, const QString &mpt)
 {
-    externalMounts.insert(id, mpt);
+    QString p = mpt.endsWith("/") ? mpt : mpt + "/";
+    if (id.startsWith(kBlockDeviceIdPrefix)) {
+        auto &&info = q->queryBlockInfo(id);
+        if (info.value(GlobalServerDefines::DeviceProperty::kRemovable).toBool())
+            externalMounts.insert(id, p);
+    } else {
+        externalMounts.insert(id, p);
+    }
+    allMounts.insert(id, p);
 }
 
-void DeviceProxyManagerPrivate::removeExternalMounts(const QString &id)
+void DeviceProxyManagerPrivate::removeMounts(const QString &id)
 {
     externalMounts.remove(id);
+    allMounts.remove(id);
 }

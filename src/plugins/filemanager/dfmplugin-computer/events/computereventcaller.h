@@ -48,7 +48,7 @@ public:
     static void sendOpenItem(quint64 winId, const QUrl &url);
     static void sendCtrlNOnItem(quint64 winId, const QUrl &url);
     static void sendCtrlTOnItem(quint64 winId, const QUrl &url);
-    static void sendShowPropertyDialog(const QUrl &url);
+    static void sendShowPropertyDialog(const QList<QUrl> &urls);
     static void sendErase(const QString &dev);
 };
 
