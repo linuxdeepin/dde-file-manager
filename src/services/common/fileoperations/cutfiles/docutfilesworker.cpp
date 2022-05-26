@@ -280,7 +280,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
         AbstractFileInfoPointer newTargetInfo(nullptr);
-        if (!doCheckFile(sourceInfo, targetInfo, newTargetInfo, ok))
+        if (!doCheckFile(sourceInfo, targetInfo, sourceInfo->fileName(), newTargetInfo, ok))
             return *ok;
 
         if (sourceInfo->isSymLink()) {

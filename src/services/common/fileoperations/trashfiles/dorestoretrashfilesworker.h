@@ -54,7 +54,7 @@ protected:
     bool doRestoreTrashFiles();
     bool getRestoreFileUrl(const AbstractFileInfoPointer &trashFileInfo, QUrl &restoreUrl, bool *result);
     bool handleSymlinkFile(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
-    bool handleRestoreTrash(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo);
+    bool handleRestoreTrash(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, const AbstractFileInfoPointer &targetInfo);
     bool clearTrashFile(const QUrl &fromUrl, const QUrl &toUrl, const AbstractFileInfoPointer &trashInfo,
                         const bool isSourceDel = false);
     //check disk space available before do move job

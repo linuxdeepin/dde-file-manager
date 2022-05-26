@@ -521,7 +521,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
 {
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool ok = false;
-    if (!doCheckFile(fromInfo, toInfo, newTargetInfo, result))
+    if (!doCheckFile(fromInfo, toInfo, fromInfo->fileName(), newTargetInfo, result))
         return ok;
 
     bool oldExist = newTargetInfo->exists();
@@ -561,7 +561,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
  * \param result Output parameter: whether skip
  * \return Is it successful
  */
-bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, const QString &fileName,
                                         AbstractFileInfoPointer &newTargetInfo, bool *workContinue)
 {
     // 检查源文件的文件信息
@@ -615,7 +615,7 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
     }
 
     // 创建新的目标文件并做检查
-    QString fileNewName = fromInfo->fileName();
+    QString fileNewName = fileName;
     newTargetInfo.reset(nullptr);
     if (!doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, workContinue, true))
         return false;
@@ -975,7 +975,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
 {
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
-    if (!doCheckFile(fromInfo, toInfo, newTargetInfo, workContinue))
+    if (!doCheckFile(fromInfo, toInfo, fromInfo->fileName(), newTargetInfo, workContinue))
         return result;
 
     bool oldExist = newTargetInfo->exists();

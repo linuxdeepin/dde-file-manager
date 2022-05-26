@@ -56,7 +56,7 @@ public:
     };
 
 public:
-    bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, const QString &fileName,
                      AbstractFileInfoPointer &newTargetInfo, bool *workContinue);
     bool doCheckNewFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                         AbstractFileInfoPointer &newTargetInfo, QString &fileNewName,

@@ -157,7 +157,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
         if (fileInfo->isSymLink()) {
             ok = handleSymlinkFile(fileInfo, restoreInfo);
         } else {
-            ok = handleRestoreTrash(fileInfo, targetInfo);
+            ok = handleRestoreTrash(fileInfo, restoreInfo, targetInfo);
             if (!ok)
                 emit requestShowRestoreFailedDialog({ url });
         }
@@ -245,7 +245,7 @@ bool DoRestoreTrashFilesWorker::handleSymlinkFile(const AbstractFileInfoPointer 
  * \param restoreInfo the file information restored at the originating station
  * \return Is the execution successful
  */
-bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo)
+bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, const AbstractFileInfoPointer &targetInfo)
 {
     //执行dorename，失败执行拷贝，再执行清理掉当前的trashinfo和源文件
     const QUrl &fromUrl = trashInfo->url();
@@ -255,7 +255,7 @@ bool DoRestoreTrashFilesWorker::handleRestoreTrash(const AbstractFileInfoPointer
 
     bool ok = false;
     AbstractFileInfoPointer newTargetInfo(nullptr);
-    if (!doCheckFile(trashInfo, restoreInfo, newTargetInfo, &ok))
+    if (!doCheckFile(trashInfo, targetInfo, restoreInfo->fileName(), newTargetInfo, &ok))
         return ok;
 
     toUrl = newTargetInfo->url();
