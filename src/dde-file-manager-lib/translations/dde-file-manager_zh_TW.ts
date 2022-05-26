@@ -2,49 +2,49 @@
 <context>
     <name>AppController</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="518"/>
+        <location filename="../controllers/appcontroller.cpp" line="521"/>
         <source>New Folder</source>
         <translation>建立資料夾</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="624"/>
+        <location filename="../controllers/appcontroller.cpp" line="627"/>
         <source>Mounting device error</source>
         <translation>掛載裝置時發生錯誤</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="679"/>
+        <location filename="../controllers/appcontroller.cpp" line="682"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
         <translation>此光碟中的鏡像已損壞，無法掛載，請擦除後使用</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="721"/>
+        <location filename="../controllers/appcontroller.cpp" line="724"/>
         <source>Mount error: unsupported image format</source>
-        <translation>掛載錯誤，鏡像檔案格式不支援</translation>
+        <translation>掛載錯誤，鏡像文件格式不支援</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="860"/>
-        <location filename="../controllers/appcontroller.cpp" line="900"/>
+        <location filename="../controllers/appcontroller.cpp" line="866"/>
+        <location filename="../controllers/appcontroller.cpp" line="906"/>
         <source>The device was not safely removed</source>
         <translation>裝置沒有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="860"/>
-        <location filename="../controllers/appcontroller.cpp" line="900"/>
+        <location filename="../controllers/appcontroller.cpp" line="866"/>
+        <location filename="../controllers/appcontroller.cpp" line="906"/>
         <source>Click &quot;Safely Remove&quot; and then disconnect it next time</source>
         <translation>請點擊「安全移除」後，再斷開連接</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="870"/>
+        <location filename="../controllers/appcontroller.cpp" line="876"/>
         <source>The device was not ejected</source>
         <translation>裝置未彈出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="870"/>
+        <location filename="../controllers/appcontroller.cpp" line="876"/>
         <source>Disk is busy, cannot eject now</source>
         <translation>磁碟忙碌，現在無法退出</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="881"/>
+        <location filename="../controllers/appcontroller.cpp" line="887"/>
         <source>Authentication timed out</source>
         <translation>認證超時</translation>
     </message>
@@ -220,33 +220,33 @@
     <message>
         <location filename="../dialogs/closealldialogindicator.cpp" line="78"/>
         <source>Total size: %1, %2 files</source>
-        <translation>總容量為 %1，包含 %2 個檔案</translation>
+        <translation>總容量為 %1，包含 %2 個文件</translation>
     </message>
 </context>
 <context>
     <name>ComputerModel</name>
     <message>
-        <location filename="../models/computermodel.cpp" line="504"/>
+        <location filename="../models/computermodel.cpp" line="505"/>
         <source>Double click to open it</source>
         <translation>雙擊打開應用程式</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="909"/>
+        <location filename="../models/computermodel.cpp" line="910"/>
         <source>My Directories</source>
         <translation>我的資料夾</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="912"/>
+        <location filename="../models/computermodel.cpp" line="913"/>
         <source>Disks</source>
         <translation>磁碟</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="915"/>
+        <location filename="../models/computermodel.cpp" line="916"/>
         <source>File Vault</source>
         <translation>保險箱</translation>
     </message>
     <message>
-        <location filename="../models/computermodel.cpp" line="918"/>
+        <location filename="../models/computermodel.cpp" line="919"/>
         <source>Quick Access</source>
         <translation>快速訪問</translation>
     </message>
@@ -331,40 +331,47 @@
 <context>
     <name>ConnectToServerDialog</name>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="56"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="57"/>
         <source>Connect to Server</source>
         <translation>連線到伺服器</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="139"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="190"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="262"/>
         <source>Favorite</source>
         <translation>收藏</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="230"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="253"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="231"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="254"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>連 線</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="241"/>
-        <source>My Favorites:</source>
-        <translation>個人收藏伺服器</translation>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="263"/>
+        <source>My Favorites</source>
+        <translation>我收藏的伺服器</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="298"/>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="342"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="364"/>
+        <source>No favorites yet</source>
+        <translation>暫無收藏</translation>
+    </message>
+    <message>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="326"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="380"/>
         <source>Clear History</source>
         <translation>清除最近使用的伺服器</translation>
     </message>
     <message>
-        <location filename="../dialogs/connecttoserverdialog.cpp" line="361"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="183"/>
+        <location filename="../dialogs/connecttoserverdialog.cpp" line="414"/>
         <source>Unfavorite</source>
         <translation>取消收藏</translation>
     </message>
@@ -387,12 +394,12 @@
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="168"/>
         <source>File Type:</source>
-        <translation>檔案類型：</translation>
+        <translation>文件類型：</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="169"/>
         <source>File Size:</source>
-        <translation>檔案大小：</translation>
+        <translation>文件大小：</translation>
     </message>
     <message>
         <location filename="../views/dfmadvancesearchbar.cpp" line="170"/>
@@ -564,7 +571,7 @@
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="459"/>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="470"/>
         <source>Contains: %1</source>
-        <translation>檔案數量：%1</translation>
+        <translation>文件數量：%1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="462"/>
@@ -604,7 +611,7 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="461"/>
         <source>Original file</source>
-        <translation>原始檔案</translation>
+        <translation>原始文件</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="469"/>
@@ -614,7 +621,7 @@
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="472"/>
         <source>Target file</source>
-        <translation>目標檔案</translation>
+        <translation>目標文件</translation>
     </message>
 </context>
 <context>
@@ -1149,17 +1156,17 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="220"/>
         <source>Failed to open the file</source>
-        <translation>開啟檔案失敗</translation>
+        <translation>打開文件失敗</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="222"/>
         <source>Failed to read the file</source>
-        <translation>讀取檔案失敗</translation>
+        <translation>讀取文件失敗</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="224"/>
         <source>Failed to write the file</source>
-        <translation>寫入檔案失敗</translation>
+        <translation>寫入文件失敗</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="226"/>
@@ -1169,22 +1176,22 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="228"/>
         <source>Failed to delete the file</source>
-        <translation>刪除檔案失敗</translation>
+        <translation>刪除文件失敗</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="230"/>
         <source>Failed to move the file</source>
-        <translation>移動檔案失敗</translation>
+        <translation>移動文件失敗</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="232"/>
         <source>Original file does not exist</source>
-        <translation>原始檔案不存在</translation>
+        <translation>原始文件不存在</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="234"/>
         <source>Failed, file size must be less than 4GB</source>
-        <translation>失敗，檔案大小至多只能 4GB</translation>
+        <translation>失敗，文件大小至多只能 4GB</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="236"/>
@@ -1194,7 +1201,7 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="238"/>
         <source>File integrity was damaged</source>
-        <translation>檔案完整性被破壞</translation>
+        <translation>文件完整性被破壞</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="240"/>
@@ -1230,37 +1237,37 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1234"/>
         <source>Failed to open the directory, cause: file name too long</source>
-        <translation>目錄打開失敗，原因：檔案名過長</translation>
+        <translation>目錄打開失敗，原因：文件名過長</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1427"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2413"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2417"/>
         <source>Failed to open the file, cause: file name too long</source>
-        <translation>文件打開失敗，原因：檔案名過長</translation>
+        <translation>文件打開失敗，原因：文件名過長</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2704"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2708"/>
         <source>Failed to create symlink, cause: %1</source>
         <translation>建立連結失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3295"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3379"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3299"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3383"/>
         <source>Failed to write the file, cause:</source>
-        <translation>無法寫入檔案，因為：</translation>
+        <translation>無法寫入文件，因為：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="3793"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3797"/>
         <source>Failed to position the file pointer, cause: %1</source>
         <translation>指標定位失敗，原因：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4476"/>
         <source>Syncing data</source>
         <translation>資料同步中</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="4472"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="4476"/>
         <source>Please wait</source>
         <translation>請稍候</translation>
     </message>
@@ -1272,54 +1279,54 @@
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1439"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1479"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1948"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3842"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1952"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1992"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3846"/>
         <source>Failed to open the file, cause: %1</source>
-        <translation>無法開啟檔案，因為：%1</translation>
+        <translation>無法打開文件，因為：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1475"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="1984"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3240"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="3838"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1988"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3244"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="3842"/>
         <source>Failed to open the file, cause: Permission denied</source>
         <translation>文件打開失敗，原因：權限不足</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1589"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2098"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2102"/>
         <source>Failed to read the file, cause: %1</source>
-        <translation>無法讀取檔案，因為：%1</translation>
+        <translation>無法讀取文件，因為：%1</translation>
     </message>
     <message>
         <location filename="../io/dfilecopymovejob.cpp" line="1643"/>
         <location filename="../io/dfilecopymovejob.cpp" line="1716"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2142"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2189"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2146"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2193"/>
         <source>Failed to write the file, cause: %1</source>
-        <translation>無法寫入檔案，因為：%1</translation>
+        <translation>無法寫入文件，因為：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="1846"/>
-        <location filename="../io/dfilecopymovejob.cpp" line="2297"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="1850"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2301"/>
         <source>File integrity was damaged, cause: %1</source>
-        <translation>檔案完整性被破壞，因為：%1</translation>
+        <translation>文件完整性被破壞，因為：%1</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2425"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2429"/>
         <source>Failed to open the file, cause: </source>
-        <translation>無法開啟檔案，因為：</translation>
+        <translation>無法打開文件，因為：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2506"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2510"/>
         <source>Failed to read the file, cause: </source>
-        <translation>無法讀取檔案，因為：</translation>
+        <translation>無法讀取文件，因為：</translation>
     </message>
     <message>
-        <location filename="../io/dfilecopymovejob.cpp" line="2604"/>
+        <location filename="../io/dfilecopymovejob.cpp" line="2608"/>
         <source>Failed to delete the file, cause: %1</source>
-        <translation>刪除檔案失敗，因為：%1</translation>
+        <translation>刪除文件失敗，因為：%1</translation>
     </message>
 </context>
 <context>
@@ -1359,12 +1366,12 @@
         <location filename="../views/dfiledialog.cpp" line="1474"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>開啟</translation>
+        <translation>打開</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1294"/>
         <source>This file will be hidden if the file name starts with a dot (.). Do you want to hide it?</source>
-        <translation>檔案名以“.”開始將會隱藏此文件，請確認是否繼續?</translation>
+        <translation>文件名以“.”開始將會隱藏此文件，請確認是否繼續?</translation>
     </message>
 </context>
 <context>
@@ -1398,12 +1405,12 @@
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1595"/>
         <source>Size</source>
-        <translation>檔案大小</translation>
+        <translation>文件大小</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1597"/>
         <source>Type</source>
-        <translation>檔案類型</translation>
+        <translation>文件類型</translation>
     </message>
     <message>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1599"/>
@@ -1411,7 +1418,7 @@
         <translation>建立時間</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
         <location filename="../interfaces/dfilesystemmodel.cpp" line="1601"/>
         <source>Last access</source>
         <translation>上次存取</translation>
@@ -1491,12 +1498,12 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="76"/>
         <source>%1 file selected (%2)</source>
-        <translation>已選取 %1 個檔案（%2）</translation>
+        <translation>已選取 %1 個文件（%2）</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="77"/>
         <source>%1 files selected (%2)</source>
-        <translation>已選取 %1 個檔案（%2）</translation>
+        <translation>已選取 %1 個文件（%2）</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="78"/>
@@ -1506,7 +1513,7 @@
     <message>
         <location filename="../views/dstatusbar.cpp" line="176"/>
         <source>Filter</source>
-        <translation>檔案類型</translation>
+        <translation>文件類型</translation>
     </message>
     <message>
         <location filename="../views/dstatusbar.cpp" line="190"/>
@@ -1693,27 +1700,27 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="426"/>
         <source>It is an executable text file.</source>
-        <translation>此為文字執行檔案。</translation>
+        <translation>此為文字執行文件。</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="457"/>
         <source>It is an executable file.</source>
-        <translation>此為執行檔案。</translation>
+        <translation>此為執行文件。</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="473"/>
         <source>This file is not executable, do you want to add the execute permission and run?</source>
-        <translation>此檔案不是可執行檔案，是否要對這檔案增加執行權限並執行？</translation>
+        <translation>此文件不是可執行文件，是否要對這文件增加執行權限並執行？</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="487"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>「%1」已存在，請使用其他檔案名稱。</translation>
+        <translation>「%1」已存在，請使用其他文件名稱。</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="502"/>
         <source>The file name must not contain two dots (..)</source>
-        <translation>檔案名不得含有兩個點（..）</translation>
+        <translation>文件名不得含有兩個點（..）</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="518"/>
@@ -1798,7 +1805,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="946"/>
         <source>%1 that this shortcut refers to has been changed or moved</source>
-        <translation>%1 捷徑連結的檔案或資料夾已更改或移除</translation>
+        <translation>%1 捷徑連結的文件或資料夾已更改或移除</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="950"/>
@@ -1808,12 +1815,12 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1063"/>
         <source>Failed, file size must be less than 4GB.</source>
-        <translation>失敗，檔案大小至少要小於 4GB。</translation>
+        <translation>失敗，文件大小至少要小於 4GB。</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1090"/>
         <source>The selected files contain system file/directory, and it cannot be deleted</source>
-        <translation>已選取的檔案中包含系統檔案╱資料夾，無法刪除</translation>
+        <translation>已選取的文件中包含系統文件╱資料夾，無法刪除</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1126"/>
@@ -1824,7 +1831,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="1201"/>
         <location filename="../dialogs/dialogmanager.cpp" line="1237"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation>你無權對檔案或資料夾進行操作！</translation>
+        <translation>你無權對文件或資料夾進行操作！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1212"/>
@@ -1834,7 +1841,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1254"/>
         <source>Sorry, you don&apos;t have permission to operate the following %1 file/folder(s)!</source>
-        <translation>抱歉，您無權執行以下 %1 個檔案和資料夾！</translation>
+        <translation>抱歉，您無權執行以下 %1 個文件和資料夾！</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1395"/>
@@ -1877,7 +1884,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="564"/>
         <source>Burn files</source>
         <comment>button</comment>
-        <translation>燒錄檔案</translation>
+        <translation>燒錄文件</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="651"/>
@@ -2087,7 +2094,7 @@
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="37"/>
         <source>Format</source>
-        <translation>檔案格式</translation>
+        <translation>文件格式</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="84"/>
@@ -2099,19 +2106,19 @@
         <location filename="../views/filedialogstatusbar.cpp" line="84"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>開啟</translation>
+        <translation>打開</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="92"/>
         <source>Save File</source>
         <comment>button</comment>
-        <translation>儲存檔案</translation>
+        <translation>儲存文件</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="92"/>
         <source>Open File</source>
         <comment>button</comment>
-        <translation>開啟檔案</translation>
+        <translation>打開文件</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="59"/>
@@ -2167,7 +2174,7 @@
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="3389"/>
         <source>%1 is a duplicate file.</source>
-        <translation>%1 檔案重複。</translation>
+        <translation>%1 文件重複。</translation>
     </message>
     <message>
         <location filename="../../fileoperations/filejob.cpp" line="3392"/>
@@ -2214,35 +2221,35 @@
         <location filename="../configure/global-setting-template-pro.js" line="9"/>
         <location filename="../configure/global-setting-template.js" line="9"/>
         <source>Open behavior</source>
-        <translation>開啟方式</translation>
+        <translation>打開方式</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="14"/>
         <location filename="../configure/global-setting-template-pro.js" line="14"/>
         <location filename="../configure/global-setting-template.js" line="14"/>
         <source>Always open folder in new window</source>
-        <translation>永遠在新視窗開啟</translation>
+        <translation>永遠在新視窗打開</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="19"/>
         <location filename="../configure/global-setting-template-pro.js" line="19"/>
         <location filename="../configure/global-setting-template.js" line="19"/>
         <source>Open file:</source>
-        <translation>檔案開啟方式：</translation>
+        <translation>文件打開方式：</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="22"/>
         <location filename="../configure/global-setting-template-pro.js" line="22"/>
         <location filename="../configure/global-setting-template.js" line="22"/>
         <source>Click</source>
-        <translation>滑鼠按一下</translation>
+        <translation>單擊</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="23"/>
         <location filename="../configure/global-setting-template-pro.js" line="23"/>
         <location filename="../configure/global-setting-template.js" line="23"/>
         <source>Double click</source>
-        <translation>滑鼠連按兩下</translation>
+        <translation>雙擊</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="31"/>
@@ -2256,7 +2263,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="35"/>
         <location filename="../configure/global-setting-template.js" line="35"/>
         <source>Open from default window:</source>
-        <translation>視窗預設開啟：</translation>
+        <translation>視窗預設打開：</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="39"/>
@@ -2343,7 +2350,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="63"/>
         <location filename="../configure/global-setting-template.js" line="63"/>
         <source>Open in new tab:</source>
-        <translation>新建分頁時開啟：</translation>
+        <translation>從新分頁打開：</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="67"/>
@@ -2434,14 +2441,14 @@
         <location filename="../configure/global-setting-template-pro.js" line="135"/>
         <location filename="../configure/global-setting-template.js" line="135"/>
         <source>Hidden files</source>
-        <translation>隱藏檔案</translation>
+        <translation>隱藏文件</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="139"/>
         <location filename="../configure/global-setting-template-pro.js" line="139"/>
         <location filename="../configure/global-setting-template.js" line="139"/>
         <source>Show hidden files</source>
-        <translation>顯示隱藏檔案</translation>
+        <translation>顯示隱藏文件</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="145"/>
@@ -2511,14 +2518,14 @@
         <location filename="../configure/global-setting-template-pro.js" line="281"/>
         <location filename="../configure/global-setting-template.js" line="280"/>
         <source>Use the file chooser dialog of File Manager</source>
-        <translation>使用檔案管理器的選擇檔案對話框</translation>
+        <translation>使用文件管理器的選擇文件對話框</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="287"/>
         <location filename="../configure/global-setting-template-pro.js" line="287"/>
         <location filename="../configure/global-setting-template.js" line="286"/>
         <source>Ask for my confirmation when deleting files</source>
-        <translation>開啟普通刪除提示</translation>
+        <translation>打開普通刪除提示</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="295"/>
@@ -2546,21 +2553,21 @@
         <location filename="../configure/global-setting-template-pro.js" line="318"/>
         <location filename="../configure/global-setting-template.js" line="317"/>
         <source>Show file system on disk icon</source>
-        <translation>在磁碟圖標上顯示文件系統標籤</translation>
+        <translation>在磁碟圖示上顯示文件系統標籤</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="194"/>
         <location filename="../configure/global-setting-template-pro.js" line="195"/>
         <location filename="../configure/global-setting-template.js" line="195"/>
         <source>Show hidden files in search results</source>
-        <translation>搜尋結果顯示隱藏檔案</translation>
+        <translation>搜尋結果顯示隱藏文件</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="151"/>
         <location filename="../configure/global-setting-template-pro.js" line="151"/>
         <location filename="../configure/global-setting-template.js" line="151"/>
         <source>Display recent file entry in left panel</source>
-        <translation>在左方面板顯示最近檔案項目</translation>
+        <translation>在左方面板顯示最近文件項目</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="203"/>
@@ -2573,21 +2580,21 @@
         <location filename="../configure/global-setting-template-fedora.js" line="207"/>
         <location filename="../configure/global-setting-template-pro.js" line="208"/>
         <source>Compress file preview</source>
-        <translation>預覽壓縮檔案</translation>
+        <translation>預覽壓縮文件</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="214"/>
         <location filename="../configure/global-setting-template-pro.js" line="215"/>
         <location filename="../configure/global-setting-template.js" line="214"/>
         <source>Text preview</source>
-        <translation>預覽文字檔案</translation>
+        <translation>預覽文字</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="220"/>
         <location filename="../configure/global-setting-template-pro.js" line="221"/>
         <location filename="../configure/global-setting-template.js" line="220"/>
         <source>Document preview</source>
-        <translation>預覽文件檔案</translation>
+        <translation>預覽文件</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="226"/>
@@ -2622,7 +2629,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="257"/>
         <location filename="../configure/global-setting-template.js" line="256"/>
         <source>Open after auto mount</source>
-        <translation>自動掛載後開啟</translation>
+        <translation>自動掛載後打開</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="277"/>
@@ -2634,79 +2641,79 @@
     <message>
         <location filename="../configure/global-setting-template.js" line="208"/>
         <source>Compressed file preview</source>
-        <translation>壓縮檔案預覽</translation>
+        <translation>壓縮文件預覽</translation>
     </message>
 </context>
 <context>
     <name>GvfsMountManager</name>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="815"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="821"/>
         <source>Can’t verify the identity of %1.</source>
         <translation>無法確認%1的身份。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="816"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="822"/>
         <source>This happens when you log in to a computer the first time.</source>
         <translation>當您首次登入時會看到這個提示。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="817"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="823"/>
         <source>The identity sent by the remote computer is</source>
         <translation>遠端電腦發送的身份訊息為</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="819"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="825"/>
         <source>If you want to be absolutely sure it is safe to continue, contact the system administrator.</source>
         <translation>若想確認繼續操作是否安全，請聯絡系統管理員。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="876"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1552"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1558"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1561"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="881"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="885"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1601"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1607"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1610"/>
         <source>Mounting device error</source>
         <translation>掛載裝置時發生錯誤</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="872"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1558"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="881"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1607"/>
         <source>Wrong username or password</source>
         <translation>使用者名稱或密碼錯誤</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1786"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1797"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1824"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1943"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1967"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1836"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1847"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1874"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1993"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2017"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>確 定</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1792"/>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1964"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1842"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="2014"/>
         <source>Cannot find the mounted device</source>
         <translation>找不到掛載裝置</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1706"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1756"/>
         <source>No key available to unlock device</source>
         <translation>沒有金鑰解鎖裝置</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1783"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1833"/>
         <source>The disk is mounted by user &quot;%1&quot;, you cannot unmount it.</source>
         <translation>此磁碟已被「%1」給掛載，你無法移除它。</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1821"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1871"/>
         <source>Cannot unmount the device</source>
         <translation>無法卸載裝置</translation>
     </message>
     <message>
-        <location filename="../gvfs/gvfsmountmanager.cpp" line="1939"/>
+        <location filename="../gvfs/gvfsmountmanager.cpp" line="1989"/>
         <source>Cannot eject the device &quot;%1&quot;</source>
         <translation>無法退出裝置「%1」</translation>
     </message>
@@ -2906,17 +2913,17 @@
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="49"/>
         <source>This file is too big for the trash</source>
-        <translation>檔案過大無法丟到回收桶</translation>
+        <translation>文件過大無法丟到回收桶</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="53"/>
         <source>The files are too big for the trash</source>
-        <translation>檔案過大無法丟到回收桶</translation>
+        <translation>文件過大無法丟到回收桶</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="54"/>
         <source>Are you sure you want to permanently delete %1 files?</source>
-        <translation>確定永久刪除 %1 個檔案？</translation>
+        <translation>確定永久刪除 %1 個文件？</translation>
     </message>
     <message>
         <location filename="../dialogs/movetotrashconflictdialog.cpp" line="74"/>
@@ -2936,7 +2943,7 @@
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="208"/>
         <source>Open with</source>
-        <translation>其他程式開啟</translation>
+        <translation>其他程式打開</translation>
     </message>
     <message>
         <location filename="../dialogs/openwithdialog.cpp" line="230"/>
@@ -3024,12 +3031,12 @@
     <message>
         <location filename="../controllers/pathmanager.cpp" line="68"/>
         <source>Computers in LAN</source>
-        <translation>共用的電腦</translation>
+        <translation>網路鄰居</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="69"/>
         <source>My Shares</source>
-        <translation>我的共用</translation>
+        <translation>我的共享</translation>
     </message>
     <message>
         <location filename="../controllers/pathmanager.cpp" line="70"/>
@@ -3057,7 +3064,7 @@
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="316"/>
         <source>Open with</source>
-        <translation>其他程式開啟</translation>
+        <translation>其他程式打開</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="317"/>
@@ -3104,7 +3111,7 @@
     <name>QObject</name>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1205"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="230"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="236"/>
         <source>Size</source>
@@ -3115,11 +3122,11 @@
         <location filename="../dialogs/propertydialog.cpp" line="1477"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="231"/>
         <source>Contains</source>
-        <translation>檔案數量</translation>
+        <translation>文件數量</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1206"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="327"/>
         <source>Type</source>
         <translation>類型</translation>
@@ -3128,7 +3135,7 @@
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="175"/>
         <location filename="../dialogs/propertydialog.cpp" line="1209"/>
         <location filename="../dialogs/propertydialog.cpp" line="1230"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="359"/>
         <source>Time modified</source>
         <translation>修改時間</translation>
@@ -3209,53 +3216,53 @@
         <translation>群組</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="841"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="844"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
         <source>Open</source>
-        <translation>開啟</translation>
+        <translation>打開</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="926"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="932"/>
         <source>Lock</source>
         <translation>立即上鎖</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="927"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="933"/>
         <source>Auto lock</source>
         <translation>自動上鎖</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="928"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="934"/>
         <source>Never</source>
         <translation>永不</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="935"/>
         <source>5 minutes</source>
         <translation>5分鐘</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="930"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="936"/>
         <source>10 minutes</source>
         <translation>10分鐘</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="931"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="937"/>
         <source>20 minutes</source>
         <translation>20分鐘</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="932"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="938"/>
         <source>Delete File Vault</source>
         <translation>刪除保險箱</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="933"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="939"/>
         <source>Unlock</source>
         <translation>解鎖</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="934"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="940"/>
         <source>Unlock by key</source>
         <translation>金鑰解鎖</translation>
     </message>
@@ -3263,7 +3270,7 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="96"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>開啟</translation>
+        <translation>打開</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
@@ -3290,271 +3297,271 @@
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="90"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="87"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="68"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="842"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="845"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="613"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="58"/>
         <source>Open in new window</source>
-        <translation>在新視窗中開啟</translation>
+        <translation>在新視窗中打開</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="94"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="91"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="72"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="843"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="846"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
         <location filename="../interfaces/dfmcrumbbar.cpp" line="617"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="62"/>
         <source>Open in new tab</source>
-        <translation>在新分頁中開啟</translation>
+        <translation>在新分頁中打開</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="848"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
         <source>Open with</source>
-        <translation>用其他程式開啟</translation>
+        <translation>用其他程式打開</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="851"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
         <location filename="../plugins/dfmadditionalmenu.cpp" line="375"/>
         <source>Compress</source>
         <translation>壓縮</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="852"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
         <source>Extract</source>
         <translation>解壓縮</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
         <source>Extract here</source>
         <translation>在此解壓縮</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="854"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
         <source>Cut</source>
         <translation>剪下</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
         <source>Copy</source>
         <translation>複製</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
         <source>Paste</source>
         <translation>貼上</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="100"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="78"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="857"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="858"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="918"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="924"/>
         <source>Rename</source>
         <translation>重新命名</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="107"/>
         <location filename="../controllers/dfmsidebartagitemhandler.cpp" line="85"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="958"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="959"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="894"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="964"/>
         <source>Remove</source>
         <translation>移除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="860"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
         <source>Create link</source>
         <translation>建立連結</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="861"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
         <source>Send to desktop</source>
         <translation>傳送到桌面</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="862"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="868"/>
         <source>Send to</source>
         <translation>傳送到</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="863"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
         <source>Bluetooth</source>
         <translation>藍牙</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="864"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
         <source>Add to bookmark</source>
         <translation>加到書籤</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebarbookmarkitemhandler.cpp" line="113"/>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="120"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="867"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
         <location filename="../interfaces/dfmsidebariteminterface.cpp" line="68"/>
         <source>Properties</source>
         <translation>屬性</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="869"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
         <source>New folder</source>
         <translation>新增資料夾</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="870"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
         <source>New window</source>
         <translation>新增視窗</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
         <source>Select all</source>
         <translation>全選</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="98"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
         <source>Clear recent history</source>
         <translation>清除最近使用的位置</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardefaultitemhandler.cpp" line="108"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="873"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
         <location filename="../views/dfilemanagerwindow.cpp" line="1309"/>
         <source>Empty Trash</source>
         <translation>清除回收桶</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="874"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
         <source>Display as</source>
         <translation>顯示方式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="875"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
         <source>Sort by</source>
         <translation>排列順序</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="876"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
         <source>New document</source>
         <translation>新增文件</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1207"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
         <source>Time created</source>
         <translation>建立時間</translation>
     </message>
     <message>
         <location filename="../dialogs/propertydialog.cpp" line="1210"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="909"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="377"/>
         <source>Source path</source>
         <translation>原始路徑</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
         <source>Share folder</source>
-        <translation>共用資料夾</translation>
+        <translation>共享資料夾</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="912"/>
         <source>Cancel sharing</source>
-        <translation>取消共用</translation>
+        <translation>取消共享</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="914"/>
         <source>Connect to Server</source>
         <translation>連線到伺服器</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="909"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="915"/>
         <source>Set share password</source>
-        <translation>設定共用密碼</translation>
+        <translation>設定共享密碼</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="916"/>
         <source>Format</source>
         <translation>格式化</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="914"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
         <source>Tag information</source>
         <translation>標記內容</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="847"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="853"/>
         <source>Open as administrator</source>
         <translation>以管理員身份打開</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="849"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="855"/>
         <source>Select default program</source>
-        <translation>選擇預設開啟程式</translation>
+        <translation>選擇預設打開程式</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="850"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="856"/>
         <source>Open file location</source>
-        <translation>開啟檔案位置</translation>
+        <translation>打開文件位置</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="859"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
         <source>Remove bookmark</source>
         <translation>移除書籤</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="865"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="866"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="916"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="871"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="872"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="922"/>
         <source>Delete</source>
         <translation>刪除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="877"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
         <source>Office Text</source>
         <translation>辦公文件</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="878"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
         <source>Spreadsheets</source>
         <translation>試算表</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="880"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
         <source>Plain Text</source>
-        <translation>文字檔案</translation>
+        <translation>文字文件</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="881"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
         <source>Open in terminal</source>
-        <translation>開啟終端機</translation>
+        <translation>打開終端機</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="882"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="888"/>
         <source>Restore</source>
         <translation>還原</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="883"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
         <source>Restore all</source>
         <translation>全部還原</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="967"/>
         <source>Clear saved password and unmount</source>
         <translation>取消記住密碼並移除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="907"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="913"/>
         <source>File Vault</source>
         <translation>保險箱</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="923"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="929"/>
         <source>Add to disc</source>
         <translation>添加至光碟燒錄</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="960"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="966"/>
         <source>Refresh</source>
         <translation>重新整理</translation>
     </message>
@@ -3566,17 +3573,18 @@
     <message>
         <location filename="../dialogs/dfmsettingdialog.cpp" line="349"/>
         <source>Open after auto mount</source>
-        <translation>自動掛載後開啟</translation>
+        <translation>自動掛載後打開</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="884"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="920"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="890"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="926"/>
         <source>Mount</source>
         <translation>掛載</translation>
     </message>
     <message>
         <location filename="../controllers/dfmsidebardeviceitemhandler.cpp" line="50"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="891"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="965"/>
         <source>Unmount</source>
         <translation>卸載</translation>
     </message>
@@ -3604,7 +3612,7 @@
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="358"/>
         <source>Allow files to be added later</source>
-        <translation>允許稍候附加檔案</translation>
+        <translation>允許稍候附加文件</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="368"/>
@@ -3633,48 +3641,48 @@
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="372"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="886"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="892"/>
         <source>Eject</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="887"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="893"/>
         <source>Safely Remove</source>
         <translation>安全移除</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="889"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
         <location filename="../views/dfmfilebasicinfowidget.cpp" line="215"/>
         <source>Name</source>
-        <translation>檔案名稱</translation>
+        <translation>文件名稱</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="895"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="901"/>
         <source>Settings</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="896"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
         <source>Exit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="897"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="903"/>
         <source>Icon</source>
         <translation>圖示顯示</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="898"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
         <source>List</source>
         <translation>列表顯示</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="899"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="905"/>
         <source>Extend</source>
         <translation>延伸</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="900"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="906"/>
         <source>Set as wallpaper</source>
         <translation>設定為桌布</translation>
     </message>
@@ -3697,7 +3705,7 @@
         <location filename="../dialogs/propertydialog.cpp" line="1434"/>
         <location filename="../dialogs/propertydialog.cpp" line="1435"/>
         <source>Network shared directory</source>
-        <translation>網路共用資料夾</translation>
+        <translation>網路共享資料夾</translation>
     </message>
     <message>
         <location filename="../deviceinfo/udiskdeviceinfo.cpp" line="311"/>
@@ -3744,22 +3752,22 @@
         <translation>%1 個項目</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="1224"/>
+        <location filename="../interfaces/dfileservices.cpp" line="1220"/>
         <source>Shortcut</source>
         <translation>快速鍵</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfileservices.cpp" line="769"/>
+        <location filename="../interfaces/dfileservices.cpp" line="761"/>
         <source>Create symlink</source>
         <translation>建立連結</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="904"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="910"/>
         <source>Path</source>
         <translation>路徑</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="902"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="908"/>
         <location filename="../models/trashfileinfo.cpp" line="325"/>
         <location filename="../models/trashfileinfo.cpp" line="333"/>
         <source>Time deleted</source>
@@ -3773,7 +3781,7 @@
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="873"/>
         <source>File has been moved or deleted</source>
-        <translation>檔案已移動或刪除</translation>
+        <translation>文件已移動或刪除</translation>
     </message>
     <message>
         <location filename="../interfaces/dfileinfo.cpp" line="879"/>
@@ -3813,23 +3821,23 @@
         <translation>來源路徑</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="568"/>
+        <location filename="../controllers/appcontroller.cpp" line="571"/>
         <source>Document</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="577"/>
+        <location filename="../controllers/appcontroller.cpp" line="580"/>
         <source>Spreadsheet</source>
         <translation>試算表</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="586"/>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="879"/>
+        <location filename="../controllers/appcontroller.cpp" line="589"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="885"/>
         <source>Presentation</source>
         <translation>簡報</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="593"/>
+        <location filename="../controllers/appcontroller.cpp" line="596"/>
         <source>Text</source>
         <translation>純文字文件</translation>
     </message>
@@ -3978,17 +3986,17 @@
     <message>
         <location filename="../views/drenamebar.cpp" line="290"/>
         <source>Tips: Sort by selected file order</source>
-        <translation>小提示：用選取檔案順序來排序</translation>
+        <translation>小提示：用選取文件順序來排序</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="1566"/>
         <source>Rename %1 Files</source>
-        <translation>重新命名 %1 個檔案</translation>
+        <translation>重新命名 %1 個文件</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="151"/>
         <source>Multiple Files</source>
-        <translation>多個檔案</translation>
+        <translation>多個文件</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="160"/>
@@ -4003,12 +4011,12 @@
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="169"/>
         <source>Number of files</source>
-        <translation>檔案數量</translation>
+        <translation>文件數量</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="169"/>
         <source>%1 file(s), %2 folder(s)</source>
-        <translation>%1 個檔案，%2 個資料夾</translation>
+        <translation>%1 個文件，%2 個資料夾</translation>
     </message>
     <message>
         <location filename="../dialogs/dmultifilepropertydialog.cpp" line="174"/>
@@ -4068,7 +4076,7 @@
         <translation>書籤</translation>
     </message>
     <message>
-        <location filename="../interfaces/dfilemenumanager.cpp" line="911"/>
+        <location filename="../interfaces/dfilemenumanager.cpp" line="917"/>
         <source>Erase</source>
         <translation>清除</translation>
     </message>
@@ -4117,12 +4125,12 @@
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="332"/>
         <source>Failed to open the file, cause: %1</source>
-        <translation>無法開啟檔案，因為：%1</translation>
+        <translation>無法打開文件，因為：%1</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="333"/>
         <source>Original file does not exist</source>
-        <translation>原始檔案不存在</translation>
+        <translation>原始文件不存在</translation>
     </message>
     <message>
         <location filename="../controllers/recentcontroller.cpp" line="334"/>
@@ -4186,7 +4194,7 @@
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="78"/>
         <source>Share this folder</source>
-        <translation>共用資料夾</translation>
+        <translation>共享資料夾</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="107"/>
@@ -4240,6 +4248,7 @@
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="189"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="532"/>
         <source>None</source>
         <translation>無</translation>
     </message>
@@ -4251,13 +4260,15 @@
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="265"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="533"/>
         <source>Change password</source>
         <translation>修改密碼</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="265"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="533"/>
         <source>Set password</source>
-        <translation>設置密碼</translation>
+        <translation>設定密碼</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="298"/>
@@ -4265,35 +4276,35 @@
         <translation>此密碼將應用到所有共享文件夾，沒有共享密碼的用戶可以訪問“允許匿名訪問”的共享文件夾。</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="536"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="553"/>
         <source>The share name must not be two dots (..) or one dot (.)</source>
         <translation>..和.禁止作為共享名使用</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="552"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="569"/>
         <source>The share name is used by another user.</source>
         <translation>該共享名已被其他使用者使用</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="553"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="570"/>
         <source>OK</source>
         <comment>button</comment>
         <translation>確 定</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="556"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="573"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>取 消</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="557"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="574"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>取代</translation>
     </message>
     <message>
-        <location filename="../dialogs/shareinfoframe.cpp" line="555"/>
+        <location filename="../dialogs/shareinfoframe.cpp" line="572"/>
         <source>The share name already exists. Do you want to replace the shared folder?</source>
         <translation>該共享名已存在。是否取代原有共享資料夾？</translation>
     </message>
@@ -4368,7 +4379,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
         <source>Open</source>
-        <translation>開啟</translation>
+        <translation>打開</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="40"/>
@@ -4398,7 +4409,7 @@
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
         <source>Delete file</source>
-        <translation>刪除檔案</translation>
+        <translation>刪除文件</translation>
     </message>
     <message>
         <location filename="../shutil/shortcut.cpp" line="43"/>
@@ -4720,14 +4731,14 @@
 <context>
     <name>UnmountWorker</name>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1704"/>
+        <location filename="../controllers/appcontroller.cpp" line="1791"/>
         <location filename="../../fileoperations/filejob.cpp" line="789"/>
         <location filename="../../fileoperations/filejob.cpp" line="1052"/>
         <source>The device was not safely unmounted</source>
         <translation>裝置沒有正常移除</translation>
     </message>
     <message>
-        <location filename="../controllers/appcontroller.cpp" line="1711"/>
+        <location filename="../controllers/appcontroller.cpp" line="1798"/>
         <source>The device was not safely removed</source>
         <translation>裝置沒有正常移除</translation>
     </message>
@@ -4774,7 +4785,7 @@
     <message>
         <location filename="../../usershare/usersharemanager.cpp" line="585"/>
         <source>You do not have permission to operate file/folder!</source>
-        <translation>你無權對檔案或資料夾進行操作！</translation>
+        <translation>你無權對文件或資料夾進行操作！</translation>
     </message>
 </context>
 <context>
