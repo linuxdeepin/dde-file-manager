@@ -32,7 +32,10 @@ void CompleterViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     }
 
     painter->setFont(option.font);
-    painter->drawText(option.rect.adjusted(31, 0, 0, 0), Qt::AlignVCenter, index.data(Qt::DisplayRole).toString());
+    auto text = index.data(Qt::DisplayRole).toString();
+    if (text.contains('\n'))
+        text = text.replace('\n', ' ');
+    painter->drawText(option.rect.adjusted(31, 0, 0, 0), Qt::AlignVCenter, text);
 }
 
 QSize CompleterViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
