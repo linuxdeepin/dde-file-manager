@@ -255,6 +255,8 @@ QVariant FileViewItem::data(int role) const
         return d->fileinfo->suffixOfRename();
     case kItemUrlRole:
         return d->fileinfo->url();
+    case Qt::TextAlignmentRole:
+        return Qt::AlignVCenter;
     default:
         return QVariant();
     }
