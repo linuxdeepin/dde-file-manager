@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Open</source>
-        <translation>開啟</translation>
+        <translation>打開</translation>
     </message>
     <message>
         <source>Eject all</source>
