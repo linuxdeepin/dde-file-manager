@@ -34,8 +34,7 @@ DFMGLOBAL_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
 CanvasProxyModelPrivate::CanvasProxyModelPrivate(CanvasProxyModel *qq)
-    : QObject(qq)
-    , q(qq)
+    : QObject(qq), q(qq)
 {
     modelFilters << QSharedPointer<CanvasModelFilter>(new HiddenFileFilter(qq));
     modelFilters << QSharedPointer<CanvasModelFilter>(new InnerDesktopAppFilter(qq));
@@ -148,8 +147,8 @@ void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &
     }
 
     auto newInfo = srcModel->fileInfo(srcModel->index(newUrl));
-    if (Q_LIKELY(row < 0)) { // no old data, need to insert
-        if (!fileMap.contains(newUrl)) { // insert it if it does not exist.
+    if (Q_LIKELY(row < 0)) {   // no old data, need to insert
+        if (!fileMap.contains(newUrl)) {   // insert it if it does not exist.
             row = fileList.count();
             q->beginInsertRows(q->rootIndex(), row, row);
             fileList.append(newUrl);
@@ -190,17 +189,16 @@ void CanvasProxyModelPrivate::sortMainDesktopFile(QList<QUrl> &files, Qt::SortOr
 
     //! warrning: the root url and LocalFileInfo::url must be like file://
     QDir dir(q->rootUrl().toString());
-    QList<QPair<QString, QUrl>> mainDesktop = {{dir.filePath("dde-home.desktop"), QUrl()},
-        {dir.filePath("dde-trash.desktop"), QUrl()},
-        {dir.filePath("dde-computer.desktop"), QUrl()}
-    };
+    QList<QPair<QString, QUrl>> mainDesktop = { { dir.filePath("dde-home.desktop"), QUrl() },
+                                                { dir.filePath("dde-trash.desktop"), QUrl() },
+                                                { dir.filePath("dde-computer.desktop"), QUrl() } };
     auto list = files;
     for (auto it = mainDesktop.begin(); it != mainDesktop.end(); ++it) {
         for (const QUrl &url : list)
-        if (url.toString() == it->first) {
-            it->second = url;
-            files.removeOne(url);
-        }
+            if (url.toString() == it->first) {
+                it->second = url;
+                files.removeOne(url);
+            }
     }
 
     for (auto it = mainDesktop.begin(); it != mainDesktop.end(); ++it) {
@@ -282,7 +280,7 @@ bool CanvasProxyModelPrivate::lessThan(const QUrl &left, const QUrl &right) cons
     QVariant rightData = q->data(rightIdx, fileSortRole);
 
     // When the selected sort attribute value is the same, sort by file name
-    auto compareByName = [this, leftIdx, rightIdx](){
+    auto compareByName = [this, leftIdx, rightIdx]() {
         QString leftName = q->data(leftIdx, kItemFileDisplayNameRole).toString();
         QString rightName = q->data(rightIdx, kItemFileDisplayNameRole).toString();
         return FileUtils::compareString(leftName, rightName, fileSortOrder);
@@ -357,7 +355,6 @@ void CanvasProxyModelPrivate::createMapping()
             maps.insert(url, srcModel->fileInfo(srcModel->index(url)));
     }
 
-
     fileList = urls;
     fileMap = maps;
 }
@@ -426,7 +423,7 @@ void CanvasProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft
         return;
 
     // AscendingOrder
-    qSort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2){
+    qSort(idxs.begin(), idxs.end(), [](const QModelIndex &t1, const QModelIndex &t2) {
         return t1.row() < t2.row();
     });
 
@@ -434,10 +431,8 @@ void CanvasProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft
 }
 
 CanvasProxyModel::CanvasProxyModel(QObject *parent)
-    : QAbstractProxyModel(parent)
-    , d(new CanvasProxyModelPrivate(this))
+    : QAbstractProxyModel(parent), d(new CanvasProxyModelPrivate(this))
 {
-
 }
 
 QModelIndex CanvasProxyModel::rootIndex() const
@@ -563,40 +558,39 @@ void CanvasProxyModel::setSourceModel(QAbstractItemModel *model)
     //! the sgnals listed below is useless.
     //! The original model did not involve sorting
 
-//    connect(model, &QAbstractItemModel::columnsAboutToBeRemoved),
-//            d, &CanvasProxyModelPrivate::sourceColumnsAboutToBeRemoved);
-//    connect(model, &QAbstractItemModel::columnsRemoved),
-//            d, &CanvasProxyModelPrivate::sourceColumnsRemoved);
+    //    connect(model, &QAbstractItemModel::columnsAboutToBeRemoved),
+    //            d, &CanvasProxyModelPrivate::sourceColumnsAboutToBeRemoved);
+    //    connect(model, &QAbstractItemModel::columnsRemoved),
+    //            d, &CanvasProxyModelPrivate::sourceColumnsRemoved);
 
-//    connect(model, &QAbstractItemModel::columnsAboutToBeInserted,
-//            d, &CanvasProxyModelPrivate::sourceColumnsAboutToBeInserted);
-//    connect(model, &QAbstractItemModel::rowsRemoved,
-//            d, &CanvasProxyModelPrivate::sourceRowsRemoved);
+    //    connect(model, &QAbstractItemModel::columnsAboutToBeInserted,
+    //            d, &CanvasProxyModelPrivate::sourceColumnsAboutToBeInserted);
+    //    connect(model, &QAbstractItemModel::rowsRemoved,
+    //            d, &CanvasProxyModelPrivate::sourceRowsRemoved);
 
-//    connect(model, &QAbstractItemModel::columnsInserted,
-//            d, &CanvasProxyModelPrivate::sourceColumnsInserted);
+    //    connect(model, &QAbstractItemModel::columnsInserted,
+    //            d, &CanvasProxyModelPrivate::sourceColumnsInserted);
 
-//    connect(model, &QAbstractItemModel::rowsAboutToBeInserted,
-//            d, &CanvasProxyModelPrivate::sourceRowsAboutToBeInserted);
+    //    connect(model, &QAbstractItemModel::rowsAboutToBeInserted,
+    //            d, &CanvasProxyModelPrivate::sourceRowsAboutToBeInserted);
 
-//    connect(model, &QAbstractItemModel::rowsAboutToBeMoved,
-//            d, &CanvasProxyModelPrivate::sourceRowsAboutToBeMoved);
+    //    connect(model, &QAbstractItemModel::rowsAboutToBeMoved,
+    //            d, &CanvasProxyModelPrivate::sourceRowsAboutToBeMoved);
 
-//    connect(model, &QAbstractItemModel::rowsMoved,
-//            d, &CanvasProxyModelPrivate::sourceRowsMoved);
+    //    connect(model, &QAbstractItemModel::rowsMoved,
+    //            d, &CanvasProxyModelPrivate::sourceRowsMoved);
 
-//    connect(model, &QAbstractItemModel::columnsAboutToBeMoved,
-//            d, &CanvasProxyModelPrivate::sourceColumnsAboutToBeMoved);
+    //    connect(model, &QAbstractItemModel::columnsAboutToBeMoved,
+    //            d, &CanvasProxyModelPrivate::sourceColumnsAboutToBeMoved);
 
-//    connect(model, &QAbstractItemModel::columnsMoved,
-//            d, &CanvasProxyModelPrivate::sourceColumnsMoved);
+    //    connect(model, &QAbstractItemModel::columnsMoved,
+    //            d, &CanvasProxyModelPrivate::sourceColumnsMoved);
 
-//    connect(model, &QAbstractItemModel::layoutAboutToBeChanged,
-//            d, &CanvasProxyModelPrivate::sourceLayoutAboutToBeChanged);
+    //    connect(model, &QAbstractItemModel::layoutAboutToBeChanged,
+    //            d, &CanvasProxyModelPrivate::sourceLayoutAboutToBeChanged);
 
-//    connect(model, &QAbstractItemModel::layoutChanged,
-//            d, &CanvasProxyModelPrivate::sourceLayoutChanged);
-
+    //    connect(model, &QAbstractItemModel::layoutChanged,
+    //            d, &CanvasProxyModelPrivate::sourceLayoutChanged);
 }
 
 QModelIndex CanvasProxyModel::mapToSource(const QModelIndex &proxyIndex) const
@@ -675,7 +669,7 @@ QStringList CanvasProxyModel::mimeTypes() const
 {
     auto list = QAbstractProxyModel::mimeTypes();
 
-    if (d->extend ) {
+    if (d->extend) {
         d->extend->mimeTypes(&list);
         qDebug() << "using extend mimeTypes." << list;
     }
@@ -733,12 +727,6 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
     if (d->extend && d->extend->dropMimeData(data, targetFileUrl, action)) {
         qDebug() << "droped by extend module.";
         return true;
-    }
-
-    if (itemInfo->canDragCompress()
-            && !itemInfo->isDir()) { // don't compress is itemInfo is dir.
-        qDebug() << "drop to append compress files.";
-        return false;//FileUtils::appendCompress(toUrl, urlList);    // todo Compress
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
@@ -812,7 +800,7 @@ void CanvasProxyModel::refresh(const QModelIndex &parent, bool global, int ms)
     } else {
         d->refreshTimer.reset(new QTimer);
         d->refreshTimer->setSingleShot(true);
-        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global](){
+        connect(d->refreshTimer.get(), &QTimer::timeout, this, [this, global]() {
             d->doRefresh(global);
         });
 

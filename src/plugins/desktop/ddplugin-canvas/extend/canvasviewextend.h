@@ -28,7 +28,9 @@ class CanvasViewExtendPrivate;
 class CanvasViewExtend : public QObject, public ViewExtendInterface
 {
     Q_OBJECT
+
     friend class CanvasViewExtendPrivate;
+
 public:
     explicit CanvasViewExtend(QObject *parent = nullptr);
     ~CanvasViewExtend();
@@ -46,10 +48,11 @@ public:
     bool dragLeave(int viewIndex, const QMimeData *, void *extData = nullptr) const override;
     bool keyboardSearch(int viewIndex, const QString &search, void *extData = nullptr) const override;
     bool drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData = nullptr) const override;
+
 private:
     CanvasViewExtendPrivate *d;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASVIEWEXTEND_H
+#endif   // CANVASVIEWEXTEND_H

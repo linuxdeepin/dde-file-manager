@@ -32,25 +32,28 @@ DDP_CANVAS_BEGIN_NAMESPACE
 
 #define RegCanvasEventID(provider, type, name) provider->events(type)->insert(name, DFMBASE_NAMESPACE::UniversalUtils::registerEventType())
 #define RegCanvasSignalsID(provider, name) RegCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kEventSignal, name)
-#define RegCanvasSlotsID(provider, name)   RegCanvasEventID (provider, DSB_D_NAMESPACE::EventType::kEventSlot, name)
-#define RegCanvasSeqSigID(provider, name)  RegCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kSeqSignal, name)
+#define RegCanvasSlotsID(provider, name) RegCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kEventSlot, name)
+#define RegCanvasSeqSigID(provider, name) RegCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kSeqSignal, name)
 
 #define GetCanvasEventID(provider, type, name) provider->events(type)->value(name).toInt()
 #define GetCanvasSignalsID(provider, name) GetCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kEventSignal, name)
-#define GetCanvasSlotsID(provider, name)   GetCanvasEventID (provider, DSB_D_NAMESPACE::EventType::kEventSlot, name)
-#define GetCanvasSeqSigID(provider, name)  GetCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kSeqSignal, name)
+#define GetCanvasSlotsID(provider, name) GetCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kEventSlot, name)
+#define GetCanvasSeqSigID(provider, name) GetCanvasEventID(provider, DSB_D_NAMESPACE::EventType::kSeqSignal, name)
 
 class CanvasEventProvider : public DSB_D_NAMESPACE::EventProvider
 {
 public:
     explicit CanvasEventProvider();
     ~CanvasEventProvider() override;
+
 public:
     virtual bool initEvent();
     QVariantHash query(int type) const override;
     QVariantHash *events(int type);
+
 protected:
     virtual void registerEvent() = 0;
+
 protected:
     DSB_D_NAMESPACE::CanvasService *service = nullptr;
     QVariantHash eSignals;
@@ -60,4 +63,4 @@ protected:
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASEVENTPROVIDER_H
+#endif   // CANVASEVENTPROVIDER_H

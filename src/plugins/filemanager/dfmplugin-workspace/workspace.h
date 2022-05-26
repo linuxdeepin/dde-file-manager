@@ -36,6 +36,8 @@ class Workspace : public dpf::Plugin
 
     DPF_EVENT_NAMESPACE(DPWORKSPACE_NAMESPACE)
 
+    DPF_EVENT_REG_SIGNAL(signal_FileDrop)
+
     // slot events
     DPF_EVENT_REG_SLOT(slot_CloseTab)
 
@@ -47,6 +49,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_PasteFilesShortcut)
     DPF_EVENT_REG_HOOK(hook_DeleteFilesShortcut)
     DPF_EVENT_REG_HOOK(hook_MoveToTrashShortcut)
+    DPF_EVENT_REG_HOOK(hook_FileDragMove)
 
 public:
     virtual void initialize() override;

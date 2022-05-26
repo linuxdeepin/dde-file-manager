@@ -25,7 +25,7 @@
 
 #include "dfmplugin_utils_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPUTILS_BEGIN_NAMESPACE
 

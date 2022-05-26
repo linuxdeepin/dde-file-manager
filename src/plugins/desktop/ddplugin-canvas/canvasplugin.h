@@ -23,7 +23,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasManager;
@@ -31,14 +31,20 @@ class CanvasPlugin : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.desktop" FILE "canvas.json")
+
+    DPF_EVENT_NAMESPACE(DDP_CANVAS_NAMESPACE)
+    DPF_EVENT_REG_HOOK(hook_CanvasView_FileDrop)
+    DPF_EVENT_REG_HOOK(hook_CanvasView_FileDragMove)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
+
 private:
     CanvasManager *proxy = nullptr;
 };
 
 DDP_CANVAS_END_NAMESPACE
 
-#endif // CANVASPLUGIN_H
+#endif   // CANVASPLUGIN_H

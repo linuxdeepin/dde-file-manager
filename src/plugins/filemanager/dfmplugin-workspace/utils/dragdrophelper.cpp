@@ -32,6 +32,8 @@
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/fileutils.h"
 
+#include "dfm-framework/event/event.h"
+
 #include <DFileDragClient>
 #include <QMimeData>
 
@@ -97,6 +99,15 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             return true;
         }
 
+        QUrl toUrl = hoverFileInfo->url();
+        QList<QUrl> fromUrls = event->mimeData()->urls();
+        Qt::DropAction dropAction = event->dropAction();
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_FileDragMove", toUrl, fromUrls, (void *)&dropAction)) {
+            event->setDropAction(dropAction);
+            event->accept();
+            return true;
+        }
+
         if (!handleDFileDrag(event->mimeData(), hoverFileInfo->url())) {
             event->accept();
         } else {
@@ -150,6 +161,10 @@ bool DragDropHelper::drop(QDropEvent *event)
         }
         if (!hoverIndex.isValid())
             return true;
+
+        QUrl toUrl = view->model()->itemFromIndex(hoverIndex)->url();
+        QList<QUrl> fromUrls = event->mimeData()->urls();
+        dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_FileDrop", toUrl, fromUrls);
 
         bool supportDropAction = view->model()->supportedDropActions() & event->dropAction();
         bool dropEnabled = isDropAtRootIndex ? true : (view->model()->flags(hoverIndex) & Qt::ItemIsDropEnabled);

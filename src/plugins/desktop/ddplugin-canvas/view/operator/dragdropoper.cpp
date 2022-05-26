@@ -83,6 +83,22 @@ bool DragDropOper::move(QDragMoveEvent *event)
     stopDelayDodge();
     auto pos = event->pos();
     auto hoverIndex = view->indexAt(pos);
+    // extend
+    if (hoverIndex.isValid() && view->d->extend) {
+        QUrl hoverUrl = view->model()->fileUrl(hoverIndex);
+        Qt::DropAction dropAction = Qt::IgnoreAction;
+
+        QVariantHash ext;
+        ext.insert("hoverUrl", QVariant(hoverUrl));
+        ext.insert("dropAction", qlonglong(&dropAction));
+
+        if (view->d->extend->dragMove(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
+            if (dropAction != Qt::IgnoreAction) {
+                event->setDropAction(dropAction);
+                return true;
+            }
+        }
+    }
     QUrl curUrl = hoverIndex.isValid() ? view->model()->fileUrl(hoverIndex) : view->model()->rootUrl();
     if (hoverIndex.isValid()) {
         if (auto fileInfo = view->model()->fileInfo(hoverIndex)) {
@@ -90,16 +106,6 @@ bool DragDropOper::move(QDragMoveEvent *event)
             if (!canDrop) {
                 handleMoveMimeData(event, curUrl);
 
-                // append compress
-                if (fileInfo->canDrop() && fileInfo->canDragCompress()) {
-                    // Set when dragging and dropping gvfs files, do not support additional compression
-                    auto urls = event->mimeData()->urls();
-                    if (!urls.isEmpty()) {
-                        event->setDropAction(Qt::CopyAction);
-                        if (FileUtils::isGvfsFile(urls.first()))
-                            event->setDropAction(Qt::MoveAction);
-                    }
-                }
                 return true;
             } else {
                 // not support drop
@@ -127,6 +133,13 @@ bool DragDropOper::drop(QDropEvent *event)
     if (view->d->extend) {
         QVariantHash ext;
         ext.insert("QDropEvent", (qlonglong)event);
+        QUrl dropUrl;
+        QModelIndex dropIndex = view->indexAt(event->pos());
+        if (dropIndex.isValid()) {
+            dropUrl = view->model()->fileUrl(dropIndex);
+        }
+        ext.insert("dropUrl", QVariant(dropUrl));
+
         if (view->d->extend->dropData(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
             qDebug() << "droped by extend";
             return true;
@@ -185,7 +198,7 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
         // is from or to trash or is to trash
         {
             bool isFromTrash = from.toLocalFile().startsWith(StandardPaths::location(StandardPaths::kTrashPath));
-            bool isToTrash = false; // there is no  trash dir on desktop.
+            bool isToTrash = false;   // there is no  trash dir on desktop.
 
             if (isFromTrash && isToTrash) {
                 event->setDropAction(Qt::IgnoreAction);
@@ -201,7 +214,6 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
 
         // todo is from vault
 
-
         if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
             QList<Qt::DropAction> actions;
 
@@ -216,11 +228,11 @@ void DragDropOper::preproccessDropEvent(QDropEvent *event, const QList<QUrl> &ur
             }
         }
 
-//        // is from recent file
-//        if (from.isRecentFile()) {
-//            defaultAction = isToTrash ? Qt::MoveAction : Qt::CopyAction;
-//            event->setDropAction(defaultAction);
-//        }
+        //        // is from recent file
+        //        if (from.isRecentFile()) {
+        //            defaultAction = isToTrash ? Qt::MoveAction : Qt::CopyAction;
+        //            event->setDropAction(defaultAction);
+        //        }
 
         event->setDropAction(defaultAction);
     }

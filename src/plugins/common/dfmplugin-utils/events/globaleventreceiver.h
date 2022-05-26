@@ -26,6 +26,11 @@
 #include "dfmplugin_utils_global.h"
 
 #include <QObject>
+#include <QUrl>
+
+QT_BEGIN_NAMESPACE
+class QMimeData;
+QT_END_NAMESPACE
 
 DPUTILS_BEGIN_NAMESPACE
 
@@ -40,6 +45,10 @@ public:
 
 public slots:
     void handleOpenAsAdmin(const QUrl &url);
+    bool handleSetMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, void *type);
+    void handleDragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls);
+    bool handleSetMouseStyleOnDesktop(int viewIndex, const QMimeData *mime, const QPoint &viewPos, void *extData);
+    bool handleDragDropCompressOnDesktop(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData);
 
 private:
     explicit GlobalEventReceiver(QObject *parent = nullptr);
