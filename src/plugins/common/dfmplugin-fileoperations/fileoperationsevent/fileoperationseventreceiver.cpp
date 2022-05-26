@@ -841,11 +841,18 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
             return ok;
         }
     }
+
+    AbstractFileInfoPointer toFileInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+    if (toFileInfo && toFileInfo->exists()) {
+        dialogManager->showRenameNameSameErrorDialog(toFileInfo->fileName());
+        return false;
+    }
+
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     ok = fileHandler.renameFile(oldUrl, newUrl);
     if (!ok) {
         error = fileHandler.errorString();
-        dialogManager->showErrorDialog("rename file error", error);
+        dialogManager->showRenameBusyErrDialog();
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,

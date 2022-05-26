@@ -38,6 +38,7 @@
 DFMBASE_USE_NAMESPACE
 
 static const QString kUserTrashFullOpened = "user-trash-full-opened";
+
 DialogManager *DialogManager::instance()
 {
     static DialogManager ins;
@@ -51,7 +52,7 @@ DDialog *DialogManager::showQueryScanningDialog(const QString &title)
     d->setAttribute(Qt::WA_DeleteOnClose);
     Qt::WindowFlags flags = d->windowFlags();
     d->setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
-    d->setIcon(QIcon::fromTheme("dialog-warning"));
+    d->setIcon(warningIcon);
     d->addButton(QObject::tr("Cancel", "button"));
     d->addButton(QObject::tr("Stop", "button"), true, DDialog::ButtonWarning);   // 终止
     d->setMaximumWidth(640);
@@ -65,7 +66,7 @@ void DialogManager::showErrorDialog(const QString &title, const QString &message
     Qt::WindowFlags flags = d.windowFlags();
     // dialog show top
     d.setWindowFlags(flags | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint);
-    d.setIcon(QIcon::fromTheme("dialog-error"));
+    d.setIcon(errorIcon);
     d.addButton(tr("Confirm", "button"), true, DDialog::ButtonRecommend);
     d.setMaximumWidth(640);
     d.exec();
@@ -80,11 +81,11 @@ int DialogManager::showMessageDialog(DialogManager::MessageType messageLevel, co
     d.addButtons(buttonTexts);
     d.setDefaultButton(0);
     if (messageLevel == kMsgWarn) {
-        d.setIcon(QIcon::fromTheme("dialog-warning"));
+        d.setIcon(warningIcon);
     } else if (messageLevel == kMsgErr) {
-        d.setIcon(QIcon::fromTheme("dialog-error"));
+        d.setIcon(errorIcon);
     } else {
-        d.setIcon(QIcon::fromTheme("dialog-information"));
+        d.setIcon(infoIcon);
     }
     int code = d.exec();
     return code;
@@ -133,7 +134,6 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
 
     DDialog d;
 
-    QIcon icon = QIcon::fromTheme("dialog-warning");
     if (urls.count() == 1) {
 
         d.setTitle(tr("You do not have permission to operate file/folder!"));
@@ -144,13 +144,13 @@ void DialogManager::showNoPermissionDialog(const QList<QUrl> &urls)
         }
 
         d.setMessage(message);
-        d.setIcon(icon);
+        d.setIcon(warningIcon);
     } else {
 
         QFrame *contentFrame = new QFrame;
 
         QLabel *iconLabel = new QLabel;
-        iconLabel->setPixmap(icon.pixmap(64, 64));
+        iconLabel->setPixmap(warningIcon.pixmap(64, 64));
 
         QLabel *titleLabel = new QLabel;
         titleLabel->setText(tr("Sorry, you don't have permission to operate the following %1 file/folder(s)!").arg(QString::number(urls.count())));
@@ -228,7 +228,7 @@ QString DialogManager::askPasswordForLockedDevice()
 bool DialogManager::askForFormat()
 {
     DDialog dlg;
-    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.setIcon(warningIcon);
     dlg.addButton(tr("Cancel", "button"));
     dlg.addButton(tr("Format", "button"), true, DDialog::ButtonRecommend);
     dlg.setTitle(tr("To access the device, you must format the disk first. Are you sure you want to format it now?"));
@@ -401,14 +401,44 @@ void DialogManager::showRestoreFailedDialog(const QList<QUrl> &urlList)
     } else if (urlList.count() > 1) {
         d.setMessage(tr("Failed to restore %1 files, the target folder is read-only").arg(QString::number(urlList.count())));
     }
-    d.setIcon(QIcon::fromTheme("dialog-warning"));
+    d.setIcon(warningIcon);
     d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
+    d.exec();
+}
+
+int DialogManager::showRenameNameSameErrorDialog(const QString &name)
+{
+    DDialog d;
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("\"%1\" already exists, please use another name.").arg(fm.elidedText(name, Qt::ElideMiddle, 150)));
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Confirm", "button"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    d.setIcon(warningIcon);
+    int code = d.exec();
+    return code;
+}
+
+void DialogManager::showRenameBusyErrDialog()
+{
+    DDialog d;
+    QFontMetrics fm(d.font());
+    d.setTitle(tr("Device or resource busy"));
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Confirm", "button"));
+    d.addButton(buttonTexts[0], true, DDialog::ButtonRecommend);
+    d.setDefaultButton(0);
+    d.setIcon(warningIcon);
     d.exec();
 }
 
 DialogManager::DialogManager(QObject *parent)
     : QObject(parent)
 {
+    infoIcon = QIcon::fromTheme("dialog-information");
+    warningIcon = QIcon::fromTheme("dialog-warning");
+    errorIcon = QIcon::fromTheme("dialog-error");
 }
 
 DialogManager::~DialogManager()

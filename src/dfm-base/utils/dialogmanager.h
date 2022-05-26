@@ -79,10 +79,18 @@ public:
 
     void showRestoreFailedDialog(const QList<QUrl> &urlList);
 
+    // rename
+    int showRenameNameSameErrorDialog(const QString &name);
+    void showRenameBusyErrDialog();
+
 private:
     explicit DialogManager(QObject *parent = nullptr);
     ~DialogManager();
+
     TaskDialog *taskdialog = nullptr;   // 文件任务进度和错误处理弹窗
+    QIcon infoIcon;
+    QIcon warningIcon;
+    QIcon errorIcon;
 };
 
 DFMBASE_END_NAMESPACE
