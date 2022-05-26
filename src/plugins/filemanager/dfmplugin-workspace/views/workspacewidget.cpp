@@ -33,6 +33,7 @@
 #include "dfm-base/interfaces/abstractbaseview.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/application/application.h"
 
 #include <DIconButton>
 #include <DHorizontalLine>
@@ -257,7 +258,12 @@ void WorkspaceWidget::hideNewTabButton()
 
 void WorkspaceWidget::onNewTabButtonClicked()
 {
-    QUrl url = currentUrl();
+    QUrl url = Application::instance()->appUrlAttribute(Application::kUrlOfNewTab);
+
+    if (!url.isValid()) {
+        url = currentUrl();
+    }
+
     openNewTab(url);
 }
 
