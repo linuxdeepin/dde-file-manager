@@ -25,6 +25,7 @@
 #include "controller/computercontroller.h"
 #include "utils/computerutils.h"
 
+#include "services/common/delegate/delegateservice.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
@@ -47,25 +48,19 @@ void ComputerEventReceiver::handleItemEject(const QUrl &url)
 
 bool ComputerEventReceiver::handleShowPropertyDialog(const QList<QUrl> &urls)
 {
-    qDebug() << urls;
     bool handled = false;
     QList<QUrl> converted;
-    for (const auto &url : urls) {
-        if (url.scheme() == Global::kBurn && url.path().split("/", QString::SkipEmptyParts).size() == 3) {   // burn:///dev/sr0/disc_files/
+    for (auto url : urls) {
+        if (delegateServIns->isRegistedTransparentHandle(url.scheme()))   // first convert it to local file
+            url = delegateServIns->urlTransform(url);
+
+        QString devId;
+        if (url.scheme() == Global::kFile && DevProxyMng->isMptOfDevice(url.path(), devId)) {
             handled = true;
-            QString id = url.path();
-            id.remove("/dev/").remove("/disc_files").remove("/");
-            id.prepend(kBlockDeviceIdPrefix);
-            converted << ComputerUtils::makeBlockDevUrl(id);
-        } else if (url.scheme() == Global::kFile) {
-            QString devId;
-            if (DevProxyMng->isMptOfDevice(url.path(), devId)) {
-                handled = true;
-                if (devId.startsWith(kBlockDeviceIdPrefix))
-                    converted << ComputerUtils::makeBlockDevUrl(devId);
-                else
-                    converted << ComputerUtils::makeProtocolDevUrl(devId);
-            }
+            if (devId.startsWith(kBlockDeviceIdPrefix))
+                converted << ComputerUtils::makeBlockDevUrl(devId);
+            else
+                converted << ComputerUtils::makeProtocolDevUrl(devId);
         } else {
             converted << url;
         }
