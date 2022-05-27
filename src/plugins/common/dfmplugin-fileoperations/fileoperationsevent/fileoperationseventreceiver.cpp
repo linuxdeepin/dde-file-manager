@@ -982,7 +982,7 @@ QString FileOperationsEventReceiver::handleOperationTouchFile(const quint64 wind
                                                               const CreateFileType fileType,
                                                               const QString suffix)
 {
-    doTouchFilePremature(windowId, url, fileType, suffix, QVariant(), nullptr);
+    return doTouchFilePremature(windowId, url, fileType, suffix, QVariant(), nullptr);
 }
 
 void FileOperationsEventReceiver::handleOperationTouchFile(const quint64 windowId,
