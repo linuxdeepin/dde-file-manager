@@ -526,7 +526,7 @@ bool LocalFileHandler::deleteFile(const QUrl &file)
     }
     int sysErrno = errno;
     qDebug() << "try delete file, but failed url: " << file << " ret: " << ret << sysErrno << strerror(sysErrno);
-    if (sysErrno == EROFS)
+    if (sysErrno == EROFS || sysErrno == EACCES)
         setError(DFMIOError(DFM_IO_ERROR_PERMISSION_DENIED));
     else
         setError(DFMIOError(DFM_IO_ERROR_NOT_SUPPORTED));
