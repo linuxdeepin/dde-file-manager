@@ -156,6 +156,7 @@ void FileViewModelPrivate::doWatcherEvent()
 
         if (event.second == kAddFile) {
             nodeManager->insertChild(fileUrl);
+            q->addedFilesUrl.append(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
             dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
@@ -208,14 +209,12 @@ const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    clear();
-
     if (!d->root.isNull() && d->root->url() == url) {
         QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
         QModelIndex root = createIndex(0, 0, d->root.data());
 
         d->canFetchMoreFlag = true;
-        fetchMore(root);
+        //        fetchMore(root);
 
         //! The watcher is restarted after being suspended to solve the problem that
         //! the same file in the same path cannot be monitored after being deleted and recreated.
@@ -227,6 +226,8 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 
         return root;
     }
+
+    clear();
 
     if (!url.isValid())
         return QModelIndex();
@@ -609,6 +610,13 @@ void FileViewModel::stopTraversWork()
 {
     if (d->traversalThread)
         d->traversalThread->stop();
+}
+
+QList<QUrl> FileViewModel::takeAddedFiles()
+{
+    QList<QUrl> tempUrl = addedFilesUrl;
+    addedFilesUrl.clear();
+    return tempUrl;
 }
 
 void FileViewModel::onFilesUpdated()

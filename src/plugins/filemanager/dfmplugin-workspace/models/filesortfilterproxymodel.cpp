@@ -129,8 +129,10 @@ QModelIndex FileSortFilterProxyModel::getIndexByUrl(const QUrl &url) const
 {
     FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
     QModelIndex sourceIndex = fileModel->findIndex(url);
-    if (sourceIndex.isValid())
-        return mapFromSource(sourceIndex);
+    if (sourceIndex.isValid()) {
+        auto tempIndex = mapFromSource(sourceIndex);
+        return index(tempIndex.row(), tempIndex.column());
+    }
 
     return QModelIndex();
 }

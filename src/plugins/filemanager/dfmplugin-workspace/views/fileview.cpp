@@ -820,8 +820,9 @@ void FileView::onRowCountChanged()
 
 void FileView::onChildrenChanged()
 {
-    // TODO(liuyangming): temp code. should select added files.
-    selectionModel()->clear();
+    QList<QUrl> addedFiles = sourceModel()->takeAddedFiles();
+    if (!addedFiles.isEmpty())
+        selectFiles(addedFiles);
 
     updateContentLabel();
     delayUpdateStatusBar();
@@ -1101,8 +1102,18 @@ void FileView::startDrag(Qt::DropActions supportedActions)
 QModelIndexList FileView::selectedIndexes() const
 {
     FileSelectionModel *fileSelectionModel = dynamic_cast<FileSelectionModel *>(selectionModel());
-    if (fileSelectionModel)
-        return fileSelectionModel->selectedIndexes();
+    if (fileSelectionModel) {
+        QModelIndexList indexes = fileSelectionModel->selectedIndexes();
+
+        auto isInvalid = [=](const QModelIndex &index) {
+            return !(index.isValid() && model()->itemFromIndex(index));
+        };
+
+        indexes.erase(std::remove_if(indexes.begin(), indexes.end(), isInvalid),
+                      indexes.end());
+
+        return indexes;
+    }
 
     return QModelIndexList();
 }
