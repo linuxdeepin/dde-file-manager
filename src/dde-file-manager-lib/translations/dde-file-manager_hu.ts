@@ -356,12 +356,12 @@
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="263"/>
         <source>My Favorites</source>
-        <translation type="unfinished"/>
+        <translation>Kedvenceim</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="364"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"/>
+        <translation>Még nincsenek kedvencek</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="326"/>
