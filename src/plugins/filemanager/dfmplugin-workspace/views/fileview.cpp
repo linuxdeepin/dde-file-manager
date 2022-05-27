@@ -814,6 +814,7 @@ DirOpenMode FileView::currentDirOpenMode() const
 
 void FileView::onRowCountChanged()
 {
+    delayUpdateStatusBar();
     updateModelActiveIndex();
 }
 

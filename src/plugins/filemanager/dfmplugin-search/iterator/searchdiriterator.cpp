@@ -99,8 +99,10 @@ void SearchDirIteratorPrivate::onSearchCompleted(const QString &id)
 
 void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
 {
-    if (taskId == id)
+    if (taskId == id) {
         searchStoped = true;
+        emit q->sigStopSearch();
+    }
 }
 
 SearchDirIterator::SearchDirIterator(const QUrl &url,
