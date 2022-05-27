@@ -161,6 +161,20 @@ bool DoCutFilesWorker::cutFiles()
                 return false;
             }
         }
+        if (fileInfo->isSymLink()) {
+            AbstractFileInfoPointer newTargetInfo(nullptr);
+            bool result = false;
+            bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->fileName(), newTargetInfo, &result);
+            if (!ok && !result)
+                return false;
+            ok = createSystemLink(fileInfo, newTargetInfo, true, false, &result);
+            if (!ok && !result)
+                return false;
+            ok = deleteFile(url, &result);
+            if (!ok && !result)
+                return false;
+            continue;
+        }
 
         if (!doCutFile(fileInfo, targetInfo)) {
             return false;

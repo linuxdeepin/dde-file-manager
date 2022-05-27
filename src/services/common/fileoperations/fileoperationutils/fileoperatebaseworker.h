@@ -107,8 +107,9 @@ public:
 
     bool copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                            bool *result);
-    bool creatSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                         bool *result);
+    bool createSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                          const bool followLink, const bool doCopy,
+                          bool *result);
     bool canWriteFile(const QUrl &url) const;
 
     bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,

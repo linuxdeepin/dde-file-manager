@@ -527,7 +527,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
     bool oldExist = newTargetInfo->exists();
 
     if (fromInfo->isSymLink()) {
-        ok = creatSystemLink(fromInfo, newTargetInfo, result);
+        ok = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, result);
         if (ok)
             ok = deleteFile(fromInfo->url(), result);
     } else if (fromInfo->isDir()) {
@@ -629,12 +629,13 @@ bool FileOperateBaseWorker::doCheckFile(const AbstractFileInfoPointer &fromInfo,
  * \param result Output parameter: whether skip
  * \return Was the linked file created successfully
  */
-bool FileOperateBaseWorker::creatSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
+bool FileOperateBaseWorker::createSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+                                             const bool followLink, const bool doCopy, bool *result)
 {
     // 创建链接文件
     skipWritSize += dirSize;
     AbstractFileInfoPointer newFromInfo = fromInfo;
-    if (jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink)) {
+    if (followLink) {
         do {
             QUrl newUrl = newFromInfo->url();
             newUrl.setPath(newFromInfo->symLinkTarget());
@@ -647,7 +648,7 @@ bool FileOperateBaseWorker::creatSystemLink(const AbstractFileInfoPointer &fromI
             newFromInfo = symlinkTarget;
         } while (newFromInfo->isSymLink());
 
-        if (newFromInfo->exists()) {
+        if (newFromInfo->exists() && doCopy) {
             // copy file here
             if (fromInfo->isFile()) {
                 return checkAndCopyFile(fromInfo, toInfo, result);
@@ -980,7 +981,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
 
     bool oldExist = newTargetInfo->exists();
     if (fromInfo->isSymLink()) {
-        result = creatSystemLink(fromInfo, newTargetInfo, workContinue);
+        result = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, workContinue);
     } else if (fromInfo->isDir()) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, workContinue);
     } else {
