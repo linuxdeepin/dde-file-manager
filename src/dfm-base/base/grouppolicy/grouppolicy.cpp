@@ -38,12 +38,16 @@ Q_GLOBAL_STATIC(GroupPolicyGlobal, groupPolicyGlobal)
 
 GroupPolicy *GroupPolicy::instance()
 {
+#if DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 29, 0)
     return groupPolicyGlobal;
+#endif
+    return nullptr;
 }
 
 GroupPolicy::GroupPolicy(QObject *parent)
     : QObject(parent)
 {
+#if DTK_VERSION >= DTK_VERSION_CHECK(5, 5, 29, 0)
     config = DConfig::create(kCfgAppId, kCfgName, "", this);
 
     // 判断配置是否有效
@@ -51,6 +55,7 @@ GroupPolicy::GroupPolicy(QObject *parent)
         return;
 
     connect(config, &DConfig::valueChanged, this, &GroupPolicy::valueChanged);
+#endif
 }
 
 bool GroupPolicy::isValidConfig()
