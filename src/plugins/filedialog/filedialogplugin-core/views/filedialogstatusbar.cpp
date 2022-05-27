@@ -31,6 +31,7 @@
 #include <QMimeDatabase>
 #include <QTimer>
 #include <QDebug>
+#include <QFontMetrics>
 
 DIALOGCORE_USE_NAMESPACE
 
@@ -181,7 +182,9 @@ void FileDialogStatusBar::onWindowTitleChanged(const QString &title)
     if (title.isEmpty())
         return;
 
-    titleLabel->setText(title);
+    QFontMetrics fontWidth(titleLabel->font());
+    QString elideTitle = fontWidth.elidedText(title, Qt::ElideMiddle, UISize::kTitleMaxWidth);
+    titleLabel->setText(elideTitle);
 
     titleLabel->setObjectName(title);
 }
