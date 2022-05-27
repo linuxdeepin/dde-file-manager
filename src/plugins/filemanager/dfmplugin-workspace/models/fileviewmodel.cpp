@@ -27,6 +27,7 @@
 #include "utils/fileoperatorhelper.h"
 #include "workspace/workspace_defines.h"
 #include "events/workspaceeventsequence.h"
+#include "filesortfilterproxymodel.h"
 
 #include "services/common/delegate/delegateservice.h"
 
@@ -327,6 +328,12 @@ int FileViewModel::rowCount(const QModelIndex &parent) const
 int FileViewModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
+
+    auto self = const_cast<FileViewModel *>(this);
+    FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(self)->parent());
+    if (view)
+        return view->model()->columnCount();
+
     return d->column;
 }
 
