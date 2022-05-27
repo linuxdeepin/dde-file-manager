@@ -24,6 +24,8 @@
 #include "views/fileview.h"
 #include "models/filesortfilterproxymodel.h"
 
+#include <QApplication>
+
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
@@ -123,14 +125,67 @@ void HeaderView::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_EMIT mouseReleased();
 
-    return QHeaderView::mouseReleaseEvent(e);
+    QHeaderView::mouseReleaseEvent(e);
+}
+
+void HeaderView::mouseMoveEvent(QMouseEvent *e)
+{
+    QHeaderView::mouseMoveEvent(e);
+
+    int position = e->pos().x();
+    int visual = visualIndexAt(position);
+    if (visual == -1)
+        return;
+    int log = logicalIndex(visual);
+    int pos = sectionViewportPosition(log);
+    int grip = style()->pixelMetric(QStyle::PM_HeaderGripMargin, nullptr, this);
+
+    bool atLeft = position < pos + grip;
+    bool atRight = (position > pos + sectionSize(log) - grip);
+
+    int result = -1;
+    if (atLeft) {
+        //grip at the beginning of the section
+        while (visual > -1) {
+            int logical = logicalIndex(--visual);
+            if (!isSectionHidden(logical)) {
+                result = logical;
+                break;
+            }
+        }
+    } else if (atRight) {
+        //grip at the end of the section
+        result = log;
+    }
+
+    if (result != -1) {
+        if (!isChangeCursorState) {
+            QApplication::setOverrideCursor(orientation() == Qt::Horizontal ? Qt::SplitHCursor : Qt::SplitVCursor);
+            isChangeCursorState = true;
+        }
+    } else {
+        if (isChangeCursorState) {
+            QApplication::restoreOverrideCursor();
+            isChangeCursorState = false;
+        }
+    }
 }
 
 void HeaderView::resizeEvent(QResizeEvent *e)
 {
     Q_EMIT viewResized();
 
-    return QHeaderView::resizeEvent(e);
+    QHeaderView::resizeEvent(e);
+}
+
+void HeaderView::leaveEvent(QEvent *e)
+{
+    if (isChangeCursorState) {
+        QApplication::restoreOverrideCursor();
+        isChangeCursorState = false;
+    }
+
+    QHeaderView::leaveEvent(e);
 }
 
 FileSortFilterProxyModel *HeaderView::proxyModel() const

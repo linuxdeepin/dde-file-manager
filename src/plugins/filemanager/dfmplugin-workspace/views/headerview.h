@@ -47,7 +47,9 @@ public:
 
 protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
+    void leaveEvent(QEvent *e) override;
 
 Q_SIGNALS:
     void mouseReleased();
@@ -59,6 +61,7 @@ private:
     FileView *view { nullptr };
     int firstVisibleColumn = -1;
     int lastVisibleColumn = -1;
+    bool isChangeCursorState = false;
 };
 
 DPWORKSPACE_END_NAMESPACE
