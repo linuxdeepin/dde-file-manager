@@ -52,14 +52,6 @@ bool CanvasPlugin::start()
     auto service = ctx.service<CanvasService>(CanvasService::name());
     Q_ASSERT_X(service, "CanvasPlugin", "CanvasService not found");
 
-    // find serviceprivate
-    auto ptr = service->findChild<QObject *>("dfm_service_desktop::CanvasServicePrivate");
-    if (!ptr) {
-        qCritical() << "can not find dfm_service_desktop::ScreenServicePrivate.";
-        abort();
-        return false;
-    }
-
     // moitor the changes of event
 #ifdef QT_DEBUG
     connect(service, &CanvasService::sigEventChanged, service, [](int eventType, const QStringList &event) {
@@ -74,8 +66,6 @@ bool CanvasPlugin::start()
     ClipBoard::instance();
 
     proxy = CanvasIns->instance();
-    QMetaObject::invokeMethod(ptr, "setProxy", Qt::DirectConnection, Q_ARG(QObject *, proxy));
-
     proxy->init();
     return true;
 }

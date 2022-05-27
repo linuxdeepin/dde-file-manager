@@ -80,10 +80,9 @@ DisplayConfig::DisplayConfig(QObject *parent) : QObject(parent)
     auto work = new QThread(this);
     this->moveToThread(work);
     work->start();
-    settings->setParent(work);
 
     // delay sync
-    syncTimer = new QTimer(this);
+    syncTimer = new QTimer();
     syncTimer->setSingleShot(true);
     syncTimer->setInterval(1000);
     connect(syncTimer, &QTimer::timeout, this, [this]() {
