@@ -600,7 +600,8 @@ void FileViewModel::traversCurrDir()
 
 void FileViewModel::stopTraversWork()
 {
-    d->traversalThread->stop();
+    if (d->traversalThread)
+        d->traversalThread->stop();
 }
 
 void FileViewModel::onFilesUpdated()
