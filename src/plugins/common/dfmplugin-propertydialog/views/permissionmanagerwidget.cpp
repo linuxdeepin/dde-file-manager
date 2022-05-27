@@ -103,7 +103,7 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
         }
 
         // 一些文件系统不支持修改可执行权限
-        if (!canChmod(info) || canChmodFileType.contains(fsType)) {
+        if (!canChmod(info) || cannotChmodFsType.contains(fsType)) {
             executableCheckBox->setDisabled(true);
         }
     }
@@ -111,20 +111,15 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     // 置灰：
     // 1. 本身用户无权限
     // 2. 所属文件系统无权限机制
-    if (info->ownerId() != getuid() || !canChmod(info) || fsType == "fuseblk") {
+    if (info->ownerId() != getuid() || !canChmod(info) || cannotChmodFsType.contains(fsType)) {
         ownerComboBox->setDisabled(true);
         groupComboBox->setDisabled(true);
         otherComboBox->setDisabled(true);
     }
 
     // tmp: 暂时的处理
-    if (fsType == "vfat") {
-        groupComboBox->setDisabled(true);
-        otherComboBox->setDisabled(true);
-        if (info->isDir()) {
-            ownerComboBox->setDisabled(true);
-        }
-    }
+    if (fsType == "vfat" && !info->isDir())
+        ownerComboBox->setDisabled(false);
 
     connect(ownerComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
     connect(groupComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &PermissionManagerWidget::onComboBoxChanged);
@@ -153,8 +148,9 @@ void PermissionManagerWidget::initUI()
                   << QObject::tr("Read-write")   // 6
                   << QObject::tr("Read-write");   // 7 with x
 
-    canChmodFileType << "vfat"
-                     << "fuseblk";
+    cannotChmodFsType << "vfat"
+                      << "fuseblk"
+                      << "cifs";
 
     ownerComboBox = new QComboBox(this);
     ownerComboBox->view()->parentWidget()->setAttribute(Qt::WA_TranslucentBackground);

@@ -69,7 +69,7 @@ private:
     QComboBox *otherComboBox { nullptr };
     QCheckBox *executableCheckBox { nullptr };
     QStringList authorityList {};
-    QStringList canChmodFileType {};
+    QStringList cannotChmodFsType {};
     QUrl selectUrl;
 
     // these are for file or folder, folder will with executable index.
