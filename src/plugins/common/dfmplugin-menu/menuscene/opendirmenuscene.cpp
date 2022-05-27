@@ -23,6 +23,7 @@
 
 #include "services/common/menu/menu_defines.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/sysinfoutils.h"
@@ -186,9 +187,15 @@ void OpenDirMenuScene::normalMenu(QMenu *parent)
 void OpenDirMenuScene::openAsAdminAction(QMenu *parent)
 {
     // root user, server version user and non developer mode do not need to be opened as an administrator
-    if (!SysInfoUtils::isRootUser() && !SysInfoUtils::isServerSys() && SysInfoUtils::isDeveloperMode()) {
-        QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
-        d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
-        tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
-    }
+    if (!SysInfoUtils::isDeveloperModeEnabled())
+        return;
+    if (SysInfoUtils::isRootUser() || SysInfoUtils::isServerSys())
+        return;
+
+    if (FileUtils::isGvfsFile(d->currentDir))   // gvfs mounts and new smb mounts
+        return;
+
+    QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
+    d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, ActionID::kOpenAsAdmin);
 }

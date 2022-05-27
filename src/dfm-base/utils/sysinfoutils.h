@@ -39,7 +39,7 @@ public:
     static bool isServerSys();
     static bool isDesktopSys();
     static bool isOpenAsAdmin();
-    static bool isDeveloperMode();
+    static bool isDeveloperModeEnabled();
     static bool isProfessional();
 };
 DFMBASE_END_NAMESPACE

@@ -63,7 +63,7 @@ bool SysInfoUtils::isOpenAsAdmin()
     return SysInfoUtils::isRootUser() && SysInfoUtils::isDesktopSys();
 }
 
-bool SysInfoUtils::isDeveloperMode()
+bool SysInfoUtils::isDeveloperModeEnabled()
 {
     // 为了性能，开发者模式仅需获取一次，不必每次请求 dbus，因此此处使用静态变量
     static bool hasAcquireDevMode = false;
