@@ -57,6 +57,12 @@ void DFMVaultPageBase::closeEvent(QCloseEvent *event)
 {
     // 记录当前退出模态对话框状态
     VaultHelper::isModel = false;
+    // fix bug 134139
+    DFileManagerWindow *wnd = qobject_cast<DFileManagerWindow *>(m_wndptr);
+    if (wnd) {
+        emit wnd->currentUrlChanged();
+    }
+
     DDialog::closeEvent(event);
 }
 
