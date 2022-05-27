@@ -57,6 +57,11 @@ private:
 
     bool canChmod(const AbstractFileInfoPointer &info);
 
+    void setExecText();
+
+protected:
+    void paintEvent(QPaintEvent *evt) override;
+
 private slots:
     void onComboBoxChanged();
 

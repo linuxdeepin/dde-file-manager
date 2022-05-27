@@ -39,6 +39,10 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
 
+constexpr int kOwerAll = QFile::ExeOwner | QFile::WriteOwner | QFile::ReadOwner;
+constexpr int kGroupAll = QFile::ExeGroup | QFile::WriteGroup | QFile::ReadGroup;
+constexpr int kOtherAll = QFile::ExeOther | QFile::WriteOther | QFile::ReadOther;
+
 PermissionManagerWidget::PermissionManagerWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {
@@ -85,9 +89,9 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
     otherComboBox->addItem(authorityList[readWriteIndex], QVariant(QFile::WriteOther | QFile::ReadOther));
     otherComboBox->addItem(authorityList[readOnlyIndex], QVariant(QFile::ReadOther));
 
-    setComboBoxByPermission(ownerComboBox, info->permissions() & 0x7000, 12);
-    setComboBoxByPermission(groupComboBox, info->permissions() & 0x0070, 4);
-    setComboBoxByPermission(otherComboBox, info->permissions() & 0x0007, 0);
+    setComboBoxByPermission(ownerComboBox, static_cast<int>(info->permissions() & kOwerAll), 12);
+    setComboBoxByPermission(groupComboBox, static_cast<int>(info->permissions() & kGroupAll), 4);
+    setComboBoxByPermission(otherComboBox, static_cast<int>(info->permissions() & kOtherAll), 0);
 
     if (info->isFile()) {
         executableCheckBox->setText(tr("Allow to execute as program"));
@@ -225,6 +229,26 @@ bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
         ret = false;
 
     return ret;
+}
+
+void PermissionManagerWidget::setExecText()
+{
+    executableCheckBox->adjustSize();
+    QString text = tr("Allow to execute as program");
+    QFontMetrics fontWidth(executableCheckBox->font());
+    int fontSize = fontWidth.width(text);
+    int fontW = executableCheckBox->width() - executableCheckBox->contentsMargins().left() - executableCheckBox->contentsMargins().right() - this->contentsMargins().left() - this->contentsMargins().right();
+    if (fontSize > fontW) {
+        text = fontWidth.elidedText(text, Qt::ElideMiddle, fontW);
+    }
+
+    executableCheckBox->setText(text);
+}
+
+void PermissionManagerWidget::paintEvent(QPaintEvent *evt)
+{
+    setExecText();
+    DArrowLineDrawer::paintEvent(evt);
 }
 
 void PermissionManagerWidget::onComboBoxChanged()

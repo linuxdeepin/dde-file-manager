@@ -44,11 +44,13 @@ public:
         kLeftTip,
         kLeftAlignment,
         kLeftWordWrap,
+        kLeftFontWidth,
         kRightValue,
         kRightElideMode,
         kRightTip,
         kRightAlignment,
         kRightWordWrap,
+        kRightFontWidth,
         kRowHeight
     };
 

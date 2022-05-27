@@ -40,7 +40,7 @@ KeyValueLabel::~KeyValueLabel()
 void KeyValueLabel::initUI()
 {
     leftValueLabel = new DLabel(this);
-    leftValueLabel->setMinimumWidth(100);
+    leftValueLabel->setMinimumWidth(110);
     rightValueLabel = new DLabel(this);
     rightValueLabel->setMinimumWidth(130);
     glayout = new QGridLayout;
@@ -90,6 +90,7 @@ void KeyValueLabel::setLeftValue(QString value, Qt::TextElideMode elideMode, Qt:
     propertyMap[kLeftElideMode] = QVariant::fromValue(elideMode);
     propertyMap[kLeftTip] = QVariant::fromValue(toolTipVisibility);
     propertyMap[kLeftAlignment] = QVariant::fromValue(aligment);
+    propertyMap[kLeftFontWidth] = QVariant::fromValue(fontW);
 }
 
 /*!
@@ -116,6 +117,7 @@ void KeyValueLabel::setRightValue(QString value, Qt::TextElideMode elideMode, Qt
     propertyMap[kRightElideMode] = QVariant::fromValue(elideMode);
     propertyMap[kRightTip] = QVariant::fromValue(toolTipVisibility);
     propertyMap[kRightAlignment] = QVariant::fromValue(aligment);
+    propertyMap[kRightFontWidth] = QVariant::fromValue(fontW);
 }
 
 /*!
@@ -200,10 +202,12 @@ void KeyValueLabel::paintEvent(QPaintEvent *evt)
 {
     Qt::TextElideMode fontWeight = propertyMap.value(kLeftElideMode).value<Qt::TextElideMode>();
     Qt::Alignment alignment = propertyMap.value(kLeftAlignment).value<Qt::Alignment>();
-    setLeftValue(propertyMap.value(kLeftValue).toString(), fontWeight, alignment, propertyMap.value(kLeftTip).toBool());
+    int fontW = propertyMap.value(kLeftFontWidth).toInt();
+    setLeftValue(propertyMap.value(kLeftValue).toString(), fontWeight, alignment, propertyMap.value(kLeftTip).toBool(), fontW);
+    fontW = propertyMap.value(kRightFontWidth).toInt();
     fontWeight = static_cast<Qt::TextElideMode>(propertyMap.value(kRightElideMode).toInt());
     alignment = propertyMap.value(kRightAlignment).value<Qt::Alignment>();
-    setRightValue(propertyMap.value(kRightValue).toString(), fontWeight, alignment, propertyMap.value(kRightTip).toBool());
+    setRightValue(propertyMap.value(kRightValue).toString(), fontWeight, alignment, propertyMap.value(kRightTip).toBool(), fontW);
     if (propertyMap.value(kRowHeight).toInt() > -1) {
         QFontMetrics fontMetrics(font());
         QRect boundingRect = fontMetrics.boundingRect(propertyMap.value(kLeftValue).toString());

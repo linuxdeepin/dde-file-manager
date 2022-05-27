@@ -68,11 +68,11 @@ void MultiFilePropertyDialog::initHeadUi()
     totalSizeLabel = new KeyValueLabel(this);
     totalSizeLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     totalSizeLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    totalSizeLabel->setLeftValue(tr("Total size"), Qt::ElideMiddle, Qt::AlignLeft, true, 80);
+    totalSizeLabel->setLeftValue(tr("Total size"), Qt::ElideMiddle, Qt::AlignLeft, true, 100);
     fileCountLabel = new KeyValueLabel(this);
     fileCountLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
     fileCountLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileCountLabel->setLeftValue(tr("Number of files"), Qt::ElideMiddle, Qt::AlignLeft, true, 80);
+    fileCountLabel->setLeftValue(tr("Number of files"), Qt::ElideMiddle, Qt::AlignLeft, true, 150);
     QPushButton *btn = new QPushButton(this);
     btn->setMaximumHeight(1);
 

@@ -71,11 +71,11 @@ void TrashPropertyDialog::initUI()
 
     DHorizontalLine *hLine = new DHorizontalLine(this);
     fileCountAndFileSize = new KeyValueLabel(this);
-    fileCountAndFileSize->setLeftValue(QString(tr("Contains %1 %2")).arg(QString::number(fCount), itemStr));
+    fileCountAndFileSize->setLeftValue(QString(tr("Contains %1 %2")).arg(QString::number(fCount), itemStr), Qt::ElideMiddle, Qt::AlignLeft, true);
     fileCountAndFileSize->setRightValue(FileUtils::formatSize(0), Qt::ElideNone, Qt::AlignHCenter);
 
     QFrame *infoFrame = new QFrame;
-    infoFrame->setFixedHeight(48);
+    infoFrame->setMaximumHeight(48);
     QHBoxLayout *infoLayout = new QHBoxLayout;
     infoLayout->setContentsMargins(10, 10, 10, 0);
     infoLayout->addWidget(fileCountAndFileSize);

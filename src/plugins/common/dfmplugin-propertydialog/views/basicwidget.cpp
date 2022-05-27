@@ -65,37 +65,37 @@ void BasicWidget::initUI()
 
     fileSize = new KeyValueLabel(frameMain);
     fileSize->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileSize->setLeftValue(tr("Size"));
+    fileSize->setLeftValue(tr("Size"), Qt::ElideMiddle, Qt::AlignLeft, true);
     fileSize->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
 
     fileCount = new KeyValueLabel(frameMain);
     fileCount->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileCount->setLeftValue(tr("Contains"));
+    fileCount->setLeftValue(tr("Contains"), Qt::ElideMiddle, Qt::AlignLeft, true);
     fileCount->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
 
     fileType = new KeyValueLabel(frameMain);
     fileType->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileType->setLeftValue(tr("Type"));
+    fileType->setLeftValue(tr("Type"), Qt::ElideMiddle, Qt::AlignLeft, true);
     fileType->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
 
     filePosition = new KeyValueLabel(frameMain);
     filePosition->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    filePosition->setLeftValue(tr("Location"));
+    filePosition->setLeftValue(tr("Location"), Qt::ElideMiddle, Qt::AlignLeft, true);
     filePosition->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
 
     fileCreated = new KeyValueLabel(frameMain);
     fileCreated->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileCreated->setLeftValue(tr("Time created"));
+    fileCreated->setLeftValue(tr("Time created"), Qt::ElideMiddle, Qt::AlignLeft, true);
     fileCreated->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
 
     fileAccessed = new KeyValueLabel(frameMain);
     fileAccessed->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileAccessed->setLeftValue(tr("Time accessed"));
+    fileAccessed->setLeftValue(tr("Time accessed"), Qt::ElideMiddle, Qt::AlignLeft, true);
     fileAccessed->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
 
     fileModified = new KeyValueLabel(frameMain);
     fileModified->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
-    fileModified->setLeftValue(tr("Time modified"));
+    fileModified->setLeftValue(tr("Time modified"), Qt::ElideMiddle, Qt::AlignLeft, true);
     fileModified->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
 
     hideFile = new QCheckBox(frameMain);
@@ -116,7 +116,7 @@ void BasicWidget::basicExpand(const QUrl &url)
                 QList<QPair<QString, QString>> fieldlist = expand.values(k);
                 for (QPair<QString, QString> field : fieldlist) {
                     KeyValueLabel *expandLabel = new KeyValueLabel(this);
-                    expandLabel->setLeftValue(field.first);
+                    expandLabel->setLeftValue(field.first, Qt::ElideMiddle, Qt::AlignLeft, true);
                     expandLabel->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7);
                     expandLabel->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
                     expandLabel->setRightFontSizeWeight(DFontSizeManager::SizeType::T8);
@@ -127,7 +127,7 @@ void BasicWidget::basicExpand(const QUrl &url)
         case kFieldReplace: {
             for (BasicFieldExpandEnum k : filterEnumList) {
                 QPair<QString, QString> field = expand.value(k);
-                fieldMap.value(k)->setLeftValue(field.first);
+                fieldMap.value(k)->setLeftValue(field.first, Qt::ElideMiddle, Qt::AlignLeft, true);
                 fieldMap.value(k)->setRightValue(field.second, Qt::ElideMiddle, Qt::AlignVCenter, true);
             }
         } break;
