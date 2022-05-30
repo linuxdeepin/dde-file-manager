@@ -78,7 +78,6 @@ signals:
     void refreshButtonClicked();
     void toolbarUrlChanged(const DUrl &url);
     void detailButtonClicked();
-    void addSmbIpToSideBar(const DUrl &url);
 
 public slots:
     void searchBarActivated();

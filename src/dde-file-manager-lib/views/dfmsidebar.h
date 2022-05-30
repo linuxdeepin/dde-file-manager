@@ -81,11 +81,9 @@ public:
     static const int minimumWidth = 120;
     static const int maximumWidth = 200;
     void rootFileResult();
-    void removeSmbUrlFromMultipMap(const DUrl& url);
-    void clearSmbMultiMap(const DUrl& url);
     void jumpToComputerItem(bool toComputerItem = true);
 private:
-    int remainCountOfMountedSmb(const QString& ip);
+    bool isSmbItemExisted(const DUrl &smbDevice);
 signals:
     void disableUrlSchemesChanged();
     // 侧边栏添加共享item信号，url为共享文件夹的路径
@@ -129,7 +127,6 @@ private:
     DFMSideBarItem *m_pLastToggleItem = nullptr;
     DUrl m_currentUrl;
     QMutex m_currentUrlMutex;
-    QMultiMap<QString, DUrl> m_sideBarSmbIpItemNames;   //<ip,smb_source>
 #ifdef ENABLE_ASYNCINIT
     QPair<bool,QFuture<void>> m_initDevThread; //初始化initDeviceConnection线程，first为是否强制结束线程
 #endif

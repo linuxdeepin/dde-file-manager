@@ -1068,7 +1068,7 @@ TEST_F(AppControllerTest, start_showErrorDialog){
     TestHelper::runInLoop([=](){
     });
 }
-
+/*smb挂载项聚合后，侧边栏常驻项变成了smb://x.x.x.x，不适用下面的用例
 TEST_F(AppControllerTest, start_actionRemoveStashedMount) {
     RemoteMountsStashManager::stashRemoteMount("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=test", "test");
 
@@ -1084,3 +1084,4 @@ TEST_F(AppControllerTest, start_actionRemoveStashedMount) {
     EXPECT_NO_FATAL_FAILURE(RemoteMountsStashManager::clearRemoteMounts());
     EXPECT_NO_FATAL_FAILURE(RemoteMountsStashManager::stashCurrentMounts());
 }
+*/

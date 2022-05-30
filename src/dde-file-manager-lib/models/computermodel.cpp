@@ -45,6 +45,7 @@
 #include "shutil/fileutils.h"
 #include "vault/vaulthelper.h"
 #include "computermodel.h"
+#include "utils.h"
 
 #include <QtConcurrent>
 
@@ -70,7 +71,6 @@ ComputerModel::ComputerModel(QObject *parent)
         addItem(makeSplitterUrl(MyDirectories));
         auto rootInit = [=](const QList<DAbstractFileInfoPointer> &ch){
             QMutexLocker lx(&m_initItemMutex);
-            m_computerSmbIpItemNames.clear();
             bool opticalchanged = false;
             for (auto chi : ch) {
 #ifdef ENABLE_ASYNCINIT
@@ -81,10 +81,29 @@ ComputerModel::ComputerModel(QObject *parent)
                 if (chi->scheme() == DFMROOT_SCHEME && chi->suffix() == SUFFIX_USRDIR) {
                     addItem(chi->fileUrl());
                 } else {
+                    //跳过smb挂载或缓存项，后面单独创建聚合项
+                    QString smbIp;
+                    FileUtils::isSmbRelatedUrl(chi->fileUrl(),smbIp);
+                    if (!smbIp.isEmpty()){
+                        if(chi->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted( chi->fileUrl() )){
+                            continue;
+                        }
+                        if(chi->fileUrl().toString().endsWith( QString(".%1").arg(SUFFIX_STASHED_REMOTE))){
+                            continue;
+                        }
+                    }
+
                     addRootItem(chi);
                     if (chi->fileUrl().path().contains("sr"))
                         opticalchanged = true;
                 }
+            }
+
+            //最后添加smb聚合设备
+            QStringList m_smbDevices = RemoteMountsStashManager::stashedSmbDevices();
+            foreach(const QString &smbDevice, m_smbDevices){
+                DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(smbDevice));
+                addRootItem(fi);
             }
 
             if (!m_isQueryRootFileFinshed) {
@@ -94,6 +113,7 @@ ComputerModel::ComputerModel(QObject *parent)
                 }
                 m_isQueryRootFileFinshed = true;
             }
+
         };
 
         connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this,rootInit](){
@@ -174,6 +194,20 @@ ComputerModel::ComputerModel(QObject *parent)
         m_watcher = DRootFileManager::instance()->rootFileWather();
         connect(m_watcher, &DAbstractFileWatcher::fileDeleted, this, &ComputerModel::removeItem);
         connect(m_watcher, &DAbstractFileWatcher::subfileCreated, this, [this, addComputerItem](const DUrl &url) {
+            QString smbIp;
+            FileUtils::isSmbRelatedUrl(url,smbIp);
+            if (!smbIp.isEmpty()){
+                DUrl smbDevice(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
+                if(isSmbItemExisted(smbDevice))//smb device is already added
+                    return;
+                else{
+                    //DAbstractFileInfoPointer fi = fileService->createFileInfo(this, DUrl(url));//如果url的scheme是smb，则使用的是NetworkController::createFileInfo
+                    //addRootItem(fi);
+                    addComputerItem(smbDevice);
+                    return;
+                }
+            }
+
             addComputerItem(url);
             if (url.path().contains("sr"))
                 emit opticalChanged();
@@ -284,7 +318,6 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DecorationRole) {
         if (pitmdata->fi) {
-
             DFMRootFileInfo::ItemType itemType = static_cast<DFMRootFileInfo::ItemType>(pitmdata->fi->fileType());
             if (itemType == DFMRootFileInfo::UDisksOptical) {
                 QString udisk = pitmdata->fi->extraProperties()["udisksblk"].toString();
@@ -296,7 +329,9 @@ QVariant ComputerModel::data(const QModelIndex &index, int role) const
                     return QIcon::fromTheme("media-external");
                 }
             }
-
+            if(pitmdata->url.scheme() == SMB_SCHEME){
+                return QIcon::fromTheme("folder-remote");
+            }
             return QIcon::fromTheme(pitmdata->fi->iconName());
         }
     }
@@ -633,24 +668,6 @@ void ComputerModel::removeItem(const DUrl &url)
     if (p == -1) {
         return;
     }
-
-    QString smbIp;
-    bool isSmbRelatedPath = FileUtils::isSmbRelatedUrl(url, smbIp);
-    if(isSmbRelatedPath){
-        bool lastOneShareFolderRemved = false;
-        removeSmbUrlFromMultipMap(url);
-        int remainMountedCount = remainCountOfMountedSmb(smbIp);//剩余SMB挂载目录数量
-        if(remainMountedCount <=0 )//SMB设备已经没有挂载着的共享目录了
-        {
-            //标识最后一个SMB挂载目录已被卸载，可以从侧边栏移除（具体是否可以移除，还要看配置GA_AlwaysShowOfflineRemoteConnections）
-            lastOneShareFolderRemved = true;
-        }
-        //如果最后一个SMB挂载已被移除 且 配置为无需常驻SMB挂载，才可把SMB项从侧边栏移除，否则保留它
-        bool keepSmbStashedMount = DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool();
-        if(!(lastOneShareFolderRemved && !keepSmbStashedMount)){
-            return;
-        }
-    }
     beginRemoveRows(QModelIndex(), p, p);
     m_items.removeAt(p);
     endRemoveRows();
@@ -717,34 +734,10 @@ void ComputerModel::onOpticalChanged()
     thread.detach();
 }
 
-void ComputerModel::removeSmbUrlFromMultipMap(const DUrl &url)
+bool ComputerModel::isSmbItemExisted(const DUrl &smbDevice)
 {
-    QString comparePath = QUrl::fromPercentEncoding(url.path().toUtf8());
-    QString smbIp;
-    if(FileUtils::isSmbRelatedUrl(url,smbIp)){
-        QList<DUrl> values = m_computerSmbIpItemNames.values(smbIp);
-        for (int i = 0; i < values.size(); ++i){
-            QString temPath = QUrl::fromPercentEncoding(values.at(i).path().toUtf8());
-            if(temPath == comparePath){
-              m_computerSmbIpItemNames.remove(smbIp,values.at(i));
-              break;
-            }
-        }
-    }
-}
-
-int ComputerModel::remainCountOfMountedSmb(const QString &ip)
-{
-    int sum = 0;
-    QList<DUrl> values = m_computerSmbIpItemNames.values(ip);
-    for (int i = 0; i < values.size(); ++i){
-        if(values.at(i).path().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)))
-            sum++;
-    }
-    //当前ip没有挂载的smb目录 且 配置文件为 无需常驻，则从hash中移除
-    if(sum == 0 && !DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
-        m_computerSmbIpItemNames.remove(ip);
-    return sum;
+    int index = findItem(smbDevice);
+    return index >=0;
 }
 
 void ComputerModel::getRootFile()
@@ -784,13 +777,6 @@ void ComputerModel::addRootItem(const DAbstractFileInfoPointer &info)
         return;
     if (!Singleton<PathManager>::instance()->isVisiblePartitionPath(info))
         return;
-    QString smbIp;
-    bool needAddSmbItem = FileUtils::isSmbRelatedUrl(info->fileUrl(), smbIp);
-    bool doNotToAdd = needAddSmbItem && m_computerSmbIpItemNames.keys().contains(smbIp);
-    if (doNotToAdd) {
-        return;
-    }
-
 #ifdef SPLIT_APP_ENTRY
     auto splitterUrl = info->scheme() == DFMROOT_SCHEME
             ? makeSplitterUrl(Disks)
@@ -837,12 +823,6 @@ void ComputerModel::addRootItem(const DAbstractFileInfoPointer &info)
             }
         }
     }
-    if (needAddSmbItem && !smbIp.isEmpty()) {
-        QString scheme = info->fileUrl().scheme();
-        if (!m_computerSmbIpItemNames.keys().contains(smbIp)) {   //还没有添加该smb的ip按钮
-            m_computerSmbIpItemNames.insert(smbIp, info->fileUrl());   //保存原始smb源路径
-        }
-    }
 }
 
 
@@ -857,7 +837,8 @@ void ComputerModel::initItemData(ComputerModelItemData &data, const DUrl &url, Q
         data.widget = w;
     } else {
         //这里不用去创建fileinfo，已经缓存了rootfileinfo //get root file info cache
-        if (url.toString().endsWith(SUFFIX_GVFSMP))
+//        if (url.toString().endsWith(SUFFIX_GVFSMP))
+        if (url.toString().startsWith("smb://"))
         {
             const DAbstractFileInfoPointer &info = DRootFileManager::getFileInfo(url);
             if (info) {

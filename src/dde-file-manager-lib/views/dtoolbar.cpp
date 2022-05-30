@@ -289,10 +289,6 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
 
     QDir::setCurrent(currentDir);
 
-    if(FileUtils::isSmbHostOnly(inputUrl)){//like: smb://xx.xx.xx.xx
-        emit addSmbIpToSideBar(inputUrl);
-    }
-
     //fix bug 32652 当连接了同一台机器的smb共享时，就缓存了它，第二次再去连接smb访问时，使用了缓存
     NetworkManager::NetworkNodes.remove(inputUrl);
 

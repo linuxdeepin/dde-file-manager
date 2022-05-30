@@ -34,6 +34,8 @@
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
 #include "../controllers/searchhistroymanager.h"
+#include "utils/utils.h"
+
 
 #include "gvfsmountmanager.h"
 
@@ -133,6 +135,24 @@ void NetworkManager::initConnect()
     connect(fileSignalManager, &FileSignalManager::requestFetchNetworks, this, &NetworkManager::fetchNetworks);
 }
 
+void NetworkManager::addSmbServerToHistory(const DUrl &url)
+{
+    //add search history list
+    SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
+    DUrl mountUrl = url;
+    QString toHistory;
+    QString scheme = mountUrl.scheme();
+    if(!scheme.isEmpty() && !mountUrl.host().isEmpty()){
+        toHistory = mountUrl.toString();
+        if (!historyManager->toStringList().contains(toHistory)) {//添加新历史挂载记录
+            historyManager->writeIntoSearchHistory(toHistory);
+        }else{//访问连接已经包含在历史记录中,先移除再追加到最后，用于下次打开对话框时显示上次连接。
+            historyManager->removeSearchHistory(toHistory);
+            historyManager->writeIntoSearchHistory(toHistory);
+        }
+    }
+}
+
 bool NetworkManager::fetch_networks(gchar *url, DFMEvent *e)
 {
     if(isFetchingNetworks())
@@ -195,25 +215,20 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
             }
         }
         qDebug() << error->message;
+        QString test = event->fileUrl().toString();
         MountStatus status = gvfsMountManager->mount_sync(*event);
+        if(status == MountStatus::MOUNT_SUCCESS){
+            bool re = FileUtils::isSmbShareFolder(DUrl(test));
+            if(re){
+                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+DUrl(test).host());//挂载成功后，添加smb聚合设备到配置中
+            }
+        }
         g_clear_error(&error);
         if(status == MOUNT_SUCCESS){
             if(eventLoop)
                 eventLoop->setProperty("success",true);
-            //add search history list
-            SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
-            DUrl mountUrl = event->fileUrl();
-            QString toHistory;
-            QString scheme = mountUrl.scheme();
-            if(!scheme.isEmpty()){
-                toHistory = mountUrl.toString();
-                if (!historyManager->toStringList().contains(toHistory)) {//添加新历史挂载记录
-                    historyManager->writeIntoSearchHistory(toHistory);
-                }else{//访问连接已经包含在历史记录中,先移除再追加到最后，用于下次打开对话框时显示上次连接。
-                    historyManager->removeSearchHistory(toHistory);
-                    historyManager->writeIntoSearchHistory(toHistory);
-                }
-            }
+
+            addSmbServerToHistory(event->fileUrl());
         }
         if (eventLoop) {
             // 挂载完成时, 返回 1, 在fetch_networks中再次调用g_file_enumerate_children_async获取列表
@@ -253,7 +268,7 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
 
     if (error) {
         if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
-            qWarning("Failed to fetch network locations: %s", error->message);
+            qWarning("Failed to fetch network locations: %s", error->message);//指定的位置未挂载
             DFMEvent *event = static_cast<DFMEvent *>(user_data);
             if (event->fileUrl() == DUrl::fromNetworkFile("/")) {
                 NetworkManager::restartGVFSD();
@@ -340,21 +355,7 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
     NetworkNodes.remove(neturl);
     NetworkNodes.insert(neturl, nodeList);
 
-
-    //add search history list
-    SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
-    DUrl mountUrl = event->fileUrl();
-    QString toHistory;
-    QString scheme = mountUrl.scheme();
-    if(!scheme.isEmpty()){
-        toHistory = mountUrl.toString();
-        if (!historyManager->toStringList().contains(toHistory)) {//添加新历史挂载记录
-            historyManager->writeIntoSearchHistory(toHistory);
-        }else{//访问连接已经包含在历史记录中,先移除再追加到最后，用于下次打开对话框时显示上次连接。
-            historyManager->removeSearchHistory(toHistory);
-            historyManager->writeIntoSearchHistory(toHistory);
-        }
-    }
+    addSmbServerToHistory(neturl);
     qDebug() << "request NetworkNodeList successfully";
 }
 
@@ -412,6 +413,12 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
         gchar *url = const_cast<gchar *>(stdPath.c_str());
 
         if (fetch_networks(url, e)) {
+            bool re = FileUtils::isSmbHostOnly(e->fileUrl());
+            if(re){
+                RemoteMountsStashManager::insertStashedSmbDevice("smb://"+e->fileUrl().host());//当进行smb地址访问时，添加smb聚合设备到配置中
+                addSmbServerToHistory(e->fileUrl());//通知侧边栏和计算机界面显示smb挂载聚合项
+                emit addSmbMountIntegration(e->fileUrl());
+            }
             QWidget *main_window = WindowManager::getWindowById(e->windowId());
 
             // call later
