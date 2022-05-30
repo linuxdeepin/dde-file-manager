@@ -656,6 +656,20 @@ void FileView::setReadOnly(const bool readOnly)
     model()->setReadOnly(readOnly);
 }
 
+void FileView::onSelectAndEdit(const QUrl &url)
+{
+    if (!url.isValid())
+        return;
+
+    const QModelIndex &index = model()->getIndexByUrl(url);
+
+    if (!index.isValid())
+        return;
+
+    selectFiles({ url });
+    edit(index, QAbstractItemView::AllEditTriggers, nullptr);
+}
+
 int FileView::itemCountForRow() const
 {
 
@@ -1365,6 +1379,7 @@ void FileView::initializeConnect()
     connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(sourceModel(), &FileViewModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);
+    connect(sourceModel(), &FileViewModel::selectAndEditFile, this, &FileView::onSelectAndEdit);
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);

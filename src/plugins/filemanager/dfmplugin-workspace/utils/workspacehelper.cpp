@@ -22,6 +22,7 @@
 #include "workspacehelper.h"
 #include "views/fileview.h"
 #include "views/workspacewidget.h"
+#include "models/fileviewmodel.h"
 #include "events/workspaceeventcaller.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -276,6 +277,14 @@ int WorkspaceHelper::getViewFilter(const quint64 windowID)
         return view->getFilters();
 
     return QDir::NoFilter;
+}
+
+void WorkspaceHelper::setFileRename(const quint64 windowID, const QUrl &rootUrl, const QUrl &targetUrl)
+{
+    FileView *view = findFileViewByWindowID(windowID);
+    if (view && rootUrl == view->rootUrl()) {
+        view->sourceModel()->newFolderCreated(targetUrl);
+    }
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)

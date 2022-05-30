@@ -50,7 +50,9 @@ void FileOperatorHelper::touchFolder(const FileView *view)
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
                                           windowId,
-                                          view->rootUrl());
+                                          view->rootUrl(),
+                                          GlobalEventType::kMkdir,
+                                          callBack);
 }
 
 void FileOperatorHelper::touchFiles(const FileView *view, const CreateFileType type, QString suffix)
@@ -284,4 +286,31 @@ void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &a
 FileOperatorHelper::FileOperatorHelper(QObject *parent)
     : QObject(parent)
 {
+    callBack = std::bind(&FileOperatorHelper::callBackFunction, this, std::placeholders::_1);
+}
+
+void FileOperatorHelper::callBackFunction(const CallbackArgus args)
+{
+    const QVariant &customValue = args->value(CallbackKey::kCustom);
+    GlobalEventType type = static_cast<GlobalEventType>(customValue.toInt());
+
+    switch (type) {
+    case kMkdir: {
+        quint64 windowID = args->value(CallbackKey::kWindowId).toULongLong();
+        QList<QUrl> sourceUrlList = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
+        if (sourceUrlList.isEmpty())
+            break;
+
+        QList<QUrl> targetUrlList = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        if (targetUrlList.isEmpty())
+            break;
+
+        QUrl rootUrl = sourceUrlList.first();
+        QUrl newFolder = targetUrlList.first();
+        WorkspaceHelper::instance()->setFileRename(windowID, rootUrl, newFolder);
+        break;
+    }
+    default:
+        break;
+    }
 }

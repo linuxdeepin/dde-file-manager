@@ -156,7 +156,14 @@ void FileViewModelPrivate::doWatcherEvent()
 
         if (event.second == kAddFile) {
             nodeManager->insertChild(fileUrl);
-            q->addedFilesUrl.append(fileUrl);
+
+            if (q->newFolderList.contains(fileUrl)) {
+                q->newFolderList.removeOne(fileUrl);
+                emit q->selectAndEditFile(fileUrl);
+            } else {
+                q->addedFilesUrl.append(fileUrl);
+            }
+
         } else {
             nodeManager->removeChildren(fileUrl);
             dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
@@ -617,6 +624,16 @@ QList<QUrl> FileViewModel::takeAddedFiles()
     QList<QUrl> tempUrl = addedFilesUrl;
     addedFilesUrl.clear();
     return tempUrl;
+}
+
+void FileViewModel::newFolderCreated(const QUrl &url)
+{
+    if (findIndex(url).isValid()) {
+        emit selectAndEditFile(url);
+    } else {
+        if (!newFolderList.contains(url))
+            newFolderList.append(url);
+    }
 }
 
 void FileViewModel::onFilesUpdated()

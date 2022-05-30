@@ -149,6 +149,8 @@ public slots:
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
 
+    void onSelectAndEdit(const QUrl &url);
+
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;
 
     DirOpenMode currentDirOpenMode() const;

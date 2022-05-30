@@ -60,8 +60,12 @@ public:
 
 private:
     explicit FileOperatorHelper(QObject *parent = nullptr);
+    void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
+
+    DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
 };
 
 #define FileOperatorHelperIns DPWORKSPACE_USE_NAMESPACE::FileOperatorHelper::instance()
 DPWORKSPACE_END_NAMESPACE
+
 #endif   // FILEOPERATORHELPER_H

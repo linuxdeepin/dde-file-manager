@@ -96,6 +96,8 @@ public:
 
     int getViewFilter(const quint64 windowID);
 
+    void setFileRename(const quint64 windowID, const QUrl &rootUrl, const QUrl &targetUrl);
+
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);
