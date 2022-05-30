@@ -216,9 +216,11 @@ int DiskControlWidget::addItems(const QStringList &list, bool isBlockDevice)
         if (isBlockDevice)
             dev.reset(new DAttachedBlockDevice(id));
         else {
-            // do not show local vfs mounts.
-            if (id.startsWith("file://"))
+            // do not show local vfs mounts. smb is mounted at /media/$USER/smbmounts so it should be displayed.
+            if (id.startsWith("file://") && !id.contains(QRegularExpression("^file:///media/[\\s\\S]*/smbmounts"))) {   // TODO(xust), smb's mount point might be changed later.
+                qDebug() << "protocol device is ignored: " << id;
                 continue;
+            }
             dev.reset(new DAttachedProtocolDevice(id));
         }
         dev->query();
