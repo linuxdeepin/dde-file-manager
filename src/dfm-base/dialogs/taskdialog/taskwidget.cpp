@@ -342,7 +342,7 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
 
     qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProccessKey).value<qint64>();
     qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
-    qint64 value = total <= 0 ? 1 : current * 100 / total;
+    qint64 value = total <= 0 ? 1 : (current * 100 / total + 1);   // +1: round up value，maybe 99% when finished
 
     if (value > 100) {
         value = 100;

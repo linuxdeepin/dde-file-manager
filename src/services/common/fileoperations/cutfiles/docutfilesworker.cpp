@@ -138,22 +138,11 @@ bool DoCutFilesWorker::cutFiles()
         }
         fileInfo->refresh();
 
-        const QUrl &urlFrom = fileInfo->url();
-        const QString &fileName = fileInfo->fileName();
-
-        QString newFileUrl = targetInfo->url().toString();
-        if (!newFileUrl.endsWith("/"))
-            newFileUrl.append("/");
-        newFileUrl.append(fileName);
-        DecoratorFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
-
-        if (newFileInfo.url() == fileInfo->url()
-            || (FileUtils::isSameFile(urlFrom, newFileInfo.url()) && !fileInfo->isSymLink())) {
-            ++completedFilesCount;
-            continue;
-        }
-
         // check self
+        if (checkSelf(fileInfo))
+            continue;
+
+        // check hierarchy
         if (fileInfo->isDir()) {
             const bool higher = FileUtils::isHigherHierarchy(url, targetUrl) || url == targetUrl;
             if (higher) {
@@ -161,19 +150,14 @@ bool DoCutFilesWorker::cutFiles()
                 return false;
             }
         }
+
+        // check link
         if (fileInfo->isSymLink()) {
-            AbstractFileInfoPointer newTargetInfo(nullptr);
-            bool result = false;
-            bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->fileName(), newTargetInfo, &result);
-            if (!ok && !result)
+            const bool ok = checkSymLink(fileInfo);
+            if (ok)
+                continue;
+            else
                 return false;
-            ok = createSystemLink(fileInfo, newTargetInfo, true, false, &result);
-            if (!ok && !result)
-                return false;
-            ok = deleteFile(url, &result);
-            if (!ok && !result)
-                return false;
-            continue;
         }
 
         if (!doCutFile(fileInfo, targetInfo)) {
@@ -281,6 +265,39 @@ void DoCutFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
 {
     AbstractWorker::doOperateWork(actions);
     resume();
+}
+
+bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
+{
+    AbstractFileInfoPointer newTargetInfo(nullptr);
+    bool result = false;
+    bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->fileName(), newTargetInfo, &result);
+    if (!ok && !result)
+        return false;
+    ok = createSystemLink(fileInfo, newTargetInfo, true, false, &result);
+    if (!ok && !result)
+        return false;
+    ok = deleteFile(fileInfo->url(), &result);
+    if (!ok && !result)
+        return false;
+    return true;
+}
+
+bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
+{
+    const QString &fileName = fileInfo->fileName();
+    QString newFileUrl = targetInfo->url().toString();
+    if (!newFileUrl.endsWith("/"))
+        newFileUrl.append("/");
+    newFileUrl.append(fileName);
+    DecoratorFileInfo newFileInfo(QUrl(newFileUrl, QUrl::TolerantMode));
+
+    if (newFileInfo.url() == fileInfo->url()
+        || (FileUtils::isSameFile(fileInfo->url(), newFileInfo.url()) && !fileInfo->isSymLink())) {
+        ++completedFilesCount;
+        return true;
+    }
+    return false;
 }
 
 bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo)
