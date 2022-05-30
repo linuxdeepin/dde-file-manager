@@ -345,6 +345,33 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
     QJsonObject newMount;
     QJsonObject obj = config.object();
     QJsonObject remoteMountsObj;
+    ///添加到SMB聚合列表字段，无论是否配置SMB常驻，侧边栏和计算机界面的smb聚合项都以此为数据源做界面显示 - start
+    bool newSmbDeviceInserted = false;
+    if(protocol == SMB_SCHEME && !host.isEmpty()){//本次缓存的是smb挂载
+        QString newSmbDevice = QString("%1://%2").arg(protocol).arg(host);
+        if(obj.contains("StashedSmbDevices")){
+            QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
+            if(stashedSmbDevices.isArray()){
+                QJsonArray stashSbDeviceArray = stashedSmbDevices.toArray();
+                if(!stashSbDeviceArray.contains(QJsonValue(newSmbDevice))){
+                    stashSbDeviceArray << QJsonValue(newSmbDevice);
+                    obj.insert("StashedSmbDevices",stashSbDeviceArray);
+                    newSmbDeviceInserted = true;
+                }
+            }
+        }else{
+            QJsonArray stashSbDeviceArray;
+            stashSbDeviceArray << QJsonValue(newSmbDevice);
+            obj.insert("StashedSmbDevices",stashSbDeviceArray);
+            newSmbDeviceInserted = true;
+        }
+    }
+    if(!newSmbDeviceInserted){
+        return ;
+    }
+    ///添加到SMB聚合列表字段... - end
+
+    /* 实现smb挂载侧边栏聚合后，这里不再读取RemoteMounts字段及插入常驻挂载（请保留此部分注释）
     if (obj.contains("RemoteMounts")) {
         QJsonValue remoteMounts = obj.value("RemoteMounts");
         if (remoteMounts.isObject()) {
@@ -355,13 +382,14 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
             }
         }
     }
-
     newMount.insert(REMOTE_HOST, host);
     newMount.insert(REMOTE_SHARE, share);
     newMount.insert(REMOTE_PROTOCOL, protocol);
     newMount.insert(REMOTE_DISPLAYNAME, displayName);
-    remoteMountsObj.insert(key, newMount);
+    remoteMountsObj.insert(key, newMount);//smb挂载聚合后，无需写.remote缓存路径
     obj.insert("RemoteMounts", remoteMountsObj);
+    */
+
     config.setObject(obj);
     configFile.open(QIODevice::ReadWrite | QIODevice::Truncate);
     configFile.write(config.toJson());
@@ -448,6 +476,8 @@ void RemoteMountsStashManager::removeRemoteMountItem(const QString &key)
 
 void RemoteMountsStashManager::clearRemoteMounts()
 {
+    //考虑到smb聚合功能实现之后的兼容性，调用此函数移除配置中的RemoteMounts之后，将不会再添加它；
+    //smb聚合项的缓存到配置文件的新字段StashedSmbDevices中。
     QFile configFile(CONFIG_PATH);
     if (!configFile.open(QIODevice::ReadOnly)) {
         return;
@@ -467,6 +497,7 @@ void RemoteMountsStashManager::clearRemoteMounts()
     if (!obj.contains("RemoteMounts"))
         return;
     obj.remove("RemoteMounts");
+
     config.setObject(obj);
     configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
     configFile.write(config.toJson());
@@ -525,4 +556,146 @@ QString RemoteMountsStashManager::normalizeConnUrl(const QString &url)
         path = path.mid(1);
     path.remove(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
     return path;
+}
+
+/*!
+ * \brief RemoteMountsStashManager::stashedSmbDevices 获取当前缓存的smb聚合设备列表
+ * \return
+ */
+QStringList RemoteMountsStashManager::stashedSmbDevices()
+{
+    QFile configFile(CONFIG_PATH);
+    if (!configFile.open(QIODevice::ReadOnly))
+        return QStringList();
+
+    QJsonParseError err;
+    QJsonDocument config = QJsonDocument::fromJson(configFile.readAll(), &err);
+    if (err.error != QJsonParseError::NoError) {
+        qWarning() << "config file is not valid json file: " << err.errorString();
+        configFile.close();
+        return QStringList();
+    }
+    configFile.close();
+
+    QJsonObject obj = config.object();
+    QStringList smbDevices;
+    if(obj.contains("StashedSmbDevices")){
+        QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
+        if(stashedSmbDevices.isArray()){
+            QJsonArray jsonArray = stashedSmbDevices.toArray();
+            foreach (QJsonValue va, jsonArray) {
+                QString tem = va.toString();
+                if(!tem.isEmpty())
+                    smbDevices << tem;
+            }
+        }
+    }
+    ///为了和SMB挂载项聚合功能实现前的配置兼容，这里读出原有缓存的smb挂载信息并提取smb://x.x.x.x保存到
+    ///StashedSmbDevices字段中
+    if(obj.contains("RemoteMounts")){
+        QJsonValue remoteMounts = obj.value("RemoteMounts");
+        if (remoteMounts.isObject()) {
+            QJsonObject mountsObj = remoteMounts.toObject();
+            const QStringList &itemKeys = mountsObj.keys();
+            for (const auto &itemKey: itemKeys) {
+                QJsonValue mountItem = mountsObj.value(itemKey);
+                if (!mountItem.isObject())
+                    continue;
+                QJsonObject mountObj = mountItem.toObject();
+                if(mountObj.value("protocol").toString() == SMB_SCHEME){
+                    smbDevices << QString("%1://%2").arg(SMB_SCHEME).arg(mountObj.value("host").toString());
+                }
+            }
+            config.setObject(obj);
+            configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+            configFile.write(config.toJson());
+            configFile.close();
+        }
+    }
+    smbDevices.removeDuplicates();
+    return smbDevices;
+}
+
+void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
+{
+    QFile configFile(CONFIG_PATH);
+    if (!configFile.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QByteArray data = configFile.readAll();
+    configFile.close();
+
+    QJsonParseError err;
+    QJsonDocument config = QJsonDocument::fromJson(data, &err);
+    if (err.error != QJsonParseError::NoError) {
+        qWarning() << "config file is not valid json file: " << err.errorString();
+        return;
+    }
+
+    QJsonObject obj = config.object();
+        if(obj.contains("StashedSmbDevices")){
+            QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
+            if(stashedSmbDevices.isArray()){
+                QJsonArray jsonArray = stashedSmbDevices.toArray();
+                int count = jsonArray.count();
+                for(int i = 0;i<count;i++){
+                    QString tem = jsonArray.at(i).toString();
+                    if(tem == url){
+                       jsonArray.removeAt(i);
+                       break;
+                    }
+                }
+                if(jsonArray.count() >0 )
+                    obj.insert("StashedSmbDevices", jsonArray);
+                else
+                    obj.remove("StashedSmbDevices");
+            }
+        }
+        config.setObject(obj);
+        configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+        configFile.write(config.toJson());
+        configFile.close();
+
+        qInfo() << " smb merged remote mount: " << url << "is unstashed.";
+
+}
+
+void RemoteMountsStashManager::insertStashedSmbDevice(const QString &url)
+{
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+    QFile configFile(CONFIG_PATH);
+    if (!configFile.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QByteArray data = configFile.readAll();
+    configFile.close();
+
+    QJsonParseError err;
+    QJsonDocument config = QJsonDocument::fromJson(data, &err);
+    if (err.error != QJsonParseError::NoError) {
+        qWarning() << "config file is not valid json file: " << err.errorString();
+        return;
+    }
+    QJsonObject obj = config.object();
+    if(obj.contains("StashedSmbDevices")){
+        QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
+        if(stashedSmbDevices.isArray()){
+            QJsonArray stashSbDeviceArray = stashedSmbDevices.toArray();
+            if(!stashSbDeviceArray.contains(QJsonValue(url))){
+                stashSbDeviceArray << QJsonValue(url);
+                obj.insert("StashedSmbDevices",stashSbDeviceArray);
+            }
+        }
+    }else{
+        QJsonArray stashSbDeviceArray;
+        stashSbDeviceArray << QJsonValue(url);
+        obj.insert("StashedSmbDevices",stashSbDeviceArray);
+    }
+    config.setObject(obj);
+    configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    configFile.write(config.toJson());
+    configFile.close();
 }

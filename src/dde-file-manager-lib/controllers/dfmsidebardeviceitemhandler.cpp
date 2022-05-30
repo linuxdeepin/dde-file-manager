@@ -164,8 +164,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
     QVector<MenuAction> av = infoPointer->menuActionList();
     bool isSmbIp = FileUtils::isSmbHostOnly(item->url());
     if(isSmbIp){
-        av.removeOne(MenuAction::Open);
-        av.removeOne(MenuAction::OpenInNewWindow);
+        av.clear();//对于侧边栏smb挂载聚合项的右键菜单只显示 卸载 和 取消记住密码并卸载
         av.push_back(MenuAction::UnmountAllSmbMount);
         av.push_back(MenuAction::ForgetAllSmbPassword);
     }

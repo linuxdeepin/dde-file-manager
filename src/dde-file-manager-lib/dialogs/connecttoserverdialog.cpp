@@ -32,6 +32,9 @@
 #include "../controllers/searchhistroymanager.h"
 #include "../interfaces/dfmsettings.h"
 #include "../interfaces/dfmapplication.h"
+#include "app/define.h"
+#include "gvfs/networkmanager.h"
+#include "utils/utils.h"
 
 #include <QComboBox>
 #include <QVBoxLayout>
@@ -102,22 +105,6 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         QDir::setCurrent(currentDir);
         if(fileWindow)
             DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, inputUrl, fileWindow->window());
-/*
-        //add search history list
-        SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
-        if (!historyManager->toStringList().contains(text)) {
-            historyManager->writeIntoSearchHistory(text);
-        }else{//访问连接已经包含在历史记录中
-            historyManager->removeSearchHistory(text);
-            historyManager->writeIntoSearchHistory(text);//追加到最后，用于下次打开对话框时显示上次连接。
-        }
-*/
-//        if(FileUtils::isSmbHostOnly(inputUrl)){
-//            DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(fileWindow->topLevelWidget());
-//            if(window){
-//                emit window->getToolBar()->addSmbIpToSideBar(inputUrl);
-//            }
-//        }
     }
     close();
 }

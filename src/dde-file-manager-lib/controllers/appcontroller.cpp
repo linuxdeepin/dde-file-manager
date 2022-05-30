@@ -830,8 +830,10 @@ void AppController::doActionUnmount(const QSharedPointer<DFMUrlBaseEvent> &event
         QString path = fileUrl.path();
         path = path.startsWith('/') ? path.mid(1) : path;
         path = path.toLower();
+        QString tPath = fileUrl.scheme() + "://" + fileUrl.host() + "/" +path;
         path = fileUrl.scheme() + "://" + fileUrl.host() + "/" + QUrl::toPercentEncoding(path,"{$}") + "/";
         deviceListener->unmount(path);
+        doRemoveStashedMount(tPath);//这里需要移除缓存
         return;
         ///处理对smb设备根目录下共享文件夹的卸载操作 - end
     }else if (fileUrl.query().length()) {
@@ -1198,13 +1200,19 @@ void AppController::actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &ev
 void AppController::actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event)
 {
     auto path = event->url().path(); // something like "/smb://host/shared-folder.remote"
-    path = RemoteMountsStashManager::normalizeConnUrl(path);
+    doRemoveStashedMount(path);
+}
+
+void AppController::doRemoveStashedMount(const QString &path)
+{
     // then find the stashed key of it.
     const auto &&stashedRemoteMounts = RemoteMountsStashManager::remoteMounts();
     QString key;
+    QString smbHost;
     for (const auto &mount: stashedRemoteMounts) {
         auto protocol = mount.value(REMOTE_PROTOCOL).toString();
         auto host = mount.value(REMOTE_HOST).toString();
+        smbHost = host;
         auto share = mount.value(REMOTE_SHARE).toString();
         if (protocol.isEmpty() || host.isEmpty()) {
             qWarning() << "protocol or host is empty: " << mount;
@@ -1259,27 +1267,29 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
          }
 
          deviceListener->unmount(finalPath);
+         QString tPath = finalPath;
+         tPath.chop(1);
+         doRemoveStashedMount(tPath);//这里需要移除缓存
          if(isOperateUnmount)
              continue;
          else
              isOperateUnmount = true;
        }
    }
-   if(!isOperateUnmount)
-       deviceListener->setBatchedRemovingSmbMount(false);//没有smb目录卸载操作，还原批量卸载标记
+
    //从侧边栏移除SMB挂载子项
    DFileManagerWindow* managerWindow = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(event->windowId()));
    if(managerWindow && !smbIp.isEmpty()){
        DUrl smbUrl = DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp));
-       managerWindow->getLeftSideBar()->removeItem(smbUrl,"device");
-       managerWindow->getLeftSideBar()->clearSmbMultiMap(smbUrl);
-
-       QTimer::singleShot(250, [=]() {
-           //这里一定要清空侧边栏常驻配置，否则下面跳转到计算机界面时，SMB挂载项又会显示
-           RemoteMountsStashManager::clearRemoteMounts();
-           //如果前面没有smb目录卸载操作，在这里主动跳转到计算机页面，反之则在侧边栏的fileDeleted中通过最后一个卸载来跳转
-           if(!isOperateUnmount)
+       QTimer::singleShot(125, [=]() {
+           //如果前面没有smb目录卸载操作，在这里主动跳转到计算机页面;（场景：用户只是在地址栏输入了smb host，但是没有做目录挂载操作）
+           //反之则在侧边栏的fileDeleted中槽函数中触发界面跳转
+           if(!isOperateUnmount){//如果上述没有发生挂载目录的卸载操作，则不会触发卸载通知，因此在这里移除smb挂载聚合项
+            RemoteMountsStashManager::removeStashedSmbDevice(smbUrl.toString());
+            managerWindow->getLeftSideBar()->removeItem(smbUrl,"device");//todo(zhuangshu):多窗口同步移除
             managerWindow->getLeftSideBar()->jumpToComputerItem();
+            emit DFMApplication::instance()->reloadComputerModel();//刷新计算机界面上的smb聚合设备
+           }
        });
    }
 }

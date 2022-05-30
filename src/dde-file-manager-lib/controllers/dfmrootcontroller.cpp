@@ -326,7 +326,13 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
                 qWarning() << "protocol or host is empty: " << mount;
                 continue;
             }
-
+            //考虑到用户升级到有smb挂载项聚合功能的版本后的兼容性，把配置中缓存的.remote挂载信息移到StashedSmbDevices字段中
+            //以smb://x.x.x.x格式保存
+            if(protocol == SMB_SCHEME){
+                RemoteMountsStashManager::insertStashedSmbDevice(QString("%1://%2").arg(protocol).arg(host));
+                QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
+            }
+            /*smb挂载项聚合功能中，这里不再对缓存的挂载目录创建DFMRootFileInfo对象（请保留此部分注释）
             QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
             path.append(QString(".%1").arg(SUFFIX_STASHED_REMOTE));
             path.prepend(DFMROOT_ROOT);
@@ -335,8 +341,11 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             auto stashedMountInfo = new DFMRootFileInfo(DUrl::fromPercentEncoding(path.toUtf8()));
             DAbstractFileInfoPointer fp(stashedMountInfo);
             ret.push_back(fp);
+            */
         }
     }
+
+
 
     qInfo() << "get rootfileinfo over !" << ret;
     for(auto item: ret) {
