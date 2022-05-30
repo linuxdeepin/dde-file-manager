@@ -45,7 +45,7 @@ public:
     void initConnection();
 
 public slots:
-    void handleTileBarSwitchModeTriggered(quint64 windowId, DFMBASE_NAMESPACE::Global::ViewMode mode);
+    void handleTileBarSwitchModeTriggered(quint64 windowId, int mode);
     void handleOpenNewTabTriggered(quint64 windowId, const QUrl &url);
     void handleShowCustomTopWidget(quint64 windowId, const QString &cheme, bool visible);
     void handleCloseTabs(const QUrl &url);

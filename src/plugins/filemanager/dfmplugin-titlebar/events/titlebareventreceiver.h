@@ -45,6 +45,7 @@ public slots:
     void handleStartSpinner(quint64 windowId);
     void handleStopSpinner(quint64 windowId);
     void handleShowFilterButton(quint64 windowId, bool visible);
+    void handleViewModeChanged(quint64 windowId, int mode);
 
 private:
     explicit TitleBarEventReceiver(QObject *parent = nullptr);

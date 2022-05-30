@@ -33,6 +33,7 @@
 
 DPTITLEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 TitleBarWidget::TitleBarWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -75,6 +76,16 @@ void TitleBarWidget::handleHotkeyCtrlF()
 void TitleBarWidget::handleHotkeyCtrlL()
 {
     showAddrsssBar(currentUrl());
+}
+
+void TitleBarWidget::handleHotketSwitchViewMode(int mode)
+{
+    // Press ctrl+1
+    if (mode == 0)
+        TitleBarEventCaller::sendViewMode(this, ViewMode::kIconMode);
+    // Press ctrl+2
+    if (mode == 1)
+        TitleBarEventCaller::sendViewMode(this, ViewMode::kListMode);
 }
 
 void TitleBarWidget::initializeUi()
@@ -209,6 +220,12 @@ void TitleBarWidget::showSearchFilterButton(bool visible)
 {
     if (searchButtonSwitchState)
         searchButton->setVisible(visible);
+}
+
+void TitleBarWidget::setViewModeState(int mode)
+{
+    if (optionButtonBox)
+        optionButtonBox->setViewMode(mode);
 }
 
 bool TitleBarWidget::eventFilter(QObject *watched, QEvent *event)

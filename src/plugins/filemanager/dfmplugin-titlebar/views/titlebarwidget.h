@@ -50,9 +50,12 @@ public:
     void stopSpinner();
     void showSearchFilterButton(bool visible);
 
+    void setViewModeState(int mode);
+
 public slots:
     void handleHotkeyCtrlF();
     void handleHotkeyCtrlL();
+    void handleHotketSwitchViewMode(int mode);
 
 private:
     void initializeUi();

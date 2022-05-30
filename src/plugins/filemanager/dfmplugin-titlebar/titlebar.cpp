@@ -34,6 +34,7 @@
 #include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -107,6 +108,7 @@ void TitleBar::onWindowOpened(quint64 windId)
             &NavWidget::onNewWindowOpended);
     connect(window, &FileManagerWindow::reqSearchCtrlF, GlobalPrivate::titleBar, &TitleBarWidget::handleHotkeyCtrlF);
     connect(window, &FileManagerWindow::reqSearchCtrlL, GlobalPrivate::titleBar, &TitleBarWidget::handleHotkeyCtrlL);
+    connect(window, &FileManagerWindow::reqTriggerActionByIndex, GlobalPrivate::titleBar, &TitleBarWidget::handleHotketSwitchViewMode);
 }
 
 void TitleBar::onWindowClosed(quint64 windId)
@@ -125,6 +127,9 @@ void TitleBar::bindEvents()
                                    TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabMoved);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kTabRemoved,
                                    TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabRemovd);
+
+    dpfSignalDispatcher->subscribe(DFMBASE_NAMESPACE::kSwitchViewMode,
+                                   TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleViewModeChanged);
 
     // bind self slot events  slot_StartSpinner
     static constexpr auto curSpace { DPF_MACRO_TO_STR(DPTITLEBAR_NAMESPACE) };

@@ -53,6 +53,7 @@ void WorkspaceEventReceiver::initConnection()
 
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSwitchViewMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
+
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
 
@@ -78,9 +79,9 @@ void WorkspaceEventReceiver::initConnection()
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetReadOnly);
 }
 
-void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, DFMBASE_NAMESPACE::Global::ViewMode mode)
+void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, int mode)
 {
-    WorkspaceHelper::instance()->switchViewMode(windowId, int(mode));
+    WorkspaceHelper::instance()->switchViewMode(windowId, mode);
 }
 
 void WorkspaceEventReceiver::handleOpenNewTabTriggered(quint64 windowId, const QUrl &url)

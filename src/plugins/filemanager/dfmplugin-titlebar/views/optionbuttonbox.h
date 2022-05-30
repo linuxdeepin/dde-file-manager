@@ -54,6 +54,8 @@ public:
     void setListViewButton(QToolButton *listViewButton);
     void setDetailButton(QToolButton *detailButton);
 
+    void setViewMode(int mode);
+
 public slots:
     void onUrlChanged(const QUrl &url);
 

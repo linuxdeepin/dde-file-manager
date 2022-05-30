@@ -89,6 +89,15 @@ void TitleBarEventReceiver::handleShowFilterButton(quint64 windowId, bool visibl
     w->showSearchFilterButton(visible);
 }
 
+void TitleBarEventReceiver::handleViewModeChanged(quint64 windowId, int mode)
+{
+    TitleBarWidget *w = TitleBarHelper::findTileBarByWindowId(windowId);
+    if (!w)
+        return;
+
+    w->setViewModeState(mode);
+}
+
 TitleBarEventReceiver::TitleBarEventReceiver(QObject *parent)
     : QObject(parent)
 {

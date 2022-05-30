@@ -110,6 +110,11 @@ void OptionButtonBox::setDetailButton(QToolButton *detailButton)
     }
 }
 
+void OptionButtonBox::setViewMode(int mode)
+{
+    d->switchMode(static_cast<ViewMode>(mode));
+}
+
 void OptionButtonBox::onUrlChanged(const QUrl &url)
 {
     d->loadViewMode(url);

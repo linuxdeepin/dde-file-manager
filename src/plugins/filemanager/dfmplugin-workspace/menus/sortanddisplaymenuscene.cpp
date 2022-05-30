@@ -28,6 +28,9 @@
 
 #include "services/common/menu/menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 
@@ -68,6 +71,7 @@ QString SortAndDisplayMenuScene::name() const
 
 bool SortAndDisplayMenuScene::initialize(const QVariantHash &params)
 {
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     if (d->isEmptyArea)
         return AbstractMenuScene::initialize(params);
@@ -109,13 +113,13 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
         {
             // display as icon
             if (actionId == ActionID::kDisplayIcon) {
-                d->view->setViewMode(Global::ViewMode::kIconMode);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kIconMode));
                 return true;
             }
 
             // display as list
             if (actionId == ActionID::kDisplayList) {
-                d->view->setViewMode(Global::ViewMode::kListMode);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::kSwitchViewMode, d->windowId, int(Global::ViewMode::kListMode));
                 return true;
             }
         }

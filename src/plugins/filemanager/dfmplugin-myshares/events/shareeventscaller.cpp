@@ -75,5 +75,5 @@ void ShareEventsCaller::sendShowProperty(const QList<QUrl> &urls)
 
 void ShareEventsCaller::sendSwitchDisplayMode(quint64 winId, Global::ViewMode mode)
 {
-    dispatcher.publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, winId, mode);
+    dispatcher.publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, winId, int(mode));
 }
