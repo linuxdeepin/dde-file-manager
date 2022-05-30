@@ -989,7 +989,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     AbstractFileInfoPointer info = nullptr;
 
     do {
-        const QUrl &targetUrl = symLinkTarget();
+        const QUrl &targetUrl = QUrl::fromLocalFile(symLinkTarget());
 
         if (targetUrl == url()) {
             return false;
