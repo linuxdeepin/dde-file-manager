@@ -29,6 +29,7 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <DDialog>
 
@@ -369,9 +370,9 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     if (bookmarkMap[url].deviceUrl.startsWith(Global::kSmb)
         || bookmarkMap[url].deviceUrl.startsWith(Global::kFtp)
         || bookmarkMap[url].deviceUrl.startsWith(Global::kSFtp)) {
-        DFileInfo info(url);
-        if (info.exists()) {
-            if (info.attribute(DFileInfo::AttributeID::kStandardIsDir).toBool())
+        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info && info->exists()) {
+            if (info->isDir())
                 BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
         } else {
             DeviceManager::instance()->mountNetworkDeviceAsync(bookmarkMap[url].deviceUrl, [windowId, url](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
