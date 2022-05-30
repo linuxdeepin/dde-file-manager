@@ -590,7 +590,7 @@ bool DFMSideBarView::fetchDragEventUrlsFromSharedMemory()
 bool DFMSideBarView::checkOpTime()
 {
     //如果两次操作时间间隔足够长，则返回true
-    if (QDateTime::currentDateTime().toMSecsSinceEpoch() - m_lastOpTime > 200) {
+    if (abs(QDateTime::currentDateTime().toMSecsSinceEpoch() - m_lastOpTime) > 200) {
         m_lastOpTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
         return true;
     }
