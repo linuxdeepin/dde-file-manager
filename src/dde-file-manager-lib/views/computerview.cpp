@@ -403,7 +403,15 @@ void ComputerView::contextMenu(const QPoint &pos)
         quint64 wndId = WindowManager::getWindowId(this);
         menu = DFileMenuManager::createVaultMenu(WindowManager::getWindowById(wndId));
     } else {
-        menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
+        const QString &scheme = idx.data(ComputerModel::DataRoles::SchemeRole).value<QString>();
+        if(scheme == SMB_SCHEME){
+            QVector<MenuAction> actionValue;
+            actionValue << MenuAction::UnmountAllSmbMount
+                        << MenuAction::ForgetAllSmbPassword;
+            menu = DFileMenuManager::genereteMenuByKeys(actionValue, disabled);
+        }else{
+            menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
+        }
     }
 
     menu->setEventData(DUrl(), {idx.data(ComputerModel::DataRoles::DFMRootUrlRole).value<DUrl>()}, WindowManager::getWindowId(this), this);

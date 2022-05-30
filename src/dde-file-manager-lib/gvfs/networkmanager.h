@@ -84,6 +84,7 @@ public:
 
     void initData();
     void initConnect();
+    static void addSmbServerToHistory(const DUrl &url);
 
     static QStringList SupportScheme;
     static QMap<DUrl, NetworkNodeList> NetworkNodes;
@@ -100,8 +101,10 @@ public:
     static void populate_networks (GFileEnumerator *enumerator, GList *detected_networks, gpointer user_data);
     static void restartGVFSD();
     static bool isFetchingNetworks();
+
 signals:
     void mountFailed(const DUrl &url);
+    void addSmbMountIntegration(const DUrl &url);
 public slots:
     void fetchNetworks(const DFMUrlBaseEvent &event);
     static void cancelFeatchNetworks();

@@ -143,6 +143,7 @@ public slots:
     void actionFormatDevice(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionOpticalBlank(const QSharedPointer<DFMUrlBaseEvent> &event);
     void actionRemoveStashedMount(const QSharedPointer<DFMUrlBaseEvent> &event);
+    void doRemoveStashedMount(const QString& path);
     void actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBaseEvent> &event);
     void actionForgetAllSmbPassword(const QSharedPointer<DFMUrlListBaseEvent> &event);
 
