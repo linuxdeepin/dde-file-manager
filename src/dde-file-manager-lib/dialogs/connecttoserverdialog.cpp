@@ -83,7 +83,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
 {
     // connect to server
     if(index == ConnectButton) {
-        QString text = m_schemeComboBox->currentText() + m_serverComboBox->currentText();
+        QString text = m_schemeComboBox->currentText() + m_serverComboBox->currentText();//smb://x.x.x.x
         if (m_serverComboBox->currentText().isEmpty()) {
             close();
             return;
@@ -109,6 +109,9 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
         if (!historyManager->toStringList().contains(text)) {
             historyManager->writeIntoSearchHistory(text);
+        }else{//访问连接已经包含在历史记录中
+            historyManager->removeSearchHistory(text);
+            historyManager->writeIntoSearchHistory(text);//追加到最后，用于下次打开对话框时显示上次连接。
         }
         if(FileUtils::isSmbHostOnly(inputUrl)){
             DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(fileWindow->topLevelWidget());
@@ -311,7 +314,7 @@ void ConnectToServerDialog::initUI()
     schemeList << QString("%1://").arg(SFTP_SCHEME);
 
     while(hostList.count() > Max_HISTORY_ITEM - 1 )
-        hostList.takeLast();
+        hostList.takeFirst();
 
     m_completer = new QCompleter(hostList,this);
     m_completer->setCaseSensitivity(Qt::CaseInsensitive);
@@ -327,10 +330,22 @@ void ConnectToServerDialog::initUI()
     m_serverComboBox->setEditable(true);
     m_serverComboBox->setCompleter(m_completer);
     m_serverComboBox->clearEditText();
+
+
     static QString regExpStr = "(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])";
     m_serverComboBox->setValidator(new QRegExpValidator(QRegExp(regExpStr),this));
     m_schemeComboBox->addItems(schemeList);
     m_schemeComboBox->setFixedWidth(100);
+
+
+    if(hostList.count() > 0){
+        QString lastOne = hostList.last();
+        QString scheme = lastOne.section("://",0,0);
+        if(!scheme.isEmpty()){
+            m_serverComboBox->setEditText(lastOne.section("//",-1));
+            m_schemeComboBox->setCurrentText(scheme + "://");
+        }
+    }
 
     m_collectionServerView->setViewportMargins(0, 0, m_collectionServerView->verticalScrollBar()->sizeHint().width(), 0);
     m_collectionServerView->setVerticalScrollMode(DListView::ScrollPerPixel);
@@ -373,7 +388,7 @@ void ConnectToServerDialog::initConnect()
 {
     //QComboBox clear history
     connect(m_serverComboBox, &QComboBox::currentTextChanged, this, [=](const QString &string){
-        if (string == m_serverComboBox->itemText(m_serverComboBox->count() - 1)) {
+       if (string == m_serverComboBox->itemText(m_serverComboBox->count() - 1)) {
             QSignalBlocker blocker(m_serverComboBox);
             Q_UNUSED(blocker)
             m_serverComboBox->clear();
@@ -382,16 +397,16 @@ void ConnectToServerDialog::initConnect()
             m_serverComboBox->completer()->setModel(new QStringListModel());
             Singleton<SearchHistroyManager>::instance()->clearHistory();
         }
-        if(string.contains("://")){
+
+       if(string.contains("://")){
             QString scheme = string.section("://",0,0);
             if(!scheme.isEmpty()){
                 m_serverComboBox->setEditText(string.section("//",-1));
                 m_schemeComboBox->setCurrentText(scheme + "://");
             }
-        }
+       }
 
-
-        upateState();
+       upateState();
     });
 
     connect(m_completer, SIGNAL(activated(const QString&)),this, SLOT(onCompleterActivated(const QString&)));
