@@ -143,7 +143,9 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
         } else {
             if (fileList.contains(newUrl)) {
                 // e.g. a mv to b(b is existed)
+                lk.unlock();
                 removeData(oldUrl);
+                lk.relock();
                 position = fileList.indexOf(newUrl);
             } else {
                 fileList.replace(position, newUrl);

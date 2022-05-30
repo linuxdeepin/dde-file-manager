@@ -282,7 +282,8 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     if (const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
         QUrl oldUrl = fileInfo->url();
         QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
-        FileOperatorProxyIns->renameFile(parent(), oldUrl, newUrl);
+        QMetaObject::invokeMethod(FileOperatorProxyIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId())
+                                  , Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
     }
 }
 

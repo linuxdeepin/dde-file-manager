@@ -157,10 +157,16 @@ bool BoxSelecter::eventFilter(QObject *watched, QEvent *event)
         case QEvent::MouseMove:
         {
             QMouseEvent *e = dynamic_cast<QMouseEvent *>(event);
-            end = e->globalPos();
-            updateSelection();
-            updateCurrentIndex();
-            QMetaObject::invokeMethod(this, "changed", Qt::QueuedConnection);
+            if (Q_LIKELY(e->buttons().testFlag(Qt::LeftButton))) {
+                end = e->globalPos();
+                updateSelection();
+                updateCurrentIndex();
+                QMetaObject::invokeMethod(this, "changed", Qt::QueuedConnection);
+            } else {
+                endSelect();
+                // using queue event to prevent disrupting the event cycle
+                QMetaObject::invokeMethod(this, "changed", Qt::QueuedConnection);
+            }
         }
             break;
         default:
