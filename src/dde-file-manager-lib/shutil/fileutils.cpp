@@ -354,8 +354,7 @@ qint64 FileUtils::totalSize(const DUrlList &files, qint32 &dirSize, qint32 &file
             if (flag != FTS_DP)
                 total += ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : ent->fts_statp->st_size;
             if (dirSize == 0 && flag == FTS_D)
-                dirSize = ent->fts_statp->st_size <= 0 ? getMemoryPageSize() :
-                                                                  static_cast<qint32>(ent->fts_statp->st_size);
+                dirSize = ent->fts_statp->st_size <= 0 ? getMemoryPageSize() : static_cast<qint32>(ent->fts_statp->st_size);
             if (flag == FTS_F)
                 fileCount++;
         }
@@ -639,7 +638,6 @@ QString FileUtils::diskUsageString(quint64 &usedSize, quint64 &totalSize, QStrin
     }
 }
 
-
 /*!
  * \brief 解析配置文件，获取光盘大小数据
  * 光盘打开后可以显示大小，并挂载然而关闭文管后再重新启动会导致之前的状态机失效（未持久化存储）
@@ -649,8 +647,8 @@ QString FileUtils::diskUsageString(quint64 &usedSize, quint64 &totalSize, QStrin
  */
 QString FileUtils::defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize)
 {
-    QString size{"0M"};
-    int burnStatus{DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct};
+    QString size {"0M"};
+    int burnStatus { DFMOpticalMediaWidget::BCSA_BurnCapacityStatusEjct };
     quint64 curTotalSize{0}; // 光盘总大小
     quint64 curUsedSize{0};  // 光盘已使用的大小
 
@@ -669,7 +667,6 @@ QString FileUtils::defaultOpticalSize(const QString &tagName, quint64 &usedSize,
             totalSize = curTotalSize;
             size = QString("%1/%2").arg(FileUtils::formatSize(static_cast<qint64>(usedSize), true, 1, usedSize < mb ? 2 : -1, unitDisplayText),
                                         FileUtils::formatSize(static_cast<qint64>(totalSize), true, 1, totalSize < mb ? 2 : -1, unitDisplayText));
-
         }
     }
 
@@ -796,7 +793,8 @@ bool FileUtils::openFile(const QString &filePath, const QString &desktopFile)
         }
     }
 
-    result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromLocalFile(filePath).toString());
+    DUrl tempurl = DUrl::fromLocalFile(filePath);
+    result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromPercentEncoding(tempurl.toString().toLocal8Bit()));
     if (result) {
         // workaround since DTK apps doesn't support the recent file spec.
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
@@ -1264,7 +1262,7 @@ QByteArray FileUtils::md5(QFile *file, const QString &filePath)
         file->close();
     }
 
-    return QCryptographicHash::hash(md5, QCryptographicHash::Md5).toHex();;
+    return QCryptographicHash::hash(md5, QCryptographicHash::Md5).toHex();
 }
 
 bool FileUtils::isFileExecutable(const QString &path)
@@ -1338,7 +1336,6 @@ bool FileUtils::isFileRunnable(const QString &path)
     return false;
 }
 
-
 bool FileUtils::isFileWindowsUrlShortcut(const QString &path)
 {
     QString mimetype = getFileMimetype(path);
@@ -1356,7 +1353,6 @@ QString FileUtils::getInternetShortcutUrl(const QString &path)
     settings.endGroup();
     return url;
 }
-
 
 QString FileUtils::getFileMimetype(const QString &path)
 {
@@ -1531,7 +1527,6 @@ QByteArray FileUtils::imageFormatName(QImage::Format f)
 
     return "jpeg";
 }
-
 
 QString FileUtils::getFileContent(const QString &file)
 {
@@ -1989,7 +1984,7 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
             QString path = QUrl::fromPercentEncoding(url.path().toUtf8());
             host = path.section( "server=" , -1 ).section( "," , 0, 0 );
         } else if (url.path().endsWith( QString( ".%1" ).arg(SUFFIX_STASHED_REMOTE)) ){//ends with .remote
-            QString smbPath = QUrl::fromPercentEncoding( url.path().toUtf8() );
+            QString smbPath = QUrl::fromPercentEncoding(url.path().toUtf8());
             if (smbPath.startsWith( "/" ))
                 smbPath = smbPath.mid(1);
             host = DUrl(smbPath).host();
@@ -2282,5 +2277,4 @@ bool FileUtils::isDesktopFile(const QFileInfo &fileInfo, QMimeType &mimetyp)
     mimetyp = mt;
     return mt.name() == "application/x-desktop" &&
            mt.suffixes().contains("desktop", Qt::CaseInsensitive);
-
 }
