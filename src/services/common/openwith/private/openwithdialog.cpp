@@ -372,31 +372,31 @@ void OpenWithDialog::checkItem(OpenWithDialogListItem *item)
 
 void OpenWithDialog::useOtherApplication()
 {
-    const QString &file_path = QFileDialog::getOpenFileName(this);
+    const QString &filePath = QFileDialog::getOpenFileName(this);
 
-    if (file_path.isEmpty())
+    if (filePath.isEmpty())
         return;
 
-    QFileInfo info(file_path);
+    QFileInfo info(filePath);
     QString targetDesktopFileName("%1/%2-custom-open-%3.desktop");
 
     targetDesktopFileName = targetDesktopFileName.arg(QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)).arg(qApp->applicationName()).arg(mimeType.name().replace("/", "-"));
 
-    if (file_path.endsWith(".desktop")) {
+    if (filePath.endsWith(".desktop")) {
         auto list = recommandLayout->parentWidget()->findChildren<OpenWithDialog *>();
-        auto ret = std::any_of(list.begin(), list.end(), [file_path](const OpenWithDialog *w) {
-            return w->property("app").toString() == file_path;
+        auto ret = std::any_of(list.begin(), list.end(), [filePath](const OpenWithDialog *w) {
+            return w->property("app").toString() == filePath;
         });
 
         if (ret)
             return;
 
-        Properties desktop(file_path, "Desktop Entry");
+        Properties desktop(filePath, "Desktop Entry");
 
         if (desktop.value("MimeType").toString().isEmpty())
             return;
 
-        if (!QFile::link(file_path, targetDesktopFileName))
+        if (!QFile::link(filePath, targetDesktopFileName))
             return;
     } else if (info.isExecutable()) {
         Properties desktop;
@@ -404,7 +404,7 @@ void OpenWithDialog::useOtherApplication()
         desktop.set("Type", "Application");
         desktop.set("Name", info.fileName());
         desktop.set("Icon", "application-x-desktop");
-        desktop.set("Exec", file_path);
+        desktop.set("Exec", filePath);
         desktop.set("MimeType", "*/*");
         desktop.set("X-DDE-File-Manager-Custom-Open", mimeType.name());
 

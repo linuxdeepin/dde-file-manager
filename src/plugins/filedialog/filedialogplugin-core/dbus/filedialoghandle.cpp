@@ -454,8 +454,18 @@ void FileDialogHandle::show()
 {
     D_D(FileDialogHandle);
     if (d->dialog) {
-        WindowsService::service()->showWindow(d->dialog);
-        d->dialog->updateAsDefaultSize();
+        // why ?
+        // Use QFileDialog will call to the current function, but `WindowsService::showWindow` will call
+        // to some D-Bus interfaces in desktop.
+        // The main thread of the desktop waits for the current function to
+        // finish running if launch filedialog from desktop, this leads to deadlocks as each side waits for
+        // the other to finish.
+        // So this modification makes `WindowsService::showWindow` execute asynchronously,
+        // without blocking the main desktop thread
+        QTimer::singleShot(10, this, [d]() {
+            WindowsService::service()->showWindow(d->dialog);
+            d->dialog->updateAsDefaultSize();
+        });
     }
 }
 
