@@ -173,7 +173,7 @@ VideoPreview::VideoPreview(QObject *parent)
 
     // 强制不使用嵌入mpv窗口的模式
     // 经确认，该函数已废弃，屏蔽后不影响使用
- //   dmr::CompositingManager::get().overrideCompositeMode(true);
+    //   dmr::CompositingManager::get().overrideCompositeMode(true);
 
     playerWidget = new VideoWidget(this);
     statusBar = new VideoStatusBar(this);
@@ -207,7 +207,7 @@ bool VideoPreview::setFileUrl(const DUrl &url)
     playerWidget->title->setText(info.title);
     playerWidget->title->adjustSize();
     statusBar->slider->setMaximum(static_cast<int>(info.duration));
-    videoUrl = QUrl(url.toLocalFile());
+    videoUrl = QUrl::fromLocalFile(url.toLocalFile());
 
     return true;
 }
