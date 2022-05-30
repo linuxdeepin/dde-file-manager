@@ -832,6 +832,7 @@ void FileView::setFilterData(const quint64 windowID, const QUrl &url, const QVar
 {
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
     if (thisWindId == windowID && url == rootUrl() && isVisible()) {
+        clearSelection();
         model()->setFilterData(data);
         update();
     }
@@ -841,6 +842,7 @@ void FileView::setFilterCallback(const quint64 windowID, const QUrl &url, const 
 {
     auto thisWindId = WorkspaceHelper::instance()->windowId(this);
     if (thisWindId == windowID && url == rootUrl() && isVisible()) {
+        clearSelection();
         model()->setFilterCallBack(callback);
         update();
     }
