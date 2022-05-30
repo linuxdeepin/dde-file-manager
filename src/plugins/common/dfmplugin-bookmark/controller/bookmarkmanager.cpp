@@ -391,7 +391,7 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
     if (info.exists() && info.isDir()) {
         BookMarkEventCaller::sendOpenBookMarkInWindow(windowId, url);
     } else {
-        if (BookMarkManager::instance()->showRemoveBookMarkDialog(windowId))
+        if (DDialog::Accepted == BookMarkManager::instance()->showRemoveBookMarkDialog(windowId))
             BookMarkManager::instance()->removeBookMark(url);
     }
 }
