@@ -20,6 +20,7 @@
  */
 #include "fileinfomodel_p.h"
 #include "fileprovider.h"
+#include "filefilter.h"
 #include "utils/fileutil.h"
 
 #include <base/standardpaths.h>
@@ -184,6 +185,8 @@ FileInfoModel::FileInfoModel(QObject *parent)
       d(new FileInfoModelPrivate(this))
 {
     d->fileProvider = new FileProvider(this);
+    installFilter(QSharedPointer<FileFilter>(new RedundantUpdateFilter(d->fileProvider)));
+
     connect(d->fileProvider, &FileProvider::refreshEnd, d, &FileInfoModelPrivate::resetData);
 
     connect(d->fileProvider, &FileProvider::fileInserted, d, &FileInfoModelPrivate::insertData);

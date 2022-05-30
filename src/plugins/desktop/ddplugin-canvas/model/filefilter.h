@@ -23,10 +23,11 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include <QAbstractItemModel>
 #include <QObject>
+#include <QHash>
 
 class QGSettings;
+
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class FileFilter
@@ -34,12 +35,29 @@ class FileFilter
     Q_DISABLE_COPY(FileFilter)
 public:
     explicit FileFilter();
+    virtual ~FileFilter();
     virtual bool fileTraversalFilter(QList<QUrl> &urls);
     virtual bool fileDeletedFilter(const QUrl &url);
     virtual bool fileCreatedFilter(const QUrl &url);
     virtual bool fileRenameFilter(const QUrl &oldUrl, const QUrl &newUrl);
     virtual bool fileUpdatedFilter(const QUrl &url);
 protected:
+};
+
+class FileProvider;
+class RedundantUpdateFilter : public QObject, public FileFilter
+{
+    Q_OBJECT
+public:
+    explicit RedundantUpdateFilter(FileProvider *parent);
+    bool fileUpdatedFilter(const QUrl &url) override;
+protected:
+    void checkUpdate();
+    void timerEvent(QTimerEvent *event) override;
+protected:
+    FileProvider *provider = nullptr;
+    QHash<QUrl, int> updateList;
+    int timerid = -1;
 };
 
 DDP_CANVAS_END_NAMESPACE
