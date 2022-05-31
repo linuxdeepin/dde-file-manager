@@ -142,6 +142,7 @@ bool DoCleanTrashFilesWorker::cleanAllTrashFiles()
         if (!clearTrashFile(fileInfo))
             return false;
         cleanTrashFilesCount++;
+        completeTargetFiles.append(fileInfo->url());
         ++it;
     }
     return true;

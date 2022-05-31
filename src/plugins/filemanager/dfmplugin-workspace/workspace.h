@@ -24,8 +24,8 @@
 #define WORKSPACE_H
 
 #include "dfmplugin_workspace_global.h"
-#include <dfm-framework/framework.h>
-#include "dfm-framework/dpf.h"
+
+#include <dfm-framework/dpf.h>
 
 DPWORKSPACE_BEGIN_NAMESPACE
 

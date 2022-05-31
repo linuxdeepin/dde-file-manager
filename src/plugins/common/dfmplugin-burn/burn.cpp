@@ -65,4 +65,5 @@ void Burn::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_ShowBurnDialog", BurnEventReceiver::instance(), &BurnEventReceiver::handleShowBurnDlg);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Erase", BurnEventReceiver::instance(), &BurnEventReceiver::handleErase);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_PasteTo", BurnEventReceiver::instance(), &BurnEventReceiver::handlePasteTo);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleCopyFilesResult);
 }

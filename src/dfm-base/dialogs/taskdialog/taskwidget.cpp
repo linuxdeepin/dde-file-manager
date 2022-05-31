@@ -155,22 +155,22 @@ void TaskWidget::parentClose()
  * 在我们自己提供的dailog服务中，这个VarintMap必须有存在kSpeedKey（显示任务的右第一个label的显示，类型：QString）、
  * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
  */
-void TaskWidget::onShowErrors(const JobInfoPointer JobInfo)
+void TaskWidget::onShowErrors(const JobInfoPointer jobInfo)
 {
     isShowError.store(true);
 
-    AbstractJobHandler::JobErrorType errorType = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
-    QString sourceMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
-    QString targetMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
-    AbstractJobHandler::SupportActions actions = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kActionsKey).value<AbstractJobHandler::SupportActions>();
+    AbstractJobHandler::JobErrorType errorType = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>();
+    QString sourceMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceMsgKey).toString();
+    QString targetMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetMsgKey).toString();
+    AbstractJobHandler::SupportActions actions = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kActionsKey).value<AbstractJobHandler::SupportActions>();
     lbSrcPath->setText(sourceMsg);
     lbDstPath->setText(targetMsg);
     if (errorType == AbstractJobHandler::JobErrorType::kFileExistsError || errorType == AbstractJobHandler::JobErrorType::kDirectoryExistsError) {
-        QUrl source = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey).value<QUrl>();
-        QUrl target = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey).value<QUrl>();
+        QUrl source = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kSourceUrlKey).value<QUrl>();
+        QUrl target = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kTargetUrlKey).value<QUrl>();
         return onShowConflictInfo(source, target, actions);
     }
-    QString errorMsg = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey).toString();
+    QString errorMsg = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorMsgKey).toString();
     lbErrorMsg->setText(errorMsg);
     lbErrorMsg->setHidden(errorMsg.isEmpty());
     if (!widButton) {

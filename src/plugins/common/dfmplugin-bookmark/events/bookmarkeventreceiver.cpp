@@ -21,6 +21,8 @@
 #include "bookmarkeventreceiver.h"
 #include "controller/bookmarkmanager.h"
 
+#include <QDebug>
+
 DPBOOKMARK_USE_NAMESPACE
 
 BookMarkEventReceiver *BookMarkEventReceiver::instance()
@@ -29,11 +31,12 @@ BookMarkEventReceiver *BookMarkEventReceiver::instance()
     return &instance;
 }
 
-void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QUrl &oldUrl,
-                                             const QUrl &newUrl)
+void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QList<QUrl> &urls, bool result, const QString &errorMsg)
 {
     Q_UNUSED(windowId)
-    BookMarkManager::instance()->fileRenamed(oldUrl, newUrl);
+    Q_UNUSED(errorMsg)
+    if (urls.size() == 2 && result)
+        BookMarkManager::instance()->fileRenamed(urls.at(0), urls.at(1));
 }
 
 void BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled(const QString &scheme)
@@ -41,4 +44,5 @@ void BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled(const QString &sch
     BookMarkManager::instance()->addSchemeOfBookMarkDisabled(scheme);
 }
 
-BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent) : QObject(parent) {}
+BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent)
+    : QObject(parent) {}

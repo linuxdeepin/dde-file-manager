@@ -36,7 +36,7 @@ public:
     static BookMarkEventReceiver *instance();
 
 public slots:
-    void handleRenameFile(quint64 windowId, const QUrl &oldUrl, const QUrl &newUrl);
+    void handleRenameFile(quint64 windowId, const QList<QUrl> &urls, bool result, const QString &errorMsg);
     void handleAddSchemeOfBookMarkDisabled(const QString &scheme);
 
 private:
@@ -45,4 +45,4 @@ private:
 
 DPBOOKMARK_END_NAMESPACE
 
-#endif // BOOKMARKEVENTRECEIVER_H
+#endif   // BOOKMARKEVENTRECEIVER_H

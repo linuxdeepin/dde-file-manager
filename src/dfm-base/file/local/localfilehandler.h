@@ -59,6 +59,7 @@ public:
     virtual bool openFilesByApp(const QList<QUrl> &files, const QString &appDesktop);
     virtual bool createSystemLink(const QUrl &sourcfile, const QUrl &link);
     virtual bool setPermissions(const QUrl &url, QFileDevice::Permissions permissions);
+    virtual bool setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions);
     virtual bool deleteFile(const QUrl &file);
     virtual bool setFileTime(const QUrl &url, const QDateTime &accessDateTime, const QDateTime &lastModifiedTime);
 

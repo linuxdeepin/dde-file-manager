@@ -23,7 +23,7 @@
 
 #include "dfmplugin_bookmark_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPBOOKMARK_BEGIN_NAMESPACE
 

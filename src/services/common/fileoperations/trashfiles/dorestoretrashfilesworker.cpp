@@ -166,7 +166,7 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             return false;
         }
 
-        if (!isConvert) {
+        if (isConvert) {
             if (!completeSourceFiles.contains(url))
                 completeSourceFiles.append(url);
             if (!completeTargetFiles.contains(restoreInfo->url()))

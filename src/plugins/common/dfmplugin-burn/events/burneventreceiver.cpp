@@ -33,6 +33,7 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include <dfm-framework/framework.h>
 
@@ -126,4 +127,23 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
     QDir().mkpath(tmpDest.toLocalFile());
 
     BurnEventCaller::sendPasteFiles(urls, tmpDest, isCopy);
+}
+
+void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(errMsg)
+
+    int index = 0;
+    if (ok && srcUrls.size() == destUrls.size()) {
+        for (auto &&url : srcUrls) {
+            if (DevProxyMng->isFileFromOptical(url.toLocalFile())) {
+                QUrl destUrl { destUrls.at(index) };
+                qInfo() << "Add write permission for " << destUrl;
+                auto permissions = (QFileInfo(destUrl.toLocalFile()).permissions() | QFileDevice::WriteUser | QFileDevice::WriteUser
+                                    | QFileDevice::ReadGroup | QFileDevice::WriteGroup | QFileDevice::ReadOther);
+                LocalFileHandler().setPermissionsRecursive(destUrl, permissions);
+            }
+            ++index;
+        }
+    }
 }

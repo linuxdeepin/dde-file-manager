@@ -66,14 +66,14 @@ signals:
      * 在我们自己提供的dailog服务中，这个VarintMap必须有kCurrentProccessKey（当前任务执行的进度，类型qint64）和
      * kTotalSizeKey（当前任务文件的总大小，如果统计文件数量没有完成，值为-1，类型qint64）值来做文件进度的展示
      */
-    void proccessChangedNotify(const JobInfoPointer JobInfo);
+    void proccessChangedNotify(const JobInfoPointer jobInfo);
     /*!
      * @brief stateChanged 任务状态发生改变，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
      * 在我们自己提供的fileoperations服务中，这个VarintMap里面会存在kJobStateKey（当前任务执行的状态,类型：JobState）和存在kJobtypeKey（任务类型，类型JobType）
      * 在我们自己提供的dailog服务中，这个VarintMap必须存在kJobStateKey（当前任务执行的状态，类型：JobState）用来展示暂停和开始按钮状态
      */
-    void stateChangedNotify(const JobInfoPointer JobInfo);
+    void stateChangedNotify(const JobInfoPointer jobInfo);
     /*!
      * \brief currentTaskNotify 当前任务的信息变化，此信号都可能是异步连接，所以所有参数都没有使用引用
      * 例如：拷贝文件时，正在拷贝a文件到b目录，发送此信号
@@ -84,7 +84,7 @@ signals:
      * 在我们自己提供的dailog服务中，这个VarintMap必须有存在kSourceMsgKey（显示任务的左第一个label的显示，类型：QString）
      * 和kTargetMsgKey显示任务的左第二个label的显示，类型：QString）
      */
-    void currentTaskNotify(const JobInfoPointer JobInfo);
+    void currentTaskNotify(const JobInfoPointer jobInfo);
     /*!
      * \brief finishedNotify 任务完成
      */
@@ -100,7 +100,7 @@ signals:
      * targetMsg（显示任务的左第二个label的显示，类型：QString）、kErrorMsgKey（显示任务的左第三个label的显示，类型：QString）、
      * kActionsKey（支持的操作，用来显示那些按钮，类型：SupportActions）
      */
-    void errorNotify(const JobInfoPointer JobInfo);
+    void errorNotify(const JobInfoPointer jobInfo);
     /*!
      * \brief speedUpdatedNotify 速度更新信号，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
@@ -109,7 +109,7 @@ signals:
      * 在我们自己提供的dailog服务中，这个VarintMap必须有存在kSpeedKey（显示任务的右第一个label的显示，类型：QString）、
      * kRemindTimeKey（（显示任务的右第二个label的显示，类型：QString）
      */
-    void speedUpdatedNotify(const JobInfoPointer JobInfo);
+    void speedUpdatedNotify(const JobInfoPointer jobInfo);
 
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
 signals:   // update proccess timer use

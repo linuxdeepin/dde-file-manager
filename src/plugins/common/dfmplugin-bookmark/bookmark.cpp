@@ -38,9 +38,9 @@ void BookMark::initialize()
     connect(BookMarkHelper::winServIns(), &DSB_FM_NAMESPACE::WindowsService::windowCreated, this,
             &BookMark::onWindowCreated, Qt::DirectConnection);
 
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
-                                            BookMarkEventReceiver::instance(),
-                                            &BookMarkEventReceiver::handleRenameFile);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult,
+                                   BookMarkEventReceiver::instance(),
+                                   &BookMarkEventReceiver::handleRenameFile);
     dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled,
                                             BookMarkEventReceiver::instance(),
                                             &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);

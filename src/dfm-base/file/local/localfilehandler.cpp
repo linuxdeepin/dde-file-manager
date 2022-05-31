@@ -497,6 +497,34 @@ bool LocalFileHandler::setPermissions(const QUrl &url, QFileDevice::Permissions 
 
     return true;
 }
+
+bool LocalFileHandler::setPermissionsRecursive(const QUrl &url, QFileDevice::Permissions permissions)
+{
+    DecoratorFileInfo info(url);
+    if (info.isFile())
+        return setPermissions(url, permissions);
+
+    if (info.isDir()) {
+        DecoratorFileEnumerator enumerator(url);
+        if (!enumerator.isValid())
+            return false;
+        bool succ = false;
+        while (enumerator.hasNext()) {
+            const QString &path = enumerator.next();
+
+            const QUrl &urlNext = QUrl::fromLocalFile(path);
+            if (DecoratorFileInfo(urlNext).isDir()) {
+                succ = setPermissionsRecursive(urlNext, permissions);
+            } else {
+                succ = setPermissions(urlNext, permissions);
+            }
+        }
+        succ = setPermissions(url, permissions);
+        return succ;
+    }
+
+    return false;
+}
 /*!
  * \brief LocalFileHandler::deleteFile 删除文件使用系统c库
  * \param file 文件的url

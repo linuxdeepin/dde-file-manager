@@ -47,7 +47,7 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
     kOpenAsAdmin,
     kSwitchViewMode,
 
-    // file operations
+    // request file operations
     kOpenFiles = 200,
     kOpenFilesByApp,
     kRenameFile,
@@ -67,14 +67,24 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
     kWriteCustomToClipboard,
     kHideFiles,
 
+    // file operations finieshed!
     kOpenFilesResult = 1000,
     kOpenFilesByAppResult,
-    kRenameFileResult,
+    kRenameFileResult,   // contains result of kRenameFile and kRenameFiles
     kMkdirResult,
     kTouchFileResult,
     kCreateSymlinkResult,
     kSetPermissionResult,
+    kCopyResult,
+    kDeleteFilesResult,
+    kMoveToTrashResult,
+    kRestoreFromTrashResult,
+    kWriteUrlsToClipboardResult,
+    kCutFileResult,
     kOpenInTerminalResult,
+    kCleanTrashResult,
+    kWriteCustomToClipboardResult,
+    kHideFilesResult,
 
     kTempDesktopPaintTag = 9998,   //! todo(zy) need to delete when find solution
 

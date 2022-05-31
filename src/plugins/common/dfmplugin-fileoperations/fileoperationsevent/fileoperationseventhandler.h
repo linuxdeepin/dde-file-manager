@@ -20,36 +20,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BURNEVENTRECEIVER_H
-#define BURNEVENTRECEIVER_H
+#ifndef FILEOPERATIONSEVENTHANDLER_H
+#define FILEOPERATIONSEVENTHANDLER_H
 
-#include "dfmplugin_burn_global.h"
+#include "dfmplugin_fileoperations_global.h"
+
+#include <dfm-base/interfaces/abstractjobhandler.h>
 
 #include <QObject>
 
-DPBURN_BEGIN_NAMESPACE
+DPFILEOPERATIONS_BEGIN_NAMESPACE
 
-class BurnEventReceiver : public QObject
+class FileOperationsEventHandler : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(BurnEventReceiver)
+    Q_DISABLE_COPY(FileOperationsEventHandler)
 
 public:
-    static BurnEventReceiver *instance();
-
-public slots:
-    void handleShowBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent);
-    void handleErase(const QString &dev);
-    void handlePasteTo(const QList<QUrl> &urls, const QUrl &dest, bool isCopy);
-    void handleCopyFilesResult(const QList<QUrl> &srcUrls,
-                               const QList<QUrl> &destUrls,
-                               bool ok,
-                               const QString &errMsg);
+    static FileOperationsEventHandler *instance();
+    void handleJobResult(DFMBASE_NAMESPACE::AbstractJobHandler::JobType jobType, JobHandlePointer ptr);
 
 private:
-    explicit BurnEventReceiver(QObject *parent = nullptr);
+    explicit FileOperationsEventHandler(QObject *parent = nullptr);
+    void publishJobResultEvent(DFMBASE_NAMESPACE::AbstractJobHandler::JobType jobType,
+                               const QList<QUrl> &srcUrls,
+                               const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
 };
 
-DPBURN_END_NAMESPACE
+DPFILEOPERATIONS_END_NAMESPACE
 
-#endif   // BURNEVENTRECEIVER_H
+#endif   // FILEOPERATIONSEVENTHANDLER_H

@@ -100,7 +100,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (sourceUrls.contains(url)) {
-            if (action != AbstractJobHandler::SupportAction::kNoAction)
+            if (action == AbstractJobHandler::SupportAction::kNoAction)
                 completeSourceFiles.append(url);
             deleteFilesCount++;
         }
