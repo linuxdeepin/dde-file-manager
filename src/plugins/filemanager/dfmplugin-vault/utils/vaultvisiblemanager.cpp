@@ -31,9 +31,11 @@
 #include "utils/filemanipulation.h"
 #include "utils/policy/policymanager.h"
 #include "utils/servicemanager.h"
+#include "menus/vaultmenuscene.h"
 
 #include "services/common/delegate/delegateservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
+#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -97,6 +99,9 @@ void VaultVisibleManager::pluginServiceRegister()
         propertyServIns->registerFilterControlField(VaultHelper::instance()->scheme(), Property::FilePropertyControlFilter::kPermission);
 
         delegateServIns->registerUrlTransform(VaultHelper::instance()->scheme(), VaultHelper::vaultToLocalUrl);
+
+        MenuService::service()->registerScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
+        WorkspaceService::service()->setWorkspaceMenuScene(VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
     }
 }
 
