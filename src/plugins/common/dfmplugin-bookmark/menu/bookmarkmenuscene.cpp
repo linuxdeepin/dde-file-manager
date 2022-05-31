@@ -24,6 +24,7 @@
 #include "controller/bookmarkmanager.h"
 
 #include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "services/common/menu/menu_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
@@ -91,17 +92,45 @@ bool BookmarkMenuScene::create(QMenu *parent)
         QAction *action = new QAction;
         action->setText(d->predicateName.value(BookmarkActionId::kActRemoveBookmarkKey));
         action->setProperty(ActionPropertyKey::kActionID, QString(BookmarkActionId::kActRemoveBookmarkKey));
-        parent->addAction(action);
         d->predicateAction.insert(BookmarkActionId::kActRemoveBookmarkKey, action);
     } else {
         QAction *action = new QAction;
         action->setText(d->predicateName.value(BookmarkActionId::kActAddBookmarkKey));
         action->setProperty(ActionPropertyKey::kActionID, QString(BookmarkActionId::kActAddBookmarkKey));
-        parent->addAction(action);
         d->predicateAction.insert(BookmarkActionId::kActAddBookmarkKey, action);
     }
 
     return AbstractMenuScene::create(parent);
+}
+
+void BookmarkMenuScene::updateState(QMenu *parent)
+{
+    AbstractMenuScene::updateState(parent);
+
+    if (!parent || !d->showBookMarkMenu || d->predicateAction.isEmpty())
+        return;
+
+    bool bAdd = false;
+    QList<QAction *> actions = parent->actions();
+    QList<QAction *>::iterator itAction = actions.begin();
+    for (; itAction != actions.end(); ++itAction) {
+        if ((*itAction)->isSeparator())
+            continue;
+
+        const QString &actionID = (*itAction)->property(ActionPropertyKey::kActionID).toString();
+        if (actionID == QString(dfmplugin_menu::ActionID::kSendToDesktop)) {
+            if (++itAction != actions.end()) {
+                parent->insertActions(*itAction, d->predicateAction.values());
+            } else {
+                parent->addActions(d->predicateAction.values());
+            }
+            bAdd = true;
+            break;
+        }
+    }
+
+    if (!bAdd)
+        parent->addActions(d->predicateAction.values());
 }
 
 bool BookmarkMenuScene::triggered(QAction *action)
