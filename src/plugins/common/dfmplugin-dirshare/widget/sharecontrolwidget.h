@@ -26,6 +26,7 @@
 #include "dfmplugin_dirshare_global.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfilewatcher.h"
 
 #include <DArrowLineDrawer>
 #include <QUrl>
@@ -52,6 +53,7 @@ protected Q_SLOTS:
     void shareFolder();
     void unshareFolder();
     void updateWidgetStatus(const QString &filePath);
+    void updateFile(const QUrl &oldOne, const QUrl &newOne);
 
 private:
     QCheckBox *shareSwitcher { nullptr };
@@ -60,7 +62,8 @@ private:
     QComboBox *shareAnonymousSelector { nullptr };
 
     QUrl url;
-    AbstractFileInfoPointer info;
+    AbstractFileInfoPointer info { nullptr };
+    AbstractFileWatcherPointer watcher { nullptr };
 };
 
 DPDIRSHARE_END_NAMESPACE

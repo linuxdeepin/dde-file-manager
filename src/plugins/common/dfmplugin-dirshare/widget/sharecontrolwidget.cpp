@@ -26,6 +26,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/decorator/decoratorfile.h"
+#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/file/local/localfilewatcher.h"
 
 #include <QCheckBox>
 #include <QVBoxLayout>
@@ -127,6 +129,11 @@ void ShareControlWidget::init()
         return;
     }
 
+    if (!watcher) {
+        watcher = WatcherFactory::create<AbstractFileWatcher>(info->parentUrl());
+        watcher->startWatcher();
+    }
+
     QString filePath = url.path();
     DSC_USE_NAMESPACE auto shareName = UserShareService::service()->getShareNameByPath(filePath);
     if (shareName.isEmpty())
@@ -163,6 +170,8 @@ void ShareControlWidget::initConnection()
     connect(UserShareService::service(), &UserShareService::shareAdded, this, &ShareControlWidget::updateWidgetStatus);
     connect(UserShareService::service(), &UserShareService::shareRemoved, this, &ShareControlWidget::updateWidgetStatus);
     connect(UserShareService::service(), &UserShareService::shareRemoveFailed, this, &ShareControlWidget::updateWidgetStatus);
+
+    connect(watcher.data(), &AbstractFileWatcher::fileRename, this, &ShareControlWidget::updateFile);
 }
 
 bool ShareControlWidget::validateShareName()
@@ -300,6 +309,13 @@ void ShareControlWidget::updateWidgetStatus(const QString &filePath)
         sharePermissionSelector->setEnabled(false);
         shareAnonymousSelector->setEnabled(false);
     }
+}
+
+void ShareControlWidget::updateFile(const QUrl &oldOne, const QUrl &newOne)
+{
+    if (UniversalUtils::urlEquals(oldOne, url))
+        url = newOne;
+    init();
 }
 
 #include "sharecontrolwidget.moc"
