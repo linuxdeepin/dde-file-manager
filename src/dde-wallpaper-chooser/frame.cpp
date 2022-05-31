@@ -269,12 +269,14 @@ void Frame::setMode(Frame::Mode mode)
 
 QPair<QString, QString> Frame::desktopBackground() const
 {
-    return QPair<QString, QString>(m_screenName, m_cureentWallpaper);
+    return QPair<QString, QString>(m_screenName, m_currentSelectedWallpaper);
 }
 
 void Frame::handleNeedCloseButton(QString path, QPoint pos)
 {
-    if (!path.isEmpty()) {
+    if (!path.isEmpty()
+        && path != m_currentSelectedWallpaper
+        && path != m_actualEffectivedWallpaper) {
         m_closeButton->adjustSize();
         m_closeButton->move(pos.x() - 10, pos.y() - 10);
         m_closeButton->show();
@@ -335,7 +337,7 @@ void Frame::hideEvent(QHideEvent *event)
     m_mouseArea->unregisterRegion();
 
     if (m_mode == WallpaperMode) {
-        if (!m_cureentWallpaper.isEmpty() && m_dbusDeepinWM)
+        if (!m_currentSelectedWallpaper.isEmpty() && m_dbusDeepinWM)
             m_dbusDeepinWM->SetTransientBackground("");
 
         if (ThumbnailManager *manager = ThumbnailManager::instance(devicePixelRatioF()))
@@ -1024,6 +1026,7 @@ void Frame::refreshList()
                     }
                     WallpaperItem *item = m_wallpaperList->addWallpaper(path);
                     item->setData(item->getPath());
+                    // only item is greeterbackground,deletable is false.
                     item->setDeletable(m_deletableInfo.value(path));
                     item->addButton(DESKTOP_BUTTON_ID, tr("Desktop","button"), BUTTON_NARROW_WIDTH, 0, 0, 1, 1);
                     item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Lock Screen","button"), BUTTON_NARROW_WIDTH, 0, 1, 1, 1);
@@ -1142,30 +1145,11 @@ void Frame::onItemPressed(const QString &data)
         if (m_backgroundManager)
             m_backgroundManager->setBackgroundImage(m_screenName, data);
 
-        m_cureentWallpaper = data;
+        m_currentSelectedWallpaper = data;
 
         // 点击当前壁纸不显示删除按钮
         if (m_closeButton && m_closeButton->isVisible()) {
             m_closeButton->hide();
-        }
-
-        QStringList used;
-        if (m_backgroundManager)
-            used = m_backgroundManager->backgroundImages().values();
-        {
-            for (int i = 0; i < m_wallpaperList->count(); ++i) {
-                WallpaperItem *item = dynamic_cast<WallpaperItem *>(m_wallpaperList->item(i));
-                if (item) {
-                    bool isCustom = item->data().contains("custom-wallpapers");
-                    if (!isCustom) {
-                        continue;
-                    }
-
-                    bool isCurrent = used.contains(item->data());
-                    bool isDeletable = item->getDeletable();
-                    item->setDeletable(!isCurrent && (isDeletable || isCustom));
-                }
-            }
         }
     }
 #ifndef DISABLE_SCREENSAVER
@@ -1255,13 +1239,13 @@ void Frame::applyToDesktop()
         return;
     }
 
-    if (m_cureentWallpaper.isEmpty()) {
+    if (m_currentSelectedWallpaper.isEmpty()) {
         qWarning() << "cureentWallpaper is empty";
         return;
     }
 
-    qInfo() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_cureentWallpaper;
-    m_dbusAppearance->SetMonitorBackground(m_screenName, m_cureentWallpaper);
+    qInfo() << "dbus Appearance SetMonitorBackground is called " << m_screenName << " " << m_currentSelectedWallpaper;
+    m_dbusAppearance->SetMonitorBackground(m_screenName, m_currentSelectedWallpaper);
 
     emit backgroundChanged();
 }
@@ -1273,11 +1257,11 @@ void Frame::applyToGreeter()
         return;
     }
 
-    if (m_cureentWallpaper.isEmpty()) {
+    if (m_currentSelectedWallpaper.isEmpty()) {
         qWarning() << "cureentWallpaper is empty";
         return;
     }
 
-    qInfo() << "dbus Appearance greeterbackground is called " << m_cureentWallpaper;
-    m_dbusAppearance->Set("greeterbackground", m_cureentWallpaper);
+    qInfo() << "dbus Appearance greeterbackground is called " << m_currentSelectedWallpaper;
+    m_dbusAppearance->Set("greeterbackground", m_currentSelectedWallpaper);
 }

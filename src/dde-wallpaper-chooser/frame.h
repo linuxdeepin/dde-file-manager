@@ -101,7 +101,8 @@ private:
     const Mode m_mode = WallpaperMode;
 #endif
     WallpaperList *m_wallpaperList = nullptr;
-    QString m_cureentWallpaper;
+    QString m_actualEffectivedWallpaper;
+    QString m_currentSelectedWallpaper;
     QStringList m_needDeleteList;
     DIconButton *m_closeButton = nullptr;
 #ifndef DISABLE_WALLPAPER_CAROUSEL
