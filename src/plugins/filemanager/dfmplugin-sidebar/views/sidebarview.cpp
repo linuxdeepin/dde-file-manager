@@ -23,6 +23,8 @@
 #include "views/sidebaritem.h"
 #include "models/sidebarmodel.h"
 #include "views/private/sidebarview_p.h"
+#include "utils/fileoperatorhelper.h"
+#include "utils/sidebarhelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -110,7 +112,7 @@ void SideBarView::mouseMoveEvent(QMouseEvent *event)
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
 {
     d->previousRowCount = model()->rowCount();
-    d->fetchDragEventUrlsFromSharedMemory();
+    d->urlsForDragEvent = event->mimeData()->urls();
 
     if (isAccepteDragEvent(event)) {
         return;
@@ -161,7 +163,7 @@ void SideBarView::dropEvent(QDropEvent *event)
     // bug case 24499, 这里需要区分哪些是可读的文件 或文件夹，因为其权限是不一样的，所以需要对不同权限的文件进行区分处理
     // 主要有4种场景：1.都是可读写的场景; 2.文件夹是只读属性，子集是可读写的; 3.文件夹或文件是可读写的; 4.拖动的包含 可读写的和只读的
     QList<QUrl> urls, copyUrls;
-    for (const QUrl &url : event->mimeData()->urls()) {
+    for (const QUrl &url : d->urlsForDragEvent) {
         if (UrlRoute::isRootUrl(url)) {
             qDebug() << "skip the same dir file..." << url;
         } else {
@@ -246,16 +248,20 @@ bool SideBarView::onDropData(QList<QUrl> srcUrls, QUrl dstUrl, Qt::DropAction ac
     if (dstInfo->isSymLink())
         dstUrl = dstInfo->symLinkTarget();
 
+    auto winId = SideBarHelper::windowId(qobject_cast<QWidget *>(parent()));
+
     switch (action) {
     case Qt::CopyAction:
         // blumia: should run in another thread or user won't do another DnD opreation unless the copy action done.
         QtConcurrent::run([=]() {
+            FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
             //            DFileService::instance()->pasteFile(this, DFMGlobal::CopyAction, dstUrl, srcUrls);
         });
         break;
     case Qt::LinkAction:
         break;
     case Qt::MoveAction:
+        FileOperatorHelperIns->pasteFiles(winId, srcUrls, dstUrl, action);
         //        DFileService::instance()->pasteFile(this, DFMGlobal::CutAction, dstUrl, srcUrls);
         break;
     default:
@@ -301,37 +307,41 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
 
     // TODO(zhangs): impl me!
 
+    auto itemInfo = InfoFactory::create<AbstractFileInfo>(item->url());
+    if (!itemInfo || !itemInfo->canDrop()) {
+        return Qt::IgnoreAction;
+    }
+
     for (const QUrl &url : urls) {
         auto fileInfo = InfoFactory::create<AbstractFileInfo>(url);
         if (!fileInfo->isReadable()) {
             return Qt::IgnoreAction;
         }
-        //        //部分文件不能复制或剪切，需要在拖拽时忽略
-        //        if (!fileInfo->canMoveOrCopy()) {
-        //            return Qt::IgnoreAction;
-        //        }
+        //部分文件不能复制或剪切，需要在拖拽时忽略
+        if (!fileInfo->canMoveOrCopy()) {
+            return Qt::IgnoreAction;
+        }
     }
 
-    //    if (!info/* || !info->canDrop()*/) {
-    //        return Qt::IgnoreAction;
-    //    }
     Qt::DropAction action = Qt::IgnoreAction;
-    //    const Qt::DropActions support_actions = info->supportedDropActions() & actions;
+    const Qt::DropActions support_actions = itemInfo->supportedDropActions() & actions;
 
-    //    if (support_actions.testFlag(Qt::CopyAction)) {
-    //        action = Qt::CopyAction;
-    //    }
+    if (support_actions.testFlag(Qt::CopyAction)) {
+        action = Qt::CopyAction;
+    }
 
-    //    if (support_actions.testFlag(Qt::MoveAction)) {
-    //        action = Qt::MoveAction;
-    //    }
+    if (support_actions.testFlag(Qt::MoveAction)) {
+        action = Qt::MoveAction;
+    }
 
-    //    if (support_actions.testFlag(Qt::LinkAction)) {
-    //        action = Qt::LinkAction;
-    //    }
+    if (support_actions.testFlag(Qt::LinkAction)) {
+        action = Qt::LinkAction;
+    }
+
     if ((action == Qt::MoveAction) && qApp->keyboardModifiers() == Qt::ControlModifier) {
         action = Qt::CopyAction;
     }
+
     return action;
 }
 
