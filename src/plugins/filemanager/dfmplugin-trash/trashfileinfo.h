@@ -36,19 +36,19 @@ public:
     explicit TrashFileInfo(const QUrl &url);
     ~TrashFileInfo() override;
 
+    virtual void refresh() override;
     virtual QString fileName() const override;
     virtual QString fileDisplayName() const override;
     virtual QString baseName() const override;
     virtual QString completeBaseName() const override;
     virtual bool exists() const override;
-    virtual void refresh() override;
-    bool canRename() const override;
-    virtual QFile::Permissions permissions() const override;
+    virtual bool canRename() const override;
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
-    bool isDir() const override;
-    bool canDrop() override;
-    QUrl redirectedFileUrl() const override;
+    virtual bool isDir() const override;
+    virtual bool canDrop() override;
+    virtual QUrl redirectedFileUrl() const override;
+    virtual QFile::Permissions permissions() const override;
 
 private:
     TrashFileInfoPrivate *d;

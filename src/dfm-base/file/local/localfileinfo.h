@@ -100,6 +100,7 @@ public:
     virtual QIcon fileIcon() override;
     virtual QString iconName() override;
     virtual QString genericIconName() override;
+    virtual QUrl redirectedFileUrl() const override;
 
     virtual bool isBlockDev() const;
     virtual QString mountPath() const;

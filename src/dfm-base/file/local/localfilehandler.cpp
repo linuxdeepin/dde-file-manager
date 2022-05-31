@@ -34,6 +34,7 @@
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "utils/universalutils.h"
 #include "dfm_event_defines.h"
 
@@ -54,6 +55,7 @@
 #include <QProcess>
 #include <QDesktopServices>
 #include <QX11Info>
+#include <QSettings>
 
 #include <unistd.h>
 #include <utime.h>
@@ -276,102 +278,88 @@ bool LocalFileHandler::renameFileBatchCustom(const QList<QUrl> &urls, const QPai
  * \param file 打开文件的url
  * \return bool 打开文件是否成功
  */
-bool LocalFileHandler::openFile(const QUrl &url)
+bool LocalFileHandler::openFile(const QUrl &fileUrl)
 {
-    return openFiles({ url });
+    return openFiles({ fileUrl });
 }
 /*!
  * \brief LocalFileHandler::openFiles 打开多个文件
  * \param files 打开文件的url列表
  * \return bool 打开文件是否成功
  */
-bool LocalFileHandler::openFiles(const QList<QUrl> &urls)
+bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
 {
-    QList<QUrl> resourceUrls = urls;
+    if (fileUrls.isEmpty())
+        return true;
 
-    bool ret = false;
-    for (const QUrl &url : urls) {
-        AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
-        if (!info)
-            continue;
-        if (info->suffix() == Global::kDesktop) {
-            ret = launchApp(url.path()) || ret;   //有一个成功就成功
-            resourceUrls.removeOne(url);
+    QList<QUrl> urls = fileUrls;
+
+    QList<QUrl> packUrl;
+    QList<QUrl> pathList;
+    bool result = false;
+
+    for (QUrl &fileUrl : urls) {
+        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+
+        AbstractFileInfoPointer fileInfoLink = fileInfo;
+        while (fileInfoLink->isSymLink()) {
+            const QString &targetLink = fileInfoLink->symLinkTarget();
+            fileInfoLink = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(targetLink));
+            if (!fileInfoLink) {
+                DialogManagerInstance->showErrorDialog(QObject::tr("Unable to find the original file"), QString());
+                return false;
+            }
+            const_cast<QUrl &>(fileUrl) = fileInfoLink->redirectedFileUrl();
+            if (!fileInfoLink->exists() && !isSmbUnmountedFile(fileUrl)) {
+                lastEvent = DialogManagerInstance->showBreakSymlinkDialog(fileInfoLink->fileName(), fileInfo->url());
+                return lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
+            }
+        }
+
+        if (isExecutableScript(fileUrl.path())) {
+            int code = DialogManagerInstance->showRunExcutableScriptDialog(fileUrl);
+            result = openExcutableScriptFile(fileUrl.path(), code) || result;
             continue;
         }
+
+        if (isFileRunnable(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
+            int code = DialogManagerInstance->showRunExcutableFileDialog(fileUrl);
+            result = openExcutableFile(fileUrl.path(), code) || result;
+            continue;
+        }
+
+        if (shouldAskUserToAddExecutableFlag(fileUrl.path()) && !FileUtils::isDesktopFile(fileUrl)) {
+            int code = DialogManagerInstance->showAskIfAddExcutableFlagAndRunDialog();
+            result = addExecutableFlagAndExecuse(fileUrl.path(), code) || result;
+            continue;
+        }
+
+        packUrl << fileUrl;
+        QString urlPath = fileUrl.path();
+        if (isFileWindowsUrlShortcut(urlPath)) {
+            urlPath = getInternetShortcutUrl(urlPath);
+        }
+        pathList << QUrl::fromLocalFile(urlPath);
     }
-    if (resourceUrls.isEmpty())
-        return ret;
 
-    const QUrl firstUrl = resourceUrls.first();
-
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(firstUrl);
-    QString mimetype;
-    if (info && info->size() == 0 && info->exists()) {
-        mimetype = info->fileMimeType().name();
+    if (!pathList.empty()) {
+        // todo lanxs, deal enter
+        /*if (event->isEnter()) {
+            result = FileUtils::openEnterFiles(pathList);
+        } else {
+            result = FileUtils::openFiles(pathList);
+        }*/
+        result = doOpenFiles(pathList);
+        if (!result) {
+            for (const QUrl &fileUrl : packUrl) {
+                // deal open file with custom dialog
+                //AppController::instance()->actionOpenWithCustom(dMakeEventPointer<DFMOpenFileEvent>(event->sender(), fileUrl)); // requestShowOpenWithDialog
+            }
+        }
     } else {
-        mimetype = getFileMimetypeFromGio(firstUrl);
-    }
-
-    bool isOpenNow = false;
-    QString defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
-    if (defaultDesktopFile.isEmpty()) {
-        if (isSmbUnmountedFile(firstUrl)) {
-            mimetype = QString("inode/directory");
-            defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimetype);
-            isOpenNow = true;
-            mimetype = QString();
-        } else {
-            qDebug() << "no default application for" << firstUrl;
-            return false;
-        }
-    }
-
-    if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimetype != "inode/directory") {
-        QStringList recommendApps = MimesAppsManager::getRecommendedApps(firstUrl);
-        recommendApps.removeOne(defaultDesktopFile);
-        if (recommendApps.count() > 0) {
-            defaultDesktopFile = recommendApps.first();
-        } else {
-            qDebug() << "no default application for" << firstUrl;
-            return false;
-        }
-    }
-
-    QStringList appAgrs;
-    for (const QUrl &tmp : resourceUrls)
-        appAgrs << tmp.toString();
-    bool result = launchApp(defaultDesktopFile, appAgrs);
-    if (result) {
-        // workaround since DTK apps doesn't support the recent file spec.
-        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
-        // the correct approach: let the app add it to the recent list.
-        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-        for (const QUrl &tmp : resourceUrls) {
-            QString file_path = tmp.path();
-            DesktopFile df(defaultDesktopFile);
-            addRecentFile(file_path, df, mimetype);
-        }
-        return result;
-    } else if (isSmbUnmountedFile(firstUrl)) {
-        return false;
-    }
-
-    if (MimesAppsManager::getDefaultAppByFileName(firstUrl.path()) == "org.gnome.font-viewer.desktop") {
-        QProcess::startDetached("gio", QStringList() << "open" << firstUrl.path());
-        QTimer::singleShot(200, [=] {
-            QProcess::startDetached("gio", QStringList() << "open" << firstUrl.path());
-        });
         return true;
     }
 
-    result = QProcess::startDetached("gio", QStringList() << "open" << firstUrl.path());
-
-    if (!result) {
-        result = false;
-        for (const QUrl &tmp : resourceUrls)
-            result = QDesktopServices::openUrl(tmp) || result;   //有一个成功就成功
-    }
     return result;
 }
 /*!
@@ -390,7 +378,7 @@ bool LocalFileHandler::openFileByApp(const QUrl &file, const QString &desktopFil
  * \param appDesktop app的desktop路径
  * \return bool 是否打开成功
  */
-bool LocalFileHandler::openFilesByApp(const QList<QUrl> &filePaths, const QString &desktopFile)
+bool LocalFileHandler::openFilesByApp(const QList<QUrl> &fileUrls, const QString &desktopFile)
 {
     bool ok = false;
 
@@ -399,12 +387,12 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &filePaths, const QStrin
         return ok;
     }
 
-    if (filePaths.isEmpty()) {
+    if (fileUrls.isEmpty()) {
         qDebug() << "Failed to open desktop file with gio: file path is empty";
         return ok;
     }
 
-    qDebug() << desktopFile << filePaths;
+    qDebug() << desktopFile << fileUrls;
 
     GDesktopAppInfo *appInfo = g_desktop_app_info_new_from_filename(desktopFile.toLocal8Bit().constData());
     if (!appInfo) {
@@ -413,7 +401,7 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &filePaths, const QStrin
     }
 
     QStringList filePathsStr;
-    for (const auto &url : filePaths) {
+    for (const auto &url : fileUrls) {
         filePathsStr << url.toString();
     }
 
@@ -435,10 +423,8 @@ bool LocalFileHandler::openFilesByApp(const QList<QUrl> &filePaths, const QStrin
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
         // the correct approach: let the app add it to the recent list.
         // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
-        QString filePath = filePaths.first().toString();
-        filePath = QUrl::fromUserInput(filePath).path();
-        QString mimetype = getFileMimetype(filePath);
-        for (const QUrl &tmp : filePaths) {
+        QString mimetype = getFileMimetype(fileUrls.first().path());
+        for (const QUrl &tmp : fileUrls) {
             QString temFilePath = tmp.path();
             DesktopFile df(desktopFile);
             addRecentFile(temFilePath, df, mimetype);
@@ -634,7 +620,7 @@ bool LocalFileHandler::isSmbUnmountedFile(const QUrl &url)
 {
     return url.path().startsWith("/run/user/")
             && url.path().contains("/gvfs/smb-share:server=");
-    // TODO(lanxs)
+    // TODO(lanxs) check gvfs busy
     /*return url.path().startsWith("/run/user/")
             && url.path().contains("/gvfs/smb-share:server=")
             && DFileService::instance()->checkGvfsMountfileBusy(url, false);*/
@@ -727,6 +713,284 @@ QString LocalFileHandler::getFileMimetype(const QString &path)
     return result;
 }
 
+bool LocalFileHandler::isExecutableScript(const QString &path)
+{
+    QString pathValue = path;
+    QString mimetype = getFileMimetype(path);
+
+    DecoratorFileInfo info(pathValue);
+
+    while (info.isSymLink()) {
+        pathValue = info.symLinkTarget();
+        mimetype = getFileMimetype(pathValue);
+
+        info = DecoratorFileInfo(pathValue);
+    }
+
+    // blumia: it's not a good idea to check if it is a executable script by just checking
+    //         mimetype.startsWith("text/"), should be fixed later.
+    if (mimetype.startsWith("text/") || (mimetype == "application/x-shellscript")) {
+        return isFileExecutable(pathValue);
+    }
+
+    return false;
+}
+
+bool LocalFileHandler::isFileExecutable(const QString &path)
+{
+    DecoratorFileInfo fileInfo(path);
+
+    // regard these type as unexecutable.
+    const static QStringList noValidateType { "txt", "md" };
+    if (noValidateType.contains(fileInfo.suffix()))
+        return false;
+
+    DFMIO::DFile::Permissions permissions = fileInfo.permissions();
+    bool isExeUser = permissions & DFMIO::DFile::Permission::kExeUser;
+
+    return (permissions & DFMIO::DFile::Permission::kReadUser) && isExeUser;
+}
+
+bool LocalFileHandler::openExcutableScriptFile(const QString &path, int flag)
+{
+    bool result = false;
+    switch (flag) {
+    case 0:
+
+        break;
+    case 1:
+        result = UniversalUtils::runCommand(path, QStringList(), QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        break;
+    case 2: {
+        QStringList args;
+        args << "-e" << path;
+        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        break;
+    }
+    case 3:
+        result = openFile(QUrl::fromLocalFile(path));
+        break;
+    default:
+        break;
+    }
+
+    return result;
+}
+
+bool LocalFileHandler::openExcutableFile(const QString &path, int flag)
+{
+    bool result = false;
+    switch (flag) {
+    case 0:
+        break;
+    case 1: {
+        QStringList args;
+        args << "-e" << path;
+        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        break;
+    }
+    case 2:
+        result = UniversalUtils::runCommand(path, QStringList(), QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        break;
+    default:
+        break;
+    }
+
+    return result;
+}
+
+bool LocalFileHandler::isFileRunnable(const QString &path)
+{
+    QString pathValue = path;
+    QString mimetype = getFileMimetype(path);
+
+    DecoratorFileInfo info(pathValue);
+    while (info.isSymLink()) {
+        pathValue = info.symLinkTarget();
+        mimetype = getFileMimetype(pathValue);
+
+        info = DecoratorFileInfo(pathValue);
+    }
+
+    // blumia: about AppImage mime type, please refer to:
+    //         https://cgit.freedesktop.org/xdg/shared-mime-info/tree/freedesktop.org.xml.in
+    //         btw, consider using MimeTypeDisplayManager::ExecutableMimeTypes(private) ?
+    if (mimetype == "application/x-executable"
+        || mimetype == "application/x-sharedlib"
+        || mimetype == "application/x-iso9660-appimage"
+        || mimetype == "application/vnd.appimage") {
+        return isFileExecutable(pathValue);
+    }
+
+    return false;
+}
+
+bool LocalFileHandler::shouldAskUserToAddExecutableFlag(const QString &path)
+{
+    QString pathValue = path;
+    QString mimetype = getFileMimetype(path);
+
+    DecoratorFileInfo info(pathValue);
+    while (info.isSymLink()) {
+        pathValue = info.symLinkTarget();
+        mimetype = getFileMimetype(pathValue);
+
+        info = DecoratorFileInfo(pathValue);
+    }
+
+    if (mimetype == "application/x-executable"
+        || mimetype == "application/x-sharedlib"
+        || mimetype == "application/x-iso9660-appimage"
+        || mimetype == "application/vnd.appimage") {
+        return !isFileExecutable(pathValue);
+    }
+
+    return false;
+}
+
+bool LocalFileHandler::addExecutableFlagAndExecuse(const QString &path, int flag)
+{
+    bool result = false;
+    DecoratorFile file(path);
+    switch (flag) {
+    case 0:
+        break;
+    case 1:
+        file.setPermissions(file.permissions() | DFMIO::DFile::Permission::kExeOwner | DFMIO::DFile::Permission::kExeUser | DFMIO::DFile::Permission::kExeGroup | DFMIO::DFile::Permission::kExeOther);
+        result = UniversalUtils::runCommand(path, QStringList());
+        break;
+    default:
+        break;
+    }
+
+    return result;
+}
+
+bool LocalFileHandler::isFileWindowsUrlShortcut(const QString &path)
+{
+    QString mimetype = getFileMimetype(path);
+    qDebug() << mimetype;
+    if (mimetype == "application/x-mswinurl")
+        return true;
+    return false;
+}
+
+QString LocalFileHandler::getInternetShortcutUrl(const QString &path)
+{
+    QSettings settings(path, QSettings::IniFormat);
+    settings.beginGroup("InternetShortcut");
+    QString url = settings.value("URL").toString();
+    settings.endGroup();
+    return url;
+}
+
+bool LocalFileHandler::doOpenFile(const QUrl &url, const QString &desktopFile /*= QString()*/)
+{
+    return doOpenFiles({ url }, desktopFile);
+}
+
+bool LocalFileHandler::doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile /*= QString()*/)
+{
+    bool ret = false;
+
+    QList<QUrl> transUrls = urls;
+    for (const QUrl &url : urls) {
+        DecoratorFileInfo fileInfo(url);
+        if (fileInfo.suffix() == Global::kDesktop) {
+            ret = launchApp(url.path()) || ret;   //有一个成功就成功
+            transUrls.removeOne(url);
+            continue;
+        }
+    }
+    if (transUrls.isEmpty())
+        return ret;
+
+    const QUrl &fileUrl = transUrls.first();
+    const QString &filePath = fileUrl.path();
+
+    AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(fileUrl);
+
+    QString mimeType;
+    if (Q_UNLIKELY(!filePath.contains("#")) && fileInfo && fileInfo->size() == 0 && fileInfo->exists()) {
+        mimeType = fileInfo->fileMimeType().name();
+    } else {
+        mimeType = getFileMimetype(filePath);
+    }
+    QAtomicInteger<bool> isOpenNow = false;
+    QString defaultDesktopFile;
+
+    if (!desktopFile.isEmpty() && isFileManagerSelf(desktopFile)) {
+        defaultDesktopFile = desktopFile;
+    } else {
+        defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
+        if (defaultDesktopFile.isEmpty()) {
+            if (isSmbUnmountedFile(fileUrl)) {
+                mimeType = QString("inode/directory");
+                defaultDesktopFile = MimesAppsManager::getDefaultAppDesktopFileByMimeType(mimeType);
+                isOpenNow = true;
+                mimeType = QString();
+            } else {
+                qDebug() << "no default application for" << fileUrl;
+                return false;
+            }
+        }
+
+        if (!isOpenNow && isFileManagerSelf(defaultDesktopFile) && mimeType != "inode/directory") {
+            QStringList recommendApps = MimesAppsManager::getRecommendedApps(fileUrl);
+            recommendApps.removeOne(defaultDesktopFile);
+            if (recommendApps.count() > 0) {
+                defaultDesktopFile = recommendApps.first();
+            } else {
+                qDebug() << "no default application for" << transUrls;
+                return false;
+            }
+        }
+    }
+
+    QStringList appArgs;
+    for (const QUrl &url : transUrls)
+        appArgs << QUrl::fromPercentEncoding(url.toString().toLocal8Bit());
+
+    bool result = launchApp(defaultDesktopFile, appArgs);
+    if (result) {
+        // workaround since DTK apps doesn't support the recent file spec.
+        // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
+        // the correct approach: let the app add it to the recent list.
+        // addToRecentFile(DUrl::fromLocalFile(filePath), mimetype);
+        for (const QUrl &url : transUrls) {
+            QString filePath = url.toLocalFile();
+
+            DesktopFile df(defaultDesktopFile);
+            addRecentFile(filePath, df, mimeType);
+        }
+        return result;
+    } else if (isSmbUnmountedFile(transUrls[0])) {
+        return false;
+    }
+
+    QStringList paths;
+    for (const QUrl &url : transUrls) {
+        paths << url.path();
+    }
+
+    if (MimesAppsManager::getDefaultAppByFileName(fileUrl.path()) == "org.gnome.font-viewer.desktop") {
+        QProcess::startDetached("gio", QStringList() << "open" << paths);
+        QTimer::singleShot(200, [=] {
+            QProcess::startDetached("gio", QStringList() << "open" << paths);
+        });
+        return true;
+    }
+
+    result = QProcess::startDetached("gio", QStringList() << "open" << paths);
+
+    if (!result) {
+        result = false;
+        for (const QUrl &url : transUrls)
+            result = QDesktopServices::openUrl(url) || result;   //有一个成功就成功
+    }
+    return result;
+}
+
 bool LocalFileHandler::renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls)
 {
     successUrls.clear();
@@ -762,6 +1026,11 @@ QString LocalFileHandler::errorString()
 DFMIOErrorCode LocalFileHandler::errorCode()
 {
     return lastError.code();
+}
+
+GlobalEventType LocalFileHandler::lastEventType()
+{
+    return lastEvent;
 }
 /*!
  * \brief LocalFileHandler::setError 设置当前的错误信息

@@ -21,6 +21,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dialogmanager.h"
+#include "dfm_global_defines.h"
 
 #include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
 #include "dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.h"
@@ -28,10 +29,10 @@
 #include "dfm-base/dialogs/taskdialog/taskdialog.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm_global_defines.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QDir>
 
@@ -490,6 +491,47 @@ void DialogManager::showRenameBusyErrDialog()
     d.setDefaultButton(0);
     d.setIcon(warningIcon);
     d.exec();
+}
+
+DFMBASE_NAMESPACE::GlobalEventType DialogManager::showBreakSymlinkDialog(const QString &targetName, const QUrl &linkfile)
+{
+    DDialog d;
+    QString warnText = tr("%1 that this shortcut refers to has been changed or moved");
+    QFontMetrics fm(d.font());
+    QString _targetName = fm.elidedText(targetName, Qt::ElideMiddle, 120);
+    d.setTitle(warnText.arg(_targetName));
+    d.setMessage(tr("Do you want to delete this shortcut？"));
+    QStringList buttonTexts;
+    buttonTexts.append(tr("Cancel", "button"));
+    buttonTexts.append(tr("Confirm", "button"));
+    d.addButton(buttonTexts[0], true);
+    d.addButton(buttonTexts[1], false, DDialog::ButtonRecommend);
+    d.setDefaultButton(1);
+    d.setIcon(warningIcon);
+    int code = d.exec();
+    if (code == 1) {
+        QList<QUrl> urls;
+        urls << linkfile;
+        if (Q_UNLIKELY(linkfile.toLocalFile().startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath)))) {
+            return DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles;
+        } else {
+            return DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash;
+        }
+    }
+    return DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
+}
+
+int DialogManager::showAskIfAddExcutableFlagAndRunDialog()
+{
+    DDialog d;
+    // i18n text from: https://github.com/linuxdeepin/internal-discussion/issues/456 , seems a little weird..
+    QString message = tr("This file is not executable, do you want to add the execute permission and run?");
+    d.addButton(tr("Cancel", "button"));
+    d.addButton(tr("Run", "button"), true, DDialog::ButtonRecommend);
+    d.setTitle(message);
+    d.setIcon(warningIcon);
+    int code = d.exec();
+    return code;
 }
 
 DialogManager::DialogManager(QObject *parent)

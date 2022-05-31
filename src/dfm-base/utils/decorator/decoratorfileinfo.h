@@ -57,6 +57,8 @@ public:
     QString filePath() const;
     QString parentPath() const;
     QString fileName() const;
+    QString symLinkTarget() const;
+
     QList<QString> standardIconNames() const;
 
     DFMIO::DFile::Permissions permissions() const;

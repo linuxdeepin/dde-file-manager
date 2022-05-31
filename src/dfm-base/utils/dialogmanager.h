@@ -24,6 +24,7 @@
 #define DIALOGMANAGER_H
 
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
@@ -88,6 +89,10 @@ public:
     // rename
     int showRenameNameSameErrorDialog(const QString &name);
     void showRenameBusyErrDialog();
+
+    // link file not exist
+    DFMBASE_NAMESPACE::GlobalEventType showBreakSymlinkDialog(const QString &targetName, const QUrl &linkfile);
+    int showAskIfAddExcutableFlagAndRunDialog();
 
 private:
     explicit DialogManager(QObject *parent = nullptr);

@@ -714,7 +714,9 @@ void FileOperationsEventReceiver::handleOperationCleanTrash(const quint64 window
 bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowId,
                                                            const QList<QUrl> urls)
 {
-    Q_UNUSED(windowId);
+    if (urls.isEmpty())
+        return false;
+
     bool ok = false;
     QString error;
     if (!urls.isEmpty() && !urls.first().isLocalFile()) {
@@ -736,10 +738,17 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     ok = fileHandler.openFiles(urls);
     if (!ok) {
-        error = fileHandler.errorString();
-        dialogManager->showErrorDialog("open file error", error);
+        DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
+        if (lastEvent != DFMBASE_NAMESPACE::GlobalEventType::kUnknowType) {
+            if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles)
+                dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
+                dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        } else {
+            error = fileHandler.errorString();
+            dialogManager->showErrorDialog("open file error", error);
+        }
     }
-    // TODO:: file Open finished need to send file Open finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
     return ok;
 }

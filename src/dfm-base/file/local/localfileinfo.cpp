@@ -1509,6 +1509,13 @@ QString LocalFileInfo::genericIconName()
 {
     return fileMimeType().genericIconName();
 }
+
+QUrl LocalFileInfo::redirectedFileUrl() const
+{
+    if (isSymLink())
+        return QUrl::fromLocalFile(symLinkTarget());
+    return url();
+}
 /*!
  * \brief inode linux系统下的唯一表示符
  *

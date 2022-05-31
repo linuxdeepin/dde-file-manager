@@ -25,6 +25,7 @@
 #define LOCALFILEHANDLER_H
 
 #include "dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
@@ -64,6 +65,7 @@ public:
     QString defaultTerminalPath();
     QString errorString();
     DFMIOErrorCode errorCode();
+    DFMBASE_NAMESPACE::GlobalEventType lastEventType();
 
     bool renameFilesBatch(const QMap<QUrl, QUrl> &urls, QMap<QUrl, QUrl> &successUrls);
 
@@ -79,10 +81,24 @@ private:
     void addRecentFile(const QString &filePath, const DesktopFile &desktopFile, const QString &mimetype);
     QString getFileMimetype(const QString &path);
 
+    bool isExecutableScript(const QString &path);
+    bool isFileExecutable(const QString &path);
+    bool openExcutableScriptFile(const QString &path, int flag);
+    bool openExcutableFile(const QString &path, int flag);
+    bool isFileRunnable(const QString &path);
+    bool shouldAskUserToAddExecutableFlag(const QString &path);
+    bool addExecutableFlagAndExecuse(const QString &path, int flag);
+    bool isFileWindowsUrlShortcut(const QString &path);
+    QString getInternetShortcutUrl(const QString &path);
+
+    bool doOpenFile(const QUrl &url, const QString &desktopFile = QString());
+    bool doOpenFiles(const QList<QUrl> &urls, const QString &desktopFile = QString());
+
 private:
     void setError(DFMIOError error);
 
     DFMIOError lastError;
+    DFMBASE_NAMESPACE::GlobalEventType lastEvent = DFMBASE_NAMESPACE::GlobalEventType::kUnknowType;
 };
 
 DFMBASE_END_NAMESPACE

@@ -214,6 +214,21 @@ QString DecoratorFileInfo::fileName() const
     return QString();
 }
 
+QString DecoratorFileInfo::symLinkTarget() const
+{
+    if (d->dfileInfo) {
+        QString symLinkTarget = d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
+        if (!symLinkTarget.startsWith("/")) {
+            QString currPath = parentPath();
+            if (currPath.right(1) != "/")
+                currPath += "/";
+            symLinkTarget.prepend(currPath);
+        }
+        return symLinkTarget;
+    }
+    return QString();
+}
+
 QList<QString> DecoratorFileInfo::standardIconNames() const
 {
     if (d->dfileInfo)
