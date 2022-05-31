@@ -29,6 +29,7 @@
 
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/application/application.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_global_defines.h"
 
@@ -76,7 +77,10 @@ void ComputerEventCaller::cdTo(quint64 winId, const QUrl &url)
         return;
 
     DFMBASE_USE_NAMESPACE
-    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
+    if (Application::appAttribute(Application::ApplicationAttribute::kAllwayOpenOnNewWindow).toBool())
+        sendEnterInNewWindow(url);
+    else
+        dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);
 }
 
 void ComputerEventCaller::cdTo(quint64 winId, const QString &path)
