@@ -143,19 +143,19 @@ TEST_F(FrameTest, test_setwallpaperslideshow)
 TEST_F(FrameTest, test_applyToDesktop)
 {
     ASSERT_NE(m_frame->m_dbusAppearance, nullptr);
-    auto ctmp = m_frame->m_cureentWallpaper;
+    auto ctmp = m_frame->m_currentSelectedWallpaper;
 
     stub_ext::StubExt stu;
     bool judge = false;
     stu.set_lamda(ADDR(ComDeepinDaemonAppearanceInterface, SetMonitorBackground),
                   [&judge](){judge = true; return QDBusPendingReply<QString>();});
 
-    m_frame->m_cureentWallpaper.clear();
+    m_frame->m_currentSelectedWallpaper.clear();
     m_frame->applyToDesktop();
     EXPECT_FALSE(judge);
 
     judge = false;
-    m_frame->m_cureentWallpaper = "test";
+    m_frame->m_currentSelectedWallpaper = "test";
     m_frame->applyToDesktop();
     EXPECT_TRUE(judge);
 
@@ -167,25 +167,25 @@ TEST_F(FrameTest, test_applyToDesktop)
     EXPECT_FALSE(judge);
 
     m_frame->m_dbusAppearance = tmp;
-    m_frame->m_cureentWallpaper = ctmp;
+    m_frame->m_currentSelectedWallpaper = ctmp;
 }
 
 TEST_F(FrameTest, test_applyToGreeter)
 {
     ASSERT_NE(m_frame->m_dbusAppearance, nullptr);
-    auto ctmp = m_frame->m_cureentWallpaper;
+    auto ctmp = m_frame->m_currentSelectedWallpaper;
 
     stub_ext::StubExt stu;
     bool judge = false;
     stu.set_lamda(ADDR(ComDeepinDaemonAppearanceInterface, Set),
                   [&judge](){judge = true; return QDBusPendingReply<>();});
 
-    m_frame->m_cureentWallpaper.clear();
+    m_frame->m_currentSelectedWallpaper.clear();
     m_frame->applyToGreeter();
     EXPECT_FALSE(judge);
 
     judge = false;
-    m_frame->m_cureentWallpaper = "test";
+    m_frame->m_currentSelectedWallpaper = "test";
     m_frame->applyToGreeter();
     EXPECT_TRUE(judge);
 
@@ -197,7 +197,7 @@ TEST_F(FrameTest, test_applyToGreeter)
     EXPECT_FALSE(judge);
 
     m_frame->m_dbusAppearance = tmp;
-    m_frame->m_cureentWallpaper = ctmp;
+    m_frame->m_currentSelectedWallpaper = ctmp;
 }
 
 TEST_F(FrameTest, test_getwallpaperslideshow)
@@ -270,8 +270,8 @@ TEST_F(FrameTest, test_frame_hide)
     ASSERT_NE(m_frame, nullptr);
     ASSERT_TRUE(m_frame->isVisible());
 
-    auto tmp = m_frame->m_cureentWallpaper;
-    m_frame->m_cureentWallpaper = "test";
+    auto tmp = m_frame->m_currentSelectedWallpaper;
+    m_frame->m_currentSelectedWallpaper = "test";
     bool desktop = false;
     bool greeter = false;
     bool setSs = false;
@@ -289,7 +289,7 @@ TEST_F(FrameTest, test_frame_hide)
     EXPECT_FALSE(greeter);
     EXPECT_FALSE(setSs);
 
-    m_frame->m_cureentWallpaper = tmp;
+    m_frame->m_currentSelectedWallpaper = tmp;
     EXPECT_FALSE(m_frame->isVisible());
     EXPECT_EQ(m_frame->m_backgroundManager, nullptr);
     EXPECT_EQ(m_frame->m_dbusDeepinWM, nullptr);
@@ -420,7 +420,7 @@ TEST_F(FrameTest, test_onitemispressed)
     QString data = m_frame->m_wallpaperList->m_items.at(0)->getPath();
     m_frame->onItemPressed(data);
     EXPECT_TRUE(is_set);
-    EXPECT_EQ(m_frame->m_cureentWallpaper, data);
+    EXPECT_EQ(m_frame->m_currentSelectedWallpaper, data);
 
     m_frame->m_mode = Frame::ScreenSaverMode;
     bool preview = false;
@@ -439,7 +439,7 @@ TEST_F(FrameTest, test_onitemispressed)
 TEST_F(FrameTest, test_desktopbackground)
 {
     QPair<QString, QString> pair = m_frame->desktopBackground();
-    QPair<QString, QString> compare = QPair<QString, QString>(m_frame->m_screenName, m_frame->m_cureentWallpaper);
+    QPair<QString, QString> compare = QPair<QString, QString>(m_frame->m_screenName, m_frame->m_currentSelectedWallpaper);
 
     EXPECT_EQ(pair, compare);
 }
@@ -505,7 +505,7 @@ TEST_F(FrameTest, test_loading)
 TEST_F(FrameTest, test_onitembuttonisclicked)
 {
     const QString name = "test";
-    m_frame->m_cureentWallpaper = name;
+    m_frame->m_currentSelectedWallpaper = name;
     StubExt stub;
     bool callHide = false;
     stub.set_lamda(ADDR(Frame, hide),
@@ -532,7 +532,7 @@ TEST_F(FrameTest, test_onitembuttonisclicked)
                    [&setSs](){setSs = true;});
     callHide = false;
     m_frame->onItemButtonClicked("desktop");
-    EXPECT_EQ(m_frame->m_cureentWallpaper, name);
+    EXPECT_EQ(m_frame->m_currentSelectedWallpaper, name);
     EXPECT_TRUE(callHide);
     EXPECT_TRUE(desktop);
     EXPECT_FALSE(greeter);
@@ -543,7 +543,7 @@ TEST_F(FrameTest, test_onitembuttonisclicked)
     greeter = false;
     setSs = false;
     m_frame->onItemButtonClicked("lock-screen");
-    EXPECT_EQ(m_frame->m_cureentWallpaper, name);
+    EXPECT_EQ(m_frame->m_currentSelectedWallpaper, name);
     EXPECT_TRUE(callHide);
     EXPECT_TRUE(greeter);
     EXPECT_FALSE(desktop);
@@ -554,7 +554,7 @@ TEST_F(FrameTest, test_onitembuttonisclicked)
     greeter = false;
     setSs = false;
     m_frame->onItemButtonClicked("desktop-lockscreen");
-    EXPECT_EQ(m_frame->m_cureentWallpaper, name);
+    EXPECT_EQ(m_frame->m_currentSelectedWallpaper, name);
     EXPECT_TRUE(callHide);
     EXPECT_TRUE(desktop);
     EXPECT_TRUE(greeter);
