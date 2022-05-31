@@ -521,7 +521,7 @@ bool LocalFileInfo::canRename() const
 bool LocalFileInfo::canTag() const
 {
     // todo lanxs
-    return false;
+    return true;
 }
 /*!
  * \brief isReadable 获取文件是否可读

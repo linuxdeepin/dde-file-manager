@@ -59,9 +59,7 @@ QString ShareFileInfo::fileName() const
 
 bool ShareFileInfo::isDir() const
 {
-    // a `openFile` function is register, so we have to treat the share folder like a normal file, when double click to access the directory,
-    // the `openFile` will be invoked to open the real directory
-    return false;
+    return true;
 }
 
 bool ShareFileInfo::canRename() const
@@ -82,6 +80,16 @@ ShareFileInfoPrivate::~ShareFileInfoPrivate()
 }
 
 bool dfmplugin_myshares::ShareFileInfo::canDrag()
+{
+    return false;
+}
+
+bool dfmplugin_myshares::ShareFileInfo::isWritable() const
+{
+    return true;
+}
+
+bool dfmplugin_myshares::ShareFileInfo::canTag() const
 {
     return false;
 }

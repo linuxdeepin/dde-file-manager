@@ -55,9 +55,7 @@ PermissionManagerWidget::~PermissionManagerWidget()
 
 void PermissionManagerWidget::selectFileUrl(const QUrl &url)
 {
-    selectUrl = QUrl::fromLocalFile(url.path());
-
-    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(selectUrl);
+    AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
 
     QUrl parentUrl = info->parentUrl();
     QStorageInfo storageInfo(parentUrl.toLocalFile());
@@ -215,10 +213,8 @@ void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
 
 bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
 {
-    bool ret = true;
-
     if (!info->canRename())
-        ret = false;
+        return false;
 
     QString path = info->filePath();
     static QRegularExpression regExp("^/run/user/\\d+/gvfs/.+$",
@@ -226,9 +222,9 @@ bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
                                              | QRegularExpression::DontCaptureOption
                                              | QRegularExpression::OptimizeOnFirstUsageOption);
     if (regExp.match(path, 0, QRegularExpression::NormalMatch, QRegularExpression::DontCheckSubjectStringMatchOption).hasMatch())
-        ret = false;
+        return false;
 
-    return ret;
+    return true;
 }
 
 void PermissionManagerWidget::setExecText()

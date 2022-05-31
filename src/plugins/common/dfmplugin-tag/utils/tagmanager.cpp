@@ -303,6 +303,9 @@ void TagManager::deleteFiles(const QList<QUrl> &urls)
 
 bool TagManager::canTagFile(const AbstractFileInfoPointer &fileInfo) const
 {
+    if (!fileInfo || !fileInfo->canTag())
+        return false;
+
     QString filePath = fileInfo->filePath();
 
     if (!filePath.startsWith("/home/") && !filePath.startsWith("/data/home/"))

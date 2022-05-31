@@ -156,6 +156,7 @@ inline constexpr char kComputer[] { "computer" };
 inline constexpr char kDevice[] { "device" };
 inline constexpr char kTrash[] { "trash" };
 inline constexpr char kRecent[] { "recent" };
+inline constexpr char kUserShare[] { "usershare" };
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

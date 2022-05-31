@@ -68,11 +68,7 @@ void ShareEventsCaller::sendCancelSharing(const QUrl &url)
 
 void ShareEventsCaller::sendShowProperty(const QList<QUrl> &urls)
 {
-    QList<QUrl> convertedUrls = urls;
-    for (auto &url : convertedUrls)
-        url = ShareUtils::convertToLocalUrl(url);
-
-    dispatcher.publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, convertedUrls);
+    dispatcher.publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 
 void ShareEventsCaller::sendSwitchDisplayMode(quint64 winId, Global::ViewMode mode)
