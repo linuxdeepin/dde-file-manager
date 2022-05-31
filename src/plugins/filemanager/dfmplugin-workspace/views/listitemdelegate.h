@@ -53,6 +53,9 @@ protected:
     bool eventFilter(QObject *object, QEvent *event) override;
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) override;
 
+private slots:
+    void editorFinished();
+
 private:
     void paintItemBackground(QPainter *painter, const QStyleOptionViewItem &option,
                              const QModelIndex &index) const;

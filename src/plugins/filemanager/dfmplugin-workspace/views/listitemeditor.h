@@ -27,11 +27,16 @@ public:
         return theMaxCharSize;
     }
 
+signals:
+    void inputFocusOut();
+
 public slots:
     void showAlertMessage(const QString &text, int duration = 3000);
 
 protected:
     static DTK_WIDGET_NAMESPACE::DArrowRectangle *createTooltip();
+
+    bool event(QEvent *ee) override;
 
 private slots:
     void onEditorTextChanged(const QString &text);

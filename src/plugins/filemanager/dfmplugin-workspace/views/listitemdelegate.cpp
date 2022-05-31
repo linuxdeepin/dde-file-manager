@@ -31,6 +31,7 @@
 #include "utils/fileviewhelper.h"
 #include "events/workspaceeventcaller.h"
 #include "events/workspaceeventsequence.h"
+#include "utils/workspacehelper.h"
 
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
@@ -133,10 +134,16 @@ QWidget *ListItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
         d->editor->setFixedHeight(GlobalPrivate::kListEditorHeight);
     }
 
+    connect(static_cast<ListItemEditor *>(d->editor), &ListItemEditor::inputFocusOut, this, &ListItemDelegate::editorFinished);
+
     connect(d->editor, &QLineEdit::destroyed, this, [=] {
         d->editingIndex = QModelIndex();
         d->editor = nullptr;
     });
+
+    auto windowId = WorkspaceHelper::instance()->windowId(parent);
+    QUrl url = this->parent()->parent()->model()->getUrlByIndex(index);
+    WorkspaceEventCaller::sendRenameStartEdit(windowId, url);
 
     return d->editor;
 }
@@ -226,6 +233,23 @@ bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
     }
 
     return QStyledItemDelegate::helpEvent(event, view, option, index);
+}
+
+void ListItemDelegate::editorFinished()
+{
+    FileViewHelper *viewHelper = parent();
+    if (!viewHelper)
+        return;
+
+    FileView *fileview = viewHelper->parent();
+    if (!fileview)
+        return;
+
+    auto windowId = WorkspaceHelper::instance()->windowId(fileview);
+    if (!fileview->model())
+        return;
+    QUrl url = fileview->model()->getUrlByIndex(d->editingIndex);
+    WorkspaceEventCaller::sendRenameEndEdit(windowId, url);
 }
 
 QList<QRect> ListItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const

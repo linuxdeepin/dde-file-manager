@@ -30,6 +30,8 @@
 #include "iconitemeditor.h"
 #include "models/filesortfilterproxymodel.h"
 #include "events/workspaceeventsequence.h"
+#include "events/workspaceeventcaller.h"
+#include "utils/workspacehelper.h"
 
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/fileutils.h"
@@ -267,6 +269,23 @@ QString IconItemDelegate::displayFileName(const QModelIndex &index) const
         str = str.mid(0, str.length() - suffix.length());
 
     return str;
+}
+
+void IconItemDelegate::editorFinished()
+{
+    FileViewHelper *viewHelper = parent();
+    if (!viewHelper)
+        return;
+
+    FileView *fileview = viewHelper->parent();
+    if (!fileview)
+        return;
+
+    auto windowId = WorkspaceHelper::instance()->windowId(fileview);
+    if (!fileview->model())
+        return;
+    QUrl url = fileview->model()->getUrlByIndex(d->editingIndex);
+    WorkspaceEventCaller::sendRenameEndEdit(windowId, url);
 }
 
 void IconItemDelegate::initTextLayout(const QModelIndex &index, QTextLayout *layout) const
@@ -507,6 +526,8 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
             this, &IconItemDelegate::commitDataAndCloseActiveEditor,
             Qt::UniqueConnection);
 
+    connect(editor, &IconItemEditor::inputFocusOut, this, &IconItemDelegate::editorFinished);
+
     connect(editor, &IconItemEditor::destroyed, this, [this, d] {
         Q_UNUSED(this)
         QWidget *editor = this->parent()->indexWidget(d->editingIndex);
@@ -521,6 +542,16 @@ QWidget *IconItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewI
     editor->getTextEdit()->setAlignment(Qt::AlignHCenter);
     editor->getTextEdit()->document()->setTextWidth(d->itemSizeHint.width());
     editor->setOpacity(this->parent()->isTransparent(index) ? 0.3 : 1);
+
+    if (FileViewHelper *viewHelper = this->parent()) {
+        if (FileView *fileView = viewHelper->parent()) {
+            if (FileSortFilterProxyModel *model = fileView->model()) {
+                auto windowId = WorkspaceHelper::instance()->windowId(parent);
+                QUrl url = model->getUrlByIndex(index);
+                WorkspaceEventCaller::sendRenameStartEdit(windowId, url);
+            }
+        }
+    }
 
     return editor;
 }

@@ -77,6 +77,19 @@ DArrowRectangle *ListItemEditor::createTooltip()
     return tooltip;
 }
 
+bool ListItemEditor::event(QEvent *ee)
+{
+    switch (ee->type()) {
+    case QEvent::FocusOut:
+            emit inputFocusOut();
+        break;
+    default:
+        break;
+    }
+
+    return QLineEdit::event(ee);
+}
+
 void ListItemEditor::onEditorTextChanged(const QString &text)
 {
     const QString srcText = text;

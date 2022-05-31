@@ -114,3 +114,15 @@ void WorkspaceEventCaller::sendViewSelectionChanged(const quint64 windowID, cons
 {
     dispatcher()->publish(Workspace::EventType::kViewSelectionChanged, windowID, selected, deselected);
 }
+
+bool WorkspaceEventCaller::sendRenameStartEdit(const quint64 &winId, const QUrl &url)
+{
+    bool ret = dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_RenameStartEdit", winId, url);
+    return ret;
+}
+
+bool WorkspaceEventCaller::sendRenameEndEdit(const quint64 &winId, const QUrl &url)
+{
+    bool ret = dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_RenameEndEdit", winId, url);
+    return ret;
+}

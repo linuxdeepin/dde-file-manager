@@ -54,6 +54,10 @@ public:
     static void sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url);
 
     static void sendViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
+
+    static bool sendRenameStartEdit(const quint64 &winId, const QUrl &url);
+
+    static bool sendRenameEndEdit(const quint64 &winId, const QUrl &url);
 };
 
 DPWORKSPACE_END_NAMESPACE

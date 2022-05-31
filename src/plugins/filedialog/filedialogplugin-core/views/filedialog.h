@@ -129,6 +129,10 @@ private Q_SLOTS:
     void handleUrlChanged(const QUrl &url);
     void onViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected);
 
+    void handleRenameStartAcceptBtn(const quint64 windowID, const QUrl &url);
+
+    void handleRenameEndAcceptBtn(const quint64 windowID, const QUrl &url);
+
 protected:
     void showEvent(QShowEvent *event) override;
     void closeEvent(QCloseEvent *event) override;
@@ -137,6 +141,7 @@ protected:
 private:
     void initializeUi();
     void initConnect();
+    void initEventConnect();
     void updateViewState();
     FileDialogStatusBar *statusBar() const;
     void adjustPosition(QWidget *w);

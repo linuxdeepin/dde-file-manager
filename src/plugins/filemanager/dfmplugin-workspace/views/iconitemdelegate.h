@@ -69,6 +69,9 @@ public:
 
     QString displayFileName(const QModelIndex &index) const;
 
+private slots:
+    void editorFinished();
+
 protected:
     virtual void initTextLayout(const QModelIndex &index, QTextLayout *layout) const override;
 

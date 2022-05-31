@@ -166,11 +166,13 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
 {
     initializeUi();
     initConnect();
+    initEventConnect();
 
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenFiles, [this](EventDispatcher::Listener, const QVariantList &) {
-        onAcceptButtonClicked();
-        return true;
-    });
+    dpfInstance.eventDispatcher()
+            .installEventFilter(GlobalEventType::kOpenFiles, [this](EventDispatcher::Listener, const QVariantList &) {
+                onAcceptButtonClicked();
+                return true;
+            });
     dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewWindow, [this](EventDispatcher::Listener, const QVariantList &params) {
         if (params.size() > 0)
             d->handleOpenNewWindow(params.at(0).toUrl());
@@ -858,6 +860,22 @@ void FileDialog::onViewSelectionChanged(const quint64 windowID, const QItemSelec
     }
 }
 
+void FileDialog::handleRenameStartAcceptBtn(const quint64 windowID, const QUrl &url)
+{
+    Q_UNUSED(url)
+    if (windowID == internalWinId()) {
+        statusBar()->acceptButton()->setEnabled(false);
+    }
+}
+
+void FileDialog::handleRenameEndAcceptBtn(const quint64 windowID, const QUrl &url)
+{
+    Q_UNUSED(url)
+    if (windowID == internalWinId()) {
+        statusBar()->acceptButton()->setEnabled(true);
+    }
+}
+
 void FileDialog::showEvent(QShowEvent *event)
 {
     if (!event->spontaneous() && !testAttribute(Qt::WA_Moved)) {
@@ -966,6 +984,12 @@ void FileDialog::initConnect()
             static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::activated),
             this, &FileDialog::selectedNameFilterChanged);
     connect(this, &FileDialog::selectionFilesChanged, &FileDialog::updateAcceptButtonState);
+}
+
+void FileDialog::initEventConnect()
+{
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
 }
 
 /*!

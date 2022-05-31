@@ -37,6 +37,8 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_NAMESPACE(DPWORKSPACE_NAMESPACE)
 
     DPF_EVENT_REG_SIGNAL(signal_FileDrop)
+    DPF_EVENT_REG_SIGNAL(signal_RenameStartEdit)
+    DPF_EVENT_REG_SIGNAL(signal_RenameEndEdit)
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_CloseTab)
