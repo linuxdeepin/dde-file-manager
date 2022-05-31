@@ -29,21 +29,19 @@ class QAbstractItemModel;
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasManager;
-class CanvasManagerBrokerPrivate;
 class CanvasManagerBroker : public QObject
 {
     Q_OBJECT
 public:
     explicit CanvasManagerBroker(CanvasManager *canvas, QObject *parent = nullptr);
+    ~CanvasManagerBroker();
     bool init();
-signals:
-
 public slots:
     void update();
     void edit(const QUrl &url);
-    void fileInfoModel(QAbstractItemModel **model);
+    QAbstractItemModel *fileInfoModel();
 private:
-    CanvasManagerBrokerPrivate *d;
+    CanvasManager *canvas = nullptr;
 };
 
 DDP_CANVAS_END_NAMESPACE

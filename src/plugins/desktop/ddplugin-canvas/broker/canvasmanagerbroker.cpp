@@ -18,57 +18,55 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "canvasmanagerbroker_p.h"
+#include "canvasmanagerbroker.h"
+#include "canvasmanager.h"
+#include "model/fileinfomodel.h"
+
+#include <dfm-framework/dpf.h>
 
 DDP_CANVAS_USE_NAMESPACE
-Q_DECLARE_METATYPE(QAbstractItemModel **)
 
-CanvasManagerBrokerPrivate::CanvasManagerBrokerPrivate(CanvasManagerBroker *qq)
-    : QObject(qq)
-    , CanvasEventProvider()
-    , q(qq)
-{
+#define CanvasManagerSlot(topic, args...) \
+            dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
-}
+#define CanvasManagerDisconnect(topic) \
+            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
 
-void CanvasManagerBrokerPrivate::registerEvent()
-{
-    RegCanvasSlotsID(this, kSlotCanvasManagerFileModel);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasManagerFileModel), q, &CanvasManagerBroker::fileInfoModel);
-
-    RegCanvasSlotsID(this, kSlotCanvasManagerUpdate);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasManagerUpdate), q, &CanvasManagerBroker::update);
-
-    RegCanvasSlotsID(this, kSlotCanvasManagerEdit);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasManagerEdit), q, &CanvasManagerBroker::edit);
-}
-
-CanvasManagerBroker::CanvasManagerBroker(CanvasManager *canvas, QObject *parent)
+CanvasManagerBroker::CanvasManagerBroker(CanvasManager *ptr, QObject *parent)
     : QObject(parent)
-    , d(new CanvasManagerBrokerPrivate(this))
+    , canvas(ptr)
 {
-    d->canvas = canvas;
+
+}
+
+CanvasManagerBroker::~CanvasManagerBroker()
+{
+    CanvasManagerDisconnect(slot_CanvasManager_FileInfoModel);
+    CanvasManagerDisconnect(slot_CanvasManager_Update);
+    CanvasManagerDisconnect(slot_CanvasManager_Edit);
 }
 
 bool CanvasManagerBroker::init()
 {
-    return d->initEvent();
+    CanvasManagerSlot(slot_CanvasManager_FileInfoModel, &CanvasManagerBroker::fileInfoModel);
+    CanvasManagerSlot(slot_CanvasManager_Update, &CanvasManagerBroker::update);
+    CanvasManagerSlot(slot_CanvasManager_Edit, &CanvasManagerBroker::edit);
+    return true;
 }
 
 void CanvasManagerBroker::update()
 {
-    d->canvas->update();
+    canvas->update();
 }
 
 void CanvasManagerBroker::edit(const QUrl &url)
 {
-    d->canvas->openEditor(url);
+    canvas->openEditor(url);
 }
 
-void CanvasManagerBroker::fileInfoModel(QAbstractItemModel **model)
+QAbstractItemModel *CanvasManagerBroker::fileInfoModel()
 {
-    if (model)
-        *model = d->canvas->fileModel();
+    return canvas->fileModel();
 }
 
 

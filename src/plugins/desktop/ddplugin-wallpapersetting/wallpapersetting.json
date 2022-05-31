@@ -21,7 +21,6 @@
     "UrlLink" : "https://www.uniontech.com",
     "Depends" : [
         {"Name" : "ddplugin-core", "Version": "1.0.0"},
-        {"Name" : "ddplugin-screen", "Version": "1.0.0"},
         {"Name" : "ddplugin-canvas", "Version": "1.0.0"}
     ]
 }

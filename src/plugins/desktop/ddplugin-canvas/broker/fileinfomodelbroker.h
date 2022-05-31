@@ -29,26 +29,27 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class FileInfoModel;
-class FileInfoModelBrokerPrivate;
 class FileInfoModelBroker : public QObject
 {
     Q_OBJECT
-    friend class FileInfoModelBrokerPrivate;
 public:
     explicit FileInfoModelBroker(FileInfoModel *model, QObject *parent = nullptr);
+    ~FileInfoModelBroker();
     bool init();
 signals:
 
 public slots:
-    void rootUrl(QUrl *url);
-    void rootIndex(QModelIndex *root);
-    void urlIndex(const QUrl &url, QModelIndex *index);
-    void indexUrl(const QModelIndex &index, QUrl *url);
-    void files(QList<QUrl> *urls);
-    void fileInfo(const QModelIndex &index, DFMLocalFileInfoPointer *file);
+    QUrl rootUrl();
+    QModelIndex rootIndex();
+    QModelIndex urlIndex(const QUrl &url);
+    QUrl indexUrl(const QModelIndex &index);
+    QList<QUrl> files();
+    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index);
     void refresh(const QModelIndex &parent);
+private slots:
+    void onDataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 private:
-    FileInfoModelBrokerPrivate *d;
+    FileInfoModel *model = nullptr;
 };
 
 DDP_CANVAS_END_NAMESPACE

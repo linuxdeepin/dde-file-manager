@@ -60,9 +60,9 @@ void GlobalEventReceiver::initEventConnect()
                             GlobalEventReceiver::instance(), &GlobalEventReceiver::handleDragDropCompress);
 
     // desktop
-    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_FileDragMove",
+    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DragMove",
                             GlobalEventReceiver::instance(), &GlobalEventReceiver::handleSetMouseStyleOnDesktop);
-    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_FileDrop",
+    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_DropData",
                             GlobalEventReceiver::instance(), &GlobalEventReceiver::handleDragDropCompressOnDesktop);
 }
 

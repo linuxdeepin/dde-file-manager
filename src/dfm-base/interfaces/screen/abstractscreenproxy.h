@@ -22,9 +22,8 @@
 #ifndef ABSTRACTSCREENPROXY_H
 #define ABSTRACTSCREENPROXY_H
 
-#include "abstractscreen.h"
-#include "dfm-base/dfm_base_global.h"
-#include "interfaces/screen/screenglobal.h"
+#include "dfm-base/dfm_desktop_defines.h"
+#include "interfaces/screen/abstractscreen.h"
 
 #include <QObject>
 #include <QMultiMap>
@@ -60,7 +59,7 @@ signals:
     void screenGeometryChanged();
     void screenAvailableGeometryChanged();
 protected:
-    DisplayMode lastMode = DisplayMode::Custom;
+    DisplayMode lastMode = DisplayMode::kCustom;
     QMultiMap<Event, qint64> events;
 private:
     QTimer *eventShot = nullptr;

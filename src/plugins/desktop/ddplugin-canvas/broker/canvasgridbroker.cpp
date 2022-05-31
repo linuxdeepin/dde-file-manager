@@ -18,46 +18,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "canvasgridbroker_p.h"
+#include "canvasgridbroker.h"
+#include "grid/canvasgrid.h"
 
-Q_DECLARE_METATYPE(QStringList *)
+#include <dfm-framework/dpf.h>
 
 DDP_CANVAS_USE_NAMESPACE
 
-CanvasGridBrokerPrivate::CanvasGridBrokerPrivate(CanvasGridBroker *qq)
-    : QObject(qq)
-    , CanvasEventProvider()
-    , q(qq)
-{
+#define CanvasGridSlot(topic, args...) \
+            dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
-}
+#define CanvasGridDisconnect(topic) \
+            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
 
-CanvasGridBrokerPrivate::~CanvasGridBrokerPrivate()
-{
-
-}
-
-void CanvasGridBrokerPrivate::registerEvent()
-{
-    RegCanvasSlotsID(this, kSlotCanvasGridItems);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasGridItems), q, &CanvasGridBroker::items);
-}
-
-CanvasGridBroker::CanvasGridBroker(CanvasGrid *grid, QObject *parent)
+CanvasGridBroker::CanvasGridBroker(CanvasGrid *gridPtr, QObject *parent)
     : QObject(parent)
-    , d(new CanvasGridBrokerPrivate(this))
+    , grid(gridPtr)
 {
-    d->grid = grid;
+}
+
+CanvasGridBroker::~CanvasGridBroker()
+{
+    CanvasGridDisconnect(slot_CanvasGrid_Items);
 }
 
 bool CanvasGridBroker::init()
 {
-    return d->initEvent();
+    CanvasGridSlot(slot_CanvasGrid_Items, &CanvasGridBroker::items);
+    return true;
 }
 
-void CanvasGridBroker::items(int index, QStringList *ret)
+QStringList CanvasGridBroker::items(int index)
 {
-    if (ret)
-        *ret = d->grid->items(index);
+    return grid->items(index);
 }
 

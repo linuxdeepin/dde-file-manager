@@ -335,7 +335,7 @@ void CanvasView::startDrag(Qt::DropActions supportedActions)
     if (isPersistentEditorOpen(currentIndex()))
         closePersistentEditor(currentIndex());
 
-    if (d->extend && d->extend->startDrag(screenNum(), supportedActions)) {
+    if (d->hookIfs && d->hookIfs->startDrag(screenNum(), supportedActions)) {
         qDebug() << "start drag by extend.";
         return;
     }
@@ -666,14 +666,14 @@ void CanvasView::initUI()
     }
 }
 
-void CanvasView::setViewExtend(ViewExtendInterface *ext)
+void CanvasView::setViewHook(ViewHookInterface *ext)
 {
-    d->extend = ext;
+    d->hookIfs = ext;
 }
 
-ViewExtendInterface *CanvasView::viewExtend() const
+ViewHookInterface *CanvasView::viewHook() const
 {
-    return d->extend;
+    return d->hookIfs;
 }
 
 const QMargins CanvasViewPrivate::gridMiniMargin = QMargins(2, 2, 2, 2);

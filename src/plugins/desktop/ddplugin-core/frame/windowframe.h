@@ -33,6 +33,7 @@ class WindowFrame : public DFMBASE_NAMESPACE::AbstractDesktopFrame
     friend class WindowFramePrivate;
 public:
     explicit WindowFrame(QObject *parent = nullptr);
+    ~WindowFrame();
     bool init();
     QList<QWidget *> rootWindows() const override;
     void layoutChildren() override;

@@ -22,6 +22,9 @@
 #include "backgroundmanager.h"
 #include "backgroundmanager_p.h"
 #include "backgrounddefault.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
+
+#include "dfm-base/dfm_desktop_defines.h"
 
 #include <QGSettings>
 
@@ -30,16 +33,21 @@
 DFMBASE_USE_NAMESPACE
 DGUI_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 
-static QString getScreenName(QWidget *win)
+#define CanvasCoreSubscribe(topic, func) \
+    dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
+
+#define CanvasCoreUnsubscribe(topic, func) \
+    dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
+
+inline QString getScreenName(QWidget *win)
 {
-    return win->property(FrameProperty::kPropScreenName).toString();
+    return win->property(DesktopFrameProperty::kPropScreenName).toString();
 }
 
-static QMap<QString, QWidget *> rootMap(FrameService *srv)
+static QMap<QString, QWidget *> rootMap()
 {
-    QList<QWidget *> root = srv->rootWindows();
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
     QMap<QString, QWidget *> ret;
     for (QWidget *win : root) {
         QString name = getScreenName(win);
@@ -179,6 +187,9 @@ BackgroundManager::BackgroundManager(QObject *parent)
 
 BackgroundManager::~BackgroundManager()
 {
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &BackgroundManager::onBackgroundBuild);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);
 }
 
 void BackgroundManager::init()
@@ -190,16 +201,9 @@ void BackgroundManager::init()
 
     onRestBackgroundManager();
 
-    auto &ctx = dpfInstance.serviceContext();
-    d->frameService = ctx.service<FrameService>(FrameService::name());
-    if (!d->frameService) {
-        qWarning() << "get frame service failed.";
-        return;
-    }
-
-    connect(d->frameService, &FrameService::windowBuilded, this, &BackgroundManager::onBackgroundBuild, Qt::DirectConnection);
-    connect(d->frameService, &FrameService::windowAboutToBeBuilded, this, &BackgroundManager::onDetachWindows, Qt::DirectConnection);
-    connect(d->frameService, &FrameService::geometryChanged, this, &BackgroundManager::onGeometryChanged, Qt::DirectConnection);
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &BackgroundManager::onDetachWindows);
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &BackgroundManager::onBackgroundBuild);
+    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &BackgroundManager::onGeometryChanged);
 }
 
 QMap<QString, BackgroundWidgetPointer> BackgroundManager::allBackgroundWidgets()
@@ -233,12 +237,7 @@ void BackgroundManager::setBackgroundPath(const QString &screen, const QString &
 
 void BackgroundManager::onBackgroundBuild()
 {
-    if (!d->frameService) {
-        qWarning() << "no screen service,give up build background.";
-        return;
-    }
-
-    QList<QWidget *> root = d->frameService->rootWindows();
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
     if (root.size() == 1) {
         QWidget *primary = root.first();
         if (primary == nullptr) {
@@ -248,7 +247,7 @@ void BackgroundManager::onBackgroundBuild()
             return;
         }
 
-        const QString screeName = getScreenName(primary);
+        const QString &screeName = getScreenName(primary);
         if (screeName.isEmpty()) {
             qWarning() << "can not get screen name from root window";
             return;
@@ -297,7 +296,7 @@ void BackgroundManager::onBackgroundBuild()
 
         // clean up invalid widget
         {
-            auto winMap = rootMap(d->frameService);
+            auto winMap = rootMap();
             for (const QString &sp : d->backgroundWidgets.keys()) {
                 if (!winMap.contains(sp)) {
                     d->backgroundWidgets.take(sp);
@@ -334,18 +333,12 @@ void BackgroundManager::onRestBackgroundManager()
         updateBackgroundPaths();
     }
 
-    if (d->frameService)
-        onBackgroundBuild();
+    onBackgroundBuild();
 }
 
 void BackgroundManager::onGeometryChanged()
 {
-    if (!d->frameService) {
-        qWarning() << "no screen service,give up build background.";
-        return;
-    }
-
-    auto winMap = rootMap(d->frameService);
+    auto winMap = rootMap();
     for (auto itor = d->backgroundWidgets.begin(); itor != d->backgroundWidgets.end(); ++itor) {
         BackgroundWidgetPointer bw = itor.value();
         auto *win = winMap.value(itor.key());
@@ -358,9 +351,9 @@ void BackgroundManager::onGeometryChanged()
             QRect geometry = d->relativeGeometry(win->geometry());   // scaled area
             if (bw->geometry() == geometry) {
                 qDebug() << "background geometry is equal to root widget geometry,and discard changes" << bw->geometry()
-                         << win->geometry() << win->property(FrameProperty::kPropScreenName).toString()
-                         << win->property(FrameProperty::kPropScreenGeometry).toRect() << win->property(FrameProperty::kPropScreenHandleGeometry).toRect()
-                         << win->property(FrameProperty::kPropScreenAvailableGeometry);
+                         << win->geometry() << win->property(DesktopFrameProperty::kPropScreenName).toString()
+                         << win->property(DesktopFrameProperty::kPropScreenGeometry).toRect() << win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect()
+                         << win->property(DesktopFrameProperty::kPropScreenAvailableGeometry);
                 continue;
             }
             qInfo() << "background geometry change from" << bw->geometry() << "to" << geometry
@@ -410,15 +403,13 @@ void BackgroundManager::onAppearanceCalueChanged(const QString &key)
 
 void BackgroundManager::updateBackgroundPaths()
 {
-    if (!d->frameService)
-        return;
 
     d->backgroundPaths.clear();
 
     if (!d->isEnableBackground())
         return;
 
-    auto winMap = rootMap(d->frameService);
+    auto winMap = rootMap();
     for (auto itor = d->backgroundWidgets.begin(); itor != d->backgroundWidgets.end(); ++itor) {
         auto *win = winMap.value(itor.key());
         if (win == nullptr) {
@@ -502,9 +493,9 @@ BackgroundWidgetPointer BackgroundManager::createBackgroundWidget(QWidget *root)
     const QString screenName = getScreenName(root);
     BackgroundWidgetPointer bwp(new BackgroundDefault(screenName, root));
     bwp->setParent(root);
-    bwp->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
-    bwp->setProperty(FrameProperty::kPropWidgetName, "background");
-    bwp->setProperty(FrameProperty::kPropWidgetLevel, 5.0);
+    bwp->setProperty(DesktopFrameProperty::kPropScreenName, getScreenName(root));
+    bwp->setProperty(DesktopFrameProperty::kPropWidgetName, "background");
+    bwp->setProperty(DesktopFrameProperty::kPropWidgetLevel, 5.0);
 
     QRect geometry = d->relativeGeometry(root->geometry());   // scaled area
     bwp->setGeometry(geometry);

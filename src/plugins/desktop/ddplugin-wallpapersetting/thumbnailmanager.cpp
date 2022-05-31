@@ -35,8 +35,9 @@ ThumbnailManager::ThumbnailManager(qreal _scale, QObject *parent)
 {
     cacheDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     // old dir
-    cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(scale);
-    //cacheDir = cacheDir + QDir::separator() + QString("wallpaperthumbnail") + QDir::separator() + QString::number(scale);
+    //cacheDir = cacheDir + QDir::separator() + qApp->applicationVersion() + QDir::separator() + QString::number(scale);
+    // using `wallpaperthumbnail` dir to replace `applicationVersion(` dir to reduce redundant disk usage
+    cacheDir = cacheDir + QDir::separator() + QString("wallpaperthumbnail") + QDir::separator() + QString::number(scale);
 
     connect(&futureWatcher, &QFutureWatcher<QPixmap>::finished, this, &ThumbnailManager::onProcessFinished, Qt::QueuedConnection);
 

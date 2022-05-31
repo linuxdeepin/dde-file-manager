@@ -22,6 +22,8 @@
 #include "thumbnailmanager.h"
 #include "private/wallpapersettings_p.h"
 #include "desktoputils/widgetutil.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
+
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/windowutils.h"
 
@@ -45,6 +47,12 @@ DDP_WALLPAERSETTING_USE_NAMESPACE
 
 #define BUTTON_NARROW_WIDTH     79
 #define BUTTON_WIDE_WIDTH       164
+
+#define CanvasCoreSubscribe(topic, recv, func) \
+    dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), recv, func);
+
+#define CanvasCoreUnsubscribe(topic, recv, func) \
+    dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), recv, func);
 
 const int WallpaperSettingsPrivate::kHeaderSwitcherHeight = 45;
 const int WallpaperSettingsPrivate::kFrameHeight = 130;
@@ -99,10 +107,6 @@ WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
 
     reloadTimer.setSingleShot(true);
     connect(&reloadTimer, &QTimer::timeout, q, &WallpaperSettings::refreshList);
-
-    auto &ctx = dpfInstance.serviceContext();
-    screenService = ctx.service<ScreenService>(ScreenService::name());
-    Q_ASSERT(screenService);
 }
 
 void WallpaperSettingsPrivate::propertyForWayland()
@@ -481,13 +485,7 @@ void WallpaperSettingsPrivate::onMousePressed(const QPoint &pos, int button)
         wallpaperList->nextPage();
     } else {
         qreal scale = q->devicePixelRatioF();
-        auto &ctx = dpfInstance.serviceContext();
-        auto screenScevice = ctx.service<ScreenService>(ScreenService::name());
-        if (!screenScevice) {
-            qCritical() << "can not get ScreenService.";
-            return;
-        }
-        if (auto screen = screenScevice->screen(screenName)) {
+        if (auto screen = ddplugin_desktop_util::screenProxyScreen(screenName)) {
             const QRect sRect = screen->geometry();
             QRect nativeRect = q->geometry();
 
@@ -681,7 +679,7 @@ void WallpaperSettingsPrivate::initSreenSaver()
 
 void WallpaperSettingsPrivate::initPreivew()
 {
-    wallpaperPrview = new WallaperPreview(screenService, this);
+    wallpaperPrview = new WallaperPreview(this);
     wallpaperPrview->init();
 }
 
@@ -728,7 +726,11 @@ WallpaperSettings::WallpaperSettings(const QString &screenName, Mode mode, QWidg
 
 WallpaperSettings::~WallpaperSettings()
 {
-    qInfo() << "deleted";
+    CanvasCoreUnsubscribe(signal_ScreenProxy_ScreenChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
+    CanvasCoreUnsubscribe(signal_ScreenProxy_DisplayModeChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
+    CanvasCoreUnsubscribe(signal_ScreenProxy_ScreenGeometryChanged, this, &WallpaperSettings::onGeometryChanged);
+
+    qInfo() << "WallpaperSettings deleted";
     delete d->loadingLabel;
     d->loadingLabel = nullptr;
 
@@ -799,13 +801,7 @@ QStringList WallpaperSettings::availableWallpaperSlide()
 
 void WallpaperSettings::adjustGeometry()
 {
-    if(!d->screenService->screen(d->screenName)){
-        qCritical() << "lost screen " << d->screenName;
-        hide();
-        return;
-    }
-
-    const QRect screenRect = d->screenService->screen(d->screenName)->geometry();
+    const QRect screenRect = ddplugin_desktop_util::screenProxyScreen(d->screenName)->geometry();
     int actualHeight =  d->kFrameHeight + d->kHeaderSwitcherHeight;
     setFixedSize(screenRect.width() - 20, actualHeight);
 
@@ -1162,8 +1158,8 @@ void WallpaperSettings::init()
     if (d->mode == Mode::WallpaperMode)
         d->wallpaperPrview->setVisible(true);
 
-    connect(d->screenService, &ScreenService::screenGeometryChanged, this, &WallpaperSettings::onGeometryChanged);
-    connect(d->screenService, &ScreenService::screenChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
-    connect(d->screenService, &ScreenService::displayModeChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
+    CanvasCoreSubscribe(signal_ScreenProxy_ScreenChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
+    CanvasCoreSubscribe(signal_ScreenProxy_DisplayModeChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
+    CanvasCoreSubscribe(signal_ScreenProxy_ScreenGeometryChanged, this, &WallpaperSettings::onGeometryChanged);
 }
 

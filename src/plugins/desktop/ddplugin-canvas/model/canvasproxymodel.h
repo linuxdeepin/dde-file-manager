@@ -30,7 +30,7 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
-class ModelExtendInterface;
+class ModelHookInterface;
 class CanvasProxyModelPrivate;
 class CanvasProxyModel : public QAbstractProxyModel
 {
@@ -52,8 +52,8 @@ public:
     int sortRole() const;
     void setSortRole(int role, Qt::SortOrder order = Qt::AscendingOrder);
 
-    void setModelExtend(ModelExtendInterface *);
-    ModelExtendInterface *modelExtend() const;
+    void setModelHook(ModelHookInterface *);
+    ModelHookInterface *modelHook() const;
 public:
     void setSourceModel(QAbstractItemModel *sourceModel) override;
     Q_INVOKABLE virtual QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;

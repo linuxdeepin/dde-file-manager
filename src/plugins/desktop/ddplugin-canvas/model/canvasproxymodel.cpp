@@ -59,7 +59,7 @@ void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
         auto url = srcModel->fileUrl(srcModel->index(i));
-        if (extend && extend->dataInserted(url)) {
+        if (hookIfs && hookIfs->dataInserted(url)) {
             qDebug() << "filter by extend module:" << url;
             continue;
         }
@@ -94,7 +94,7 @@ void CanvasProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sour
     QList<QUrl> files;
     for (int i = start; i <= end; ++i) {
         auto url = srcModel->fileUrl(srcModel->index(i));
-        if (extend && extend->dataRemoved(url)) {
+        if (hookIfs && hookIfs->dataRemoved(url)) {
             qWarning() << "invalid module: dataRemoved returns true.";
         }
 
@@ -124,8 +124,8 @@ void CanvasProxyModelPrivate::sourceRowsAboutToBeRemoved(const QModelIndex &sour
 void CanvasProxyModelPrivate::sourceDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
     bool ignore = false;
-    if (extend) {
-        if (ignore = extend->dataRenamed(oldUrl, newUrl))
+    if (hookIfs) {
+        if (ignore = hookIfs->dataRenamed(oldUrl, newUrl))
             qDebug() << "dataRenamed: ignore target" << newUrl << "old:" << oldUrl;
     }
 
@@ -330,7 +330,7 @@ void CanvasProxyModelPrivate::createMapping()
         return;
 
     auto urls = srcModel->files();
-    if (extend && extend->dataRested(&urls)) {
+    if (hookIfs && hookIfs->dataRested(&urls)) {
         qWarning() << "invalid module: dataRested returns true.";
     }
 
@@ -374,7 +374,7 @@ bool CanvasProxyModelPrivate::doSort(QList<QUrl> &files) const
     if (files.isEmpty())
         return true;
 
-    if (extend && extend->sortData(fileSortRole, fileSortOrder, &files)) {
+    if (hookIfs && hookIfs->sortData(fileSortRole, fileSortOrder, &files)) {
         qDebug() << "using extend sort";
         return true;
     }
@@ -407,7 +407,7 @@ void CanvasProxyModelPrivate::sourceDataChanged(const QModelIndex &sourceTopleft
     // find items in this model
     for (int i = begin; i <= end; ++i) {
         auto url = srcModel->fileUrl(srcModel->index(i));
-        if (extend && extend->dataChanged(url)) {
+        if (hookIfs && hookIfs->dataChanged(url)) {
             qWarning() << "invalid module: dataChanged returns true.";
         }
 
@@ -506,14 +506,14 @@ void CanvasProxyModel::setSortRole(int role, Qt::SortOrder order)
     d->fileSortOrder = order;
 }
 
-void CanvasProxyModel::setModelExtend(ModelExtendInterface *ext)
+void CanvasProxyModel::setModelHook(ModelHookInterface *ext)
 {
-    d->extend = ext;
+    d->hookIfs = ext;
 }
 
-ModelExtendInterface *CanvasProxyModel::modelExtend() const
+ModelHookInterface *CanvasProxyModel::modelHook() const
 {
-    return d->extend;
+    return d->hookIfs;
 }
 
 void CanvasProxyModel::setSourceModel(QAbstractItemModel *model)
@@ -655,10 +655,10 @@ QVariant CanvasProxyModel::data(const QModelIndex &index, int itemRole) const
         return QVariant();
 
     // canvas extend
-    if (d->extend) {
+    if (d->hookIfs) {
         auto url = fileUrl(index);
         QVariant var;
-        if (d->extend->modelData(url, itemRole, &var))
+        if (d->hookIfs->modelData(url, itemRole, &var))
             return var;
     }
 
@@ -669,8 +669,8 @@ QStringList CanvasProxyModel::mimeTypes() const
 {
     auto list = QAbstractProxyModel::mimeTypes();
 
-    if (d->extend) {
-        d->extend->mimeTypes(&list);
+    if (d->hookIfs) {
+        d->hookIfs->mimeTypes(&list);
         qDebug() << "using extend mimeTypes." << list;
     }
 
@@ -685,7 +685,7 @@ QMimeData *CanvasProxyModel::mimeData(const QModelIndexList &indexes) const
     for (const QModelIndex &idx : indexes)
         urls << fileUrl(idx);
 
-    if (d->extend && d->extend->mimeData(urls, data)) {
+    if (d->hookIfs && d->hookIfs->mimeData(urls, data)) {
         qDebug() << "using extend mimeData.";
     } else {
         data->setUrls(urls);
@@ -724,7 +724,7 @@ bool CanvasProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action
         targetFileUrl = itemInfo->symLinkTarget();
     }
 
-    if (d->extend && d->extend->dropMimeData(data, targetFileUrl, action)) {
+    if (d->hookIfs && d->hookIfs->dropMimeData(data, targetFileUrl, action)) {
         qDebug() << "droped by extend module.";
         return true;
     }
@@ -827,7 +827,7 @@ bool CanvasProxyModel::fetch(const QUrl &url)
 
     auto info = d->srcModel->fileInfo(index);
     if (info) {
-        if (d->extend && d->extend->dataInserted(url)) {
+        if (d->hookIfs && d->hookIfs->dataInserted(url)) {
             qDebug() << "filter by extend module. can not add" << url;
             return false;
         }
@@ -857,7 +857,7 @@ bool CanvasProxyModel::take(const QUrl &url)
     if (!d->fileMap.contains(url))
         return true;
 
-    if (d->extend && d->extend->dataRemoved(url)) {
+    if (d->hookIfs && d->hookIfs->dataRemoved(url)) {
         qWarning() << "invalid module: dataRemoved returns true.";
     }
 

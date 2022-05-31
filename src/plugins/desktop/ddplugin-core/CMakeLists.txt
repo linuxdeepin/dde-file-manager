@@ -7,7 +7,13 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(EXT_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.h
     ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/widgetutil.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../desktoputils/ddpugin_eventinterface_helper.h
     )
+
+FILE(GLOB_RECURSE SCREEN_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/screen/*.cpp"
+)
 
 set(CORE_FILES
     frame/basewindow.h
@@ -24,6 +30,7 @@ set(CORE_FILES
 add_library(${PROJECT_NAME}
     SHARED
     ${CORE_FILES}
+    ${SCREEN_FILES}
     ${EXT_FILES}
 )
 
@@ -31,7 +38,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    DFMSERVICE::desktop
     )
 
 #install library file

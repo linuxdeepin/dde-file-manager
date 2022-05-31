@@ -21,16 +21,14 @@
 #include "wallaperpreview.h"
 
 #include "desktoputils/widgetutil.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
 
 DFMBASE_USE_NAMESPACE
 DDP_WALLPAERSETTING_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 
-WallaperPreview::WallaperPreview(ScreenService *service, QObject *parent)
+WallaperPreview::WallaperPreview(QObject *parent)
     : QObject(parent)
-    , screenService(service)
 {
-    Q_ASSERT(service);
     qInfo() << "create com.deepin.wm";
     wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm",
                           QDBusConnection::sessionBus(), this);
@@ -60,7 +58,7 @@ void WallaperPreview::setVisible(bool v)
 void WallaperPreview::pullImageSettings()
 {
     wallpapers.clear();
-    for (ScreenPointer sc : screenService->logicScreens()) {
+    for (ScreenPointer sc : ddplugin_desktop_util::screenProxyLogicScreens()) {
         QString path = getBackgroundFromWm(sc->name());
         wallpapers.insert(sc->name(), path);
     }
@@ -98,14 +96,15 @@ void WallaperPreview::setWallpaper(const QString &screen, const QString &image)
 
 void WallaperPreview::buildWidgets()
 {
-    DisplayMode mode = screenService->lastChangedMode();
-    qInfo() << "screen mode:" << mode << "screen count:" << screenService->screens().size();
+    DisplayMode mode = ddplugin_desktop_util::screenProxyLastChangedMode();
+    auto screens = ddplugin_desktop_util::screenProxyLogicScreens();
+    qInfo() << "screen mode:" << mode << "screen count:" << screens.size();
 
     // 实际是单屏
-    if ((DisplayMode::Showonly == mode) || (DisplayMode::Duplicate == mode) // 仅显示和复制
-            || (screenService->screens().count() == 1)) {  // 单屏模式
+    if ((DisplayMode::kShowonly == mode) || (DisplayMode::kDuplicate == mode) // 仅显示和复制
+            || (screens.count() == 1)) {  // 单屏模式
 
-        ScreenPointer primary = screenService->primaryScreen();
+        ScreenPointer primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (primary == nullptr) {
             qCritical() << "get primary screen failed return";
             previewWidgets.clear();
@@ -123,16 +122,15 @@ void WallaperPreview::buildWidgets()
 
         previewWidgets.insert(primary->name(), wid);
     } else { //多屏
-        auto screes = screenService->logicScreens();
         for (auto screenName : previewWidgets.keys()) {
             // 删除实际不存在的数据
-            if (!screenService->screen(screenName)) {
+            if (!ddplugin_desktop_util::screenProxyScreen(screenName)) {
                 qInfo() << "screen:" << screenName << "  invalid, delete it.";
                 previewWidgets.remove(screenName);
             }
         }
 
-        for (ScreenPointer s : screes) {
+        for (ScreenPointer s : screens) {
             PreviewWidgetPtr wid = previewWidgets.value(s->name());
             if (!wid.isNull()) {
                 if (wid->geometry() != s->geometry())
@@ -149,7 +147,7 @@ void WallaperPreview::buildWidgets()
 
 void WallaperPreview::updateGeometry()
 {
-    for (ScreenPointer sp : screenService->screens()) {
+    for (ScreenPointer sp : ddplugin_desktop_util::screenProxyScreens()) {
         PreviewWidgetPtr wid = previewWidgets.value(sp->name());
         qDebug() << "screen geometry change:" << sp.get() << wid.get();
         if (wid.get() != nullptr) {

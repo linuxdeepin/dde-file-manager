@@ -24,8 +24,7 @@
 #include "ddplugin_wallpapersetting_global.h"
 #include "ddplugin-background/backgrounddefault.h"
 
-#include <services/desktop/screen/screenservice.h>
-
+#include "interfaces/screen/abstractscreen.h"
 #include <com_deepin_wm.h>
 
 #include <QObject>
@@ -47,7 +46,7 @@ class WallaperPreview : public QObject
 {
     Q_OBJECT
 public:
-    explicit WallaperPreview(DSB_D_NAMESPACE::ScreenService *service, QObject *parent = nullptr);
+    explicit WallaperPreview(QObject *parent = nullptr);
     ~WallaperPreview();
     void init();
     void setVisible(bool visible);
@@ -73,7 +72,6 @@ protected:
     QString getBackgroundFromWm(const QString &screen);
 private:
     bool visible = false;
-    DSB_D_NAMESPACE::ScreenService *screenService = nullptr;
     WMInter *wmInter = nullptr;
     QMap<QString, QString> wallpapers;
     QMap<QString, PreviewWidgetPtr> previewWidgets;

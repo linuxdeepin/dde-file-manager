@@ -7,7 +7,6 @@ include_directories(
     )
 
 add_subdirectory(ddplugin-core)
-add_subdirectory(ddplugin-screen)
 add_subdirectory(ddplugin-background)
 add_subdirectory(ddplugin-canvas)
 add_subdirectory(ddplugin-wallpapersetting)

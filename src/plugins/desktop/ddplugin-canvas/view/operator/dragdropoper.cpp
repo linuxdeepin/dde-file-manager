@@ -84,7 +84,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
     auto pos = event->pos();
     auto hoverIndex = view->indexAt(pos);
     // extend
-    if (hoverIndex.isValid() && view->d->extend) {
+    if (hoverIndex.isValid() && view->d->hookIfs) {
         QUrl hoverUrl = view->model()->fileUrl(hoverIndex);
         Qt::DropAction dropAction = Qt::IgnoreAction;
 
@@ -92,7 +92,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
         ext.insert("hoverUrl", QVariant(hoverUrl));
         ext.insert("dropAction", qlonglong(&dropAction));
 
-        if (view->d->extend->dragMove(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
+        if (view->d->hookIfs->dragMove(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
             if (dropAction != Qt::IgnoreAction) {
                 event->setDropAction(dropAction);
                 event->accept();
@@ -131,7 +131,7 @@ bool DragDropOper::drop(QDropEvent *event)
     updatePrepareDodgeValue(event);
 
     // extend
-    if (view->d->extend) {
+    if (view->d->hookIfs) {
         QVariantHash ext;
         ext.insert("QDropEvent", (qlonglong)event);
         QUrl dropUrl;
@@ -141,7 +141,7 @@ bool DragDropOper::drop(QDropEvent *event)
         }
         ext.insert("dropUrl", QVariant(dropUrl));
 
-        if (view->d->extend->dropData(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
+        if (view->d->hookIfs->dropData(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
             qDebug() << "droped by extend";
             return true;
         }

@@ -24,25 +24,27 @@
 #include "ddplugin_canvas_global.h"
 
 #include <QObject>
+#include <QRect>
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasManager;
-class CanvasViewBrokerPrivate;
+class CanvasView;
 class CanvasViewBroker : public QObject
 {
     Q_OBJECT
-    friend class CanvasViewBrokerPrivate;
 public:
     explicit CanvasViewBroker(CanvasManager *, QObject *parent = nullptr);
+    ~CanvasViewBroker();
     bool init();
+    QSharedPointer<CanvasView> getView(int idx);
 public slots:
-    void visualRect(int idx, const QUrl &url, QRect *rect);
+    QRect visualRect(int idx, const QUrl &url);
     void refresh(int idx);
     void update(int idx);
     void select(const QList<QUrl> &urls);
-    void selectedUrls(int idx, QList<QUrl> *urls);
+    QList<QUrl> selectedUrls(int idx);
 private:
-    CanvasViewBrokerPrivate *d;
+    CanvasManager *manager = nullptr;
 };
 
 DDP_CANVAS_END_NAMESPACE

@@ -20,9 +20,10 @@
  */
 
 #include "backgrounddefault.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#include <services/desktop/dd_service_global.h>
-#include <interfaces/screen/abstractscreen.h>
+#include "dfm-base/dfm_desktop_defines.h"
+#include "interfaces/screen/abstractscreen.h"
 
 #include <QPaintEvent>
 #include <QBackingStore>
@@ -34,17 +35,17 @@
 #include <qpa/qplatformscreen.h>
 #include <qpa/qplatformbackingstore.h>
 
+DFMBASE_USE_NAMESPACE
 DDP_BACKGROUND_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 
-static QString getScreenName(QWidget *win)
+inline QString getScreenName(QWidget *win)
 {
-    return win->property(FrameProperty::kPropScreenName).toString();
+    return win->property(DesktopFrameProperty::kPropScreenName).toString();
 }
 
-static QMap<QString, QWidget *> rootMap(FrameService *srv)
+static QMap<QString, QWidget *> rootMap()
 {
-    QList<QWidget *> root = srv->rootWindows();
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
     QMap<QString, QWidget *> ret;
     for (QWidget *win : root) {
         QString name = getScreenName(win);
@@ -59,16 +60,6 @@ static QMap<QString, QWidget *> rootMap(FrameService *srv)
 BackgroundDefault::BackgroundDefault(const QString &screenName, QWidget *parent)
     : DFMBASE_NAMESPACE::AbstractBackground (screenName, parent)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    frameService = ctx.service<FrameService>(FrameService::name());
-
-    Q_ASSERT_X(frameService, "Error", "get frame service failed.");
-
-    connect(frameService, &FrameService::destroyed, this, [this]() {
-        frameService = nullptr;
-        qWarning() << "frame service destroyed.";
-    }, Qt::UniqueConnection);
-
     setAttribute(Qt::WA_TranslucentBackground,true);
 }
 
@@ -121,14 +112,14 @@ void BackgroundDefault::updateDisplay()
         QPixmap defaultImage;
         QPixmap backgroundPixmap = getPixmap(filePath, defaultImage);
 
-        auto winMap = rootMap(frameService);
+        auto winMap = rootMap();
         auto *win = winMap.value(screen);
         if (win == nullptr) {
             qCritical() << "can not get root " << screen;
             return;
         }
 
-        QSize trueSize = win->property(FrameProperty::kPropScreenHandleGeometry).toRect().size(); // 使用屏幕缩放前的分辨率
+        QSize trueSize = win->property(DesktopFrameProperty::kPropScreenHandleGeometry).toRect().size(); // 使用屏幕缩放前的分辨率
         if (backgroundPixmap.isNull()) {
             qCritical() << "screen " << screen << "backfround path" << filePath
                         << "can not read!";

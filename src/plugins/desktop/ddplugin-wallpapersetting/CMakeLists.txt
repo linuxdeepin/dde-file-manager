@@ -47,7 +47,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    DFMSERVICE::desktop
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
     ${DtkGui_LIBRARIES}

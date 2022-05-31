@@ -23,40 +23,29 @@
 
 #include "ddplugin_wallpapersetting_global.h"
 
-#include <services/desktop/event/eventprovider.h>
-
 #include <dfm-framework/dpf.h>
 
 DDP_WALLPAERSETTING_BEGIN_NAMESPACE
 
-inline constexpr char kEventWallpaperSetting[] = "WallpaperSetting";
-inline constexpr char kEventScreenSaverSetting[] = "ScreenSaverSetting";
-inline constexpr char kEventWallpaperChanged[] = "WallpaperChanged";
-
 class WallpaperSettings;
-class EventHandle : public QObject, public DSB_D_NAMESPACE::EventProvider
+class EventHandle : public QObject
 {
     Q_OBJECT
 public:
     explicit EventHandle(QObject *parent = nullptr);
-    QVariantHash query(int type) const override;
+    ~EventHandle();
+    bool init();
 public slots:
     bool wallpaperSetting(QString name);
     bool screenSaverSetting(QString name);
     void onQuit();
-    void pluginStarted();
 
+    bool hookCanvasRequest(const QString &screen);
 protected:
     void onChanged();
     void show(QString name, int mode);
-
-private:
-    bool followEvent(DSB_D_NAMESPACE::EventProvider *);
-
 private:
     WallpaperSettings *wallpaperSettings = nullptr;
-    QVariantHash eSignals;
-    QVariantHash eSlots;
 };
 
 class WlSetPlugin : public dpf::Plugin
@@ -70,6 +59,12 @@ public:
 
 private:
     EventHandle *handle = nullptr;
+private:
+    DPF_EVENT_NAMESPACE(DDP_WALLPAERSETTING_NAMESPACE)
+    DPF_EVENT_REG_SIGNAL(signal_WallpaperSettings_WallpaperChanged)
+
+    DPF_EVENT_REG_SLOT(slot_WallpaperSettings_WallpaperSetting)
+    DPF_EVENT_REG_SLOT(slot_WallpaperSettings_ScreenSaverSetting)
 };
 
 DDP_WALLPAERSETTING_END_NAMESPACE

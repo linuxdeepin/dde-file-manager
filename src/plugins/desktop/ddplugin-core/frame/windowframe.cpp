@@ -21,14 +21,18 @@
 #include "windowframe_p.h"
 
 #include "desktoputils/widgetutil.h"
-
-#include <services/desktop/frame/frameservice.h>
+#include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include <QWindow>
 
 DDPCORE_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+#define CanvasCoreSubscribe(topic, func) \
+    dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
+
+#define CanvasCoreUnsubscribe(topic, func) \
+    dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
 WindowFramePrivate::WindowFramePrivate(WindowFrame *parent)
     : QObject(parent)
@@ -40,13 +44,13 @@ WindowFramePrivate::WindowFramePrivate(WindowFrame *parent)
 void WindowFramePrivate::updateProperty(BaseWindowPointer win, ScreenPointer screen, bool primary)
 {
     if (win && screen) {
-        win->setProperty(FrameProperty::kPropScreenName, screen->name());
-        win->setProperty(FrameProperty::kPropIsPrimary, primary);
-        win->setProperty(FrameProperty::kPropScreenGeometry, screen->geometry());
-        win->setProperty(FrameProperty::kPropScreenAvailableGeometry, screen->availableGeometry());
-        win->setProperty(FrameProperty::kPropScreenHandleGeometry, screen->handleGeometry());
-        win->setProperty(FrameProperty::kPropWidgetName, "root");
-        win->setProperty(FrameProperty::kPropWidgetLevel, "0.0");
+        win->setProperty(DesktopFrameProperty::kPropScreenName, screen->name());
+        win->setProperty(DesktopFrameProperty::kPropIsPrimary, primary);
+        win->setProperty(DesktopFrameProperty::kPropScreenGeometry, screen->geometry());
+        win->setProperty(DesktopFrameProperty::kPropScreenAvailableGeometry, screen->availableGeometry());
+        win->setProperty(DesktopFrameProperty::kPropScreenHandleGeometry, screen->handleGeometry());
+        win->setProperty(DesktopFrameProperty::kPropWidgetName, "root");
+        win->setProperty(DesktopFrameProperty::kPropWidgetLevel, "0.0");
     }
 }
 
@@ -71,18 +75,20 @@ WindowFrame::WindowFrame(QObject *parent)
 
 }
 
+WindowFrame::~WindowFrame()
+{
+    CanvasCoreUnsubscribe(signal_ScreenProxy_ScreenChanged, &WindowFrame::buildBaseWindow);
+    CanvasCoreUnsubscribe(signal_ScreenProxy_DisplayModeChanged, &WindowFrame::buildBaseWindow);
+    CanvasCoreUnsubscribe(signal_ScreenProxy_ScreenGeometryChanged, &WindowFrame::onGeometryChanged);
+    CanvasCoreUnsubscribe(signal_ScreenProxy_ScreenAvailableGeometryChanged, &WindowFrame::onAvailableGeometryChanged);
+}
+
 bool WindowFrame::init()
 {
-    // get the screen service
-    auto &ctx = dpfInstance.serviceContext();
-    ScreenService *screenService = ctx.service<ScreenService>(ScreenService::name());
-    Q_ASSERT_X(screenService, "WindowFrame", "ScreenService not found.");
-    d->screen = screenService;
-
-    connect(screenService, &ScreenService::screenChanged, this, &WindowFrame::buildBaseWindow, Qt::DirectConnection);
-    connect(screenService, &ScreenService::displayModeChanged, this, &WindowFrame::buildBaseWindow, Qt::DirectConnection);
-    connect(screenService, &ScreenService::screenGeometryChanged, this, &WindowFrame::onGeometryChanged, Qt::DirectConnection);
-    connect(screenService, &ScreenService::screenAvailableGeometryChanged, this, &WindowFrame::onAvailableGeometryChanged, Qt::DirectConnection);
+    CanvasCoreSubscribe(signal_ScreenProxy_ScreenChanged, &WindowFrame::buildBaseWindow);
+    CanvasCoreSubscribe(signal_ScreenProxy_DisplayModeChanged, &WindowFrame::buildBaseWindow);
+    CanvasCoreSubscribe(signal_ScreenProxy_ScreenGeometryChanged, &WindowFrame::onGeometryChanged);
+    CanvasCoreSubscribe(signal_ScreenProxy_ScreenAvailableGeometryChanged, &WindowFrame::onAvailableGeometryChanged);
 
     return true;
 }
@@ -91,7 +97,7 @@ QList<QWidget *> WindowFrame::rootWindows() const
 {
     QList<QWidget *> ret;
     QReadLocker lk(&d->locker);
-    for (ScreenPointer s : d->screen->logicScreens()) {
+    for (ScreenPointer s : ddplugin_desktop_util::screenProxyLogicScreens()) {
         if (auto win = d->windows.value(s->name()))
             ret << win.get();
     }
@@ -107,10 +113,10 @@ void WindowFrame::layoutChildren()
         // find subwidgets
         for (QObject *obj : root->children()) {
             if (QWidget *wid = qobject_cast<QWidget *>(obj)) {
-                auto var = wid->property(FrameProperty::kPropWidgetLevel);
+                auto var = wid->property(DesktopFrameProperty::kPropWidgetLevel);
                 if (var.isValid()) {
                     subWidgets.append(wid);
-                    qDebug() << screen << "subwidget" << wid->property(FrameProperty::kPropWidgetName).toString() << "level" << var.toDouble();
+                    qDebug() << screen << "subwidget" << wid->property(DesktopFrameProperty::kPropWidgetName).toString() << "level" << var.toDouble();
                 } else {
                     qWarning() << screen << "subwidget" << wid << "no WidgetLevel property ";
                 }
@@ -119,8 +125,8 @@ void WindowFrame::layoutChildren()
 
         // sort by level
         std::sort(subWidgets.begin(), subWidgets.end(), [](const QWidget *before, const QWidget *after)->bool {
-            QVariant var1 = before->property(FrameProperty::kPropWidgetLevel);
-            QVariant var2 = after->property(FrameProperty::kPropWidgetLevel);
+            QVariant var1 = before->property(DesktopFrameProperty::kPropWidgetLevel);
+            QVariant var2 = after->property(DesktopFrameProperty::kPropWidgetLevel);
             return var1.toDouble() < var2.toDouble();
         });
 
@@ -135,23 +141,19 @@ void WindowFrame::layoutChildren()
 
 void WindowFrame::buildBaseWindow()
 {
-    if (!d->screen) {
-        qWarning() << "no screen service, give up build.";
-        return;
-    }
-
     // tell other module that the base windows will be rebuild.
     emit windowAboutToBeBuilded();
 
-    DisplayMode mode = d->screen->lastChangedMode();
-    qInfo() << "screen mode:" << mode << "screen count:" << d->screen->screens().size();
+    DisplayMode mode = ddplugin_desktop_util::screenProxyLastChangedMode();
+    auto screens = ddplugin_desktop_util::screenProxyLogicScreens();
+    qInfo() << "screen mode:" << mode << "screen count:" << screens.size();
 
     QWriteLocker lk(&d->locker);
     // 实际是单屏
-    if ((DisplayMode::Showonly == mode) || (DisplayMode::Duplicate == mode) // 仅显示和复制
-            || (d->screen->screens().count() == 1)) {  // 单屏模式
+    if ((DisplayMode::kShowonly == mode) || (DisplayMode::kDuplicate == mode) // 仅显示和复制
+            || (screens.count() == 1)) {  // 单屏模式
 
-        ScreenPointer primary = d->screen->primaryScreen();
+        ScreenPointer primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
         if (primary == nullptr) {
             qCritical() << "get primary screen failed return";
             //清空并通知重建
@@ -174,16 +176,15 @@ void WindowFrame::buildBaseWindow()
         d->windows.insert(primary->name(), winPtr);
     } else {
         //多屏
-        auto screes = d->screen->logicScreens();
         for (auto screenName : d->windows.keys()) {
             // 删除实际不存在的数据
-            if (!d->screen->screen(screenName)) {
+            if (!ddplugin_desktop_util::screenProxyScreen(screenName)) {
                 qInfo() << "screen:" << screenName << "  invalid, delete it.";
                 d->windows.remove(screenName);
             }
         }
-        auto primary = d->screen->primaryScreen();
-        for (ScreenPointer s : screes) {
+        auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
+        for (ScreenPointer s : screens) {
             BaseWindowPointer winPtr = d->windows.value(s->name());
             if (!winPtr.isNull()) {
                 if (winPtr->geometry() != s->geometry())
@@ -213,14 +214,9 @@ void WindowFrame::buildBaseWindow()
 
 void WindowFrame::onGeometryChanged()
 {
-    if (!d->screen) {
-        qWarning() << "no screen service";
-        return;
-    }
-
     bool changed = false;
-    auto primary = d->screen->primaryScreen();
-    for (ScreenPointer sp : d->screen->logicScreens()) {
+    auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
+    for (ScreenPointer sp : ddplugin_desktop_util::screenProxyLogicScreens()) {
         auto win = d->windows.value(sp->name());
         qDebug() << "screen geometry change:" << sp.get() << win.get();
         if (win.get() != nullptr) {
@@ -242,12 +238,12 @@ void WindowFrame::onGeometryChanged()
 void WindowFrame::onAvailableGeometryChanged()
 {
     bool changed = false;
-    auto primary = d->screen->primaryScreen();
-    for (ScreenPointer sp : d->screen->logicScreens()) {
+    auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
+    for (ScreenPointer sp : ddplugin_desktop_util::screenProxyLogicScreens()) {
         auto win = d->windows.value(sp->name());
         qDebug() << "screen available geometry change:" << sp.get() << win.get();
         if (win.get() != nullptr) {
-            if (win->property(FrameProperty::kPropScreenAvailableGeometry).toRect() == sp->availableGeometry())
+            if (win->property(DesktopFrameProperty::kPropScreenAvailableGeometry).toRect() == sp->availableGeometry())
                 continue;
             d->updateProperty(win, sp, (sp == primary));
             changed = true;

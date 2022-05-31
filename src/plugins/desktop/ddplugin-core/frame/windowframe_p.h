@@ -24,7 +24,10 @@
 #include "windowframe.h"
 #include "basewindow.h"
 
-#include <services/desktop/screen/screenservice.h>
+#include "interfaces/screen/abstractscreen.h"
+
+#include <QMap>
+#include <QReadWriteLock>
 
 DDPCORE_BEGIN_NAMESPACE
 
@@ -37,7 +40,6 @@ public:
     BaseWindowPointer createWindow(DFMBASE_NAMESPACE::ScreenPointer sp);
 public slots:
 public:
-    DSB_D_NAMESPACE::ScreenService *screen = nullptr;
     QMap<QString, BaseWindowPointer> windows;
     QReadWriteLock locker;
 private:

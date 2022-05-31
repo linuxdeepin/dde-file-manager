@@ -23,12 +23,10 @@
 #include "utils/fileutil.h"
 
 #include <services/common/menu/menuservice.h>
-#include <services/desktop/canvas/canvasservice.h>
 
 #include <dfm-base/utils/clipboard.h>
 
 DSC_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -38,27 +36,6 @@ void CanvasPlugin::initialize()
 
 bool CanvasPlugin::start()
 {
-    auto &ctx = dpfInstance.serviceContext();
-
-    // start service.
-    {
-        QString error;
-        bool ret = ctx.load(CanvasService::name(), &error);
-        Q_ASSERT_X(ret, "CanvasPlugin", error.toStdString().c_str());
-
-        MenuService::service();
-    }
-
-    auto service = ctx.service<CanvasService>(CanvasService::name());
-    Q_ASSERT_X(service, "CanvasPlugin", "CanvasService not found");
-
-    // moitor the changes of event
-#ifdef QT_DEBUG
-    connect(service, &CanvasService::sigEventChanged, service, [](int eventType, const QStringList &event) {
-       qDebug() << "CanvasService events :" << eventType << event;
-    });
-#endif
-
     // initialize file creator
     DesktopFileCreator::instance();
 
@@ -72,7 +49,5 @@ bool CanvasPlugin::start()
 
 dpf::Plugin::ShutdownFlag CanvasPlugin::stop()
 {
-    delete proxy;
-    proxy = nullptr;
     return kSync;
 }

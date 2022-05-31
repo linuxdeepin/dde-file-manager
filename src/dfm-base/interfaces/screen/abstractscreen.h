@@ -42,6 +42,9 @@ signals:
     void geometryChanged(const QRect &);
     void availableGeometryChanged(const QRect &);
 };
+
+typedef QSharedPointer<AbstractScreen> ScreenPointer;
+
 DFMBASE_END_NAMESPACE
 
 #endif // ABSTRACTSCREEN_H

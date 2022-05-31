@@ -23,8 +23,6 @@
 
 #include "backgroundmanager.h"
 
-#include <services/desktop/frame/frameservice.h>
-
 #include <com_deepin_wm.h>
 
 #include <DWindowManagerHelper>
@@ -56,7 +54,6 @@ public:
     WMInter *wmInter = nullptr;
     QGSettings *gsettings = nullptr;
     Dtk::Gui::DWindowManagerHelper* windowManagerHelper = nullptr;
-    DSB_D_NAMESPACE::FrameService *frameService = nullptr;
     QMap<QString, DFMBASE_NAMESPACE::BackgroundWidgetPointer> backgroundWidgets;
     QMap<QString, QString> backgroundPaths;
     int currentWorkspaceIndex = 1;

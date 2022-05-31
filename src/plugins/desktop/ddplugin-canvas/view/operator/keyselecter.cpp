@@ -87,7 +87,7 @@ void KeySelecter::keyboardSearch(const QString &search)
     if (search.isEmpty())
         return;
 
-    if (view->d->extend && view->d->extend->keyboardSearch(view->screenNum(), search))
+    if (view->d->hookIfs && view->d->hookIfs->keyboardSearch(view->screenNum(), search))
         return;
 
     bool reverseOrder = isShiftPressed();

@@ -78,7 +78,7 @@ bool CanvasViewMenuProxy::disableMenu()
 void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, const QPoint gridPos)
 {
     // extend menu
-    if (view->d->extend && view->d->extend->contextMenu(view->screenNum(), view->model()->rootUrl(), QList<QUrl>(), QCursor::pos()))
+    if (view->d->hookIfs && view->d->hookIfs->contextMenu(view->screenNum(), view->model()->rootUrl(), QList<QUrl>(), QCursor::pos()))
         return;
 
     // TODO(lee) 这里的Q_UNUSED参数后续随着业务接入会进行优化
@@ -121,7 +121,7 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
         // first is focus
         selectUrls.removeAll(tgUrl);
         selectUrls.prepend(tgUrl);
-        if (view->d->extend && view->d->extend->contextMenu(view->screenNum(), view->model()->rootUrl(), selectUrls, QCursor::pos()))
+        if (view->d->hookIfs && view->d->hookIfs->contextMenu(view->screenNum(), view->model()->rootUrl(), selectUrls, QCursor::pos()))
             return;
     }
 

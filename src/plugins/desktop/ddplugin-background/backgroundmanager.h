@@ -23,8 +23,7 @@
 
 #include "ddplugin_background_global.h"
 
-#include <services/desktop/frame/frameservice.h>
-#include <interfaces/background/abstractbackground.h>
+#include "interfaces/background/abstractbackground.h"
 
 #include <QObject>
 

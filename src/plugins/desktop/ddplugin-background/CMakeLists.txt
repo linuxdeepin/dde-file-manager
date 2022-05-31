@@ -5,7 +5,7 @@ project(ddplugin-background)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-FILE(GLOB_RECURSE SCREEN_FILES
+FILE(GLOB_RECURSE SRC_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
@@ -13,7 +13,7 @@ FILE(GLOB_RECURSE SCREEN_FILES
 
 add_library(${PROJECT_NAME}
     SHARED
-    ${SCREEN_FILES}
+    ${SRC_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
@@ -30,7 +30,6 @@ target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
     DFMSERVICE::common
-    DFMSERVICE::desktop
     ${DFrameworkDBus_LIBRARIES}
 )
 

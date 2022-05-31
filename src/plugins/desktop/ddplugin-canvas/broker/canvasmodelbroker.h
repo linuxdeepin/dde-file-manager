@@ -24,38 +24,40 @@
 #include "ddplugin_canvas_global.h"
 
 #include <QObject>
+#include <QUrl>
+#include <QModelIndex>
+#include <QVariant>
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasProxyModel;
-class CanvasModelBrokerPrivate;
 class CanvasModelBroker : public QObject
 {
     Q_OBJECT
-    friend class CanvasModelBrokerPrivate;
 public:
     explicit CanvasModelBroker(CanvasProxyModel *model, QObject *parent = nullptr);
+    ~CanvasModelBroker();
     bool init();
 public slots:
     // model interfaces
-    void rootUrl(QUrl *url);
-    void urlIndex(const QUrl &url, QModelIndex *idx);
-    void index(int row, QModelIndex *idx);
-    void fileUrl(const QModelIndex &index, QUrl *url);
-    void files(QList<QUrl> *urls);
-    void showHiddenFiles(bool *show);
+    QUrl rootUrl();
+    QModelIndex urlIndex(const QUrl &url);
+    QModelIndex index(int row);
+    QUrl fileUrl(const QModelIndex &index);
+    QList<QUrl> files();
+    bool showHiddenFiles();
     void setShowHiddenFiles(bool show);
-    void sortOrder(int *order);
+    int sortOrder();
     void setSortOrder(int order);
-    void sortRole(int *role);
+    int sortRole();
     void setSortRole(int role, int order);
-    void rowCount(int *count);
-    void data(const QUrl &url, int itemRole, QVariant *out);
+    int rowCount();
+    QVariant data(const QUrl &url, int itemRole);
     void sort();
     void refresh(bool global, int ms);
-    void fetch(const QUrl &url, bool *ret);
-    void take(const QUrl &url, bool *ret);
+    bool fetch(const QUrl &url);
+    bool take(const QUrl &url);
 private:
-    CanvasModelBrokerPrivate *d;
+    CanvasProxyModel *model = nullptr;
 };
 
 DDP_CANVAS_END_NAMESPACE

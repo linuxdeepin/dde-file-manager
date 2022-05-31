@@ -25,8 +25,7 @@
 
 #include "ddplugin_background_global.h"
 
-#include <services/desktop/frame/frameservice.h>
-#include <interfaces/background/abstractbackground.h>
+#include "interfaces/background/abstractbackground.h"
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
 
@@ -43,8 +42,6 @@ protected:
     QPixmap getPixmap(const QString &path, const QPixmap &defalutPixmap);
 
 private:
-    DSB_D_NAMESPACE::FrameService *frameService = nullptr;
-
     QPixmap pixmap;
     QPixmap noScalePixmap;
 };

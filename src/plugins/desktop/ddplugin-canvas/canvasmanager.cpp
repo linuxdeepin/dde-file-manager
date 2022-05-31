@@ -25,18 +25,24 @@
 #include "grid/canvasgrid.h"
 #include "displayconfig.h"
 #include "view/operator/fileoperatorproxy.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#include <services/desktop/event/private/eventhelperfunc.h>
+#include "dfm-base/dfm_desktop_defines.h"
+#include "base/schemefactory.h"
+#include "base/application/application.h"
 
-#include <dfm-framework/framework.h>
-#include <base/schemefactory.h>
-#include <base/application/application.h>
+#include "dfm-framework/framework.h"
 
 #include <QCoreApplication>
 
 DFMBASE_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
+
+#define CanvasCoreSubscribe(topic, func) \
+    dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
+
+#define CanvasCoreUnsubscribe(topic, func) \
+    dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
 class CanvasManagerGlobal : public CanvasManager
 {
@@ -49,6 +55,14 @@ CanvasManager::CanvasManager(QObject *parent)
     Q_ASSERT(thread() == qApp->thread());
 }
 
+CanvasManager::~CanvasManager()
+{
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &CanvasManager::onDetachWindows);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
+}
+
 CanvasManager *CanvasManager::instance()
 {
     return canvasManagerGlobal;
@@ -56,12 +70,12 @@ CanvasManager *CanvasManager::instance()
 
 static QString getScreenName(QWidget *win)
 {
-    return win->property(FrameProperty::kPropScreenName).toString();
+    return win->property(DesktopFrameProperty::kPropScreenName).toString();
 }
 
-static QMap<QString, QWidget *> rootMap(FrameService *srv)
+static QMap<QString, QWidget *> rootMap()
 {
-    QList<QWidget *> root = srv->rootWindows();
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
     QMap<QString, QWidget *> ret;
     for (QWidget *win : root) {
         QString name = getScreenName(win);
@@ -79,21 +93,13 @@ void CanvasManager::init()
     DispalyIns;
     GridIns;
 
-    auto &ctx = dpfInstance.serviceContext();
-    d->frameService = ctx.service<FrameService>(FrameService::name());
-    if (!d->frameService) {
-        qWarning() << "CanvasManager can not get FrameService.";
-        return;
-    }
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &CanvasManager::onDetachWindows);
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
+    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
+    CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
 
-    connect(d->frameService, &FrameService::geometryChanged, this, &CanvasManager::onGeometryChanged);
-    connect(d->frameService, &FrameService::availableGeometryChanged, this, &CanvasManager::onGeometryChanged);
-    connect(d->frameService, &FrameService::windowAboutToBeBuilded, this, &CanvasManager::onDetachWindows);
-    connect(d->frameService, &FrameService::windowBuilded, this, &CanvasManager::onCanvasBuild);
-
-    // self extend
-    d->extend = new CanvasManagerExtend(this);
-    d->extend->init();
+    // self hook
+    d->hookIfs = new CanvasManagerHook(this);
 
     // self borker
     d->broker = new CanvasManagerBroker(this, this);
@@ -159,7 +165,7 @@ void CanvasManager::setIconLevel(int level)
 
         DispalyIns->setIconLevel(level);
         // notify others that icon size changed
-        d->extend->iconSizeChanged(level);
+        d->hookIfs->iconSizeChanged(level);
     }
 }
 
@@ -185,12 +191,7 @@ QList<QSharedPointer<CanvasView>> CanvasManager::views() const
 
 void CanvasManager::onCanvasBuild()
 {
-    if (!d->frameService) {
-        qWarning() << "can not build canvas:no frame service.";
-        return;
-    }
-
-    QList<QWidget *> root = d->frameService->rootWindows();
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
     if (root.size() == 1) {
         QWidget *primary = root.first();
         if (primary == nullptr) {
@@ -247,7 +248,7 @@ void CanvasManager::onCanvasBuild()
 
         // 检查移除的窗口
         {
-            auto winMap = rootMap(d->frameService);
+            auto winMap = rootMap();
             for (const QString &sp : d->viewMap.keys()) {
                 if (!winMap.contains(sp))
                     d->viewMap.take(sp);
@@ -268,12 +269,7 @@ void CanvasManager::onDetachWindows()
 
 void CanvasManager::onGeometryChanged()
 {
-    if (!d->frameService) {
-        qWarning() << "can not build canvas:no frame service.";
-        return;
-    }
-
-    auto winMap = rootMap(d->frameService);
+    auto winMap = rootMap();
     for (auto itor = d->viewMap.begin(); itor != d->viewMap.end(); ++itor) {
         CanvasViewPointer view = itor.value();
         auto *win = winMap.value(itor.key());
@@ -283,8 +279,8 @@ void CanvasManager::onGeometryChanged()
         }
 
         // calc current geometry.
-        QRect avRect = d->relativeRect(win->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
-                                       win->property(FrameProperty::kPropScreenGeometry).toRect());
+        QRect avRect = d->relativeRect(win->property(DesktopFrameProperty::kPropScreenAvailableGeometry).toRect(),
+                                       win->property(DesktopFrameProperty::kPropScreenGeometry).toRect());
 
         // no need to update.
         if (view->geometry() == avRect) {
@@ -311,7 +307,7 @@ void CanvasManager::onWallperSetting(CanvasView *view)
     if (screen.isEmpty())
         return;
 
-    d->extend->requestWallpaperSetting(screen);
+    d->hookIfs->requestWallpaperSetting(screen);
 }
 
 void CanvasManager::reloadItem()
@@ -372,13 +368,11 @@ void CanvasManagerPrivate::initModel()
     connect(canvasModel, &CanvasProxyModel::layoutChanged, this, &CanvasManagerPrivate::onFileSorted, Qt::QueuedConnection);
     connect(canvasModel, &CanvasProxyModel::dataReplaced, this, &CanvasManagerPrivate::onFileRenamed, Qt::QueuedConnection);
 
-    // extend interface
-    modelExt = new CanvasModelExtend(q);
-    modelExt->init();
-    canvasModel->setModelExtend(modelExt);
+    // hook interface
+    modelHook = new CanvasModelHook(q);
+    canvasModel->setModelHook(modelHook);
 
-    viewExt = new CanvasViewExtend(q);
-    viewExt->init();
+    viewHook = new CanvasViewHook(q);
 
     // external interface
     sourceModelBroker = new FileInfoModelBroker(sourceModel, q);
@@ -412,16 +406,16 @@ CanvasViewPointer CanvasManagerPrivate::createView(QWidget *root, int index)
     view->setParent(root);
     view->setModel(canvasModel);
     view->setSelectionModel(selectionModel);
-    view->setViewExtend(viewExt);
+    view->setViewHook(viewHook);
     view->setAttribute(Qt::WA_NativeWindow, false);
     view->initUI();
 
     view->setScreenNum(index);
-    auto avRect = relativeRect(root->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
-                               root->property(FrameProperty::kPropScreenGeometry).toRect());
-    view->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
-    view->setProperty(FrameProperty::kPropWidgetName, "canvas");
-    view->setProperty(FrameProperty::kPropWidgetLevel, 10.0);
+    auto avRect = relativeRect(root->property(DesktopFrameProperty::kPropScreenAvailableGeometry).toRect(),
+                               root->property(DesktopFrameProperty::kPropScreenGeometry).toRect());
+    view->setProperty(DesktopFrameProperty::kPropScreenName, getScreenName(root));
+    view->setProperty(DesktopFrameProperty::kPropWidgetName, "canvas");
+    view->setProperty(DesktopFrameProperty::kPropWidgetLevel, 10.0);
     view->setGeometry(avRect);
     return view;
 }
@@ -435,9 +429,9 @@ void CanvasManagerPrivate::updateView(const CanvasViewPointer &view, QWidget *ro
     view->setScreenNum(index);
     view->setParent(root);
 
-    view->setProperty(FrameProperty::kPropScreenName, getScreenName(root));
-    auto avRect = relativeRect(root->property(FrameProperty::kPropScreenAvailableGeometry).toRect(),
-                               root->property(FrameProperty::kPropScreenGeometry).toRect());
+    view->setProperty(DesktopFrameProperty::kPropScreenName, getScreenName(root));
+    auto avRect = relativeRect(root->property(DesktopFrameProperty::kPropScreenAvailableGeometry).toRect(),
+                               root->property(DesktopFrameProperty::kPropScreenGeometry).toRect());
     view->setGeometry(avRect);
 }
 
@@ -447,7 +441,7 @@ void CanvasManagerPrivate::onHiddenFlagsChanged(bool show)
         canvasModel->setShowHiddenFiles(show);
         canvasModel->refresh(canvasModel->rootIndex());
 
-        extend->hiddenFlagChanged(!show);
+        hookIfs->hiddenFlagChanged(!show);
     }
 }
 

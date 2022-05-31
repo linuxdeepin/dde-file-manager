@@ -26,16 +26,14 @@
 #include "view/canvasview.h"
 #include "delegate/canvasitemdelegate.h"
 #include "model/fileinfomodel.h"
-#include "extend/canvasmanagerextend.h"
-#include "extend/canvasmodelextend.h"
-#include "extend/canvasviewextend.h"
+#include "hook/canvasmanagerhook.h"
+#include "hook/canvasmodelhook.h"
+#include "hook/canvasviewhook.h"
 #include "broker/canvasmanagerbroker.h"
 #include "broker/fileinfomodelbroker.h"
 #include "broker/canvasmodelbroker.h"
 #include "broker/canvasviewbroker.h"
 #include "broker/canvasgridbroker.h"
-
-#include <services/desktop/frame/frameservice.h>
 
 DDP_CANVAS_BEGIN_NAMESPACE
 
@@ -70,14 +68,13 @@ public slots:
 protected slots:
 
 public:
-    CanvasManagerExtend *extend = nullptr;
+    CanvasManagerHook *hookIfs = nullptr;
     CanvasManagerBroker *broker = nullptr;
     FileInfoModel *sourceModel = nullptr;
     CanvasProxyModel *canvasModel = nullptr;
-    CanvasModelExtend *modelExt = nullptr;
+    CanvasModelHook *modelHook = nullptr;
     CanvasSelectionModel *selectionModel = nullptr ;
-    DSB_D_NAMESPACE::FrameService *frameService = nullptr;
-    CanvasViewExtend *viewExt = nullptr;
+    CanvasViewHook *viewHook = nullptr;
     QMap<QString, CanvasViewPointer> viewMap;
 public:
     FileInfoModelBroker *sourceModelBroker = nullptr;

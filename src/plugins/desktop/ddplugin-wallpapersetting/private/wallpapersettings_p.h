@@ -27,8 +27,6 @@
 #include "wallaperpreview.h"
 #include "dbus/screensaver_interface.h"
 
-#include <services/desktop/screen/screenservice.h>
-
 #include <com_deepin_wm.h>
 #include <com_deepin_daemon_appearance.h>
 #include <com_deepin_sessionmanager.h>
@@ -49,7 +47,7 @@ using WMInter = com::deepin::wm;
 using AppearanceIfs = com::deepin::daemon::Appearance;
 using SessionIfs = com::deepin::SessionManager;
 using ScreenSaverIfs = com::deepin::ScreenSaver;
-DSB_D_USE_NAMESPACE
+
 class WallpaperSettingsPrivate : public QObject
 {
     Q_OBJECT
@@ -96,7 +94,6 @@ public:
     SessionIfs *sessionIfs = nullptr;
     ScreenSaverIfs *screenSaverIfs = nullptr;
     DRegionMonitor *regionMonitor = nullptr;
-    ScreenService *screenService = nullptr;
 public:
     DButtonBox *switchModeControl = nullptr;
     LoadingLabel *loadingLabel = nullptr;

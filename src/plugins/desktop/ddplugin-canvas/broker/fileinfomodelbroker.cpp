@@ -18,9 +18,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "fileinfomodelbroker_p.h"
 
+#include "fileinfomodelbroker.h"
 #include "model/fileinfomodel.h"
+
+#include <dfm-framework/dpf.h>
 
 Q_DECLARE_METATYPE(QUrl *)
 Q_DECLARE_METATYPE(QModelIndex *)
@@ -29,92 +31,86 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DDP_CANVAS_USE_NAMESPACE
 
-FileInfoModelBrokerPrivate::FileInfoModelBrokerPrivate(FileInfoModelBroker *qq)
-    : QObject(qq)
-    , CanvasEventProvider()
-    , q(qq)
-{
+#define FileInfoModelPublish(topic, args...) \
+            dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)
 
-}
+#define FileInfoModelSlot(topic, args...) \
+            dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
-void FileInfoModelBrokerPrivate::registerEvent()
-{
-    RegCanvasSlotsID(this, kSlotFileInfoModelRootUrl);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotFileInfoModelRootUrl), q, &FileInfoModelBroker::rootUrl);
+#define FileInfoModelDisconnect(topic) \
+            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
 
-    RegCanvasSlotsID(this, kSlotFileInfoModelRootIndex);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotFileInfoModelRootIndex), q, &FileInfoModelBroker::rootIndex);
-
-    RegCanvasSlotsID(this, kSlotFileInfoModelUrlIndex);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotFileInfoModelUrlIndex), q, &FileInfoModelBroker::urlIndex);
-
-    RegCanvasSlotsID(this, kSlotFileInfoModelIndexUrl);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotFileInfoModelIndexUrl), q, &FileInfoModelBroker::indexUrl);
-
-    RegCanvasSlotsID(this, kSlotFileInfoModelFiles);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotFileInfoModelFiles), q, &FileInfoModelBroker::files);
-
-    RegCanvasSlotsID(this, kSlotFileInfoModelFileInfo);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotFileInfoModelFileInfo), q, &FileInfoModelBroker::fileInfo);
-
-    RegCanvasSlotsID(this, kSlotFileInfoModelRefresh);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotFileInfoModelRefresh), q, &FileInfoModelBroker::refresh);
-
-    // signal
-    RegCanvasSignalsID(this, kSignalFileInfoModelDataReplaced);
-}
-
-
-FileInfoModelBroker::FileInfoModelBroker(FileInfoModel *model, QObject *parent)
+FileInfoModelBroker::FileInfoModelBroker(FileInfoModel *m, QObject *parent)
     : QObject(parent)
-    , d(new FileInfoModelBrokerPrivate(this))
+    , model(m)
 {
-    d->model = model;
+
+}
+
+FileInfoModelBroker::~FileInfoModelBroker()
+{
+    FileInfoModelDisconnect(slot_FileInfoModel_RootUrl);
+    FileInfoModelDisconnect(slot_FileInfoModel_RootIndex);
+    FileInfoModelDisconnect(slot_FileInfoModel_UrlIndex);
+    FileInfoModelDisconnect(slot_FileInfoModel_IndexUrl);
+    FileInfoModelDisconnect(slot_FileInfoModel_Files);
+    FileInfoModelDisconnect(slot_FileInfoModel_FileInfo);
+    FileInfoModelDisconnect(slot_FileInfoModel_Refresh);
 }
 
 bool FileInfoModelBroker::init()
 {
-    return d->initEvent();
+    // signal
+    connect(model, &FileInfoModel::dataReplaced, this, &FileInfoModelBroker::onDataReplaced, Qt::DirectConnection);
+
+    FileInfoModelSlot(slot_FileInfoModel_RootUrl, &FileInfoModelBroker::rootUrl);
+    FileInfoModelSlot(slot_FileInfoModel_RootIndex, &FileInfoModelBroker::rootIndex);
+    FileInfoModelSlot(slot_FileInfoModel_UrlIndex, &FileInfoModelBroker::urlIndex);
+    FileInfoModelSlot(slot_FileInfoModel_IndexUrl, &FileInfoModelBroker::indexUrl);
+    FileInfoModelSlot(slot_FileInfoModel_Files, &FileInfoModelBroker::files);
+    FileInfoModelSlot(slot_FileInfoModel_FileInfo, &FileInfoModelBroker::fileInfo);
+    FileInfoModelSlot(slot_FileInfoModel_Refresh, &FileInfoModelBroker::refresh);
+
+    return true;
 }
 
-void FileInfoModelBroker::rootUrl(QUrl *url)
+QUrl FileInfoModelBroker::rootUrl()
 {
-    if (url)
-        *url = d->model->rootUrl();
+    return model->rootUrl();
 }
 
-void FileInfoModelBroker::rootIndex(QModelIndex *root)
+QModelIndex FileInfoModelBroker::rootIndex()
 {
-    if (root)
-        *root = d->model->rootIndex();
+    return model->rootIndex();
 }
 
-void FileInfoModelBroker::urlIndex(const QUrl &url, QModelIndex *index)
+QModelIndex FileInfoModelBroker::urlIndex(const QUrl &url)
 {
-    if (index)
-        *index = d->model->index(url);
+    return model->index(url);
 }
 
-void FileInfoModelBroker::fileInfo(const QModelIndex &index, DFMLocalFileInfoPointer *file)
+DFMLocalFileInfoPointer FileInfoModelBroker::fileInfo(const QModelIndex &index)
 {
-    if (file)
-        *file = d->model->fileInfo(index);
+    return model->fileInfo(index);
 }
 
-void FileInfoModelBroker::indexUrl(const QModelIndex &index, QUrl *url)
+QUrl FileInfoModelBroker::indexUrl(const QModelIndex &index)
 {
-    if (url)
-        *url = d->model->fileUrl(index);
+    return model->fileUrl(index);
 }
 
-void FileInfoModelBroker::files(QList<QUrl> *urls)
+QList<QUrl> FileInfoModelBroker::files()
 {
-    if (urls)
-        *urls = d->model->files();
+    return model->files();
 }
 
 void FileInfoModelBroker::refresh(const QModelIndex &parent)
 {
-    d->model->refresh(parent);
+    model->refresh(parent);
+}
+
+void FileInfoModelBroker::onDataReplaced(const QUrl &oldUrl, const QUrl &newUrl)
+{
+    FileInfoModelPublish(signal_FileInfoModel_DataReplaced, oldUrl, newUrl);
 }
 

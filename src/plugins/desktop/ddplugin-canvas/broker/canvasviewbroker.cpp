@@ -18,130 +18,119 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "canvasviewbroker_p.h"
+
+#include "canvasviewbroker.h"
+#include "canvasmanager.h"
+#include "view/canvasview.h"
 #include "view/canvasview_p.h"
+
+#include <dfm-framework/dpf.h>
 
 Q_DECLARE_METATYPE(QRect *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DDP_CANVAS_USE_NAMESPACE
 
-CanvasViewBrokerPrivate::CanvasViewBrokerPrivate(CanvasViewBroker *qq)
-    : QObject(qq)
-    , CanvasEventProvider()
-    , q(qq)
+#define CanvasViewSlot(topic, args...) \
+            dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+
+#define CanvasViewDisconnect(topic) \
+            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
+
+CanvasViewBroker::CanvasViewBroker(CanvasManager *mrg, QObject *parent)
+    : QObject(parent)
+    , manager(mrg)
 {
 
 }
 
-CanvasViewBrokerPrivate::~CanvasViewBrokerPrivate()
+CanvasViewBroker::~CanvasViewBroker()
 {
-
+    CanvasViewDisconnect(slot_CanvasView_VisualRect);
+    CanvasViewDisconnect(slot_CanvasView_Refresh);
+    CanvasViewDisconnect(slot_CanvasView_Update);
+    CanvasViewDisconnect(slot_CanvasView_Select);
+    CanvasViewDisconnect(slot_CanvasView_SelectedUrls);
 }
 
-QSharedPointer<CanvasView> CanvasViewBrokerPrivate::view(int idx)
+bool CanvasViewBroker::init()
+{
+    CanvasViewSlot(slot_CanvasView_VisualRect, &CanvasViewBroker::visualRect);
+    CanvasViewSlot(slot_CanvasView_Refresh, &CanvasViewBroker::refresh);
+    CanvasViewSlot(slot_CanvasView_Update, &CanvasViewBroker::update);
+    CanvasViewSlot(slot_CanvasView_Select, &CanvasViewBroker::select);
+    CanvasViewSlot(slot_CanvasView_SelectedUrls, &CanvasViewBroker::selectedUrls);
+    return true;
+}
+
+QSharedPointer<CanvasView> CanvasViewBroker::getView(int idx)
 {
     // screen num is start with 1
-    for (auto v : mrg->views())
+    for (auto v : manager->views())
         if (v->screenNum() == idx)
             return v;
 
     return nullptr;
 }
 
-void CanvasViewBrokerPrivate::registerEvent()
+QRect CanvasViewBroker::visualRect(int idx, const QUrl &url)
 {
-    RegCanvasSlotsID(this, kSlotCanvasViewVisualRect);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasViewVisualRect), q, &CanvasViewBroker::visualRect);
-
-    RegCanvasSlotsID(this, kSlotCanvasViewRefresh);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasViewRefresh), q, &CanvasViewBroker::refresh);
-
-    RegCanvasSlotsID(this, kSlotCanvasViewUpdate);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasViewUpdate), q, &CanvasViewBroker::update);
-
-    RegCanvasSlotsID(this, kSlotCanvasViewSelect);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasViewSelect), q, &CanvasViewBroker::select);
-
-    RegCanvasSlotsID(this, kSlotCanvasViewSelectedUrls);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasViewSelectedUrls), q, &CanvasViewBroker::selectedUrls);
-}
-
-CanvasViewBroker::CanvasViewBroker(CanvasManager *mrg, QObject *parent)
-    : QObject(parent)
-    , d(new CanvasViewBrokerPrivate(this))
-{
-    d->mrg = mrg;
-}
-
-bool CanvasViewBroker::init()
-{
-    return d->initEvent();
-}
-
-void CanvasViewBroker::visualRect(int idx, const QUrl &url, QRect *rect)
-{
-    auto view = d->view(idx);
-    if (rect && view) {
-        *rect = view->d->visualRect(url.toString());
-    }
+    QRect rect;
+    if (auto view = getView(idx))
+        rect = view->d->visualRect(url.toString());
+    return rect;
 }
 
 void CanvasViewBroker::refresh(int idx)
 {
-    if (auto view = d->view(idx))
+    if (auto view = getView(idx))
         view->refresh();
 }
 
 void CanvasViewBroker::update(int idx)
 {
     if (idx < 0) {
-        for (auto view : d->mrg->views())
+        for (auto view : manager->views())
             view->update();
         return;
     }
 
-    if (auto view = d->view(idx))
+    if (auto view = getView(idx))
         view->update();
 }
 
 void CanvasViewBroker::select(const QList<QUrl> &urls)
 {
     QItemSelection selection;
-    auto m = d->mrg->model();
+    auto m = manager->model();
     for (const QUrl &url: urls) {
         auto index = m->index(url);
         if (index.isValid())
             selection.append(QItemSelectionRange(index));
     }
 
-    d->mrg->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    manager->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
-void CanvasViewBroker::selectedUrls(int idx, QList<QUrl> *urls)
+QList<QUrl> CanvasViewBroker::selectedUrls(int idx)
 {
-    if (urls) {
-        auto files = d->mrg->selectionModel()->selectedUrls();
+    QList<QUrl> urls;
+    auto files = manager->selectionModel()->selectedUrls();
+    if (idx < 0) {
+        urls = files;
+    } else if (auto view = getView(idx)) {
+        const int num = view->screenNum();
+        QStringList items;
+        items << GridIns->points(num).keys();
+        items << GridIns->overloadItems(num);
 
-        if (idx < 0) {
-            *urls = files;
-        } else if (auto view = d->view(idx)) {
-            const int num = view->screenNum();
-
-            QStringList items;
-            items << GridIns->points(num).keys();
-            items << GridIns->overloadItems(num);
-
-            QList<QUrl> viewOn;
-            for (const QUrl &url: files) {
-                if (items.contains(url.toString()))
-                    viewOn.append(url);
-            }
-
-            *urls = viewOn;
+        QList<QUrl> viewOn;
+        for (const QUrl &url: files) {
+            if (items.contains(url.toString()))
+                viewOn.append(url);
         }
+        urls = viewOn;
     }
-
-    return;
+    return urls;
 }
 

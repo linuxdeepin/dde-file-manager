@@ -31,6 +31,7 @@ qt5_add_resources(QRC_RESOURCES ${QRC_FILE})
 set(GLOBAL_H dfm_base_global.h
              dfm_event_defines.h
              dfm_global_defines.h
+             dfm_desktop_defines.h
              )
 
 FILE (GLOB INTERFACES_FILES

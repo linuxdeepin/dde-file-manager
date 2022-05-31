@@ -20,13 +20,10 @@
  */
 #include "backgroundplugin.h"
 
-#include <services/desktop/background/backgroundservice.h>
-
 #include <dfm-framework/listener/listener.h>
 
 DDP_BACKGROUND_USE_NAMESPACE
 DPF_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
 
 void BackgroundPlugin::initialize()
 {
@@ -35,12 +32,6 @@ void BackgroundPlugin::initialize()
 
 bool BackgroundPlugin::start()
 {
-    auto &ctx = dpfInstance.serviceContext();
-    // start background service.
-    QString error;
-    bool ret = ctx.load(BackgroundService::name(), &error);
-    Q_ASSERT_X(ret, "BackgroundPlugin", error.toStdString().c_str());
-
     backgroundManager = new BackgroundManager;
     backgroundManager->init();
 

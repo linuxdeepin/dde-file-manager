@@ -23,7 +23,7 @@
 
 #include "canvasproxymodel.h"
 #include "fileinfomodel.h"
-#include "modelextendinterface.h"
+#include "modelhookinterface.h"
 #include "canvasmodelfilter.h"
 
 #include <dfm_global_defines.h>
@@ -74,7 +74,7 @@ public:
     QSharedPointer<QTimer> refreshTimer;
     int fileSortRole = DFMGLOBAL_NAMESPACE::ItemRoles::kItemFileMimeTypeRole;
     Qt::SortOrder fileSortOrder = Qt::AscendingOrder;
-    ModelExtendInterface *extend = nullptr;
+    ModelHookInterface *hookIfs = nullptr;
     QList<QSharedPointer<CanvasModelFilter>> modelFilters;
 private:
     CanvasProxyModel *q;

@@ -21,16 +21,23 @@
 #include "wlsetplugin.h"
 #include "wallpapersettings.h"
 #include "private/autoactivatewindow.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
 
-#include <dfm-base/utils/universalutils.h>
-
-#include "services/desktop/event/private/eventhelperfunc.h"
-#include "services/desktop/wallpapersetting/wallpaperservice.h"
-#include "services/desktop/screen/screenservice.h"
-#include "services/desktop/canvas/canvasservice.h"
+#include "dfm-base/utils/universalutils.h"
 
 DDP_WALLPAERSETTING_USE_NAMESPACE
-DSB_D_USE_NAMESPACE
+
+#define WlSetSlot(topic, args...) \
+            dpfSlotChannel->connect(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+
+#define CanvasMangerFollow(topic, args...) \
+            dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
+
+#define WlSetDisconnect(topic) \
+            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE), QT_STRINGIFY2(topic))
+
+#define CanvasMangerUnfollow(topic, args...) \
+            dpfHookSequence->unfollow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
 void WlSetPlugin::initialize()
 {
@@ -39,69 +46,39 @@ void WlSetPlugin::initialize()
 bool WlSetPlugin::start()
 {
     handle = new EventHandle();
-
-    auto &ctx = dpfInstance.serviceContext();
-    // start service.
-    {
-        QString error;
-        bool ret = ctx.load(WallpaperService::name(), &error);
-        Q_ASSERT_X(ret, "WallpaperSettingPlugin", error.toStdString().c_str());
-    }
-
-    auto service = ctx.service<WallpaperService>(WallpaperService::name());
-    Q_ASSERT_X(service, "WallpaperSettingPlugin", "ScreenService not found");
-
-    // register event
-    service->registerEvent(handle);
-
-    // register slots
-    {
-        auto eslots = handle->query(EventType::kEventSlot);
-        int showWallpaper = EventHelperFunc::getEventID(eslots, kEventWallpaperSetting);
-        if (showWallpaper > 0)
-            dpfInstance.eventDispatcher().subscribe(showWallpaper,
-                                                    handle,
-                                                    &EventHandle::wallpaperSetting);
-        else
-            qWarning() << "Fail to get EventShowWallpaper";
-
-        int showScreenSaver = EventHelperFunc::getEventID(eslots, kEventScreenSaverSetting);
-        if (showScreenSaver > 0)
-            dpfInstance.eventDispatcher().subscribe(showScreenSaver,
-                                                    handle,
-                                                    &EventHandle::screenSaverSetting);
-        else
-            qWarning() << "Fail to get EventShowScreenSaver";
-    }
-
-    connect(dpfListener, &DPF_NAMESPACE::Listener::pluginsStarted, handle, &EventHandle::pluginStarted);
+    handle->init();
     return true;
 }
 
 dpf::Plugin::ShutdownFlag WlSetPlugin::stop()
 {
+    delete handle;
+    handle = nullptr;
     return kSync;
 }
 
 EventHandle::EventHandle(QObject *parent)
-    : QObject(parent), EventProvider()
+    : QObject(parent)
 {
-    eSignals.insert(kEventWallpaperChanged,
-                    DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
-    eSlots.insert(kEventWallpaperSetting,
-                  DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
-    eSlots.insert(kEventScreenSaverSetting,
-                  DFMBASE_NAMESPACE::UniversalUtils::registerEventType());
+
 }
 
-QVariantHash EventHandle::query(int type) const
+EventHandle::~EventHandle()
 {
-    if (type == EventType::kEventSignal)
-        return eSignals;
-    else if (type == EventType::kEventSlot)
-        return eSlots;
+    WlSetDisconnect(slot_WallpaperSettings_WallpaperSetting);
+    WlSetDisconnect(slot_WallpaperSettings_ScreenSaverSetting);
 
-    return {};
+    CanvasMangerUnfollow(hook_CanvasManager_RequestWallpaperSetting, &EventHandle::hookCanvasRequest);
+}
+
+bool EventHandle::init()
+{
+    WlSetSlot(slot_WallpaperSettings_WallpaperSetting, &EventHandle::wallpaperSetting);
+    WlSetSlot(slot_WallpaperSettings_ScreenSaverSetting, &EventHandle::screenSaverSetting);
+
+    // follow the request from canvas
+    CanvasMangerFollow(hook_CanvasManager_RequestWallpaperSetting, &EventHandle::hookCanvasRequest);
+    return true;
 }
 
 bool EventHandle::wallpaperSetting(QString name)
@@ -124,56 +101,27 @@ void EventHandle::onQuit()
     }
 }
 
-void EventHandle::pluginStarted()
-{
-    // receive canvas requsetion.
-    auto &ctx = dpfInstance.serviceContext();
-    auto canvas = ctx.service<CanvasService>(CanvasService::name());
-    Q_ASSERT_X(canvas, "WallpaperSettingPlugin", "CanvasService not found");
-    if (!followEvent(canvas)) {
-        qWarning() << "CanvasService no event: CanvasManager_Signal_wallpaperSetting";
-        connect(canvas, &CanvasService::sigEventChanged, this, [canvas, this](int eventType, const QStringList &event) {
-            if ((eventType == EventType::kEventSignal)
-                && event.contains("CanvasManager_Signal_wallpaperSetting")) {
-                if (followEvent(canvas)) {
-                    qInfo() << "CanvasManager_Signal_wallpaperSetting has resubscribed.";
-                    disconnect(canvas, &CanvasService::sigEventChanged, this, nullptr);
-                }
-            }
-        });
-    }
-}
-
 void EventHandle::onChanged()
 {
     if (!wallpaperSettings)
         return;
 
     auto wallpaper = wallpaperSettings->currentWallpaper();
-    int wallpaperChanged = EventHelperFunc::getEventID(eSignals, kEventWallpaperChanged);
-    if (wallpaperChanged > 0)
-        dpfInstance.eventDispatcher().publish(wallpaperChanged, wallpaper.first, wallpaper.second);
-    else {
-        qWarning() << "invalid Event_WallpaperChanged id" << wallpaperChanged;
-    }
+    // screen name and picture path.
+    dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE),
+                                 "signal_WallpaperSettings_WallpaperChanged", wallpaper.first, wallpaper.second);
 }
 
 void EventHandle::show(QString name, int mode)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto screenScevice = ctx.service<ScreenService>(ScreenService::name());
-    if (!screenScevice) {
-        qCritical() << "can not get ScreenService.";
-        return;
-    }
-
     if (name.isNull() || name.isEmpty()) {
-        if (screenScevice->primaryScreen() == nullptr) {
+        auto primary = ddplugin_desktop_util::screenProxyPrimaryScreen();
+        if (!primary.get()) {
             qCritical() << "get primary screen failed! stop show wallpaper";
             return;
         }
 
-        name = screenScevice->primaryScreen()->name();
+        name = primary->name();
     }
 
     if (wallpaperSettings) {
@@ -198,14 +146,9 @@ void EventHandle::show(QString name, int mode)
     autoAct->start();
 }
 
-bool EventHandle::followEvent(EventProvider *provider)
+bool EventHandle::hookCanvasRequest(const QString &screen)
 {
-    bool ok = false;
-    int eventid = provider->query(EventType::kSeqSignal).value("CanvasManager_Filter_wallpaperSetting").toInt(&ok);
-    if (ok && eventid > 0) {
-        dpfInstance.eventSequence().follow(eventid, this, &EventHandle::wallpaperSetting);
-        return true;
-    }
-
-    return false;
+    wallpaperSetting(screen);
+    return true;
 }
+

@@ -18,199 +18,149 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "canvasmodelbroker_p.h"
+#include "canvasmodelbroker.h"
+#include "model/canvasproxymodel.h"
 
-#include <QModelIndex>
-#include <QVariant>
-
-Q_DECLARE_METATYPE(bool *)
-Q_DECLARE_METATYPE(QVariant *)
-Q_DECLARE_METATYPE(QUrl *)
-Q_DECLARE_METATYPE(QModelIndex *)
-Q_DECLARE_METATYPE(QList<QUrl> *)
-Q_DECLARE_METATYPE(int *)
+#include <dfm-framework/dpf.h>
 
 DDP_CANVAS_USE_NAMESPACE
 
-CanvasModelBrokerPrivate::CanvasModelBrokerPrivate(CanvasModelBroker *qq)
-    : QObject(qq)
-    , CanvasEventProvider()
-    , q(qq)
-{
-    qRegisterMetaType<bool *>();
-    qRegisterMetaType<QVariant *>();
-}
+#define CanvasModelSlot(topic, args...) \
+            dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
-CanvasModelBrokerPrivate::~CanvasModelBrokerPrivate()
-{
+#define CanvasModelDisconnect(topic) \
+            dpfSlotChannel->disconnect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic))
 
-}
-
-void CanvasModelBrokerPrivate::registerEvent()
-{
-    RegCanvasSlotsID(this, kSlotCanvasModelRootUrl);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelRootUrl), q, &CanvasModelBroker::rootUrl);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelUrlIndex);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelUrlIndex), q, &CanvasModelBroker::urlIndex);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelIndex);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelIndex), q, &CanvasModelBroker::index);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelFileUrl);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelFileUrl), q, &CanvasModelBroker::fileUrl);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelFiles);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelFiles), q, &CanvasModelBroker::files);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelShowHiddenFiles);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelShowHiddenFiles), q, &CanvasModelBroker::showHiddenFiles);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelsetShowHiddenFiles);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelsetShowHiddenFiles), q, &CanvasModelBroker::setShowHiddenFiles);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelSortOrder);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSortOrder), q, &CanvasModelBroker::sortOrder);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelSetSortOrder);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSetSortOrder), q, &CanvasModelBroker::setSortOrder);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelSortRole);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSortRole), q, &CanvasModelBroker::sortRole);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelSetSortRole);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelSetSortRole), q, &CanvasModelBroker::setSortRole);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelRowCount);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelRowCount), q, &CanvasModelBroker::rowCount);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelData);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelData), q, &CanvasModelBroker::data);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelFetch);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelFetch), q, &CanvasModelBroker::fetch);
-
-    RegCanvasSlotsID(this, kSlotCanvasModelTake);
-    dpfInstance.eventDispatcher().subscribe(GetCanvasSlotsID(this, kSlotCanvasModelTake), q, &CanvasModelBroker::take);
-}
-
-CanvasModelBroker::CanvasModelBroker(CanvasProxyModel *model, QObject *parent)
+CanvasModelBroker::CanvasModelBroker(CanvasProxyModel *m, QObject *parent)
     : QObject(parent)
-    , d(new CanvasModelBrokerPrivate(this))
+    , model(m)
 {
-    d->model = model;
+}
+
+CanvasModelBroker::~CanvasModelBroker()
+{
+    CanvasModelDisconnect(slot_CanvasModel_RootUrl);
+    CanvasModelDisconnect(slot_CanvasModel_UrlIndex);
+    CanvasModelDisconnect(slot_CanvasModel_Index);
+    CanvasModelDisconnect(slot_CanvasModel_FileUrl);
+    CanvasModelDisconnect(slot_CanvasModel_Files);
+    CanvasModelDisconnect(slot_CanvasModel_ShowHiddenFiles);
+    CanvasModelDisconnect(slot_CanvasModel_SetShowHiddenFiles);
+    CanvasModelDisconnect(slot_CanvasModel_SortOrder);
+    CanvasModelDisconnect(slot_CanvasModel_SetSortOrder);
+    CanvasModelDisconnect(slot_CanvasModel_SortRole);
+    CanvasModelDisconnect(slot_CanvasModel_SetSortRole);
+    CanvasModelDisconnect(slot_CanvasModel_RowCount);
+    CanvasModelDisconnect(slot_CanvasModel_Data);
+    CanvasModelDisconnect(slot_CanvasModel_Sort);
+    CanvasModelDisconnect(slot_CanvasModel_Refresh);
+    CanvasModelDisconnect(slot_CanvasModel_Fetch);
+    CanvasModelDisconnect(slot_CanvasModel_Take);
 }
 
 bool CanvasModelBroker::init()
 {
-    return d->initEvent();
+    CanvasModelSlot(slot_CanvasModel_RootUrl, &CanvasModelBroker::rootUrl);
+    CanvasModelSlot(slot_CanvasModel_UrlIndex, &CanvasModelBroker::urlIndex);
+    CanvasModelSlot(slot_CanvasModel_Index, &CanvasModelBroker::index);
+    CanvasModelSlot(slot_CanvasModel_FileUrl, &CanvasModelBroker::fileUrl);
+    CanvasModelSlot(slot_CanvasModel_Files, &CanvasModelBroker::files);
+    CanvasModelSlot(slot_CanvasModel_ShowHiddenFiles, &CanvasModelBroker::showHiddenFiles);
+    CanvasModelSlot(slot_CanvasModel_SetShowHiddenFiles, &CanvasModelBroker::setShowHiddenFiles);
+    CanvasModelSlot(slot_CanvasModel_SortOrder, &CanvasModelBroker::sortOrder);
+    CanvasModelSlot(slot_CanvasModel_SetSortOrder, &CanvasModelBroker::setSortOrder);
+    CanvasModelSlot(slot_CanvasModel_SortRole, &CanvasModelBroker::sortRole);
+    CanvasModelSlot(slot_CanvasModel_SetSortRole, &CanvasModelBroker::setSortRole);
+    CanvasModelSlot(slot_CanvasModel_RowCount, &CanvasModelBroker::rowCount);
+    CanvasModelSlot(slot_CanvasModel_Data, &CanvasModelBroker::data);
+    CanvasModelSlot(slot_CanvasModel_Sort, &CanvasModelBroker::sort);
+    CanvasModelSlot(slot_CanvasModel_Refresh, &CanvasModelBroker::refresh);
+    CanvasModelSlot(slot_CanvasModel_Fetch, &CanvasModelBroker::fetch);
+    CanvasModelSlot(slot_CanvasModel_Take, &CanvasModelBroker::take);
+    return true;
 }
 
-void CanvasModelBroker::rootUrl(QUrl *url)
+QUrl CanvasModelBroker::rootUrl()
 {
-    if (url) {
-        *url = d->model->rootUrl();
-    }
+    return model->rootUrl();
 }
 
-void CanvasModelBroker::urlIndex(const QUrl &url, QModelIndex *idx)
+QModelIndex CanvasModelBroker::urlIndex(const QUrl &url)
 {
-    if (idx) {
-        *idx = d->model->index(url);
-    }
+    return model->index(url);
 }
 
-void CanvasModelBroker::fileUrl(const QModelIndex &index, QUrl *url)
+QUrl CanvasModelBroker::fileUrl(const QModelIndex &index)
 {
-    if (url) {
-        *url = d->model->fileUrl(index);
-    }
+    return model->fileUrl(index);
 }
 
-void CanvasModelBroker::files(QList<QUrl> *urls)
+QList<QUrl> CanvasModelBroker::files()
 {
-    if (urls) {
-        *urls = d->model->files();
-    }
+    return model->files();
 }
 
-void CanvasModelBroker::showHiddenFiles(bool *show)
+bool CanvasModelBroker::showHiddenFiles()
 {
-    if (show) {
-        *show = d->model->showHiddenFiles();
-    }
+    return model->showHiddenFiles();
 }
 
 void CanvasModelBroker::setShowHiddenFiles(bool show)
 {
-    d->model->setShowHiddenFiles(show);
+    model->setShowHiddenFiles(show);
 }
 
-void CanvasModelBroker::sortOrder(int *order)
+int CanvasModelBroker::sortOrder()
 {
-    if (order) {
-        *order = d->model->sortOrder();
-    }
+    return model->sortOrder();
 }
 
 void CanvasModelBroker::setSortOrder(int order)
 {
-    d->model->setSortOrder(static_cast<Qt::SortOrder>(order));
+    model->setSortOrder(static_cast<Qt::SortOrder>(order));
 }
 
-void CanvasModelBroker::sortRole(int *role)
+int CanvasModelBroker::sortRole()
 {
-    if (role) {
-        *role = d->model->sortRole();
-    }
+    return model->sortRole();
 }
 
 void CanvasModelBroker::setSortRole(int role, int order)
 {
-    d->model->setSortRole(role, static_cast<Qt::SortOrder>(order));
+    model->setSortRole(role, static_cast<Qt::SortOrder>(order));
 }
 
-void CanvasModelBroker::index(int row, QModelIndex *idx)
+QModelIndex CanvasModelBroker::index(int row)
 {
-    if (idx) {
-        *idx = d->model->index(row);
-    }
+    return model->index(row);
 }
 
-void CanvasModelBroker::rowCount(int *count)
+int CanvasModelBroker::rowCount()
 {
-    if (count) {
-        *count = d->model->rowCount(d->model->rootIndex());
-    }
+    return model->rowCount(model->rootIndex());
 }
 
-void CanvasModelBroker::data(const QUrl &url, int itemRole, QVariant *out)
+QVariant CanvasModelBroker::data(const QUrl &url, int itemRole)
 {
-    if (out) {
-        *out = d->model->data(d->model->index(url), itemRole);
-    }
+    return model->data(model->index(url), itemRole);
 }
 
 void CanvasModelBroker::sort()
 {
-    d->model->sort();
+    model->sort();
 }
 
 void CanvasModelBroker::refresh(bool global, int ms)
 {
-    d->model->refresh(d->model->rootIndex(), global, ms);
+    model->refresh(model->rootIndex(), global, ms);
 }
 
-void CanvasModelBroker::fetch(const QUrl &url, bool *ret)
+bool CanvasModelBroker::fetch(const QUrl &url)
 {
-    bool ok = d->model->fetch(url);
-    if (ret)
-        *ret = ok;
+    return model->fetch(url);
 }
 
-void CanvasModelBroker::take(const QUrl &url, bool *ret)
+bool CanvasModelBroker::take(const QUrl &url)
 {
-    bool ok = d->model->take(url);
-    if (ret)
-        *ret = ok;
+    return model->take(url);
 }

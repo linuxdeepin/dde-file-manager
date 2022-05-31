@@ -36,7 +36,7 @@ class CanvasProxyModel;
 class CanvasSelectionModel;
 class CanvasItemDelegate;
 class CanvasViewPrivate;
-class ViewExtendInterface;
+class ViewHookInterface;
 class CanvasView : public QAbstractItemView
 {
     Q_OBJECT
@@ -54,8 +54,8 @@ public:
     using CursorAction = QAbstractItemView::CursorAction;
     explicit CanvasView(QWidget *parent = nullptr);
     void initUI();
-    void setViewExtend(ViewExtendInterface *);
-    ViewExtendInterface *viewExtend() const;
+    void setViewHook(ViewHookInterface *);
+    ViewHookInterface *viewHook() const;
 public:
     virtual QRect visualRect(const QModelIndex &index) const override;
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;

@@ -27,19 +27,18 @@
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasGrid;
-class CanvasGridBrokerPrivate;
 class CanvasGridBroker : public QObject
 {
     Q_OBJECT
-    friend class CanvasGridBrokerPrivate;
 public:
     explicit CanvasGridBroker(CanvasGrid *grid, QObject *parent = nullptr);
+    ~CanvasGridBroker();
     bool init();
 
 public slots:
-    void items(int index, QStringList *ret);
+    QStringList items(int index);
 private:
-    CanvasGridBrokerPrivate *d;
+    CanvasGrid *grid = nullptr;
 };
 
 DDP_CANVAS_END_NAMESPACE
