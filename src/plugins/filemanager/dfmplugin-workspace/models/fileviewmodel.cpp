@@ -320,11 +320,11 @@ AbstractFileInfoPointer FileViewModel::fileInfo(const QModelIndex &index) const
 
 QModelIndex FileViewModel::parent(const QModelIndex &child) const
 {
-    FileViewItem *parentItem = static_cast<FileViewItem *>(child.internalPointer());
-    if (!parentItem || parentItem == d->nodeManager->rootNode().data())
+    FileViewItem *childItem = static_cast<FileViewItem *>(child.internalPointer());
+    if (!childItem || childItem->parent != d->nodeManager->rootNode().data())
         return QModelIndex();
 
-    return createIndex(0, 0, parentItem);
+    return createIndex(0, 0, childItem->parent);
 }
 
 int FileViewModel::rowCount(const QModelIndex &parent) const
