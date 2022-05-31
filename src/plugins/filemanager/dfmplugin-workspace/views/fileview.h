@@ -38,6 +38,7 @@ class SelectHelper;
 class DragDropHelper;
 class ViewDrawHelper;
 class FileViewMenuHelper;
+class FileViewHelper;
 class FileViewItem;
 class FileViewModel;
 class FileViewPrivate;
@@ -52,6 +53,7 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class FileViewMenuHelper;
     friend class ShortcutHelper;
     friend class FileViewPrivate;
+    friend class FileViewHelper;
 
     QSharedPointer<FileViewPrivate> d;
 

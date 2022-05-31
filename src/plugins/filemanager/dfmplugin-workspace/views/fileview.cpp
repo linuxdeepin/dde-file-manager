@@ -931,7 +931,6 @@ void FileView::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::RightButton: {
-        DListView::mousePressEvent(event);
         break;
     }
     default:
@@ -1168,7 +1167,8 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
                 return;
             }
 
-            d->selectHelper->click(index);
+            const QUrl &url = model()->getUrlByIndex(index);
+            selectFiles({ url });
         }
 
         d->viewMenuHelper->showNormalMenu(index, model()->flags(index));

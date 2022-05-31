@@ -221,7 +221,29 @@ bool FileViewHelper::isEmptyArea(const QPoint &pos)
 {
     const QModelIndex &index = parent()->indexAt(pos);
 
-    return !index.isValid();
+    if (!index.isValid())
+        return true;
+
+    if (isSelected(index)) {
+        return false;
+    } else {
+        const QRect &rect = parent()->visualRect(index);
+
+        if (!rect.contains(pos))
+            return true;
+
+        QStyleOptionViewItem option = parent()->viewOptions();
+        option.rect = rect;
+
+        const QList<QRect> &geometryList = itemDelegate()->paintGeomertys(option, index);
+        auto ret = std::any_of(geometryList.begin(), geometryList.end(), [pos](const QRect &geometry) {
+            return geometry.contains(pos);
+        });
+
+        return !ret;
+    }
+
+    return true;
 }
 
 int FileViewHelper::caculateListItemIndex(const QSize &itemSize, const QPoint &pos)
