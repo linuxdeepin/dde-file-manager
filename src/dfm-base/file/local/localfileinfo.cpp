@@ -1356,7 +1356,7 @@ QString LocalFileInfo::fileDisplayName() const
         if (!displayName.isEmpty())
             return displayName;
     }
-    return fileName();
+    return LocalFileInfo::fileName();
 }
 
 /*!
