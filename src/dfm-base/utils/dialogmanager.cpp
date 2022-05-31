@@ -21,7 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dialogmanager.h"
-#include "dfm_global_defines.h"
 
 #include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
 #include "dfm-base/dialogs/mountpasswddialog/mountsecretdiskaskpassworddialog.h"

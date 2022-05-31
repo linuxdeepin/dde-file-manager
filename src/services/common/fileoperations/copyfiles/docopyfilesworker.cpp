@@ -216,48 +216,7 @@ void DoCopyFilesWorker::setStat(const AbstractJobHandler::JobState &stat)
         smallFileThreadCopyInfoQueue.clear();
     }
 }
-/*!
- * \brief DoCopyFilesWorker::supportActions get the support Acttions by error type
- * \param error error type
- * \return support action
- */
-AbstractJobHandler::SupportActions DoCopyFilesWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
-{
-    AbstractJobHandler::SupportActions support = AbstractJobHandler::SupportAction::kCancelAction;
-    switch (error) {
-    case AbstractJobHandler::JobErrorType::kPermissionError:
-    case AbstractJobHandler::JobErrorType::kOpenError:
-    case AbstractJobHandler::JobErrorType::kReadError:
-    case AbstractJobHandler::JobErrorType::kWriteError:
-    case AbstractJobHandler::JobErrorType::kSymlinkError:
-    case AbstractJobHandler::JobErrorType::kMkdirError:
-    case AbstractJobHandler::JobErrorType::kResizeError:
-    case AbstractJobHandler::JobErrorType::kRemoveError:
-    case AbstractJobHandler::JobErrorType::kRenameError:
-    case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
-    case AbstractJobHandler::JobErrorType::kSpecialFileError:
-        return AbstractJobHandler::SupportAction::kSkipAction;
-    case AbstractJobHandler::JobErrorType::kFileSizeTooBigError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kNotEnoughSpaceError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kFileExistsError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kReplaceAction | AbstractJobHandler::SupportAction::kCoexistAction;
-    case AbstractJobHandler::JobErrorType::kDirectoryExistsError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kMergeAction | AbstractJobHandler::SupportAction::kCoexistAction;
-    case AbstractJobHandler::JobErrorType::kTargetReadOnlyError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kTargetIsSelfError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kEnforceAction;
-    case AbstractJobHandler::JobErrorType::kSymlinkToGvfsError:
-        return support | AbstractJobHandler::SupportAction::kSkipAction;
-    default:
-        break;
-    }
 
-    return support;
-}
 /*!
  * \brief DoCopyFilesWorker::onUpdateProccess update proccess and speed slot
  */

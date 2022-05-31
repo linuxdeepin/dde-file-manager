@@ -48,7 +48,6 @@ protected:
     bool statisticsFilesSize() override;
     bool initArgs() override;
     void doOperateWork(AbstractJobHandler::SupportActions actions) override;
-    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
 
 protected:
     bool cleanAllTrashFiles();

@@ -278,7 +278,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
             if (!handler->renameFile(fileInfo->url(), QUrl::fromLocalFile(targetPath))) {
                 action = doHandleErrorAndWait(sourceUrl, QUrl::fromLocalFile(targetPath), AbstractJobHandler::JobErrorType::kRenameError, handler->errorString());
             }
-        } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         completeFilesCount++;
 

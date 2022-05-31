@@ -110,6 +110,8 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
 
+    if (currentAction == AbstractJobHandler::SupportAction::kSkipAction)
+        setStat(AbstractJobHandler::JobState::kRunningState);
     return currentAction;
 }
 
@@ -482,7 +484,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, bool *result)
         if (!handler->deleteFile(fromUrl)) {
             action = doHandleErrorAndWait(fromUrl, QUrl(), AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
         }
-    } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     *result = action == AbstractJobHandler::SupportAction::kSkipAction
             || action == AbstractJobHandler::SupportAction::kNoAction;

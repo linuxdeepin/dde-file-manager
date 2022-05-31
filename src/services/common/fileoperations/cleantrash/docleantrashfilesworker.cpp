@@ -92,11 +92,6 @@ void DoCleanTrashFilesWorker::doOperateWork(AbstractJobHandler::SupportActions a
     AbstractWorker::doOperateWork(actions);
     resume();
 }
-
-AbstractJobHandler::SupportActions DoCleanTrashFilesWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
-{
-    return AbstractWorker::supportActions(error);
-}
 /*!
  * \brief DoCleanTrashFilesWorker::deleteAllFiles delete All files
  * \return delete all files success

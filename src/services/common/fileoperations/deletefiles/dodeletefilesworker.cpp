@@ -68,11 +68,6 @@ void DoDeleteFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actio
     AbstractWorker::doOperateWork(actions);
     resume();
 }
-
-AbstractJobHandler::SupportActions DoDeleteFilesWorker::supportActions(const AbstractJobHandler::JobErrorType &error)
-{
-    return AbstractWorker::supportActions(error);
-}
 /*!
  * \brief DoDeleteFilesWorker::deleteAllFiles delete All files
  * \return delete all files success
@@ -102,7 +97,7 @@ bool DoDeleteFilesWorker::deleteFilesOnCanNotRemoveDevice()
             if (!handler->deleteFile(url)) {
                 action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
             }
-        } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+        } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (sourceUrls.contains(url)) {
             if (action != AbstractJobHandler::SupportAction::kNoAction)
@@ -166,7 +161,7 @@ bool DoDeleteFilesWorker::deleteFileOnOtherDevice(const QUrl &url)
         if (!handler->deleteFile(url)) {
             action = doHandleErrorAndWait(url, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
         }
-    } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     deleteFilesCount++;
 
@@ -196,7 +191,7 @@ bool DoDeleteFilesWorker::deleteDirOnOtherDevice(const AbstractFileInfoPointer &
         if (!iterator) {
             action = doHandleErrorAndWait(dir->url(), AbstractJobHandler::JobErrorType::kDeleteFileError, errorMsg);
         }
-    } while (isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
+    } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
     if (action == AbstractJobHandler::SupportAction::kSkipAction)
         return true;

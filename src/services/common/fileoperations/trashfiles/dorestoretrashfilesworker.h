@@ -63,8 +63,6 @@ protected:
     bool createParentDir(const AbstractFileInfoPointer &trashInfo, const AbstractFileInfoPointer &restoreInfo, AbstractFileInfoPointer &targetFileInfo,
                          bool *result);
 
-    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
-
 private:
     QAtomicInteger<qint64> compeleteFilesCount { 0 };   // move to trash success file count
     QSharedPointer<QStorageInfo> trashStorageInfo { nullptr };   // target file's device infor

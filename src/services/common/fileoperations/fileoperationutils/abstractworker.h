@@ -134,11 +134,7 @@ protected:
     virtual void emitProccessChangedNotify(const qint64 &writSize);
     virtual void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                                  const QString &errorMsg = QString());
-    virtual AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error)
-    {
-        Q_UNUSED(error);
-        return AbstractJobHandler::SupportAction::kNoAction;
-    }
+    virtual AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error);
     bool isStopped();
     JobInfoPointer createCopyJobInfo(const QUrl &from, const QUrl &to);
 

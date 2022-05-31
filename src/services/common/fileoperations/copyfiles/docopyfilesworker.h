@@ -62,7 +62,6 @@ protected:
     void setStat(const AbstractJobHandler::JobState &stat) override;
     bool initArgs() override;
     void endWork() override;
-    AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error) override;
 
 protected:
     bool copyFiles();
