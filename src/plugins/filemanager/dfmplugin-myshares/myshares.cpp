@@ -176,4 +176,6 @@ void MyShares::hookEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DeleteFilesShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockDelete);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_MoveToTrashShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockMoveToTrash);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_PasteFilesShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockPaste);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_SendOpenWindow", ShareEventHelper::instance(), &ShareEventHelper::hookSendOpenWindow);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_SendChangeCurrentUrl", ShareEventHelper::instance(), &ShareEventHelper::hookSendChangeCurrentUrl);
 }

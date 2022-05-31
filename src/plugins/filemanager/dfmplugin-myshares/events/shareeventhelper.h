@@ -38,6 +38,8 @@ public:
     bool blockPaste(quint64 winId, const QUrl &to);
     bool blockDelete(quint64 winId, const QList<QUrl> &urls);
     bool blockMoveToTrash(quint64 winId, const QList<QUrl> &urls);
+    bool hookSendOpenWindow(const QList<QUrl> &urls);
+    bool hookSendChangeCurrentUrl(quint64 winId, const QUrl &url);
 
 protected:
     explicit ShareEventHelper(QObject *parent = nullptr);

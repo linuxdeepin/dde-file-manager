@@ -50,6 +50,8 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_DeleteFilesShortcut)
     DPF_EVENT_REG_HOOK(hook_MoveToTrashShortcut)
     DPF_EVENT_REG_HOOK(hook_FileDragMove)
+    DPF_EVENT_REG_HOOK(hook_SendOpenWindow)
+    DPF_EVENT_REG_HOOK(hook_SendChangeCurrentUrl)
 
 public:
     virtual void initialize() override;

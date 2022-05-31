@@ -38,6 +38,8 @@ DSC_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
+static constexpr char kEventNS[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
+
 static DPF_NAMESPACE::EventDispatcherManager *
 dispatcher()
 {
@@ -46,6 +48,10 @@ dispatcher()
 
 void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls)
 {
+    bool hooked = dpfHookSequence->run(kEventNS, "hook_SendOpenWindow", urls);
+    if (hooked)
+        return;
+
     if (urls.isEmpty()) {
         dispatcher()->publish(GlobalEventType::kOpenNewWindow, QUrl());
     } else {
@@ -56,6 +62,10 @@ void WorkspaceEventCaller::sendOpenWindow(const QList<QUrl> &urls)
 
 void WorkspaceEventCaller::sendChangeCurrentUrl(const quint64 windowId, const QUrl &url)
 {
+    bool hooked = dpfHookSequence->run(kEventNS, "hook_SendChangeCurrentUrl", windowId, url);
+    if (hooked)
+        return;
+
     if (!url.isEmpty())
         dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }

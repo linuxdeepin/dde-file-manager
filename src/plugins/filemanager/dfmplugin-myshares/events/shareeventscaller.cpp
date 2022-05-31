@@ -40,8 +40,10 @@ void ShareEventsCaller::sendOpenDirs(quint64 winId, const QList<QUrl> &urls, Sha
         return;
 
     QList<QUrl> convertedUrls = urls;
-    for (auto &url : convertedUrls)
-        url = ShareUtils::convertToLocalUrl(url);
+    for (auto &url : convertedUrls) {
+        auto u = ShareUtils::convertToLocalUrl(url);
+        url = u.isValid() ? u : url;
+    }
 
     if (urls.count() > 1) {
         for (auto url : convertedUrls)

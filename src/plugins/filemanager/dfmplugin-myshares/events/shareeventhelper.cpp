@@ -21,7 +21,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "shareeventhelper.h"
+#include "shareeventscaller.h"
 #include "utils/shareutils.h"
+
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QDebug>
 
@@ -55,6 +58,36 @@ bool ShareEventHelper::blockMoveToTrash(quint64, const QList<QUrl> &urls)
 {
     if (containsShareUrl(urls)) {
         qDebug() << "move to trash event is blocked, trying to delete usershare:///*";
+        return true;
+    }
+    return false;
+}
+
+bool ShareEventHelper::hookSendOpenWindow(const QList<QUrl> &urls)
+{
+    bool hook = false;
+    for (auto u : urls) {
+        if (u.scheme() == ShareUtils::scheme() && u.path() != "/") {
+            hook = true;
+            break;
+        }
+    }
+
+    if (hook) {
+        ShareEventsCaller::sendOpenDirs(0, urls, ShareEventsCaller::kOpenInNewWindow);
+        return true;
+    }
+
+    return false;
+}
+
+bool ShareEventHelper::hookSendChangeCurrentUrl(quint64 winId, const QUrl &url)
+{
+    if (url.scheme() == ShareUtils::scheme() && url.path() != "/") {
+        auto u(url);
+        u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+        QList<QUrl> urls { u };
+        ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::kOpenInCurrentWindow);
         return true;
     }
     return false;
