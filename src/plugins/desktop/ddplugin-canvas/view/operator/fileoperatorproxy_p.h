@@ -49,7 +49,7 @@ public:
 
     void callBackTouchFile(const QUrl &target, const QVariantMap &customData);
     void callBackPasteFiles(const JobInfoPointer info);
-    void callBackRenameFiles(const QList<QUrl> &targets);
+    void callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets);
 
     void delaySelectUrls(const QList<QUrl> &urls, int ms = 10);
     void doSelectUrls(const QList<QUrl> &urls);
@@ -60,6 +60,7 @@ public:
     DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
 
     QPair<QString, QPair<int, QPoint>> touchFileData;
+    QHash<QUrl, QUrl> renameFileData;
 };
 
 DDP_CANVAS_END_NAMESPACE

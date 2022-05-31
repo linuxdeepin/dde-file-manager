@@ -59,6 +59,10 @@ public:
 
     QPair<QString, QPair<int, QPoint>> touchFileData() const;
     void clearTouchFileData();
+
+    QHash<QUrl, QUrl> renameFileData() const;
+    void removeRenameFileData(const QUrl &oldUrl);
+    void clearRenameFileData();
 public:
     void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
 

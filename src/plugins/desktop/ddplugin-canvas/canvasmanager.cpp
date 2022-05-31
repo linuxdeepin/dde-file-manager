@@ -457,6 +457,15 @@ void CanvasManagerPrivate::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
         QModelIndex index = canvasModel->index(newUrl);
         if (!index.isValid())
             return;
+        const auto &renameFileData = FileOperatorProxyIns->renameFileData();
+        if (renameFileData.contains(oldUrl) && renameFileData.value(oldUrl) == newUrl) {
+            FileOperatorProxyIns->removeRenameFileData(oldUrl);
+            selectionModel->select(index, QItemSelectionModel::Select);
+            for (auto view : viewMap.values()) {
+                view->setCurrentIndex(index);
+                view->activateWindow();
+            }
+        }
 
         q->update();
     }

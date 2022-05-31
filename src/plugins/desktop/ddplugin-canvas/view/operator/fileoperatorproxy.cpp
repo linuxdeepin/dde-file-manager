@@ -90,9 +90,22 @@ void FileOperatorProxyPrivate::callBackPasteFiles(const JobInfoPointer info)
     }
 }
 
-void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &targets)
+void FileOperatorProxyPrivate::callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets)
 {
-    delaySelectUrls(targets);
+    q->clearRenameFileData();
+
+    // clear selected and current
+    auto view = CanvasIns->views().first();
+    if (Q_UNLIKELY(nullptr == view))
+        return;
+    view->selectionModel()->clearSelection();
+    view->selectionModel()->clearCurrentIndex();
+
+    Q_ASSERT(sources.count() == targets.count());
+
+    for (int i = 0; i < targets.count(); ++i) {
+        renameFileData.insert(sources.at(i), targets.at(i));
+    }
 }
 
 void FileOperatorProxyPrivate::delaySelectUrls(const QList<QUrl> &urls, int ms)
@@ -324,6 +337,21 @@ void FileOperatorProxy::clearTouchFileData()
     d->touchFileData = qMakePair(QString(), qMakePair(-1, QPoint(-1, -1)));
 }
 
+QHash<QUrl, QUrl> FileOperatorProxy::renameFileData() const
+{
+    return d->renameFileData;
+}
+
+void FileOperatorProxy::removeRenameFileData(const QUrl &oldUrl)
+{
+    d->renameFileData.remove(oldUrl);
+}
+
+void FileOperatorProxy::clearRenameFileData()
+{
+    d->renameFileData.clear();
+}
+
 void FileOperatorProxy::callBackFunction(const CallbackArgus args)
 {
     const QVariant &customValue = args->value(CallbackKey::kCustom);
@@ -355,8 +383,9 @@ void FileOperatorProxy::callBackFunction(const CallbackArgus args)
         }
     } break;
     case FileOperatorProxyPrivate::CallBackFunc::kCallBackRenameFiles: {
+        auto sources = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
         auto targets = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
-        d->callBackRenameFiles(targets);
+        d->callBackRenameFiles(sources, targets);
     } break;
     default:
         break;
