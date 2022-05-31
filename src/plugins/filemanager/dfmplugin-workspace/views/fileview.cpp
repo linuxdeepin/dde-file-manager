@@ -604,8 +604,12 @@ void FileView::setSort(const ItemRoles role, const Qt::SortOrder order)
 
     int column = model()->getColumnByRole(role);
 
-    if (d->headerView)
+    onSortIndicatorChanged(column, order);
+    if (d->headerView) {
+        QSignalBlocker blocker(d->headerView);
+        Q_UNUSED(blocker)
         d->headerView->setSortIndicator(column, order);
+    }
 }
 
 QModelIndex FileView::currentPressIndex() const
