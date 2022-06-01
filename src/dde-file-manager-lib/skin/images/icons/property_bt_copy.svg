@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>形状结合</title>
+    <g id="主界面" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" fill-opacity="0.7">
+        <g id="文件管理器1050-文件共享3.1-共享端" transform="translate(-1966.000000, -779.000000)" fill="#000000" fill-rule="nonzero">
+            <g id="共享打开" transform="translate(1685.000000, 35.000000)">
+                <g id="内容区" transform="translate(0.000000, 217.000000)">
+                    <g id="共享" transform="translate(10.000000, 285.000000)">
+                        <g id="编组-4" transform="translate(10.000000, 70.000000)">
+                            <g id="-mockplus-" transform="translate(260.000000, 171.000000)">
+                                <g id="ICON-/-Action-/-Copy" transform="translate(1.000000, 1.000000)">
+                                    <path d="M12,5 C13.1045695,5 14,5.8954305 14,7 L14,12 C14,13.1045695 13.1045695,14 12,14 L7,14 C5.8954305,14 5,13.1045695 5,12 L5,7 C5,5.8954305 5.8954305,5 7,5 L12,5 Z M7,0 C8.1045695,0 9,0.8954305 9,2 L9,4 L8,4 L8,2 C8,1.48716416 7.61395981,1.06449284 7.11662113,1.00672773 L7,1 L2,1 C1.48716416,1 1.06449284,1.38604019 1.00672773,1.88337887 L1,2 L1,7 C1,7.51283584 1.38604019,7.93550716 1.88337887,7.99327227 L2,8 L4,8 L4,9 L2,9 C0.8954305,9 0,8.1045695 0,7 L0,2 C0,0.8954305 0.8954305,0 2,0 L7,0 Z" id="形状结合"></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
