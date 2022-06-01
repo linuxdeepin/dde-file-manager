@@ -768,7 +768,7 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
             auto nameCheckFunc = [](const QString &name) -> bool {
                 return FileOperationsUtils::fileNameUsing.contains(name);
             };
-            fileNewName = FileUtils::nonExistFileName(fromInfo, toInfo, nameCheckFunc);
+            fileNewName = FileUtils::nonExistFileName(newTargetInfo, toInfo, nameCheckFunc);
             FileOperationsUtils::addUsingName(fileNewName);
 
             if (fileNewName.isEmpty()) {
