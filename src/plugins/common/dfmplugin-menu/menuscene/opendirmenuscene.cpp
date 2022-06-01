@@ -192,8 +192,10 @@ void OpenDirMenuScene::openAsAdminAction(QMenu *parent)
     if (SysInfoUtils::isRootUser() || SysInfoUtils::isServerSys())
         return;
 
-    if (FileUtils::isGvfsFile(d->currentDir))   // gvfs mounts and new smb mounts
+    if (FileUtils::isGvfsFile(d->currentDir)) {   // gvfs mounts and new smb mounts
+        qDebug() << "openAsAdmin is not added cause GVFS file: " << d->currentDir;
         return;
+    }
 
     QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kOpenAsAdmin));
     d->predicateAction[ActionID::kOpenAsAdmin] = tempAction;
