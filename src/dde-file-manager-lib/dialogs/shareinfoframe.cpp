@@ -42,6 +42,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <DPushButton>
+#include <DGuiApplicationHelper>
 
 #include <unistd.h>
 
@@ -176,8 +177,14 @@ void ShareInfoFrame::initUI()
     sharePasswordLabel->setAttribute(Qt::WA_TranslucentBackground, true);
     m_sharePasswordlineEdit = new QLineEdit(this);
     m_sharePasswordlineEdit->setAttribute(Qt::WA_TranslucentBackground, true);
-    pe.setColor(QPalette::Text, QColor("#000000"));
+
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
+        pe.setColor(QPalette::Text, QColor("#000000"));
+    } else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+        pe.setColor(QPalette::Text, QColor("#cfcfe0"));
+    }
     m_sharePasswordlineEdit->setPalette(pe);
+
     m_sharePasswordlineEdit->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
     QFont font = this->font();
     int defaultFontSize = font.pointSize();
@@ -223,8 +230,15 @@ void ShareInfoFrame::initUI()
     //Layout: network
     QHBoxLayout *networkAddrLayout = new QHBoxLayout;
     networkAddrLayout->setContentsMargins(0, 0, 0, 0);
-    DPushButton *copyNetAddr = new DPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
+
+    DPushButton *copyNetAddr = nullptr;
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
+        copyNetAddr = new DPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
+    } else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+        copyNetAddr = new DPushButton(QIcon(":dark/icons/property_bt_copy.svg"), "");
+    }
     copyNetAddr->setToolTip(tr("Copy"));
+
     QObject::connect(copyNetAddr, &DPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(m_netScheme->text() + m_networkAddrLabel->text());
@@ -239,8 +253,14 @@ void ShareInfoFrame::initUI()
     //Layout: user name
     QHBoxLayout *userNameLayout = new QHBoxLayout();
     userNameLayout->setContentsMargins(0, 0, 0, 0);
-    DPushButton *copyUserName = new DPushButton(QIcon(":icons/images/icons/property_bt_copy.png"), "");
+    DPushButton *copyUserName = nullptr;
+    if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType) {
+        copyUserName = new DPushButton(QIcon(":light/icons/property_bt_copy.svg"), "");
+    } else if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType) {
+        copyUserName = new DPushButton(QIcon(":dark/icons/property_bt_copy.svg"), "");
+    }
     copyUserName->setToolTip(tr("Copy"));
+
     QObject::connect(copyUserName, &DPushButton::clicked, [=]() {
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(m_userNamelineEdit->text());

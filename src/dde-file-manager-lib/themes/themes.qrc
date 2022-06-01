@@ -85,5 +85,7 @@
         <file>dark/icons/glowing.svg</file>
         <file>light/icons/glowing.svg</file>
         <file>dark/icons/caution.svg</file>
+        <file>light/icons/property_bt_copy.svg</file>
+        <file>dark/icons/property_bt_copy.svg</file>
     </qresource>
 </RCC>
