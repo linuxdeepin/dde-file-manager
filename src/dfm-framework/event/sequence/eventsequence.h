@@ -86,7 +86,11 @@ public:
     inline bool follow(const QString &space, const QString &topic, T *obj, Func method)
     {
         Q_ASSERT(topic.startsWith(kHookStrategePrefix));
-        return follow(EventConverter::convert(space, topic), obj, std::move(method));
+        if (Q_UNLIKELY(!follow(EventConverter::convert(space, topic), obj, std::move(method)))) {
+            qCritical() << "Topic " << space << ":" << topic << "is invalid";
+            return false;
+        }
+        return true;
     }
 
     template<class T, class Func>
@@ -127,6 +131,24 @@ public:
             lk.unlock();
             if (dispatcher)
                 return dispatcher->traversal(param, std::forward<Args>(args)...);
+        }
+        return false;
+    }
+
+    inline bool run(const QString &space, const QString &topic)
+    {
+        Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+        return run(EventConverter::convert(space, topic));
+    }
+
+    inline bool run(EventType type)
+    {
+        QReadLocker lk(&rwLock);
+        if (Q_LIKELY(sequenceMap.contains(type))) {
+            auto dispatcher = sequenceMap.value(type);
+            lk.unlock();
+            if (dispatcher)
+                return dispatcher->traversal();
         }
         return false;
     }

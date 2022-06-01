@@ -99,3 +99,11 @@ TEST_F(UT_EventDispatcher, test_use_filter)
     EventDispatcherManager::instance().publish(eType1, 11, &called);
     EXPECT_EQ(10, called);
 }
+
+TEST_F(UT_EventDispatcher, test_empty_push)
+{
+    TestQObject b;
+    EventType eType1 = 2;
+    EXPECT_TRUE(EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::empty1));
+    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1));
+}

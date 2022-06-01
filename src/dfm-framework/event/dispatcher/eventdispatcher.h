@@ -96,7 +96,11 @@ public:
     inline bool subscribe(const QString &space, const QString &topic, T *obj, Func method)
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
-        return subscribe(EventConverter::convert(space, topic), obj, std::move(method));
+        if (Q_UNLIKELY(!subscribe(EventConverter::convert(space, topic), obj, std::move(method)))) {
+            qCritical() << "Topic " << space << ":" << topic << "is invalid";
+            return false;
+        }
+        return true;
     }
 
     template<class T, class Func>
@@ -143,6 +147,26 @@ public:
         return false;
     }
 
+    inline bool publish(const QString &space, const QString &topic)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        return publish(EventConverter::convert(space, topic));
+    }
+
+    inline bool publish(EventType type)
+    {
+        QReadLocker lk(&rwLock);
+        if (Q_LIKELY(dispatcherMap.contains(type))) {
+            auto dispatcher = dispatcherMap.value(type);
+            lk.unlock();
+            if (dispatcher) {
+                dispatcher->dispatch();
+                return true;
+            }
+        }
+        return false;
+    }
+
     template<class T, class... Args>
     inline QFuture<void> asyncPublish(const QString &space, const QString &topic, T param, Args &&... args)
     {
@@ -154,9 +178,22 @@ public:
     inline QFuture<void> asyncPublish(EventType type, T param, Args &&... args)
     {
         QReadLocker lk(&rwLock);
-        if (Q_LIKELY(dispatcherMap.contains(type))) {
+        if (Q_LIKELY(dispatcherMap.contains(type)))
             return dispatcherMap[type]->asyncDispatch(param, std::forward<Args>(args)...);
-        }
+        return QFuture<void>();
+    }
+
+    inline QFuture<void> asyncPublish(const QString &space, const QString &topic)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        return asyncPublish(EventConverter::convert(space, topic));
+    }
+
+    inline QFuture<void> asyncPublish(EventType type)
+    {
+        QReadLocker lk(&rwLock);
+        if (Q_LIKELY(dispatcherMap.contains(type)))
+            return dispatcherMap[type]->asyncDispatch();
         return QFuture<void>();
     }
 

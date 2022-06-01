@@ -105,7 +105,11 @@ public:
     inline bool connect(const QString &space, const QString &topic, T *obj, Func method)
     {
         Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
-        return connect(EventConverter::convert(space, topic), obj, std::move(method));
+        if (Q_UNLIKELY(!connect(EventConverter::convert(space, topic), obj, std::move(method)))) {
+            qCritical() << "Topic " << space << ":" << topic << "is invalid";
+            return false;
+        }
+        return true;
     }
 
     template<class T, class Func>
@@ -181,6 +185,20 @@ public:
         QReadLocker guard(&rwLock);
         if (Q_LIKELY(ChannelMap.contains(type)))
             return ChannelMap[type]->asyncSend(param, std::forward<Args>(args)...);
+        return EventChannelFuture(QFuture<QVariant>());
+    }
+
+    inline EventChannelFuture post(const QString &space, const QString &topic)
+    {
+        Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
+        return post(EventConverter::convert(space, topic));
+    }
+
+    inline EventChannelFuture post(const EventType &type)
+    {
+        QReadLocker guard(&rwLock);
+        if (Q_LIKELY(ChannelMap.contains(type)))
+            return ChannelMap[type]->asyncSend();
         return EventChannelFuture(QFuture<QVariant>());
     }
 
