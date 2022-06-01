@@ -104,7 +104,14 @@ void SelectHelper::selection(const QRect &rect, QItemSelectionModel::SelectionFl
     QItemSelection newSelection;
     caculateSelection(rect, &newSelection);
 
-    view->selectionModel()->select(newSelection, flags);
+    if (view->isIconViewMode()) {
+        view->clearSelection();
+        for (const QModelIndex &index : newSelection.indexes()) {
+            view->selectionModel()->select(index, QItemSelectionModel::Select);
+        }
+    } else {
+        view->selectionModel()->select(newSelection, flags);
+    }
 }
 
 void SelectHelper::select(const QList<QUrl> &urls)
@@ -154,7 +161,6 @@ void SelectHelper::caculateIconViewSelection(const QRect &rect, QItemSelection *
                      abs(rect.width()),
                      abs(rect.height()));
 
-    QVector<QModelIndex> selectItems;
     for (int i = 0; i < itemCount; ++i) {
         const QModelIndex &index = view->model()->index(i, 0);
         const QRect &itemRect = view->rectForIndex(index);
