@@ -216,7 +216,7 @@ void TrashMenuScenePrivate::updateMenu(QMenu *menu)
             auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
             if (actId == TrashActionId::kRestoreAll
                 || actId == TrashActionId::kEmptyTrash)
-                act->setEnabled(curDir == TrashHelper::rootUrl());
+                act->setEnabled(curDir == TrashHelper::rootUrl() && !TrashHelper::isEmpty());
 
             if (sceneNameCurrent.isEmpty())
                 sceneNameCurrent = sceneName;
