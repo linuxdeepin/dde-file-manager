@@ -602,9 +602,9 @@ void FilePreviewDialog::done(int r)
 
 void FilePreviewDialog::DoneCurrent()
 {
-    if (this != nullptr && m_preview) {
-        m_preview->DoneCurrent();
-    }
+//    if (this != nullptr && m_preview) {
+//        m_preview->DoneCurrent();
+//    }
 }
 
 void FilePreviewDialog::playCurrentPreviewFile()
