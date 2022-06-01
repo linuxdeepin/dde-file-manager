@@ -27,6 +27,8 @@
 
 #include <dfm-framework/framework.h>
 
+inline constexpr uint8_t kMaxStep { 2 };
+
 OperationsStackManagerDbus::OperationsStackManagerDbus(QObject *parent)
     : QObject(parent)
 {
@@ -35,6 +37,10 @@ OperationsStackManagerDbus::OperationsStackManagerDbus(QObject *parent)
 void OperationsStackManagerDbus::SaveOperations(const QVariantMap &values)
 {
     QMutexLocker lk(&lock);
+
+    while (fileOperations.size() >= kMaxStep)
+        fileOperations.pop_front();
+
     fileOperations.push(values);
 }
 

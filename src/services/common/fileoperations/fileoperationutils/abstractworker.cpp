@@ -514,7 +514,7 @@ void AbstractWorker::saveOperations()
             }
             values.insert("sources", QVariant::fromValue(listUrls));
             values.insert("target", targetUrl.toString());
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kSaveOperator, values);
+            dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
         }
     }
 }

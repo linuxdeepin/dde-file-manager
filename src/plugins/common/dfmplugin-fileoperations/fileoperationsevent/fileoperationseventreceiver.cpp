@@ -997,8 +997,20 @@ bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId,
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("touch file error", error);
     }
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                          windowId, QList<QUrl>() << url, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+                                 windowId, QList<QUrl>() << url, ok, error);
+
+    // save operation by dbus
+    {
+        QVariantMap values;
+        values.insert("event", QVariant::fromValue(static_cast<uint16_t>(GlobalEventType::kDeleteFiles)));
+        QStringList lists;
+        lists << url.toString();
+        values.insert("sources", QVariant::fromValue(lists));
+        values.insert("target", "");
+        dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
+    }
+
     return ok;
 }
 
