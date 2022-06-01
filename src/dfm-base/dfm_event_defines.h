@@ -79,11 +79,9 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
     kDeleteFilesResult,
     kMoveToTrashResult,
     kRestoreFromTrashResult,
-    kWriteUrlsToClipboardResult,
     kCutFileResult,
     kOpenInTerminalResult,
     kCleanTrashResult,
-    kWriteCustomToClipboardResult,
     kHideFilesResult,
 
     kTempDesktopPaintTag = 9998,   //! todo(zy) need to delete when find solution

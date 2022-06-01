@@ -27,6 +27,8 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 
+DPUTILS_USE_NAMESPACE
+
 static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
 {
     const QString &suffix = fileInfo->suffix();
@@ -38,10 +40,13 @@ static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<df
     return fileInfo;
 }
 
-bool dfmplugin_utils::Utils::start()
+void Utils::initialize()
 {
     GlobalEventReceiver::instance()->initEventConnect();
-
     DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::AbstractFileInfo>(DFMBASE_NAMESPACE::Global::kFile, transFileInfo);
+}
+
+bool Utils::start()
+{
     return true;
 }

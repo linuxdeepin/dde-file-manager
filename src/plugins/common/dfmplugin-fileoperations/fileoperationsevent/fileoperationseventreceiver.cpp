@@ -1273,6 +1273,7 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
 {
     Q_UNUSED(windowId)
 
+    bool ok { true };
     for (const QUrl &url : urls) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
@@ -1281,11 +1282,12 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
 
             HideFileHelper helper(parentUrl);
             helper.contains(fileName) ? helper.remove(fileName) : helper.insert(fileName);
-            helper.save();
+            if (!helper.save())
+                ok = false;
         }
     }
-
-    return true;
+    dpfSignalDispatcher->publish(GlobalEventType::kHideFilesResult, windowId, urls, ok);
+    return ok;
 }
 
 void FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,

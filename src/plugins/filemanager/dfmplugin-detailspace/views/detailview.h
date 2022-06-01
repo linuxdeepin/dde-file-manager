@@ -59,6 +59,7 @@ protected:
 private:
     QScrollArea *scrollArea { nullptr };
     QFrame *expandFrame { nullptr };
+    QVBoxLayout *vLayout { nullptr };
     QVBoxLayout *mainLayout { nullptr };
     FileBaseInfoView *fileBaseInfoView { nullptr };
     QList<QWidget *> expandList {};

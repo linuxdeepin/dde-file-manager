@@ -128,11 +128,11 @@ void DetailView::initInfoUI()
     expandFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     scrollArea->setWidget(expandFrame);
 
-    QVBoxLayout *vlayout = new QVBoxLayout;
-    vlayout->setContentsMargins(5, 0, 5, 0);
-    vlayout->setSpacing(8);
-    vlayout->addStretch();
-    expandFrame->setLayout(vlayout);
+    vLayout = new QVBoxLayout;
+    vLayout->setContentsMargins(5, 0, 5, 0);
+    vLayout->setSpacing(8);
+    vLayout->addStretch();
+    expandFrame->setLayout(vLayout);
 
     mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 30, 0, 0);
@@ -151,7 +151,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
             return;
 
         if (iconLabel) {
-            mainLayout->removeWidget(iconLabel);
+            vLayout->removeWidget(iconLabel);
             delete iconLabel;
             iconLabel = nullptr;
         }
@@ -181,7 +181,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
             iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
         iconLabel->setAlignment(Qt::AlignCenter);
 
-        mainLayout->insertWidget(0, iconLabel, 1, Qt::AlignCenter);
+        vLayout->insertWidget(0, iconLabel, 1, Qt::AlignCenter);
     }
 }
 

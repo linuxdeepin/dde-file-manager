@@ -35,6 +35,7 @@ class Utils : public DPF_NAMESPACE::Plugin
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "utils.json")
 
 public:
+    virtual void initialize() override;
     virtual bool start() override;
 };
 
