@@ -103,12 +103,12 @@ bool MountControlDBus::Unmount(const QString &path)
 
     QString mpt;
     int ret = d->checkMount(path, mpt);
-    if (ret == MountControlDBusPrivate::kNotOwner && !d->checkAuth()) {
-        qDebug() << "check auth failed";
+    if (ret == MountControlDBusPrivate::kNotExist) {
+        qDebug() << "mount is not exist: " << path;
         return false;
     }
-    if (ret != MountControlDBusPrivate::kNoErr) {
-        qWarning() << "check mount failed: " << static_cast<MountControlDBusPrivate::MntCheckErr>(ret);
+    if (ret == MountControlDBusPrivate::kNotOwner && !d->checkAuth()) {
+        qDebug() << "check auth failed: " << path;
         return false;
     }
 
