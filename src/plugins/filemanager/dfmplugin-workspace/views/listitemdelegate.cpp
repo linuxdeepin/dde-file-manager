@@ -446,7 +446,7 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     QStyleOptionViewItem opt = option;
     painter->setFont(opt.font);
 
-    double columnX = iconRect.right() + kListModeIconSpacing;
+    double columnX = iconRect.right();
 
     bool isSelected = (opt.state & QStyle::State_Selected) && opt.showDecorationSelected;
     if (isSelected)
@@ -455,25 +455,22 @@ void ListItemDelegate::paintItemColumn(QPainter *painter, const QStyleOptionView
     // 绘制那些需要显示的项
     for (int i = 0; i < columnRoleList.count(); ++i) {
         int columnWidth = parent()->parent()->getColumnWidth(i);
-        //第一列需要去掉图标宽度
-        if (i == 0)
-            columnWidth -= iconRect.right() + kListModeIconSpacing;
-
-        if (columnWidth <= 0) {
+        if (columnWidth <= 0)
             continue;
-        }
 
         QRectF columnRect = opt.rect;
-        columnRect.setLeft(columnX);
+        columnRect.setLeft(columnX + kListModeColumnPadding);
 
-        if (columnRect.left() >= columnRect.right()) {
+        if (columnRect.left() >= columnRect.right())
             break;
+
+        if (i == 0) {
+            columnX = option.rect.x() + columnWidth - 1 - parent()->parent()->viewportMargins().left();
+        } else {
+            columnX += columnWidth;
         }
 
-        columnX += columnWidth;
-        if (columnX > opt.rect.right())
-            columnX = opt.rect.right();
-        columnRect.setRight(columnX - kListModeRightPadding);
+        columnRect.setRight(qMin(columnX, static_cast<qreal>(opt.rect.right())));
 
         int rol = columnRoleList.at(i);
         const QVariant &data = index.data(rol);
