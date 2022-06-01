@@ -231,6 +231,7 @@ void DoCutFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
 
 bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
 {
+    const QUrl &sourceUrl = fileInfo->url();
     AbstractFileInfoPointer newTargetInfo(nullptr);
     bool result = false;
     bool ok = doCheckFile(fileInfo, targetInfo, fileInfo->fileName(), newTargetInfo, &result);
@@ -239,9 +240,13 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
     ok = createSystemLink(fileInfo, newTargetInfo, true, false, &result);
     if (!ok && !result)
         return false;
-    ok = deleteFile(fileInfo->url(), &result);
+    ok = deleteFile(sourceUrl, &result);
     if (!ok && !result)
         return false;
+    if (!isConvert) {
+        completeSourceFiles.append(sourceUrl);
+        completeTargetFiles.append(newTargetInfo->url());
+    }
     return true;
 }
 
@@ -278,59 +283,20 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
     sourceStorageInfo.reset(new QStorageInfo(sourceInfo->url().path()));
 
     const QUrl &sourceUrl = sourceInfo->url();
-    const QUrl &targetUrl = targetInfo->url();
 
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
         AbstractFileInfoPointer newTargetInfo(nullptr);
         if (!doCheckFile(sourceInfo, targetInfo, sourceInfo->fileName(), newTargetInfo, ok))
             return *ok;
 
-        if (sourceInfo->isSymLink()) {
-            if (newTargetInfo->exists()) {
-                if (!isConvert && targetInfo == this->targetInfo) {
-                    completeSourceFiles.append(sourceUrl);
-                    completeTargetFiles.append(newTargetInfo->url());
-                }
-                bool succ = deleteFile(sourceUrl, ok);
-                if (!succ) {
-                    return *ok;
-                }
-            }
-
-            // create link
-
-            AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
-            do {
-                if (!handler->createSystemLink(sourceUrl, newTargetInfo->url()))
-                    // pause and emit error msg
-                    action = doHandleErrorAndWait(sourceUrl, targetUrl, AbstractJobHandler::JobErrorType::kSymlinkError);
-
-            } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
-
-            if (action != AbstractJobHandler::SupportAction::kNoAction) {
-                return action == AbstractJobHandler::SupportAction::kSkipAction;
-            }
-
+        *ok = renameFileByHandler(sourceInfo, newTargetInfo);
+        if (*ok) {
             if (!isConvert && targetInfo == this->targetInfo) {
                 completeSourceFiles.append(sourceUrl);
                 completeTargetFiles.append(newTargetInfo->url());
             }
-            // remove old link file
-            if (!deleteFile(sourceUrl, ok))
-                return *ok;
-
-            return true;
-
-        } else {
-            *ok = renameFileByHandler(sourceInfo, newTargetInfo);
-            if (*ok) {
-                if (!isConvert && targetInfo == this->targetInfo) {
-                    completeSourceFiles.append(sourceUrl);
-                    completeTargetFiles.append(newTargetInfo->url());
-                }
-            }
-            return *ok;
         }
+        return *ok;
     }
 
     return false;

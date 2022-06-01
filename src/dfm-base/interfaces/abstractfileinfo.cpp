@@ -987,9 +987,10 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     }
 
     AbstractFileInfoPointer info = nullptr;
+    QString linkTargetPath = symLinkTarget();
 
     do {
-        const QUrl &targetUrl = QUrl::fromLocalFile(symLinkTarget());
+        const QUrl &targetUrl = QUrl::fromLocalFile(linkTargetPath);
 
         if (targetUrl == url()) {
             return false;
@@ -1000,6 +1001,8 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
         if (!info) {
             return false;
         }
+
+        linkTargetPath = info->symLinkTarget();
     } while (info->isSymLink());
 
     return info->canDrop();
