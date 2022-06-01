@@ -63,7 +63,7 @@ void FileOperatorProxyPrivate::callBackTouchFile(const QUrl &target, const QVari
     // befor call back,recive file created signal
     QPair<int, QPoint> oriPoint;
     if (Q_UNLIKELY(GridIns->point(path, oriPoint))) {
-        qInfo() << "note:file existed!must check code!" << path << oriPoint << pos;;
+        qInfo() << "note:file existed!must check code!" << path << oriPoint << pos;
         if (CanvasGrid::Mode::Align == GridIns->mode())
             return;
 
@@ -280,7 +280,7 @@ void FileOperatorProxy::sendFilesToBluetooth(const CanvasView *view)
 void FileOperatorProxy::undoFiles(const CanvasView *view)
 {
     dpfInstance.eventDispatcher().publish(GlobalEventType::kRevocation,
-                                          view->winId());
+                                          view->winId(), nullptr);
 }
 
 void FileOperatorProxy::dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
@@ -314,7 +314,7 @@ void FileOperatorProxy::dropToApp(const QList<QUrl> &urls, const QString &app)
     dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, view->winId(), urls, apps);
 }
 
-QPair<QString, QPair<int, QPoint> > FileOperatorProxy::touchFileData() const
+QPair<QString, QPair<int, QPoint>> FileOperatorProxy::touchFileData() const
 {
     return d->touchFileData;
 }
