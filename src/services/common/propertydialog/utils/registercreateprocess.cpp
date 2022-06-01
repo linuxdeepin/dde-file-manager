@@ -109,9 +109,10 @@ bool RegisterCreateProcess::isContains(const QUrl &url) const
 QWidget *RegisterCreateProcess::createCustomizePropertyWidget(const QUrl &url)
 {
     QWidget *widget = nullptr;
-    if (viewCreateFunctionHash.contains(url.scheme())) {
-        createControlViewFunc func = viewCreateFunctionHash.value(url.scheme());
+    for (createControlViewFunc &func : viewCreateFunctionHash.values()) {
         widget = func(url);
+        if (widget)
+            break;
     }
     return widget;
 }
