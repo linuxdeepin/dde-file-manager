@@ -1073,6 +1073,12 @@ bool dfmbase::AbstractFileInfo::canFetch() const
 
     return isDir() && !isPrivate();
 }
+
+bool dfmbase::AbstractFileInfo::canHidden() const
+{
+    CALL_PROXY(canHidden());
+    return true;
+}
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::isDragCompressFileFormat
  * \return

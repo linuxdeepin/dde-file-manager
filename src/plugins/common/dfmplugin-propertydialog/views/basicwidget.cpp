@@ -208,6 +208,9 @@ void BasicWidget::basicFill(const QUrl &url)
     if (info.isNull())
         return;
 
+    if (!info->canHidden())
+        hideFile->setEnabled(false);
+
     if (info->isHidden())
         hideFile->setChecked(true);
 

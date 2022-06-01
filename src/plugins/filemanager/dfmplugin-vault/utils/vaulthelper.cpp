@@ -266,7 +266,8 @@ QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
 {
     static VaultPropertyDialog *vaultDialog = nullptr;
     bool flg = UniversalUtils::urlEquals(VaultHelper::instance()->rootUrl(), url);
-    QUrl tempUrl = UrlRoute::pathToReal(VaultHelper::instance()->rootUrl().path());
+    QUrl tempUrl = VaultHelper::instance()->sourceRootUrl();
+    tempUrl.setScheme(url.scheme());
     bool flg1 = UniversalUtils::urlEquals(tempUrl, url);
     if (flg || flg1) {
         if (!vaultDialog) {

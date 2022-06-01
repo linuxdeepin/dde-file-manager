@@ -113,6 +113,7 @@ void Trash::addFileOperations()
     WorkspaceService::service()->setWorkspaceMenuScene(Global::kTrash, TrashMenuCreator::name());
 
     propertyServIns->registerBasicViewFiledExpand(TrashHelper::propetyExtensionFunc, TrashHelper::scheme());
+    propertyServIns->registerFilterControlField(TrashHelper::scheme(), Property::FilePropertyControlFilter::kPermission);
 
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;

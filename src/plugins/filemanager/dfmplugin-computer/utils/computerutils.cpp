@@ -25,7 +25,9 @@
 #include "utils/computerdatastruct.h"
 #include "deviceproperty/devicepropertydialog.h"
 
+#include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/windows/windowsservice.h"
+
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
@@ -33,6 +35,8 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -316,7 +320,11 @@ QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)
 
 QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
 {
-    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
+    QUrl devUrl = convertToDevUrl(url);
+    if (devUrl.isEmpty())
+        return nullptr;
+
+    DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     DevicePropertyDialog *dialog = new DevicePropertyDialog;
     DSC_NAMESPACE::Property::DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
@@ -329,4 +337,29 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
     devInfo.availableSpace = info->sizeFree();
     dialog->setSelectDeviceInfo(devInfo);
     return dialog;
+}
+
+QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
+{
+    if (url.scheme() == Global::kEntry) {
+        return url;
+    }
+
+    QUrl converted = url;
+    if (delegateServIns->isRegistedTransparentHandle(converted.scheme())) {   // first convert it to local file
+        converted = delegateServIns->urlTransform(converted);
+    }
+
+    QString devId;
+    if (converted.scheme() == Global::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
+        if (devId.startsWith(kBlockDeviceIdPrefix)) {
+            converted = ComputerUtils::makeBlockDevUrl(devId);
+        } else {
+            converted = ComputerUtils::makeProtocolDevUrl(devId);
+        }
+    } else {
+        converted = QUrl();
+    }
+
+    return converted;
 }

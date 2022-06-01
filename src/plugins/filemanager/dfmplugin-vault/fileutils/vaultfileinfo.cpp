@@ -147,6 +147,11 @@ bool VaultFileInfo::isRoot() const
     return bRootDir;
 }
 
+bool VaultFileInfo::canTag() const
+{
+    return false;
+}
+
 QUrl VaultFileInfo::url() const
 {
     if (!dptr->proxy)

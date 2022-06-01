@@ -50,6 +50,7 @@ public:
     virtual bool isDir() const override;
     virtual bool isSymLink() const override;
     virtual bool isRoot() const override;
+    virtual bool canTag() const override;
     virtual QUrl url() const override;
     virtual qint64 size() const override;
     virtual int countChildFile() const override;

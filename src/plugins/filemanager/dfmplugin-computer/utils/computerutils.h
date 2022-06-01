@@ -85,6 +85,7 @@ public:
 
     static QString deviceTypeInfo(DFMEntryFileInfoPointer info);
     static QWidget *devicePropertyDialog(const QUrl &url);
+    static QUrl convertToDevUrl(const QUrl &url);
 
     static int getUniqueInteger();
     static bool checkGvfsMountExist(const QUrl &url, int timeout = 2000);

@@ -165,9 +165,19 @@ bool TrashFileInfo::isDir() const
     return AbstractFileInfo::isDir();
 }
 
+bool TrashFileInfo::canTag() const
+{
+    return false;
+}
+
 bool TrashFileInfo::canDrop()
 {
     return url() == TrashHelper::rootUrl();
+}
+
+bool TrashFileInfo::canHidden() const
+{
+    return false;
 }
 
 QUrl TrashFileInfo::redirectedFileUrl() const

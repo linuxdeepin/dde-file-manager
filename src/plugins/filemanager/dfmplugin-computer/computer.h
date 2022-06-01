@@ -53,7 +53,6 @@ private:
     void regComputerCrumbToTitleBar();
     void regComputerToSearch();
     void bindEvents();
-    void followEvents();
 };
 DPCOMPUTER_END_NAMESPACE
 

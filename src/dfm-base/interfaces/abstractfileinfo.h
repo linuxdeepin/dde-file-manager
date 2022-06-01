@@ -169,6 +169,7 @@ public:
     virtual bool canTag() const;
     virtual bool canDragCompress() const;
     virtual bool canFetch() const;
+    virtual bool canHidden() const;
     virtual bool permission(QFile::Permissions permissions) const;
     virtual QFile::Permissions permissions() const;
     virtual int countChildFile() const;

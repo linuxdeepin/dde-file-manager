@@ -39,7 +39,6 @@ public:
 
 public Q_SLOTS:
     void handleItemEject(const QUrl &url);
-    bool handleShowPropertyDialog(const QList<QUrl> &urls);
 
 private:
     explicit ComputerEventReceiver(QObject *parent = nullptr);

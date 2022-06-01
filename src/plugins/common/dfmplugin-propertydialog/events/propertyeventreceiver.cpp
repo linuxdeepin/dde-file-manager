@@ -32,8 +32,6 @@ DPPROPERTYDIALOG_USE_NAMESPACE
 #define STR1(s) #s
 #define STR2(s) STR1(s)
 
-static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE) };
-
 PropertyEventReceiver::PropertyEventReceiver(QObject *parent)
     : QObject(parent)
 {
@@ -52,9 +50,6 @@ void PropertyEventReceiver::connectService()
 
 void PropertyEventReceiver::showPropertyControl(const QList<QUrl> &url)
 {
-    bool handled = dpfHookSequence->run(kCurrentEventSpace, "hook_ShowPropertyDialog", url);
-    if (!handled) {
-        FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
-        fileDialogManager->showPropertyDialog(url);
-    }
+    FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
+    fileDialogManager->showPropertyDialog(url);
 }

@@ -23,12 +23,6 @@
 #include "computereventreceiver.h"
 #include "computereventcaller.h"
 #include "controller/computercontroller.h"
-#include "utils/computerutils.h"
-
-#include "services/common/delegate/delegateservice.h"
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
-#include "dfm-base/base/device/deviceutils.h"
 
 #include <QDebug>
 
@@ -44,33 +38,6 @@ ComputerEventReceiver *ComputerEventReceiver::instance()
 void ComputerEventReceiver::handleItemEject(const QUrl &url)
 {
     ComputerControllerInstance->actEject(url);
-}
-
-bool ComputerEventReceiver::handleShowPropertyDialog(const QList<QUrl> &urls)
-{
-    bool handled = false;
-    QList<QUrl> converted;
-    for (auto url : urls) {
-        if (delegateServIns->isRegistedTransparentHandle(url.scheme()))   // first convert it to local file
-            url = delegateServIns->urlTransform(url);
-
-        QString devId;
-        if (url.scheme() == Global::kFile && DevProxyMng->isMptOfDevice(url.path(), devId)) {
-            handled = true;
-            if (devId.startsWith(kBlockDeviceIdPrefix))
-                converted << ComputerUtils::makeBlockDevUrl(devId);
-            else
-                converted << ComputerUtils::makeProtocolDevUrl(devId);
-        } else {
-            converted << url;
-        }
-    }
-
-    if (handled) {
-        ComputerEventCaller::sendShowPropertyDialog(converted);
-        qInfo() << "property is handled by computer plugin: " << urls << "after converted: " << converted;
-    }
-    return handled;
 }
 
 ComputerEventReceiver::ComputerEventReceiver(QObject *parent)

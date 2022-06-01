@@ -46,7 +46,9 @@ public:
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
     virtual bool isDir() const override;
+    virtual bool canTag() const override;
     virtual bool canDrop() override;
+    virtual bool canHidden() const override;
     virtual QUrl redirectedFileUrl() const override;
     virtual QFile::Permissions permissions() const override;
     virtual bool isHidden() const override;
