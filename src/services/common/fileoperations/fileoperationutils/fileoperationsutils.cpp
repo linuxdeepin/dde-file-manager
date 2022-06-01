@@ -104,6 +104,8 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
                                              SizeInfoPointer &sizeInfo,
                                              const bool &isRecordUrl)
 {
+    QSet<QUrl> urlCounted;
+
     char *paths[2] = { nullptr, nullptr };
     paths[0] = strdup(url.path().toUtf8().toStdString().data());
     FTS *fts = fts_open(paths, 0, nullptr);
@@ -120,9 +122,14 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
         if (ent == nullptr) {
             break;
         }
+        const QUrl &curUrl = QUrl::fromLocalFile(ent->fts_path);
+        if (urlCounted.contains(curUrl))
+            continue;
+        urlCounted.insert(curUrl);
+
         unsigned short flag = ent->fts_info;
         if (isRecordUrl && flag != FTS_DP)
-            sizeInfo->allFiles.append(QUrl::fromLocalFile(ent->fts_path));
+            sizeInfo->allFiles.append(curUrl);
         if (flag != FTS_DP)
             sizeInfo->totalSize += ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
         if (sizeInfo->dirSize == 0 && flag == FTS_D)
