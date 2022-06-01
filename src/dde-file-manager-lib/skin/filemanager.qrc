@@ -317,6 +317,7 @@
         <file>images/icons/jump_to_copy.svg</file>
         <file>images/icons/property_bt_copy@2x.png</file>
         <file>images/icons/property_bt_copy.png</file>
+        <file>images/icons/property_bt_copy.svg</file>
     </qresource>
     <qresource prefix="/leftsidebar">
         <file>images/leftsidebar/android_active_16px.svg</file>
