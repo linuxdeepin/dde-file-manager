@@ -108,10 +108,20 @@ void MultiFilePropertyDialog::calculateFileCount()
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info.isNull())
             return;
-        if (info->isDir())
-            ++dirCount;
-        if (info->isFile())
+        if (info->isSymLink()) {
             ++fileCount;
+            continue;
+        }
+
+        if (info->isDir()) {
+            ++dirCount;
+            continue;
+        }
+
+        if (info->isFile()) {
+            ++fileCount;
+            continue;
+        }
     }
 
     fileCountLabel->setRightValue(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount), Qt::ElideMiddle, Qt::AlignVCenter, true);
