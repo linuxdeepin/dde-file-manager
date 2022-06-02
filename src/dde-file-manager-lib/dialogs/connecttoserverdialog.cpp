@@ -33,7 +33,6 @@
 #include "../interfaces/dfmsettings.h"
 #include "../interfaces/dfmapplication.h"
 
-
 #include <QComboBox>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -88,7 +87,6 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
             close();
             return;
         }
-
         QWidget *fileWindow = qobject_cast<QWidget *>(parent());
 
         const QString &currentDir = QDir::currentPath();
@@ -104,7 +102,7 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         QDir::setCurrent(currentDir);
         if(fileWindow)
             DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, inputUrl, fileWindow->window());
-
+/*
         //add search history list
         SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
         if (!historyManager->toStringList().contains(text)) {
@@ -113,12 +111,13 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
             historyManager->removeSearchHistory(text);
             historyManager->writeIntoSearchHistory(text);//追加到最后，用于下次打开对话框时显示上次连接。
         }
-        if(FileUtils::isSmbHostOnly(inputUrl)){
-            DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(fileWindow->topLevelWidget());
-            if(window){
-                emit window->getToolBar()->addSmbIpToSideBar(inputUrl);
-            }
-        }
+*/
+//        if(FileUtils::isSmbHostOnly(inputUrl)){
+//            DFileManagerWindow* window = qobject_cast<DFileManagerWindow*>(fileWindow->topLevelWidget());
+//            if(window){
+//                emit window->getToolBar()->addSmbIpToSideBar(inputUrl);
+//            }
+//        }
     }
     close();
 }

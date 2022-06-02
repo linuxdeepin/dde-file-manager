@@ -459,12 +459,24 @@ void DFMAddressBar::initConnections()
 
         //! 如果为保险箱路径则进行路径转换
         QString str = VaultController::toInternalPath(text());
-
         if (!DUrl::fromUserInput(str).isLocalFile()) {
             //从配置文件中更新historyList，因为搜索历史列表可能在连接到服务器对话框中有改变
-            historyList = Singleton<SearchHistroyManager>::instance()->toStringList();
-            if (!historyList.contains(str)) {
-                historyList.append(str);
+            QStringList list = Singleton<SearchHistroyManager>::instance()->toStringList();
+            if(!list.isEmpty())
+                historyList.append(list);
+            historyList.removeDuplicates();
+            if (!historyList.contains(str) || !list.contains(str)) {
+
+                DUrl inputUrl(str);
+                if(!inputUrl.scheme().isEmpty() && (
+                            inputUrl.scheme() == SMB_SCHEME ||
+                            inputUrl.scheme() == FTP_SCHEME ||
+                            inputUrl.scheme() == SFTP_SCHEME
+                            ) ){
+                    //网络挂载路径不在这里写入历史记录，在NetworkManager中挂载成功后写入，
+                    //防止挂载失败的地址写入历史记录。
+                    return;
+                }
                 Singleton<SearchHistroyManager>::instance()->writeIntoSearchHistory(str);
             }
         }

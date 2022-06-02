@@ -33,12 +33,14 @@
 
 #include "views/windowmanager.h"
 #include "shutil/fileutils.h"
+#include "../controllers/searchhistroymanager.h"
 
 #include "gvfsmountmanager.h"
 
 #include <QProcess>
 #include <QRegularExpression>
 #include <QTimer>
+#include <QString>
 
 DFM_USE_NAMESPACE
 
@@ -160,6 +162,7 @@ bool NetworkManager::fetch_networks(gchar *url, DFMEvent *e)
                                         network_enumeration_finished,
                                         e);
         ret = eventLoop->exec();
+        e->setProperty("success",event_loop.property("success").toBool());
     } while (ret == EventLoopCode::MountFinished); // 需要重新执行 g_file_enumerate_children_async
 
     g_clear_object(&network_file);
@@ -179,7 +182,8 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
     enumerator = g_file_enumerate_children_finish(G_FILE(source_object), res, &error);
 
     qDebug() << "network_enumeration_finished";
-
+    if(eventLoop)
+        eventLoop->setProperty("success",false);
     if (error) {
         DFMUrlBaseEvent *event = static_cast<DFMUrlBaseEvent *>(user_data);
         if (!g_error_matches(error, G_IO_ERROR, G_IO_ERROR_CANCELLED) &&
@@ -193,7 +197,24 @@ void NetworkManager::network_enumeration_finished(GObject *source_object, GAsync
         qDebug() << error->message;
         MountStatus status = gvfsMountManager->mount_sync(*event);
         g_clear_error(&error);
-
+        if(status == MOUNT_SUCCESS){
+            if(eventLoop)
+                eventLoop->setProperty("success",true);
+            //add search history list
+            SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
+            DUrl mountUrl = event->fileUrl();
+            QString toHistory;
+            QString scheme = mountUrl.scheme();
+            if(!scheme.isEmpty()){
+                toHistory = mountUrl.toString();
+                if (!historyManager->toStringList().contains(toHistory)) {//添加新历史挂载记录
+                    historyManager->writeIntoSearchHistory(toHistory);
+                }else{//访问连接已经包含在历史记录中,先移除再追加到最后，用于下次打开对话框时显示上次连接。
+                    historyManager->removeSearchHistory(toHistory);
+                    historyManager->writeIntoSearchHistory(toHistory);
+                }
+            }
+        }
         if (eventLoop) {
             // 挂载完成时, 返回 1, 在fetch_networks中再次调用g_file_enumerate_children_async获取列表
             if (status == MOUNT_SUCCESS || status == MOUNT_PASSWORD_WRONG) {
@@ -240,12 +261,15 @@ void NetworkManager::network_enumeration_next_files_finished(GObject *source_obj
         }
         g_clear_error(&error);
     } else {
+        DFMUrlBaseEvent *event = static_cast<DFMUrlBaseEvent *>(user_data);
+        event->setProperty("isSuccess",true);
         populate_networks(G_FILE_ENUMERATOR(source_object), detected_networks, user_data);
 
         g_list_free_full(detected_networks, g_object_unref);
     }
 
     if (eventLoop) {
+        eventLoop->setProperty("success",error?false:true);
         eventLoop->exit(error ? EventLoopCode::FetchFailed : EventLoopCode::FetchFinished);
     }
 }
@@ -315,6 +339,22 @@ void NetworkManager::populate_networks(GFileEnumerator *enumerator, GList *detec
 
     NetworkNodes.remove(neturl);
     NetworkNodes.insert(neturl, nodeList);
+
+
+    //add search history list
+    SearchHistroyManager *historyManager = Singleton<SearchHistroyManager>::instance();
+    DUrl mountUrl = event->fileUrl();
+    QString toHistory;
+    QString scheme = mountUrl.scheme();
+    if(!scheme.isEmpty()){
+        toHistory = mountUrl.toString();
+        if (!historyManager->toStringList().contains(toHistory)) {//添加新历史挂载记录
+            historyManager->writeIntoSearchHistory(toHistory);
+        }else{//访问连接已经包含在历史记录中,先移除再追加到最后，用于下次打开对话框时显示上次连接。
+            historyManager->removeSearchHistory(toHistory);
+            historyManager->writeIntoSearchHistory(toHistory);
+        }
+    }
     qDebug() << "request NetworkNodeList successfully";
 }
 
@@ -390,6 +430,8 @@ void NetworkManager::fetchNetworks(const DFMUrlBaseEvent &event)
             });
         }
     }
+    if(!e->property("success").toBool())//挂载失败
+        emit mountFailed(fileUrl);
     delete e;
 }
 
