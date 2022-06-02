@@ -1,5 +1,4 @@
-/*
- * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
+/* * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd
  *
  * Author:     huanyu<huanyub@uniontech.com>
  *
@@ -1387,7 +1386,7 @@ QIcon LocalFileInfo::fileIcon()
     const QUrl &fileUrl = this->url();
 
     if (FileUtils::containsCopyingFileUrl(fileUrl))
-        return QIcon();
+        return LocalFileIconProvider::globalProvider()->icon(this);
 
     const QString &filePath = this->absoluteFilePath();
 

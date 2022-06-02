@@ -30,9 +30,6 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-inline constexpr char kOperateFileGroup[] { "CopyingFileGroup" };
-inline constexpr char kCopyingFileKey[] { "CopyingFile" };
-
 class FileUtils
 {
 public:
@@ -95,6 +92,7 @@ public:
 
 private:
     static QMutex cacheCopyingMutex;
+    static QSet<QUrl> copyingUrl;
 };
 
 class DesktopAppUrl

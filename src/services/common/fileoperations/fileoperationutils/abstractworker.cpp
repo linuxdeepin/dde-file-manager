@@ -327,6 +327,7 @@ AbstractJobHandler::SupportActions AbstractWorker::supportActions(const Abstract
     case AbstractJobHandler::JobErrorType::kRemoveError:
     case AbstractJobHandler::JobErrorType::kRenameError:
     case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
+    case AbstractJobHandler::JobErrorType::kNonexistenceError:
         return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
     case AbstractJobHandler::JobErrorType::kSpecialFileError:
         return AbstractJobHandler::SupportAction::kSkipAction;
@@ -454,7 +455,6 @@ AbstractWorker::AbstractWorker(QObject *parent)
     : QObject(parent)
 {
     qRegisterMetaType<DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType>();
-    Application::dataPersistence()->autoSyncExclude(DFMBASE_NAMESPACE::kOperateFileGroup);
 }
 /*!
  * \brief AbstractWorker::formatFileName Processing and formatting file names
