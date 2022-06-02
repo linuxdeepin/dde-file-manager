@@ -49,6 +49,7 @@ public:
     virtual bool canDrop() override;
     virtual QUrl redirectedFileUrl() const override;
     virtual QFile::Permissions permissions() const override;
+    virtual bool isHidden() const override;
 
 private:
     TrashFileInfoPrivate *d;

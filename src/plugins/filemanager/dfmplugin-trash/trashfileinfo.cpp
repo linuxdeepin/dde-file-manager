@@ -257,4 +257,9 @@ void TrashFileInfoPrivate::inheritParentTrashInfo()
     }
 }
 
+bool TrashFileInfo::isHidden() const
+{
+    return false;
+}
+
 DPTRASH_END_NAMESPACE
