@@ -109,7 +109,8 @@ QSize ListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
     const AbstractFileInfoPointer &fileInfo = parent()->fileInfo(index);
 
     if (!fileInfo) {
-        return BaseItemDelegate::sizeHint(option, index);
+        auto size = BaseItemDelegate::sizeHint(option, index);
+        return QSize(size.width(), qMax(option.fontMetrics.height(), size.height()));
     }
 
     Q_D(const ListItemDelegate);
@@ -418,7 +419,7 @@ QRectF ListItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     // draw icon
     QRectF iconRect = opt.rect;
     iconRect.setSize(parent()->parent()->iconSize());
-    //    iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
+    iconRect.moveTop(iconRect.top() + (opt.rect.bottom() - iconRect.bottom()) / 2);
 
     ItemDelegateHelper::paintIcon(painter, opt.icon, iconRect, Qt::AlignCenter, isEnabled ? QIcon::Normal : QIcon::Disabled);
 
