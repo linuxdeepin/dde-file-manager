@@ -606,7 +606,8 @@ bool LocalFileInfo::isExecutable() const
             isExecutable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
         }
         if (!success)
-            isExecutable = QFileInfo(d->url.path()).isExecutable();
+            qWarning() << "cannot obtain the property kAccessCanExecute of" << d->url;
+        //            isExecutable = QFileInfo(d->url.path()).isExecutable(); // cannot obtain correct property of gvfs file, submit an issue to Qt group.
 
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanExecute, isExecutable);
     } else {
