@@ -43,6 +43,7 @@
 #include "vault/vaulthelper.h"
 #include "shutil/fileutils.h"
 #include <DApplication>
+#include <DSettingsDialog>
 
 #include <QThread>
 #include <QDebug>
@@ -350,6 +351,16 @@ void WindowManager::onWindowClosed()
         }
         saveWindowState(window);
         dialogManager->closeAllPropertyDialog();
+        if (window) {
+            qlonglong settingDialog  = window->property("settingDialog").toLongLong();
+            if (settingDialog != 0) {
+                DSettingsDialog *dsd = (DSettingsDialog *)settingDialog;
+                if (dsd) {
+                    delete dsd;
+                    dsd = nullptr;
+                }
+            }
+        }
     } else if (window && window->getCanDestruct()) {
         // fix bug 59239 drag事件的接受者的drop事件和发起drag事件的发起者的mousemove事件处理完成才能
         // 析构本窗口，检查当前窗口是否可以析构
