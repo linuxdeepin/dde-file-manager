@@ -1031,9 +1031,10 @@ void DialogManager::showGlobalSettingsDialog(quint64 winId)
 
     DSettingsDialog *dsd = new DFMSettingDialog(w);
     dsd->show();
-
+    w->setProperty("settingDialog", qlonglong(dsd));
     connect(dsd, &DSettingsDialog::finished, [ = ] {
         w->setProperty("isSettingDialogShown", false);
+        w->setProperty("settingDialog", 0);
     });
 }
 
