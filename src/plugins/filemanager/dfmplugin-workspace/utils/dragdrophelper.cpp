@@ -162,7 +162,7 @@ bool DragDropHelper::drop(QDropEvent *event)
         if (!hoverIndex.isValid())
             return true;
 
-        QUrl toUrl = view->model()->itemFromIndex(hoverIndex)->url();
+        QUrl toUrl = view->sourceModel()->itemFromIndex(isDropAtRootIndex ? hoverIndex : view->model()->mapToSource(hoverIndex))->url();
         QList<QUrl> fromUrls = event->mimeData()->urls();
         dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_FileDrop", toUrl, fromUrls);
 
