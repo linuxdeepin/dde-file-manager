@@ -793,8 +793,7 @@ bool FileUtils::openFile(const QString &filePath, const QString &desktopFile)
         }
     }
 
-    DUrl tempurl = DUrl::fromLocalFile(filePath);
-    result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromPercentEncoding(tempurl.toString().toLocal8Bit()));
+    result = launchApp(defaultDesktopFile, QStringList() << DUrl::fromLocalFile(filePath).toString());
     if (result) {
         // workaround since DTK apps doesn't support the recent file spec.
         // spec: https://www.freedesktop.org/wiki/Specifications/desktop-bookmark-spec/
