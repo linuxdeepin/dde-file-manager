@@ -947,6 +947,11 @@ void DFMSideBar::initBookmarkConnection()
 
 void DFMSideBar::initDeviceConnection()
 {
+    // 已经初始化了就直接拿结果
+    if (DRootFileManager::instance()->isRootFileInited()) {
+        rootFileResult();
+    }
+
     // 获取遍历结果进行显示
     connect(DRootFileManager::instance(),&DRootFileManager::queryRootFileFinsh,this,[this](){
         rootFileResult();
@@ -966,10 +971,6 @@ void DFMSideBar::initDeviceConnection()
         rootFileResult();
     },Qt::QueuedConnection);
 
-    // 已经初始化了就直接拿结果
-   if (DRootFileManager::instance()->isRootFileInited()) {
-        rootFileResult();
-    }
     // 开启遍历线程,刷新一次root，修复分区问题
     DRootFileManager::instance()->startQuryRootFile();
 
