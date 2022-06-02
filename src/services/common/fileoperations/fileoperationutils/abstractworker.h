@@ -163,6 +163,8 @@ public:
     AbstractJobHandler::JobType jobType { AbstractJobHandler::JobType::kUnknow };   // current task type
     AbstractJobHandler::JobFlags jobFlags { AbstractJobHandler::JobFlag::kNoHint };   // job flag
     AbstractJobHandler::SupportAction currentAction { AbstractJobHandler::SupportAction::kNoAction };   // current action
+    std::atomic_bool rememberSelect { false };
+    std::atomic_bool stopWork { false };
     AbstractJobHandler::JobState currentState = AbstractJobHandler::JobState::kUnknowState;   // current state
 
     QAtomicInteger<qint64> sourceFilesTotalSize { 0 };   // total size of all source files

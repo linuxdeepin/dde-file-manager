@@ -90,6 +90,8 @@ void AbstractWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
             currentAction = AbstractJobHandler::SupportAction::kNoAction;
         }
 
+        rememberSelect.store(actions.testFlag(AbstractJobHandler::SupportAction::kRememberAction));
+
         handlingErrorCondition.wakeAll();
     }
 }

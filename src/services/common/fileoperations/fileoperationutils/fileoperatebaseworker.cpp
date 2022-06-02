@@ -101,6 +101,10 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
     errorThreadIdQueueMutex.unlock();
     if (isStopped())
         return AbstractJobHandler::SupportAction::kCancelAction;
+
+    if (rememberSelect.load() && currentAction != AbstractJobHandler::SupportAction::kNoAction)
+        return currentAction;
+
     // 发送错误处理 阻塞自己
     const QString &errorMsgAll = errorMsg.isEmpty() ? AbstractJobHandler::errorToString(error) : (AbstractJobHandler::errorToString(error) + ": " + errorMsg);
     emitErrorNotify(urlFrom, urlTo, error, errorMsgAll);
@@ -779,6 +783,11 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
             bool ok = doCheckNewFile(fromInfo, toInfo, newTargetInfo, fileNewName, workContinue);
             cancelThreadProcessingError();
             return ok;
+        }
+        case AbstractJobHandler::SupportAction::kCancelAction: {
+            stopWork.store(true);
+            cancelThreadProcessingError();
+            return false;
         }
         default:
             cancelThreadProcessingError();

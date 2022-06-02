@@ -176,6 +176,12 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     if (doRenameFile(fromInfo, toInfo, &ok) || ok) {
         return true;
     }
+
+    if (stopWork.load()) {
+        stopWork.store(false);
+        return false;
+    }
+
     qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->url() << " to url: " << toInfo->url();
 
     bool result = false;
