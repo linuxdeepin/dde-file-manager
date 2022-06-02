@@ -963,9 +963,7 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::redirectedFileUrl() const
 
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
 {
-    // TODO(liyigang) : temp impl
-    if (!isReadable())
-        return false;
+    CALL_PROXY(canMoveOrCopy());
 
     return true;
 }
