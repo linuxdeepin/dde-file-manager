@@ -36,6 +36,7 @@
 #include "dfmopticalmediawidget.h"
 #include "gvfs/secretmanager.h"
 #include "dfmeventdispatcher.h"
+#include "gvfs/networkmanager.h"
 
 #include "interfaces/dfmsidebariteminterface.h"
 #include "views/dfmsidebarview.h"
@@ -765,6 +766,11 @@ void DFMSideBar::initConnection()
 
     DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
     if (window) {
+        connect(networkManager,&NetworkManager::mountFailed,this,[&](const DUrl& url){
+            this->removeItem(QString("%1://%2").arg(url.scheme()).arg(url.host()),"device");
+            this->jumpToComputerItem();
+        });
+
         connect(window->getToolBar(),&DToolBar::addSmbIpToSideBar,this,[&](const DUrl& url){
             if(url.scheme() != SMB_SCHEME)
                 return;

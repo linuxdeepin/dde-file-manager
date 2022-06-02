@@ -55,8 +55,6 @@ public:
     QString iconType() const;
     void setIconType(const QString &iconType);
 
-signals:
-
 public slots:
 
 private:
@@ -103,7 +101,7 @@ public:
     static void restartGVFSD();
     static bool isFetchingNetworks();
 signals:
-
+    void mountFailed(const DUrl &url);
 public slots:
     void fetchNetworks(const DFMUrlBaseEvent &event);
     static void cancelFeatchNetworks();
