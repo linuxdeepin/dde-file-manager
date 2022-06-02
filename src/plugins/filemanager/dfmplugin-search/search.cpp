@@ -127,6 +127,9 @@ void Search::followEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", SearchHelper::instance(), &SearchHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", SearchHelper::instance(), &SearchHelper::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", SearchHelper::instance(), &SearchHelper::customRoleData);
+
+    // disable paste
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_PasteFilesShortcut", SearchHelper::instance(), &SearchHelper::blockPaste);
 }
 
 DPSEARCH_END_NAMESPACE

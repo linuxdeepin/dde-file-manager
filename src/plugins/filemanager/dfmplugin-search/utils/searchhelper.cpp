@@ -201,6 +201,17 @@ bool SearchHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const It
     return false;
 }
 
+bool SearchHelper::blockPaste(quint64 winId, const QUrl &to)
+{
+    Q_UNUSED(winId)
+
+    if (to.scheme() == SearchHelper::scheme()) {
+        qDebug() << "The search root directory does not support paste!";
+        return true;
+    }
+    return false;
+}
+
 SearchHelper::SearchHelper(QObject *parent)
     : QObject(parent)
 {
