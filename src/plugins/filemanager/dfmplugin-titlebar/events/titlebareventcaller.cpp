@@ -29,6 +29,8 @@
 
 #include <dfm-framework/dpf.h>
 
+Q_DECLARE_METATYPE(QString *)
+
 DPTITLEBAR_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
@@ -102,4 +104,9 @@ void TitleBarEventCaller::sendShowFilterView(QWidget *sender, bool visible)
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
     dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_ShowFilterView", id, visible);
+}
+
+void TitleBarEventCaller::sendCheckAddressInputStr(QString *str)
+{
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_CheckInputAdddressStr", str);
 }

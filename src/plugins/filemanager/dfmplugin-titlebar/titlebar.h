@@ -39,6 +39,7 @@ class TitleBar : public dpf::Plugin
     DPF_EVENT_REG_SIGNAL(signal_StartSearch)
     DPF_EVENT_REG_SIGNAL(signal_StopSearch)
     DPF_EVENT_REG_SIGNAL(signal_ShowFilterView)
+    DPF_EVENT_REG_SIGNAL(signal_CheckInputAdddressStr)
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_StartSpinner)

@@ -26,6 +26,7 @@
 #include "utils/recentmanager.h"
 #include "utils/recentfileshelper.h"
 #include "menus/recentmenuscene.h"
+#include "events/recenteventreceiver.h"
 
 #include "services/common/menu/menuservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
@@ -62,6 +63,8 @@ bool Recent::start()
     addDelegateSettings();
 
     followEvent();
+
+    RecentEventReceiver::instance()->initConnect();
 
     return true;
 }

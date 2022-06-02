@@ -46,6 +46,7 @@ public:
     static void sendSearch(QWidget *sender, const QString &keyword);
     static void sendStopSearch(QWidget *sender);
     static void sendShowFilterView(QWidget *sender, bool visible);
+    static void sendCheckAddressInputStr(QString *str);
 };
 
 DPTITLEBAR_END_NAMESPACE

@@ -200,18 +200,21 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
     if (currentUrl.isLocalFile())
         QDir::setCurrent(currentUrl.toLocalFile());
 
+    QString inputStr = text;
+    TitleBarEventCaller::sendCheckAddressInputStr(&inputStr);
+
     bool search { false };
     FinallyUtil finally([&]() {if (isSearch) *isSearch = search; });
 
     // here, judge whether the text is a local file path.
-    QUrl url(UrlRoute::fromUserInput(text, false));
+    QUrl url(UrlRoute::fromUserInput(inputStr, false));
     QDir::setCurrent(currentDir);
 
     QString scheme { url.scheme() };
     if (!url.scheme().isEmpty() && UrlRoute::hasScheme(scheme)) {
         if (url.path().isEmpty())
-            url = UrlRoute::fromUserInput(text + "/");
-        qInfo() << "jump :" << text;
+            url = UrlRoute::fromUserInput(inputStr + "/");
+        qInfo() << "jump :" << inputStr;
         TitleBarEventCaller::sendCd(sender, url);
     } else {
         if (currentUrl.isValid()) {
