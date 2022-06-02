@@ -2974,7 +2974,12 @@ void DFileSystemModel::addFile(const DAbstractFileInfoPointer &fileInfo)
 
     FileSystemNodePointer node = createNode(parentNode.data(), fileInfo);
 
-    if (parentNode && parentNode->populatedChildren && !parentNode->childContains(fileUrl)) {
+    if (parentNode->childContains(fileUrl)) {
+        d_ptr->_q_onFileUpdated(fileUrl);
+        return;
+    }
+
+    if (parentNode && parentNode->populatedChildren) {
         QPointer<DFileSystemModel> me = this;
 
         int row = -1;
