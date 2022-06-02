@@ -394,6 +394,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
     sbItem.text = info->displayName();
     sbItem.removable = removable;
     sbItem.subGroup = Global::kComputer;
+    sbItem.targetUrl = info->targetUrl().isValid() ? info->targetUrl() : QUrl();
 
     sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
     sbItem.contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };

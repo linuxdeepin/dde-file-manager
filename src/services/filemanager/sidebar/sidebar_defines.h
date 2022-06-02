@@ -64,6 +64,7 @@ struct ItemInfo
     Qt::ItemFlags flags;   //< Qt::ItemFlag
     bool removable { false };   //< item will set actionList(right edge)
     QString subGroup;   // a custom group name used for sorting items
+    QUrl targetUrl;   // this might be invalid, only for those items whose item url is different from real url
 
     CdActionCallback cdCb { nullptr };
     ContextMenuCallback contextMenuCb { nullptr };

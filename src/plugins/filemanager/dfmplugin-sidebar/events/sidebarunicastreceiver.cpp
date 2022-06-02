@@ -27,6 +27,8 @@
 #include "views/sidebarwidget.h"
 #include "views/sidebaritem.h"
 
+#include "dfm-base/utils/universalutils.h"
+
 #include <dfm-framework/framework.h>
 
 DPSIDEBAR_USE_NAMESPACE
@@ -78,7 +80,9 @@ void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info)
             // for select to computer
             QUrl &&itemUrl = item->url();
             QUrl &&sidebarUrl = sidebar->currentUrl();
-            if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
+            DFMBASE_USE_NAMESPACE
+            if (UniversalUtils::urlEquals(itemUrl, sidebarUrl)
+                || (info.targetUrl.isValid() && UniversalUtils::urlEquals(sidebarUrl, info.targetUrl)))
                 sidebar->setCurrentUrl(item->url());
         }
     }
