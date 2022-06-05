@@ -170,12 +170,12 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
     } else if (ClipBoard::kCutAction == action) {
 
         if (ClipBoard::supportCut()) {
-            ClipBoard::clearClipboard();
             dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile,
                                                   windowId,
                                                   sourceUrls,
                                                   view->rootUrl(),
                                                   AbstractJobHandler::JobFlag::kNoHint, nullptr);
+            ClipBoard::clearClipboard();
         }
     } else {
         qWarning() << "clipboard action:" << action << "    urls:" << sourceUrls;

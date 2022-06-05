@@ -25,6 +25,7 @@
 #include "models/filesortfilterproxymodel.h"
 
 #include <QApplication>
+#include <QMouseEvent>
 
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE

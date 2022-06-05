@@ -78,8 +78,11 @@ bool MasteredMediaFileInfo::isReadable() const
 
 bool MasteredMediaFileInfo::isWritable() const
 {
-    if (!OpticalHelper::burnIsOnDisc(backerUrl))
-        return true;
+    if (!OpticalHelper::burnIsOnDisc(backerUrl)) {
+        if (!dptr->proxy)
+            return false;
+        return dptr->proxy->isWritable();
+    }
     QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url())) };
     quint64 avil { qvariant_cast<quint64>(devInfoMap[DeviceProperty::kSizeFree]) };
     return avil > 0;
