@@ -31,17 +31,19 @@
 DPWORKSPACE_BEGIN_NAMESPACE
 
 // begin file view item icon delegate global define
-static const int kIconModeTextPadding = 4;
-static const int kIconModeIconSpacing = 5;
-static const int kIconModeRectRadius = kIconModeTextPadding;
-static const int kIconModeBackRadius = 18;
+inline constexpr int kIconModeTextPadding = { 4 };
+inline constexpr int kIconModeIconSpacing = { 5 };
+inline constexpr int kIconModeRectRadius = kIconModeTextPadding;
+inline constexpr int kIconModeBackRadius = { 18 };
+inline constexpr int kIconModeColumuPadding { 10 };
 // end
+
 // begin file view item list delegate global define
-static const int kListModeRectRadius = 8;
-static const int kListModeLeftPadding = 10;
-static const int kListModeIconSpacing = 6;
-static const int kListModeRightPadding = 10;
-static const int kListModeColumnPadding = 10;
+inline constexpr int kListModeRectRadius = { 8 };
+inline constexpr int kListModeLeftPadding = { 10 };
+inline constexpr int kListModeIconSpacing = { 6 };
+inline constexpr int kListModeRightPadding = { 10 };
+inline constexpr int kListModeColumnPadding = { 10 };
 // end
 
 class ItemDelegateHelper

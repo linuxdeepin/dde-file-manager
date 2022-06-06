@@ -57,8 +57,6 @@ public:
     void setIndex(QModelIndex index);
     QStyleOptionViewItem getOption() const;
     void setOption(QStyleOptionViewItem opt);
-
-private:
     QRectF textGeometry(int width = -1) const;
     QRectF iconGeometry() const;
 

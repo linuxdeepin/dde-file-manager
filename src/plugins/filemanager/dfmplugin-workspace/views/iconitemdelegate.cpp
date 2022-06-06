@@ -162,11 +162,75 @@ bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
 
 QList<QRect> IconItemDelegate::paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode) const
 {
-    Q_UNUSED(option)
-    Q_UNUSED(index)
     Q_UNUSED(sizeHintMode)
+    Q_D(const IconItemDelegate);
 
-    return QList<QRect>();
+    QList<QRect> geometries;
+
+    if (index == d->expandedIndex) {
+        QRect geometry = d->expandedItem->iconGeometry().toRect();
+        geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
+
+        geometries << geometry;
+
+        geometry = d->expandedItem->textGeometry().toRect();
+        geometry.moveTopLeft(geometry.topLeft() + d->expandedItem->pos());
+        geometry.setTop(geometries.first().bottom());
+
+        geometries << geometry;
+
+        return geometries;
+    }
+
+    // init icon geomerty
+    QRect iconRect = option.rect;
+
+    iconRect.setSize(parent()->parent()->iconSize());
+    iconRect.moveCenter(option.rect.center());
+    iconRect.moveTop(option.rect.top());
+
+    geometries << iconRect;
+
+    QString str = index.data(Qt::DisplayRole).toString();
+
+    if (str.isEmpty()) {
+        return geometries;
+    }
+
+    // init file name geometry
+    QRect labelRect = option.rect;
+    int backgroundMargin = kIconModeColumuPadding;
+    labelRect.setWidth(labelRect.width() - 2 * kIconModeTextPadding - 2 * backgroundMargin - kIconModeBackRadius);
+    labelRect.moveLeft(labelRect.left() + kIconModeTextPadding + backgroundMargin + kIconModeBackRadius / 2);
+    labelRect.setTop(iconRect.bottom() + kIconModeTextPadding + kIconModeIconSpacing);
+
+    QStyleOptionViewItem opt = option;
+
+    bool isSelected = parent()->isSelected(index) && opt.showDecorationSelected;
+    // if has selected show all file name else show elide file name.
+    bool singleSelected = parent()->selectedIndexsCount() < 2;
+
+    QTextLayout textLayout;
+
+    textLayout.setFont(option.font);
+    textLayout.setText(str);
+
+    bool elide = (!isSelected || !singleSelected);
+    QList<QRectF> lines = drawText(index, nullptr, str, QRect(labelRect.topLeft(), QSize(labelRect.width(), INT_MAX)),
+                                   kIconModeRectRadius, isSelected ? opt.backgroundBrush : QBrush(Qt::NoBrush),
+                                   QTextOption::WrapAtWordBoundaryOrAnywhere, elide ? opt.textElideMode : Qt::ElideNone,
+                                   Qt::AlignCenter);
+
+    labelRect = GlobalPrivate::boundingRect(lines).toRect();
+    labelRect.setTop(iconRect.bottom());
+    geometries << labelRect;
+
+    // background rect
+    QRect backgroundRect = option.rect;
+    backgroundRect.adjust(backgroundMargin, backgroundMargin, -backgroundMargin, -backgroundMargin);
+    geometries << backgroundRect;
+
+    return geometries;
 }
 
 void IconItemDelegate::updateItemSizeHint()
