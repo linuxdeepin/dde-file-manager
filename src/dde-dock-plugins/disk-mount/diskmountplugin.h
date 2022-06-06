@@ -42,13 +42,13 @@ public:
     void setText(const QString &text)
     {
         m_text = text;
-        setFixedSize(fontMetrics().width(text) + 6, fontMetrics().height());
+        setFixedSize(fontMetrics().width(text) + 20, fontMetrics().height());
         update();
     }
 
     void refreshFont()
     {
-        setFixedSize(fontMetrics().width(m_text) + 6, fontMetrics().height());
+        setFixedSize(fontMetrics().width(m_text) + 20, fontMetrics().height());
         update();
     }
 
