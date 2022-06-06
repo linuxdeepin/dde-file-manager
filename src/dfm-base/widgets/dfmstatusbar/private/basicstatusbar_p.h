@@ -23,6 +23,7 @@
 #define BASICSTATUSBAR_P_H
 
 #include "dfm-base/dfm_base_global.h"
+#include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DAnchors>
 
@@ -49,6 +50,9 @@ public:
     void initTipLabel();
     void initLayout();
 
+    void calcFolderContains(const QList<QUrl> &folderList);
+    void initJobConnection();
+
     QString onlyOneItemCounted;
     QString counted;
     QString onlyOneItemSelected;
@@ -67,6 +71,9 @@ public:
 
     QHBoxLayout *layout = nullptr;
     QLabel *tip = nullptr;
+
+    FileStatisticsJob *fileStatisticsJog = nullptr;
+    bool isJobDisconnect = true;
 };
 
 DFMBASE_END_NAMESPACE

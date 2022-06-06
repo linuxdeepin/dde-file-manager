@@ -65,21 +65,32 @@ void BasicStatusBar::itemSelected(const QList<AbstractFileInfo *> &infoList)
     d->folderCount = 0;
     d->folderContains = 0;
 
+    QList<QUrl> dirUrlList;
     for (const AbstractFileInfo *info : infoList) {
         if (info->isDir()) {
             d->folderCount += 1;
-            // TODO(liuyangming): caculate folder contains items count
+            dirUrlList << info->url();
         } else {
             d->fileCount += 1;
             d->fileSize += info->size();
         }
     }
 
+    if (!dirUrlList.isEmpty())
+        d->calcFolderContains(dirUrlList);
+
     updateStatusMessage();
 }
 
 void BasicStatusBar::itemCounted(const int count)
 {
+    if (d->fileStatisticsJog && d->fileStatisticsJog->isRunning()) {
+        d->fileStatisticsJog->stop();
+        d->fileStatisticsJog->wait();
+        if (d->fileStatisticsJog->disconnect())
+            d->isJobDisconnect = true;
+    }
+
     d->tip->setText(d->counted.arg(QString::number(count)));
 }
 

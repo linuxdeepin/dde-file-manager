@@ -67,3 +67,42 @@ void BasicStatusBarPrivate::initLayout()
     layout->setSpacing(14);
     layout->setContentsMargins(0, 0, 4, 0);
 }
+
+void BasicStatusBarPrivate::calcFolderContains(const QList<QUrl> &folderList)
+{
+    if (!fileStatisticsJog) {
+        fileStatisticsJog = new FileStatisticsJob(this);
+        fileStatisticsJog->setFileHints(FileStatisticsJob::kExcludeSourceFile | FileStatisticsJob::kSingleDepth);
+    } else if (fileStatisticsJog->isRunning()) {
+        fileStatisticsJog->stop();
+        fileStatisticsJog->wait();
+    }
+
+    if (isJobDisconnect) {
+        isJobDisconnect = false;
+        initJobConnection();
+    }
+
+    fileStatisticsJog->start(folderList);
+}
+
+void BasicStatusBarPrivate::initJobConnection()
+{
+    if (!fileStatisticsJog)
+        return;
+
+    auto onFoundFile = [this]() {
+        if (!sender())
+            return;
+
+        ++folderContains;
+        q->updateStatusMessage();
+    };
+
+    connect(fileStatisticsJog, &FileStatisticsJob::finished, this, [this]() {
+        folderContains = fileStatisticsJog->filesCount() + fileStatisticsJog->directorysCount();
+        q->updateStatusMessage();
+    });
+    connect(fileStatisticsJog, &FileStatisticsJob::fileFound, this, onFoundFile);
+    connect(fileStatisticsJog, &FileStatisticsJob::directoryFound, this, onFoundFile);
+}
