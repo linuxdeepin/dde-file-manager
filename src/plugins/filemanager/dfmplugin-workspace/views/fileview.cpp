@@ -51,6 +51,7 @@
 #include <QScroller>
 #include <QTimer>
 #include <QDrag>
+#include <QApplication>
 
 DPWORKSPACE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -933,6 +934,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
         }
 
         bool isEmptyArea = d->fileViewHelper->isEmptyArea(event->pos());
+        if (isEmptyArea && (qApp->keyboardModifiers() == Qt::NoModifier))
+            setCurrentIndex(QModelIndex());
 
         QModelIndex index = indexAt(event->pos());
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
