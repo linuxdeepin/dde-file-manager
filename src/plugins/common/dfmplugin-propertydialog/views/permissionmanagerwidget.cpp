@@ -55,7 +55,11 @@ PermissionManagerWidget::~PermissionManagerWidget()
 
 void PermissionManagerWidget::selectFileUrl(const QUrl &url)
 {
+    selectUrl = url;
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+
+    if (info.isNull())
+        return;
 
     QUrl parentUrl = info->parentUrl();
     QStorageInfo storageInfo(parentUrl.toLocalFile());
@@ -204,6 +208,9 @@ void PermissionManagerWidget::setComboBoxByPermission(QComboBox *cb, int permiss
 void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(selectUrl);
+    if (info.isNull())
+        return;
+
     if (isChecked) {
         PropertyEventCall::sendSetPermissionManager(qApp->activeWindow()->winId(), selectUrl, info->permissions() | QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther);
     } else {
@@ -213,6 +220,9 @@ void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
 
 bool PermissionManagerWidget::canChmod(const AbstractFileInfoPointer &info)
 {
+    if (info.isNull())
+        return false;
+
     if (!info->canRename())
         return false;
 
@@ -250,6 +260,8 @@ void PermissionManagerWidget::paintEvent(QPaintEvent *evt)
 void PermissionManagerWidget::onComboBoxChanged()
 {
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(selectUrl);
+    if (info.isNull())
+        return;
 
     struct stat fileStat;
     QByteArray infoBytes(info->absoluteFilePath().toUtf8());
