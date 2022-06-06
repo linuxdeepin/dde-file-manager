@@ -45,15 +45,20 @@ public:
     void updateColumnWidth();
     void doFileNameColumnResize(const int totalWidth);
 
+public slots:
+    void onActionClicked(const int column, QAction *action);
+
 protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
     void leaveEvent(QEvent *e) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 Q_SIGNALS:
     void mouseReleased();
     void viewResized();
+    void hiddenSectionChanged(const QString &roleName, const bool checked);
 
 private:
     FileSortFilterProxyModel *proxyModel() const;

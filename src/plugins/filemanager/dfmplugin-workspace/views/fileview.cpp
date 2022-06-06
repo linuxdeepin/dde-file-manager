@@ -361,6 +361,17 @@ void FileView::onHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int ne
     update();
 }
 
+void FileView::onHeaderHiddenChanged(const QString &roleName, const bool isHidden)
+{
+    d->columnForRoleHiddenMap[roleName] = isHidden;
+
+    if (d->allowedAdjustColumnSize) {
+        updateListHeaderView();
+    } else {
+        d->headerView->updateColumnWidth();
+    }
+}
+
 void FileView::onSortIndicatorChanged(int logicalIndex, Qt::SortOrder order)
 {
     model()->setSortRole(model()->getRoleByColumn(logicalIndex));

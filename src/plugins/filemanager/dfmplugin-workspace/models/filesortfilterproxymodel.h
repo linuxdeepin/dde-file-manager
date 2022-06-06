@@ -70,6 +70,7 @@ public:
     DFMGLOBAL_NAMESPACE::ItemRoles getRoleByColumn(const int &column) const;
     int getColumnByRole(const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> getColumnRoles() const;
+    QString roleDisplayString(int role) const;
 
     // Filter
     QDir::Filters getFilters() const;
@@ -91,8 +92,6 @@ private:
     bool passNameFilters(const AbstractFileInfoPointer &info) const;
 
     FileViewModel *viewModel() const;
-
-    QString roleDisplayString(int role) const;
 
 private:
     QVariant filterData;

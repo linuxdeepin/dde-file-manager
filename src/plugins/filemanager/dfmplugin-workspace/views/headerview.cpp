@@ -26,6 +26,7 @@
 
 #include <QApplication>
 #include <QMouseEvent>
+#include <QMenu>
 
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
@@ -122,6 +123,14 @@ void HeaderView::doFileNameColumnResize(const int totalWidth)
     }
 }
 
+void HeaderView::onActionClicked(const int column, QAction *action)
+{
+    action->setChecked(!action->isChecked());
+    setSectionHidden(column, action->isChecked());
+
+    emit hiddenSectionChanged(action->text(), action->isChecked());
+}
+
 void HeaderView::mouseReleaseEvent(QMouseEvent *e)
 {
     Q_EMIT mouseReleased();
@@ -187,6 +196,38 @@ void HeaderView::leaveEvent(QEvent *e)
     }
 
     QHeaderView::leaveEvent(e);
+}
+
+void HeaderView::contextMenuEvent(QContextMenuEvent *event)
+{
+    const FileViewItem* rootItem = proxyModel()->rootItem();
+
+    if (!rootItem || !rootItem->fileInfo())
+        return;
+
+    QMenu *menu = new QMenu;
+
+    for (int i = 0; i < count(); ++i) {
+        // file name can not hidden
+        int role = proxyModel()->getRoleByColumn(i);
+        if (role == kItemNameRole || role == kItemFileDisplayNameRole)
+            continue;
+
+        QAction *action = new QAction(menu);
+
+        action->setText(proxyModel()->roleDisplayString(role));
+        action->setCheckable(true);
+        action->setChecked(!isSectionHidden(i));
+
+        connect(action, &QAction::triggered, this, [=] {
+            onActionClicked(i, action);
+        });
+
+        menu->addAction(action);
+    }
+
+    menu->exec(QCursor::pos());
+    menu->deleteLater();
 }
 
 FileSortFilterProxyModel *HeaderView::proxyModel() const
