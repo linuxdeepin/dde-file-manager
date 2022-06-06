@@ -595,14 +595,23 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
         QTimer::singleShot(200, this, [this, pos]() {
             // file info and url changed,but pos will not change
             const QModelIndex &renamedIndex = indexAt(pos);
+            if (!renamedIndex.isValid())
+                return;
             const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
             FileOperatorProxyIns->openFiles(this, { renamedUrl });
         });
         return;
     }
+    // process in QAbstractItemView::mouseDoubleClickEvent
+    // this can prevent opening editor by calling edit.
+    QPersistentModelIndex persistent = index;
+    if ((event->button() == Qt::LeftButton) && !edit(persistent, DoubleClicked, event)
+        && !style()->styleHint(QStyle::SH_ItemView_ActivateItemOnSingleClick, 0, this))
+        emit activated(persistent);
 
     const QUrl &url = model()->fileUrl(index);
     FileOperatorProxyIns->openFiles(this, { url });
+    event->accept();
 }
 
 void CanvasView::wheelEvent(QWheelEvent *event)

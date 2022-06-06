@@ -53,6 +53,7 @@ protected:
     void contextMenuEvent(QContextMenuEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
     void keyPressEvent(QKeyEvent *e) override;
+    void showEvent(QShowEvent *) override;
 private:
     bool enableStack = true;
     int stackCurrentIndex = -1;

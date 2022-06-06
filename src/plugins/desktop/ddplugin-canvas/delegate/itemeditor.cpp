@@ -412,3 +412,12 @@ void RenameEdit::keyPressEvent(QKeyEvent *e)
     DTextEdit::keyPressEvent(e);
 }
 
+void RenameEdit::showEvent(QShowEvent *e)
+{
+    DTextEdit::showEvent(e);
+
+    // the editor will be not active when opening the file and then pressing it immediately.
+    if (!isActiveWindow())
+        activateWindow();
+}
+
