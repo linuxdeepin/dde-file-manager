@@ -41,7 +41,7 @@ bool AppendCompressHelper::setMouseStyle(const QUrl &toUrl, const QList<QUrl> &f
     return false;
 }
 
-void AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
+bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
 {
     if (!fromUrls.isEmpty()) {
         if (canAppendCompress(toUrl)) {
@@ -51,9 +51,11 @@ void AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl>
             for (int i = 0; i < count; ++i) {
                 fromFilePath << fromUrls.at(i).toLocalFile();
             }
-            appendCompress(toFilePath, fromFilePath);
+            return appendCompress(toFilePath, fromFilePath);
         }
     }
+
+    return false;
 }
 
 bool AppendCompressHelper::appendCompress(const QString &toFilePath, const QStringList &fromFilePaths)

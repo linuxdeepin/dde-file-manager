@@ -46,7 +46,7 @@ public:
 public slots:
     void handleOpenAsAdmin(const QUrl &url);
     bool handleSetMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, void *type);
-    void handleDragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls);
+    bool handleDragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls);
     bool handleSetMouseStyleOnDesktop(int viewIndex, const QMimeData *mime, const QPoint &viewPos, void *extData);
     bool handleDragDropCompressOnDesktop(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData);
 

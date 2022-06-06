@@ -95,6 +95,7 @@ bool DragDropOper::move(QDragMoveEvent *event)
         if (view->d->extend->dragMove(view->screenNum(), event->mimeData(), event->pos(), &ext)) {
             if (dropAction != Qt::IgnoreAction) {
                 event->setDropAction(dropAction);
+                event->accept();
                 return true;
             }
         }

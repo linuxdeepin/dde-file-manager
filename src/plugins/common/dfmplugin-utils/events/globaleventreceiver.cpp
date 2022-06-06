@@ -56,8 +56,8 @@ void GlobalEventReceiver::initEventConnect()
     // workspace
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDragMove",
                             GlobalEventReceiver::instance(), &GlobalEventReceiver::handleSetMouseStyle);
-    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_FileDrop",
-                                   GlobalEventReceiver::instance(), &GlobalEventReceiver::handleDragDropCompress);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDrop",
+                            GlobalEventReceiver::instance(), &GlobalEventReceiver::handleDragDropCompress);
 
     // desktop
     dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasView_FileDragMove",
@@ -88,9 +88,9 @@ bool GlobalEventReceiver::handleSetMouseStyle(const QUrl &toUrl, const QList<QUr
     return AppendCompressHelper::setMouseStyle(toUrl, fromUrls, *dropAction);
 }
 
-void GlobalEventReceiver::handleDragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
+bool GlobalEventReceiver::handleDragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
 {
-    AppendCompressHelper::dragDropCompress(toUrl, fromUrls);
+    return AppendCompressHelper::dragDropCompress(toUrl, fromUrls);
 }
 
 bool GlobalEventReceiver::handleSetMouseStyleOnDesktop(int viewIndex, const QMimeData *mime, const QPoint &viewPos, void *extData)
@@ -113,7 +113,7 @@ bool GlobalEventReceiver::handleDragDropCompressOnDesktop(int viewIndex, const Q
     if (data) {
         QUrl toUrl = data->value("dropUrl").toUrl();
         QList<QUrl> fromUrls = md->urls();
-        AppendCompressHelper::dragDropCompress(toUrl, fromUrls);
+        return AppendCompressHelper::dragDropCompress(toUrl, fromUrls);
     }
 
     return false;

@@ -981,7 +981,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
 
     if (!isSymLink()) {
         const bool isDesktop = mimeTypeName() == Global::kMimeTypeAppXDesktop;
-        return isDir() || isDesktop || (canDragCompress() && isDragCompressFileFormat());
+        return isDir() || isDesktop;
     }
 
     AbstractFileInfoPointer info = nullptr;

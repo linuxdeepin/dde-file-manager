@@ -33,7 +33,7 @@ class AppendCompressHelper : public QObject
     Q_OBJECT
 public:
     static bool setMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, Qt::DropAction &dropAction);
-    static void dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls);
+    static bool dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls);
 
 private:
     explicit AppendCompressHelper(QObject *parent = nullptr);
