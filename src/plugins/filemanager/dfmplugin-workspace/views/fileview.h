@@ -180,6 +180,8 @@ protected:
     bool event(QEvent *e) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
 
+    void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end) override;
+
 Q_SIGNALS:
     void reqOpenNewWindow(const QList<QUrl> &urls);
     void viewStateChanged();

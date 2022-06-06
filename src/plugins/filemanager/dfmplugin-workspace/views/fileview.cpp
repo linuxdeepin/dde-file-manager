@@ -1348,6 +1348,36 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
     return DListView::eventFilter(obj, event);
 }
 
+void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+{
+    QModelIndex currentIdx = currentIndex();
+    for (const QModelIndex &index : selectedIndexes()) {
+        if (index.parent() != parent)
+            continue;
+
+        if (index.row() >= start && index.row() <= end) {
+            selectionModel()->select(index, QItemSelectionModel::Clear);
+            if (index == currentIdx) {
+                clearSelection();
+            }
+        }
+    }
+
+    if (start < d->visibleIndexRande.second) {
+        if (end <= d->visibleIndexRande.first) {
+            d->visibleIndexRande.first -= (end - start - 1);
+            d->visibleIndexRande.second -= (end - start + 1);
+        } else if (end <= d->visibleIndexRande.second) {
+            d->visibleIndexRande.first = start;
+            d->visibleIndexRande.second -= (end - start + 1);
+        } else {
+            d->visibleIndexRande.first = d->visibleIndexRande.second = -1;
+        }
+    }
+
+    DListView::rowsAboutToBeRemoved(parent, start, end);
+}
+
 void FileView::initializeModel()
 {
     FileViewModel *model = new FileViewModel(this);
