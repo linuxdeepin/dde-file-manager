@@ -71,6 +71,8 @@ public:
     bool isEqualBookmarkData(const QMap<QString, QVariant> arg1, const QMap<QString, QVariant> &arg2) const;
     void mergeList(const QVariantList &oldList, const QVariantList &groupPolicyList, QVariantList &all) const;
 
+    void initData();
+
 private:
     BookMarkPointer findBookmark(const DUrl &url) const;
     BookmarkData findBookmarkData(const DUrl &url) const;

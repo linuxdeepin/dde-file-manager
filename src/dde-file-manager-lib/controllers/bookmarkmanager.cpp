@@ -549,6 +549,39 @@ void BookMarkManager::mergeList(const QVariantList &oldList, const QVariantList 
     }
 }
 
+void BookMarkManager::initData()
+{
+    QVariantList list = DFMApplication::genericSetting()->value("BookMark", "Items").toList();
+    QVariantList groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
+
+    for (const auto &temp : groupPolicyList) {
+        BookmarkData data;
+        const QVariantMap &item = temp.toMap();
+        this->variantToBookmarkData(item, data);
+        const DUrl &url = DUrl::fromUserInput(item.value(BOOKMARK_URL).toString());
+        m_bookmarkDataMap[url] = data;
+    }
+
+    for (const auto &oldItem : list) {
+
+        bool hasFinded = false;
+        const QVariantMap &tempItem = oldItem.toMap();
+        if (std::any_of(groupPolicyList.begin(), groupPolicyList.end(), [this, tempItem](QVariant value){
+                        return this->isEqualBookmarkData(tempItem, value.toMap()); })) {
+            hasFinded = true;
+            break;
+        }
+
+        if (!hasFinded) {
+            BookmarkData data;
+            const QVariantMap &item = tempItem;
+            this->variantToBookmarkData(item, data);
+            const DUrl &url = DUrl::fromUserInput(item.value(BOOKMARK_URL).toString());
+            m_bookmarkDataMap[url] = data;
+        }
+    }
+}
+
 const QList<DAbstractFileInfoPointer> BookMarkManager::getChildren(const QSharedPointer<DFMGetChildrensEvent> &event) const
 {
     ///这个函数目前不会被调用了

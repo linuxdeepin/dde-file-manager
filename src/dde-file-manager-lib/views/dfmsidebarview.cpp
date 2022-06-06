@@ -448,7 +448,7 @@ Qt::DropAction DFMSideBarView::canDropMimeData(DFMSideBarItem *item, const QMime
         //防止不可添加tag的文件被拖进tag目录从而获取tag属性
         if (item->url().isTaggedFile() && !fileInfo->canTag()) {
             return Qt::IgnoreAction;
-        }        
+        }
     }
 
     if (!info || !info->canDrop()) {
