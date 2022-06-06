@@ -268,6 +268,9 @@ void TaskWidget::onShowConflictInfo(const QUrl source, const QUrl target, const 
         widButton->show();
         btnCoexist->setHidden(false);
         showConflictButtons();
+
+        if (btnPause)
+            btnPause->setEnabled(false);
     }
 }
 /*!

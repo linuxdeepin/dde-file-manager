@@ -30,6 +30,8 @@
 
 #include <dfm-framework/framework.h>
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QUrl>
 #include <QWaitCondition>
 #include <QMutex>
@@ -169,26 +171,29 @@ bool AbstractWorker::statisticsFilesSize()
         qWarning() << "sources files list is empty!";
         return false;
     }
+
+    const QUrl &firstUrl = sourceUrls.first();
+
     // 判读源文件所在设备位置，执行异步或者同统计源文件大小
-    isSourceFileLocal = FileOperationsUtils::isFileOnDisk(sourceUrls.at(0));
+    isSourceFileLocal = FileOperationsUtils::isFileOnDisk(firstUrl);
 
     if (isSourceFileLocal) {
-        QStorageInfo soureStorageInfo(sourceUrls.first().path().toStdString().data());
-        isSourceFileLocal = soureStorageInfo.fileSystemType().startsWith("ext");
+        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(firstUrl);
+        isSourceFileLocal = fsType.startsWith("ext");
     }
 
     if (isSourceFileLocal) {
         const SizeInfoPointer &fileSizeInfo = FileOperationsUtils::statisticsFilesSize(sourceUrls, true);
+
         allFilesList = fileSizeInfo->allFiles;
         sourceFilesTotalSize = fileSizeInfo->totalSize;
         dirSize = fileSizeInfo->dirSize;
         sourceFilesCount = fileSizeInfo->fileCount;
-        return true;
+    } else {
+        statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
+        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
+        statisticsFilesSizeJob->start(sourceUrls);
     }
-
-    statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
-    connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
-    statisticsFilesSizeJob->start(sourceUrls);
     return true;
 }
 /*!
@@ -446,7 +451,7 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
 {
     statisticsFilesSizeJob->stop();
     const SizeInfoPointer &sizeInfo = statisticsFilesSizeJob->getFileSizeInfo();
-    sourceFilesTotalSize = sizeInfo->totalSize;
+    sourceFilesTotalSize = statisticsFilesSizeJob->totalProgressSize();
     dirSize = sizeInfo->dirSize;
     sourceFilesCount = sizeInfo->fileCount;
 }

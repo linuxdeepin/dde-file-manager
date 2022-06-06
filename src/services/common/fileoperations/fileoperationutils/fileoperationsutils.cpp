@@ -58,12 +58,12 @@ QMutex FileOperationsUtils::mutex;
 SizeInfoPointer FileOperationsUtils::statisticsFilesSize(const QList<QUrl> &files, const bool &isRecordUrl)
 {
     SizeInfoPointer filesSizeInfo(new DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo);
+    filesSizeInfo->dirSize = FileUtils::getMemoryPageSize();
 
     for (auto url : files) {
         statisticFilesSize(url, filesSizeInfo, isRecordUrl);
     }
 
-    filesSizeInfo->dirSize = filesSizeInfo->dirSize <= 0 ? FileUtils::getMemoryPageSize() : filesSizeInfo->dirSize;
     return filesSizeInfo;
 }
 
@@ -128,14 +128,22 @@ void FileOperationsUtils::statisticFilesSize(const QUrl &url,
         urlCounted.insert(curUrl);
 
         unsigned short flag = ent->fts_info;
+
+        const auto &fileSize = ent->fts_statp->st_size;
+
+        // url record
         if (isRecordUrl && flag != FTS_DP)
             sizeInfo->allFiles.append(curUrl);
-        if (flag != FTS_DP)
-            sizeInfo->totalSize += ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
-        if (sizeInfo->dirSize == 0 && flag == FTS_D)
-            sizeInfo->dirSize = ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : static_cast<quint16>(ent->fts_statp->st_size);
-        if (flag == FTS_F)
+
+        // file counted
+        if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE)
             sizeInfo->fileCount++;
+
+        // total size
+        if (flag == FTS_D)
+            sizeInfo->totalSize += FileUtils::getMemoryPageSize();
+        else if (flag != FTS_DP)
+            sizeInfo->totalSize += fileSize;
     }
     fts_close(fts);
 }

@@ -25,6 +25,8 @@
 #include "base/schemefactory.h"
 #include "interfaces/abstractdiriterator.h"
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <QMutex>
 #include <QQueue>
 #include <QTimer>
@@ -60,7 +62,6 @@ public:
     QWaitCondition waitCondition;
 
     QAtomicInteger<qint64> totalSize = { 0 };
-    // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
     QAtomicInteger<qint64> totalProgressSize { 0 };
     QAtomicInt filesCount { 0 };
     QAtomicInt directoryCount { 0 };
@@ -72,6 +73,7 @@ FileStatisticsJobPrivate::FileStatisticsJobPrivate(FileStatisticsJob *qq)
     : QObject(nullptr), q(qq), notifyDataTimer(nullptr)
 {
     sizeInfo.reset(new FileUtils::FilesSizeInfo());
+    sizeInfo->dirSize = FileUtils::getMemoryPageSize();
 }
 
 FileStatisticsJobPrivate::~FileStatisticsJobPrivate()
@@ -352,8 +354,9 @@ void FileStatisticsJob::run()
     d->filesCount = 0;
     d->directoryCount = 0;
     if (!d->sourceUrlList.isEmpty()) {
-        QStorageInfo sourceStorageInfo(d->sourceUrlList.first().path());
-        d->isExtFileSystem = sourceStorageInfo.fileSystemType().startsWith("ext");
+        const QUrl &urlFirst = d->sourceUrlList.first();
+        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(urlFirst);
+        d->isExtFileSystem = fsType.startsWith("ext");
     }
 
     if (d->isExtFileSystem) {
@@ -495,20 +498,26 @@ void FileStatisticsJob::statistcsExtFileSystem()
             }
             unsigned short flag = ent->fts_info;
 
-            if (d->sizeInfo->dirSize == 0 && flag == FTS_D)
-                d->sizeInfo->dirSize = ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : static_cast<quint16>(ent->fts_statp->st_size);
-
+            // file counted
             if (flag == FTS_F || flag == FTS_SL || flag == FTS_SLNONE) {
                 d->filesCount++;
                 Q_EMIT fileFound(QUrl::fromLocalFile(ent->fts_path));
-            } else if (flag == FTS_D) {
+            }
+
+            // dir counted
+            if (flag == FTS_D) {
                 d->directoryCount++;
                 Q_EMIT directoryFound(QUrl::fromLocalFile(ent->fts_path));
             }
 
-            if (flag != FTS_DP) {
+            // total size
+            if (flag == FTS_D) {
+                d->totalSize += FileUtils::getMemoryPageSize();
+                d->totalProgressSize += FileUtils::getMemoryPageSize();
+                Q_EMIT sizeChanged(d->totalSize);
+            } else if (flag != FTS_DP) {
                 d->totalSize += ent->fts_statp->st_size;
-                d->totalProgressSize += ent->fts_statp->st_size <= 0 ? FileUtils::getMemoryPageSize() : ent->fts_statp->st_size;
+                d->totalProgressSize += ent->fts_statp->st_size;
                 Q_EMIT sizeChanged(d->totalSize);
             }
         }

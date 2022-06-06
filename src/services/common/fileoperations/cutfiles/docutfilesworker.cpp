@@ -163,8 +163,6 @@ bool DoCutFilesWorker::cutFiles()
         if (!doCutFile(fileInfo, targetInfo)) {
             return false;
         }
-
-        ++completedFilesCount;
     }
     return true;
 }
@@ -197,26 +195,7 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
 
 void DoCutFilesWorker::onUpdateProccess()
 {
-    if (totalMoveFilesCount > 0) {
-        qreal realProgress = qreal(completedFilesCount) / totalMoveFilesCount;
-        if (realProgress > lastProgress)
-            lastProgress = realProgress;
-    } else {
-        if (completedFilesCount < totalMoveFilesCount && totalMoveFilesCount > 0) {
-            qreal fuzzyProgress = qreal(completedFilesCount) / totalMoveFilesCount;
-            if (fuzzyProgress < 0.5 && fuzzyProgress > lastProgress)
-                lastProgress = fuzzyProgress;
-        }
-    }
-    // 保证至少出现%1
-    if (lastProgress < 0.02) {
-        lastProgress = 0.01;
-    }
-    // TODO(lanxs) emit signal to update progress
-    //Q_EMIT progressChanged(qMin(lastProgress, 1.0), 0);
-
-    qint64 writSize = getWriteDataSize();
-    writSize += skipWritSize;
+    const qint64 writSize = getWriteDataSize();
     emitProccessChangedNotify(writSize);
     emitSpeedUpdatedNotify(writSize);
 }
@@ -267,7 +246,6 @@ bool DoCutFilesWorker::checkSelf(const AbstractFileInfoPointer &fileInfo)
 
     if (newFileInfo.url() == fileInfo->url()
         || (FileUtils::isSameFile(fileInfo->url(), newFileInfo.url()) && !fileInfo->isSymLink())) {
-        ++completedFilesCount;
         return true;
     }
     return false;

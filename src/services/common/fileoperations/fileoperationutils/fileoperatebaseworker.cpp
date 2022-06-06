@@ -995,6 +995,8 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
         result = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, workContinue);
     } else if (fromInfo->isDir()) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, workContinue);
+        if (result || workContinue)
+            currentWritSize += FileUtils::getMemoryPageSize();
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo, workContinue);
     }
@@ -1202,21 +1204,31 @@ void FileOperateBaseWorker::cancelThreadProcessingError()
 }
 qint64 FileOperateBaseWorker::getWriteDataSize()
 {
-    if (CountWriteSizeType::kTidType == countWriteType) {
-        return getTidWriteSize();
-    } else if (CountWriteSizeType::kCustomizeType == countWriteType) {
-        return currentWritSize;
-    }
+    qint64 writeSize = currentWritSize;
 
-    if (targetDeviceStartSectorsWritten >= 0) {
-        if ((getSectorsWritten() == 0) && (targetDeviceStartSectorsWritten > 0)) {
-            return 0;
-        } else {
-            return (getSectorsWritten() - targetDeviceStartSectorsWritten) * targetLogSecionSize;
+    if (CountWriteSizeType::kTidType == countWriteType) {
+        writeSize = getTidWriteSize();
+    } else if (CountWriteSizeType::kCustomizeType == countWriteType) {
+        writeSize = currentWritSize;
+    } else {
+        if (targetDeviceStartSectorsWritten >= 0) {
+            if ((getSectorsWritten() == 0) && (targetDeviceStartSectorsWritten > 0)) {
+                writeSize = 0;
+            } else {
+                writeSize = (getSectorsWritten() - targetDeviceStartSectorsWritten) * targetLogSecionSize;
+            }
         }
     }
 
-    return currentWritSize;
+    if (writeSize > currentWritSize && currentWritSize > 0) {
+        writeSize = currentWritSize;
+    }
+
+    writeSize += currentWritSize;
+
+    writeSize += skipWritSize;
+
+    return writeSize;
 }
 
 qint64 FileOperateBaseWorker::getTidWriteSize()
@@ -1341,10 +1353,10 @@ void FileOperateBaseWorker::syncFilesToDevice()
         return;
 
     qDebug() << __FUNCTION__ << "syncFilesToDevice begin";
-    qint64 writeSize = getWriteDataSize() + skipWritSize;
+    qint64 writeSize = getWriteDataSize();
     while (!isStopped() && sourceFilesTotalSize > 0 && writeSize < sourceFilesTotalSize) {
         QThread::msleep(100);
-        writeSize = getWriteDataSize() + skipWritSize;
+        writeSize = getWriteDataSize();
     }
     qDebug() << __FUNCTION__ << "syncFilesToDevice end";
 }

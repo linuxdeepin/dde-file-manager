@@ -223,8 +223,7 @@ void DoCopyFilesWorker::setStat(const AbstractJobHandler::JobState &stat)
 void DoCopyFilesWorker::onUpdateProccess()
 {
     // 当前写入文件大小获取
-    qint64 writSize = getWriteDataSize();
-    writSize += skipWritSize;
+    const qint64 writSize = getWriteDataSize();
     emitProccessChangedNotify(writSize);
     emitSpeedUpdatedNotify(writSize);
 }

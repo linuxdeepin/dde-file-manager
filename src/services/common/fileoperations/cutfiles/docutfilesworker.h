@@ -64,11 +64,6 @@ protected:
 private:
     bool checkSymLink(const AbstractFileInfoPointer &fromInfo);
     bool checkSelf(const AbstractFileInfoPointer &fromInfo);
-
-private:
-    int totalMoveFilesCount = 1;
-    int completedFilesCount = 0;
-    qreal lastProgress = 0.01;
 };
 
 DSC_END_NAMESPACE
