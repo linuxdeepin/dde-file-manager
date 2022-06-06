@@ -107,15 +107,17 @@ EventChannelManager &EventChannelManager::instance()
     return instance;
 }
 
-void EventChannelManager::disconnect(const QString &space, const QString &topic)
+bool EventChannelManager::disconnect(const QString &space, const QString &topic)
 {
     Q_ASSERT(topic.startsWith(kSlotStrategePrefix));
-    disconnect(EventConverter::convert(space, topic));
+    return disconnect(EventConverter::convert(space, topic));
 }
 
-void EventChannelManager::disconnect(const EventType &type)
+bool EventChannelManager::disconnect(const EventType &type)
 {
     QWriteLocker guard(&rwLock);
-    if (ChannelMap.contains(type))
-        ChannelMap.remove(type);
+    if (channelMap.contains(type))
+        return channelMap.remove(type) > 0;
+
+    return false;
 }

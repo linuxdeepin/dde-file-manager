@@ -20,12 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "event/dispatcher/eventdispatcher.h"
 #include "testqobject.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <gtest/gtest.h>
+#define protected public
+#include "event/dispatcher/eventdispatcher.h"
 
 DPF_USE_NAMESPACE
 
@@ -106,4 +107,27 @@ TEST_F(UT_EventDispatcher, test_empty_push)
     EventType eType1 = 2;
     EXPECT_TRUE(EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::empty1));
     EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1));
+    EXPECT_TRUE(EventDispatcherManager::instance().unsubscribe(eType1));
+}
+
+TEST_F(UT_EventDispatcher, test_unsub)
+{
+    TestQObject b;
+    EventType eType1 = 2;
+    int v = 0;
+    EXPECT_TRUE(EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::add1));
+    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_EQ(v, 1);
+    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_EQ(v, 2);
+
+    EXPECT_TRUE(EventDispatcherManager::instance().unsubscribe(eType1, &b, &TestQObject::add1));
+    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_EQ(v, 2);
+
+    EXPECT_TRUE(EventDispatcherManager::instance().subscribe(eType1, &b, &TestQObject::add1));
+    EXPECT_TRUE(EventDispatcherManager::instance().publish(eType1, &v));
+    EXPECT_EQ(v, 3);
+
+    EXPECT_TRUE(EventDispatcherManager::instance().unsubscribe(eType1));
 }

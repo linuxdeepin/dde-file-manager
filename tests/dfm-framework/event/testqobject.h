@@ -37,6 +37,7 @@ public slots:
     bool bigger15(int v, int *called);
     bool empty1();
     bool empty2();
+    void add1(int *val);
 };
 
 Q_DECLARE_METATYPE(int *);

@@ -43,9 +43,9 @@ FileBaseInfoView::FileBaseInfoView(QWidget *parent)
 
 FileBaseInfoView::~FileBaseInfoView()
 {
-    dpfInstance.eventDispatcher().unsubscribe(kImageExten);
-    dpfInstance.eventDispatcher().unsubscribe(kVideoExten);
-    dpfInstance.eventDispatcher().unsubscribe(kAudioExten);
+    dpfInstance.eventDispatcher().unsubscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
+    dpfInstance.eventDispatcher().unsubscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
+    dpfInstance.eventDispatcher().unsubscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
 }
 
 void FileBaseInfoView::initUI()

@@ -57,3 +57,8 @@ bool TestQObject::empty2()
     qDebug() << __PRETTY_FUNCTION__;
     return true;
 }
+
+void TestQObject::add1(int *val)
+{
+    *val = *val + 1;
+}

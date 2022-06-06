@@ -20,11 +20,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "event/sequence/eventsequence.h"
 #include "testqobject.h"
 #include "framework.h"
 
 #include <gtest/gtest.h>
+
+#define protected public
+#include "event/sequence/eventsequence.h"
 
 DPF_USE_NAMESPACE
 
@@ -87,8 +89,8 @@ TEST_F(UT_EventSequence, test_manager)
     EventType eType2 = 2;
     int called { 0 };
 
-    EventSequenceManager::instance().follow(eType1, &b, &TestQObject::bigger15);
-    EventSequenceManager::instance().follow(eType1, &b, &TestQObject::bigger10);
+    EXPECT_TRUE(EventSequenceManager::instance().follow(eType1, &b, &TestQObject::bigger15));
+    EXPECT_TRUE(EventSequenceManager::instance().follow(eType1, &b, &TestQObject::bigger10));
     EXPECT_FALSE(EventSequenceManager::instance().run(eType1, 0, &called));
     EXPECT_EQ(10, called);
 
@@ -97,6 +99,7 @@ TEST_F(UT_EventSequence, test_manager)
 
     EXPECT_TRUE(EventSequenceManager::instance().run(eType1, 14, &called));
     EXPECT_EQ(10, called);
+    EXPECT_TRUE(EventSequenceManager::instance().unfollow(eType1));
 
     EventSequenceManager::instance().follow(eType2, &b, &TestQObject::bigger10);
     EventSequenceManager::instance().follow(eType2, &b, &TestQObject::bigger15);
@@ -108,4 +111,32 @@ TEST_F(UT_EventSequence, test_manager)
 
     EXPECT_TRUE(EventSequenceManager::instance().run(eType2, 14, &called));
     EXPECT_EQ(10, called);
+    EXPECT_TRUE(EventSequenceManager::instance().unfollow(eType2));
+}
+
+TEST_F(UT_EventSequence, test_unfollow)
+{
+    TestQObject b;
+    EventType eType1 = 1;
+    int called { 0 };
+
+    EXPECT_TRUE(EventSequenceManager::instance().follow(eType1, &b, &TestQObject::bigger15));
+    EXPECT_TRUE(EventSequenceManager::instance().follow(eType1, &b, &TestQObject::bigger10));
+    EXPECT_FALSE(EventSequenceManager::instance().run(eType1, 0, &called));
+    EXPECT_EQ(10, called);
+
+    EXPECT_TRUE(EventSequenceManager::instance().run(eType1, 16, &called));
+    EXPECT_EQ(15, called);
+
+    EXPECT_TRUE(EventSequenceManager::instance().run(eType1, 14, &called));
+    EXPECT_EQ(10, called);
+
+    // unfollow &TestQObject::bigger15
+    EXPECT_TRUE(EventSequenceManager::instance().unfollow(eType1, &b, &TestQObject::bigger15));
+    EXPECT_TRUE(EventSequenceManager::instance().run(eType1, 16, &called));
+    EXPECT_EQ(10, called);
+    EXPECT_TRUE(EventSequenceManager::instance().run(eType1, 14, &called));
+    EXPECT_EQ(10, called);
+
+    EXPECT_TRUE(EventSequenceManager::instance().unfollow(eType1));
 }

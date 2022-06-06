@@ -184,7 +184,8 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
 
 FileDialog::~FileDialog()
 {
-    dpfInstance.eventDispatcher().unsubscribe(Workspace::EventType::kViewSelectionChanged);
+    dpfInstance.eventDispatcher().unsubscribe(Workspace::EventType::kViewSelectionChanged, this,
+                                              &FileDialog::onViewSelectionChanged);
 }
 
 void FileDialog::cd(const QUrl &url)

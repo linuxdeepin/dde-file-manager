@@ -39,7 +39,7 @@ class EventSequence
 {
 public:
     using Sequence = std::function<bool(const QVariantList &)>;
-    using SequenceList = QList<Sequence>;
+    using HandlerList = QList<EventHandler<Sequence>>;
 
     bool traversal();
     bool traversal(const QVariantList &params);
@@ -67,11 +67,36 @@ public:
             EventHelper<decltype(method)> helper = (EventHelper<decltype(method)>(obj, method));
             return helper.invoke(args).toBool();
         };
-        allSequences.push_back(func);
+        list.push_back(EventHandler<Sequence> { obj, memberFunctionVoidCast(method), func });
+    }
+
+    template<class T, class Func>
+    inline bool remove(T *obj, Func method)
+    {
+        static_assert(std::is_base_of<QObject, T>::value, "Template type T must be derived QObject");
+        static_assert(!std::is_pointer<T>::value, "Receiver::bind's template type T must not be a pointer type");
+#if __cplusplus > 201703L
+        static_assert(std::is_same_v<bool, ReturnType<decltype(method)>>, "The return value of template method must is bool");
+#elif __cplusplus > 201103L
+        static_assert(std::is_same<bool, ReturnType<decltype(method)>>::value, "Template method's ReturnType must is bool");
+#endif
+
+        bool ret { true };
+        QMutexLocker guard(&sequenceMutex);
+        for (auto handler : list) {
+            if (handler.compare(obj, method)) {
+                if (!list.removeOne(handler)) {
+                    qWarning() << "Cannot remove: " << handler.objectIndex->objectName();
+                    ret = false;
+                }
+            }
+        }
+
+        return ret;
     }
 
 private:
-    SequenceList allSequences;
+    HandlerList list {};
     QMutex sequenceMutex;
 };
 
@@ -112,8 +137,25 @@ public:
         return true;
     }
 
-    void unfollow(const QString &space, const QString &topic);
-    void unfollow(EventType type);
+    template<class T, class Func>
+    bool unfollow(const QString &space, const QString &topic, T *obj, Func method)
+    {
+        Q_ASSERT(topic.startsWith(kHookStrategePrefix));
+        return unfollow(EventConverter::convert(space, topic), obj, std::move(method));
+    }
+
+    template<class T, class Func>
+    bool unfollow(EventType type, T *obj, Func method)
+    {
+        if (!obj || !method)
+            return false;
+
+        QWriteLocker lk(&rwLock);
+        if (sequenceMap.contains(type))
+            return sequenceMap[type]->remove(obj, std::move(method));
+
+        return false;
+    }
 
     template<class T, class... Args>
     inline bool run(const QString &space, const QString &topic, T param, Args &&... args)
@@ -152,6 +194,10 @@ public:
         }
         return false;
     }
+
+protected:
+    bool unfollow(const QString &space, const QString &topic);
+    bool unfollow(EventType type);
 
 private:
     using SequencePtr = QSharedPointer<EventSequence>;

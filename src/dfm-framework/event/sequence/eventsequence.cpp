@@ -31,8 +31,8 @@ bool EventSequence::traversal()
 
 bool EventSequence::traversal(const QVariantList &params)
 {
-    for (auto seq : allSequences) {
-        if (seq(params))
+    for (auto seq : list) {
+        if (seq.handler(params))
             return true;
     }
     return false;
@@ -44,15 +44,17 @@ EventSequenceManager &EventSequenceManager::instance()
     return instance;
 }
 
-void EventSequenceManager::unfollow(const QString &space, const QString &topic)
+bool EventSequenceManager::unfollow(const QString &space, const QString &topic)
 {
     Q_ASSERT(topic.startsWith(kHookStrategePrefix));
-    unfollow(EventConverter::convert(space, topic));
+    return unfollow(EventConverter::convert(space, topic));
 }
 
-void EventSequenceManager::unfollow(EventType type)
+bool EventSequenceManager::unfollow(EventType type)
 {
     QWriteLocker guard(&rwLock);
     if (sequenceMap.contains(type))
-        sequenceMap.remove(type);
+        return sequenceMap.remove(type) > 0;
+
+    return false;
 }

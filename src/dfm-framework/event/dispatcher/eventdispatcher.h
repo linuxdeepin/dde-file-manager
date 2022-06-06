@@ -38,7 +38,7 @@ class EventDispatcher
 {
 public:
     using Listener = std::function<QVariant(const QVariantList &)>;
-    using ListenerList = QList<Listener>;
+    using HandlerList = QList<EventHandler<Listener>>;
     using Filter = std::function<bool(Listener, const QVariantList &)>;
 
     void dispatch();
@@ -72,7 +72,28 @@ public:
             EventHelper<decltype(method)> helper = (EventHelper<decltype(method)>(obj, method));
             return helper.invoke(args);
         };
-        allListeners.push_back(func);
+
+        list.push_back(EventHandler<Listener> { obj, memberFunctionVoidCast(method), func });
+    }
+
+    template<class T, class Func>
+    inline bool remove(T *obj, Func method)
+    {
+        static_assert(std::is_base_of<QObject, T>::value, "Template type T must be derived QObject");
+        static_assert(!std::is_pointer<T>::value, "Receiver::bind's template type T must not be a pointer type");
+
+        bool ret { true };
+        QMutexLocker guard(&listenerMutex);
+        for (auto handler : list) {
+            if (handler.compare(obj, method)) {
+                if (!list.removeOne(handler)) {
+                    qWarning() << "Cannot remove: " << handler.objectIndex->objectName();
+                    ret = false;
+                }
+            }
+        }
+
+        return ret;
     }
 
     void setFilter(Filter filter);
@@ -80,7 +101,7 @@ public:
     Filter filter();
 
 private:
-    ListenerList allListeners {};
+    HandlerList list {};
     Filter curFilter {};
     QMutex listenerMutex;
 };
@@ -122,8 +143,25 @@ public:
         return true;
     }
 
-    void unsubscribe(const QString &space, const QString &topic);
-    void unsubscribe(EventType type);
+    template<class T, class Func>
+    inline bool unsubscribe(const QString &space, const QString &topic, T *obj, Func method)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        return unsubscribe(EventConverter::convert(space, topic), obj, std::move(method));
+    }
+
+    template<class T, class Func>
+    inline bool unsubscribe(EventType type, T *obj, Func method)
+    {
+        if (!obj || !method)
+            return false;
+
+        QWriteLocker lk(&rwLock);
+        if (dispatcherMap.contains(type))
+            return dispatcherMap[type]->remove(obj, std::move(method));
+
+        return false;
+    }
 
     template<class T, class... Args>
     inline bool publish(const QString &space, const QString &topic, T param, Args &&... args)
@@ -201,6 +239,10 @@ public:
     bool installEventFilter(EventType type, EventDispatcher::Filter filter);
     bool removeEventFilter(const QString &space, const QString &topic);
     bool removeEventFilter(EventType type);
+
+protected:
+    bool unsubscribe(const QString &space, const QString &topic);
+    bool unsubscribe(EventType type);
 
 private:
     using DispatcherPtr = QSharedPointer<EventDispatcher>;

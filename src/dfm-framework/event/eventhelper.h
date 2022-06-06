@@ -93,94 +93,94 @@ public:
 /*
  * Check return value type
  */
-template<typename T>
+template<class T>
 struct ReturnTypeHelper;
 
-template<typename R, typename... Args>
+template<class R, class... Args>
 struct ReturnTypeHelper<R(Args...)>
 {
     using type = R;
 };
 
-template<typename R, typename... Args>
+template<class R, class... Args>
 struct ReturnTypeHelper<R (*)(Args...)>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...)>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) &>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) &&>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) const>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) const &>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) const &&>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) volatile>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) volatile &>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) volatile &&>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) const volatile>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) const volatile &>
 {
     using type = R;
 };
 
-template<typename R, typename C, typename... Args>
+template<class R, class C, class... Args>
 struct ReturnTypeHelper<R (C::*)(Args...) const volatile &&>
 {
     using type = R;
 };
 
-template<typename T>
+template<class T>
 using ReturnType = typename ReturnTypeHelper<T>::type;
 
 /*
@@ -472,6 +472,173 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
 protected:
     QPointer<T> s;
     Func f;
+};
+
+/*
+ * cast member function to void *
+ */
+template<class T, class R>
+void *memberFunctionVoidCast(R (T::*f)(void))
+{
+    union {
+        R(T::*pf)
+        ();
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1>
+void *memberFunctionVoidCast(R (T::*f)(Arg1))
+{
+    union {
+        R(T::*pf)
+        (Arg1);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2, class Arg3>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2, Arg3))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2, Arg3);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2, class Arg3, class Arg4>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2, Arg3, Arg4))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2, Arg3, Arg4);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2, Arg3, Arg4, Arg5))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2, Arg3, Arg4, Arg5);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+template<class T, class R, class Arg1, class Arg2, class Arg3, class Arg4, class Arg5, class Arg6, class Arg7, class Arg8, class Arg9>
+void *memberFunctionVoidCast(R (T::*f)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9))
+{
+    union {
+        R(T::*pf)
+        (Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8, Arg9);
+        void *p;
+    };
+    pf = f;
+    return p;
+}
+
+/*
+ * index to the event handler
+ */
+template<class Method>
+struct EventHandler
+{
+    QObject *objectIndex;
+    // Warning: pointers to member functions and pointers to data are not necessarily represented
+    // in the same way. A pointer to a member function might be a data structure rather than a single pointer.
+    // Think about it: if it’s pointing at a virtual function, it might not actually be pointing at a statically resolvable pile of code,
+    // so it might not even be a normal address — it might be a different data structure of some sort.
+    // See: https://stackoverflow.com/questions/1307278/casting-between-void-and-a-pointer-to-member-function
+    void *funcIndex;
+    Method handler;
+
+    inline EventHandler(QObject *obj, void *func, Method method)
+        : objectIndex(obj),
+          funcIndex(func),
+          handler(method)
+    {
+    }
+
+    inline bool compare(QObject *obj)
+    {
+        if (!objectIndex)
+            return false;
+        return obj == objectIndex;
+    }
+
+    template<class Func>
+    inline bool compare(QObject *obj, Func func)
+    {
+        if (!objectIndex || !funcIndex)
+            return false;
+        return compare(obj) && memberFunctionVoidCast(func) == funcIndex;
+    }
+
+    inline bool operator==(const EventHandler &rhs)
+    {
+        return objectIndex == rhs.objectIndex
+                && funcIndex == rhs.funcIndex;
+    }
 };
 
 DPF_END_NAMESPACE

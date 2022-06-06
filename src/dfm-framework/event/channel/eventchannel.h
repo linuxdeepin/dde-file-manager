@@ -121,18 +121,18 @@ public:
         }
 
         QWriteLocker guard(&rwLock);
-        if (ChannelMap.contains(type)) {
-            ChannelMap[type]->setReceiver(obj, method);
+        if (channelMap.contains(type)) {
+            channelMap[type]->setReceiver(obj, method);
         } else {
             ChannelPtr Channel { new EventChannel };
             Channel->setReceiver(obj, method);
-            ChannelMap.insert(type, Channel);
+            channelMap.insert(type, Channel);
         }
         return true;
     }
 
-    void disconnect(const QString &space, const QString &topic);
-    void disconnect(const EventType &type);
+    bool disconnect(const QString &space, const QString &topic);
+    bool disconnect(const EventType &type);
 
     template<class T, class... Args>
     inline QVariant push(const QString &space, const QString &topic, T param, Args &&... args)
@@ -145,8 +145,8 @@ public:
     [[gnu::hot]] inline QVariant push(EventType type, T param, Args &&... args)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(ChannelMap.contains(type))) {
-            auto Channel = ChannelMap.value(type);
+        if (Q_LIKELY(channelMap.contains(type))) {
+            auto Channel = channelMap.value(type);
             guard.unlock();
             return Channel->send(param, std::forward<Args>(args)...);
         }
@@ -162,8 +162,8 @@ public:
     inline QVariant push(const EventType &type)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(ChannelMap.contains(type))) {
-            auto Channel = ChannelMap.value(type);
+        if (Q_LIKELY(channelMap.contains(type))) {
+            auto Channel = channelMap.value(type);
             guard.unlock();
             if (Channel)
                 return Channel->send();
@@ -183,8 +183,8 @@ public:
     inline EventChannelFuture post(EventType type, T param, Args &&... args)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(ChannelMap.contains(type)))
-            return ChannelMap[type]->asyncSend(param, std::forward<Args>(args)...);
+        if (Q_LIKELY(channelMap.contains(type)))
+            return channelMap[type]->asyncSend(param, std::forward<Args>(args)...);
         return EventChannelFuture(QFuture<QVariant>());
     }
 
@@ -197,8 +197,8 @@ public:
     inline EventChannelFuture post(const EventType &type)
     {
         QReadLocker guard(&rwLock);
-        if (Q_LIKELY(ChannelMap.contains(type)))
-            return ChannelMap[type]->asyncSend();
+        if (Q_LIKELY(channelMap.contains(type)))
+            return channelMap[type]->asyncSend();
         return EventChannelFuture(QFuture<QVariant>());
     }
 
@@ -210,7 +210,7 @@ private:
     ~EventChannelManager() = default;
 
 private:
-    EventChannelMap ChannelMap;
+    EventChannelMap channelMap;
     QReadWriteLock rwLock;
 };
 

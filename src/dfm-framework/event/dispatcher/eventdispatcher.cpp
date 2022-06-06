@@ -36,8 +36,8 @@ void EventDispatcher::dispatch()
 void EventDispatcher::dispatch(const QVariantList &params)
 {
     if (Q_UNLIKELY(curFilter)) {
-        if (std::any_of(allListeners.begin(), allListeners.end(), [this, params](const Listener &listener) {
-                if (curFilter(listener, params))
+        if (std::any_of(list.begin(), list.end(), [this, params](const EventHandler<Listener> &h) {
+                if (curFilter(h.handler, params))
                     return true;
                 return false;
             })) {
@@ -45,8 +45,8 @@ void EventDispatcher::dispatch(const QVariantList &params)
         }
     }
 
-    std::for_each(allListeners.begin(), allListeners.end(), [params](const Listener &listener) {
-        listener(params);
+    std::for_each(list.begin(), list.end(), [params](const EventHandler<Listener> &h) {
+        h.handler(params);
     });
 }
 
@@ -88,17 +88,19 @@ EventDispatcherManager &EventDispatcherManager::instance()
     return instance;
 }
 
-void EventDispatcherManager::unsubscribe(const QString &space, const QString &topic)
+bool EventDispatcherManager::unsubscribe(const QString &space, const QString &topic)
 {
     Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
-    unsubscribe(EventConverter::convert(space, topic));
+    return unsubscribe(EventConverter::convert(space, topic));
 }
 
-void EventDispatcherManager::unsubscribe(EventType type)
+bool EventDispatcherManager::unsubscribe(EventType type)
 {
     QWriteLocker guard(&rwLock);
     if (dispatcherMap.contains(type))
-        dispatcherMap.remove(type);
+        return dispatcherMap.remove(type) > 0;
+
+    return false;
 }
 
 bool EventDispatcherManager::installEventFilter(const QString &space, const QString &topic, EventDispatcher::Filter filter)
