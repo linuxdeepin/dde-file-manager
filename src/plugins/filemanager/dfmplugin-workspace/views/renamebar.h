@@ -63,6 +63,7 @@ private slots:
 
 private:
     void initConnect();
+    QList<QUrl> getSelectFiles();
 
 private:
     QSharedPointer<RenameBarPrivate> d { nullptr };

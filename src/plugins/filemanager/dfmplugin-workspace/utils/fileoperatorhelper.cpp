@@ -301,6 +301,35 @@ void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &a
     }
 }
 
+void FileOperatorHelper::renameFilesByReplace(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair)
+{
+    auto windowId = WorkspaceHelper::instance()->windowId(sender);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles,
+                                          windowId,
+                                          urlList,
+                                          replacePair,
+                                          true);
+}
+
+void FileOperatorHelper::renameFilesByAdd(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &addPair)
+{
+    auto windowId = WorkspaceHelper::instance()->windowId(sender);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles,
+                                          windowId,
+                                          urlList,
+                                          addPair);
+}
+
+void FileOperatorHelper::renameFilesByCustom(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair)
+{
+    auto windowId = WorkspaceHelper::instance()->windowId(sender);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles,
+                                          windowId,
+                                          urlList,
+                                          customPair,
+                                          false);
+}
+
 FileOperatorHelper::FileOperatorHelper(QObject *parent)
     : QObject(parent)
 {

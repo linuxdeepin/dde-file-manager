@@ -21,12 +21,17 @@
  */
 #include "renamebar.h"
 #include "private/renamebar_p.h"
+#include "utils/fileoperatorhelper.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
+#include "workspacewidget.h"
+#include "views/fileview.h"
 
 #include <QComboBox>
 #include <QPushButton>
 #include <QLineEdit>
 #include <QStackedWidget>
 
+DFMBASE_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
 
 RenameBar::RenameBar(QWidget *parent)
@@ -75,7 +80,6 @@ void RenameBar::onVisibleChanged(bool value) noexcept
 
     using RenamePattern = RenameBarPrivate::RenamePattern;
     if (value) {
-
         switch (d->currentPattern) {
         case RenamePattern::kReplace: {
             QLineEdit *lineEdit { std::get<1>(d->replaceOperatorItems) };
@@ -242,42 +246,27 @@ void RenameBar::eventDispatcher()
 {
     Q_D(RenameBar);
 
-    bool value { false };
+    QList<QUrl> urls = getSelectFiles();
 
     using RenamePattern = RenameBarPrivate::RenamePattern;
 
     if (d->currentPattern == RenamePattern::kReplace) {
         QString forFindingStr { std::get<1>(d->replaceOperatorItems)->text() };
         QString forReplaceStr { std::get<3>(d->replaceOperatorItems)->text() };
-
         QPair<QString, QString> pair { forFindingStr, forReplaceStr };
 
-        // Todo(yanghao): multi files replace name
-
+        FileOperatorHelperIns->renameFilesByReplace(parentWidget(), urls, pair);
     } else if (d->currentPattern == RenamePattern::kAdd) {
         QString forAddingStr { std::get<1>(d->addOperatorItems)->text() };
+        QPair<QString, AbstractJobHandler::FileNameAddFlag> pair { forAddingStr, static_cast<AbstractJobHandler::FileNameAddFlag>(d->flag) };
 
-        // Todo(yanghao): multi files add name
-        //        QPair<QString, DFileService::AddTextFlags> pair{ forAddingStr, d->m_flag };
-
-        //        value = DFileService::instance()->multiFilesAddStrToName(d->m_urlList, pair);
-
+        FileOperatorHelperIns->renameFilesByAdd(parentWidget(), urls, pair);
     } else if (d->currentPattern == RenamePattern::kCustom) {
         QString forCustomStr { std::get<1>(d->customOPeratorItems)->text() };
         QString numberStr { std::get<3>(d->customOPeratorItems)->text() };
-
         QPair<QString, QString> pair { forCustomStr, numberStr };
 
-        // Todo(yanghao): multi files custom name
-        //        value = DFileService::instance()->multiFilesCustomName(d->m_urlList, pair);
-    }
-
-    if (value) {
-        if (QWidget *const parent = dynamic_cast<QWidget *>(this->parent())) {
-            // Todo(yanghao)???
-            //            quint64 windowId { WindowManager::getWindowId(parent) };
-            //            AppController::multiSelectionFilesCache.second = windowId;
-        }
+        FileOperatorHelperIns->renameFilesByCustom(parentWidget(), urls, pair);
     }
 
     setVisible(false);
@@ -312,4 +301,16 @@ void RenameBar::initConnect()
     QObject::connect(this, &RenameBar::visibleChanged, this, &RenameBar::onVisibleChanged);
     QObject::connect(this, &RenameBar::clickRenameButton, this, &RenameBar::eventDispatcher);
     QObject::connect(this, &RenameBar::clickCancelButton, this, &RenameBar::hideRenameBar);
+}
+
+QList<QUrl> RenameBar::getSelectFiles()
+{
+    auto widget = qobject_cast<WorkspaceWidget *>(parentWidget());
+    if (widget) {
+        auto view = dynamic_cast<FileView *>(widget->currentView());
+        if (view)
+            return view->selectedUrlList();
+    }
+
+    return {};
 }

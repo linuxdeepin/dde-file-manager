@@ -24,6 +24,7 @@
 
 #include "dfmplugin_workspace_global.h"
 #include "dfm_global_defines.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <QObject>
 #include <QUrl>
@@ -58,7 +59,10 @@ public:
     void sendBluetoothFiles(const FileView *view);
     void previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls);
     void dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
-    // Todo(yanghao)
+
+    void renameFilesByReplace(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair);
+    void renameFilesByAdd(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> &addPair);
+    void renameFilesByCustom(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair);
 
 private:
     explicit FileOperatorHelper(QObject *parent = nullptr);
