@@ -75,13 +75,13 @@ QModelIndexList FileSelectionModel::selectedIndexes() const
                 d->selectedList << range.indexes();
             }
         }
+
         auto isInVaildIndex = [=](const QModelIndex &index) {
             return index.column() != 0;
         };
 
         d->selectedList.erase(std::remove_if(d->selectedList.begin(), d->selectedList.end(), isInVaildIndex),
                               d->selectedList.end());
-        d->selectedList = d->selectedList.toSet().toList();
     }
     return d->selectedList;
 }
