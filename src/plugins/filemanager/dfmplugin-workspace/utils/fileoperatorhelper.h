@@ -43,12 +43,14 @@ public:
     void openFiles(const FileView *view, const QList<QUrl> &urls);
     void openFilesByMode(const FileView *view, const QList<QUrl> &urls, const DirOpenMode mode = DirOpenMode::kOpenInCurrentWindow);
     void openFilesByApp(const FileView *view);
+    void openFilesByApp(const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps);
     void renameFile(const FileView *view, const QUrl &oldUrl, const QUrl &newUrl);
     void copyFiles(const FileView *view);
     void cutFiles(const FileView *view);
     void pasteFiles(const FileView *view);
     void undoFiles(const FileView *view);
     void moveToTrash(const FileView *view);
+    void moveToTrash(const FileView *view, const QList<QUrl> &urls);
     void deleteFiles(const FileView *view);
     void createSymlink(const FileView *view, QUrl targetParent = QUrl());
     void openInTerminal(const FileView *view);

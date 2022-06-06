@@ -105,6 +105,15 @@ void FileOperatorHelper::openFilesByApp(const FileView *view)
     // Todo(yanghao)
 }
 
+void FileOperatorHelper::openFilesByApp(const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps)
+{
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp,
+                                          windowId,
+                                          urls,
+                                          apps);
+}
+
 void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, const QUrl &newUrl)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
@@ -197,6 +206,15 @@ void FileOperatorHelper::moveToTrash(const FileView *view)
     dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
                                           windowId,
                                           view->selectedUrlList(),
+                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
+}
+
+void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &urls)
+{
+    auto windowId = WorkspaceHelper::instance()->windowId(view);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
+                                          windowId,
+                                          urls,
                                           AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 

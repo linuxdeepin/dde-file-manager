@@ -486,20 +486,28 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
         // TODO: trans 'targetUrl' to source url
     }
 
+    FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
+
+    if (FileUtils::isTrashDesktopFile(targetUrl)) {
+        FileOperatorHelperIns->moveToTrash(view, dropUrls);
+        return true;
+    } else if (FileUtils::isDesktopFile(targetUrl)) {
+        FileOperatorHelperIns->openFilesByApp(view, dropUrls, QStringList { targetUrl.toLocalFile() });
+        return true;
+    }
+
     bool ret { true };
 
     switch (action) {
     case Qt::CopyAction:
         if (dropUrls.count() > 0) {
             // call copy
-            FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
             FileOperatorHelperIns->dropFiles(view, Qt::CopyAction, targetUrl, dropUrls);
         }
         break;
     case Qt::MoveAction:
         if (dropUrls.count() > 0) {
             // call move
-            FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
             FileOperatorHelperIns->dropFiles(view, Qt::MoveAction, targetUrl, dropUrls);
         }
         break;
