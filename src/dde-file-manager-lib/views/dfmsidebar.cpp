@@ -727,15 +727,25 @@ void DFMSideBar::initConnection()
     connect(m_sidebarModel, &QStandardItemModel::rowsInserted, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this, &DFMSideBar::updateSeparatorVisibleState);
     connect(m_sidebarModel, &QStandardItemModel::rowsMoved, this, &DFMSideBar::updateSeparatorVisibleState);
+
     // drag to move item will emit rowsInserted and rowsMoved..
     connect(m_sidebarModel, &QStandardItemModel::rowsRemoved, this,
-    [this](const QModelIndex & parent, int first, int last) {
+            [this](const QModelIndex & parent, int first, int last) {
         Q_UNUSED(parent);
         Q_UNUSED(last);
+
         DFMSideBarItem *item = m_sidebarModel->itemFromIndex(first);
-        if (!item) {
+        if (!item)
             item = m_sidebarModel->itemFromIndex(first - 1);
+
+        // only bookmark and tag item are DragEnabled
+        if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
+            saveItemOrder(item->groupName());
+            return;
         }
+
+        if (item->text().isEmpty())
+            item = m_sidebarModel->itemFromIndex(item->index().row() - 1);
 
         // only bookmark and tag item are DragEnabled
         if (item && item->flags().testFlag(Qt::ItemIsEnabled) && item->flags().testFlag(Qt::ItemIsDragEnabled)) {
@@ -1238,7 +1248,7 @@ void DFMSideBar::addGroupItems(DFMSideBar::GroupName groupType)
         if (m_disableUrlSchemes.contains(BOOKMARK_SCHEME))  {
             break;
         }
-
+        bookmarkManager->initData();
         const DUrlList urlList = bookmarkManager->getBookmarkUrls();
         QList<DFMSideBarItem *> unsortedList;
         for (const DUrl &url : urlList) {
