@@ -37,6 +37,7 @@
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/networkutils.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -95,7 +96,26 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     if (target.isValid()) {
         if (isOptical)
             target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(url));
-        ComputerEventCaller::cdTo(winId, target);
+        if (suffix == SuffixInfo::kProtocol) {
+            if (DeviceUtils::isSamba(target) || DeviceUtils::isFtp(target)) {
+                QString ip, port;
+                if (!NetworkUtils::instance()->parseIp(target.path(), ip, port)) {
+                    qDebug() << "parse ip address failed: " << target;
+                    ComputerEventCaller::cdTo(winId, target);
+                } else {
+                    ComputerUtils::setCursorState(true);
+                    NetworkUtils::instance()->doAfterCheckNet(ip, port, [winId, target, ip](bool ok) {
+                        ComputerUtils::setCursorState(false);
+                        if (ok)
+                            ComputerEventCaller::cdTo(winId, target);
+                        else
+                            DialogManagerInstance->showErrorDialog(tr("Mount error"), tr("Cannot access %1").arg(ip));
+                    });
+                }
+            }
+        } else {
+            ComputerEventCaller::cdTo(winId, target);
+        }
     } else {
         if (suffix == SuffixInfo::kBlock) {
             mountDevice(winId, info);

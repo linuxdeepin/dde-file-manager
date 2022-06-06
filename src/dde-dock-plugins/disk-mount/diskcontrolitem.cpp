@@ -21,9 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "diskcontrolitem.h"
+#include "diskcontrolwidget.h"
 #include "sizeformathelper.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/networkutils.h"
 
 #include <DGuiApplicationHelper>
 #include <DDialog>
@@ -91,7 +93,8 @@ DiskControlItem::DiskControlItem(QSharedPointer<DAttachedDevice> attachedDeviceP
       diskCapacity(new QLabel),
       capacityValueBar(new QProgressBar),
       attachedDev(attachedDevicePtr),
-      ejectButton(new DIconButton(this))
+      ejectButton(new DIconButton(this)),
+      par(qobject_cast<DiskControlWidget *>(parent))
 {
     setObjectName("DiskItem");
 
@@ -115,10 +118,12 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
     }
 
     QUrl &&mountPoint = QUrl(attachedDev->mountpointUrl());
+    QUrl &&url = QUrl(attachedDev->accessPointUrl());
 
+    DFMBASE_USE_NAMESPACE
     // 光盘文件系统剥离 RockRidge 后，udisks 的默认挂载权限为 500，为遵从 linux 权限限制，在这里添加访问目录的权限校验
     QFile f(mountPoint.path());
-    if (f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
+    if (url.scheme() == Global::kBurn && f.exists() && !f.permissions().testFlag(QFile::ExeUser)) {
         DDialog *d = new DDialog(QObject::tr("Access denied"), QObject::tr("You do not have permission to access this folder"));
         d->setAttribute(Qt::WA_DeleteOnClose);
         Qt::WindowFlags flags = d->windowFlags();
@@ -130,8 +135,7 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
         return;
     }
 
-    QUrl &&url = QUrl(attachedDev->accessPointUrl());
-    if (url.scheme() == DFMBASE_NAMESPACE::Global::kBurn) {
+    if (url.scheme() == Global::kBurn) {
         // 1. 当前熊默认文件管理器为 dde-file-manager 时，使用它打开光盘
         // 2. 默认文件管理器为其他时，依然采用打开挂载点的方式
         if (!QStandardPaths::findExecutable(QStringLiteral("dde-file-manager")).isEmpty()) {
@@ -144,12 +148,25 @@ void DiskControlItem::mouseReleaseEvent(QMouseEvent *e)
             DDesktopServices::showFolder(url);
         }
     } else {
-        DDesktopServices::showFolder(url);
+        QString host, port;
+        if (!NetworkUtils::instance()->parseIp(url.path(), host, port)) {
+            DDesktopServices::showFolder(url);
+        } else {
+            NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
+                if (ok) {
+                    DDesktopServices::showFolder(url);
+                } else {
+                    qDebug() << "cannot access " << host << url;
+                    par->notifyMessage(tr("Cannot access %1").arg(host));   // TODO(xust) PO should define what should be display to user
+                }
+            });
+        }
     }
 }
 
 void DiskControlItem::showEvent(QShowEvent *e)
 {
+    attachedDev->query();
     diskName->setText(attachedDev->displayName());
     QString &&name = attachedDev->displayName();
     auto &&f = diskName->font();

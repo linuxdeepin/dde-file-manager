@@ -29,12 +29,14 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/networkutils.h"
 #include "dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h"
 
 #include <QDebug>
 #include <QtConcurrent/QtConcurrent>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <QApplication>
 
 #include <dfm-mount/dmount.h>
 #include <mutex>
@@ -536,10 +538,26 @@ void DeviceManager::unmountProtocolDevAsync(const QString &id, const QVariantMap
 void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType1 cb, int timeout)
 {
     Q_ASSERT_X(!address.isEmpty(), __FUNCTION__, "address is emtpy");
+    QUrl u(address);
+    if (!u.isValid()) {
+        qDebug() << "url is not valid: " << u << address;
+        return;
+    }
+
+    QString host = u.host();
+    QString port = u.scheme() == "smb" ? "139" : "21";
 
     using namespace std::placeholders;
     auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
-    DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice, cb, timeout);
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
+        if (ok)
+            DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice, cb, timeout);
+        else if (cb)
+            cb(false, DeviceError::kUserErrorTimedOut, "");
+    });
 }
 
 void DeviceManager::doAutoMountAtStart()

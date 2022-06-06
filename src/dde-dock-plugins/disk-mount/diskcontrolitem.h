@@ -31,6 +31,7 @@
 #include <QPushButton>
 #include <QProgressBar>
 
+class DiskControlWidget;
 class DiskControlItem : public QFrame
 {
     Q_OBJECT
@@ -57,6 +58,7 @@ private:
     QProgressBar *capacityValueBar { nullptr };
     QSharedPointer<DAttachedDevice> attachedDev;
     DTK_WIDGET_NAMESPACE::DIconButton *ejectButton { nullptr };
+    DiskControlWidget *par;
 };
 
 #endif   // DISKCONTROLITEM_H

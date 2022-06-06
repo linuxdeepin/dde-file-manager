@@ -28,6 +28,8 @@
 
 #include <QVector>
 #include <QDebug>
+#include <QRegularExpressionMatch>
+
 DFMBASE_USE_NAMESPACE
 using namespace GlobalServerDefines::DeviceProperty;
 
@@ -82,6 +84,18 @@ bool DeviceUtils::isAutoMountEnable()
 bool DeviceUtils::isAutoMountAndOpenEnable()
 {
     return Application::genericAttribute(Application::GenericAttribute::kAutoMountAndOpen).toBool();
+}
+
+bool DeviceUtils::isSamba(const QUrl &url)
+{
+    static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };   // TODO(xust) /media/$USER/smbmounts might be changed in the future.}
+    return hasMatch(url.path(), smbMatch);
+}
+
+bool DeviceUtils::isFtp(const QUrl &url)
+{
+    static const QString smbMatch { "(^/run/user/\\d+/gvfs/s?ftp|^/root/\\.gvfs/s?ftp)" };
+    return hasMatch(url.path(), smbMatch);
 }
 
 QString DeviceUtils::nameOfSystemDisk(const QVariantMap &datas)
@@ -215,4 +229,11 @@ QString DeviceUtils::nameOfSize(const quint64 &size)
         index++;
     }
     return QString("%1 %2").arg(QString::number(fileSize, 'f', 1)).arg(unit);
+}
+
+bool DeviceUtils::hasMatch(const QString &txt, const QString &rex)
+{
+    QRegularExpression re(rex);
+    QRegularExpressionMatch match = re.match(txt);
+    return match.hasMatch();
 }

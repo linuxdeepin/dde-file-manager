@@ -353,9 +353,14 @@ bool UniversalUtils::urlEquals(const QUrl &url1, const QUrl &url2)
 {
     if (url1 == url2)
         return true;
-    if ((url1.scheme() == url2.scheme() && url1.path() == url2.path()))
-        return true;
-    if (url1.scheme() == url2.scheme() && QDir(url1.path()) == QDir(url2.path()))
+
+    auto path1 { url1.path() }, path2 { url2.path() };
+    if (!path1.endsWith("/"))
+        path1.append("/");
+    if (!path2.endsWith("/"))
+        path2.append("/");
+
+    if ((url1.scheme() == url2.scheme() && path1 == path2))
         return true;
     return false;
 }

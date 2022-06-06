@@ -26,6 +26,12 @@ FILE (GLOB BASE_DEVICE_FILES
     ${BASE_DEV_DIR}/private/*.cpp
 )
 
+set(BASE_UTIL_DIR ${SRC_DIR}/dfm-base/utils)
+FILE(GLOB BASE_UTIL_FILES
+    ${BASE_UTIL_DIR}/networkutils.h
+    ${BASE_UTIL_DIR}/networkutils.cpp
+)
+
 set(DBUS_DIR ${SRC_DIR}/dfm-base/dbusservice)
 include_directories(${DBUS_DIR})
 FILE (GLOB DBUS_INTERFACE_FILES
@@ -63,6 +69,7 @@ add_library(${PROJECT_NAME}
     SHARED
     ${MOUNT_PLUGIN_FILES}
     ${BASE_DEVICE_FILES}
+    ${BASE_UTIL_FILES}
     ${DBUS_INTERFACE_FILES}
     ${QRC_RESOURCES}
     )

@@ -55,12 +55,17 @@ public:
     static bool isAutoMountEnable();
     static bool isAutoMountAndOpenEnable();
 
+    static bool isSamba(const QUrl &url);
+    static bool isFtp(const QUrl &url);
+
 private:
     static QString nameOfSystemDisk(const QVariantMap &datas);
     static QString nameOfOptical(const QVariantMap &datas);
     static QString nameOfEncrypted(const QVariantMap &datas);
     static QString nameOfDefault(const QString &label, const quint64 &size);
     static QString nameOfSize(const quint64 &size);
+
+    static bool hasMatch(const QString &txt, const QString &rex);
 };
 
 DFMBASE_END_NAMESPACE
