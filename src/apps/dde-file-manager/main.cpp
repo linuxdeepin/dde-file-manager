@@ -30,6 +30,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <DApplicationSettings>
+
 #include <QIcon>
 #include <QDir>
 #include <QTextCodec>
@@ -186,6 +188,8 @@ int main(int argc, char *argv[])
                                                            "trash, compression/decompression, file property "
                                                            "and other useful functions."));
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+    DApplicationSettings setting;
 
     DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();

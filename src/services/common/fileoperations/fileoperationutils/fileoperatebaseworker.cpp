@@ -249,7 +249,7 @@ bool FileOperateBaseWorker::openFile(const AbstractFileInfoPointer &fromInfo, co
     if (action != AbstractJobHandler::SupportAction::kNoAction) {
         skipWritSize += action == AbstractJobHandler::SupportAction::kSkipAction ? (fromInfo->size() <= 0 ? dirSize : fromInfo->size()) : 0;
         *result = action == AbstractJobHandler::SupportAction::kSkipAction;
-        return *result;
+        return false;
     }
     return true;
 }
