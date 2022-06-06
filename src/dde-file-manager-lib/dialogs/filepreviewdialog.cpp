@@ -240,7 +240,7 @@ FilePreviewDialog::FilePreviewDialog(const DUrlList &previewUrllist, QWidget *pa
     : DAbstractDialog(parent), m_fileList(previewUrllist)
 {
 #ifdef Q_OS_LINUX
-#    ifndef ARCH_SW   // 申威和龙芯架构已禁用视频预览功能，不会触发此问题
+#    ifndef ARCH_SW   // SW与MIPS已禁用视频预览功能，不会触发此问题
 #        ifndef ARCH_MIPSEL   //
     // 先触发Qt多媒体库加载gstreamter插件
     // 因为预览视频时会先加载mpv库，如果之后再加载gst库，会导致崩溃在init_plugin
