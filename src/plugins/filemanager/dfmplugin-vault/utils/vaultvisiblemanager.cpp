@@ -102,6 +102,7 @@ void VaultVisibleManager::pluginServiceRegister()
 
         MenuService::service()->registerScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
         WorkspaceService::service()->setWorkspaceMenuScene(VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
+        VaultEventReceiver::instance()->connectEvent();
     }
 }
 
@@ -160,7 +161,6 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
         connect(window, &FileManagerWindow::workspaceInstallFinished, this, &VaultVisibleManager::addComputer, Qt::DirectConnection);
 
     addFileOperations();
-    VaultEventReceiver::instance()->connectEvent();
     VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
 }
 
