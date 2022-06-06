@@ -842,11 +842,11 @@ void DialogManager::showShareOptionsInPropertyDialog(const DFMUrlListBaseEvent &
     if (m_propertyDialogs.contains(url)) {
         PropertyDialog *dialog = m_propertyDialogs.value(url);
         if (dialog->expandGroup().count() > 1) {
-            dialog->expandGroup().at(0)->setAnimationDuration(1);
-            dialog->expandGroup().at(1)->setAnimationDuration(1);
+            dialog->expandGroup().at(0)->setAnimationDuration(0);
+            dialog->expandGroup().at(1)->setAnimationDuration(0);
             dialog->expandGroup().at(0)->setExpand(false);
             dialog->expandGroup().at(1)->setExpand(true);
-            QTimer::singleShot(120, this, [=]() {
+            QTimer::singleShot(0, this, [=]() {
                 dialog->expandGroup().at(0)->setAnimationDuration(250);
                 dialog->expandGroup().at(1)->setAnimationDuration(250);
             });
