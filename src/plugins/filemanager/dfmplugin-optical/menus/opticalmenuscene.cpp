@@ -92,7 +92,9 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "copy",
         "create-system-link",
         "send-to-desktop",
-        "property"
+        "property",
+        "open-in-new-window",
+        "open-in-new-tab"
     };
     static const QStringList whiteEmptyActIdList {
         "display-as",
