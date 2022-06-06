@@ -39,7 +39,7 @@ GroupPolicy::GroupPolicy(QObject *parent) : QObject(parent)
     }
 
 #if (DTK_POLICY_SUPPORT)
-    m_config = Dtk::Core::DConfig::create("dde-file-manager", "org.deepin.dde.file-manager", "", this);
+    m_config = Dtk::Core::DConfig::create("org.deepin.dde.file-manager", "org.deepin.dde.file-manager", "", this);
 
     // 判断配置是否有效
     if (!m_config->isValid()) {
