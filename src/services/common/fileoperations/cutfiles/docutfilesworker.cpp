@@ -225,7 +225,7 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
     ok = createSystemLink(fileInfo, newTargetInfo, true, false, &result);
     if (!ok && !result)
         return false;
-    ok = deleteFile(sourceUrl, &result);
+    ok = deleteFile(sourceUrl, QUrl(), &result);
     if (!ok && !result)
         return false;
     if (!isConvert) {

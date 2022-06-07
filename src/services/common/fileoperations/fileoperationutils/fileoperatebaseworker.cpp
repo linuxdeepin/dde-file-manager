@@ -478,25 +478,27 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
  * \param fileInfo delete file information
  * \return Delete file successfully
  */
-bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, bool *result)
+bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
 {
+    bool ret = false;
+
     if (!stateCheck())
         return false;
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
-        if (!handler->deleteFile(fromUrl)) {
-            action = doHandleErrorAndWait(fromUrl, QUrl(), AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
+        ret = handler->deleteFile(fromUrl);
+        if (!ret) {
+            action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
-    *result = action == AbstractJobHandler::SupportAction::kSkipAction
-            || action == AbstractJobHandler::SupportAction::kNoAction;
+    *result = action == AbstractJobHandler::SupportAction::kSkipAction;
 
-    return result;
+    return ret;
 }
 
-bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, bool *result)
+bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
 {
     DecoratorFileEnumerator enumerator(fromUrl);
     if (!enumerator.isValid())
@@ -508,12 +510,12 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, bool *result)
 
         const QUrl &urlNext = QUrl::fromLocalFile(path);
         if (DecoratorFileInfo(urlNext).isDir()) {
-            succ = deleteDir(urlNext, result);
+            succ = deleteDir(urlNext, toUrl, result);
         } else {
-            succ = deleteFile(urlNext, result);
+            succ = deleteFile(urlNext, toUrl, result);
         }
     }
-    succ = deleteFile(fromUrl, result);
+    succ = deleteFile(fromUrl, toUrl, result);
     return succ;
 }
 /*!
@@ -535,18 +537,18 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
     if (fromInfo->isSymLink()) {
         ok = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, result);
         if (ok)
-            ok = deleteFile(fromInfo->url(), result);
+            ok = deleteFile(fromInfo->url(), toInfo->url(), result);
     } else if (fromInfo->isDir()) {
         ok = checkAndCopyDir(fromInfo, newTargetInfo, result);
         if (ok)
-            ok = deleteDir(fromInfo->url(), result);
+            ok = deleteDir(fromInfo->url(), toInfo->url(), result);
     } else {
         const QUrl &url = newTargetInfo->url();
 
         FileUtils::cacheCopyingFileUrl(url);
         ok = doCopyFilePractically(fromInfo, newTargetInfo, result);
         if (ok)
-            ok = deleteFile(fromInfo->url(), result);
+            ok = deleteFile(fromInfo->url(), toInfo->url(), result);
         FileUtils::removeCopyingFileUrl(url);
     }
 

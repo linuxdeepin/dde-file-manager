@@ -333,6 +333,7 @@ AbstractJobHandler::SupportActions AbstractWorker::supportActions(const Abstract
     case AbstractJobHandler::JobErrorType::kRenameError:
     case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
     case AbstractJobHandler::JobErrorType::kNonexistenceError:
+    case AbstractJobHandler::JobErrorType::kDeleteFileError:
         return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
     case AbstractJobHandler::JobErrorType::kSpecialFileError:
         return AbstractJobHandler::SupportAction::kSkipAction;

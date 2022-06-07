@@ -205,6 +205,7 @@ QString AbstractJobHandler::errorToString(const AbstractJobHandler::JobErrorType
     case AbstractJobHandler::JobErrorType::kMkdirError:
         return tr("Failed to create the directory");
     case AbstractJobHandler::JobErrorType::kRemoveError:
+    case AbstractJobHandler::JobErrorType::kDeleteFileError:
         return tr("Failed to delete the file");
     case AbstractJobHandler::JobErrorType::kRenameError:
         return tr("Failed to move the file");

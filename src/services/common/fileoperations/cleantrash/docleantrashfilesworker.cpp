@@ -163,10 +163,10 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
     do {
         if (!resultFile) {
             if (trashInfo->isFile() || trashInfo->isSymLink()) {
-                deleteFile(trashInfo->url(), &resultFile);
+                deleteFile(trashInfo->url(), QUrl(), &resultFile);
             } else {
                 // dir
-                deleteDir(trashInfo->url(), &resultFile);
+                deleteDir(trashInfo->url(), QUrl(), &resultFile);
             }
         }
         if (!resultInfo)
