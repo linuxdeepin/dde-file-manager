@@ -189,7 +189,7 @@ Q_SIGNALS:
 private slots:
     void loadViewState(const QUrl &url);
     void saveViewModeState();
-    void delaySort();
+    void doSort();
     void onModelStateChanged();
     void setIconSizeBySizeIndex(const int sizeIndex);
     void onShowHiddenFileChanged(bool isShow);
@@ -209,8 +209,10 @@ private:
     void updateStatusBar();
     void updateLoadingIndicator();
     void updateContentLabel();
+    void updateSelectedUrl();
     void updateListHeaderView();
     void setDefaultViewMode();
+    QUrl parseSelectedUrl(const QUrl &url);
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);
 

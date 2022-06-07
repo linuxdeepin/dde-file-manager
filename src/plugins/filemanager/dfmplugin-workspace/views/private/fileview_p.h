@@ -61,7 +61,6 @@ class FileViewPrivate
     DAnchors<QLabel> contentLabel { nullptr };
     FileSortFilterProxyModel *proxyModel { nullptr };
     QTimer *updateStatusBarTimer { nullptr };
-    QTimer *sortTimer { nullptr };
     QUrl url;
 
     ShortcutHelper *shortcutHelper { nullptr };
@@ -86,6 +85,8 @@ class FileViewPrivate
 
     int horizontalOffset { 0 };
     int cachedViewWidth { -1 };
+
+    QList<QUrl> preSelectionUrls;
 
     QList<DFMGLOBAL_NAMESPACE::ItemRoles> columnRoles;
     QMap<QString, bool> columnForRoleHiddenMap;

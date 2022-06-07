@@ -52,6 +52,7 @@
 #include <QTimer>
 #include <QDrag>
 #include <QApplication>
+#include <QUrlQuery>
 
 DPWORKSPACE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -167,17 +168,16 @@ bool FileView::setRootUrl(const QUrl &url)
     //Todo(yanghao&lzj):!url.isSearchFile()
     setFocus();
 
-    model()->setRootUrl(url);
+    const QUrl &fileUrl = parseSelectedUrl(url);
+    model()->setRootUrl(fileUrl);
 
-    loadViewState(url);
+    loadViewState(fileUrl);
     delayUpdateStatusBar();
     setDefaultViewMode();
 
     resetSelectionModes();
     updateListHeaderView();
-
-    if (d->sortTimer)
-        d->sortTimer->start();
+    doSort();
 
     return true;
 }
@@ -1391,10 +1391,6 @@ void FileView::initializeModel()
 
     FileSelectionModel *selectionModel = new FileSelectionModel(proxyModel, this);
     setSelectionModel(selectionModel);
-
-    d->sortTimer = new QTimer(this);
-    d->sortTimer->setInterval(20);
-    d->sortTimer->setSingleShot(true);
 }
 
 void FileView::initializeDelegate()
@@ -1418,7 +1414,6 @@ void FileView::initializeStatusBar()
 
 void FileView::initializeConnect()
 {
-    connect(d->sortTimer, &QTimer::timeout, this, &FileView::delaySort);
     connect(d->updateStatusBarTimer, &QTimer::timeout, this, &FileView::updateStatusBar);
 
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
@@ -1506,6 +1501,15 @@ void FileView::updateContentLabel()
     d->contentLabel->setText(QString());
 }
 
+void FileView::updateSelectedUrl()
+{
+    if (d->preSelectionUrls.isEmpty() || sourceModel()->state() != FileViewModel::Idle)
+        return;
+
+    selectFiles(d->preSelectionUrls);
+    d->preSelectionUrls.clear();
+}
+
 void FileView::updateListHeaderView()
 {
     if (!d->headerView)
@@ -1565,6 +1569,29 @@ void FileView::setDefaultViewMode()
     setViewMode(d->currentViewMode);
 }
 
+QUrl FileView::parseSelectedUrl(const QUrl &url)
+{
+    auto fileUrl = url;
+    QUrlQuery urlQuery;
+    QByteArray encode = QUrl::toPercentEncoding(fileUrl.query(QUrl::FullyEncoded), "=");
+    urlQuery.setQuery(encode);
+    const auto &selectFile = urlQuery.queryItemValue("selectUrl", QUrl::FullyDecoded);
+    if (selectFile.isEmpty())
+        return fileUrl;
+
+    const QUrl &defaultSelectUrl = QUrl::fromUserInput(selectFile);
+    if (defaultSelectUrl.isValid()) {
+        d->preSelectionUrls << defaultSelectUrl;
+        urlQuery.removeQueryItem("selectUrl");
+        fileUrl.setQuery(urlQuery);
+    } else {
+        // todo: liuzhangjian
+        // checkGvfsMountfileBusy
+    }
+
+    return fileUrl;
+}
+
 void FileView::loadViewState(const QUrl &url)
 {
     int defaultViewMode = static_cast<int>(WorkspaceHelper::instance()->findViewMode(url.scheme()));
@@ -1577,7 +1604,7 @@ void FileView::loadViewState(const QUrl &url)
     d->currentSortOrder = static_cast<Qt::SortOrder>(fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
 }
 
-void FileView::delaySort()
+void FileView::doSort()
 {
     model()->sort(model()->getColumnByRole(d->currentSortRole), d->currentSortOrder);
 }
@@ -1586,6 +1613,7 @@ void FileView::onModelStateChanged()
 {
     updateContentLabel();
     updateLoadingIndicator();
+    updateSelectedUrl();
 
     if (d->headerView) {
         d->headerView->setAttribute(Qt::WA_TransparentForMouseEvents, sourceModel()->state() == FileViewModel::Busy);
