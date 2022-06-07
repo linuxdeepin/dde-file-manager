@@ -559,6 +559,8 @@ void AppController::actionClearTrash(const QObject *sender)
 
     if (ret) {
         DDesktopServices::playSystemSoundEffect(DDesktopServices::SSE_EmptyTrash);
+    } else {
+        DFileService::instance()->setDoClearTrashState(false);
     }
 }
 
