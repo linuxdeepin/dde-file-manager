@@ -120,7 +120,8 @@ void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, co
     dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile,
                                           windowId,
                                           oldUrl,
-                                          newUrl);
+                                          newUrl,
+                                          DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
 }
 
 void FileOperatorHelper::copyFiles(const FileView *view)

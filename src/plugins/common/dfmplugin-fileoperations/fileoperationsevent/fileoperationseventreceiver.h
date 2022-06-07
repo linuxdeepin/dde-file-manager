@@ -140,10 +140,12 @@ public slots:
 
     bool handleOperationRenameFile(const quint64 windowId,
                                    const QUrl oldUrl,
-                                   const QUrl newUrl);
+                                   const QUrl newUrl,
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
     void handleOperationRenameFile(const quint64 windowId,
                                    const QUrl oldUrl,
                                    const QUrl newUrl,
+                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
                                    const QVariant custom,
                                    DFMBASE_NAMESPACE::Global::OperatorCallback callback);
 

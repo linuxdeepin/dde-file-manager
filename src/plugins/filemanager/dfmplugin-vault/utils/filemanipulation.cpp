@@ -124,9 +124,9 @@ bool FileManipulation::touchFileHandle(const quint64 windowId, const QUrl url, Q
                                                  type, *error);
 }
 
-bool FileManipulation::renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, QString *error)
+bool FileManipulation::renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags, QString *error)
 {
     QUrl ourl = delegateServIns->urlTransform(oldUrl);
     QUrl nurl = delegateServIns->urlTransform(newUrl);
-    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, windowId, ourl, nurl);
+    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, windowId, ourl, nurl, flags);
 }

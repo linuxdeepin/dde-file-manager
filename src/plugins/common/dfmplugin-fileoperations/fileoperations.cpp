@@ -144,12 +144,14 @@ void FileOperations::initEventHandle()
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<bool (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
-                                                                                              const QUrl)>(&FileOperationsEventReceiver::handleOperationRenameFile));
+                                                                                              const QUrl,
+                                                                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags)>(&FileOperationsEventReceiver::handleOperationRenameFile));
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kRenameFile,
                                             FileOperationsEventReceiver::instance(),
                                             static_cast<void (FileOperationsEventReceiver::*)(const quint64,
                                                                                               const QUrl,
                                                                                               const QUrl,
+                                                                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
                                                                                               const QVariant,
                                                                                               OperatorCallback)>(&FileOperationsEventReceiver::handleOperationRenameFile));
 

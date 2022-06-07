@@ -175,7 +175,7 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
         handleOperationRestoreFromTrash(windowId, sources, AbstractJobHandler::JobFlag::kRevocation, handle);
         break;
     case kRenameFile:
-        handleOperationRenameFile(windowId, sources.first(), target);
+        handleOperationRenameFile(windowId, sources.first(), target, AbstractJobHandler::JobFlag::kRevocation);
         break;
     default:
         return false;
@@ -541,7 +541,7 @@ void FileOperationsEventReceiver::saveRenameOperate(const QString &sourcesUrl, c
     QStringList sources { sourcesUrl };
     values.insert("sources", QVariant::fromValue(sources));
     values.insert("target", targetUrl);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kSaveOperator, values);
+    dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
 }
 
 QUrl FileOperationsEventReceiver::checkTargetUrl(const QUrl &url)
@@ -842,7 +842,8 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
 
 bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
                                                             const QUrl oldUrl,
-                                                            const QUrl newUrl)
+                                                            const QUrl newUrl,
+                                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags)
 {
     Q_UNUSED(windowId);
     bool ok = false;
@@ -855,14 +856,15 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         }
         if (function && function->renameFile) {
 
-            ok = function->renameFile(windowId, oldUrl, newUrl, &error);
+            ok = function->renameFile(windowId, oldUrl, newUrl, flags, &error);
             if (!ok) {
                 dialogManager->showErrorDialog("rename file error", error);
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                                   windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
-            saveRenameOperate(newUrl.toString(), oldUrl.toString());
+            if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
+                saveRenameOperate(newUrl.toString(), oldUrl.toString());
             return ok;
         }
     }
@@ -882,16 +884,19 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     // TODO:: file renameFile finished need to send file renameFile finished event
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
-    saveRenameOperate(newUrl.toString(), oldUrl.toString());
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
+        saveRenameOperate(newUrl.toString(), oldUrl.toString());
     return ok;
 }
 
 void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 windowId,
                                                             const QUrl oldUrl,
-                                                            const QUrl newUrl, const QVariant custom,
+                                                            const QUrl newUrl,
+                                                            const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags,
+                                                            const QVariant custom,
                                                             OperatorCallback callback)
 {
-    bool ok = handleOperationRenameFile(windowId, oldUrl, newUrl);
+    bool ok = handleOperationRenameFile(windowId, oldUrl, newUrl, flags);
     if (callback) {
         CallbackArgus args(new QMap<CallbackKey, QVariant>);
         args->insert(CallbackKey::kWindowId, QVariant::fromValue(windowId));

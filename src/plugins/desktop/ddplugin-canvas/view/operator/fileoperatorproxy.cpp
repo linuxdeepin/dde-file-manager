@@ -242,7 +242,7 @@ void FileOperatorProxy::openFiles(const CanvasView *view, const QList<QUrl> &url
 
 void FileOperatorProxy::renameFile(int wid, const QUrl &oldUrl, const QUrl &newUrl)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, wid, oldUrl, newUrl);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, wid, oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
 }
 
 void FileOperatorProxy::renameFiles(const CanvasView *view, const QList<QUrl> &urls, const QPair<QString, QString> &pair, const bool replace)

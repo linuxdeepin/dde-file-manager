@@ -25,6 +25,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/interfaces/abstractjobhandler.h"
 
 #include <dfm-framework/framework.h>
 
@@ -286,7 +287,7 @@ void EditStackedWidget::showTextShowFrame()
         }
 
         initTextShowFrame(newName);
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl);
+        dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     }
 }
 

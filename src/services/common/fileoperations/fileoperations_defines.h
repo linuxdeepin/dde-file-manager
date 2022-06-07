@@ -71,6 +71,7 @@ using HandleOperationOpenFilesByApp = std::function<bool(const quint64 windowId,
 using HandleOperationRenameFile = std::function<bool(const quint64 windowId,
                                                      const QUrl oldUrl,
                                                      const QUrl newUrl,
+                                                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
                                                      QString *)>;
 
 using HandleOperationMkdir = std::function<bool(const quint64 windowId,
