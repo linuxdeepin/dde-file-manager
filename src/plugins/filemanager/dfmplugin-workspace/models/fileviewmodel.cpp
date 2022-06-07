@@ -148,6 +148,10 @@ void FileViewModelPrivate::doWatcherEvent()
         if (UniversalUtils::urlEquals(fileUrl, root->url())) {
             if (event.second == kAddFile)
                 continue;
+            else if (event.second == kRmFile) {
+                nodeManager->clearChildren();
+                break;
+            }
             //todo:先不做
         }
 
