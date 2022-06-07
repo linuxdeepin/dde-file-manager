@@ -294,7 +294,7 @@ void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString
     // update progress
     if (progress > 0 && progress <= 100 && progress > lastProgress) {
         lastProgress = progress;
-        info->insert(AbstractJobHandler::NotifyInfoKey::kCurrentProccessKey, progress);
+        info->insert(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey, progress);
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, 100);
         emit jobHandlePtr->proccessChangedNotify(info);
     }

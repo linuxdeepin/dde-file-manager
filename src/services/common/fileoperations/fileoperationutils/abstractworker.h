@@ -41,7 +41,7 @@
 DSC_BEGIN_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-class UpdateProccessTimer;
+class UpdateProgressTimer;
 
 class AbstractWorker : public QObject
 {
@@ -66,7 +66,7 @@ signals:
      * 在我们自己提供的dailog服务中，这个VarintMap必须有kCurrentProccessKey（当前任务执行的进度，类型qint64）和
      * kTotalSizeKey（当前任务文件的总大小，如果统计文件数量没有完成，值为-1，类型qint64）值来做文件进度的展示
      */
-    void proccessChangedNotify(const JobInfoPointer jobInfo);
+    void progressChangedNotify(const JobInfoPointer jobInfo);
     /*!
      * @brief stateChanged 任务状态发生改变，此信号都可能是异步连接，所以所有参数都没有使用引用
      * \param info 这个Varint信息map
@@ -113,7 +113,7 @@ signals:
 
     void requestShowTipsDialog(DFMBASE_NAMESPACE::AbstractJobHandler::ShowDialogType type, const QList<QUrl> list);
 signals:   // update proccess timer use
-    void startUpdateProccessTimer();
+    void startUpdateProgressTimer();
 
 public:
     virtual void doOperateWork(AbstractJobHandler::SupportActions actions);
@@ -131,7 +131,7 @@ protected:
     virtual void endWork();
     virtual void emitStateChangedNotify();
     virtual void emitCurrentTaskNotify(const QUrl &from, const QUrl &to);
-    virtual void emitProccessChangedNotify(const qint64 &writSize);
+    virtual void emitProgressChangedNotify(const qint64 &writSize);
     virtual void emitErrorNotify(const QUrl &from, const QUrl &to, const AbstractJobHandler::JobErrorType &error,
                                  const QString &errorMsg = QString());
     virtual AbstractJobHandler::SupportActions supportActions(const AbstractJobHandler::JobErrorType &error);
@@ -140,7 +140,7 @@ protected:
 
 protected slots:
     virtual bool doWork();
-    virtual void onUpdateProccess() {}
+    virtual void onUpdateProgress() {}
     virtual void onStatisticsFilesSizeFinish();
 
 protected:
@@ -154,8 +154,8 @@ public:
 
 public:
     QSharedPointer<DFMBASE_NAMESPACE::FileStatisticsJob> statisticsFilesSizeJob { nullptr };   // statistics file info async
-    QSharedPointer<QThread> updateProccessThread { nullptr };   // update proccess timer thread
-    QSharedPointer<UpdateProccessTimer> updateProccessTimer { nullptr };   // update proccess timer
+    QSharedPointer<QThread> updateProgressThread { nullptr };   // update progress timer thread
+    QSharedPointer<UpdateProgressTimer> updateProgressTimer { nullptr };   // update progress timer
 
     JobHandlePointer handle { nullptr };   // handle
     QSharedPointer<LocalFileHandler> handler { nullptr };   // file base operations handler

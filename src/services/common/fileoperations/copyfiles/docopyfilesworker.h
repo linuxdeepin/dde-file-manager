@@ -67,7 +67,7 @@ protected:
     bool copyFiles();
 
 private slots:
-    void onUpdateProccess() override;
+    void onUpdateProgress() override;
 };
 
 DSC_END_NAMESPACE

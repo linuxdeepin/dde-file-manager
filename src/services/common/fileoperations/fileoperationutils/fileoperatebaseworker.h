@@ -125,7 +125,7 @@ protected:
     QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
     QAtomicInteger<qint64> skipWritSize { 0 };   // 跳过的文件大小
     CountWriteSizeType countWriteType { CountWriteSizeType::kTidType };   // get write size type
-    QAtomicInteger<qint64> currentWritSize { 0 };   // 当前写入文件的大小
+    QAtomicInteger<qint64> currentWriteSize { 0 };   // 当前写入文件的大小
     long copyTid = { -1 };   // 使用 /pric/[pid]/task/[tid]/io 文件中的的 writeBytes 字段的值作为判断已写入数据的依据
     qint64 targetDeviceStartSectorsWritten { 0 };   // 记录任务开始时目标磁盘设备已写入扇区数
     QString targetSysDevPath;   // /sys/dev/block/x:x

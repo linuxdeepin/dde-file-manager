@@ -220,10 +220,10 @@ void DoCopyFilesWorker::setStat(const AbstractJobHandler::JobState &stat)
 /*!
  * \brief DoCopyFilesWorker::onUpdateProccess update proccess and speed slot
  */
-void DoCopyFilesWorker::onUpdateProccess()
+void DoCopyFilesWorker::onUpdateProgress()
 {
     // 当前写入文件大小获取
-    const qint64 writSize = getWriteDataSize();
-    emitProccessChangedNotify(writSize);
-    emitSpeedUpdatedNotify(writSize);
+    const qint64 writeSize = getWriteDataSize();
+    emitProgressChangedNotify(writeSize);
+    emitSpeedUpdatedNotify(writeSize);
 }

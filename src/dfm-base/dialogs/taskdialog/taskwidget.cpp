@@ -343,7 +343,7 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
     if (isShowError.load())
         return;
 
-    qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProccessKey).value<qint64>();
+    qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey).value<qint64>();
     qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
     qint64 value = 1;
     if (total > 0 && current > 0) {

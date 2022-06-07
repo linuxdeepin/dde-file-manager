@@ -44,7 +44,7 @@ public:
 
 protected:
     bool doWork() override;
-    void onUpdateProccess() override;
+    void onUpdateProgress() override;
     bool statisticsFilesSize() override;
     bool initArgs() override;
     void doOperateWork(AbstractJobHandler::SupportActions actions) override;

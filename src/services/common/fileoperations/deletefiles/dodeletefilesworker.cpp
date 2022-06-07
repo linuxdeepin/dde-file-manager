@@ -58,9 +58,9 @@ void DoDeleteFilesWorker::stop()
     AbstractWorker::stop();
 }
 
-void DoDeleteFilesWorker::onUpdateProccess()
+void DoDeleteFilesWorker::onUpdateProgress()
 {
-    emitProccessChangedNotify(deleteFilesCount);
+    emitProgressChangedNotify(deleteFilesCount);
 }
 
 void DoDeleteFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)

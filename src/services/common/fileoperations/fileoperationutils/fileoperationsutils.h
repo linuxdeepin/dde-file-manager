@@ -32,26 +32,26 @@
 #include <QPointer>
 
 DSC_BEGIN_NAMESPACE
-class UpdateProccessTimer : public QObject
+class UpdateProgressTimer : public QObject
 {
     Q_OBJECT
     friend class AbstractWorker;
     friend class DoCopyFilesWorker;
-    explicit UpdateProccessTimer(QObject *parent = nullptr)
+    explicit UpdateProgressTimer(QObject *parent = nullptr)
         : QObject(parent) {}
     void stopTimer()
     {
         isStop = true;
     }
 signals:
-    void updateProccessNotify();
+    void updateProgressNotify();
 private slots:
     void handleTimeOut()
     {
         if (Q_UNLIKELY(isStop)) {
             timer->stop();
         } else {
-            emit updateProccessNotify();
+            emit updateProgressNotify();
         }
     }
 
@@ -59,13 +59,12 @@ private slots:
     {
         if (!timer)
             timer = new QTimer;
-        connect(timer, &QTimer::timeout, this, &UpdateProccessTimer::handleTimeOut
-                , Qt::ConnectionType( Qt::DirectConnection | Qt::UniqueConnection));
+        connect(timer, &QTimer::timeout, this, &UpdateProgressTimer::handleTimeOut, Qt::ConnectionType(Qt::DirectConnection | Qt::UniqueConnection));
         timer->start(500);
     }
 
 public:
-    ~UpdateProccessTimer()
+    ~UpdateProgressTimer()
     {
         if (!timer)
             timer->deleteLater();
@@ -73,7 +72,7 @@ public:
 
 private:
     QAtomicInteger<bool> isStop { false };
-    QPointer<QTimer> timer {nullptr};
+    QPointer<QTimer> timer { nullptr };
 };
 class FileOperationsUtils
 {

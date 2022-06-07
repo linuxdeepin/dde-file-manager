@@ -128,7 +128,7 @@ public:
     Q_DECLARE_FLAGS(SupportActions, SupportAction)
     enum NotifyInfoKey : uint8_t {
         kJobtypeKey,
-        kCurrentProccessKey,
+        kCurrentProgressKey,
         kTotalSizeKey,
         kJobStateKey,
         kJobStateHideKey,

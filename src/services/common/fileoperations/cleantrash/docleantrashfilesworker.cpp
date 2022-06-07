@@ -56,9 +56,9 @@ bool DoCleanTrashFilesWorker::doWork()
     return true;
 }
 
-void DoCleanTrashFilesWorker::onUpdateProccess()
+void DoCleanTrashFilesWorker::onUpdateProgress()
 {
-    emitProccessChangedNotify(cleanTrashFilesCount);
+    emitProgressChangedNotify(cleanTrashFilesCount);
 }
 
 bool DoCleanTrashFilesWorker::statisticsFilesSize()

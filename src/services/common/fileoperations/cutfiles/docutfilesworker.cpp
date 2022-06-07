@@ -193,10 +193,10 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
     return true;
 }
 
-void DoCutFilesWorker::onUpdateProccess()
+void DoCutFilesWorker::onUpdateProgress()
 {
     const qint64 writSize = getWriteDataSize();
-    emitProccessChangedNotify(writSize);
+    emitProgressChangedNotify(writSize);
     emitSpeedUpdatedNotify(writSize);
 }
 

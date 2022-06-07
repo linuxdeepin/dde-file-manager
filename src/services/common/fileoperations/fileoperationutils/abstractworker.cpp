@@ -118,12 +118,12 @@ void AbstractWorker::stop()
 
     errorCondition.wakeAll();
 
-    if (updateProccessTimer)
-        updateProccessTimer->stopTimer();
+    if (updateProgressTimer)
+        updateProgressTimer->stopTimer();
 
-    if (updateProccessThread) {
-        updateProccessThread->quit();
-        updateProccessThread->wait();
+    if (updateProgressThread) {
+        updateProgressThread->quit();
+        updateProgressThread->wait();
     }
 }
 /*!
@@ -151,15 +151,15 @@ void AbstractWorker::resume()
  */
 void AbstractWorker::startCountProccess()
 {
-    if (!updateProccessTimer)
-        updateProccessTimer.reset(new UpdateProccessTimer());
-    if (!updateProccessThread)
-        updateProccessThread.reset(new QThread);
-    updateProccessTimer->moveToThread(updateProccessThread.data());
-    updateProccessThread->start();
-    connect(this, &AbstractWorker::startUpdateProccessTimer, updateProccessTimer.data(), &UpdateProccessTimer::doStartTime);
-    connect(updateProccessTimer.data(), &UpdateProccessTimer::updateProccessNotify, this, &AbstractWorker::onUpdateProccess, Qt::DirectConnection);
-    emit startUpdateProccessTimer();
+    if (!updateProgressTimer)
+        updateProgressTimer.reset(new UpdateProgressTimer());
+    if (!updateProgressThread)
+        updateProgressThread.reset(new QThread);
+    updateProgressTimer->moveToThread(updateProgressThread.data());
+    updateProgressThread->start();
+    connect(this, &AbstractWorker::startUpdateProgressTimer, updateProgressTimer.data(), &UpdateProgressTimer::doStartTime);
+    connect(updateProgressTimer.data(), &UpdateProgressTimer::updateProgressNotify, this, &AbstractWorker::onUpdateProgress, Qt::DirectConnection);
+    emit startUpdateProgressTimer();
 }
 /*!
  * \brief AbstractWorker::statisticsFilesSize statistics source files size
@@ -279,10 +279,10 @@ void AbstractWorker::emitCurrentTaskNotify(const QUrl &from, const QUrl &to)
     emit currentTaskNotify(info);
 }
 /*!
- * \brief AbstractWorker::emitProccessChangedNotify send process changed signal
+ * \brief AbstractWorker::emitProgressChangedNotify send process changed signal
  * \param writSize task complete data size
  */
-void AbstractWorker::emitProccessChangedNotify(const qint64 &writSize)
+void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
 {
     JobInfoPointer info(new QMap<quint8, QVariant>);
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
@@ -293,9 +293,9 @@ void AbstractWorker::emitProccessChangedNotify(const qint64 &writSize)
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesCount)));
     }
 
-    info->insert(AbstractJobHandler::NotifyInfoKey::kCurrentProccessKey, QVariant::fromValue(writSize));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey, QVariant::fromValue(writSize));
 
-    emit proccessChangedNotify(info);
+    emit progressChangedNotify(info);
 }
 /*!
  * \brief AbstractWorker::emitErrorNotify send job error signal
@@ -544,7 +544,7 @@ void AbstractWorker::initHandleConnects(const JobHandlePointer &handle)
 
     connect(handle.data(), &AbstractJobHandler::userAction, this, &AbstractWorker::doOperateWork, Qt::QueuedConnection);
 
-    connect(this, &AbstractWorker::proccessChangedNotify, handle.data(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::progressChangedNotify, handle.data(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
     connect(this, &AbstractWorker::stateChangedNotify, handle.data(), &AbstractJobHandler::onStateChanged, Qt::QueuedConnection);
     connect(this, &AbstractWorker::currentTaskNotify, handle.data(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
     connect(this, &AbstractWorker::finishedNotify, handle.data(), &AbstractJobHandler::onFinished, Qt::QueuedConnection);

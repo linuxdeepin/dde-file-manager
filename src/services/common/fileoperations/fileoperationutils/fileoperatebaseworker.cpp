@@ -359,6 +359,7 @@ bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo,
     AbstractJobHandler::SupportAction actionForWrite { AbstractJobHandler::SupportAction::kNoAction };
     qint64 sizeWrite = 0;
     qint64 surplusSize = readSize;
+
     do {
         bool writeFinishedOnce = true;
         const char *surplusData = data;
@@ -389,7 +390,7 @@ bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo,
                 AbstractJobHandler::SupportAction actionForWriteSeek = doHandleErrorAndWait(fromInfo->url(), toInfo->url(),
                                                                                             AbstractJobHandler::JobErrorType::kSeekError);
                 *result = actionForWriteSeek == AbstractJobHandler::SupportAction::kSkipAction;
-                currentWritSize += readSize - surplusSize;
+                currentWriteSize += readSize - surplusSize;
                 skipWritSize += result ? fromInfo->size() - (currentPos + readSize - surplusSize) : 0;
                 cancelThreadProcessingError();
                 return false;
@@ -401,7 +402,7 @@ bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo,
 
     if (actionForWrite != AbstractJobHandler::SupportAction::kNoAction) {
         *result = actionForWrite == AbstractJobHandler::SupportAction::kSkipAction;
-        currentWritSize += readSize - surplusSize;
+        currentWriteSize += readSize - surplusSize;
         skipWritSize += result ? fromInfo->size() - (currentPos + readSize - surplusSize) : 0;
         return false;
     }
@@ -417,7 +418,7 @@ bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo,
             toDevice->flush();
         }
     }
-    currentWritSize += readSize;
+    currentWriteSize += readSize;
 
     return true;
 }
@@ -998,7 +999,7 @@ bool FileOperateBaseWorker::doCopyFile(const AbstractFileInfoPointer &fromInfo, 
     } else if (fromInfo->isDir()) {
         result = checkAndCopyDir(fromInfo, newTargetInfo, workContinue);
         if (result || workContinue)
-            currentWritSize += FileUtils::getMemoryPageSize();
+            currentWriteSize += FileUtils::getMemoryPageSize();
     } else {
         result = checkAndCopyFile(fromInfo, newTargetInfo, workContinue);
     }
@@ -1206,12 +1207,12 @@ void FileOperateBaseWorker::cancelThreadProcessingError()
 }
 qint64 FileOperateBaseWorker::getWriteDataSize()
 {
-    qint64 writeSize = currentWritSize;
+    qint64 writeSize = currentWriteSize;
 
     if (CountWriteSizeType::kTidType == countWriteType) {
         writeSize = getTidWriteSize();
     } else if (CountWriteSizeType::kCustomizeType == countWriteType) {
-        writeSize = currentWritSize;
+        writeSize = currentWriteSize;
     } else {
         if (targetDeviceStartSectorsWritten >= 0) {
             if ((getSectorsWritten() == 0) && (targetDeviceStartSectorsWritten > 0)) {
@@ -1222,11 +1223,9 @@ qint64 FileOperateBaseWorker::getWriteDataSize()
         }
     }
 
-    if (writeSize > currentWritSize && currentWritSize > 0) {
-        writeSize = currentWritSize;
+    if (writeSize > currentWriteSize && currentWriteSize > 0) {
+        writeSize = currentWriteSize;
     }
-
-    writeSize += currentWritSize;
 
     writeSize += skipWritSize;
 

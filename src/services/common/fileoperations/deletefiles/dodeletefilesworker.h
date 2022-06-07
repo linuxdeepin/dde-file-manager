@@ -44,7 +44,7 @@ public:
 protected:
     bool doWork() override;
     void stop() override;
-    void onUpdateProccess() override;
+    void onUpdateProgress() override;
     void doOperateWork(AbstractJobHandler::SupportActions actions) override;
 
 protected:

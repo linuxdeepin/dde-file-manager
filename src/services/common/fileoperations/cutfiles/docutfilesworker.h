@@ -51,7 +51,7 @@ protected:
     bool doWork() override;
     void stop() override;
     bool initArgs() override;
-    void onUpdateProccess() override;
+    void onUpdateProgress() override;
 
     bool cutFiles();
     bool doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
