@@ -94,7 +94,13 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "send-to-desktop",
         "property",
         "open-in-new-window",
-        "open-in-new-tab"
+        "open-in-new-tab",
+        "open-as-administrator",
+        "add-bookmark",
+        "stage-file-to-burning",
+        "set-as-wallpaper",
+        "mount-image",
+        ""   // for oem
     };
     static const QStringList whiteEmptyActIdList {
         "display-as",
@@ -103,10 +109,12 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "open-in-terminal",
         "paste",
         "select-all",
-        "property"
+        "property",
+        ""   // for oem
     };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
-                                              "OpenWithMenu", "SendToMenu", "SortAndDisplayMenu", "PropertyMenu" };
+                                              "OpenWithMenu", "SendToMenu", "SortAndDisplayMenu", "PropertyMenu",
+                                              "BookmarkMenu", "SendToDiscMenu", "OemMenu" };
 
     auto actions = parent->actions();
     std::for_each(actions.begin(), actions.end(), [this](QAction *act) {
@@ -135,7 +143,7 @@ void OpticalMenuScene::updateState(QMenu *parent)
             if (OpticalHelper::burnIsOnDisc(d->focusFile) && discBlackActIdList.contains(id))
                 act->setVisible(false);
 
-            static const QStringList nativeBlackActIdList { "copy", "create-system-link", "send-to-desktop" };
+            static const QStringList nativeBlackActIdList { "create-system-link", "send-to-desktop" };
             if (!OpticalHelper::burnIsOnDisc(d->focusFile) && nativeBlackActIdList.contains(id))
                 act->setVisible(false);
         }

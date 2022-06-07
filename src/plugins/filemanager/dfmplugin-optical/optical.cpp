@@ -28,6 +28,7 @@
 #include "mastered/masteredmediadiriterator.h"
 #include "views/opticalmediawidget.h"
 #include "menus/opticalmenuscene.h"
+#include "events/opticaleventreceiver.h"
 
 #include "services/common/menu/menuservice.h"
 #include "services/filemanager/workspace/workspace_defines.h"
@@ -47,6 +48,7 @@ void Optical::initialize()
     InfoFactory::regClass<MasteredMediaFileInfo>(Global::kBurn);
     WatcherFactory::regClass<MasteredMediaFileWatcher>(Global::kBurn);
     DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::kBurn);
+    bindEvents();
 
     connect(OpticalHelper::winServIns(), &WindowsService::windowCreated, this,
             [this]() {
@@ -172,6 +174,12 @@ void Optical::addDelegateSettings()
         return !OpticalHelper::burnIsOnDisc(url);
     });
     OpticalHelper::dlgateServIns()->registerUrlTransform(Global::kBurn, &OpticalHelper::tansToLocalFile);
+}
+
+void Optical::bindEvents()
+{
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DeleteFilesShortcut", &OpticalEventReceiver::instance(),
+                            &OpticalEventReceiver::handleDeleteFilesShortcut);
 }
 
 void Optical::onDeviceUnmounted(const QString &id)

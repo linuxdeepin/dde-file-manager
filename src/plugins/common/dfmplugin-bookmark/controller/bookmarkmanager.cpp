@@ -24,6 +24,8 @@
 #include "events/bookmarkeventcaller.h"
 #include "utils/bookmarkhelper.h"
 
+#include "services/common/delegate/delegateservice.h"
+
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicemanager.h"
@@ -102,7 +104,9 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
     int count = urls.size();
     if (count < 0)
         return false;
-    for (const QUrl &url : urls) {
+    for (QUrl url : urls) {
+        if (delegateServIns->isRegisterUrlTransform(url.scheme()))
+            url = delegateServIns->urlTransform(url);
         QFileInfo info(url.path());
         if (info.isDir()) {
             BookmarkData bookmarkData;

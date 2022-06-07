@@ -38,6 +38,7 @@ class SendToDiscMenuScenePrivate : public AbstractMenuScenePrivate
 public:
     explicit SendToDiscMenuScenePrivate(AbstractMenuScene *qq);
     void actionStageFileForBurning();
+    void actionMountImage();
 
 private:
     QString destDevice;

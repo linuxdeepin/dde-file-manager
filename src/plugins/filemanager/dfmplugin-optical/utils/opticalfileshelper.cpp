@@ -93,7 +93,7 @@ JobHandlePointer OpticalFilesHelper::deleteFilesHandle(const quint64 windowId, c
         if (backer.isEmpty())
             continue;
         if (!OpticalHelper::burnIsOnDisc(url))
-            redirectedFileUrls.push_back(backer);
+            redirectedFileUrls.push_back(QUrl::fromLocalFile(backer));
     }
 
     dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles, windowId, redirectedFileUrls, flags, nullptr);

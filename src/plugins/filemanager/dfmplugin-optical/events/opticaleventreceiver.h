@@ -20,38 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPTICAL_H
-#define OPTICAL_H
+#ifndef OPTICALEVENTRECEIVER_H
+#define OPTICALEVENTRECEIVER_H
 
 #include "dfmplugin_optical_global.h"
 
-#include <dfm-framework/framework.h>
+#include <QObject>
 
 DPOPTICAL_BEGIN_NAMESPACE
 
-class Optical : public dpf::Plugin
+class OpticalEventReceiver : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
+    Q_DISABLE_COPY(OpticalEventReceiver)
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+    static OpticalEventReceiver &instance();
 
-private:
-    void addOpticalCrumbToTitleBar();
-    void addFileOperations();
-    void addCustomTopWidget();
-    void addDelegateSettings();
+public slots:
+    bool handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls);
 
-private:
-    void bindEvents();
-
-private slots:
-    void onDeviceUnmounted(const QString &id);
+public:
+    explicit OpticalEventReceiver(QObject *parent = nullptr);
 };
 
 DPOPTICAL_END_NAMESPACE
 
-#endif   // OPTICAL_H
+#endif   // OPTICALEVENTRECEIVER_H

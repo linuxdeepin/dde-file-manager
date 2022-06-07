@@ -56,6 +56,10 @@ public:
     virtual DFMBASE_NAMESPACE::AbstractMenuScene *scene(QAction *action) const override;
 
 private:
+    void updateStageAction(QMenu *parent);
+    void updateMountAction(QMenu *parent);
+
+private:
     QScopedPointer<SendToDiscMenuScenePrivate> d;
 };
 

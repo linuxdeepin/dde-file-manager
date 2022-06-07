@@ -20,38 +20,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPTICAL_H
-#define OPTICAL_H
+#include "opticaleventreceiver.h"
+#include "utils/opticalhelper.h"
 
-#include "dfmplugin_optical_global.h"
+DPOPTICAL_USE_NAMESPACE
 
-#include <dfm-framework/framework.h>
-
-DPOPTICAL_BEGIN_NAMESPACE
-
-class Optical : public dpf::Plugin
+OpticalEventReceiver &OpticalEventReceiver::instance()
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
+    static OpticalEventReceiver ins;
+    return ins;
+}
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
+bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls)
+{
+    auto iter = std::find_if(urls.cbegin(), urls.cend(), [](const QUrl &url) {
+        return OpticalHelper::burnIsOnDisc(url);
+    });
+    if (iter != urls.cend()) {
+        qInfo() << "delete event is blocked, trying to delete disc burn:///*";
+        return true;
+    }
+    return false;
+}
 
-private:
-    void addOpticalCrumbToTitleBar();
-    void addFileOperations();
-    void addCustomTopWidget();
-    void addDelegateSettings();
-
-private:
-    void bindEvents();
-
-private slots:
-    void onDeviceUnmounted(const QString &id);
-};
-
-DPOPTICAL_END_NAMESPACE
-
-#endif   // OPTICAL_H
+OpticalEventReceiver::OpticalEventReceiver(QObject *parent)
+    : QObject(parent)
+{
+}

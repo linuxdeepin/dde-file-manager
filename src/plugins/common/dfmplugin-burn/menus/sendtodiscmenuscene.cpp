@@ -29,14 +29,18 @@
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <QMenu>
+#include <QProcess>
 
 DPBURN_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 namespace ActionId {
 static constexpr char kStageKey[] { "stage-file-to-burning" };
+static constexpr char kMountImage[] { "mount-image" };
 }
 
 SendToDiscMenuScenePrivate::SendToDiscMenuScenePrivate(AbstractMenuScene *qq)
@@ -63,6 +67,35 @@ void SendToDiscMenuScenePrivate::actionStageFileForBurning()
     BurnEventReceiver::instance()->handlePasteTo(srcUrls, dest, true);
 }
 
+void SendToDiscMenuScenePrivate::actionMountImage()
+{
+    qInfo() << "Mount image:" << focusFile;
+    QString archiveuri;
+    auto info { InfoFactory::create<AbstractFileInfo>(focusFile) };
+    if (info && info->canRedirectionFileUrl()) {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->redirectedFileUrl().toString()));
+        qInfo() << "Mount image redirect the url to:" << info->redirectedFileUrl();
+    } else {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(focusFile.toString()));
+    }
+
+    QStringList args;
+    args << "mount" << archiveuri;
+    QProcess *gioproc = new QProcess;
+    gioproc->start("gio", args);
+    connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
+        if (ret) {
+            DialogManagerInstance->showErrorDialog(tr("Mount error: unsupported image format"), QString());
+        } else {
+            QString doubleEncodedUri { QUrl::toPercentEncoding(focusFile.toEncoded()) };
+            doubleEncodedUri = QUrl::toPercentEncoding(doubleEncodedUri);
+        }
+        // TODO(zhangs): cd to mnt path
+        gioproc->deleteLater();
+    },
+            Qt::DirectConnection);
+}
+
 AbstractMenuScene *SendToDiscMenuCreator::create()
 {
     return new SendToDiscMenuScene();
@@ -86,13 +119,13 @@ QString SendToDiscMenuScene::name() const
 bool SendToDiscMenuScene::initialize(const QVariantHash &params)
 {
     d->destDevice = BurnHelper::firstOptcailDev();
-    if (d->destDevice.isEmpty())
-        return false;
-
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+    if (!d->selectFiles.isEmpty())
+        d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->predicateName.insert(ActionId::kStageKey, QObject::tr("Add to disc"));
+    d->predicateName.insert(ActionId::kMountImage, QObject::tr("Mount"));
 
     if (d->selectFiles.isEmpty())
         return false;
@@ -113,16 +146,60 @@ bool SendToDiscMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
-    auto act = parent->addAction(d->predicateName[ActionId::kStageKey]);
+    QAction *act = parent->addAction(d->predicateName[ActionId::kStageKey]);
     act->setProperty(ActionPropertyKey::kActionID, ActionId::kStageKey);
     d->predicateAction.insert(ActionId::kStageKey, act);
+
+    act = parent->addAction(d->predicateName[ActionId::kMountImage]);
+    act->setProperty(ActionPropertyKey::kActionID, ActionId::kMountImage);
+    d->predicateAction.insert(ActionId::kMountImage, act);
 
     return AbstractMenuScene::create(parent);
 }
 
 void SendToDiscMenuScene::updateState(QMenu *parent)
 {
+    updateStageAction(parent);
+    updateMountAction(parent);
+
+    return AbstractMenuScene::updateState(parent);
+}
+
+bool SendToDiscMenuScene::triggered(QAction *action)
+{
+    if (!d->predicateAction.values().contains(action))
+        return false;
+
+    QString &&key { action->property(ActionPropertyKey::kActionID).toString() };
+    if (key == ActionId::kStageKey) {
+        d->actionStageFileForBurning();
+        return true;
+    }
+
+    // Maybe as a event?
+    if (key == ActionId::kMountImage) {
+        d->actionMountImage();
+        return true;
+    }
+
+    return AbstractMenuScene::triggered(action);
+}
+
+AbstractMenuScene *SendToDiscMenuScene::scene(QAction *action) const
+{
+    if (action == nullptr)
+        return nullptr;
+
+    if (!d->predicateAction.key(action).isEmpty())
+        return const_cast<SendToDiscMenuScene *>(this);
+
+    return AbstractMenuScene::scene(action);
+}
+
+void SendToDiscMenuScene::updateStageAction(QMenu *parent)
+{
     auto actions { parent->actions() };
+
     QAction *sendToAct { nullptr };
     QAction *stageAct { nullptr };
     for (auto act : actions) {
@@ -140,30 +217,37 @@ void SendToDiscMenuScene::updateState(QMenu *parent)
         parent->insertAction(stageAct, sendToAct);
     }
 
-    return AbstractMenuScene::updateState(parent);
+    stageAct->setVisible(false);
+    if (!d->destDevice.isEmpty())
+        stageAct->setVisible(true);
 }
 
-bool SendToDiscMenuScene::triggered(QAction *action)
+void SendToDiscMenuScene::updateMountAction(QMenu *parent)
 {
-    if (!d->predicateAction.values().contains(action))
-        return false;
+    auto actions { parent->actions() };
 
-    QString &&key { action->property(ActionPropertyKey::kActionID).toString() };
-    if (key == ActionId::kStageKey) {
-        d->actionStageFileForBurning();
-        return true;
+    QAction *openWithAct { nullptr };
+    QAction *mountAct { nullptr };
+    for (auto act : actions) {
+        QString &&id { act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString() };
+        if (id == ActionId::kMountImage)
+            mountAct = act;
+        if (id == "open-with")
+            openWithAct = act;
     }
 
-    return AbstractMenuScene::triggered(action);
-}
+    if (openWithAct && mountAct) {
+        actions.removeOne(openWithAct);
+        parent->insertAction(openWithAct, mountAct);
+        parent->removeAction(openWithAct);
+        parent->insertAction(mountAct, openWithAct);
+    }
+    mountAct->setVisible(false);
 
-AbstractMenuScene *SendToDiscMenuScene::scene(QAction *action) const
-{
-    if (action == nullptr)
-        return nullptr;
-
-    if (!d->predicateAction.key(action).isEmpty())
-        return const_cast<SendToDiscMenuScene *>(this);
-
-    return AbstractMenuScene::scene(action);
+    auto focusInfo { InfoFactory::create<AbstractFileInfo>(d->focusFile) };
+    if (focusInfo) {
+        static QSet<QString> mountable = { "application/x-cd-image", "application/x-iso9660-image" };
+        if (mountable.contains(focusInfo->mimeTypeName()))
+            mountAct->setVisible(true);
+    }
 }
