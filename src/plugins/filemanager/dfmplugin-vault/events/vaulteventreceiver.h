@@ -18,6 +18,7 @@ public:
 
 public slots:
     void computerOpenItem(quint64 winId, const QUrl &url);
+    bool handleNotAllowedAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
 };
 DPVAULT_END_NAMESPACE
 #endif   // VAULTEVENTRECEIVER_H

@@ -34,6 +34,10 @@ class Utils : public DPF_NAMESPACE::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "utils.json")
 
+    DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
+
+    DPF_EVENT_REG_HOOK(hook_NotAllowdAppendCompress)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

@@ -38,7 +38,7 @@ public:
 private:
     explicit AppendCompressHelper(QObject *parent = nullptr);
     static bool appendCompress(const QString &toFilePath, const QStringList &fromFilePaths);
-    static bool canAppendCompress(const QUrl &toUrl);
+    static bool canAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
 };
 
 DPUTILS_END_NAMESPACE

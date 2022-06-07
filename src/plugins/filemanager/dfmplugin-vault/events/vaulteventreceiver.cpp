@@ -5,7 +5,9 @@
 #include "dfm-base/base/urlroute.h"
 
 #include "services/filemanager/computer/computer_defines.h"
+#include "services/common/delegate/delegateservice.h"
 
+#include <dfm-framework/dpf.h>
 #include <dfm-framework/framework.h>
 
 DPF_USE_NAMESPACE
@@ -25,6 +27,8 @@ VaultEventReceiver *VaultEventReceiver::instance()
 void VaultEventReceiver::connectEvent()
 {
     dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_NotAllowdAppendCompress",
+                            VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -46,4 +50,29 @@ void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
             break;
         }
     }
+}
+
+bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl)
+{
+    QUrl vaultRootUrl = VaultHelper::instance()->sourceRootUrl();
+    QString vaultRootPath = vaultRootUrl.path();
+
+    if (!fromUrls.isEmpty()) {
+        const QUrl &url = fromUrls.first();
+        if (url.isValid()) {
+            QUrl localUrl = delegateServIns->urlTransform(url);
+            QString localPath = localUrl.toLocalFile();
+            if (localPath.startsWith(vaultRootPath))
+                return true;
+        }
+    }
+
+    if (toUrl.isValid()) {
+        QUrl localUrl = delegateServIns->urlTransform(toUrl);
+        QString localPath = localUrl.toLocalFile();
+        if (localPath.startsWith(vaultRootPath))
+            return true;
+    }
+
+    return false;
 }

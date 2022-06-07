@@ -20,6 +20,8 @@
 */
 #include "appendcompresshelper.h"
 
+#include "dfm-framework/event/event.h"
+
 #include <QProcess>
 #include <QFileInfo>
 
@@ -33,7 +35,7 @@ AppendCompressHelper::AppendCompressHelper(QObject *parent)
 bool AppendCompressHelper::setMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, Qt::DropAction &dropAction)
 {
     if (!fromUrls.isEmpty()) {
-        if (canAppendCompress(toUrl)) {
+        if (canAppendCompress(fromUrls, toUrl)) {
             dropAction = Qt::CopyAction;
             return true;
         }
@@ -44,7 +46,7 @@ bool AppendCompressHelper::setMouseStyle(const QUrl &toUrl, const QList<QUrl> &f
 bool AppendCompressHelper::dragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
 {
     if (!fromUrls.isEmpty()) {
-        if (canAppendCompress(toUrl)) {
+        if (canAppendCompress(fromUrls, toUrl)) {
             QString toFilePath = toUrl.toLocalFile();
             QStringList fromFilePath;
             int count = fromUrls.count();
@@ -67,7 +69,7 @@ bool AppendCompressHelper::appendCompress(const QString &toFilePath, const QStri
     return QProcess::startDetached("deepin-compressor", arguments);
 }
 
-bool AppendCompressHelper::canAppendCompress(const QUrl &toUrl)
+bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
     if (!toUrl.isValid())
         return false;
@@ -75,6 +77,10 @@ bool AppendCompressHelper::canAppendCompress(const QUrl &toUrl)
     QString toFilePath = toUrl.toLocalFile();
     if (toFilePath.isEmpty())
         return false;
+
+    if (dpfHookSequence->run("dfmplugin_utils", "hook_NotAllowdAppendCompress", fromUrls, toUrl)) {
+        return false;
+    }
 
     QFileInfo info(toFilePath);
     if (info.isFile() && info.isWritable() && (toFilePath.endsWith(".zip") || (toFilePath.endsWith(".7z") && !toFilePath.endsWith(".tar.7z")))) {
