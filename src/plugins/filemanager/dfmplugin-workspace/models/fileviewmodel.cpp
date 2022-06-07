@@ -162,6 +162,11 @@ void FileViewModelPrivate::doWatcherEvent()
                 emit q->selectAndEditFile(fileUrl);
             } else {
                 q->addedFilesUrl.append(fileUrl);
+                FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(q)->parent());
+                if (view) {
+                    QDir::Filters filter = view->model()->getFilters();
+                    view->model()->setFilters(filter);
+                }
             }
 
         } else {
