@@ -144,6 +144,7 @@ QVector<MenuAction> NetworkFileInfo::menuActionList(DAbstractFileInfo::MenuType 
     } else if (type == SingleFile){
         actionKeys << MenuAction::Open;
         actionKeys << MenuAction::OpenInNewWindow;
+        actionKeys << MenuAction::OpenInNewTab;
     }else if (type == MultiFiles){
 
     }
