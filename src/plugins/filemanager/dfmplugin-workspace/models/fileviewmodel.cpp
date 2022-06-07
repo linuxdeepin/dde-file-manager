@@ -34,6 +34,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -144,7 +145,7 @@ void FileViewModelPrivate::doWatcherEvent()
         if (!fileUrl.isValid())
             continue;
 
-        if (fileUrl == root->url()) {
+        if (UniversalUtils::urlEquals(fileUrl, root->url())) {
             if (event.second == kAddFile)
                 continue;
             //todo:先不做

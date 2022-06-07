@@ -189,7 +189,7 @@ void UnlockView::onVaultUlocked(int state)
             VaultAutoLock::instance()->slotUnlockVault(state);
             emit sigCloseDialog();
         } else if (state == 1) {   //! cryfs没有成功卸载挂载目录
-            //! 解决sp3bug-38885:注销系统时，cryfs卸载挂载目录会概率性失败
+            //! cryfs卸载挂载目录会概率性失败
             //! 卸载挂载目录
             QProcess process;
             QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
