@@ -787,16 +787,16 @@ bool LocalFileHandler::openExcutableScriptFile(const QString &path, int flag)
 
         break;
     case 1:
-        result = UniversalUtils::runCommand(path, QStringList(), QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        result = UniversalUtils::runCommand(path, QStringList(), QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     case 2: {
         QStringList args;
         args << "-e" << path;
-        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl::fromLocalFile(path).adjusted(QUrl::RemoveFilename).toString());
+        result = UniversalUtils::runCommand(defaultTerminalPath(), args, QUrl(path).adjusted(QUrl::RemoveFilename).toString());
         break;
     }
     case 3:
-        result = openFile(QUrl::fromLocalFile(path));
+        result = doOpenFile(QUrl::fromLocalFile(path));
         break;
     default:
         break;
