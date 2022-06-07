@@ -28,6 +28,8 @@
 
 #include <QSharedPointer>
 #include <QThread>
+#include <QTimer>
+#include <QPointer>
 
 DSC_BEGIN_NAMESPACE
 class UpdateProccessTimer : public QObject
@@ -44,21 +46,34 @@ class UpdateProccessTimer : public QObject
 signals:
     void updateProccessNotify();
 private slots:
-    void doStartTime()
+    void handleTimeOut()
     {
-        while (true) {
+        if (Q_UNLIKELY(isStop)) {
+            timer->stop();
+        } else {
             emit updateProccessNotify();
-            QThread::msleep(500);
-            if (isStop)
-                return;
         }
     }
 
+    void doStartTime()
+    {
+        if (!timer)
+            timer = new QTimer;
+        connect(timer, &QTimer::timeout, this, &UpdateProccessTimer::handleTimeOut
+                , Qt::ConnectionType( Qt::DirectConnection | Qt::UniqueConnection));
+        timer->start(500);
+    }
+
 public:
-    ~UpdateProccessTimer() = default;
+    ~UpdateProccessTimer()
+    {
+        if (!timer)
+            timer->deleteLater();
+    }
 
 private:
     QAtomicInteger<bool> isStop { false };
+    QPointer<QTimer> timer {nullptr};
 };
 class FileOperationsUtils
 {
