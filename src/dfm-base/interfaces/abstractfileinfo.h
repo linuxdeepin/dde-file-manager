@@ -150,6 +150,7 @@ public:
     virtual QUrl getUrlByNewFileName(const QString &fileName) const;
     virtual QUrl redirectedFileUrl() const;
     virtual QUrl parentUrl() const;
+    virtual bool isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors = nullptr) const;
     virtual bool isReadable() const;
     virtual bool isWritable() const;
     virtual bool isExecutable() const;

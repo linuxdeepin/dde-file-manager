@@ -1576,8 +1576,6 @@ QUrl FileView::parseSelectedUrl(const QUrl &url)
     QByteArray encode = QUrl::toPercentEncoding(fileUrl.query(QUrl::FullyEncoded), "=");
     urlQuery.setQuery(encode);
     const auto &selectFile = urlQuery.queryItemValue("selectUrl", QUrl::FullyDecoded);
-    if (selectFile.isEmpty())
-        return fileUrl;
 
     const QUrl &defaultSelectUrl = QUrl::fromUserInput(selectFile);
     if (defaultSelectUrl.isValid()) {
@@ -1587,6 +1585,11 @@ QUrl FileView::parseSelectedUrl(const QUrl &url)
     } else {
         // todo: liuzhangjian
         // checkGvfsMountfileBusy
+        QList<QUrl> ancestors;
+        if (const AbstractFileInfoPointer &currentFileInfo = InfoFactory::create<AbstractFileInfo>(rootUrl())) {
+            if (currentFileInfo->isAncestorsUrl(fileUrl, &ancestors))
+                d->preSelectionUrls << (ancestors.count() > 1 ? ancestors.at(ancestors.count() - 2) : rootUrl());
+        }
     }
 
     return fileUrl;

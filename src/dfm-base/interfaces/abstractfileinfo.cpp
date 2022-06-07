@@ -25,6 +25,7 @@
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <QMetaType>
 #include <QDateTime>
@@ -1027,6 +1028,39 @@ QUrl DFMBASE_NAMESPACE::AbstractFileInfo::parentUrl() const
     CALL_PROXY(parentUrl());
 
     return UrlRoute::urlParent(url());
+}
+
+bool dfmbase::AbstractFileInfo::isAncestorsUrl(const QUrl &url, QList<QUrl> *ancestors) const
+{
+    CALL_PROXY(isAncestorsUrl(url, ancestors));
+
+    QUrl parentUrl = this->parentUrl();
+
+    forever {
+        if (ancestors && parentUrl.isValid()) {
+            ancestors->append(parentUrl);
+        }
+
+        if (UniversalUtils::urlEquals(parentUrl, url) || FileUtils::isSameFile(parentUrl, url)) {
+            return true;
+        }
+
+        auto fileInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
+
+        if (!fileInfo) {
+            break;
+        }
+
+        const QUrl &pu = fileInfo->parentUrl();
+
+        if (pu == parentUrl) {
+            break;
+        }
+
+        parentUrl = pu;
+    }
+
+    return false;
 }
 /*!
  * \brief DFMBASE_NAMESPACE::AbstractFileInfo::supportedDragActions
