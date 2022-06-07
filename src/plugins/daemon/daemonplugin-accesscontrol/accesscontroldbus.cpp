@@ -246,14 +246,14 @@ void AccessControlDBus::onBlockDevAdded(const QString &deviceId)
 
 void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString &mountPoint)
 {
-    if (globalDevPolicies.contains(kTypeBlock)) {
-        DFM_MOUNT_USE_NS
-        auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
-        if (!dev) {
-            qWarning() << "cannot craete device handler for " << deviceId;
-            return;
-        }
+    DFM_MOUNT_USE_NS
+    auto dev = monitor->createDeviceById(deviceId).objectCast<DBlockDevice>();
+    if (!dev) {
+        qWarning() << "cannot craete device handler for " << deviceId;
+        return;
+    }
 
+    if (globalDevPolicies.contains(kTypeBlock)) {
         QString devDesc { dev->device() };
         int mode = ::Utils::accessMode(mountPoint);
         QString source = globalDevPolicies.value(kTypeBlock).first;
@@ -281,7 +281,10 @@ void AccessControlDBus::onBlockDevMounted(const QString &deviceId, const QString
             return;
     }
 
-    Utils::addWriteMode(mountPoint);
+    QStringList mountOpts = dev->getProperty(Property::kBlockUserspaceMountOptions).toStringList();
+    qDebug() << "mount opts: ==>" << mountOpts << deviceId;
+    if (mountOpts.contains("uhelper=udisks2"))   // only chmod for those devices mounted by udisks
+        ::Utils::addWriteMode(mountPoint);
 }
 
 void AccessControlDBus::initConnect()
