@@ -325,7 +325,7 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                 const QModelIndex &index = d->view->selectionModel()->currentIndex();
                 if (Q_UNLIKELY(!index.isValid()))
                     return false;
-                d->view->edit(index);
+                d->view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
             } else {
                 WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::kFile, true);
             }
