@@ -1645,7 +1645,13 @@ void FileView::openIndex(const QModelIndex &index)
 
 QVariant FileView::fileViewStateValue(const QUrl &url, const QString &key, const QVariant &defalutValue)
 {
-    return Application::appObtuselySetting()->value("FileViewState", url).toMap().value(key, defalutValue);
+    QUrl realUrl = url;
+    // reset root url to make them be same.
+    if (UrlRoute::isRootUrl(url))
+        realUrl = UrlRoute::rootUrl(url.scheme());
+
+    QMap<QString, QVariant> valueMap = Application::appObtuselySetting()->value("FileViewState", realUrl).toMap();
+    return valueMap.value(key, defalutValue);
 }
 
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)
