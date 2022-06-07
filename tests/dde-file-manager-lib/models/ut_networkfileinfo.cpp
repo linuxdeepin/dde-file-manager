@@ -145,7 +145,7 @@ TEST_F(TestNetworkFileInfo, tstMenuActionList)
     auto type = DAbstractFileInfo::MenuType::SpaceArea;
     EXPECT_TRUE(info->menuActionList(type).count() == 0);
     type = DAbstractFileInfo::MenuType::SingleFile;
-    EXPECT_TRUE(info->menuActionList(type).count() == 2);
+    EXPECT_TRUE(info->menuActionList(type).count() == 3);//NetworkFileInfo::menuActionList中增加了从新标签中打开，这里由2改为3
     type = DAbstractFileInfo::MenuType::MultiFiles;
     EXPECT_TRUE(info->menuActionList(type).count() == 0);
 }
