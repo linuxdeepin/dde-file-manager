@@ -89,6 +89,13 @@ QSize BaseItemDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex
     return d->itemSizeHint;
 }
 
+void BaseItemDelegate::destroyEditor(QWidget *editor, const QModelIndex &index) const
+{
+    QStyledItemDelegate::destroyEditor(editor, index);
+
+    d->editingIndex = QModelIndex();
+}
+
 int BaseItemDelegate::iconSizeLevel() const
 {
     return -1;

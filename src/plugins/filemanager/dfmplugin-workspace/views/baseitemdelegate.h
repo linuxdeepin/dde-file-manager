@@ -54,6 +54,7 @@ public:
     virtual QList<QRect> paintGeomertys(const QStyleOptionViewItem &option, const QModelIndex &index, bool sizeHintMode = false) const = 0;
 
     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const override;
+    void destroyEditor(QWidget *editor, const QModelIndex &index) const override;
 
     /**
      * @brief iconSizeLevel return icon size level
