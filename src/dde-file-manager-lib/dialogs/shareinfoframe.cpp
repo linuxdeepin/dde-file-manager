@@ -353,7 +353,6 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
     bool ret = doShareInfoSetting();
     if (ret) {
         if (checked) {
-//            emit folderShared(m_fileinfo->absoluteFilePath());
             if(!m_isSharePasswordSet){//if not set share password, then show the settings dialog
                 setOrModifySharePassword();
             }
@@ -363,6 +362,11 @@ void ShareInfoFrame::handleCheckBoxChanged(const bool &checked)
         m_shareCheckBox->setChecked(false);
         m_shareCheckBox->setEnabled(true);
         disactivateWidgets();
+        //首次安装镜像会走这里 fixbug:129625
+        m_isSharePasswordSet = userShareManager->isSharePasswordSet(UserShareManager::getCurrentUserName());
+        if(!m_isSharePasswordSet){//if not set share password, then show the settings dialog
+            setOrModifySharePassword();
+        }
     }
 }
 
