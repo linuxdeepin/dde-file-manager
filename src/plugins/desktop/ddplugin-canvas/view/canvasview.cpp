@@ -595,8 +595,10 @@ void CanvasView::mouseDoubleClickEvent(QMouseEvent *event)
         QTimer::singleShot(200, this, [this, pos]() {
             // file info and url changed,but pos will not change
             const QModelIndex &renamedIndex = indexAt(pos);
-            if (!renamedIndex.isValid())
+            if (!renamedIndex.isValid()) {
+                qWarning() << "renamed index is invalid.";
                 return;
+            }
             const QUrl &renamedUrl = model()->fileUrl(renamedIndex);
             FileOperatorProxyIns->openFiles(this, { renamedUrl });
         });
