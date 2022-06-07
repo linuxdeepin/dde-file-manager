@@ -139,9 +139,11 @@ bool IconItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
     if (event->type() == QEvent::ToolTip) {
         const QString tooltip = index.data(kItemFileIconModelToolTipRole).toString();
 
-        if (tooltip.isEmpty()) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
+        const QList<QRect> &geometries = paintGeomertys(option, index);
+
+        if (tooltip.isEmpty() || geometries.count() < 3) {   // 当从一个需要显示tooltip的icon上移动光标到不需要显示的icon上时立即隐藏当前tooltip
             ItemDelegateHelper::hideTooltipImmediately();
-        } else {
+        } else if (option.fontMetrics.width(tooltip) > geometries[1].width() * 2) {
             int tooltipsize = tooltip.size();
             const int nlong = 32;
             int lines = tooltipsize / nlong + 1;

@@ -213,7 +213,26 @@ bool ListItemDelegate::eventFilter(QObject *object, QEvent *event)
 bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     if (event->type() == QEvent::ToolTip) {
-        const QString tooltip = index.data(kItemToolTipRole).toString();
+        const QList<ItemRoles> columnRoleList = parent()->parent()->getColumnRoles();
+        if (columnRoleList.length() < 2)
+            return true;
+
+        const QList<QRect> &geometries = paintGeomertys(option, index);
+
+        QString tooltip {};
+        // 从1开始是为了排除掉icon区域
+        for (int i = 1; i < geometries.length() && i <= columnRoleList.length(); ++i) {
+            const QRect &rect = geometries.at(i);
+
+            if (rect.left() <= event->x() && rect.right() >= event->x()) {
+                const QString &tipStr = index.data(columnRoleList[i - 1]).toString();
+
+                if (option.fontMetrics.width(tipStr, -1, static_cast<int>(Qt::Alignment(index.data(Qt::TextAlignmentRole).toInt()))) > rect.width()) {
+                    tooltip = tipStr;
+                    break;
+                }
+            }
+        }
 
         if (tooltip.isEmpty()) {
             ItemDelegateHelper::hideTooltipImmediately();
@@ -228,7 +247,6 @@ bool ListItemDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, con
             }
             strtooltip.chop(1);
             QToolTip::showText(event->globalPos(), strtooltip, view);
-            // Todo(yanghao): fix 81894
         }
         return true;
     }

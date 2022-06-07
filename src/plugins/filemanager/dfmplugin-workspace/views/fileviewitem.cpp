@@ -26,6 +26,8 @@
 
 #include "dfm-base/dfm_global_defines.h"
 
+#include <QStandardPaths>
+
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 DPWORKSPACE_USE_NAMESPACE
@@ -257,6 +259,16 @@ QVariant FileViewItem::data(int role) const
         return d->fileinfo->url();
     case Qt::TextAlignmentRole:
         return Qt::AlignVCenter;
+    case kItemFileIconModelToolTipRole: {
+        const QString filePath = data(kItemFilePathRole).toString();
+        const QString stdDocPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DocumentsLocation);
+        const QString stdDownPath = QStandardPaths::writableLocation(QStandardPaths::StandardLocation::DownloadLocation);
+        if (filePath == stdDocPath || filePath == stdDownPath || filePath == "/data" + stdDocPath || filePath == "/data" + stdDownPath)
+            return QString();
+
+        QString strToolTip = data(kItemFileDisplayNameRole).toString();
+        return strToolTip;
+    }
     default:
         return QVariant();
     }
