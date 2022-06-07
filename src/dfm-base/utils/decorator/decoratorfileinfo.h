@@ -58,6 +58,8 @@ public:
     QString parentPath() const;
     QString fileName() const;
     QString symLinkTarget() const;
+    quint64 size() const;
+    QVariant customAttribute(const char *key, const DFMIO::DFileInfo::DFileAttributeType type);
 
     QList<QString> standardIconNames() const;
 

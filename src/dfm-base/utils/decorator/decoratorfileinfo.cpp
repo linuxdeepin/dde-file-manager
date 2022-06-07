@@ -229,6 +229,20 @@ QString DecoratorFileInfo::symLinkTarget() const
     return QString();
 }
 
+quint64 DecoratorFileInfo::size() const
+{
+    if (d->dfileInfo)
+        return d->dfileInfo->attribute(DFMIO::DFileInfo::AttributeID::kStandardSize).toULongLong();
+    return 0;
+}
+
+QVariant DecoratorFileInfo::customAttribute(const char *key, const dfmio::DFileInfo::DFileAttributeType type)
+{
+    if (d->dfileInfo)
+        return d->dfileInfo->customAttribute(key, type);
+    return QVariant();
+}
+
 QList<QString> DecoratorFileInfo::standardIconNames() const
 {
     if (d->dfileInfo)

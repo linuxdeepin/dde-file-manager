@@ -23,6 +23,8 @@
 
 #include "services/common/usershare/usershareservice.h"
 
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
+
 #include <dfm-io/core/dfileinfo.h>
 
 #include <QDebug>
@@ -62,8 +64,8 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
 {
     QMap<int, QIcon> emblemsMap;
 
-    DFileInfo fileInfo(info->url());
-    QStringList emblemData = fileInfo.customAttribute("metadata::emblem", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
+    DecoratorFileInfo fileInfo(info->url());
+    QStringList emblemData = fileInfo.customAttribute("metadata::emblems", DFileInfo::DFileAttributeType::kTypeStringV).toStringList();
 
     if (emblemData.isEmpty())
         return emblemsMap;
@@ -132,13 +134,13 @@ bool EmblemHelper::parseEmblemString(QIcon &emblem, QString &pos, const QString 
         if (imgPath.startsWith("~/"))
             imgPath.replace(0, 1, QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
 
-        DFileInfo fileInfo(imgPath);
+        DecoratorFileInfo fileInfo(imgPath);
 
         if (fileInfo.exists()) {
-            if (fileInfo.attribute(DFileInfo::AttributeID::kStandardSize).toInt() > 102400)   // size small than 100kb
+            if (fileInfo.size() > 102400)   // size small than 100kb
                 return false;
 
-            QString suffix = fileInfo.attribute(DFileInfo::AttributeID::kStandardCompleteSuffix).toString();
+            QString suffix = fileInfo.completeSuffix();
             // check support type
             if (suffix != "svg" && suffix != "png" && suffix != "gif" && suffix != "bmp" && suffix != "jpg")
                 return false;
