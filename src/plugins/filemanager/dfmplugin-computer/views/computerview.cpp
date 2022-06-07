@@ -76,7 +76,7 @@ DFMBASE_NAMESPACE::AbstractBaseView::ViewState ComputerView::viewState() const
 bool ComputerView::setRootUrl(const QUrl &url)
 {
     Q_UNUSED(url);
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    QApplication::restoreOverrideCursor();
     return true;
 }
 
@@ -130,7 +130,7 @@ bool ComputerView::eventFilter(QObject *watched, QEvent *event)
 
 void ComputerView::showEvent(QShowEvent *event)
 {
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    QApplication::restoreOverrideCursor();
     hideSystemPartitions(ComputerUtils::shouldSystemPartitionHide());
     hideLoopPartitions(ComputerUtils::shouldLoopPartitionsHide());
     DListView::showEvent(event);

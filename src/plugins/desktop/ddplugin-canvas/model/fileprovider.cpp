@@ -28,7 +28,8 @@
 DFMBASE_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 
-FileProvider::FileProvider(QObject *parent) : QObject(parent)
+FileProvider::FileProvider(QObject *parent)
+    : QObject(parent)
 {
     qRegisterMetaType<QList<QUrl>>();
 }
@@ -117,7 +118,7 @@ void FileProvider::reset(QList<QUrl> children)
 void FileProvider::traversalFinished()
 {
     updateing = false;
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    QApplication::restoreOverrideCursor();
 }
 
 void FileProvider::insert(const QUrl &url)
@@ -160,4 +161,3 @@ void FileProvider::update(const QUrl &url)
 
     emit fileUpdated(url);
 }
-

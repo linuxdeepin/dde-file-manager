@@ -111,7 +111,7 @@ void VaultHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QP
  */
 void VaultHelper::siderItemClicked(quint64 windowId, const QUrl &url)
 {
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    QApplication::restoreOverrideCursor();
     VaultHelper::instance()->appendWinID(windowId);
 
     switch (instance()->state(PathManager::vaultLockPath())) {

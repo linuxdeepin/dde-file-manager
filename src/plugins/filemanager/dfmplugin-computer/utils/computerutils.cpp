@@ -283,7 +283,10 @@ bool ComputerUtils::checkGvfsMountExist(const QUrl &url, int timeout)
 
 void ComputerUtils::setCursorState(bool busy)
 {
-    QApplication::setOverrideCursor(busy ? Qt::WaitCursor : Qt::ArrowCursor);
+    if (busy)
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+    else
+        QApplication::restoreOverrideCursor();
 }
 
 QString ComputerUtils::deviceTypeInfo(DFMEntryFileInfoPointer info)

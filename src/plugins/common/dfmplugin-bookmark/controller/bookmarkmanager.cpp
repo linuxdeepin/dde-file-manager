@@ -361,7 +361,7 @@ void BookMarkManager::renameCallBack(quint64 windowId, const QUrl &url, const QS
 
 void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
 {
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    QApplication::restoreOverrideCursor();
 
     const QMap<QUrl, BookmarkData> &bookmarkMap = BookMarkManager::instance()->getBookMarkDataMap();
 

@@ -217,7 +217,7 @@ const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
     if (!d->root.isNull() && d->root->url() == url) {
-        QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+        QApplication::restoreOverrideCursor();
         QModelIndex root = createIndex(0, 0, d->root.data());
 
         d->canFetchMoreFlag = true;
@@ -674,7 +674,7 @@ void FileNodeManagerThread::onHandleAddFile(const QUrl url)
 void FileNodeManagerThread::onHandleTraversalFinished()
 {
     isTraversalFinished = true;
-    QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor));
+    QApplication::restoreOverrideCursor();
 
     if (!isRunning())
         model()->setState(FileViewModel::Idle);

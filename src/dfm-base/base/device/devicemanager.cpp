@@ -552,7 +552,7 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
     NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
-        QApplication::setOverrideCursor(Qt::ArrowCursor);
+        QApplication::restoreOverrideCursor();
         if (ok)
             DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice, cb, timeout);
         else if (cb)
