@@ -66,7 +66,8 @@ public:
 
     quint64 currentWindowId();
 
-    void appendWinID(quint64 id);
+    void appendWinID(const quint64 &winId);
+    void removeWinID(const quint64 &winId);
 
 public:
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);

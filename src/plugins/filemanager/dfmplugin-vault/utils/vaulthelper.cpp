@@ -34,6 +34,7 @@
 #include "dbus/vaultdbusutils.h"
 
 #include "services/common/delegate/delegateservice.h"
+#include "services/filemanager/windows/windowsservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
@@ -190,11 +191,18 @@ quint64 VaultHelper::currentWindowId()
     return currentWinID;
 }
 
-void VaultHelper::appendWinID(quint64 id)
+void VaultHelper::removeWinID(const quint64 &winId)
 {
-    currentWinID = id;
-    if (!VaultHelper::instance()->winIDs.contains(id))
-        VaultHelper::instance()->winIDs.append(id);
+    if (winIDs.contains(winId)) {
+        winIDs.removeOne(winId);
+    }
+}
+
+void VaultHelper::appendWinID(const quint64 &winId)
+{
+    currentWinID = winId;
+    if (!winIDs.contains(winId))
+        winIDs.append(winId);
 }
 
 QMenu *VaultHelper::createMenu()

@@ -76,6 +76,7 @@ void PolicyManager::slotVaultPolicy()
     case 1: {
         switch (getVaultCurrentPageMark()) {
         case VaultPageMark::kUnknown:
+            vaultVisiable = false;
             break;
         case VaultPageMark::kClipboardPage:
             if (vaultVisiable) {
@@ -108,6 +109,8 @@ void PolicyManager::slotVaultPolicy()
             return;
         }
 
+        VaultVisibleManager::instance()->removeSideBarVaultItem();
+        VaultVisibleManager::instance()->removeComputerVaultItem();
     } break;
     case 2:
         if (!vaultVisiable) {

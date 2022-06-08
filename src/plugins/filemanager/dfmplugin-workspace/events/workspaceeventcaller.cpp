@@ -126,3 +126,9 @@ bool WorkspaceEventCaller::sendRenameEndEdit(const quint64 &winId, const QUrl &u
     bool ret = dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_RenameEndEdit", winId, url);
     return ret;
 }
+
+bool WorkspaceEventCaller::sendEnterFileView(const quint64 &winId, const QUrl &url)
+{
+    bool ret = dpfSignalDispatcher->publish("dfmplugin_workspace", "signal_EnterFileView", winId, url);
+    return ret;
+}

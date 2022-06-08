@@ -29,6 +29,7 @@ void VaultEventReceiver::connectEvent()
     dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
     dpfHookSequence->follow("dfmplugin_utils", "hook_NotAllowdAppendCompress",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_EnterFileView", VaultEventReceiver::instance(), &VaultEventReceiver::EnterFileView);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)
@@ -75,4 +76,12 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
     }
 
     return false;
+}
+
+void VaultEventReceiver::EnterFileView(const quint64 &winId, const QUrl &url)
+{
+    if (url.scheme() == VaultHelper::instance()->scheme())
+        VaultHelper::instance()->appendWinID(winId);
+    else
+        VaultHelper::instance()->removeWinID(winId);
 }

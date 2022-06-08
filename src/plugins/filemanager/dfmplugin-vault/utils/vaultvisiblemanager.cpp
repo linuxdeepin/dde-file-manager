@@ -88,6 +88,7 @@ void VaultVisibleManager::pluginServiceRegister()
 {
     if (!serviceRegisterState) {
         connect(ServiceManager::windowServiceInstance(), &WindowsService::windowOpened, this, &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
+        VaultEventReceiver::instance()->connectEvent();
         serviceRegisterState = true;
     }
 
@@ -102,7 +103,6 @@ void VaultVisibleManager::pluginServiceRegister()
 
         MenuService::service()->registerScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
         WorkspaceService::service()->setWorkspaceMenuScene(VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
-        VaultEventReceiver::instance()->connectEvent();
     }
 }
 
