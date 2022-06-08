@@ -384,13 +384,29 @@ void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
     if (isShowError.load())
         return;
 
-    qint64 speed = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey).toInt();
-    const QString &speedStr = FileUtils::formatSize(speed) + "/s";
-    qint64 rmTime = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey).toInt();
-    const QString &rmTimeStr = formatTime(rmTime);
+    const QVariant &speedValue = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey);
+    const QVariant &remindValue = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey);
+    if (speedValue.isValid()) {
+        QString speedStr = QString();
+        bool ok = false;
+        qint64 speed = speedValue.toInt(&ok);
+        if (ok)
+            speedStr = FileUtils::formatSize(speed) + "/s";
+        else
+            speedStr = speedValue.toString();
+        lbSpeed->setText(speedStr);
+    }
 
-    lbSpeed->setText(speedStr);
-    lbRmTime->setText(rmTimeStr);
+    if (remindValue.isValid()) {
+        QString rmTimeStr = QString();
+        bool ok = false;
+        qint64 rmTime = remindValue.toInt(&ok);
+        if (ok)
+            rmTimeStr = formatTime(rmTime);
+        else
+            rmTimeStr = remindValue.toString();
+        lbRmTime->setText(rmTimeStr);
+    }
 }
 
 /*!
