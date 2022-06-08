@@ -217,6 +217,7 @@ void WindowManager::showNewWindow(const DUrl &url, const bool &isNewWindow)
         QString smbShareName = url.path().mid(1);
         smbShareName = smbShareName.mid(0, smbShareName.indexOf("/"));
         smbUrl.setPath("/" + smbShareName);
+        qInfo()<<"m_smbPointUrl = "<<m_smbPointUrl;
         if (!DRootFileManager::instance()->isRootFileInited() ||
                 !DRootFileManager::instance()->isRootFileContainSmb(url)) {
             QMutexLocker lk(&m_smbPointUrlMutex);
@@ -410,6 +411,7 @@ void WindowManager::onShowNewWindow()
     QList<DUrl> smbUrlKey = m_smbPointUrl.keys();
     QList<DUrl>::Iterator it = smbUrlKey.begin();
     while (it != smbUrlKey.end()) {
+
         if (DRootFileManager::instance()->isRootFileContainSmb(*it)) {
             QList<DUrl> showUrls = m_smbPointUrl.values(*it);
             m_smbPointUrl.remove(*it);

@@ -955,6 +955,10 @@ void DFMSideBar::initDeviceConnection()
         }
     });
     connect(devicesWatcher, &DAbstractFileWatcher::fileDeleted, this, [=/*this*/](const DUrl & url) {
+        if(FileUtils::isSmbHostOnly(url)){//url like: smb://x.x.x.x
+            this->removeItem(url,"device");
+            return;
+        }
         bool curUrlCanAccess = true; // 初始化为true 避免影响原有逻辑
         auto fi = fileService->createFileInfo(nullptr, m_currentUrl);
         if (fi)

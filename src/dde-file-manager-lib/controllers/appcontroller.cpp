@@ -51,6 +51,7 @@
 #include "app/filesignalmanager.h"
 #include "dfmevent.h"
 #include "app/define.h"
+#include "drootfilemanager.h"
 
 #include "interfaces/dfmstandardpaths.h"
 #include "interfaces/defenderinterface.h"
@@ -1248,6 +1249,7 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
        if(FileUtils::isSmbRelatedUrl(url,smbIp) && url.toString().endsWith(SUFFIX_GVFSMP)){
          QString decodePath = QUrl::fromPercentEncoding(url.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
          QString folderName = decodePath.section("share=",-1).section(",user=",0,0);
+         folderName = QUrl::fromPercentEncoding(folderName.toUtf8());
          if(folderName.isEmpty())
              continue;
          QString finalPath;
@@ -1286,7 +1288,7 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
            //反之则在侧边栏的fileDeleted中槽函数中触发界面跳转
            if(!isOperateUnmount){//如果上述没有发生挂载目录的卸载操作，则不会触发卸载通知，因此在这里移除smb挂载聚合项
             RemoteMountsStashManager::removeStashedSmbDevice(smbUrl.toString());
-            managerWindow->getLeftSideBar()->removeItem(smbUrl,"device");//todo(zhuangshu):多窗口同步移除
+            emit rootFileManager->rootFileWather()->fileDeleted(smbUrl);//多个打开的窗口同步移除smb挂载聚合项
             managerWindow->getLeftSideBar()->jumpToComputerItem();
             emit DFMApplication::instance()->reloadComputerModel();//刷新计算机界面上的smb聚合设备
            }
