@@ -493,7 +493,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
         }
     } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
-    *result = action == AbstractJobHandler::SupportAction::kSkipAction;
+    *result = action == AbstractJobHandler::SupportAction::kSkipAction || action == AbstractJobHandler::SupportAction::kNoAction;
 
     return ret;
 }

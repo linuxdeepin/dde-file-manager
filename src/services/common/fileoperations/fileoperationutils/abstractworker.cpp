@@ -337,6 +337,20 @@ AbstractJobHandler::SupportActions AbstractWorker::supportActions(const Abstract
     case AbstractJobHandler::JobErrorType::kIntegrityCheckingError:
     case AbstractJobHandler::JobErrorType::kNonexistenceError:
     case AbstractJobHandler::JobErrorType::kDeleteFileError:
+    case AbstractJobHandler::JobErrorType::kDeleteTrashFileError:
+    case AbstractJobHandler::JobErrorType::kNoSourceError:
+    case AbstractJobHandler::JobErrorType::kCancelError:
+    case AbstractJobHandler::JobErrorType::kUnknowUrlError:
+    case AbstractJobHandler::JobErrorType::kNotSupportedError:
+    case AbstractJobHandler::JobErrorType::kPermissionDeniedError:
+    case AbstractJobHandler::JobErrorType::kSeekError:
+    case AbstractJobHandler::JobErrorType::kProrogramError:
+    case AbstractJobHandler::JobErrorType::kDfmIoError:
+    case AbstractJobHandler::JobErrorType::kMakeStandardTrashError:
+    case AbstractJobHandler::JobErrorType::kGetRestorePathError:
+    case AbstractJobHandler::JobErrorType::kIsNotTrashFileError:
+    case AbstractJobHandler::JobErrorType::kCreateParentDirError:
+    case AbstractJobHandler::JobErrorType::kUnknowError:
         return support | AbstractJobHandler::SupportAction::kSkipAction | AbstractJobHandler::SupportAction::kRetryAction;
     case AbstractJobHandler::JobErrorType::kSpecialFileError:
         return AbstractJobHandler::SupportAction::kSkipAction;
