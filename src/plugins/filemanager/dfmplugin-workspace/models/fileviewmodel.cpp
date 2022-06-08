@@ -231,7 +231,13 @@ QModelIndex FileViewModel::setRootUrl(const QUrl &url)
         QModelIndex root = createIndex(0, 0, d->root.data());
 
         d->canFetchMoreFlag = true;
-        //        fetchMore(root);
+
+        // other scheme maybe has self file manage method
+        // see: bug-138643
+        if (url.scheme() != Global::kFile) {
+            clear();
+            fetchMore(root);
+        }
 
         //! The watcher is restarted after being suspended to solve the problem that
         //! the same file in the same path cannot be monitored after being deleted and recreated.
