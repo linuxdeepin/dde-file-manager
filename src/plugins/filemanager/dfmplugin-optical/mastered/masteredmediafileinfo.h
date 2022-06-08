@@ -50,7 +50,9 @@ public:
     bool canRename() const override;
     void refresh() override;
     bool canDragCompress() const override;
-    virtual QString emptyDirectoryTip() const override;
+    bool canHidden() const override;
+    bool canTag() const override;
+    QString emptyDirectoryTip() const override;
 
 private:
     void backupInfo(const QUrl &url);

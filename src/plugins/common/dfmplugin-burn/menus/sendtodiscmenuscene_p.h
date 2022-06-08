@@ -37,11 +37,16 @@ class SendToDiscMenuScenePrivate : public AbstractMenuScenePrivate
 
 public:
     explicit SendToDiscMenuScenePrivate(AbstractMenuScene *qq);
-    void actionStageFileForBurning();
+
+    void actionStageFileForBurning(const QString &dev);
     void actionMountImage();
 
+    void initDestDevices();
+    void addSubStageActions(QMenu *menu);
+
 private:
-    QString destDevice;
+    QList<QVariantMap> destDeviceDataGroup;
+    bool disableStage { false };
 };
 
 DPBURN_END_NAMESPACE

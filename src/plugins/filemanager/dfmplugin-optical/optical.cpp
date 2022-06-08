@@ -31,6 +31,7 @@
 #include "events/opticaleventreceiver.h"
 
 #include "services/common/menu/menuservice.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -78,6 +79,7 @@ bool Optical::start()
     addFileOperations();
     addCustomTopWidget();
     addDelegateSettings();
+    addPropertySettings();
 
     return true;
 }
@@ -174,6 +176,12 @@ void Optical::addDelegateSettings()
         return !OpticalHelper::burnIsOnDisc(url);
     });
     OpticalHelper::dlgateServIns()->registerUrlTransform(Global::kBurn, &OpticalHelper::tansToLocalFile);
+}
+
+void Optical::addPropertySettings()
+{
+    // TODO(lixiang): change to slot event
+    propertyServIns->registerFilterControlField(Global::kBurn, Property::FilePropertyControlFilter::kPermission);
 }
 
 void Optical::bindEvents()

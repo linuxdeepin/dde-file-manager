@@ -187,7 +187,7 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
     auto dedupedDevs = devs.toSet();
     int idx = 0;
     for (const QString &dev : dedupedDevs) {
-        auto data = DevProxyMng->queryBlockInfo(dev);
+        auto &&data = DevProxyMng->queryBlockInfo(dev);
         QString label = DeviceUtils::convertSuitableDisplayName(data);
         QString mpt = data.value(DeviceProperty::kMountPoint).toString();
         QString devDesc = data.value(DeviceProperty::kDevice).toString();

@@ -173,25 +173,21 @@ QString BurnHelper::burnFilePath(const QUrl &url)
     return m.captured(3);
 }
 
-QString BurnHelper::firstOptcailDev()
+QList<QVariantMap> BurnHelper::discDataGroup()
 {
     using namespace GlobalServerDefines;
-    QString opticalDevId;
-    auto &&devs = DevProxyMng->getAllBlockIds({});
-    for (const auto &dev : devs) {
-        if (dev.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
-            opticalDevId = dev;
-            break;
+    QList<QVariantMap> discDatas;
+    QStringList discIdList;
+    auto &&idList = DevProxyMng->getAllBlockIds({});
+    for (const auto &id : idList) {
+        if (id.startsWith("/org/freedesktop/UDisks2/block_devices/sr")) {
+            auto &&data = DevProxyMng->queryBlockInfo(id);
+            bool isOptical { data.value(DeviceProperty::kOptical).toBool() };
+            bool isOpticalDrive { data.value(DeviceProperty::kOpticalDrive).toBool() };
+            if (isOptical && isOpticalDrive)
+                discDatas.push_back(data);
         }
     }
 
-    if (!opticalDevId.isEmpty()) {
-        auto &&data = DevProxyMng->queryBlockInfo(opticalDevId);
-        bool isOptical { data.value(DeviceProperty::kOptical).toBool() };
-        bool isOpticalDrive { data.value(DeviceProperty::kOpticalDrive).toBool() };
-        if (isOptical && isOpticalDrive)
-            return data.value(DeviceProperty::kDevice).toString();
-    }
-
-    return {};
+    return discDatas;
 }

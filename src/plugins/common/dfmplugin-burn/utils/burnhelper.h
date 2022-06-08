@@ -26,6 +26,7 @@
 #include "dfmplugin_burn_global.h"
 
 #include <QUrl>
+#include <QVariantMap>
 
 DPBURN_BEGIN_NAMESPACE
 
@@ -40,7 +41,7 @@ public:
     static QString parseXorrisoErrorMessage(const QStringList &msg);
     static QString burnDestDevice(const QUrl &url);
     static QString burnFilePath(const QUrl &url);
-    static QString firstOptcailDev();
+    static QList<QVariantMap> discDataGroup();
 };
 
 DPBURN_END_NAMESPACE

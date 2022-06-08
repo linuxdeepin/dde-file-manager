@@ -115,7 +115,7 @@ void BurnEventReceiver::handlePasteTo(const QList<QUrl> &urls, const QUrl &dest,
                 }
             }
 
-            if (r == 0 || r == 1)
+            if (r == 0 || r == -1)
                 return;
         }
     }

@@ -44,6 +44,7 @@ private:
     void addFileOperations();
     void addCustomTopWidget();
     void addDelegateSettings();
+    void addPropertySettings();
 
 private:
     void bindEvents();

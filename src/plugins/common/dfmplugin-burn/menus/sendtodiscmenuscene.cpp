@@ -29,7 +29,9 @@
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 
 #include <QMenu>
@@ -37,10 +39,12 @@
 
 DPBURN_USE_NAMESPACE
 DSC_USE_NAMESPACE
+using namespace GlobalServerDefines;
 
 namespace ActionId {
 static constexpr char kStageKey[] { "stage-file-to-burning" };
-static constexpr char kMountImage[] { "mount-image" };
+static constexpr char kStagePrex[] { "_stage-file-to-burning-" };
+static constexpr char kMountImageKey[] { "mount-image" };
 }
 
 SendToDiscMenuScenePrivate::SendToDiscMenuScenePrivate(AbstractMenuScene *qq)
@@ -48,21 +52,17 @@ SendToDiscMenuScenePrivate::SendToDiscMenuScenePrivate(AbstractMenuScene *qq)
 {
 }
 
-void SendToDiscMenuScenePrivate::actionStageFileForBurning()
+void SendToDiscMenuScenePrivate::actionStageFileForBurning(const QString &dev)
 {
-    QUrl dest { BurnHelper::fromBurnFile(destDevice) };
+    if (dev.isEmpty())
+        return;
+    QUrl dest { BurnHelper::fromBurnFile(dev) };
     QList<QUrl> srcUrls { selectFiles };
     std::transform(srcUrls.begin(), srcUrls.end(), srcUrls.begin(), [](const QUrl &url) -> QUrl {
         if (delegateServIns->isRegisterUrlTransform(url.scheme()))
             return delegateServIns->urlTransform(url);
         return url;
     });
-
-    QString currentDest { BurnHelper::firstOptcailDev() };
-    if (currentDest != destDevice) {
-        qWarning() << "Current device: " << currentDest << "not src dest: " << destDevice;
-        return;
-    }
 
     BurnEventReceiver::instance()->handlePasteTo(srcUrls, dest, true);
 }
@@ -92,8 +92,43 @@ void SendToDiscMenuScenePrivate::actionMountImage()
         }
         // TODO(zhangs): cd to mnt path
         gioproc->deleteLater();
-    },
-            Qt::DirectConnection);
+    });
+}
+
+void SendToDiscMenuScenePrivate::initDestDevices()
+{
+    bool filterFlag { false };
+    // remove self disc id
+    auto &&dataGroup { BurnHelper::discDataGroup() };
+    for (const auto &data : dataGroup) {
+        QString curDev { BurnHelper::burnDestDevice(currentDir) };
+        QString dev { data[DeviceProperty::kDevice].toString() };
+        if (curDev != dev)
+            destDeviceDataGroup.push_back(data);
+        else
+            filterFlag = true;
+    }
+
+    // only self disc, disable action
+    if (filterFlag && destDeviceDataGroup.isEmpty())
+        disableStage = true;
+}
+
+void SendToDiscMenuScenePrivate::addSubStageActions(QMenu *menu)
+{
+    Q_ASSERT(menu);
+
+    if (destDeviceDataGroup.size() > 1) {
+        for (const auto &data : destDeviceDataGroup) {
+            QString label { DeviceUtils::convertSuitableDisplayName(data) };
+            QString dev { data[DeviceProperty::kDevice].toString() };
+            QAction *act { menu->addAction(label) };
+            act->setData(dev);
+            QString actId { ActionId::kStagePrex + dev };
+            act->setProperty(ActionPropertyKey::kActionID, actId);
+            predicateAction.insert(actId, act);
+        }
+    }
 }
 
 AbstractMenuScene *SendToDiscMenuCreator::create()
@@ -118,17 +153,17 @@ QString SendToDiscMenuScene::name() const
 
 bool SendToDiscMenuScene::initialize(const QVariantHash &params)
 {
-    d->destDevice = BurnHelper::firstOptcailDev();
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->predicateName.insert(ActionId::kStageKey, QObject::tr("Add to disc"));
-    d->predicateName.insert(ActionId::kMountImage, QObject::tr("Mount"));
+    d->predicateName.insert(ActionId::kMountImageKey, QObject::tr("Mount"));
 
     if (d->selectFiles.isEmpty())
         return false;
+    d->initDestDevices();
 
     QUrl url(d->selectFiles.first());
     QString scheme { url.scheme() };
@@ -146,13 +181,35 @@ bool SendToDiscMenuScene::create(QMenu *parent)
     if (!parent)
         return false;
 
-    QAction *act = parent->addAction(d->predicateName[ActionId::kStageKey]);
-    act->setProperty(ActionPropertyKey::kActionID, ActionId::kStageKey);
-    d->predicateAction.insert(ActionId::kStageKey, act);
+    // stage file to disc
+    if (!d->destDeviceDataGroup.isEmpty() || d->disableStage) {
+        QAction *act { parent->addAction(d->predicateName[ActionId::kStageKey]) };
+        act->setProperty(ActionPropertyKey::kActionID, ActionId::kStageKey);
+        d->predicateAction.insert(ActionId::kStageKey, act);
+        // use menu if has multi otical devs
+        if (d->destDeviceDataGroup.size() == 1) {
+            QString dev { d->destDeviceDataGroup.first()[DeviceProperty::kDevice].toString() };
+            act->setData(dev);
+        } else if (d->destDeviceDataGroup.size() > 1) {
+            QMenu *stageMenu { new QMenu(parent) };
+            d->addSubStageActions(stageMenu);
+            if (stageMenu->actions().isEmpty())
+                delete stageMenu;
+            else
+                act->setMenu(stageMenu);
+        }
+    }
 
-    act = parent->addAction(d->predicateName[ActionId::kMountImage]);
-    act->setProperty(ActionPropertyKey::kActionID, ActionId::kMountImage);
-    d->predicateAction.insert(ActionId::kMountImage, act);
+    // mount image
+    auto focusInfo { InfoFactory::create<AbstractFileInfo>(d->focusFile) };
+    if (focusInfo) {
+        static QSet<QString> mountable { "application/x-cd-image", "application/x-iso9660-image" };
+        if (mountable.contains(focusInfo->mimeTypeName())) {
+            QAction *act { parent->addAction(d->predicateName[ActionId::kMountImageKey]) };
+            act->setProperty(ActionPropertyKey::kActionID, ActionId::kMountImageKey);
+            d->predicateAction.insert(ActionId::kMountImageKey, act);
+        }
+    }
 
     return AbstractMenuScene::create(parent);
 }
@@ -171,13 +228,14 @@ bool SendToDiscMenuScene::triggered(QAction *action)
         return false;
 
     QString &&key { action->property(ActionPropertyKey::kActionID).toString() };
-    if (key == ActionId::kStageKey) {
-        d->actionStageFileForBurning();
+    if (key == ActionId::kStageKey || key.startsWith(ActionId::kStagePrex)) {
+        QString dev { action->data().toString() };
+        d->actionStageFileForBurning(dev);
         return true;
     }
 
     // Maybe as a event?
-    if (key == ActionId::kMountImage) {
+    if (key == ActionId::kMountImageKey) {
         d->actionMountImage();
         return true;
     }
@@ -210,6 +268,9 @@ void SendToDiscMenuScene::updateStageAction(QMenu *parent)
             sendToAct = act;
     }
 
+    if (!stageAct)
+        return;
+
     if (sendToAct && stageAct) {
         actions.removeOne(stageAct);
         parent->insertAction(sendToAct, stageAct);
@@ -217,9 +278,13 @@ void SendToDiscMenuScene::updateStageAction(QMenu *parent)
         parent->insertAction(stageAct, sendToAct);
     }
 
-    stageAct->setVisible(false);
-    if (!d->destDevice.isEmpty())
-        stageAct->setVisible(true);
+    // disable action in self disc
+    if (d->disableStage) {
+        stageAct->setEnabled(false);
+        return;
+    }
+
+    stageAct->setEnabled(true);
 }
 
 void SendToDiscMenuScene::updateMountAction(QMenu *parent)
@@ -230,7 +295,7 @@ void SendToDiscMenuScene::updateMountAction(QMenu *parent)
     QAction *mountAct { nullptr };
     for (auto act : actions) {
         QString &&id { act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString() };
-        if (id == ActionId::kMountImage)
+        if (id == ActionId::kMountImageKey)
             mountAct = act;
         if (id == "open-with")
             openWithAct = act;
@@ -241,13 +306,5 @@ void SendToDiscMenuScene::updateMountAction(QMenu *parent)
         parent->insertAction(openWithAct, mountAct);
         parent->removeAction(openWithAct);
         parent->insertAction(mountAct, openWithAct);
-    }
-    mountAct->setVisible(false);
-
-    auto focusInfo { InfoFactory::create<AbstractFileInfo>(d->focusFile) };
-    if (focusInfo) {
-        static QSet<QString> mountable = { "application/x-cd-image", "application/x-iso9660-image" };
-        if (mountable.contains(focusInfo->mimeTypeName()))
-            mountAct->setVisible(true);
     }
 }

@@ -44,6 +44,7 @@ public:
 class SendToDiscMenuScenePrivate;
 class SendToDiscMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit SendToDiscMenuScene(QObject *parent = nullptr);
     virtual ~SendToDiscMenuScene() override;

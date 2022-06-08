@@ -181,7 +181,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
             iconLabel->setPixmap(info->fileIcon().pixmap(targetSize));
         iconLabel->setAlignment(Qt::AlignCenter);
 
-        vLayout->insertWidget(0, iconLabel, 1, Qt::AlignCenter);
+        vLayout->insertWidget(0, iconLabel, 0, Qt::AlignCenter);
     }
 }
 

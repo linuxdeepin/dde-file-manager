@@ -69,7 +69,7 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
     d->predicateName.insert(TagActionId::kActTagColorListKey, "");
-    d->predicateName.insert(TagActionId::kActTagAddKey, tr("Add color tags"));
+    d->predicateName.insert(TagActionId::kActTagAddKey, tr("Tag information"));
 
     return AbstractMenuScene::initialize(params);
 }
