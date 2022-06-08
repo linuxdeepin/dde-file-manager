@@ -91,8 +91,8 @@ Qt::ItemFlags FileSortFilterProxyModel::flags(const QModelIndex &index) const
 
 QModelIndex FileSortFilterProxyModel::setRootUrl(const QUrl &url)
 {
-    resetFilter();
     QModelIndex rootIndex = viewModel()->setRootUrl(url);
+    resetFilter();
 
     return createIndex(0, 0, rootIndex.internalPointer());
 }
