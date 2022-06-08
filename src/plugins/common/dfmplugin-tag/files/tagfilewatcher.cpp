@@ -21,6 +21,7 @@
  */
 #include "tagfilewatcher.h"
 #include "private/tagfilewatcher_p.h"
+#include "utils/taghelper.h"
 
 DFMBASE_USE_NAMESPACE
 DPTAG_USE_NAMESPACE
@@ -39,6 +40,38 @@ TagFileWatcher::~TagFileWatcher()
 
 void TagFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
 {
+}
+
+void TagFileWatcher::onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags)
+{
+    QString tagName = TagHelper::instance()->getTagNameFromUrl(dptr->url);
+
+    QMap<QString, QList<QString>>::const_iterator iter = fileAndTags.begin();
+    while (iter != fileAndTags.end()) {
+        if (iter.value().contains(tagName)) {
+            QUrl fileUrl = QUrl::fromLocalFile(iter.key());
+
+            emit AbstractFileWatcher::subfileCreated(fileUrl);
+            return;
+        }
+        ++iter;
+    }
+}
+
+void TagFileWatcher::onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags)
+{
+    QString tagName = TagHelper::instance()->getTagNameFromUrl(dptr->url);
+
+    QMap<QString, QList<QString>>::const_iterator iter = fileAndTags.begin();
+    while (iter != fileAndTags.end()) {
+        if (iter.value().contains(tagName)) {
+            QUrl fileUrl = QUrl::fromLocalFile(iter.key());
+
+            emit AbstractFileWatcher::fileDeleted(fileUrl);
+            return;
+        }
+        ++iter;
+    }
 }
 
 void TagFileWatcher::addWatcher(const QUrl &url)

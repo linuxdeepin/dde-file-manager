@@ -86,6 +86,10 @@ public slots:
     void onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags);
     void onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
 
+signals:
+    void filesTagged(const QMap<QString, QList<QString>> &fileAndTags);
+    void filesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
+
 private:
     explicit TagManager(QObject *parent = nullptr);
     void initializeConnection();

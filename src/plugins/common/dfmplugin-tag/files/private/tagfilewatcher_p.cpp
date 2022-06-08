@@ -21,6 +21,7 @@
  */
 #include "tagfilewatcher_p.h"
 #include "files/tagfilewatcher.h"
+#include "utils/tagmanager.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -56,8 +57,10 @@ void TagFileWatcherPrivate::initFileWatcher()
 
 void TagFileWatcherPrivate::initConnect()
 {
-
     connect(proxy.data(), &AbstractFileWatcher::fileDeleted, q, &AbstractFileWatcher::fileDeleted);
     connect(proxy.data(), &AbstractFileWatcher::fileAttributeChanged, q, &AbstractFileWatcher::fileAttributeChanged);
     connect(proxy.data(), &AbstractFileWatcher::subfileCreated, q, &AbstractFileWatcher::subfileCreated);
+
+    connect(TagManager::instance(), &TagManager::filesTagged, qobject_cast<TagFileWatcher *>(q), &TagFileWatcher::onFilesTagged);
+    connect(TagManager::instance(), &TagManager::filesUntagged, qobject_cast<TagFileWatcher *>(q), &TagFileWatcher::onFilesUntagged);
 }

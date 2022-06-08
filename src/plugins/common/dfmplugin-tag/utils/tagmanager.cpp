@@ -476,10 +476,10 @@ void TagManager::onTagNameChanged(const QMap<QString, QString> &oldAndNew)
 
 void TagManager::onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags)
 {
-    Q_UNUSED(fileAndTags)
+    emit filesTagged(fileAndTags);
 }
 
 void TagManager::onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags)
 {
-    Q_UNUSED(fileAndTags)
+    emit filesUntagged(fileAndTags);
 }

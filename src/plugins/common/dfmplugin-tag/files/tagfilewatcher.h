@@ -38,6 +38,10 @@ public:
 
     virtual void setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled = true) override;
 
+public slots:
+    void onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags);
+    void onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
+
 private:
     void addWatcher(const QUrl &url);
     void removeWatcher(const QUrl &url);
