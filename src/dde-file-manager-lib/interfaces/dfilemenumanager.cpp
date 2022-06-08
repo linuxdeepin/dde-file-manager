@@ -233,12 +233,12 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             if(!path.isEmpty()){
                 QString ip = tem.host();
                 QString dirName = path.split("/").last();
+                dirName = QUrl::fromPercentEncoding(dirName.toUtf8());
                 QString formatPath = mountDir.arg(getuid()).arg(ip).arg(dirName.toLower());
                 DUrl mountUrl;
                 mountUrl.setScheme(DFMROOT_SCHEME);
                 mountUrl.setPath("/" + QUrl::toPercentEncoding(formatPath + "." SUFFIX_GVFSMP));
                 bool isMounted = FileUtils::isNetworkUrlMounted(mountUrl);
-
 
                 if (isMounted) {//Menu show unmount item
                     actions << MenuAction::Unmount;
