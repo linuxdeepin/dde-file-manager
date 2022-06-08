@@ -32,9 +32,7 @@
 #include "../controllers/searchhistroymanager.h"
 #include "../interfaces/dfmsettings.h"
 #include "../interfaces/dfmapplication.h"
-#include "app/define.h"
 #include "gvfs/networkmanager.h"
-#include "utils/utils.h"
 
 #include <QComboBox>
 #include <QVBoxLayout>
@@ -103,8 +101,10 @@ void ConnectToServerDialog::onButtonClicked(const int &index)
         DUrl inputUrl = DUrl::fromUserInput(text, false); ///###: here, judge whether the text is a local file path.
 
         QDir::setCurrent(currentDir);
-        if(fileWindow)
+        if(fileWindow){
+            NetworkManager::NetworkNodes.remove(inputUrl);
             DFMEventDispatcher::instance()->processEvent<DFMChangeCurrentUrlEvent>(this, inputUrl, fileWindow->window());
+        }
     }
     close();
 }
