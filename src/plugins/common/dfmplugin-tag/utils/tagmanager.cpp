@@ -128,8 +128,11 @@ QStringList TagManager::getTagsByUrls(const QList<QUrl> &urlList) const
     if (!urlList.isEmpty()) {
         for (const QUrl &url : urlList) {
             const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
-            if (info)
+            if (info) {
                 dataMap[info->filePath()] = QVariant { QList<QString> {} };
+            } else {
+                dataMap[UrlRoute::urlToLocalPath(url)] = QVariant { QList<QString> {} };
+            }
         }
 
         if (dataMap.isEmpty())
@@ -232,7 +235,11 @@ bool TagManager::removeTagsOfFiles(const QList<QString> &tags, const QList<QUrl>
 
         for (const QUrl &url : files) {
             const AbstractFileInfoPointer &info = InfoFactory::create<AbstractFileInfo>(url);
-            fileWithTag[info->filePath()] = QVariant(tags);
+            if (info) {
+                fileWithTag[info->filePath()] = QVariant(tags);
+            } else {
+                fileWithTag[UrlRoute::urlToLocalPath(url)] = QVariant(tags);
+            }
         }
 
         QVariant var = dbusHelper->sendDataToDBus(fileWithTag, TagActionType::kRemoveTagsOfFiles);

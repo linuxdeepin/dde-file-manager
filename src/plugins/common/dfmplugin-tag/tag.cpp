@@ -28,6 +28,7 @@
 #include "utils/tagoperationhelper.h"
 #include "widgets/tagwidget.h"
 #include "menu/tagmenuscene.h"
+#include "events/tageventreceiver.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -69,6 +70,7 @@ bool Tag::start()
     DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget, 1);
 
     followEvent();
+    TagEventReceiver::instance()->initConnect();
 
     MenuService::service()->registerScene(TagMenuCreator::name(), new TagMenuCreator);
     bindScene("FileOperatorMenu");
