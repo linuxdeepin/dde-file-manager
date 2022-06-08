@@ -68,10 +68,10 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
 QUrl MasteredMediaDirIterator::next()
 {
     if (discIterator && discIterator->hasNext()) {
-        return changeSchemeUpdate(discIterator->next());
+        return changeSchemeUpdate(QUrl::fromLocalFile(discIterator->next()));
     } else {
         discIterator = nullptr;
-        return changeSchemeUpdate(stagingIterator->next());
+        return changeSchemeUpdate(QUrl::fromLocalFile(stagingIterator->next()));
     }
 }
 
