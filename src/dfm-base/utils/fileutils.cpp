@@ -26,6 +26,7 @@
 #include "mimetype/mimedatabase.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
@@ -324,56 +325,6 @@ bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2)
         }
     }
     return false;
-}
-
-bool FileUtils::isSmbPath(const QUrl &url)
-{
-    const QString &&strUrl = url.toString();
-
-    // like file:///run/user/1000/gvfs/smb-share:domain=ttt,server=xx.xx.xx.xx,share=io,user=uos/path
-    QRegExp reg("/run/user/.+gvfs/smb-share:.*server.+share.+");
-    int idx = reg.indexIn(strUrl);
-
-    if (-1 == idx) {
-        // 传进来的可能是加密的路径
-        idx = reg.indexIn(QUrl::fromPercentEncoding(strUrl.toLocal8Bit()));
-    }
-
-    if (-1 == idx) {
-        // like smb://ttt;uos:1@xx.xx.xx.xx/io/path
-        // maybe access by mapping addr, like smb://xxx.com/io
-        reg.setPattern("smb://.+");
-        idx = reg.indexIn(strUrl);
-    }
-    return -1 != idx;
-}
-
-bool FileUtils::isFtpPath(const QUrl &url)
-{
-    const QString &&strUrl = url.toString();
-
-    QRegExp reg("/run/user/.+gvfs/ftp:.*host=.+");
-    int idx = reg.indexIn(strUrl);
-
-    if (-1 == idx) {
-        // 传进来的可能是加密的路径
-        idx = reg.indexIn(QUrl::fromPercentEncoding(strUrl.toLocal8Bit()));
-    }
-    return -1 != idx;
-}
-
-bool FileUtils::isSftpPath(const QUrl &url)
-{
-    const QString &&strUrl = url.toString();
-
-    QRegExp reg("/run/user/.+gvfs/sftp:.*host=.+");
-    int idx = reg.indexIn(strUrl);
-
-    if (-1 == idx) {
-        // 传进来的可能是加密的路径
-        idx = reg.indexIn(QUrl::fromPercentEncoding(strUrl.toLocal8Bit()));
-    }
-    return -1 != idx;
 }
 
 bool FileUtils::isLowSpeedDevice(const QUrl &url)
@@ -1005,11 +956,9 @@ void FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType
         return;
 
     auto isRemoteMount = [=](const QUrl &url) -> bool {
-        if (FileUtils::isSmbPath(url))
+        if (DeviceUtils::isSamba(url))
             return true;
-        if (FileUtils::isFtpPath(url))
-            return true;
-        if (FileUtils::isSftpPath(url))
+        if (DeviceUtils::isFtp(url))
             return true;
 
         return false;

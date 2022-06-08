@@ -23,6 +23,7 @@
 
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <QDir>
@@ -550,7 +551,7 @@ QList<QAction *> OemMenu::normalActions(const QList<QUrl> &files, bool onDesktop
             }
 
             // compression is not supported on FTP
-            if (action->text() == QObject::tr("Compress") && FileUtils::isFtpPath(file)) {
+            if (action->text() == QObject::tr("Compress") && DeviceUtils::isFtp(file)) {
                 it = actions.erase(it);
                 continue;
             }

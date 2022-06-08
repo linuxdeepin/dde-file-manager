@@ -26,6 +26,7 @@
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 
@@ -1342,6 +1343,9 @@ void FileOperateBaseWorker::determineCountProcessType()
         qDebug("targetIsRemovable = %d", bool(targetIsRemovable));
     }
     if (isSourceFileLocal && isTargetFileLocal)
+        countWriteType = CountWriteSizeType::kCustomizeType;
+
+    if (DeviceUtils::isSamba(targetUrl) || DeviceUtils::isFtp(targetUrl))
         countWriteType = CountWriteSizeType::kCustomizeType;
 
     copyTid = (countWriteType == CountWriteSizeType::kTidType) ? syscall(SYS_gettid) : -1;
