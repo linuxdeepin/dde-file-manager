@@ -479,7 +479,7 @@ bool FileOperateBaseWorker::checkDiskSpaceAvailable(const QUrl &fromUrl,
  * \param fileInfo delete file information
  * \return Delete file successfully
  */
-bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
+bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force)
 {
     bool ret = false;
 
@@ -488,6 +488,8 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
 
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
     do {
+        if (force)
+            handler->setPermissions(fromUrl, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
         ret = handler->deleteFile(fromUrl);
         if (!ret) {
             action = doHandleErrorAndWait(fromUrl, toUrl, AbstractJobHandler::JobErrorType::kDeleteFileError, handler->errorString());
@@ -499,7 +501,7 @@ bool FileOperateBaseWorker::deleteFile(const QUrl &fromUrl, const QUrl &toUrl, b
     return ret;
 }
 
-bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result)
+bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force)
 {
     DecoratorFileEnumerator enumerator(fromUrl);
     if (!enumerator.isValid())
@@ -511,12 +513,16 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
 
         const QUrl &urlNext = QUrl::fromLocalFile(path);
         if (DecoratorFileInfo(urlNext).isDir()) {
-            succ = deleteDir(urlNext, toUrl, result);
+            if (force)
+                handler->setPermissions(urlNext, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
+            succ = deleteDir(urlNext, toUrl, result, force);
         } else {
-            succ = deleteFile(urlNext, toUrl, result);
+            succ = deleteFile(urlNext, toUrl, result, force);
         }
+        if (!succ)
+            return false;
     }
-    succ = deleteFile(fromUrl, toUrl, result);
+    succ = deleteFile(fromUrl, toUrl, result, force);
     return succ;
 }
 /*!

@@ -102,8 +102,8 @@ public:
     // notify
     void emitSpeedUpdatedNotify(const qint64 &writSize);
 
-    bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result);
-    bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result);
+    bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
+    bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
 
     bool copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                            bool *result);

@@ -162,12 +162,17 @@ bool DoCleanTrashFilesWorker::clearTrashFile(const AbstractFileInfoPointer &tras
     bool resultInfo = false;
     do {
         if (!resultFile) {
+            const QUrl &fileUrl = trashInfo->url();
+
+            bool ret = false;
             if (trashInfo->isFile() || trashInfo->isSymLink()) {
-                deleteFile(trashInfo->url(), QUrl(), &resultFile);
+                ret = deleteFile(fileUrl, QUrl(), &resultFile, true);
             } else {
                 // dir
-                deleteDir(trashInfo->url(), QUrl(), &resultFile);
+                ret = deleteDir(fileUrl, QUrl(), &resultFile, true);
             }
+            if (!ret)
+                return false;
         }
         if (!resultInfo)
             resultInfo = handler->deleteFile(QUrl::fromLocalFile(location));
