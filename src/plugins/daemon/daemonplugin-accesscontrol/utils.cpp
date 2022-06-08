@@ -60,10 +60,10 @@ int Utils::accessMode(const QString &mps)
     // 获取挂载点访问权限
     if (mps.isEmpty())
         return kPolicyDisable;
-    char *path = mps.toLocal8Bit().data();
-    if (access(path, W_OK) == 0)
+    const QByteArray &path = mps.toLocal8Bit();
+    if (access(path.data(), W_OK) == 0)
         return kPolicyRw;
-    if (access(path, R_OK) == 0)
+    if (access(path.data(), R_OK) == 0)
         return kPolicyRonly;
     return kPolicyDisable;
 }

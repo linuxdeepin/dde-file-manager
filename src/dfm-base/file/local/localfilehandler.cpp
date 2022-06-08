@@ -604,9 +604,9 @@ bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStr
 {
     qDebug() << "launchApp by gio:" << desktopFilePath << fileUrls;
 
-    const char *cDesktopFilePath = desktopFilePath.toLocal8Bit().data();
+    const QByteArray &cDesktopFilePath = desktopFilePath.toLocal8Bit();
 
-    g_autoptr(GDesktopAppInfo) appInfo = g_desktop_app_info_new_from_filename(cDesktopFilePath);
+    g_autoptr(GDesktopAppInfo) appInfo = g_desktop_app_info_new_from_filename(cDesktopFilePath.data());
     if (!appInfo) {
         qDebug() << "Failed to open desktop file with gio: g_desktop_app_info_new_from_filename returns NULL. Check PATH maybe?";
         return false;
@@ -614,8 +614,8 @@ bool LocalFileHandler::launchAppByGio(const QString &desktopFilePath, const QStr
 
     GList *gfiles = nullptr;
     foreach (const QString &url, fileUrls) {
-        const char *cFilePath = url.toLocal8Bit().data();
-        GFile *gfile = g_file_new_for_uri(cFilePath);
+        const QByteArray &cFilePath = url.toLocal8Bit();
+        GFile *gfile = g_file_new_for_uri(cFilePath.data());
         gfiles = g_list_append(gfiles, gfile);
     }
 

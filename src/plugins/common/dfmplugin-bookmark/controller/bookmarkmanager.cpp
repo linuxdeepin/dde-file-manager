@@ -291,8 +291,8 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
                 indexOfFirstDir = locatePath.indexOf("/", 1);
             }
             locatePath = locatePath.mid(indexOfFirstDir);
-            QByteArray ba = locatePath.toLocal8Bit().toBase64();
-            map["locateUrl"] = QString(ba);
+            const QByteArray &ba = locatePath.toLocal8Bit();
+            map["locateUrl"] = QString(ba.toBase64());
             map["url"] = newUrl;
             list[i] = map;
 

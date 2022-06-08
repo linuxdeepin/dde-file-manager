@@ -175,9 +175,9 @@ void FileViewHelper::keyboardSearch(const QString &search)
 {
     if (search.isEmpty())
         return;
-    auto key = search.toLocal8Bit().at(0);
+    const QByteArray &key = search.toLocal8Bit();
 
-    keyboardSearchKeys.append(key);
+    keyboardSearchKeys.append(key.at(0));
     bool reverseOrder = WindowUtils::keyShiftIsPressed();
     const QModelIndex &currentIndex = parent()->currentIndex();
 
