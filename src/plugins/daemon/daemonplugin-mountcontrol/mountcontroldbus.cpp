@@ -83,6 +83,8 @@ QString MountControlDBus::Mount(const QString &path, const QVariantMap &opts)
     }
 
     auto arg = d->convertArg(opts);
+    if (aPath.contains(QRegularExpression("^//localhost/")))
+        arg = "ip=127.0.0.1," + arg;
     ret = ::mount(aPath.toStdString().c_str(), mntPath.toStdString().c_str(), "cifs", 0, arg.c_str());
     if (ret != 0) {
         qWarning() << "mounting failed: " << path << strerror(errno) << errno;
