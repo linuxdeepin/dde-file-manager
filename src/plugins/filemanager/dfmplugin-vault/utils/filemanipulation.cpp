@@ -23,6 +23,7 @@
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -56,7 +57,7 @@ bool FileManipulation::openFilesHandle(quint64 windowId, const QList<QUrl> urls,
 bool FileManipulation::writeToClipBoardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
 {
     QList<QUrl> redirectedFileUrls;
-    for (QUrl url : urls) {
+    for (const QUrl &url: urls) {
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
@@ -69,7 +70,7 @@ JobHandlePointer FileManipulation::moveToTrashHandle(const quint64 windowId, con
 {
     Q_UNUSED(flags)
     QList<QUrl> redirectedFileUrls;
-    for (QUrl url : sources) {
+    for (const QUrl &url : sources) {
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
@@ -83,7 +84,7 @@ JobHandlePointer FileManipulation::deletesHandle(const quint64 windowId, const Q
 {
     Q_UNUSED(flags)
     QList<QUrl> redirectedFileUrls;
-    for (QUrl url : sources) {
+    for (const QUrl &url: sources) {
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
@@ -95,15 +96,31 @@ JobHandlePointer FileManipulation::deletesHandle(const quint64 windowId, const Q
 
 JobHandlePointer FileManipulation::copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
+    QList<QUrl> actualUrls;
+    for (const QUrl &url : sources) {
+        if (FileUtils::isComputerDesktopFile(url) || FileUtils::isTrashDesktopFile(url)) {
+            continue;
+        } else {
+            actualUrls << url;
+        }
+    }
     QUrl url = delegateServIns->urlTransform(target);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, sources, url, flags, nullptr);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, actualUrls, url, flags, nullptr);
     return {};
 }
 
 JobHandlePointer FileManipulation::cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
+    QList<QUrl> actualUrls;
+    for (const QUrl &url: sources) {
+        if (FileUtils::isComputerDesktopFile(url) || FileUtils::isTrashDesktopFile(url)) {
+            continue;
+        } else {
+            actualUrls << url;
+        }
+    }
     QUrl url = delegateServIns->urlTransform(target);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, sources, url, flags, nullptr);
+    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, actualUrls, url, flags, nullptr);
     return {};
 }
 
