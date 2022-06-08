@@ -27,8 +27,12 @@
 #include "dbus/dbusdock.h"
 #include "dbus/dbusmonitor.h"
 
+#include <DApplication>
+#include <QDesktopWidget>
 #include <QGuiApplication>
 #include <QScreen>
+
+DWIDGET_USE_NAMESPACE
 
 #define SCREENOBJECT(screen) dynamic_cast<ScreenObjectWayland*>(screen)
 ScreenManagerWayland::ScreenManagerWayland(QObject *parent)
@@ -298,6 +302,13 @@ void ScreenManagerWayland::init()
     connect(DockInfoIns, &DBusDock::FrontendWindowRectChanged, this, &ScreenManagerWayland::onDockChanged);
     connect(DockInfoIns, &DBusDock::HideModeChanged, this, &ScreenManagerWayland::onDockChanged);
     //connect(DockInfoIns,&DBusDock::PositionChanged,this, &ScreenManagerWayland::onDockChanged);不关心位子改变，有bug#25148，全部由区域改变触发
+
+    // wayland缩放下增加QDesktopWidget::workAreaResized信号进行geomtry纠错
+    connect(qApp->desktop(), &QDesktopWidget::workAreaResized, this, [this]{
+        qDebug() << "workAreaResized on wayland!!!";
+        appendEvent(Geometry);
+        emit m_display->PrimaryRectChanged();
+    });
 
     //初始化屏幕
     for (auto objectPath : m_display->monitors()) {

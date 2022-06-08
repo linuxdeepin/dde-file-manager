@@ -156,7 +156,15 @@ void BackgroundManager::onScreenGeometryChanged()
             //fix bug32166 bug32205
             if (bw->geometry() == sp->geometry()) {
                 qDebug() << "background geometry is equal to screen geometry,and discard changes" << bw->geometry();
-                continue;
+
+                QWindow *bwWindow = bw->windowHandle();
+                if (bwWindow && bw->windowHandle()->geometry() != sp->geometry()) {
+                    bw->windowHandle()->setGeometry(sp->geometry());
+                    qWarning() << "background windowHandle()->geometry() is not equal to screen geometry,and discard changes" << bw->geometry();
+                } else {
+                    qInfo() << "background windowHandle()->geometry() is equal to screen geometry,background window setGeometry" << bw->geometry();
+                    continue;
+                }
             }
             qInfo() << "background geometry change from" << bw->geometry() << "to" << sp->geometry()
                     << "screen name" << sp->name();
