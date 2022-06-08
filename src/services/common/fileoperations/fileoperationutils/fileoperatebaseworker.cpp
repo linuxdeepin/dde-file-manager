@@ -72,8 +72,6 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
                                                                               const AbstractJobHandler::JobErrorType &error,
                                                                               const QString &errorMsg)
 {
-    setStat(AbstractJobHandler::JobState::kPauseState);
-
     // 判断是否有线程在处理错误,1.无，当前线程加入到处理队列，阻塞其他线程的错误处理，发送错误信号，阻塞自己。收到错误处理，恢复自己。
     // 判读是否有retry操作,当前错误处理线程就切换（错误处理线程不出队列），继续处理，外部判读处理完成就切换处理线程
     // 当前处理线程为队列的第一个对象
@@ -81,10 +79,11 @@ AbstractJobHandler::SupportAction FileOperateBaseWorker::doHandleErrorAndWait(co
 
     if (urlFrom == urlTo) {
         currentAction = AbstractJobHandler::SupportAction::kCoexistAction;
-        setStat(AbstractJobHandler::JobState::kRunningState);
         errorThreadIdQueueMutex.unlock();
         return currentAction;
     }
+
+    setStat(AbstractJobHandler::JobState::kPauseState);
 
     errorThreadIdQueue.clear();
     errorThreadIdQueue.enqueue(QThread::currentThreadId());

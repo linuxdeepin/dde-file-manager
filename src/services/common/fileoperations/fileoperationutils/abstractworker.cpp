@@ -214,6 +214,9 @@ bool AbstractWorker::workerWait()
  */
 void AbstractWorker::setStat(const AbstractJobHandler::JobState &stat)
 {
+    if (stat == AbstractJobHandler::JobState::kRunningState)
+        waitCondition.wakeAll();
+
     if (stat == currentState)
         return;
 
