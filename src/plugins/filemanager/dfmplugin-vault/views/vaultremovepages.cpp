@@ -43,6 +43,8 @@ using namespace PolkitQt1;
 DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DPVAULT_USE_NAMESPACE
+constexpr int kKeyVerifyDeleteBtn = 1;
+constexpr int kPassWordDeleteBtn = 2;
 VaultRemovePages::VaultRemovePages(QWidget *parent)
     : VaultPageBase(parent),
       passwordView(new VaultRemoveByPasswordView(this)),
@@ -200,7 +202,7 @@ void VaultRemovePages::onButtonClicked(int index)
             }
         }
 
-        // 用户权限认证(异步授权)
+        //! User authorization authentication (asynchronous authorization)
         auto ins = Authority::instance();
         ins->checkAuthorization(kPolkitVaultRemove,
                                 UnixProcessSubject(getpid()),
@@ -209,14 +211,14 @@ void VaultRemovePages::onButtonClicked(int index)
                 this, &VaultRemovePages::slotCheckAuthorizationFinished);
 
         QAbstractButton *btn;
-        //! 1050及以上版本无密钥验证
+        //! 1050 and above version without key authentication
         if (!VaultHelper::instance()->getVaultVersion()) {
-            btn = getButton(2);
+            btn = getButton(kPassWordDeleteBtn);
         } else {
-            btn = getButton(1);
+            btn = getButton(kKeyVerifyDeleteBtn);
         }
 
-        // 按钮置灰，防止用户胡乱操作
+        //! The button is grayed out to prevent users from operating indiscriminately
         if (btn)
             btn->setEnabled(false);
     } break;
@@ -230,30 +232,31 @@ void VaultRemovePages::slotCheckAuthorizationFinished(Authority::Result result)
     disconnect(Authority::instance(), &Authority::checkAuthorizationFinished,
                this, &VaultRemovePages::slotCheckAuthorizationFinished);
     if (isVisible()) {
+        QAbstractButton *btn;
+        //! 1050 and above version without key authentication
+        if (!VaultHelper::instance()->getVaultVersion()) {
+            btn = getButton(kPassWordDeleteBtn);
+        } else {
+            btn = getButton(kKeyVerifyDeleteBtn);
+        }
         PolicyManager::setVauleCurrentPageMark(PolicyManager::VaultPageMark::kDeleteVaultPage);
         if (result == Authority::Yes) {
             removeVault = true;
-            // 删除前，先置顶保险箱内拷贝、剪贴、压缩任务
+            //! Before deleting, set the copy, clip, and compress task dialog box in the vault as the top-level window.
             if (false) {
-                //! todo 待实现
-                qDebug() << "当前保险箱内是否有拷贝、剪贴、压缩任务，不能删除保险箱！";
+                //! todo to be realized
+                qDebug() << "Whether there are copying, clipping or compression tasks in the current safe, the vault cannot be deleted!";
             } else {
-                // 验证成功，先对保险箱进行上锁
+                //! The verification is successful, first lock the vault
                 VaultHelper::instance()->lockVault();
             }
-        }
-
-        QAbstractButton *btn;
-        //! 1050及以上版本无密钥验证
-        if (!VaultHelper::instance()->getVaultVersion()) {
-            btn = getButton(2);
+            //! The button is grayed out to prevent users from operating indiscriminately
+            if (btn)
+                btn->setEnabled(false);
         } else {
-            btn = getButton(1);
+            if (btn)
+                btn->setEnabled(true);
         }
-
-        // 按钮置灰，防止用户胡乱操作
-        if (btn)
-            btn->setEnabled(false);
     }
 }
 
