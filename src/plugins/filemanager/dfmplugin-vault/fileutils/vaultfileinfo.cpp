@@ -194,6 +194,11 @@ QUrl VaultFileInfo::getUrlByNewFileName(const QString &fileName) const
     return theUrl;
 }
 
+QUrl VaultFileInfo::redirectedFileUrl() const
+{
+    return url();
+}
+
 QIcon VaultFileInfo::fileIcon()
 {
     if (!dptr->proxy)

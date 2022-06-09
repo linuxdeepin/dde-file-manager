@@ -61,7 +61,9 @@ QString VaultFileIterator::fileName() const
 
 QUrl VaultFileIterator::fileUrl() const
 {
-    return QUrl::fromLocalFile(discIterator->filePath());
+    QString path = discIterator->filePath();
+    QUrl url = VaultHelper::instance()->pathToVaultVirtualUrl(path);
+    return url;
 }
 
 const AbstractFileInfoPointer VaultFileIterator::fileInfo() const

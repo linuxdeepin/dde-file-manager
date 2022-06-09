@@ -57,6 +57,7 @@ public:
     virtual QString sizeFormat() const override;
     virtual QVariantHash extraProperties() const override;
     virtual QUrl getUrlByNewFileName(const QString &fileName) const override;
+    virtual QUrl redirectedFileUrl() const override;
 
     virtual QIcon fileIcon() override;
     QString iconName() override;
