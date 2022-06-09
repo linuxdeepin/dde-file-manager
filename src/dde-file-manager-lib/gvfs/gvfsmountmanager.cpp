@@ -602,10 +602,12 @@ void GvfsMountManager::monitor_mount_removed(GVolumeMonitor *volume_monitor, GMo
         g_object_unref(root);
         emit fileSignalManager->requestCloseTab(durl);
 
-        if (qMount.mounted_root_uri().startsWith("smb://")) {
+        //smb挂载项聚合显示在侧边栏和计算机界面后，这里无需再reloadComputerModel()。请保留此处注释
+        if (!qMount.mounted_root_uri().startsWith("smb://")) {//非smb卸载才刷新计算机界面
             if (DFMApplication::genericAttribute(DFMApplication::GA_AlwaysShowOfflineRemoteConnections).toBool())
-                emit DFMApplication::instance()->reloadComputerModel();
+                emit DFMApplication::instance()->reloadComputerModel();//通过smb聚合项右键菜单批量卸载时，这里会导致卸载卡顿
         }
+
     }
 }
 
