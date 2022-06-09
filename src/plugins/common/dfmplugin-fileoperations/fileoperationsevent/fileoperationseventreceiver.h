@@ -270,7 +270,7 @@ private:
                                  const DFMBASE_NAMESPACE::Global::CreateFileType fileType, const QString suffix,
                                  const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callbackImmediately);
     bool doTouchFilePractically(const quint64 windowId, const QUrl url);
-    void saveRenameOperate(const QString &sourcesUrl, const QString &targetUrl);
+    void saveFileOperation(const QUrl &sourcesUrl, const QUrl &targetUrl, DFMBASE_NAMESPACE::GlobalEventType type);
     QUrl checkTargetUrl(const QUrl &url);
 
 private:

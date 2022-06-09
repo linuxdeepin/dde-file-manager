@@ -491,6 +491,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
 
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
                                           windowId, QList<QUrl>() << url, ok, error);
+    saveFileOperation(targetUrl, QUrl(), GlobalEventType::kDeleteFiles);
     return ok;
 }
 
@@ -537,13 +538,15 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
     }
 }
 
-void FileOperationsEventReceiver::saveRenameOperate(const QString &sourcesUrl, const QString &targetUrl)
+void FileOperationsEventReceiver::saveFileOperation(const QUrl &sourcesUrl, const QUrl &targetUrl, GlobalEventType type)
 {
+    // save operation by dbus
     QVariantMap values;
-    values.insert("event", QVariant::fromValue(static_cast<uint16_t>(GlobalEventType::kRenameFile)));
-    QStringList sources { sourcesUrl };
-    values.insert("sources", QVariant::fromValue(sources));
-    values.insert("target", targetUrl);
+    values.insert("event", QVariant::fromValue(static_cast<uint16_t>(type)));
+    QStringList lists;
+    lists << sourcesUrl.toString();
+    values.insert("sources", QVariant::fromValue(lists));
+    values.insert("target", targetUrl.toString());
     dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
 }
 
@@ -867,7 +870,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
             dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                                   windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
             if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
-                saveRenameOperate(newUrl.toString(), oldUrl.toString());
+                saveFileOperation(newUrl.toString(), oldUrl.toString(), GlobalEventType::kRenameFile);
             return ok;
         }
     }
@@ -888,7 +891,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
-        saveRenameOperate(newUrl.toString(), oldUrl.toString());
+        saveFileOperation(newUrl.toString(), oldUrl.toString(), GlobalEventType::kRenameFile);
     return ok;
 }
 
@@ -926,7 +929,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
-        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+        saveFileOperation(lastNewUrl.toString(), lastOldUrl.toString(), GlobalEventType::kRenameFile);
     }
     return ok;
 }
@@ -946,7 +949,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
-        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+        saveFileOperation(lastNewUrl.toString(), lastOldUrl.toString(), GlobalEventType::kRenameFile);
     }
 }
 
@@ -962,7 +965,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
-        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+        saveFileOperation(lastNewUrl.toString(), lastOldUrl.toString(), GlobalEventType::kRenameFile);
     }
     return ok;
 }
@@ -979,7 +982,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
-        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+        saveFileOperation(lastNewUrl.toString(), lastOldUrl.toString(), GlobalEventType::kRenameFile);
     }
 }
 
@@ -1019,17 +1022,7 @@ bool FileOperationsEventReceiver::doTouchFilePractically(const quint64 windowId,
     }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
                                  windowId, QList<QUrl>() << url, ok, error);
-
-    // save operation by dbus
-    {
-        QVariantMap values;
-        values.insert("event", QVariant::fromValue(static_cast<uint16_t>(GlobalEventType::kDeleteFiles)));
-        QStringList lists;
-        lists << url.toString();
-        values.insert("sources", QVariant::fromValue(lists));
-        values.insert("target", "");
-        dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
-    }
+    saveFileOperation(url, QUrl(), GlobalEventType::kDeleteFiles);
 
     return ok;
 }
