@@ -31,6 +31,7 @@
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/application/application.h"
 
 #include <dfm-framework/framework.h>
 
@@ -257,7 +258,11 @@ bool FileOperatorMenuScene::triggered(QAction *action)
     // open
     if (actionId == ActionID::kOpen) {
         if (!d->onDesktop && 1 == d->selectFiles.count() && d->focusFileInfo->isDir()) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, d->windowId, d->focusFile);
+            if (Application::instance()->appAttribute(Application::kAllwayOpenOnNewWindow).toBool()) {
+                dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+            } else {
+                dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, d->windowId, d->focusFile);
+            }
         } else {
             dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, d->windowId, d->selectFiles);
         }
