@@ -75,6 +75,7 @@ private:
 
 private:
     QString m_xbelPath;
+    QMap<QString, QString> m_bindPathMaps;
     DFileWatcher *m_watcher;
     QWaitCondition m_condition;
     QMutex m_xbelFileLock;
