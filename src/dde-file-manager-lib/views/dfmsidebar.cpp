@@ -970,8 +970,8 @@ void DFMSideBar::initDeviceConnection()
         bool jumpToComputerViewAfterUnmountSmb = false;
         int remainMountedCount = 0;
         bool isBathUnmuntSmb = devicesWatcher->property("isBathUnmuntSmb").toBool();//批量卸载
+        bool lastOneShareFolderRemved = false;
         if (isSmbRelatedPath){
-            bool lastOneShareFolderRemved = false;
             remainMountedCount = devicesWatcher->property("remainUnmuntSmb").toInt();//每卸载一个，这里的值会递减1
             if (remainMountedCount <=0 ){//SMB设备已经没有挂载着的共享目录了
                 //标识最后一个SMB挂载目录已被卸载，可以从侧边栏移除（具体是否可以移除，还要看配置GA_AlwaysShowOfflineRemoteConnections）
@@ -993,7 +993,7 @@ void DFMSideBar::initDeviceConnection()
                 jumpToComputerViewAfterUnmountSmb = true;
                 deviceListener->setBatchedRemovingSmbMount(false);
                 //The smb ip item data like: smb://xx.xx.xx.xx
-                this->removeItem(DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp)), this->groupName(Device));//Important!remove smb ip item from side bar.
+                emit rootFileManager->rootFileWather()->fileDeleted(DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp)));
             }
         }
         jumpToComputerViewAfterUnmountSmb = jumpToComputerViewAfterUnmountSmb && (!(isBathUnmuntSmb && remainMountedCount>0));

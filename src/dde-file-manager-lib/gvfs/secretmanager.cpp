@@ -207,8 +207,16 @@ void SecretManager::clearPasswordByLoginObj(const QJsonObject &obj)
  */
 void SecretManager::clearPassworkBySmbHost(const DUrl &smbDevice)
 {
+    DUrl temSmbDevice = smbDevice;
+    if(temSmbDevice.path().contains("smb-share") && temSmbDevice.path().endsWith(".gvfsmp")){
+        QString path = QUrl::fromPercentEncoding(temSmbDevice.path().toUtf8());
+        QString domain = path.section("domain=",-1).section(",server=",0,0);
+        temSmbDevice.setPath(domain);
+        path = path.replace(".gvfsmp","/");
+        temSmbDevice = FileUtils::durlFromLocalPath(path);
+    }
     for (auto key : m_smbLoginObjs.keys()){
-        if (key.startsWith(smbDevice.scheme()+"://") && key.contains(smbDevice.host())){
+        if (key.startsWith(temSmbDevice.scheme()+"://") && key.contains(temSmbDevice.host())){//注意：这里只匹配了scheme和host，没有匹配username
             QJsonObject smbObj = m_smbLoginObjs.value(key).toObject();//取出数据
             smbObj.insert("key",key);
 
@@ -216,7 +224,7 @@ void SecretManager::clearPassworkBySmbHost(const DUrl &smbDevice)
             obj.insert("user", smbObj.value("username").toString());//注意，相同的smb设备下面的不同共享目录，可能是不同的远端用户共享出来的
             obj.insert("domain", smbObj.value("domain").toString());
             obj.insert("protocol", DUrl(smbObj.value("id").toString()).scheme());
-            obj.insert("server", smbDevice.host());
+            obj.insert("server", temSmbDevice.host());
             obj.insert("key", smbObj.value("key").toString());
 
             clearPasswordByLoginObj(obj);
@@ -230,9 +238,17 @@ void SecretManager::clearPassworkBySmbHost(const DUrl &smbDevice)
  */
 bool SecretManager::userCheckedRememberPassword(const DUrl &smbDevice)
 {
+    DUrl temSmbDevice = smbDevice;
+    if(temSmbDevice.path().contains("smb-share") && temSmbDevice.path().endsWith(".gvfsmp")){
+        QString path = QUrl::fromPercentEncoding(temSmbDevice.path().toUtf8());
+        QString domain = path.section("domain=",-1).section(",server=",0,0);
+        temSmbDevice.setPath(domain);
+        path = path.replace(".gvfsmp","/");
+        temSmbDevice = FileUtils::durlFromLocalPath(path);
+    }
     bool savePasswordChecked = false;
     for (auto key : m_smbLoginObjs.keys()){
-        if (key.startsWith(smbDevice.toString())) {
+        if (key.startsWith(temSmbDevice.toString())) {
             QJsonObject smbObj = m_smbLoginObjs.value(key).toObject();
             savePasswordChecked = smbObj.value("savePasswordChecked").toBool();
             if(savePasswordChecked)

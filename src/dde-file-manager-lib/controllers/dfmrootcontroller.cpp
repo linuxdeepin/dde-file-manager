@@ -330,7 +330,6 @@ const QList<DAbstractFileInfoPointer> DFMRootController::getChildren(const QShar
             //以smb://x.x.x.x格式保存
             if(protocol == SMB_SCHEME){
                 RemoteMountsStashManager::insertStashedSmbDevice(QString("%1://%2").arg(protocol).arg(host));
-                QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
             }
             /*smb挂载项聚合功能中，这里不再对缓存的挂载目录创建DFMRootFileInfo对象（请保留此部分注释）
             QString path = QString("%1://%2/%3").arg(protocol).arg(host).arg(share);
