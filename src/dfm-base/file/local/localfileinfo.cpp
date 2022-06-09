@@ -71,7 +71,7 @@ LocalFileInfo::~LocalFileInfo()
 
 LocalFileInfo &LocalFileInfo::operator=(const LocalFileInfo &info)
 {
-    QReadLocker locker(&d->lock);
+    QWriteLocker locker(&d->lock);
     AbstractFileInfo::operator=(info);
     d->url = info.d->url;
     d->dfmFileInfo = info.d->dfmFileInfo;
@@ -158,8 +158,7 @@ void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
     QWriteLocker locker(&d->lock);
     if (value.isValid())
         d->dfmFileInfo->setAttribute(id, value);
-    if (d->attributes.contains(id))
-        d->attributes.remove(id);
+    d->attributes.remove(id);
 }
 /*!
  * \brief filePath 获取文件的绝对路径，含文件的名称，相当于文件的全路径
@@ -174,17 +173,20 @@ void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
  */
 QString LocalFileInfo::filePath() const
 {
-    //文件的路径
-    QReadLocker locker(&d->lock);
     QString filePath;
+    QReadLocker locker(&d->lock);
 
     if (d->attributes.count(DFileInfo::AttributeID::kStandardFilePath) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             filePath = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardFilePath, &success).toString();
         }
         if (!success)
             filePath = QFileInfo(d->url.path()).filePath();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardFilePath, filePath);
     } else {
         filePath = d->attributes.value(DFileInfo::AttributeID::kStandardFilePath).toString();
@@ -221,10 +223,12 @@ QString LocalFileInfo::absoluteFilePath() const
  */
 QString LocalFileInfo::fileName() const
 {
-    QReadLocker locker(&d->lock);
     QString fileName;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardName) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             fileName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardName, &success).toString();
@@ -237,6 +241,7 @@ QString LocalFileInfo::fileName() const
         if (!success)
             fileName = QFileInfo(d->url.path()).fileName();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardName, fileName);
     } else {
         fileName = d->attributes.value(DFileInfo::AttributeID::kStandardName).toString();
@@ -257,10 +262,12 @@ QString LocalFileInfo::fileName() const
  */
 QString LocalFileInfo::baseName() const
 {
-    QReadLocker locker(&d->lock);
     QString baseName;
+    QReadLocker locker(&d->lock);
 
     if (d->attributes.count(DFileInfo::AttributeID::kStandardBaseName) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             baseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardBaseName, &success).toString();
@@ -268,6 +275,7 @@ QString LocalFileInfo::baseName() const
         if (!success)
             baseName = QFileInfo(d->url.path()).baseName();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardBaseName, baseName);
     } else {
         baseName = d->attributes.value(DFileInfo::AttributeID::kStandardBaseName).toString();
@@ -288,10 +296,12 @@ QString LocalFileInfo::baseName() const
  */
 QString LocalFileInfo::completeBaseName() const
 {
-    QReadLocker locker(&d->lock);
     QString completeBaseName;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardCompleteBaseName) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             completeBaseName = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardCompleteBaseName, &success).toString();
@@ -299,6 +309,7 @@ QString LocalFileInfo::completeBaseName() const
         if (!success)
             completeBaseName = QFileInfo(d->url.path()).completeBaseName();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardCompleteBaseName, completeBaseName);
     } else {
         completeBaseName = d->attributes.value(DFileInfo::AttributeID::kStandardCompleteBaseName).toString();
@@ -319,10 +330,12 @@ QString LocalFileInfo::completeBaseName() const
  */
 QString LocalFileInfo::suffix() const
 {
-    QReadLocker locker(&d->lock);
     QString suffix;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardSuffix) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             suffix = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSuffix, &success).toString();
@@ -330,6 +343,7 @@ QString LocalFileInfo::suffix() const
         if (!success)
             suffix = QFileInfo(d->url.path()).suffix();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardSuffix, suffix);
     } else {
         suffix = d->attributes.value(DFileInfo::AttributeID::kStandardSuffix).toString();
@@ -350,10 +364,12 @@ QString LocalFileInfo::suffix() const
  */
 QString LocalFileInfo::completeSuffix()
 {
-    QReadLocker locker(&d->lock);
     QString completeSuffix;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardCompleteSuffix) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             completeSuffix = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardCompleteSuffix, &success).toString();
@@ -361,6 +377,7 @@ QString LocalFileInfo::completeSuffix()
         if (!success)
             completeSuffix = QFileInfo(d->url.path()).completeSuffix();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardCompleteSuffix, completeSuffix);
     } else {
         completeSuffix = d->attributes.value(DFileInfo::AttributeID::kStandardCompleteSuffix).toString();
@@ -381,10 +398,12 @@ QString LocalFileInfo::completeSuffix()
  */
 QString LocalFileInfo::path() const
 {
-    QReadLocker locker(&d->lock);
     QString path;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardParentPath) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             path = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardParentPath, &success).toString();
@@ -392,6 +411,7 @@ QString LocalFileInfo::path() const
         if (!success)
             path = QFileInfo(d->url.path()).path();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardParentPath, path);
     } else {
         path = d->attributes.value(DFileInfo::AttributeID::kStandardParentPath).toString();
@@ -412,10 +432,12 @@ QString LocalFileInfo::path() const
  */
 QString LocalFileInfo::absolutePath() const
 {
-    QReadLocker locker(&d->lock);
     QString path;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardParentPath) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             path = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardParentPath, &success).toString();
@@ -423,6 +445,7 @@ QString LocalFileInfo::absolutePath() const
         if (!success)
             path = QFileInfo(d->url.path()).absolutePath();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardParentPath, path);
     } else {
         path = d->attributes.value(DFileInfo::AttributeID::kStandardParentPath).toString();
@@ -497,10 +520,12 @@ bool LocalFileInfo::canRename() const
     if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
         return false;
 
-    QReadLocker locker(&d->lock);
     bool canRename = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kAccessCanRename) == 0) {
+        locker.unlock();
+
         canRename = SysInfoUtils::isRootUser();
         if (!canRename) {
             int result = access(this->absolutePath().toLocal8Bit().data(), W_OK);
@@ -510,6 +535,8 @@ bool LocalFileInfo::canRename() const
             if (d->dfmFileInfo)
                 canRename = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRename, nullptr).toBool();
         }
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanRename, canRename);
     } else {
         canRename = d->attributes.value(DFileInfo::AttributeID::kAccessCanRename).toBool();
@@ -539,10 +566,12 @@ bool LocalFileInfo::isReadable() const
     // todo lanxs
     // check file isprivate
 
-    QReadLocker locker(&d->lock);
     bool isReadable = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kAccessCanRead) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             isReadable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanRead, &success).toBool();
@@ -550,6 +579,7 @@ bool LocalFileInfo::isReadable() const
         if (!success)
             isReadable = QFileInfo(d->url.path()).isReadable();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanRead, isReadable);
     } else {
         isReadable = d->attributes.value(DFileInfo::AttributeID::kAccessCanRead).toBool();
@@ -570,10 +600,12 @@ bool LocalFileInfo::isReadable() const
  */
 bool LocalFileInfo::isWritable() const
 {
-    QReadLocker locker(&d->lock);
     bool isWritable = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kAccessCanWrite) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo)
             isWritable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanWrite, &success).toBool();
@@ -581,6 +613,7 @@ bool LocalFileInfo::isWritable() const
         if (!success)
             isWritable = QFileInfo(d->url.path()).isWritable();
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanWrite, isWritable);
     } else {
         isWritable = d->attributes.value(DFileInfo::AttributeID::kAccessCanWrite).toBool();
@@ -597,10 +630,12 @@ bool LocalFileInfo::isWritable() const
  */
 bool LocalFileInfo::isExecutable() const
 {
-    QReadLocker locker(&d->lock);
     bool isExecutable = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kAccessCanExecute) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             isExecutable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
@@ -627,6 +662,7 @@ bool LocalFileInfo::isExecutable() const
             }
         }
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanExecute, isExecutable);
     } else {
         isExecutable = d->attributes.value(DFileInfo::AttributeID::kAccessCanExecute).toBool();
@@ -643,13 +679,17 @@ bool LocalFileInfo::isExecutable() const
  */
 bool LocalFileInfo::isHidden() const
 {
-    QReadLocker locker(&d->lock);
     bool isHidden = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardIsHidden) == 0) {
+        locker.unlock();
+
         if (d->dfmFileInfo) {
             isHidden = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsHidden, nullptr).toBool();
         }
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardIsHidden, isHidden);
     } else {
         isHidden = d->attributes.value(DFileInfo::AttributeID::kStandardIsHidden).toBool();
@@ -672,16 +712,20 @@ bool LocalFileInfo::isHidden() const
  */
 bool LocalFileInfo::isFile() const
 {
-    QReadLocker locker(&d->lock);
     bool isFile = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardIsFile) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             isFile = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsFile, &success).toBool();
         }
         if (!success)
             isFile = QFileInfo(d->url.path()).isFile();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardIsFile, isFile);
     } else {
         isFile = d->attributes.value(DFileInfo::AttributeID::kStandardIsFile).toBool();
@@ -702,16 +746,20 @@ bool LocalFileInfo::isFile() const
  */
 bool LocalFileInfo::isDir() const
 {
-    QReadLocker locker(&d->lock);
     bool isDir = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardIsDir) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             isDir = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsDir, &success).toBool();
         }
         if (!success)
             isDir = QFileInfo(d->url.path()).isDir();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardIsDir, isDir);
     } else {
         isDir = d->attributes.value(DFileInfo::AttributeID::kStandardIsDir).toBool();
@@ -739,16 +787,20 @@ bool LocalFileInfo::isDir() const
  */
 bool LocalFileInfo::isSymLink() const
 {
-    QReadLocker locker(&d->lock);
     bool isSymLink = false;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardIsSymlink) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             isSymLink = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardIsSymlink, &success).toBool();
         }
         if (!success)
             isSymLink = QFileInfo(d->url.path()).isSymLink();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardIsSymlink, isSymLink);
     } else {
         isSymLink = d->attributes.value(DFileInfo::AttributeID::kStandardIsSymlink).toBool();
@@ -829,10 +881,12 @@ bool LocalFileInfo::canFetch() const
  */
 QString LocalFileInfo::symLinkTarget() const
 {
-    QReadLocker locker(&d->lock);
     QString symLinkTarget;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardSymlinkTarget) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             symLinkTarget = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSymlinkTarget, &success).toString();
@@ -847,6 +901,8 @@ QString LocalFileInfo::symLinkTarget() const
 
         if (!success)
             symLinkTarget = QFileInfo(d->url.path()).symLinkTarget();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardSymlinkTarget, symLinkTarget);
     } else {
         symLinkTarget = d->attributes.value(DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
@@ -869,16 +925,20 @@ QString LocalFileInfo::symLinkTarget() const
  */
 QString LocalFileInfo::owner() const
 {
-    QReadLocker locker(&d->lock);
     QString owner;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kOwnerUser) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             owner = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kOwnerUser, &success).toString();
         }
         if (!success)
             owner = QFileInfo(d->url.path()).owner();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kOwnerUser, owner);
     } else {
         owner = d->attributes.value(DFileInfo::AttributeID::kOwnerUser).toString();
@@ -897,16 +957,20 @@ QString LocalFileInfo::owner() const
  */
 uint LocalFileInfo::ownerId() const
 {
-    QReadLocker locker(&d->lock);
     uint ownerId = uint(-2);
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kUnixUID) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             ownerId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kUnixUID, &success).toUInt();
         }
         if (!success)
             ownerId = QFileInfo(d->url.path()).ownerId();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kUnixUID, ownerId);
     } else {
         ownerId = d->attributes.value(DFileInfo::AttributeID::kUnixUID).toUInt();
@@ -926,16 +990,20 @@ uint LocalFileInfo::ownerId() const
  */
 QString LocalFileInfo::group() const
 {
-    QReadLocker locker(&d->lock);
     QString group;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kOwnerGroup) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             group = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kOwnerGroup, &success).toString();
         }
         if (!success)
             group = QFileInfo(d->url.path()).group();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kOwnerGroup, group);
     } else {
         group = d->attributes.value(DFileInfo::AttributeID::kOwnerGroup).toString();
@@ -953,16 +1021,20 @@ QString LocalFileInfo::group() const
  */
 uint LocalFileInfo::groupId() const
 {
-    QReadLocker locker(&d->lock);
     uint groupId = 0;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kOwnerGroup) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             groupId = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kOwnerGroup, &success).toUInt();
         }
         if (!success)
             groupId = QFileInfo(d->url.path()).groupId();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kOwnerGroup, groupId);
     } else {
         groupId = d->attributes.value(DFileInfo::AttributeID::kOwnerGroup).toUInt();
@@ -1019,16 +1091,20 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
  */
 qint64 LocalFileInfo::size() const
 {
-    QReadLocker locker(&d->lock);
     qint64 size = 0;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardSize) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             size = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardSize, &success).value<qint64>();
         }
         if (!success)
             size = QFileInfo(d->url.path()).size();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardSize, size);
     } else {
         size = d->attributes.value(DFileInfo::AttributeID::kStandardSize).toLongLong();
@@ -1050,10 +1126,12 @@ qint64 LocalFileInfo::size() const
  */
 QDateTime LocalFileInfo::created() const
 {
-    QReadLocker locker(&d->lock);
     QDateTime time;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kTimeCreated) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             uint64_t created = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeCreated, &success).value<uint64_t>();
@@ -1062,6 +1140,8 @@ QDateTime LocalFileInfo::created() const
         }
         if (!success)
             time = QFileInfo(d->url.path()).created();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kTimeCreated, time);
     } else {
         time = d->attributes.value(DFileInfo::AttributeID::kTimeCreated).toDateTime();
@@ -1102,10 +1182,12 @@ QDateTime LocalFileInfo::birthTime() const
  */
 QDateTime LocalFileInfo::metadataChangeTime() const
 {
-    QReadLocker locker(&d->lock);
     QDateTime time;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kTimeChanged) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             uint64_t data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeChanged, &success).value<uint64_t>();
@@ -1115,6 +1197,8 @@ QDateTime LocalFileInfo::metadataChangeTime() const
         if (!success) {
             time = QFileInfo(d->url.path()).metadataChangeTime();
         }
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kTimeChanged, time);
     } else {
         time = d->attributes.value(DFileInfo::AttributeID::kTimeChanged).toDateTime();
@@ -1130,10 +1214,12 @@ QDateTime LocalFileInfo::metadataChangeTime() const
  */
 QDateTime LocalFileInfo::lastModified() const
 {
-    QReadLocker locker(&d->lock);
     QDateTime time;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kTimeModified) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             uint64_t data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeModified, &success).value<uint64_t>();
@@ -1142,6 +1228,8 @@ QDateTime LocalFileInfo::lastModified() const
         }
         if (!success)
             time = QFileInfo(d->url.path()).lastModified();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kTimeModified, time);
     } else {
         time = d->attributes.value(DFileInfo::AttributeID::kTimeModified).toDateTime();
@@ -1157,10 +1245,12 @@ QDateTime LocalFileInfo::lastModified() const
  */
 QDateTime LocalFileInfo::lastRead() const
 {
-    QReadLocker locker(&d->lock);
     QDateTime time;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kTimeAccess) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             uint64_t data = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kTimeAccess, &success).value<uint64_t>();
@@ -1169,6 +1259,8 @@ QDateTime LocalFileInfo::lastRead() const
         }
         if (!success)
             time = QFileInfo(d->url.path()).lastRead();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kTimeAccess, time);
     } else {
         time = d->attributes.value(DFileInfo::AttributeID::kTimeAccess).toDateTime();
@@ -1261,16 +1353,17 @@ bool LocalFileInfo::isRegular() const
  */
 LocalFileInfo::FileType LocalFileInfo::fileType() const
 {
-    QReadLocker locker(&d->lock);
     FileType fileType;
+
+    QReadLocker locker(&d->lock);
     if (d->fileType != MimeDatabase::FileType::kUnknown) {
         fileType = FileType(d->fileType);
         return fileType;
     }
+    locker.unlock();
 
     QString absoluteFilePath = filePath();
-    if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath))
-        && isSymLink()) {
+    if (absoluteFilePath.startsWith(StandardPaths::location(StandardPaths::kTrashFilesPath)) && isSymLink()) {
         d->fileType = MimeDatabase::FileType::kRegularFile;
         fileType = FileType(d->fileType);
         return fileType;
@@ -1281,6 +1374,7 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
     const QByteArray &nativeFilePath = QFile::encodeName(absoluteFilePath);
     QT_STATBUF statBuffer;
     if (QT_STAT(nativeFilePath.constData(), &statBuffer) == 0) {
+        QWriteLocker locker(&d->lock);
         if (S_ISDIR(statBuffer.st_mode))
             d->fileType = MimeDatabase::FileType::kDirectory;
 
@@ -1507,15 +1601,19 @@ QIcon LocalFileInfo::fileIcon()
 
 QString LocalFileInfo::iconName()
 {
-    QReadLocker locker(&d->lock);
     QString iconNameValue;
+    QReadLocker locker(&d->lock);
+
     if (d->attributes.count(DFileInfo::AttributeID::kStandardIcon) == 0) {
+        locker.unlock();
+
         if (SystemPathUtil::instance()->isSystemPath(absoluteFilePath()))
             iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(absoluteFilePath());
         if (iconNameValue.isEmpty()) {
             iconNameValue = AbstractFileInfo::iconName();
         }
 
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardIcon, iconNameValue);
     } else {
         iconNameValue = d->attributes.value(DFileInfo::AttributeID::kStandardIcon).toString();
@@ -1547,13 +1645,17 @@ quint64 LocalFileInfo::inode() const
     if (d->inode != 0) {
         return inNode;
     }
+    locker.unlock();
 
     struct stat statinfo;
     int filestat = stat(absoluteFilePath().toStdString().c_str(), &statinfo);
     if (filestat != 0) {
         return 0;
     }
-    d->inode = statinfo.st_ino;
+    {
+        QWriteLocker locker(&d->lock);
+        d->inode = statinfo.st_ino;
+    }
     return d->inode;
 }
 
@@ -1563,6 +1665,9 @@ QMimeType LocalFileInfo::fileMimeType(QMimeDatabase::MatchMode mode /*= QMimeDat
 
     QReadLocker locker(&d->lock);
     if (!d->mimeType.isValid() || d->mimeTypeMode != mode) {
+        locker.unlock();
+
+        QWriteLocker locker(&d->lock);
         d->mimeType = this->mimeType(url.path(), mode);
         d->mimeTypeMode = mode;
     }
@@ -1632,16 +1737,20 @@ bool LocalFileInfo::notifyAttributeChanged()
 
 QString LocalFileInfo::mimeTypeName()
 {
-    QReadLocker locker(&d->lock);
     QString type;
 
+    QReadLocker locker(&d->lock);
     if (d->attributes.count(DFileInfo::AttributeID::kStandardContentType) == 0) {
+        locker.unlock();
+
         bool success = false;
         if (d->dfmFileInfo) {
             type = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kStandardContentType, &success).toString();
         }
         if (!success)
             type = fileMimeType().name();
+
+        QWriteLocker locker(&d->lock);
         d->attributes.insert(DFileInfo::AttributeID::kStandardContentType, type);
     } else {
         type = d->attributes.value(DFileInfo::AttributeID::kStandardContentType).toString();
