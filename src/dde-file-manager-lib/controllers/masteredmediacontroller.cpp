@@ -330,7 +330,7 @@ DUrlList MasteredMediaController::moveToTrash(const QSharedPointer<DFMMoveToTras
             retlst.push_back(i);
         }
     }
-    fileService->deleteFiles(event->sender(), lst, false);
+    fileService->deleteFiles(event->sender(), lst, true);
 
     return retlst;
 }
