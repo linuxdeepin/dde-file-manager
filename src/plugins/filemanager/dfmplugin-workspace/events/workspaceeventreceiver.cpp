@@ -57,6 +57,11 @@ void WorkspaceEventReceiver::initConnection()
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
 
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCutFileResult,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
+    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCopyResult,
+                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
+
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kShowCustomTopWidget,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectFiles,
@@ -147,4 +152,13 @@ void WorkspaceEventReceiver::handleSetNameFilter(const quint64 windowId, const Q
 void WorkspaceEventReceiver::handleSetReadOnly(const quint64 windowId, const bool readOnly)
 {
     WorkspaceHelper::instance()->setReadOnly(windowId, readOnly);
+}
+
+void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(srcUrls)
+    Q_UNUSED(errMsg)
+
+    if (ok)
+        WorkspaceHelper::instance()->laterRequestSelectFiles(destUrls);
 }

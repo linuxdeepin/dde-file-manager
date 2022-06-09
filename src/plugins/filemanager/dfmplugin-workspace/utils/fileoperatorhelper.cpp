@@ -374,7 +374,7 @@ void FileOperatorHelper::callBackFunction(const CallbackArgus args)
 
         QUrl rootUrl = sourceUrlList.first();
         QUrl newFolder = targetUrlList.first();
-        WorkspaceHelper::instance()->setFileRename(windowID, rootUrl, newFolder);
+        WorkspaceHelper::kSelectionAndRenameFile[windowID] = qMakePair(rootUrl, newFolder);
         break;
     }
     default:

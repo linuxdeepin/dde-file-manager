@@ -111,6 +111,8 @@ void FileViewModelPrivate::doFileUpdated(const QUrl &url)
     if (info)
         info->refresh();
 
+    q->dataChanged(q->findIndex(url), q->findIndex(url));
+
     if (!updateTimer.isActive())
         updateTimer.start();
 }
@@ -162,18 +164,13 @@ void FileViewModelPrivate::doWatcherEvent()
         if (event.second == kAddFile) {
             nodeManager->insertChild(fileUrl);
 
-            if (q->newFolderList.contains(fileUrl)) {
-                q->newFolderList.removeOne(fileUrl);
-                emit q->selectAndEditFile(fileUrl);
-            } else {
-                q->addedFilesUrl.append(fileUrl);
-                FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(q)->parent());
-                if (view) {
-                    QDir::Filters filter = view->model()->getFilters();
-                    view->model()->setFilters(filter);
-                }
+            FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(q)->parent());
+            if (view) {
+                QDir::Filters filter = view->model()->getFilters();
+                view->model()->setFilters(filter);
             }
 
+            q->selectAndRenameFile(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
             dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
@@ -643,20 +640,22 @@ void FileViewModel::stopTraversWork()
         d->traversalThread->stop();
 }
 
-QList<QUrl> FileViewModel::takeAddedFiles()
+void FileViewModel::selectAndRenameFile(const QUrl &fileUrl)
 {
-    QList<QUrl> tempUrl = addedFilesUrl;
-    addedFilesUrl.clear();
-    return tempUrl;
-}
+    FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
+    if (!view)
+        return;
 
-void FileViewModel::newFolderCreated(const QUrl &url)
-{
-    if (findIndex(url).isValid()) {
-        emit selectAndEditFile(url);
-    } else {
-        if (!newFolderList.contains(url))
-            newFolderList.append(url);
+    quint64 windowId = WorkspaceHelper::instance()->windowId(view);
+
+    if (WorkspaceHelper::kSelectionAndRenameFile.contains(windowId)) {
+        if (WorkspaceHelper::kSelectionAndRenameFile[windowId].first == rootUrl()) {
+            WorkspaceHelper::kSelectionAndRenameFile[windowId] = qMakePair(QUrl(), QUrl());
+
+            QTimer::singleShot(100, this, [=] {
+                emit selectAndEditFile(fileUrl);
+            });
+        }
     }
 }
 

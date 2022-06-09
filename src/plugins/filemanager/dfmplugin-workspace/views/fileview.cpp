@@ -850,10 +850,6 @@ void FileView::onRowCountChanged()
 
 void FileView::onChildrenChanged()
 {
-    QList<QUrl> addedFiles = sourceModel()->takeAddedFiles();
-    if (!addedFiles.isEmpty())
-        selectFiles(addedFiles);
-
     updateContentLabel();
     delayUpdateStatusBar();
 }

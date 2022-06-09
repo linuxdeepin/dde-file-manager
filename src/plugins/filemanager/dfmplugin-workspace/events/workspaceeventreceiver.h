@@ -63,6 +63,8 @@ public slots:
     void handleSetNameFilter(const quint64 windowId, const QStringList &filters);
     void handleSetReadOnly(const quint64 windowId, const bool readOnly);
 
+    void handlePasteFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
+
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };

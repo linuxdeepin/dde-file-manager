@@ -34,6 +34,7 @@
 #include <dfm-framework/framework.h>
 
 #include <QDir>
+#include <QTimer>
 
 DPWORKSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -41,6 +42,9 @@ DFMBASE_USE_NAMESPACE
 
 QMap<quint64, WorkspaceWidget *> WorkspaceHelper::kWorkspaceMap {};
 QMap<QString, DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler> WorkspaceHelper::kPrehandlers {};
+
+QMap<quint64, QPair<QUrl, QUrl>> WorkspaceHelper::kSelectionAndRenameFile {};
+QMap<quint64, QPair<QUrl, QUrl>> WorkspaceHelper::kSelectionFile {};
 
 void WorkspaceHelper::registerTopWidgetCreator(const WorkspaceHelper::KeyType &scheme, const WorkspaceHelper::TopWidgetCreator &creator)
 {
@@ -279,12 +283,11 @@ int WorkspaceHelper::getViewFilter(const quint64 windowID)
     return QDir::NoFilter;
 }
 
-void WorkspaceHelper::setFileRename(const quint64 windowID, const QUrl &rootUrl, const QUrl &targetUrl)
+void WorkspaceHelper::laterRequestSelectFiles(const QList<QUrl> &urls)
 {
-    FileView *view = findFileViewByWindowID(windowID);
-    if (view && rootUrl == view->rootUrl()) {
-        view->sourceModel()->newFolderCreated(targetUrl);
-    }
+    QTimer::singleShot(qMax(urls.count() * (10 + urls.count() / 150), 200), this, [=] {
+        emit requestSelectFiles(urls);
+    });
 }
 
 WorkspaceHelper::WorkspaceHelper(QObject *parent)

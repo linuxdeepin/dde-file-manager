@@ -35,6 +35,7 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/windowutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 #include <DApplication>
 
@@ -325,6 +326,12 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
 
+void FileViewHelper::selectFiles(const QList<QUrl> &files)
+{
+    if (files.count() > 0 && UniversalUtils::urlEquals(UrlRoute::urlParent(files.first()), parent()->rootUrl()))
+        parent()->selectFiles(files);
+}
+
 void FileViewHelper::clipboardDataChanged()
 {
     if (itemDelegate()) {
@@ -355,6 +362,7 @@ void FileViewHelper::init()
     connect(qApp, &DApplication::iconThemeChanged, parent(), static_cast<void (QWidget::*)()>(&QWidget::update));
     connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &FileViewHelper::clipboardDataChanged);
     connect(parent(), &FileView::triggerEdit, this, &FileViewHelper::triggerEdit);
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSelectFiles, this, &FileViewHelper::selectFiles);
 }
 
 BaseItemDelegate *FileViewHelper::itemDelegate() const

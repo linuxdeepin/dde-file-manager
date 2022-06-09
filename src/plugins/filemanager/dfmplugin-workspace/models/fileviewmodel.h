@@ -99,9 +99,8 @@ public:
 
     void traversCurrDir();
     void stopTraversWork();
-    QList<QUrl> takeAddedFiles();
 
-    void newFolderCreated(const QUrl &url);
+    void selectAndRenameFile(const QUrl &fileUrl);
 
 public slots:
     void onFilesUpdated();
@@ -111,10 +110,6 @@ signals:
     void modelChildrenUpdated();
     void updateFiles();
     void selectAndEditFile(const QUrl &url);
-
-private:
-    QList<QUrl> addedFilesUrl;
-    QList<QUrl> newFolderList;
 };
 
 DPWORKSPACE_END_NAMESPACE

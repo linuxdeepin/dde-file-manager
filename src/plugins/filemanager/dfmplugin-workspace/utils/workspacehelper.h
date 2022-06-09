@@ -41,6 +41,7 @@ QT_BEGIN_NAMESPACE
 class QFrame;
 QT_END_NAMESPACE
 DPWORKSPACE_BEGIN_NAMESPACE
+
 class CustomTopWidgetInterface;
 class WorkspaceWidget;
 class FileView;
@@ -96,13 +97,17 @@ public:
 
     int getViewFilter(const quint64 windowID);
 
-    void setFileRename(const quint64 windowID, const QUrl &rootUrl, const QUrl &targetUrl);
+    void laterRequestSelectFiles(const QList<QUrl> &urls);
+
+    static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
+    static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
 signals:
     void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);
     void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void requestSelectFiles(const QList<QUrl> &urlList);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
