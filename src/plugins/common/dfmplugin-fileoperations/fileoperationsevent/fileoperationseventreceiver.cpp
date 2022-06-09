@@ -920,8 +920,11 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, successUrls.values(), ok, error);
-    if (!successUrls.isEmpty())
-        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
+    if (!successUrls.isEmpty()) {
+        QUrl lastOldUrl = successUrls.lastKey();
+        QUrl lastNewUrl = successUrls.value(lastOldUrl);
+        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+    }
     return ok;
 }
 
@@ -937,8 +940,11 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     const QList<QUrl> &lists = successUrls.values();
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, lists, ok, error);
-    if (!successUrls.isEmpty())
-        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
+    if (!successUrls.isEmpty()) {
+        QUrl lastOldUrl = successUrls.lastKey();
+        QUrl lastNewUrl = successUrls.value(lastOldUrl);
+        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
@@ -950,8 +956,11 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, successUrls.values(), ok, error);
-    if (!successUrls.isEmpty())
-        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
+    if (!successUrls.isEmpty()) {
+        QUrl lastOldUrl = successUrls.lastKey();
+        QUrl lastNewUrl = successUrls.value(lastOldUrl);
+        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+    }
     return ok;
 }
 
@@ -964,8 +973,11 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, urls, lists, ok, error);
-    if (!successUrls.isEmpty())
-        saveRenameOperate(successUrls.lastKey().toString(), successUrls[successUrls.lastKey()].toString());
+    if (!successUrls.isEmpty()) {
+        QUrl lastOldUrl = successUrls.lastKey();
+        QUrl lastNewUrl = successUrls.value(lastOldUrl);
+        saveRenameOperate(lastNewUrl.toString(), lastOldUrl.toString());
+    }
 }
 
 bool FileOperationsEventReceiver::handleOperationMkdir(const quint64 windowId, const QUrl url)
