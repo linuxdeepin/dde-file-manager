@@ -874,6 +874,12 @@ void FileView::setFilterCallback(const quint64 windowID, const QUrl &url, const 
     }
 }
 
+void FileView::trashStateChanged()
+{
+    if (Q_LIKELY(sourceModel()))
+        sourceModel()->update();
+}
+
 bool FileView::edit(const QModelIndex &index, QAbstractItemView::EditTrigger trigger, QEvent *event)
 {
     return DListView::edit(index, trigger, event);
@@ -1415,6 +1421,7 @@ void FileView::initializeConnect()
     connect(d->statusBar->scalingSlider(), &QSlider::valueChanged, this, &FileView::onScalingValueChanged);
     connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &FileView::updateModelActiveIndex);
 
+    connect(sourceModel(), &FileViewModel::dataChanged, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::updateFiles, this, &FileView::updateView);
     connect(sourceModel(), &FileViewModel::stateChanged, this, &FileView::onModelStateChanged);
     connect(sourceModel(), &FileViewModel::modelChildrenUpdated, this, &FileView::onChildrenChanged);

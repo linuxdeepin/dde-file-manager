@@ -42,6 +42,8 @@
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
 
+#include <dfm-framework/dpf.h>
+
 #include <DHorizontalLine>
 #include <DApplicationHelper>
 
@@ -310,7 +312,7 @@ dfm_service_common::FileOperationsService *TrashHelper::fileOperationsServIns()
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
 }
 
-void TrashHelper::trashFilesChanged(const QUrl &url)
+void TrashHelper::onTrashStateChanged()
 {
     if (isEmpty() == isTrashEmpty)
         return;
@@ -327,17 +329,12 @@ TrashHelper::TrashHelper(QObject *parent)
     : QObject(parent),
       isTrashEmpty(isEmpty())
 {
-    initTrashWatcher();
+    initEvent();
 }
 
-void TrashHelper::initTrashWatcher()
+void TrashHelper::initEvent()
 {
-    QUrl trashFilesUrl;
-    trashFilesUrl.setScheme(Global::kFile);
-    trashFilesUrl.setPath(StandardPaths::location(StandardPaths::kTrashFilesPath));
-
-    trashFileWatcher = new LocalFileWatcher(trashFilesUrl, this);
-    connect(trashFileWatcher, &LocalFileWatcher::subfileCreated, this, &TrashHelper::trashFilesChanged);
-    connect(trashFileWatcher, &LocalFileWatcher::fileDeleted, this, &TrashHelper::trashFilesChanged);
-    trashFileWatcher->startWatcher();
+    bool resutl = dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &TrashHelper::onTrashStateChanged);
+    if (!resutl)
+        qWarning() << "subscribe signal_TrashCore_TrashStateChanged from dfmplugin_trashcore is failed.";
 }

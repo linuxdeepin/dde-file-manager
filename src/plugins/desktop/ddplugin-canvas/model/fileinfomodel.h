@@ -49,6 +49,7 @@ public:
     Q_INVOKABLE QUrl fileUrl(const QModelIndex &index) const;
     Q_INVOKABLE QList<QUrl> files() const;
     Q_INVOKABLE void refresh(const QModelIndex &parent);
+    Q_INVOKABLE void update();
 public:
     QModelIndex index(int row, int column = 0,
                       const QModelIndex &parent = QModelIndex()) const override;

@@ -332,6 +332,11 @@ void FileViewHelper::selectFiles(const QList<QUrl> &files)
         parent()->selectFiles(files);
 }
 
+void FileViewHelper::handleTrashStateChanged()
+{
+    parent()->trashStateChanged();
+}
+
 void FileViewHelper::clipboardDataChanged()
 {
     if (itemDelegate()) {
@@ -363,6 +368,7 @@ void FileViewHelper::init()
     connect(ClipBoard::instance(), &ClipBoard::clipboardDataChanged, this, &FileViewHelper::clipboardDataChanged);
     connect(parent(), &FileView::triggerEdit, this, &FileViewHelper::triggerEdit);
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSelectFiles, this, &FileViewHelper::selectFiles);
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged, this, &FileViewHelper::handleTrashStateChanged);
 }
 
 BaseItemDelegate *FileViewHelper::itemDelegate() const

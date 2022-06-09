@@ -40,6 +40,7 @@ class WorkspaceEventReceiver final : public QObject
     Q_DISABLE_COPY(WorkspaceEventReceiver)
 
 public:
+    ~WorkspaceEventReceiver();
     static WorkspaceEventReceiver *instance();
 
     void initConnection();

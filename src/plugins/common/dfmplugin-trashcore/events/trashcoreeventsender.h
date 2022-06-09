@@ -1,10 +1,9 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             liuyangming<liuyangming@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef TRASHCOREPLUGIN_H
-#define TRASHCOREPLUGIN_H
+#ifndef TRASHCOREEVENTSENDER_H
+#define TRASHCOREEVENTSENDER_H
 
 #include "dfmplugin_trashcore_global.h"
+#include "dfm_base_global.h"
 
-#include <dfm-framework/dpf.h>
+#include <QObject>
+
+DFMBASE_BEGIN_NAMESPACE
+class LocalFileWatcher;
+DFMBASE_END_NAMESPACE
 
 DPTRASHCORE_BEGIN_NAMESPACE
-class TrashCore : public dpf::Plugin
+
+class TrashCoreEventSender final : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "trashcore.json")
+    Q_DISABLE_COPY(TrashCoreEventSender)
 
-    DPF_EVENT_NAMESPACE(DPTRASHCORE_NAMESPACE)
-    DPF_EVENT_REG_SIGNAL(signal_TrashCore_TrashStateChanged)
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual dpf::Plugin::ShutdownFlag stop() override;
+    static TrashCoreEventSender *instance();
+
+private slots:
+    void sendTrashStateChanged();
+
+private:
+    explicit TrashCoreEventSender(QObject *parent = nullptr);
+    void initTrashWatcher();
+
+private:
+    DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher = nullptr;
 };
+
 DPTRASHCORE_END_NAMESPACE
 
-#endif   // TRASHCOREPLUGIN_H
+#endif   // TRASHCOREEVENTSENDER_H

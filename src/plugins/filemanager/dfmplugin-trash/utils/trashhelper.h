@@ -32,7 +32,6 @@
 #include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/utils/clipboard.h"
-#include "dfm-base/dfm_global_defines.h"
 
 #include <QUrl>
 #include <QIcon>
@@ -90,15 +89,12 @@ public:
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 
-signals:
-    void trashStateChanged(bool isEmpty);
-
 private:
-    void trashFilesChanged(const QUrl &url);
+    void onTrashStateChanged();
 
 private:
     explicit TrashHelper(QObject *parent = nullptr);
-    void initTrashWatcher();
+    void initEvent();
 
 private:
     DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher { nullptr };

@@ -40,6 +40,12 @@ WorkspaceEventReceiver::WorkspaceEventReceiver(QObject *parent)
 {
 }
 
+WorkspaceEventReceiver::~WorkspaceEventReceiver()
+{
+    dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
+                                   WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
+}
+
 WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
 {
     static WorkspaceEventReceiver receiver;
@@ -48,6 +54,8 @@ WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
 
 void WorkspaceEventReceiver::initConnection()
 {
+    dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
+                                   WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_CloseTab",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
 

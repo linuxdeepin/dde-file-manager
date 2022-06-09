@@ -23,6 +23,7 @@
 #include "utils/trashcorehelper.h"
 #include "events/trashcoreunicastreceiver.h"
 #include "events/trashcoreeventreceiver.h"
+#include "events/trashcoreeventsender.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
 #include "services/common/trash/trash_defines.h"
@@ -32,6 +33,7 @@ DPTRASHCORE_USE_NAMESPACE
 void TrashCore::initialize()
 {
     TrashCoreUnicastReceiver::instance()->connectService();
+    TrashCoreEventSender::instance();
 }
 
 bool TrashCore::start()

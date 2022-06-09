@@ -151,6 +151,7 @@ public slots:
     void onChildrenChanged();
     void setFilterData(const quint64 windowID, const QUrl &url, const QVariant &data);
     void setFilterCallback(const quint64 windowID, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void trashStateChanged();
 
     void onSelectAndEdit(const QUrl &url);
 

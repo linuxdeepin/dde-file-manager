@@ -108,6 +108,7 @@ signals:
     void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
     void requestSelectFiles(const QList<QUrl> &urlList);
+    void trashStateChanged();
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);

@@ -190,6 +190,7 @@ bool FileViewModelPrivate::checkFileEventQueue()
 FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel(parent), d(new FileViewModelPrivate(this))
 {
+
 }
 
 FileViewModel::~FileViewModel()
@@ -379,6 +380,22 @@ void FileViewModel::clear()
     d->nodeManager->clearChildren();
     endRemoveRows();
 }
+
+void FileViewModel::update()
+{
+    if (0 == d->nodeManager->childrenCount())
+        return;
+
+    for (int i = 0; i < d->nodeManager->childrenCount(); ++i) {
+        auto child = d->nodeManager->childByIndex(i);
+        if (Q_UNLIKELY(!child))
+            continue;
+        child->refresh();
+    }
+
+    emit dataChanged(index(0, columnCount()), index(d->nodeManager->childrenCount(), columnCount()));
+}
+
 /*!
  * \brief FileViewModel::rowCountMaxShow
  * \return int 当前view最多展示多少行的item项

@@ -301,6 +301,14 @@ void FileInfoModel::refresh(const QModelIndex &parent)
     d->fileProvider->refresh(d->filters);
 }
 
+void FileInfoModel::update()
+{
+    for (auto itor = d->fileMap.begin(); itor != d->fileMap.end(); ++itor)
+        itor.value()->refresh();
+
+    emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
+}
+
 QModelIndex FileInfoModel::parent(const QModelIndex &child) const
 {
     if (child != rootIndex() && child.isValid())

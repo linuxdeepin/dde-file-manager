@@ -63,6 +63,7 @@ public:
 public slots:
     void handleCommitData(QWidget *editor) const;
     void selectFiles(const QList<QUrl> &files);
+    void handleTrashStateChanged();
 
 private slots:
     void clipboardDataChanged();

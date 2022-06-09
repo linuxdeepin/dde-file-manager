@@ -74,6 +74,7 @@ public:
 
     QModelIndex setRootUrl(const QUrl &url);
     void clear();
+    void update();
     int rowCountMaxShow();
 
     AbstractFileWatcherPointer fileWatcher() const;

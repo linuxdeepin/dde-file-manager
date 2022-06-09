@@ -28,10 +28,11 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 #include "dfm-base/dfm_desktop_defines.h"
-#include "base/schemefactory.h"
-#include "base/application/application.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/utils/fileutils.h"
 
-#include "dfm-framework/framework.h"
+#include <dfm-framework/framework.h>
 
 #include <QCoreApplication>
 
@@ -61,6 +62,7 @@ CanvasManager::~CanvasManager()
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
     CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
     CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
 }
 
 CanvasManager *CanvasManager::instance()
@@ -97,6 +99,7 @@ void CanvasManager::init()
     CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
     CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
     CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &CanvasManager::onGeometryChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
 
     // self hook
     d->hookIfs = new CanvasManagerHook(this);
@@ -569,4 +572,9 @@ void CanvasManager::onChangeIconLevel(bool increase)
     int currentLevel = delegate->iconLevel();
     currentLevel = increase ? currentLevel + 1 : currentLevel - 1;
     setIconLevel(currentLevel);
+}
+
+void CanvasManager::onTrashStateChanged()
+{
+    d->sourceModel->update();
 }
