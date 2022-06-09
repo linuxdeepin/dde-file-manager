@@ -48,7 +48,7 @@
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="40"/>
         <source>Tiny</source>
-        <translation>Bardzo małe</translation>
+        <translation>Maleńkie</translation>
     </message>
     <message>
         <location filename="../view/desktopitemdelegate.cpp" line="41"/>
