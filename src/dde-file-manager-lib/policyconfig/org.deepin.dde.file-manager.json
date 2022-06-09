@@ -13,6 +13,17 @@
             "permissions":"readwrite",
             "visibility":"private"
         },
+        "dfm.recent.hidden":{
+            "value":true,
+            "serial":0,
+            "flags":[],
+            "name":"隐藏最近使用",
+            "name[zh_CN]":"隐藏最近使用",
+            "description[zh_CN]":"该配置项用于配置隐藏侧边栏的最近使用条目,true代表隐藏，false代表显示。",
+            "description":"This configuration item is used to configure disk hiding,this array contains the UUID of the disk that you want to hide.",
+            "permissions":"readwrite",
+            "visibility":"private"
+        },
         "bookmark":{
             "value":[],
             "serial":0,
