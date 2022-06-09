@@ -356,12 +356,12 @@
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="263"/>
         <source>My Favorites</source>
-        <translation type="unfinished"/>
+        <translation>Favorits:</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="364"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"/>
+        <translation>Encara no hi ha cap favorit.</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="326"/>

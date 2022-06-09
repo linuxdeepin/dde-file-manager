@@ -339,7 +339,7 @@
         <location filename="../dialogs/connecttoserverdialog.cpp" line="190"/>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="262"/>
         <source>Favorite</source>
-        <translation type="unfinished"/>
+        <translation>Favori</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="253"/>
@@ -356,12 +356,12 @@
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="263"/>
         <source>My Favorites</source>
-        <translation type="unfinished"/>
+        <translation>Favorilerim</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="364"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"/>
+        <translation>Henüz favori yok</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="326"/>
@@ -2434,7 +2434,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="127"/>
         <location filename="../configure/global-setting-template.js" line="127"/>
         <source>Mix sorting of files and folders</source>
-        <translation type="unfinished"/>
+        <translation>Dosya ve klasörlerin sıralanmasını karıştır</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="135"/>
@@ -2497,7 +2497,7 @@
         <location filename="../configure/global-setting-template-pro.js" line="239"/>
         <location filename="../configure/global-setting-template.js" line="238"/>
         <source>Music preview</source>
-        <translation type="unfinished"/>
+        <translation>Müzik önizlemesi</translation>
     </message>
     <message>
         <location filename="../configure/global-setting-template-fedora.js" line="263"/>

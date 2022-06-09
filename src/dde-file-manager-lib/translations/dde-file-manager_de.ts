@@ -339,7 +339,7 @@
         <location filename="../dialogs/connecttoserverdialog.cpp" line="190"/>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="262"/>
         <source>Favorite</source>
-        <translation type="unfinished"/>
+        <translation>Favorit</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="253"/>
@@ -356,12 +356,12 @@
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="263"/>
         <source>My Favorites</source>
-        <translation type="unfinished"/>
+        <translation>Meine Favoriten</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="364"/>
         <source>No favorites yet</source>
-        <translation type="unfinished"/>
+        <translation>Noch keine Favoriten</translation>
     </message>
     <message>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="326"/>
