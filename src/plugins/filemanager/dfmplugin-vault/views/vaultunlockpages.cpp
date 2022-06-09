@@ -58,7 +58,7 @@ VaultUnlockPages::VaultUnlockPages(QWidget *parent)
 {
 
     setIcon(QIcon::fromTheme("dfm_vault"));
-    setMinimumSize(396, 244);
+    setMinimumSize(396, 270);
     connect(this, &VaultUnlockPages::buttonClicked, this, &VaultUnlockPages::onButtonClicked);
     setOnButtonClickedClose(false);
 }
