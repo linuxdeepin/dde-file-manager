@@ -54,6 +54,7 @@ private:
 private slots:
     void onBurnButtonClicked();
     void onStagingFileStatisticsFinished();
+    void onDiscUnmounted(const QUrl &url);
 
 private:
     QHBoxLayout *layout { nullptr };
@@ -62,7 +63,9 @@ private:
     QLabel *lbUDFSupport { nullptr };
     DTK_WIDGET_NAMESPACE::DPushButton *pbBurn { nullptr };
     QSvgWidget *iconCaution { nullptr };
+    bool disableNotify { false };
 
+    QUrl curUrl;
     QString devId;
     QString curFS;
     QString curFSVersion;

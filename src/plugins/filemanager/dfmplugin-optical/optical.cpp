@@ -23,6 +23,7 @@
 #include "optical.h"
 #include "utils/opticalhelper.h"
 #include "utils/opticalfileshelper.h"
+#include "utils/opticalsignalmanager.h"
 #include "mastered/masteredmediafileinfo.h"
 #include "mastered/masteredmediafilewatcher.h"
 #include "mastered/masteredmediadiriterator.h"
@@ -58,15 +59,16 @@ void Optical::initialize()
             Qt::DirectConnection);
 
     connect(DevProxyMng, &DeviceProxyManager::blockDevUnmounted,
-            this, &Optical::onDeviceUnmounted, Qt::DirectConnection);
-    connect(DevProxyMng, &DeviceProxyManager::blockDevRemoved,
-            this, &Optical::onDeviceUnmounted, Qt::DirectConnection);
+            this, [this](const QString &id) {
+                onDeviceChanged(id, true);
+            },
+            Qt::DirectConnection);
     // for blank disc
     connect(DevProxyMng, &DeviceProxyManager::blockDevPropertyChanged, this,
             [this](const QString &id, const QString &property, const QVariant &val) {
                 if (id.contains(QRegularExpression("/sr[0-9]*$"))
                     && property == GlobalServerDefines::DeviceProperty::kOptical && !val.toBool()) {
-                    onDeviceUnmounted(id);
+                    onDeviceChanged(id);
                 }
             },
             Qt::DirectConnection);
@@ -190,11 +192,13 @@ void Optical::bindEvents()
                             &OpticalEventReceiver::handleDeleteFilesShortcut);
 }
 
-void Optical::onDeviceUnmounted(const QString &id)
+void Optical::onDeviceChanged(const QString &id, bool isUnmount)
 {
     if (id.contains(QRegularExpression("sr[0-9]*$"))) {
         const QString &&volTag { id.mid(id.lastIndexOf("/") + 1) };
         QUrl url { QString("burn:///dev/%1/disc_files/").arg(volTag) };
+        if (isUnmount)
+            emit OpticalSignalManager::instance()->discUnmounted(url);
         dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", url);
     }
 }

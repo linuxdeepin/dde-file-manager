@@ -20,39 +20,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef OPTICAL_H
-#define OPTICAL_H
+#include "opticalsignalmanager.h"
 
-#include "dfmplugin_optical_global.h"
+DPOPTICAL_USE_NAMESPACE
 
-#include <dfm-framework/framework.h>
-
-DPOPTICAL_BEGIN_NAMESPACE
-
-class Optical : public dpf::Plugin
+OpticalSignalManager *OpticalSignalManager::instance()
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "optical.json")
+    static OpticalSignalManager ins;
+    return &ins;
+}
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-    virtual ShutdownFlag stop() override;
-
-private:
-    void addOpticalCrumbToTitleBar();
-    void addFileOperations();
-    void addCustomTopWidget();
-    void addDelegateSettings();
-    void addPropertySettings();
-
-private:
-    void bindEvents();
-
-private slots:
-    void onDeviceChanged(const QString &id, bool isUnmount = false);
-};
-
-DPOPTICAL_END_NAMESPACE
-
-#endif   // OPTICAL_H
+OpticalSignalManager::OpticalSignalManager(QObject *parent)
+    : QObject(parent)
+{
+}

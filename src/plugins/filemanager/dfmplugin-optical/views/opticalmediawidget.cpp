@@ -23,10 +23,12 @@
 #include "opticalmediawidget.h"
 
 #include "utils/opticalhelper.h"
+#include "utils/opticalsignalmanager.h"
 #include "events/opticaleventcaller.h"
 
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/devicemanager.h"
@@ -53,6 +55,7 @@ OpticalMediaWidget::OpticalMediaWidget(QWidget *parent)
 
 bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
 {
+    curUrl = url;
     QString dev { OpticalHelper::burnDestDevice(url) };
     devId = { DeviceUtils::getBlockDeviceId(dev) };
     auto &&map = DevProxyMng->queryBlockInfo(devId);
@@ -83,6 +86,7 @@ bool OpticalMediaWidget::updateDiscInfo(const QUrl &url, bool retry)
         });
     }
 
+    disableNotify = false;
     curMnt = mnt;
     curFS = qvariant_cast<QString>(map[DeviceProperty::kFileSystem]);
     curFSVersion = qvariant_cast<QString>(map[DeviceProperty::kFsVersion]);
@@ -136,6 +140,7 @@ void OpticalMediaWidget::initConnect()
 {
     connect(pbBurn, &QPushButton::clicked, this, &OpticalMediaWidget::onBurnButtonClicked);
     connect(statisticWorker, &FileStatisticsJob::finished, this, &OpticalMediaWidget::onStagingFileStatisticsFinished);
+    connect(OpticalSignalManager::instance(), &OpticalSignalManager::discUnmounted, this, &OpticalMediaWidget::onDiscUnmounted);
 }
 
 void OpticalMediaWidget::updateUi()
@@ -174,6 +179,12 @@ void OpticalMediaWidget::handleErrorMount()
         QUrl jumpUrl { UrlRoute::rootUrl(Global::kComputer) };
         window->cd(jumpUrl);
     }
+
+    if (disableNotify) {
+        disableNotify = false;
+        return;
+    }
+
     DialogManagerInstance->showErrorDialog(tr("Mounting failed"), {});
 }
 
@@ -259,4 +270,12 @@ void OpticalMediaWidget::onStagingFileStatisticsFinished()
     auto id = OpticalHelper::winServIns()->findWindowId(this);
     auto window = OpticalHelper::winServIns()->findWindowById(id);
     OpticalEventCaller::sendOpenBurnDlg(curDev, isSupportedUDF(), window);
+}
+
+void OpticalMediaWidget::onDiscUnmounted(const QUrl &url)
+{
+    if (UniversalUtils::urlEquals(curUrl, url))
+        disableNotify = true;
+    else
+        disableNotify = false;
 }
