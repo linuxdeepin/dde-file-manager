@@ -809,27 +809,12 @@ bool FileOperateBaseWorker::doCheckNewFile(const AbstractFileInfoPointer &fromIn
     return true;
 }
 
-bool FileOperateBaseWorker::doCheckFileFreeSpace(const qint64 &size)
-{
-    if (!targetStorageInfo) {
-        targetStorageInfo.reset(new StorageInfo(targetUrl.path()));
-    } else {
-        targetStorageInfo->refresh();
-    }
-
-    const qint64 sizeTotal = targetStorageInfo->bytesTotal();
-    if (sizeTotal <= 0) {
-        qWarning() << "get bytesTotal failed, size: " << sizeTotal;
-        return true;   // invalid size, maybe can not read
-    }
-    return targetStorageInfo->bytesAvailable() >= size;
-}
-
 bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *workContinue)
 {
     AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
-    while (!doCheckFileFreeSpace(fromInfo->size())) {
+    bool skip = false;
+    while (!checkDiskSpaceAvailable(fromInfo->url(), toInfo->url(), targetStorageInfo, &skip)) {
         action = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kNotEnoughSpaceError);
         if (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction) {
             continue;

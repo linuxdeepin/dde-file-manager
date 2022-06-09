@@ -161,9 +161,14 @@ QByteArray StorageInfo::fileSystemType() const
  */
 qint64 StorageInfo::bytesTotal() const
 {
-
-    if (dataInfo->gioInfo)
-        return static_cast<qint64>(g_file_info_get_attribute_uint64(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE));
+    if (dataInfo->gioInfo) {
+        if (g_file_info_has_attribute(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE)) {
+            return static_cast<qint64>(g_file_info_get_attribute_uint64(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE));
+        } else {
+            qInfo() << "file do not support G_FILE_ATTRIBUTE_FILESYSTEM_SIZE, returns max of qint64";
+            return std::numeric_limits<qint64>::max();
+        }
+    }
 
     return QStorageInfo::bytesTotal();
 }
@@ -173,11 +178,14 @@ qint64 StorageInfo::bytesTotal() const
  */
 qint64 StorageInfo::bytesFree() const
 {
-
     if (dataInfo->gioInfo) {
-        quint64 used = g_file_info_get_attribute_uint64(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
-
-        return bytesTotal() - static_cast<qint64>(used);
+        if (g_file_info_has_attribute(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED)) {
+            quint64 used = g_file_info_get_attribute_uint64(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_USED);
+            return bytesTotal() - static_cast<qint64>(used);
+        } else {
+            qInfo() << "file do not support G_FILE_ATTRIBUTE_FILESYSTEM_USED, returns max of qint64";
+            return std::numeric_limits<qint64>::max();
+        }
     }
 
     return QStorageInfo::bytesFree();
@@ -188,9 +196,13 @@ qint64 StorageInfo::bytesFree() const
  */
 qint64 StorageInfo::bytesAvailable() const
 {
-
     if (dataInfo->gioInfo) {
-        return static_cast<qint64>(g_file_info_get_attribute_uint64(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE));
+        if (g_file_info_has_attribute(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE)) {
+            return static_cast<qint64>(g_file_info_get_attribute_uint64(dataInfo->gioInfo, G_FILE_ATTRIBUTE_FILESYSTEM_FREE));
+        } else {
+            qInfo() << "file do not support G_FILE_ATTRIBUTE_FILESYSTEM_FREE, returns max of qint64";
+            return std::numeric_limits<qint64>::max();
+        }
     }
 
     return QStorageInfo::bytesAvailable();

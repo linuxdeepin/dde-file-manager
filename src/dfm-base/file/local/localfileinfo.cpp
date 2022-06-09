@@ -20,15 +20,16 @@
  */
 #include "localfileinfo.h"
 #include "private/localfileinfo_p.h"
-#include "base/urlroute.h"
-#include "base/standardpaths.h"
-#include "base/schemefactory.h"
-#include "utils/fileutils.h"
-#include "utils/systempathutil.h"
-#include "utils/chinese2pinyin.h"
+
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/standardpaths.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/utils/dthumbnailprovider.h"
-#include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/base/application/application.h"
@@ -604,9 +605,27 @@ bool LocalFileInfo::isExecutable() const
         if (d->dfmFileInfo) {
             isExecutable = d->dfmFileInfo->attribute(DFileInfo::AttributeID::kAccessCanExecute, &success).toBool();
         }
-        if (!success)
+        if (!success) {
             qWarning() << "cannot obtain the property kAccessCanExecute of" << d->url;
-        //            isExecutable = QFileInfo(d->url.path()).isExecutable(); // cannot obtain correct property of gvfs file, submit an issue to Qt group.
+            if (FileUtils::isGvfsFile(this->url())) {
+                qInfo() << "trying to get isExecutable by judging whether the dir can be iterated" << d->url;
+                struct dirent *next { nullptr };
+                DIR *dirp = opendir(absoluteFilePath().toUtf8().constData());
+                if (!dirp) {
+                    isExecutable = false;
+                } else {
+                    errno = 0;
+                    next = readdir(dirp);
+                    closedir(dirp);
+                    isExecutable = (next || errno == 0);
+                }
+                qInfo() << "dir can be iterated? " << isExecutable << d->url;
+            } else {
+                // cannot obtain correct property of gvfs file, it's a bug of GVFS
+                // see detail in https://bugreports.qt.io/browse/QTBUG-104027
+                isExecutable = QFileInfo(d->url.path()).isExecutable();
+            }
+        }
 
         d->attributes.insert(DFileInfo::AttributeID::kAccessCanExecute, isExecutable);
     } else {

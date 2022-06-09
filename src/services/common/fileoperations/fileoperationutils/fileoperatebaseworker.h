@@ -61,7 +61,6 @@ public:
     bool doCheckNewFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                         AbstractFileInfoPointer &newTargetInfo, QString &fileNewName,
                         bool *workContinue, bool isCountSize = false);
-    bool doCheckFileFreeSpace(const qint64 &size);
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl,
                                  QSharedPointer<StorageInfo> targetStorageInfo, bool *result);
     bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *result);
