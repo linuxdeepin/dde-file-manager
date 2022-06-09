@@ -27,6 +27,7 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/device/deviceutils.h"
 
 #include <dfm-framework/framework.h>
 #include <dfm-burn/dburn_global.h>
@@ -81,13 +82,11 @@ QUrl OpticalHelper::localDiscFile(const QUrl &dest)
 {
     using namespace GlobalServerDefines;
 
-    QString devFile { OpticalHelper::burnDestDevice(dest) };
+    QString &&devFile { OpticalHelper::burnDestDevice(dest) };
     if (devFile.isEmpty())
         return {};
 
-    QString id { DeviceUtils::getBlockDeviceId(devFile) };
-    auto &&map = DevProxyMng->queryBlockInfo(id);
-    QString mntPoint { qvariant_cast<QString>(map[DeviceProperty::kMountPoint]) };
+    QString &&mntPoint { DeviceUtils::getMountPointOfDevice(devFile) };
     if (mntPoint.isEmpty())
         return {};
 

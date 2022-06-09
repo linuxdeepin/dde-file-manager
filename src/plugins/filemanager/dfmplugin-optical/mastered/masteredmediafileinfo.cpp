@@ -190,17 +190,11 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
         return;
 
     if (OpticalHelper::burnIsOnDisc(url)) {
-        QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url)) };
-        // TODO(zhangs) optimize the invokation
-        devInfoMap = DevProxyMng->queryBlockInfo(id);
-        bool opticalBlank { qvariant_cast<bool>(devInfoMap[DeviceProperty::kOpticalBlank]) };
-        if (opticalBlank)
-            return;
-        QString mnt { qvariant_cast<QString>(devInfoMap[DeviceProperty::kMountPoint]) };
+        QString &&devFile { OpticalHelper::burnDestDevice(url) };
+        QString &&mnt { DeviceUtils::getMountPointOfDevice(devFile) };
         if (mnt.isEmpty())
-            backerUrl = QUrl();
-        else
-            backerUrl = QUrl::fromLocalFile(mnt + OpticalHelper::burnFilePath(url));
+            return;
+        backerUrl = QUrl::fromLocalFile(mnt + OpticalHelper::burnFilePath(url));
     } else {
         backerUrl = OpticalHelper::localStagingFile(url);
     }
