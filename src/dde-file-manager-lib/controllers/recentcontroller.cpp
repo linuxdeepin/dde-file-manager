@@ -462,7 +462,7 @@ bool RecentController::createSymlink(const QSharedPointer<DFMCreateSymlinkEvent>
 
 bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) const
 {
-    DThreadUtil::runInMainThread([event] {
+    DThreadUtil::runInMainThread([event, this] {
         DDialog dlg;
         dlg.setIcon(QIcon::fromTheme("dialog-warning"));
         dlg.addButton(tr("Cancel", "button"));
@@ -481,7 +481,11 @@ bool RecentController::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) 
                 //list << DUrl::fromLocalFile(url.path()).toString();
                 //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
                 QString urlPath = url.path();
-                list << "file://" + urlPath;
+                if (m_bindPathMaps.contains(urlPath)) {
+                    list << m_bindPathMaps.value(urlPath);
+                } else {
+                    list << "file://" + urlPath;
+                }
             }
 
             DRecentManager::removeItems(list);
@@ -588,6 +592,7 @@ void RecentController::handleFileChanged()
 
     if (file.open(QIODevice::ReadOnly)) {
         QXmlStreamReader reader(&file);
+        m_bindPathMaps.clear();
 
         while (!reader.atEnd()) {
 
@@ -609,6 +614,8 @@ void RecentController::handleFileChanged()
 
                 if (info.exists() && info.isFile()) {
                     urlList << recentUrl;
+                    if (path != location.toString())
+                        m_bindPathMaps.insert(info.filePath(), location.toString());
 
                     DThreadUtil::runInMainThread([ = ]() {
                         if (dp.isNull())
