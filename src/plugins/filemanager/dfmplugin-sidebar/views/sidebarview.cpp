@@ -168,18 +168,14 @@ void SideBarView::dropEvent(QDropEvent *event)
             qDebug() << "skip the same dir file..." << url;
         } else {
             QString folderPath = UrlRoute::urlToPath(UrlRoute::urlParent(url));
-            QString filePath = url.path();
 
             bool isFolderWritable = false;
-            bool isFileWritable = false;
 
             QFileInfo folderinfo(folderPath);   // 判断上层文件是否是只读，有可能上层是只读，而里面子文件或文件夾又是可以写
-            QFileInfo fileinfo(filePath);
 
-            isFolderWritable = fileinfo.isWritable();
-            isFileWritable = folderinfo.isWritable();
+            isFolderWritable = folderinfo.isWritable();
 
-            if (!isFolderWritable || !isFileWritable) {
+            if (!isFolderWritable) {
                 copyUrls << QUrl(url);
                 qDebug() << "this is a unwriteable case:" << url;
             } else {
