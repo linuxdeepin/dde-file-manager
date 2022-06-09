@@ -539,7 +539,8 @@ void AbstractWorker::saveOperations()
             }
             values.insert("sources", QVariant::fromValue(listUrls));
             values.insert("target", targetUrl.toString());
-            dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
+            if (jobType != AbstractJobHandler::JobType::kDeleteTpye)
+                dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
         }
     }
 }

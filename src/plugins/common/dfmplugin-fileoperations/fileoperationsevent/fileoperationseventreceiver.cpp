@@ -155,8 +155,11 @@ bool FileOperationsEventReceiver::revocation(const quint64 windowId, const QVari
     GlobalEventType eventType = static_cast<GlobalEventType>(ret.value("event").value<uint16_t>());
     QList<QUrl> sources;
     QStringList listUrls = ret.value("sources").value<QStringList>();
-    for (const auto &url : listUrls)
-        sources.append(QUrl(url));
+    for (const auto &url : listUrls) {
+        AbstractFileInfoPointer fileInfo = InfoFactory::create<AbstractFileInfo>(url);
+        if (fileInfo->exists())
+            sources.append(QUrl(url));
+    }
     if (sources.isEmpty())
         return true;
 
