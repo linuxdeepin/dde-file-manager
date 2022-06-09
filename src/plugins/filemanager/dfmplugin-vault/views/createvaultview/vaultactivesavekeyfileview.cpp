@@ -27,6 +27,7 @@
 #include <DPalette>
 #include <DFontSizeManager>
 #include <DApplicationHelper>
+#include <DFileDialog>
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -78,14 +79,14 @@ void VaultActiveSaveKeyFileView::initUI()
     DFontSizeManager::instance()->bind(otherPathRadioBtn, DFontSizeManager::T8, QFont::Medium);
     selectfileSavePathEdit->lineEdit()->setReadOnly(true);
     selectfileSavePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    QFileDialog *filedialog = new QFileDialog(selectfileSavePathEdit, QDir::homePath(), QString("pubKey.key"));
+    DFileDialog *filedialog = new DFileDialog(this, QDir::homePath(), QString("pubKey.key"));
     filedialog->setAcceptMode(QFileDialog::AcceptMode::AcceptSave);
-    filedialog->setNameFilter("KEY file(*.key)");
     filedialog->setDefaultSuffix(QString("key"));
-    selectfileSavePathEdit->setFileDialog(filedialog);
     selectfileSavePathEdit->setDirectoryUrl(QDir::homePath());
-    selectfileSavePathEdit->setEnabled(false);
     selectfileSavePathEdit->setFileMode(QFileDialog::Directory);
+    selectfileSavePathEdit->setNameFilters({ "KEY file(*.key)" });
+    selectfileSavePathEdit->setFileDialog(filedialog);
+    selectfileSavePathEdit->setEnabled(false);
 
     QButtonGroup *group = new QButtonGroup(this);
     group->addButton(defaultPathRadioBtn, 1);

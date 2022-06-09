@@ -24,6 +24,7 @@
 #include "utils/policy/policymanager.h"
 
 #include <DFontSizeManager>
+#include <DFileDialog>
 
 #include <QStringList>
 #include <QFrame>
@@ -52,20 +53,16 @@ const QString PolicyKitRetrievePasswordActionId = "com.deepin.filemanager.vault.
 RetrievePasswordView::RetrievePasswordView(QWidget *parent)
     : QFrame(parent)
 {
-    //    setTitle(tr("Retrieve Password"));
-    //    QLabel *title = this->findChild<QLabel *>("TitleLabel");
-    //    if (title)
-    //        DFontSizeManager::instance()->bind(title, DFontSizeManager::T7, QFont::Medium);
-
     savePathTypeComboBox = new QComboBox(this);
     savePathTypeComboBox->addItem(tr("By key in the default path"));
     savePathTypeComboBox->addItem(tr("By key in the specified path"));
 
     filePathEdit = new DFileChooserEdit(this);
     filePathEdit->lineEdit()->setPlaceholderText(tr("Select a path"));
-    QFileDialog *fileDialog = new QFileDialog(this, QDir::homePath());
-    fileDialog->setDirectoryUrl(QDir::homePath());
-    fileDialog->setNameFilter(QString("KEY file(*.key)"));
+    DFileDialog *fileDialog = new DFileDialog(this, QDir::homePath());
+    filePathEdit->setDirectoryUrl(QDir::homePath());
+    filePathEdit->setFileMode(DFileDialog::ExistingFiles);
+    filePathEdit->setNameFilters({ QString("KEY file(*.key)") });
     filePathEdit->setFileDialog(fileDialog);
     filePathEdit->lineEdit()->setReadOnly(true);
     filePathEdit->hide();
