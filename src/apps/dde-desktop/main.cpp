@@ -47,6 +47,8 @@ DWIDGET_USE_NAMESPACE
 #    define ORGANIZATION_NAME "deepin"
 #endif
 
+#define BUILD_VERSION ((QString(VERSION) == "") ? "6.0.0.0" : QString(VERSION))
+
 /// @brief PLUGIN_INTERFACE 默认插件iid
 static const char *const kFmPluginInterface = "org.deepin.plugin.desktop";
 static const char *const kCommonPluginInterface = "org.deepin.plugin.common";
@@ -132,7 +134,7 @@ int main(int argc, char *argv[])
     DApplication a(argc, argv);
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setApplicationDisplayName(a.translate("DesktopMain", "Desktop"));
-    a.setApplicationVersion(DApplication::buildVersion(DPF_MACRO_TO_STR(VERSION)));
+    a.setApplicationVersion(BUILD_VERSION);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     DPF_NAMESPACE::backtrace::initbacktrace();

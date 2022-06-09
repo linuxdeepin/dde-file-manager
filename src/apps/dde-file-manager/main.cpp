@@ -50,6 +50,8 @@ DFMBASE_USE_NAMESPACE
 #    define ORGANIZATION_NAME "deepin"
 #endif
 
+#define BUILD_VERSION ((QString(VERSION) == "") ? "6.0.0.0" : QString(VERSION))
+
 // defualt plugin IID
 static constexpr char kFmPluginInterface[] { "org.deepin.plugin.filemanager" };
 static constexpr char kCommonPluginInterface[] { "org.deepin.plugin.common" };
@@ -179,7 +181,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName(ORGANIZATION_NAME);
     a.loadTranslator();
     a.setApplicationDisplayName(a.translate("Application", "File Manager"));
-    a.setApplicationVersion(DApplication::buildVersion(DPF_MACRO_TO_STR(VERSION)));
+    a.setApplicationVersion(BUILD_VERSION);
     a.setProductIcon(QIcon::fromTheme("dde-file-manager"));
     a.setApplicationAcknowledgementPage("https://www.deepin.org/acknowledgments/" + qApp->applicationName());
     a.setApplicationDescription(a.translate("Application", "File Manager is a powerful and "

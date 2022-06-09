@@ -4,12 +4,12 @@ project(dde-file-manager)
 
 message("PROJECT_BINARY_DIR: " ${PROJECT_BINARY_DIR})
 
-message("CURR APPLICATION dde-file-manager version: " @VERSION@)
-
 configure_file(
     "config.h.in"
     "${CMAKE_CURRENT_BINARY_DIR}/config.h"
     )
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(SRCS
     main.cpp
