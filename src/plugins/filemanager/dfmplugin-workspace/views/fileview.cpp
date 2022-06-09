@@ -674,6 +674,8 @@ void FileView::setReadOnly(const bool readOnly)
 
 void FileView::onSelectAndEdit(const QUrl &url)
 {
+    selectionModel()->clear();
+
     if (!url.isValid())
         return;
 

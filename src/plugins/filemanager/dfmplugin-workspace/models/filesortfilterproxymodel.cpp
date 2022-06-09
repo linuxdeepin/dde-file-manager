@@ -25,6 +25,7 @@
 #include "base/application/settings.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/universalutils.h"
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -33,6 +34,7 @@ DPWORKSPACE_USE_NAMESPACE
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
+    setDynamicSortFilter(true);
     resetFilter();
 }
 
@@ -129,8 +131,19 @@ QModelIndex FileSortFilterProxyModel::getIndexByUrl(const QUrl &url) const
 {
     FileViewModel *fileModel = qobject_cast<FileViewModel *>(sourceModel());
     QModelIndex sourceIndex = fileModel->findIndex(url);
+
     if (sourceIndex.isValid()) {
         auto tempIndex = mapFromSource(sourceIndex);
+
+        // Importent: The mapping object will not update when the row count changed,
+        // therefore can not map source to proxy. So traverse the model to find the proxy index.
+        if (!tempIndex.isValid()) {
+            for (int i = 0; i < rowCount(); ++i) {
+                sourceIndex = mapToSource(index(i, 0));
+                if (sourceIndex.isValid() && UniversalUtils::urlEquals(sourceIndex.data(kItemUrlRole).toUrl(), url))
+                    return index(i, 0);
+            }
+        }
         return index(tempIndex.row(), tempIndex.column());
     }
 

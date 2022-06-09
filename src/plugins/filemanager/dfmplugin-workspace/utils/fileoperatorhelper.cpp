@@ -64,7 +64,9 @@ void FileOperatorHelper::touchFiles(const FileView *view, const CreateFileType t
                                           windowId,
                                           url,
                                           type,
-                                          suffix);
+                                          suffix,
+                                          GlobalEventType::kTouchFile,
+                                          callBack);
 }
 
 void FileOperatorHelper::openFiles(const FileView *view)
@@ -358,6 +360,20 @@ void FileOperatorHelper::callBackFunction(const CallbackArgus args)
         QUrl newFolder = targetUrlList.first();
         WorkspaceHelper::kSelectionAndRenameFile[windowID] = qMakePair(rootUrl, newFolder);
         break;
+    }
+    case kTouchFile: {
+        quint64 windowID = args->value(CallbackKey::kWindowId).toULongLong();
+        QList<QUrl> sourceUrlList = args->value(CallbackKey::kSourceUrls).value<QList<QUrl>>();
+        if (sourceUrlList.isEmpty())
+            break;
+
+        QList<QUrl> targetUrlList = args->value(CallbackKey::kTargets).value<QList<QUrl>>();
+        if (targetUrlList.isEmpty())
+            break;
+
+        QUrl rootUrl = sourceUrlList.first();
+        QUrl newFile = targetUrlList.first();
+        WorkspaceHelper::kSelectionAndRenameFile[windowID] = qMakePair(rootUrl, newFile);
     }
     default:
         break;
