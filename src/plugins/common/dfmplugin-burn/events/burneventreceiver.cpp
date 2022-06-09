@@ -66,10 +66,8 @@ void BurnEventReceiver::handleShowBurnDlg(const QString &dev, bool isSupportedUD
     QString fileSystem { qvariant_cast<QString>(map[DeviceProperty::kFileSystem]) };
     bool disableISOOpts { isSupportedUDF };
 
-    if (fileSystem.isEmpty()) {
-        isSupportedUDF = true;
+    if (fileSystem.isEmpty())
         disableISOOpts = false;
-    }
 
     QScopedPointer<BurnOptDialog> dlg { new BurnOptDialog(dev, parent) };
     dlg->setDefaultVolName(defaultDiscName);

@@ -192,11 +192,12 @@ bool OpticalMediaWidget::isSupportedUDF()
 {
     if (!(DSysInfo::deepinType() == DSysInfo::DeepinProfessional))
         return false;
-    if (!OpticalHelper::isSupportedUDFVersion(curFSVersion))
+    if (!OpticalHelper::isSupportedUDFMedium(curMediaType))
         return false;
-    if (OpticalHelper::isSupportedUDFMedium(curMediaType))
-        return true;
-    return false;
+    if (!curFS.isEmpty() && !OpticalHelper::isSupportedUDFVersion(curFSVersion))
+        return false;
+
+    return true;
 }
 
 void OpticalMediaWidget::onBurnButtonClicked()
