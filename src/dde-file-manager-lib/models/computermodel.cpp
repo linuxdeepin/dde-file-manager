@@ -797,7 +797,7 @@ void ComputerModel::addRootItem(const DAbstractFileInfoPointer &info)
                                   [](const DAbstractFileInfoPointer &a, const ComputerModelItemData &b) {
             return DFMRootFileInfo::typeCompare(a, b.fi);
         });
-        if (r == m_items.end()) {
+        if (r == m_items.end()  || info->scheme() == SMB_SCHEME) {
             addItem(info->fileUrl());
         } else {
             insertBefore(info->fileUrl(), r->url);
