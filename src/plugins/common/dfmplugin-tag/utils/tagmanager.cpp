@@ -24,6 +24,7 @@
 #include "tagdbushelper.h"
 #include "events/tageventcaller.h"
 #include "widgets/tagcolorlistwidget.h"
+#include "files/tagfileinfo.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
@@ -372,6 +373,34 @@ bool TagManager::paintIconTagsHandle(int role, const QUrl &url, QPainter *painte
         TagHelper::instance()->paintTags(painter, boundingRect, colors);
 
         rect->setTop(boundingRect.bottom());
+    }
+
+    return false;
+}
+
+bool TagManager::pasteHandle(quint64 winId, const QUrl &to)
+{
+    Q_UNUSED(winId)
+
+    if (to.scheme() == scheme()) {
+        auto action = ClipBoard::instance()->clipboardAction();
+        if (action == ClipBoard::kCutAction)
+            return true;
+
+        auto sourceUrls = ClipBoard::instance()->clipboardFileUrlList();
+        QList<QUrl> canTagFiles;
+        for (const auto &url : sourceUrls) {
+            const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+            if (canTagFile(info))
+                canTagFiles << url;
+        }
+
+        if (canTagFiles.isEmpty())
+            return true;
+
+        const auto &tagInfo = InfoFactory::create<TagFileInfo>(to);
+        TagManager::setTagsForFiles(QList<QString>() << tagInfo->tagName(), canTagFiles);
+        return true;
     }
 
     return false;

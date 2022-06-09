@@ -74,6 +74,7 @@ public:
     bool canTagFile(const AbstractFileInfoPointer &fileInfo) const;
     bool paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
+    bool pasteHandle(quint64 winId, const QUrl &to);
 
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameHandle(quint64 windowId, const QUrl &url, const QString &name);
