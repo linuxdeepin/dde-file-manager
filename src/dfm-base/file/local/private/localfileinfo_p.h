@@ -56,11 +56,14 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     QReadWriteLock lock;
     QMutex mutex;
 
-    // thumbnail
-    QIcon icon;
-    std::atomic_bool needThumbnail = { false };
-    std::atomic_int hasThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
-    std::atomic_bool iconFromTheme = { false };
+    enum IconType {
+        kDefaultIcon,
+        kThumbIcon,
+    };
+    QReadWriteLock iconLock;
+    QMap<IconType, QIcon> icons;
+    std::atomic_bool loadingThumbnail = { false };
+    std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
     QPointer<QTimer> getIconTimer = nullptr;
 
 public:
@@ -86,24 +89,17 @@ public:
     }
     virtual QMimeType readMimeType(QMimeDatabase::MatchMode mode = QMimeDatabase::MatchDefault) const;
 
-    void setIcon(const QIcon &icon)
-    {
-        QMutexLocker locker(&mutex);
-        this->icon = icon;
-    }
-    QIcon fileIcon()
-    {
-        QReadLocker locker(&lock);
-        return this->icon;
-    }
     void clearIcon()
     {
-        icon = QIcon();
-        needThumbnail = false;
-        hasThumbnail = -1;
-        iconFromTheme = false;
+        icons.clear();
+        loadingThumbnail = false;
+        enableThumbnail = -1;
         getIconTimer = nullptr;
     }
+
+    QIcon thumbIcon();
+    QIcon defaultIcon();
+    void onRequestThumbFinished(const QString &path);
 
     void attributesExtendCallback(bool ok, QMap<DFMIO::DFileInfo::AttributeExtendID, QVariant> values)
     {

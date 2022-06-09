@@ -1501,102 +1501,16 @@ QIcon LocalFileInfo::fileIcon()
     if (FileUtils::containsCopyingFileUrl(fileUrl))
         return LocalFileIconProvider::globalProvider()->icon(this);
 
-    const QString &filePath = this->absoluteFilePath();
-
-    if (!d->fileIcon().isNull() && !d->needThumbnail && (!d->iconFromTheme || !d->fileIcon().name().isEmpty())) {
-        return d->fileIcon();
-    }
-
-    d->iconFromTheme = false;
-
 #ifdef DFM_MINIMUM
-    d->hasThumbnail = 0;
+    d->enableThumbnail = 0;
 #else
-    if (d->hasThumbnail < 0) {
-        d->hasThumbnail = FileUtils::isLocalDevice(fileUrl) && DThumbnailProvider::instance()->hasThumbnail(filePath) && !FileUtils::isCdRomDevice(QUrl::fromLocalFile(filePath));
-    }
+    const QString &filePath = this->absoluteFilePath();
+    if (d->enableThumbnail < 0)
+        d->enableThumbnail = FileUtils::isLocalDevice(fileUrl) && !FileUtils::isCdRomDevice(QUrl::fromLocalFile(filePath));
 #endif
-    if (d->needThumbnail || d->hasThumbnail > 0) {
-        d->needThumbnail = true;
 
-        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(filePath, DThumbnailProvider::kLarge));
-
-        if (!icon.isNull()) {
-            QPixmap pixmap = icon.pixmap(DThumbnailProvider::kLarge, DThumbnailProvider::kLarge);
-            QPainter pa(&pixmap);
-
-            pa.setPen(Qt::gray);
-            pa.drawPixmap(0, 0, pixmap);
-            QIcon fileIcon = d->fileIcon();
-            fileIcon.addPixmap(pixmap);
-            d->iconFromTheme = false;
-            d->needThumbnail = false;
-
-            d->setIcon(fileIcon);
-
-            return fileIcon;
-        }
-
-        if (d->getIconTimer) {
-            QMetaObject::invokeMethod(d->getIconTimer, "start", Qt::QueuedConnection);
-        } else {
-            QTimer *timer = new QTimer();
-
-            QPointer<LocalFileInfo> me = const_cast<LocalFileInfo *>(this);
-
-            d->getIconTimer = timer;
-            timer->setSingleShot(true);
-            timer->moveToThread(qApp->thread());
-            timer->setInterval(REQUEST_THUMBNAIL_DEALY);
-
-            QObject::connect(timer, &QTimer::timeout, [timer, filePath, me] {
-                DThumbnailProvider::instance()->appendToProduceQueue(filePath, DThumbnailProvider::kLarge, [me](const QString &path) {
-                    if (me) {
-                        if (path.isEmpty()) {
-                            me->d->iconFromTheme = true;
-                        } else {
-                            me->d->setIcon(QIcon());
-                        }
-
-                        me->d->needThumbnail = false;
-
-                        me->notifyAttributeChanged();
-                    } else {
-                        qWarning() << "me is nullptr !!!";
-                    }
-                });
-                timer->deleteLater();
-            });
-
-            QMetaObject::invokeMethod(timer, "start", Qt::QueuedConnection);
-        }
-
-        if (d->fileIcon().isNull())
-            d->setIcon(LocalFileIconProvider::globalProvider()->icon(filePath));
-
-        return d->fileIcon();
-    } else {
-        d->needThumbnail = false;
-    }
-
-    if (isSymLink()) {
-        const QString &symLinkTarget = this->symLinkTarget();
-
-        if (symLinkTarget != filePath) {
-            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(symLinkTarget));
-            if (info) {
-                d->setIcon(info->fileIcon());
-                d->iconFromTheme = false;
-
-                return d->fileIcon();
-            }
-        }
-    }
-
-    d->setIcon(LocalFileIconProvider::globalProvider()->icon(this));
-    d->iconFromTheme = true;
-
-    return d->fileIcon();
+    bool thumbEnabled = (d->enableThumbnail > 0) && DThumbnailProvider::instance()->hasThumbnail(fileMimeType());
+    return thumbEnabled ? d->thumbIcon() : d->defaultIcon();
 }
 
 QString LocalFileInfo::iconName()
@@ -1798,6 +1712,100 @@ QMimeType LocalFileInfo::mimeType(const QString &filePath, QMimeDatabase::MatchM
         return db.mimeTypeForFile(filePath, mode, inod, isGvfs);
     }
     return db.mimeTypeForFile(filePath, mode);
+}
+
+QIcon LocalFileInfoPrivate::thumbIcon()
+{
+    {   // if already loaded thumb just return it.
+        QReadLocker rlk(&iconLock);
+        auto icon = icons.value(IconType::kThumbIcon);
+        if (!icon.isNull())
+            return icon;
+    }
+
+    auto curFilePath = q->absoluteFilePath();
+    {
+        const QIcon icon(DThumbnailProvider::instance()->thumbnailFilePath(curFilePath, DThumbnailProvider::kLarge));
+        if (!icon.isNull()) {
+            QPixmap pixmap = icon.pixmap(DThumbnailProvider::kLarge, DThumbnailProvider::kLarge);
+            QPainter pa(&pixmap);
+            pa.setPen(Qt::gray);
+            pa.drawPixmap(0, 0, pixmap);
+
+            QIcon fileIcon;
+            fileIcon.addPixmap(pixmap);
+
+            QWriteLocker wlk(&iconLock);
+            icons.insert(IconType::kThumbIcon, fileIcon);
+            return fileIcon;
+        }
+
+        // else load thumb from DThumbnailProvider in async.
+        // and before thumb thread finish, return default icon.
+        if (!loadingThumbnail) {
+            loadingThumbnail = true;
+            QPointer<LocalFileInfo> that(q);
+
+            if (!getIconTimer) {
+                QTimer *t = new QTimer;
+                getIconTimer = t;
+                getIconTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
+                getIconTimer->setSingleShot(true);
+                getIconTimer->moveToThread(qApp->thread());
+
+                QObject::connect(getIconTimer, &QTimer::timeout, [=] {
+                    DThumbnailProvider::instance()->appendToProduceQueue(curFilePath, DThumbnailProvider::kLarge, [=](const QString &path) {
+                        if (that)
+                            onRequestThumbFinished(path);
+                    });
+                    t->deleteLater();
+                });
+            }
+            QMetaObject::invokeMethod(getIconTimer, "start", Qt::QueuedConnection);
+        }
+    }
+    return defaultIcon();
+}
+
+QIcon LocalFileInfoPrivate::defaultIcon()
+{
+    {
+        QReadLocker rlk(&iconLock);
+        auto icon = icons.value(LocalFileInfoPrivate::kDefaultIcon);
+        if (!icon.isNull())
+            return icon;
+    }
+
+    QIcon icon = LocalFileIconProvider::globalProvider()->icon(q);
+    if (q->isSymLink()) {
+        const auto &&target = q->symLinkTarget();
+        if (target != q->absoluteFilePath()) {
+            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(QUrl::fromLocalFile(target));
+            if (info)
+                icon = info->fileIcon();
+        }
+    }
+
+    {
+        QWriteLocker wlk(&iconLock);
+        icons.insert(LocalFileInfoPrivate::kDefaultIcon, icon);
+    }
+
+    return icon;
+}
+
+void LocalFileInfoPrivate::onRequestThumbFinished(const QString &path)
+{
+    if (path.isEmpty()) {
+        // cannot generate thumbnail, using default icon
+        auto icon = defaultIcon();
+        QWriteLocker wlk(&iconLock);
+        icons.insert(LocalFileInfoPrivate::kThumbIcon, icon);
+    } else {
+        thumbIcon();   // load icon from DThumbnailProvider
+        q->notifyAttributeChanged();
+    }
+    loadingThumbnail = false;
 }
 
 DFMBASE_END_NAMESPACE

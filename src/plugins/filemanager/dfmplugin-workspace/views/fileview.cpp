@@ -1436,6 +1436,7 @@ void FileView::initializeConnect()
     connect(Application::instance(), &Application::iconSizeLevelChanged, this, &FileView::setIconSizeBySizeIndex);
     connect(Application::instance(), &Application::showedHiddenFilesChanged, this, &FileView::onShowHiddenFileChanged);
     connect(Application::instance(), &Application::showedFileSuffixChanged, this, &FileView::onShowFileSuffixChanged);
+    connect(Application::instance(), &Application::previewAttributeChanged, this, [this] { this->update(); });
 }
 
 void FileView::updateStatusBar()

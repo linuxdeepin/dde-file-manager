@@ -94,6 +94,9 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
         case Application::kPreviewImage:
         case Application::kPreviewTextFile:
         case Application::kPreviewVideo:
+        case Application::kPreviewCompressFile:
+            if (ga == Application::kPreviewCompressFile)
+                Q_EMIT self->previewCompressFileChanged(value.toBool());
             Q_EMIT self->previewAttributeChanged(ga, value.toBool());
             break;
         case Application::kShowedHiddenFiles:
@@ -104,9 +107,6 @@ void ApplicationPrivate::_q_onSettingsValueChanged(const QString &group, const Q
             break;
         case Application::kShowRecentFileEntry:
             Q_EMIT self->recentDisplayChanged(value.toBool());
-            break;
-        case Application::kPreviewCompressFile:
-            Q_EMIT self->previewCompressFileChanged(value.toBool());
             break;
         case Application::kShowCsdCrumbBarClickableArea:
             Q_EMIT self->csdClickableAreaAttributeChanged(value.toBool());
