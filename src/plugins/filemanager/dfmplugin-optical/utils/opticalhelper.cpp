@@ -259,6 +259,6 @@ DSC_NAMESPACE::MenuService *OpticalHelper::menuServIns()
 
 QRegularExpression OpticalHelper::burnRxp()
 {
-    static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
+    static QRegularExpression rxp { "^([\\s\\S]*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")([\\s\\S]*)$" };
     return rxp;
 }
