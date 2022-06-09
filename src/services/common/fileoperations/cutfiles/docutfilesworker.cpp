@@ -167,11 +167,12 @@ bool DoCutFilesWorker::cutFiles()
     return true;
 }
 
-bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo)
+bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &targetPathInfo)
 {
     // try rename
     bool ok = false;
-    if (doRenameFile(fromInfo, toInfo, &ok) || ok) {
+    AbstractFileInfoPointer toInfo = nullptr;
+    if (doRenameFile(fromInfo, targetPathInfo, toInfo, &ok) || ok) {
         return true;
     }
 
@@ -180,14 +181,14 @@ bool DoCutFilesWorker::doCutFile(const AbstractFileInfoPointer &fromInfo, const 
         return false;
     }
 
-    qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->url() << " to url: " << toInfo->url();
+    qDebug() << "do rename failed, use copy and delete way, from url: " << fromInfo->url() << " to url: " << targetPathInfo->url();
 
     bool result = false;
     // check space
-    if (!checkDiskSpaceAvailable(fromInfo->url(), toInfo->url(), targetStorageInfo, &result))
+    if (!checkDiskSpaceAvailable(fromInfo->url(), targetPathInfo->url(), targetStorageInfo, &result))
         return result;
 
-    if (!copyAndDeleteFile(fromInfo, toInfo, &result))
+    if (!copyAndDeleteFile(fromInfo, targetPathInfo, toInfo, &result))
         return result;
 
     return true;
@@ -261,23 +262,23 @@ bool DoCutFilesWorker::renameFileByHandler(const AbstractFileInfoPointer &source
     return false;
 }
 
-bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo, bool *ok)
+bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetPathInfo, AbstractFileInfoPointer &toInfo, bool *ok)
 {
     QSharedPointer<QStorageInfo> sourceStorageInfo = nullptr;
     sourceStorageInfo.reset(new QStorageInfo(sourceInfo->url().path()));
 
     const QUrl &sourceUrl = sourceInfo->url();
 
+    toInfo.reset(nullptr);
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
-        AbstractFileInfoPointer newTargetInfo(nullptr);
-        if (!doCheckFile(sourceInfo, targetInfo, sourceInfo->fileName(), newTargetInfo, ok))
+        if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileName(), toInfo, ok))
             return *ok;
 
-        *ok = renameFileByHandler(sourceInfo, newTargetInfo);
+        *ok = renameFileByHandler(sourceInfo, toInfo);
         if (*ok) {
-            if (!isConvert && targetInfo == this->targetInfo) {
+            if (!isConvert && targetPathInfo == this->targetInfo) {
                 completeSourceFiles.append(sourceUrl);
-                completeTargetFiles.append(newTargetInfo->url());
+                completeTargetFiles.append(toInfo->url());
             }
         }
         return *ok;

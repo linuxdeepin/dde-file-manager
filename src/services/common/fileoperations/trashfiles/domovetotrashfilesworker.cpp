@@ -253,9 +253,9 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
     }
 
     const QUrl &sourceUrl = fileInfo->url();
-    const QUrl &targetUrl = QUrl::fromLocalFile(targetPath);
+    const QUrl &toUrl = QUrl::fromLocalFile(targetPath);
 
-    emitCurrentTaskNotify(fileInfo->url(), targetUrl);
+    emitCurrentTaskNotify(fileInfo->url(), toUrl);
 
     if (checkFileOutOfLimit(fileInfo)) {
         qWarning() << "move to trash big file, use delete way, url: " << sourceUrl;
@@ -271,7 +271,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
     // ToDo::判断是否同盘，是就直接rename
     if (isSameDisk == 1) {
-        qDebug() << "move to trash is on same disk, from url: " << fileInfo->url() << " to url: " << targetUrl;
+        qDebug() << "move to trash is on same disk, from url: " << fileInfo->url() << " to url: " << toUrl;
         AbstractJobHandler::SupportAction action = AbstractJobHandler::SupportAction::kNoAction;
 
         do {
@@ -293,22 +293,26 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
             return true;
     }
 
-    const QUrl &parentUrl = DFMUtils::directParentUrl(targetUrl);
+    const QUrl &parentUrl = DFMUtils::directParentUrl(toUrl);
     if (!parentUrl.isValid())
         return false;
 
-    const auto &toInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
-    if (!toInfo) {
+    const auto &targetPathInfo = InfoFactory::create<AbstractFileInfo>(parentUrl);
+    if (!targetPathInfo) {
         // pause and emit error msg
-        return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, toInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
+        return AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(sourceUrl, targetPathInfo->url(), AbstractJobHandler::JobErrorType::kProrogramError);
     }
     // 检查磁盘空间是否不足
     if (!checkDiskSpaceAvailable(sourceUrl, parentUrl, targetStorageInfo, &result))
         return result;
 
     // 拷贝并删除文件
-    qDebug() << "rename failed, use copy and delete way, from url :" << fileInfo->url() << " to url: " << toInfo->url();
-    return copyAndDeleteFile(fileInfo, toInfo, &result);
+    qDebug() << "rename failed, use copy and delete way, from url :" << fileInfo->url() << " to url: " << targetPathInfo->url();
+
+    AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(toUrl);
+    if (!toInfo)
+        return false;
+    return copyAndDeleteFile(fileInfo, targetPathInfo, toInfo, &result);
 }
 /*!
  * \brief DoMoveToTrashFilesWorker::checkFileOutOfLimit Check whether the file size exceeds the limit value

@@ -104,7 +104,7 @@ public:
     bool deleteFile(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
     bool deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bool *result, const bool force = false);
 
-    bool copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
+    bool copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &targetPathInfo, const AbstractFileInfoPointer &toInfo,
                            bool *result);
     bool createSystemLink(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                           const bool followLink, const bool doCopy,

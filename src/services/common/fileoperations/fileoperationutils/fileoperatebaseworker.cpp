@@ -532,39 +532,35 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
  * \param result Output parameter: whether skip
  * \return Is the copy successful
  */
-bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *result)
+bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &targetPathInfo, const AbstractFileInfoPointer &toInfo, bool *result)
 {
-    AbstractFileInfoPointer newTargetInfo(nullptr);
     bool ok = false;
-    if (!doCheckFile(fromInfo, toInfo, fromInfo->fileName(), newTargetInfo, result))
-        return ok;
-
-    bool oldExist = newTargetInfo->exists();
+    bool oldExist = toInfo->exists();
 
     if (fromInfo->isSymLink()) {
-        ok = createSystemLink(fromInfo, newTargetInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, result);
+        ok = createSystemLink(fromInfo, toInfo, jobFlags.testFlag(AbstractJobHandler::JobFlag::kCopyFollowSymlink), true, result);
         if (ok)
-            ok = deleteFile(fromInfo->url(), toInfo->url(), result);
+            ok = deleteFile(fromInfo->url(), targetPathInfo->url(), result);
     } else if (fromInfo->isDir()) {
-        ok = checkAndCopyDir(fromInfo, newTargetInfo, result);
+        ok = checkAndCopyDir(fromInfo, toInfo, result);
         if (ok)
-            ok = deleteDir(fromInfo->url(), toInfo->url(), result);
+            ok = deleteDir(fromInfo->url(), targetPathInfo->url(), result);
     } else {
-        const QUrl &url = newTargetInfo->url();
+        const QUrl &url = toInfo->url();
 
         FileUtils::cacheCopyingFileUrl(url);
-        ok = doCopyFilePractically(fromInfo, newTargetInfo, result);
+        ok = doCopyFilePractically(fromInfo, toInfo, result);
         if (ok)
-            ok = deleteFile(fromInfo->url(), toInfo->url(), result);
+            ok = deleteFile(fromInfo->url(), targetPathInfo->url(), result);
         FileUtils::removeCopyingFileUrl(url);
     }
 
-    if (!isConvert && !oldExist && newTargetInfo->exists() && targetInfo == toInfo) {
+    if (!isConvert && !oldExist && toInfo->exists() && targetInfo == targetPathInfo) {
         completeSourceFiles.append(fromInfo->url());
-        completeTargetFiles.append(newTargetInfo->url());
+        completeTargetFiles.append(toInfo->url());
     }
 
-    toInfo->refresh();
+    targetPathInfo->refresh();
 
     return ok;
 }

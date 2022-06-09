@@ -65,6 +65,9 @@ public:
     void renameFilesByCustom(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair);
 
 private:
+    QList<QUrl> checkUrlsCanMoveToTrash(const QList<QUrl> &urls);
+
+private:
     explicit FileOperatorHelper(QObject *parent = nullptr);
     void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
 

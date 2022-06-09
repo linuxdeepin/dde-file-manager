@@ -204,28 +204,33 @@ void FileOperatorHelper::undoFiles(const FileView *view)
 void FileOperatorHelper::moveToTrash(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
-                                          windowId,
-                                          view->selectedUrlList(),
-                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
+
+    const QList<QUrl> &urls = checkUrlsCanMoveToTrash(view->selectedUrlList());
+    if (!urls.isEmpty())
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
+                                     windowId,
+                                     urls,
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperatorHelper::moveToTrash(const FileView *view, const QList<QUrl> &urls)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
-                                          windowId,
-                                          urls,
-                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    const QList<QUrl> &urlsNew = checkUrlsCanMoveToTrash(urls);
+    if (!urlsNew.isEmpty())
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
+                                     windowId,
+                                     urlsNew,
+                                     AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperatorHelper::deleteFiles(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
-                                          windowId,
-                                          view->selectedUrlList(),
-                                          AbstractJobHandler::JobFlag::kNoHint, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
+                                 windowId,
+                                 view->selectedUrlList(),
+                                 AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }
 
 void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
@@ -329,6 +334,20 @@ void FileOperatorHelper::renameFilesByCustom(const QWidget *sender, const QList<
                                           urlList,
                                           customPair,
                                           false);
+}
+
+QList<QUrl> FileOperatorHelper::checkUrlsCanMoveToTrash(const QList<QUrl> &urls)
+{
+    QList<QUrl> urlsRet = urls;
+    auto it = urlsRet.begin();
+    while (it != urlsRet.end()) {
+        auto info = InfoFactory::create<AbstractFileInfo>(*it);
+        if (!info || !info->canRename() || (!info->isWritable() && !info->isFile() && !info->isSymLink()))
+            it = urlsRet.erase(it);
+        else
+            ++it;
+    }
+    return urlsRet;
 }
 
 FileOperatorHelper::FileOperatorHelper(QObject *parent)

@@ -179,47 +179,19 @@ void FileOperatorMenuScene::updateState(QMenu *parent)
         }
     }
 
-    if (1 == d->selectFiles.count()) {
-        d->focusFileInfo->refresh();
-        // delete
-        if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
-            if (!d->focusFileInfo->canRename() || (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink()))
-                delAction->setDisabled(true);
-        }
+    d->focusFileInfo->refresh();
+    // delete
+    if (auto delAction = d->predicateAction.value(ActionID::kDelete)) {
+        if (!d->focusFileInfo->canRename() || (!d->focusFileInfo->isWritable() && !d->focusFileInfo->isFile() && !d->focusFileInfo->isSymLink()))
+            delAction->setDisabled(true);
+    }
 
-        // rename
-        if (auto rename = d->predicateAction.value(ActionID::kRename)) {
-            if (!d->focusFileInfo->canRename() || !d->indexFlags.testFlag(Qt::ItemIsEditable))
-                rename->setDisabled(true);
-        }
-
-    } else {
-        bool disableRename = false;
-        bool disableDelete = false;
-        for (const auto &url : d->selectFiles) {
-            auto info = InfoFactory::create<AbstractFileInfo>(url);
-            if (!info)
-                continue;
-            info->refresh();
-
-            if (!info->canRename()) {
-                auto rename = d->predicateAction.value(ActionID::kRename);
-                if (!disableRename && rename) {
-                    rename->setDisabled(true);
-                    disableRename = true;
-                }
-
-                auto delAction = d->predicateAction.value(ActionID::kDelete);
-                if (!disableDelete && delAction) {
-                    delAction->setDisabled(true);
-                    disableDelete = true;
-                }
-
-                if (disableRename && disableDelete)
-                    break;
-            }
-        }
-
+    // rename
+    if (auto rename = d->predicateAction.value(ActionID::kRename)) {
+        if (!d->focusFileInfo->canRename() || !d->indexFlags.testFlag(Qt::ItemIsEditable))
+            rename->setDisabled(true);
+    }
+    if (d->selectFiles.count() > 1) {
         // open
         if (auto open = d->predicateAction.value(ActionID::kOpen)) {
 
@@ -299,7 +271,17 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // delete
     if (actionId == ActionID::kDelete) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        QList<QUrl> urlsRet = d->selectFiles;
+        auto it = urlsRet.begin();
+        while (it != urlsRet.end()) {
+            auto info = InfoFactory::create<AbstractFileInfo>(*it);
+            if (!info || !info->canRename() || (!info->isWritable() && !info->isFile() && !info->isSymLink()))
+                it = urlsRet.erase(it);
+            else
+                ++it;
+        }
+        if (!urlsRet.isEmpty())
+            dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, urlsRet, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         return true;
     }
 

@@ -54,8 +54,8 @@ protected:
     void onUpdateProgress() override;
 
     bool cutFiles();
-    bool doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
-    bool doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo, bool *ok = nullptr);
+    bool doCutFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &targetPathInfo);
+    bool doRenameFile(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetPathInfo, AbstractFileInfoPointer &toInfo, bool *ok = nullptr);
     bool renameFileByHandler(const AbstractFileInfoPointer &sourceInfo, const AbstractFileInfoPointer &targetInfo);
 
     void emitCompleteFilesUpdatedNotify(const qint64 &writCount);
