@@ -136,6 +136,12 @@ void TagWidget::onCheckedColorChanged(const QColor &color)
     loadTags(d->url);
 }
 
+void TagWidget::onTagChanged(const QMap<QString, QList<QString>> &fileAndTags)
+{
+    if (fileAndTags.contains(d->url.path()))
+        loadTags(d->url);
+}
+
 void TagWidget::initConnection()
 {
     if (!d->crumbEdit || !d->colorListWidget)
@@ -143,4 +149,7 @@ void TagWidget::initConnection()
 
     connect(d->crumbEdit, &DCrumbEdit::crumbListChanged, this, &TagWidget::onCrumbListChanged);
     connect(d->colorListWidget, &TagColorListWidget::checkedColorChanged, this, &TagWidget::onCheckedColorChanged);
+
+    connect(TagManager::instance(), &TagManager::filesTagged, this, &TagWidget::onTagChanged);
+    connect(TagManager::instance(), &TagManager::filesUntagged, this, &TagWidget::onTagChanged);
 }
