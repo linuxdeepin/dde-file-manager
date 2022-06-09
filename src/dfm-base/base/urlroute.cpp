@@ -96,6 +96,20 @@ QIcon UrlRoute::icon(const QString &scheme)
     return kSchemeInfos[scheme].pathIcon();
 }
 
+QString UrlRoute::toString(const QUrl &url, QUrl::FormattingOptions options)
+{
+    if (!url.isValid())
+        return "";
+
+    if (url.isLocalFile() || !hasScheme(url.scheme()))
+        return url.toString(options);
+
+    QUrl tmpUrl { url };
+    tmpUrl.setScheme(Global::kFile);
+
+    return tmpUrl.toString(options).replace(0, strlen(Global::kFile), url.scheme());
+}
+
 /*!
  * \brief UrlRoute::hasScheme 判断是否存在Scheme
  * \param scheme 要查找的url前缀

@@ -66,6 +66,7 @@ public:
                           QString *errorString = nullptr);
     static bool hasScheme(const QString &scheme);
     static QIcon icon(const QString &scheme);
+    static QString toString(const QUrl &url, QUrl::FormattingOptions options = QUrl::PrettyDecoded);
     static QString rootPath(const QString &scheme);
     static QUrl rootUrl(const QString &scheme);
     static QString urlToPath(const QUrl &url);
