@@ -1213,6 +1213,8 @@ qint64 FileOperateBaseWorker::getWriteDataSize()
             }
         }
     }
+    if (writeSize <= 0)
+        writeSize = currentWriteSize;
 
     if (writeSize > currentWriteSize && currentWriteSize > 0) {
         writeSize = currentWriteSize;
