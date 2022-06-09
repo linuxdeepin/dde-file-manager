@@ -111,12 +111,14 @@ void DFMApplicationPrivate::_q_onSettingsValueChanged(const QString &group, cons
             break;
         case DFMApplication::GA_AlwaysShowOfflineRemoteConnections:
             gsGlobal->sync(); // cause later invocations may update the config file, so sync the config before.
+            //smb挂载聚合功能实现后，这里无需刷新计算机界面以及调用stashCurrentMounts();
+            //因为现在smb挂载项是否常驻的区别在于：最后一个挂载项移除之后，是否移除smb聚合项
             if (value.toBool()) { // stash all mounted remote connections
-                RemoteMountsStashManager::stashCurrentMounts();
+            //RemoteMountsStashManager::stashCurrentMounts();
             } else { // remove all stashed remote connections
                 RemoteMountsStashManager::clearRemoteMounts();
             }
-            Q_EMIT self->reloadComputerModel();
+            //Q_EMIT self->reloadComputerModel();
             break;
         case DFMApplication::GA_HideLoopPartitions:
             Q_EMIT self->reloadComputerModel();

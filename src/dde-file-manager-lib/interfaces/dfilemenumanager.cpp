@@ -233,7 +233,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
             if(!path.isEmpty()){
                 QString ip = tem.host();
                 QString dirName = path.split("/").last();
-                dirName = QUrl::fromPercentEncoding(dirName.toUtf8());
+                dirName = QUrl::toPercentEncoding(dirName.toUtf8());//解决目录中含有空格问题
                 QString formatPath = mountDir.arg(getuid()).arg(ip).arg(dirName.toLower());
                 DUrl mountUrl;
                 mountUrl.setScheme(DFMROOT_SCHEME);

@@ -40,9 +40,7 @@
 
 #include "shutil/fileutils.h"
 
-
 DFM_USE_NAMESPACE
-
 QString getThumbnailsPath(){
     QString cachePath = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).at(0);
     QString thumbnailPath = joinPath(cachePath, "thumbnails");
@@ -351,18 +349,22 @@ void RemoteMountsStashManager::stashRemoteMount(const QString &mpt, const QStrin
         QString newSmbDevice = QString("%1://%2").arg(protocol).arg(host);
         if(obj.contains("StashedSmbDevices")){
             QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-            if(stashedSmbDevices.isArray()){
-                QJsonArray stashSbDeviceArray = stashedSmbDevices.toArray();
+            if(stashedSmbDevices.isObject()){
+                QJsonObject temObj = stashedSmbDevices.toObject();
+                QJsonArray stashSbDeviceArray = temObj.value("SmbIntegrations").toArray();
                 if(!stashSbDeviceArray.contains(QJsonValue(newSmbDevice))){
                     stashSbDeviceArray << QJsonValue(newSmbDevice);
-                    obj.insert("StashedSmbDevices",stashSbDeviceArray);
+                    temObj.insert("SmbIntegrations",stashSbDeviceArray);
+                    obj.insert("StashedSmbDevices",temObj);
                     newSmbDeviceInserted = true;
                 }
             }
         }else{
             QJsonArray stashSbDeviceArray;
             stashSbDeviceArray << QJsonValue(newSmbDevice);
-            obj.insert("StashedSmbDevices",stashSbDeviceArray);
+            QJsonObject temObj;
+            temObj.insert("SmbIntegrations",stashSbDeviceArray);
+            obj.insert("StashedSmbDevices",temObj);
             newSmbDeviceInserted = true;
         }
     }
@@ -581,8 +583,9 @@ QStringList RemoteMountsStashManager::stashedSmbDevices()
     QStringList smbDevices;
     if(obj.contains("StashedSmbDevices")){
         QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-        if(stashedSmbDevices.isArray()){
-            QJsonArray jsonArray = stashedSmbDevices.toArray();
+        if(stashedSmbDevices.isObject()){
+            QJsonObject temObj = stashedSmbDevices.toObject();
+            QJsonArray jsonArray = temObj.value("SmbIntegrations").toArray();
             foreach (QJsonValue va, jsonArray) {
                 QString tem = va.toString();
                 if(!tem.isEmpty())
@@ -636,8 +639,9 @@ void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
     QJsonObject obj = config.object();
         if(obj.contains("StashedSmbDevices")){
             QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-            if(stashedSmbDevices.isArray()){
-                QJsonArray jsonArray = stashedSmbDevices.toArray();
+            if(stashedSmbDevices.isObject()){
+                QJsonObject temObj = stashedSmbDevices.toObject();
+                QJsonArray jsonArray = temObj.value("SmbIntegrations").toArray();
                 int count = jsonArray.count();
                 for(int i = 0;i<count;i++){
                     QString tem = jsonArray.at(i).toString();
@@ -646,8 +650,10 @@ void RemoteMountsStashManager::removeStashedSmbDevice(const QString &url)
                        break;
                     }
                 }
-                if(jsonArray.count() >0 )
-                    obj.insert("StashedSmbDevices", jsonArray);
+                if(jsonArray.count() >0 ){
+                    temObj.insert("SmbIntegrations",jsonArray);
+                    obj.insert("StashedSmbDevices", temObj);
+                }
                 else
                     obj.remove("StashedSmbDevices");
             }
@@ -682,17 +688,21 @@ void RemoteMountsStashManager::insertStashedSmbDevice(const QString &url)
     QJsonObject obj = config.object();
     if(obj.contains("StashedSmbDevices")){
         QJsonValue stashedSmbDevices = obj.value("StashedSmbDevices");
-        if(stashedSmbDevices.isArray()){
-            QJsonArray stashSbDeviceArray = stashedSmbDevices.toArray();
+        if(stashedSmbDevices.isObject()){
+            QJsonObject temObj = stashedSmbDevices.toObject();
+            QJsonArray stashSbDeviceArray = temObj.value("SmbIntegrations").toArray();
             if(!stashSbDeviceArray.contains(QJsonValue(url))){
                 stashSbDeviceArray << QJsonValue(url);
-                obj.insert("StashedSmbDevices",stashSbDeviceArray);
+                temObj.insert("SmbIntegrations",stashSbDeviceArray);
+                obj.insert("StashedSmbDevices",temObj);
             }
         }
     }else{
         QJsonArray stashSbDeviceArray;
         stashSbDeviceArray << QJsonValue(url);
-        obj.insert("StashedSmbDevices",stashSbDeviceArray);
+        QJsonObject temObj;
+        temObj.insert("SmbIntegrations",stashSbDeviceArray);
+        obj.insert("StashedSmbDevices",temObj);
     }
     config.setObject(obj);
     configFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
