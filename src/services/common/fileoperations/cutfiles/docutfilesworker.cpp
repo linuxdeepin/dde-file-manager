@@ -284,5 +284,8 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
         return *ok;
     }
 
+    if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileName(), toInfo, ok))
+        return false;
+
     return false;
 }

@@ -535,6 +535,9 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
 bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &targetPathInfo, const AbstractFileInfoPointer &toInfo, bool *result)
 {
     bool ok = false;
+    if (!toInfo)
+        return false;
+
     bool oldExist = toInfo->exists();
 
     if (fromInfo->isSymLink()) {
