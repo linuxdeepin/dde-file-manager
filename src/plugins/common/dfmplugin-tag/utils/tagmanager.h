@@ -75,6 +75,7 @@ public:
     bool paintListTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool paintIconTagsHandle(int role, const QUrl &url, QPainter *painter, QRectF *rect);
     bool pasteHandle(quint64 winId, const QUrl &to);
+    bool fileDropHandle(const QUrl &toUrl, const QList<QUrl> &fromUrls);
 
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameHandle(quint64 windowId, const QUrl &url, const QString &name);

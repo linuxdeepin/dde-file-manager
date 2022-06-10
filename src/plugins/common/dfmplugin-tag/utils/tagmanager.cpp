@@ -427,6 +427,27 @@ bool TagManager::pasteHandle(quint64 winId, const QUrl &to)
     return false;
 }
 
+bool TagManager::fileDropHandle(const QUrl &toUrl, const QList<QUrl> &fromUrls)
+{
+    if (toUrl.scheme() == scheme()) {
+        QList<QUrl> canTagFiles;
+        for (const auto &url : fromUrls) {
+            const auto &info = InfoFactory::create<AbstractFileInfo>(url);
+            if (canTagFile(info))
+                canTagFiles << url;
+        }
+
+        if (canTagFiles.isEmpty())
+            return true;
+
+        const auto &tagInfo = InfoFactory::create<TagFileInfo>(toUrl);
+        TagManager::setTagsForFiles(QList<QString>() << tagInfo->tagName(), canTagFiles);
+        return true;
+    }
+
+    return false;
+}
+
 void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QMenu *menu = new QMenu;

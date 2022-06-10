@@ -151,6 +151,7 @@ void Tag::followEvent()
     TagHelper::eventSequence()->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
     // paste
     TagHelper::eventSequence()->follow("dfmplugin_workspace", "hook_PasteFilesShortcut", TagManager::instance(), &TagManager::pasteHandle);
+    TagHelper::eventSequence()->follow("dfmplugin_workspace", "hook_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
 }
 
 void Tag::bindScene(const QString &parentScene)
