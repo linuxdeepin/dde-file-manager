@@ -72,7 +72,7 @@ void RegisterExpandProcess::unregisterBasicViewExpand(const QString &scheme)
     basicViewFieldFuncHash.remove(scheme);
 }
 
-bool RegisterExpandProcess::registerFilterControlField(const QString &scheme, DetailFilterType filter)
+bool RegisterExpandProcess::registerFilterControlField(const QString &scheme, DetailFilterTypes filter)
 {
     if (!detailFilterHash.contains(scheme)) {
         detailFilterHash.insert(scheme, filter);
@@ -113,7 +113,7 @@ QMap<BasicExpandType, BasicExpandMap> RegisterExpandProcess::createBasicExpandFi
     return expandField;
 }
 
-DetailFilterType RegisterExpandProcess::contorlFieldFilter(const QUrl &url)
+DetailFilterTypes RegisterExpandProcess::contorlFieldFilter(const QUrl &url)
 {
     if (detailFilterHash.isEmpty())
         return kNotFilter;

@@ -99,7 +99,7 @@ public:
      * /param filter filter type
      * /return true registration success. false registration failed
      */
-    bool registerFilterControlField(const QString &scheme, DetailFilterType filter);
+    bool registerFilterControlField(const QString &scheme, DetailFilterTypes filter);
 
     /*!
      * /brief Unregister widget or basic information field filtering
@@ -112,7 +112,7 @@ public:
      * /param url file url
      * /return Return DetailFilterType
      */
-    DetailFilterType contorlFieldFilter(const QUrl &url);
+    DetailFilterTypes contorlFieldFilter(const QUrl &url);
 };
 
 DSB_FM_END_NAMESPACE

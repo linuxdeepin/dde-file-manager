@@ -105,9 +105,9 @@ QMap<BasicExpandType, BasicExpandMap> DetailSpaceService::createBasicExpandField
     return DTSP_NAMESPACE::RegisterExpandProcess::instance()->createBasicExpandField(url);
 }
 
-bool DetailSpaceService::registerFilterControlField(const QString &scheme, DetailFilterType filter)
+bool DetailSpaceService::registerFilterControlField(const QString &scheme, DetailFilterTypes filters)
 {
-    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->registerFilterControlField(scheme, filter);
+    return DTSP_NAMESPACE::RegisterExpandProcess::instance()->registerFilterControlField(scheme, filters);
 }
 
 void DetailSpaceService::unregisterFilterControlField(const QString &scheme)
@@ -115,7 +115,7 @@ void DetailSpaceService::unregisterFilterControlField(const QString &scheme)
     DTSP_NAMESPACE::RegisterExpandProcess::instance()->unregisterFilterControlField(scheme);
 }
 
-DetailFilterType DetailSpaceService::contorlFieldFilter(const QUrl &url)
+DetailFilterTypes DetailSpaceService::contorlFieldFilter(const QUrl &url)
 {
     return DTSP_NAMESPACE::RegisterExpandProcess::instance()->contorlFieldFilter(url);
 }

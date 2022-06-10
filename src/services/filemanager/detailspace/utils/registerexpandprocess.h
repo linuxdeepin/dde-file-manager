@@ -41,7 +41,7 @@ protected:
     //! 创建函数列表
     QHash<int, createControlViewFunc> constructList {};
     QHash<QString, basicViewFieldFunc> basicViewFieldFuncHash {};
-    QHash<QString, DetailFilterType> detailFilterHash {};
+    QHash<QString, DetailFilterTypes> detailFilterHash {};
 
 public:
     /*!
@@ -78,7 +78,7 @@ public:
      * /param filter filter type
      * /return true registration success. false registration failed
      */
-    bool registerFilterControlField(const QString &scheme, DetailFilterType filter);
+    bool registerFilterControlField(const QString &scheme, DetailFilterTypes filter);
 
     /*!
      * /brief Unregister widget or basic information field filtering
@@ -105,7 +105,7 @@ public:
      * /param url file url
      * /return Return DetailFilterType
      */
-    DetailFilterType contorlFieldFilter(const QUrl &url);
+    DetailFilterTypes contorlFieldFilter(const QUrl &url);
 };
 DTSP_END_NAMESPACE
 DSB_FM_END_NAMESPACE

@@ -69,6 +69,11 @@ bool Tag::start()
     PropertyDialogService::service()->registerControlExpand(Tag::createTagWidget, 0, nullptr);
     DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget, 1);
 
+    DetailFilterTypes filter = DetailFilterType::kFileSizeField;
+    filter |= DetailFilterType::kFileChangeTImeField;
+    filter |= DetailFilterType::kFileInterviewTimeField;
+    DetailSpaceService::serviceInstance()->registerFilterControlField(TagManager::scheme(), filter);
+
     followEvent();
     TagEventReceiver::instance()->initConnect();
 

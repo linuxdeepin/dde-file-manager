@@ -36,18 +36,20 @@ extern const int kShowDetailView;
 extern const int kSetDetailViewSelectFileUrl;
 }
 
-enum DetailFilterType : int {
-    kNotFilter = 0x00000000,
-    kBasicView = 0x00000001,
-    kIconView = 0x00000002,
-    kFileNameField = 0x00000004,
-    kFileSizeField = 0x00000008,
-    kFileViewSizeField = 0x00000010,
-    kFileDurationField = 0x00000020,
-    kFileTypeField = 0x00000040,
-    kFileInterviewTimeField = 0x00000080,
-    kFileChangeTImeField = 0x000000100
+enum DetailFilterType {
+    kNotFilter = 0,
+    kBasicView = 1,
+    kIconView = 2,
+    kFileNameField = 4,
+    kFileSizeField = 8,
+    kFileViewSizeField = 16,
+    kFileDurationField = 32,
+    kFileTypeField = 64,
+    kFileInterviewTimeField = 128,
+    kFileChangeTImeField = 256
 };
+
+Q_DECLARE_FLAGS(DetailFilterTypes, DetailFilterType)
 
 enum BasicFieldExpandEnum : int {
     kNotAll,
