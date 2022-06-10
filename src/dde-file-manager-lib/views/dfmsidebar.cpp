@@ -536,7 +536,8 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
                 QString scheme = item->url().scheme()+"://";
                 QString host = item->url().host();
                 QString smbIp;
-                if (FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp) && !r->fileUrl().toString().contains(host))
+                bool isSmbRelated = FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp);
+                if ( !isSmbRelated || (isSmbRelated && !r->fileUrl().toString().contains(host)))//!isSmbRelated:排除ftp挂载
                     continue;
 
                  if (r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted(r->fileUrl())){
