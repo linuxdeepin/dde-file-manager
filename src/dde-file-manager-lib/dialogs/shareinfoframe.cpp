@@ -141,11 +141,24 @@ void ShareInfoFrame::initUI()
         m_updateIp = new QTimer();
         m_updateIp->setInterval(0);
         connect(m_updateIp,&QTimer::timeout, this, [this](){
-            QList<QHostAddress> list = QNetworkInterface::allAddresses();
+            foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
+            {
+                if (!netInterface.isValid())//包含有关网络接口的有效信息，则返回true。
+                    continue;
 
-            foreach (QHostAddress address, list) {
-                if (address.protocol() == QAbstractSocket::IPv4Protocol) {
-                    m_selfIp = address.toString();
+                QNetworkInterface::InterfaceFlags flags = netInterface.flags();
+                if (flags.testFlag(QNetworkInterface::IsRunning)
+                && !flags.testFlag(QNetworkInterface::IsLoopBack))
+                {
+                    QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
+                    foreach(QNetworkAddressEntry entry, entryList)
+                    {
+                        if(entry.ip().toString()!="" && entry.ip().toString()!="0.0.0.0")
+                        {
+                            m_selfIp = entry.ip().toString();
+                            break;//获取到第一个活跃的跳出
+                        }
+                    }
                 }
             }
             if(m_networkAddrLabel->text() != m_selfIp){
@@ -154,7 +167,6 @@ void ShareInfoFrame::initUI()
                 else
                     m_networkAddrLabel->setText(m_selfIp);
             }
-
             m_updateIp->setInterval(2000);
         });
         m_updateIp->start();
