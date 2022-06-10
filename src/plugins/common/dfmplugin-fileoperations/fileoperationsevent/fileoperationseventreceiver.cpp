@@ -925,7 +925,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, urls, successUrls.values(), ok, error);
+                                          windowId, successUrls, ok, error);
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
@@ -943,9 +943,8 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
         type = RenameTypes::kBatchCustom;
     bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error, custom, callback);
     // publish result
-    const QList<QUrl> &lists = successUrls.values();
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, urls, lists, ok, error);
+                                          windowId, successUrls, ok, error);
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
@@ -961,7 +960,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, urls, successUrls.values(), ok, error);
+                                          windowId, successUrls, ok, error);
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
@@ -975,10 +974,9 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     QMap<QUrl, QUrl> successUrls;
     QString error;
     bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error, custom, callback);
-    const QList<QUrl> &lists = successUrls.values();
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, urls, lists, ok, error);
+                                          windowId, successUrls, ok, error);
     if (!successUrls.isEmpty()) {
         QUrl lastOldUrl = successUrls.lastKey();
         QUrl lastNewUrl = successUrls.value(lastOldUrl);
