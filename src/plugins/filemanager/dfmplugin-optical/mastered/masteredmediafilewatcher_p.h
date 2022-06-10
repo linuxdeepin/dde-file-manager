@@ -43,6 +43,7 @@ public:
     bool start() override;
     bool stop() override;
 
+    QString curMnt;
     AbstractFileWatcherPointer proxyStaging;
     AbstractFileWatcherPointer proxyOnDisk;
 };

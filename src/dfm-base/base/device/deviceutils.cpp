@@ -25,12 +25,13 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/utils/finallyutil.h"
 
 #include <QVector>
 #include <QDebug>
 #include <QRegularExpressionMatch>
 
-#include <fstream>
+#include <libmount.h>
 
 DFMBASE_USE_NAMESPACE
 using namespace GlobalServerDefines::DeviceProperty;
@@ -43,31 +44,23 @@ QString DeviceUtils::getBlockDeviceId(const QString &deviceDesc)
     return kBlockDeviceIdPrefix + dev;
 }
 
-QString DeviceUtils::getDeviceOfMountPoint(const QString &mntPath)
-{
-    std::ifstream mounts { "/proc/mounts" };
-    std::string mountPoint;
-    std::string device;
-
-    while (mounts >> device >> mountPoint) {
-        if (mountPoint == mntPath.toStdString())
-            return QString { device.data() };
-    }
-
-    return {};
-}
-
 QString DeviceUtils::getMountPointOfDevice(const QString &devPath)
 {
-    std::ifstream mounts { "/proc/mounts" };
-    std::string mountPoint;
-    std::string device;
-
-    while (mounts >> device >> mountPoint) {
-        if (device == devPath.toStdString())
-            return QString { mountPoint.data() };
+    libmnt_table *tab { mnt_new_table() };
+    if (!tab)
+        return {};
+    FinallyUtil finally { [tab]() { if (tab) mnt_free_table(tab); } };
+    if (mnt_table_parse_mtab(tab, nullptr) != 0) {
+        qWarning() << "Invalid mnt_table_parse_mtab call";
+        return {};
     }
 
+    std::string stdPath { devPath.toStdString() };
+    auto fs = mnt_table_find_source(tab, stdPath.c_str(), MNT_ITER_BACKWARD);
+    if (fs)
+        return { mnt_fs_get_target(fs) };
+
+    qWarning() << "Invalid libmnt_fs*";
     return {};
 }
 

@@ -74,8 +74,8 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     QString devFile { OpticalHelper::burnDestDevice(url) };
     QString id { DeviceUtils::getBlockDeviceId(devFile) };
     auto &&map = DevProxyMng->queryBlockInfo(id);
-    QString mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
-    dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(mntPoint);
+    dptr->curMnt = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
+    dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(dptr->curMnt);
 }
 
 void MasteredMediaFileWatcher::onFileDeleted(const QUrl &url)
@@ -108,6 +108,10 @@ void MasteredMediaFileWatcher::onSubfileCreated(const QUrl &url)
 {
     if (!UniversalUtils::urlEquals(url, dptr->proxyStaging->url())) {
         QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
+        if (OpticalHelper::idDupFileNameInPath(dptr->curMnt, realUrl)) {
+            qWarning() << "Dup file: " << url;
+            return;
+        }
         emit subfileCreated(realUrl);
     }
 }

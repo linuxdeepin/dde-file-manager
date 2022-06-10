@@ -59,6 +59,7 @@ public:
     static bool isSupportedUDFVersion(const QString &version);
     static bool isSupportedUDFMedium(int type);
     static void createStagingFolder(const QString &path);
+    static bool idDupFileNameInPath(const QString &path, const QUrl &url);
 
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();

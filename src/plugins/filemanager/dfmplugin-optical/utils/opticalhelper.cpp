@@ -23,6 +23,7 @@
 #include "opticalhelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -190,6 +191,24 @@ void OpticalHelper::createStagingFolder(const QString &path)
     QFileInfo fileInfo(path);
     if (!fileInfo.exists())
         QDir().mkpath(path);
+}
+
+bool OpticalHelper::idDupFileNameInPath(const QString &path, const QUrl &url)
+{
+    auto info { InfoFactory::create<AbstractFileInfo>(url) };
+    if (!info || path.isEmpty())
+        return false;
+    QDir dir { path };
+    if (!dir.exists())
+        return false;
+
+    QFileInfoList fileInfoList { dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot | QDir::Dirs) };
+    QString fileName { info->fileName() };
+    for (const auto &info : fileInfoList) {
+        if (info.fileName() == fileName)
+            return true;
+    }
+    return false;
 }
 
 DSB_FM_NAMESPACE::WindowsService *OpticalHelper::winServIns()

@@ -49,7 +49,6 @@ class DeviceUtils
 {
 public:
     static QString getBlockDeviceId(const QString &deviceDesc);
-    static QString getDeviceOfMountPoint(const QString &mntPath);
     static QString getMountPointOfDevice(const QString &devPath);
     static QString errMessage(DFMMOUNT::DeviceError err);
     static QString convertSuitableDisplayName(const QVariantMap &devInfo);
