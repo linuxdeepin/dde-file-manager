@@ -43,7 +43,7 @@ WorkspaceEventReceiver::WorkspaceEventReceiver(QObject *parent)
 WorkspaceEventReceiver::~WorkspaceEventReceiver()
 {
     dpfSignalDispatcher->unsubscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
-                                   WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
+                                     WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
 }
 
 WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
@@ -58,6 +58,8 @@ void WorkspaceEventReceiver::initConnection()
                                    WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_CloseTab",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_FileUpdate",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleFileUpdate);
 
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSwitchViewMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -169,4 +171,9 @@ void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, c
 
     if (ok)
         WorkspaceHelper::instance()->laterRequestSelectFiles(destUrls);
+}
+
+void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)
+{
+    WorkspaceHelper::instance()->fileUpdate(url);
 }

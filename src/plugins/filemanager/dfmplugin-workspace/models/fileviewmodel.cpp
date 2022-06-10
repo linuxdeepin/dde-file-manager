@@ -190,7 +190,7 @@ bool FileViewModelPrivate::checkFileEventQueue()
 FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel(parent), d(new FileViewModelPrivate(this))
 {
-
+    connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestFileUpdate, this, &FileViewModel::onFileUpdated);
 }
 
 FileViewModel::~FileViewModel()
@@ -679,6 +679,18 @@ void FileViewModel::selectAndRenameFile(const QUrl &fileUrl)
 void FileViewModel::onFilesUpdated()
 {
     emit updateFiles();
+}
+
+void FileViewModel::onFileUpdated(const QUrl &url)
+{
+    const QModelIndex &index = findIndex(url);
+    if (index.isValid()) {
+        auto info = InfoFactory::create<AbstractFileInfo>(url);
+        if (info)
+            info->refresh();
+
+        emit dataChanged(index, index);
+    }
 }
 
 FileNodeManagerThread::FileNodeManagerThread(FileViewModel *parent)

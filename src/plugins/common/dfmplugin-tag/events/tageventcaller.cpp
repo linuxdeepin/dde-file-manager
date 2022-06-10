@@ -24,6 +24,7 @@
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QUrl>
 
@@ -48,4 +49,10 @@ void TagEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 void TagEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
 {
     dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+}
+
+void TagEventCaller::sendFileUpdate(const QString &path)
+{
+    QUrl fileUrl = QUrl::fromLocalFile(path);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_FileUpdate", fileUrl);
 }

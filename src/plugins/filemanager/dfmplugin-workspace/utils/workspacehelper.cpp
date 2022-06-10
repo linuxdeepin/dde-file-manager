@@ -290,6 +290,11 @@ void WorkspaceHelper::laterRequestSelectFiles(const QList<QUrl> &urls)
     });
 }
 
+void WorkspaceHelper::fileUpdate(const QUrl &url)
+{
+    emit requestFileUpdate(url);
+}
+
 WorkspaceHelper::WorkspaceHelper(QObject *parent)
     : QObject(parent)
 {

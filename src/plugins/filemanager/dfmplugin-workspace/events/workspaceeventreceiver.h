@@ -65,6 +65,7 @@ public slots:
     void handleSetReadOnly(const quint64 windowId, const bool readOnly);
 
     void handlePasteFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
+    void handleFileUpdate(const QUrl &url);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

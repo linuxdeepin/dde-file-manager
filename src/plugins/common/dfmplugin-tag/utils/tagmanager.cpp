@@ -547,10 +547,16 @@ void TagManager::onTagNameChanged(const QMap<QString, QString> &oldAndNew)
 
 void TagManager::onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags)
 {
+    if (!fileAndTags.isEmpty()) {
+        TagEventCaller::sendFileUpdate(fileAndTags.firstKey());
+    }
     emit filesTagged(fileAndTags);
 }
 
 void TagManager::onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags)
 {
+    if (!fileAndTags.isEmpty()) {
+        TagEventCaller::sendFileUpdate(fileAndTags.firstKey());
+    }
     emit filesUntagged(fileAndTags);
 }

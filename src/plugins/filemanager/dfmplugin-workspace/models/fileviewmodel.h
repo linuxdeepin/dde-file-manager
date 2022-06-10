@@ -105,6 +105,7 @@ public:
 
 public slots:
     void onFilesUpdated();
+    void onFileUpdated(const QUrl &url);
 
 signals:
     void stateChanged();

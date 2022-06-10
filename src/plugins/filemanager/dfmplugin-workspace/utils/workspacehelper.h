@@ -99,6 +99,8 @@ public:
 
     void laterRequestSelectFiles(const QList<QUrl> &urls);
 
+    void fileUpdate(const QUrl &url);
+
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionAndRenameFile;   //###: for creating new file.
     static QMap<quint64, QPair<QUrl, QUrl>> kSelectionFile;   //###: rename a file which must be existance.
 
@@ -109,6 +111,7 @@ signals:
     void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
     void requestSelectFiles(const QList<QUrl> &urlList);
     void trashStateChanged();
+    void requestFileUpdate(const QUrl &url);
 
 private:
     explicit WorkspaceHelper(QObject *parent = nullptr);

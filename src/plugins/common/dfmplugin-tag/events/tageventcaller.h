@@ -34,6 +34,7 @@ public:
     static void sendOpenWindow(const QUrl &url);
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
+    static void sendFileUpdate(const QString &path);
 };
 
 DPTAG_END_NAMESPACE
