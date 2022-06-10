@@ -69,7 +69,6 @@ public:
         return tmpParams;
     }
 };
-
 }
 
 #endif   // MENUUTILS_H

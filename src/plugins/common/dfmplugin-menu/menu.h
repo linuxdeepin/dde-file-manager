@@ -26,6 +26,7 @@
 #include "services/common/dfm_common_service_global.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 namespace dfm_service_common {
 class MenuService;
@@ -37,6 +38,9 @@ class Menu : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "menu.json")
+    DPF_EVENT_NAMESPACE(DPMENU_NAMESPACE)
+
+    DPF_EVENT_REG_SLOT(slot_PerfectMenuParams)
 
 public:
     virtual void initialize() override;
@@ -45,6 +49,9 @@ public:
 
 private:
     void regDefaultScene();
+
+private slots:
+    QVariantHash perfectMenuParams(const QVariantHash &params);
 
 private:
     dfm_service_common::MenuService *menuServer = nullptr;

@@ -27,7 +27,6 @@
 #include "models/fileviewmodel.h"
 #include "models/filesortfilterproxymodel.h"
 #include "utils/fileoperatorhelper.h"
-#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 
 #include "dfm-base/dfm_global_defines.h"
 
@@ -134,7 +133,7 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->currentDir.isEmpty())

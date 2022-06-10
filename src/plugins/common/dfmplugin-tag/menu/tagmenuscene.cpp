@@ -25,7 +25,6 @@
 #include "utils/tagmanager.h"
 #include "widgets/tagcolorlistwidget.h"
 
-#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 #include "services/common/menu/menu_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
@@ -33,6 +32,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QWidgetAction>
@@ -64,7 +64,7 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 

@@ -25,6 +25,7 @@
 #include "menuscene/openwithmenuscene.h"
 #include "menuscene/newcreatemenuscene.h"
 #include "menuscene/sendtomenuscene.h"
+#include "menuscene/menuutils.h"
 #include "extendmenuscene/extendmenuscene.h"
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 #include "oemmenuscene/oemmenuscene.h"
@@ -49,6 +50,8 @@ bool Menu::start()
     Q_ASSERT_X(menuServer, "Menu Plugin", "MenuService not found");
 
     this->regDefaultScene();
+
+    dpfSlotChannel->connect("dfmplugin_menu", "slot_PerfectMenuParams", this, &Menu::perfectMenuParams);
 
     return true;
 }
@@ -79,4 +82,9 @@ void Menu::regDefaultScene()
     menuServer->registerScene(ExtendMenuCreator::name(), new ExtendMenuCreator);
 
     menuServer->registerScene(OemMenuCreator::name(), new OemMenuCreator);
+}
+
+QVariantHash Menu::perfectMenuParams(const QVariantHash &params)
+{
+    return MenuUtils::perfectMenuParams(params);
 }

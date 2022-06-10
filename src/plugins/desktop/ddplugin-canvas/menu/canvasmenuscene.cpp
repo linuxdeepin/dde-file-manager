@@ -36,7 +36,6 @@
 #include "services/common/menu/menuservice.h"
 #include "plugins/common/dfmplugin-menu/dfmplugin_menu_global.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
-#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 
 #include <dfm-framework/framework.h>
 
@@ -193,7 +192,7 @@ bool CanvasMenuScene::initialize(const QVariantHash &params)
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
     d->gridPos = params.value(CanvasMenuParams::kDesktopGridPos).toPoint();
 
-    const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->currentDir.isEmpty())

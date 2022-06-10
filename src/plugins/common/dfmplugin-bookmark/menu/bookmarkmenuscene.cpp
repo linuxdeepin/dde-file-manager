@@ -23,7 +23,6 @@
 #include "private/bookmarkmenuscene_p.h"
 #include "controller/bookmarkmanager.h"
 
-#include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "services/common/menu/menu_defines.h"
 #include "services/common/propertydialog/property_defines.h"
@@ -32,6 +31,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QMap>
@@ -61,7 +61,7 @@ bool BookmarkMenuScene::initialize(const QVariantHash &params)
         d->showBookMarkMenu = false;
     } else {
         d->showBookMarkMenu = true;
-        const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
+        const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
         d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 
         d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();

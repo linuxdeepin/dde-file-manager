@@ -28,6 +28,7 @@
 #include "utils/tagoperationhelper.h"
 #include "widgets/tagwidget.h"
 #include "menu/tagmenuscene.h"
+#include "menu/tagdirmenuscene.h"
 #include "events/tageventreceiver.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -79,6 +80,9 @@ bool Tag::start()
 
     MenuService::service()->registerScene(TagMenuCreator::name(), new TagMenuCreator);
     bindScene("FileOperatorMenu");
+
+    WorkspaceService::service()->setWorkspaceMenuScene(TagManager::scheme(), TagDirMenuCreator::name());
+    MenuService::service()->registerScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
 
     return true;
 }
