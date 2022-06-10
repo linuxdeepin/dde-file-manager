@@ -44,6 +44,7 @@
 #include "shutil/fileutils.h"
 #include <DApplication>
 #include <DSettingsDialog>
+#include <DAboutDialog>
 
 #include <QThread>
 #include <QDebug>
@@ -360,6 +361,10 @@ void WindowManager::onWindowClosed()
                     delete dsd;
                     dsd = nullptr;
                 }
+            }
+            DAboutDialog *aboutDialog = qApp->aboutDialog();
+            if (aboutDialog) {
+                aboutDialog->hide();
             }
         }
     } else if (window && window->getCanDestruct()) {
