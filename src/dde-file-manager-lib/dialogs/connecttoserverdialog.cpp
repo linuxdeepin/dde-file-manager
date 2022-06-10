@@ -293,7 +293,7 @@ void ConnectToServerDialog::initUI()
 
         hostList << QString("%1://%2").arg(scheme).arg(host);
     }
-
+    hostList.removeDuplicates();//由于历史记录中有很多设备相同，但是路径不同的记录，这里又只提取了设备，所以这里显示时要去重。
     QStringList schemeList;
     schemeList << QString("%1://").arg(SMB_SCHEME);
     schemeList << QString("%1://").arg(FTP_SCHEME);
