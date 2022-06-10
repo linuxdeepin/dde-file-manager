@@ -60,6 +60,9 @@ bool Trash::start()
 
     dpfHookSequence->follow("dfmplugin_workspace", "hook_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", TrashHelper::instance(), &TrashHelper::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
 
     return true;
 }

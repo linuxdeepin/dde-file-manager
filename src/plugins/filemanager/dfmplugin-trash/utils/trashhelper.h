@@ -82,6 +82,10 @@ public:
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool detailViewIcon(const QUrl &url, QString *iconName);
 
+    bool customColumnRole(const QUrl &rootUrl, QList<DFMGLOBAL_NAMESPACE::ItemRoles> *roleList);
+    bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
+    bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
+
     // services instance
     static DSB_FM_NAMESPACE::WindowsService *winServIns();
     static DSB_FM_NAMESPACE::TitleBarService *titleServIns();

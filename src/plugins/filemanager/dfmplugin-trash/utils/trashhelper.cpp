@@ -41,6 +41,7 @@
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -58,6 +59,7 @@ DPTRASH_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DFMGLOBAL_USE_NAMESPACE
 
 TrashHelper *TrashHelper::instance()
 {
@@ -249,6 +251,65 @@ bool TrashHelper::detailViewIcon(const QUrl &url, QString *iconName)
         if (!iconName->isEmpty())
             return true;
     }
+    return false;
+}
+
+bool TrashHelper::customColumnRole(const QUrl &rootUrl, QList<Global::ItemRoles> *roleList)
+{
+    if (rootUrl.scheme() == scheme()) {
+        roleList->append(kItemNameRole);
+        roleList->append(kItemFileOriginalPath);
+        roleList->append(kItemFileDeletionDate);
+        roleList->append(kItemFileSizeRole);
+        roleList->append(kItemFileMimeTypeRole);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool TrashHelper::customRoleDisplayName(const QUrl &url, const Global::ItemRoles role, QString *displayName)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    if (role == kItemFileOriginalPath) {
+        displayName->append(tr("Source Path"));
+        return true;
+    }
+
+    if (role == kItemFileDeletionDate) {
+        displayName->append(tr("Time deleted"));
+        return true;
+    }
+
+    return false;
+}
+
+bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Global::ItemRoles role, QVariant *data)
+{
+    Q_UNUSED(rootUrl)
+
+    if (url.scheme() != scheme())
+        return false;
+
+    if (role == kItemFileOriginalPath) {
+        QSharedPointer<TrashFileInfo> info = InfoFactory::create<TrashFileInfo>(url);
+        if (info) {
+            data->setValue(info->redirectedFileUrl().path());
+            return true;
+        }
+    }
+
+    if (role == kItemFileDeletionDate) {
+        QSharedPointer<TrashFileInfo> info = InfoFactory::create<TrashFileInfo>(url);
+        if (info) {
+            data->setValue(info->fileTime(QFileDevice::FileAccessTime).toString(FileUtils::dateTimeFormat()));
+            return true;
+        }
+    }
+
     return false;
 }
 
