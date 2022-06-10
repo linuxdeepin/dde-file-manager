@@ -186,12 +186,33 @@ QStringList TagManager::getFilesByTag(const QString &tag)
 
 bool TagManager::setTagsForFiles(const QList<QString> &tags, const QList<QUrl> &files)
 {
-    if (tags.isEmpty()) {
-        const QStringList &tags = TagManager::instance()->getTagsByUrls(files);
-        return tags.isEmpty() || TagManager::instance()->removeTagsOfFiles(tags, files);
+    QStringList mutualTagNames = TagManager::instance()->getTagsByUrls(files);   // the mutual tags of multi files.
+    QStringList dirtyTagNames;   // for deleting.
+
+    for (const QString &tag : mutualTagNames) {
+        if (!tags.contains(tag))
+            dirtyTagNames << tag;
     }
 
-    return TagManager::instance()->addTagsForFiles(tags, files);
+    if (!dirtyTagNames.isEmpty()) {
+        return TagManager::instance()->removeTagsOfFiles(dirtyTagNames, files);
+    } else {
+        bool ret = false;
+        for (const QUrl &url : files) {
+            QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url });
+            QStringList newTags = tags;
+
+            auto isNewTag = [tagsOfFile](const QString &newTagName) {
+                return tagsOfFile.contains(newTagName);
+            };
+
+            newTags.erase(std::remove_if(newTags.begin(), newTags.end(), isNewTag), newTags.end());
+
+            if (!newTags.isEmpty())
+                ret = TagManager::instance()->addTagsForFiles(newTags, { url });
+        }
+        return ret;
+    }
 }
 
 bool TagManager::addTagsForFiles(const QList<QString> &tags, const QList<QUrl> &files)
