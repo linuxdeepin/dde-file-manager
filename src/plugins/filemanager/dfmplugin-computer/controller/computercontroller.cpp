@@ -96,22 +96,20 @@ void ComputerController::onOpenItem(quint64 winId, const QUrl &url)
     if (target.isValid()) {
         if (isOptical)
             target = ComputerUtils::makeBurnUrl(ComputerUtils::getBlockDevIdByUrl(url));
-        if (suffix == SuffixInfo::kProtocol) {
-            if (DeviceUtils::isSamba(target) || DeviceUtils::isFtp(target)) {
-                QString ip, port;
-                if (!NetworkUtils::instance()->parseIp(target.path(), ip, port)) {
-                    qDebug() << "parse ip address failed: " << target;
-                    ComputerEventCaller::cdTo(winId, target);
-                } else {
-                    ComputerUtils::setCursorState(true);
-                    NetworkUtils::instance()->doAfterCheckNet(ip, port, [winId, target, ip](bool ok) {
-                        ComputerUtils::setCursorState(false);
-                        if (ok)
-                            ComputerEventCaller::cdTo(winId, target);
-                        else
-                            DialogManagerInstance->showErrorDialog(tr("Mount error"), tr("Cannot access %1").arg(ip));
-                    });
-                }
+        if (DeviceUtils::isSamba(target) || DeviceUtils::isFtp(target)) {
+            QString ip, port;
+            if (!NetworkUtils::instance()->parseIp(target.path(), ip, port)) {
+                qDebug() << "parse ip address failed: " << target;
+                ComputerEventCaller::cdTo(winId, target);
+            } else {
+                ComputerUtils::setCursorState(true);
+                NetworkUtils::instance()->doAfterCheckNet(ip, port, [winId, target, ip](bool ok) {
+                    ComputerUtils::setCursorState(false);
+                    if (ok)
+                        ComputerEventCaller::cdTo(winId, target);
+                    else
+                        DialogManagerInstance->showErrorDialog(tr("Mount error"), tr("Cannot access %1").arg(ip));
+                });
             }
         } else {
             ComputerEventCaller::cdTo(winId, target);
