@@ -101,6 +101,14 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
             return true;
         }
 
+        for (const QUrl &url : fromUrls) {
+            AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
+            if (!info->canRename()) {
+                event->ignore();
+                return true;
+            }
+        }
+
         if (!hoverFileInfo->canDrop()
             || !hoverFileInfo->supportedDropActions().testFlag(event->dropAction())
             || (hoverFileInfo->isDir() && !hoverFileInfo->isWritable())) {

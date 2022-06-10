@@ -975,10 +975,9 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canMoveOrCopy() const
  */
 bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
 {
-    // todo lanxs
-    /*if (isPrivate()) {
+    if (isPrivate()) {
         return false;
-    }*/
+    }
 
     if (!isSymLink()) {
         const bool isDesktop = mimeTypeName() == Global::kMimeTypeAppXDesktop;
