@@ -344,25 +344,33 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
 
 QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
 {
-    if (url.scheme() == Global::kEntry) {
+    if (url.scheme() == Global::kEntry)
         return url;
-    }
 
     QUrl converted = url;
-    if (delegateServIns->isRegistedTransparentHandle(converted.scheme())) {   // first convert it to local file
+    if (delegateServIns->isRegistedTransparentHandle(converted.scheme()))   // first convert it to local file
         converted = delegateServIns->urlTransform(converted);
-    }
 
     QString devId;
     if (converted.scheme() == Global::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
-        if (devId.startsWith(kBlockDeviceIdPrefix)) {
+        if (devId.startsWith(kBlockDeviceIdPrefix))
             converted = ComputerUtils::makeBlockDevUrl(devId);
-        } else {
+        else
             converted = ComputerUtils::makeProtocolDevUrl(devId);
+    } else if (!converted.isValid() && url.scheme() == Global::kBurn) {
+        // empty disc do not have mapped mount path.
+        auto path = url.path();
+        QRegularExpression re("^/dev/(.*)/disc_files/");
+        auto match = re.match(path);
+        if (match.hasMatch() && path.remove(re).isEmpty()) {
+            auto vol = match.captured(1);
+            auto id = kBlockDeviceIdPrefix + vol;
+            converted = ComputerUtils::makeBlockDevUrl(id);
         }
     } else {
-        converted = QUrl();
+        converted = QUrl();   // make it invalid to got handled by default property dialog
     }
 
+    qDebug() << "convert url from" << url << "to" << converted;
     return converted;
 }
