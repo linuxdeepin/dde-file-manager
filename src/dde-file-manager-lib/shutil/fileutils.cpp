@@ -1978,6 +1978,9 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
       3、smb ip,such as：
       smb://<host>
     */
+    QString decodeUrl = DUrl::fromPercentEncoding(url.path().toUtf8());
+    if(decodeUrl.contains("ftp:host"))
+        return false;
     if (isSmbPath(url.path()) || url.toString().startsWith("smb://") ) {//ends with .gvfsmp
         if ( url.path().endsWith( QString( ".%1" ).arg(SUFFIX_GVFSMP)) ){
             QString path = QUrl::fromPercentEncoding(url.path().toUtf8());
@@ -2005,6 +2008,8 @@ bool FileUtils::isSmbRelatedUrl(const DUrl &url, QString &host)
  */
 bool FileUtils::isSmbHostOnly(const DUrl &url)
 {
+    if(url.scheme() != SMB_SCHEME)
+        return false;
     QString urlString = url.toString();
     if(urlString.endsWith("/") || urlString.endsWith("\\"))
         urlString.chop(1);

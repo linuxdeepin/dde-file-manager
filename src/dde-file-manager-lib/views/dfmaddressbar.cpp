@@ -468,13 +468,8 @@ void DFMAddressBar::initConnections()
             if (!historyList.contains(str) || !list.contains(str)) {
 
                 DUrl inputUrl(str);
-                if(!inputUrl.scheme().isEmpty() && (
-                            inputUrl.scheme() == SMB_SCHEME ||
-                            inputUrl.scheme() == FTP_SCHEME ||
-                            inputUrl.scheme() == SFTP_SCHEME
-                            ) ){
-                    //网络挂载路径不在这里写入历史记录，在NetworkManager中挂载成功后写入，
-                    //防止挂载失败的地址写入历史记录。
+                if (!inputUrl.scheme().isEmpty() && inputUrl.scheme() == SMB_SCHEME){
+                    //smb挂载路径不在这里写入历史记录，在NetworkManager中挂载成功后写入
                     return;
                 }
                 Singleton<SearchHistroyManager>::instance()->writeIntoSearchHistory(str);

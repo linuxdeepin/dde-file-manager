@@ -264,6 +264,8 @@ void DToolBar::searchBarTextEntered(const QString textEntered)
 {
     QString text = textEntered;
 
+    if(text.endsWith("/"))
+        text.chop(1);
     if (text.isEmpty()) {
         //m_searchBar->clearText();
         return;
