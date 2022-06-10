@@ -22,6 +22,7 @@
 #include "utils/vaultdefine.h"
 #include "private/vaultfileinfoprivate.h"
 #include "utils/vaulthelper.h"
+#include "utils/pathmanager.h"
 
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/mimetype/mimedatabase.h"
@@ -150,6 +151,15 @@ bool VaultFileInfo::isRoot() const
 bool VaultFileInfo::canTag() const
 {
     return false;
+}
+
+bool VaultFileInfo::canDrop()
+{
+    if (VaultHelper::instance()->state(PathManager::vaultLockPath()) != VaultState::kUnlocked) {
+        return false;
+    }
+
+    return !dptr->proxy || dptr->proxy->canDrop();
 }
 
 QUrl VaultFileInfo::url() const
