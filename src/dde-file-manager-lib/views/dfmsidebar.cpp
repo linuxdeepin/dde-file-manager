@@ -535,7 +535,6 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
             foreach (DAbstractFileInfoPointer r, filist) {
                 QString scheme = item->url().scheme()+"://";
                 QString host = item->url().host();
-                QString decodeUrl = DUrl::fromPercentEncoding(r->fileUrl().path().toUtf8());
                 QString smbIp;
                 if (FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp) && !r->fileUrl().toString().contains(host))
                     continue;
