@@ -132,7 +132,7 @@ namespace  {
 
 CanvasGridView::CanvasGridView(const QString &screen, QWidget *parent)
     : QAbstractItemView(parent)
-    , d(new CanvasViewPrivate)
+    , d(new CanvasViewPrivate(this))
     , m_screenName(screen)
     , m_currentTargetUrl(DUrl())
 {
@@ -2602,10 +2602,20 @@ void CanvasGridView::initUI()
     delegate->setFocusTextBackgroundBorderColor(Qt::white);
     setItemDelegate(delegate);
 
-    QVariant iconSizeLevel = 1;
-    iconSizeLevel = Config::instance()->getConfig(Config::groupGeneral, Config::keyIconLevel, iconSizeLevel);
-    itemDelegate()->setIconSizeByIconSizeLevel(iconSizeLevel.toInt());
-    qDebug() << "current icon size level" << itemDelegate()->iconSizeLevel();
+    {
+        QVariant iconSizeLevel = 1;
+        iconSizeLevel = Config::instance()->getConfig(Config::groupGeneral, Config::keyIconLevel, iconSizeLevel);
+        delegate->setIconSizeByIconSizeLevel(iconSizeLevel.toInt());
+
+        // 默认使用图标大小
+        int iSizeMode = Config::instance()->getConfig(Config::groupGeneral, Config::keyIconSizeMode, 0).toInt();
+        auto sizeMode = iSizeMode == 1 ? DesktopItemDelegate::IconSizeMode::WordNum
+                                       : DesktopItemDelegate::IconSizeMode::IconLevel;
+        delegate->setIconSizeMode(sizeMode);
+
+        qInfo() << "current icon size level" << itemDelegate()->iconSizeLevel()
+                << "size mode" << iSizeMode << (int)sizeMode;
+    }
 
     DFMSocketInterface::instance();
     DGioSettings desktopSettings("com.deepin.dde.filemanager.desktop", "/com/deepin/dde/filemanager/desktop/");
@@ -3001,7 +3011,6 @@ void CanvasGridView::updateCanvas()
 
     GridManager::instance()->updateGridSize(m_screenNum, d->colCount, d->rowCount);
 
-    //需在expandedWidget->setContentsMargins(margins)之后在更新，否则在计算时没有将Margins纳入计算，导致显示错误
     updateEditorGeometries();
 
     {
