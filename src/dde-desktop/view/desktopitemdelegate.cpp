@@ -139,12 +139,14 @@ QSize DesktopItemDelegate::iconSizeByIconSizeLevel() const
 void DesktopItemDelegate::updateItemSizeHint()
 {
     DIconItemDelegate::updateItemSizeHint();
-    // update word width
-    textFontWidth = parent()->parent()->fontMetrics().width("中");
     auto iconSize = parent()->parent()->iconSize();
-
     int width;
-    {
+    if (sizeMode != IconSizeMode::WordNum) {
+       width = iconSize.width() * 17 / 10;
+    } else {
+        // update word width
+        textFontWidth = parent()->parent()->fontMetrics().width("中");
+
         // defalut word num
         const int minWidth = iconSize.width() + ICON_TOP_SPACE_DESKTOP * 2;
         int num = 9;
@@ -169,4 +171,14 @@ void DesktopItemDelegate::hideAllIIndexWidget()
 
     if (editor)
         editor->hide();
+}
+
+void DesktopItemDelegate::setIconSizeMode(IconSizeMode mode)
+{
+    sizeMode = mode;
+}
+
+DesktopItemDelegate::IconSizeMode DesktopItemDelegate::iconSizeMode() const
+{
+    return sizeMode;
 }

@@ -46,7 +46,7 @@ public:
     static const QString keyQuickHide;
     static const QString keyAutoMerge;
     static const QString keyWaterMask;
-
+    static const QString keyIconSizeMode;
 public slots:
     void setConfig(const QString &group, const QString &key, const QVariant &value);
     void removeConfig(const QString &group, const QString &key);

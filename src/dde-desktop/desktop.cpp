@@ -34,6 +34,8 @@
 #include "canvasviewmanager.h"
 #include "backgroundmanager.h"
 #include "desktopprivate.h"
+#include "config/config.h"
+#include "desktopitemdelegate.h"
 
 Desktop::Desktop()
     : d(new DesktopPrivate)
@@ -273,4 +275,36 @@ QList<int> Desktop::GetIconSize()
         iconSize = d->m_canvas->canvas().first()->iconSize();
     QList<int> size{iconSize.width(), iconSize.height()};
     return  size;
+}
+
+int Desktop::GetIconSizeMode()
+{
+    int iSizeMode = 0;
+    if (d->m_canvas && !d->m_canvas->canvas().isEmpty()) {
+        iSizeMode = static_cast<int>(d->m_canvas->canvas().first()->itemDelegate()->iconSizeMode());
+    } else {
+        iSizeMode = Config::instance()->getConfig(Config::groupGeneral, Config::keyIconSizeMode, 0).toInt();
+        iSizeMode = iSizeMode == 1 ? 1 : 0;
+    }
+
+    return iSizeMode;
+}
+
+bool Desktop::SetIconSizeMode(int iSizeMode)
+{
+    if (iSizeMode < 0 || iSizeMode > 1)
+        return false;
+
+    int current = GetIconSizeMode();
+    if (current != iSizeMode) {
+        auto sizeMode = iSizeMode == 1 ? DesktopItemDelegate::IconSizeMode::WordNum
+                                       : DesktopItemDelegate::IconSizeMode::IconLevel;
+        for (CanvasViewPointer view : d->m_canvas->canvas().values()) {
+            view->itemDelegate()->setIconSizeMode(sizeMode);
+            view->updateCanvas();
+        }
+
+        Config::instance()->setConfig(Config::groupGeneral, Config::keyIconSizeMode, iSizeMode);
+    }
+    return true;
 }
