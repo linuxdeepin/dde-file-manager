@@ -185,9 +185,15 @@ bool OpticalHelper::isSupportedUDFMedium(int type)
     return supportedMedium.contains(DFMBURN::MediaType(type));
 }
 
-void OpticalHelper::createStagingFolder(const QString &path)
+void OpticalHelper::createStagingFolder(const QString &dev)
 {
+    if (!dev.startsWith("/dev/sr"))
+        return;
     // Make sure the staging folder exists. Otherwise the staging watcher won't work.
+    auto &&url { OpticalHelper::localStagingFile(dev) };
+    if (!url.isValid())
+        return;
+    auto path { url.toLocalFile() };
     QFileInfo fileInfo(path);
     if (!fileInfo.exists())
         QDir().mkpath(path);

@@ -49,7 +49,7 @@ MasteredMediaDirIterator::MasteredMediaDirIterator(const QUrl &url,
     mntPoint = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
 
     QString stagingPath { OpticalHelper::localStagingFile(url).path() };
-    OpticalHelper::createStagingFolder(stagingPath);
+    OpticalHelper::createStagingFolder(devFile);
 
     stagingIterator = QSharedPointer<QDirIterator>(
             new QDirIterator(stagingPath, nameFilters, filters, flags));

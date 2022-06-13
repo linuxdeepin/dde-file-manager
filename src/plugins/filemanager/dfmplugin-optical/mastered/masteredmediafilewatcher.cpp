@@ -54,11 +54,14 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     : AbstractFileWatcher(new MasteredMediaFileWatcherPrivate(url, this), parent)
 {
     dptr = dynamic_cast<MasteredMediaFileWatcherPrivate *>(d.data());
+    QString dev { OpticalHelper::burnDestDevice(url) };
+    if (dev.isEmpty())
+        return;
+    OpticalHelper::createStagingFolder(dev);
+
     QUrl urlStaging { OpticalHelper::localStagingFile(url) };
     if (!urlStaging.isValid() || urlStaging.isEmpty())
         return;
-
-    OpticalHelper::createStagingFolder(urlStaging.toLocalFile());
 
     dptr->proxyStaging = WatcherFactory::create<AbstractFileWatcher>(urlStaging);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileAttributeChanged,
