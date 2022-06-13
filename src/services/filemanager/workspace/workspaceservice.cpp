@@ -41,7 +41,6 @@ const int kShowCustomTopWidget = DFMBASE_NAMESPACE::UniversalUtils::registerEven
 const int kPaintListItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kPaintIconItem = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSelectFiles = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
-const int kSelectAll = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kFetchSelectionModes = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSetSelectionMode = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kSetEnabledSelectionModes = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();

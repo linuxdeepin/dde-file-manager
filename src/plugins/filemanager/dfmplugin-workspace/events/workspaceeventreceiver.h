@@ -52,6 +52,7 @@ public slots:
     void handleCloseTabs(const QUrl &url);
     void handleSelectFiles(quint64 windowId, const QList<QUrl> &files);
     void handleSelectAll(quint64 windowId);
+    void handleSetSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
 
     void handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode);
     void handleSetEnabledSelectionModes(const quint64 windowId, const QList<QAbstractItemView::SelectionMode> &modes);
@@ -66,6 +67,7 @@ public slots:
 
     void handlePasteFileResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
     void handleFileUpdate(const QUrl &url);
+    DFMBASE_NAMESPACE::Global::ItemRoles handleCurrentSortRole(quint64 windowId);
 
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);

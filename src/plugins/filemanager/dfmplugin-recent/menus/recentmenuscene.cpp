@@ -26,6 +26,7 @@
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/menu/menuservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 
 #include "dfm-base/utils/dialogmanager.h"
@@ -43,6 +44,10 @@ static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 static constexpr char kOpenDirMenuSceneName[] = "OpenDirMenu";
 
+static constexpr char kSortByActionId[] = "sort-by";
+static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
+
+DSB_FM_USE_NAMESPACE
 DPRECENT_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -76,6 +81,7 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->indexFlags = params.value(MenuParamKey::kIndexFlags).value<Qt::ItemFlags>();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     if (!d->initializeParamsIsValid()) {
         qWarning() << "menu scene:" << name() << " init failed." << d->selectFiles.isEmpty() << d->focusFile << d->currentDir;
@@ -119,6 +125,16 @@ bool RecentMenuScene::create(QMenu *parent)
         auto actOpenFileLocation = parent->addAction(d->predicateName[RecentActionID::kOpenFileLocation]);
         actOpenFileLocation->setProperty(ActionPropertyKey::kActionID, RecentActionID::kOpenFileLocation);
         d->predicateAction[RecentActionID::kOpenFileLocation] = actOpenFileLocation;
+    } else {
+        QAction *actSortByPath = new QAction(d->predicateName[RecentActionID::kSortByPath], parent);
+        actSortByPath->setCheckable(true);
+        actSortByPath->setProperty(ActionPropertyKey::kActionID, RecentActionID::kSortByPath);
+        d->predicateAction[RecentActionID::kSortByPath] = actSortByPath;
+
+        QAction *actSortByLastRead = new QAction(d->predicateName[RecentActionID::kSortByLastRead], parent);
+        actSortByLastRead->setCheckable(true);
+        actSortByLastRead->setProperty(ActionPropertyKey::kActionID, RecentActionID::kSortByLastRead);
+        d->predicateAction[RecentActionID::kSortByLastRead] = actSortByLastRead;
     }
 
     return AbstractMenuScene::create(parent);
@@ -140,6 +156,12 @@ bool RecentMenuScene::triggered(QAction *action)
             return true;
         } else if (actId == RecentActionID::kOpenFileLocation) {
             RecentFilesHelper::openFileLocation(d->selectFiles);
+            return true;
+        } else if (actId == RecentActionID::kSortByPath) {
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);
+            return true;
+        } else if (actId == RecentActionID::kSortByLastRead) {
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
             return true;
         }
         qWarning() << "action not found, id: " << actId;
@@ -165,6 +187,8 @@ RecentMenuScenePrivate::RecentMenuScenePrivate(RecentMenuScene *qq)
 {
     predicateName[RecentActionID::kRemove] = tr("Remove");
     predicateName[RecentActionID::kOpenFileLocation] = tr("Open file location");
+    predicateName[RecentActionID::kSortByPath] = tr("Path");
+    predicateName[RecentActionID::kSortByLastRead] = tr("Last access");
 
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kPaste);
     selectDisableActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
@@ -194,6 +218,12 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
             auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
             if (emptyDisableActions.contains(sceneName, actId)) {
                 menu->removeAction(act);
+                continue;
+            }
+
+            if (sceneName == kSortAndDisplayMenuSceneName && actId == kSortByActionId) {
+                auto subMenu = act->menu();
+                updateSubMenu(subMenu);
                 continue;
             }
 
@@ -246,6 +276,33 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
             menu->insertAction(copyAct, removeAct);
             menu->removeAction(copyAct);
             menu->insertAction(removeAct, copyAct);
+        }
+    }
+}
+
+void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
+{
+    auto actions = menu->actions();
+    auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
+        auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+        return actId == kSrtTimeModifiedActionId;
+    });
+
+    if (iter != actions.end()) {
+        menu->insertAction(*iter, predicateAction[RecentActionID::kSortByLastRead]);
+        menu->insertAction(predicateAction[RecentActionID::kSortByLastRead], predicateAction[RecentActionID::kSortByPath]);
+        menu->removeAction(*iter);
+
+        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_CurrentSortRole", windowId).value<Global::ItemRoles>();
+        switch (role) {
+        case Global::ItemRoles::kItemFilePathRole:
+            predicateAction[RecentActionID::kSortByPath]->setChecked(true);
+            break;
+        case Global::ItemRoles::kItemFileLastReadRole:
+            predicateAction[RecentActionID::kSortByLastRead]->setChecked(true);
+            break;
+        default:
+            break;
         }
     }
 }

@@ -85,6 +85,8 @@ public:
     DFMBASE_NAMESPACE::Global::ViewMode findViewMode(const QString &scheme);
     void selectFiles(quint64 windowId, const QList<QUrl> &files);
     void selectAll(quint64 windowId);
+    void setSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
+    DFMBASE_NAMESPACE::Global::ItemRoles sortRole(quint64 windowId);
 
     bool reigsterViewRoutePrehandler(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler prehandler);
     DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);

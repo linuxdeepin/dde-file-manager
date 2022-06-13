@@ -44,6 +44,9 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_CloseTab)
     DPF_EVENT_REG_SLOT(slot_FileUpdate)
     DPF_EVENT_REG_SLOT(slot_SetViewFilter)
+    DPF_EVENT_REG_SLOT(slot_CurrentSortRole)
+    DPF_EVENT_REG_SLOT(slot_SetSort)
+    DPF_EVENT_REG_SLOT(slot_SelectAll)
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_FetchCustomColumnRoles)

@@ -55,7 +55,6 @@ extern const int kShowCustomTopWidget;
 extern const int kPaintListItem;
 extern const int kPaintIconItem;
 extern const int kSelectFiles;
-extern const int kSelectAll;
 
 //signal
 extern const int kViewSelectionChanged;

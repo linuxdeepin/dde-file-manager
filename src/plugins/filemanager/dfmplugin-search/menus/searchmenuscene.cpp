@@ -219,7 +219,7 @@ bool SearchMenuScene::triggered(QAction *action)
 
         // select all
         if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
-            dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSelectAll, d->windowId);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_SelectAll", d->windowId);
             return true;
         }
     }

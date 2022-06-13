@@ -37,6 +37,7 @@ public:
     explicit RecentMenuScenePrivate(RecentMenuScene *qq);
 
     void updateMenu(QMenu *menu);
+    void updateSubMenu(QMenu *menu);
 
 private:
     RecentMenuScene *q;

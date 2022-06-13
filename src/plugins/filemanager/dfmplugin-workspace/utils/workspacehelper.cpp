@@ -22,6 +22,7 @@
 #include "workspacehelper.h"
 #include "views/fileview.h"
 #include "views/workspacewidget.h"
+#include "models/filesortfilterproxymodel.h"
 #include "models/fileviewmodel.h"
 #include "events/workspaceeventcaller.h"
 #include "services/filemanager/windows/windowsservice.h"
@@ -231,6 +232,24 @@ void WorkspaceHelper::selectAll(quint64 windowId)
     FileView *view = findFileViewByWindowID(windowId);
     if (view)
         view->selectAll();
+}
+
+void WorkspaceHelper::setSort(quint64 windowId, Global::ItemRoles role)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view) {
+        Qt::SortOrder order = view->model()->sortOrder();
+        view->setSort(role, order == Qt::AscendingOrder ? Qt::DescendingOrder : Qt::AscendingOrder);
+    }
+}
+
+Global::ItemRoles WorkspaceHelper::sortRole(quint64 windowId)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        return static_cast<Global::ItemRoles>(view->model()->sortRole());
+
+    return Global::ItemRoles::kItemUnknowRole;
 }
 
 bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const Workspace::FileViewRoutePrehaldler prehandler)

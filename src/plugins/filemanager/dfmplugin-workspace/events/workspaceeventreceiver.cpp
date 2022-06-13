@@ -54,14 +54,23 @@ WorkspaceEventReceiver *WorkspaceEventReceiver::instance()
 
 void WorkspaceEventReceiver::initConnection()
 {
+    // signal event
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged",
                                    WorkspaceHelper::instance(), &WorkspaceHelper::trashStateChanged);
+
+    // slot event
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_CloseTab",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_FileUpdate",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleFileUpdate);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetViewFilter",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_CurrentSortRole",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentSortRole);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetSort",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSort);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SelectAll",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectAll);
 
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSwitchViewMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -78,8 +87,6 @@ void WorkspaceEventReceiver::initConnection()
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectFiles,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectAll,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectAll);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetSelectionMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSelectionMode);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetEnabledSelectionModes,
@@ -124,6 +131,11 @@ void WorkspaceEventReceiver::handleSelectFiles(quint64 windowId, const QList<QUr
 void WorkspaceEventReceiver::handleSelectAll(quint64 windowId)
 {
     WorkspaceHelper::instance()->selectAll(windowId);
+}
+
+void WorkspaceEventReceiver::handleSetSort(quint64 windowId, ItemRoles role)
+{
+    WorkspaceHelper::instance()->setSort(windowId, role);
 }
 
 void WorkspaceEventReceiver::handleSetSelectionMode(const quint64 windowId, const QAbstractItemView::SelectionMode mode)
@@ -178,4 +190,9 @@ void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, c
 void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)
 {
     WorkspaceHelper::instance()->fileUpdate(url);
+}
+
+ItemRoles WorkspaceEventReceiver::handleCurrentSortRole(quint64 windowId)
+{
+    return WorkspaceHelper::instance()->sortRole(windowId);
 }
