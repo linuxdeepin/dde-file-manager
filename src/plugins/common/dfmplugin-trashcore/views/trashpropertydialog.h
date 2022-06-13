@@ -41,7 +41,7 @@ private:
     void initUI();
 
 public slots:
-    void slotTrashDirSizeChange(qint64 size);
+    void slotTrashDirSizeChange(qint64 size, int filesCount, int directoryCount);
 
 protected:
     virtual void showEvent(QShowEvent *event) override;

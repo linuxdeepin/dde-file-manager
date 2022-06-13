@@ -183,8 +183,6 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &direct
             size = info->size();
             if (size > 0) {
                 totalSize += size;
-
-                Q_EMIT q->sizeChanged(totalSize);
             }
             // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
             // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
@@ -514,11 +512,9 @@ void FileStatisticsJob::statistcsExtFileSystem()
             if (flag == FTS_D) {
                 d->totalSize += FileUtils::getMemoryPageSize();
                 d->totalProgressSize += FileUtils::getMemoryPageSize();
-                Q_EMIT sizeChanged(d->totalSize);
             } else if (flag != FTS_DP) {
                 d->totalSize += ent->fts_statp->st_size;
                 d->totalProgressSize += ent->fts_statp->st_size;
-                Q_EMIT sizeChanged(d->totalSize);
             }
         }
         setSizeInfo();

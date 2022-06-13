@@ -85,7 +85,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void stateChanged(State state);
-    void sizeChanged(qint64 size);
     void fileFound(const QUrl &url);
     void directoryFound(const QUrl &url);
     void dataNotify(qint64 size, int filesCount, int directoryCount);

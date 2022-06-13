@@ -50,7 +50,7 @@ public:
     virtual QUrl targetUrl() const override;
 
 public slots:
-    void slotFileDirSizeChange(qint64 size);
+    void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);
 
     void slotFinishedThread();
 
