@@ -63,6 +63,8 @@ void Tag::initialize()
     connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);
 
     TagManager::instance();
+
+    bindEvents();
 }
 
 bool Tag::start()
@@ -174,4 +176,9 @@ void Tag::bindScene(const QString &parentScene)
         },
                 Qt::DirectConnection);
     }
+}
+
+void Tag::bindEvents()
+{
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, TagEventReceiver::instance(), &TagEventReceiver::handleWindowUrlChanged);
 }

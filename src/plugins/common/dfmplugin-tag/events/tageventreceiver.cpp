@@ -26,6 +26,11 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <QTimer>
+#include <QDir>
+
+Q_DECLARE_METATYPE(QDir::Filters);
+
 DFMBASE_USE_NAMESPACE
 DPTAG_USE_NAMESPACE
 
@@ -100,6 +105,16 @@ void TagEventReceiver::handleFilesRenameResult(quint64 winId, const QMap<QUrl, Q
     auto iter = renamedUrls.constBegin();
     for (; iter != renamedUrls.constEnd(); ++iter) {
         handleFileRenameResult(winId, QList<QUrl>() << iter.key() << iter.value(), ok, errMsg);
+    }
+}
+
+void TagEventReceiver::handleWindowUrlChanged(quint64 winId, const QUrl &url)
+{
+    if (url.scheme() == TagManager::scheme()) {
+        QTimer::singleShot(0, this, [=] {
+            QDir::Filters f = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetViewFilter", winId, f);
+        });
     }
 }
 

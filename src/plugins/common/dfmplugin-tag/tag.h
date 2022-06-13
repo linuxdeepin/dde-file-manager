@@ -48,6 +48,7 @@ private:
     void addFileOperations();
     void followEvent();
     void bindScene(const QString &parentScene);
+    void bindEvents();
 };
 
 DPTAG_END_NAMESPACE

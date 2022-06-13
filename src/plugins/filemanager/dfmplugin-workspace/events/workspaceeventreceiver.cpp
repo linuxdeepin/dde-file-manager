@@ -60,6 +60,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCloseTabs);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_FileUpdate",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleFileUpdate);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetViewFilter",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
 
     dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSwitchViewMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);

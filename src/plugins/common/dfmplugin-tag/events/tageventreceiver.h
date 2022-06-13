@@ -38,6 +38,7 @@ public slots:
     void handleFileRemoveResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
     void handleFileRenameResult(quint64 winId, const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
     void handleFilesRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
+    void handleWindowUrlChanged(quint64 winId, const QUrl &url);
 
 private:
     explicit TagEventReceiver(QObject *parent = nullptr);
