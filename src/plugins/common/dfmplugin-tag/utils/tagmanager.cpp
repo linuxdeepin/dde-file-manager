@@ -427,7 +427,7 @@ bool TagManager::pasteHandle(quint64 winId, const QUrl &to)
     return false;
 }
 
-bool TagManager::fileDropHandle(const QUrl &toUrl, const QList<QUrl> &fromUrls)
+bool TagManager::fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
     if (toUrl.scheme() == scheme()) {
         QList<QUrl> canTagFiles;

@@ -32,11 +32,12 @@ AppendCompressHelper::AppendCompressHelper(QObject *parent)
 {
 }
 
-bool AppendCompressHelper::setMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, Qt::DropAction &dropAction)
+bool AppendCompressHelper::setMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, Qt::DropAction *dropAction)
 {
+    Q_ASSERT(dropAction);
     if (!fromUrls.isEmpty()) {
         if (canAppendCompress(fromUrls, toUrl)) {
-            dropAction = Qt::CopyAction;
+            *dropAction = Qt::CopyAction;
             return true;
         }
     }

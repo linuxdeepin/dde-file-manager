@@ -37,6 +37,7 @@ DPUTILS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(const QMimeData *)
+Q_DECLARE_METATYPE(Qt::DropAction *)
 GlobalEventReceiver::GlobalEventReceiver(QObject *parent)
     : QObject(parent)
 {
@@ -82,13 +83,12 @@ void GlobalEventReceiver::handleOpenAsAdmin(const QUrl &url)
     QProcess::startDetached("dde-file-manager-pkexec", { localPath });
 }
 
-bool GlobalEventReceiver::handleSetMouseStyle(const QUrl &toUrl, const QList<QUrl> &fromUrls, void *type)
+bool GlobalEventReceiver::handleSetMouseStyle(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *type)
 {
-    Qt::DropAction *dropAction = (Qt::DropAction *)type;
-    return AppendCompressHelper::setMouseStyle(toUrl, fromUrls, *dropAction);
+    return AppendCompressHelper::setMouseStyle(toUrl, fromUrls, type);
 }
 
-bool GlobalEventReceiver::handleDragDropCompress(const QUrl &toUrl, const QList<QUrl> &fromUrls)
+bool GlobalEventReceiver::handleDragDropCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl)
 {
     return AppendCompressHelper::dragDropCompress(toUrl, fromUrls);
 }
@@ -101,7 +101,7 @@ bool GlobalEventReceiver::handleSetMouseStyleOnDesktop(int viewIndex, const QMim
         QList<QUrl> fromUrls = mime->urls();
         Qt::DropAction *dropAction = (Qt::DropAction *)data->value("dropAction").toLongLong();
         if (dropAction) {
-            return AppendCompressHelper::setMouseStyle(toUrl, fromUrls, *dropAction);
+            return AppendCompressHelper::setMouseStyle(toUrl, fromUrls, dropAction);
         }
     }
     return false;

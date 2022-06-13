@@ -78,14 +78,9 @@ bool MasteredMediaFileInfo::isReadable() const
 
 bool MasteredMediaFileInfo::isWritable() const
 {
-    if (!OpticalHelper::burnIsOnDisc(backerUrl)) {
-        if (!dptr->proxy)
-            return false;
-        return dptr->proxy->isWritable();
-    }
-    QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url())) };
-    quint64 avil { qvariant_cast<quint64>(devInfoMap[DeviceProperty::kSizeFree]) };
-    return avil > 0;
+    if (!dptr->proxy)
+        return false;
+    return dptr->proxy->isWritable();
 }
 
 bool MasteredMediaFileInfo::isDir() const
@@ -192,6 +187,8 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
     if (OpticalHelper::burnIsOnDisc(url)) {
         QString &&devFile { OpticalHelper::burnDestDevice(url) };
         QString &&mnt { DeviceUtils::getMountPointOfDevice(devFile) };
+        QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url)) };
+        devInfoMap = DevProxyMng->queryBlockInfo(id);
         if (mnt.isEmpty())
             return;
         backerUrl = QUrl::fromLocalFile(mnt + OpticalHelper::burnFilePath(url));

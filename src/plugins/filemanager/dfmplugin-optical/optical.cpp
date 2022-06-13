@@ -44,6 +44,8 @@ DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(Qt::DropAction *)
+
 void Optical::initialize()
 {
     UrlRoute::regScheme(Global::kBurn, "/", OpticalHelper::icon(), true);
@@ -190,6 +192,10 @@ void Optical::bindEvents()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DeleteFilesShortcut", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleDeleteFilesShortcut);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_CheckDragDropAction", &OpticalEventReceiver::instance(),
+                            &OpticalEventReceiver::handleCheckDragDropAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDragMove", &OpticalEventReceiver::instance(),
+                            &OpticalEventReceiver::handleCheckDragDropAction);
 }
 
 void Optical::onDeviceChanged(const QString &id, bool isUnmount)

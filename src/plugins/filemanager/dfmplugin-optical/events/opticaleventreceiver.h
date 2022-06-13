@@ -39,6 +39,7 @@ public:
 
 public slots:
     bool handleDeleteFilesShortcut(quint64, const QList<QUrl> &urls);
+    bool handleCheckDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
 
 public:
     explicit OpticalEventReceiver(QObject *parent = nullptr);

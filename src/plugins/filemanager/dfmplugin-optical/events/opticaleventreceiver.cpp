@@ -43,6 +43,23 @@ bool OpticalEventReceiver::handleDeleteFilesShortcut(quint64, const QList<QUrl> 
     return false;
 }
 
+bool OpticalEventReceiver::handleCheckDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
+{
+    if (urls.isEmpty())
+        return false;
+    if (!urlTo.isValid())
+        return false;
+    if (!action)
+        return false;
+
+    if (urlTo.scheme() == DFMBASE_NAMESPACE::Global::kBurn) {
+        *action = Qt::CopyAction;
+        return true;
+    }
+
+    return false;
+}
+
 OpticalEventReceiver::OpticalEventReceiver(QObject *parent)
     : QObject(parent)
 {
