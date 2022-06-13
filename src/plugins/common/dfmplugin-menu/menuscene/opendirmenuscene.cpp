@@ -22,6 +22,7 @@
 #include "action_defines.h"
 
 #include "services/common/menu/menu_defines.h"
+
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -146,6 +147,12 @@ bool OpenDirMenuScene::triggered(QAction *action)
     // open as admin
     if (actionId == ActionID::kOpenAsAdmin) {
         dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenAsAdmin, d->isEmptyArea ? d->currentDir : d->focusFile);
+        return true;
+    }
+
+    // select all
+    if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_SelectAll", d->windowId);
         return true;
     }
 

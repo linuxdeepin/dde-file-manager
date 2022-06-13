@@ -245,15 +245,6 @@ bool WorkspaceMenuScene::emptyMenuTriggered(QAction *action)
     }
 
     const QString &sceneName = actionScene->name();
-    // OpenDirMenu scene
-    if (sceneName == kOpenDirMenuSceneName) {
-        // select all
-        if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
-            d->view->selectAll();
-            return true;
-        }
-    }
-
     // ClipBoardMenu scene
     if (sceneName == kClipBoardMenuSceneName) {
         // paste
