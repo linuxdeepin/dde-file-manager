@@ -236,6 +236,7 @@ bool AbstractWorker::initArgs()
         handler.reset(new LocalFileHandler);
     completeSourceFiles.clear();
     completeTargetFiles.clear();
+    completeCustomInfos.clear();
 
     return true;
 }
@@ -251,6 +252,7 @@ void AbstractWorker::endWork()
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobtypeKey, QVariant::fromValue(jobType));
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey, QVariant::fromValue(completeSourceFiles));
     info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey, QVariant::fromValue(completeTargetFiles));
+    info->insert(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey, QVariant::fromValue(completeCustomInfos));
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobHandlePointer, QVariant::fromValue(handle));
 
     saveOperations();

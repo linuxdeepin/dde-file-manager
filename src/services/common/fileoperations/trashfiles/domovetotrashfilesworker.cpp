@@ -415,10 +415,11 @@ bool DoMoveToTrashFilesWorker::doWriteTrashInfo(const QString &fileBaseName, con
     data.append("DeletionDate=").append(time).append("\n");
 
     // save the file tag info
-    const QStringList tag_name_list;
+    auto tags = dpfSlotChannel->push("dfmplugin_tag", "slot_GetTags", QUrl::fromUserInput(path)).toStringList();
+    if (!tags.isEmpty())
+        data.append("TagNameList=").append(tags.join(',')).append('\n');
 
     qint64 size = metadata.write(data);
-
     metadata.close();
 
     if (size < 0) {

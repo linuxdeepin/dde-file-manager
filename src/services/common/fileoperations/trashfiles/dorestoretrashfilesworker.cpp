@@ -26,6 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/utils/decorator/decoratorfile.h"
 
 #include <dfm-io/dfmio_global.h>
 #include <dfm-io/core/diofactory.h>
@@ -155,6 +156,12 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 
         bool ok = false;
 
+        QString trashInfoFile(trashInfoPath + fileInfo->fileName() + ".trashinfo");
+        DecoratorFile file(trashInfoFile);
+        QString trashInfoCache;
+        if (file.exists())
+            trashInfoCache = file.readAll();
+
         if (fileInfo->isSymLink()) {
             ok = handleSymlinkFile(fileInfo, restoreInfo);
         } else {
@@ -169,8 +176,10 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
 
         // save info
         {
-            if (!completeSourceFiles.contains(url))
+            if (!completeSourceFiles.contains(url)) {
                 completeSourceFiles.append(url);
+                completeCustomInfos.append(trashInfoCache);
+            }
             if (!completeTargetFiles.contains(restoreInfo->url()))
                 completeTargetFiles.append(restoreInfo->url());
         }

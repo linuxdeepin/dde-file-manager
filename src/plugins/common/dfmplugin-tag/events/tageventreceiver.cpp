@@ -28,6 +28,8 @@
 
 #include <QTimer>
 #include <QDir>
+#include <QSettings>
+#include <QTemporaryFile>
 
 Q_DECLARE_METATYPE(QDir::Filters);
 
@@ -47,6 +49,9 @@ void TagEventReceiver::initConnect()
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, this, &TagEventReceiver::handleFileRemoveResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, this, &TagEventReceiver::handleFileRenameResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, this, &TagEventReceiver::handleFilesRenameResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRestoreFromTrashResult, this, &TagEventReceiver::handleRestoreFromTrashResult);
+
+    dpfSlotChannel->connect("dfmplugin_tag", "slot_GetTags", this, &TagEventReceiver::handleGetTags);
 }
 
 void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg)
@@ -116,6 +121,45 @@ void TagEventReceiver::handleWindowUrlChanged(quint64 winId, const QUrl &url)
             dpfSlotChannel->push("dfmplugin_workspace", "slot_SetViewFilter", winId, f);
         });
     }
+}
+
+void TagEventReceiver::handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, const QVariantList &customInfos, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(errMsg)
+    Q_UNUSED(srcUrls)
+    Q_UNUSED(destUrls)
+
+    if (!ok)
+        return;
+
+    for (const auto &info : customInfos) {
+        QString infoStr = info.toString();
+        if (!infoStr.contains("TagNameList"))
+            continue;
+
+        QTemporaryFile file;
+        if (file.open()) {
+            file.write(info.toByteArray());
+            file.close();
+
+            QSettings setting(file.fileName(), QSettings::NativeFormat);
+            setting.beginGroup("Trash Info");
+            setting.setIniCodec("utf-8");
+
+            const auto tagNameList = setting.value("TagNameList").toStringList();
+            if (!tagNameList.isEmpty()) {
+                const auto &path = QByteArray::fromPercentEncoding(setting.value("Path").toByteArray());
+                TagManager::instance()->addTagsForFiles(tagNameList, { QUrl::fromLocalFile(path) });
+            }
+
+            setting.endGroup();
+        }
+    }
+}
+
+QStringList TagEventReceiver::handleGetTags(const QUrl &url)
+{
+    return TagManager::instance()->getTagsByUrls({ url });
 }
 
 TagEventReceiver::TagEventReceiver(QObject *parent)

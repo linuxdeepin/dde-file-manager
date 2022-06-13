@@ -44,7 +44,9 @@ private:
     explicit FileOperationsEventHandler(QObject *parent = nullptr);
     void publishJobResultEvent(DFMBASE_NAMESPACE::AbstractJobHandler::JobType jobType,
                                const QList<QUrl> &srcUrls,
-                               const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
+                               const QList<QUrl> &destUrls,
+                               const QVariantList &customInfos,
+                               bool ok, const QString &errMsg);
 };
 
 DPFILEOPERATIONS_END_NAMESPACE

@@ -25,6 +25,7 @@
 #include "dfmplugin_tag_global.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 DPTAG_BEGIN_NAMESPACE
 
@@ -32,6 +33,10 @@ class Tag : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "tag.json")
+
+    DPF_EVENT_NAMESPACE(DPTAG_NAMESPACE)
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_GetTags)
 
 public:
     virtual void initialize() override;

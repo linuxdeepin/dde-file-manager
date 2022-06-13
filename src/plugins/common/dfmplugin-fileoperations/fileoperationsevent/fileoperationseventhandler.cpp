@@ -38,7 +38,7 @@ FileOperationsEventHandler::FileOperationsEventHandler(QObject *parent)
 
 void FileOperationsEventHandler::publishJobResultEvent(AbstractJobHandler::JobType jobType,
                                                        const QList<QUrl> &srcUrls,
-                                                       const QList<QUrl> &destUrls,
+                                                       const QList<QUrl> &destUrls, const QVariantList &customInfos,
                                                        bool ok,
                                                        const QString &errMsg)
 {
@@ -56,7 +56,7 @@ void FileOperationsEventHandler::publishJobResultEvent(AbstractJobHandler::JobTy
         dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrashResult, srcUrls, ok, errMsg);
         break;
     case AbstractJobHandler::JobType::kRestoreType:
-        dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrashResult, destUrls, ok, errMsg);
+        dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrashResult, srcUrls, destUrls, customInfos, ok, errMsg);
         break;
     case AbstractJobHandler::JobType::kCleanTrashType:
         dpfSignalDispatcher->publish(GlobalEventType::kCleanTrashResult, destUrls, ok, errMsg);
@@ -92,6 +92,7 @@ void FileOperationsEventHandler::handleJobResult(DFMBASE_NAMESPACE::AbstractJobH
     connect(ptr.data(), &AbstractJobHandler::finishedNotify, this, [this, jobType, ok, errMsg](const JobInfoPointer &jobInfo) {
         auto srcUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey).value<QList<QUrl>>() };
         auto destUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>() };
-        publishJobResultEvent(jobType, srcUrls, destUrls, *ok, *errMsg);
+        auto customInfos = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey).toList();
+        publishJobResultEvent(jobType, srcUrls, destUrls, customInfos, *ok, *errMsg);
     });
 }

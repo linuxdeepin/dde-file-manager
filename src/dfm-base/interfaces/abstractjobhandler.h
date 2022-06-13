@@ -143,6 +143,7 @@ public:
         kRemindTimeKey,
         kCompleteFilesKey,
         kCompleteTargetFilesKey,
+        kCompleteCustomInfosKey,
         kJobHandlePointer,
     };
     Q_ENUM(NotifyInfoKey)
