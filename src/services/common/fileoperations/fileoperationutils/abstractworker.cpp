@@ -504,7 +504,7 @@ QString AbstractWorker::formatFileName(const QString &fileName)
 
 void AbstractWorker::saveOperations()
 {
-    if (/*!isConvert && */ !completeTargetFiles.isEmpty()) {
+    if (!isConvert && !completeTargetFiles.isEmpty()) {
         // send saveoperator event
         if (jobType == AbstractJobHandler::JobType::kCopyType
             || jobType == AbstractJobHandler::JobType::kCutType

@@ -229,10 +229,10 @@ bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
     ok = deleteFile(sourceUrl, QUrl(), &result);
     if (!ok && !result)
         return false;
-    if (!isConvert) {
-        completeSourceFiles.append(sourceUrl);
-        completeTargetFiles.append(newTargetInfo->url());
-    }
+
+    completeSourceFiles.append(sourceUrl);
+    completeTargetFiles.append(newTargetInfo->url());
+
     return true;
 }
 
@@ -276,7 +276,7 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
 
         *ok = renameFileByHandler(sourceInfo, toInfo);
         if (*ok) {
-            if (!isConvert && targetPathInfo == this->targetInfo) {
+            if (targetPathInfo == this->targetInfo) {
                 completeSourceFiles.append(sourceUrl);
                 completeTargetFiles.append(toInfo->url());
             }

@@ -89,6 +89,7 @@ bool DoRestoreTrashFilesWorker::initArgs()
     trashInfoPath = StandardPaths::location(StandardPaths::kTrashInfosPath);
     trashInfoPath = trashInfoPath.endsWith("/") ? trashInfoPath : trashInfoPath + "/";
     completeTargetFiles.clear();
+    isConvert = !jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
     return AbstractWorker::initArgs();
 }
 /*!
@@ -166,13 +167,15 @@ bool DoRestoreTrashFilesWorker::doRestoreTrashFiles()
             return false;
         }
 
-        if (isConvert) {
+        // save info
+        {
             if (!completeSourceFiles.contains(url))
                 completeSourceFiles.append(url);
             if (!completeTargetFiles.contains(restoreInfo->url()))
                 completeTargetFiles.append(restoreInfo->url());
         }
     }
+
     return true;
 }
 /*!

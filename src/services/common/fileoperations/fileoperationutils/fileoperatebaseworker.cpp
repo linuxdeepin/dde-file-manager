@@ -558,7 +558,7 @@ bool FileOperateBaseWorker::copyAndDeleteFile(const AbstractFileInfoPointer &fro
         FileUtils::removeCopyingFileUrl(url);
     }
 
-    if (!isConvert && !oldExist && toInfo->exists() && targetInfo == targetPathInfo) {
+    if (!oldExist && toInfo->exists() && targetInfo == targetPathInfo) {
         completeSourceFiles.append(fromInfo->url());
         completeTargetFiles.append(toInfo->url());
     }
