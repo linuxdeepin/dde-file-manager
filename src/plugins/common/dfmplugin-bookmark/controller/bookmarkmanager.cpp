@@ -158,7 +158,7 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
     item.iconName = BookMarkHelper::instance()->icon().name();
     item.text = bookmarkName;
     item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-    item.contextMenuCb = BookMarkManager::contenxtMenuHandle;
+    item.contextMenuCb = BookMarkManager::contextMenuHandle;
     item.renameCb = BookMarkManager::renameCallBack;
     item.cdCb = BookMarkManager::cdBookMarkUrlCallBack;
 
@@ -185,6 +185,7 @@ void BookMarkManager::update(const QVariant &value)
         BookmarkData data;
         data.resetData(item);
         bookmarkDataMap[data.url] = data;
+        addBookMarkItem(data.url, data.name);
     }
 }
 
@@ -317,7 +318,7 @@ void BookMarkManager::addSchemeOfBookMarkDisabled(const QString &scheme)
     bookMarkDisabledSchemes.insert(scheme);
 }
 
-void BookMarkManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
+void BookMarkManager::contextMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QFileInfo info(url.path());
     bool bEnabled = info.exists();

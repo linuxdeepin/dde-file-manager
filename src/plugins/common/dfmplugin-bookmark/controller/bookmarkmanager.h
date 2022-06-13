@@ -59,7 +59,7 @@ public:
     void addBookMarkItem(const QUrl &url, const QString &bookmarkName) const;
     void addBookMarkItemsFromConfig();
 
-    static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
+    static void contextMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static void renameCallBack(quint64 windowId, const QUrl &url, const QString &name);
     static void cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url);
 
