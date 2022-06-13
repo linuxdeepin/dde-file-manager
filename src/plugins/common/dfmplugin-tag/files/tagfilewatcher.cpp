@@ -23,6 +23,8 @@
 #include "private/tagfilewatcher_p.h"
 #include "utils/taghelper.h"
 
+#include "dfm-base/utils/universalutils.h"
+
 DFMBASE_USE_NAMESPACE
 DPTAG_USE_NAMESPACE
 
@@ -40,6 +42,12 @@ TagFileWatcher::~TagFileWatcher()
 
 void TagFileWatcher::setEnabledSubfileWatcher(const QUrl &subfileUrl, bool enabled)
 {
+}
+
+void TagFileWatcher::onTagRemoved(const QString &tagName)
+{
+    if (UniversalUtils::urlEquals(TagHelper::instance()->makeTagUrlByTagName(tagName), dptr->url))
+        emit AbstractFileWatcher::fileDeleted(dptr->url);
 }
 
 void TagFileWatcher::onFilesTagged(const QMap<QString, QList<QString>> &fileAndTags)

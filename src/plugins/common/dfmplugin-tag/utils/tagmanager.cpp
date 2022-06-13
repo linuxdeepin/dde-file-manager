@@ -515,6 +515,8 @@ void TagManager::onTagDeleted(const QStringList &tags)
     for (const QString &tag : tags) {
         QUrl url = TagHelper::instance()->makeTagUrlByTagName(tag);
         TagHelper::sideBarServIns()->removeItem(url);
+
+        emit tagDeleted(tag);
     }
 }
 

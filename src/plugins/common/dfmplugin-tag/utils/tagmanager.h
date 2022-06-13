@@ -89,6 +89,7 @@ public slots:
     void onFilesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
 
 signals:
+    void tagDeleted(const QString &tagName);
     void filesTagged(const QMap<QString, QList<QString>> &fileAndTags);
     void filesUntagged(const QMap<QString, QList<QString>> &fileAndTags);
 

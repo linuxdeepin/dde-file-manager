@@ -152,6 +152,7 @@ void FileViewModelPrivate::doWatcherEvent()
                 continue;
             else if (event.second == kRmFile) {
                 nodeManager->clearChildren();
+                dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
                 break;
             }
             //todo:先不做
