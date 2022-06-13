@@ -31,6 +31,7 @@
 #include "utils/sidebarinfocachemananger.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/utils/systempathutil.h"
 
 #include <QApplication>
@@ -174,6 +175,37 @@ void SideBarWidget::setItemVisible(const QUrl &url, bool visible)
     int r = sidebarModel->findRowByUrl(url);
     if (r > 0)
         sidebarView->setRowHidden(r, !visible);
+}
+
+QList<QUrl> SideBarWidget::findItems(const QString &group) const
+{
+    QList<QUrl> ret;
+    bool groupTraversed { false };
+    for (int r = 0; r < sidebarModel->rowCount(); r++) {
+        auto item = sidebarModel->itemFromIndex(sidebarModel->index(r, 0));
+        if (item && item->group() == group) {
+            auto u = item->url();
+            if (u.isValid())
+                ret << u;
+            groupTraversed = true;
+        } else {
+            if (groupTraversed)
+                break;
+        }
+    }
+    return ret;
+}
+
+void SideBarWidget::sortGroup(const QString &group, const QList<QUrl> &orders)
+{
+    sidebarModel->sortGroup(group, orders);
+    updateSeparatorVisibleState();
+
+    // after sort the hightlight may lose, re-select the highlight item.
+    quint64 winId = SideBarHelper::windowId(this);
+    auto window = WindowsService::service()->findWindowById(winId);
+    if (window)
+        setCurrentUrl(window->currentUrl());
 }
 
 void SideBarWidget::onItemActived(const QModelIndex &index)

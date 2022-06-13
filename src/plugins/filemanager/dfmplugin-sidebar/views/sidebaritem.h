@@ -59,9 +59,6 @@ public:
 
     void setItemInfo(DSB_FM_NAMESPACE::SideBar::ItemInfo info);
     DSB_FM_NAMESPACE::SideBar::ItemInfo itemInfo() const;
-
-private:
-    DSB_FM_NAMESPACE::SideBar::ItemInfo info;
 };
 
 class SideBarItemSeparator : public DPSIDEBAR_NAMESPACE::SideBarItem

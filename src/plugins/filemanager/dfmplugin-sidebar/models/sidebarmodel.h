@@ -51,6 +51,8 @@ public:
     void updateRow(const QUrl &url, const QIcon &newIcon);
     QStringList groups() const;
     int findRowByUrl(const QUrl &url);
+    int findLastPosOf(const QString &group);
+    void sortGroup(const QString &group, const QList<QUrl> &order);
 };
 
 DPSIDEBAR_END_NAMESPACE

@@ -46,23 +46,42 @@
 USING_IO_NAMESPACE
 
 DPBOOKMARK_BEGIN_NAMESPACE
-const char *const kConfigGroupName = "BookMark";
-const char *const kConfigKeyName = "Items";
+static constexpr char kConfigGroupName[] { "BookMark" };
+static constexpr char kConfigKeyName[] { "Items" };
+
+static constexpr char kKeyCreated[] { "created" };
+static constexpr char kKeyLastModi[] { "lastModified" };
+static constexpr char kKeyLocateUrl[] { "locateUrl" };
+static constexpr char kKeyMountPoint[] { "mountPoint" };
+static constexpr char kKeyName[] { "name" };
+static constexpr char kKeyUrl[] { "url" };
 
 void BookmarkData::resetData(const QVariantMap &map)
 {
-    created = QDateTime::fromString(map.value("created").toString(), Qt::ISODate);
-    lastModified = QDateTime::fromString(map.value("lastModified").toString(), Qt::ISODate);
+    created = QDateTime::fromString(map.value(kKeyCreated).toString(), Qt::ISODate);
+    lastModified = QDateTime::fromString(map.value(kKeyLastModi).toString(), Qt::ISODate);
     QByteArray ba;
-    if (map.value("locateUrl").toString().startsWith("/")) {
-        ba = map.value("locateUrl").toString().toLocal8Bit().toBase64();
+    if (map.value(kKeyLocateUrl).toString().startsWith("/")) {
+        ba = map.value(kKeyLocateUrl).toString().toLocal8Bit().toBase64();
     } else {
-        ba = map.value("locateUrl").toString().toLocal8Bit();
+        ba = map.value(kKeyLocateUrl).toString().toLocal8Bit();
     }
     locateUrl = QString(ba);
-    deviceUrl = map.value("mountPoint").toString();
-    name = map.value("name").toString();
-    url = QUrl::fromUserInput(map.value("url").toString());
+    deviceUrl = map.value(kKeyMountPoint).toString();
+    name = map.value(kKeyName).toString();
+    url = QUrl::fromUserInput(map.value(kKeyUrl).toString());
+}
+
+QVariantMap BookmarkData::serialize()
+{
+    QVariantMap v;
+    v.insert(kKeyCreated, created.toString(Qt::ISODate));
+    v.insert(kKeyLastModi, lastModified.toString(Qt::ISODate));
+    v.insert(kKeyLocateUrl, locateUrl);
+    v.insert(kKeyMountPoint, deviceUrl);
+    v.insert(kKeyName, name);
+    v.insert(kKeyUrl, url);
+    return v;
 }
 
 DPBOOKMARK_END_NAMESPACE
@@ -86,11 +105,10 @@ bool BookMarkManager::removeBookMark(const QUrl &url)
         return true;
     bookmarkDataMap.remove(url);
 
-    QVariantList list =
-            Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+    QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
     for (int i = 0; i < list.size(); ++i) {
         const QVariantMap &map = list.at(i).toMap();
-        if (map.value("url").toUrl() == url) {
+        if (map.value(kKeyUrl).toUrl() == url) {
             list.removeAt(i);
         }
     }
@@ -115,16 +133,8 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             getMountInfo(url, bookmarkData.deviceUrl, bookmarkData.locateUrl);
             bookmarkData.name = info.fileName();
             bookmarkData.url = url;
-            QVariantList list =
-                    Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
-            list << QVariantMap { { "name", bookmarkData.name },
-                                  { "url", bookmarkData.url },
-                                  { "created", bookmarkData.created.toString(Qt::ISODate) },
-                                  { "lastModified",
-                                    bookmarkData.lastModified.toString(Qt::ISODate) },
-                                  { "mountPoint", bookmarkData.deviceUrl },
-                                  { "locateUrl", bookmarkData.locateUrl } };
-            Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
+            QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+            list << bookmarkData.serialize();
 
             bookmarkDataMap[url] = bookmarkData;
             addBookMarkItem(url, info.fileName());
@@ -136,14 +146,13 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
 
 void BookMarkManager::addBookMarkItemsFromConfig()
 {
-    QVariantList list =
-            Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+    QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
     for (const QVariant &data : list) {
         QMap<QString, QVariant> bookMarkMap = data.toMap();
-        if (bookMarkMap.contains("url")) {
+        if (bookMarkMap.contains(kKeyUrl)) {
             BookmarkData bookmarkData;
             bookmarkData.resetData(bookMarkMap);
-            const QString &name = bookMarkMap.value("name").toString();
+            const QString &name = bookMarkMap.value(kKeyName).toString();
             bookmarkDataMap[bookmarkData.url] = bookmarkData;
             addBookMarkItem(bookmarkData.url, name);
         }
@@ -202,13 +211,12 @@ void BookMarkManager::bookMarkRename(const QUrl &url, const QString &newName)
     if (!url.isValid() || newName.isEmpty() || !bookmarkDataMap.contains(url))
         return;
 
-    QVariantList list =
-            Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+    QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
-        if (map.value("name").toString() == bookmarkDataMap[url].name) {
-            map["name"] = newName;
-            map["lastModified"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+        if (map.value(kKeyName).toString() == bookmarkDataMap[url].name) {
+            map[kKeyName] = newName;
+            map[kKeyLastModi] = QDateTime::currentDateTime().toString(Qt::ISODate);
             list[i] = map;
             Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
             bookmarkDataMap[url].name = newName;
@@ -266,6 +274,17 @@ QSet<QString> BookMarkManager::getBookMarkDisabledSchemes()
     return bookMarkDisabledSchemes;
 }
 
+void BookMarkManager::sortItemsByOrder(const QList<QUrl> &order)
+{
+    QVariantList sorted;
+    for (auto url : order) {
+        auto item = bookmarkDataMap.value(url);
+        if (item.url.isValid())
+            sorted << item.serialize();
+    }
+    Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, sorted);
+}
+
 void BookMarkManager::onFileEdited(const QString &group, const QString &key, const QVariant &value)
 {
     if (group != kConfigGroupName || key != kConfigKeyName)
@@ -279,11 +298,10 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
     if (!oldUrl.isValid() || !bookmarkDataMap.contains(oldUrl))
         return;
 
-    QVariantList list =
-            Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
+    QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
     for (int i = 0; i < list.size(); ++i) {
         QVariantMap map = list.at(i).toMap();
-        if (map.value("name").toString() == bookmarkDataMap.value(oldUrl).name) {
+        if (map.value(kKeyName).toString() == bookmarkDataMap.value(oldUrl).name) {
             QString locatePath = newUrl.path();
             int indexOfFirstDir = 0;
             if (locatePath.startsWith("/media")) {
@@ -293,8 +311,8 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
             }
             locatePath = locatePath.mid(indexOfFirstDir);
             const QByteArray &ba = locatePath.toLocal8Bit();
-            map["locateUrl"] = QString(ba.toBase64());
-            map["url"] = newUrl;
+            map[kKeyLocateUrl] = QString(ba.toBase64());
+            map[kKeyUrl] = newUrl;
             list[i] = map;
 
             BookmarkData newData;
@@ -323,8 +341,7 @@ void BookMarkManager::contextMenuHandle(quint64 windowId, const QUrl &url, const
     bool bEnabled = info.exists();
 
     QMenu *menu = new QMenu;
-    auto newWindowAct = menu->addAction(QObject::tr("Open in new window"),
-                                        [url]() { BookMarkEventCaller::sendBookMarkOpenInNewWindow(url); });
+    auto newWindowAct = menu->addAction(QObject::tr("Open in new window"), [url]() { BookMarkEventCaller::sendBookMarkOpenInNewWindow(url); });
     newWindowAct->setEnabled(bEnabled);
 
     auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {

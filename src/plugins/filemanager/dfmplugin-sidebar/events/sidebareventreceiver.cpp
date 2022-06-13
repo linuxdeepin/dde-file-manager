@@ -26,6 +26,7 @@
 #include "utils/sidebarinfocachemananger.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
+#include "services/filemanager/windows/windowsservice.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -45,6 +46,7 @@ void SideBarEventReceiver::connectService()
     dpfSignalDispatcher->subscribe(SideBar::EventType::kItemVisibleSetting, this, &SideBarEventReceiver::handleItemVisibleSetting);
 
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetContextMenuEnable", this, &SideBarEventReceiver::handleSetContextMenuEnable);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_GetGroupItems", this, &SideBarEventReceiver::handleGetGroupItems);
 }
 
 void SideBarEventReceiver::handleItemVisibleSetting(const QUrl &url, bool visible)
@@ -62,6 +64,26 @@ void SideBarEventReceiver::handleItemVisibleSetting(const QUrl &url, bool visibl
 void SideBarEventReceiver::handleSetContextMenuEnable(bool enable)
 {
     SideBarHelper::contextMenuEnabled = enable;
+}
+
+QList<QUrl> SideBarEventReceiver::handleGetGroupItems(quint64 winId, const QString &group)
+{
+    if (group.isEmpty())
+        return {};
+
+    SideBarWidget *wid { nullptr };
+    for (auto sb : SideBarHelper::allSideBar()) {
+        if (WindowsService::service()->findWindowId(sb) == winId) {
+            wid = sb;
+            break;
+        }
+    }
+
+    if (wid)
+        return wid->findItems(group);
+
+    qDebug() << "cannot find sidebarwidget for winid: " << winId << group;
+    return {};
 }
 
 SideBarEventReceiver::SideBarEventReceiver(QObject *parent)

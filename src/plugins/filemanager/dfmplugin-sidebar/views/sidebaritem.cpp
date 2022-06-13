@@ -20,6 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sidebaritem.h"
+#include "models/sidebarmodel.h"
+#include "utils/sidebarinfocachemananger.h"
 
 #include "dfm-base/base/standardpaths.h"
 
@@ -27,6 +29,7 @@
 #include <QVariant>
 
 DPSIDEBAR_USE_NAMESPACE
+using namespace DSB_FM_NAMESPACE::SideBar;
 
 SideBarItem::SideBarItem(const QUrl &url)
     : SideBarItem(QIcon(), QString(), QString(), url)
@@ -71,17 +74,18 @@ void SideBarItem::setGroup(const QString &group)
 
 QString SideBarItem::subGourp() const
 {
-    return info.subGroup;
+    return itemInfo().subGroup;
 }
 
-void SideBarItem::setItemInfo(DSB_FM_NAMESPACE::SideBar::ItemInfo info)
+void SideBarItem::setItemInfo(ItemInfo info)
 {
-    this->info = info;
+    SideBarInfoCacheMananger::instance()->bindItemInfo(info.url, info);
 }
 
-DSB_FM_NAMESPACE::SideBar::ItemInfo SideBarItem::itemInfo() const
+ItemInfo SideBarItem::itemInfo() const
 {
-    return this->info;
+    // if this is storage as a member variable, click item after dragged, dfm crash.
+    return SideBarInfoCacheMananger::instance()->itemInfo(url());
 }
 
 QString SideBarItem::group() const

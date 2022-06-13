@@ -39,6 +39,10 @@ class SideBar : public dpf::Plugin
 
     // slot events
     DPF_EVENT_REG_SLOT(slot_SetContextMenuEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
+    DPF_EVENT_REG_SLOT(slot_GetGroupItems)
+
+    // signal events
+    DPF_EVENT_REG_SIGNAL(signal_SidebarSorted);
 
 public:
     virtual void initialize() override;

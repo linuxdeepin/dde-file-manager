@@ -59,6 +59,12 @@ public:
     bool containsHiddenUrl(const QUrl &url);
     void addHiddenUrl(const QUrl &url);
     void removeHiddenUrl(const QUrl &url);
+    void sortCache(const QString &group, const QList<QUrl> &order);
+
+    // these 3 funcs is for QHash<QUrl, ItemInfo> bindedInfos;
+    void bindItemInfo(const QUrl &url, const ItemInfo &info);
+    ItemInfo itemInfo(const QUrl &url);
+    void removeBindedItemInfo(const QUrl &url);
 
 private:
     SideBarInfoCacheMananger();
@@ -66,6 +72,7 @@ private:
 private:
     GroupCacheMap cacheInfoMap;
     QList<QUrl> hiddenUrlList;
+    QHash<QUrl, ItemInfo> bindedInfos;
 };
 
 DPSIDEBAR_END_NAMESPACE

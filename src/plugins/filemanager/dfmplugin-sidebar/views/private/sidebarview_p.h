@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QPoint>
 #include <QModelIndex>
+#include <QUrl>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
@@ -38,18 +39,19 @@ class SideBarViewPrivate : public QObject
     SideBarView *const q;
     int previousRowCount { 0 };
     QPoint dropPos;
-    QString dragItemName;
-    int dragRow { 0 };
     QModelIndex previous;
     QModelIndex current;
-    QString strItemUniqueKey;
     QList<QUrl> urlsForDragEvent;
     qint64 lastOpTime;   //上次操作的时间（ms）
+    QUrl draggedUrl;
+    QString draggedGroup;
 
     explicit SideBarViewPrivate(SideBarView *qq);
     bool fetchDragEventUrlsFromSharedMemory();
     bool checkOpTime();   //检查当前操作与上次操作的时间间隔
     void currentChanged(const QModelIndex &previous);
+    void highlightAfterDraggedToSort();
+    void notifyOrderChanged();
 };
 
 DPSIDEBAR_END_NAMESPACE

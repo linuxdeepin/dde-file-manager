@@ -23,6 +23,7 @@
 #include "views/sidebaritemdelegate.h"
 #include "views/sidebaritem.h"
 #include "utils/sidebarhelper.h"
+#include "utils/sidebarinfocachemananger.h"
 
 #include "dfm-base/utils/universalutils.h"
 
@@ -225,6 +226,7 @@ bool SideBarModel::removeRow(SideBarItem *item)
     for (int row = rowCount() - 1; row >= 0; row--) {
         auto foundItem = dynamic_cast<SideBarItem *>(this->item(row, 0));
         if (item == foundItem) {
+            SideBarInfoCacheMananger::instance()->removeBindedItemInfo(item->url());
             QStandardItemModel::removeRow(row);
             return true;
         }
@@ -242,6 +244,7 @@ bool SideBarModel::removeRow(const QUrl &url)
         auto item = itemFromIndex(r);
         QUrl itemUrl { item->url() };
         if (item && DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, itemUrl)) {
+            SideBarInfoCacheMananger::instance()->removeBindedItemInfo(item->url());
             QStandardItemModel::removeRow(r);
             return true;
         }
@@ -322,4 +325,37 @@ int SideBarModel::findRowByUrl(const QUrl &url)
         }
     }
     return ret;
+}
+
+int SideBarModel::findLastPosOf(const QString &group)
+{
+    for (int r = rowCount() - 1; r >= 0; r--) {
+        auto item = itemFromIndex(index(r, 0));
+        if (item && item->group() == group)
+            return r;
+    }
+    return -1;
+}
+
+void SideBarModel::sortGroup(const QString &group, const QList<QUrl> &order)
+{
+    int r = findLastPosOf(group);
+    if (r < 0)
+        return;
+
+    beginResetModel();
+    int firstGroup = -1;
+    QMap<QUrl, SideBarItem *> items;
+    for (; r > 0; r--) {   // the index 0 is a group
+        auto item = itemFromIndex(index(r, 0));
+        if (item && item->group() == group && item->url().isValid()) {
+            items.insert(item->url(), new SideBarItem(*item));
+            QStandardItemModel::removeRow(r);   // takeItem do not reduce the rowCount() of model, might be a bug.
+            firstGroup = r;
+        }
+    }
+
+    for (auto url : order)
+        insertRow(firstGroup++, items.value(url));
+    endResetModel();
 }

@@ -21,8 +21,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "sidebarhelper.h"
+#include "sidebarinfocachemananger.h"
 #include "views/sidebaritem.h"
+#include "views/sidebarwidget.h"
 #include "events/sidebareventcaller.h"
+#include "events/sidebareventreceiver.h"
 
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
@@ -194,6 +197,18 @@ bool SideBarHelper::registerSortFunc(const QString &subGroup, SideBar::SortFunc 
 SideBar::SortFunc SideBarHelper::sortFunc(const QString &subGroup)
 {
     return kSortFuncs.value(subGroup, nullptr);
+}
+
+void SideBarHelper::sortSidebarGroupExcept(quint64 winId, const QString &group)
+{
+    const auto &&order = SideBarEventReceiver::instance()->handleGetGroupItems(winId, group);
+    auto all = SideBarHelper::allSideBar();
+    for (auto sb : all) {
+        if (!sb || SideBarHelper::windowId(sb) == winId)
+            continue;
+        sb->sortGroup(group, order);
+    }
+    SideBarInfoCacheMananger::instance()->sortCache(group, order);
 }
 
 QMutex &SideBarHelper::mutex()

@@ -21,6 +21,8 @@
 #include "bookmarkeventreceiver.h"
 #include "controller/bookmarkmanager.h"
 
+#include <dfm-framework/dpf.h>
+
 #include <QDebug>
 
 DPBOOKMARK_USE_NAMESPACE
@@ -42,6 +44,14 @@ void BookMarkEventReceiver::handleRenameFile(quint64 windowId, const QList<QUrl>
 void BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled(const QString &scheme)
 {
     BookMarkManager::instance()->addSchemeOfBookMarkDisabled(scheme);
+}
+
+void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group)
+{
+    if (group != "Bookmark")
+        return;
+    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_GetGroupItems", winId, group);
+    BookMarkManager::instance()->sortItemsByOrder(items.value<QList<QUrl>>());
 }
 
 BookMarkEventReceiver::BookMarkEventReceiver(QObject *parent)

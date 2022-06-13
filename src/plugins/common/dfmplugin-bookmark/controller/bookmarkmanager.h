@@ -45,11 +45,14 @@ struct BookmarkData
     QString udisksDBusPath;
     QString udisksMountPoint;
     void resetData(const QVariantMap &map);
+    QVariantMap serialize();
 };
 class BookMarkWatcherController;
 class BookMarkManager : public QObject
 {
     Q_OBJECT
+    friend class BookMarkEventReceiver;
+
 public:
     static BookMarkManager *instance();
 
@@ -79,6 +82,7 @@ private:
     int showRemoveBookMarkDialog(quint64 winId);
     void getMountInfo(const QUrl &url, QString &mountPoint, QString &localUrl);
     QSet<QString> getBookMarkDisabledSchemes();
+    void sortItemsByOrder(const QList<QUrl> &order);
 
 private slots:
     void onFileEdited(const QString &group, const QString &key, const QVariant &value);

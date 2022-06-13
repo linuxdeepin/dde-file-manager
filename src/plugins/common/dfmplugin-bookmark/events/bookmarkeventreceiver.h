@@ -38,6 +38,7 @@ public:
 public slots:
     void handleRenameFile(quint64 windowId, const QList<QUrl> &urls, bool result, const QString &errorMsg);
     void handleAddSchemeOfBookMarkDisabled(const QString &scheme);
+    void handleSidebarOrderChanged(quint64 winId, const QString &group);
 
 private:
     explicit BookMarkEventReceiver(QObject *parent = nullptr);

@@ -40,6 +40,7 @@ public:
 public slots:
     void handleItemVisibleSetting(const QUrl &url, bool visible);
     void handleSetContextMenuEnable(bool enable);
+    QList<QUrl> handleGetGroupItems(quint64 winId, const QString &group);
 
 private:
     explicit SideBarEventReceiver(QObject *parent = nullptr);

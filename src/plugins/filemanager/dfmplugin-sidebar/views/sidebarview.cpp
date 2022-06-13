@@ -20,14 +20,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sidebarview.h"
-#include "views/sidebaritem.h"
 #include "models/sidebarmodel.h"
+#include "views/sidebaritem.h"
 #include "views/private/sidebarview_p.h"
 #include "utils/fileoperatorhelper.h"
 #include "utils/sidebarhelper.h"
 
+#include "services/filemanager/windows/windowsservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QtConcurrent>
 #include <QDebug>
@@ -50,7 +53,30 @@ SideBarViewPrivate::SideBarViewPrivate(SideBarView *qq)
 void SideBarViewPrivate::currentChanged(const QModelIndex &previous)
 {
     current = q->currentIndex();
-    SideBarViewPrivate::previous = previous;
+    this->previous = previous;
+}
+
+void SideBarViewPrivate::highlightAfterDraggedToSort()
+{
+    QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
+        auto ret = q->model()->findRowByUrl(draggedUrl);
+        if (ret >= 0)
+            q->setCurrentIndex(q->model()->index(ret, 0));
+        draggedUrl = QUrl {};
+    });
+}
+
+void SideBarViewPrivate::notifyOrderChanged()
+{
+    if (draggedGroup.isEmpty())
+        return;
+
+    QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
+        quint64 winId = DSB_FM_NAMESPACE::WindowsService::service()->findWindowId(q);
+        dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_SidebarSorted", winId, draggedGroup);
+        SideBarHelper::sortSidebarGroupExcept(winId, draggedGroup);
+        draggedGroup = "";
+    });
 }
 
 SideBarView::SideBarView(QWidget *parent)
@@ -84,6 +110,10 @@ void SideBarView::mousePressEvent(QMouseEvent *event)
     if (!d->checkOpTime())
         return;
 
+    d->draggedUrl = urlAt(event->pos());
+    auto item = itemAt(event->pos());
+    d->draggedGroup = item ? item->group() : "";
+
     if (event->button() == Qt::RightButton) {
         //fix bug#33502 鼠标挪动到侧边栏底部右键，滚动条滑动，不能定位到选中的栏目上
         event->accept();
@@ -107,6 +137,13 @@ void SideBarView::mouseMoveEvent(QMouseEvent *event)
         }
     }
 #endif   // QT_CONFIG(draganddrop)
+}
+
+void SideBarView::mouseReleaseEvent(QMouseEvent *event)
+{
+    d->draggedUrl = QUrl {};
+    d->draggedGroup.clear();
+    DListView::mouseReleaseEvent(event);
 }
 
 void SideBarView::dragEnterEvent(QDragEnterEvent *event)
@@ -141,6 +178,11 @@ void SideBarView::dragMoveEvent(QDragMoveEvent *event)
 
 void SideBarView::dropEvent(QDropEvent *event)
 {
+    if (d->draggedUrl.isValid()) {   // select the dragged item when dropped.
+        d->notifyOrderChanged();   // notify to update the persistence data
+        d->highlightAfterDraggedToSort();
+    }
+
     d->dropPos = event->pos();
     SideBarItem *item = itemAt(event->pos());
     if (!item) {

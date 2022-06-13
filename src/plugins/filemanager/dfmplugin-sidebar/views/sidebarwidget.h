@@ -59,6 +59,8 @@ public:
     int findItem(const QUrl &url) const;
     void editItem(const QUrl &url);
     void setItemVisible(const QUrl &url, bool visible);
+    QList<QUrl> findItems(const QString &group) const;
+    void sortGroup(const QString &group, const QList<QUrl> &orders);
 
 private Q_SLOTS:
     void onItemActived(const QModelIndex &index);
