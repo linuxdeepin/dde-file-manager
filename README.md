@@ -70,9 +70,9 @@ $ apt build-dep dde-file-manager
 2. Build:
 ```
 $ cd dde-file-manager
-$ mkdir Build
-$ cd Build
-$ qmake ..
+$ mkdir build
+$ cd build
+$ qmake ../filemanager.pro
 $ make
 ```
 
