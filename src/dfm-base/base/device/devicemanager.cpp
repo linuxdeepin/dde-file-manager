@@ -47,7 +47,7 @@ using namespace GlobalServerDefines;
 
 QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
 {
-    auto &&ret = d->watcher->getDevIds(DeviceType::kBlockDevice);
+    auto ret { d->watcher->getDevIds(DeviceType::kBlockDevice) };
     ret.sort();
     if (opts.testFlag(DeviceQueryOption::kNoCondition))
         return ret;
@@ -75,7 +75,7 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
 
 QStringList DeviceManager::getAllProtocolDevID()
 {
-    auto &&ret = d->watcher->getDevIds(DeviceType::kProtocolDevice);
+    auto ret { d->watcher->getDevIds(DeviceType::kProtocolDevice) };
     ret.sort();
     return ret;
 }

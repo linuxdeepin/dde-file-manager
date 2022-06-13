@@ -159,10 +159,12 @@ void DeviceWatcher::initDevDatas()
  */
 void DeviceWatcher::queryOpticalDevUsage(const QString &id)
 {
-    bool sizeChanged = false;
     QVariantMap data = DeviceHelper::loadBlockInfo(id);
+    if (data.value(DeviceProperty::kId).toString().isEmpty())
+        return;
+    bool sizeChanged = false;
     QScopedPointer<DFMBURN::DOpticalDiscInfo> info { DFMBURN::DOpticalDiscManager::createOpticalInfo(data.value(DeviceProperty::kDevice).toString()) };
-    if (info && !data.value(DeviceProperty::kId).toString().isEmpty()) {
+    if (info) {
         sizeChanged = true;
         data[DeviceProperty::kSizeTotal] = static_cast<quint64>(info->totalSize());
         data[DeviceProperty::kSizeUsed] = static_cast<quint64>(info->usedSize());

@@ -185,7 +185,9 @@ void OpticalMediaWidget::handleErrorMount()
         return;
     }
 
-    DialogManagerInstance->showErrorDialog(tr("Mounting failed"), {});
+    DevMngIns->ejectBlockDevAsync(devId, {}, [](bool, DFMMOUNT::DeviceError) {
+        DialogManagerInstance->showErrorDialog(tr("Mounting failed"), {});
+    });
 }
 
 bool OpticalMediaWidget::isSupportedUDF()
