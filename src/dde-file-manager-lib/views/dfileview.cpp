@@ -2204,7 +2204,9 @@ void DFileView::setSelection(const QRect &rect, QItemSelectionModel::SelectionFl
             } else {   //列表模式
                 QRect tmp_rect = rect;
                 //修改远程时，文件选择框内容选中后被取消问题
-                if (tmp_rect.width() < 5 && tmp_rect.width() > -5 && tmp_rect.height() < 5 && tmp_rect.height() > -5)
+                // fix bug#138931
+                if ((tmp_rect.width() < 5 && tmp_rect.width() > -5 && tmp_rect.height() < 5 && tmp_rect.height() > -5)
+                        && !(tmp_rect.width() == 1 && tmp_rect.height() == 1))
                     return;
 
                 tmp_rect.translate(horizontalOffset(), verticalOffset());
