@@ -29,6 +29,36 @@ class CollectionViewPrivate
 {
 public:
     explicit CollectionViewPrivate(CollectionView *qq);
+
+    void updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize);
+
+    int verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const;
+    QItemSelection selection(const QRect &rect) const;
+
+    QPoint pointToPos(const QPoint &point) const;
+    QPoint posToPoint(const QPoint &pos) const;
+    int posToNode(const QPoint &pos) const;
+    QPoint nodeToPos(const int node) const;
+
+private:
+    void updateRowCount(const int &viewHeight, const int &minCellHeight);
+    void updateColumnCount(const int &viewWidth, const int &minCellWidth);
+    void updateCellMargins(const QSize &itemSize, const QSize &cellSize);
+    void updateViewMargins(const QSize &viewSize, const QMargins &oldMargins);
+
+public:
+    int space = 0;
+    QMargins viewMargins;
+    QMargins cellMargins = QMargins(2, 2, 2, 2);
+    int rowCount = 0;
+    int columnCount = 0;
+    int cellWidth = 0;
+    int cellHeight = 0;
+
+    QList<QUrl> urls;
+
+    bool showGrid = true;
+
 private:
     CollectionView *q;
 };

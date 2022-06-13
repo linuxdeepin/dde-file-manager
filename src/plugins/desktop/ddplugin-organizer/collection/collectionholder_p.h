@@ -32,6 +32,9 @@ public:
 public:
     QString id;
     QString name;
+    FileProxyModel *model = nullptr;
+    CollectionView *view = nullptr;
+
 private:
     CollectionHolder *q;
 };

@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "collectionholder_p.h"
+#include "view/collectionview.h"
+#include "models/fileproxymodel.h"
 
 DDP_ORGANIZER_USE_NAMESPACE
 
@@ -52,4 +54,21 @@ void CollectionHolder::setName(const QString &text)
     // todo update title bar
 }
 
+QList<QUrl> CollectionHolder::urls() const
+{
+    return d->view->urls();
+}
 
+void CollectionHolder::setUrls(const QList<QUrl> &urls)
+{
+    d->view->setUrls(urls);
+}
+
+void CollectionHolder::createView(FileProxyModel *model)
+{
+    d->model = model;
+    d->view = new CollectionView();
+    d->view->setModel(d->model);
+    d->view->setGeometry(QRect(200, 200, 400, 240));
+    d->view->show();
+}

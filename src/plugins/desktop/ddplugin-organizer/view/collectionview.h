@@ -27,6 +27,8 @@
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
+class FileProxyModel;
+class CollectionItemDelegate;
 class CollectionViewPrivate;
 class CollectionView : public QAbstractItemView
 {
@@ -34,9 +36,17 @@ class CollectionView : public QAbstractItemView
     friend class CollectionViewPrivate;
 public:
     explicit CollectionView(QWidget *parent = nullptr);
+    void setGeometry(const QRect &rect);
+    QList<QUrl> urls() const;
+    void setUrls(const QList<QUrl> &urls);
+    QMargins cellMargins() const;
+    FileProxyModel *model() const;
+    CollectionItemDelegate *itemDelegate() const;
+
     QRect visualRect(const QModelIndex &index) const override;
     void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     QModelIndex indexAt(const QPoint &point) const override;
+
 protected:
     QModelIndex moveCursor(CursorAction cursorAction,
                                    Qt::KeyboardModifiers modifiers) override;
@@ -48,6 +58,18 @@ protected:
 
     void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override;
     QRegion visualRegionForSelection(const QItemSelection &selection) const override;
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
+    void updateGeometries() override;
+
+private:
+    void initUI();
+    void updateRegionView();
+    QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
+    QRect itemRect(const QModelIndex &index) const;
+
 private:
     CollectionViewPrivate *d;
 };

@@ -15,15 +15,30 @@ FILE(GLOB_RECURSE CORE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
 )
 
+find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(DtkGui REQUIRED dtkgui )
+pkg_check_modules(DtkWidget REQUIRED dtkwidget )
+
 add_library(${PROJECT_NAME}
     SHARED
     ${CORE_FILES}
+    ${EXT_FILES}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
+
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    ${DtkGui_INCLUDE_DIRS}
+    ${DtkWidget_INCLUDE_DIRS}
+)
+
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
+    ${DtkWidget_LIBRARIES}
+    ${DtkGui_LIBRARIES}
     )
 
 #install library file

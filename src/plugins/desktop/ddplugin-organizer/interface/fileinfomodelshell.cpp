@@ -70,7 +70,9 @@ QAbstractItemModel *FileInfoModelShell::sourceModel() const
 
 QModelIndex FileInfoModelShell::index(const QUrl &url, int column) const
 {
-    QVariant ret = FileInfoModelPush2(slot_FileInfoModel_UrlIndex, url, column);
+    Q_UNUSED(column)
+
+    QVariant ret = FileInfoModelPush2(slot_FileInfoModel_UrlIndex, url);
     return ret.toModelIndex();
 }
 

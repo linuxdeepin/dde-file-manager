@@ -23,6 +23,7 @@
 
 #include "mode/normalizedmode.h"
 #include "fileclassifier.h"
+#include "collection/collectionholder.h"
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -32,6 +33,7 @@ public:
     explicit NormalizedModePrivate(NormalizedMode *qq);
 public:
     FileClassifier *classifier = nullptr;
+    QHash<QString, CollectionHolderPointer> holders;
 private:
     NormalizedMode *q;
 };

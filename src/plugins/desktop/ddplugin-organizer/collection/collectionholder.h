@@ -27,6 +27,8 @@
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
+class FileProxyModel;
+class CollectionView;
 class CollectionHolderPrivate;
 class CollectionHolder : public QObject
 {
@@ -37,12 +39,18 @@ public:
     QString id() const;
     QString name();
     void setName(const QString &);
+    QList<QUrl> urls() const;
+    void setUrls(const QList<QUrl> &urls);
+    void createView(FileProxyModel *model);
+
 signals:
 
 public slots:
 private:
     CollectionHolderPrivate *d;
 };
+
+typedef QSharedPointer<CollectionHolder> CollectionHolderPointer;
 
 DDP_ORGANIZER_END_NAMESPACE
 

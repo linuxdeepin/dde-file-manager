@@ -84,10 +84,19 @@ void NormalizedMode::reset()
         const QString &name = d->classifier->name(key);
         auto files = d->classifier->items(key);
         qDebug() << "type" << name << "files" << files;
-        // 复用已有分组
-        // 创建没有的组
-    }
 
+        // 复用已有分组
+        CollectionHolderPointer collectionHolder = d->holders.value(name);
+        // 创建没有的组
+
+        if (collectionHolder.isNull()) {
+            collectionHolder.reset(new CollectionHolder(name));
+            collectionHolder->createView(model);
+            collectionHolder->setName(name);
+            d->holders.insert(name, collectionHolder);
+        }
+        collectionHolder->setUrls(files);
+    }
     // 删除无需的组
 }
 
