@@ -29,6 +29,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <QMap>
 #include <QColor>
@@ -287,6 +288,11 @@ bool TagManager::changeTagColor(const QString &tagName, const QString &newTagCol
 bool TagManager::changeTagName(const QString &tagName, const QString &newName)
 {
     bool result = false;
+
+    if (getAllTags().contains(newName)) {
+        DialogManagerInstance->showRenameNameSameErrorDialog(newName);
+        return result;
+    }
 
     if (!tagName.isEmpty() && !newName.isEmpty()) {
         QMap<QString, QVariant> oldAndNewName = { { tagName, QVariant { newName } } };
