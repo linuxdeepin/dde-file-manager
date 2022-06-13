@@ -301,12 +301,11 @@ void BookMarkManager::fileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
             newData.resetData(map);
 
             bookmarkDataMap.remove(oldUrl);
-            bookmarkDataMap.insert(newUrl, newData);
-
-            Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
             BookMarkHelper::sideBarServIns()->removeItem(oldUrl);
-            // TODO:(gongheng) 此处应该是插入新的item到原来的位置
-            addBookMarkItem(newUrl, bookmarkDataMap[newUrl].name);
+
+            bookmarkDataMap.insert(newUrl, newData);
+            Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
+            update(list);
 
             break;
         }
