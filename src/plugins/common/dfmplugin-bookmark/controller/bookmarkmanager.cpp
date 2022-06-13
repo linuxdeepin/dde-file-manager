@@ -157,7 +157,7 @@ void BookMarkManager::addBookMarkItem(const QUrl &url, const QString &bookmarkNa
     item.url = url;
     item.iconName = BookMarkHelper::instance()->icon().name();
     item.text = bookmarkName;
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsDragEnabled;
     item.contextMenuCb = BookMarkManager::contextMenuHandle;
     item.renameCb = BookMarkManager::renameCallBack;
     item.cdCb = BookMarkManager::cdBookMarkUrlCallBack;
