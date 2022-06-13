@@ -64,8 +64,10 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
         }
     }
 
-    currentDragUrls = delegateServIns->urlsTransform(currentDragUrls);
-    const_cast<QMimeData *>(event->mimeData())->setUrls(currentDragUrls);
+    if (!currentDragUrls.isEmpty()) {
+        currentDragUrls = delegateServIns->urlsTransform(currentDragUrls);
+        const_cast<QMimeData *>(event->mimeData())->setUrls(currentDragUrls);
+    }
 
     bool fall = true;
     handleDropEvent(event, &fall);
