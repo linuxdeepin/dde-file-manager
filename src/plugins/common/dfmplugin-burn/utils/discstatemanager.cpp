@@ -27,6 +27,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 
 #include <QTimer>
+#include <QDebug>
 
 #include <mutex>
 
@@ -70,7 +71,18 @@ void DiscStateManager::onDevicePropertyChanged(const QString &id, const QString 
     if (id.startsWith(kDiscPrefix) && propertyName == DeviceProperty::kOptical && var.toBool()) {
         auto &&map = DevProxyMng->queryBlockInfo(id);
         bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
-        qint64 curAvial = qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]);
+        qint64 curAvial { qvariant_cast<qint64>(map[DeviceProperty::kSizeFree]) };
+        qint64 curUsed { qvariant_cast<qint64>(map[DeviceProperty::kSizeUsed]) };
+        auto media { qvariant_cast<QString>(map[DeviceProperty::kMedia]) };
+
+        // For DVD-RW discs, sometimes the properties of the `OpticalBbank` cannot be obtained,
+        // so the disc is ejected for the user to reinsert
+        if (media == "optical_dvd_rw" && !blank && curAvial == 0 && curUsed == 0) {
+            qWarning() << "DVD-RW disc happended error, eject it";
+            DevMngIns->ejectBlockDevAsync(id);
+            return;
+        }
+
         if (blank && curAvial == 0) {
             DevMngIns->mountBlockDevAsync(id, {}, [id](bool, DFMMOUNT::DeviceError, const QString &) {
                 DevProxyMng->reloadOpticalInfo(id);
