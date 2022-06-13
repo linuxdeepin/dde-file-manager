@@ -214,7 +214,9 @@ bool DoRestoreTrashFilesWorker::getRestoreFileUrl(const AbstractFileInfoPointer 
     }
 
     if (!restoreUrl.isValid()) {
-        *result = AbstractJobHandler::SupportAction::kSkipAction == doHandleErrorAndWait(trashFileInfo->url(), restoreUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
+        AbstractJobHandler::SupportAction action = doHandleErrorAndWait(trashFileInfo->url(), restoreUrl, AbstractJobHandler::JobErrorType::kGetRestorePathError);
+        if (result)
+            *result = action == AbstractJobHandler::SupportAction::kSkipAction;
         return false;
     }
 
@@ -380,7 +382,8 @@ bool DoRestoreTrashFilesWorker::createParentDir(const AbstractFileInfoPointer &t
         } while (!isStopped() && action == AbstractJobHandler::SupportAction::kRetryAction);
 
         if (action != AbstractJobHandler::SupportAction::kNoAction) {
-            *result = action == AbstractJobHandler::SupportAction::kSkipAction;
+            if (result)
+                *result = action == AbstractJobHandler::SupportAction::kSkipAction;
             return false;
         }
     }

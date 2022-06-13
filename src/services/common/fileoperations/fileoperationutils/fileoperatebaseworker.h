@@ -57,33 +57,33 @@ public:
 
 public:
     bool doCheckFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, const QString &fileName,
-                     AbstractFileInfoPointer &newTargetInfo, bool *workContinue);
+                     AbstractFileInfoPointer &newTargetInfo, bool *skip);
     bool doCheckNewFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                         AbstractFileInfoPointer &newTargetInfo, QString &fileNewName,
-                        bool *workContinue, bool isCountSize = false);
+                        bool *skip, bool isCountSize = false);
     bool checkDiskSpaceAvailable(const QUrl &fromUrl, const QUrl &toUrl,
-                                 QSharedPointer<StorageInfo> targetStorageInfo, bool *result);
-    bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *result);
+                                 QSharedPointer<StorageInfo> targetStorageInfo, bool *skip);
+    bool doCopyFilePractically(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
     bool createFileDevices(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                            QSharedPointer<DFMIO::DFile> &fromeFile, QSharedPointer<DFMIO::DFile> &toFile,
-                           bool *result);
+                           bool *skip);
     bool createFileDevice(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                           const AbstractFileInfoPointer &needOpenInfo, QSharedPointer<DFMIO::DFile> &file,
-                          bool *result);
+                          bool *skip);
     bool openFiles(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                    const QSharedPointer<DFMIO::DFile> &fromeFile, const QSharedPointer<DFMIO::DFile> &toFile,
-                   bool *result);
+                   bool *skip);
     bool openFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                   const QSharedPointer<DFMIO::DFile> &file, const DFMIO::DFile::OpenFlags &flags,
-                  bool *result);
+                  bool *skip);
     bool resizeTargetFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                          const QSharedPointer<DFMIO::DFile> &file, bool *result);
+                          const QSharedPointer<DFMIO::DFile> &file, bool *skip);
     bool doReadFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                     const QSharedPointer<DFMIO::DFile> &fromDevice,
-                    char *data, const qint64 &blockSize, qint64 &readSize, bool *result);
+                    char *data, const qint64 &blockSize, qint64 &readSize, bool *skip);
     bool doWriteFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
                      const QSharedPointer<DFMIO::DFile> &toDevice,
-                     const char *data, const qint64 &readSize, bool *result);
+                     const char *data, const qint64 &readSize, bool *skip);
     void setTargetPermissions(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo);
     bool verifyFileIntegrity(const qint64 &blockSize, const ulong &sourceCheckSum,
                              const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
@@ -111,11 +111,13 @@ public:
                           bool *result);
     bool canWriteFile(const QUrl &url) const;
 
-    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo,
-                    bool *workContinue);
-    bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *workContinue);
-    bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *workContinue);
+    bool doCopyFile(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
+    bool checkAndCopyFile(const AbstractFileInfoPointer fromInfo, const AbstractFileInfoPointer toInfo, bool *skip);
+    bool checkAndCopyDir(const AbstractFileInfoPointer &fromInfo, const AbstractFileInfoPointer &toInfo, bool *skip);
     bool doThreadPoolCopyFile();
+
+private:
+    void setSkipValue(bool *skip, AbstractJobHandler::SupportAction action);
 
 protected:
     QTime time;   // time eslape

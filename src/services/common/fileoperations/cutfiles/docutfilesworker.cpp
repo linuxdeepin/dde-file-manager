@@ -272,16 +272,18 @@ bool DoCutFilesWorker::doRenameFile(const AbstractFileInfoPointer &sourceInfo, c
     toInfo.reset(nullptr);
     if (sourceStorageInfo->device() == targetStorageInfo->device()) {
         if (!doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileName(), toInfo, ok))
-            return *ok;
+            return ok ? *ok : false;
 
-        *ok = renameFileByHandler(sourceInfo, toInfo);
-        if (*ok) {
+        bool result = renameFileByHandler(sourceInfo, toInfo);
+        if (result) {
             if (targetPathInfo == this->targetInfo) {
                 completeSourceFiles.append(sourceUrl);
                 completeTargetFiles.append(toInfo->url());
             }
         }
-        return *ok;
+        if (ok)
+            *ok = result;
+        return result;
     }
 
     if (!toInfo && !doCheckFile(sourceInfo, targetPathInfo, sourceInfo->fileName(), toInfo, ok))
