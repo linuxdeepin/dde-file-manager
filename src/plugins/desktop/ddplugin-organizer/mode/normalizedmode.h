@@ -33,8 +33,9 @@ public:
    explicit NormalizedMode(QObject *parent = nullptr);
    int mode() const override;
    bool initialize(FileProxyModel *) override;
+   void reset() override;
 public slots:
-   void reset();
+   void rebuild();
    void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);
    void onFileInserted(const QModelIndex &parent, int first, int last);
    void onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last);
@@ -44,7 +45,7 @@ protected slots:
     bool filterDataInserted(const QUrl &url) override;
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;
 protected:
-   bool setClassifier(int id);
+    bool setClassifier(Classifier id);
 private:
     NormalizedModePrivate *d;
 };

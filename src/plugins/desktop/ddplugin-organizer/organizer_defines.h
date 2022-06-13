@@ -18,37 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMODELSHELL_H
-#define CANVASMODELSHELL_H
+#ifndef ORGANIZER_DEFINES_H
+#define ORGANIZER_DEFINES_H
 
 #include "ddplugin_organizer_global.h"
 
-#include <QObject>
-
-class QMimeData;
-
 DDP_ORGANIZER_BEGIN_NAMESPACE
-class CanvasInterface;
-class CanvasModelShell : public QObject
-{
-    Q_OBJECT
-public:
-    explicit CanvasModelShell(QObject *parent = nullptr);
-    ~CanvasModelShell();
-    bool initialize();
-    void refresh(int ms = 0);
-signals: // unqiue and direct signals
-    bool filterDataRested(QList<QUrl> *urls);
-    bool filterDataInserted(const QUrl &url);
-    bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-public slots:
-private slots:
-    bool eventDataRested(QList<QUrl> *urls, void *extData);
-    bool eventDataInserted(const QUrl &url, void *extData);
-    bool eventDataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData);
+
+enum OrganizerMode {
+    kNormalized = 0,
+    kCustom
+};
+
+enum Classifier {
+    kType = 0,
+    kTimeCreated,
+    kTimeModified,
+    kLabel,
+    kName,
+    kSize
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-
-#endif // CANVASMODELSHELL_H
+#endif // ORGANIZER_DEFINES_H

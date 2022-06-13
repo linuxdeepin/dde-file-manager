@@ -18,37 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMODELSHELL_H
-#define CANVASMODELSHELL_H
+#ifndef EXTENDCANVASSCENE_P_H
+#define EXTENDCANVASSCENE_P_H
 
 #include "ddplugin_organizer_global.h"
 
-#include <QObject>
+#include "extendcanvasscene.h"
+#include "organizer_defines.h"
 
-class QMimeData;
+#include "services/common/menu/menuservice.h"
 
+#include "interfaces/private/abstractmenuscene_p.h"
+
+DFMBASE_USE_NAMESPACE
+DSC_USE_NAMESPACE
 DDP_ORGANIZER_BEGIN_NAMESPACE
-class CanvasInterface;
-class CanvasModelShell : public QObject
+
+class ExtendCanvasScenePrivate : public AbstractMenuScenePrivate
 {
     Q_OBJECT
 public:
-    explicit CanvasModelShell(QObject *parent = nullptr);
-    ~CanvasModelShell();
-    bool initialize();
-    void refresh(int ms = 0);
-signals: // unqiue and direct signals
-    bool filterDataRested(QList<QUrl> *urls);
-    bool filterDataInserted(const QUrl &url);
-    bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-public slots:
-private slots:
-    bool eventDataRested(QList<QUrl> *urls, void *extData);
-    bool eventDataInserted(const QUrl &url, void *extData);
-    bool eventDataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData);
+    explicit ExtendCanvasScenePrivate(ExtendCanvasScene *qq);
+    void emptyMenu(QMenu *parent);
+    void normalMenu(QMenu *parent);
+    QMenu *organizeBySubActions(QMenu *menu);
+
+    static QString classifierToActionID(Classifier cf);
+public:
+    MenuService *menuServer = nullptr;
+    bool turnOn = false;
+private:
+    ExtendCanvasScene *q;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-
-#endif // CANVASMODELSHELL_H
+#endif // EXTENDCANVASSCENE_P_H

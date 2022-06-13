@@ -299,9 +299,9 @@ QString DisplayConfig::path() const
 
     QString configPath = paths.first();
     configPath = configPath
-            + "/" + QApplication::organizationName()
-            + "/" + QApplication::applicationName()
-            + "/" + QApplication::applicationName() + ".conf";
+            + QDir::separator() + QApplication::organizationName()
+            + QDir::separator() + QApplication::applicationName()
+            + QDir::separator() + QApplication::applicationName() + ".conf";
 
     return configPath;
 }

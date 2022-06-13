@@ -20,8 +20,12 @@
  */
 #include "framemanager.h"
 #include "private/framemanager_p.h"
+#include "config/configpresenter.h"
+#include "interface/canvasmodelshell.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "menus/extendcanvasscene.h"
 
+#include "services/common/menu/menuservice.h"
 #include "dfm-base/dfm_desktop_defines.h"
 
 #include <QAbstractItemView>
@@ -35,7 +39,9 @@ DDP_ORGANIZER_USE_NAMESPACE
 #define CanvasCoreUnsubscribe(topic, func) \
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
-FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq) : q(qq)
+FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
+    : QObject(qq)
+    , q(qq)
 {
 
 }
@@ -82,6 +88,14 @@ void FrameManagerPrivate::buildSurface()
     }
 }
 
+void FrameManagerPrivate::clearSurface()
+{
+    for (const SurfacePointer &sur : surfaceWidgets.values())
+        sur->setParent(nullptr);
+
+    surfaceWidgets.clear();
+}
+
 SurfacePointer FrameManagerPrivate::createSurface(QWidget *root)
 {
     SurfacePointer surface = nullptr;
@@ -108,7 +122,59 @@ void FrameManagerPrivate::layoutSurface(QWidget *root, SurfacePointer surface, b
     } else {
         surface->setParent(root);
         surface->setGeometry(QRect(QPoint(0, 0), root->geometry().size()));
-        surface->raise();
+    }
+}
+
+void FrameManagerPrivate::buildOrganizer()
+{
+    q->switchMode(CfgPresenter->mode());
+    refeshCanvas();
+}
+
+void FrameManagerPrivate::refeshCanvas()
+{
+    if (canvas)
+        canvas->canvasModel()->refresh(1);
+}
+
+void FrameManagerPrivate::enableChanged(bool e)
+{
+    if (e == CfgPresenter->isEnable())
+        return;
+
+    qDebug() << "enableChanged" << e;
+    CfgPresenter->setEnable(e);
+    if (e)
+        q->turnOn();
+    else
+        q->turnOff();
+}
+
+void FrameManagerPrivate::switchToCustom()
+{
+    Q_ASSERT(organizer);
+
+    if (organizer->mode() == OrganizerMode::kCustom) {
+        qDebug() << "reject to switch: current mode had been custom.";
+        return;
+    }
+
+    CfgPresenter->setMode(kCustom);
+    buildOrganizer();
+}
+
+void FrameManagerPrivate::switchToNormalized(int cf)
+{
+    Q_ASSERT(organizer);
+
+    if (organizer->mode() == OrganizerMode::kNormalized) {
+        CfgPresenter->setClassification(static_cast<Classifier>(cf));
+        organizer->reset();
+        refeshCanvas();
+    } else {
+        CfgPresenter->setMode(kNormalized);
+        CfgPresenter->setClassification(static_cast<Classifier>(cf));
+        buildOrganizer();
     }
 }
 
@@ -137,31 +203,34 @@ FrameManager::FrameManager(QObject *parent)
 
 FrameManager::~FrameManager()
 {
-    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
+    turnOff();
 
-    delete d;
+    // unregister menu
+    auto menuService = DSC_NAMESPACE::MenuService::service();
+    menuService->unBind(ExtendCanvasCreator::name());
+    auto creator = menuService->unregisterScene(ExtendCanvasCreator::name());
+    if (creator)
+        delete creator;
 }
 
-bool FrameManager::init()
+bool FrameManager::initialize()
 {
-    CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
-    CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
-    CanvasCoreSubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
-    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
-    CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
+    // initialize config
+    CfgPresenter->initialize();
 
-    d->canvas = new CanvasInterface(this);
-    if (!d->canvas->initialize()) {
-        qWarning() << "fail to init CanvasInterface";
-        return false;
-    }
+    // register menu for canvas
+    auto menuService = DSC_NAMESPACE::MenuService::service();
+    menuService->registerScene(ExtendCanvasCreator::name(), new ExtendCanvasCreator());
+    menuService->bind(ExtendCanvasCreator::name(), "CanvasMenu");
 
-    d->model = new FileProxyModel(this);
-    d->model->setModelShell(d->canvas->fileInfoModel());
+    bool enable = CfgPresenter->isEnable();
+    qInfo() << "Organizer enable:" << enable;
+    if (enable)
+        turnOn(false); // builded by signal.
+
+    connect(CfgPresenter, &ConfigPresenter::changeEnableState, d, &FrameManagerPrivate::enableChanged);
+    connect(CfgPresenter, &ConfigPresenter::switchToNormalized, d, &FrameManagerPrivate::switchToNormalized);
+    connect(CfgPresenter, &ConfigPresenter::switchToCustom, d, &FrameManagerPrivate::switchToCustom);
     return true;
 }
 
@@ -170,12 +239,14 @@ void FrameManager::layout()
 
 }
 
-void FrameManager::switchMode(int mode)
+void FrameManager::switchMode(OrganizerMode mode)
 {
     if (d->organizer)
         delete d->organizer;
 
-    d->organizer = OrganizerCreator::createOrganizer(static_cast<OrganizerCreator::Mode>(mode));
+    qInfo() << "switch to" << mode;
+
+    d->organizer = OrganizerCreator::createOrganizer(mode);
     Q_ASSERT(d->organizer);
 
     // 初始化创建集合窗口
@@ -188,15 +259,65 @@ void FrameManager::switchMode(int mode)
     // 布局
 }
 
+void FrameManager::turnOn(bool build)
+{
+    Q_ASSERT(!d->canvas);
+    Q_ASSERT(!d->model);
+    Q_ASSERT(!d->organizer);
+
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
+    CanvasCoreSubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
+    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
+    CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
+
+    d->canvas = new CanvasInterface(this);
+    d->canvas->initialize();
+
+    d->model = new FileProxyModel(this);
+    d->model->setModelShell(d->canvas->fileInfoModel());
+
+    if (build) {
+        onBuild();
+
+        // show surface
+        for (const SurfacePointer &sur : d->surfaceWidgets.values())
+            sur->setVisible(true);
+    }
+}
+
+void FrameManager::turnOff()
+{
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
+
+    delete d->organizer;
+    d->organizer = nullptr;
+
+    delete d->model;
+    d->model = nullptr;
+
+    d->clearSurface();
+
+    // restore canvas
+    d->refeshCanvas();
+
+    delete d->canvas;
+    d->canvas = nullptr;
+}
+
 void FrameManager::onBuild()
 {
-    // todo 是否开启
-
     d->buildSurface();
 
-    // 读取配置文件获取模式
-    // 创建模式
-    switchMode(0);
+    if (d->organizer) {
+        // 仅重新布局
+    } else {
+        d->buildOrganizer();
+    }
 }
 
 void FrameManager::onWindowShowed()

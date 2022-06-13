@@ -23,12 +23,18 @@
 
 #include "organizerconfig.h"
 
+#include <QSettings>
+
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class OrganizerConfigPrivate
 {
 public:
     explicit OrganizerConfigPrivate(OrganizerConfig *);
+    ~OrganizerConfigPrivate();
+    QVariant value(const QString &group, const QString &key, const QVariant &defaultVar);
+    void setValue(const QString &group, const QString &key, const QVariant &var);
+    QSettings *settings = nullptr;
 private:
     OrganizerConfig *q;
 };

@@ -26,11 +26,11 @@
 
 DDP_ORGANIZER_USE_NAMESPACE
 
-FileClassifier *ClassifierCreator::createClassifier(ClassifierCreator::Classifier mode)
+FileClassifier *ClassifierCreator::createClassifier(Classifier mode)
 {
     FileClassifier *ret = nullptr;
     switch (mode) {
-    case kType:
+    case Classifier::kType:
         ret = new TypeClassifier();
         break;
     default:

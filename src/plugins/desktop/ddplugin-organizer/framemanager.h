@@ -22,6 +22,7 @@
 #define FRAMEMANAGER_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <QObject>
 
@@ -34,10 +35,11 @@ class FrameManager : public QObject
     friend class FrameManagerPrivate;
 public:
     explicit FrameManager(QObject *parent = nullptr);
-    ~FrameManager();
-    bool init();
+    ~FrameManager() override;
+    bool initialize();
     void layout();
-    void switchMode(int mode);
+    void turnOn(bool build = true);
+    void turnOff();
 signals:
 
 public slots:
@@ -45,6 +47,8 @@ public slots:
     void onWindowShowed();
     void onDetachWindows();
     void onGeometryChanged();
+protected:
+    void switchMode(OrganizerMode mode);
 private:
     FrameManagerPrivate *d;
 };

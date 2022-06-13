@@ -31,7 +31,7 @@ void OrganizerPlugin::initialize()
 bool OrganizerPlugin::start()
 {
     instance = new FrameManager();
-    return instance->init();
+    return instance->initialize();
 }
 
 dpf::Plugin::ShutdownFlag OrganizerPlugin::stop()

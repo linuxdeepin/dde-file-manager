@@ -22,6 +22,7 @@
 #define FILECLASSIFIER_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <QObject>
 #include <QHash>
@@ -33,13 +34,6 @@ class ModelDataHandler;
 class ClassifierCreator
 {
 public:
-    enum Classifier {
-        kType = 0,
-        kTime,
-        kLabel,
-        kName,
-        kSize
-    };
     static class FileClassifier *createClassifier(Classifier mode);
 };
 
@@ -48,7 +42,7 @@ class FileClassifier : public QObject
     Q_OBJECT
 public:
     explicit FileClassifier(QObject *parent = nullptr);
-    virtual int mode() const = 0;
+    virtual Classifier mode() const = 0;
     virtual QString name(const QString &id) const = 0;
     virtual ModelDataHandler *dataHandler() const = 0;
     virtual QStringList classes() const = 0;

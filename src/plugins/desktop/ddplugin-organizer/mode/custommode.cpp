@@ -37,7 +37,7 @@ CustomMode::CustomMode(QObject *parent)
 
 int CustomMode::mode() const
 {
-    return OrganizerCreator::kCustom;
+    return OrganizerMode::kCustom;
 }
 
 bool CustomMode::initialize(FileProxyModel *)

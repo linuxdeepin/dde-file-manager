@@ -18,39 +18,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ORGANIZERCONFIG_H
-#define ORGANIZERCONFIG_H
+#ifndef EXTENDCANVASSCENE_H
+#define EXTENDCANVASSCENE_H
 
 #include "ddplugin_organizer_global.h"
 
-#include <QObject>
+#include "dfm-base/interfaces/abstractmenuscene.h"
+#include "dfm-base/interfaces/abstractscenecreator.h"
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class OrganizerConfigPrivate;
-class OrganizerConfig : public QObject
+class ExtendCanvasCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
-    Q_OBJECT
-    friend class OrganizerConfigPrivate;
 public:
-    explicit OrganizerConfig(QObject *parent = nullptr);
-    ~OrganizerConfig() override;
-    bool isEnable() const;
-    void setEnable(bool e);
-    int mode() const;
-    void setMode(int m);
-    void sync();
-    int classification() const;
-    void setClassification(int cf);
-signals:
+    static QString name()
+    {
+        return "OrganizerExtCanvasMenu";
+    }
+    DFMBASE_NAMESPACE::AbstractMenuScene *create() override;
+};
 
-public slots:
-protected:
-    QString path() const;
+class ExtendCanvasScenePrivate;
+class ExtendCanvasScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+{
+public:
+    explicit ExtendCanvasScene(QObject *parent = nullptr);
+    QString name() const override;
+    bool initialize(const QVariantHash &params) override;
+    AbstractMenuScene *scene(QAction *action) const override;
+    bool create(QMenu *parent) override;
+    void updateState(QMenu *parent) override;
+    bool triggered(QAction *action) override;
+
 private:
-    OrganizerConfigPrivate *d;
+    ExtendCanvasScenePrivate *const d = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-#endif // ORGANIZERCONFIG_H
+#endif // EXTENDCANVASSCENE_H

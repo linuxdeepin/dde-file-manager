@@ -32,15 +32,22 @@
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class FrameManagerPrivate
+class FrameManagerPrivate : public QObject
 {
+    Q_OBJECT
 public:
     explicit FrameManagerPrivate(FrameManager *qq);
-    ~FrameManagerPrivate();
+    ~FrameManagerPrivate() override;
     void buildSurface();
-    void buildPolymer();
+    void clearSurface();
     SurfacePointer createSurface(QWidget *root);
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
+    void buildOrganizer();
+    void refeshCanvas();
+public slots:
+    void enableChanged(bool e);
+    void switchToCustom();
+    void switchToNormalized(int cf);
 protected:
     QWidget *findView(QWidget *root) const;
 public:

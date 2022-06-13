@@ -35,7 +35,7 @@ class TypeClassifier : public FileClassifier
 public:
     explicit TypeClassifier(QObject *parent = nullptr);
     ~TypeClassifier();
-    int mode() const override;
+    Classifier mode() const override;
     ModelDataHandler *dataHandler() const override;
     QString name(const QString &id) const override;
     QStringList classes() const override;

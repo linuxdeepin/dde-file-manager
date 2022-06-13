@@ -20,6 +20,7 @@
  */
 #include "normalized/normalizedmode_p.h"
 #include "models/fileproxymodel.h"
+#include "config/configpresenter.h"
 
 #include <QDebug>
 #include <QTime>
@@ -40,7 +41,7 @@ NormalizedMode::NormalizedMode(QObject *parent)
 
 int NormalizedMode::mode() const
 {
-    return OrganizerCreator::kNormalized;
+    return OrganizerMode::kNormalized;
 }
 
 bool NormalizedMode::initialize(FileProxyModel *m)
@@ -49,7 +50,9 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     model = m;
 
     // 根据配置创建分类器, 默认按类型
-    auto type = ClassifierCreator::kType;
+    auto type = CfgPresenter->classification();
+    qInfo() << "classification:" << type;
+
     setClassifier(type);
     Q_ASSERT(d->classifier);
 
@@ -57,24 +60,31 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &NormalizedMode::onFileAboutToBeRemoved, Qt::DirectConnection);
     connect(model, &FileProxyModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
     connect(model, &FileProxyModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
-    connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::reset, Qt::QueuedConnection);
+    connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
 
 
     // creating if there already are files.
     if (!model->files().isEmpty())
-        reset();
+        rebuild();
 
     return true;
 }
 
 void NormalizedMode::reset()
 {
-    auto files = model->files();
+    auto type = CfgPresenter->classification();
+    qInfo() << "normalized mode reset to " << type;
+    setClassifier(type);
+    Q_ASSERT(d->classifier);
+}
 
+void NormalizedMode::rebuild()
+{
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
     {
         QTime time;
         time.start();
+        auto files = model->files();
         d->classifier->reset(files);
         qInfo() << QString("Classifying %0 files takes %1ms").arg(files.size()).arg(time.elapsed());
     }
@@ -83,7 +93,7 @@ void NormalizedMode::reset()
     for (const QString &key : d->classifier->regionKeys()) {
         const QString &name = d->classifier->name(key);
         auto files = d->classifier->items(key);
-        qDebug() << "type" << name << "files" << files;
+        qDebug() << "type" << name << "files" << files.size();
 
         // 复用已有分组
         CollectionHolderPointer collectionHolder = d->holders.value(name);
@@ -147,7 +157,7 @@ void NormalizedMode::onFileDataChanged(const QModelIndex &topLeft, const QModelI
 bool NormalizedMode::filterDataRested(QList<QUrl> *urls)
 {
     // All datas are not displayed on the desktop.
-    if (urls) {
+    if (urls && d->classifier) {
         urls->clear();
         return true;
     }
@@ -156,19 +166,21 @@ bool NormalizedMode::filterDataRested(QList<QUrl> *urls)
 
 bool NormalizedMode::filterDataInserted(const QUrl &url)
 {
-    return true;
+    return d->classifier;
 }
 
 bool NormalizedMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    return true;
+    return d->classifier;
 }
 
-bool NormalizedMode::setClassifier(int id)
+bool NormalizedMode::setClassifier(Classifier id)
 {
     if (d->classifier) {
-        if (d->classifier->mode() == id)
+        if (d->classifier->mode() == id) {
+            qDebug() << "ingore setting, current classifier was" << id;
             return true;
+        }
 
         if (model->handler() == d->classifier->dataHandler())
             model->setHandler(nullptr);
@@ -176,9 +188,10 @@ bool NormalizedMode::setClassifier(int id)
        delete d->classifier;
     }
 
-    // clear all group
+    // clear all collections
+    d->holders.clear();
 
-    d->classifier = ClassifierCreator::createClassifier(static_cast<ClassifierCreator::Classifier>(id));
+    d->classifier = ClassifierCreator::createClassifier(id);
     if (!d->classifier)
         return false;
 

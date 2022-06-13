@@ -22,6 +22,7 @@
 #define MUSTERMODE_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <QObject>
 
@@ -31,11 +32,7 @@ class CanvasModelShell;
 class OrganizerCreator
 {
 public:
-    enum Mode {
-        kNormalized = 0,
-        kCustom
-    };
-    static class CanvasOrganizer *createOrganizer(Mode mode);
+    static class CanvasOrganizer *createOrganizer(OrganizerMode mode);
 };
 
 class CanvasOrganizer : public QObject
@@ -43,10 +40,12 @@ class CanvasOrganizer : public QObject
     Q_OBJECT
 public:
     explicit CanvasOrganizer(QObject *parent = nullptr);
+    ~CanvasOrganizer();
     virtual int mode() const = 0;
     virtual bool initialize(FileProxyModel *) = 0;
     virtual void setCanvasShell(CanvasModelShell *sh);
     virtual void setSurface(QWidget *w);
+    virtual void reset();
 signals:
 
 public slots:

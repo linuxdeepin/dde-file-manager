@@ -52,9 +52,6 @@ CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
 {
     // 获取菜单服务
     extensionMenuServer = MenuService::service();
-
-    // 注册canvas菜单
-    extensionMenuServer->registerScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
 }
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()

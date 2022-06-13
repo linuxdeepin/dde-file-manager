@@ -25,14 +25,14 @@
 
 DDP_ORGANIZER_USE_NAMESPACE
 
-CanvasOrganizer *OrganizerCreator::createOrganizer(OrganizerCreator::Mode mode)
+CanvasOrganizer *OrganizerCreator::createOrganizer(OrganizerMode mode)
 {
     CanvasOrganizer *ret = nullptr;
     switch (mode) {
-    case kNormalized:
+    case OrganizerMode::kNormalized:
         ret = new NormalizedMode();
         break;
-    case kCustom:
+    case OrganizerMode::kCustom:
         ret = new CustomMode();
         break;
     default:
@@ -42,6 +42,11 @@ CanvasOrganizer *OrganizerCreator::createOrganizer(OrganizerCreator::Mode mode)
 }
 
 CanvasOrganizer::CanvasOrganizer(QObject *parent) : QObject(parent)
+{
+
+}
+
+CanvasOrganizer::~CanvasOrganizer()
 {
 
 }
@@ -67,6 +72,11 @@ void CanvasOrganizer::setCanvasShell(CanvasModelShell *sh)
 void CanvasOrganizer::setSurface(QWidget *w)
 {
     surface = w;
+}
+
+void CanvasOrganizer::reset()
+{
+
 }
 
 bool CanvasOrganizer::filterDataRested(QList<QUrl> *urls)

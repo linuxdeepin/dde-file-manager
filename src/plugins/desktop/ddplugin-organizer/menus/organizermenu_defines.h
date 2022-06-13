@@ -18,37 +18,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMODELSHELL_H
-#define CANVASMODELSHELL_H
+#ifndef ORGANIZERMENU_DEFINES_H
+#define ORGANIZERMENU_DEFINES_H
 
 #include "ddplugin_organizer_global.h"
 
-#include <QObject>
-
-class QMimeData;
-
 DDP_ORGANIZER_BEGIN_NAMESPACE
-class CanvasInterface;
-class CanvasModelShell : public QObject
-{
-    Q_OBJECT
-public:
-    explicit CanvasModelShell(QObject *parent = nullptr);
-    ~CanvasModelShell();
-    bool initialize();
-    void refresh(int ms = 0);
-signals: // unqiue and direct signals
-    bool filterDataRested(QList<QUrl> *urls);
-    bool filterDataInserted(const QUrl &url);
-    bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
-public slots:
-private slots:
-    bool eventDataRested(QList<QUrl> *urls, void *extData);
-    bool eventDataInserted(const QUrl &url, void *extData);
-    bool eventDataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData);
-};
+
+namespace ActionID {
+inline constexpr char kOrganizeDesktop[] = "organize-desktop";
+inline constexpr char kOrganizeOptions[] = "organize-options";
+inline constexpr char kOrganizeBy[] = "organize-by";
+inline constexpr char kOrganizeByType[] = "organize-by-type";
+inline constexpr char kOrganizeByTimeAccessed[] = "organize-by-time-accessed";
+inline constexpr char kOrganizeByTimeModified[] = "organize-by-time-modified";
+inline constexpr char kOrganizeByTimeCreated[] = "organize-by-time-created";
+inline constexpr char kOrganizeByCustom[] = "custom-collection";
+
+} // namespace ActionID
 
 DDP_ORGANIZER_END_NAMESPACE
 
-
-#endif // CANVASMODELSHELL_H
+#endif // ORGANIZERMENU_DEFINES_H

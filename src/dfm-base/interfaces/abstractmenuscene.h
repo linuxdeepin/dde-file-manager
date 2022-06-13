@@ -33,6 +33,7 @@ DFMBASE_BEGIN_NAMESPACE
 class AbstractMenuScenePrivate;
 class AbstractMenuScene : public QObject
 {
+    Q_OBJECT
 public:
     explicit AbstractMenuScene(QObject *parent = nullptr);
     virtual ~AbstractMenuScene();

@@ -18,37 +18,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASMODELSHELL_H
-#define CANVASMODELSHELL_H
+#ifndef CONFIGPRESENTER_H
+#define CONFIGPRESENTER_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <QObject>
 
-class QMimeData;
-
 DDP_ORGANIZER_BEGIN_NAMESPACE
-class CanvasInterface;
-class CanvasModelShell : public QObject
+class OrganizerConfig;
+class ConfigPresenter : public QObject
 {
     Q_OBJECT
 public:
-    explicit CanvasModelShell(QObject *parent = nullptr);
-    ~CanvasModelShell();
+    static ConfigPresenter* instance();
     bool initialize();
-    void refresh(int ms = 0);
-signals: // unqiue and direct signals
-    bool filterDataRested(QList<QUrl> *urls);
-    bool filterDataInserted(const QUrl &url);
-    bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
+    bool isEnable() const;
+    void setEnable(bool e);
+    OrganizerMode mode() const;
+    void setMode(OrganizerMode m);
+    Classifier classification() const;
+    void setClassification(Classifier cf);
+signals:
+    void changeEnableState(bool e);
+    void switchToNormalized(int);
+    void switchToCustom();
 public slots:
-private slots:
-    bool eventDataRested(QList<QUrl> *urls, void *extData);
-    bool eventDataInserted(const QUrl &url, void *extData);
-    bool eventDataRenamed(const QUrl &oldUrl, const QUrl &newUrl, void *extData);
+protected:
+    explicit ConfigPresenter(QObject *parent = nullptr);
+    ~ConfigPresenter() override;
+private:
+    OrganizerConfig *conf = nullptr;
+    bool enable = false;
+    OrganizerMode curMode = OrganizerMode::kNormalized;
+    Classifier curClassifier = Classifier::kType;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-
-#endif // CANVASMODELSHELL_H
+#define CfgPresenter ConfigPresenter::instance()
+#endif // CONFIGPRESENTER_H

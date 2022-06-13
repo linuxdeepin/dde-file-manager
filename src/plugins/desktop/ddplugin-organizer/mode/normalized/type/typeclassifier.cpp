@@ -46,7 +46,7 @@ namespace  {
 #define InitSuffixTable(table, suffix) \
         {\
             QSet<QString> *tablePtr = const_cast<QSet<QString> *>(&table);\
-            tablePtr->fromList(QString(suffix).split(';'));\
+            *tablePtr = tablePtr->fromList(QString(suffix).split(','));\
         }
 TypeClassifierPrivate::TypeClassifierPrivate(TypeClassifier *qq) : q(qq)
 {
@@ -90,9 +90,9 @@ TypeClassifier::~TypeClassifier()
     handler = nullptr;
 }
 
-int TypeClassifier::mode() const
+Classifier TypeClassifier::mode() const
 {
-    return ClassifierCreator::kType;
+    return Classifier::kType;
 }
 
 ModelDataHandler *TypeClassifier::dataHandler() const

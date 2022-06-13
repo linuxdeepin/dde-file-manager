@@ -28,6 +28,7 @@ DFMBASE_BEGIN_NAMESPACE
 
 class AbstractMenuScenePrivate : public QObject
 {
+    Q_OBJECT
 public:
     friend class AbstractMenuScene;
     explicit AbstractMenuScenePrivate(AbstractMenuScene *qq);

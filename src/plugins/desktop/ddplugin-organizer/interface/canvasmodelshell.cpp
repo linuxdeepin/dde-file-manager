@@ -31,6 +31,9 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DDP_ORGANIZER_USE_NAMESPACE
 
+#define CanvasModelPush(topic, args...) \
+        dpfSlotChannel->push("ddplugin_canvas", QT_STRINGIFY2(topic), ##args)
+
 #define CanvasModelFollow(topic, args...) \
         dpfHookSequence->follow("ddplugin_canvas", QT_STRINGIFY2(topic), this, ##args)
 
@@ -56,6 +59,11 @@ bool CanvasModelShell::initialize()
     CanvasModelFollow(hook_CanvasModel_DataInserted, &CanvasModelShell::eventDataInserted);
     CanvasModelFollow(hook_CanvasModel_DataRenamed, &CanvasModelShell::eventDataRenamed);
     return true;
+}
+
+void CanvasModelShell::refresh(int ms)
+{
+    CanvasModelPush(slot_CanvasModel_Refresh, false, ms);
 }
 
 bool CanvasModelShell::eventDataRested(QList<QUrl> *urls, void *extData)
