@@ -38,6 +38,7 @@ public:
 
 public slots:
     void handleAddressInputStr(QString *str);
+    void handleWindowUrlChanged(quint64 winId, const QUrl &url);
 
 private:
     explicit RecentEventReceiver(QObject *parent = nullptr);

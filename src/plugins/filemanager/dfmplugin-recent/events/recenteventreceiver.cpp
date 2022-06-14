@@ -22,8 +22,11 @@
 #include "recenteventreceiver.h"
 #include "utils/recentmanager.h"
 
+#include "dfm-base/dfm_event_defines.h"
+
 #include <dfm-framework/dpf.h>
 
+DFMBASE_USE_NAMESPACE
 DPRECENT_USE_NAMESPACE
 
 RecentEventReceiver *RecentEventReceiver::instance()
@@ -35,6 +38,7 @@ RecentEventReceiver *RecentEventReceiver::instance()
 void RecentEventReceiver::initConnect()
 {
     dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_CheckInputAdddressStr", instance(), &RecentEventReceiver::handleAddressInputStr);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, RecentEventReceiver::instance(), &RecentEventReceiver::handleWindowUrlChanged);
 }
 
 void RecentEventReceiver::handleAddressInputStr(QString *str)
@@ -42,6 +46,16 @@ void RecentEventReceiver::handleAddressInputStr(QString *str)
     if (str->startsWith(RecentManager::scheme())) {
         str->clear();
         str->append(RecentManager::scheme() + ":/");
+    }
+}
+
+void RecentEventReceiver::handleWindowUrlChanged(quint64 winId, const QUrl &url)
+{
+    if (url.scheme() == RecentManager::scheme()) {
+        QTimer::singleShot(0, this, [=] {
+            QDir::Filters f = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetViewFilter", winId, f);
+        });
     }
 }
 
