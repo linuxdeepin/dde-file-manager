@@ -111,7 +111,7 @@ void MasteredMediaFileWatcher::onSubfileCreated(const QUrl &url)
 {
     if (!UniversalUtils::urlEquals(url, dptr->proxyStaging->url())) {
         QUrl realUrl { OpticalHelper::tansToBurnFile(url) };
-        if (OpticalHelper::idDupFileNameInPath(dptr->curMnt, realUrl)) {
+        if (OpticalHelper::isDupFileNameInPath(dptr->curMnt, realUrl)) {
             qWarning() << "Dup file: " << url;
             return;
         }

@@ -226,7 +226,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
 
     // empty stage files folder
     QString errTitle(tr("No files to burn"));
-    QDir::Filters filter { QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden };
+    QDir::Filters filter { QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden | QDir::NoSymLinks };
     QFileInfoList listFilesInStage = dirStage.entryInfoList(filter);
     if (listFilesInStage.count() == 0) {
         DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, errTitle);
@@ -242,7 +242,7 @@ void OpticalMediaWidget::onBurnButtonClicked()
             if (stageInfo.fileName() != discFileInfo.fileName())
                 continue;
             qInfo() << "Remove file: " << stageInfo.fileName();
-            if (stageInfo.isFile() || stageInfo.isSymLink()) {
+            if (stageInfo.isFile()) {
                 dirStage.remove(stageInfo.fileName());
             } else {
                 QDir(stageInfo.absoluteFilePath()).removeRecursively();
