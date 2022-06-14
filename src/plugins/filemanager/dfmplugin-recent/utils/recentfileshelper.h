@@ -34,7 +34,6 @@
 DPRECENT_BEGIN_NAMESPACE
 class RecentFilesHelper
 {
-
 public:
     static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
     static void pasteFilesHandle(const QList<QUrl> sources,
@@ -57,6 +56,15 @@ public:
                                     const QUrl url,
                                     const QFileDevice::Permissions permissions,
                                     QString *error);
+    static bool createLinkFileHandle(const quint64 windowId,
+                                     const QUrl url,
+                                     const QUrl link,
+                                     const bool force,
+                                     const bool silence,
+                                     QString *error);
+
+private:
+    static QUrl checkTargetUrl(const QUrl &url);
 };
 
 DPRECENT_END_NAMESPACE

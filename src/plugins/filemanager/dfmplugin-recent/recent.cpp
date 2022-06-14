@@ -175,6 +175,7 @@ void Recent::addFileOperations()
     fileOpeationsHandle->openFiles = &RecentFilesHelper::openFilesHandle;
     fileOpeationsHandle->setPermission = &RecentFilesHelper::setPermissionHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &RecentFilesHelper::writeUrlToClipboardHandle;
+    fileOpeationsHandle->linkFile = &RecentFilesHelper::createLinkFileHandle;
 
     RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
 }

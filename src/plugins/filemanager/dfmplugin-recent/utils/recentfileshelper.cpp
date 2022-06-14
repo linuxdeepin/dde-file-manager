@@ -25,14 +25,18 @@
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
 #include "services/common/delegate/delegateservice.h"
 
 #include <DDialog>
 #include <DRecentManager>
-
 #include <DDesktopServices>
+
+#include <dfm-io/dfmio_utils.h>
+
 #include <QProcess>
 
 DFMBASE_USE_NAMESPACE
@@ -136,4 +140,39 @@ bool RecentFilesHelper::setPermissionHandle(const quint64 windowId, const QUrl u
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
 
     return fileHandler.setPermissions(localUrl, permissions);
+}
+
+bool RecentFilesHelper::createLinkFileHandle(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence, QString *error)
+{
+    Q_UNUSED(windowId)
+    Q_UNUSED(error)
+
+    if (force) {
+        const AbstractFileInfoPointer &toInfo = InfoFactory::create<AbstractFileInfo>(link);
+        if (toInfo && toInfo->exists()) {
+            DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+            fileHandler.deleteFile(link);
+        }
+    }
+
+    QUrl urlValid { link };
+    if (silence)
+        urlValid = checkTargetUrl(link);
+
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    const QUrl &localUrl = RecentManager::urlTransform(url);
+    return fileHandler.createSystemLink(localUrl, urlValid);
+}
+
+QUrl RecentFilesHelper::checkTargetUrl(const QUrl &url)
+{
+    const QUrl &urlParent = DFMIO::DFMUtils::directParentUrl(url);
+    if (!urlParent.isValid())
+        return url;
+
+    const QString &nameValid = FileUtils::nonExistSymlinkFileName(url, urlParent);
+    if (!nameValid.isEmpty())
+        return urlParent.toString() + QDir::separator() + nameValid;
+
+    return url;
 }
