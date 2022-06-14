@@ -95,6 +95,7 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "property",
         "open-in-new-window",
         "open-in-new-tab",
+        "open-in-terminal",
         "open-as-administrator",
         "add-bookmark",
         "stage-file-to-burning",
