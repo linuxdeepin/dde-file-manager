@@ -34,6 +34,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
 #include "services/common/menu/menuservice.h"
@@ -136,12 +137,15 @@ QWidget *Tag::createTagWidget(const QUrl &url)
 void Tag::installToSideBar()
 {
     QMap<QString, QColor> tagsMap = TagManager::instance()->getAllTags();
-
-    QMap<QString, QColor>::const_iterator it = tagsMap.begin();
-    while (it != tagsMap.end()) {
-        SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(it.key());
-        TagHelper::sideBarServIns()->addItem(item);
-        ++it;
+    auto tagNames = tagsMap.keys();
+    auto orders = Application::genericSetting()->value(kSidebarOrder, kTagOrderKey).toStringList();
+    for (const auto &item : orders) {
+        QUrl u(item);
+        auto query = u.query().split("=", QString::SkipEmptyParts);
+        if (query.count() == 2 && tagNames.contains(query[1])) {
+            SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(query[1]);
+            TagHelper::sideBarServIns()->addItem(item);
+        }
     }
 }
 
@@ -181,4 +185,5 @@ void Tag::bindScene(const QString &parentScene)
 void Tag::bindEvents()
 {
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, TagEventReceiver::instance(), &TagEventReceiver::handleWindowUrlChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_SidebarSorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
 }

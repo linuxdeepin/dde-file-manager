@@ -26,6 +26,9 @@
 
 DPTAG_BEGIN_NAMESPACE
 
+inline constexpr char kSidebarOrder[] { "SideBar/ItemOrder" };
+inline constexpr char kTagOrderKey[] { "tag" };
+
 class TagEventReceiver : public QObject
 {
     Q_OBJECT
@@ -42,6 +45,7 @@ public slots:
     void handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls,
                                       const QVariantList &customInfos, bool ok, const QString &errMsg);
     QStringList handleGetTags(const QUrl &url);
+    void handleSidebarOrderChanged(quint64 winId, const QString &group);
 
 private:
     explicit TagEventReceiver(QObject *parent = nullptr);

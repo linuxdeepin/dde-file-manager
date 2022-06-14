@@ -23,6 +23,8 @@
 #include "utils/tagmanager.h"
 
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -160,6 +162,22 @@ void TagEventReceiver::handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, 
 QStringList TagEventReceiver::handleGetTags(const QUrl &url)
 {
     return TagManager::instance()->getTagsByUrls({ url });
+}
+
+void TagEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &group)
+{
+    if (group != "Tag")
+        return;
+    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_GetGroupItems", winId, group);
+    auto urls = items.value<QList<QUrl>>();
+
+    QVariantList lst;
+    for (auto &url : urls) {
+        url.setQuery(QString("tagname=%1").arg(url.path().remove("/")));
+        lst << url.toString();
+    }
+    if (!lst.isEmpty())
+        Application::genericSetting()->setValue(kSidebarOrder, kTagOrderKey, lst);
 }
 
 TagEventReceiver::TagEventReceiver(QObject *parent)
