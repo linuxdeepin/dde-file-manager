@@ -173,14 +173,16 @@ QString DeviceUtils::nameOfOptical(const QVariantMap &datas)
     static const QMap<QString, QString> discMapper(opticalMedias);
     static const QVector<std::pair<QString, QString>> discVector(opticalMedias);
 
-    qlonglong totalSize = datas.value(kSizeTotal).toLongLong();
+    auto totalSize { datas.value(kSizeTotal).toULongLong() };
 
     if (datas.value(kOptical).toBool()) {   // medium loaded
         if (datas.value(kOpticalBlank).toBool()) {   // show empty disc name
             QString mediaType = datas.value(kMedia).toString();
             return QObject::tr("Blank %1 Disc").arg(discMapper.value(mediaType, QObject::tr("Unknown")));
         } else {
-            return nameOfDefault(label, totalSize);
+            // totalSize changed after disc mounted
+            auto udiks2Size { datas.value(kUDisks2Size).toULongLong() };
+            return nameOfDefault(label, udiks2Size > 0 ? udiks2Size : totalSize);
         }
     } else {   // show drive name, medium is not loaded
         auto medias = datas.value(kMediaCompatibility).toStringList();

@@ -97,6 +97,7 @@ inline constexpr char kCleartextDevice[] { "CleartextDevice" };
 inline constexpr char kDisplayName[] { "DisplayName" };
 inline constexpr char kDeviceIcon[] { "DeviceIcon" };
 inline constexpr char kConnectionBus[] { "connectBus" };
+inline constexpr char kUDisks2Size[] { "UDisks2Size" };
 }   // namespace DeviceProperty
 
 /*!

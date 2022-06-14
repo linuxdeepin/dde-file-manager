@@ -125,6 +125,9 @@ QVariantMap DeviceHelper::loadBlockInfo(const BlockDevPtr &dev)
     datas[kCleartextDevice] = getNullStrIfNotValid(Property::kEncryptedCleartextDevice);
     datas[kConnectionBus] = getNullStrIfNotValid(Property::kDriveConnectionBus);
 
+    if (dev->optical())
+        datas[kUDisks2Size] = dev->sizeTotal();
+
     auto eType = dev->partitionEType();
     datas[kHasExtendedPatition] = eType == PartitionType::kMbrWin95_Extended_LBA
             || eType == PartitionType::kMbrLinux_extended
