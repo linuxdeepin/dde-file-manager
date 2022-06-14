@@ -123,6 +123,9 @@ RecentManager::ExpandFieldMap RecentManager::propetyExtensionFunc(const QUrl &ur
 
 QUrl RecentManager::urlTransform(const QUrl &url)
 {
+    if (UrlRoute::isRootUrl(url))
+        return url;
+
     QUrl out { url };
     out.setScheme(Global::kFile);
     return out;

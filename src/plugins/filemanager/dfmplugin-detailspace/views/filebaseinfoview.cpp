@@ -144,7 +144,11 @@ void FileBaseInfoView::basicExpand(const QUrl &url)
 
 void FileBaseInfoView::basicFieldFilter(const QUrl &url)
 {
-    DetailFilterTypes fieldFilter = detailServIns->contorlFieldFilter(url);
+    QUrl filterUrl = url;
+    if (delegateServIns->isRegisterUrlTransform(filterUrl.scheme()))
+        filterUrl = delegateServIns->urlTransform(filterUrl);
+
+    DetailFilterTypes fieldFilter = detailServIns->contorlFieldFilter(filterUrl);
     if (fieldFilter & DetailFilterType::kFileNameField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileName);
         fileName->deleteLater();

@@ -43,6 +43,7 @@ public:
     virtual bool isReadable() const override;
     virtual bool isWritable() const override;
 
+    QString fileName() const override;
     bool canRedirectionFileUrl() const override;
     QUrl redirectedFileUrl() const override;
 

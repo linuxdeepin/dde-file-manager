@@ -31,6 +31,7 @@
 #include "services/common/menu/menuservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/delegate/delegateservice.h"
+#include "services/filemanager/detailspace/detailspaceservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -59,6 +60,13 @@ void Recent::initialize()
 
 bool Recent::start()
 {
+    delegateServIns->registerUrlTransform(RecentManager::scheme(), RecentManager::urlTransform);
+
+    DetailFilterTypes filter = DetailFilterType::kFileSizeField;
+    filter |= DetailFilterType::kFileChangeTImeField;
+    filter |= DetailFilterType::kFileInterviewTimeField;
+    DetailSpaceService::serviceInstance()->registerFilterControlField(RecentManager::scheme(), filter);
+
     addFileOperations();
     addDelegateSettings();
 

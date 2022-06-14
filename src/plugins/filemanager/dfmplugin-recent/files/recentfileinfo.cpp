@@ -80,6 +80,17 @@ bool RecentFileInfo::isWritable() const
     return permissions().testFlag(QFile::Permission::WriteUser);
 }
 
+QString RecentFileInfo::fileName() const
+{
+    if (d->proxy)
+        return d->proxy->fileName();
+
+    if (UrlRoute::isRootUrl(url()))
+        return QObject::tr("Recent");
+
+    return QString();
+}
+
 bool RecentFileInfo::canRedirectionFileUrl() const
 {
     return d->proxy;
