@@ -337,6 +337,8 @@ void DToolBar::currentUrlChanged(const DFMEvent &event)
 void DToolBar::back()
 {
     DUrl url = m_navStack->back();
+    if(FileUtils::isSmbShareFolder(url))//从smb://x.x.x.x/share_folder返回到smb://x.x.x.x
+        url.setPath("");
     //判断网络文件是否可以到达
     if (DFileService::instance()->checkGvfsMountfileBusy(url)) {
         return;
