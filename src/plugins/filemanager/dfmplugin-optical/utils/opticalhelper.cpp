@@ -134,15 +134,14 @@ QUrl OpticalHelper::tansToBurnFile(const QUrl &in)
     QRegularExpressionMatch m;
     QString cachepath = QRegularExpression::escape(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                                                    + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/");
-    m = QRegularExpression(cachepath + "(.*)").match(in.path());
+    m = QRegularExpression(cachepath + "([\\s\\S]*)").match(in.path());
     Q_ASSERT(m.hasMatch());
     QString cpth = m.captured(1);
-    m = QRegularExpression("(.*?)/(.*)").match(cpth);
+    m = QRegularExpression("([\\s\\S]*?)/([\\s\\S]*)").match(cpth);
     QString devid(m.captured(1));
     QString path(m.captured(2));
-    if (!m.hasMatch()) {
+    if (!m.hasMatch())
         devid = cpth;
-    }
 
     QUrl url;
     QString filePath { devid.replace('_', '/') + "/" BURN_SEG_STAGING "/" + path };

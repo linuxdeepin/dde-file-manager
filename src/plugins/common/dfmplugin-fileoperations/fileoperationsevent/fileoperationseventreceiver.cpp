@@ -388,12 +388,6 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
 
 JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags, OperatorHandleCallback handleCallback)
 {
-    //Delete local file with shift+delete, show a confirm dialog.
-    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
-        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
-            return nullptr;
-    }
-
     if (sources.isEmpty())
         return nullptr;
 
@@ -409,6 +403,12 @@ JobHandlePointer FileOperationsEventReceiver::doDeleteFile(const quint64 windowI
                 handleCallback(handle);
             return handle;
         }
+    }
+
+    //Delete local file with shift+delete, show a confirm dialog.
+    if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation)) {
+        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
+            return nullptr;
     }
     JobHandlePointer handle = copyMoveJob->deletes(sources, flags);
     if (handleCallback)
