@@ -145,7 +145,12 @@ void Tag::installToSideBar()
         if (query.count() == 2 && tagNames.contains(query[1])) {
             SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(query[1]);
             TagHelper::sideBarServIns()->addItem(item);
+            tagNames.removeAll(query[1]);
         }
+    }
+    for (const auto &tag : tagNames) {   // if tag order is not complete.
+        SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(tag);
+        TagHelper::sideBarServIns()->addItem(item);
     }
 }
 
