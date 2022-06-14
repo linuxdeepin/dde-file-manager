@@ -941,7 +941,33 @@ void FileView::mousePressEvent(QMouseEvent *event)
 
         QModelIndex index = indexAt(event->pos());
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
-        d->selectHelper->setSelection(selectionModel()->selection());
+        if (isEmptyArea) {
+            d->selectHelper->setSelection(selectionModel()->selection());
+            if (!WindowUtils::keyCtrlIsPressed()) {
+                itemDelegate()->hideNotEditingIndexWidget();
+                if (qApp->keyboardModifiers() == Qt::NoModifier)
+                    setCurrentIndex(QModelIndex());
+                if (dragDropMode() != NoDragDrop) {
+                    setDragDropMode(DropOnly);
+                }
+            }
+        } else if (WindowUtils::keyCtrlIsPressed() && selectionMode() == QAbstractItemView::SingleSelection) {
+            if (selectionModel()->isSelected(index)) {
+
+                DListView::mousePressEvent(event);
+
+                selectionModel()->select(index, QItemSelectionModel::Select);
+
+                return;
+            }
+        } else if (WindowUtils::keyShiftIsPressed()) {
+            if (!selectionModel()->isSelected(index)) {   // 如果该项没有被选择
+                DListView::mousePressEvent(event);   // 选择该项
+                return;
+            }
+        } else {
+            d->selectHelper->setSelection(selectionModel()->selection());
+        }
 
         DListView::mousePressEvent(event);
         break;
