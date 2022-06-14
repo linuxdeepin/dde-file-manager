@@ -51,6 +51,7 @@ enum class TagActionType : uint8_t {
 namespace TagActionId {
 inline constexpr char kActTagColorListKey[] { "tag-color-list" };
 inline constexpr char kActTagAddKey[] { "tag-add" };
+inline constexpr char kOpenFileLocation[] { "open-file-location" };
 }
 
 DPTAG_END_NAMESPACE

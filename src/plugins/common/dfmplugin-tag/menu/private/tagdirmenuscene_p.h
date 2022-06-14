@@ -18,12 +18,29 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "tagdirmenusceneprivate.h"
+#ifndef TAGDIRMENUSCENEPRIVATE_H
+#define TAGDIRMENUSCENEPRIVATE_H
 
-DPTAG_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+#include "dfmplugin_tag_global.h"
 
-dfmplugin_tag::TagDirMenuScenePrivate::TagDirMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
-    : AbstractMenuScenePrivate(qq)
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+
+DPTAG_BEGIN_NAMESPACE
+
+class TagDirMenuScene;
+class TagDirMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
-}
+    friend class TagDirMenuScene;
+
+public:
+    explicit TagDirMenuScenePrivate(TagDirMenuScene *qq);
+    bool openFileLocation(const QString &path);
+    void updateMenu(QMenu *menu);
+
+private:
+    TagDirMenuScene *q;
+};
+
+DPTAG_END_NAMESPACE
+
+#endif   // TAGDIRMENUSCENEPRIVATE_H

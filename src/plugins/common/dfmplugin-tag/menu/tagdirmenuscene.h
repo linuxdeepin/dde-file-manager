@@ -48,8 +48,10 @@ public:
 
     virtual QString name() const override;
     virtual bool initialize(const QVariantHash &params) override;
+    bool create(QMenu *parent) override;
     virtual void updateState(QMenu *parent) override;
     virtual DFMBASE_NAMESPACE::AbstractMenuScene *scene(QAction *action) const override;
+    bool triggered(QAction *action) override;
 
 private:
     QScopedPointer<TagDirMenuScenePrivate> d;

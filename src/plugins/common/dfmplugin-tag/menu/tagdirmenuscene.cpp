@@ -19,15 +19,77 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "tagdirmenuscene.h"
-#include "private/tagdirmenusceneprivate.h"
+#include "private/tagdirmenuscene_p.h"
 #include "utils/tagmanager.h"
 
 #include "services/common/menu/menu_defines.h"
 #include "services/common/menu/menuservice.h"
 
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/sysinfoutils.h"
+
+#include <DDesktopServices>
+
+#include <QProcess>
+
+DWIDGET_USE_NAMESPACE
 DPTAG_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
+
+TagDirMenuScenePrivate::TagDirMenuScenePrivate(TagDirMenuScene *qq)
+    : AbstractMenuScenePrivate(qq),
+      q(qq)
+{
+}
+
+bool TagDirMenuScenePrivate::openFileLocation(const QString &path)
+{
+    // why? because 'DDesktopServices::showFileItem(realUrl(event->url()))' will call session bus 'org.freedesktop.FileManager1'
+    // but cannot find session bus when user is root!
+    if (SysInfoUtils::isRootUser()) {
+        QStringList urls { path };
+        return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << urls << "--raw");
+    }
+
+    return DDesktopServices::showFileItem(path);
+}
+
+void TagDirMenuScenePrivate::updateMenu(QMenu *menu)
+{
+    QList<QAction *> actions = menu->actions();
+    if (isEmptyArea) {
+        QList<QAction *>::iterator itAction = actions.begin();
+        for (; itAction != actions.end(); ++itAction) {
+            if ((*itAction)->isSeparator())
+                continue;
+
+            const QString sceneName = q->scene(*itAction)->name();
+            if (sceneName == "ExtendMenu" || sceneName == "OemMenu") {
+                menu->removeAction(*itAction);
+            }
+        }
+    } else {
+        QAction *openLocalAct = nullptr;
+        for (auto act : actions) {
+            if (act->isSeparator())
+                continue;
+
+            const auto &p = act->property(ActionPropertyKey::kActionID);
+            if (p == TagActionId::kOpenFileLocation) {
+                openLocalAct = act;
+                break;
+            }
+        }
+
+        // insert 'OpenFileLocation' action
+        if (openLocalAct) {
+            actions.removeOne(openLocalAct);
+            actions.insert(1, openLocalAct);
+            menu->addActions(actions);
+        }
+    }
+}
 
 AbstractMenuScene *TagDirMenuCreator::create()
 {
@@ -37,6 +99,7 @@ AbstractMenuScene *TagDirMenuCreator::create()
 TagDirMenuScene::TagDirMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new TagDirMenuScenePrivate(this))
 {
+    d->predicateName[TagActionId::kOpenFileLocation] = tr("Open file location");
 }
 
 TagDirMenuScene::~TagDirMenuScene()
@@ -74,24 +137,27 @@ bool TagDirMenuScene::initialize(const QVariantHash &params)
     return AbstractMenuScene::initialize(params);
 }
 
+bool TagDirMenuScene::create(QMenu *parent)
+{
+    if (!parent)
+        return false;
+
+    if (!d->isEmptyArea) {
+        QAction *tempAction = parent->addAction(d->predicateName.value(TagActionId::kOpenFileLocation));
+        d->predicateAction[TagActionId::kOpenFileLocation] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(TagActionId::kOpenFileLocation));
+    }
+
+    return AbstractMenuScene::create(parent);
+}
+
 void TagDirMenuScene::updateState(QMenu *parent)
 {
     if (!parent)
         return;
 
     AbstractMenuScene::updateState(parent);
-
-    QList<QAction *> actions = parent->actions();
-    QList<QAction *>::iterator itAction = actions.begin();
-    for (; itAction != actions.end(); ++itAction) {
-        if ((*itAction)->isSeparator())
-            continue;
-
-        const QString sceneName = scene(*itAction)->name();
-        if (sceneName == "ExtendMenu" || sceneName == "OemMenu") {
-            parent->removeAction(*itAction);
-        }
-    }
+    d->updateMenu(parent);
 }
 
 AbstractMenuScene *TagDirMenuScene::scene(QAction *action) const
@@ -103,4 +169,22 @@ AbstractMenuScene *TagDirMenuScene::scene(QAction *action) const
         return const_cast<TagDirMenuScene *>(this);
 
     return AbstractMenuScene::scene(action);
+}
+
+bool TagDirMenuScene::triggered(QAction *action)
+{
+    auto actionId = action->property(ActionPropertyKey::kActionID).toString();
+    if (d->predicateAction.contains(actionId)) {
+        // open file location
+        if (actionId == TagActionId::kOpenFileLocation) {
+            for (const auto &file : d->selectFiles) {
+                auto info = InfoFactory::create<AbstractFileInfo>(file);
+                d->openFileLocation(info->absoluteFilePath());
+            }
+
+            return true;
+        }
+    }
+
+    return AbstractMenuScene::triggered(action);
 }
