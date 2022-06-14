@@ -201,16 +201,17 @@ bool TagManager::setTagsForFiles(const QList<QString> &tags, const QList<QUrl> &
         bool ret = false;
         for (const QUrl &url : files) {
             QStringList tagsOfFile = TagManager::instance()->getTagsByUrls({ url });
-            QStringList newTags = tags;
+            QStringList newTags;
 
-            auto isNewTag = [tagsOfFile](const QString &newTagName) {
-                return tagsOfFile.contains(newTagName);
-            };
+            for (const QString &tag : tags) {
+                if (!tagsOfFile.contains(tag))
+                    newTags.append(tag);
+            }
 
-            newTags.erase(std::remove_if(newTags.begin(), newTags.end(), isNewTag), newTags.end());
-
-            if (!newTags.isEmpty())
-                ret = TagManager::instance()->addTagsForFiles(newTags, { url });
+            if (!newTags.isEmpty()) {
+                tagsOfFile.append(newTags);
+                ret = TagManager::instance()->addTagsForFiles(tagsOfFile, { url });
+            }
         }
         return ret;
     }
