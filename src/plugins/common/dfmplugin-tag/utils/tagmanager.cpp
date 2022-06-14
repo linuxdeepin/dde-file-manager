@@ -334,7 +334,8 @@ void TagManager::deleteFiles(const QList<QUrl> &urls)
         return;
     }
 
-    deleteTags(tagNames);
+    if (DialogManagerInstance->showDeleteFilesClearTrashDialog(urls) == QDialog::Accepted)
+        deleteTags(tagNames);
 }
 
 bool TagManager::canTagFile(const AbstractFileInfoPointer &fileInfo) const
