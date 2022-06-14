@@ -121,6 +121,11 @@ public:
     virtual bool canDragCompress() const override;
     virtual bool isDragCompressFileFormat() const override;
 
+    // emblems
+    virtual void setEmblems(const QMap<int, QIcon> &maps) override;
+    virtual QMap<int, QIcon> emblems() const override;
+    virtual bool emblemsInited() const override;
+
     // media info
     virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,
                                      QList<DFMIO::DFileInfo::AttributeExtendID> ids,

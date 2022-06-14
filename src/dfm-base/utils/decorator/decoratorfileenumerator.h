@@ -52,6 +52,7 @@ public:
     bool hasNext() const;
     QString next() const;
     QUrl nextUrl() const;
+    quint64 fileCount() const;
     QSharedPointer<DFMIO::DFileInfo> fileInfo() const;
 
     DFMIOError lastError() const;

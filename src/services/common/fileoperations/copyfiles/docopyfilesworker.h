@@ -42,7 +42,6 @@
 #include <QThreadPool>
 #include <QMultiMap>
 
-class QWaitCondition;
 DSC_BEGIN_NAMESPACE
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE

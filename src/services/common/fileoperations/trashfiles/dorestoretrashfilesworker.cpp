@@ -34,7 +34,6 @@
 #include <QUrl>
 #include <QDebug>
 #include <QMutex>
-#include <QWaitCondition>
 #include <QSettings>
 #include <QStorageInfo>
 

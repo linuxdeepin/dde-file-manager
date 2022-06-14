@@ -32,17 +32,14 @@
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url,
-                                                 const QStringList &nameFilters,
-                                                 QDir::Filters filters,
-                                                 QDirIterator::IteratorFlags flags,
+LocalDirIteratorPrivate::LocalDirIteratorPrivate(const QUrl &url, const QStringList &nameFilters,
+                                                 QDir::Filters filters, QDirIterator::IteratorFlags flags,
                                                  LocalDirIterator *q)
-    : q(q), curFilters(filters)
+    : q(q)
 {
-    QUrl temp = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
+    QUrl urlReally = QUrl::fromLocalFile(UrlRoute::urlToPath(url));
 
-    DecoratorFileEnumerator enumerator(temp,
-                                       nameFilters,
+    DecoratorFileEnumerator enumerator(urlReally, nameFilters,
                                        static_cast<DEnumerator::DirFilter>(static_cast<int32_t>(filters)),
                                        static_cast<DEnumerator::IteratorFlag>(static_cast<uint8_t>(flags)));
 
@@ -76,11 +73,6 @@ LocalDirIterator::~LocalDirIterator()
  **/
 QUrl LocalDirIterator::next()
 {
-    if (d->isCurrent) {
-        d->isCurrent = false;
-        return d->currentUrl;
-    }
-
     if (d->dfmioDirIterator)
         d->currentUrl = QUrl::fromLocalFile(d->dfmioDirIterator->next());
 

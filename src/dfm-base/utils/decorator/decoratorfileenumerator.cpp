@@ -116,6 +116,13 @@ QUrl DecoratorFileEnumerator::nextUrl() const
     return QUrl();
 }
 
+quint64 DecoratorFileEnumerator::fileCount() const
+{
+    if (d->denumerator)
+        return d->denumerator->fileCount();
+    return 0;
+}
+
 QSharedPointer<dfmio::DFileInfo> DecoratorFileEnumerator::fileInfo() const
 {
     if (d->denumerator)

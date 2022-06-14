@@ -29,7 +29,6 @@
 
 #include <QUrl>
 #include <QDebug>
-#include <QWaitCondition>
 
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE

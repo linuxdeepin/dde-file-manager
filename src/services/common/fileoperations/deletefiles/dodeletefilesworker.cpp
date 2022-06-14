@@ -25,7 +25,6 @@
 
 #include <QUrl>
 #include <QDebug>
-#include <QWaitCondition>
 
 DSC_USE_NAMESPACE
 DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)

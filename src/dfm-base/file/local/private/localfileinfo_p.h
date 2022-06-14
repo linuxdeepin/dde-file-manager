@@ -66,6 +66,9 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     std::atomic_int enableThumbnail = { -1 };   // 小于0时表示此值未初始化，0表示不支持，1表示支持
     QPointer<QTimer> getIconTimer = nullptr;
 
+    std::atomic_int enableEmblems = { -1 };
+    QMap<int, QIcon> gioEmblemsMap;   // 缓存的角标数据
+
 public:
     explicit LocalFileInfoPrivate(LocalFileInfo *qq);
     virtual ~LocalFileInfoPrivate();

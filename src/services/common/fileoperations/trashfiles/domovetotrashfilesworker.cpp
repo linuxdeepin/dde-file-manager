@@ -32,7 +32,6 @@
 
 #include <QUrl>
 #include <QDebug>
-#include <QWaitCondition>
 #include <QtGlobal>
 #include <QCryptographicHash>
 #include <QStorageInfo>

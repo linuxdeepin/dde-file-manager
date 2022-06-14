@@ -37,7 +37,6 @@
 #include <QRegularExpression>
 #include <QProcess>
 #include <QtConcurrent/QtConcurrent>
-#include <QWaitCondition>
 
 #include <syscall.h>
 #include <fcntl.h>

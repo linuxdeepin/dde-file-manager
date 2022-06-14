@@ -35,7 +35,6 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QMutex>
-#include <QWaitCondition>
 #include <QDateTime>
 #include <QApplication>
 #include <QProcess>

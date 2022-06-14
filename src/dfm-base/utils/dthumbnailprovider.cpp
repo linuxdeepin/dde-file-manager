@@ -610,6 +610,7 @@ void DThumbnailProvider::run()
     forever {
 
         if (d->produceQueue.isEmpty()) {
+            d->mutex.lock();
             d->waitCondition.wait(&d->mutex);
             d->mutex.unlock();
         }

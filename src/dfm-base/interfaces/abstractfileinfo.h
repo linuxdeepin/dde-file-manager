@@ -195,6 +195,11 @@ public:
     virtual QString emptyDirectoryTip() const;
     virtual QString loadingTip() const;
 
+    // emblems
+    virtual void setEmblems(const QMap<int, QIcon> &maps);
+    virtual QMap<int, QIcon> emblems() const;
+    virtual bool emblemsInited() const;
+
     // media info
     virtual void mediaInfoAttributes(DFMIO::DFileInfo::MediaType type,
                                      QList<DFMIO::DFileInfo::AttributeExtendID> ids,

@@ -29,6 +29,7 @@
 #include "dfm-base/utils/chinese2pinyin.h"
 #include "dfm-base/utils/dthumbnailprovider.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/utils/decorator/decoratorfileenumerator.h"
 #include "dfm-base/file/local/localfileiconprovider.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
@@ -151,6 +152,8 @@ void LocalFileInfo::refresh()
     d->clearIcon();
     d->dfmFileInfo->clearCache();
     d->dfmFileInfo->refresh();
+    d->enableEmblems = -1;
+    d->gioEmblemsMap.clear();
 }
 
 void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
@@ -1405,11 +1408,10 @@ LocalFileInfo::FileType LocalFileInfo::fileType() const
 int LocalFileInfo::countChildFile() const
 {
     if (isDir()) {
-        QDir dir(absoluteFilePath());
+        const QString &path = absoluteFilePath();
         QReadLocker locker(&d->lock);
-        QStringList entryList = dir.entryList(QDir::AllEntries | QDir::System
-                                              | QDir::NoDotAndDotDot | QDir::Hidden);
-        return entryList.size();
+        DecoratorFileEnumerator enumerator(path);
+        return enumerator.fileCount();
     }
 
     return -1;
@@ -1617,6 +1619,25 @@ bool LocalFileInfo::isDragCompressFileFormat() const
     return name.endsWith(".zip")
             || (name.endsWith(".7z")
                 && !name.endsWith(".tar.7z"));
+}
+
+void LocalFileInfo::setEmblems(const QMap<int, QIcon> &maps)
+{
+    QWriteLocker locker(&d->lock);
+    d->enableEmblems = 1;
+    d->gioEmblemsMap = maps;
+}
+
+QMap<int, QIcon> LocalFileInfo::emblems() const
+{
+    QReadLocker locker(&d->lock);
+    return d->gioEmblemsMap;
+}
+
+bool LocalFileInfo::emblemsInited() const
+{
+    QReadLocker locker(&d->lock);
+    return d->enableEmblems != -1;
 }
 
 void LocalFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const

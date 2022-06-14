@@ -35,7 +35,6 @@
 #include <QProcess>
 #include <QMutex>
 #include <QStorageInfo>
-#include <QWaitCondition>
 #include <QQueue>
 #include <QDebug>
 

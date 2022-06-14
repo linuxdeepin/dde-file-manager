@@ -1140,6 +1140,25 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::loadingTip() const
     return QObject::tr("Loading...");
 }
 
+void dfmbase::AbstractFileInfo::setEmblems(const QMap<int, QIcon> &maps)
+{
+    CALL_PROXY(setEmblems(maps));
+}
+
+QMap<int, QIcon> dfmbase::AbstractFileInfo::emblems() const
+{
+    CALL_PROXY(emblems());
+
+    return {};
+}
+
+bool dfmbase::AbstractFileInfo::emblemsInited() const
+{
+    CALL_PROXY(emblemsInited());
+
+    return false;
+}
+
 void dfmbase::AbstractFileInfo::mediaInfoAttributes(DFileInfo::MediaType type, QList<DFileInfo::AttributeExtendID> ids, DFileInfo::AttributeExtendFuncCallback callback) const
 {
     CALL_PROXY(mediaInfoAttributes(type, ids, callback));
