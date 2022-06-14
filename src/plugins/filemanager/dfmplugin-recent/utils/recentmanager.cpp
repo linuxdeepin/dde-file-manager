@@ -31,6 +31,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 
 #include <QFile>
 #include <QMenu>
@@ -249,6 +250,8 @@ void RecentManager::init()
     connect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &RecentManager::updateRecent);
     connect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &RecentManager::updateRecent);
     watcher->startWatcher();
+
+    connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &RecentManager::updateRecent);
 }
 
 void RecentManager::updateRecent()
