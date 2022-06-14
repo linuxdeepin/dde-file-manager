@@ -76,6 +76,7 @@ public:
     static void clearRecent();
     static void contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
+    static QUrl urlTransform(const QUrl &url);
 
     QMap<QUrl, AbstractFileInfoPointer> getRecentNodes() const;
     bool removeRecentFile(const QUrl &url);

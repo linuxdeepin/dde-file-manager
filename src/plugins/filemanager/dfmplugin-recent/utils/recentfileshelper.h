@@ -29,6 +29,7 @@
 
 #include <QUrl>
 #include <QMimeData>
+#include <QFileDevice>
 
 DPRECENT_BEGIN_NAMESPACE
 class RecentFilesHelper
@@ -52,6 +53,10 @@ public:
     static bool openFileLocation(const QUrl &url);
 
     static void openFileLocation(const QList<QUrl> &urls);
+    static bool setPermissionHandle(const quint64 windowId,
+                                    const QUrl url,
+                                    const QFileDevice::Permissions permissions,
+                                    QString *error);
 };
 
 DPRECENT_END_NAMESPACE

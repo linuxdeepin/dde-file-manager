@@ -25,6 +25,7 @@
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/file/local/localfilehandler.h"
 
 #include "services/common/delegate/delegateservice.h"
 
@@ -124,4 +125,15 @@ void RecentFilesHelper::openFileLocation(const QList<QUrl> &urls)
         if (!openFileLocation(url))
             qWarning() << "failed to open: " << url.path();
     }
+}
+
+bool RecentFilesHelper::setPermissionHandle(const quint64 windowId, const QUrl url, const QFileDevice::Permissions permissions, QString *error)
+{
+    Q_UNUSED(windowId)
+    Q_UNUSED(error)
+
+    const QUrl &localUrl = RecentManager::urlTransform(url);
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+
+    return fileHandler.setPermissions(localUrl, permissions);
 }

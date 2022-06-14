@@ -173,6 +173,7 @@ void Recent::addFileOperations()
     fileOpeationsHandle->deletes = &RecentFilesHelper::deleteFilesHandle;
     fileOpeationsHandle->moveToTash = &RecentFilesHelper::deleteFilesHandle;
     fileOpeationsHandle->openFiles = &RecentFilesHelper::openFilesHandle;
+    fileOpeationsHandle->setPermission = &RecentFilesHelper::setPermissionHandle;
     fileOpeationsHandle->writeUrlsToClipboard = &RecentFilesHelper::writeUrlToClipboardHandle;
 
     RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);

@@ -120,6 +120,13 @@ RecentManager::ExpandFieldMap RecentManager::propetyExtensionFunc(const QUrl &ur
     return map;
 }
 
+QUrl RecentManager::urlTransform(const QUrl &url)
+{
+    QUrl out { url };
+    out.setScheme(Global::kFile);
+    return out;
+}
+
 QMap<QUrl, AbstractFileInfoPointer> RecentManager::getRecentNodes() const
 {
     return recentNodes;
