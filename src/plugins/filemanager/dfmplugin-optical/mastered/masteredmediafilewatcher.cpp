@@ -63,7 +63,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     if (!urlStaging.isValid() || urlStaging.isEmpty())
         return;
 
-    dptr->proxyStaging = WatcherFactory::create<AbstractFileWatcher>(urlStaging);
+    dptr->proxyStaging = WatcherFactory::create<AbstractFileWatcher>(urlStaging, false);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileAttributeChanged,
             this, &MasteredMediaFileWatcher::onFileAttributeChanged);
     connect(dptr->proxyStaging.data(), &AbstractFileWatcher::fileDeleted,
@@ -78,7 +78,7 @@ MasteredMediaFileWatcher::MasteredMediaFileWatcher(const QUrl &url, QObject *par
     QString id { DeviceUtils::getBlockDeviceId(devFile) };
     auto &&map = DevProxyMng->queryBlockInfo(id);
     dptr->curMnt = qvariant_cast<QString>(map[DeviceProperty::kMountPoint]);
-    dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(dptr->curMnt);
+    dptr->proxyOnDisk = WatcherFactory::create<AbstractFileWatcher>(dptr->curMnt, false);
 }
 
 void MasteredMediaFileWatcher::onFileDeleted(const QUrl &url)

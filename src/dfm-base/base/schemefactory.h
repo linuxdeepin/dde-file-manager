@@ -263,8 +263,11 @@ public:
     // 提供任意子类的转换方法模板，仅限DAbstractFileWatcher树族，
     // 与qSharedPointerDynamicCast保持一致
     template<class T>
-    static QSharedPointer<T> create(const QUrl &url, QString *errorString = nullptr)
+    static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
     {
+        if (Q_UNLIKELY(!cache))
+            return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileWatcher>::create(url, errorString));
+
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(url);
         if (watcher.isNull()) {
             watcher = instance().SchemeFactory<AbstractFileWatcher>::create(url, errorString);
