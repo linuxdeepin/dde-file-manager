@@ -266,17 +266,31 @@ JobHandlePointer FileOperationsEventReceiver::doMoveToTrash(const quint64 window
         }
     }
 
+    // check url permission
+    QList<QUrl> urlsCanTrash = sources;
+    auto it = urlsCanTrash.begin();
+    while (it != urlsCanTrash.end()) {
+        auto info = InfoFactory::create<AbstractFileInfo>(*it);
+        if (!info || !info->canRename() || (!info->isWritable() && !info->isFile() && !info->isSymLink()))
+            it = urlsCanTrash.erase(it);
+        else
+            ++it;
+    }
+
+    if (urlsCanTrash.isEmpty())
+        return nullptr;
+
     JobHandlePointer handle = nullptr;
     if (FileUtils::isGvfsFile(sourceFirst) || DFMIO::DFMUtils::fileIsRemovable(sourceFirst)) {
-        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(sources) != QDialog::Accepted)
+        if (DialogManagerInstance->showDeleteFilesClearTrashDialog(urlsCanTrash) != QDialog::Accepted)
             return nullptr;
-        handle = copyMoveJob->deletes(sources, flags);
+        handle = copyMoveJob->deletes(urlsCanTrash, flags);
     } else {
         if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation) && Application::instance()->genericAttribute(Application::kShowDeleteConfirmDialog).toBool()) {
-            if (DialogManagerInstance->showNormalDeleteConfirmDialog(sources) != QDialog::Accepted)
+            if (DialogManagerInstance->showNormalDeleteConfirmDialog(urlsCanTrash) != QDialog::Accepted)
                 return nullptr;
         }
-        handle = copyMoveJob->moveToTrash(sources, flags);
+        handle = copyMoveJob->moveToTrash(urlsCanTrash, flags);
     }
     if (handleCallback)
         handleCallback(handle);

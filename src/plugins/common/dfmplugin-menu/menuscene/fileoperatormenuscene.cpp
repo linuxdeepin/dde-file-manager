@@ -276,17 +276,7 @@ bool FileOperatorMenuScene::triggered(QAction *action)
 
     // delete
     if (actionId == ActionID::kDelete) {
-        QList<QUrl> urlsRet = d->selectFiles;
-        auto it = urlsRet.begin();
-        while (it != urlsRet.end()) {
-            auto info = InfoFactory::create<AbstractFileInfo>(*it);
-            if (!info || !info->canRename() || (!info->isWritable() && !info->isFile() && !info->isSymLink()))
-                it = urlsRet.erase(it);
-            else
-                ++it;
-        }
-        if (!urlsRet.isEmpty())
-            dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, urlsRet, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash, d->windowId, d->selectFiles, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         return true;
     }
 

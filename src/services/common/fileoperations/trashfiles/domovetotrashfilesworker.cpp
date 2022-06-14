@@ -254,7 +254,9 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
 
     emitCurrentTaskNotify(fileInfo->url(), toUrl);
 
-    if (checkFileOutOfLimit(fileInfo)) {
+    // in old dde-file-manager there has not this logic
+    // todo lanxs, confirm this code
+    /*if (checkFileOutOfLimit(fileInfo)) {
         qWarning() << "move to trash big file, use delete way, url: " << sourceUrl;
 
         // todo lanxs, need tips dialog
@@ -264,7 +266,7 @@ bool DoMoveToTrashFilesWorker::handleMoveToTrash(const AbstractFileInfoPointer &
             return deleteFile(sourceUrl, QUrl(), &result);
         else
             return deleteDir(sourceUrl, QUrl(), &result);
-    }
+    }*/
 
     // ToDo::判断是否同盘，是就直接rename
     if (isSameDisk == 1) {
