@@ -110,20 +110,6 @@ void SideBarInfoCacheMananger::removeHiddenUrl(const QUrl &url)
         hiddenUrlList.removeOne(url);
 }
 
-void SideBarInfoCacheMananger::sortCache(const QString &group, const QList<QUrl> &order)
-{
-    auto items = cacheInfoMap.value(group);
-    CacheInfoList sorted;
-    for (auto url : order) {
-        auto ret = std::find_if(items.cbegin(), items.cend(), [url](const ItemInfo &info) { return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, info.url); });
-        if (ret != items.cend())
-            sorted << *ret;
-        items.removeAt(ret - items.cbegin());
-    }
-    sorted << items;   // if there is any item not in ordered-list
-    cacheInfoMap.insert(group, sorted);
-}
-
 void SideBarInfoCacheMananger::bindItemInfo(const QUrl &url, const ItemInfo &info)
 {
     bindedInfos.insert(url, info);

@@ -199,16 +199,14 @@ SideBar::SortFunc SideBarHelper::sortFunc(const QString &subGroup)
     return kSortFuncs.value(subGroup, nullptr);
 }
 
-void SideBarHelper::sortSidebarGroupExcept(quint64 winId, const QString &group)
+void SideBarHelper::updateSideBarSelection(quint64 winId)
 {
-    const auto &&order = SideBarEventReceiver::instance()->handleGetGroupItems(winId, group);
     auto all = SideBarHelper::allSideBar();
     for (auto sb : all) {
         if (!sb || SideBarHelper::windowId(sb) == winId)
             continue;
-        sb->sortGroup(group, order);
+        sb->updateSelection();
     }
-    SideBarInfoCacheMananger::instance()->sortCache(group, order);
 }
 
 QMutex &SideBarHelper::mutex()

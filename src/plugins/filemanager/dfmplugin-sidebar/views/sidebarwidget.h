@@ -60,7 +60,7 @@ public:
     void editItem(const QUrl &url);
     void setItemVisible(const QUrl &url, bool visible);
     QList<QUrl> findItems(const QString &group) const;
-    void sortGroup(const QString &group, const QList<QUrl> &orders);
+    void updateSelection();
 
 private Q_SLOTS:
     void onItemActived(const QModelIndex &index);
@@ -76,7 +76,7 @@ private:
 private:
     QUrl sidebarUrl;
     SideBarView *sidebarView { nullptr };
-    SideBarModel *sidebarModel { nullptr };
+    static QSharedPointer<SideBarModel> kSidebarModelIns;
     QStringList currentGroups;
 };
 DPSIDEBAR_END_NAMESPACE

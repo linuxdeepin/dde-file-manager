@@ -71,12 +71,12 @@ void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info)
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return;
 
-    int ret { -1 };
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    for (SideBarWidget *sidebar : allSideBar) {
+    if (!allSideBar.isEmpty()) {
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
+        auto sidebar = allSideBar.first();
         if (item) {
-            ret = sidebar->addItem(item);
+            int ret = sidebar->addItem(item);
             // for select to computer
             QUrl &&itemUrl = item->url();
             QUrl &&sidebarUrl = sidebar->currentUrl();
@@ -84,40 +84,39 @@ void SideBarUnicastReceiver::invokeAddItem(const ItemInfo &info)
             if (UniversalUtils::urlEquals(itemUrl, sidebarUrl)
                 || (info.targetUrl.isValid() && UniversalUtils::urlEquals(sidebarUrl, info.targetUrl)))
                 sidebar->setCurrentUrl(item->url());
+            if (ret != -1)
+                SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
         }
     }
-
-    if (ret != -1)
-        SideBarInfoCacheMananger::instance()->addItemInfoCache(info);
 }
 
 void SideBarUnicastReceiver::invokeRemoveItem(const QUrl &url)
 {
     SideBarInfoCacheMananger::instance()->removeItemInfoCache(url);
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    for (SideBarWidget *sidebar : allSideBar)
-        sidebar->removeItem(url);
+    if (!allSideBar.isEmpty())
+        allSideBar.first()->removeItem(url);
 }
 
 void SideBarUnicastReceiver::invokeUpdateItem(const QUrl &url, const ItemInfo &info)
 {
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    for (SideBarWidget *sidebar : allSideBar)
-        sidebar->updateItem(url, info);
+    if (!allSideBar.isEmpty())
+        allSideBar.first()->updateItem(url, info);
 }
 
 void SideBarUnicastReceiver::invokeUpdateItemName(const QUrl &url, const QString &newName, bool editable)
 {
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    for (SideBarWidget *sidebar : allSideBar)
-        sidebar->updateItem(url, newName, editable);
+    if (!allSideBar.isEmpty())
+        allSideBar.first()->updateItem(url, newName, editable);
 }
 
 void SideBarUnicastReceiver::invokeUpdateItemIcon(const QUrl &url, const QIcon &newIcon)
 {
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    for (SideBarWidget *sidebar : allSideBar)
-        sidebar->updateItem(url, newIcon);
+    if (!allSideBar.isEmpty())
+        allSideBar.first()->updateItem(url, newIcon);
 }
 
 void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info)
@@ -127,21 +126,20 @@ void SideBarUnicastReceiver::invokeInsertItem(int index, const ItemInfo &info)
     if (SideBarInfoCacheMananger::instance()->contains(info))
         return;
 
-    bool ret { false };
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
-    for (SideBarWidget *sidebar : allSideBar) {
+    if (!allSideBar.isEmpty()) {
         SideBarItem *item = SideBarHelper::createItemByInfo(info);
+        auto sidebar = allSideBar.first();
         if (item) {
-            ret = sidebar->insertItem(index, item);
+            bool ret = sidebar->insertItem(index, item);
             QUrl &&itemUrl = item->url();
             QUrl &&sidebarUrl = sidebar->currentUrl().url();
             if (itemUrl.scheme() == sidebarUrl.scheme() && itemUrl.path() == sidebarUrl.path())
                 sidebar->setCurrentUrl(item->url());
+            if (ret)
+                SideBarInfoCacheMananger::instance()->insertItemInfoCache(index, info);
         }
     }
-
-    if (ret)
-        SideBarInfoCacheMananger::instance()->insertItemInfoCache(index, info);
 }
 
 void SideBarUnicastReceiver::invokeTriggerItemEdit(quint64 winId, const QUrl &url)

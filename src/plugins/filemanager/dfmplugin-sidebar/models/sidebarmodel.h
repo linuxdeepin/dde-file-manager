@@ -26,6 +26,7 @@
 #include "services/filemanager/sidebar/sidebar_defines.h"
 
 #include <QStandardItemModel>
+#include <QMutex>
 
 DPSIDEBAR_BEGIN_NAMESPACE
 
@@ -51,8 +52,9 @@ public:
     void updateRow(const QUrl &url, const QIcon &newIcon);
     QStringList groups() const;
     int findRowByUrl(const QUrl &url);
-    int findLastPosOf(const QString &group);
-    void sortGroup(const QString &group, const QList<QUrl> &order);
+
+private:
+    QMutex locker;
 };
 
 DPSIDEBAR_END_NAMESPACE

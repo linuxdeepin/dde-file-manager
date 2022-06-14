@@ -44,18 +44,22 @@ DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 
 static constexpr char kNotExistedGroup[] { "__not_existed_group" };
+QSharedPointer<SideBarModel> SideBarWidget::kSidebarModelIns { nullptr };
 
 SideBarWidget::SideBarWidget(QFrame *parent)
     : AbstractFrame(parent),
       sidebarView(new SideBarView(this)),
-      sidebarModel(new SideBarModel(this)),
       currentGroups { SideBar::DefaultGroup::kCommon, SideBar::DefaultGroup::kDevice,
                       SideBar::DefaultGroup::kBookmark, SideBar::DefaultGroup::kNetwork,
                       SideBar::DefaultGroup::kTag, SideBar::DefaultGroup::kOther, kNotExistedGroup }
 {
+    if (!kSidebarModelIns) {
+        kSidebarModelIns.reset(new SideBarModel);
+        initDefaultModel();
+    }
     initializeUi();
-    initDefaultModel();
     initConnect();
+    updateSeparatorVisibleState();
 }
 
 void SideBarWidget::setCurrentUrl(const QUrl &url)
@@ -63,7 +67,7 @@ void SideBarWidget::setCurrentUrl(const QUrl &url)
     sidebarUrl = url;
     int index = findItem(url);
     if (index != -1) {
-        sidebarView->setCurrentIndex(sidebarModel->index(index, 0));
+        sidebarView->setCurrentIndex(kSidebarModelIns->index(index, 0));
     } else {
         sidebarView->clearSelection();
     }
@@ -94,7 +98,7 @@ int SideBarWidget::addItem(SideBarItem *item)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
     // TODO(zhangs): custom group
-    int r { sidebarModel->appendRow(item) };
+    int r { kSidebarModelIns->appendRow(item) };
     if (r >= 0 && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url()))
         setItemVisible(item->url(), false);
     return r;
@@ -103,7 +107,7 @@ int SideBarWidget::addItem(SideBarItem *item)
 bool SideBarWidget::insertItem(const int index, SideBarItem *item)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    bool r { sidebarModel->insertRow(index, item) };
+    bool r { kSidebarModelIns->insertRow(index, item) };
     if (r && SideBarInfoCacheMananger::instance()->containsHiddenUrl(item->url()))
         setItemVisible(item->url(), false);
     return r;
@@ -112,31 +116,31 @@ bool SideBarWidget::insertItem(const int index, SideBarItem *item)
 bool SideBarWidget::removeItem(SideBarItem *item)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    return sidebarModel->removeRow(item);
+    return kSidebarModelIns->removeRow(item);
 }
 
 bool SideBarWidget::removeItem(const QUrl &url)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    return sidebarModel->removeRow(url);
+    return kSidebarModelIns->removeRow(url);
 }
 
 void SideBarWidget::updateItem(const QUrl &url, const SideBar::ItemInfo &newInfo)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    sidebarModel->updateRow(url, newInfo);
+    kSidebarModelIns->updateRow(url, newInfo);
 }
 
 void SideBarWidget::updateItem(const QUrl &url, const QString &newName, bool editable)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    sidebarModel->updateRow(url, newName, editable);
+    kSidebarModelIns->updateRow(url, newName, editable);
 }
 
 void SideBarWidget::updateItem(const QUrl &url, const QIcon &newIcon)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    sidebarModel->updateRow(url, newIcon);
+    kSidebarModelIns->updateRow(url, newIcon);
 }
 
 /*!
@@ -146,8 +150,8 @@ void SideBarWidget::updateItem(const QUrl &url, const QIcon &newIcon)
  */
 int SideBarWidget::findItem(const QUrl &url) const
 {
-    for (int i = 0; i < sidebarModel->rowCount(); i++) {
-        SideBarItem *item = sidebarModel->itemFromIndex(i);
+    for (int i = 0; i < kSidebarModelIns->rowCount(); i++) {
+        SideBarItem *item = kSidebarModelIns->itemFromIndex(i);
         if (!dynamic_cast<SideBarItemSeparator *>(item)) {
             bool foundByCb = item->itemInfo().findMeCb && item->itemInfo().findMeCb(item->url(), url);
             if (foundByCb || (item->url().scheme() == url.scheme() && item->url().path() == url.path()))
@@ -164,7 +168,7 @@ void SideBarWidget::editItem(const QUrl &url)
     if (pos < 0)
         return;
 
-    auto idx = sidebarModel->index(pos, 0);
+    auto idx = kSidebarModelIns->index(pos, 0);
     if (idx.isValid())
         sidebarView->edit(idx);
 }
@@ -172,7 +176,7 @@ void SideBarWidget::editItem(const QUrl &url)
 void SideBarWidget::setItemVisible(const QUrl &url, bool visible)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
-    int r = sidebarModel->findRowByUrl(url);
+    int r = kSidebarModelIns->findRowByUrl(url);
     if (r > 0)
         sidebarView->setRowHidden(r, !visible);
 }
@@ -181,8 +185,8 @@ QList<QUrl> SideBarWidget::findItems(const QString &group) const
 {
     QList<QUrl> ret;
     bool groupTraversed { false };
-    for (int r = 0; r < sidebarModel->rowCount(); r++) {
-        auto item = sidebarModel->itemFromIndex(sidebarModel->index(r, 0));
+    for (int r = 0; r < kSidebarModelIns->rowCount(); r++) {
+        auto item = kSidebarModelIns->itemFromIndex(kSidebarModelIns->index(r, 0));
         if (item && item->group() == group) {
             auto u = item->url();
             if (u.isValid())
@@ -196,11 +200,8 @@ QList<QUrl> SideBarWidget::findItems(const QString &group) const
     return ret;
 }
 
-void SideBarWidget::sortGroup(const QString &group, const QList<QUrl> &orders)
+void SideBarWidget::updateSelection()
 {
-    sidebarModel->sortGroup(group, orders);
-    updateSeparatorVisibleState();
-
     // after sort the hightlight may lose, re-select the highlight item.
     quint64 winId = SideBarHelper::windowId(this);
     auto window = WindowsService::service()->findWindowById(winId);
@@ -210,7 +211,7 @@ void SideBarWidget::sortGroup(const QString &group, const QList<QUrl> &orders)
 
 void SideBarWidget::onItemActived(const QModelIndex &index)
 {
-    SideBarItem *item = sidebarModel->itemFromIndex(index);
+    SideBarItem *item = kSidebarModelIns->itemFromIndex(index);
     if (dynamic_cast<SideBarItemSeparator *>(item))
         return;
 
@@ -233,7 +234,7 @@ void SideBarWidget::customContextMenuCall(const QPoint &pos)
 
 void SideBarWidget::onItemRenamed(const QModelIndex &index, const QString &newName)
 {
-    SideBarItem *item = sidebarModel->itemFromIndex(index);
+    SideBarItem *item = kSidebarModelIns->itemFromIndex(index);
     if (!item)
         return;
 
@@ -248,7 +249,7 @@ void SideBarWidget::initializeUi()
     vlayout->setMargin(0);
     vlayout->setSpacing(0);
 
-    sidebarView->setModel(sidebarModel);
+    sidebarView->setModel(kSidebarModelIns.data());
     sidebarView->setItemDelegate(new SideBarItemDelegate(sidebarView));
     sidebarView->setViewportMargins(10, 0, sidebarView->verticalScrollBar()->sizeHint().width(), 0);
     sidebarView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -311,11 +312,12 @@ void SideBarWidget::initConnect()
     auto delegate = qobject_cast<SideBarItemDelegate *>(sidebarView->itemDelegate());
     if (delegate)
         connect(delegate, &SideBarItemDelegate::rename, this, &SideBarWidget::onItemRenamed);
+
     // so no extra separator if a group is empty.
     // since we do this, ensure we do initConnection() after initModelData().
-    connect(sidebarModel, &SideBarModel::rowsInserted, this, &SideBarWidget::updateSeparatorVisibleState);
-    connect(sidebarModel, &SideBarModel::rowsRemoved, this, &SideBarWidget::updateSeparatorVisibleState);
-    connect(sidebarModel, &SideBarModel::rowsMoved, this, &SideBarWidget::updateSeparatorVisibleState);
+    connect(kSidebarModelIns.data(), &SideBarModel::rowsInserted, this, &SideBarWidget::updateSeparatorVisibleState);
+    connect(kSidebarModelIns.data(), &SideBarModel::rowsRemoved, this, &SideBarWidget::updateSeparatorVisibleState);
+    connect(kSidebarModelIns.data(), &SideBarModel::rowsMoved, this, &SideBarWidget::updateSeparatorVisibleState);
 }
 
 void SideBarWidget::updateSeparatorVisibleState()
@@ -324,8 +326,8 @@ void SideBarWidget::updateSeparatorVisibleState()
     int lastGroupItemCount = 0;
     int lastShowSeparatorIndex = -1;
 
-    for (int i = 0; i < sidebarModel->rowCount(); i++) {
-        SideBarItem *item = sidebarModel->itemFromIndex(i);
+    for (int i = 0; i < kSidebarModelIns->rowCount(); i++) {
+        SideBarItem *item = kSidebarModelIns->itemFromIndex(i);
         if (item->group() != lastGroupName) {
             if (dynamic_cast<SideBarItemSeparator *>(item)) {   // Separator
                 if (lastGroupItemCount == 0) {
@@ -345,7 +347,7 @@ void SideBarWidget::updateSeparatorVisibleState()
 
     // hide the last one
     if (lastShowSeparatorIndex > 0) {
-        SideBarItem *item = sidebarModel->itemFromIndex(lastShowSeparatorIndex);
+        SideBarItem *item = kSidebarModelIns->itemFromIndex(lastShowSeparatorIndex);
         if (dynamic_cast<SideBarItemSeparator *>(item))
             sidebarView->setRowHidden(lastShowSeparatorIndex, true);
     }

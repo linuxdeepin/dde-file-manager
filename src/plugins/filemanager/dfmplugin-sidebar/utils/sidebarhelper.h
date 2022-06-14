@@ -52,7 +52,7 @@ public:
     static void defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos);
     static bool registerSortFunc(const QString &subGroup, DSB_FM_NAMESPACE::SideBar::SortFunc func);
     static DSB_FM_NAMESPACE::SideBar::SortFunc sortFunc(const QString &subGroup);
-    static void sortSidebarGroupExcept(quint64 winId, const QString &group);
+    static void updateSideBarSelection(quint64 winId);
 
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.

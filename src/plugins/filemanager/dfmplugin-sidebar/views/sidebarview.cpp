@@ -74,7 +74,7 @@ void SideBarViewPrivate::notifyOrderChanged()
     QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
         quint64 winId = DSB_FM_NAMESPACE::WindowsService::service()->findWindowId(q);
         dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_SidebarSorted", winId, draggedGroup);
-        SideBarHelper::sortSidebarGroupExcept(winId, draggedGroup);
+        SideBarHelper::updateSideBarSelection(winId);
         draggedGroup = "";
     });
 }

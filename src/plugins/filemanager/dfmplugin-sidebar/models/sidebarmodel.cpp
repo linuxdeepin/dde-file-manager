@@ -137,11 +137,15 @@ SideBarItem *SideBarModel::itemFromIndex(int index) const
 
 bool SideBarModel::insertRow(int row, SideBarItem *item)
 {
+    QMutexLocker lk(&locker);
     if (!item)
         return false;
 
     if (0 > row)
         return false;
+
+    if (findRowByUrl(item->url()) > 0)
+        return true;
 
     if (rowCount() == 0) {
         QStandardItemModel::appendRow(item);
@@ -183,8 +187,14 @@ bool SideBarModel::insertRow(int row, SideBarItem *item)
 
 int SideBarModel::appendRow(SideBarItem *item)
 {
+    QMutexLocker lk(&locker);
+
     if (!item)
         return -1;
+
+    auto r = findRowByUrl(item->url());
+    if (r > 0)
+        return r;
 
     if (rowCount() == 0) {
         QStandardItemModel::appendRow(item);
@@ -220,6 +230,8 @@ int SideBarModel::appendRow(SideBarItem *item)
 
 bool SideBarModel::removeRow(SideBarItem *item)
 {
+    QMutexLocker lk(&locker);
+
     if (!item)
         return false;
 
@@ -237,13 +249,14 @@ bool SideBarModel::removeRow(SideBarItem *item)
 
 bool SideBarModel::removeRow(const QUrl &url)
 {
+    QMutexLocker lk(&locker);
+
     if (!url.isValid())
         return false;
 
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
-        QUrl itemUrl { item->url() };
-        if (item && DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, itemUrl)) {
+        if (item && DFMBASE_NAMESPACE::UniversalUtils::urlEquals(url, item->url())) {
             SideBarInfoCacheMananger::instance()->removeBindedItemInfo(item->url());
             QStandardItemModel::removeRow(r);
             return true;
@@ -254,12 +267,14 @@ bool SideBarModel::removeRow(const QUrl &url)
 
 void SideBarModel::updateRow(const QUrl &url, const SideBar::ItemInfo &newInfo)
 {
+    QMutexLocker lk(&locker);
+
     if (!url.isValid())
         return;
 
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
-        if (item->url() == url) {
+        if (item && item->url() == url) {
             item->setItemInfo(newInfo);
             item->setIcon(QIcon::fromTheme(newInfo.iconName));
             item->setText(newInfo.text);
@@ -271,12 +286,14 @@ void SideBarModel::updateRow(const QUrl &url, const SideBar::ItemInfo &newInfo)
 
 void SideBarModel::updateRow(const QUrl &url, const QString &newName, bool editable)
 {
+    QMutexLocker lk(&locker);
+
     if (!url.isValid())
         return;
 
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
-        if (item->url() == url) {
+        if (item && item->url() == url) {
             item->setText(newName);
             Qt::ItemFlags flags = item->flags();
             if (editable)
@@ -290,12 +307,14 @@ void SideBarModel::updateRow(const QUrl &url, const QString &newName, bool edita
 
 void SideBarModel::updateRow(const QUrl &url, const QIcon &newIcon)
 {
+    QMutexLocker lk(&locker);
+
     if (!url.isValid())
         return;
 
     for (int r = 0; r < rowCount(); r++) {
         auto item = itemFromIndex(r);
-        if (item->url() == url)
+        if (item && item->url() == url)
             item->setIcon(newIcon);
     }
 }
@@ -325,37 +344,4 @@ int SideBarModel::findRowByUrl(const QUrl &url)
         }
     }
     return ret;
-}
-
-int SideBarModel::findLastPosOf(const QString &group)
-{
-    for (int r = rowCount() - 1; r >= 0; r--) {
-        auto item = itemFromIndex(index(r, 0));
-        if (item && item->group() == group)
-            return r;
-    }
-    return -1;
-}
-
-void SideBarModel::sortGroup(const QString &group, const QList<QUrl> &order)
-{
-    int r = findLastPosOf(group);
-    if (r < 0)
-        return;
-
-    beginResetModel();
-    int firstGroup = -1;
-    QMap<QUrl, SideBarItem *> items;
-    for (; r > 0; r--) {   // the index 0 is a group
-        auto item = itemFromIndex(index(r, 0));
-        if (item && item->group() == group && item->url().isValid()) {
-            items.insert(item->url(), new SideBarItem(*item));
-            QStandardItemModel::removeRow(r);   // takeItem do not reduce the rowCount() of model, might be a bug.
-            firstGroup = r;
-        }
-    }
-
-    for (auto url : order)
-        insertRow(firstGroup++, items.value(url));
-    endResetModel();
 }
