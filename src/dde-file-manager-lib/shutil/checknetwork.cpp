@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+static QMap<QString,bool> m_networkConnected;
 CheckNetwork::CheckNetwork(QObject *parent) : QObject(parent)
 {
 
@@ -44,4 +45,27 @@ bool CheckNetwork::isHostAndPortConnect(const QString &host, const QString &port
     }
     freeaddrinfo(result);
     return retval != nullptr;
+}
+
+bool CheckNetwork::isHostAndPortConnectV2(const QString &host, quint16 port, int timeout, bool fast)
+{
+    if(host.isEmpty())
+        return false;
+    QString key = host+"_"+QString::number(port);
+    if(fast && m_networkConnected.keys().contains(key))
+        return m_networkConnected.value(key);
+
+    bool re = false;
+    QTcpSocket tcpClient;
+    tcpClient.abort();
+    tcpClient.connectToHost(host, port);
+    re = tcpClient.waitForConnected(timeout);
+    if(fast)
+        m_networkConnected.insert(key,re);
+    return re;
+}
+
+void CheckNetwork::clearUp()
+{
+    m_networkConnected.clear();
 }

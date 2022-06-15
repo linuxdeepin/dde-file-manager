@@ -15,6 +15,8 @@ class CheckNetwork : public QObject
 public:
     explicit CheckNetwork(QObject *parent = nullptr);
     bool isHostAndPortConnect(const QString &host, const QString &port);
+    static bool isHostAndPortConnectV2(const QString &host, quint16 port, int timeout = 1200, bool fast = true);
+    static void clearUp();
 signals:
 
 public slots:
