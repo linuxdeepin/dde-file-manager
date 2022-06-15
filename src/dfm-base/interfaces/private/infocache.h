@@ -73,6 +73,9 @@ public:
     AbstractFileInfoPointer getCacheInfo(const QUrl &url);
     void cacheInfo(const QUrl &url, const AbstractFileInfoPointer &info);
     void removeCacheInfo(const QUrl &url);
+    bool cacheDisable(const QString &scheme);
+    void setCacheDisbale(const QString &scheme, bool disbale = true);
+
 private Q_SLOTS:
     void refreshFileInfo(const QUrl &url);
     void timeNeedRemoveCache();

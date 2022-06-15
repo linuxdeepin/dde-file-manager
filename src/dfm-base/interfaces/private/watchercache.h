@@ -45,7 +45,9 @@ public:
     virtual ~WatcherCache();
     QSharedPointer<AbstractFileWatcher> getCacheWatcher(const QUrl &url);
     void cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFileWatcher> &watcher);
-    void removCacheWatcher(const QUrl &url);
+    void removeCacheWatcher(const QUrl &url);
+    bool cacheDisable(const QString &scheme);
+    void setCacheDisbale(const QString &scheme, bool disbale = true);
 };
 DFMBASE_END_NAMESPACE
 

@@ -109,10 +109,27 @@ void WatcherCache::cacheWatcher(const QUrl &url, const QSharedPointer<AbstractFi
  *
  * \return void
  */
-void WatcherCache::removCacheWatcher(const QUrl &url)
+void WatcherCache::removeCacheWatcher(const QUrl &url)
 {
     Q_D(WatcherCache);
 
     d->watchers.remove(url);
+}
+
+bool WatcherCache::cacheDisable(const QString &scheme)
+{
+    return d->disableCahceSchemes.contains(scheme);
+}
+
+void WatcherCache::setCacheDisbale(const QString &scheme, bool disbale)
+{
+    if (!d->disableCahceSchemes.contains(scheme) && disbale) {
+        d->disableCahceSchemes.push_backByLock(scheme);
+        return;
+    }
+    if (d->disableCahceSchemes.contains(scheme) && !disbale) {
+        d->disableCahceSchemes.removeOneByLock(scheme);
+        return;
+    }
 }
 DFMBASE_END_NAMESPACE

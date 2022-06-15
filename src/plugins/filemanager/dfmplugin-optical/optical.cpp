@@ -49,9 +49,10 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 void Optical::initialize()
 {
     UrlRoute::regScheme(Global::kBurn, "/", OpticalHelper::icon(), true);
-    InfoFactory::regClass<MasteredMediaFileInfo>(Global::kBurn);
-    WatcherFactory::regClass<MasteredMediaFileWatcher>(Global::kBurn);
+    InfoFactory::regClass<MasteredMediaFileInfo>(Global::kBurn, InfoFactory::kNoCache);
+    WatcherFactory::regClass<MasteredMediaFileWatcher>(Global::kBurn, WatcherFactory::kNoCache);
     DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::kBurn);
+
     bindEvents();
 
     connect(OpticalHelper::winServIns(), &WindowsService::windowCreated, this,

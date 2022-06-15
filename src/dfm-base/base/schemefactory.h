@@ -175,9 +175,17 @@ class InfoFactory final : public SchemeFactory<AbstractFileInfo>
     static InfoFactory *ins;
 
 public:
+    enum RegOpts : uint32_t {
+        kNoOpt = 0,
+        kNoCache = 1
+        // add other opt like `kAnyOpt = 1 << 1 ... n`
+    };
+
     template<class CT = AbstractFileInfo>
-    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    static bool regClass(const QString &scheme, RegOpts opts = RegOpts::kNoOpt, QString *errorString = nullptr)
     {
+        if (opts & RegOpts::kNoCache)
+            InfoCache::instance().setCacheDisbale(scheme);
         return instance().SchemeFactory<AbstractFileInfo>::regClass<CT>(scheme, errorString);
     }
 
@@ -197,7 +205,7 @@ public:
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
     {
-        if (Q_UNLIKELY(!cache))
+        if (Q_UNLIKELY(!cache) || InfoCache::instance().cacheDisable(url.scheme()))
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileInfo>::create(url, errorString));
 
         QSharedPointer<AbstractFileInfo> info = InfoCache::instance().getCacheInfo(url);
@@ -254,9 +262,17 @@ class WatcherFactory final : public SchemeFactory<AbstractFileWatcher>
     static WatcherFactory *ins;
 
 public:
+    enum RegOpts : uint32_t {
+        kNoOpt = 0,
+        kNoCache = 1
+        // add other opt like `kAnyOpt = 1 << 1 ... n`
+    };
+
     template<class CT = AbstractFileWatcher>
-    static bool regClass(const QString &scheme, QString *errorString = nullptr)
+    static bool regClass(const QString &scheme, RegOpts opts = RegOpts::kNoOpt, QString *errorString = nullptr)
     {
+        if (opts & RegOpts::kNoCache)
+            WatcherCache::instance().setCacheDisbale(scheme);
         return instance().SchemeFactory<AbstractFileWatcher>::regClass<CT>(scheme, errorString);
     }
 
@@ -265,7 +281,7 @@ public:
     template<class T>
     static QSharedPointer<T> create(const QUrl &url, const bool cache = true, QString *errorString = nullptr)
     {
-        if (Q_UNLIKELY(!cache))
+        if (Q_UNLIKELY(!cache) || WatcherCache::instance().cacheDisable(url.scheme()))
             return qSharedPointerDynamicCast<T>(instance().SchemeFactory<AbstractFileWatcher>::create(url, errorString));
 
         QSharedPointer<AbstractFileWatcher> watcher = WatcherCache::instance().getCacheWatcher(url);

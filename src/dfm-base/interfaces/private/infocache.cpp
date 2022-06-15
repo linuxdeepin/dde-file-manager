@@ -308,12 +308,29 @@ void InfoCache::removeCacheInfo(const QUrl &url)
             disconnect(watcher.data(), &AbstractFileWatcher::fileAttributeChanged, this, &InfoCache::refreshFileInfo);
             disconnect(watcher.data(), &AbstractFileWatcher::subfileCreated, this, &InfoCache::refreshFileInfo);
             disconnect(watcher.data(), &AbstractFileWatcher::fileRename, this, &InfoCache::refreshFileInfo);
-            WatcherCache::instance().removCacheWatcher(url);
+            WatcherCache::instance().removeCacheWatcher(url);
         }
     }
     d->fileInfos.remove(url);
     //移除刷新的url
     d->refreshThread->removeRefreshByUrl(url);
+}
+
+bool InfoCache::cacheDisable(const QString &scheme)
+{
+    return d->disableCahceSchemes.contains(scheme);
+}
+
+void InfoCache::setCacheDisbale(const QString &scheme, bool disbale)
+{
+    if (!d->disableCahceSchemes.contains(scheme) && disbale) {
+        d->disableCahceSchemes.push_backByLock(scheme);
+        return;
+    }
+    if (d->disableCahceSchemes.contains(scheme) && !disbale) {
+        d->disableCahceSchemes.removeOneByLock(scheme);
+        return;
+    }
 }
 /*!
  * \brief refreshFileInfo 刷新缓存fileinfo

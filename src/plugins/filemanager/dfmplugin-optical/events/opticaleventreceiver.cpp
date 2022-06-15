@@ -53,8 +53,12 @@ bool OpticalEventReceiver::handleCheckDragDropAction(const QList<QUrl> &urls, co
         return false;
 
     if (urlTo.scheme() == DFMBASE_NAMESPACE::Global::kBurn) {
-        *action = Qt::CopyAction;
-        return true;
+        QString &&path { OpticalHelper::burnFilePath(urlTo) };
+        // only allow drop file to root path now
+        if (path.isEmpty() || path == "/") {
+            *action = Qt::CopyAction;
+            return true;
+        }
     }
 
     return false;

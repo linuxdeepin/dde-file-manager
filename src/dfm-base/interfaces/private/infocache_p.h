@@ -40,6 +40,8 @@ class InfoCachePrivate
     DThreadList<QUrl> sortByTimeCacheUrl;   // 按时间排序的缓存fileinfo的文件url
     QTimer needRemoveTimer;   // 需要加入待移除缓存的计时器
     QTimer removeTimer;   // 移除缓存的
+    DThreadList<QString> disableCahceSchemes;
+
 public:
     explicit InfoCachePrivate(InfoCache *qq);
     virtual ~InfoCachePrivate();

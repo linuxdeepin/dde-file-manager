@@ -128,6 +128,8 @@ void OpticalMenuScene::updateState(QMenu *parent)
 
         // empty area filter
         if (d->isEmptyArea) {
+            if (id == "paste" && d->enablePaste())
+                act->setEnabled(true);
             if (!whiteEmptyActIdList.contains(id))
                 act->setVisible(false);
             static const QStringList blankActBlackList { "open-as-administrator", "open-in-terminal" };
@@ -166,4 +168,11 @@ QString OpticalMenuScenePrivate::findSceneName(QAction *act) const
     if (childScene)
         name = childScene->name();
     return name;
+}
+
+bool OpticalMenuScenePrivate::enablePaste() const
+{
+    auto &&clipboard { ClipBoard::instance() };
+    return clipboard->clipboardAction() != ClipBoard::kUnknownAction
+            && !clipboard->clipboardFileUrlList().isEmpty();
 }

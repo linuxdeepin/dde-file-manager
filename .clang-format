@@ -1,140 +1,85 @@
-# 基于那个配置文件 https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# Copyright (C) 2016 Olivier Goffart <ogoffart@woboq.com>
+#
+# You may use this file under the terms of the 3-clause BSD license.
+# See the file LICENSE from this package for details.
+
+# This is the clang-format configuration style to be used by Qt,
+# based on the rules from https://wiki.qt.io/Qt_Coding_Style and
+# https://wiki.qt.io/Coding_Conventions
+
+---
+# Webkit style was loosely based on the Qt style
 BasedOnStyle: WebKit
-# 访问说明符的偏移(public private)
-AccessModifierOffset: -4
-# 括号之后,水平对齐参数: Align DontAlign AlwaysBreak。
-AlignAfterOpenBracket: Align
-#AlignConsecutiveBitFields: false
-# 连续的赋值时,对齐所有的等号
-AlignConsecutiveAssignments: false
-# 连续声明时，对齐所有声明的变量名
-AlignConsecutiveDeclarations: false
-#AlignConsecutiveMacros: false
-AlignEscapedNewlines: DontAlign
-# 水平对齐二元和三元表达式的操作数 
-AlignOperands: true
-# 对齐连续的尾随的注释  
-AlignTrailingComments: false
-#AllowAllArgumentsOnNextLine: false
-#AllowAllConstructorInitializersOnNextLine: false
-# 允许函数声明的所有参数在放在下一行
-AllowAllParametersOfDeclarationOnNextLine: false
-# 允许短的块放在同一行  
-AllowShortBlocksOnASingleLine: true
-# 允许短的case标签放在同一行
-AllowShortCaseLabelsOnASingleLine: false
-#AllowShortEnumsOnASingleLine: false
-# 允许短的函数放在同一行: None, InlineOnly(定义在类中), Empty(空函数), Inline(定义在类中，空函数), All 
-AllowShortFunctionsOnASingleLine: InlineOnly
-# 是否允许短if单行 If true, if (a) return; 可以放到同一行
-AllowShortIfStatementsOnASingleLine: false
-#AllowShortLambdasOnASingleLine: Inline
-# 允许短的循环保持在同一行   
-AllowShortLoopsOnASingleLine: false 
-# 总是在定义返回类型后换行(deprecated)   
-AlwaysBreakAfterDefinitionReturnType: None
-AlwaysBreakBeforeMultilineStrings: false
-AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: true
-BinPackParameters: true
+
+Standard: Cpp11
+
+# Column width is limited to 100 in accordance with Qt Coding Style.
+# https://wiki.qt.io/Qt_Coding_Style
+# 每行字符的限制，0表示没有限制
+ColumnLimit: 0
+# 对于每个在行字符数限制之外的字符的penalty
+# PenaltyExcessCharacter: 4
+
+# Disable reflow of qdoc comments: indentation rules are different.
+CommentPragmas: "^!|^:"
+
+# We want a space between the type and the star for pointer types.
+PointerBindsToType: false
+
+# 在 template 关键字后插入一个空格
+SpaceAfterTemplateKeyword: false
+
+# 在二元运算符前换行: None(在操作符后换行), NonAssignment(在非赋值的操作符前换行), All(在操作符前换行)
+BreakBeforeBinaryOperators: NonAssignment
+
+# Braces are usually attached, but not after functions or class declarations.
 BreakBeforeBraces: Custom
 BraceWrapping:
-#  AfterCaseLabel: false
-  AfterClass: true
-  AfterControlStatement: false
-  AfterEnum: false
-  AfterFunction: true
-  AfterNamespace: false
-  AfterStruct: false
-  AfterUnion: false
-  AfterExternBlock: false
-  BeforeCatch: false
-  BeforeElse: false
-#  BeforeLambdaBody: false
-#  BeforeWhile: false
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
-  SplitEmptyNamespace: true  
+    AfterClass: true
+    AfterControlStatement: false
+    AfterEnum: false
+    AfterFunction: true
+    AfterNamespace: false
+    AfterObjCDeclaration: false
+    AfterStruct: true
+    AfterUnion: false
+    BeforeCatch: false
+    BeforeElse: false
+    IndentBraces: false
 
-BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeTernaryOperators: true
-#在构造函数初始化时按逗号断行，并以冒号对齐
-BreakConstructorInitializers: BeforeComma
-BreakInheritanceList: BeforeComma
-BreakStringLiterals: false
-# 每行字符的限制，0表示没有限制 
-ColumnLimit: 0
-# 描述具有特殊意义的注释的正则表达式，它不应该被分割为多行或以其它方式改变
-# CommentPragmas: '^ IWYU pragma:'
-# 语言: None Cpp Java Objc Protp
-CompactNamespaces: false
-Cpp11BracedListStyle: true
-#DeriveLineEnding: \n
-DerivePointerAlignment: false
-FixNamespaceComments: true
-ForEachMacros: ["foreach", "Q_FOREACH"]
-IncludeBlocks: Regroup
-IncludeCategories:
-  - Regex:           '^"'
-    Priority:        1
-  - Regex:           '^["<]D'
-    Priority:        2
-  - Regex:           '^<Q'
-    Priority:        3
-  - Regex:           '^<'
-    Priority:        4
-  - Regex:           '\.h>$'
-    Priority:        5
-  - Regex:           '^"moc_'
-    Priority:        99
-  - Regex:           '\.moc"'
-    Priority:        99
+# When constructor initializers do not fit on one line, put them each on a new line.
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# 构造函数的初始化列表的缩进宽度
+ConstructorInitializerIndentWidth: 4
 
-# 缩进case 标签
-IndentCaseLabels: false
-#IndentExternBlock: NoIndent
-#IndentCaseBlocks: false
-#IndentGotoLabels: false
-IndentPPDirectives: None
-#缩进宽度
-IndentWidth: 4
-IndentWrappedFunctionNames: false
-#InsertTrailingCommas: None
-#在block从空行开始
-KeepEmptyLinesAtTheStartOfBlocks: false
-Language: Cpp
-# 连续的空行保留几行
-MaxEmptyLinesToKeep: 1
+# 延续的行的缩进宽度
+ContinuationIndentWidth: 8
+
+# 命名空间的缩进: None, Inner(缩进嵌套的命名空间中的内容), All
 NamespaceIndentation: None
-#指针的*的挨着哪边
-PointerAlignment: Right
-# 允许排序#include, 造成编译错误
+
+# 要使用的预处理器指令缩进样式
+IndentPPDirectives: AfterHash
+
+# 左括号(左圆括号、左尖括号、左方括号)后的对齐
+AlignAfterOpenBracket: true
+# 总是在template声明后换行
+AlwaysBreakTemplateDeclarations: true
+
+# 允许短的函数放在同一行: None, InlineOnly(定义在类中), Empty(空函数), Inline(定义在类中，空函数), All
+AllowShortFunctionsOnASingleLine: Inline
+
+# 允许短的if语句保持在同一行
+AllowShortIfStatementsOnASingleLine: true
+
+# 允许排序#include
 SortIncludes: false
-SortUsingDeclarations: false
-#括号后添加空格
-SpaceAfterCStyleCast: false
-#SpaceAfterLogicalNot: false
-SpaceAfterTemplateKeyword: false
-#等号两边的空格
-SpaceBeforeAssignmentOperators: true
-SpaceBeforeCpp11BracedList: true
-SpaceBeforeCtorInitializerColon: false
-SpaceBeforeParens: ControlStatements
-SpaceBeforeRangeBasedForLoopColon: true
-#SpaceBeforeSquareBrackets: false
-#SpaceInEmptyBlock: true
-SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInAngles: false
-SpacesInCStyleCastParentheses: false
-#SpacesInConditionalStatement: false
-# 容器类的空格 例如 OC的字典
-SpacesInContainerLiterals: false
-# 小括号两边添加空格
-SpacesInParentheses: false
-# 中括号两边空格 [] 
-SpacesInSquareBrackets: false
-#StatementMacros: ["Q_UNUSED"]
-#tab键盘的宽度
-TabWidth: 4
-UseTab: Never
+
+# 需要被解读为foreach循环而不是函数调用的宏
+ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH, forever, Q_FOREVER, QBENCHMARK, QBENCHMARK_ONCE ]
+
+# 要使用的构造函数初始化式样式
+BreakConstructorInitializers: BeforeColon
+
+# 在尾随的评论前添加的空格数(只适用于//)
+SpacesBeforeTrailingComments: 3

@@ -37,6 +37,7 @@ class OpticalMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePriva
 public:
     explicit OpticalMenuScenePrivate(OpticalMenuScene *qq);
     QString findSceneName(QAction *act) const;
+    bool enablePaste() const;
 
 private:
     OpticalMenuScene *q;
