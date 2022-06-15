@@ -73,6 +73,8 @@ private slots:
     void showShareInfo(bool value);
     void updatePasswordState();
 private:
+    QString refreshIp() const;
+private:
     DAbstractFileInfoPointer m_fileinfo;
     QCheckBox *m_shareCheckBox = nullptr;
     QLineEdit *m_shareNamelineEdit = nullptr;
@@ -87,7 +89,7 @@ private:
     QPushButton *splitLineGray = nullptr;
     QPushButton *passwordOperation = nullptr;
     bool m_isSharePasswordSet = false;
-    QTimer *m_updateIp = nullptr;
+    QTimer *m_refreshIp = nullptr;
     //QTimer *m_jobTimer;
     QString m_selfIp;
     bool m_userSharePwdSettingDialogShown = false;
