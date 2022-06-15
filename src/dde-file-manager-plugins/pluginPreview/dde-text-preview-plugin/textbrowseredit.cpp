@@ -29,24 +29,58 @@ constexpr int kReadTextSize { 1024 * 1024 * 5 };
 TextBrowserEdit::TextBrowserEdit(QWidget *parent)
     : QPlainTextEdit(parent)
 {
-    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &TextBrowserEdit::scrollbarVauleChange);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &TextBrowserEdit::scrollbarValueChange);
+    connect(verticalScrollBar(), &QScrollBar::sliderMoved, this, &TextBrowserEdit::sliderPositionValueChange);
+}
+
+TextBrowserEdit::~TextBrowserEdit()
+{
+    fileData.clear();
 }
 
 void TextBrowserEdit::setFileData(std::vector<char> &data)
 {
+    clear();
     fileData = data;
     std::vector<char>::iterator temp = fileData.begin();
     appendText(temp);
-    verticalScrollBar()->setValue(0);
+    this->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
+    lastPosition = verticalScrollBar()->sliderPosition();
 }
 
-void TextBrowserEdit::scrollbarVauleChange(int value)
+void TextBrowserEdit::wheelEvent(QWheelEvent *e)
 {
-    if (verticalScrollBar()->maximum() <= value) {
-        std::vector<char>::iterator data = fileData.begin();
-        appendText(data);
+    QPoint numDegrees = e->angleDelta();
+    if (numDegrees.y() < 0) {
+        int sbValue = verticalScrollBar()->value();
+        if(verticalScrollBar()->maximum() <= sbValue) {
+            if(fileData.begin() != fileData.end()) {
+                std::vector<char>::iterator data = fileData.begin();
+                appendText(data);
+            }
+        }
+    }
+    QPlainTextEdit::wheelEvent(e);
+}
+
+void TextBrowserEdit::scrollbarValueChange(int value)
+{
+    if(verticalScrollBar()->maximum() <= value){
         verticalScrollBar()->setValue(value);
     }
+}
+
+void TextBrowserEdit::sliderPositionValueChange(int position)
+{
+    if(position > lastPosition){
+        if(verticalScrollBar()->maximum() <= position) {
+            if(fileData.begin() != fileData.end()) {
+                std::vector<char>::iterator data = fileData.begin();
+                appendText(data);
+            }
+        }
+    }
+    lastPosition = position;
 }
 
 int TextBrowserEdit::verifyEndOfStrIntegrity(const char *s, int l)
@@ -93,7 +127,7 @@ void TextBrowserEdit::appendText(std::vector<char>::iterator &data)
 
         fileData.erase(std::begin(fileData), std::begin(fileData) + l);
         QString textData = QString::fromLocal8Bit(temp, l);
-        appendPlainText(textData);
+        insertPlainText(textData);
     } else if (fileData.size() > 0) {
         unsigned long len = static_cast<unsigned long>(fileData.size());
         char *buf = new char[len];
@@ -102,6 +136,6 @@ void TextBrowserEdit::appendText(std::vector<char>::iterator &data)
         QString textData = QString::fromLocal8Bit(buf, static_cast<int>(len));
         delete[] buf;
         buf = nullptr;
-        appendPlainText(textData);
+        insertPlainText(textData);
     }
 }
