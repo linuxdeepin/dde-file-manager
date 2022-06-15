@@ -53,6 +53,13 @@ enum class CallbackKey : uint8_t {
     kCustom,   // QVariant
 };
 
+enum class FileNotifyType : uint8_t {
+    kFileNone,
+    kFileChanged,
+    kFileAdded,
+    kFileDeleted
+};
+
 enum ItemRoles {
     kItemFileDisplayNameRole = Qt::DisplayRole,
     kItemIconRole = Qt::DecorationRole,

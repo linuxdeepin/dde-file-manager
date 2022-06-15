@@ -950,7 +950,7 @@ bool FileUtils::containsCopyingFileUrl(const QUrl &url)
     return copyingUrl.contains(url);
 }
 
-void FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType type, const QUrl &url)
+void FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType type, const QUrl &url)
 {
     if (!url.isValid())
         return;
@@ -976,10 +976,10 @@ void FileUtils::notifyFileChangeManual(DFMBASE_NAMESPACE::Global::FileNotifyType
         return;
 
     switch (type) {
-    case DFMBASE_NAMESPACE::Global::FileNotifyType::kFileAdded:
+    case DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded:
         watcher->notifyFileAdded(url);
         return;
-    case DFMBASE_NAMESPACE::Global::FileNotifyType::kFileDeleted:
+    case DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted:
         watcher->notifyFileDeleted(url);
         return;
     case DFMBASE_NAMESPACE::Global::FileNotifyType::kFileChanged:

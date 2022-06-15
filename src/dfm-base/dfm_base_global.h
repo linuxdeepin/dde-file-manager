@@ -30,17 +30,4 @@
 #define DFMBASE_END_NAMESPACE }
 #define DFMBASE_USE_NAMESPACE using namespace DFMBASE_NAMESPACE;
 
-DFMBASE_BEGIN_NAMESPACE
-
-namespace Global {
-enum class FileNotifyType : uint8_t {
-    kFileNone,
-    kFileChanged,
-    kFileAdded,
-    kFileDeleted
-};
-}
-
-DFMBASE_END_NAMESPACE
-
 #endif   //DFM_BASE_GLOBAL_H

@@ -40,7 +40,7 @@
 
 DFMBASE_BEGIN_NAMESPACE
 
-static constexpr uint16_t kSizeChangeinterval = 200;
+static constexpr uint16_t kSizeChangeinterval { 200 };
 
 class FileStatisticsJobPrivate : public QObject
 {
