@@ -86,6 +86,7 @@ public:
     void initializeUi();
     void initConnect();
     void initData();
+    void updateSearchHistory();
     void setIndicator(enum AddressBar::IndicatorType type);
     void setCompleter(QCompleter *c);
     void clearCompleterModel();

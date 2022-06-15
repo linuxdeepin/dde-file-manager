@@ -135,8 +135,14 @@ void AddressBarPrivate::initData()
     // 设置补全选择组件为popup的焦点
     completerView->setFocus(Qt::FocusReason::PopupFocusReason);
 
+    updateSearchHistory();
+}
+
+void AddressBarPrivate::updateSearchHistory()
+{
     historyList.clear();
     historyList.append(SearchHistroyManager::instance()->toStringList());
+    isHistoryInCompleterModel = false;
 }
 
 /*!
@@ -663,6 +669,7 @@ void AddressBar::showEvent(QShowEvent *event)
 {
     d->timer.start();
     d->updateIndicatorIcon();
+    d->updateSearchHistory();
     return QLineEdit::showEvent(event);
 }
 
