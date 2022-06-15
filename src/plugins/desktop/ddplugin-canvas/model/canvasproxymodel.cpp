@@ -438,7 +438,7 @@ CanvasProxyModel::CanvasProxyModel(QObject *parent)
 
 QModelIndex CanvasProxyModel::rootIndex() const
 {
-    return createIndex((quintptr)this, 0, (void *)this);
+    return createIndex(INT_MAX, 0, (void *)this);
 }
 
 QModelIndex CanvasProxyModel::index(const QUrl &url, int column) const

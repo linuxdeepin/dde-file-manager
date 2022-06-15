@@ -294,7 +294,7 @@ ModelDataHandler *FileProxyModel::handler() const
 
 QModelIndex FileProxyModel::rootIndex() const
 {
-    return createIndex((quintptr)this, 0, (void *)this);
+    return createIndex(INT_MAX, 0, (void *)this);
 }
 
 QModelIndex FileProxyModel::index(const QUrl &url, int column) const

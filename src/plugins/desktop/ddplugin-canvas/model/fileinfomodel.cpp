@@ -228,7 +228,7 @@ QUrl FileInfoModel::rootUrl() const
 
 QModelIndex FileInfoModel::rootIndex() const
 {
-    return createIndex((quintptr)this, 0, (void *)this);
+    return createIndex(INT_MAX, 0, (void *)this);
 }
 
 void FileInfoModel::installFilter(QSharedPointer<FileFilter> filter)
