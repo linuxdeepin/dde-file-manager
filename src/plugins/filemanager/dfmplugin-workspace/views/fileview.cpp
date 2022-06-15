@@ -1209,8 +1209,7 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
                 return;
             }
 
-            const QUrl &url = model()->getUrlByIndex(index);
-            selectFiles({ url });
+            selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
         }
 
         d->viewMenuHelper->showNormalMenu(index, model()->flags(index));
