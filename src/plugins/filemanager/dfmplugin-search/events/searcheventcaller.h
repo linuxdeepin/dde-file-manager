@@ -30,7 +30,7 @@ DPSEARCH_BEGIN_NAMESPACE
 class SearchEventCaller
 {
 public:
-    static void sendDoSearch(quint64 winId, const QUrl &url);
+    static void sendChangeCurrentUrl(quint64 winId, const QUrl &url);
     static void sendShowAdvanceSearchBar(quint64 winId, bool visible);
     static void sendShowAdvanceSearchButton(quint64 winId, bool visible);
     static void sendStartSpinner(quint64 winId);

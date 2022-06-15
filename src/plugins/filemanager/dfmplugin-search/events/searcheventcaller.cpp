@@ -30,7 +30,7 @@
 
 DPSEARCH_BEGIN_NAMESPACE
 
-void dfmplugin_search::SearchEventCaller::sendDoSearch(quint64 winId, const QUrl &url)
+void dfmplugin_search::SearchEventCaller::sendChangeCurrentUrl(quint64 winId, const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE
     dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, url);

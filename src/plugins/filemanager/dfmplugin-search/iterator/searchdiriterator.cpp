@@ -23,8 +23,10 @@
 #include "utils/searchhelper.h"
 #include "events/searcheventcaller.h"
 
-#include "dfm-base/base/schemefactory.h"
 #include "services/filemanager/search/searchservice.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/universalutils.h"
+#include "dfm-base/file/local/localfilewatcher.h"
 
 #include <dfm-framework/framework.h>
 
@@ -58,9 +60,17 @@ void SearchDirIteratorPrivate::doSearch()
 {
     auto targetUrl = SearchHelper::searchTargetUrl(fileUrl);
     const auto &info = SearchService::service()->findCustomSearchInfo(targetUrl.scheme());
+    DFMBASE_USE_NAMESPACE
+    searchRootWatcher.reset(new LocalFileWatcher(targetUrl));
+    searchRootWatcher->startWatcher();
+    connect(searchRootWatcher.data(), &LocalFileWatcher::fileDeleted, this, [=](const QUrl &url) {
+        if (UniversalUtils::urlEquals(targetUrl, url)) {
+            SearchService::service()->stop(taskId);
+            SearchEventCaller::sendChangeCurrentUrl(taskId.toULongLong(), QUrl("computer:///"));
+        }
+    });
 
-    if (info.isDisableSearch)
-        return;
+    if (info.isDisableSearch) return;
 
     if (!info.redirectedPath.isEmpty()) {
         auto targetPath = targetUrl.path();
@@ -102,6 +112,8 @@ void SearchDirIteratorPrivate::onSearchStoped(const QString &id)
     if (taskId == id) {
         searchStoped = true;
         emit q->sigStopSearch();
+        if (searchRootWatcher)
+            searchRootWatcher->stopWatcher();
     }
 }
 

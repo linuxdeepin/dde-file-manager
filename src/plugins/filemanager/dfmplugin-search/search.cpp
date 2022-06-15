@@ -70,15 +70,10 @@ dpf::Plugin::ShutdownFlag Search::stop()
 
 void Search::subscribeEvent()
 {
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StartSearch",
-                                   SearchEventReceiverIns,
-                                   &SearchEventReceiver::handleSearch);
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StopSearch",
-                                   SearchEventReceiverIns,
-                                   &SearchEventReceiver::handleStopSearch);
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_ShowFilterView",
-                                   SearchEventReceiverIns,
-                                   &SearchEventReceiver::handleShowAdvanceSearchBar);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StartSearch", SearchEventReceiverIns, &SearchEventReceiver::handleSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StopSearch", SearchEventReceiverIns, &SearchEventReceiver::handleStopSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_ShowFilterView", SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
 
     followEvent();
 }

@@ -53,7 +53,8 @@ bool SearchFileWatcherPrivate::stop()
                               return watcher->stopWatcher();
                           });
 
-    return started = ok;
+    started = !ok;
+    return ok;
 }
 
 SearchFileWatcher::SearchFileWatcher(const QUrl &url, QObject *parent)

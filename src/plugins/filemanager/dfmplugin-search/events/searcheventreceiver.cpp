@@ -50,7 +50,7 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
         searchUrl = SearchHelper::fromSearchFile(curUrl, keyword, QString::number(winId));
     }
 
-    SearchEventCaller::sendDoSearch(winId, searchUrl);
+    SearchEventCaller::sendChangeCurrentUrl(winId, searchUrl);
 }
 
 void SearchEventReceiver::handleStopSearch(quint64 winId)
@@ -61,6 +61,12 @@ void SearchEventReceiver::handleStopSearch(quint64 winId)
 void SearchEventReceiver::handleShowAdvanceSearchBar(quint64 winId, bool visible)
 {
     SearchEventCaller::sendShowAdvanceSearchBar(winId, visible);
+}
+
+void SearchEventReceiver::handleUrlChanged(quint64 winId, const QUrl &u)
+{
+    if (u.scheme() != SearchHelper::scheme())
+        SearchEventReceiver::handleStopSearch(winId);
 }
 
 SearchEventReceiver::SearchEventReceiver(QObject *parent)

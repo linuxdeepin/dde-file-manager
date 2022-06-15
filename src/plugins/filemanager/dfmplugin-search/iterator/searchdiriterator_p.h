@@ -23,7 +23,7 @@
 
 #include "dfmplugin_search_global.h"
 
-#include "interfaces/abstractfileinfo.h"
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
 #include <QQueue>
@@ -31,6 +31,10 @@
 #include <QMutex>
 
 #include <mutex>
+
+DFMBASE_BEGIN_NAMESPACE
+class LocalFileWatcher;
+DFMBASE_END_NAMESPACE
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -64,6 +68,7 @@ private:
     std::once_flag searchOnceFlag;
 
     SearchDirIterator *q;
+    QScopedPointer<DFMBASE_NAMESPACE::LocalFileWatcher> searchRootWatcher;
 };
 
 DPSEARCH_END_NAMESPACE
