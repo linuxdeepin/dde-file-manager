@@ -43,7 +43,6 @@ public:
     static QStringList stripFilters(const QStringList &filters);
     static QString findExtensioName(const QString &fileName, const QStringList &newNameFilters, QMimeDatabase *db);
     static void urlTransform(QList<QUrl> *urls);
-    static bool isVirtualUrl(const QUrl &url);
 };
 
 DIALOGCORE_END_NAMESPACE

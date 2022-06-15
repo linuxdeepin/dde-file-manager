@@ -227,15 +227,3 @@ void CoreHelper::urlTransform(QList<QUrl> *urls)
         }
     }
 }
-
-bool CoreHelper::isVirtualUrl(const QUrl &url)
-{
-    bool isVirtual { UrlRoute::isVirtual(url.scheme()) };
-    bool isTransform { delegateServIns->isRegisterUrlTransform(url.scheme()) };
-    bool isRemovable { false };
-    if (isTransform) {
-        isRemovable = DFMIO::DFMUtils::fileIsRemovable(delegateServIns->urlTransform(url));
-        return isRemovable && isVirtual;
-    }
-    return isVirtual && !isTransform;
-}

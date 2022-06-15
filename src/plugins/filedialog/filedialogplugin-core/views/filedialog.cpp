@@ -784,7 +784,7 @@ void FileDialog::updateAcceptButtonState()
 
     bool isDirMode = d->fileMode == QFileDialog::Directory || d->fileMode == QFileDialog::DirectoryOnly;
     bool dialogShowMode = d->acceptMode;
-    bool isVirtual = CoreHelper::isVirtualUrl(fileInfo->url());
+    bool isVirtual = UrlRoute::isVirtual(fileInfo->url().scheme());
     if (dialogShowMode == QFileDialog::AcceptOpen) {
         auto size = WorkspaceService::service()->selectedUrls(internalWinId()).size();
         bool isSelectFiles = size > 0;
