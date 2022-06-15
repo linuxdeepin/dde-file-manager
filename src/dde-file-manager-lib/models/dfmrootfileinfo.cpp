@@ -57,6 +57,8 @@
 DFM_USE_NAMESPACE
 
 QMap<QString, DiskInfoStr> DFMRootFileInfo::DiskInfoMap = QMap<QString, DiskInfoStr>();
+QHash<QString, QString> DFMRootFileInfo::SuffixCache;
+QRegularExpression DFMRootFileInfo::SuffixRE(".*\\.(.*)$");
 
 DFMRootFileInfo::DFMRootFileInfo(const DUrl &url) :
     DAbstractFileInfo(url),
@@ -166,14 +168,25 @@ bool DFMRootFileInfo::exists() const
     return false; //默认返回false warning项
 }
 
+
 QString DFMRootFileInfo::suffix() const
 {
-    QRegularExpression re(".*\\.(.*)$");
-    auto rem = re.match(fileName());
+    auto fname = fileName();
+    auto cdata = DFMRootFileInfo::SuffixCache.find(fname);
+    if (cdata != DFMRootFileInfo::SuffixCache.end()) {
+        return cdata.value();
+    }
+    if (DFMRootFileInfo::SuffixCache.size() > 50) {
+        DFMRootFileInfo::SuffixCache.clear();
+    }
+    auto rem = DFMRootFileInfo::SuffixRE.match(fname);
     if (!rem.hasMatch()) {
+        DFMRootFileInfo::SuffixCache.insert(fname, "");
         return "";
     }
-    return rem.captured(1);
+    auto v = rem.captured(1);
+    DFMRootFileInfo::SuffixCache.insert(fname, v);
+    return v;
 }
 
 QString DFMRootFileInfo::fileDisplayName() const

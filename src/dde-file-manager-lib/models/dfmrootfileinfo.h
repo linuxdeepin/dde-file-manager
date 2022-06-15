@@ -114,6 +114,8 @@ public:
     static bool typeCompareByUrl(const DAbstractFileInfoPointer &a, const DAbstractFileInfoPointer &b);
 
     static QMap<QString, DiskInfoStr> DiskInfoMap;
+    static QHash<QString, QString> SuffixCache;
+    static QRegularExpression SuffixRE;
 private:
     QScopedPointer<DFMRootFileInfoPrivate> d_ptr;
     Q_DECLARE_PRIVATE(DFMRootFileInfo)
