@@ -32,12 +32,15 @@
 #include <QTimer>
 #include <QWaitCondition>
 #include <QStorageInfo>
+#include <QElapsedTimer>
 #include <QDebug>
 
 #include <fts.h>
 #include <sys/stat.h>
 
 DFMBASE_BEGIN_NAMESPACE
+
+static constexpr uint16_t kSizeChangeinterval = 200;
 
 class FileStatisticsJobPrivate : public QObject
 {
@@ -51,6 +54,7 @@ public:
     bool stateCheck();
 
     void processFile(const QUrl &url, QQueue<QUrl> &directoryQueue);
+    void emitSizeChanged();
 
     FileStatisticsJob *q;
     QTimer *notifyDataTimer;
@@ -60,6 +64,7 @@ public:
 
     QList<QUrl> sourceUrlList;
     QWaitCondition waitCondition;
+    QElapsedTimer elapsedTimer;
 
     QAtomicInteger<qint64> totalSize = { 0 };
     QAtomicInteger<qint64> totalProgressSize { 0 };
@@ -97,9 +102,10 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
     }
 
     if (s == FileStatisticsJob::kRunningState) {
-        QMetaObject::invokeMethod(notifyDataTimer, "start", Q_ARG(int, 500));
+        QMetaObject::invokeMethod(notifyDataTimer, "start", Qt::DirectConnection, Q_ARG(int, 500));
+        elapsedTimer.start();
     } else {
-        QMetaObject::invokeMethod(notifyDataTimer, "stop");
+        QMetaObject::invokeMethod(notifyDataTimer, "stop", Qt::DirectConnection);
 
         if (s == FileStatisticsJob::kStoppedState) {
             Q_EMIT q->dataNotify(totalSize, filesCount, directoryCount);
@@ -183,6 +189,7 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &direct
             size = info->size();
             if (size > 0) {
                 totalSize += size;
+                emitSizeChanged();
             }
             // fix bug 30548 ,以为有些文件大小为0,文件夹为空，size也为零，重新计算显示大小
             // fix bug 202007010033【文件管理器】【5.1.2.10-1】【sp2】复制软连接的文件，进度条显示1%
@@ -239,6 +246,14 @@ void FileStatisticsJobPrivate::processFile(const QUrl &url, QQueue<QUrl> &direct
         }
 
         Q_EMIT q->directoryFound(url);
+    }
+}
+
+void FileStatisticsJobPrivate::emitSizeChanged()
+{
+    if (elapsedTimer.elapsed() > kSizeChangeinterval) {
+        Q_EMIT q->sizeChanged(totalSize);
+        elapsedTimer.restart();
     }
 }
 
@@ -512,9 +527,11 @@ void FileStatisticsJob::statistcsExtFileSystem()
             if (flag == FTS_D) {
                 d->totalSize += FileUtils::getMemoryPageSize();
                 d->totalProgressSize += FileUtils::getMemoryPageSize();
+                d->emitSizeChanged();
             } else if (flag != FTS_DP) {
                 d->totalSize += ent->fts_statp->st_size;
                 d->totalProgressSize += ent->fts_statp->st_size;
+                d->emitSizeChanged();
             }
         }
         setSizeInfo();

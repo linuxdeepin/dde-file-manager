@@ -387,7 +387,7 @@ bool FileUtils::trashIsEmpty()
 bool FileUtils::isHigherHierarchy(const QUrl &urlBase, const QUrl &urlCompare)
 {
     QUrl url = urlCompare;
-    while (url != QUrl::fromLocalFile(R"(/)")) {
+    while (url.isValid() && url != QUrl::fromLocalFile(R"(/)")) {
         if (urlBase.isParentOf(url))
             return true;
         url = DFMIO::DFMUtils::directParentUrl(url);

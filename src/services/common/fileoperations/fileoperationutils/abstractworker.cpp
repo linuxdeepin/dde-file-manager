@@ -192,6 +192,7 @@ bool AbstractWorker::statisticsFilesSize()
     } else {
         statisticsFilesSizeJob.reset(new DFMBASE_NAMESPACE::FileStatisticsJob());
         connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::finished, this, &AbstractWorker::onStatisticsFilesSizeFinish, Qt::DirectConnection);
+        connect(statisticsFilesSizeJob.data(), &DFMBASE_NAMESPACE::FileStatisticsJob::sizeChanged, this, &AbstractWorker::onStatisticsFilesSizeUpdate, Qt::DirectConnection);
         statisticsFilesSizeJob->start(sourceUrls);
     }
     return true;
@@ -230,7 +231,7 @@ void AbstractWorker::setStat(const AbstractJobHandler::JobState &stat)
  */
 bool AbstractWorker::initArgs()
 {
-    sourceFilesTotalSize = -1;
+    sourceFilesTotalSize = 0;
     setStat(AbstractJobHandler::JobState::kRunningState);
     if (!handler)
         handler.reset(new LocalFileHandler);
@@ -297,6 +298,14 @@ void AbstractWorker::emitProgressChangedNotify(const qint64 &writSize)
     } else {
         info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, QVariant::fromValue(qint64(sourceFilesCount)));
     }
+    AbstractJobHandler::StatisticState state = AbstractJobHandler::StatisticState::kNoState;
+    if (statisticsFilesSizeJob) {
+        if (statisticsFilesSizeJob->isFinished())
+            state = AbstractJobHandler::StatisticState::kStopState;
+        else
+            state = AbstractJobHandler::StatisticState::kRunningState;
+    }
+    info->insert(AbstractJobHandler::NotifyInfoKey::kStatisticStateKey, QVariant::fromValue(state));
 
     info->insert(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey, QVariant::fromValue(writSize));
 
@@ -474,6 +483,11 @@ void AbstractWorker::onStatisticsFilesSizeFinish()
     sourceFilesTotalSize = statisticsFilesSizeJob->totalProgressSize();
     dirSize = sizeInfo->dirSize;
     sourceFilesCount = sizeInfo->fileCount;
+}
+
+void AbstractWorker::onStatisticsFilesSizeUpdate(qint64 size)
+{
+    sourceFilesTotalSize = size;
 }
 
 AbstractWorker::AbstractWorker(QObject *parent)

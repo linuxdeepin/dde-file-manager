@@ -61,6 +61,12 @@ public:
         kUnknowState = 255
     };
     Q_ENUM(JobState)
+    enum class StatisticState : uint8_t {
+        kNoState,   // 无状态
+        kRunningState,   // 运行状态
+        kStopState,   // 停止状态
+    };
+    Q_ENUM(StatisticState)
     enum class JobErrorType : uint8_t {
         kNoError,   // 没有错误
         kNoSourceError,   // 没有源文件
@@ -130,6 +136,7 @@ public:
         kJobtypeKey,
         kCurrentProgressKey,
         kTotalSizeKey,
+        kStatisticStateKey,
         kJobStateKey,
         kJobStateHideKey,
         kSourceUrlKey,

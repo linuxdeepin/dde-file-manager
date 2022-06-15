@@ -87,6 +87,7 @@ Q_SIGNALS:
     void stateChanged(State state);
     void fileFound(const QUrl &url);
     void directoryFound(const QUrl &url);
+    void sizeChanged(qint64 size);
     void dataNotify(qint64 size, int filesCount, int directoryCount);
 
 private:

@@ -142,6 +142,7 @@ protected slots:
     virtual bool doWork();
     virtual void onUpdateProgress() {}
     virtual void onStatisticsFilesSizeFinish();
+    virtual void onStatisticsFilesSizeUpdate(qint64 size);
 
 protected:
     void initHandleConnects(const JobHandlePointer &handle);

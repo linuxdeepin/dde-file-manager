@@ -44,6 +44,7 @@ DFMBASE_USE_NAMESPACE
 
 static const int kMsgLabelWidth = 350;
 static const int kSpeedLabelWidth = 100;
+static constexpr uint8_t kVirtualValue = 30;
 static const char *const kBtnPropertyActionName = "btnType";
 static const AbstractJobHandler::JobState kPausedState = AbstractJobHandler::JobState::kPauseState;
 
@@ -343,30 +344,39 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
     if (isShowError.load())
         return;
 
+    int preValue = progress->value();
+
+    AbstractJobHandler::StatisticState state = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kStatisticStateKey).value<AbstractJobHandler::StatisticState>();
     qint64 current = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey).value<qint64>();
     qint64 total = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey).value<qint64>();
+
     qint64 value = 1;
+
     if (total > 0 && current > 0) {
         value = current * 100 / total;
         if (current * 100 % total > 0)
             value += 1;   // +1: round up value，maybe 99% when finished
     }
 
+    if (state == AbstractJobHandler::StatisticState::kRunningState) {
+        value = value > kVirtualValue ? kVirtualValue : value;
+        value = value > preValue ? preValue + 1 : value;
+    }
+
     if (value > 100) {
         value = 100;
     }
 
-    if (value > 0 && value == progress->value()) {
+    if (value > 0 && value == preValue) {
+        // value not change, return
         return;
-    } else if (value >= 0 && progress->value() == 0) {
+    } else if (value >= 0 && preValue == 0) {
+        // first value arrived, start progress
         progress->start();
         progress->setValue(static_cast<int>(value));
         return;
-    }
-
-    if (value < 0) {
-        progress->stop();
     } else {
+        // update progress
         progress->setValue(static_cast<int>(value));
         progress->update();
     }
