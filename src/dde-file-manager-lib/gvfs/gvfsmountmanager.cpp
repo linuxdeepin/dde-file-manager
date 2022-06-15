@@ -876,7 +876,7 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         askPasswordDialogHash.value(op)->deleteLater();
         askPasswordDialogHash.remove(op);
         if (AskingPasswordHash.value(op))
-            qInfo()<<"password error!!";
+            qInfo()<<"password error!!";clearLoginData();
         //不是SMB挂载，弹出错误提示；否则走弹出鉴权对话框流程
         if(m_mountScheme != SMB_SCHEME){//ftp or some others
                 DThreadUtil::runInMainThread(dialogManager, &DialogManager::showErrorDialog,
