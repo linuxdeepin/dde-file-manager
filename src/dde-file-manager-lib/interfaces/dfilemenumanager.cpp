@@ -961,6 +961,9 @@ void DFileMenuData::initData()
         actionIcons[MenuAction::Property] = QIcon::fromTheme("document-properties");
     }
 
+    // fix #bug140633,原新建文本菜单项不支持icon，与产品和UI沟通，建文本菜单项新增icon且不纳入DGioSettings
+    actionIcons[MenuAction::NewText] = QIcon::fromTheme("text-plain");
+
     actionKeys[MenuAction::RemoveStashedRemoteConn] = QObject::tr("Remove");
     actionKeys[MenuAction::UnmountAllSmbMount] = QObject::tr("Unmount");
     actionKeys[MenuAction::RefreshView] = QObject::tr("Refresh");
