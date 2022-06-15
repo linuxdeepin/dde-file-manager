@@ -32,6 +32,7 @@
 #include "views/windowmanager.h"
 #include "views/dfilemanagerwindow.h"
 #include "shutil/fileutils.h"
+#include "shutil/checknetwork.h"
 #include "singleton.h"
 #include "app/define.h"
 #include "tag/tagmanager.h"
@@ -388,9 +389,32 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
         const QSharedPointer<DFMOpenNewWindowEvent> &e = event.staticCast<DFMOpenNewWindowEvent>();
 
         for (const DUrl &url : e->urlList()) {
+            QString serverIP;
+            quint16 port = 139;
+            DUrl temUrl;
+            if(url.scheme() == SMB_SCHEME){
+                serverIP = url.host();
+            } else {
+                QString path = QUrl::fromPercentEncoding(url.path().toUtf8());
+                if(FileUtils::isSmbPath(path)){
+                    serverIP = FileUtils::smbAttribute(path,FileUtils::SmbAttribute::kServer);
+                }else if(url.scheme() == FILE_SCHEME){
+                    if(path.contains("ftp:host")){
+                        serverIP = path.section("ftp:host=",-1);
+                        port = 21;
+                    }else if(path.contains("sftp:host")){
+                        serverIP = path.section("sftp:host=",-1);
+                        port = 22;
+                    }
+                }
+            }
+            if(!serverIP.isEmpty() && !CheckNetwork::isHostAndPortConnectV2(serverIP,port)){
+                WindowManager::instance()->showNewWindow(DUrl(COMPUTER_ROOT), e->force());
+                continue;
+            }
             WindowManager::instance()->showNewWindow(url, e->force());
         }
-
+        CheckNetwork::clearUp();
         break;
     }
     case DFMEvent::ChangeCurrentUrl: {
