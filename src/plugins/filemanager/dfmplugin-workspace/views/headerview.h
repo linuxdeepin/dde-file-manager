@@ -54,6 +54,7 @@ protected:
     void resizeEvent(QResizeEvent *e) override;
     void leaveEvent(QEvent *e) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
+    void paintEvent(QPaintEvent *e) override;
 
 Q_SIGNALS:
     void mouseReleased();

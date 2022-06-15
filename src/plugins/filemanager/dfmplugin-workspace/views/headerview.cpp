@@ -200,7 +200,7 @@ void HeaderView::leaveEvent(QEvent *e)
 
 void HeaderView::contextMenuEvent(QContextMenuEvent *event)
 {
-    const FileViewItem* rootItem = proxyModel()->rootItem();
+    const FileViewItem *rootItem = proxyModel()->rootItem();
 
     if (!rootItem || !rootItem->fileInfo())
         return;
@@ -228,6 +228,14 @@ void HeaderView::contextMenuEvent(QContextMenuEvent *event)
 
     menu->exec(QCursor::pos());
     menu->deleteLater();
+}
+
+void HeaderView::paintEvent(QPaintEvent *e)
+{
+    QHeaderView::paintEvent(e);
+    int idealHeight = qMax(kListViewIconSize, fontMetrics().height());
+    if (idealHeight != this->height())
+        this->setFixedHeight(idealHeight);
 }
 
 FileSortFilterProxyModel *HeaderView::proxyModel() const
