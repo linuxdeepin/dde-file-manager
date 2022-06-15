@@ -137,39 +137,17 @@ void ShareInfoFrame::initUI()
     m_networkAddrLabel->setObjectName("NetworkAddress");
     m_networkAddrLabel->setStyleSheet("QLineEdit{background-color:rgba(0,0,0,0)}");
 
-    if(m_updateIp == nullptr){
-        m_updateIp = new QTimer();
-        m_updateIp->setInterval(0);
-        connect(m_updateIp,&QTimer::timeout, this, [this](){
-            foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces())
-            {
-                if (!netInterface.isValid())//包含有关网络接口的有效信息，则返回true。
-                    continue;
-
-                QNetworkInterface::InterfaceFlags flags = netInterface.flags();
-                if (flags.testFlag(QNetworkInterface::IsRunning)
-                && !flags.testFlag(QNetworkInterface::IsLoopBack))
-                {
-                    QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
-                    foreach(QNetworkAddressEntry entry, entryList)
-                    {
-                        if(entry.ip().toString()!="" && entry.ip().toString()!="0.0.0.0")
-                        {
-                            m_selfIp = entry.ip().toString();
-                            break;//获取到第一个活跃的跳出
-                        }
-                    }
-                }
-            }
+    if(m_refreshIp == nullptr){
+        m_refreshIp = new QTimer();
+        m_refreshIp->setInterval(0);
+        connect(m_refreshIp,&QTimer::timeout, this, [this](){
+            m_selfIp = refreshIp();
             if(m_networkAddrLabel->text() != m_selfIp){
-                if(m_selfIp == "127.0.0.1")
-                    m_networkAddrLabel->setText("");
-                else
-                    m_networkAddrLabel->setText(m_selfIp);
+                m_networkAddrLabel->setText(m_selfIp);
             }
-            m_updateIp->setInterval(2000);
+            m_refreshIp->setInterval(2000);
         });
-        m_updateIp->start();
+        m_refreshIp->start();
     }
 
     SectionKeyLabel *userNameLabel = new SectionKeyLabel(tr("Username"));
@@ -570,6 +548,41 @@ void ShareInfoFrame::updatePasswordState()
     }
 }
 
+QString ShareInfoFrame::refreshIp() const
+{
+    QString selfIp;
+    QStringList validIpList;//临时保存所有网卡符合条件的ipv4
+    foreach (QNetworkInterface netInterface, QNetworkInterface::allInterfaces()){//遍历网卡、网络接口
+        if (!netInterface.isValid())
+            continue;
+        QNetworkInterface::InterfaceFlags flags = netInterface.flags();
+        if (flags.testFlag(QNetworkInterface::IsRunning) && !flags.testFlag(QNetworkInterface::IsLoopBack)){//活跃ip 且 非127.0.0.1
+            QList<QNetworkAddressEntry> entryList = netInterface.addressEntries();
+            foreach(QNetworkAddressEntry entry, entryList){
+                if(!entry.ip().toString().isEmpty() && entry.ip().toString()!="0.0.0.0" && entry.ip().toIPv4Address()){
+                    validIpList << entry.ip().toString();
+                }
+            }
+        }
+    }
+    //筛选IP(此为临时处理方案：当多网卡时，如果本机除了19和17开头的ip地址外，没有其它ip了，则从中选取一个)
+    //todo：此处需要讨论界面是否以下拉菜单的方式显示多个本机ip的情况，或者通过某种途径直接获取任务栏的网络连接ip
+    QStringList ip17or19;
+    while (validIpList.count() > 0) {
+        QString ip = validIpList.takeFirst();
+        if(ip.startsWith("17") || ip.startsWith("19")){
+            ip17or19 << ip;
+            continue;
+        }else {
+            selfIp = ip;
+        }
+    }
+    if(selfIp.isEmpty() && !ip17or19.isEmpty()){
+            selfIp = ip17or19.first();
+    }
+    return selfIp;//若没有找到有效的IP地址，selfIp允许为空
+}
+
 void ShareInfoFrame::setFileinfo(const DAbstractFileInfoPointer &fileinfo)
 {
     m_fileinfo = fileinfo;
@@ -647,10 +660,10 @@ bool ShareInfoFrame::eventFilter(QObject *obj, QEvent *event)
 
 ShareInfoFrame::~ShareInfoFrame()
 {
-    if(m_updateIp){
-        m_updateIp->stop();
-        m_updateIp->deleteLater();
-        m_updateIp = nullptr;
+    if(m_refreshIp){
+        m_refreshIp->stop();
+        m_refreshIp->deleteLater();
+        m_refreshIp = nullptr;
     }
 }
 
