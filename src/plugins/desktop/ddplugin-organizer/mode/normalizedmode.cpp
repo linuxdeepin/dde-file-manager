@@ -91,11 +91,18 @@ void NormalizedMode::reset()
 
         if (collectionHolder.isNull()) {
             collectionHolder.reset(new CollectionHolder(name));
-            collectionHolder->createView(model);
+            collectionHolder->createFrame(surface, model);
             collectionHolder->setName(name);
             d->holders.insert(name, collectionHolder);
         }
         collectionHolder->setUrls(files);
+
+        // disable rename,move and adjust
+        collectionHolder->setRenamable(false);
+        collectionHolder->setMovable(false);
+        collectionHolder->setAdjustable(false);
+
+        collectionHolder->show();
     }
     // 删除无需的组
 }

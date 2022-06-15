@@ -46,6 +46,7 @@ public:
     virtual int mode() const = 0;
     virtual bool initialize(FileProxyModel *) = 0;
     virtual void setCanvasShell(CanvasModelShell *sh);
+    virtual void setSurface(QWidget *w);
 signals:
 
 public slots:
@@ -56,6 +57,7 @@ protected slots:
 protected:
     FileProxyModel *model = nullptr;
     CanvasModelShell *shell = nullptr;
+    QWidget *surface = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

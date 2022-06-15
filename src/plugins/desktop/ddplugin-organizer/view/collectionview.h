@@ -36,7 +36,6 @@ class CollectionView : public QAbstractItemView
     friend class CollectionViewPrivate;
 public:
     explicit CollectionView(QWidget *parent = nullptr);
-    void setGeometry(const QRect &rect);
     QList<QUrl> urls() const;
     void setUrls(const QList<QUrl> &urls);
     QMargins cellMargins() const;
@@ -62,6 +61,8 @@ protected:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
     void updateGeometries() override;
 
 private:

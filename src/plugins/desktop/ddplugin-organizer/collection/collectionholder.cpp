@@ -19,8 +19,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "collectionholder_p.h"
-#include "view/collectionview.h"
+#include "view/collectionframe.h"
+#include "view/collectionwidget.h"
 #include "models/fileproxymodel.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
 
 DDP_ORGANIZER_USE_NAMESPACE
 
@@ -48,27 +50,146 @@ QString CollectionHolder::name()
 
 void CollectionHolder::setName(const QString &text)
 {
-    if (!text.isEmpty())
-        d->name = text;
+    if (text.isEmpty() || d->name == text.trimmed())
+        return;
 
-    // todo update title bar
+    d->name = text.trimmed();
+    d->widget->setTitleName(d->name);
 }
 
 QList<QUrl> CollectionHolder::urls() const
 {
-    return d->view->urls();
+    return d->widget->urls();
 }
 
 void CollectionHolder::setUrls(const QList<QUrl> &urls)
 {
-    d->view->setUrls(urls);
+    d->widget->setUrls(urls);
 }
 
-void CollectionHolder::createView(FileProxyModel *model)
+void CollectionHolder::createFrame(QWidget *surface, FileProxyModel *model)
 {
+    d->frame = new CollectionFrame(surface);
+    d->frame->setGeometry(QRect(200, 200, 400, 240));
+
     d->model = model;
-    d->view = new CollectionView();
-    d->view->setModel(d->model);
-    d->view->setGeometry(QRect(200, 200, 400, 240));
-    d->view->show();
+    d->widget = new CollectionWidget(d->frame);
+    d->widget->setModel(d->model);
+    d->widget->setGeometry(d->frame->geometry());
+    d->frame->setWidget(d->widget);
+}
+
+void CollectionHolder::show()
+{
+    d->frame->show();
+}
+
+void CollectionHolder::setMovable(const bool movable)
+{
+    auto features = d->frame->collectionFeatures();
+    if (movable)
+        features |= CollectionFrame::CollectionFrameMovable;
+    else
+        features &= ~CollectionFrame::CollectionFrameMovable;
+
+    d->frame->setCollectionFeatures(features);
+}
+
+bool CollectionHolder::movable() const
+{
+    return d->frame->collectionFeatures().testFlag(CollectionFrame::CollectionFrameMovable);
+}
+
+void CollectionHolder::setClosable(const bool closable)
+{
+    auto features = d->frame->collectionFeatures();
+    if (closable)
+        features |= CollectionFrame::CollectionFrameClosable;
+    else
+        features &= ~CollectionFrame::CollectionFrameClosable;
+
+    d->frame->setCollectionFeatures(features);
+}
+
+bool CollectionHolder::closable() const
+{
+    return d->frame->collectionFeatures().testFlag(CollectionFrame::CollectionFrameClosable);
+}
+
+void CollectionHolder::setFloatable(const bool floatable)
+{
+    auto features = d->frame->collectionFeatures();
+    if (floatable)
+        features |= CollectionFrame::CollectionFrameFloatable;
+    else
+        features &= ~CollectionFrame::CollectionFrameFloatable;
+
+    d->frame->setCollectionFeatures(features);
+}
+
+bool CollectionHolder::floatable() const
+{
+    return d->frame->collectionFeatures().testFlag(CollectionFrame::CollectionFrameFloatable);
+}
+
+void CollectionHolder::setHiddableCollection(const bool hiddable)
+{
+    auto features = d->frame->collectionFeatures();
+    if (hiddable)
+        features |= CollectionFrame::CollectionFrameHiddable;
+    else
+        features &= ~CollectionFrame::CollectionFrameHiddable;
+
+    d->frame->setCollectionFeatures(features);
+}
+
+bool CollectionHolder::hiddableCollection() const
+{
+    return d->frame->collectionFeatures().testFlag(CollectionFrame::CollectionFrameHiddable);
+}
+
+void CollectionHolder::setAdjustable(const bool adjustable)
+{
+    auto features = d->frame->collectionFeatures();
+    if (adjustable)
+        features |= CollectionFrame::CollectionFrameAdjustable;
+    else
+        features &= ~CollectionFrame::CollectionFrameAdjustable;
+
+    d->frame->setCollectionFeatures(features);
+}
+
+bool CollectionHolder::adjustable() const
+{
+    return d->frame->collectionFeatures().testFlag(CollectionFrame::CollectionFrameAdjustable);
+}
+
+void CollectionHolder::setHiddableTitleBar(const bool hiddable)
+{
+    // todo
+}
+
+bool CollectionHolder::hiddableTitleBar() const
+{
+    // todo
+}
+
+void CollectionHolder::setHiddableView(const bool hiddable)
+{
+    // todo
+}
+
+bool CollectionHolder::hiddableView() const
+{
+    // todo
+}
+
+void CollectionHolder::setRenamable(const bool renamable)
+{
+    d->widget->setRenamable(renamable);
+}
+
+bool CollectionHolder::renamable() const
+{
+    return d->widget->renamable();
 }

@@ -28,7 +28,8 @@
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class FileProxyModel;
-class CollectionView;
+class CollectionFrame;
+class CollectionWidget;
 class CollectionHolderPrivate;
 class CollectionHolder : public QObject
 {
@@ -41,11 +42,26 @@ public:
     void setName(const QString &);
     QList<QUrl> urls() const;
     void setUrls(const QList<QUrl> &urls);
-    void createView(FileProxyModel *model);
+    void createFrame(QWidget *surface, FileProxyModel *model);
+    void show();
 
-signals:
+    void setMovable(const bool movable = true);
+    bool movable() const;
+    void setClosable(const bool closable = false);
+    bool closable() const;
+    void setFloatable(const bool floatable = false);
+    bool floatable() const;
+    void setHiddableCollection(const bool hiddable = false);
+    bool hiddableCollection() const;
+    void setAdjustable(const bool adjustable = true);
+    bool adjustable() const;
+    void setHiddableTitleBar(const bool hiddable = true);
+    bool hiddableTitleBar() const;
+    void setHiddableView(const bool hiddable = false);
+    bool hiddableView() const;
+    void setRenamable(const bool renamable = true);
+    bool renamable() const;
 
-public slots:
 private:
     CollectionHolderPrivate *d;
 };

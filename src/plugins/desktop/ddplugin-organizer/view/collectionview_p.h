@@ -50,14 +50,14 @@ public:
     int space = 0;
     QMargins viewMargins;
     QMargins cellMargins = QMargins(2, 2, 2, 2);
-    int rowCount = 0;
-    int columnCount = 0;
-    int cellWidth = 0;
-    int cellHeight = 0;
+    int rowCount = 1;
+    int columnCount = 1;
+    int cellWidth = 1;
+    int cellHeight = 1;
 
     QList<QUrl> urls;
 
-    bool showGrid = true;
+    bool showGrid = false;
 
 private:
     CollectionView *q;

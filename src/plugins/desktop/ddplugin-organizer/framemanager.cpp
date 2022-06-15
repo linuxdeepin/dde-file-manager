@@ -179,6 +179,9 @@ void FrameManager::switchMode(int mode)
     Q_ASSERT(d->organizer);
 
     // 初始化创建集合窗口
+    if (!d->surfaceWidgets.isEmpty())
+        d->organizer->setSurface(d->surfaceWidgets.first().data());
+
     d->organizer->setCanvasShell(d->canvas->canvasModel());
     d->organizer->initialize(d->model);
 

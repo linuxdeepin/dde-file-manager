@@ -194,16 +194,6 @@ CollectionView::CollectionView(QWidget *parent)
     initUI();
 }
 
-void CollectionView::setGeometry(const QRect &rect)
-{
-    if (rect.size().width() < 1 || rect.size().height() < 1)
-        return;
-
-    QAbstractItemView::setGeometry(rect);
-    setFixedSize(this->geometry().size());
-    updateRegionView();
-}
-
 QList<QUrl> CollectionView::urls() const
 {
     return d->urls;
@@ -218,6 +208,7 @@ void CollectionView::setUrls(const QList<QUrl> &urls)
         d->urls.append(url);
     }
 
+    // todo:在holder中判断,只有自动集合才隐藏空集合
     if (d->urls.isEmpty())
         hide();
     else
@@ -505,6 +496,18 @@ void CollectionView::wheelEvent(QWheelEvent *event)
     verticalScrollBar()->setSliderPosition( ccc );
 }
 
+void CollectionView::mouseMoveEvent(QMouseEvent *event)
+{
+    return QAbstractItemView::mouseMoveEvent(event);
+}
+
+void CollectionView::resizeEvent(QResizeEvent *event)
+{
+    QAbstractItemView::resizeEvent(event);
+
+    updateRegionView();
+}
+
 void CollectionView::updateGeometries()
 {
     int dataRow = d->urls.count() / d->columnCount;
@@ -523,8 +526,8 @@ void CollectionView::initUI()
 {
     setRootIndex(model()->rootIndex());
     setAttribute(Qt::WA_TranslucentBackground);
-//    viewport()->setAttribute(Qt::WA_TranslucentBackground);
-//    viewport()->setAutoFillBackground(false);
+    viewport()->setAttribute(Qt::WA_TranslucentBackground);
+    viewport()->setAutoFillBackground(false);
     setFrameShape(QFrame::NoFrame);
 
     auto delegate = new CollectionItemDelegate(this);

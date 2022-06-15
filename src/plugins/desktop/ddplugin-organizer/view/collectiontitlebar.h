@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangyu<zhangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef COLLECTIONHOLDER_P_H
-#define COLLECTIONHOLDER_P_H
+#ifndef COLLECTIONTITLEBAR_H
+#define COLLECTIONTITLEBAR_H
 
-#include "collection/collectionholder.h"
+#include "ddplugin_organizer_global.h"
+
+#include <DBlurEffectWidget>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class CollectionHolderPrivate
+class CollectionTitleBarPrivate;
+
+class CollectionTitleBar : public Dtk::Widget::DBlurEffectWidget
 {
+    Q_OBJECT
 public:
-    explicit CollectionHolderPrivate(CollectionHolder *qq);
-public:
-    QString id;
-    QString name;
-    FileProxyModel *model = nullptr;
-    CollectionFrame *frame = nullptr;
-    CollectionWidget *widget = nullptr;
+    explicit CollectionTitleBar(QWidget *parent = nullptr);
+    ~CollectionTitleBar() override;
+
+    void setRenamable(const bool renamable = true);
+    bool renamable() const;
+    void setTitleName(const QString &name);
+    QString titleName() const;
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
-    CollectionHolder *q;
+    QSharedPointer<CollectionTitleBarPrivate> d = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-#endif // COLLECTIONHOLDER_P_H
+#endif // COLLECTIONTITLEBAR_H

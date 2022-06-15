@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangyu<zhangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef COLLECTIONHOLDER_P_H
-#define COLLECTIONHOLDER_P_H
+#ifndef COLLECTIONWIDGET_P_H
+#define COLLECTIONWIDGET_P_H
 
-#include "collection/collectionholder.h"
+#include "collectionwidget.h"
+
+#include <QVBoxLayout>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class CollectionHolderPrivate
+class CollectionWidgetPrivate
 {
 public:
-    explicit CollectionHolderPrivate(CollectionHolder *qq);
-public:
-    QString id;
-    QString name;
-    FileProxyModel *model = nullptr;
-    CollectionFrame *frame = nullptr;
-    CollectionWidget *widget = nullptr;
+    explicit CollectionWidgetPrivate(CollectionWidget *qq = nullptr);
+    ~CollectionWidgetPrivate();
 
-private:
-    CollectionHolder *q;
+public:
+    CollectionWidget *q = nullptr;
+    CollectionTitleBar *titleBar = nullptr;
+    CollectionView *view = nullptr;
+    QVBoxLayout *mainLayout = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-#endif // COLLECTIONHOLDER_P_H
+#endif // COLLECTIONWIDGET_P_H

@@ -64,6 +64,11 @@ void CanvasOrganizer::setCanvasShell(CanvasModelShell *sh)
 
 }
 
+void CanvasOrganizer::setSurface(QWidget *w)
+{
+    surface = w;
+}
+
 bool CanvasOrganizer::filterDataRested(QList<QUrl> *urls)
 {
     return false;
