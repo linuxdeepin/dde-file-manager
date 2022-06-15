@@ -44,6 +44,7 @@
 #include "dfm-base/base/application/settings.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
 #include <QDir>
@@ -151,9 +152,9 @@ VaultState VaultHelper::state(QString lockBaseDir)
     }
 
     if (QFile::exists(lockBaseDir)) {
-        QStorageInfo info(PathManager::makeVaultLocalPath());
-        QString temp = info.fileSystemType();
-        if (info.isValid() && temp == "fuse.cryfs") {
+        QUrl baseDirUrl = QUrl::fromLocalFile(PathManager::vaultUnlockPath());
+        const QString &fsType = DFMIO::DFMUtils::fsTypeFromUrl(baseDirUrl);
+        if (fsType == "fuse.cryfs") {
             return VaultState::kUnlocked;
         }
         return VaultState::kEncrypted;
