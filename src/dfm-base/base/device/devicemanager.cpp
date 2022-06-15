@@ -544,19 +544,27 @@ void DeviceManager::mountNetworkDeviceAsync(const QString &address, CallbackType
         return;
     }
 
+    static QMap<QString, QString> defaultPort { { "smb", "139" }, { "ftp", "21" }, { "sftp", "22" } };
     QString host = u.host();
-    QString port = u.scheme() == "smb" ? "139" : "21";
+    QString port = defaultPort.value(u.scheme(), "21");
 
     using namespace std::placeholders;
     auto func = std::bind(DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice, _1, _2, _3, address);
 
+    auto wrappedCb = [=](bool ok, DeviceError err, const QString &msg) {
+        if (cb) cb(ok, err, msg);
+        QApplication::restoreOverrideCursor();
+    };
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     NetworkUtils::instance()->doAfterCheckNet(host, port, [=](bool ok) {
         QApplication::restoreOverrideCursor();
-        if (ok)
-            DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice, cb, timeout);
-        else if (cb)
-            cb(false, DeviceError::kUserErrorTimedOut, "");
+        if (ok) {
+            DProtocolDevice::mountNetworkDevice(address, func, DeviceManagerPrivate::askForUserChoice, wrappedCb, timeout);
+        } else {
+            wrappedCb(false, DeviceError::kUserErrorTimedOut, "");
+            qDebug() << "cannot access network " << host << ":" << port;
+        }
     });
 }
 
@@ -761,6 +769,7 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
         info.cancelled = true;
     }
 
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     return info;
 }
 

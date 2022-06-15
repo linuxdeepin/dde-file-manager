@@ -156,8 +156,8 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
         case DeviceError::kUserErrorUserCancelled:
             return;
         default:
-            showErrorDialog(kMountFailed, tr("Error occured while mounting device"));
             qWarning() << "mount device failed: " << err;
+            showErrorDialog(kMountFailed, tr("Error occured while mounting device"));
             return;
         }
     } else if (type == OperateType::kRemove || type == OperateType::kUnmount) {

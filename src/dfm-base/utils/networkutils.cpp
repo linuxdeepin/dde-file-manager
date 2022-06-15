@@ -82,6 +82,7 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
 {
     static constexpr char kSmbPort[] { "139" };
     static constexpr char kFtpPort[] { "21" };
+    static constexpr char kSftpPort[] { "22" };
     auto s(mpt);
     static QRegularExpression gvfsPref { "(^/run/user/\\d+/gvfs/|^/root/.gvfs/)" };
     static QRegularExpression cifsMptPref { "^/media/[\\s\\S]*/smbmounts/" };   // TODO(xust) smb mount point may be changed.
@@ -93,6 +94,8 @@ bool NetworkUtils::parseIp(const QString &mpt, QString &ip, QString &port)
         if (match.hasMatch()) {
             ip = match.captured(1);
             port = kFtpPort;
+            if (s.startsWith("s"))
+                port = kSftpPort;
             return true;
         } else {
             match = smbRex.match(s);
