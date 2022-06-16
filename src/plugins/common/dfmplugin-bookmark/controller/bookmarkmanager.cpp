@@ -135,6 +135,7 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
             bookmarkData.url = url;
             QVariantList list = Application::genericSetting()->value(kConfigGroupName, kConfigKeyName).toList();
             list << bookmarkData.serialize();
+            Application::genericSetting()->setValue(kConfigGroupName, kConfigKeyName, list);
 
             bookmarkDataMap[url] = bookmarkData;
             addBookMarkItem(url, info.fileName());
