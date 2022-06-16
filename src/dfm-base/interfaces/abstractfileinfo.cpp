@@ -764,6 +764,17 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::sizeDisplayName() const
 }
 
 /*!
+ * \brief DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayPath Used to get the path displayed when the file is displayed.
+ * \return Used to get the path displayed when the file is displayed.
+ */
+QString DFMBASE_NAMESPACE::AbstractFileInfo::fileDisplayPath() const
+{
+    CALL_PROXY(fileTypeDisplayName());
+
+    return url().path();
+}
+
+/*!
  * \brief created 获取文件的创建时间
  *
  * Returns the date and time when the file was created,

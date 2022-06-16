@@ -138,6 +138,7 @@ public:
     virtual QString fileDisplayName() const;
     virtual QString fileDisplayPinyinName() const;
     virtual QString sizeDisplayName() const;
+    virtual QString fileDisplayPath() const;
     virtual QString iconName();
     virtual QString genericIconName();
     virtual QString mimeTypeDisplayName();

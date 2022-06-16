@@ -87,6 +87,7 @@ QUrl VaultHelper::pathToVaultVirtualUrl(const QString &path)
         QUrl virtualUrl;
         virtualUrl.setPath(virtualPath);
         virtualUrl.setScheme(scheme());
+        virtualUrl.setHost("");
         return virtualUrl;
     }
     return QUrl();

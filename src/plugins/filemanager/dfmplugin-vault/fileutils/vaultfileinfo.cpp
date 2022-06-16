@@ -251,4 +251,14 @@ QString VaultFileInfo::fileDisplayName() const
         return AbstractFileInfo::fileDisplayName();
     return dptr->proxy->fileDisplayName();
 }
+
+QString VaultFileInfo::fileDisplayPath() const
+{
+    QUrl currentUrl = url();
+    currentUrl.setHost("");
+    QString urlStr = currentUrl.toString();
+    QByteArray array = urlStr.toLocal8Bit();
+    QString filePath = QUrl::fromPercentEncoding(array);
+    return filePath;
+}
 DPVAULT_END_NAMESPACE

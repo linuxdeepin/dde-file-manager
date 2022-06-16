@@ -193,7 +193,7 @@ bool SearchHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const It
     if (role == kItemFilePathRole) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
         if (info) {
-            data->setValue(info->redirectedFileUrl().path());
+            data->setValue(info->fileDisplayPath());
             return true;
         }
     }
