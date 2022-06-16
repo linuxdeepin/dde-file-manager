@@ -944,7 +944,8 @@ void FileView::mousePressEvent(QMouseEvent *event)
         QModelIndex index = indexAt(event->pos());
         d->selectHelper->click(isEmptyArea ? QModelIndex() : index);
         if (isEmptyArea) {
-            d->selectHelper->setSelection(selectionModel()->selection());
+            if (selectionMode() != QAbstractItemView::SingleSelection)
+                d->selectHelper->setSelection(selectionModel()->selection());
             if (!WindowUtils::keyCtrlIsPressed()) {
                 itemDelegate()->hideNotEditingIndexWidget();
                 if (qApp->keyboardModifiers() == Qt::NoModifier)
