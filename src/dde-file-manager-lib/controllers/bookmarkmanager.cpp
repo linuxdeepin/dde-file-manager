@@ -176,7 +176,6 @@ bool BookMarkManager::deleteFiles(const QSharedPointer<DFMDeleteEvent> &event) c
     if (DTK_POLICY_SUPPORT) {
         // task:6200: policy priority,policy and old config are synchronized at here
         QVariantList groupPolicyList =  GroupPolicy::instance()->getValue(BOOKMARK).toList();
-        QVariantList allList;
         this->mergeList(list, groupPolicyList, allList);
     } else {
         allList = list;
@@ -535,17 +534,11 @@ void BookMarkManager::mergeList(const QVariantList &oldList, const QVariantList 
     all = groupPolicyList;
 
     for (const auto &oldItem : oldList) {
-
-        bool hasFinded = false;
         const QVariantMap &tempItem = oldItem.toMap();
-        if (std::any_of(groupPolicyList.begin(), groupPolicyList.end(), [this, tempItem](QVariant value){
+        if (!std::any_of(groupPolicyList.begin(), groupPolicyList.end(), [this, tempItem](QVariant value){
                         return this->isEqualBookmarkData(tempItem, value.toMap()); })) {
-            hasFinded = true;
-            break;
-        }
-
-        if (!hasFinded)
             all.append(tempItem);
+        }
     }
 }
 
