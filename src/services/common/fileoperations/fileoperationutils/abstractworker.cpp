@@ -549,12 +549,8 @@ void AbstractWorker::saveOperations()
             }
             QVariantMap values;
             values.insert("event", QVariant::fromValue(static_cast<uint16_t>(operatorType)));
-            QStringList listUrls;
-            for (const auto &url : completeTargetFiles) {
-                listUrls.append(url.toString());
-            }
-            values.insert("sources", QVariant::fromValue(listUrls));
-            values.insert("target", targetUrl.toString());
+            values.insert("sources", QUrl::toStringList(completeTargetFiles));
+            values.insert("targets", QUrl::toStringList({ targetUrl }));
             if (jobType != AbstractJobHandler::JobType::kDeleteTpye)
                 dpfSignalDispatcher->publish(GlobalEventType::kSaveOperator, values);
         }
