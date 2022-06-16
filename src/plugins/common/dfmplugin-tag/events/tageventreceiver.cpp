@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -69,7 +70,10 @@ void TagEventReceiver::handleFileCutResult(const QList<QUrl> &srcUrls, const QLi
             TagManager::instance()->removeTagsOfFiles(tags, { url });
 
             const QUrl &newUrl = destUrls.at(srcUrls.indexOf(url));
-            TagManager::instance()->addTagsForFiles(tags, { newUrl });
+            auto info = InfoFactory::create<AbstractFileInfo>(newUrl);
+
+            if (TagManager::instance()->canTagFile(info))
+                TagManager::instance()->addTagsForFiles(tags, { newUrl });
         }
     }
 }
