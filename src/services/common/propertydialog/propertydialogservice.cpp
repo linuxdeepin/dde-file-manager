@@ -90,9 +90,9 @@ PropertyDialogService *PropertyDialogService::service()
  * QString error;
  * bool flg = service->registerMethod(fun, 1, &error);
  */
-bool PropertyDialogService::registerControlExpand(CPY_NAMESPACE::createControlViewFunc view, int index, QString *error)
+bool PropertyDialogService::registerControlExpand(CPY_NAMESPACE::createControlViewFunc view, int index)
 {
-    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerControlExpand(view, index, error);
+    return CPY_NAMESPACE::RegisterCreateProcess::instance()->registerControlExpand(view, index);
 }
 
 /*!

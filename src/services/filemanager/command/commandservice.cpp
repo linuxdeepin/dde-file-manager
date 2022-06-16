@@ -25,8 +25,6 @@
 #include <dfm-framework/framework.h>
 
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/openwith/openwith_defines.h"
-#include "services/common/openwith/openwithservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -226,7 +224,7 @@ void CommandService::openWithDialog()
     }
     if (urlList.isEmpty())
         return;
-    OpenWithService::service()->showOpenWithDialog(urlList);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_ShowOpenWithDialog", urlList);
 }
 
 void CommandService::openInHomeDirectory()

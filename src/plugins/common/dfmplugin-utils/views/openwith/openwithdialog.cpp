@@ -23,12 +23,11 @@
 #include "openwithdialog.h"
 #include "dfileservices.h"
 
-#include "base/schemefactory.h"
-#include "utils/windowutils.h"
-#include "mimetype/mimesappsmanager.h"
-#include "utils/fileutils.h"
-#include "utils/properties.h"
-
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/windowutils.h"
+#include "dfm-base/mimetype/mimesappsmanager.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/properties.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -57,7 +56,7 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+DPUTILS_USE_NAMESPACE
 
 OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent)
     : QWidget(parent),

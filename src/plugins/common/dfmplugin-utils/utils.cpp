@@ -22,6 +22,10 @@
 */
 #include "utils.h"
 #include "events/globaleventreceiver.h"
+#include "events/openwitheventreceiver.h"
+#include "utils/openwithhelper.h"
+
+#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -43,10 +47,12 @@ static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<df
 void Utils::initialize()
 {
     GlobalEventReceiver::instance()->initEventConnect();
+    OpenWithEventReceiver::instance()->initEventConnect();
     DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::AbstractFileInfo>(DFMBASE_NAMESPACE::Global::kFile, transFileInfo);
 }
 
 bool Utils::start()
 {
+    propertyServIns->registerControlExpand(OpenWithHelper::createOpenWithWidget, 2);
     return true;
 }

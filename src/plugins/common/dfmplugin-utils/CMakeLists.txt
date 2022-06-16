@@ -9,6 +9,8 @@ FILE(GLOB UTILS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 

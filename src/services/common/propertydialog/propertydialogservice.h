@@ -44,7 +44,7 @@ public:
 
     static PropertyDialogService *service();
 
-    bool registerControlExpand(CPY_NAMESPACE::createControlViewFunc view, int index = -1, QString *error = nullptr);
+    bool registerControlExpand(CPY_NAMESPACE::createControlViewFunc view, int index = -1);
 
     bool registerCustomizePropertyView(CPY_NAMESPACE::createControlViewFunc view, QString scheme);
 

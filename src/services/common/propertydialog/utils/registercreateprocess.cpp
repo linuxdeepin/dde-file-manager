@@ -33,19 +33,9 @@ RegisterCreateProcess *RegisterCreateProcess::instance()
     return &reg;
 }
 
-bool RegisterCreateProcess::registerControlExpand(createControlViewFunc view, int index, QString *errorString)
+bool RegisterCreateProcess::registerControlExpand(createControlViewFunc view, int index)
 {
-    QString error;
-    DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
-
-    if (constructList.keys().contains(index)) {
-        error = "The current index has registered the associated construction class";
-        qInfo() << error;
-        return false;
-    }
-
     constructList.insert(index, view);
-    finally.dismiss();
     return true;
 }
 

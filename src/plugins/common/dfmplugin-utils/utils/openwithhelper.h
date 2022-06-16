@@ -1,10 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             liuyangming<liuyangming@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +17,26 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#ifndef OPENWITH_DEFINES_H
-#define OPENWITH_DEFINES_H
+ */
+#ifndef OPENWITHHELPER_H
+#define OPENWITHHELPER_H
+#include "dfmplugin_utils_global.h"
 
-#include "dfm_common_service_global.h"
+#include <QObject>
+#include <QUrl>
 
-DSC_BEGIN_NAMESPACE
+DPUTILS_BEGIN_NAMESPACE
+class OpenWithHelper : public QObject
+{
+    Q_OBJECT
+public:
+    explicit OpenWithHelper(QObject *parent = nullptr);
 
-namespace OpenWith {
-namespace EventType {
-extern const int kOpenWith;
-}
-}
+    static QWidget *createOpenWithWidget(const QUrl &url);
 
-DSC_END_NAMESPACE
+signals:
 
-#endif   // OPENWITH_DEFINES_H
+public slots:
+};
+DPUTILS_END_NAMESPACE
+#endif   // OPENWITHHELPER_H

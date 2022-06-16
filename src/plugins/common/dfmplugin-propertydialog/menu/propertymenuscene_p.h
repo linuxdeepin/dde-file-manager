@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef OPENWITHMENUSCENE_P_H
-#define OPENWITHMENUSCENE_P_H
+#ifndef PROPERTYMENUSCENE_P_H
+#define PROPERTYMENUSCENE_P_H
 
 #include "propertymenuscene.h"
 
@@ -40,4 +40,4 @@ private:
 
 DPPROPERTYDIALOG_END_NAMESPACE
 
-#endif   // OPENWITHMENUSCENE_P_H
+#endif   // PROPERTYMENUSCENE_P_H

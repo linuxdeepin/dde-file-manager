@@ -37,7 +37,7 @@ public:
 
 protected:
     //创建函数列表
-    QHash<int, createControlViewFunc> constructList {};
+    QMultiHash<int, createControlViewFunc> constructList {};
     QHash<QString, createControlViewFunc> viewCreateFunctionHash {};
     QHash<QString, basicViewFieldFunc> basicViewFieldFuncHash {};
     QList<QString> propertyPathList {};
@@ -50,7 +50,7 @@ public:
      * /param index position to insert
      * /return true registration success. false registration failed
      */
-    bool registerControlExpand(createControlViewFunc view, int index = -1, QString *errorString = nullptr);
+    bool registerControlExpand(createControlViewFunc view, int index = -1);
 
     /*!
      * /brief Cancel widget extension registration

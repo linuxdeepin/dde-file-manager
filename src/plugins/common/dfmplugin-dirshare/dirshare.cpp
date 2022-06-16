@@ -47,7 +47,7 @@ bool DirShare::start()
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
 
-    PropertyDialogService::service()->registerControlExpand(DirShare::createShareControlWidget, 2, nullptr);
+    PropertyDialogService::service()->registerControlExpand(DirShare::createShareControlWidget, 2);
 
     return true;
 }

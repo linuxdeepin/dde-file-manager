@@ -23,7 +23,7 @@
 #ifndef OPENWITHDIALOG_H
 #define OPENWITHDIALOG_H
 
-#include "dfm-base/dfm_base_global.h"
+#include "dfmplugin_utils_global.h"
 
 #include "dialogs/basedialog/basedialog.h"
 
@@ -40,7 +40,7 @@ class QScrollArea;
 class QCheckBox;
 QT_END_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+DPUTILS_BEGIN_NAMESPACE
 
 class OpenWithDialogListItem : public QWidget
 {
@@ -65,7 +65,7 @@ private:
     QLabel *label;
 };
 
-class OpenWithDialog : public BaseDialog
+class OpenWithDialog : public DFMBASE_NAMESPACE::BaseDialog
 {
     Q_OBJECT
 public:
@@ -102,5 +102,5 @@ private:
 
     OpenWithDialogListItem *checkedItem { nullptr };
 };
-DFMBASE_END_NAMESPACE
+DPUTILS_END_NAMESPACE
 #endif   // OPENWITHDIALOG_H

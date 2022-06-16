@@ -24,7 +24,6 @@
 #include "menuutils.h"
 
 #include "services/common/menu/menu_defines.h"
-#include "services/common/openwith/openwithservice.h"
 
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/base/schemefactory.h"
@@ -230,7 +229,7 @@ bool OpenWithMenuScene::triggered(QAction *action)
 
     if (actProperty == ActionID::kOpenWithCustom) {
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
-        OpenWithService::service()->showOpenWithDialog(selectUrls);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_ShowOpenWithDialog", selectUrls);
         return true;
     }
 

@@ -87,13 +87,6 @@ FILE(GLOB TRASH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/trash/*.cpp"
 )
 
-FILE(GLOB OPENWITH_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/openwith/private/*.cpp"
-)
-
 FILE(GLOB EMBLEM_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/emblem/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/emblem/*.cpp"
@@ -111,7 +104,6 @@ add_library(${PROJECT_NAME}
     ${USERSHARE_FILES}
     ${PREVIEW_FILES}
     ${TRASH_FILES}
-    ${OPENWITH_FILES}
     ${EMBLEM_FILES}
 )
 

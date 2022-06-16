@@ -74,7 +74,7 @@ bool VideoPreview::setFileUrl(const QUrl &url)
     playerWidget->title->setText(info.title);
     playerWidget->title->adjustSize();
     statusBar->slider->setMaximum(static_cast<int>(info.duration));
-    videoUrl = QUrl(url.toLocalFile());
+    videoUrl = QUrl::fromLocalFile(url.toLocalFile());
 
     return true;
 }
