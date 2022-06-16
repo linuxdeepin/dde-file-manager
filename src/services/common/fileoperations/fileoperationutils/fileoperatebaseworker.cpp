@@ -396,6 +396,7 @@ bool FileOperateBaseWorker::doWriteFile(const AbstractFileInfoPointer &fromInfo,
 
         actionForWrite = doHandleErrorAndWait(fromInfo->url(), toInfo->url(), AbstractJobHandler::JobErrorType::kWriteError, errorStr);
         if (actionForWrite == AbstractJobHandler::SupportAction::kRetryAction) {
+            setStat(AbstractJobHandler::JobState::kRunningState);
             if (!toDevice->seek(currentPos)) {
                 AbstractJobHandler::SupportAction actionForWriteSeek = doHandleErrorAndWait(fromInfo->url(), toInfo->url(),
                                                                                             AbstractJobHandler::JobErrorType::kSeekError);
