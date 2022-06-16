@@ -86,7 +86,7 @@ void TraversalDirThread::run()
         if (stopFlag)
             break;
 
-        QUrl &&fileurl = dirIterator->next();
+        const QUrl &fileurl = dirIterator->next();
         if (!fileurl.isValid())
             continue;
 

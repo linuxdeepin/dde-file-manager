@@ -50,7 +50,7 @@ public:
 
     bool isValid() const;
     bool hasNext() const;
-    QString next() const;
+    QUrl next() const;
     QUrl nextUrl() const;
     quint64 fileCount() const;
     QSharedPointer<DFMIO::DFileInfo> fileInfo() const;

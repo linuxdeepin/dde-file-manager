@@ -51,9 +51,8 @@ public:
 
         bool succ = false;
         while (enumerator->hasNext()) {
-            const QString &path = enumerator->next();
+            const QUrl &urlNext = enumerator->next();
 
-            const QUrl &urlNext = QUrl::fromLocalFile(path);
             DecoratorFileInfo info(urlNext);
             if (info.isDir()) {
                 succ = deleteDir(urlNext);

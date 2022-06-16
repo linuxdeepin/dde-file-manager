@@ -95,25 +95,17 @@ bool DecoratorFileEnumerator::hasNext() const
     return false;
 }
 
-QString DecoratorFileEnumerator::next() const
+QUrl DecoratorFileEnumerator::next() const
 {
     if (d->denumerator)
         return d->denumerator->next();
 
-    return QString();
+    return QUrl();
 }
 
 QUrl DecoratorFileEnumerator::nextUrl() const
 {
-    const QString &path = next();
-    if (!path.isEmpty()) {
-        QUrl url = QUrl::fromLocalFile(path);
-        if (url.isValid())
-            return url;
-        else
-            return path;
-    }
-    return QUrl();
+    return next();
 }
 
 quint64 DecoratorFileEnumerator::fileCount() const

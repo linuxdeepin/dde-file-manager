@@ -73,9 +73,9 @@ LocalDirIterator::~LocalDirIterator()
  **/
 QUrl LocalDirIterator::next()
 {
-    if (d->dfmioDirIterator)
-        d->currentUrl = QUrl::fromLocalFile(d->dfmioDirIterator->next());
-
+    if (d->dfmioDirIterator) {
+        d->currentUrl = d->dfmioDirIterator->next();
+    }
     return d->currentUrl;
 }
 /*!

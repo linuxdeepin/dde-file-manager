@@ -109,7 +109,7 @@ bool LocalFileHandler::touchFile(const QUrl &url)
     DecoratorFileInfo targetFileInfo(url);
     const QString &suffix = targetFileInfo.suffix();
 
-    QString templateFile;
+    QUrl templateFile;
     DecoratorFileEnumerator enumerator(StandardPaths::location(StandardPaths::kTemplatesPath), {}, static_cast<DFMIO::DEnumerator::DirFilter>(static_cast<int32_t>(QDir::Files)));
     while (enumerator.hasNext()) {
         if (enumerator.fileInfo()->attribute(DFMIO::DFileInfo::AttributeID::kStandardSuffix) == suffix) {
@@ -118,7 +118,7 @@ bool LocalFileHandler::touchFile(const QUrl &url)
         }
     }
 
-    if (!templateFile.isEmpty()) {
+    if (templateFile.isValid()) {
         QByteArray arr = DecoratorFile(templateFile).readAll();
         if (!arr.isEmpty()) {
             qint64 writeCount = DecoratorFile(url).writeAll(arr, DFMIO::DFile::OpenFlag::kAppend);
@@ -510,13 +510,11 @@ bool LocalFileHandler::setPermissionsRecursive(const QUrl &url, QFileDevice::Per
             return false;
         bool succ = false;
         while (enumerator.hasNext()) {
-            const QString &path = enumerator.next();
-
-            const QUrl &urlNext = QUrl::fromLocalFile(path);
-            if (DecoratorFileInfo(urlNext).isDir()) {
-                succ = setPermissionsRecursive(urlNext, permissions);
+            const QUrl &url = enumerator.next();
+            if (DecoratorFileInfo(url).isDir()) {
+                succ = setPermissionsRecursive(url, permissions);
             } else {
-                succ = setPermissions(urlNext, permissions);
+                succ = setPermissions(url, permissions);
             }
         }
         succ = setPermissions(url, permissions);

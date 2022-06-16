@@ -520,15 +520,14 @@ bool FileOperateBaseWorker::deleteDir(const QUrl &fromUrl, const QUrl &toUrl, bo
 
     bool succ = false;
     while (enumerator.hasNext()) {
-        const QString &path = enumerator.next();
+        const QUrl &url = enumerator.next();
 
-        const QUrl &urlNext = QUrl::fromLocalFile(path);
-        if (DecoratorFileInfo(urlNext).isDir()) {
+        if (DecoratorFileInfo(url).isDir()) {
             if (force)
-                handler->setPermissions(urlNext, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
-            succ = deleteDir(urlNext, toUrl, skip, force);
+                handler->setPermissions(url, QFileDevice::ReadUser | QFileDevice::WriteUser | QFileDevice::ExeUser);
+            succ = deleteDir(url, toUrl, skip, force);
         } else {
-            succ = deleteFile(urlNext, toUrl, skip, force);
+            succ = deleteFile(url, toUrl, skip, force);
         }
         if (!succ)
             return false;
