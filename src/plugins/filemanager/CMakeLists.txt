@@ -15,4 +15,4 @@ add_subdirectory(dfmplugin-optical)
 add_subdirectory(dfmplugin-vault)
 add_subdirectory(dfmplugin-myshares)
 add_subdirectory(dfmplugin-smbbrowser)
-
+add_subdirectory(dfmplugin-avfsbrowser)
