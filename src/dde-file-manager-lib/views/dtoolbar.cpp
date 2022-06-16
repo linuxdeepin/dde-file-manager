@@ -556,5 +556,7 @@ void DToolBar::setEnterText(QString &text)
         text = "usershare:///";
     } else if (text.startsWith("computer:")) {
         text = "computer:///";
+    } else if (text.startsWith("trash:")) {
+        text = "trash:///"; //fix bug: 141489
     }
 }
