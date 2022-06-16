@@ -60,6 +60,7 @@ public:
     void registerTopWidgetCreator(const KeyType &scheme, const TopWidgetCreator &creator);
     bool isRegistedTopWidget(const KeyType &scheme) const;
     CustomTopWidgetInterface *createTopWidgetByUrl(const QUrl &url);
+    CustomTopWidgetInterface *createTopWidgetByScheme(const QString &scheme);
     void setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible);
     void setFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
     void setFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);

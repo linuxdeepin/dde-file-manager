@@ -70,6 +70,15 @@ CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
     return topWidgetCreators.value(theType)();
 }
 
+CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByScheme(const QString &scheme)
+{
+    if (!topWidgetCreators.contains(scheme)) {
+        qWarning() << "Scheme: " << scheme << "not registered!";
+        return nullptr;
+    }
+    return topWidgetCreators.value(scheme)();
+}
+
 void WorkspaceHelper::setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible)
 {
     WorkspaceWidget *workspaceWidget = findWorkspaceByWindowId(windowId);

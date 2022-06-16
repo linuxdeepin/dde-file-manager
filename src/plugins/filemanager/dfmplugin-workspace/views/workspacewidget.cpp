@@ -162,8 +162,18 @@ void WorkspaceWidget::closeTab(quint64 winId, const QUrl &url)
 
 void WorkspaceWidget::setCustomTopWidgetVisible(const QString &scheme, bool visible)
 {
-    if (topWidgets.contains(scheme) && views.count(scheme) > 0 && views[scheme]->widget()->isVisible()) {
+    if (topWidgets.contains(scheme)) {
         topWidgets[scheme]->setVisible(visible);
+    } else {
+        auto interface = WorkspaceHelper::instance()->createTopWidgetByScheme(scheme);
+        if (interface) {
+            TopWidgetPtr topWidgetPtr = QSharedPointer<QWidget>(interface->create());
+            if (topWidgetPtr) {
+                widgetLayout->insertWidget(widgetLayout->indexOf(tabBottomLine) + 1, topWidgetPtr.get());
+                topWidgets.insert(scheme, topWidgetPtr);
+                topWidgetPtr->setVisible(visible);
+            }
+        }
     }
 }
 
