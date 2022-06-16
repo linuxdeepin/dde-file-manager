@@ -35,12 +35,14 @@ DFMBASE_BEGIN_NAMESPACE
 
 class DeviceWatcher;
 class DeviceManager;
+class DiscDeviceScanner;
 class DeviceManagerPrivate
 {
     friend DeviceManager;
+    Q_DISABLE_COPY(DeviceManagerPrivate)
 
 public:
-    DeviceManagerPrivate(DeviceManager *qq);
+    explicit DeviceManagerPrivate(DeviceManager *qq);
 
 private:
     // private operations
@@ -51,6 +53,7 @@ private:
 
 private:
     DeviceWatcher *watcher { nullptr };
+    DiscDeviceScanner *discScanner { nullptr };
     bool isWatching = false;
     DeviceManager *q { nullptr };
 };

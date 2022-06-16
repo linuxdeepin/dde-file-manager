@@ -50,7 +50,7 @@ class DeviceManager : public QObject
 {
     friend class DeviceWatcher;
     Q_OBJECT
-    Q_DISABLE_COPY(DeviceManager);
+    Q_DISABLE_COPY(DeviceManager)
 
 public:
     inline static DeviceManager *instance()
@@ -60,7 +60,7 @@ public:
     }
 
     // device infos
-    QStringList getAllBlockDevID(GlobalServerDefines::DeviceQueryOptions opts = 0);
+    QStringList getAllBlockDevID(GlobalServerDefines::DeviceQueryOptions opts = {});
     QStringList getAllProtocolDevID();
     QVariantMap getBlockDevInfo(const QString &id, bool needReload = false);
     QVariantMap getProtocolDevInfo(const QString &id, bool needReload = false);
@@ -104,6 +104,7 @@ public:
     void startMonitor();
     void stopMonitor();
     bool isMonitoring();
+    void startOpticalDiscScan();   // call once
 
     void stopScanDrive(const QString &id);
     void stopAllScanTask();
@@ -133,6 +134,8 @@ signals:
     void protocolDevRemoved(const QString &id);
     void protocolDevMounted(const QString &id, const QString &mpt);
     void protocolDevUnmounted(const QString &id);
+
+    void opticalDiscWorkStateChanged(const QString &id, const QString &dev, bool working);
 
 private:
     explicit DeviceManager(QObject *parent = nullptr);

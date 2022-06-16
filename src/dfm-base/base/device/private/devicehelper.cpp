@@ -320,6 +320,7 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
 
     Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
     Application::dataPersistence()->sync();
+    Application::dataPersistence()->reload();
 
     qDebug() << "optical usage persistented: " << datas;
 }
@@ -327,7 +328,6 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
 void DeviceHelper::readOpticalInfo(QVariantMap &datas)
 {
     using namespace GlobalServerDefines;
-    Application::dataPersistence()->reload();
     QString tag { datas.value(DeviceProperty::kDevice).toString().mid(5) };
 
     if (Application::dataPersistence()->keys(kBurnAttribute).contains(tag)) {

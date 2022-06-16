@@ -23,11 +23,17 @@
 #include "burn.h"
 #include "menus/sendtodiscmenuscene.h"
 #include "utils/discstatemanager.h"
+#include "utils/burnhelper.h"
 #include "events/burneventreceiver.h"
 
 #include "services/common/menu/menuservice.h"
 
+#include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+
 #include <QWidget>
+#include <QTimer>
 
 DPBURN_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -42,6 +48,9 @@ bool Burn::start()
     bindScene("SendToMenu");
 
     DiscStateManager::instance()->initilaize();
+
+    connect(Application::dataPersistence(), &Settings::valueChanged, this, &Burn::onPersistenceDataChanged, Qt::DirectConnection);
+    DevMngIns->startOpticalDiscScan();
 
     return true;
 }
@@ -66,4 +75,16 @@ void Burn::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Erase", BurnEventReceiver::instance(), &BurnEventReceiver::handleErase);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_PasteTo", BurnEventReceiver::instance(), &BurnEventReceiver::handlePasteTo);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleCopyFilesResult);
+}
+
+void Burn::onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value)
+{
+    if (group != Persistence::kBurnStateGroup)
+        return;
+
+    qInfo() << "Burn working state changed: " << key << value;
+    auto &&map { value.toMap() };
+    auto &&id { map[Persistence::kIdKey].toString() };
+    auto &&working { map[Persistence::kWoringKey].toBool() };
+    emit DevMngIns->opticalDiscWorkStateChanged(id, key, working);
 }

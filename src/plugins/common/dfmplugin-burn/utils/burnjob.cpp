@@ -29,6 +29,7 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
+#include "dfm-base/utils/finallyutil.h"
 
 #include <QDebug>
 #include <QThread>
@@ -151,6 +152,10 @@ void AbstractBurnJob::run()
 {
     curDevId = { DeviceUtils::getBlockDeviceId(curDev) };
     JobInfoPointer info { new QMap<quint8, QVariant> };
+    BurnHelper::updateBurningStateToPersistence(curDevId, curDev, true);
+    FinallyUtil finaly([this]() {
+        BurnHelper::updateBurningStateToPersistence(curDevId, curDev, false);
+    });
 
     work();
 

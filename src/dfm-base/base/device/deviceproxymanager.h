@@ -68,6 +68,7 @@ public:
 
     bool connectToService();
     bool isMonitorWorking();
+    bool isDBusRuning();
 
     bool isFileOfExternalMounts(const QString &filePath);
     bool isFileOfProtocolMounts(const QString &filePath);

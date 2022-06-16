@@ -25,6 +25,7 @@
 #include "private/devicemanager_p.h"
 #include "private/devicehelper.h"
 #include "private/devicewatcher.h"
+#include "private/discdevicescanner.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -683,6 +684,11 @@ bool DeviceManager::isMonitoring()
     return d->isWatching;
 }
 
+void DeviceManager::startOpticalDiscScan()
+{
+    d->discScanner->initialize();
+}
+
 DeviceManager::DeviceManager(QObject *parent)
     : QObject(parent), d(new DeviceManagerPrivate(this))
 {
@@ -729,7 +735,9 @@ void DeviceManager::doAutoMount(const QString &id, DeviceType type)
 }
 
 DeviceManagerPrivate::DeviceManagerPrivate(DeviceManager *qq)
-    : watcher(new DeviceWatcher(qq)), q(qq)
+    : watcher(new DeviceWatcher(qq)),
+      discScanner(new DiscDeviceScanner(qq)),
+      q(qq)
 {
 }
 

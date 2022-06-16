@@ -26,6 +26,8 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 
 #include <DDialog>
 #include <QObject>
@@ -190,4 +192,14 @@ QList<QVariantMap> BurnHelper::discDataGroup()
     }
 
     return discDatas;
+}
+
+void BurnHelper::updateBurningStateToPersistence(const QString &id, const QString &dev, bool working)
+{
+    QVariantMap info;
+    info[Persistence::kIdKey] = id;
+    info[Persistence::kWoringKey] = working;
+
+    Application::dataPersistence()->setValue(Persistence::kBurnStateGroup, dev, info);
+    Application::dataPersistence()->sync();
 }

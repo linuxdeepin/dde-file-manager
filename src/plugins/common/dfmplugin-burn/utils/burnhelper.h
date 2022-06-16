@@ -30,6 +30,12 @@
 
 DPBURN_BEGIN_NAMESPACE
 
+namespace Persistence {
+inline constexpr char kBurnStateGroup[] { "BurnState" };
+inline constexpr char kWoringKey[] { "Working" };
+inline constexpr char kIdKey[] { "id" };
+}   // namespace Persistence
+
 class BurnHelper
 {
 public:
@@ -42,6 +48,7 @@ public:
     static QString burnDestDevice(const QUrl &url);
     static QString burnFilePath(const QUrl &url);
     static QList<QVariantMap> discDataGroup();
+    static void updateBurningStateToPersistence(const QString &id, const QString &dev, bool working);
 };
 
 DPBURN_END_NAMESPACE

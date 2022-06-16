@@ -20,34 +20,42 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BURN_H
-#define BURN_H
+#ifndef DISCDEVICESCANNER_H
+#define DISCDEVICESCANNER_H
 
-#include "dfmplugin_burn_global.h"
+#include "dfm-base/dfm_base_global.h"
 
-#include <dfm-framework/dpf.h>
+#include <QObject>
+#include <QTimer>
+#include <QDBusVariant>
 
-DPBURN_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
-class Burn : public DPF_NAMESPACE::Plugin
+class DiscDeviceScanner final : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "burn.json")
-
-    DPF_EVENT_NAMESPACE(DPBURN_NAMESPACE)
-    DPF_EVENT_REG_SLOT(slot_ShowBurnDialog)
-    DPF_EVENT_REG_SLOT(slot_Erase)
-    DPF_EVENT_REG_SLOT(slot_PasteTo)
 
 public:
-    virtual bool start() override;
+    explicit DiscDeviceScanner(QObject *parent = nullptr);
+
+    void initialize();
+
+private:
+    bool startScan();
+    void stopScan();
+    void updateScanState();
 
 private slots:
-    void bindScene(const QString &parentScene);
-    void bindEvents();
-    void onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value);
+    void scanOpticalDisc();
+    void onDevicePropertyChangedQVar(const QString &id, const QString &propertyName, const QVariant &var);
+    void onDevicePropertyChangedQDBusVar(const QString &id, const QString &propertyName, const QDBusVariant &var);
+    void onDiscWoringStateChanged(const QString &id, const QString &dev, bool working);
+
+private:
+    QScopedPointer<QTimer> discScanTimer { new QTimer };
+    QStringList discDevIdGroup;
 };
 
-DPBURN_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // BURN_H
+#endif   // DISCDEVICESCANNER_H

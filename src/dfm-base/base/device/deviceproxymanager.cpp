@@ -132,6 +132,11 @@ bool DeviceProxyManager::isMonitorWorking()
     return reply.value();
 }
 
+bool DeviceProxyManager::isDBusRuning()
+{
+    return d->isDBusRuning();
+}
+
 bool DeviceProxyManager::isFileOfExternalMounts(const QString &filePath)
 {
     const QStringList &&mpts = d->externalMounts.values();
