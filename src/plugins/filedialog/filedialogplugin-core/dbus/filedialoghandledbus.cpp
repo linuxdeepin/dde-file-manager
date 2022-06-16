@@ -151,7 +151,7 @@ bool FileDialogHandleDBus::testOption(int option) const
 
 qulonglong FileDialogHandleDBus::winId() const
 {
-    return widget()->winId();
+    return FileDialogHandle::winId();
 }
 
 void FileDialogHandleDBus::setWindowTitle(const QString &title)

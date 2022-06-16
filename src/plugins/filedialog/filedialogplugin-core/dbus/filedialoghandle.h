@@ -61,6 +61,7 @@ public Q_SLOTS:
     QString selectedNameFilter() const;
     void selectNameFilterByIndex(int index);
     int selectedNameFilterIndex() const;
+    qulonglong winId() const;
 
     QDir::Filters filter() const;
     void setFilter(QDir::Filters filters);
@@ -100,6 +101,9 @@ public Q_SLOTS:
     int exec();
     void open();
     void reject();
+
+private:
+    void waitForWindowShow() const;
 
 Q_SIGNALS:
     void finished(int result);

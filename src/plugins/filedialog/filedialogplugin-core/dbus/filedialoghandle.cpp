@@ -32,6 +32,7 @@
 #include <QPointer>
 #include <QWindow>
 #include <QTimer>
+#include <QEventLoop>
 
 #include <mutex>
 
@@ -244,6 +245,14 @@ int FileDialogHandle::selectedNameFilterIndex() const
         return d->dialog->selectedNameFilterIndex();
 
     return {};
+}
+
+qulonglong FileDialogHandle::winId() const
+{
+    D_DC(FileDialogHandle);
+
+    waitForWindowShow();
+    return d->dialog->winId();
 }
 
 QDir::Filters FileDialogHandle::filter() const
@@ -517,4 +526,12 @@ void FileDialogHandle::reject()
 
     if (d->dialog)
         d->dialog->reject();
+}
+
+void FileDialogHandle::waitForWindowShow() const
+{
+    QEventLoop loop;
+    connect(d_func()->dialog, &FileDialog::windowShowed, &loop, &QEventLoop::quit);
+    QTimer::singleShot(500, &loop, &QEventLoop::quit);
+    loop.exec();
 }
