@@ -172,9 +172,10 @@ bool AbstractBurnJob::readyToWork()
     }
 
     bool blank { qvariant_cast<bool>(map[DeviceProperty::kOpticalBlank]) };
-    // for dvd+rw disc, erase operation only overwrite some blocks which used to present filesystem,
+    // for dvd+rw/dvd-rw disc, erase operation only overwrite some blocks which used to present filesystem,
     // so the blank field is still false even if it can be write datas from the beginning,
-    if (static_cast<MediaType>(map[DeviceProperty::kOpticalMediaType].toUInt()) == MediaType::kDVD_PLUS_RW)
+    auto mediaType { static_cast<MediaType>(map[DeviceProperty::kOpticalMediaType].toUInt()) };
+    if (mediaType == MediaType::kDVD_PLUS_RW || mediaType == MediaType::kDVD_RW)
         blank |= map[DeviceProperty::kSizeTotal].toULongLong() == map[DeviceProperty::kSizeFree].toULongLong();
 
     if (blank) {
@@ -355,7 +356,6 @@ void EraseJob::work()
     qInfo() << "End erase device: " << curDev;
 
     comfort();
-
     DeviceManager::instance()->rescanBlockDev(curDevId);
 
     // Due to disc don't ejected after erase, we must readlod optical info again
