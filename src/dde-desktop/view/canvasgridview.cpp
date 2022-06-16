@@ -3564,6 +3564,7 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         });
         menu->popup(t_tmpPoint);
         menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
+        DFileMenuManager::menuFilterHiddenActions(menu, DD_MENU_ACTION_HIDDEN);
         eventLoop.exec();
         d->menuLoop = nullptr;
         menu->deleteLater();
@@ -3805,6 +3806,7 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         });
         menu->popup(t_tmpPoint);
         menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
+        DFileMenuManager::menuFilterHiddenActions(menu, DD_MENU_ACTION_HIDDEN);
         eventLoop.exec();
         d->menuLoop = nullptr;
         menu->deleteLater();
