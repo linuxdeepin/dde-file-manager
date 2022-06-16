@@ -71,7 +71,7 @@ void Tag::initialize()
 bool Tag::start()
 {
     PropertyDialogService::service()->registerControlExpand(Tag::createTagWidget, 0);
-    DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget, 1);
+    DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget);
 
     DetailFilterTypes filter = DetailFilterType::kFileSizeField;
     filter |= DetailFilterType::kFileChangeTImeField;

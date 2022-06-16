@@ -39,7 +39,7 @@ public:
 
 protected:
     //! 创建函数列表
-    QHash<int, createControlViewFunc> constructList {};
+    QMultiHash<int, createControlViewFunc> constructList {};
     QHash<QString, basicViewFieldFunc> basicViewFieldFuncHash {};
     QHash<QString, DetailFilterTypes> detailFilterHash {};
 

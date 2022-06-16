@@ -54,7 +54,7 @@ public:
     /*!
      * /brief Widget extension registration
      * /param view Function pointer to create widget
-     * /param index position to insert
+     * /param index position to insert, if index equal -1 append widget to tail
      * /return true registration success. false registration failed
      */
     bool registerControlExpand(createControlViewFunc view, int index = -1);

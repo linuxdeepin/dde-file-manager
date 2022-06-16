@@ -73,6 +73,9 @@ bool DetailView::addCustomControl(QWidget *widget)
  */
 bool DetailView::insertCustomControl(int index, QWidget *widget)
 {
+    // final one is stretch
+    index = index == -1 ? vLayout->count() - 1 : qMin(vLayout->count() - 1, index);
+
     if (widget) {
         widget->setParent(this);
         QFrame *frame = new QFrame(this);
@@ -124,7 +127,6 @@ void DetailView::initInfoUI()
     scrollArea->setFrameShape(QFrame::NoFrame);
 
     expandFrame = new QFrame(this);
-
     expandFrame->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     scrollArea->setWidget(expandFrame);
 

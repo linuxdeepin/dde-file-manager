@@ -39,8 +39,7 @@ RegisterExpandProcess *RegisterExpandProcess::instance()
 
 bool RegisterExpandProcess::registerControlExpand(createControlViewFunc view, int index)
 {
-
-    if (constructList.keys().contains(index)) {
+    if (constructList.keys().contains(index) && index != -1) {
         QString error = "The current index has registered the associated construction class";
         qInfo() << error;
         return false;
