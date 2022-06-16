@@ -138,7 +138,11 @@ QUrl MasteredMediaFileInfo::parentUrl() const
 
 bool MasteredMediaFileInfo::canDrop()
 {
-    return isWritable();
+    if (!OpticalHelper::burnIsOnDisc(backerUrl))
+        return true;
+    QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url())) };
+    quint64 avil { qvariant_cast<quint64>(devInfoMap[DeviceProperty::kSizeFree]) };
+    return avil > 0;
 }
 
 bool MasteredMediaFileInfo::canRename() const

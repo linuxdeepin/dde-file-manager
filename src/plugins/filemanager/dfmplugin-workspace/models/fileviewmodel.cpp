@@ -225,26 +225,11 @@ const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    if (!d->root.isNull() && d->root->url() == url) {
+    if (url.scheme() == Global::kFile && !d->root.isNull() && d->root->url() == url) {
         QApplication::restoreOverrideCursor();
         QModelIndex root = createIndex(0, 0, d->root.data());
 
         d->canFetchMoreFlag = true;
-
-        // other scheme maybe has self file manage method
-        // see: bug-138643
-        if (url.scheme() != Global::kFile) {
-            clear();
-            fetchMore(root);
-        }
-
-        //! The watcher is restarted after being suspended to solve the problem that
-        //! the same file in the same path cannot be monitored after being deleted and recreated.
-        d->watcher = WatcherFactory::create<AbstractFileWatcher>(url);
-        if (!d->watcher.isNull()) {
-            d->watcher->stopWatcher();
-            d->watcher->startWatcher();
-        }
 
         return root;
     }
