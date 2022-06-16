@@ -50,6 +50,7 @@ bool Burn::start()
     DiscStateManager::instance()->initilaize();
 
     connect(Application::dataPersistence(), &Settings::valueChanged, this, &Burn::onPersistenceDataChanged, Qt::DirectConnection);
+    Application::dataPersistence()->removeGroup(Persistence::kBurnStateGroup);
     DevMngIns->startOpticalDiscScan();
 
     return true;

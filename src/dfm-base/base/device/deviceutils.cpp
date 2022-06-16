@@ -109,6 +109,18 @@ bool DeviceUtils::isAutoMountAndOpenEnable()
     return Application::genericAttribute(Application::GenericAttribute::kAutoMountAndOpen).toBool();
 }
 
+bool DeviceUtils::isWorkingOpticalDiscDev(const QString &dev)
+{
+    static constexpr char kBurnStateGroup[] { "BurnState" };
+    static constexpr char kWoringKey[] { "Working" };
+
+    if (Application::dataPersistence()->keys(kBurnStateGroup).contains(dev)) {
+        const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnStateGroup, dev).toMap();
+        return info.value(kWoringKey).toBool();
+    }
+    return false;
+}
+
 bool DeviceUtils::isSamba(const QUrl &url)
 {
     static const QString smbMatch { "(^/run/user/\\d+/gvfs/smb|^/root/\\.gvfs/smb|^/media/[\\s\\S]*/smbmounts)" };   // TODO(xust) /media/$USER/smbmounts might be changed in the future.}

@@ -245,7 +245,12 @@ QMenu *BlockEntryFileEntity::createMenu()
                 act->setDisabled(true);
         }
     }
-
+    // disbale all actiosn if dev working
+    QString &&dev { datas.value(DeviceProperty::kDevice).toString() };
+    if (DeviceUtils::isWorkingOpticalDiscDev(dev)) {
+        for (auto act : menu->actions())
+            act->setDisabled(true);
+    }
     return menu;
 }
 

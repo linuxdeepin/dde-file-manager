@@ -55,6 +55,7 @@ public:
     static QString convertSuitableDisplayName(const QVariantHash &devInfo);
     static bool isAutoMountEnable();
     static bool isAutoMountAndOpenEnable();
+    static bool isWorkingOpticalDiscDev(const QString &dev);
 
     static bool isSamba(const QUrl &url);
     static bool isFtp(const QUrl &url);
