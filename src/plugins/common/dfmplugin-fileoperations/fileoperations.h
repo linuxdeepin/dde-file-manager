@@ -26,12 +26,18 @@
 #include "dfmplugin_fileoperations_global.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 class FileOperations : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "fileoperations.json")
+
+    DPF_EVENT_NAMESPACE(DPFILEOPERATIONS_NAMESPACE)
+
+    // hook events
+    DPF_EVENT_REG_HOOK(hook_OpenLocalFiles);
 
 public:
     virtual void initialize() override;

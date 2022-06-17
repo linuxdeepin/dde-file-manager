@@ -191,7 +191,7 @@ void Optical::addPropertySettings()
 
 void Optical::bindEvents()
 {
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_DeleteFilesShortcut", &OpticalEventReceiver::instance(),
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleDeleteFilesShortcut);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_CheckDragDropAction", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleCheckDragDropAction);

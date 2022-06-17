@@ -25,16 +25,17 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/file/local/localfileinfo.h"
 
 DPAVFSBROWSER_BEGIN_NAMESPACE
 
-class AvfsFileInfoPrivate;
 class AvfsFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
 public:
     explicit AvfsFileInfo(const QUrl &url);
     virtual ~AvfsFileInfo();
+
+    virtual QUrl url() const override;
 };
 
 DPAVFSBROWSER_END_NAMESPACE

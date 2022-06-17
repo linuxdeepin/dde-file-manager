@@ -21,5 +21,83 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "avfseventhandler.h"
+#include "utils/avfsutils.h"
+
+#include "services/common/propertydialog/property_defines.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/file/local/localfilehandler.h"
+#include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/utils/decorator/decoratorfileinfo.h"
+#include "dfm-base/utils/clipboard.h"
+
+#include <dfm-framework/event/event.h>
 
 DPAVFSBROWSER_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)
+{
+    if (!AvfsUtils::archivePreviewEnabled())
+        return false;
+
+    bool takeHandle = false;
+    QList<QUrl> archives, others;
+    for (auto url : urls) {
+        if (url.scheme() != Global::kFile && url.scheme() != AvfsUtils::scheme())
+            return false;
+        if (url.scheme() == AvfsUtils::scheme()) {
+            takeHandle = true;
+            url = AvfsUtils::avfsUrlToLocal(url);
+        }
+
+        if (AvfsUtils::isSupportedArchives(url.path())) {
+            takeHandle = true;
+            archives << AvfsUtils::localArchiveToAvfsUrl(url);
+        } else if (url.path().startsWith(AvfsUtils::avfsMountPoint()) && DecoratorFileInfo(url.path()).isDir()) {
+            takeHandle = true;
+            archives << AvfsUtils::localUrlToAvfsUrl(url);
+        } else {
+            others << url;
+        }
+    }
+
+    if (!takeHandle)
+        return false;
+
+    if (archives.count() > 0)
+        openArchivesAsDir(winId, archives);
+
+    if (others.count() > 0) {
+        LocalFileHandler handler;
+        bool ok = std::all_of(others.cbegin(), others.cend(), [&](const QUrl &u) { return handler.openFile({ u }); });
+        if (!ok)
+            qWarning() << "open files failed: " << others;
+    }
+    return true;
+}
+
+bool AvfsEventHandler::hookEnterPressed(quint64 winId, const QList<QUrl> &urls)
+{
+    return hookOpenFiles(winId, urls);
+}
+
+void AvfsEventHandler::openArchivesAsDir(quint64 winId, const QList<QUrl> &urls)
+{
+    if (urls.count() == 1) {
+        dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, urls.first());
+    } else {
+        std::for_each(urls.cbegin(), urls.cend(), [](const QUrl &url) {
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+        });
+    }
+}
+
+void AvfsEventHandler::writeToClipbord(quint64 winId, const QList<QUrl> &urls)
+{
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, winId, ClipBoard::kCopyAction, urls);
+}
+
+void AvfsEventHandler::showProperty(const QList<QUrl> &urls)
+{
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+}

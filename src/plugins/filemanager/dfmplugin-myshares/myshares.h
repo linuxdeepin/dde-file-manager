@@ -46,7 +46,7 @@ protected Q_SLOTS:
 private:
     void addToSidebar();
     void regMyShareToSearch();
-    void bindSubScene(const QString &scene);
+    void claimSubScene(const QString &scene);
     void hookEvent();
 };
 

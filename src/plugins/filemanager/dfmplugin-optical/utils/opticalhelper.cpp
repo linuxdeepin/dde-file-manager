@@ -87,7 +87,7 @@ QUrl OpticalHelper::localDiscFile(const QUrl &dest)
     if (devFile.isEmpty())
         return {};
 
-    QString &&mntPoint { DeviceUtils::getMountPointOfDevice(devFile) };
+    QString &&mntPoint { DeviceUtils::getMountInfo(devFile) };
     if (mntPoint.isEmpty())
         return {};
 

@@ -44,7 +44,13 @@ QString DeviceUtils::getBlockDeviceId(const QString &deviceDesc)
     return kBlockDeviceIdPrefix + dev;
 }
 
-QString DeviceUtils::getMountPointOfDevice(const QString &devPath)
+/*!
+ * \brief DeviceUtils::getMountInfo
+ * \param in: the mount src or target, /dev/sda is a source and /media/$USER/sda is target, e.g.
+ * \param lookForMpt: if setted to true, then treat 'in' like a mount source
+ * \return if lookForMpt is setted to true, then returns the mount target, otherwise returns mount source.
+ */
+QString DeviceUtils::getMountInfo(const QString &in, bool lookForMpt)
 {
     libmnt_table *tab { mnt_new_table() };
     if (!tab)
@@ -55,10 +61,12 @@ QString DeviceUtils::getMountPointOfDevice(const QString &devPath)
         return {};
     }
 
-    std::string stdPath { devPath.toStdString() };
-    auto fs = mnt_table_find_source(tab, stdPath.c_str(), MNT_ITER_BACKWARD);
+    auto query = lookForMpt ? mnt_table_find_source : mnt_table_find_target;
+    auto get = lookForMpt ? mnt_fs_get_target : mnt_fs_get_source;
+    std::string stdPath { in.toStdString() };
+    auto fs = query(tab, stdPath.c_str(), MNT_ITER_BACKWARD);
     if (fs)
-        return { mnt_fs_get_target(fs) };
+        return { get(fs) };
 
     qWarning() << "Invalid libmnt_fs*";
     return {};

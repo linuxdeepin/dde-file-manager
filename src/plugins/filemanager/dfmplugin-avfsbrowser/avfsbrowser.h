@@ -43,6 +43,8 @@ public:
 
 private:
     void followEvents();
+    void regCrumb();
+    void claimSubScene(const QString &subScene);
 };
 
 DPAVFSBROWSER_END_NAMESPACE

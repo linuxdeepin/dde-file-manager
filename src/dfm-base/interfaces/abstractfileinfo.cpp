@@ -750,17 +750,10 @@ QString DFMBASE_NAMESPACE::AbstractFileInfo::sizeDisplayName() const
 {
     CALL_PROXY(sizeDisplayName());
 
-    if (isDir()) {
-        int size = countChildFile();
-
-        if (size <= 1) {
-            return QObject::tr("%1 item").arg(size);
-        } else {
-            return QObject::tr("%1 items").arg(size);
-        }
-    } else {
+    if (isDir())
+        return "-";   // for dir don't display items count, highly improve the view's performance
+    else
         return FileUtils::formatSize(size());
-    }
 }
 
 /*!

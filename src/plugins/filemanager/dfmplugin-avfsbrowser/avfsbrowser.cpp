@@ -26,26 +26,53 @@
 #include "files/avfsfileiterator.h"
 #include "utils/avfsutils.h"
 #include "menu/avfsmenuscene.h"
+#include "events/avfseventhandler.h"
 
 #include "services/common/menu/menuservice.h"
+#include "services/common/delegate/delegateservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
+#include "services/filemanager/titlebar/titlebarservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+
+#include <QDebug>
 
 DPAVFSBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void AvfsBrowser::initialize()
 {
+    UrlRoute::regScheme(AvfsUtils::scheme(), "/", {}, true);
+
     InfoFactory::regClass<AvfsFileInfo>(AvfsUtils::scheme());
     WatcherFactory::regClass<AvfsFileWatcher>(AvfsUtils::scheme());
     DirIteratorFactory::regClass<AvfsFileIterator>(AvfsUtils::scheme());
 
-    DSC_USE_NAMESPACE
-    MenuService::service()->registerScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator);
+    followEvents();
 }
 
 bool AvfsBrowser::start()
 {
+    qDebug() << "avfs mounted? " << AvfsUtils::isAvfsMounted() << ", archive preview enabled? " << AvfsUtils::archivePreviewEnabled();
+    if (AvfsUtils::archivePreviewEnabled())
+        AvfsUtils::mountAvfs();
+    connect(Application::instance(), &Application::previewCompressFileChanged,
+            this, [](bool enable) { enable ? AvfsUtils::mountAvfs() : AvfsUtils::unmountAvfs(); }, Qt::DirectConnection);
+
+    DSC_USE_NAMESPACE
+    DelegateService::service()->registerUrlTransform(AvfsUtils::scheme(), &AvfsUtils::avfsUrlToLocal);
+    MenuService::service()->registerScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator);
+
+    DSB_FM_USE_NAMESPACE
+    WorkspaceService::service()->addScheme(AvfsUtils::scheme());
+    WorkspaceService::service()->setWorkspaceMenuScene(AvfsUtils::scheme(), AvfsMenuSceneCreator::name());
+
+    regCrumb();
+    claimSubScene("SortAndDisplayMenu");   //  yours last second but it's mine now
+    claimSubScene("OpenWithMenu");   //  yours last second but it's mine now
+
     return true;
 }
 
@@ -56,4 +83,32 @@ dpf::Plugin::ShutdownFlag AvfsBrowser::stop()
 
 void AvfsBrowser::followEvents()
 {
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_OpenLocalFiles", AvfsEventHandler::instance(), &AvfsEventHandler::hookOpenFiles);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_EnterPressed", AvfsEventHandler::instance(), &AvfsEventHandler::hookEnterPressed);
+}
+
+void AvfsBrowser::regCrumb()
+{
+    DSB_FM_USE_NAMESPACE
+    TitleBar::CustomCrumbInfo info;
+    info.scheme = AvfsUtils::scheme();
+    info.supportedCb = [](const QUrl &url) { return url.scheme() == AvfsUtils::scheme(); };
+    info.seperateCb = &AvfsUtils::seperateUrl;
+    TitleBarService::service()->addCustomCrumbar(info);
+}
+
+void AvfsBrowser::claimSubScene(const QString &subScene)
+{
+    DSC_USE_NAMESPACE
+    if (MenuService::service()->contains(subScene)) {
+        MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
+    } else {
+        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
+            if (subScene == addedScene) {
+                MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
+                MenuService::service()->disconnect(this);
+            }
+        },
+                Qt::DirectConnection);
+    }
 }

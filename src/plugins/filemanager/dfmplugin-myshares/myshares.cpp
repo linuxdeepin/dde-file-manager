@@ -59,7 +59,7 @@ void MyShares::initialize()
     DirIteratorFactory::regClass<ShareIterator>(ShareUtils::scheme());
     WatcherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
     MenuService::service()->registerScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
-    bindSubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
+    claimSubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
 
     DSB_FM_USE_NAMESPACE
     connect(WindowsService::service(), &WindowsService::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
@@ -155,7 +155,7 @@ void MyShares::regMyShareToSearch()
     SearchService::service()->regCustomSearchInfo(info);
 }
 
-void MyShares::bindSubScene(const QString &scene)
+void MyShares::claimSubScene(const QString &scene)
 {
     DSC_USE_NAMESPACE
     if (MenuService::service()->contains(scene)) {
@@ -173,9 +173,9 @@ void MyShares::bindSubScene(const QString &scene)
 
 void MyShares::hookEvent()
 {
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_DeleteFilesShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockDelete);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_MoveToTrashShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockMoveToTrash);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_PasteFilesShortcut", ShareEventHelper::instance(), &ShareEventHelper::blockPaste);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", ShareEventHelper::instance(), &ShareEventHelper::blockDelete);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_MoveToTrash", ShareEventHelper::instance(), &ShareEventHelper::blockMoveToTrash);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", ShareEventHelper::instance(), &ShareEventHelper::blockPaste);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendOpenWindow", ShareEventHelper::instance(), &ShareEventHelper::hookSendOpenWindow);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendChangeCurrentUrl", ShareEventHelper::instance(), &ShareEventHelper::hookSendChangeCurrentUrl);
 }

@@ -30,12 +30,15 @@
 DPAVFSBROWSER_BEGIN_NAMESPACE
 
 class AvfsMenuScene;
-class AvfsMenuScenePrivate: public DFMBASE_NAMESPACE::AbstractMenuScenePrivate {
+class AvfsMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
+{
     friend class AvfsMenuScene;
+
+    bool showOpenWith { false };
 
 public:
     explicit AvfsMenuScenePrivate(AvfsMenuScene *qq);
 };
 
 DPAVFSBROWSER_END_NAMESPACE
-#endif // AVFSMENUSCENE_P_H
+#endif   // AVFSMENUSCENE_P_H

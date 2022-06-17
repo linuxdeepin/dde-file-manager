@@ -77,6 +77,10 @@ bool ShortcutHelper::normalKeyPressEventHandle(const QKeyEvent *event)
     case Qt::Key_Enter: {
         // Todo(yanghao):editingIndex handle
         const auto &urls = view->selectedUrlList();
+        quint64 winId = WorkspaceHelper::instance()->windowId(view);
+        if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_EnterPressed", winId, urls))
+            return true;
+
         int dirCount = 0;
         for (const QUrl &url : urls) {
             AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
@@ -232,7 +236,7 @@ void ShortcutHelper::cutFiles()
 void ShortcutHelper::pasteFiles()
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_PasteFilesShortcut", windowId, view->rootUrl()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PasteFiles", windowId, view->rootUrl()))
         return;
 
     FileOperatorHelperIns->pasteFiles(view);
@@ -249,7 +253,7 @@ void ShortcutHelper::deleteFiles()
         return;
 
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_DeleteFilesShortcut", windowId, view->selectedUrlList()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_DeleteFiles", windowId, view->selectedUrlList()))
         return;
 
     // Todo(yanghao):only support trash on root url
@@ -262,7 +266,7 @@ void ShortcutHelper::deleteFiles()
 void ShortcutHelper::moveToTrash()
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    if (dpfHookSequence->run(kCurrentEventSpace, "hook_MoveToTrashShortcut", windowId, view->selectedUrlList()))
+    if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_MoveToTrash", windowId, view->selectedUrlList()))
         return;
     // Todo(lanxs): QUrl to LocalFile
     // complete deletion eg: gvfs, vault

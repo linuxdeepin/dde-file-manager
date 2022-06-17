@@ -29,4 +29,14 @@
 #define DPAVFSBROWSER_END_NAMESPACE }
 #define DPAVFSBROWSER_USE_NAMESPACE using namespace DPAVFSBROWSER_NAMESPACE;
 
+DPAVFSBROWSER_BEGIN_NAMESPACE
+
+namespace AvfsMenuActionId {
+inline constexpr char kOpen[] { "act-avfs-open" };
+inline constexpr char kCopy[] { "act-avfs-copy" };
+inline constexpr char kProperty[] { "act-avfs-property" };
+}
+
+DPAVFSBROWSER_END_NAMESPACE
+
 #endif   // DFMPLUGIN_AVFSBROWSER_GLOBAL_H

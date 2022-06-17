@@ -584,6 +584,8 @@ bool LocalFileHandler::launchApp(const QString &desktopFilePath, const QStringLi
         }
     }
 
+    // url path will be truncated at the index of '#', so replace it if it's real existed in url. (mostly it's for avfs archive paths)
+    std::for_each(newFileUrls.begin(), newFileUrls.end(), [](QString &path) { path.replace("#", "%23"); });
     bool ok = launchAppByDBus(desktopFilePath, newFileUrls);
     if (!ok) {
         ok = launchAppByGio(desktopFilePath, newFileUrls);

@@ -22,12 +22,15 @@
 */
 #include "avfsfileiterator.h"
 #include "private/avfsfileiterator_p.h"
+#include "utils/avfsutils.h"
+
+#include <QDebug>
 
 DPAVFSBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 AvfsFileIterator::AvfsFileIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)
-    : LocalDirIterator(url, nameFilters, filters, flags), d(new AvfsFileIteratorPrivate(this))
+    : LocalDirIterator(AvfsUtils::avfsUrlToLocal(url), nameFilters, filters, flags), d(new AvfsFileIteratorPrivate(url, this))
 {
 }
 
@@ -35,29 +38,29 @@ AvfsFileIterator::~AvfsFileIterator()
 {
 }
 
-AvfsFileIteratorPrivate::AvfsFileIteratorPrivate(AvfsFileIterator *qq)
-    : q(qq)
+AvfsFileIteratorPrivate::AvfsFileIteratorPrivate(const QUrl &root, AvfsFileIterator *qq)
+    : q(qq), root(root)
 {
 }
 
 QUrl AvfsFileIterator::next()
 {
-    return {};
+    return AvfsUtils::localUrlToAvfsUrl(LocalDirIterator::next());
 }
 
 bool AvfsFileIterator::hasNext() const
 {
-    return false;
+    return LocalDirIterator::hasNext();
 }
 
 QString AvfsFileIterator::fileName() const
 {
-    return "";
+    return LocalDirIterator::fileName();
 }
 
 QUrl AvfsFileIterator::fileUrl() const
 {
-    return {};
+    return AvfsUtils::localUrlToAvfsUrl(LocalDirIterator::fileUrl());
 }
 
 const AbstractFileInfoPointer AvfsFileIterator::fileInfo() const
@@ -67,5 +70,5 @@ const AbstractFileInfoPointer AvfsFileIterator::fileInfo() const
 
 QUrl AvfsFileIterator::url() const
 {
-    return {};
+    return d->root;
 }

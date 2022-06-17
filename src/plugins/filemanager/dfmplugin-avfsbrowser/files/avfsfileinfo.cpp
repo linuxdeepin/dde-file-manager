@@ -23,6 +23,9 @@
 
 #include "avfsfileinfo.h"
 #include "private/avfsfileinfo_p.h"
+#include "utils/avfsutils.h"
+
+#include "dfm-base/base/schemefactory.h"
 
 DPAVFSBROWSER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -30,9 +33,19 @@ DFMBASE_USE_NAMESPACE
 AvfsFileInfo::AvfsFileInfo(const QUrl &url)
     : AbstractFileInfo(url, new AvfsFileInfoPrivate(this))
 {
+    setProxy(InfoFactory::create<AbstractFileInfo>(AvfsUtils::avfsUrlToLocal(url)));
+}
+
+AvfsFileInfo::~AvfsFileInfo()
+{
 }
 
 AvfsFileInfoPrivate::AvfsFileInfoPrivate(AvfsFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
 {
+}
+
+QUrl AvfsFileInfo::url() const
+{
+    return dptr->url;
 }

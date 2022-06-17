@@ -190,7 +190,7 @@ void MasteredMediaFileInfo::backupInfo(const QUrl &url)
 
     if (OpticalHelper::burnIsOnDisc(url)) {
         QString &&devFile { OpticalHelper::burnDestDevice(url) };
-        QString &&mnt { DeviceUtils::getMountPointOfDevice(devFile) };
+        QString &&mnt { DeviceUtils::getMountInfo(devFile) };
         QString id { DeviceUtils::getBlockDeviceId(OpticalHelper::burnDestDevice(url)) };
         devInfoMap = DevProxyMng->queryBlockInfo(id);
         if (mnt.isEmpty())

@@ -54,13 +54,14 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_FetchCustomRoleDisplayName)
     DPF_EVENT_REG_HOOK(hook_FetchCustomRoleData)
     DPF_EVENT_REG_HOOK(hook_CheckDragDropAction)
-    DPF_EVENT_REG_HOOK(hook_PasteFilesShortcut)
-    DPF_EVENT_REG_HOOK(hook_DeleteFilesShortcut)
-    DPF_EVENT_REG_HOOK(hook_MoveToTrashShortcut)
     DPF_EVENT_REG_HOOK(hook_FileDragMove)
     DPF_EVENT_REG_HOOK(hook_SendOpenWindow)
     DPF_EVENT_REG_HOOK(hook_SendChangeCurrentUrl)
     DPF_EVENT_REG_HOOK(hook_FileDrop)
+    DPF_EVENT_REG_HOOK(hook_ShortCut_PasteFiles)
+    DPF_EVENT_REG_HOOK(hook_ShortCut_DeleteFiles)
+    DPF_EVENT_REG_HOOK(hook_ShortCut_MoveToTrash)
+    DPF_EVENT_REG_HOOK(hook_ShortCut_EnterPressed);
 
 public:
     virtual void initialize() override;

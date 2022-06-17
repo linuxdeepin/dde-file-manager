@@ -781,6 +781,10 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
             return ok;
         }
     }
+
+    if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_OpenLocalFiles", windowId, urls))
+        return true;
+
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     ok = fileHandler.openFiles(urls);
     if (!ok) {

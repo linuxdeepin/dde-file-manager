@@ -25,6 +25,8 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
+#include <QUrl>
+
 DPAVFSBROWSER_BEGIN_NAMESPACE
 
 class AvfsFileIterator;
@@ -33,10 +35,11 @@ class AvfsFileIteratorPrivate
     friend class AvfsFileIterator;
 
 public:
-    explicit AvfsFileIteratorPrivate(AvfsFileIterator *qq);
+    explicit AvfsFileIteratorPrivate(const QUrl &root, AvfsFileIterator *qq);
 
 private:
     AvfsFileIterator *q { nullptr };
+    QUrl root;
 };
 
 DPAVFSBROWSER_END_NAMESPACE

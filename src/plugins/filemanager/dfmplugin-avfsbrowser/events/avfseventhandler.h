@@ -25,11 +25,29 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
+#include <QUrl>
+#include <QList>
+
 DPAVFSBROWSER_BEGIN_NAMESPACE
 
-class AvfsEventHandler
+class AvfsEventHandler : public QObject
 {
+    AvfsEventHandler() {};
+    Q_DISABLE_COPY(AvfsEventHandler);
+
 public:
+    inline static AvfsEventHandler *instance()
+    {
+        static AvfsEventHandler ins;
+        return &ins;
+    }
+
+    bool hookOpenFiles(quint64 winId, const QList<QUrl> &urls);
+    bool hookEnterPressed(quint64 winId, const QList<QUrl> &urls);
+
+    void openArchivesAsDir(quint64 winId, const QList<QUrl> &urls);
+    void writeToClipbord(quint64 winId, const QList<QUrl> &urls);
+    void showProperty(const QList<QUrl> &urls);
 };
 
 DPAVFSBROWSER_END_NAMESPACE
