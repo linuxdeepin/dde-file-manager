@@ -14,7 +14,7 @@
             "visibility":"private"
         },
         "dfm.recent.hidden":{
-            "value":true,
+            "value":false,
             "serial":0,
             "flags":[],
             "name":"隐藏最近使用",
