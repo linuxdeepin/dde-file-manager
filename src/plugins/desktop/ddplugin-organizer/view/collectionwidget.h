@@ -39,7 +39,7 @@ class CollectionWidget : public Dtk::Widget::DBlurEffectWidget
     friend class CollectionWidgetPrivate;
 public:
     explicit CollectionWidget(QWidget *parent = nullptr);
-    ~CollectionWidget();
+    ~CollectionWidget() override;
 
     void setModel(QAbstractItemModel *model);
     QList<QUrl> urls() const;
@@ -52,6 +52,8 @@ public:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
 
 private:
     QSharedPointer<CollectionWidgetPrivate> d = nullptr;

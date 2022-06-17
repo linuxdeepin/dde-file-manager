@@ -37,6 +37,7 @@ class CollectionHolder : public QObject
     friend class CollectionHolderPrivate;
 public:
     explicit CollectionHolder(const QString &uuid, QObject *parent = nullptr);
+    ~CollectionHolder() override;
     QString id() const;
     QString name();
     void setName(const QString &);
@@ -63,7 +64,7 @@ public:
     bool renamable() const;
 
 private:
-    CollectionHolderPrivate *d;
+    CollectionHolderPrivate *d = nullptr;
 };
 
 typedef QSharedPointer<CollectionHolder> CollectionHolderPointer;

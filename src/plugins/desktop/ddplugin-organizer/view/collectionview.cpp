@@ -53,6 +53,20 @@ void CollectionViewPrivate::updateViewSizeData(const QSize &viewSize, const QMar
     updateViewMargins(viewSize, viewMargins);
 }
 
+void CollectionViewPrivate::updateVerticalBarRange()
+{
+    needUpdateVerticalBarRange = false;
+
+    int dataRow = urls.count() / columnCount;
+    if (0 != urls.count() % columnCount)
+        dataRow += 1;
+
+    int height = dataRow * cellHeight + viewMargins.top() + viewMargins.bottom() - q->viewport()->height();
+
+    q->verticalScrollBar()->setRange(0, height);
+    qDebug() << "update vertical scrollbar range to:" << q->verticalScrollBar()->maximum();
+}
+
 int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const
 {
     Q_UNUSED(index)
@@ -194,6 +208,11 @@ CollectionView::CollectionView(QWidget *parent)
     initUI();
 }
 
+CollectionView::~CollectionView()
+{
+
+}
+
 QList<QUrl> CollectionView::urls() const
 {
     return d->urls;
@@ -214,7 +233,7 @@ void CollectionView::setUrls(const QList<QUrl> &urls)
     else
         show();
 
-    updateGeometries();
+    d->updateVerticalBarRange();
     update();
 }
 
@@ -437,6 +456,8 @@ QRegion CollectionView::visualRegionForSelection(const QItemSelection &selection
 
 void CollectionView::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event)
+
     if (Q_UNLIKELY(!itemDelegate()))
         return;
 
@@ -490,10 +511,29 @@ void CollectionView::paintEvent(QPaintEvent *event)
 
 void CollectionView::wheelEvent(QWheelEvent *event)
 {
-    auto aaa = verticalScrollBar()->sliderPosition();
-    auto bbb = event->angleDelta().y();
-    auto ccc = aaa - bbb;
-    verticalScrollBar()->setSliderPosition( ccc );
+    int currentPosition = verticalScrollBar()->sliderPosition();
+    int scrollValue = event->angleDelta().y();
+    int targetValue = currentPosition - scrollValue;
+    verticalScrollBar()->setSliderPosition(targetValue);
+}
+
+void CollectionView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->buttons().testFlag(Qt::LeftButton)) {
+        d->canUpdateVerticalBarRange = false;
+    }
+
+    return QAbstractItemView::mousePressEvent(event);
+}
+
+void CollectionView::mouseReleaseEvent(QMouseEvent *event)
+{
+    d->canUpdateVerticalBarRange = true;
+    if (d->needUpdateVerticalBarRange) {
+        d->updateVerticalBarRange();
+    }
+
+    return QAbstractItemView::mouseReleaseEvent(event);
 }
 
 void CollectionView::mouseMoveEvent(QMouseEvent *event)
@@ -506,20 +546,12 @@ void CollectionView::resizeEvent(QResizeEvent *event)
     QAbstractItemView::resizeEvent(event);
 
     updateRegionView();
-}
 
-void CollectionView::updateGeometries()
-{
-    int dataRow = d->urls.count() / d->columnCount;
-    if (0 != d->urls.count() % d->columnCount)
-        dataRow += 1;
-
-    int height = dataRow * d->cellHeight + d->viewMargins.top() + d->viewMargins.bottom() - viewport()->height();
-
-    verticalScrollBar()->setRange(0, height);
-    qDebug() << "update vertical scrollbar range to:" << verticalScrollBar()->maximum();
-
-    return QAbstractItemView::updateGeometries();
+    if (d->canUpdateVerticalBarRange) {
+        d->updateVerticalBarRange();
+    } else {
+        d->needUpdateVerticalBarRange = true;
+    }
 }
 
 void CollectionView::initUI()
@@ -534,8 +566,6 @@ void CollectionView::initUI()
     setItemDelegate(delegate);
 
     // todo:disble selection???
-
-//    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 }
 
 void CollectionView::updateRegionView()

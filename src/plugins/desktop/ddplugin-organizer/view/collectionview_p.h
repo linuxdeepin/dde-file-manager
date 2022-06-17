@@ -23,6 +23,8 @@
 
 #include "view/collectionview.h"
 
+#include <QAtomicInteger>
+
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class CollectionViewPrivate
@@ -31,6 +33,7 @@ public:
     explicit CollectionViewPrivate(CollectionView *qq);
 
     void updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize);
+    void updateVerticalBarRange();
 
     int verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const;
     QItemSelection selection(const QRect &rect) const;
@@ -57,6 +60,8 @@ public:
 
     QList<QUrl> urls;
 
+    QAtomicInteger<bool> canUpdateVerticalBarRange = true;
+    QAtomicInteger<bool> needUpdateVerticalBarRange = false;
     bool showGrid = false;
 
 private:

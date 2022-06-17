@@ -31,6 +31,7 @@ class NormalizedModePrivate
 {
 public:
     explicit NormalizedModePrivate(NormalizedMode *qq);
+    ~NormalizedModePrivate();
 public:
     FileClassifier *classifier = nullptr;
     QHash<QString, CollectionHolderPointer> holders;

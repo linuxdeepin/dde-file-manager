@@ -27,6 +27,8 @@
 #include <QEvent>
 #include <QMouseEvent>
 
+static constexpr int kTitleBarHeight = 36;
+
 DWIDGET_USE_NAMESPACE
 DDP_ORGANIZER_USE_NAMESPACE
 
@@ -58,7 +60,8 @@ CollectionWidget::CollectionWidget(QWidget *parent)
 
     d->titleBar = new CollectionTitleBar(this);
     d->titleBar->move(0, 0);
-    d->titleBar->setFixedHeight(36);
+    d->titleBar->setFixedHeight(kTitleBarHeight);
+    d->titleBar->hide();
 
     this->setLayout(d->mainLayout);
 }
@@ -129,3 +132,16 @@ bool CollectionWidget::eventFilter(QObject *obj, QEvent *event)
     return DBlurEffectWidget::eventFilter(obj, event);
 }
 
+void CollectionWidget::enterEvent(QEvent *event)
+{
+    d->titleBar->show();
+
+    DBlurEffectWidget::enterEvent(event);
+}
+
+void CollectionWidget::leaveEvent(QEvent *event)
+{
+    d->titleBar->hide();
+
+    DBlurEffectWidget::leaveEvent(event);
+}

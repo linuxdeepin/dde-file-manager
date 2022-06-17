@@ -23,6 +23,8 @@
 
 #include "canvasorganizer.h"
 
+#include <QSharedPointer>
+
 DDP_ORGANIZER_BEGIN_NAMESPACE
 class NormalizedModePrivate;
 class NormalizedMode : public CanvasOrganizer
@@ -31,6 +33,7 @@ class NormalizedMode : public CanvasOrganizer
     friend class NormalizedModePrivate;
 public:
    explicit NormalizedMode(QObject *parent = nullptr);
+    ~NormalizedMode() override;
    int mode() const override;
    bool initialize(FileProxyModel *) override;
    void reset() override;
@@ -47,7 +50,7 @@ protected slots:
 protected:
     bool setClassifier(Classifier id);
 private:
-    NormalizedModePrivate *d;
+    QSharedPointer<NormalizedModePrivate> d = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

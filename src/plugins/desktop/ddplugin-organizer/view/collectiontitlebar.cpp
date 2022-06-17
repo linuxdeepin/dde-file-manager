@@ -20,46 +20,61 @@
  */
 #include "collectiontitlebar_p.h"
 
+#include <DFontSizeManager>
+#include <DStyle>
+
 #include <QEvent>
 #include <QFont>
 #include <QFontMetrics>
+#include <QPalette>
 
-#include <QLabel>
-#include <QImage>
-#include <QBackingStore>
-#include <QRect>
-#include <QPaintEvent>
-#include <qpa/qplatformbackingstore.h>
-#include "private/qpixmapfilter_p.h"
-#include <private/qwidgetbackingstore_p.h>
-#include <private/qwidget_p.h>
-#include <QSharedPointer>
-#include <QGraphicsBlurEffect>
+static constexpr int kNameMaxLength = 255;
+static constexpr int kMenuBtnWidth = 18;
+static constexpr int kMenuBtnHeight = 18;
 
 DDP_ORGANIZER_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-
-QT_BEGIN_NAMESPACE
-Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0);
-QT_END_NAMESPACE
 
 CollectionTitleBarPrivate::CollectionTitleBarPrivate(CollectionTitleBar *qq)
     : q(qq)
 {
     nameLabel = new DLabel(q);
-    QFont font(nameLabel->font());
-    font.setWeight(QFont::Medium);
-    nameLabel->setFont(font);
+    nameLabel->setWordWrap(false);
 
     nameLineEdit = new DLineEdit(q);
+    nameLineEdit->lineEdit()->setMaxLength(kNameMaxLength);
+    nameLineEdit->setClearButtonEnabled(false);
+    DStyle::setFocusRectVisible(nameLineEdit->lineEdit(), false);
+    QMargins margins = nameLineEdit->lineEdit()->textMargins();
+    margins.setLeft(0);
+    nameLineEdit->lineEdit()->setTextMargins(margins);
+
+    QFont nameFont = nameLineEdit->font();
+    nameFont = DFontSizeManager::instance()->get(DFontSizeManager::T8, nameFont);
+    nameFont.setWeight(QFont::Medium);
+    nameLabel->setFont(nameFont);
+    nameLineEdit->setFont(nameFont);
+
+    QPalette palette(nameLineEdit->palette());
+    palette.setColor(QPalette::WindowText, Qt::black);
+    nameLabel->setPalette(palette);
+
+    palette.setColor(QPalette::Button, Qt::transparent);
+    palette.setColor(QPalette::Text, Qt::black);
+    palette.setColor(QPalette::Highlight, QColor(0x00, 0x61, 0xf7));
+    palette.setColor(QPalette::HighlightedText, Qt::black);
+    nameLineEdit->setPalette(palette);
+
     nameWidget = new DStackedWidget(q);
+    nameWidget->layout()->setContentsMargins(0, 0, 0, 0);
+
     nameWidget->addWidget(nameLabel);
     nameWidget->addWidget(nameLineEdit);
     nameWidget->setCurrentWidget(nameLabel);
 
     menuBtn = new DPushButton(q);
 //    menuBtn->setIcon()
-    menuBtn->setFixedSize(18, 18);
+    menuBtn->setFixedSize(kMenuBtnWidth, kMenuBtnHeight);
     menuBtn->setText("...");
 
     mainLayout = new QHBoxLayout(q);
@@ -84,6 +99,8 @@ void CollectionTitleBarPrivate::modifyTitleName()
 
     nameWidget->setCurrentWidget(nameLineEdit);
     nameLineEdit->setText(titleName);
+    nameLineEdit->setFocus();
+    nameLineEdit->lineEdit()->setSelection(0, nameLineEdit->lineEdit()->maxLength());
 }
 
 void CollectionTitleBarPrivate::titleNameModified()

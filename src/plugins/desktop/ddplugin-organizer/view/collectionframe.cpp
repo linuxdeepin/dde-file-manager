@@ -25,8 +25,9 @@
 #include <QPainter>
 #include <QBitmap>
 
-const static int stretchWidth = 5;
-const static int stretchHeight = 5;
+static constexpr int kStretchWidth = 10;
+static constexpr int kStretchHeight = 10;
+static constexpr int kWidgetRoundRadius = 18;
 
 DWIDGET_USE_NAMESPACE
 DDP_ORGANIZER_USE_NAMESPACE
@@ -34,7 +35,9 @@ DDP_ORGANIZER_USE_NAMESPACE
 CollectionFramePrivate::CollectionFramePrivate(CollectionFrame *qq)
     : q(qq)
 {
-
+    stretchArea << LeftTopRect << TopRect << RightTopRect << RightRect
+                << RightBottomRect << BottomRect << LeftBottomRect << LeftRect;
+    moveArea << TitleBarRect;
 }
 
 CollectionFramePrivate::~CollectionFramePrivate()
@@ -45,14 +48,14 @@ CollectionFramePrivate::~CollectionFramePrivate()
 void CollectionFramePrivate::updateAdjustRect()
 {
     stretchRects.clear();
-    stretchRects << QRect(0, 0, stretchWidth, stretchHeight);   // leftTopRect
-    stretchRects << QRect(stretchWidth, 0, q->width() - stretchWidth * 2, stretchHeight);   // topRect
-    stretchRects << QRect(q->width() - stretchWidth, 0, stretchWidth, stretchHeight);   // rightTopRect
-    stretchRects << QRect(q->width() - stretchWidth, stretchHeight, stretchWidth, q->height() - stretchHeight * 2);   // rightRect
-    stretchRects << QRect(q->width() - stretchWidth, q->height() - stretchHeight, stretchWidth, stretchHeight);   // rightBottomRect
-    stretchRects << QRect(stretchWidth, q->height() - stretchHeight, q->width() - stretchWidth * 2, stretchHeight);   // bottomRect
-    stretchRects << QRect(0, q->height() - stretchHeight, stretchWidth, stretchHeight);   // leftBottomRect
-    stretchRects << QRect(0, stretchHeight, stretchWidth, q->height() - stretchHeight * 2);   // leftRect
+    stretchRects << QRect(0, 0, kStretchWidth, kStretchHeight);   // leftTopRect
+    stretchRects << QRect(kStretchWidth, 0, q->width() - kStretchWidth * 2, kStretchHeight);   // topRect
+    stretchRects << QRect(q->width() - kStretchWidth, 0, kStretchWidth, kStretchHeight);   // rightTopRect
+    stretchRects << QRect(q->width() - kStretchWidth, kStretchHeight, kStretchWidth, q->height() - kStretchHeight * 2);   // rightRect
+    stretchRects << QRect(q->width() - kStretchWidth, q->height() - kStretchHeight, kStretchWidth, kStretchHeight);   // rightBottomRect
+    stretchRects << QRect(kStretchWidth, q->height() - kStretchHeight, q->width() - kStretchWidth * 2, kStretchHeight);   // bottomRect
+    stretchRects << QRect(0, q->height() - kStretchHeight, kStretchWidth, kStretchHeight);   // leftBottomRect
+    stretchRects << QRect(0, kStretchHeight, kStretchWidth, q->height() - kStretchHeight * 2);   // leftRect
 }
 
 void CollectionFramePrivate::updateMoveRect()
@@ -266,6 +269,7 @@ void CollectionFrame::setWidget(QWidget *w)
     if (d->titleBarWidget) {
         d->titleBarRect = d->titleBarWidget->geometry();
         d->minHeight = d->titleBarRect.height();
+        d->titleBarWidget->installEventFilter(this);
     }
 
     d->mainLayout->addWidget(d->widget);
@@ -310,6 +314,23 @@ int CollectionFrame::adjustStep() const
     return 0;
 }
 
+bool CollectionFrame::event(QEvent *event)
+{
+
+    return DFrame::event(event);
+}
+
+bool CollectionFrame::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == d->titleBarWidget) {
+        if (event->type() == QEvent::Leave) {
+            this->unsetCursor();
+        }
+    }
+
+    return DFrame::eventFilter(obj, event);
+}
+
 void CollectionFrame::showEvent(QShowEvent *event)
 {
     if (d->canMove()) {
@@ -326,44 +347,42 @@ void CollectionFrame::showEvent(QShowEvent *event)
 void CollectionFrame::mousePressEvent(QMouseEvent *event)
 {
     if (Qt::LeftButton == event->button()) {
-        d->mousePressed = true;
 
         if (d->canAdjust() && d->stretchArea.contains(d->responseArea)) {
-            // 优先处理拉伸
+            // handle stretch
             d->adjustBeforRect = this->geometry();
             d->frameState = CollectionFramePrivate::StretchState;
         } else if (d->canMove() && d->moveArea.contains(d->responseArea)) {
-            // 再处理移动
+            // handle move
             d->moveStartPoint = this->mapToParent(event->pos());
             d->frameState = CollectionFramePrivate::MoveState;
         } else {
             d->frameState = CollectionFramePrivate::NormalShowState;
         }
     }
-
-    return DFrame::mousePressEvent(event);
+    DFrame::mousePressEvent(event);
+    event->accept();
 }
 
 void CollectionFrame::mouseReleaseEvent(QMouseEvent *event)
 {
-    d->mousePressed = false;
-    d->frameState = CollectionFramePrivate::NormalShowState;
-
-    if (d->canAdjust())
+    if (d->canAdjust() && CollectionFramePrivate::StretchState == d->frameState) {
+        d->frameState = CollectionFramePrivate::NormalShowState;
         d->updateAdjustRect();
+    }
 
-    if (d->canMove())
+    if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
+        d->frameState = CollectionFramePrivate::NormalShowState;
         d->updateMoveRect();
+    }
 
-    return DFrame::mouseReleaseEvent(event);
+    DFrame::mouseReleaseEvent(event);
+    event->accept();
 }
 
 void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!d->mousePressed) {
-        d->responseArea = d->getCurrentResponseArea(event->pos());
-        d->updateCursorState(d->responseArea);
-    } else {
+    if (event->buttons().testFlag(Qt::LeftButton)) {
         if (d->canAdjust() && CollectionFramePrivate::StretchState == d->frameState) {
             d->stretchEndPoint = this->mapToParent(event->pos());
             d->updateFrameGeometry();
@@ -372,15 +391,18 @@ void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
             d->moveStartPoint = this->mapToParent(event->pos());
             this->move(pos().x() + movePoint.x(), pos().y() + movePoint.y());
         }
+    } else if (event->buttons().testFlag(Qt::NoButton)) {
+        d->responseArea = d->getCurrentResponseArea(event->pos());
+        d->updateCursorState(d->responseArea);
     }
 
-    return DFrame::mouseMoveEvent(event);
+    DFrame::mouseMoveEvent(event);
+    event->accept();
 }
 
 void CollectionFrame::resizeEvent(QResizeEvent *event)
 {
     DFrame::resizeEvent(event);
-
     d->titleBarRect.setWidth(event->size().width());
 
     if (d->canAdjust())
@@ -390,17 +412,26 @@ void CollectionFrame::resizeEvent(QResizeEvent *event)
         d->updateMoveRect();
 
     QBitmap roundMask(size());
+    roundMask.fill();
     QPainter painter(&roundMask);
+    painter.setPen(Qt::NoPen);
     painter.setBrush(Qt::black);
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawRoundedRect(rect(), 18, 18, Qt::AbsoluteSize);
+    painter.drawRoundedRect(rect(), kWidgetRoundRadius, kWidgetRoundRadius, Qt::AbsoluteSize);
     setMask(roundMask);
 }
 
 void CollectionFrame::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event)
+    event->ignore();
     // disable paint,because transparent background color can affect the blurring effect of child widget(view)
+}
+
+void CollectionFrame::focusOutEvent(QFocusEvent *event)
+{
+    setCursor(Qt::ArrowCursor);
+
+    DFrame::focusOutEvent(event);
 }
 
 void CollectionFrame::initUi()

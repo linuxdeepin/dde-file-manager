@@ -38,6 +38,12 @@ CollectionHolder::CollectionHolder(const QString &uuid, QObject *parent)
     d->id = uuid;
 }
 
+CollectionHolder::~CollectionHolder()
+{
+    delete d;
+    d = nullptr;
+}
+
 QString CollectionHolder::id() const
 {
     return d->id;

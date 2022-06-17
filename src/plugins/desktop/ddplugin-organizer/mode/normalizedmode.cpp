@@ -32,9 +32,22 @@ NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq) : q(qq)
 
 }
 
+NormalizedModePrivate::~NormalizedModePrivate()
+{
+    delete classifier;
+    classifier = nullptr;
+
+    holders.clear();
+}
+
 NormalizedMode::NormalizedMode(QObject *parent)
     : CanvasOrganizer(parent)
     , d(new NormalizedModePrivate(this))
+{
+
+}
+
+NormalizedMode::~NormalizedMode()
 {
 
 }

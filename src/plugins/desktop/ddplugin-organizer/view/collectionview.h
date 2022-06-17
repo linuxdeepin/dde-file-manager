@@ -24,6 +24,7 @@
 #include "ddplugin_organizer_global.h"
 
 #include <QAbstractItemView>
+#include <QSharedPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -36,6 +37,7 @@ class CollectionView : public QAbstractItemView
     friend class CollectionViewPrivate;
 public:
     explicit CollectionView(QWidget *parent = nullptr);
+    ~CollectionView() override;
     QList<QUrl> urls() const;
     void setUrls(const QList<QUrl> &urls);
     QMargins cellMargins() const;
@@ -61,9 +63,10 @@ protected:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
-    void updateGeometries() override;
 
 private:
     void initUI();
@@ -72,7 +75,7 @@ private:
     QRect itemRect(const QModelIndex &index) const;
 
 private:
-    CollectionViewPrivate *d;
+    QSharedPointer<CollectionViewPrivate> d = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

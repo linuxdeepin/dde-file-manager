@@ -82,7 +82,6 @@ public:
     QPoint stretchEndPoint;
     QRect adjustBeforRect;
     ResponseArea responseArea = UnKnowRect;
-    bool mousePressed = false;
     QPoint moveStartPoint;
     QList<ResponseArea> stretchArea;
     QList<ResponseArea> moveArea;
