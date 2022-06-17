@@ -401,14 +401,17 @@ bool FileEventProcessor::fmEvent(const QSharedPointer<DFMEvent> &event, QVariant
                 }else if(url.scheme() == FILE_SCHEME){
                     if(path.contains("ftp:host")){
                         serverIP = path.section("ftp:host=",-1);
+                        serverIP = serverIP.section("/",0,0);
                         port = 21;
                     }else if(path.contains("sftp:host")){
                         serverIP = path.section("sftp:host=",-1);
+                        serverIP = serverIP.section("/",0,0);
                         port = 22;
                     }
                 }
             }
-            if(!serverIP.isEmpty() && !CheckNetwork::isHostAndPortConnectV2(serverIP,port)){
+            bool re = CheckNetwork::isHostAndPortConnectV2(serverIP,port);
+            if(!serverIP.isEmpty() && !re){
                 WindowManager::instance()->showNewWindow(DUrl(COMPUTER_ROOT), e->force());
                 continue;
             }
