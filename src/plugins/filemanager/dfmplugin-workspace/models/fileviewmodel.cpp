@@ -164,13 +164,6 @@ void FileViewModelPrivate::doWatcherEvent()
 
         if (event.second == kAddFile) {
             nodeManager->insertChild(fileUrl);
-
-            FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(q)->parent());
-            if (view) {
-                QDir::Filters filter = view->model()->getFilters();
-                view->model()->setFilters(filter);
-            }
-
             q->selectAndRenameFile(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
@@ -664,6 +657,11 @@ void FileViewModel::selectAndRenameFile(const QUrl &fileUrl)
 
 void FileViewModel::onFilesUpdated()
 {
+    FileView *view = qobject_cast<FileView *>(qobject_cast<QObject *>(this)->parent());
+    if (view) {
+        QDir::Filters filter = view->model()->getFilters();
+        view->model()->setFilters(filter);
+    }
     emit updateFiles();
 }
 

@@ -1323,6 +1323,10 @@ bool FileOperationsEventReceiver::handleOperationHideFiles(const quint64 windowI
                 ok = false;
         }
     }
+
+    if (ok && !urls.isEmpty())
+        FileUtils::notifyFileChangeManual(DFMGLOBAL_NAMESPACE::FileNotifyType::kFileChanged, urls.first());
+
     dpfSignalDispatcher->publish(GlobalEventType::kHideFilesResult, windowId, urls, ok);
     return ok;
 }

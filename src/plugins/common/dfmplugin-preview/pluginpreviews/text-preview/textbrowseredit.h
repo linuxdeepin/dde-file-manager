@@ -33,17 +33,26 @@ class TextBrowserEdit : public QPlainTextEdit
 public:
     explicit TextBrowserEdit(QWidget *parent = nullptr);
 
-    void setFileData(std::vector<char> &data);
+    virtual ~TextBrowserEdit() override;
+
+    void setFileData(std::string &data);
+
+protected:
+    void wheelEvent(QWheelEvent *e) override;
 
 private slots:
-    void scrollbarVauleChange(int value);
+    void scrollbarValueChange(int value);
+
+    void sliderPositionValueChange(int position);
 
 private:
     int verifyEndOfStrIntegrity(const char *s, int l);
 
-    void appendText(std::vector<char>::iterator &data);
+    void appendText(std::string::iterator &data);
 
-    std::vector<char> fileData;
+    std::string filestr;
+
+    int lastPosition { 0 };
 };
 PREVIEW_END_NAMESPACE
 #endif   // TEXTBROWSER_H

@@ -74,11 +74,13 @@ bool TextPreview::setFileUrl(const QUrl &url)
     if (len <= 0)
         return false;
 
-    vector<char> buf(static_cast<unsigned long>(len));
-    device.seekg(0, ios::beg).read(&buf[0], static_cast<streamsize>(buf.size()));
+    char *buf = new char[static_cast<unsigned long>(len)];
+    device.seekg(0, ios::beg).read(buf, static_cast<streamsize>(len));
     device.close();
-
-    textBrowser->setFileData(buf);
+    string strBuf = buf;
+    textBrowser->setFileData(strBuf);
+    delete[] buf;
+    buf = nullptr;
 
     Q_EMIT titleChanged();
 
