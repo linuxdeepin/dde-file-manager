@@ -114,6 +114,9 @@ bool DeviceUtils::isWorkingOpticalDiscDev(const QString &dev)
     static constexpr char kBurnStateGroup[] { "BurnState" };
     static constexpr char kWoringKey[] { "Working" };
 
+    if (dev.isEmpty())
+        return false;
+
     if (Application::dataPersistence()->keys(kBurnStateGroup).contains(dev)) {
         const QMap<QString, QVariant> &info = Application::dataPersistence()->value(kBurnStateGroup, dev).toMap();
         return info.value(kWoringKey).toBool();

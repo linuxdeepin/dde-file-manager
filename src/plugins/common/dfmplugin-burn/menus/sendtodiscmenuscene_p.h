@@ -43,6 +43,7 @@ public:
 
     void initDestDevices();
     void addSubStageActions(QMenu *menu);
+    bool disbaleWoringDevAction(QAction *act);
 
 private:
     QList<QVariantMap> destDeviceDataGroup;

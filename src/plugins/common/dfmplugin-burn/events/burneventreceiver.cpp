@@ -145,3 +145,31 @@ void BurnEventReceiver::handleCopyFilesResult(const QList<QUrl> &srcUrls, const 
         }
     }
 }
+
+void BurnEventReceiver::handleMountImage(const QUrl &isoUrl)
+{
+    qInfo() << "Mount image:" << isoUrl;
+    QString archiveuri;
+    auto info { InfoFactory::create<AbstractFileInfo>(isoUrl) };
+    if (info && info->canRedirectionFileUrl()) {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->redirectedFileUrl().toString()));
+        qInfo() << "Mount image redirect the url to:" << info->redirectedFileUrl();
+    } else {
+        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(isoUrl.toString()));
+    }
+
+    QStringList args;
+    args << "mount" << archiveuri;
+    QProcess *gioproc = new QProcess;
+    gioproc->start("gio", args);
+    connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
+        if (ret) {
+            DialogManagerInstance->showErrorDialog(tr("Mount error: unsupported image format"), QString());
+        } else {
+            QString doubleEncodedUri { QUrl::toPercentEncoding(isoUrl.toEncoded()) };
+            doubleEncodedUri = QUrl::toPercentEncoding(doubleEncodedUri);
+            // TODO(zhangs): cd to mnt path
+        }
+        gioproc->deleteLater();
+    });
+}

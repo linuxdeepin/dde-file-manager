@@ -38,6 +38,7 @@ class Burn : public DPF_NAMESPACE::Plugin
     DPF_EVENT_REG_SLOT(slot_ShowBurnDialog)
     DPF_EVENT_REG_SLOT(slot_Erase)
     DPF_EVENT_REG_SLOT(slot_PasteTo)
+    DPF_EVENT_REG_SLOT(slot_MountImage)
 
 public:
     virtual bool start() override;

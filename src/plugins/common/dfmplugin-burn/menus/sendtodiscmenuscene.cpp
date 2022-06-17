@@ -69,30 +69,7 @@ void SendToDiscMenuScenePrivate::actionStageFileForBurning(const QString &dev)
 
 void SendToDiscMenuScenePrivate::actionMountImage()
 {
-    qInfo() << "Mount image:" << focusFile;
-    QString archiveuri;
-    auto info { InfoFactory::create<AbstractFileInfo>(focusFile) };
-    if (info && info->canRedirectionFileUrl()) {
-        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(info->redirectedFileUrl().toString()));
-        qInfo() << "Mount image redirect the url to:" << info->redirectedFileUrl();
-    } else {
-        archiveuri = "archive://" + QString(QUrl::toPercentEncoding(focusFile.toString()));
-    }
-
-    QStringList args;
-    args << "mount" << archiveuri;
-    QProcess *gioproc = new QProcess;
-    gioproc->start("gio", args);
-    connect(gioproc, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, [=](int ret) {
-        if (ret) {
-            DialogManagerInstance->showErrorDialog(tr("Mount error: unsupported image format"), QString());
-        } else {
-            QString doubleEncodedUri { QUrl::toPercentEncoding(focusFile.toEncoded()) };
-            doubleEncodedUri = QUrl::toPercentEncoding(doubleEncodedUri);
-        }
-        // TODO(zhangs): cd to mnt path
-        gioproc->deleteLater();
-    });
+    BurnEventReceiver::instance()->handleMountImage(focusFile);
 }
 
 void SendToDiscMenuScenePrivate::initDestDevices()
@@ -131,6 +108,18 @@ void SendToDiscMenuScenePrivate::addSubStageActions(QMenu *menu)
     }
 }
 
+bool SendToDiscMenuScenePrivate::disbaleWoringDevAction(QAction *act)
+{
+    Q_ASSERT(act);
+    QString &&dev { act->data().toString() };
+    if (DeviceUtils::isWorkingOpticalDiscDev(dev)) {
+        act->setEnabled(false);
+        return true;
+    }
+
+    return false;
+}
+
 AbstractMenuScene *SendToDiscMenuCreator::create()
 {
     return new SendToDiscMenuScene();
@@ -160,6 +149,9 @@ bool SendToDiscMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->predicateName.insert(ActionId::kStageKey, QObject::tr("Add to disc"));
     d->predicateName.insert(ActionId::kMountImageKey, QObject::tr("Mount"));
+
+    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
 
     if (d->selectFiles.isEmpty())
         return false;
@@ -234,7 +226,6 @@ bool SendToDiscMenuScene::triggered(QAction *action)
         return true;
     }
 
-    // Maybe as a event?
     if (key == ActionId::kMountImageKey) {
         d->actionMountImage();
         return true;
@@ -260,6 +251,7 @@ void SendToDiscMenuScene::updateStageAction(QMenu *parent)
 
     QAction *sendToAct { nullptr };
     QAction *stageAct { nullptr };
+
     for (auto act : actions) {
         QString &&id { act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString() };
         if (id == ActionId::kStageKey)
@@ -276,6 +268,23 @@ void SendToDiscMenuScene::updateStageAction(QMenu *parent)
         parent->insertAction(sendToAct, stageAct);
         parent->removeAction(sendToAct);
         parent->insertAction(stageAct, sendToAct);
+    }
+
+    // hide action if contains dde desktop filef
+    if (d->isDDEDesktopFileIncluded) {
+        stageAct->setVisible(false);
+        return;
+    }
+
+    // disbale action if dev working
+    if (d->destDeviceDataGroup.size() == 1 && d->disbaleWoringDevAction(stageAct))
+        return;
+    if (d->destDeviceDataGroup.size() > 1 && stageAct->menu()) {
+        auto &&actions { stageAct->menu()->actions() };
+        for (int i = 0; i != actions.size(); ++i) {
+            if (d->disbaleWoringDevAction(actions[i]))
+                return;
+        }
     }
 
     // disable action in self disc

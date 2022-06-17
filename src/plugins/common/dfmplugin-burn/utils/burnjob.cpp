@@ -24,6 +24,8 @@
 #include "utils/burnhelper.h"
 #include "events/burneventcaller.h"
 
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
@@ -296,6 +298,10 @@ void AbstractBurnJob::onJobUpdated(JobStatus status, int progress, const QString
     // hide btn
     info->insert(AbstractJobHandler::NotifyInfoKey::kJobStateHideKey, true);
     emit jobHandlePtr->stateChangedNotify(info);
+
+    // group `Persistence::kBurnStateGroup` will be deleted when filemanger starts
+    if (!Application::dataPersistence()->groups().contains(Persistence::kBurnStateGroup))
+        BurnHelper::updateBurningStateToPersistence(curDevId, curDev, true);
 
     // update progress
     if (progress > 0 && progress <= 100 && progress > lastProgress) {

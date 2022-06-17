@@ -60,6 +60,7 @@ bool OpticalMenuScene::initialize(const QVariantHash &params)
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
         d->focusFile = d->selectFiles.first();
+
     QString backer { MasteredMediaFileInfo(d->currentDir).extraProperties()["mm_backer"].toString() };
     if (backer.isEmpty())
         d->isBlankDisc = true;

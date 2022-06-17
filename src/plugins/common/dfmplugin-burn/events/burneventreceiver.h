@@ -45,6 +45,7 @@ public slots:
                                const QList<QUrl> &destUrls,
                                bool ok,
                                const QString &errMsg);
+    void handleMountImage(const QUrl &isoUrl);
 
 private:
     explicit BurnEventReceiver(QObject *parent = nullptr);
