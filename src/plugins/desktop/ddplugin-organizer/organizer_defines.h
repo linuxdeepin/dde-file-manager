@@ -23,6 +23,10 @@
 
 #include "ddplugin_organizer_global.h"
 
+#include <QString>
+#include <QUrl>
+#include <QSharedData>
+
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 enum OrganizerMode {
@@ -38,6 +42,16 @@ enum Classifier {
     kName,
     kSize
 };
+
+class CollectionBaseData : public QSharedData
+{
+public:
+    QString name;
+    QString key;
+    QList<QUrl> items;
+};
+
+typedef QSharedDataPointer<CollectionBaseData> CollectionBaseDataPtr;
 
 DDP_ORGANIZER_END_NAMESPACE
 

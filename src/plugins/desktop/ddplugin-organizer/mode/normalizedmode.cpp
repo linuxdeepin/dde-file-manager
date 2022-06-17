@@ -49,10 +49,13 @@ NormalizedMode::NormalizedMode(QObject *parent)
 
 NormalizedMode::~NormalizedMode()
 {
+    if (model && (model->handler() == d->classifier->dataHandler()))
+        model->setHandler(nullptr);
 
+    delete d;
 }
 
-int NormalizedMode::mode() const
+OrganizerMode NormalizedMode::mode() const
 {
     return OrganizerMode::kNormalized;
 }
@@ -69,9 +72,11 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     setClassifier(type);
     Q_ASSERT(d->classifier);
 
+    // must be DirectConnection to keep sequential
     connect(model, &FileProxyModel::rowsInserted, this, &NormalizedMode::onFileInserted, Qt::DirectConnection);
     connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &NormalizedMode::onFileAboutToBeRemoved, Qt::DirectConnection);
     connect(model, &FileProxyModel::dataReplaced, this, &NormalizedMode::onFileRenamed, Qt::DirectConnection);
+
     connect(model, &FileProxyModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
     connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
 
@@ -103,7 +108,7 @@ void NormalizedMode::rebuild()
     }
 
     // 从分类器中获取组,根据组创建分区
-    for (const QString &key : d->classifier->regionKeys()) {
+    for (const QString &key : d->classifier->keys()) {
         const QString &name = d->classifier->name(key);
         auto files = d->classifier->items(key);
         qDebug() << "type" << name << "files" << files.size();
@@ -133,7 +138,7 @@ void NormalizedMode::rebuild()
 
 void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    d->classifier->repalce(oldUrl, newUrl);
+    d->classifier->replace(oldUrl, newUrl);
 }
 
 void NormalizedMode::onFileInserted(const QModelIndex &parent, int first, int last)
@@ -154,7 +159,7 @@ void NormalizedMode::onFileAboutToBeRemoved(const QModelIndex &parent, int first
         if (Q_UNLIKELY(!index.isValid()))
             continue;
         QUrl url = model->fileUrl(index);
-        d->classifier->take(url);
+        d->classifier->remove(url);
     }
 }
 

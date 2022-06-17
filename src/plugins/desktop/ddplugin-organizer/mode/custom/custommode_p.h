@@ -22,6 +22,8 @@
 #define CUSTOMMODE_P_H
 
 #include "mode/custommode.h"
+#include "customdatahandler.h"
+#include "collection/collectionholder.h"
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -29,6 +31,8 @@ class CustomModePrivate
 {
 public:
     explicit CustomModePrivate(CustomMode *qq);
+    CustomDataHandler *dataHandler = nullptr;
+    QHash<QString, CollectionHolderPointer> holders;
 private:
     CustomMode *q;
 };

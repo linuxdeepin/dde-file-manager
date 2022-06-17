@@ -63,6 +63,7 @@ void CanvasOrganizer::setCanvasShell(CanvasModelShell *sh)
     if (!shell)
         return;
 
+    // hook canvas model, must be DirectConnection
     connect(shell, &CanvasModelShell::filterDataRested, this, &CanvasOrganizer::filterDataRested, Qt::DirectConnection);
     connect(shell, &CanvasModelShell::filterDataInserted, this, &CanvasOrganizer::filterDataInserted, Qt::DirectConnection);
     connect(shell, &CanvasModelShell::filterDataRenamed, this, &CanvasOrganizer::filterDataRenamed, Qt::DirectConnection);

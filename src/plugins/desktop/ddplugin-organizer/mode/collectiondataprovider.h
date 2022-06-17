@@ -18,45 +18,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef FILECLASSIFIER_H
-#define FILECLASSIFIER_H
+#ifndef COLLECTIONDATAPROVIDER_H
+#define COLLECTIONDATAPROVIDER_H
 
 #include "ddplugin_organizer_global.h"
 #include "organizer_defines.h"
-#include "mode/collectiondataprovider.h"
 
 #include <QObject>
 #include <QHash>
-#include <QUrl>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class ModelDataHandler;
-class ClassifierCreator
-{
-public:
-    static class FileClassifier *createClassifier(Classifier mode);
-};
-
-class FileClassifier : public CollectionDataProvider
+class CollectionDataProvider : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(CollectionDataProvider)
 public:
-    explicit FileClassifier(QObject *parent = nullptr);
-    virtual Classifier mode() const = 0;
-    virtual ModelDataHandler *dataHandler() const = 0;
-    virtual QStringList classes() const = 0;
-    virtual QString classify(const QUrl &) const = 0;
-    virtual QString className(const QString &) const = 0;
-    virtual void reset(const QList<QUrl> &);
-public:
-    QString replace(const QUrl &oldUrl, const QUrl &newUrl) override;
-    QString append(const QUrl &) override;
-    QString remove(const QUrl &) override;
-    QString change(const QUrl &) override;
+    explicit CollectionDataProvider(QObject *parent = nullptr);
+    virtual ~CollectionDataProvider();
+    virtual QString key(const QUrl &) const;
+    virtual QString name(const QString &key) const;
+    virtual QList<QString> keys() const;
+    virtual QList<QUrl> items(const QString &key) const;
+protected:
+    virtual QString replace(const QUrl &oldUrl, const QUrl &newUrl) = 0;
+    virtual QString append(const QUrl &) = 0;
+    virtual QString remove(const QUrl &) = 0;
+    virtual QString change(const QUrl &) = 0;
 signals:
+    // todo(wcl) add signals
+protected:
+    QHash<QString, CollectionBaseDataPtr> collections;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-#endif // FILECLASSIFIER_H
+#endif // COLLECTIONDATAPROVIDER_H

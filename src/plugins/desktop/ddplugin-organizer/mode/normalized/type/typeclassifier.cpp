@@ -100,11 +100,6 @@ ModelDataHandler *TypeClassifier::dataHandler() const
     return handler;
 }
 
-QString TypeClassifier::name(const QString &id) const
-{
-    return d->keyNames.value(id);
-}
-
 QStringList TypeClassifier::classes() const
 {
     return d->keyNames.keys();
@@ -134,4 +129,9 @@ QString TypeClassifier::classify(const QUrl &url) const
         return kTypeKeyMuz;
 
     return kTypeKeyOth;
+}
+
+QString TypeClassifier::className(const QString &key) const
+{
+    return d->keyNames.value(key);
 }

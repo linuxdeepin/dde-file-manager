@@ -838,7 +838,7 @@ bool CollectionItemDelegate::extendPaintText(QPainter *painter, const QUrl &url,
 {
     const int role = Global::ItemRoles::kItemFileDisplayNameRole;
     // todo(zy) using right event id
-    return dpfInstance.eventSequence().run(GlobalEventType::kTempDesktopPaintTag, role, url, painter, rect);
+    return dpfHookSequence->run(GlobalEventType::kTempDesktopPaintTag, role, url, painter, rect);
 }
 
 void CollectionItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const

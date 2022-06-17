@@ -39,17 +39,21 @@ FileClassifier *ClassifierCreator::createClassifier(Classifier mode)
     return ret;
 }
 
-FileClassifier::FileClassifier(QObject *parent) : QObject(parent)
+FileClassifier::FileClassifier(QObject *parent) : CollectionDataProvider(parent)
 {
 
 }
 
 void FileClassifier::reset(const QList<QUrl> &urls)
 {
-    regionDatas.clear();
-    QList<QUrl> temp;
-    for (const QString &key : classes())
-        regionDatas.insert(key, temp);
+    collections.clear();
+    for (const QString &id : classes()) {
+        CollectionBaseDataPtr dp(new CollectionBaseData);
+        dp->name = className(id);
+        dp->key = id;
+
+        collections.insert(id, dp);
+    }
 
     for (const QUrl &url : urls) {
         auto type = classify(url);
@@ -58,19 +62,19 @@ void FileClassifier::reset(const QList<QUrl> &urls)
             continue;
         }
 
-        auto it = regionDatas.find(type);
-        if (it != regionDatas.end())
-            it->append(url);
+        auto it = collections.find(type);
+        if (it != collections.end())
+            it.value()->items.append(url);
         else
-            Q_ASSERT_X(it == regionDatas.end(), "TypeClassifier", QString("unrecognized type %0").arg(type).toStdString().c_str());
+            Q_ASSERT_X(it == collections.end(), "TypeClassifier", QString("unrecognized type %0").arg(type).toStdString().c_str());
     }
 }
 
-QString FileClassifier::repalce(const QUrl &oldUrl, const QUrl &newUrl)
+QString FileClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    QString oldType = region(oldUrl);
+    QString oldType = key(oldUrl);
     QString newType = classify(newUrl);
-    QString newKey = region(newUrl);
+    QString newKey = key(newUrl);
 #if 1
     //! the newUrl must be not existed,
     //! and the oldUrl must be existed,
@@ -80,16 +84,16 @@ QString FileClassifier::repalce(const QUrl &oldUrl, const QUrl &newUrl)
 
     if (Q_UNLIKELY(newType.isEmpty())) {
         qWarning() << "can not find file:" << newUrl;
-        regionDatas[oldType].removeOne(oldUrl);
+        collections[oldType]->items.removeOne(oldUrl);
         return newType;
     }
 
     if (oldType == newType) {
-        int idx = regionDatas[newType].indexOf(oldUrl);
-        regionDatas[newType].replace(idx, newUrl);
+        int idx = collections[newType]->items.indexOf(oldUrl);
+        collections[newType]->items.replace(idx, newUrl);
     } else {
-        regionDatas[oldType].removeOne(oldUrl);
-        regionDatas[newType].append(newUrl);
+        collections[oldType]->items.removeOne(oldUrl);
+        collections[newType]->items.append(newUrl);
     }
 #else
     // old does not exist.
@@ -144,31 +148,31 @@ QString FileClassifier::append(const QUrl &url)
         return ret;
     }
 
-    QString cur = region(url);
+    QString cur = key(url);
 
     // do not exist
     if (cur.isEmpty()) {
-        auto it = regionDatas.find(ret);
-        if (it != regionDatas.end())
-            it->append(url);
+        auto it = collections.find(ret);
+        if (it != collections.end())
+            it.value()->items.append(url);
         else
-            Q_ASSERT_X(it == regionDatas.end(), "TypeClassifier", QString("unrecognized type %0").arg(ret).toStdString().c_str());
+            Q_ASSERT_X(it == collections.end(), "TypeClassifier", QString("unrecognized type %0").arg(ret).toStdString().c_str());
     } else { // existed
         if (cur != ret) {
-            regionDatas[cur].removeOne(url);
-            regionDatas[ret].append(url);
+            collections[cur]->items.removeOne(url);
+            collections[ret]->items.append(url);
         }
     }
 
     return ret;
 }
 
-QString FileClassifier::take(const QUrl &url)
+QString FileClassifier::remove(const QUrl &url)
 {
     QString ret;
-    for (auto itor = regionDatas.begin(); itor != regionDatas.end(); ++itor) {
-        if (itor.value().contains(url)) {
-            itor->removeOne(url);
+    for (auto itor = collections.begin(); itor != collections.end(); ++itor) {
+        if (itor.value()->items.contains(url)) {
+            itor.value()->items.removeOne(url);
             ret = itor.key();
             break;
         }
@@ -177,41 +181,20 @@ QString FileClassifier::take(const QUrl &url)
     return ret;
 }
 
-bool FileClassifier::change(const QUrl &url)
+QString FileClassifier::change(const QUrl &url)
 {
-    QString cur = region(url);
+    QString cur = key(url);
     if (cur.isEmpty())
-        return false;
+        return "";
 
     QString ret = classify(url);
     if (ret != cur) {
-        regionDatas[cur].removeOne(url);
-        regionDatas[ret].append(url);
-        return true;
+        collections[cur]->items.removeOne(url);
+        collections[ret]->items.append(url);
+        return ret;
     }
-    return false;
+    return "";
 }
 
-QString FileClassifier::region(const QUrl &url) const
-{
-    QString ret;
-    for (auto itor = regionDatas.begin(); itor != regionDatas.end(); ++itor) {
-        if (itor.value().contains(url)) {
-            ret = itor.key();
-            break;
-        }
-    }
 
-    return ret;
-}
-
-QList<QString> FileClassifier::regionKeys() const
-{
-    return regionDatas.keys();
-}
-
-QList<QUrl> FileClassifier::items(const QString &key) const
-{
-    return regionDatas.value(key);
-}
 

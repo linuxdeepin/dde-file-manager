@@ -40,8 +40,8 @@ class CanvasOrganizer : public QObject
     Q_OBJECT
 public:
     explicit CanvasOrganizer(QObject *parent = nullptr);
-    ~CanvasOrganizer();
-    virtual int mode() const = 0;
+    ~CanvasOrganizer() override;
+    virtual OrganizerMode mode() const = 0;
     virtual bool initialize(FileProxyModel *) = 0;
     virtual void setCanvasShell(CanvasModelShell *sh);
     virtual void setSurface(QWidget *w);

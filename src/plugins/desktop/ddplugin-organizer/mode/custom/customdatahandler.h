@@ -18,33 +18,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef TYPECLASSIFIER_H
-#define TYPECLASSIFIER_H
+#ifndef CUSTOMDATAHANDLER_H
+#define CUSTOMDATAHANDLER_H
 
-#include "mode/normalized/fileclassifier.h"
+#include "models/modeldatahandler.h"
+#include "organizer_defines.h"
+#include "mode/collectiondataprovider.h"
 
-#include <QSet>
+#include <QUrl>
+#include <QHash>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class TypeClassifierPrivate;
-class TypeClassifier : public FileClassifier
+class CustomDataHandler : public CollectionDataProvider, public ModelDataHandler
 {
     Q_OBJECT
-    friend class TypeClassifierPrivate;
 public:
-    explicit TypeClassifier(QObject *parent = nullptr);
-    ~TypeClassifier();
-    Classifier mode() const override;
-    ModelDataHandler *dataHandler() const override;
-    QStringList classes() const override;
-    QString classify(const QUrl &) const override;
-    QString className(const QString &key) const override;
-private:
-    TypeClassifierPrivate *d;
-    ModelDataHandler *handler = nullptr;
+    explicit CustomDataHandler(QObject *parent = nullptr);
+    ~CustomDataHandler() override;
+public:
+    virtual bool reset(const QList<CollectionBaseDataPtr> &);
+public:
+    QString replace(const QUrl &oldUrl, const QUrl &newUrl) override;
+    QString append(const QUrl &) override;
+    QString remove(const QUrl &url) override;
+    QString change(const QUrl &) override;
+public:
+    bool acceptInsert(const QUrl &url) override;
+    QList<QUrl> acceptReset(const QList<QUrl> &urls) override;
+    bool acceptRename(const QUrl &oldUrl, const QUrl &newUrl) override;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
 
-#endif // TYPECLASSIFIER_H
+#endif // CUSTOMDATAHANDLER_H

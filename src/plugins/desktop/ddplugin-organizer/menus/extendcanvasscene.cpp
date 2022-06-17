@@ -70,12 +70,12 @@ QMenu *ExtendCanvasScenePrivate::organizeBySubActions(QMenu *menu)
 {
     QMenu *subMenu = new QMenu(menu);
 
-//    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByCustom));
-//    predicateAction[ActionID::kOrganizeByCustom] = tempAction;
-//    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByCustom));
-//    tempAction->setCheckable(true);
+    QAction *tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByCustom));
+    predicateAction[ActionID::kOrganizeByCustom] = tempAction;
+    tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByCustom));
+    tempAction->setCheckable(true);
 
-    auto tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
+    tempAction = subMenu->addAction(predicateName.value(ActionID::kOrganizeByType));
     predicateAction[ActionID::kOrganizeByType] = tempAction;
     tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kOrganizeByType));
     tempAction->setCheckable(true);
