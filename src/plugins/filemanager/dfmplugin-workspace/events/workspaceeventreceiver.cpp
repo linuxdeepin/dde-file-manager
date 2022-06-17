@@ -65,6 +65,8 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleFileUpdate);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetViewFilter",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetNameFilter",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetNameFilter);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_CurrentSortRole",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleCurrentSortRole);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetSort",
@@ -97,8 +99,6 @@ void WorkspaceEventReceiver::initConnection()
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragDropMode);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetViewFilter,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetNameFilter,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetNameFilter);
     dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetReadOnly,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetReadOnly);
 }

@@ -749,8 +749,7 @@ void FileDialog::selectNameFilterByIndex(int index)
     if ((d->fileMode == QFileDialog::DirectoryOnly || d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
         newNameFilters = QStringList("/");
 
-    // TODO(zhangs): liuyangming
-    // getFileView()->setNameFilters(newNameFilters);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_SetNameFilter", internalWinId(), newNameFilters);
 }
 
 int FileDialog::selectedNameFilterIndex() const

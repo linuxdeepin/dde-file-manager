@@ -217,6 +217,8 @@ void FileSortFilterProxyModel::setNameFilters(const QStringList &nameFilters)
 
     nameFiltersMatchResultMap.clear();
     this->nameFilters = nameFilters;
+
+    invalidateFilter();
 }
 
 void FileSortFilterProxyModel::setFilterData(const QVariant &data)
