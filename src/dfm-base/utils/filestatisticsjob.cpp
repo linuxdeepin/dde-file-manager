@@ -102,13 +102,14 @@ void FileStatisticsJobPrivate::setState(FileStatisticsJob::State s)
     }
 
     if (s == FileStatisticsJob::kRunningState) {
-        QMetaObject::invokeMethod(notifyDataTimer, "start", Qt::DirectConnection, Q_ARG(int, 500));
+        QMetaObject::invokeMethod(notifyDataTimer, "start", Q_ARG(int, 500));
         elapsedTimer.start();
     } else {
-        QMetaObject::invokeMethod(notifyDataTimer, "stop", Qt::DirectConnection);
+        QMetaObject::invokeMethod(notifyDataTimer, "stop");
 
         if (s == FileStatisticsJob::kStoppedState) {
             Q_EMIT q->dataNotify(totalSize, filesCount, directoryCount);
+            Q_EMIT q->sizeChanged(totalSize);
         }
     }
 

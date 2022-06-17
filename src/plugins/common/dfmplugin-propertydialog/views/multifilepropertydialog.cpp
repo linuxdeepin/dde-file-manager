@@ -39,7 +39,7 @@ MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidge
     initHeadUi();
     setFixedSize(300, 360);
     fileCalculationUtils = new FileStatisticsJob;
-    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &MultiFilePropertyDialog::updateFolderSizeLabel);
+    connect(fileCalculationUtils, &FileStatisticsJob::sizeChanged, this, &MultiFilePropertyDialog::updateFolderSizeLabel);
     fileCalculationUtils->start(urlList);
     calculateFileCount();
     this->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -127,10 +127,7 @@ void MultiFilePropertyDialog::calculateFileCount()
     fileCountLabel->setRightValue(tr("%1 file(s), %2 folder(s)").arg(fileCount).arg(dirCount), Qt::ElideMiddle, Qt::AlignVCenter, true);
 }
 
-void MultiFilePropertyDialog::updateFolderSizeLabel(qint64 size, int filesCount, int directoryCount)
+void MultiFilePropertyDialog::updateFolderSizeLabel(qint64 size)
 {
-    Q_UNUSED(filesCount)
-    Q_UNUSED(directoryCount)
-
     totalSizeLabel->setRightValue(FileUtils::formatSize(size), Qt::ElideMiddle, Qt::AlignVCenter, true);
 }

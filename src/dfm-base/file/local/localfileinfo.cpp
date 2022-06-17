@@ -50,7 +50,7 @@
 #include <stdio.h>
 #include <mntent.h>
 
-#define REQUEST_THUMBNAIL_DEALY 500
+static constexpr uint16_t kRequestThumbnailDealy { 500 };
 
 /*!
  * \class LocalFileInfo 本地文件信息类
@@ -649,6 +649,7 @@ bool LocalFileInfo::isExecutable() const
 
         if (!success) {
             qWarning() << "cannot obtain the property kAccessCanExecute of" << d->url;
+
             if (FileUtils::isGvfsFile(this->url())) {
                 qInfo() << "trying to get isExecutable by judging whether the dir can be iterated" << d->url;
                 struct dirent *next { nullptr };
@@ -1779,7 +1780,7 @@ QIcon LocalFileInfoPrivate::thumbIcon()
             if (!getIconTimer) {
                 QTimer *t = new QTimer;
                 getIconTimer = t;
-                getIconTimer->setInterval(REQUEST_THUMBNAIL_DEALY);
+                getIconTimer->setInterval(kRequestThumbnailDealy);
                 getIconTimer->setSingleShot(true);
                 getIconTimer->moveToThread(qApp->thread());
 

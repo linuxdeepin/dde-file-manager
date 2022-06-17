@@ -59,7 +59,7 @@ private:
     void calculateFileCount();
 
 private slots:
-    void updateFolderSizeLabel(qint64 size, int filesCount, int directoryCount);
+    void updateFolderSizeLabel(qint64 size);
 
 private:
     QList<QUrl> urlList {};   //###: this list contains all the urls which are selected!

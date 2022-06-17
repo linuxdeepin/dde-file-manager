@@ -30,7 +30,7 @@ VaultEntryFileEntity::VaultEntryFileEntity(const QUrl &url)
     : AbstractEntryFileEntity(url)
 {
     fileCalculationUtils = new FileStatisticsJob;
-    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &VaultEntryFileEntity::slotFileDirSizeChange);
+    connect(fileCalculationUtils, &FileStatisticsJob::sizeChanged, this, &VaultEntryFileEntity::slotFileDirSizeChange);
     connect(fileCalculationUtils, &FileStatisticsJob::finished, this, &VaultEntryFileEntity::slotFinishedThread);
 }
 
@@ -109,11 +109,8 @@ QUrl VaultEntryFileEntity::targetUrl() const
     return VaultHelper::instance()->rootUrl();
 }
 
-void VaultEntryFileEntity::slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount)
+void VaultEntryFileEntity::slotFileDirSizeChange(qint64 size)
 {
-    Q_UNUSED(filesCount)
-    Q_UNUSED(directoryCount)
-
     if (showSizeState) {
         totalchange = size;
         if (vaultTotal > 0 && totalchange > vaultTotal)
