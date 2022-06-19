@@ -41,11 +41,15 @@ DetailSpaceWidget *DetailSpaceHelper::findDetailSpaceByWindowId(quint64 windowId
     return kDetailSpaceMap[windowId];
 }
 
-void DetailSpaceHelper::addDetailSpace(quint64 windowId, DetailSpaceWidget *titleBar)
+void DetailSpaceHelper::addDetailSpace(quint64 windowId)
 {
     QMutexLocker locker(&DetailSpaceHelper::mutex());
-    if (!kDetailSpaceMap.contains(windowId))
-        kDetailSpaceMap.insert(windowId, titleBar);
+    if (!kDetailSpaceMap.contains(windowId)) {
+        DetailSpaceWidget *detailSpaceWidget = new DetailSpaceWidget;
+        auto window = WindowsService::service()->findWindowById(windowId);
+        window->installDetailView(detailSpaceWidget);
+        kDetailSpaceMap.insert(windowId, detailSpaceWidget);
+    }
 }
 
 void DetailSpaceHelper::removeDetailSpace(quint64 windowId)
@@ -64,22 +68,14 @@ void DetailSpaceHelper::showDetailView(quint64 windowId, bool checked)
     // create new detail widget in window and
     if (checked) {
         if (!w) {
-            auto &ctx = dpfInstance.serviceContext();
-            auto windowService = ctx.service<WindowsService>(WindowsService::name());
-            auto window = windowService->findWindowById(windowId);
-            w = new DetailSpaceWidget;
-            window->installDetailView(w);
-            addDetailSpace(windowId, w);
+            addDetailSpace(windowId);
+            showDetailView(windowId, checked);
+            return;
         }
         w->setVisible(checked);
     } else {
         if (w) {
             w->setVisible(checked);
-            removeDetailSpace(windowId);
-            auto &ctx = dpfInstance.serviceContext();
-            auto windowService = ctx.service<WindowsService>(WindowsService::name());
-            auto window = windowService->findWindowById(windowId);
-            window->installDetailView(nullptr);
         }
     }
 }
@@ -96,6 +92,9 @@ void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl 
                 w->insterExpandControl(index, widgetMap.value(index));
             }
         }
+    } else {
+        addDetailSpace(windowId);
+        setDetailViewSelectFileUrl(windowId, url);
     }
 }
 

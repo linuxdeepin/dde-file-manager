@@ -25,6 +25,8 @@
 
 #include "dfmplugin_detailspace_global.h"
 
+#include "services/filemanager/windows/windowsservice.h"
+
 #include <QMap>
 #include <QUrl>
 #include <QMutex>
@@ -35,7 +37,7 @@ class DetailSpaceHelper
 {
 public:
     static DetailSpaceWidget *findDetailSpaceByWindowId(quint64 windowId);
-    static void addDetailSpace(quint64 windowId, DetailSpaceWidget *titleBar);
+    static void addDetailSpace(quint64 windowId);
     static void removeDetailSpace(quint64 windowId);
     static void showDetailView(quint64 windowId, bool checked);
     static void setDetailViewSelectFileUrl(quint64 windowId, const QUrl &url);
