@@ -162,7 +162,7 @@ TEST_F(GridManagerTest, test_currentscreenmove)
     QStringList strlist;
     int emptyCount = m_grid->emptyPostionCount(m_canvasGridView->m_screenNum);
     ASSERT_GT(emptyCount, 0);
-    for (int i = 0; i < emptyCount && i < urllist.size(); ++i)
+    for (int i = 0; ((i < emptyCount) && (i < urllist.size())); ++i)
         strlist << urllist[i].toString();
 
     movestatus = m_grid->move(m_canvasGridView->m_screenNum, strlist, url, fpoint.x() + 1, fpoint.y() + 1);
