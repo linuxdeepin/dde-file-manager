@@ -23,6 +23,7 @@
 #include "filedialogmanagerdbus.h"
 #include "dbus/filedialoghandledbus.h"
 #include "dbus/filedialog_adaptor.h"
+#include "utils/appexitcontroller.h"
 
 #include "services/common/bluetooth/bluetoothservice.h"
 
@@ -69,7 +70,7 @@ QDBusObjectPath FileDialogManagerDBus::createDialog(QString key)
 
     curDialogObjectMap[path] = handle;
     connect(handle, &FileDialogHandleDBus::destroyed, this, &FileDialogManagerDBus::onDialogDestroy);
-
+    DIALOGCORE_NAMESPACE::AppExitController::instance().dismiss();
     return path;
 }
 
@@ -146,11 +147,13 @@ void FileDialogManagerDBus::onDialogDestroy()
 
 void FileDialogManagerDBus::onAppExit()
 {
-    QString &&curAppName { qApp->applicationName() };
-    // TEMP: nativce filedialog is daemon
-    // TODO(zhangs): fix crash
-    if (curAppName == "dde-file-dialog")
-        return;
-    if (lastWindowClosed && curDialogObjectMap.size() == 0)
-        exit(0);
+    if (lastWindowClosed && curDialogObjectMap.size() == 0) {
+        // after 1 minutes app exit if don't use filedialog
+        DIALOGCORE_NAMESPACE::AppExitController::instance().readyToExit(60, [this]() {
+            // last confirm exit
+            if (lastWindowClosed && curDialogObjectMap.size() == 0)
+                return true;
+            return false;
+        });
+    }
 }

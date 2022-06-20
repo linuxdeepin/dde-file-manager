@@ -72,6 +72,12 @@ bool DiscDeviceScanner::startScan()
         return false;
     }
 
+    // Usually the Community Edition does not require an optical drive to be inserted
+    if (SysInfoUtils::isDesktopSys() && !SysInfoUtils::isProfessional()) {
+        qWarning() << "Current OS version is deepin destkop, does not require start timer";
+        return false;
+    }
+
     qInfo() << "Start scan disc";
     discScanTimer->start(kTimerInterval);
 
@@ -86,7 +92,6 @@ void DiscDeviceScanner::stopScan()
     }
     qInfo() << "Stop scan disc";
     discScanTimer->stop();
-    return;
 }
 
 void DiscDeviceScanner::updateScanState()

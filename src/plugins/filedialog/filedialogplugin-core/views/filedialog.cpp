@@ -168,12 +168,11 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
     initConnect();
     initEventConnect();
 
-    dpfInstance.eventDispatcher()
-            .installEventFilter(GlobalEventType::kOpenFiles, [this](EventDispatcher::Listener, const QVariantList &) {
-                onAcceptButtonClicked();
-                return true;
-            });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewWindow, [this](EventDispatcher::Listener, const QVariantList &params) {
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kOpenFiles, [this](EventDispatcher::Listener, const QVariantList &) {
+        onAcceptButtonClicked();
+        return true;
+    });
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kOpenNewWindow, [this](EventDispatcher::Listener, const QVariantList &params) {
         if (params.size() > 0)
             d->handleOpenNewWindow(params.at(0).toUrl());
         return true;
@@ -184,8 +183,13 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
 
 FileDialog::~FileDialog()
 {
-    dpfInstance.eventDispatcher().unsubscribe(Workspace::EventType::kViewSelectionChanged, this,
-                                              &FileDialog::onViewSelectionChanged);
+    dpfSignalDispatcher->unsubscribe(Workspace::EventType::kViewSelectionChanged, this,
+                                     &FileDialog::onViewSelectionChanged);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
+
+    dpfSignalDispatcher->removeEventFilter(GlobalEventType::kOpenFiles);
+    dpfSignalDispatcher->removeEventFilter(GlobalEventType::kOpenNewWindow);
 }
 
 void FileDialog::cd(const QUrl &url)
@@ -1019,8 +1023,8 @@ void FileDialog::updateViewState()
     dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetViewDragDropMode, internalWinId(), QAbstractItemView::NoDragDrop);
 
     // TODO(liuyangming): currentChanged
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kViewSelectionChanged, this,
-                                            &FileDialog::onViewSelectionChanged);
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kViewSelectionChanged, this,
+                                   &FileDialog::onViewSelectionChanged);
 
     if (!d->nameFilters.isEmpty())
         setNameFilters(d->nameFilters);
