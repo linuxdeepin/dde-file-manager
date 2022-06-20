@@ -56,6 +56,11 @@ void UserSharePasswordSettingDialog::initUI()
     QPalette pe;
     pe.setColor(QPalette::WindowText, QColor("#526A7F"));
     QLabel* notes = new QLabel(tr("Set a password on the shared folder for non-anonymous access"),this);
+    QFontMetrics fm = QFontMetrics( notes->font());
+    if (fm.width(notes->text()) > this->width()){
+        notes->setToolTip(notes->text());
+        notes->setText(QFontMetrics( notes->font() ).elidedText( notes->text(), Qt::ElideRight, this->width()));
+    }
     notes->setAttribute(Qt::WA_TranslucentBackground, true);
     notes->setPalette(pe);
     layout->addWidget(notes);
