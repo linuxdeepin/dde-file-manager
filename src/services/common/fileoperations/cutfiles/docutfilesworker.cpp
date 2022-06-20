@@ -208,12 +208,6 @@ void DoCutFilesWorker::emitCompleteFilesUpdatedNotify(const qint64 &writCount)
     emit stateChangedNotify(info);
 }
 
-void DoCutFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
-{
-    AbstractWorker::doOperateWork(actions);
-    resume();
-}
-
 bool DoCutFilesWorker::checkSymLink(const AbstractFileInfoPointer &fileInfo)
 {
     const QUrl &sourceUrl = fileInfo->url();

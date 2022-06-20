@@ -62,11 +62,6 @@ void DoDeleteFilesWorker::onUpdateProgress()
     emitProgressChangedNotify(deleteFilesCount);
 }
 
-void DoDeleteFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
-{
-    AbstractWorker::doOperateWork(actions);
-    resume();
-}
 /*!
  * \brief DoDeleteFilesWorker::deleteAllFiles delete All files
  * \return delete all files success

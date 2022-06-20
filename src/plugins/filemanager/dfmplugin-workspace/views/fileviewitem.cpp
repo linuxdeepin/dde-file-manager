@@ -105,7 +105,6 @@ void FileViewItem::refresh()
 {
     if (!d->fileinfo.isNull())
         d->fileinfo->refresh();
-    d->mimeType = MimeDatabase::mimeTypeForUrl(d->fileinfo->url());
 }
 
 QUrl FileViewItem::url() const
@@ -122,11 +121,6 @@ void FileViewItem::setUrl(const QUrl url)
         abort();
 
     d->fileinfo->refresh();
-    d->mimeType = MimeDatabase::mimeTypeForUrl(url);
-    if (!d->mimeType.isValid())
-        abort();
-    // Todo(yanghao)
-    //setData(QVariant(d->fileinfo->fileIcon()), kItemIconRole);
     setData(QVariant(d->fileinfo->fileName()), kItemNameRole);
 }
 
@@ -209,11 +203,6 @@ QIcon FileViewItem::cornerMarkTL()
         return qvariant_cast<QIcon>(variant);
     }
     return QIcon();
-}
-
-QMimeType FileViewItem::mimeType() const
-{
-    return d->mimeType;
 }
 
 QVariant FileViewItem::data(int role) const

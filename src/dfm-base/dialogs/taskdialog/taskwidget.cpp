@@ -363,6 +363,8 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
         value = value > preValue ? preValue + 1 : value;
     }
 
+    value = value > preValue ? value : preValue;
+
     if (value > 100) {
         value = 100;
     }

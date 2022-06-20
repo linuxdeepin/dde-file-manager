@@ -47,7 +47,6 @@ protected:
     void onUpdateProgress() override;
     bool statisticsFilesSize() override;
     bool initArgs() override;
-    void doOperateWork(AbstractJobHandler::SupportActions actions) override;
 
 protected:
     bool cleanAllTrashFiles();

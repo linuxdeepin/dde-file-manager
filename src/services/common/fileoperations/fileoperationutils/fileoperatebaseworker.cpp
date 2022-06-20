@@ -1224,26 +1224,22 @@ void FileOperateBaseWorker::cancelThreadProcessingError()
 }
 qint64 FileOperateBaseWorker::getWriteDataSize()
 {
-    qint64 writeSize = currentWriteSize;
+    qint64 writeSize = 0;
 
     if (CountWriteSizeType::kTidType == countWriteType) {
         writeSize = getTidWriteSize();
+
+        if (writeSize > currentWriteSize && currentWriteSize > 0) {
+            writeSize = currentWriteSize;
+        }
+        if (writeSize <= 0)
+            writeSize = currentWriteSize;
     } else if (CountWriteSizeType::kCustomizeType == countWriteType) {
         writeSize = currentWriteSize;
-    } else {
-        if (targetDeviceStartSectorsWritten >= 0) {
-            if ((getSectorsWritten() == 0) && (targetDeviceStartSectorsWritten > 0)) {
-                writeSize = 0;
-            } else {
-                writeSize = (getSectorsWritten() - targetDeviceStartSectorsWritten) * targetLogSecionSize;
-            }
-        }
-    }
-    if (writeSize <= 0)
-        writeSize = currentWriteSize;
-
-    if (writeSize > currentWriteSize && currentWriteSize > 0) {
-        writeSize = currentWriteSize;
+    } else if (CountWriteSizeType::kWriteBlockType == countWriteType) {
+        qint64 currentSectorsWritten = getSectorsWritten();
+        if (currentSectorsWritten > targetDeviceStartSectorsWritten)
+            writeSize = (currentSectorsWritten - targetDeviceStartSectorsWritten) * targetLogSecionSize;
     }
 
     writeSize += skipWritSize;

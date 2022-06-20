@@ -86,11 +86,6 @@ bool DoCleanTrashFilesWorker::initArgs()
     return true;
 }
 
-void DoCleanTrashFilesWorker::doOperateWork(AbstractJobHandler::SupportActions actions)
-{
-    AbstractWorker::doOperateWork(actions);
-    resume();
-}
 /*!
  * \brief DoCleanTrashFilesWorker::deleteAllFiles delete All files
  * \return delete all files success

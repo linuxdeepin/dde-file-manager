@@ -86,7 +86,6 @@ public:
     virtual QIcon cornerMarkBR();
     virtual void setIconLayers(const IconLayers &layers);
     virtual IconLayers iconLayers();
-    QMimeType mimeType() const;
     virtual QVariant data(int role) const override;
 
     inline static QString dateTimeFormat()
