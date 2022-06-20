@@ -226,7 +226,6 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
     DUrlList redirectedUrlList;
     if (urls.length() == 1) {
         QVector<MenuAction> actions = info->menuActionList(DAbstractFileInfo::SingleFile);
-        ///此处需要判断currentUrl是否形如：smb://xx.xx.xx.xx/<share_folder>
         bool isSmbSharedDir = FileUtils::isSmbShareFolder(currentUrl);
         if (isSmbSharedDir) {
             bool isMounted = false;
