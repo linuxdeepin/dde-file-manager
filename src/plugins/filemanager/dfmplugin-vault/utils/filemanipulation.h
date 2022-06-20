@@ -59,6 +59,10 @@ public:
     static bool touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const DFMBASE_NAMESPACE::Global::CreateFileType type);
 
     static bool renameHandle(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags, QString *error);
+
+    static bool renameFilesHandle(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, QString> replacePair, bool flg);
+
+    static bool renameFilesHandleAddText(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> replacePair);
 };
 DPVAULT_END_NAMESPACE
 #endif   // FILEMANIPULATION_H

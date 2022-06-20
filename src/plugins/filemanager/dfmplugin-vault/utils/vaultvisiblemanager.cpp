@@ -142,6 +142,8 @@ void VaultVisibleManager::addFileOperations()
         fileOpeationsHandle->makeDir = &FileManipulation::mkdirHandle;
         fileOpeationsHandle->touchFile = &FileManipulation::touchFileHandle;
         fileOpeationsHandle->renameFile = &FileManipulation::renameHandle;
+        fileOpeationsHandle->renameFiles = &FileManipulation::renameFilesHandle;
+        fileOpeationsHandle->renameFilesAddText = &FileManipulation::renameFilesHandleAddText;
         ServiceManager::fileOperationsServIns()->registerOperations(VaultHelper::instance()->scheme(), fileOpeationsHandle);
     }
 }

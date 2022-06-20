@@ -57,7 +57,7 @@ bool FileManipulation::openFilesHandle(quint64 windowId, const QList<QUrl> urls,
 bool FileManipulation::writeToClipBoardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
 {
     QList<QUrl> redirectedFileUrls;
-    for (const QUrl &url: urls) {
+    for (const QUrl &url : urls) {
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
@@ -84,7 +84,7 @@ JobHandlePointer FileManipulation::deletesHandle(const quint64 windowId, const Q
 {
     Q_UNUSED(flags)
     QList<QUrl> redirectedFileUrls;
-    for (const QUrl &url: sources) {
+    for (const QUrl &url : sources) {
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
@@ -112,7 +112,7 @@ JobHandlePointer FileManipulation::copyHandle(const quint64 windowId, const QLis
 JobHandlePointer FileManipulation::cutHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
     QList<QUrl> actualUrls;
-    for (const QUrl &url: sources) {
+    for (const QUrl &url : sources) {
         if (FileUtils::isComputerDesktopFile(url) || FileUtils::isTrashDesktopFile(url)) {
             continue;
         } else {
@@ -146,4 +146,22 @@ bool FileManipulation::renameHandle(const quint64 windowId, const QUrl oldUrl, c
     QUrl ourl = delegateServIns->urlTransform(oldUrl);
     QUrl nurl = delegateServIns->urlTransform(newUrl);
     return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, windowId, ourl, nurl, flags);
+}
+
+bool FileManipulation::renameFilesHandle(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, QString> replacePair, bool flg)
+{
+    QList<QUrl> actualUrls;
+    for (const QUrl &url : urlList) {
+        actualUrls << delegateServIns->urlTransform(url);
+    }
+    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair, flg);
+}
+
+bool FileManipulation::renameFilesHandleAddText(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, AbstractJobHandler::FileNameAddFlag> replacePair)
+{
+    QList<QUrl> actualUrls;
+    for (const QUrl &url : urlList) {
+        actualUrls << delegateServIns->urlTransform(url);
+    }
+    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair);
 }

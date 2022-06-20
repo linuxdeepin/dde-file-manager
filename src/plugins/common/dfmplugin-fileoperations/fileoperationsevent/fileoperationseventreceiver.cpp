@@ -945,11 +945,33 @@ void FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
 bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> pair, const bool replace)
 {
     QMap<QUrl, QUrl> successUrls;
+    bool ok = false;
     QString error;
+    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(urls.first().scheme());
+        }
+        if (function && function->renameFiles) {
+
+            ok = function->renameFiles(windowId, urls, pair, replace);
+            if (!ok) {
+                dialogManager->showErrorDialog("rename file error", error);
+            }
+            // TODO:: file renameFile finished need to send file renameFile finished event
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                                  windowId, successUrls, ok, error);
+            if (!successUrls.isEmpty())
+                saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
+            return ok;
+        }
+    }
+
     RenameTypes type = RenameTypes::kBatchRepalce;
     if (!replace)
         type = RenameTypes::kBatchCustom;
-    bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error);
+    ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error);
 
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
@@ -978,8 +1000,30 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> pair)
 {
     QMap<QUrl, QUrl> successUrls;
+    bool ok = false;
     QString error;
-    bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
+    if (!urls.isEmpty() && !urls.first().isLocalFile()) {
+        FileOperationsFunctions function { nullptr };
+        {
+            QMutexLocker lk(functionsMutex.data());
+            function = this->functions.value(urls.first().scheme());
+        }
+        if (function && function->renameFilesAddText) {
+
+            ok = function->renameFilesAddText(windowId, urls, pair);
+            if (!ok) {
+                dialogManager->showErrorDialog("rename file error", error);
+            }
+            // TODO:: file renameFile finished need to send file renameFile finished event
+            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+                                                  windowId, successUrls, ok, error);
+            if (!successUrls.isEmpty())
+                saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
+            return ok;
+        }
+    }
+
+    ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
 
     // publish result
     dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,

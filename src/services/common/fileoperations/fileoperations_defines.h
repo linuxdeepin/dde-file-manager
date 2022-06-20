@@ -74,6 +74,15 @@ using HandleOperationRenameFile = std::function<bool(const quint64 windowId,
                                                      const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags,
                                                      QString *)>;
 
+using HandleOperationRenameFiles = std::function<bool(const quint64 windowId,
+                                                      const QList<QUrl> urlList,
+                                                      const QPair<QString, QString> replacePair,
+                                                      bool flg)>;
+
+using HandleOperationRenameFilesAddText = std::function<bool(const quint64 windowId,
+                                                             const QList<QUrl> urlList,
+                                                             const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> replacePair)>;
+
 using HandleOperationMkdir = std::function<bool(const quint64 windowId,
                                                 const QUrl url,
                                                 QString *)>;
@@ -121,6 +130,8 @@ struct FileOperationsInfo
     HandleOperationOpenInTerminal openInTerminal { nullptr };
     HandleOperationCleanTrash cleanTrash { nullptr };
     HandleOperationWriteDataToClipboard writeDataToClipboard { nullptr };   // TODO(lanxuesong): impl me!
+    HandleOperationRenameFiles renameFiles { nullptr };
+    HandleOperationRenameFilesAddText renameFilesAddText { nullptr };
 };
 
 };   // namespace FileOperationsSpace

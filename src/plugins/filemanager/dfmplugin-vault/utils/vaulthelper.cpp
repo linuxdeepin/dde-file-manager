@@ -293,7 +293,6 @@ QWidget *VaultHelper::createVaultPropertyDialog(const QUrl &url)
 
 QUrl VaultHelper::vaultToLocalUrl(const QUrl &url)
 {
-    UrlRoute::urlToPath(url);
     if (url.scheme() != instance()->scheme())
         return QUrl();
     if (url.path().contains(instance()->sourceRootUrl().path())) {
