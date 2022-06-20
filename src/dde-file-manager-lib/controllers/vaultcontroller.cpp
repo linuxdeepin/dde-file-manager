@@ -665,6 +665,7 @@ void VaultController::updateFileInfo(const DUrlList &fileUrls)
                 fbi.isDir = fileInfo.isDir();
                 fbi.isFile = fileInfo.isFile();
                 fbi.isSymLink = fileInfo.isSymLink();
+                fbi.isWritable = true;
                 m_mapVaultFileInfo.insert(url, fbi);
             } else {
                 m_mapVaultFileInfo[url].isDir = fileInfo.isDir();

@@ -120,7 +120,6 @@ DWIDGET_USE_NAMESPACE
 #define BOX_LINE_WIDTH 2
 
 static const int kMinMoveLenght { 5 };
-
 SelectWork::SelectWork(QObject *parent)
     : QThread(parent), m_pModel(nullptr), m_bStop(false)
 {
@@ -188,7 +187,7 @@ void SelectWork::run()
         m_pModel->update();
     }
 }
-
+using namespace FileManagerSelectionModel;
 DFileView::DFileView(QWidget *parent)
     : DListView(parent), d_ptr(new DFileViewPrivate(this)), m_currentTargetUrl(DUrl())
 {

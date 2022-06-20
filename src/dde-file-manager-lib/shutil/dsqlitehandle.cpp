@@ -440,7 +440,7 @@ std::map<QString, std::multimap<QString, QString>>  DSqliteHandle::queryPartions
             QString partionName{};
             QString mountpoint{};
 
-            QList<QString> subsTrs{ qsTr.split(' ') };
+            QList<QString> subsTrs = qsTr.split(' ');
             partionName = subsTrs[0];
             mountpoint = subsTrs[1];
 
