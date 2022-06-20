@@ -376,11 +376,11 @@ static QString getConfigFilePath(QStandardPaths::StandardLocation type, const QS
 
 Settings::Settings(const QString &name, ConfigType type, QObject *parent)
     : Settings(QString(":/config/%1.json").arg(name),
-               getConfigFilePath(type == AppConfig
+               getConfigFilePath(type == kAppConfig
                                          ? QStandardPaths::AppConfigLocation
                                          : QStandardPaths::GenericConfigLocation,
                                  name, false),
-               getConfigFilePath(type == AppConfig
+               getConfigFilePath(type == kAppConfig
                                          ? QStandardPaths::AppConfigLocation
                                          : QStandardPaths::GenericConfigLocation,
                                  name, true),

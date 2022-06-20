@@ -39,12 +39,12 @@ class Settings : public QObject
     Q_PROPERTY(bool watchChanges READ watchChanges WRITE setWatchChanges)
 public:
     enum ConfigType {
-        AppConfig,
-        GenericConfig
+        kAppConfig,
+        kGenericConfig
     };
 
     explicit Settings(const QString &defaultFile, const QString &fallbackFile, const QString &settingFile, QObject *parent = nullptr);
-    explicit Settings(const QString &name, ConfigType type = AppConfig, QObject *parent = nullptr);
+    explicit Settings(const QString &name, ConfigType type = kAppConfig, QObject *parent = nullptr);
     ~Settings();
 
     bool contains(const QString &group, const QString &key) const;

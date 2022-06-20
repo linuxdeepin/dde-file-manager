@@ -110,7 +110,7 @@ void MainController::onFileChanged(const QString &path)
 {
     Q_UNUSED(path);
 
-    Settings settings("deepin/dde-file-manager", Settings::GenericConfig);
+    Settings settings("deepin/dde-file-manager", Settings::kGenericConfig);
     bool value = settings.value("GenericAttribute", "IndexFullTextSearch", false).toBool();
     if (value && !indexFuture.isRunning()) {
         indexFuture = QtConcurrent::run([]() {
