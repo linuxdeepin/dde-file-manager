@@ -97,21 +97,17 @@ void PermissionManagerWidget::selectFileUrl(const QUrl &url)
 
     if (info->isFile()) {
         executableCheckBox->setText(tr("Allow to execute as program"));
-        connect(executableCheckBox, &QCheckBox::toggled, this, &PermissionManagerWidget::toggleFileExecutable);
-        if (info->ownerId() != getuid()) {
+        if (info->ownerId() != getuid())
             executableCheckBox->setDisabled(true);
-        }
 
-        QString filePath = info->path();
-
-        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther)) {
+        if (info->permission(QFile::ExeUser) || info->permission(QFile::ExeGroup) || info->permission(QFile::ExeOther))
             executableCheckBox->setChecked(true);
-        }
 
         // 一些文件系统不支持修改可执行权限
-        if (!canChmod(info) || cannotChmodFsType.contains(fsType)) {
+        if (!canChmod(info) || cannotChmodFsType.contains(fsType))
             executableCheckBox->setDisabled(true);
-        }
+
+        connect(executableCheckBox, &QCheckBox::toggled, this, &PermissionManagerWidget::toggleFileExecutable);
     }
 
     // 置灰：
@@ -207,6 +203,7 @@ void PermissionManagerWidget::setComboBoxByPermission(QComboBox *cb, int permiss
 
 void PermissionManagerWidget::toggleFileExecutable(bool isChecked)
 {
+
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(selectUrl);
     if (info.isNull())
         return;
