@@ -42,6 +42,7 @@ DSC_USE_NAMESPACE
 
 static constexpr char kWorkspaceMenuSceneName[] = "WorkspaceMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
+static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 
 AbstractMenuScene *SearchMenuCreator::create()
 {
@@ -110,6 +111,19 @@ bool SearchMenuScenePrivate::openFileLocation(const QString &path)
     return DDesktopServices::showFileItem(path);
 }
 
+void SearchMenuScenePrivate::disableSubScene(AbstractMenuScene *scene, const QString &sceneName)
+{
+    for (const auto s : scene->subscene()) {
+        if (sceneName == s->name()) {
+            scene->removeSubscene(s);
+            delete s;
+            return;
+        } else {
+            disableSubScene(s, sceneName);
+        }
+    }
+}
+
 SearchMenuScene::SearchMenuScene(QObject *parent)
     : AbstractMenuScene(parent),
       d(new SearchMenuScenePrivate(this))
@@ -164,7 +178,9 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     setSubscene(currentScene);
 
     // 初始化所有子场景
-    return AbstractMenuScene::initialize(tmpParams);
+    bool ret = AbstractMenuScene::initialize(params);
+    d->disableSubScene(this, kExtendMenuSceneName);
+    return ret;
 }
 
 AbstractMenuScene *SearchMenuScene::scene(QAction *action) const

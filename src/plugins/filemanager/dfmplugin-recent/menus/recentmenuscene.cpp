@@ -43,6 +43,7 @@ static constexpr char kClipBoardMenuSceneName[] = "ClipBoardMenu";
 static constexpr char kFileOperatorMenuSceneName[] = "FileOperatorMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
 static constexpr char kOpenDirMenuSceneName[] = "OpenDirMenu";
+static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 
 static constexpr char kSortByActionId[] = "sort-by";
 static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
@@ -110,7 +111,10 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
     currentScene.append(subScene);
     setSubscene(currentScene);
 
-    return AbstractMenuScene::initialize(params);
+    bool ret = AbstractMenuScene::initialize(params);
+    d->disableSubScene(this, kExtendMenuSceneName);
+
+    return ret;
 }
 
 bool RecentMenuScene::create(QMenu *parent)
@@ -303,6 +307,19 @@ void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
             break;
         default:
             break;
+        }
+    }
+}
+
+void RecentMenuScenePrivate::disableSubScene(AbstractMenuScene *scene, const QString &sceneName)
+{
+    for (const auto s : scene->subscene()) {
+        if (sceneName == s->name()) {
+            scene->removeSubscene(s);
+            delete s;
+            return;
+        } else {
+            disableSubScene(s, sceneName);
         }
     }
 }

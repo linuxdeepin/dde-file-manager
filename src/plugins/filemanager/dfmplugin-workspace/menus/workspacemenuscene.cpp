@@ -29,6 +29,8 @@
 #include "utils/fileoperatorhelper.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/utils/fileutils.h"
 
 DPWORKSPACE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -172,8 +174,10 @@ bool WorkspaceMenuScene::initialize(const QVariantHash &params)
             currentScene.append(oemScene);
 
         // extend menu.must last
-        if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
-            currentScene.append(extendScene);
+        if (!DeviceUtils::isFtp(d->currentDir) && !DeviceUtils::isSamba(d->currentDir) && !FileUtils::isGvfsFile(d->currentDir)) {
+            if (auto extendScene = d->menuServer->createScene(kExtendMenuSceneName))
+                currentScene.append(extendScene);
+        }
     }
 
     // the scene added by binding must be initializeed after 'defalut scene'.

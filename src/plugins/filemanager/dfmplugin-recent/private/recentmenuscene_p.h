@@ -38,6 +38,7 @@ public:
 
     void updateMenu(QMenu *menu);
     void updateSubMenu(QMenu *menu);
+    void disableSubScene(DFMBASE_NAMESPACE::AbstractMenuScene *scene, const QString &sceneName);
 
 private:
     RecentMenuScene *q;
