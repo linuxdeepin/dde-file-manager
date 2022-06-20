@@ -114,6 +114,7 @@ void SearchFileWatcher::onFileAttributeChanged(const QUrl &url)
 
 void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
 {
+    bool isMatched = false;
     auto targetUrl = SearchHelper::searchTargetUrl(url());
     if (toUrl.path().startsWith(targetUrl.path())) {
         auto keyword = RegularExpression::checkWildcardAndToRegularExpression(SearchHelper::searchKeyword(url()));
@@ -122,11 +123,12 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
         auto match = regexp.match(info->fileDisplayName());
 
         if (match.hasMatch()) {
+            isMatched = true;
             addWatcher(toUrl);
         }
     }
 
-    emit fileRename(fromUrl, toUrl);
+    emit fileRename(fromUrl, isMatched ? toUrl : QUrl());
 }
 
 DPSEARCH_END_NAMESPACE

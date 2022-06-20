@@ -850,6 +850,11 @@ void FileView::onRowCountChanged()
     updateModelActiveIndex();
 }
 
+void FileView::onModelReseted()
+{
+    updateModelActiveIndex();
+}
+
 void FileView::onChildrenChanged()
 {
     updateContentLabel();
@@ -1457,6 +1462,7 @@ void FileView::initializeConnect()
     connect(selectionModel(), &QItemSelectionModel::selectionChanged, this, &FileView::onSelectionChanged);
 
     connect(this, &DListView::rowCountChanged, this, &FileView::onRowCountChanged, Qt::QueuedConnection);
+    connect(sourceModel(), &FileViewModel::modelReset, this, &FileView::onModelReseted);
     connect(this, &DListView::clicked, this, &FileView::onClicked);
     connect(this, &DListView::doubleClicked, this, &FileView::onDoubleClicked);
     connect(this, &DListView::iconSizeChanged, this, &FileView::updateHorizontalOffset, Qt::QueuedConnection);
