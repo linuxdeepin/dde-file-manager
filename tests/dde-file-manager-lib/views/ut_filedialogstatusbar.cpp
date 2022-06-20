@@ -32,7 +32,7 @@
 
 TEST(FileDialogStatusBarTest,init)
 {
-    FileDialogStatusBar w;
+    FileDialogStatusBar w(nullptr);
     EXPECT_NE(nullptr,w.m_contentLayout);
     EXPECT_NE(nullptr,w.m_titleLabel);
     EXPECT_NE(nullptr,w.m_fileNameLabel);
@@ -204,14 +204,18 @@ TEST(FileDialogStatusBarTest,begin_add_customwidget)
 
 TEST(FileDialogStatusBarTest,updateLayout_delete_layout)
 {
-    FileDialogStatusBar w;
+    FileDialogStatusBar w(nullptr);
     QHBoxLayout *lay = new QHBoxLayout;
     w.m_contentLayout->addLayout(lay);
     w.m_mode = FileDialogStatusBar::Save;
 
     w.updateLayout();
-    for (int i = 0; i < w.m_contentLayout->count(); ++i)
-        EXPECT_FALSE(w.m_contentLayout->itemAt(i) == lay);
+    QHBoxLayout *layout = w.m_contentLayout;
+    if(layout){
+        for (int i = 0; i < layout->count(); ++i)
+            EXPECT_FALSE(w.m_contentLayout->itemAt(i) == lay);
+    }
+
 }
 
 TEST(FileDialogStatusBarTest,updateLayout_save)
@@ -224,18 +228,21 @@ TEST(FileDialogStatusBarTest,updateLayout_save)
     bool fileNameEdit = false;
     bool acceptButton = false;
     bool rejectButton = false;
-
-    for (int i = 0; i < w.m_contentLayout->count(); ++i) {
-        auto wid = w.m_contentLayout->itemAt(i)->widget();
-        if (wid == w.m_fileNameEdit)
-            fileNameEdit = true;
-        else if (wid == w.m_fileNameLabel)
-            fileNameLabel = true;
-        else if (wid == (QWidget *)w.m_acceptButton)
-            acceptButton = true;
-        else if (wid == (QWidget *)w.m_rejectButton)
-            rejectButton = true;
+    QHBoxLayout *layout = w.m_contentLayout;
+    if(layout){
+        for (int i = 0; i < layout->count(); ++i) {
+            auto wid = w.m_contentLayout->itemAt(i)->widget();
+            if (wid == w.m_fileNameEdit)
+                fileNameEdit = true;
+            else if (wid == w.m_fileNameLabel)
+                fileNameLabel = true;
+            else if (wid == (QWidget *)w.m_acceptButton)
+                acceptButton = true;
+            else if (wid == (QWidget *)w.m_rejectButton)
+                rejectButton = true;
+        }
     }
+
     EXPECT_TRUE(fileNameLabel);
     EXPECT_TRUE(fileNameEdit);
     EXPECT_TRUE(acceptButton);

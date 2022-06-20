@@ -22,7 +22,7 @@
 
 TEST(DfileSelectionModelTest, dfile_selection_model)
 {
-    DFileSelectionModel dfile;
+    DFileSelectionModel dfile(nullptr);
     DFileSelectionModel dfile1(nullptr, nullptr);
     EXPECT_EQ(true, dfile.m_timer.isSingleShot());
     EXPECT_TRUE(dfile1.m_timer.isSingleShot());

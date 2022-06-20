@@ -435,7 +435,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_showNormalMenu){
         stubRet = 1;
         return (QAction*)nullptr;
     });
-    auto exec_foo = (QAction* (DFileMenu::*)())&DFileMenu::exec;
+    auto exec_foo = (QAction* (DFileMenu::*)())(&DFileMenu::exec);
     st.set(exec_foo, exec_stub);
 
     auto noneWld = (bool(*)())([](){return false;});
@@ -464,7 +464,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
         stubRet = 1;
         return (QAction*)nullptr;
     });
-    auto exec_foo = (QAction* (DFileMenu::*)())&DFileMenu::exec;
+    auto exec_foo = (QAction* (DFileMenu::*)())(&DFileMenu::exec);
     st.set(exec_foo, exec_stub);
 
     auto noneWld = (bool(*)())([](){return false;});
