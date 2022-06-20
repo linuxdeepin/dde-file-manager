@@ -22,13 +22,14 @@
 */
 #include "filedialogstatusbar.h"
 
+#include "dfm-base/mimetype/dmimedatabase.h"
+
 #include <QLineEdit>
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QLabel>
 #include <QWindow>
-#include <QMimeDatabase>
 #include <QTimer>
 #include <QDebug>
 #include <QFontMetrics>
@@ -377,7 +378,7 @@ bool FileDialogStatusBar::eventFilter(QObject *watched, QEvent *event)
 
     if (event->type() == QEvent::FocusIn) {
         QTimer::singleShot(10, this, [this]() {
-            QMimeDatabase db;
+            DFMBASE_NAMESPACE::DMimeDatabase db;
             const QString &name = fileNameEdit->text();
             const QString &suffix = db.suffixForFileName(name);
 

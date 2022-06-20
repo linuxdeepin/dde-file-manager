@@ -29,10 +29,10 @@
 
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <QApplication>
 #include <QDBusConnection>
-#include <QMimeDatabase>
 #include <QUuid>
 
 DSC_USE_NAMESPACE
@@ -110,7 +110,7 @@ bool FileDialogManagerDBus::canUseFileChooserDialog(const QString &group, const 
 
 QStringList FileDialogManagerDBus::globPatternsForMime(const QString &mimeType) const
 {
-    QMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
     QMimeType mime(db.mimeTypeForName(mimeType));
     if (mime.isValid()) {
         if (mime.isDefault()) {

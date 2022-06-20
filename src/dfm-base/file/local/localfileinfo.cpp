@@ -154,6 +154,7 @@ void LocalFileInfo::refresh()
     d->dfmFileInfo->refresh();
     d->enableEmblems = -1;
     d->gioEmblemsMap.clear();
+    d->permissionsInited.store(false);
 }
 
 void LocalFileInfo::refresh(DFileInfo::AttributeID id, const QVariant &value)
@@ -1078,6 +1079,9 @@ bool LocalFileInfo::permission(QFileDevice::Permissions permissions) const
 QFileDevice::Permissions LocalFileInfo::permissions() const
 {
     QReadLocker locker(&d->lock);
+    if (d->permissionsInited.load())
+        return d->permissions;
+
     QFileDevice::Permissions ps;
 
     if (d->dfmFileInfo) {
@@ -1085,6 +1089,9 @@ QFileDevice::Permissions LocalFileInfo::permissions() const
     }
     if (ps == 0x0000)
         ps = QFileInfo(d->url.path()).permissions();
+
+    d->permissions = ps;
+    d->permissionsInited.store(true);
 
     return ps;
 }

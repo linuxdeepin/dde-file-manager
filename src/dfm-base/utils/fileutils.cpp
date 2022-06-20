@@ -35,6 +35,7 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/decorator/decoratorfileinfo.h"
 #include "dfm-base/utils/decorator/decoratorfileenumerator.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <KCodecs>
 #include <KEncodingProber>
@@ -699,7 +700,7 @@ QByteArray FileUtils::detectCharset(const QByteArray &data, const QString &fileN
         return c->name();
     }
 
-    QMimeDatabase mimeDatabase;
+    DFMBASE_NAMESPACE::DMimeDatabase mimeDatabase;
     const QMimeType &mimeType = fileName.isEmpty() ? mimeDatabase.mimeTypeForData(data) : mimeDatabase.mimeTypeForFileNameAndData(fileName, data);
     const QString &mimetypeName = mimeType.name();
     KEncodingProber::ProberType proberType = KEncodingProber::Universal;

@@ -28,7 +28,6 @@
 
 #include <QFileInfo>
 #include <QMimeType>
-#include <QMimeDatabase>
 #include <QFrame>
 #include <QSlider>
 #include <QLabel>

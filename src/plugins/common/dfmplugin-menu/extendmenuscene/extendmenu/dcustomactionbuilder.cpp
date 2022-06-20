@@ -490,7 +490,7 @@ void DCustomActionBuilder::appendParentMimeType(const QStringList &parentmimeTyp
         return;
 
     for (const QString &mtName : parentmimeTypes) {
-        QMimeDatabase db;
+        DFMBASE_NAMESPACE::DMimeDatabase db;
         QMimeType mt = db.mimeTypeForName(mtName);
         mimeTypes.append(mt.name());
         mimeTypes.append(mt.aliases());

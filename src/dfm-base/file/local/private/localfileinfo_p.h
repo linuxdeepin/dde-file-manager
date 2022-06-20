@@ -69,6 +69,10 @@ class LocalFileInfoPrivate : public AbstractFileInfoPrivate
     std::atomic_int enableEmblems = { -1 };
     QMap<int, QIcon> gioEmblemsMap;   // 缓存的角标数据
 
+    // permission
+    std::atomic_bool permissionsInited { false };
+    QFileDevice::Permissions permissions;
+
 public:
     explicit LocalFileInfoPrivate(LocalFileInfo *qq);
     virtual ~LocalFileInfoPrivate();

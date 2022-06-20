@@ -25,6 +25,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -397,7 +398,7 @@ void OemMenuPrivate::appendParentMineType(const QStringList &parentmimeTypes, QS
     if (parentmimeTypes.isEmpty())
         return;
 
-    const static QMimeDatabase db;
+    const static DFMBASE_NAMESPACE::DMimeDatabase db;
     for (const QString &mtName : parentmimeTypes) {
         QMimeType mt = db.mimeTypeForName(mtName);
         mimeTypes.append(mt.name());

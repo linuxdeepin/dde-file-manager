@@ -20,9 +20,9 @@
  */
 
 #include "global.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <QMimeType>
-#include <QMimeDatabase>
 #include <QDebug>
 #include <DGuiApplicationHelper>
 
@@ -33,7 +33,8 @@ extern "C" FileType fileType(const QString &filePath)
 {
     FileType fileType = FileType::kUnknown;
 
-    const QMimeType mimeType = QMimeDatabase().mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
+    DFMBASE_NAMESPACE::DMimeDatabase db;
+    const QMimeType mimeType = db.mimeTypeForFile(filePath, QMimeDatabase::MatchContent);
 
     if (mimeType.name() == QLatin1String("application/pdf")) {
         fileType = kPDF;

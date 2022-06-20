@@ -22,6 +22,7 @@
 #include "mimesappsmanager.h"
 
 #include "dfm-base/mimetype/mimedatabase.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 #include "dfm-base/base/standardpaths.h"
 
@@ -287,7 +288,7 @@ QStringList MimesAppsManager::getRecommendedApps(const QUrl &url)
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     mimeType = info->fileMimeType().name();
 
-    QMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
 
     recommendedApps = getRecommendedAppsByQio(db.mimeTypeForName(mimeType));
 
@@ -321,7 +322,7 @@ QStringList MimesAppsManager::getRecommendedAppsByQio(const QMimeType &mimeType)
 {
     QStringList recommendApps;
     QList<QMimeType> mimeTypeList;
-    QMimeDatabase mimeDatabase;
+    DFMBASE_NAMESPACE::DMimeDatabase mimeDatabase;
 
     mimeTypeList.append(mimeType);
 

@@ -223,8 +223,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
 
     if (fileType && fileType->RightValue().isEmpty()) {
-        QMimeType mimeType = MimeDatabase::mimeTypeForUrl(url);
-        MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
+        MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(localinfo->mimeTypeName());
         switch (type) {
         case MimeDatabase::FileType::kDirectory:
             fileType->setRightValue(tr("Directory"), Qt::ElideNone, Qt::AlignLeft, true);

@@ -33,6 +33,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 
 #include <DDialog>
 #include <DPlatformWindowHandle>
@@ -499,7 +500,7 @@ void FileDialog::setCurrentInputName(const QString &name)
 
     statusBar()->lineEdit()->setText(name);
 
-    QMimeDatabase db;
+    DFMBASE_NAMESPACE::DMimeDatabase db;
 
     const QString &suffix = db.suffixForFileName(name);
 
@@ -730,7 +731,7 @@ void FileDialog::selectNameFilterByIndex(int index)
     QStringList newNameFilters = QPlatformFileDialogHelper::cleanFilterList(nameFilter);
 
     if (d->acceptMode == QFileDialog::AcceptSave && !newNameFilters.isEmpty()) {
-        QMimeDatabase db;
+        DFMBASE_NAMESPACE::DMimeDatabase db;
         QString fileName = statusBar()->lineEdit()->text();
         const QString fileNameExtension = db.suffixForFileName(fileName);
         QString newNameFilterExtension { CoreHelper::findExtensioName(fileName, newNameFilters, &db) };

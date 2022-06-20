@@ -24,7 +24,6 @@
 #include "global.h"
 
 #include <QMimeType>
-#include <QMimeDatabase>
 #include <QUrl>
 #include <QFileInfo>
 

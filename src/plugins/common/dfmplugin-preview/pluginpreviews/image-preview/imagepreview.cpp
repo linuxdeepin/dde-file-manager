@@ -22,13 +22,13 @@
 #include "imagepreview.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
+#include "dfm-base/mimetype/dmimedatabase.h"
 #include "imageview.h"
 
 #include <DAnchors>
 
 #include <QImageReader>
 #include <QProcess>
-#include <QMimeDatabase>
 #include <QMimeType>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -58,7 +58,7 @@ bool ImagePreview::canPreview(const QUrl &url, QByteArray *format) const
     QByteArray f = QImageReader::imageFormat(url.toLocalFile());
 
     if (f.isEmpty()) {
-        QMimeDatabase mimeDatabase;
+        DFMBASE_NAMESPACE::DMimeDatabase mimeDatabase;
 
         const QMimeType &mt = mimeDatabase.mimeTypeForFile(url.toLocalFile(), QMimeDatabase::MatchContent);
 

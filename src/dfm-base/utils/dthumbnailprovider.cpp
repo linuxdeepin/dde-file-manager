@@ -376,9 +376,6 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             }
         }
     } else if (mime.name().startsWith("image/")) {
-        //        mime = d->mimeDatabase.mimeTypeForFile(info, QMimeDatabase::MatchContent);
-        //        QImageReader reader(absoluteFilePath, mime.preferredSuffix().toLatin1());
-
         //! fix bug#49451 因为使用mime.preferredSuffix(),会导致后续image.save崩溃，具体原因还需进一步跟进
         //! QImageReader构造时不传format参数，让其自行判断
         //! fix bug #53200 QImageReader构造时不传format参数，会造成没有读取不了真实的文件 类型比如将png图标后缀修改为jpg，读取的类型不对
