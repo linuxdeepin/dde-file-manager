@@ -524,6 +524,7 @@ void FilePreviewDialog::switchToPage(int index)
             }
         }
     }
+
     if (!preview) {
         if (qobject_cast<UnknowFilePreview *>(m_preview)) {
             m_preview->setFileUrl(m_fileList.at(index));
