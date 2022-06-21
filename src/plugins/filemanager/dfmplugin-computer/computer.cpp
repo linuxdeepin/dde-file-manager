@@ -27,11 +27,14 @@
 #include "events/computerunicastreceiver.h"
 #include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"
+#include "menu/computermenuscene.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/search/searchservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
+#include "services/filemanager/workspace/workspaceservice.h"
+#include "services/common/menu/menuservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -75,6 +78,13 @@ void Computer::initialize()
 bool Computer::start()
 {
     dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
+
+    DSC_USE_NAMESPACE
+    MenuService::service()->registerScene(ComputerMenuCreator::name(), new ComputerMenuCreator());
+
+    DSB_FM_USE_NAMESPACE
+    WorkspaceService::service()->addScheme(ComputerUtils::scheme());
+    WorkspaceService::service()->setWorkspaceMenuScene(ComputerUtils::scheme(), ComputerMenuCreator::name());
     return true;
 }
 

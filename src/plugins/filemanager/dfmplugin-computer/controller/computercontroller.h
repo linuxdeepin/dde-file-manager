@@ -55,7 +55,6 @@ public:
     void mountDevice(quint64 winId, const DFMEntryFileInfoPointer info, ActionAfterMount act = kEnterDirectory);
     void mountDevice(quint64 winId, const QString &id, const QString &shellId, ActionAfterMount act = kEnterDirectory);
 
-    void actionTriggered(DFMEntryFileInfoPointer info, quint64 winId, const QString &actionText, bool triggerFromSidebar);
     void actEject(const QUrl &url);
     void actOpenInNewWindow(quint64 winId, DFMEntryFileInfoPointer info);
     void actOpenInNewTab(quint64 winId, DFMEntryFileInfoPointer info);

@@ -20,63 +20,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef COMPUTERMENUSCENE_P_H
+#define COMPUTERMENUSCENE_P_H
 
-#include "computerdatastruct.h"
+#include "dfmplugin_computer_global.h"
+
+#include "dfm-base/interfaces/private/abstractmenuscene_p.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
 
 DPCOMPUTER_BEGIN_NAMESPACE
-namespace ContextMenuAction {
-QString trOpenInNewWin()
-{
-    return QObject::tr("Open in new window");
-}
-QString trOpenInNewTab()
-{
-    return QObject::tr("Open in new tab");
-}
-QString trMount()
-{
-    return QObject::tr("Mount");
-}
-QString trUnmount()
-{
-    return QObject::tr("Unmount");
-}
-QString trRename()
-{
-    return QObject::tr("Rename");
-}
-QString trEject()
-{
-    return QObject::tr("Eject");
-}
-QString trSafelyRemove()
-{
-    return QObject::tr("Safely Remove");
-}
-QString trProperties()
-{
-    return QObject::tr("Properties");
-}
-QString trFormat()
-{
-    return QObject::tr("Format");
-}
-QString trRemove()
-{
-    return QObject::tr("Remove");
-}
-QString trLogoutAndClearSavedPasswd()
-{
-    return QObject::tr("Clear saved password and unmount");
-}
-QString trOpen()
-{
-    return QObject::tr("Open");
-}
-QString trErase()
-{
-    return QObject::tr("Erase");
-}
 
-}   // namespace ContextMenuActionTrs
+class ComputerMenuScene;
+class ComputerMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
+{
+    friend class ComputerMenuScene;
+    DFMEntryFileInfoPointer info { nullptr };
+    bool triggerFromSidebar { false };
+
+public:
+    explicit ComputerMenuScenePrivate(ComputerMenuScene *qq);
+    void updateMenu(QMenu *menu, const QStringList &disabled, const QStringList &keeps);
+};
+
 DPCOMPUTER_END_NAMESPACE
+
+#endif   // COMPUTERMENUSCENE_P_H

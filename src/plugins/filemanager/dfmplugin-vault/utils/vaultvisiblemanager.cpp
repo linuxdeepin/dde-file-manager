@@ -32,6 +32,7 @@
 #include "utils/policy/policymanager.h"
 #include "utils/servicemanager.h"
 #include "menus/vaultmenuscene.h"
+#include "menus/vaultcomputermenuscene.h"
 
 #include "services/common/delegate/delegateservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
@@ -101,6 +102,8 @@ void VaultVisibleManager::pluginServiceRegister()
 
         delegateServIns->registerUrlTransform(VaultHelper::instance()->scheme(), VaultHelper::vaultToLocalUrl);
 
+        MenuService::service()->registerScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
+        MenuService::service()->bind(VaultComputerMenuCreator::name(), "ComputerMenu");
         MenuService::service()->registerScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
         WorkspaceService::service()->setWorkspaceMenuScene(VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
     }

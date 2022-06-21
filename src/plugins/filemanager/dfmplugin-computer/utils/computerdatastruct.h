@@ -69,20 +69,36 @@ namespace DeviceId {
 inline constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 }
 
-namespace ContextMenuActionTrs {
+namespace ContextMenuAction {
+inline constexpr char kOpen[] { "computer-open" };
+inline constexpr char kOpenInNewWin[] { "computer-open-in-win" };
+inline constexpr char kOpenInNewTab[] { "computer-open-in-tab" };
+inline constexpr char kMount[] { "computer-mount" };
+inline constexpr char kUnmount[] { "computer-unmount" };
+inline constexpr char kRename[] { "computer-rename" };
+inline constexpr char kFormat[] { "computer-format" };
+inline constexpr char kRemove[] { "computer-remove" };
+inline constexpr char kEject[] { "computer-eject" };
+inline constexpr char kErase[] { "computer-erase" };
+inline constexpr char kSafelyRemove[] { "computer-safely-remove" };
+inline constexpr char kLogoutAndForget[] { "computer-logout-and-forget-passwd" };
+inline constexpr char kProperty[] { "computer-property" };
+
+inline constexpr char kActionTriggeredFromSidebar[] { "trigger-from-sidebar" };
+
+extern QString trOpen();
 extern QString trOpenInNewWin();
 extern QString trOpenInNewTab();
 extern QString trMount();
 extern QString trUnmount();
 extern QString trRename();
 extern QString trFormat();
-extern QString trErase();
-extern QString trEject();
-extern QString trLogoutAndClearSavedPasswd();
 extern QString trRemove();
+extern QString trEject();
+extern QString trErase();
 extern QString trSafelyRemove();
+extern QString trLogoutAndClearSavedPasswd();
 extern QString trProperties();
-extern QString trOpen();
 }   // namespace ContextMenuActionTrs
 
 DPCOMPUTER_END_NAMESPACE

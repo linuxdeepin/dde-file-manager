@@ -27,8 +27,6 @@
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-class QMenu;
-
 DFMBASE_BEGIN_NAMESPACE
 
 class EntryFileInfoPrivate;
@@ -70,7 +68,6 @@ public:
     bool showUsedSize() const;
     bool showProgress() const;
     QUrl targetUrl() const;
-    QMenu *createMenu() const;
     bool isAccessable() const;
     QString description() const;
     QVariant extraProperty(const QString &property) const;

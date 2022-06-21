@@ -61,6 +61,11 @@ public:
         return u;
     }
 
+    inline static QString menuSceneName()
+    {
+        return "ComputerMenu";
+    }
+
     static quint64 getWinId(QWidget *widget);
 
     static QUrl makeBlockDevUrl(const QString &id);

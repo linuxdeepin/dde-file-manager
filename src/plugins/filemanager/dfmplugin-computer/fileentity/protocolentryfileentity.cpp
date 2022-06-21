@@ -32,8 +32,6 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <QMenu>
-
 DPCOMPUTER_USE_NAMESPACE
 
 using namespace GlobalServerDefines;
@@ -90,10 +88,6 @@ bool ProtocolEntryFileEntity::showUsageSize() const
     return true;
 }
 
-void ProtocolEntryFileEntity::onOpen()
-{
-}
-
 DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder ProtocolEntryFileEntity::order() const
 {
     const QString &id = datas.value(DeviceProperty::kId).toString();
@@ -141,24 +135,4 @@ QUrl ProtocolEntryFileEntity::targetUrl() const
     target.setScheme(DFMBASE_NAMESPACE::Global::kFile);
     target.setPath(mpt);
     return target;
-}
-
-QMenu *ProtocolEntryFileEntity::createMenu()
-{
-    QMenu *menu = new QMenu();
-
-    menu->addAction(ContextMenuActionTrs::trOpenInNewWin());
-    menu->addAction(ContextMenuActionTrs::trOpenInNewTab());
-    menu->addSeparator();
-
-    if (targetUrl().isValid()) {
-        menu->addAction(ContextMenuActionTrs::trUnmount());
-
-        QString origId = datas[DeviceProperty::kId].toString();
-        if (origId.startsWith(DFMBASE_NAMESPACE::Global::kSmb) || origId.startsWith(DFMBASE_NAMESPACE::Global::kFtp) || origId.startsWith(DFMBASE_NAMESPACE::Global::kSFtp) || origId.startsWith(DFMBASE_NAMESPACE::Global::kDav))
-            menu->addAction(ContextMenuActionTrs::trLogoutAndClearSavedPasswd());
-    }
-
-    menu->addAction(ContextMenuActionTrs::trProperties());
-    return menu;
 }

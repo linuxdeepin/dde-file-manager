@@ -31,6 +31,8 @@
 #include "watcher/computeritemwatcher.h"
 
 #include "services/common/propertydialog/property_defines.h"
+#include "services/common/menu/menuservice.h"
+#include "services/common/menu/menu_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
@@ -133,16 +135,34 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
     if (!ComputerUtils::contextMenuEnabled)
         return;
 
-    DFMEntryFileInfoPointer info(new EntryFileInfo(url));
-    QMenu *menu = info->createMenu();
-    if (menu) {
-        connect(menu, &QMenu::triggered, [=](QAction *act) {
-            QString actText = act->text();
-            actionTriggered(info, winId, actText, triggerFromSidebar);
-        });
-        menu->exec(QCursor::pos());
-        menu->deleteLater();
+    DSC_USE_NAMESPACE
+    auto scene = MenuService::service()->createScene(ComputerUtils::menuSceneName());
+    if (!scene) {
+        qWarning() << "Craete scene for computer failed: " << ComputerUtils::menuSceneName();
+        return;
     }
+
+    QVariantHash params {
+        { MenuParamKey::kCurrentDir, ComputerUtils::rootUrl() },
+        { MenuParamKey::kIsEmptyArea, false },
+        { MenuParamKey::kWindowId, winId },
+        { MenuParamKey::kSelectFiles, QVariant::fromValue<QList<QUrl>>({ url }) },
+    };
+
+    if (!scene->initialize(params)) {
+        delete scene;
+        return;
+    }
+
+    QMenu m;
+    m.setProperty(ContextMenuAction::kActionTriggeredFromSidebar, triggerFromSidebar);
+    scene->create(&m);
+    scene->updateState(&m);
+
+    auto act = m.exec(QCursor::pos());
+    if (act)
+        scene->triggered(act);
+    delete scene;
 }
 
 void ComputerController::doRename(quint64 winId, const QUrl &url, const QString &name)
@@ -318,43 +338,6 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
         }
         ComputerUtils::setCursorState();
     });
-}
-
-void ComputerController::actionTriggered(DFMEntryFileInfoPointer info, quint64 winId, const QString &actionText, bool triggerFromSidebar)
-{
-    // if not original supported suffix, publish event to notify subscribers to handle
-    QString sfx = info->suffix();
-    if (!ComputerUtils::isPresetSuffix(sfx)) {
-        ComputerEventCaller::sendContextActionTriggered(winId, info->url(), actionText);
-        return;
-    }
-
-    if (actionText == ContextMenuActionTrs::trOpenInNewWin())
-        actOpenInNewWindow(winId, info);
-    else if (actionText == ContextMenuActionTrs::trOpenInNewTab())
-        actOpenInNewTab(winId, info);
-    else if (actionText == ContextMenuActionTrs::trMount())
-        actMount(winId, info);
-    else if (actionText == ContextMenuActionTrs::trUnmount())
-        actUnmount(info);
-    else if (actionText == ContextMenuActionTrs::trRename())
-        actRename(winId, info, triggerFromSidebar);
-    else if (actionText == ContextMenuActionTrs::trFormat())
-        actFormat(winId, info);
-    else if (actionText == ContextMenuActionTrs::trSafelyRemove())
-        actSafelyRemove(info);
-    else if (actionText == ContextMenuActionTrs::trEject())
-        actEject(info->url());
-    else if (actionText == ContextMenuActionTrs::trProperties())
-        actProperties(winId, info);
-    else if (actionText == ContextMenuActionTrs::trOpen())
-        onOpenItem(0, info->url());
-    else if (actionText == ContextMenuActionTrs::trRemove())
-        actRemove(info);
-    else if (actionText == ContextMenuActionTrs::trLogoutAndClearSavedPasswd())
-        actLogoutAndForgetPasswd(info);
-    else if (actionText == ContextMenuActionTrs::trErase())
-        actErase(info);
 }
 
 void ComputerController::actEject(const QUrl &url)

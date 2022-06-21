@@ -26,8 +26,6 @@
 
 #include "dfm-base/base/standardpaths.h"
 
-#include <QMenu>
-
 DPCOMPUTER_USE_NAMESPACE
 
 /*!
@@ -69,23 +67,9 @@ bool StashedProtocolEntryFileEntity::showUsageSize() const
     return false;
 }
 
-void StashedProtocolEntryFileEntity::onOpen()
-{
-}
-
 DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder StashedProtocolEntryFileEntity::order() const
 {
     return DFMBASE_NAMESPACE::EntryFileInfo::EntryOrder::kOrderStashedSmb;
-}
-
-QMenu *StashedProtocolEntryFileEntity::createMenu()
-{
-    QMenu *menu = new QMenu();
-    menu->addAction(ContextMenuActionTrs::trMount());
-    menu->addAction(ContextMenuActionTrs::trRemove());
-    menu->addSeparator();
-    menu->addAction(ContextMenuActionTrs::trProperties());
-    return menu;
 }
 
 bool StashedProtocolEntryFileEntity::isAccessable() const

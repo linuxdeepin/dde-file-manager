@@ -73,11 +73,6 @@ QUrl EntryFileInfo::targetUrl() const
     return d->entity ? d->entity->targetUrl() : QUrl();
 }
 
-QMenu *EntryFileInfo::createMenu() const
-{
-    return d->entity ? d->entity->createMenu() : nullptr;
-}
-
 bool EntryFileInfo::isAccessable() const
 {
     return d->entity ? d->entity->isAccessable() : false;

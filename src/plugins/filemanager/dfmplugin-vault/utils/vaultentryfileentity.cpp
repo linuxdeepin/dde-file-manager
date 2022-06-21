@@ -76,20 +76,10 @@ bool VaultEntryFileEntity::showUsageSize() const
     return false;
 }
 
-void VaultEntryFileEntity::onOpen()
-{
-}
-
 EntryFileInfo::EntryOrder VaultEntryFileEntity::order() const
 {
     EntryFileInfo::EntryOrder order = EntryFileInfo::EntryOrder(static_cast<int>(EntryFileInfo::EntryOrder::kOrderCustom) + 1);
     return order;
-}
-
-QMenu *VaultEntryFileEntity::createMenu()
-{
-    VaultHelper::instance()->appendWinID(QApplication::activeWindow()->winId());
-    return VaultHelper::instance()->createMenu();
 }
 
 void VaultEntryFileEntity::refresh()

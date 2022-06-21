@@ -63,7 +63,7 @@ bool AvfsBrowser::start()
 
     DSC_USE_NAMESPACE
     DelegateService::service()->registerUrlTransform(AvfsUtils::scheme(), &AvfsUtils::avfsUrlToLocal);
-    MenuService::service()->registerScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator);
+    MenuService::service()->registerScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator());
 
     DSB_FM_USE_NAMESPACE
     WorkspaceService::service()->addScheme(AvfsUtils::scheme());
