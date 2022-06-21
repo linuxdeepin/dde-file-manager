@@ -39,7 +39,7 @@ void TrashCore::initialize()
 bool TrashCore::start()
 {
     DSC_USE_NAMESPACE
-    dpfInstance.eventDispatcher().subscribe(Trash::EventType::kEmptyTrash,
+    dpfSignalDispatcher->subscribe(Trash::EventType::kEmptyTrash,
                                             TrashCoreEventReceiver::instance(),
                                             &TrashCoreEventReceiver::handleEmptyTrash);
     propertyServIns->registerCustomizePropertyView(TrashCoreHelper::createTrashPropertyDialog, TrashCoreHelper::scheme());

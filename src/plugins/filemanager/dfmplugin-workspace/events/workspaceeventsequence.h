@@ -48,7 +48,6 @@ public:
 
 private:
     explicit WorkspaceEventSequence(QObject *parent = nullptr);
-    DPF_NAMESPACE::EventSequenceManager *sequence();
 };
 
 DPWORKSPACE_END_NAMESPACE

@@ -282,8 +282,7 @@ void CanvasItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     if (const AbstractFileInfoPointer &fileInfo = canvasModel->fileInfo(index)) {
         QUrl oldUrl = fileInfo->url();
         QUrl newUrl = fileInfo->getUrlByNewFileName(newName);
-        QMetaObject::invokeMethod(FileOperatorProxyIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId())
-                                  , Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
+        QMetaObject::invokeMethod(FileOperatorProxyIns, "renameFile", Qt::QueuedConnection, Q_ARG(int, parent()->winId()), Q_ARG(QUrl, oldUrl), Q_ARG(QUrl, newUrl));
     }
 }
 
@@ -822,7 +821,7 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
 {
     //todo(zy) uing extend painter by registering.
-    if (!dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url)) {
+    if (!dpfSignalDispatcher->publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url)) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {
             qWarning() << "publish `kPaintEmblems` event failed!";
@@ -835,7 +834,7 @@ bool CanvasItemDelegate::extendPaintText(QPainter *painter, const QUrl &url, QRe
 {
     const int role = Global::ItemRoles::kItemFileDisplayNameRole;
     // todo(zy) using right event id
-    return dpfInstance.eventSequence().run(GlobalEventType::kTempDesktopPaintTag, role, url, painter, rect);
+    return dpfHookSequence->run(GlobalEventType::kTempDesktopPaintTag, role, url, painter, rect);
 }
 
 void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const

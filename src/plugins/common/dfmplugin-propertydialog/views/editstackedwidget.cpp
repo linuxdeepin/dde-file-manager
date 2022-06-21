@@ -287,7 +287,7 @@ void EditStackedWidget::showTextShowFrame()
         }
 
         initTextShowFrame(newName);
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
+        dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, this->topLevelWidget()->winId(), oldUrl, newUrl, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     }
 }
 

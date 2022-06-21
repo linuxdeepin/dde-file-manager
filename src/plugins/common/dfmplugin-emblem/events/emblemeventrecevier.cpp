@@ -24,7 +24,8 @@
 #include "services/common/emblem/emblem_defines.h"
 
 #include "dfm-base/dfm_global_defines.h"
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/event/event.h>
 
 DFMGLOBAL_USE_NAMESPACE
 DPEMBLEM_USE_NAMESPACE
@@ -51,7 +52,7 @@ void EmblemEventRecevier::initializeConnections() const
 {
     DSC_USE_NAMESPACE
 
-    dpfInstance.eventDispatcher().subscribe(Emblem::EventType::kPaintEmblems,
-                                            EmblemEventRecevier::instance(),
-                                            &EmblemEventRecevier::handlePaintEmblems);
+    dpfSignalDispatcher->subscribe(Emblem::EventType::kPaintEmblems,
+                                   EmblemEventRecevier::instance(),
+                                   &EmblemEventRecevier::handlePaintEmblems);
 }

@@ -55,7 +55,6 @@ class TrashHelper final : public QObject
 
 public:
     static TrashHelper *instance();
-    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 
     inline static QString scheme()
     {

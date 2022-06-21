@@ -37,17 +37,17 @@ void CoreEventsCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::
     quint64 id = WindowsService::service()->findWindowId(sender);
     Q_ASSERT(id > 0);
 
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
 }
 
 void CoreEventsCaller::sendSelectFiles(quint64 windowId, const QList<QUrl> &files)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSelectFiles, windowId, files);
+    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::Workspace::EventType::kSelectFiles, windowId, files);
 }
 
 void CoreEventsCaller::setSidebarItemVisible(const QUrl &url, bool visible)
 {
-    dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::SideBar::EventType::kItemVisibleSetting,
+    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::SideBar::EventType::kItemVisibleSetting,
                                           url, visible);
 }
 
@@ -56,7 +56,7 @@ void CoreEventsCaller::setSelectionMode(QWidget *sender, const QAbstractItemView
     quint64 id = WindowsService::service()->findWindowId(sender);
     Q_ASSERT(id > 0);
     auto func = [id, mode]() {
-        dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetSelectionMode, id, mode);
+        dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetSelectionMode, id, mode);
     };
     CoreHelper::delayInvokeProxy(func, id, sender);
 }
@@ -67,7 +67,7 @@ void CoreEventsCaller::setEnabledSelectionModes(QWidget *sender, const QList<QAb
     Q_ASSERT(id > 0);
 
     auto func = [id, modes] {
-        dpfInstance.eventDispatcher().publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetEnabledSelectionModes, id, modes);
+        dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetEnabledSelectionModes, id, modes);
     };
     CoreHelper::delayInvokeProxy(func, id, sender);
 }

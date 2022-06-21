@@ -39,8 +39,6 @@ public:
     QList<QIcon> getSystemEmblems(const AbstractFileInfoPointer &info) const;
     QMap<int, QIcon> getGioEmblems(const AbstractFileInfoPointer &info) const;
 
-    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
-
 private:
     QIcon standardEmblem(const SystemEmblemType type) const;
 

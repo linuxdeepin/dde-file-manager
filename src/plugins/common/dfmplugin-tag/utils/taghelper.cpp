@@ -314,11 +314,6 @@ FileOperationsService *TagHelper::fileOperationsServIns()
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
 }
 
-dpf::EventSequenceManager *TagHelper::eventSequence()
-{
-    return &dpfInstance.eventSequence();
-}
-
 void TagHelper::initTagColorDefines()
 {
     colorDefines << TagColorDefine("Orange", "dfm_tag_orange", QObject::tr("Orange"), "#ffa503")

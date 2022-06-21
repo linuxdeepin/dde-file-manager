@@ -31,24 +31,19 @@
 DPTAG_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
-
 void TagEventCaller::sendOpenWindow(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }
 
 void TagEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void TagEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)
 {
-    dispatcher()->publish(GlobalEventType::kOpenFiles, windowID, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, windowID, urls);
 }
 
 void TagEventCaller::sendFileUpdate(const QString &path)

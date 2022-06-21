@@ -27,6 +27,7 @@
 #include "dfm-base/utils/universalutils.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <QFile>
 #include <QFutureWatcher>
@@ -34,8 +35,6 @@
 #include <mutex>
 
 DSC_BEGIN_NAMESPACE
-
-#define dispatcher dpfInstance.eventDispatcher()
 
 namespace EventType {
 const int kRemoveShare = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
@@ -62,7 +61,7 @@ void UserShareService::initConnect()
 
 void UserShareService::initEventHandlers()
 {
-    dispatcher.subscribe(EventType::kRemoveShare, UserShareHelperInstance, &UserShareHelper::removeShareByPath);
+    dpfSignalDispatcher->subscribe(EventType::kRemoveShare, UserShareHelperInstance, &UserShareHelper::removeShareByPath);
 }
 
 UserShareService *UserShareService::service()

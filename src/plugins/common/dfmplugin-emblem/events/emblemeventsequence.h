@@ -40,8 +40,6 @@ public:
     bool doFetchExtendEmblems(const QUrl &url, QList<QIcon> *emblems);
     bool doFetchCustomEmblems(const QUrl &url, QList<QIcon> *emblems);
 
-    static DPF_NAMESPACE::EventSequenceManager *sequence();
-
 private:
     explicit EmblemEventSequence(QObject *parent = nullptr);
 };

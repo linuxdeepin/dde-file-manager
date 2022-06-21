@@ -492,7 +492,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
                 dialogManager->showErrorDialog("make dir error", error);
             }
             // TODO:: make dir finished need to send make dir finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
                                                   windowId, QList<QUrl>() << url, ok, error);
             return ok;
         }
@@ -515,7 +515,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
     }
     targetUrl = urlNew;
 
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
                                           windowId, QList<QUrl>() << url, ok, error);
     saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles);
     return ok;
@@ -556,7 +556,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
             if (!ok) {
                 dialogManager->showErrorDialog("touch file error", error);
             }
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
                                                   windowId, QList<QUrl>() << url, ok, error);
             return ok ? url.path() : QString();
         }
@@ -777,7 +777,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
                 dialogManager->showErrorDialog("open file error", error);
             }
             // TODO:: file Open finished need to send file Open finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
             return ok;
         }
     }
@@ -791,15 +791,15 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
         DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
         if (lastEvent != DFMBASE_NAMESPACE::GlobalEventType::kUnknowType) {
             if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles)
-                dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
             else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
-                dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
+                dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, urls, AbstractJobHandler::JobFlag::kNoHint, nullptr);
         } else {
             error = fileHandler.errorString();
             dialogManager->showErrorDialog("open file error", error);
         }
     }
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesResult, windowId, urls, ok, error);
     return ok;
 }
 
@@ -855,7 +855,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
                 dialogManager->showErrorDialog("open file by app error", error);
             }
             // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
             return ok;
         }
     }
@@ -870,7 +870,7 @@ bool FileOperationsEventReceiver::handleOperationOpenFilesByApp(const quint64 wi
         dialogManager->showErrorDialog("open file by app error", error);
     }
     // TODO:: file openFilesByApp finished need to send file openFilesByApp finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenFilesByAppResult, windowId, urls, ok, error);
     return ok;
 }
 
@@ -895,7 +895,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
                 dialogManager->showErrorDialog("rename file error", error);
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                                   windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
             if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
                 saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
@@ -916,7 +916,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         dialogManager->showRenameBusyErrDialog();
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
@@ -960,7 +960,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
                 dialogManager->showErrorDialog("rename file error", error);
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                                   windowId, successUrls, ok, error);
             if (!successUrls.isEmpty())
                 saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
@@ -974,7 +974,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error);
 
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
@@ -991,7 +991,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
         type = RenameTypes::kBatchCustom;
     bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error, custom, callback);
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
@@ -1015,7 +1015,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
                 dialogManager->showErrorDialog("rename file error", error);
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                                   windowId, successUrls, ok, error);
             if (!successUrls.isEmpty())
                 saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
@@ -1026,7 +1026,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error);
 
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
@@ -1040,7 +1040,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     QString error;
     bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error, custom, callback);
     // publish result
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
                                           windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
@@ -1124,7 +1124,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
             if (!ok) {
                 dialogManager->showErrorDialog("link file error", error);
             }
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
                                                   windowId, QList<QUrl>() << url << link, ok, error);
             return ok;
         }
@@ -1148,7 +1148,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
         error = fileHandler.errorString();
         dialogManager->showErrorDialog("link file error", error);
     }
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
                                           windowId, QList<QUrl>() << url << urlValid, ok, error);
     return ok;
 }
@@ -1192,7 +1192,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
                 dialogManager->showErrorDialog("set file permissions error", error);
             }
             // TODO:: set file permissions finished need to send set file permissions finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
                                                   windowId, QList<QUrl>() << url, ok, error);
             return ok;
         }
@@ -1206,7 +1206,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
     info->refresh();
     // TODO:: set file permissions finished need to send set file permissions finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
                                           windowId, QList<QUrl>() << url, ok, error);
     return ok;
 }
@@ -1279,7 +1279,7 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
                 dialogManager->showErrorDialog("open file in terminal error", error);
             }
             // TODO:: open file in terminal finished need to send open file in terminal finished event
-            dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
                                                   windowId, urls, result, error);
             return ok;
         }
@@ -1299,7 +1299,7 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
     }
 
     // TODO:: open file in terminal finished need to send open file in terminal finished event
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
                                           windowId, urls, result, error);
 
     return ok;

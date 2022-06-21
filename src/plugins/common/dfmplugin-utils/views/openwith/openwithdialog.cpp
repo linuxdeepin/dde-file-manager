@@ -464,7 +464,7 @@ void OpenWithDialog::openFileByApp()
     if (url.isValid()) {
         QList<QUrl> urlList;
         urlList << url;
-        if (dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, urlList, apps)) {
+        if (dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, urlList, apps)) {
             close();
             return;
         }
@@ -475,7 +475,7 @@ void OpenWithDialog::openFileByApp()
         return;
     }
 
-    if (dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, this->urlList, apps)) {
+    if (dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, this->urlList, apps)) {
         close();
         return;
     }

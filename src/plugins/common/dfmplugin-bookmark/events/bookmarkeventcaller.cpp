@@ -27,29 +27,24 @@
 DPBOOKMARK_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-static DPF_NAMESPACE::EventDispatcherManager *dispatcher()
-{
-    return &dpfInstance.eventDispatcher();
-}
-
 void BookMarkEventCaller::sendBookMarkOpenInNewWindow(const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }
 
 void BookMarkEventCaller::sendBookMarkOpenInNewTab(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kOpenNewTab, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewTab, windowId, url);
 }
 
 void BookMarkEventCaller::sendShowBookMarkPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dispatcher()->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 
 void BookMarkEventCaller::sendOpenBookMarkInWindow(quint64 windowId, const QUrl &url)
 {
-    dispatcher()->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }

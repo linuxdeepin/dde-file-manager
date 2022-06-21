@@ -103,9 +103,9 @@ bool SmbBrowserMenuScene::triggered(QAction *action)
         } else {
             QUrl u = QUrl::fromLocalFile(mntPath);
             if (actId == SmbBrowserActionId::kOpenSmb)
-                dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, winId, u);
+                dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, u);
             else
-                dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, u);
+                dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, u);
         }
     });
     return AbstractMenuScene::triggered(action);

@@ -49,12 +49,12 @@ WorkspaceEventSequence *WorkspaceEventSequence::instance()
 
 bool WorkspaceEventSequence::doPaintListItem(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
-    return sequence()->run(Workspace::EventType::kPaintListItem, role, url, painter, rect);
+    return dpfHookSequence->run(Workspace::EventType::kPaintListItem, role, url, painter, rect);
 }
 
 bool WorkspaceEventSequence::doPaintIconItem(int role, const QUrl &url, QPainter *painter, QRectF *rect)
 {
-    return sequence()->run(Workspace::EventType::kPaintIconItem, role, url, painter, rect);
+    return dpfHookSequence->run(Workspace::EventType::kPaintIconItem, role, url, painter, rect);
 }
 
 bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
@@ -64,7 +64,7 @@ bool WorkspaceEventSequence::doCheckDragTarget(const QList<QUrl> &urls, const QU
 
 bool WorkspaceEventSequence::doFetchSelectionModes(const QUrl &url, QList<QAbstractItemView::SelectionMode> *modes)
 {
-    return sequence()->run(Workspace::EventType::kFetchSelectionModes, url, modes);
+    return dpfHookSequence->run(Workspace::EventType::kFetchSelectionModes, url, modes);
 }
 
 bool WorkspaceEventSequence::doFetchCustomColumnRoles(const QUrl &rootUrl, QList<ItemRoles> *roleList)
@@ -85,9 +85,4 @@ bool WorkspaceEventSequence::doFetchCustomRoleData(const QUrl &rootUrl, const QU
 WorkspaceEventSequence::WorkspaceEventSequence(QObject *parent)
     : QObject(parent)
 {
-}
-
-EventSequenceManager *WorkspaceEventSequence::sequence()
-{
-    return &dpfInstance.eventSequence();
 }

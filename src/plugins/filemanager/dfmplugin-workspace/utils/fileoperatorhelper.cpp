@@ -48,7 +48,7 @@ FileOperatorHelper *FileOperatorHelper::instance()
 void FileOperatorHelper::touchFolder(const FileView *view)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
+    dpfSignalDispatcher->publish(GlobalEventType::kMkdir,
                                           windowId,
                                           view->rootUrl(),
                                           GlobalEventType::kMkdir,
@@ -60,7 +60,7 @@ void FileOperatorHelper::touchFiles(const FileView *view, const CreateFileType t
     const quint64 windowId = WorkspaceHelper::instance()->windowId(view);
     const QUrl &url = view->rootUrl();
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFile,
+    dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
                                           windowId,
                                           url,
                                           type,
@@ -95,7 +95,7 @@ void FileOperatorHelper::openFilesByMode(const FileView *view, const QList<QUrl>
             }
         } else {
             const QList<QUrl> &openUrls = { url };
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles,
+            dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles,
                                                   windowId,
                                                   openUrls);
         }
@@ -110,7 +110,7 @@ void FileOperatorHelper::openFilesByApp(const FileView *view)
 void FileOperatorHelper::openFilesByApp(const FileView *view, const QList<QUrl> &urls, const QList<QString> &apps)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp,
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp,
                                           windowId,
                                           urls,
                                           apps);
@@ -119,7 +119,7 @@ void FileOperatorHelper::openFilesByApp(const FileView *view, const QList<QUrl> 
 void FileOperatorHelper::renameFile(const FileView *view, const QUrl &oldUrl, const QUrl &newUrl)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile,
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFile,
                                           windowId,
                                           oldUrl,
                                           newUrl,
@@ -142,7 +142,7 @@ void FileOperatorHelper::copyFiles(const FileView *view)
             << " currentUrl: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard,
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard,
                                           windowId,
                                           ClipBoard::ClipboardAction::kCopyAction,
                                           selectedUrls);
@@ -160,7 +160,7 @@ void FileOperatorHelper::cutFiles(const FileView *view)
     qInfo() << "selected urls: " << selectedUrls
             << " currentUrl: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard,
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard,
                                           windowId,
                                           ClipBoard::ClipboardAction::kCutAction,
                                           selectedUrls);
@@ -174,7 +174,7 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
     if (ClipBoard::kCopyAction == action) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy,
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy,
                                               windowId,
                                               sourceUrls,
                                               view->rootUrl(),
@@ -182,7 +182,7 @@ void FileOperatorHelper::pasteFiles(const FileView *view)
     } else if (ClipBoard::kCutAction == action) {
 
         if (ClipBoard::supportCut()) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile,
+            dpfSignalDispatcher->publish(GlobalEventType::kCutFile,
                                                   windowId,
                                                   sourceUrls,
                                                   view->rootUrl(),
@@ -199,7 +199,7 @@ void FileOperatorHelper::undoFiles(const FileView *view)
     qInfo() << " undoFiles file, currentUrl: " << view->rootUrl();
     auto windowId = WorkspaceHelper::instance()->windowId(view);
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRevocation,
+    dpfSignalDispatcher->publish(GlobalEventType::kRevocation,
                                           windowId, nullptr);
 }
 
@@ -244,7 +244,7 @@ void FileOperatorHelper::createSymlink(const FileView *view, QUrl targetParent)
         linkUrl.setScheme(targetParent.scheme());
         linkUrl.setPath(targetParent.path() + "/" + linkName);
 
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
+        dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
                                               windowId,
                                               fileUrl,
                                               linkUrl,
@@ -259,7 +259,7 @@ void FileOperatorHelper::openInTerminal(const FileView *view)
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
         urls.append(view->rootUrl());
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal,
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenInTerminal,
                                           windowId,
                                           urls);
 }
@@ -269,7 +269,7 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
         urls.append(view->rootUrl());
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
                                           urls);
 }
 
@@ -277,27 +277,27 @@ void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 {
     QList<QUrl> urls = view->selectedUrlList();
     if (!urls.isEmpty())
-        dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::EventType::kSendFiles, urls);
+        dpfSignalDispatcher->publish(DSC_NAMESPACE::EventType::kSendFiles, urls);
 }
 
 void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
 {
     quint64 winID = WorkspaceHelper::instance()->windowId(view);
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, winID, selectUrls, currentDirUrls);
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, winID, selectUrls, currentDirUrls);
 }
 
 void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     if (action == Qt::MoveAction) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile,
+        dpfSignalDispatcher->publish(GlobalEventType::kCutFile,
                                               windowId,
                                               urls,
                                               targetUrl,
                                               AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else {
         // default is copy file
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy,
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy,
                                               windowId,
                                               urls,
                                               targetUrl,
@@ -308,7 +308,7 @@ void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &a
 void FileOperatorHelper::renameFilesByReplace(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles,
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
                                           windowId,
                                           urlList,
                                           replacePair,
@@ -318,7 +318,7 @@ void FileOperatorHelper::renameFilesByReplace(const QWidget *sender, const QList
 void FileOperatorHelper::renameFilesByAdd(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, AbstractJobHandler::FileNameAddFlag> &addPair)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles,
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
                                           windowId,
                                           urlList,
                                           addPair);
@@ -327,7 +327,7 @@ void FileOperatorHelper::renameFilesByAdd(const QWidget *sender, const QList<QUr
 void FileOperatorHelper::renameFilesByCustom(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &customPair)
 {
     auto windowId = WorkspaceHelper::instance()->windowId(sender);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles,
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles,
                                           windowId,
                                           urlList,
                                           customPair,

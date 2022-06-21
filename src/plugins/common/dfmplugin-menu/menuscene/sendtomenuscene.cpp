@@ -235,14 +235,14 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         BluetoothService::service()->sendFiles(filePaths);
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else if (actId == ActionID::kSendToDesktop) {
         QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
         const QList<QUrl> &urlsTrans = delegateServIns->urlsTransform(selectFiles);
         for (const auto &url : urlsTrans) {
             QString linkName = FileUtils::nonExistSymlinkFileName(url);
             QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCreateSymlink,
+            dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
                                                   windowId,
                                                   url,
                                                   linkUrl,

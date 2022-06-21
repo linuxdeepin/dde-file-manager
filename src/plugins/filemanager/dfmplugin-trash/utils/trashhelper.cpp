@@ -67,11 +67,6 @@ TrashHelper *TrashHelper::instance()
     return &instance;
 }
 
-dpf::EventSequenceManager *TrashHelper::eventSequence()
-{
-    return &dpfInstance.eventSequence();
-}
-
 QUrl TrashHelper::rootUrl()
 {
     QUrl url;
@@ -187,7 +182,7 @@ bool TrashHelper::isEmpty()
 
 void TrashHelper::emptyTrash(const quint64 windowId)
 {
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Trash::EventType::kEmptyTrash, windowId);
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Trash::EventType::kEmptyTrash, windowId);
 }
 
 TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)

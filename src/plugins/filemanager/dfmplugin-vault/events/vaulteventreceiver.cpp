@@ -26,7 +26,7 @@ VaultEventReceiver *VaultEventReceiver::instance()
 
 void VaultEventReceiver::connectEvent()
 {
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
+    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
     dpfHookSequence->follow("dfmplugin_utils", "hook_NotAllowdAppendCompress",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_EnterFileView", VaultEventReceiver::instance(), &VaultEventReceiver::EnterFileView);

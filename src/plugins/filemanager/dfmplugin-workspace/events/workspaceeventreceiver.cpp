@@ -74,32 +74,32 @@ void WorkspaceEventReceiver::initConnection()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_SelectAll",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectAll);
 
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kSwitchViewMode,
+    dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
 
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewTab,
+    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewTab,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
 
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCutFileResult,
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kCopyResult,
+    dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
 
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kShowCustomTopWidget,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kShowCustomTopWidget,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSelectFiles,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kSelectFiles,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetSelectionMode,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kSetSelectionMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSelectionMode);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetEnabledSelectionModes,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kSetEnabledSelectionModes,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetEnabledSelectionModes);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetViewDragEnabled,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kSetViewDragEnabled,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragEnabled);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetViewDragDropMode,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kSetViewDragDropMode,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragDropMode);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetViewFilter,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kSetViewFilter,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
-    dpfInstance.eventDispatcher().subscribe(Workspace::EventType::kSetReadOnly,
+    dpfSignalDispatcher->subscribe(Workspace::EventType::kSetReadOnly,
                                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetReadOnly);
 }
 

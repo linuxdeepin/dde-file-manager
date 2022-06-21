@@ -202,7 +202,7 @@ void CommandService::showPropertyDialog()
     if (urlList.isEmpty())
         return;
 
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urlList);
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urlList);
 }
 
 void CommandService::openWithDialog()
@@ -231,7 +231,7 @@ void CommandService::openInHomeDirectory()
 {
     QString homePath = StandardPaths::location(StandardPaths::StandardLocation::kHomePath);
     QUrl url = QUrl::fromUserInput(homePath);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, url);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
     // Todo(yanghao):isSet("n")
 }
 
@@ -274,7 +274,7 @@ void CommandService::openInUrls()
         argumentUrls.append(url);
     }
     if (argumentUrls.isEmpty())
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, QUrl());
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl());
     for (const QUrl &url : argumentUrls)
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, url);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
 }

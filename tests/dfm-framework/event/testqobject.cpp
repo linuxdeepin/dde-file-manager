@@ -29,6 +29,10 @@ TestQObject::TestQObject(QObject *parent)
 {
 }
 
+TestQObject::~TestQObject()
+{
+}
+
 int TestQObject::test1(int a)
 {
     return a + 10;

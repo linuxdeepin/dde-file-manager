@@ -30,11 +30,12 @@
 
 #include <services/common/preview/preview_defines.h>
 
-#include <base/application/application.h>
-#include <base/application/settings.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/clipboard.h>
-#include <base/schemefactory.h>
-#include <dfm-framework/framework.h>
+#include <dfm-base/base/schemefactory.h>
+
+#include <dfm-framework/event/event.h>
 
 #include <DApplication>
 #include <QAction>
@@ -304,7 +305,6 @@ void ShortcutOper::swichHidden()
     model->refresh(model->rootIndex());
 }
 
-
 void ShortcutOper::previewFiles()
 {
     QList<QUrl> urls = view->selectionModel()->selectedUrls();
@@ -320,5 +320,5 @@ void ShortcutOper::previewFiles()
     for (QUrl &url : urls) {
         currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
     }
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }

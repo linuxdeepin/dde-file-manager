@@ -30,6 +30,7 @@ class TestQObject : public QObject
     Q_OBJECT
 public:
     explicit TestQObject(QObject *parent = nullptr);
+    ~TestQObject() override;
 
 public slots:
     int test1(int a);

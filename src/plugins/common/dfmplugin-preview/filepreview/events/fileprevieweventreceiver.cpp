@@ -39,7 +39,7 @@ FilePreviewEventReceiver *FilePreviewEventReceiver::instance()
 
 void FilePreviewEventReceiver::connectService()
 {
-    dpfInstance.eventDispatcher().subscribe(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, this, &FilePreviewEventReceiver::showFilePreview);
+    dpfSignalDispatcher->subscribe(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, this, &FilePreviewEventReceiver::showFilePreview);
 }
 
 void FilePreviewEventReceiver::showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)

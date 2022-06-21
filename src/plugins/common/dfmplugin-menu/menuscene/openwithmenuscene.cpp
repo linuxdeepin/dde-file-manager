@@ -224,7 +224,7 @@ bool OpenWithMenuScene::triggered(QAction *action)
         auto appName = action->property(kAppName).toString();
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
 
-        return dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFilesByApp, 0, selectUrls, QList<QString>() << appName);
+        return dpfSignalDispatcher->publish(GlobalEventType::kOpenFilesByApp, 0, selectUrls, QList<QString>() << appName);
     }
 
     if (actProperty == ActionID::kOpenWithCustom) {

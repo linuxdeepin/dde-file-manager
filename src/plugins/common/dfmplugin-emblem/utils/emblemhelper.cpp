@@ -87,11 +87,6 @@ QMap<int, QIcon> EmblemHelper::getGioEmblems(const AbstractFileInfoPointer &info
     return emblemsMap;
 }
 
-EventSequenceManager *EmblemHelper::eventSequence()
-{
-    return &dpfInstance.eventSequence();
-}
-
 QIcon EmblemHelper::standardEmblem(const SystemEmblemType type) const
 {
     static QIcon linkEmblem(QIcon::fromTheme("emblem-symbolic-link"));

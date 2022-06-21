@@ -45,7 +45,7 @@ PropertyEventReceiver *PropertyEventReceiver::instance()
 
 void PropertyEventReceiver::connectService()
 {
-    dpfInstance.eventDispatcher().subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showPropertyControl);
+    dpfSignalDispatcher->subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showPropertyControl);
 }
 
 void PropertyEventReceiver::showPropertyControl(const QList<QUrl> &url)

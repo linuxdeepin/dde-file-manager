@@ -347,8 +347,3 @@ dfm_service_common::FileOperationsService *RecentManager::fileOperationsServIns(
 
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
 }
-
-EventSequenceManager *RecentManager::eventSequence()
-{
-    return &dpfInstance.eventSequence();
-}

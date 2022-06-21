@@ -39,22 +39,22 @@ class EventDispatcher
 public:
     using Listener = std::function<QVariant(const QVariantList &)>;
     using HandlerList = QList<EventHandler<Listener>>;
-    using Filter = std::function<bool(Listener, const QVariantList &)>;
+    using FilterList = QList<EventHandler<Listener>>;
 
-    void dispatch();
-    void dispatch(const QVariantList &params);
+    bool dispatch();
+    bool dispatch(const QVariantList &params);
     template<class T, class... Args>
-    inline void dispatch(T param, Args &&... args)
+    inline bool dispatch(T param, Args &&... args)
     {
         QVariantList ret;
         makeVariantList(&ret, param, std::forward<Args>(args)...);
-        dispatch(ret);
+        return dispatch(ret);
     }
 
-    QFuture<void> asyncDispatch();
-    QFuture<void> asyncDispatch(const QVariantList &params);
+    QFuture<bool> asyncDispatch();
+    QFuture<bool> asyncDispatch(const QVariantList &params);
     template<class T, class... Args>
-    inline QFuture<void> asyncDispatch(T param, Args &&... args)
+    inline QFuture<bool> asyncDispatch(T param, Args &&... args)
     {
         QVariantList ret;
         makeVariantList(&ret, param, std::forward<Args>(args)...);
@@ -67,13 +67,12 @@ public:
         static_assert(std::is_base_of<QObject, T>::value, "Template type T must be derived QObject");
         static_assert(!std::is_pointer<T>::value, "Receiver::bind's template type T must not be a pointer type");
 
-        QMutexLocker guard(&listenerMutex);
         auto func = [obj, method](const QVariantList &args) -> QVariant {
             EventHelper<decltype(method)> helper = (EventHelper<decltype(method)>(obj, method));
             return helper.invoke(args);
         };
 
-        list.push_back(EventHandler<Listener> { obj, memberFunctionVoidCast(method), func });
+        handlerList.push_back(EventHandler<Listener> { obj, memberFunctionVoidCast(method), func });
     }
 
     template<class T, class Func>
@@ -83,10 +82,9 @@ public:
         static_assert(!std::is_pointer<T>::value, "Receiver::bind's template type T must not be a pointer type");
 
         bool ret { true };
-        QMutexLocker guard(&listenerMutex);
-        for (auto handler : list) {
+        for (auto handler : handlerList) {
             if (handler.compare(obj, method)) {
-                if (!list.removeOne(handler)) {
+                if (!handlerList.removeOne(handler)) {
                     qWarning() << "Cannot remove: " << handler.objectIndex->objectName();
                     ret = false;
                 }
@@ -96,28 +94,61 @@ public:
         return ret;
     }
 
-    void setFilter(Filter filter);
-    void unsetFilter();
-    Filter filter();
+    template<class T, class Func>
+    inline void appendFilter(T *obj, Func method)
+    {
+        static_assert(std::is_base_of<QObject, T>::value, "Template type T must be derived QObject");
+        static_assert(!std::is_pointer<T>::value, "Receiver::bind's template type T must not be a pointer type");
+#if __cplusplus > 201703L
+        static_assert(std::is_same_v<bool, ReturnType<decltype(method)>>, "The return value of template method must is bool");
+#elif __cplusplus > 201103L
+        static_assert(std::is_same<bool, ReturnType<decltype(method)>>::value, "Template method's ReturnType must is bool");
+#endif
+        auto func = [obj, method](const QVariantList &args) -> bool {
+            EventHelper<decltype(method)> helper = (EventHelper<decltype(method)>(obj, method));
+            return helper.invoke(args).toBool();
+        };
+        filterList.push_back(EventHandler<Listener> { obj, memberFunctionVoidCast(method), func });
+    }
+
+    template<class T, class Func>
+    inline bool removeFilter(T *obj, Func method)
+    {
+        static_assert(std::is_base_of<QObject, T>::value, "Template type T must be derived QObject");
+        static_assert(!std::is_pointer<T>::value, "Receiver::bind's template type T must not be a pointer type");
+#if __cplusplus > 201703L
+        static_assert(std::is_same_v<bool, ReturnType<decltype(method)>>, "The return value of template method must is bool");
+#elif __cplusplus > 201103L
+        static_assert(std::is_same<bool, ReturnType<decltype(method)>>::value, "Template method's ReturnType must is bool");
+#endif
+        bool ret { true };
+        for (auto handler : filterList) {
+            if (handler.compare(obj, method)) {
+                if (!filterList.removeOne(handler)) {
+                    qWarning() << "Cannot remove: " << handler.objectIndex->objectName();
+                    ret = false;
+                }
+            }
+        }
+
+        return ret;
+    }
 
 private:
-    HandlerList list {};
-    Filter curFilter {};
-    QMutex listenerMutex;
+    HandlerList handlerList {};
+    FilterList filterList {};
 };
 
 class EventDispatcherManager
 {
-    Q_DISABLE_COPY(EventDispatcherManager)
-
 public:
-    static EventDispatcherManager &instance();
+    using GlobalFilter = std::function<bool(EventType type, const QVariantList &)>;
 
     template<class T, class Func>
     inline bool subscribe(const QString &space, const QString &topic, T *obj, Func method)
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
-        if (Q_UNLIKELY(!subscribe(EventConverter::convert(space, topic), obj, std::move(method)))) {
+        if (!subscribe(EventConverter::convert(space, topic), obj, std::move(method))) {
             qCritical() << "Topic " << space << ":" << topic << "is invalid";
             return false;
         }
@@ -173,14 +204,19 @@ public:
     template<class T, class... Args>
     [[gnu::hot]] inline bool publish(EventType type, T param, Args &&... args)
     {
+        if (!globalFilterMap.isEmpty()) {
+            QVariantList ret;
+            makeVariantList(&ret, param, args...);
+            if (globalFiltered(type, ret))
+                return false;
+        }
+
         QReadLocker lk(&rwLock);
         if (Q_LIKELY(dispatcherMap.contains(type))) {
             auto dispatcher = dispatcherMap.value(type);
             lk.unlock();
-            if (dispatcher) {
-                dispatcher->dispatch(param, std::forward<Args>(args)...);
-                return true;
-            }
+            if (dispatcher)
+                return dispatcher->dispatch(param, std::forward<Args>(args)...);
         }
         return false;
     }
@@ -193,52 +229,120 @@ public:
 
     inline bool publish(EventType type)
     {
+        if (!globalFilterMap.isEmpty() && globalFiltered(type, QVariantList()))
+            return false;
+
         QReadLocker lk(&rwLock);
         if (Q_LIKELY(dispatcherMap.contains(type))) {
             auto dispatcher = dispatcherMap.value(type);
             lk.unlock();
-            if (dispatcher) {
-                dispatcher->dispatch();
-                return true;
-            }
+            if (dispatcher)
+                return dispatcher->dispatch();
         }
         return false;
     }
 
     template<class T, class... Args>
-    inline QFuture<void> asyncPublish(const QString &space, const QString &topic, T param, Args &&... args)
+    inline QFuture<bool> asyncPublish(const QString &space, const QString &topic, T param, Args &&... args)
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
         return asyncPublish(EventConverter::convert(space, topic), param, std::forward<Args>(args)...);
     }
 
     template<class T, class... Args>
-    inline QFuture<void> asyncPublish(EventType type, T param, Args &&... args)
+    inline QFuture<bool> asyncPublish(EventType type, T param, Args &&... args)
     {
+        if (!globalFilterMap.isEmpty()) {
+            QVariantList ret;
+            makeVariantList(&ret, param, args...);
+            if (globalFiltered(type, ret))
+                return QFuture<bool>();
+        }
+
         QReadLocker lk(&rwLock);
-        if (Q_LIKELY(dispatcherMap.contains(type)))
-            return dispatcherMap[type]->asyncDispatch(param, std::forward<Args>(args)...);
-        return QFuture<void>();
+        if (Q_LIKELY(dispatcherMap.contains(type))) {
+            auto dispatcher { dispatcherMap[type] };
+            Q_ASSERT(dispatcher);
+            lk.unlock();
+            return dispatcher->asyncDispatch(param, std::forward<Args>(args)...);
+        }
+        return QFuture<bool>();
     }
 
-    inline QFuture<void> asyncPublish(const QString &space, const QString &topic)
+    inline QFuture<bool> asyncPublish(const QString &space, const QString &topic)
     {
         Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
         return asyncPublish(EventConverter::convert(space, topic));
     }
 
-    inline QFuture<void> asyncPublish(EventType type)
+    inline QFuture<bool> asyncPublish(EventType type)
     {
+        if (!globalFilterMap.isEmpty() && globalFiltered(type, QVariantList()))
+            return QFuture<bool>();
+
         QReadLocker lk(&rwLock);
-        if (Q_LIKELY(dispatcherMap.contains(type)))
-            return dispatcherMap[type]->asyncDispatch();
-        return QFuture<void>();
+        if (Q_LIKELY(dispatcherMap.contains(type))) {
+            auto dispatcher { dispatcherMap[type] };
+            Q_ASSERT(dispatcher);
+            lk.unlock();
+            return dispatcher->asyncDispatch();
+        }
+        return QFuture<bool>();
     }
 
-    bool installEventFilter(const QString &space, const QString &topic, EventDispatcher::Filter filter);
-    bool installEventFilter(EventType type, EventDispatcher::Filter filter);
-    bool removeEventFilter(const QString &space, const QString &topic);
-    bool removeEventFilter(EventType type);
+    bool installGlobalEventFilter(QObject *obj, GlobalFilter filter);
+    bool removeGlobalEventFilter(QObject *obj);
+    bool globalFiltered(EventType type, const QVariantList &params);
+
+    template<class T, class Func>
+    inline bool installEventFilter(const QString &space, const QString &topic, T *obj, Func method)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        if (!installEventFilter(EventConverter::convert(space, topic), obj, std::move(method))) {
+            qCritical() << "Topic " << space << ":" << topic << "is invalid";
+            return false;
+        }
+        return true;
+    }
+
+    template<class T, class Func>
+    inline bool installEventFilter(EventType type, T *obj, Func method)
+    {
+        if (!isValidEventType(type)) {
+            qCritical() << "Event " << type << "is invalid";
+            return false;
+        }
+
+        QWriteLocker lk(&rwLock);
+        if (dispatcherMap.contains(type)) {
+            dispatcherMap[type]->appendFilter(obj, method);
+        } else {
+            DispatcherPtr dispatcher { new EventDispatcher };
+            dispatcher->appendFilter(obj, method);
+            dispatcherMap.insert(type, dispatcher);
+        }
+        return true;
+    }
+
+    template<class T, class Func>
+    inline bool removeEventFilter(const QString &space, const QString &topic, T *obj, Func method)
+    {
+        Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
+        return removeEventFilter(EventConverter::convert(space, topic), obj, std::move(method));
+    }
+
+    template<class T, class Func>
+    inline bool removeEventFilter(EventType type, T *obj, Func method)
+    {
+        if (!obj || !method)
+            return false;
+
+        QWriteLocker lk(&rwLock);
+        if (dispatcherMap.contains(type))
+            return dispatcherMap[type]->removeFilter(obj, std::move(method));
+
+        return false;
+    }
 
 protected:
     bool unsubscribe(const QString &space, const QString &topic);
@@ -247,12 +351,11 @@ protected:
 private:
     using DispatcherPtr = QSharedPointer<EventDispatcher>;
     using EventDispatcherMap = QMap<EventType, DispatcherPtr>;
-
-    EventDispatcherManager() = default;
-    ~EventDispatcherManager() = default;
+    using GlobalEventFilterMap = QMap<QObject *, GlobalFilter>;
 
 private:
     EventDispatcherMap dispatcherMap;
+    GlobalEventFilterMap globalFilterMap;
     QReadWriteLock rwLock;
 };
 

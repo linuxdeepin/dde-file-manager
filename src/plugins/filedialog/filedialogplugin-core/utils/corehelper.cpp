@@ -79,29 +79,6 @@ void CoreHelper::delayInvokeProxy(std::function<void()> func, quint64 winID, QOb
     }
 }
 
-void CoreHelper::installDFMEventFilterForReject()
-{
-    // reject follow events
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenNewTab, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenAsAdmin, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenFilesByApp, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kCreateSymlink, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kOpenInTerminal, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-    dpfInstance.eventDispatcher().installEventFilter(GlobalEventType::kHideFiles, [](EventDispatcher::Listener, const QVariantList &) {
-        return true;
-    });
-}
-
 /*!
  * \brief Files with filenames starting with a dot are considered as hidden files and need to be checked
  * \return true if don't save as hidden file

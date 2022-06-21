@@ -28,64 +28,70 @@
 
 DPF_USE_NAMESPACE
 
-void EventDispatcher::dispatch()
+bool EventDispatcher::dispatch()
 {
     return dispatch(QVariantList());
 }
 
-void EventDispatcher::dispatch(const QVariantList &params)
+bool EventDispatcher::dispatch(const QVariantList &params)
 {
-    if (Q_UNLIKELY(curFilter)) {
-        if (std::any_of(list.begin(), list.end(), [this, params](const EventHandler<Listener> &h) {
-                if (curFilter(h.handler, params))
-                    return true;
-                return false;
-            })) {
-            return;
-        }
+    if (std::any_of(filterList.begin(), filterList.end(), [params](const EventHandler<Listener> &h) {
+            return h.handler(params).toBool();
+        })) {
+        return false;
     }
 
-    std::for_each(list.begin(), list.end(), [params](const EventHandler<Listener> &h) {
+    std::for_each(handlerList.begin(), handlerList.end(), [params](const EventHandler<Listener> &h) {
         h.handler(params);
     });
+
+    return true;
 }
 
-QFuture<void> EventDispatcher::asyncDispatch()
+QFuture<bool> EventDispatcher::asyncDispatch()
 {
     return asyncDispatch(QVariantList());
 }
 
-QFuture<void> EventDispatcher::asyncDispatch(const QVariantList &params)
+QFuture<bool> EventDispatcher::asyncDispatch(const QVariantList &params)
 {
-    return QFuture<void>(QtConcurrent::run([this, params]() {
+    return QFuture<bool>(QtConcurrent::run([this, params]() -> bool {
         return this->dispatch(params);
     }));
 }
 
-void EventDispatcher::setFilter(EventDispatcher::Filter filter)
+bool EventDispatcherManager::installGlobalEventFilter(QObject *obj, EventDispatcherManager::GlobalFilter filter)
 {
-    curFilter = filter;
+    Q_ASSERT(obj);
+
+    QWriteLocker guard(&rwLock);
+    return globalFilterMap.insert(obj, filter) != globalFilterMap.end();
 }
 
-void EventDispatcher::unsetFilter()
+bool EventDispatcherManager::removeGlobalEventFilter(QObject *obj)
 {
-    curFilter = {};
+    QWriteLocker guard(&rwLock);
+    if (globalFilterMap.contains(obj))
+        return globalFilterMap.remove(obj) > 0;
+
+    return false;
 }
 
-EventDispatcher::Filter EventDispatcher::filter()
+bool EventDispatcherManager::globalFiltered(EventType type, const QVariantList &params)
 {
-    return curFilter;
-}
+    QReadLocker lk(&rwLock);
 
-/*!
- * \class EventDispatcherManager
- * \brief
- */
+    int size { globalFilterMap.size() };
+    for (int i = 0; i != size; ++i) {
+        auto key { globalFilterMap.keys()[i] };
+        if (key) {
+            auto func { globalFilterMap.value(key) };
+            lk.unlock();
+            return func(type, params);
+        }
+    }
 
-EventDispatcherManager &EventDispatcherManager::instance()
-{
-    static EventDispatcherManager instance;
-    return instance;
+    return false;
 }
 
 bool EventDispatcherManager::unsubscribe(const QString &space, const QString &topic)
@@ -100,39 +106,5 @@ bool EventDispatcherManager::unsubscribe(EventType type)
     if (dispatcherMap.contains(type))
         return dispatcherMap.remove(type) > 0;
 
-    return false;
-}
-
-bool EventDispatcherManager::installEventFilter(const QString &space, const QString &topic, EventDispatcher::Filter filter)
-{
-    Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
-    return installEventFilter(EventConverter::convert(space, topic), filter);
-}
-
-bool EventDispatcherManager::installEventFilter(EventType type, EventDispatcher::Filter filter)
-{
-    if (dispatcherMap.contains(type)) {
-        if (dispatcherMap.value(type)->filter())
-            return false;
-        QWriteLocker guard(&rwLock);
-        dispatcherMap.value(type)->setFilter(filter);
-        return true;
-    }
-    return false;
-}
-
-bool EventDispatcherManager::removeEventFilter(const QString &space, const QString &topic)
-{
-    Q_ASSERT(topic.startsWith(kSignalStrategePrefix));
-    return removeEventFilter(EventConverter::convert(space, topic));
-}
-
-bool EventDispatcherManager::removeEventFilter(EventType type)
-{
-    if (dispatcherMap.contains(type)) {
-        QWriteLocker guard(&rwLock);
-        dispatcherMap.value(type)->unsetFilter();
-        return true;
-    }
     return false;
 }

@@ -61,7 +61,7 @@ bool FileManipulation::writeToClipBoardHandle(const quint64 windowId, const Clip
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
 
     return true;
 }
@@ -74,7 +74,7 @@ JobHandlePointer FileManipulation::moveToTrashHandle(const quint64 windowId, con
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
+    dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
                                           windowId,
                                           redirectedFileUrls, flags, nullptr);
     return {};
@@ -88,7 +88,7 @@ JobHandlePointer FileManipulation::deletesHandle(const quint64 windowId, const Q
         redirectedFileUrls << delegateServIns->urlTransform(url);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
+    dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
                                           windowId,
                                           redirectedFileUrls, flags, nullptr);
     return {};
@@ -105,7 +105,7 @@ JobHandlePointer FileManipulation::copyHandle(const quint64 windowId, const QLis
         }
     }
     QUrl url = delegateServIns->urlTransform(target);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, windowId, actualUrls, url, flags, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kCopy, windowId, actualUrls, url, flags, nullptr);
     return {};
 }
 
@@ -120,14 +120,14 @@ JobHandlePointer FileManipulation::cutHandle(const quint64 windowId, const QList
         }
     }
     QUrl url = delegateServIns->urlTransform(target);
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, windowId, actualUrls, url, flags, nullptr);
+    dpfSignalDispatcher->publish(GlobalEventType::kCutFile, windowId, actualUrls, url, flags, nullptr);
     return {};
 }
 
 bool FileManipulation::mkdirHandle(const quint64 windowId, const QUrl url, QString *errore)
 {
     QUrl dirUrl = delegateServIns->urlTransform(url);
-    return dpfInstance.eventDispatcher().publish(GlobalEventType::kMkdir,
+    return dpfSignalDispatcher->publish(GlobalEventType::kMkdir,
                                                  windowId,
                                                  dirUrl);
 }
@@ -135,7 +135,7 @@ bool FileManipulation::mkdirHandle(const quint64 windowId, const QUrl url, QStri
 bool FileManipulation::touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const Global::CreateFileType type)
 {
     QUrl dirUrl = delegateServIns->urlTransform(url);
-    return dpfInstance.eventDispatcher().publish(GlobalEventType::kTouchFile,
+    return dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
                                                  windowId,
                                                  dirUrl,
                                                  type, *error);
@@ -145,7 +145,7 @@ bool FileManipulation::renameHandle(const quint64 windowId, const QUrl oldUrl, c
 {
     QUrl ourl = delegateServIns->urlTransform(oldUrl);
     QUrl nurl = delegateServIns->urlTransform(newUrl);
-    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFile, windowId, ourl, nurl, flags);
+    return dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, windowId, ourl, nurl, flags);
 }
 
 bool FileManipulation::renameFilesHandle(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, QString> replacePair, bool flg)
@@ -154,7 +154,7 @@ bool FileManipulation::renameFilesHandle(const quint64 windowId, const QList<QUr
     for (const QUrl &url : urlList) {
         actualUrls << delegateServIns->urlTransform(url);
     }
-    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair, flg);
+    return dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair, flg);
 }
 
 bool FileManipulation::renameFilesHandleAddText(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, AbstractJobHandler::FileNameAddFlag> replacePair)
@@ -163,5 +163,5 @@ bool FileManipulation::renameFilesHandleAddText(const quint64 windowId, const QL
     for (const QUrl &url : urlList) {
         actualUrls << delegateServIns->urlTransform(url);
     }
-    return dpfInstance.eventDispatcher().publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair);
+    return dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair);
 }

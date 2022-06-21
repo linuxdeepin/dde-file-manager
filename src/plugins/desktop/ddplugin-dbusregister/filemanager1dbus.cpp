@@ -93,6 +93,6 @@ void FileManager1DBus::Trash(const QStringList &URIs)
         urls << tempUrl;
     }
 
-    dpfInstance.eventDispatcher().publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash,
+    dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash,
                                           0, urls, DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint, nullptr);
 }

@@ -128,7 +128,7 @@ bool OpenDirMenuScene::triggered(QAction *action)
 
     // open in new window
     if (actionId == ActionID::kOpenInNewWindow) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenNewWindow, d->focusFile);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, d->focusFile);
         return true;
     }
 
@@ -140,13 +140,13 @@ bool OpenDirMenuScene::triggered(QAction *action)
         else
             urls << d->focusFile;
 
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenInTerminal, d->windowId, urls);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenInTerminal, d->windowId, urls);
         return true;
     }
 
     // open as admin
     if (actionId == ActionID::kOpenAsAdmin) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenAsAdmin, d->isEmptyArea ? d->currentDir : d->focusFile);
+        dpfSignalDispatcher->publish(GlobalEventType::kOpenAsAdmin, d->isEmptyArea ? d->currentDir : d->focusFile);
         return true;
     }
 

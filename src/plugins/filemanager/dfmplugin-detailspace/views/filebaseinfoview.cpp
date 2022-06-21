@@ -26,7 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 USING_IO_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -43,9 +43,9 @@ FileBaseInfoView::FileBaseInfoView(QWidget *parent)
 
 FileBaseInfoView::~FileBaseInfoView()
 {
-    dpfInstance.eventDispatcher().unsubscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
-    dpfInstance.eventDispatcher().unsubscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
-    dpfInstance.eventDispatcher().unsubscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
+    dpfSignalDispatcher->unsubscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
+    dpfSignalDispatcher->unsubscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
+    dpfSignalDispatcher->unsubscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
 }
 
 void FileBaseInfoView::initUI()
@@ -222,7 +222,7 @@ void FileBaseInfoView::basicFill(const QUrl &url)
 
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
 
-    if (fileType && fileType->RightValue().isEmpty()) {
+    if (fileType && fileType->RightValue().isEmpty() && localinfo) {
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(localinfo->mimeTypeName());
         switch (type) {
         case MimeDatabase::FileType::kDirectory:
@@ -275,9 +275,9 @@ void FileBaseInfoView::clearField()
 
 void FileBaseInfoView::connectEvent()
 {
-    dpfInstance.eventDispatcher().subscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
-    dpfInstance.eventDispatcher().subscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
-    dpfInstance.eventDispatcher().subscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
+    dpfSignalDispatcher->subscribe(kImageExten, this, &FileBaseInfoView::imageExtenInfoReceiver);
+    dpfSignalDispatcher->subscribe(kVideoExten, this, &FileBaseInfoView::videoExtenInfoReceiver);
+    dpfSignalDispatcher->subscribe(kAudioExten, this, &FileBaseInfoView::audioExtenInfoReceiver);
 }
 
 void FileBaseInfoView::connectInit()
@@ -343,7 +343,7 @@ void FileBaseInfoView::imageExtenInfo(bool flg, QMap<DFileInfo::AttributeExtendI
             int height = properties[DFileInfo::AttributeExtendID::kExtendMediaHeight].toInt();
             QString viewSize = QString::number(width) + "x" + QString::number(height);
             property << viewSize;
-            dpfInstance.eventDispatcher().publish(kImageExten, property);
+            dpfSignalDispatcher->publish(kImageExten, property);
         }
     }
 }
@@ -369,7 +369,7 @@ void FileBaseInfoView::videoExtenInfo(bool flg, QMap<dfmio::DFileInfo::Attribute
 
             property << durationStr;
 
-            dpfInstance.eventDispatcher().publish(kVideoExten, property);
+            dpfSignalDispatcher->publish(kVideoExten, property);
         }
     }
 }
@@ -390,7 +390,7 @@ void FileBaseInfoView::audioExtenInfo(bool flg, QMap<dfmio::DFileInfo::Attribute
 
             property << durationStr;
 
-            dpfInstance.eventDispatcher().publish(kAudioExten, property);
+            dpfSignalDispatcher->publish(kAudioExten, property);
         }
     }
 }

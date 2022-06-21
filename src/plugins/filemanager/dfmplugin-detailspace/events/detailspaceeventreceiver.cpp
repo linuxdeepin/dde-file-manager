@@ -24,7 +24,7 @@
 #include "utils/detailspacehelper.h"
 #include "services/filemanager/detailspace/detailspace_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <functional>
 
@@ -39,10 +39,10 @@ DetailSpaceEventReceiver *DetailSpaceEventReceiver::instance()
 
 void DetailSpaceEventReceiver::connectService()
 {
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView,
-                                            this, &DetailSpaceEventReceiver::handleTileBarShowDetailView);
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::DetailEventType::kSetDetailViewSelectFileUrl,
-                                            this, &DetailSpaceEventReceiver::setSelect);
+    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView,
+                                   this, &DetailSpaceEventReceiver::handleTileBarShowDetailView);
+    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::DetailEventType::kSetDetailViewSelectFileUrl,
+                                   this, &DetailSpaceEventReceiver::setSelect);
 }
 
 void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, bool checked)

@@ -44,9 +44,9 @@ public:
 TEST_F(UT_EventChannel, test_sync_send)
 {
     TestQObject b;
-    EventChannel Channel;
-    Channel.setReceiver(&b, &TestQObject::test1);
-    QVariant value = Channel.send(8);
+    EventChannel channel;
+    channel.setReceiver(&b, &TestQObject::test1);
+    QVariant value = channel.send(8);
     EXPECT_EQ(value.toInt(), 18);
 }
 

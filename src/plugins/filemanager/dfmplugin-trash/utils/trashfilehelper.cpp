@@ -72,7 +72,7 @@ bool TrashFileHelper::writeToClipBoardHandle(const quint64 windowId, const ClipB
         redirectedFileUrls << TrashHelper::toLocalFile(url);
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
 
     return true;
 }
@@ -85,7 +85,7 @@ JobHandlePointer TrashFileHelper::moveToTrashHandle(const quint64 windowId, cons
     for (QUrl url : sources) {
         redirectedFileUrls << TrashHelper::toLocalFile(url);
     }
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
+    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
                                           windowId,
                                           redirectedFileUrls,
                                           AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
@@ -98,7 +98,7 @@ JobHandlePointer TrashFileHelper::moveFromTrashHandle(const quint64 windowId, co
     for (QUrl url : sources) {
         redirectedFileUrls << TrashHelper::toLocalFile(url);
     }
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile,
+    dpfSignalDispatcher->publish(GlobalEventType::kCutFile,
                                           windowId,
                                           redirectedFileUrls,
                                           targetUrl,
@@ -114,7 +114,7 @@ JobHandlePointer TrashFileHelper::deletesHandle(const quint64 windowId, const QL
     for (QUrl url : sources) {
         redirectedFileUrls << TrashHelper::toLocalFile(url);
     }
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kCleanTrash,
+    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
                                           windowId,
                                           redirectedFileUrls,
                                           AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
@@ -123,7 +123,7 @@ JobHandlePointer TrashFileHelper::deletesHandle(const quint64 windowId, const QL
 
 JobHandlePointer TrashFileHelper::copyHandle(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
+    dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
                                           windowId,
                                           sources, nullptr);
     return {};
@@ -136,11 +136,11 @@ JobHandlePointer TrashFileHelper::cutHandle(const quint64 windowId, const QList<
 
     const QUrl &urlSource = sources.first();
     if (Q_UNLIKELY(FileUtils::isGvfsFile(urlSource) || DFMIO::DFMUtils::fileIsRemovable(urlSource))) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kDeleteFiles,
+        dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
                                               windowId,
                                               sources, flags, nullptr);
     } else {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kMoveToTrash,
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
                                               windowId,
                                               sources, flags, nullptr);
     }
@@ -155,7 +155,7 @@ JobHandlePointer TrashFileHelper::restoreFromTrashHandle(const quint64 windowId,
             urlsLocal.append(TrashHelper::toLocalFile(url));
     }
 
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kRestoreFromTrash,
+    dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash,
                                           windowId,
                                           urlsLocal,
                                           flags, nullptr);

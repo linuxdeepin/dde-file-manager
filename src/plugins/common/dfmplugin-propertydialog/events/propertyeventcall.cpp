@@ -30,10 +30,10 @@ DPPROPERTYDIALOG_USE_NAMESPACE
 
 void PropertyEventCall::sendSetPermissionManager(quint64 winID, const QUrl &url, const QFileDevice::Permissions permissions)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kSetPermission, winID, url, permissions);
+    dpfSignalDispatcher->publish(GlobalEventType::kSetPermission, winID, url, permissions);
 }
 
 void PropertyEventCall::sendFileHide(quint64 winID, const QList<QUrl> &urls)
 {
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kHideFiles, winID, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kHideFiles, winID, urls);
 }

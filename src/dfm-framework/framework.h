@@ -45,9 +45,7 @@ public:
     static Framework &instance();
 
     Q_DECL_DEPRECATED PluginServiceContext &serviceContext() const;
-    [[gnu::hot]] EventDispatcherManager &eventDispatcher() const;
     Q_DECL_DEPRECATED EventUnicastManager &eventUnicast() const;
-    EventSequenceManager &eventSequence() const;
 
 private:
     Framework();

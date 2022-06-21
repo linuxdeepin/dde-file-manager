@@ -28,7 +28,9 @@
 
 #include "services/common/menu/menuservice.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -40,9 +42,14 @@ DFMBASE_USE_NAMESPACE
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPBURN_NAMESPACE) };
 
-bool Burn::start()
+void Burn::initialize()
 {
     bindEvents();
+    dpfSignalDispatcher->installEventFilter(GlobalEventType::kChangeCurrentUrl, this, &Burn::changeUrlEventFilter);
+}
+
+bool Burn::start()
+{
     DSC_USE_NAMESPACE
     MenuService::service()->registerScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
     bindScene("SendToMenu");
@@ -78,6 +85,17 @@ void Burn::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_MountImage", BurnEventReceiver::instance(), &BurnEventReceiver::handleMountImage);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult, BurnEventReceiver::instance(), &BurnEventReceiver::handleCopyFilesResult);
+}
+
+bool Burn::changeUrlEventFilter(quint64 windowId, const QUrl &url)
+{
+    Q_UNUSED(windowId);
+    if (url.scheme() == Global::kBurn) {
+        auto &&dev { BurnHelper::burnDestDevice(url) };
+        if (DeviceUtils::isWorkingOpticalDiscDev(dev))
+            return true;
+    }
+    return false;
 }
 
 void Burn::onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value)

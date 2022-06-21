@@ -41,11 +41,13 @@ class Burn : public DPF_NAMESPACE::Plugin
     DPF_EVENT_REG_SLOT(slot_MountImage)
 
 public:
+    virtual void initialize() override;
     virtual bool start() override;
 
 private slots:
     void bindScene(const QString &parentScene);
     void bindEvents();
+    bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
     void onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value);
 };
 

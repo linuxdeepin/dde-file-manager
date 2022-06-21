@@ -77,7 +77,7 @@ void Computer::initialize()
 
 bool Computer::start()
 {
-    dpfInstance.eventDispatcher().subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
+    dpfSignalDispatcher->subscribe(SideBar::EventType::kEjectAction, ComputerEventReceiverIns, &ComputerEventReceiver::handleItemEject);
 
     DSC_USE_NAMESPACE
     MenuService::service()->registerScene(ComputerMenuCreator::name(), new ComputerMenuCreator());
@@ -85,6 +85,7 @@ bool Computer::start()
     DSB_FM_USE_NAMESPACE
     WorkspaceService::service()->addScheme(ComputerUtils::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(ComputerUtils::scheme(), ComputerMenuCreator::name());
+
     return true;
 }
 

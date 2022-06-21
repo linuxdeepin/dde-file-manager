@@ -183,9 +183,9 @@ bool ClipBoardMenuScene::triggered(QAction *action)
     if (id == ActionID::kPaste) {
         ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
         if (ClipBoard::kCopyAction == action) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCopy, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
+            dpfSignalDispatcher->publish(GlobalEventType::kCopy, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
         } else if (ClipBoard::kCutAction == action) {
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kCutFile, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
+            dpfSignalDispatcher->publish(GlobalEventType::kCutFile, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);
             //! todo bug#63441 如果是剪切操作，则禁止跨用户的粘贴操作, 讨论是否应该由下层统一处理?
 
             // clear clipboard after cutting files from clipboard
@@ -195,9 +195,9 @@ bool ClipBoardMenuScene::triggered(QAction *action)
         }
 
     } else if (id == ActionID::kCut) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCutAction, selectedUrlsTemp);
+        dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCutAction, selectedUrlsTemp);
     } else if (id == ActionID::kCopy) {
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCopyAction, selectedUrlsTemp);
+        dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, d->windowId, ClipBoard::ClipboardAction::kCopyAction, selectedUrlsTemp);
     }
 
     return AbstractMenuScene::triggered(action);

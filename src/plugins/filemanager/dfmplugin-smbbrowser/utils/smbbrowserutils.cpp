@@ -68,7 +68,7 @@ bool SmbBrowserUtils::mountSmb(const quint64 windowId, const QList<QUrl> urls, Q
             DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
         } else {
             QUrl u = mpt.isEmpty() ? url : QUrl::fromLocalFile(mpt);
-            dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, windowId, u);
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, u);
         }
     });
     return true;

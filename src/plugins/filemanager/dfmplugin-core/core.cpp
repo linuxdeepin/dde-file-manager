@@ -115,10 +115,10 @@ dpf::Plugin::ShutdownFlag Core::stop()
 void Core::onAllPluginsInitialized()
 {
     // subscribe events
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kChangeCurrentUrl,
-                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
-    dpfInstance.eventDispatcher().subscribe(GlobalEventType::kOpenNewWindow,
-                                            CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
+                                   CoreEventReceiver::instance(), &CoreEventReceiver::handleChangeUrl);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewWindow,
+                                   CoreEventReceiver::instance(), &CoreEventReceiver::handleOpenWindow);
 }
 
 void Core::onAllPluginsStarted()

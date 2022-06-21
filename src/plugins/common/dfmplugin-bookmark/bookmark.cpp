@@ -42,9 +42,9 @@ void BookMark::initialize()
                                    BookMarkEventReceiver::instance(),
                                    &BookMarkEventReceiver::handleRenameFile);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_SidebarSorted", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
-    dpfInstance.eventDispatcher().subscribe(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled,
-                                            BookMarkEventReceiver::instance(),
-                                            &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
+    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled,
+                                   BookMarkEventReceiver::instance(),
+                                   &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
 }
 
 bool BookMark::start()

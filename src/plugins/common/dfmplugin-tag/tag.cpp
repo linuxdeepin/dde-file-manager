@@ -164,14 +164,14 @@ void Tag::addFileOperations()
 
 void Tag::followEvent()
 {
-    TagHelper::eventSequence()->follow(Workspace::EventType::kPaintListItem, TagManager::instance(), &TagManager::paintListTagsHandle);
-    TagHelper::eventSequence()->follow(Workspace::EventType::kPaintIconItem, TagManager::instance(), &TagManager::paintIconTagsHandle);
+    dpfHookSequence->follow(Workspace::EventType::kPaintListItem, TagManager::instance(), &TagManager::paintListTagsHandle);
+    dpfHookSequence->follow(Workspace::EventType::kPaintIconItem, TagManager::instance(), &TagManager::paintIconTagsHandle);
 
     // todo(zy) need to delete
-    TagHelper::eventSequence()->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
+    dpfHookSequence->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
     // paste
-    TagHelper::eventSequence()->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
-    TagHelper::eventSequence()->follow("dfmplugin_workspace", "hook_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
 }
 
 void Tag::bindScene(const QString &parentScene)

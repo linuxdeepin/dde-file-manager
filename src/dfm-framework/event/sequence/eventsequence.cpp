@@ -38,12 +38,6 @@ bool EventSequence::traversal(const QVariantList &params)
     return false;
 }
 
-EventSequenceManager &EventSequenceManager::instance()
-{
-    static EventSequenceManager instance;
-    return instance;
-}
-
 bool EventSequenceManager::unfollow(const QString &space, const QString &topic)
 {
     Q_ASSERT(topic.startsWith(kHookStrategePrefix));

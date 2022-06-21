@@ -39,5 +39,5 @@ void PreviewFileOperation::openFileHandle(quint64 winID, const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfInstance.eventDispatcher().publish(GlobalEventType::kOpenFiles, winID, urls);
+    dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, winID, urls);
 }

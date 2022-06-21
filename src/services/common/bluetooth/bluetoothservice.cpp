@@ -85,7 +85,7 @@ void BluetoothService::sendFiles(const QStringList &paths, TransferMode mode, co
 BluetoothService::BluetoothService(QObject *parent)
     : dpf::PluginService(parent), dpf::AutoServiceRegister<BluetoothService>()
 {
-    dpfInstance.eventDispatcher().subscribe(EventType::kSendFiles, this, static_cast<void (BluetoothService::*)(const QList<QUrl> &)>(&BluetoothService::sendFiles));
+    dpfSignalDispatcher->subscribe(EventType::kSendFiles, this, static_cast<void (BluetoothService::*)(const QList<QUrl> &)>(&BluetoothService::sendFiles));
 }
 
 BluetoothService::~BluetoothService()

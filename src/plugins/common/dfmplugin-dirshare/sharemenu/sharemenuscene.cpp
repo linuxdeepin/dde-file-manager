@@ -31,7 +31,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <QFileInfo>
 #include <QMenu>
@@ -46,7 +46,7 @@ ShareMenuScenePrivate::ShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
 void ShareMenuScenePrivate::addShare(const QUrl &url)
 {
     QList<QUrl> urls { url };
-    dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
 }
 
 ShareMenuScene::ShareMenuScene(QObject *parent)

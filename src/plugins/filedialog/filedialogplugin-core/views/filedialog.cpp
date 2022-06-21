@@ -154,7 +154,7 @@ void FileDialogPrivate::handleOpenAcceptBtnClicked()
 void FileDialogPrivate::handleOpenNewWindow(const QUrl &url)
 {
     if (url.isValid() && !url.isEmpty() && !UniversalUtils::urlEquals(url, q->currentUrl()))
-        dpfInstance.eventDispatcher().publish(GlobalEventType::kChangeCurrentUrl, q->internalWinId(), url);
+        dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, q->internalWinId(), url);
 }
 
 /*!
@@ -167,19 +167,8 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
 {
     initializeUi();
     initConnect();
-    initEventConnect();
-
-    dpfSignalDispatcher->installEventFilter(GlobalEventType::kOpenFiles, [this](EventDispatcher::Listener, const QVariantList &) {
-        onAcceptButtonClicked();
-        return true;
-    });
-    dpfSignalDispatcher->installEventFilter(GlobalEventType::kOpenNewWindow, [this](EventDispatcher::Listener, const QVariantList &params) {
-        if (params.size() > 0)
-            d->handleOpenNewWindow(params.at(0).toUrl());
-        return true;
-    });
-
-    CoreHelper::installDFMEventFilterForReject();
+    initEventsConnect();
+    initEventsFilter();
 }
 
 FileDialog::~FileDialog()
@@ -189,8 +178,7 @@ FileDialog::~FileDialog()
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
     dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
 
-    dpfSignalDispatcher->removeEventFilter(GlobalEventType::kOpenFiles);
-    dpfSignalDispatcher->removeEventFilter(GlobalEventType::kOpenNewWindow);
+    dpfSignalDispatcher->removeGlobalEventFilter(this);
 }
 
 void FileDialog::cd(const QUrl &url)
@@ -352,7 +340,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
         || d->fileMode == QFileDialog::Directory) {
         // 清理只显示目录时对文件名添加的过滤条件
         // getFileView()->setNameFilters(QStringList());
-        dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList());
+        dpfSignalDispatcher->publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList());
     }
 
     d->fileMode = mode;
@@ -365,7 +353,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::DirectoryOnly:
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
-        dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList("/"));
+        dpfSignalDispatcher->publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList("/"));
         urlSchemeEnable("recent", false);
         // fall through
         [[fallthrough]];
@@ -452,8 +440,8 @@ void FileDialog::setOptions(QFileDialog::Options options)
 
     d->options = options;
 
-    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetReadOnly,
-                                          internalWinId(), options.testFlag(QFileDialog::ReadOnly));
+    dpfSignalDispatcher->publish(Workspace::EventType::kSetReadOnly,
+                                 internalWinId(), options.testFlag(QFileDialog::ReadOnly));
 
     if (options.testFlag(QFileDialog::ShowDirsOnly)) {
         // TODO(liuyangming):
@@ -774,7 +762,7 @@ QDir::Filters FileDialog::filter() const
 
 void FileDialog::setFilter(QDir::Filters filters)
 {
-    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetViewFilter, internalWinId(), filters);
+    dpfSignalDispatcher->publish(Workspace::EventType::kSetViewFilter, internalWinId(), filters);
 }
 
 void FileDialog::updateAcceptButtonState()
@@ -995,10 +983,36 @@ void FileDialog::initConnect()
     connect(this, &FileDialog::selectionFilesChanged, &FileDialog::updateAcceptButtonState);
 }
 
-void FileDialog::initEventConnect()
+void FileDialog::initEventsConnect()
 {
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
+}
+
+void FileDialog::initEventsFilter()
+{
+    dpfSignalDispatcher->installGlobalEventFilter(this, [this](DPF_NAMESPACE::EventType type, const QVariantList &params) -> bool {
+        if (type == GlobalEventType::kOpenFiles) {
+            onAcceptButtonClicked();
+            return true;
+        }
+
+        if (type == GlobalEventType::kOpenNewWindow && params.size() > 0) {
+            d->handleOpenNewWindow(params.at(0).toUrl());
+            return true;
+        }
+
+        static QList<DPF_NAMESPACE::EventType> filterTypeGroup { GlobalEventType::kOpenNewTab,
+                                                                 GlobalEventType::kOpenAsAdmin,
+                                                                 GlobalEventType::kOpenFilesByApp,
+                                                                 GlobalEventType::kCreateSymlink,
+                                                                 GlobalEventType::kOpenInTerminal,
+                                                                 GlobalEventType::kHideFiles };
+        if (filterTypeGroup.contains(type))
+            return true;
+
+        return false;
+    });
 }
 
 /*!
@@ -1020,8 +1034,8 @@ void FileDialog::updateViewState()
         return;
     }
 
-    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetViewDragEnabled, internalWinId(), false);
-    dpfInstance.eventDispatcher().publish(Workspace::EventType::kSetViewDragDropMode, internalWinId(), QAbstractItemView::NoDragDrop);
+    dpfSignalDispatcher->publish(Workspace::EventType::kSetViewDragEnabled, internalWinId(), false);
+    dpfSignalDispatcher->publish(Workspace::EventType::kSetViewDragDropMode, internalWinId(), QAbstractItemView::NoDragDrop);
 
     // TODO(liuyangming): currentChanged
     dpfSignalDispatcher->subscribe(Workspace::EventType::kViewSelectionChanged, this,

@@ -30,7 +30,8 @@
 #include <dfm-base/file/local/desktopfileinfo.h>
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/utils/properties.h>
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/event/event.h>
 
 #include <QMenu>
 #include <QVariant>
@@ -159,8 +160,8 @@ bool PropertyMenuScene::triggered(QAction *action)
 
     QString id = d->predicateAction.key(action);
     if (id == PropertyActionId::kProperty) {
-        dpfInstance.eventDispatcher().publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
-                                              d->selectFiles);
+        dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
+                                     d->selectFiles);
     }
 
     return AbstractMenuScene::triggered(action);

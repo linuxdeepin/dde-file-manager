@@ -90,7 +90,6 @@ public:
     static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
-    static DPF_NAMESPACE::EventSequenceManager *eventSequence();
 
 private:
     explicit TagHelper(QObject *parent = nullptr);

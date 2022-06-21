@@ -320,7 +320,6 @@ void DeviceHelper::persistentOpticalInfo(const QVariantMap &datas)
 
     Application::dataPersistence()->setValue(kBurnAttribute, tag, info);
     Application::dataPersistence()->sync();
-    Application::dataPersistence()->reload();
 
     qDebug() << "optical usage persistented: " << datas;
 }
