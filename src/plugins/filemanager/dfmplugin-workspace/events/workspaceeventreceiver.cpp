@@ -183,7 +183,7 @@ void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, c
     Q_UNUSED(srcUrls)
     Q_UNUSED(errMsg)
 
-    if (ok)
+    if (!destUrls.isEmpty())
         WorkspaceHelper::instance()->laterRequestSelectFiles(destUrls);
 }
 
