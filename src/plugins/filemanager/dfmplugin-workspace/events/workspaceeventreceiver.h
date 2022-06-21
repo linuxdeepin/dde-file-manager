@@ -68,6 +68,9 @@ public slots:
     void handleFileUpdate(const QUrl &url);
     DFMBASE_NAMESPACE::Global::ItemRoles handleCurrentSortRole(quint64 windowId);
 
+    QRectF handleGetVisualGeometry(const quint64 windowID);
+    QRectF handleGetViewItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);
+
 private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };

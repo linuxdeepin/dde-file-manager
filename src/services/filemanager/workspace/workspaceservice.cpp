@@ -172,16 +172,6 @@ QList<QUrl> WorkspaceService::selectedUrls(const quint64 windowID)
     return qvariant_cast<QList<QUrl>>(dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID));
 }
 
-QRectF WorkspaceService::getViewVisibleGeometry(const quint64 windowID)
-{
-    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toRectF();
-}
-
-QRectF WorkspaceService::getItemRect(const quint64 windowID, const QUrl &url, const dfmbase::Global::ItemRoles role)
-{
-    return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID, url, role).toRectF();
-}
-
 int WorkspaceService::getViewFilter(const quint64 windowID)
 {
     return dpfInstance.eventUnicast().push(DSB_FUNC_NAME, windowID).toInt();

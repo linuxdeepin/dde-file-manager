@@ -48,6 +48,8 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_SLOT(slot_CurrentSortRole)
     DPF_EVENT_REG_SLOT(slot_SetSort)
     DPF_EVENT_REG_SLOT(slot_SelectAll)
+    DPF_EVENT_REG_SLOT(slot_View_GetVisualGeometry)
+    DPF_EVENT_REG_SLOT(slot_View_GetViewItemRect)
 
     // hook events
     DPF_EVENT_REG_HOOK(hook_FetchCustomColumnRoles)

@@ -228,7 +228,7 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
 {
     TagEditor *editor = new TagEditor();
 
-    editor->setBaseSize(160, 98);
+    editor->setBaseSize(160, 160);
     editor->setFilesForTagging(fileList);
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setFocusOutSelfClosing(true);
@@ -240,7 +240,7 @@ void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, co
     int showPosY = static_cast<int>(iconRect.bottom());
 
     auto subValue = parentRect.bottom() - showPosY;
-    if (subValue < 98) {
+    if (subValue < editor->height()) {
         editor->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
         showPosY = qMin(static_cast<int>(parentRect.bottom()), showPosY);
     }

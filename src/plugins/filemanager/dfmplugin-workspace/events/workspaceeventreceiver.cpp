@@ -21,12 +21,15 @@
 */
 #include "workspaceeventreceiver.h"
 #include "utils/workspacehelper.h"
+#include "views/workspacewidget.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
 #include <functional>
+
+Q_DECLARE_METATYPE(QRectF *)
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -73,6 +76,10 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSort);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_SelectAll",
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectAll);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetVisualGeometry",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetVisualGeometry);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_View_GetViewItemRect",
+                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleGetViewItemRect);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
@@ -195,4 +202,22 @@ void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)
 ItemRoles WorkspaceEventReceiver::handleCurrentSortRole(quint64 windowId)
 {
     return WorkspaceHelper::instance()->sortRole(windowId);
+}
+
+QRectF WorkspaceEventReceiver::handleGetVisualGeometry(const quint64 windowID)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
+    if (workspaceWidget)
+        return workspaceWidget->viewVisibleGeometry();
+
+    return QRectF(0, 0, 0, 0);
+}
+
+QRectF WorkspaceEventReceiver::handleGetViewItemRect(const quint64 windowID, const QUrl &url, const ItemRoles role)
+{
+    WorkspaceWidget *workspaceWidget = WorkspaceHelper::instance()->findWorkspaceByWindowId(windowID);
+    if (workspaceWidget)
+        return workspaceWidget->itemRect(url, role);
+
+    return QRectF(0, 0, 0, 0);
 }

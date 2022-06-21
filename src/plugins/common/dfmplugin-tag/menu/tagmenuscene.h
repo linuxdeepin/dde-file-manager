@@ -66,6 +66,7 @@ private:
 
     QAction *createTagAction() const;
     QAction *createColorListAction() const;
+    QWidget *findDesktopView(QWidget *root) const;
 };
 
 }
