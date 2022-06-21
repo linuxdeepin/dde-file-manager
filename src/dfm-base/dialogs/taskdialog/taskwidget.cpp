@@ -396,6 +396,12 @@ void TaskWidget::onShowSpeedUpdatedInfo(const JobInfoPointer JobInfo)
     if (isShowError.load())
         return;
 
+    if (progress->value() >= 100) {
+        lbSpeed->setText(tr("Syncing data"));
+        lbRmTime->setText(tr("Please wait"));
+        return;
+    }
+
     const QVariant &speedValue = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kSpeedKey);
     const QVariant &remindValue = JobInfo->value(AbstractJobHandler::NotifyInfoKey::kRemindTimeKey);
     if (speedValue.isValid()) {
