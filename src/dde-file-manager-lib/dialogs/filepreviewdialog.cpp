@@ -518,10 +518,13 @@ void FilePreviewDialog::switchToPage(int index)
                 break;
             else if (preview->setFileUrl(m_fileList.at(index)))
                 break;
-            else
+            else {
                 preview->deleteLater();
+                preview = nullptr;
+            }
         }
     }
+
     if (!preview) {
         if (qobject_cast<UnknowFilePreview *>(m_preview)) {
             m_preview->setFileUrl(m_fileList.at(index));
@@ -544,6 +547,7 @@ void FilePreviewDialog::switchToPage(int index)
         static_cast<QVBoxLayout *>(layout())->removeWidget(m_preview->contentWidget());
         static_cast<QHBoxLayout *>(m_statusBar->layout())->removeWidget(m_preview->statusBarWidget());
         m_preview->deleteLater();
+        m_preview = nullptr;
     }
 
     static_cast<QVBoxLayout *>(layout())->insertWidget(0, preview->contentWidget());
@@ -599,9 +603,9 @@ void FilePreviewDialog::done(int r)
 
 void FilePreviewDialog::DoneCurrent()
 {
-//    if (this != nullptr && m_preview) {
-//        m_preview->DoneCurrent();
-//    }
+    //    if (this != nullptr && m_preview) {
+    //        m_preview->DoneCurrent();
+    //    }
 }
 
 void FilePreviewDialog::playCurrentPreviewFile()
