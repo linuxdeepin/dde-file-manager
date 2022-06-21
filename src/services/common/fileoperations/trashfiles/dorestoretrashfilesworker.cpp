@@ -89,7 +89,7 @@ bool DoRestoreTrashFilesWorker::initArgs()
     trashInfoPath = StandardPaths::location(StandardPaths::kTrashInfosPath);
     trashInfoPath = trashInfoPath.endsWith("/") ? trashInfoPath : trashInfoPath + "/";
     completeTargetFiles.clear();
-    isConvert = !jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
+    isConvert = jobFlags.testFlag(DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kRevocation);
     return AbstractWorker::initArgs();
 }
 /*!
