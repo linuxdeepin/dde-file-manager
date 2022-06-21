@@ -20,6 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sysinfoutils.h"
+#include "dfm_global_defines.h"
 
 #include <DSysInfo>
 
@@ -88,4 +89,12 @@ bool SysInfoUtils::isDeveloperModeEnabled()
 bool SysInfoUtils::isProfessional()
 {
     return DSysInfo::deepinType() == DSysInfo::DeepinProfessional;
+}
+
+bool SysInfoUtils::isSameUser(const QMimeData *data)
+{
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey))
+        return data->data(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey) == QString::number(SysInfoUtils::getUserId());
+
+    return false;
 }

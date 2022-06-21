@@ -62,6 +62,8 @@ public:
     bool hiddableView() const;
     void setRenamable(const bool renamable = true);
     bool renamable() const;
+    void setDragEnabled(bool enable);
+    bool dragEnabled() const;
 
 private:
     CollectionHolderPrivate *d = nullptr;

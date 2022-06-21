@@ -23,17 +23,88 @@
 #include "models/fileproxymodel.h"
 #include "delegate/collectionitemdelegate.h"
 
+#include "dfm-base/utils/windowutils.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/sysinfoutils.h"
+#include "dfm-base/base/standardpaths.h"
+
+#include <DApplication>
+#include <DFileDragClient>
+
 #include <QScrollBar>
 #include <QUrl>
 #include <QDebug>
 #include <QPainter>
+#include <QDrag>
+#include <QMimeData>
 
 DDP_ORGANIZER_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 CollectionViewPrivate::CollectionViewPrivate(CollectionView *qq)
     : q(qq)
 {
+    touchDragTimer.setSingleShot(true);
+    touchDragTimer.setTimerType(Qt::PreciseTimer);
 
+    initUI();
+}
+
+void CollectionViewPrivate::initUI()
+{
+    q->setRootIndex(q->model()->rootIndex());
+    q->setAttribute(Qt::WA_TranslucentBackground);
+
+    q->viewport()->setAttribute(Qt::WA_TranslucentBackground);
+    q->viewport()->setAutoFillBackground(false);
+
+    q->setFrameShape(QFrame::NoFrame);
+    q->setEditTriggers(QAbstractItemView::EditKeyPressed | QAbstractItemView::SelectedClicked);
+
+    q->setDragDropOverwriteMode(false);
+    q->setDragDropMode(QAbstractItemView::DragDrop);
+    q->setDefaultDropAction(Qt::CopyAction);
+
+    auto delegate = new CollectionItemDelegate(q);
+    q->setItemDelegate(delegate);
+
+    // todo:disble selection???
+}
+
+void CollectionViewPrivate::updateRegionView()
+{
+    q->itemDelegate()->updateItemSizeHint();
+    auto itemSize = q->itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+
+    updateViewSizeData(q->geometry().size(), QMargins(0, 0, 0, 0), itemSize);
+}
+
+QList<QRect> CollectionViewPrivate::itemPaintGeomertys(const QModelIndex &index) const
+{
+    if (Q_UNLIKELY(!index.isValid()))
+        return {};
+
+    QStyleOptionViewItem option = q->viewOptions();
+    option.rect = itemRect(index);
+    return q->itemDelegate()->paintGeomertys(option, index);
+}
+
+QRect CollectionViewPrivate::itemRect(const QModelIndex &index) const
+{
+    return q->visualRect(index).marginsRemoved(cellMargins);
+}
+
+QRect CollectionViewPrivate::visualRect(const QPoint &pos) const
+{
+    const QPoint &&point = posToPoint(pos);
+
+    QRect rect(point.x(), point.y(), cellWidth, cellHeight);
+    rect.moveLeft(rect.left() - q->horizontalOffset());
+    rect.moveTop(rect.top() - q->verticalOffset());
+
+    return rect;
 }
 
 void CollectionViewPrivate::updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize)
@@ -79,7 +150,7 @@ int CollectionViewPrivate::verticalScrollToValue(const QModelIndex &index, const
     QRect adjusted = rect.adjusted(-space, -space, space, space);
     if (QAbstractItemView::PositionAtTop == hint || above) {
         verticalValue += adjusted.top();
-    } else if (QAbstractItemView::PositionAtBottom || below) {
+    } else if (QAbstractItemView::PositionAtBottom == hint || below) {
         verticalValue += qMin(adjusted.top(), adjusted.bottom() - area.height() + 1);
     } else if (QAbstractItemView::PositionAtCenter == hint) {
         verticalValue += adjusted.top() - ((area.height() - adjusted.height()) / 2);
@@ -119,6 +190,28 @@ QItemSelection CollectionViewPrivate::selection(const QRect &rect) const
     return selection;
 }
 
+void CollectionViewPrivate::selectItems(const QList<QUrl> &fileUrl) const
+{
+    //fileUrl is file:///xxxx
+    QItemSelection selection;
+    for (const QUrl &url : fileUrl) {
+        auto desktopUrl = url.toString();
+        auto index = q->model()->index(desktopUrl);
+        QItemSelectionRange selectionRange(index);
+        if (!selection.contains(index)) {
+            selection.push_back(selectionRange);
+        }
+    }
+
+    if (!selection.isEmpty()) {
+        q->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+
+        // update new focus index.
+        auto lastIndex = q->selectionModel()->selectedIndexes().last();
+        q->setCurrentIndex(lastIndex);
+    }
+}
+
 QPoint CollectionViewPrivate::pointToPos(const QPoint &point) const
 {
     int column = (point.x() - viewMargins.left()) / cellWidth;
@@ -141,6 +234,368 @@ int CollectionViewPrivate::posToNode(const QPoint &pos) const
 QPoint CollectionViewPrivate::nodeToPos(const int node) const
 {
     return QPoint(node / columnCount, node % columnCount);
+}
+
+void CollectionViewPrivate::checkTouchDarg(QMouseEvent *event)
+{
+    if (!event)
+        return;
+
+    // delay 200ms to enable start drag on touch screen.
+    // When the event source is mouseeventsynthesizedbyqt, it is considered that this event is converted from touchbegin
+    if ((event->source() == Qt::MouseEventSynthesizedByQt) && (event->button() == Qt::LeftButton)) {
+        // Read the pressing duration of DDE configuration
+        QObject *themeSettings = reinterpret_cast<QObject *>(qvariant_cast<quintptr>(qApp->property("_d_theme_settings_object")));
+        QVariant touchFlickBeginMoveDelay;
+        if (themeSettings)
+            touchFlickBeginMoveDelay = themeSettings->property("touchFlickBeginMoveDelay");
+
+        touchDragTimer.setInterval(touchFlickBeginMoveDelay.isValid() ? touchFlickBeginMoveDelay.toInt() : 200);
+        touchDragTimer.start();
+    } else {
+        touchDragTimer.stop();
+    }
+}
+
+bool CollectionViewPrivate::isDelayDrag() const
+{
+    return touchDragTimer.isActive();
+}
+
+QPixmap CollectionViewPrivate::polymerizePixmap(QModelIndexList indexs) const
+{
+    if (indexs.isEmpty())
+        return QPixmap();
+
+    // get foucs item to set it on top.
+    auto foucs = q->currentIndex();
+    if (!foucs.isValid()) {
+        qWarning() << "current index is invalid.";
+        foucs = indexs.first();
+    } else if (!indexs.contains(foucs)) {
+        qWarning() << "current index is not in indexs.";
+        foucs = indexs.first();
+    }
+    const int indexCount = indexs.count();
+    // remove focus which will paint on top
+    indexs.removeAll(foucs);
+
+    static const int iconWidth = 128;
+    static const int iconMargin = 30;    // add margin for showing ratoted item.
+    static const int maxIconCount = 4;   // max painting item number.
+    static const int maxTextCount = 99;  // max text number.
+    static const qreal rotateBase = 10.0;
+    static const qreal opacityBase = 0.1;
+    static const int rectSzie = iconWidth + iconMargin * 2;
+    const qreal scale = q->devicePixelRatioF();
+
+    QRect pixRect(0, 0, rectSzie, rectSzie);
+    QPixmap pixmap(pixRect.size() * scale);
+    pixmap.setDevicePixelRatio(scale);
+    pixmap.fill(Qt::transparent);
+
+    const qreal offsetX = pixRect.width() / 2;
+    const qreal offsetY = pixRect.height() / 2;
+    const QSize iconSize(iconWidth, iconWidth);
+
+    QStyleOptionViewItem option = q->viewOptions();
+    option.state |= QStyle::State_Selected;
+    // icon rect in pixmap.
+    option.rect = pixRect.translated(iconMargin, iconMargin);
+    option.rect.setSize(iconSize);
+
+    QPainter painter(&pixmap);
+    // paint items except focus
+    for (int i = qMin(maxIconCount - 1, indexs.count() - 1); i >= 0 ; --i) {
+        painter.save();
+
+        //opacity 50% 40% 30% 20%
+        painter.setOpacity(1.0 - (i + 5) * opacityBase);
+
+        //rotate
+        {
+            qreal rotate = rotateBase * (qRound((i + 1.0) / 2.0) / 2.0 + 1.0) * (i % 2 == 1 ? -1 : 1);
+            auto tf = painter.transform();
+
+            // rotate on center
+            tf = tf.translate(offsetX, offsetY).rotate(rotate).translate(-offsetX, -offsetY);
+            painter.setTransform(tf);
+        }
+
+        //paint icon
+        q->itemDelegate()->paintDragIcon(&painter, option, indexs.at(i));
+
+        painter.restore();
+    }
+
+    // paint focus
+    QSize topIconSize;
+    {
+        painter.save();
+        painter.setOpacity(0.8);
+        topIconSize = q->itemDelegate()->paintDragIcon(&painter, option, foucs);
+        painter.restore();;
+    }
+
+    // paint text
+    {
+        int length = 0;
+        QString text;
+        if (indexCount > maxTextCount) {
+            length = 28; //there are three characters showed.
+            text = QString::number(maxTextCount).append("+");
+        } else {
+            length = 24; // one or two characters
+            text = QString::number(indexCount);
+        }
+
+        // the text rect is on right bottom of top icon.
+        // using actual size of top icon to calc postion.
+        int x = iconMargin + (iconWidth + topIconSize.width() - length) / 2;
+        int y = iconMargin + (iconWidth + topIconSize.height() - length) / 2;
+        QRect textRect(x, y, length, length);
+
+        // paint text background.
+        drawEllipseBackground(&painter, textRect);
+        drawDragText(&painter, text, textRect);
+    }
+
+    return pixmap;
+}
+
+bool CollectionViewPrivate::checkClientMimeData(QDragEnterEvent *event) const
+{
+    if (DFileDragClient::checkMimeData(event->mimeData())) {
+        event->acceptProposedAction();
+        // set target dir to source app.
+        // after setting, app will copy it's items to target.
+        // and this action is start before dropEvent instead in or after dropEvent.
+        DFileDragClient::setTargetUrl(event->mimeData(), dropTargetUrl);
+        event->setDropAction(Qt::CopyAction);
+        return true;
+    }
+
+    return false;
+}
+
+bool CollectionViewPrivate::checkXdndDirectSave(QDragEnterEvent *event) const
+{
+    if (event->mimeData()->hasFormat("XdndDirectSave0")) {
+        event->setDropAction(Qt::CopyAction);
+        event->acceptProposedAction();
+        return true;
+    }
+
+    return false;
+}
+
+void CollectionViewPrivate::preproccessDropEvent(QDropEvent *event, const QUrl &targetUrl) const
+{
+    if (!event || event->mimeData()->urls().isEmpty())
+        return;
+
+    // in collection
+    if (qobject_cast<CollectionView *>(event->source())) {
+        auto action = WindowUtils::keyCtrlIsPressed() ? Qt::CopyAction : Qt::MoveAction;
+        event->setDropAction(action);
+        return;
+    }
+
+    QString errString;
+    auto itemInfo =  InfoFactory::create<LocalFileInfo>(targetUrl, true, &errString);
+    if (Q_UNLIKELY(!itemInfo)) {
+        qWarning() << "create LocalFileInfo error: " << errString << targetUrl;
+        return;
+    }
+
+    auto defaultAction = Qt::CopyAction;
+    auto urls = event->mimeData()->urls();
+    const QUrl from = urls.first();
+
+    // using MoveAction if alt key is pressed.
+    // CopyAction if ctrl key is pressed.
+    if (WindowUtils::keyAltIsPressed()) {
+        defaultAction = Qt::MoveAction;
+    } else if (!WindowUtils::keyCtrlIsPressed()) {
+        if (FileUtils::isSameDevice(targetUrl, from)) {
+            defaultAction = Qt::MoveAction;
+        }
+    }
+
+    // is from or to trash
+    {
+        bool isFromTrash = from.toLocalFile().startsWith(StandardPaths::location(StandardPaths::kTrashPath));
+        bool isToTrash = false; // there is no trash dir on desktop
+
+        if (Q_UNLIKELY(isFromTrash && isToTrash)) {
+            event->setDropAction(Qt::IgnoreAction);
+            return;
+        } else if (isFromTrash || isToTrash) {
+            defaultAction = Qt::MoveAction;
+        }
+    }
+
+    const bool sameUser = SysInfoUtils::isSameUser(event->mimeData());
+    if (event->possibleActions().testFlag(defaultAction))
+        event->setDropAction((defaultAction == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : defaultAction);
+
+    // todo,from vault???
+
+    if (!itemInfo->supportedDropActions().testFlag(event->dropAction())) {
+        QList<Qt::DropAction> actions{Qt::CopyAction, Qt::MoveAction, Qt::LinkAction};
+        for (auto action : actions) {
+            if (event->possibleActions().testFlag(action) && itemInfo->supportedDropActions().testFlag(action)) {
+                event->setDropAction((action == Qt::MoveAction && !sameUser) ? Qt::IgnoreAction : action);
+                break;
+            }
+        }
+    }
+
+    // todo,from recent???
+
+    event->setDropAction(defaultAction);
+}
+
+void CollectionViewPrivate::handleMoveMimeData(QDropEvent *event, const QUrl &url)
+{
+    if (DFileDragClient::checkMimeData(event->mimeData())) {
+        event->acceptProposedAction();
+        // update target url if mouse focus is on file which can drop.
+        updateTarget(event->mimeData(), url);
+        qWarning() << "drop by app " << dropTargetUrl;
+    } else {
+        event->accept();
+    }
+}
+
+bool CollectionViewPrivate::dropFilter(QDropEvent *event)
+{
+    //Prevent the desktop's computer/recycle bin/home directory from being dragged and copied to other directories
+    {
+        QModelIndex index = q->indexAt(event->pos());
+        if (index.isValid()) {
+            QUrl targetItem = q->model()->fileUrl(index);
+            QString errString;
+            auto itemInfo =  InfoFactory::create<LocalFileInfo>(targetItem, true, &errString);
+            if (Q_UNLIKELY(!itemInfo)) {
+                qWarning() << "create LocalFileInfo error: " << errString << targetItem;
+                return false;
+            }
+            if (itemInfo->isDir() || itemInfo->url() == DesktopAppUrl::homeDesktopFileUrl()) {
+                auto sourceUrls = event->mimeData()->urls();
+                for (const QUrl &url : sourceUrls) {
+                    if ((DesktopAppUrl::computerDesktopFileUrl() == url)
+                         || (DesktopAppUrl::trashDesktopFileUrl() == url)
+                         || (DesktopAppUrl::homeDesktopFileUrl() == url)) {
+                        event->setDropAction(Qt::IgnoreAction);
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+bool CollectionViewPrivate::dropClientDownload(QDropEvent *event) const
+{
+    auto data = event->mimeData();
+    if (DFileDragClient::checkMimeData(data)) {
+        event->acceptProposedAction();
+        qWarning() << "drop on" << dropTargetUrl;
+
+        QList<QUrl> urlList = data->urls();
+        if (!urlList.isEmpty()) {
+            // follow canvas dropClientDownload
+            DFileDragClient *client = new DFileDragClient(data, q);
+            qDebug() << "dragClientDownload" << client << data << urlList;
+            connect(client, &DFileDragClient::stateChanged, this, [this, urlList](DFileDragState state) {
+                if (state == Finished)
+                    selectItems(urlList);
+                qDebug() << "stateChanged" << state << urlList;
+            });
+
+            connect(client, &DFileDragClient::serverDestroyed, client, &DFileDragClient::deleteLater);
+            connect(client, &DFileDragClient::destroyed, []() {
+                qDebug() << "drag client deleted";
+            });
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+bool CollectionViewPrivate::dropDirectSaveMode(QDropEvent *event) const
+{
+    if (event->mimeData()->property("IsDirectSaveMode").toBool()) {
+        event->setDropAction(Qt::CopyAction);
+        const QModelIndex &index = q->indexAt(event->pos());
+        auto fileInfo = q->model()->fileInfo(index.isValid() ? index : q->rootIndex());
+
+        if (fileInfo && fileInfo->url().isLocalFile()) {
+            if (fileInfo->isDir())
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->url());
+            else
+                const_cast<QMimeData *>(event->mimeData())->setProperty("DirectSaveUrl", fileInfo->parentUrl());
+        }
+
+        event->accept();   // yeah! we've done with XDS so stop Qt from further event propagation.
+        return true;
+    }
+
+    return false;
+}
+
+bool CollectionViewPrivate::dropBetweenView(QDropEvent *event) const
+{
+    if (WindowUtils::keyCtrlIsPressed() || !event->mimeData()->property("DragFromDesktop").toBool())
+        return false;
+
+    auto dropPos = pointToPos(event->pos());
+    auto dropRect = visualRect(dropPos);
+    auto dropIndex = q->indexAt(dropRect.center());
+    auto targetIndex = q->indexAt(event->pos());
+    bool dropOnSelf = targetIndex.isValid() ? q->selectionModel()->selectedIndexes().contains(targetIndex) : false;
+
+    // process this case in other drop function(e.g. move) if targetGridPos is used and it is not drop-needed.
+    if (dropIndex.isValid() && !dropOnSelf) {
+        if (!targetIndex.isValid()) {
+            qInfo() << "drop on invaild target, skip. drop:" << dropPos.x() << dropPos.y();
+            return true;
+        }
+        return false;
+    }
+
+    auto urls = event->mimeData()->urls();
+    auto index = posToNode(dropPos);
+    // todo 要求在index位置开始插入urls
+
+
+    return true;
+}
+
+bool CollectionViewPrivate::dropMimeData(QDropEvent *event) const
+{
+    auto model = q->model();
+    auto targetIndex = q->indexAt(event->pos());
+    bool enableDrop = targetIndex.isValid() ? model->flags(targetIndex) & Qt::ItemIsDropEnabled : model->flags(model->rootIndex()) & Qt::ItemIsDropEnabled;
+    if (model->supportedDropActions() & event->dropAction() && enableDrop) {
+        preproccessDropEvent(event, targetIndex.isValid() ? model->fileUrl(targetIndex) : model->fileUrl(model->rootIndex()));
+        const Qt::DropAction action = event->dropAction();
+        if (model->dropMimeData(event->mimeData(), action, targetIndex.row(), targetIndex.column(), targetIndex)) {
+            if (action != event->dropAction()) {
+                event->setDropAction(action);
+                event->accept();
+            } else {
+                event->acceptProposedAction();
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &minCellHeight)
@@ -201,11 +656,43 @@ void CollectionViewPrivate::updateViewMargins(const QSize &viewSize, const QMarg
     viewMargins = oldMargins + QMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 }
 
+void CollectionViewPrivate::drawDragText(QPainter *painter, const QString &str, const QRect &rect) const
+{
+    painter->save();
+    painter->setPen(Qt::white);
+    QFont ft(q->font());
+    ft.setPixelSize(12);
+    ft.setBold(true);
+    painter->setFont(ft);
+    painter->drawText(rect, Qt::AlignCenter, str);
+    painter->restore();
+}
+
+void CollectionViewPrivate::drawEllipseBackground(QPainter *painter, const QRect &rect) const
+{
+    painter->save();
+    QColor pointColor(244, 74, 74);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setOpacity(1);
+    painter->setPen(pointColor);
+    painter->setBrush(pointColor);
+    painter->drawEllipse(rect);
+    painter->restore();
+}
+
+void CollectionViewPrivate::updateTarget(const QMimeData *data, const QUrl &url)
+{
+    if (url == dropTargetUrl)
+        return;
+    dropTargetUrl = url;
+    DFileDragClient::setTargetUrl(data, dropTargetUrl);
+}
+
 CollectionView::CollectionView(QWidget *parent)
     : QAbstractItemView(parent)
     , d(new CollectionViewPrivate(this))
 {
-    initUI();
+
 }
 
 CollectionView::~CollectionView()
@@ -226,12 +713,6 @@ void CollectionView::setUrls(const QList<QUrl> &urls)
             continue;
         d->urls.append(url);
     }
-
-    // todo:在holder中判断,只有自动集合才隐藏空集合
-    if (d->urls.isEmpty())
-        hide();
-    else
-        show();
 
     d->updateVerticalBarRange();
     update();
@@ -263,13 +744,8 @@ QRect CollectionView::visualRect(const QModelIndex &index) const
 
     int node = d->urls.indexOf(url);
     const QPoint &&pos = d->nodeToPos(node);
-    const QPoint &&point = d->posToPoint(pos);
 
-    QRect rect(point.x(), point.y(), d->cellWidth, d->cellHeight);
-    rect.moveLeft(rect.left() - horizontalOffset());
-    rect.moveTop(rect.top() - verticalOffset());
-
-    return rect;
+    return d->visualRect(pos);
 }
 
 void CollectionView::scrollTo(const QModelIndex &index, ScrollHint hint)
@@ -317,7 +793,7 @@ QModelIndex CollectionView::indexAt(const QPoint &point) const
         }
     } else if (itemDelegate()->mayExpand(&rowIndex)) {   // second
         // get the expended rect.
-        auto listRect = itemPaintGeomertys(rowIndex);
+        auto listRect = d->itemPaintGeomertys(rowIndex);
         if (checkRect(listRect, point)) {
             return rowIndex;
         }
@@ -332,7 +808,7 @@ QModelIndex CollectionView::indexAt(const QPoint &point) const
         if (!rowIndex.isValid())
             return rowIndex;
 
-        auto listRect = itemPaintGeomertys(rowIndex);
+        auto listRect = d->itemPaintGeomertys(rowIndex);
         if (checkRect(listRect, point)) {
             return rowIndex;
         }
@@ -523,6 +999,8 @@ void CollectionView::mousePressEvent(QMouseEvent *event)
         d->canUpdateVerticalBarRange = false;
     }
 
+    d->checkTouchDarg(event);
+
     return QAbstractItemView::mousePressEvent(event);
 }
 
@@ -545,7 +1023,7 @@ void CollectionView::resizeEvent(QResizeEvent *event)
 {
     QAbstractItemView::resizeEvent(event);
 
-    updateRegionView();
+    d->updateRegionView();
 
     if (d->canUpdateVerticalBarRange) {
         d->updateVerticalBarRange();
@@ -554,40 +1032,123 @@ void CollectionView::resizeEvent(QResizeEvent *event)
     }
 }
 
-void CollectionView::initUI()
+void CollectionView::startDrag(Qt::DropActions supportedActions)
 {
-    setRootIndex(model()->rootIndex());
-    setAttribute(Qt::WA_TranslucentBackground);
-    viewport()->setAttribute(Qt::WA_TranslucentBackground);
-    viewport()->setAutoFillBackground(false);
-    setFrameShape(QFrame::NoFrame);
+    qDebug() << "view start drag:" << supportedActions;
+    if (d->isDelayDrag())
+        return;
 
-    auto delegate = new CollectionItemDelegate(this);
-    setItemDelegate(delegate);
+    // close editor before drag.
+    // normally, items in editing status do not enter startDrag.
+    // but if drag and drope one item before editing it, then draging it, startDrag will be called.
+    // the reason is that when one item droped, the d->pressedIndex is setted to invaild.
+    // then in mousePressEvent d->pressedIndex is not updating to preesed index because the state is EditingState.
+    // finally, in mouseMoveEvent state is changed from EditingState to DragSelectingState because d->pressedInde is invaild.
+    if (isPersistentEditorOpen(currentIndex()))
+        closePersistentEditor(currentIndex());
 
-    // todo:disble selection???
+    QModelIndexList validIndexes = selectionModel()->selectedIndexes();
+    if (validIndexes.count() > 1) {
+        QMimeData *data = model()->mimeData(validIndexes);
+        if (!data)
+            return;
+        data->setProperty("DragFromDesktop", true);
+
+        QPixmap pixmap = d->polymerizePixmap(validIndexes);
+        QDrag *drag = new QDrag(this);
+        drag->setPixmap(pixmap);
+        drag->setMimeData(data);
+        drag->setHotSpot(QPoint(static_cast<int>(pixmap.size().width() / (2 * pixmap.devicePixelRatio())),
+                                static_cast<int>(pixmap.size().height() / (2 * pixmap.devicePixelRatio()))));
+        Qt::DropAction dropAction = Qt::IgnoreAction;
+        Qt::DropAction defaultDropAction = QAbstractItemView::defaultDropAction();
+        if (defaultDropAction != Qt::IgnoreAction && (supportedActions & defaultDropAction))
+            dropAction = defaultDropAction;
+        else if (supportedActions & Qt::CopyAction && dragDropMode() != QAbstractItemView::InternalMove)
+            dropAction = Qt::CopyAction;
+        drag->exec(supportedActions, dropAction);
+    } else {
+        QAbstractItemView::startDrag(supportedActions);
+    }
 }
 
-void CollectionView::updateRegionView()
+void CollectionView::dragEnterEvent(QDragEnterEvent *event)
 {
-    itemDelegate()->updateItemSizeHint();
-    auto itemSize = itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
+    qDebug() << "view drag enter:" << event->pos() << event->mimeData() << event->dropAction() << event->possibleActions() << event->proposedAction();;
 
-    d->updateViewSizeData(this->geometry().size(), QMargins(0, 0, 0, 0), itemSize);
+    d->dropTargetUrl = model()->fileUrl(model()->rootIndex());
+
+    if (d->checkClientMimeData(event))
+        return;
+
+    if (d->checkXdndDirectSave(event))
+        return;
+
+    d->preproccessDropEvent(event, model()->fileUrl(model()->rootIndex()));
+
+    return QAbstractItemView::dragEnterEvent(event);
 }
 
-QList<QRect> CollectionView::itemPaintGeomertys(const QModelIndex &index) const
+void CollectionView::dragMoveEvent(QDragMoveEvent *event)
 {
-    if (Q_UNLIKELY(!index.isValid()))
-        return {};
+    qDebug() << "view drag move:" << event->pos() << event->mimeData() << event->dropAction() << event->possibleActions() << event->proposedAction();
 
-    QStyleOptionViewItem option = viewOptions();
-    option.rect = itemRect(index);
-    return itemDelegate()->paintGeomertys(option, index);
+    auto pos = event->pos();
+    auto hoverIndex = indexAt(pos);
+    auto currentUrl = hoverIndex.isValid() ? model()->fileUrl(hoverIndex) : model()->fileUrl(model()->rootIndex());
+    if (hoverIndex.isValid()) {
+        if (auto fileInfo = model()->fileInfo(hoverIndex)) {
+            bool canDrop = !fileInfo->canDrop()
+                           || (fileInfo->isDir() && !fileInfo->isWritable())
+                           || !fileInfo->supportedDropActions().testFlag(event->dropAction());
+            if (!canDrop) {
+                d->handleMoveMimeData(event, currentUrl);
+                return;
+            } else {
+                // not support drop
+                event->ignore();
+            }
+        }
+    }
+
+    // hover
+    d->preproccessDropEvent(event, currentUrl);
+    if (!hoverIndex.isValid())
+        d->handleMoveMimeData(event, currentUrl);
 }
 
-QRect CollectionView::itemRect(const QModelIndex &index) const
+void CollectionView::dragLeaveEvent(QDragLeaveEvent *event)
 {
-    return visualRect(index).marginsRemoved(d->cellMargins);
+    qDebug() << "view drag leave";
+
+    d->dropTargetUrl.clear();
+
+    return QAbstractItemView::dragLeaveEvent(event);
 }
 
+void CollectionView::dropEvent(QDropEvent *event)
+{
+    qDebug() << "view drop:" << event->pos() << event->mimeData() << event->dropAction() << event->possibleActions() << event->proposedAction();
+
+    // some special case
+    if (d->dropFilter(event))
+        return;
+
+    // copy file by other app
+    if (d->dropClientDownload(event))
+        return;
+
+    // directSaveMode
+    if (d->dropDirectSaveMode(event))
+        return;
+
+    // move file betewwn collection or view
+    if (d->dropBetweenView(event))
+        return;
+
+    // drop mime data by model
+    if (d->dropMimeData(event))
+        return;
+
+    event->ignore();
+}

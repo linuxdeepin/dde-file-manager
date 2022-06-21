@@ -42,8 +42,11 @@ public:
     ~CollectionWidget() override;
 
     void setModel(QAbstractItemModel *model);
-    QList<QUrl> urls() const;
     void setUrls(const QList<QUrl> &urls);
+    QList<QUrl> urls() const;
+    void setDragEnabled(bool enable);
+    bool dragEnabled() const;
+
     void setTitleName(const QString &name);
     QString titleName() const;
     void setRenamable(const bool renamable = true);

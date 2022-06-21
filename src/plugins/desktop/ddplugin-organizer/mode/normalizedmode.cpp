@@ -120,10 +120,11 @@ void NormalizedMode::rebuild()
         }
         collectionHolder->setUrls(files);
 
-        // disable rename,move and adjust
+        // disable rename,move,adjust,drag
         collectionHolder->setRenamable(false);
         collectionHolder->setMovable(false);
         collectionHolder->setAdjustable(false);
+        collectionHolder->setDragEnabled(false);
 
         collectionHolder->show();
     }

@@ -76,14 +76,24 @@ void CollectionWidget::setModel(QAbstractItemModel *model)
     d->view->setModel(model);
 }
 
+void CollectionWidget::setUrls(const QList<QUrl> &urls)
+{
+    d->view->setUrls(urls);
+}
+
 QList<QUrl> CollectionWidget::urls() const
 {
     return d->view->urls();
 }
 
-void CollectionWidget::setUrls(const QList<QUrl> &urls)
+void CollectionWidget::setDragEnabled(bool enable)
 {
-    d->view->setUrls(urls);
+    d->view->setDragEnabled(enable);
+}
+
+bool CollectionWidget::dragEnabled() const
+{
+    return d->view->dragEnabled();
 }
 
 void CollectionWidget::setTitleName(const QString &name)

@@ -199,3 +199,13 @@ bool CollectionHolder::renamable() const
 {
     return d->widget->renamable();
 }
+
+void CollectionHolder::setDragEnabled(bool enable)
+{
+    d->widget->setDragEnabled(enable);
+}
+
+bool CollectionHolder::dragEnabled() const
+{
+    return d->widget->dragEnabled();
+}

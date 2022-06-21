@@ -68,11 +68,11 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
-private:
-    void initUI();
-    void updateRegionView();
-    QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
-    QRect itemRect(const QModelIndex &index) const;
+    void startDrag(Qt::DropActions supportedActions) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dragMoveEvent(QDragMoveEvent *event) override;
+    void dragLeaveEvent(QDragLeaveEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     QSharedPointer<CollectionViewPrivate> d = nullptr;

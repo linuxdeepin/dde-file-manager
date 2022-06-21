@@ -24,30 +24,57 @@
 #include "view/collectionview.h"
 
 #include <QAtomicInteger>
+#include <QTimer>
+#include <QUrl>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class CollectionViewPrivate
+class CollectionViewPrivate : public QObject
 {
+    Q_OBJECT
 public:
     explicit CollectionViewPrivate(CollectionView *qq);
 
+    void initUI();
+    void updateRegionView();
     void updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize);
     void updateVerticalBarRange();
+    QList<QRect> itemPaintGeomertys(const QModelIndex &index) const;
+    QRect itemRect(const QModelIndex &index) const;
+    QRect visualRect(const QPoint &pos) const;
 
     int verticalScrollToValue(const QModelIndex &index, const QRect &rect, QAbstractItemView::ScrollHint hint) const;
     QItemSelection selection(const QRect &rect) const;
+    void selectItems(const QList<QUrl> &fileUrl) const;
 
     QPoint pointToPos(const QPoint &point) const;
     QPoint posToPoint(const QPoint &pos) const;
     int posToNode(const QPoint &pos) const;
     QPoint nodeToPos(const int node) const;
 
+    void checkTouchDarg(QMouseEvent *event);
+    bool isDelayDrag() const;
+    QPixmap polymerizePixmap(QModelIndexList indexs) const;
+
+    bool checkClientMimeData(QDragEnterEvent *event) const;
+    bool checkXdndDirectSave(QDragEnterEvent *event) const;
+    void preproccessDropEvent(QDropEvent *event, const QUrl &targetUrl) const;
+    void handleMoveMimeData(QDropEvent *event, const QUrl &url);
+    bool dropFilter(QDropEvent *event);
+    bool dropClientDownload(QDropEvent *event) const;
+    bool dropDirectSaveMode(QDropEvent *event) const;
+    bool dropBetweenView(QDropEvent *event) const;
+    bool dropMimeData(QDropEvent *event) const;
+
 private:
     void updateRowCount(const int &viewHeight, const int &minCellHeight);
     void updateColumnCount(const int &viewWidth, const int &minCellWidth);
     void updateCellMargins(const QSize &itemSize, const QSize &cellSize);
     void updateViewMargins(const QSize &viewSize, const QMargins &oldMargins);
+
+    void drawDragText(QPainter *painter, const QString &str, const QRect &rect) const;
+    void drawEllipseBackground(QPainter *painter, const QRect &rect) const;
+    void updateTarget(const QMimeData *data, const QUrl &url);
 
 public:
     int space = 0;
@@ -63,6 +90,9 @@ public:
     QAtomicInteger<bool> canUpdateVerticalBarRange = true;
     QAtomicInteger<bool> needUpdateVerticalBarRange = false;
     bool showGrid = false;
+
+    QTimer touchDragTimer;
+    QUrl dropTargetUrl;
 
 private:
     CollectionView *q;

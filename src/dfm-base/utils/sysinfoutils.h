@@ -25,6 +25,7 @@
 #include "dfm-base/dfm_base_global.h"
 
 #include <QObject>
+#include <QMimeData>
 
 DFMBASE_BEGIN_NAMESPACE
 
@@ -41,6 +42,7 @@ public:
     static bool isOpenAsAdmin();
     static bool isDeveloperModeEnabled();
     static bool isProfessional();
+    static bool isSameUser(const QMimeData *data);
 };
 DFMBASE_END_NAMESPACE
 

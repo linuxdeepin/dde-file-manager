@@ -43,6 +43,7 @@ public:
     ModelDataHandler *handler() const;
     QModelIndex rootIndex() const;
     QModelIndex index(const QUrl &url, int column = 0) const;
+    DFMLocalFileInfoPointer fileInfo(const QModelIndex &index) const;
     QList<QUrl> files() const;
     QUrl fileUrl(const QModelIndex &index) const;
     void refresh(const QModelIndex &parent, bool global = false, int ms = 50);
@@ -56,6 +57,8 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    QMimeData *mimeData(const QModelIndexList &indexes) const override;
+    bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 signals:
     void dataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 private:

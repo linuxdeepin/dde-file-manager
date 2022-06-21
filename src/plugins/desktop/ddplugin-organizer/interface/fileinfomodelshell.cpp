@@ -68,6 +68,16 @@ QAbstractItemModel *FileInfoModelShell::sourceModel() const
     return model;
 }
 
+QUrl FileInfoModelShell::rootUrl() const
+{
+    return FileInfoModelPush(slot_FileInfoModel_RootUrl).toUrl();
+}
+
+QModelIndex FileInfoModelShell::rootIndex() const
+{
+    return FileInfoModelPush(slot_FileInfoModel_RootIndex).toModelIndex();
+}
+
 QModelIndex FileInfoModelShell::index(const QUrl &url, int column) const
 {
     Q_UNUSED(column)
