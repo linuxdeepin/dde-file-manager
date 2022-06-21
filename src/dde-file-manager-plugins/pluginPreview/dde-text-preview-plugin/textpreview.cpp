@@ -40,8 +40,6 @@ TextPreview::TextPreview(QObject *parent)
 
 TextPreview::~TextPreview()
 {
-    if (textBrowser)
-        textBrowser->deleteLater();
 }
 
 bool TextPreview::setFileUrl(const DUrl &url)
