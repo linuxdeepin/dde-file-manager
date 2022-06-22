@@ -22,6 +22,7 @@
 */
 #include "burnjob.h"
 #include "utils/burnhelper.h"
+#include "utils/burnsignalmanager.h"
 #include "events/burneventcaller.h"
 
 #include "dfm-base/base/application/application.h"
@@ -32,6 +33,7 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/utils/decorator/decoratorfileoperator.h"
 #include "dfm-base/utils/finallyutil.h"
+#include "dfm-base/utils/dialogmanager.h"
 
 #include <QDebug>
 #include <QThread>
@@ -62,11 +64,19 @@ AbstractBurnJob::AbstractBurnJob(const QString &dev, const JobHandlePointer hand
             this, [](const QString &deviceId, const QString &property, const QVariant &val) {
                 // TODO(zhangs): mediaChangeDetected
             });
+
+    connect(BurnSignalManager::instance(), &BurnSignalManager::activeTaskDialog, this, &AbstractBurnJob::addTask);
 }
 
 void AbstractBurnJob::setProperty(AbstractBurnJob::PropertyType type, const QVariant &val)
 {
     curProperty[type] = val;
+}
+
+void AbstractBurnJob::addTask()
+{
+    if (jobHandlePtr)
+        DialogManagerInstance->addTask(jobHandlePtr);
 }
 
 void AbstractBurnJob::updateMessage(JobInfoPointer ptr)

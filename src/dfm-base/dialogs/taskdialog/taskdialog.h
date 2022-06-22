@@ -45,12 +45,13 @@ class TaskDialog : public DAbstractDialog
 
 public:
     explicit TaskDialog(QObject *parent = nullptr);
-    ~TaskDialog();
+    ~TaskDialog() override;
     void addTask(const JobHandlePointer taskHandler);
     void initUI();
     void blockShutdown();
-    void addTaskWidget(const JobHandlePointer &taskHandler, TaskWidget *wid);
+    void addTaskWidget(const JobHandlePointer taskHandler, TaskWidget *wid);
     void setTitle(int taskCount);
+
 signals:
     /*!
      * \brief closed 当前进度窗口关闭时，发送关闭信号
@@ -62,7 +63,7 @@ private slots:
     void removeTask(const JobInfoPointer info);
 
 protected:
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     QListWidget *taskListWidget { nullptr };

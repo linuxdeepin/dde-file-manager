@@ -53,7 +53,7 @@ class TaskWidget : public QWidget
     Q_OBJECT
     explicit TaskWidget(QWidget *parent = nullptr);
     ~TaskWidget();
-    void setTaskHandle(const JobHandlePointer &handle);
+    void setTaskHandle(const JobHandlePointer handle);
     void resetPauseStute();
 
 signals:

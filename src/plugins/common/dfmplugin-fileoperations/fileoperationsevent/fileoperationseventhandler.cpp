@@ -81,7 +81,7 @@ void FileOperationsEventHandler::handleJobResult(DFMBASE_NAMESPACE::AbstractJobH
 
     QSharedPointer<bool> ok { new bool { true } };
     QSharedPointer<QString> errMsg { new QString };
-    connect(ptr.data(), &AbstractJobHandler::errorNotify, this, [ok, errMsg](const JobInfoPointer &jobInfo) {
+    connect(ptr.get(), &AbstractJobHandler::errorNotify, this, [ok, errMsg](const JobInfoPointer &jobInfo) {
         auto errType { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kErrorTypeKey).value<AbstractJobHandler::JobErrorType>() };
         if (errType != AbstractJobHandler::JobErrorType::kNoError) {
             *ok = false;
@@ -89,7 +89,7 @@ void FileOperationsEventHandler::handleJobResult(DFMBASE_NAMESPACE::AbstractJobH
         }
     });
 
-    connect(ptr.data(), &AbstractJobHandler::finishedNotify, this, [this, jobType, ok, errMsg](const JobInfoPointer &jobInfo) {
+    connect(ptr.get(), &AbstractJobHandler::finishedNotify, this, [this, jobType, ok, errMsg](const JobInfoPointer &jobInfo) {
         auto srcUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteFilesKey).value<QList<QUrl>>() };
         auto destUrls { jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteTargetFilesKey).value<QList<QUrl>>() };
         auto customInfos = jobInfo->value(AbstractJobHandler::NotifyInfoKey::kCompleteCustomInfosKey).toList();

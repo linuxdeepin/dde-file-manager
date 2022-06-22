@@ -65,6 +65,7 @@ public:
     virtual ~AbstractBurnJob() override {}
 
     void setProperty(PropertyType type, const QVariant &val);
+    void addTask();
 
 protected:
     virtual void updateMessage(JobInfoPointer ptr);

@@ -69,7 +69,7 @@ void FileCopyMoveJob::onHandleAddTask()
         return;
     }
     dialogManager->addTask(jobHandler);
-    jobHandler->disconnect(jobHandler.data(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
+    jobHandler->disconnect(jobHandler.get(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
 }
 
 void FileCopyMoveJob::onHandleAddTaskWithArgs(const JobInfoPointer info)
@@ -103,14 +103,14 @@ void FileCopyMoveJob::onHandleTaskFinished(const JobInfoPointer info)
     }
 }
 
-void FileCopyMoveJob::initArguments(const JobHandlePointer &handler)
+void FileCopyMoveJob::initArguments(const JobHandlePointer handler)
 {
     QSharedPointer<QTimer> timer(new QTimer);
     timer->setSingleShot(true);
     timer->setInterval(1000);
     timer->connect(timer.data(), &QTimer::timeout, this, &FileCopyMoveJob::onHandleAddTask);
-    handler->connect(handler.data(), &AbstractJobHandler::errorNotify, this, &FileCopyMoveJob::onHandleAddTaskWithArgs);
-    handler->connect(handler.data(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
+    handler->connect(handler.get(), &AbstractJobHandler::errorNotify, this, &FileCopyMoveJob::onHandleAddTaskWithArgs);
+    handler->connect(handler.get(), &AbstractJobHandler::finishedNotify, this, &FileCopyMoveJob::onHandleTaskFinished);
     timer->setProperty("jobPointer", QVariant::fromValue(handler));
     {
         QMutexLocker lk(copyMoveTaskMutex.data());

@@ -57,7 +57,7 @@ public:
 
 private:
     bool getOperationsAndDialogService();
-    void initArguments(const JobHandlePointer &handler);
+    void initArguments(const JobHandlePointer handler);
 private slots:
     void onHandleAddTask();
     void onHandleAddTaskWithArgs(const JobInfoPointer info);

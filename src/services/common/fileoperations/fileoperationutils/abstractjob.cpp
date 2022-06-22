@@ -34,15 +34,15 @@ DSC_USE_NAMESPACE
  * \param target 目标文件
  * \param flags 任务的标志
  */
-void AbstractJob::setJobArgs(const JobHandlePointer &handle, const QList<QUrl> &sources, const QUrl &target,
+void AbstractJob::setJobArgs(const JobHandlePointer handle, const QList<QUrl> &sources, const QUrl &target,
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags)
 {
     if (!handle) {
         qWarning() << "JobHandlePointer is a nullptr, setJobArgs failed!";
         return;
     }
-    connect(handle.data(), &AbstractJobHandler::userAction, this, &AbstractJob::operateCopy);
-    connect(this, &AbstractJob::requestShowTipsDialog, handle.data(), &AbstractJobHandler::requestShowTipsDialog);
+    connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractJob::operateCopy);
+    connect(this, &AbstractJob::requestShowTipsDialog, handle.get(), &AbstractJobHandler::requestShowTipsDialog);
     doWorker->setWorkArgs(handle, sources, target, flags);
 }
 

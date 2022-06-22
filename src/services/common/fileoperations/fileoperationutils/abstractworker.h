@@ -47,7 +47,7 @@ class AbstractWorker : public QObject
 {
     friend class AbstractJob;
     Q_OBJECT
-    virtual void setWorkArgs(const JobHandlePointer &handle, const QList<QUrl> &sourceUrls, const QUrl &targetUrl = QUrl(),
+    virtual void setWorkArgs(const JobHandlePointer handle, const QList<QUrl> &sourceUrls, const QUrl &targetUrl = QUrl(),
                              const AbstractJobHandler::JobFlags &flags = AbstractJobHandler::JobFlag::kNoHint);
 
 public:
@@ -145,7 +145,7 @@ protected slots:
     virtual void onStatisticsFilesSizeUpdate(qint64 size);
 
 protected:
-    void initHandleConnects(const JobHandlePointer &handle);
+    void initHandleConnects(const JobHandlePointer handle);
     explicit AbstractWorker(QObject *parent = nullptr);
     QString formatFileName(const QString &fileName);
     void saveOperations();

@@ -46,7 +46,7 @@ DSC_USE_NAMESPACE
  * \brief setWorkArgs 设置当前任务的参数
  * \param args 参数
  */
-void AbstractWorker::setWorkArgs(const JobHandlePointer &handle, const QList<QUrl> &sources, const QUrl &target,
+void AbstractWorker::setWorkArgs(const JobHandlePointer handle, const QList<QUrl> &sources, const QUrl &target,
                                  const AbstractJobHandler::JobFlags &flags)
 {
     if (!handle) {
@@ -565,19 +565,19 @@ AbstractWorker::~AbstractWorker()
  * \brief AbstractWorker::initHandleConnects 初始化当前信号的连接
  * \param handle 任务控制处理器
  */
-void AbstractWorker::initHandleConnects(const JobHandlePointer &handle)
+void AbstractWorker::initHandleConnects(const JobHandlePointer handle)
 {
     if (!handle) {
         qWarning() << "JobHandlePointer is a nullptr,so connects failed!";
         return;
     }
 
-    connect(handle.data(), &AbstractJobHandler::userAction, this, &AbstractWorker::doOperateWork, Qt::QueuedConnection);
+    connect(handle.get(), &AbstractJobHandler::userAction, this, &AbstractWorker::doOperateWork, Qt::QueuedConnection);
 
-    connect(this, &AbstractWorker::progressChangedNotify, handle.data(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
-    connect(this, &AbstractWorker::stateChangedNotify, handle.data(), &AbstractJobHandler::onStateChanged, Qt::QueuedConnection);
-    connect(this, &AbstractWorker::currentTaskNotify, handle.data(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
-    connect(this, &AbstractWorker::finishedNotify, handle.data(), &AbstractJobHandler::onFinished, Qt::QueuedConnection);
-    connect(this, &AbstractWorker::errorNotify, handle.data(), &AbstractJobHandler::onError, Qt::QueuedConnection);
-    connect(this, &AbstractWorker::speedUpdatedNotify, handle.data(), &AbstractJobHandler::onSpeedUpdated, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::progressChangedNotify, handle.get(), &AbstractJobHandler::onProccessChanged, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::stateChangedNotify, handle.get(), &AbstractJobHandler::onStateChanged, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::currentTaskNotify, handle.get(), &AbstractJobHandler::onCurrentTask, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::finishedNotify, handle.get(), &AbstractJobHandler::onFinished, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::errorNotify, handle.get(), &AbstractJobHandler::onError, Qt::QueuedConnection);
+    connect(this, &AbstractWorker::speedUpdatedNotify, handle.get(), &AbstractJobHandler::onSpeedUpdated, Qt::QueuedConnection);
 }

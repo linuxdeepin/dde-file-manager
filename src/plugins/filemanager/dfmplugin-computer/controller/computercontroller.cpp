@@ -310,6 +310,11 @@ void ComputerController::mountDevice(quint64 winId, const QString &id, const QSt
             ComputerEventCaller::sendEnterInNewTab(winId, u);
     };
 
+    if (DeviceUtils::isWorkingOpticalDiscId(id)) {
+        cdTo(id, ComputerUtils::makeBurnUrl(id), winId, act);
+        return;
+    }
+
     const auto &&data = DevProxyMng->queryBlockInfo(id);
     if (data.value(DeviceProperty::kOpticalDrive).toBool() && data.value(DeviceProperty::kOpticalBlank).toBool()) {
         if (!data.value(DeviceProperty::kOpticalWriteSpeed).toStringList().isEmpty()) {   // already load data from xorriso.

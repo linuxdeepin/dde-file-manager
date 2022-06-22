@@ -38,7 +38,7 @@ class AbstractJob : public QObject
 {
     Q_OBJECT
     friend class FileOperationsService;
-    virtual void setJobArgs(const JobHandlePointer &handle, const QList<QUrl> &sources, const QUrl &target = QUrl(),
+    virtual void setJobArgs(const JobHandlePointer handle, const QList<QUrl> &sources, const QUrl &target = QUrl(),
                             const AbstractJobHandler::JobFlags &flags = AbstractJobHandler::JobFlag::kNoHint);
 signals:   // 对线程协同的worker使用
     /*!

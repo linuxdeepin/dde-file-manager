@@ -24,6 +24,7 @@
 #include "menus/sendtodiscmenuscene.h"
 #include "utils/discstatemanager.h"
 #include "utils/burnhelper.h"
+#include "utils/burnsignalmanager.h"
 #include "events/burneventreceiver.h"
 
 #include "services/common/menu/menuservice.h"
@@ -92,8 +93,10 @@ bool Burn::changeUrlEventFilter(quint64 windowId, const QUrl &url)
     Q_UNUSED(windowId);
     if (url.scheme() == Global::kBurn) {
         auto &&dev { BurnHelper::burnDestDevice(url) };
-        if (DeviceUtils::isWorkingOpticalDiscDev(dev))
+        if (DeviceUtils::isWorkingOpticalDiscDev(dev)) {
+            emit BurnSignalManager::instance()->activeTaskDialog();
             return true;
+        }
     }
     return false;
 }
