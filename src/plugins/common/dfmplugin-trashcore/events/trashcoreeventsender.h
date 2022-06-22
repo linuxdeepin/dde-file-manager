@@ -41,7 +41,8 @@ public:
     static TrashCoreEventSender *instance();
 
 private slots:
-    void sendTrashStateChanged();
+    void sendTrashStateChangedDel();
+    void sendTrashStateChangedAdd();
 
 private:
     explicit TrashCoreEventSender(QObject *parent = nullptr);
@@ -49,6 +50,7 @@ private:
 
 private:
     DFMBASE_NAMESPACE::LocalFileWatcher *trashFileWatcher = nullptr;
+    bool isEmpty { false };
 };
 
 DPTRASHCORE_END_NAMESPACE
