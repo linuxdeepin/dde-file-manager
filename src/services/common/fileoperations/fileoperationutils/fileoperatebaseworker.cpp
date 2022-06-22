@@ -879,8 +879,7 @@ bool FileOperateBaseWorker::checkAndCopyFile(const AbstractFileInfoPointer fromI
 
     const QString &targetUrl = toInfo->url().toString();
     FileUtils::cacheCopyingFileUrl(targetUrl);
-    bool result = false;
-    bool ok = doCopyFilePractically(fromInfo, toInfo, &result);
+    bool ok = doCopyFilePractically(fromInfo, toInfo, skip);
     FileUtils::removeCopyingFileUrl(targetUrl);
 
     FileOperationsUtils::removeUsingName(toInfo->fileName());
@@ -941,7 +940,8 @@ bool FileOperateBaseWorker::checkAndCopyDir(const AbstractFileInfoPointer &fromI
         const QUrl &url = iterator->next();
         Q_UNUSED(url);
         const AbstractFileInfoPointer &info = iterator->fileInfo();
-        if (!doCopyFile(info, toInfo, skip)) {
+        bool ok = doCopyFile(info, toInfo, skip);
+        if (!ok && !skip) {
             return false;
         }
     }
@@ -983,13 +983,13 @@ bool FileOperateBaseWorker::doThreadPoolCopyFile()
     }
     const QString &targetUrl = threadInfo->toInfo->url().toString();
     FileUtils::cacheCopyingFileUrl(targetUrl);
-    bool result = false;
-    bool ok = doCopyFilePractically(threadInfo->fromInfo, threadInfo->toInfo, &result);
-    if (!ok)
+    bool skip = false;
+    bool ok = doCopyFilePractically(threadInfo->fromInfo, threadInfo->toInfo, &skip);
+    if (!ok && !skip)
         setStat(AbstractJobHandler::JobState::kStopState);
     FileUtils::removeCopyingFileUrl(targetUrl);
     FileOperationsUtils::removeUsingName(threadInfo->toInfo->fileName());
-    return ok;
+    return ok || skip;
 }
 
 void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::SupportAction action)

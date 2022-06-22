@@ -189,9 +189,9 @@ bool DoCopyFilesWorker::copyFiles()
             }
         }
 
-        bool workContinue = false;
-        if (!doCopyFile(fileInfo, targetInfo, &workContinue)) {
-            if (workContinue)
+        bool skip = false;
+        if (!doCopyFile(fileInfo, targetInfo, &skip)) {
+            if (skip)
                 continue;
             else
                 return false;
