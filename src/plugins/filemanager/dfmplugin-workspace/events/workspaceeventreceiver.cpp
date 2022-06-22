@@ -75,32 +75,32 @@ void WorkspaceEventReceiver::initConnection()
                             WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectAll);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kSwitchViewMode,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleTileBarSwitchModeTriggered);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kOpenNewTab,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleOpenNewTabTriggered);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kCutFileResult,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
 
     dpfSignalDispatcher->subscribe(Workspace::EventType::kShowCustomTopWidget,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleShowCustomTopWidget);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kSelectFiles,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSelectFiles);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kSetSelectionMode,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSelectionMode);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetSelectionMode);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kSetEnabledSelectionModes,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetEnabledSelectionModes);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetEnabledSelectionModes);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kSetViewDragEnabled,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragEnabled);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragEnabled);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kSetViewDragDropMode,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragDropMode);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewDragDropMode);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kSetViewFilter,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetViewFilter);
     dpfSignalDispatcher->subscribe(Workspace::EventType::kSetReadOnly,
-                                            WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetReadOnly);
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleSetReadOnly);
 }
 
 void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, int mode)

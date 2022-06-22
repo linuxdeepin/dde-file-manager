@@ -377,7 +377,12 @@ void TrashHelper::onTrashStateChanged()
 
     const QList<quint64> &windowIds = winServIns()->windowIdList();
     for (const quint64 winId : windowIds) {
-        TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+        auto window = winServIns()->findWindowById(winId);
+        if (window) {
+            const QUrl &url = window->currentUrl();
+            if (url.scheme() == scheme())
+                TrashEventCaller::sendShowEmptyTrash(winId, !isTrashEmpty);
+        }
     }
 }
 
