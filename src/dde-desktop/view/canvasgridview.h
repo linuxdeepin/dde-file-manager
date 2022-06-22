@@ -150,6 +150,7 @@ public:
     void syncIconLevel(int level);
     void updateHiddenItems();
     void updateExpandItemGeometry();
+    void updateCanvas();
 signals:
     void sortRoleChanged(int role, Qt::SortOrder order);
     void autoAlignToggled();
@@ -185,7 +186,6 @@ private:
 
     void initUI();
     void initConnection();
-    void updateCanvas();
 
     void setIconByLevel(int level);
     void increaseIcon();

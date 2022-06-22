@@ -41,6 +41,7 @@
 #include "../../global/coorinate.h"
 #include "../../dbus/dbusdock.h"
 #include "../canvasgridview.h"
+#include "desktopitemdelegate.h"
 
 class QFrame;
 class CanvasViewHelper;
@@ -64,7 +65,7 @@ private:
     }
 
 public:
-    CanvasViewPrivate()
+    CanvasViewPrivate(CanvasGridView *qq) : q(qq)
     {
         mousePressed = false;
         bReloadItem = false;
@@ -85,11 +86,16 @@ public:
 
     void updateCanvasSize(const QSize &szSceeen, const QSize &szCanvas, const QMargins &geometryMargins, const QSize &szItem)
     {
-        qInfo() << "screen size" << szSceeen << "canvas" << szCanvas << "item size" << szItem;
-        // top margin is for icon top spacing
-        QMargins miniMargin = QMargins(0, ICON_TOP_SPACE_DESKTOP, 0, 0);
+        bool byIcon = q->itemDelegate()->iconSizeMode() != DesktopItemDelegate::IconSizeMode::WordNum;
+        qInfo() << "screen size" << szSceeen << "canvas" << szCanvas << "item size" << szItem
+                 << "using word num" << !byIcon;
+
+        auto reserveArea = byIcon ? dockReserveArea : QRect(0, 0, 0, 0);
+        QMargins miniMargin = byIcon ? QMargins(2, 2, 2, 2)
+                                      : QMargins(0, ICON_TOP_SPACE_DESKTOP, 0, 0);  // top margin is for icon top spacing
+
         auto miniCellWidth = szItem.width() + miniMargin.left() + miniMargin.right();
-        colCount = szSceeen.width() / miniCellWidth;
+        colCount = (szSceeen.width() - reserveArea.width())/ miniCellWidth;
 
         if (colCount < 1) {
             qCritical() << "!!!!! colCount is 0!!! set it 1 and set cellWidth to " << szCanvas.width();
@@ -102,7 +108,7 @@ public:
             cellWidth = 1;
 
         auto miniCellHeigh = szItem.height() + miniMargin.top() + miniMargin.bottom();
-        rowCount = szSceeen.height() / miniCellHeigh;
+        rowCount = (szSceeen.height() - reserveArea.height())/ miniCellHeigh;
         if (rowCount < 1) {
             qCritical() << "!!!!! rowCount is 0!!! set it and set cellHeight to" << szCanvas.height();
             cellHeight = szCanvas.height();
@@ -148,6 +154,7 @@ public:
 //    }
 
 public:
+    QRect    dockReserveArea = QRect(0, 0, 80, 80);
     QMargins viewMargins;
     QMargins cellMargins = QMargins(2, 2, 2, 2);
 
@@ -208,4 +215,6 @@ public:
 
     // 用于实现触屏拖拽手指在屏幕上按下短时间200ms后响应
     QTimer touchTimer;
+private:
+    CanvasGridView *q;
 };

@@ -30,6 +30,8 @@ class DesktopItemDelegate : public DIconItemDelegate
 {
     Q_OBJECT
 public:
+    enum class IconSizeMode{IconLevel = 0, WordNum};
+public:
     explicit DesktopItemDelegate(DFileViewHelper *parent);
     virtual ~DesktopItemDelegate() override;
 
@@ -47,6 +49,9 @@ public:
 
     void updateItemSizeHint() override;
     void hideAllIIndexWidget() override;
+
+    void setIconSizeMode(IconSizeMode mode);
+    IconSizeMode iconSizeMode() const;
 private:
     QStringList iconSizeDescriptions;
     QList<int> charOfLine;
@@ -55,5 +60,6 @@ private:
 
     // default icon size is 48px.
     int currentIconSizeIndex = -1;
+    IconSizeMode sizeMode = IconSizeMode::IconLevel;
 };
 
