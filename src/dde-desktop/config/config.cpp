@@ -41,6 +41,7 @@ const QString Config::keyIconLevel = "IconLevel";
 const QString Config::keyQuickHide = "QuickHide";
 const QString Config::keyAutoMerge = "AutoMerge";
 const QString Config::keyWaterMask = "WaterMaskUseJson";
+const QString Config::keyIconSizeMode = "IconSizeMode";
 
 Config::Config()
 {

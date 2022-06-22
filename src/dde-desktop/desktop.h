@@ -55,6 +55,8 @@ public slots:
     Q_SCRIPTABLE void PrintInfo();
     Q_SCRIPTABLE void Refresh();
     Q_SCRIPTABLE QList<int> GetIconSize();
+    Q_SCRIPTABLE int GetIconSizeMode();
+    Q_SCRIPTABLE bool SetIconSizeMode(int);
 protected:
     void showWallpaperSettings(QString name, int mode = 0);
 private:
