@@ -313,7 +313,6 @@ void ConnectToServerDialog::initUI()
 
     m_serverComboBox->addItems(hostList);
     m_serverComboBox->insertItem(m_serverComboBox->count(), tr("Clear History"));
-    m_serverComboBox->setEditable(true);
     m_serverComboBox->setCompleter(m_completer);
     m_serverComboBox->clearEditText();
 
@@ -328,6 +327,9 @@ void ConnectToServerDialog::initUI()
         QString lastOne = hostList.last();
         QString scheme = lastOne.section("://",0,0);
         if(!scheme.isEmpty()){
+            int checkedIndex = m_serverComboBox->findText(lastOne);
+            if(checkedIndex >= 0)
+                m_serverComboBox->setCurrentIndex(checkedIndex);
             m_serverComboBox->setEditText(lastOne.section("//",-1));
             m_schemeComboBox->setCurrentText(scheme + "://");
         }
@@ -408,6 +410,9 @@ void ConnectToServerDialog::initConnect()
         if ( history!= m_schemeComboBox->currentText() + m_serverComboBox->currentText()) {
             DUrl histroyUrl(history);
             m_schemeComboBox->setCurrentText(histroyUrl.scheme()+"://");
+            int checkedIndex = m_serverComboBox->findText(history);
+            if(checkedIndex >= 0)
+                m_serverComboBox->setCurrentIndex(checkedIndex);
             m_serverComboBox->setCurrentText(histroyUrl.host());
             if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
                 m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect_cancel.svg").scaled(16,16)));
