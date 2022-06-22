@@ -381,7 +381,7 @@
     <message>
         <location filename="../views/dfmaddressbar.cpp" line="445"/>
         <source>Search or enter address</source>
-        <translation>Szukaj lub wpisz adres</translation>
+        <translation>Szukaj lub wprowadź adres</translation>
     </message>
 </context>
 <context>
@@ -1715,7 +1715,7 @@
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="487"/>
         <source>&quot;%1&quot; already exists, please use another name.</source>
-        <translation>&quot;%1&quot; już istnieje, prosimy użyć innej nazwy.</translation>
+        <translation>&quot;%1&quot; już istnieje, użyj innej nazwy.</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="502"/>
@@ -4068,7 +4068,7 @@
     <message>
         <location filename="../views/dtagedit.cpp" line="96"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>Wpisz informacje o znaczniku, takie jak praca, rodzina. Między nazwami znaczników użyj przecinka.</translation>
+        <translation>Dodaj informacje o znaczniku, takie jak praca, rodzina. Między nazwami znaczników użyj przecinka.</translation>
     </message>
     <message>
         <location filename="../controllers/dfmbookmarkcrumbcontroller.cpp" line="47"/>

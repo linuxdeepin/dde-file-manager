@@ -600,7 +600,7 @@
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="192"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>取代</translation>
+        <translation>取 代</translation>
     </message>
     <message>
         <location filename="../../dialogs/dfmtaskwidget.cpp" line="443"/>
@@ -884,7 +884,7 @@
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="88"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>解鎖</translation>
+        <translation>解 鎖</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultrecoverykeypages.cpp" line="159"/>
@@ -1107,7 +1107,7 @@
         <location filename="../views/dfmvaultunlockpages.cpp" line="128"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>解鎖</translation>
+        <translation>解 鎖</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultunlockpages.cpp" line="262"/>
@@ -1360,13 +1360,13 @@
         <location filename="../views/dfiledialog.cpp" line="1343"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>取代</translation>
+        <translation>取 代</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1474"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>打開</translation>
+        <translation>打 開</translation>
     </message>
     <message>
         <location filename="../views/dfiledialog.cpp" line="1294"/>
@@ -1580,7 +1580,7 @@
         <location filename="../../dialogs/dtaskdialog.cpp" line="822"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>取代</translation>
+        <translation>取 代</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="787"/>
@@ -1972,7 +1972,7 @@
         <location filename="../dialogs/dialogmanager.cpp" line="536"/>
         <source>Erase</source>
         <comment>button</comment>
-        <translation>清除</translation>
+        <translation>擦 除</translation>
     </message>
     <message>
         <location filename="../dialogs/dialogmanager.cpp" line="598"/>
@@ -2106,7 +2106,7 @@
         <location filename="../views/filedialogstatusbar.cpp" line="84"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>打開</translation>
+        <translation>打 開</translation>
     </message>
     <message>
         <location filename="../views/filedialogstatusbar.cpp" line="92"/>
@@ -2895,7 +2895,7 @@
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="47"/>
         <source>Unlock</source>
         <comment>button</comment>
-        <translation>解鎖</translation>
+        <translation>解 鎖</translation>
     </message>
     <message>
         <location filename="../gvfs/mountsecretdiskaskpassworddialog.cpp" line="51"/>
@@ -3270,7 +3270,7 @@
         <location filename="../dialogs/filepreviewdialog.cpp" line="96"/>
         <source>Open</source>
         <comment>button</comment>
-        <translation>打開</translation>
+        <translation>打 開</translation>
     </message>
     <message>
         <location filename="../dialogs/filepreviewdialog.cpp" line="211"/>
@@ -3637,7 +3637,7 @@
         <location filename="../dialogs/burnoptdialog.cpp" line="254"/>
         <source>Burn</source>
         <comment>button</comment>
-        <translation>燒錄</translation>
+        <translation>燒 錄</translation>
     </message>
     <message>
         <location filename="../dialogs/burnoptdialog.cpp" line="372"/>
@@ -4301,7 +4301,7 @@
         <location filename="../dialogs/shareinfoframe.cpp" line="574"/>
         <source>Replace</source>
         <comment>button</comment>
-        <translation>取代</translation>
+        <translation>取 代</translation>
     </message>
     <message>
         <location filename="../dialogs/shareinfoframe.cpp" line="572"/>
