@@ -373,7 +373,7 @@
         <location filename="../dialogs/connecttoserverdialog.cpp" line="183"/>
         <location filename="../dialogs/connecttoserverdialog.cpp" line="414"/>
         <source>Unfavorite</source>
-        <translation type="unfinished"/>
+        <translation>Favori değil</translation>
     </message>
 </context>
 <context>

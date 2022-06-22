@@ -14,7 +14,7 @@
     <message>
         <location filename="../controllers/appcontroller.cpp" line="682"/>
         <source>The disc image was corrupted, cannot mount now, please erase the disc first</source>
-        <translation>Imej cakera telah rosak, tidak dapat dilekapkan, sila padam cakera dahulu</translation>
+        <translation>Imej cakera telah rosak dan tidak dapat dilekapkan, sila padamkan cakera terlebih dahulu</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="724"/>
@@ -25,7 +25,7 @@
         <location filename="../controllers/appcontroller.cpp" line="866"/>
         <location filename="../controllers/appcontroller.cpp" line="906"/>
         <source>The device was not safely removed</source>
-        <translation>Peranti masih tidak selamat ditanggalkan</translation>
+        <translation>Peranti masih tidak selamat untuk ditanggalkan</translation>
     </message>
     <message>
         <location filename="../controllers/appcontroller.cpp" line="866"/>
