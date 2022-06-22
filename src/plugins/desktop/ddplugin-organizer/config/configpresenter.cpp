@@ -28,6 +28,9 @@
 
 DDP_ORGANIZER_USE_NAMESPACE
 
+namespace  {
+inline constexpr char kProfilePrefix[] = "Collection_";
+}
 class ConfigPresenterGlobal : public ConfigPresenter{};
 Q_GLOBAL_STATIC(ConfigPresenterGlobal, configPresenter)
 
@@ -109,6 +112,24 @@ void ConfigPresenter::setClassification(Classifier cf)
 {
     curClassifier = cf;
     conf->setClassification(cf);
+    conf->sync();
+}
+
+QList<CollectionBaseDataPtr> ConfigPresenter::customProfile() const
+{
+    return conf->collectionBase(true);
+}
+
+void ConfigPresenter::saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas)
+{
+    QMap<QString, CollectionBaseDataPtr> profiles;
+
+    int index = 0;
+    for (auto iter = baseDatas.begin(); iter != baseDatas.end(); ++iter) {
+        profiles.insert(QString(kProfilePrefix) + QString::number(index), *iter);
+        ++index;
+    }
+    conf->writeCollectionBase(true, profiles);
     conf->sync();
 }
 

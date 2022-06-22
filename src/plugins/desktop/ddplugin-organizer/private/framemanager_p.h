@@ -43,6 +43,7 @@ public:
     SurfacePointer createSurface(QWidget *root);
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
     void buildOrganizer();
+public slots:
     void refeshCanvas();
 public slots:
     void enableChanged(bool e);

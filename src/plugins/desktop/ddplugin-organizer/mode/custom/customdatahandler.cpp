@@ -36,6 +36,38 @@ CustomDataHandler::~CustomDataHandler()
 
 }
 
+void CustomDataHandler::check(const QSet<QUrl> &vaild)
+{
+    for (auto iter = collections.begin(); iter != collections.end(); ++iter) {
+        for (auto it = iter.value()->items.begin(); it != iter.value()->items.end();) {
+            if (vaild.contains(*it)) {
+                ++it;
+            } else {
+                it = iter.value()->items.erase(it);
+            }
+        }
+    }
+}
+
+QList<CollectionBaseDataPtr> CustomDataHandler::baseDatas() const
+{
+    return collections.values();
+}
+
+bool CustomDataHandler::addBaseData(const CollectionBaseDataPtr &base)
+{
+    if (!base || collections.contains(base->key))
+        return false;
+
+    collections.insert(base->key, base);
+    return true;
+}
+
+void CustomDataHandler::removeBaseData(const QString &key)
+{
+    collections.remove(key);
+}
+
 bool CustomDataHandler::reset(const QList<CollectionBaseDataPtr> &datas)
 {
     for (const CollectionBaseDataPtr &ptr : datas)

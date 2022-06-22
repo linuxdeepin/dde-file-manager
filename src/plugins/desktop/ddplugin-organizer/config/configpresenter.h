@@ -40,10 +40,13 @@ public:
     void setMode(OrganizerMode m);
     Classifier classification() const;
     void setClassification(Classifier cf);
+    QList<CollectionBaseDataPtr> customProfile() const;
+    void saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas);
 signals:
     void changeEnableState(bool e);
     void switchToNormalized(int);
     void switchToCustom();
+    void newCollection(const QList<QUrl> &);
 public slots:
 protected:
     explicit ConfigPresenter(QObject *parent = nullptr);

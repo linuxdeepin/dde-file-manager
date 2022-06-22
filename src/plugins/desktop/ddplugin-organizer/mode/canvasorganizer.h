@@ -47,7 +47,7 @@ public:
     virtual void setSurface(QWidget *w);
     virtual void reset();
 signals:
-
+    void collectionChanged();
 public slots:
 protected slots:
     virtual bool filterDataRested(QList<QUrl> *urls);

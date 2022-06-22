@@ -22,6 +22,7 @@
 #define ORGANIZERCONFIG_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <QObject>
 
@@ -39,9 +40,14 @@ public:
     void setEnable(bool e);
     int mode() const;
     void setMode(int m);
-    void sync();
+    void sync(int ms = 1000);
     int classification() const;
     void setClassification(int cf);
+
+    QList<CollectionBaseDataPtr> collectionBase(bool custom) const;
+    CollectionBaseDataPtr collectionBase(bool custom, const QString &profile) const;
+    void updateCollectionBase(bool custom, const QString &profile, const CollectionBaseDataPtr &base);
+    void writeCollectionBase(bool custom, const QMap<QString, CollectionBaseDataPtr> &base);
 signals:
 
 public slots:

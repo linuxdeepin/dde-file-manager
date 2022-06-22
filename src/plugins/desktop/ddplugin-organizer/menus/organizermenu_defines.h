@@ -34,7 +34,7 @@ inline constexpr char kOrganizeByTimeAccessed[] = "organize-by-time-accessed";
 inline constexpr char kOrganizeByTimeModified[] = "organize-by-time-modified";
 inline constexpr char kOrganizeByTimeCreated[] = "organize-by-time-created";
 inline constexpr char kOrganizeByCustom[] = "custom-collection";
-
+inline constexpr char kCreateACollection[] = "create-a-collection";
 } // namespace ActionID
 
 DDP_ORGANIZER_END_NAMESPACE

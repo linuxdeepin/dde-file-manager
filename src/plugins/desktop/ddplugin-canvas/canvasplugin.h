@@ -73,6 +73,7 @@ private:
 
     // CanvasGrid begin
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Items)
+    DPF_EVENT_REG_SLOT(slot_CanvasGrid_Point)
 
     // CanvasModel begin
     DPF_EVENT_REG_SLOT(slot_CanvasModel_RootUrl)

@@ -24,8 +24,10 @@
 #include "ddplugin_canvas_global.h"
 
 #include <QObject>
+#include <QPoint>
 
 DDP_CANVAS_BEGIN_NAMESPACE
+
 class CanvasGrid;
 class CanvasGridBroker : public QObject
 {
@@ -37,6 +39,7 @@ public:
 
 public slots:
     QStringList items(int index);
+    int point(const QString &item, QPoint *pos);
 private:
     CanvasGrid *grid = nullptr;
 };

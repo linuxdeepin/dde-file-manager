@@ -41,6 +41,10 @@ public:
     explicit ExtendCanvasScenePrivate(ExtendCanvasScene *qq);
     void emptyMenu(QMenu *parent);
     void normalMenu(QMenu *parent);
+
+    void updateEmptyMenu(QMenu *parent);
+    void updateNormalMenu(QMenu *parent);
+
     QMenu *organizeBySubActions(QMenu *menu);
 
     static QString classifierToActionID(Classifier cf);

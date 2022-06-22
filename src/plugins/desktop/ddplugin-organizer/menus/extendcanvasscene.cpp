@@ -63,7 +63,63 @@ void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)
 
 void ExtendCanvasScenePrivate::normalMenu(QMenu *parent)
 {
+    if (turnOn && CfgPresenter->mode() == OrganizerMode::kCustom) {
+        QAction *tempAction = parent->addAction(predicateName.value(ActionID::kCreateACollection));
+        predicateAction[ActionID::kCreateACollection] = tempAction;
+        tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCreateACollection));
+    }
+}
 
+void ExtendCanvasScenePrivate::updateEmptyMenu(QMenu *parent)
+{
+    auto actions = parent->actions();
+    auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+        return ac->property(ActionPropertyKey::kActionID).toString() == QString("display-settings");
+    });
+
+    if (actionIter == actions.end()) {
+        qWarning() << "can not find action:" << "display-settings";
+        return ;
+    }
+
+    QAction *indexAction = *actionIter;
+    parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeDesktop]);
+    if (turnOn) {
+        parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeBy]);
+        parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
+
+        if (CfgPresenter->mode() == OrganizerMode::kCustom) {
+            predicateAction[ActionID::kOrganizeByCustom]->setChecked(true);
+        } else if (CfgPresenter->mode() == OrganizerMode::kNormalized) {
+            QString id = classifierToActionID(CfgPresenter->classification());
+            if (auto ac = predicateAction.value(id))
+                ac->setChecked(true);
+        }
+
+        auto iconSizeIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+            return ac->property(ActionPropertyKey::kActionID).toString() == QString("icon-size");
+        });
+
+        if (iconSizeIter != actions.end()) {
+            (*iconSizeIter)->setVisible(false);
+            (*iconSizeIter)->setEnabled(false);
+        }
+    } else {
+        parent->insertAction(indexAction, predicateAction[ActionID::kOrganizeOptions]);
+    }
+}
+
+void ExtendCanvasScenePrivate::updateNormalMenu(QMenu *parent)
+{
+//    auto actions = parent->actions();
+//    auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
+//        return ac->property(ActionPropertyKey::kActionID).toString() == QString("display-settings");
+//    });
+
+//    if (actionIter == actions.end()) {
+//        qWarning() << "can not find action:" << "display-settings";
+//        return ;
+//    }
 }
 
 QMenu *ExtendCanvasScenePrivate::organizeBySubActions(QMenu *menu)
@@ -140,6 +196,8 @@ ExtendCanvasScene::ExtendCanvasScene(QObject *parent)
     d->predicateName[ActionID::kOrganizeByTimeAccessed] = tr("Time accessed");
     d->predicateName[ActionID::kOrganizeByTimeModified] = tr("Time modified");
     d->predicateName[ActionID::kOrganizeByTimeCreated] = tr("Time created");
+
+    d->predicateName[ActionID::kCreateACollection] = tr("Create a collection");
 }
 
 QString ExtendCanvasScene::name() const
@@ -152,6 +210,8 @@ bool ExtendCanvasScene::initialize(const QVariantHash &params)
     d->turnOn = CfgPresenter->isEnable();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->onDesktop = params.value(MenuParamKey::kOnDesktop).toBool();
+    d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
+
     return d->onDesktop;
 }
 
@@ -183,41 +243,12 @@ bool ExtendCanvasScene::create(QMenu *parent)
 
 void ExtendCanvasScene::updateState(QMenu *parent)
 {
-    auto actions = parent->actions();
-    auto actionIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
-        return ac->property(ActionPropertyKey::kActionID).toString() == QString("display-settings");
-    });
-
-    if (actionIter == actions.end()) {
-        qWarning() << "can not find action:" << "display-settings";
-        return ;
-    }
-
-    QAction *indexAction = *actionIter;
-    parent->insertAction(indexAction, d->predicateAction[ActionID::kOrganizeDesktop]);
-    if (d->turnOn) {
-        parent->insertAction(indexAction, d->predicateAction[ActionID::kOrganizeBy]);
-        parent->insertAction(indexAction, d->predicateAction[ActionID::kOrganizeOptions]);
-
-        if (CfgPresenter->mode() == OrganizerMode::kCustom) {
-            d->predicateAction[ActionID::kOrganizeByCustom]->setChecked(true);
-        } else if (CfgPresenter->mode() == OrganizerMode::kNormalized) {
-            QString id = d->classifierToActionID(CfgPresenter->classification());
-            if (auto ac = d->predicateAction.value(id))
-                ac->setChecked(true);
-        }
-
-        auto iconSizeIter = std::find_if(actions.begin(), actions.end(), [](const QAction *ac){
-            return ac->property(ActionPropertyKey::kActionID).toString() == QString("icon-size");
-        });
-
-        if (iconSizeIter != actions.end()) {
-            (*iconSizeIter)->setVisible(false);
-            (*iconSizeIter)->setEnabled(false);
-        }
+    if (d->isEmptyArea) {
+        d->updateEmptyMenu(parent);
     } else {
-        parent->insertAction(indexAction, d->predicateAction[ActionID::kOrganizeOptions]);
+        d->updateNormalMenu(parent);
     }
+
 
     AbstractMenuScene::updateState(parent);
 }
@@ -239,6 +270,8 @@ bool ExtendCanvasScene::triggered(QAction *action)
             emit CfgPresenter->switchToNormalized(Classifier::kTimeModified);
         } else if (actionId == ActionID::kOrganizeByTimeCreated) {
             emit CfgPresenter->switchToNormalized(Classifier::kTimeCreated);
+        } else if (actionId == ActionID::kCreateACollection) {
+            emit CfgPresenter->newCollection(d->selectFiles);
         }
         return true;
     }

@@ -25,7 +25,7 @@
 
 #include <QString>
 #include <QUrl>
-#include <QSharedData>
+#include <QSharedPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -43,7 +43,7 @@ enum Classifier {
     kSize
 };
 
-class CollectionBaseData : public QSharedData
+class CollectionBaseData
 {
 public:
     QString name;
@@ -51,7 +51,7 @@ public:
     QList<QUrl> items;
 };
 
-typedef QSharedDataPointer<CollectionBaseData> CollectionBaseDataPtr;
+typedef QSharedPointer<CollectionBaseData> CollectionBaseDataPtr;
 
 DDP_ORGANIZER_END_NAMESPACE
 

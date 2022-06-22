@@ -128,7 +128,6 @@ void FrameManagerPrivate::layoutSurface(QWidget *root, SurfacePointer surface, b
 void FrameManagerPrivate::buildOrganizer()
 {
     q->switchMode(CfgPresenter->mode());
-    refeshCanvas();
 }
 
 void FrameManagerPrivate::refeshCanvas()
@@ -170,7 +169,6 @@ void FrameManagerPrivate::switchToNormalized(int cf)
     if (organizer->mode() == OrganizerMode::kNormalized) {
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
         organizer->reset();
-        refeshCanvas();
     } else {
         CfgPresenter->setMode(kNormalized);
         CfgPresenter->setClassification(static_cast<Classifier>(cf));
@@ -249,12 +247,15 @@ void FrameManager::switchMode(OrganizerMode mode)
     d->organizer = OrganizerCreator::createOrganizer(mode);
     Q_ASSERT(d->organizer);
 
+    connect(d->organizer, &CanvasOrganizer::collectionChanged, d, &FrameManagerPrivate::refeshCanvas);
+
     // 初始化创建集合窗口
     if (!d->surfaceWidgets.isEmpty())
         d->organizer->setSurface(d->surfaceWidgets.first().data());
 
     d->organizer->setCanvasShell(d->canvas->canvasModel());
     d->organizer->initialize(d->model);
+
 
     // 布局
 }

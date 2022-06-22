@@ -37,6 +37,12 @@ inline constexpr char kKeyMode[] = "Mode";
 inline constexpr char kGroupNormalized[] = "Normalized";
 inline constexpr char kKeyClassification[] = "Classification";
 
+inline constexpr char kGroupCustomed[] = "Customed";
+inline constexpr char kGroupCollectionBase[] = "CollectionBase";
+inline constexpr char kKeyName[] = "Name";
+inline constexpr char kKeyKey[] = "Key";
+inline constexpr char kGroupItems[] = "Items";
+
 } // namepace
 
 OrganizerConfigPrivate::OrganizerConfigPrivate(OrganizerConfig *qq) : q(qq)
@@ -89,6 +95,12 @@ OrganizerConfig::OrganizerConfig(QObject *parent)
         configFile.absoluteDir().mkpath(".");
 
     d->settings = new QSettings(configPath, QSettings::IniFormat);
+
+    // delay sync
+    d->syncTimer.setSingleShot(true);
+    connect(&d->syncTimer, &QTimer::timeout, this, [this]() {
+        d->settings->sync();
+    }, Qt::QueuedConnection);
 }
 
 bool OrganizerConfig::isEnable() const
@@ -111,9 +123,12 @@ void OrganizerConfig::setMode(int m)
     d->setValue(kGroupGeneral, kKeyMode, m);
 }
 
-void OrganizerConfig::sync()
+void OrganizerConfig::sync(int ms)
 {
-    d->settings->sync();
+    if (ms < 1)
+        d->settings->sync();
+    else
+        d->syncTimer.start(ms);
 }
 
 int OrganizerConfig::classification() const
@@ -124,6 +139,123 @@ int OrganizerConfig::classification() const
 void OrganizerConfig::setClassification(int cf)
 {
     d->setValue(kGroupNormalized, kKeyClassification, cf);
+}
+
+QList<CollectionBaseDataPtr> OrganizerConfig::collectionBase(bool custom) const
+{
+    QStringList profileKeys;
+    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(kGroupCollectionBase);
+    profileKeys = d->settings->childGroups();
+    d->settings->endGroup();
+    d->settings->endGroup();
+
+    QList<CollectionBaseDataPtr> ret;
+    for (const QString &key : profileKeys)
+        if (auto base = collectionBase(custom, key))
+            ret.append(base);
+
+    return ret;
+}
+
+CollectionBaseDataPtr OrganizerConfig::collectionBase(bool custom, const QString &profile) const
+{
+    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(kGroupCollectionBase);
+    d->settings->beginGroup(profile);
+
+    CollectionBaseDataPtr base(new CollectionBaseData);
+    base->name = d->settings->value(kKeyName, "").toString();
+    base->key = d->settings->value(kKeyKey, "").toString();
+
+    {
+        d->settings->beginGroup(kGroupItems);
+        auto keys = d->settings->childKeys();
+        // must be sorted by int value
+        std::sort(keys.begin(), keys.end(), [](const QString &t1, const QString &t2) {
+            return t1.toInt() < t2.toInt();
+        });
+
+        for (const QString &index: keys) {
+            QUrl url = d->settings->value(index).toString();
+            if (url.isValid())
+                base->items.append(url);
+        }
+
+        d->settings->endGroup();
+    }
+
+    d->settings->endGroup();
+    d->settings->endGroup();
+    d->settings->endGroup();
+
+    if (base->key.isEmpty() || base->name.isEmpty()) {
+        qWarning() << "invalid collection base" << profile;
+        base.clear();
+    }
+    return base;
+}
+
+void OrganizerConfig::updateCollectionBase(bool custom, const QString &profile, const CollectionBaseDataPtr &base)
+{
+    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    d->settings->beginGroup(kGroupCollectionBase);
+    // delete old datas
+    d->settings->remove(profile);
+
+    d->settings->beginGroup(profile);
+    d->settings->setValue(kKeyName, base->name);
+    d->settings->value(kKeyKey, base->key);
+
+    {
+        d->settings->beginGroup(kGroupItems);
+
+        int index = 0;
+        for (auto iter = base->items.begin(); iter != base->items.end(); ) {
+            d->settings->setValue(QString::number(index), iter->toString());
+            ++index;
+            ++iter;
+        }
+
+        d->settings->endGroup();
+    }
+
+    d->settings->endGroup();
+    d->settings->endGroup();
+    d->settings->endGroup();
+}
+
+void OrganizerConfig::writeCollectionBase(bool custom, const QMap<QString, CollectionBaseDataPtr> &base)
+{
+    d->settings->beginGroup(custom ? kGroupCustomed : kGroupNormalized);
+    // delete all old datas
+    d->settings->remove(kGroupCollectionBase);
+    d->settings->beginGroup(kGroupCollectionBase);
+
+    for (auto iter = base.begin(); iter != base.end(); ++iter) {
+        d->settings->beginGroup(iter.key());
+        d->settings->setValue(kKeyName, iter.value()->name);
+        d->settings->setValue(kKeyKey, iter.value()->key);
+
+        {
+            d->settings->beginGroup(kGroupItems);
+
+            int index = 0;
+            for (auto it = iter.value()->items.begin(); it != iter.value()->items.end(); ) {
+                d->settings->setValue(QString::number(index), it->toString());
+                ++index;
+                ++it;
+            }
+
+            d->settings->endGroup();
+        }
+
+        d->settings->endGroup();
+    }
+
+
+    d->settings->endGroup();
+    d->settings->endGroup();
 }
 
 OrganizerConfig::~OrganizerConfig()

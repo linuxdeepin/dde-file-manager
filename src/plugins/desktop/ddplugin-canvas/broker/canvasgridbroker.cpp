@@ -23,6 +23,8 @@
 
 #include <dfm-framework/dpf.h>
 
+Q_DECLARE_METATYPE(QPoint *)
+
 DDP_CANVAS_USE_NAMESPACE
 
 #define CanvasGridSlot(topic, args...) \
@@ -35,21 +37,36 @@ CanvasGridBroker::CanvasGridBroker(CanvasGrid *gridPtr, QObject *parent)
     : QObject(parent)
     , grid(gridPtr)
 {
+
 }
 
 CanvasGridBroker::~CanvasGridBroker()
 {
     CanvasGridDisconnect(slot_CanvasGrid_Items);
+    CanvasGridDisconnect(slot_CanvasGrid_Point);
 }
 
 bool CanvasGridBroker::init()
 {
     CanvasGridSlot(slot_CanvasGrid_Items, &CanvasGridBroker::items);
+    CanvasGridSlot(slot_CanvasGrid_Point, &CanvasGridBroker::point);
     return true;
 }
 
 QStringList CanvasGridBroker::items(int index)
 {
     return grid->items(index);
+}
+
+int CanvasGridBroker::point(const QString &item, QPoint *pos)
+{
+    if (pos) {
+        QPair<int, QPoint> ret;
+        if (grid->point(item, ret)) {
+            *pos = ret.second;
+            return ret.first;
+        }
+    }
+    return -1;
 }
 

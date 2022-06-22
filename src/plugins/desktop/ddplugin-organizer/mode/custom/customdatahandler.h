@@ -36,6 +36,10 @@ class CustomDataHandler : public CollectionDataProvider, public ModelDataHandler
 public:
     explicit CustomDataHandler(QObject *parent = nullptr);
     ~CustomDataHandler() override;
+    void check(const QSet<QUrl> &vaild);
+    QList<CollectionBaseDataPtr> baseDatas() const;
+    bool addBaseData(const CollectionBaseDataPtr &base);
+    void removeBaseData(const QString &key);
 public:
     virtual bool reset(const QList<CollectionBaseDataPtr> &);
 public:

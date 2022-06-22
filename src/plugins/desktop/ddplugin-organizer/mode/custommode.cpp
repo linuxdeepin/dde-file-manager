@@ -21,7 +21,10 @@
 #include "custom/custommode_p.h"
 #include "models/fileproxymodel.h"
 
+#include "config/configpresenter.h"
+
 #include <QDebug>
+#include <QUuid>
 
 DDP_ORGANIZER_USE_NAMESPACE
 
@@ -60,6 +63,8 @@ bool CustomMode::initialize(FileProxyModel *m)
     Q_ASSERT(!model);
     model = m;
 
+    connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection);
+
     // must be DirectConnection to keep sequential
     connect(model, &FileProxyModel::rowsInserted, this, &CustomMode::onFileInserted, Qt::DirectConnection);
     connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &CustomMode::onFileAboutToBeRemoved, Qt::DirectConnection);
@@ -70,8 +75,8 @@ bool CustomMode::initialize(FileProxyModel *m)
 
     d->dataHandler = new CustomDataHandler();
 
-    // todo(zy) 获取配置
-    QList<CollectionBaseDataPtr> store;
+    // restore collection as config
+    QList<CollectionBaseDataPtr> store = CfgPresenter->customProfile();
     d->dataHandler->reset(store);
 
     model->setHandler(d->dataHandler);
@@ -87,12 +92,21 @@ bool CustomMode::initialize(FileProxyModel *m)
 void CustomMode::reset()
 {
     // 获取配置
+    QList<CollectionBaseDataPtr> store = CfgPresenter->customProfile();
+    d->dataHandler->reset(store);
 
-    rebuild();
+    model->refresh(model->rootIndex(), false, 0);
 }
 
 void CustomMode::rebuild()
 {
+    // remove invaild url
+    d->dataHandler->check(QSet<QUrl>::fromList(model->files()));
+
+    // write config
+    CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
+    //
+
     // get region name and items, then create collection.
     for (const QString &key : d->dataHandler->keys()) {
         const QString &name = d->dataHandler->name(key);
@@ -100,14 +114,14 @@ void CustomMode::rebuild()
         qDebug() << "name" << name << "files" << files.size();
 
         // 复用已有分组
-        CollectionHolderPointer collectionHolder = d->holders.value(name);
+        CollectionHolderPointer collectionHolder = d->holders.value(key);
         // 创建没有的组
 
         if (collectionHolder.isNull()) {
-            collectionHolder.reset(new CollectionHolder(name));
+            collectionHolder.reset(new CollectionHolder(key));
             collectionHolder->createFrame(surface, model);
             collectionHolder->setName(name);
-            d->holders.insert(name, collectionHolder);
+            d->holders.insert(key, collectionHolder);
         }
         collectionHolder->setUrls(files);
 
@@ -118,6 +132,8 @@ void CustomMode::rebuild()
 
         collectionHolder->show();
     }
+
+    emit collectionChanged();
 }
 
 void CustomMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
@@ -187,6 +203,19 @@ bool CustomMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
         return d->dataHandler->acceptRename(oldUrl, newUrl);
 
     return false;
+}
+
+void CustomMode::onNewCollection(const QList<QUrl> &list)
+{
+    // todo 检查数据有效性
+    CollectionBaseDataPtr base(new CollectionBaseData);
+    base->name = tr("New Collection");
+    base->key = QUuid::createUuid().toString(QUuid::WithoutBraces);
+    base->items = list;
+
+    d->dataHandler->addBaseData(base);
+
+    model->refresh(model->rootIndex(), false, 0);;
 }
 
 

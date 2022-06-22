@@ -134,6 +134,8 @@ void NormalizedMode::rebuild()
         collectionHolder->show();
     }
     // 删除无需的组
+
+    emit collectionChanged();
 }
 
 void NormalizedMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
