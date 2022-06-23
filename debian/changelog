@@ -1,3 +1,9 @@
+dde-file-manager (6.0.0.0) stable; urgency=medium
+
+  * update V23 baseline version  
+
+ -- lvwujun <lvwujun@uniontech.com>  Tue, 23 Jun 2022 06:56:58 +0000
+
 dde-file-manager (1.0.1-1) stable; urgency=low
 
   * Autobuild Tag 1.0.1 

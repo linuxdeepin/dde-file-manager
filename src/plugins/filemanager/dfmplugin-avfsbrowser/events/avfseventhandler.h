@@ -27,6 +27,7 @@
 
 #include <QUrl>
 #include <QList>
+#include <QObject>
 
 DPAVFSBROWSER_BEGIN_NAMESPACE
 
