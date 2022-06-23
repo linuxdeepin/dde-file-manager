@@ -187,7 +187,8 @@ void FileDialog::cd(const QUrl &url)
     FileManagerWindow::cd(url);
 
     auto window = WindowsService::service()->findWindowById(this->internalWinId());
-    Q_ASSERT(window);
+    if (!window)
+        return;
 
     if (window->workSpace())
         handleUrlChanged(url);

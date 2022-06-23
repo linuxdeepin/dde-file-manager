@@ -28,6 +28,7 @@
 #include "services/filemanager/windows/windowsservice.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/standardpaths.h"
 
 #include <QPointer>
 #include <QWindow>
@@ -64,6 +65,8 @@ FileDialogHandle::FileDialogHandle(QWidget *parent)
         qCritical() << "Create window failed";
         abort();
     }
+    auto &&defaultPath { DFMBASE_NAMESPACE::StandardPaths::location(StandardPaths::kHomePath) };
+    d_func()->dialog->cd(QUrl::fromLocalFile(defaultPath));
     d_func()->dialog->hide();
 
     connect(d_func()->dialog, &FileDialog::accepted, this, &FileDialogHandle::accepted);
