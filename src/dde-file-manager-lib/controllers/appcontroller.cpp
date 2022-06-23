@@ -1289,7 +1289,7 @@ void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBase
            if(!isOperateUnmount){//如果上述没有发生挂载目录的卸载操作，则不会触发卸载通知，因此在这里移除smb挂载聚合项
             RemoteMountsStashManager::removeStashedSmbDevice(smbUrl.toString());
             emit rootFileManager->rootFileWather()->fileDeleted(smbUrl);//多个打开的窗口同步移除smb挂载聚合项
-            managerWindow->getLeftSideBar()->jumpToComputerItem();
+            managerWindow->getLeftSideBar()->jumpToItem(DUrl(COMPUTER_ROOT));
             emit DFMApplication::instance()->reloadComputerModel();//刷新计算机界面上的smb聚合设备
            }
        });
