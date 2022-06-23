@@ -1,1 +1,5 @@
+#possible-gpl-code-linked-with-openssl forbid
 libdde-file-manager: possible-gpl-code-linked-with-openssl
+
+#shlib-without-PT_GNU_STACK-section forbid
+libdde-file-manager: shlib-without-PT_GNU_STACK-section usr/lib/mips64el-linux-gnuabi64/libdde-file-manager.so.1.8.2
