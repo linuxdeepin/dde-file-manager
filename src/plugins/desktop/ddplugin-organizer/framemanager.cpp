@@ -251,7 +251,9 @@ void FrameManager::switchMode(OrganizerMode mode)
     if (!d->surfaceWidgets.isEmpty())
         d->organizer->setSurface(d->surfaceWidgets.first().data());
 
-    d->organizer->setCanvasShell(d->canvas->canvasModel());
+    d->organizer->setCanvasModelShell(d->canvas->canvasModel());
+    d->organizer->setCanvasViewShell(d->canvas->canvasView());
+    d->organizer->setCanvasGridShell(d->canvas->canvasGrid());
     d->organizer->initialize(d->model);
 
 

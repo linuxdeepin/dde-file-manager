@@ -101,9 +101,13 @@ QString FileClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
     if (oldType == newType) {
         int idx = collections[newType]->items.indexOf(oldUrl);
         collections[newType]->items.replace(idx, newUrl);
+        emit itemsChanged(newType);
     } else {
         collections[oldType]->items.removeOne(oldUrl);
+        emit itemsChanged(oldType);
+
         collections[newType]->items.append(newUrl);
+        emit itemsChanged(newType);
     }
 #else
     // old does not exist.
@@ -163,18 +167,28 @@ QString FileClassifier::append(const QUrl &url)
     // do not exist
     if (cur.isEmpty()) {
         auto it = collections.find(ret);
-        if (it != collections.end())
+        if (it != collections.end()) {
             it.value()->items.append(url);
-        else
+            emit itemsChanged(cur);
+        } else {
             Q_ASSERT_X(it == collections.end(), "TypeClassifier", QString("unrecognized type %0").arg(ret).toStdString().c_str());
+        }
     } else { // existed
         if (cur != ret) {
             collections[cur]->items.removeOne(url);
+            emit itemsChanged(cur);
+
             collections[ret]->items.append(url);
+            emit itemsChanged(ret);
         }
     }
 
     return ret;
+}
+
+void FileClassifier::insert(const QUrl &, const QString &, const int)
+{
+    // todo
 }
 
 QString FileClassifier::remove(const QUrl &url)
@@ -184,6 +198,7 @@ QString FileClassifier::remove(const QUrl &url)
         if (itor.value()->items.contains(url)) {
             itor.value()->items.removeOne(url);
             ret = itor.key();
+            emit itemsChanged(ret);
             break;
         }
     }
@@ -200,7 +215,11 @@ QString FileClassifier::change(const QUrl &url)
     QString ret = classify(url);
     if (ret != cur) {
         collections[cur]->items.removeOne(url);
+        emit itemsChanged(cur);
+
         collections[ret]->items.append(url);
+        emit itemsChanged(ret);
+
         return ret;
     }
     return "";

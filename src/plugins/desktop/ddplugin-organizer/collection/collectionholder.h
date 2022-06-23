@@ -24,25 +24,31 @@
 #include "ddplugin_organizer_global.h"
 
 #include <QObject>
+#include <QSharedPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class FileProxyModel;
 class CollectionFrame;
 class CollectionWidget;
+class CollectionDataProvider;
+class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
 class CollectionHolderPrivate;
 class CollectionHolder : public QObject
 {
     Q_OBJECT
     friend class CollectionHolderPrivate;
 public:
-    explicit CollectionHolder(const QString &uuid, QObject *parent = nullptr);
+    explicit CollectionHolder(const QString &uuid, CollectionDataProvider *dataProvider, QObject *parent = nullptr);
     ~CollectionHolder() override;
+    void setCanvasModelShell(CanvasModelShell *sh);
+    void setCanvasViewShell(CanvasViewShell *sh);
+    void setCanvasGridShell(CanvasGridShell *sh);
     QString id() const;
     QString name();
     void setName(const QString &);
-    QList<QUrl> urls() const;
-    void setUrls(const QList<QUrl> &urls);
     void createFrame(QWidget *surface, FileProxyModel *model);
     void show();
 
@@ -66,7 +72,7 @@ public:
     bool dragEnabled() const;
 
 private:
-    CollectionHolderPrivate *d = nullptr;
+    QSharedPointer<CollectionHolderPrivate> d = nullptr;
 };
 
 typedef QSharedPointer<CollectionHolder> CollectionHolderPointer;

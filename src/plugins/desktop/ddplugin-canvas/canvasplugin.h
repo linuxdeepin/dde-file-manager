@@ -52,6 +52,7 @@ private:
 
     // CanvasView begin
     DPF_EVENT_REG_SLOT(slot_CanvasView_VisualRect)
+    DPF_EVENT_REG_SLOT(slot_CanvasView_GridPos)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Refresh)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Update)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Select)
@@ -73,7 +74,9 @@ private:
 
     // CanvasGrid begin
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Items)
+    DPF_EVENT_REG_SLOT(slot_CanvasGrid_Item)
     DPF_EVENT_REG_SLOT(slot_CanvasGrid_Point)
+    DPF_EVENT_REG_SLOT(slot_CanvasGrid_TryAppendAfter)
 
     // CanvasModel begin
     DPF_EVENT_REG_SLOT(slot_CanvasModel_RootUrl)

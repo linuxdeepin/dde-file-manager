@@ -30,16 +30,21 @@ DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class FileProxyModel;
 class CollectionItemDelegate;
+class CollectionDataProvider;
+class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
 class CollectionViewPrivate;
 class CollectionView : public QAbstractItemView
 {
     Q_OBJECT
     friend class CollectionViewPrivate;
 public:
-    explicit CollectionView(QWidget *parent = nullptr);
+    explicit CollectionView(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionView() override;
-    QList<QUrl> urls() const;
-    void setUrls(const QList<QUrl> &urls);
+    void setCanvasModelShell(CanvasModelShell *sh);
+    void setCanvasViewShell(CanvasViewShell *sh);
+    void setCanvasGridShell(CanvasGridShell *sh);
     QMargins cellMargins() const;
     FileProxyModel *model() const;
     CollectionItemDelegate *itemDelegate() const;

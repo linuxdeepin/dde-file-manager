@@ -39,6 +39,7 @@ public:
     QSharedPointer<CanvasView> getView(int idx);
 public slots:
     QRect visualRect(int idx, const QUrl &url);
+    QPoint gridPos(int idx, const QPoint &viewPoint);
     void refresh(int idx);
     void update(int idx);
     void select(const QList<QUrl> &urls);

@@ -26,9 +26,13 @@
 
 #include <QObject>
 
+class QMimeData;
+
 DDP_ORGANIZER_BEGIN_NAMESPACE
 class FileProxyModel;
 class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
 class OrganizerCreator
 {
 public:
@@ -43,19 +47,25 @@ public:
     ~CanvasOrganizer() override;
     virtual OrganizerMode mode() const = 0;
     virtual bool initialize(FileProxyModel *) = 0;
-    virtual void setCanvasShell(CanvasModelShell *sh);
+    virtual void setCanvasModelShell(CanvasModelShell *sh);
+    virtual void setCanvasViewShell(CanvasViewShell *sh);
+    virtual void setCanvasGridShell(CanvasGridShell *sh);
     virtual void setSurface(QWidget *w);
     virtual void reset();
+
 signals:
     void collectionChanged();
-public slots:
+
 protected slots:
     virtual bool filterDataRested(QList<QUrl> *urls);
     virtual bool filterDataInserted(const QUrl &url);
     virtual bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl);
+    virtual bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint);
 protected:
     FileProxyModel *model = nullptr;
-    CanvasModelShell *shell = nullptr;
+    CanvasModelShell *canvasModelShell = nullptr;
+    CanvasViewShell *canvasViewShell = nullptr;
+    CanvasGridShell *canvasGridShell = nullptr;
     QWidget *surface = nullptr;
 };
 

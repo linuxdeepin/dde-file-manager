@@ -157,6 +157,11 @@ void CollectionTitleBar::setTitleName(const QString &name)
     d->updateDisplayName();
 }
 
+QString CollectionTitleBar::titleName() const
+{
+    return d->titleName;
+}
+
 bool CollectionTitleBar::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == d->nameWidget && QEvent::MouseButtonDblClick == event->type()) {

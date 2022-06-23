@@ -37,6 +37,8 @@ public:
     ~CanvasModelShell();
     bool initialize();
     void refresh(int ms = 0);
+    bool fetch(const QUrl &url);
+    bool take(const QUrl &url);
 signals: // unqiue and direct signals
     bool filterDataRested(QList<QUrl> *urls);
     bool filterDataInserted(const QUrl &url);

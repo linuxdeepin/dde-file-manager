@@ -20,17 +20,25 @@
  */
 #include "custom/custommode_p.h"
 #include "models/fileproxymodel.h"
-
+#include "interface/canvasgridshell.h"
+#include "interface/canvasmodelshell.h"
+#include "interface/canvasviewshell.h"
 #include "config/configpresenter.h"
 
 #include <QDebug>
 #include <QUuid>
+#include <QMimeData>
 
 DDP_ORGANIZER_USE_NAMESPACE
 
 CustomModePrivate::CustomModePrivate(CustomMode *qq) : q(qq)
 {
 
+}
+
+CustomModePrivate::~CustomModePrivate()
+{
+    holders.clear();
 }
 
 CustomMode::CustomMode(QObject *parent)
@@ -118,12 +126,14 @@ void CustomMode::rebuild()
         // 创建没有的组
 
         if (collectionHolder.isNull()) {
-            collectionHolder.reset(new CollectionHolder(key));
+            collectionHolder.reset(new CollectionHolder(key, d->dataHandler));
             collectionHolder->createFrame(surface, model);
+            collectionHolder->setCanvasModelShell(canvasModelShell);
+            collectionHolder->setCanvasViewShell(canvasViewShell);
+            collectionHolder->setCanvasGridShell(canvasGridShell);
             collectionHolder->setName(name);
             d->holders.insert(key, collectionHolder);
         }
-        collectionHolder->setUrls(files);
 
         // disable rename,move and adjust
         collectionHolder->setRenamable(true);
@@ -146,8 +156,28 @@ void CustomMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 
 void CustomMode::onFileInserted(const QModelIndex &parent, int first, int last)
 {
-    //todo(wcl)
-    // 特殊处理在集合中的新建
+    Q_UNUSED(parent)
+
+    if (first < 0 || last < 0)
+        return;
+
+    const QList<QUrl> &files = model->files();
+    if (first >= files.count() || last >= files.count()) {
+        qWarning() << "insert file err:" << first << last << files.count();
+        return;
+    }
+
+    QString targetKey;
+    int targeIndex = 0;
+    for (int i = first; i <= last; ++i) {
+        auto file = files.at(i);
+        if (d->dataHandler->takePreItem(file, targetKey, targeIndex)) {
+            d->dataHandler->insert(file, targetKey, targeIndex);
+        } else {
+            qInfo() << "it not belong collection:" << file;
+            continue;
+        }
+    }
 }
 
 void CustomMode::onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last)
@@ -203,6 +233,35 @@ bool CustomMode::filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl)
         return d->dataHandler->acceptRename(oldUrl, newUrl);
 
     return false;
+}
+
+bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint)
+{
+    auto urls = mimeData->urls();
+    QList<QUrl> collectionItems;
+    QStringList files;
+    for (auto url : urls) {
+        QString &&key = d->dataHandler->key(url);
+        if (key.isEmpty())
+            continue;
+        collectionItems << url;
+        files << url.toString();
+    }
+
+    if (collectionItems.isEmpty())
+        return false;
+
+    QPoint gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);
+    if (!canvasGridShell->item(viewIndex, gridPos).isEmpty())
+        return false;
+
+    model->take(collectionItems);
+    canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
+
+    for (auto url : collectionItems)
+        canvasModelShell->fetch(url);
+
+    return true;
 }
 
 void CustomMode::onNewCollection(const QList<QUrl> &list)

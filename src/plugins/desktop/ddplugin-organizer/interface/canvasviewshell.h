@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangyu<zhangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASINTERFACE_H
-#define CANVASINTERFACE_H
+#ifndef CANVASVIEWSHELL_H
+#define CANVASVIEWSHELL_H
 
 #include "ddplugin_organizer_global.h"
 
 #include <QObject>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+class QMimeData;
 
-class CanvasInterfacePrivate;
-class CanvasInterface : public QObject
+namespace ddplugin_organizer {
+
+class CanvasInterface;
+class CanvasViewShell : public QObject
 {
     Q_OBJECT
-    friend class CanvasInterfacePrivate;
 public:
-    explicit CanvasInterface(QObject *parent = nullptr);
-    ~CanvasInterface();
+    explicit CanvasViewShell(QObject *parent = nullptr);
+    ~CanvasViewShell();
     bool initialize();
-    class FileInfoModelShell *fileInfoModel();
-    class CanvasModelShell *canvasModel();
-    class CanvasViewShell *canvasView();
-    class CanvasGridShell *canvasGrid();
-signals:
 
-public slots:
-protected:
+public:
+    QPoint gridPos(const int &viewIndex, const QPoint &viewPoint);
 
-private:
-    CanvasInterfacePrivate *d;
+signals: // unqiue and direct signals
+    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPos);
+
+private slots:
+    bool eventDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData);
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
-#endif // CANVASINTERFACE_H
+#endif // CANVASVIEWSHELL_H

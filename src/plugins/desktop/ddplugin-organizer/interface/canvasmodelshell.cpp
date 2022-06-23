@@ -26,6 +26,7 @@
 
 #include <QUrl>
 #include <QMimeData>
+#include <QPoint>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -64,6 +65,16 @@ bool CanvasModelShell::initialize()
 void CanvasModelShell::refresh(int ms)
 {
     CanvasModelPush(slot_CanvasModel_Refresh, false, ms);
+}
+
+bool CanvasModelShell::fetch(const QUrl &url)
+{
+    return CanvasModelPush(slot_CanvasModel_Fetch, url).toBool();
+}
+
+bool CanvasModelShell::take(const QUrl &url)
+{
+    return CanvasModelPush(slot_CanvasModel_Take, url).toBool();
 }
 
 bool CanvasModelShell::eventDataRested(QList<QUrl> *urls, void *extData)

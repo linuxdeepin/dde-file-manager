@@ -24,6 +24,7 @@
 #include "fileoperatorproxy.h"
 
 #include <QTimer>
+#include <QUrl>
 
 namespace ddplugin_canvas {
 

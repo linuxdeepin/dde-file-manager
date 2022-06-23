@@ -143,12 +143,11 @@ void NormalizedMode::rebuild()
         // 创建没有的组
 
         if (collectionHolder.isNull()) {
-            collectionHolder.reset(new CollectionHolder(name));
+            collectionHolder.reset(new CollectionHolder(key, d->classifier));
             collectionHolder->createFrame(surface, model);
             collectionHolder->setName(name);
             d->holders.insert(name, collectionHolder);
         }
-        collectionHolder->setUrls(files);
 
         // disable rename,move,adjust,drag
         collectionHolder->setRenamable(false);

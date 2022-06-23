@@ -39,7 +39,9 @@ public:
 
 public slots:
     QStringList items(int index);
+    QString item(int index, const QPoint &gridPos);
     int point(const QString &item, QPoint *pos);
+    void tryAppendAfter(const QStringList &items, int index, const QPoint &begin);
 private:
     CanvasGrid *grid = nullptr;
 };

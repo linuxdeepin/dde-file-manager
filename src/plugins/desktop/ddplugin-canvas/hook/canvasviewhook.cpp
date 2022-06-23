@@ -48,9 +48,9 @@ bool CanvasViewHook::contextMenu(int viewIndex, const QUrl &dir, const QList<QUr
     return CanvasViewRunHook(hook_CanvasView_ContextMenu, viewIndex, dir, files, pos, extData);
 }
 
-bool CanvasViewHook::dropData(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData) const
+bool CanvasViewHook::dropData(int viewIndex, const QMimeData *md, const QPoint &viewPoint, void *extData) const
 {
-    return CanvasViewRunHook(hook_CanvasView_DropData, viewIndex, md, viewPos, extData);
+    return CanvasViewRunHook(hook_CanvasView_DropData, viewIndex, md, viewPoint, extData);
 }
 
 bool CanvasViewHook::keyPress(int viewIndex, int key, int modifiers, void *extData) const

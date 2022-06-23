@@ -80,6 +80,7 @@ QString CustomDataHandler::remove(const QUrl &url)
 {
     for (auto iter = collections.begin(); iter != collections.end(); ++iter) {
         if (iter.value()->items.removeOne(url)) {
+            emit itemsChanged(iter.key());
             return iter.key();
         }
     }
@@ -125,6 +126,7 @@ QString CustomDataHandler::replace(const QUrl &oldUrl, const QUrl &newUrl)
 
     Q_ASSERT(old);
     old->items.replace(oldIdx, newUrl);
+    emit itemsChanged(old->key);
 
     return old->key;
 }
@@ -132,6 +134,20 @@ QString CustomDataHandler::replace(const QUrl &oldUrl, const QUrl &newUrl)
 QString CustomDataHandler::append(const QUrl &)
 {
     return "";
+}
+
+void CustomDataHandler::insert(const QUrl &url, const QString &key, const int index)
+{
+    auto it = collections.find(key);
+    if (Q_UNLIKELY(it == collections.end())) {
+        CollectionBaseDataPtr base(new CollectionBaseData);
+        base->key = key;
+        base->items << url;
+    } else {
+        it.value()->items.insert(index, url);
+    }
+
+    emit itemsChanged(key);
 }
 
 bool CustomDataHandler::acceptInsert(const QUrl &url)

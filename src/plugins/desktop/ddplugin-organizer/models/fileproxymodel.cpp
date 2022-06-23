@@ -19,6 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileproxymodel_p.h"
+#include "interface/canvasmodelshell.h"
+#include "interface/canvasviewshell.h"
 #include "interface/fileinfomodelshell.h"
 #include "modeldatahandler.h"
 
@@ -370,6 +372,37 @@ void FileProxyModel::update()
         itor.value()->refresh();
 
     emit dataChanged(createIndex(0, 0), createIndex(rowCount(rootIndex()), 0));
+}
+
+bool FileProxyModel::fetch(const QList<QUrl> &urls)
+{
+    int row = d->fileList.count();
+    beginInsertRows(rootIndex(), row, row + urls.count() - 1);
+
+    d->fileList.append(urls);
+    for (const QUrl &url : urls)
+        d->fileMap.insert(url, d->shell->fileInfo(d->shell->index(url)));
+
+    endInsertRows();
+
+    return true;
+}
+
+bool FileProxyModel::take(const QList<QUrl> &urls)
+{
+    // remove one by one
+    for (const QUrl &url : urls) {
+        int row = d->fileList.indexOf(url);
+        if (row < 0)
+            continue;
+
+        beginRemoveRows(rootIndex(), row, row);
+        d->fileList.removeAt(row);
+        d->fileMap.remove(url);
+        endRemoveRows();
+    }
+
+    return true;
 }
 
 QModelIndex FileProxyModel::mapToSource(const QModelIndex &proxyIndex) const

@@ -1,9 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangyu<zhangyub@uniontech.com>
+ * Author:     wangchunlin<wangchunlin@uniontech.com>
  *
- * Maintainer: zhangyu<zhangyub@uniontech.com>
+ * Maintainer: wangchunlin<wangchunlin@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,37 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CANVASINTERFACE_H
-#define CANVASINTERFACE_H
-
-#include "ddplugin_organizer_global.h"
+#ifndef CANVASGRIDSHELL_H
+#define CANVASGRIDSHELL_H
 
 #include <QObject>
 
-DDP_ORGANIZER_BEGIN_NAMESPACE
+namespace ddplugin_organizer {
 
-class CanvasInterfacePrivate;
-class CanvasInterface : public QObject
+class CanvasGridShell : public QObject
 {
     Q_OBJECT
-    friend class CanvasInterfacePrivate;
 public:
-    explicit CanvasInterface(QObject *parent = nullptr);
-    ~CanvasInterface();
+    explicit CanvasGridShell(QObject *parent = nullptr);
+    ~CanvasGridShell();
     bool initialize();
-    class FileInfoModelShell *fileInfoModel();
-    class CanvasModelShell *canvasModel();
-    class CanvasViewShell *canvasView();
-    class CanvasGridShell *canvasGrid();
-signals:
 
-public slots:
-protected:
+public:
+    QString item(int index, const QPoint &gridPos);
+    void tryAppendAfter(const QStringList &items, int index, const QPoint &begin);
 
-private:
-    CanvasInterfacePrivate *d;
 };
 
-DDP_ORGANIZER_END_NAMESPACE
+}
 
-#endif // CANVASINTERFACE_H
+#endif // CANVASGRIDSHELL_H

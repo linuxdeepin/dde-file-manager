@@ -26,22 +26,52 @@
 
 DDP_ORGANIZER_USE_NAMESPACE
 
-CollectionHolderPrivate::CollectionHolderPrivate(CollectionHolder *qq) : q(qq)
+CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq)
+    : q(qq)
+    , id(uuid)
+    , provider(dataProvider)
 {
 
 }
 
-CollectionHolder::CollectionHolder(const QString &uuid, QObject *parent)
-    : QObject(parent)
-    , d(new CollectionHolderPrivate(this))
+CollectionHolderPrivate::~CollectionHolderPrivate()
 {
-    d->id = uuid;
+    if (frame) {
+        frame->setParent(nullptr);
+        delete frame;
+    }
+
+    if (widget) {
+        widget->setParent(nullptr);
+        delete widget;
+    }
+}
+
+CollectionHolder::CollectionHolder(const QString &uuid, ddplugin_organizer::CollectionDataProvider *dataProvider, QObject *parent)
+    : QObject(parent)
+    , d(new CollectionHolderPrivate(uuid, dataProvider, this))
+{
+
 }
 
 CollectionHolder::~CollectionHolder()
 {
-    delete d;
-    d = nullptr;
+
+}
+
+void CollectionHolder::setCanvasModelShell(CanvasModelShell *sh)
+{
+    d->widget->setCanvasModelShell(sh);
+}
+
+void CollectionHolder::setCanvasViewShell(CanvasViewShell *sh)
+{
+    d->widget->setCanvasViewShell(sh);
+}
+
+void CollectionHolder::setCanvasGridShell(CanvasGridShell *sh)
+{
+    d->widget->setCanvasGridShell(sh);
 }
 
 QString CollectionHolder::id() const
@@ -51,37 +81,26 @@ QString CollectionHolder::id() const
 
 QString CollectionHolder::name()
 {
-    return d->name;
+    return d->widget->titleName();
 }
 
 void CollectionHolder::setName(const QString &text)
 {
-    if (text.isEmpty() || d->name == text.trimmed())
-        return;
-
-    d->name = text.trimmed();
-    d->widget->setTitleName(d->name);
-}
-
-QList<QUrl> CollectionHolder::urls() const
-{
-    return d->widget->urls();
-}
-
-void CollectionHolder::setUrls(const QList<QUrl> &urls)
-{
-    d->widget->setUrls(urls);
+    d->widget->setTitleName(text);
 }
 
 void CollectionHolder::createFrame(QWidget *surface, FileProxyModel *model)
 {
     d->frame = new CollectionFrame(surface);
+
+    // todo set geometry by config
     d->frame->setGeometry(QRect(200, 200, 400, 240));
 
     d->model = model;
-    d->widget = new CollectionWidget(d->frame);
+    d->widget = new CollectionWidget(d->id, d->provider, d->frame);
     d->widget->setModel(d->model);
     d->widget->setGeometry(d->frame->geometry());
+
     d->frame->setWidget(d->widget);
 }
 

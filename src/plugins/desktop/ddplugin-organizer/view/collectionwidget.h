@@ -31,6 +31,10 @@ DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class CollectionTitleBar;
 class CollectionView;
+class CollectionDataProvider;
+class CanvasModelShell;
+class CanvasViewShell;
+class CanvasGridShell;
 class CollectionWidgetPrivate;
 
 class CollectionWidget : public Dtk::Widget::DBlurEffectWidget
@@ -38,12 +42,14 @@ class CollectionWidget : public Dtk::Widget::DBlurEffectWidget
     Q_OBJECT
     friend class CollectionWidgetPrivate;
 public:
-    explicit CollectionWidget(QWidget *parent = nullptr);
+    explicit CollectionWidget(const QString &uuid, CollectionDataProvider *dataProvider, QWidget *parent = nullptr);
     ~CollectionWidget() override;
 
+    void setCanvasModelShell(CanvasModelShell *sh);
+    void setCanvasViewShell(CanvasViewShell *sh);
+    void setCanvasGridShell(CanvasGridShell *sh);
+
     void setModel(QAbstractItemModel *model);
-    void setUrls(const QList<QUrl> &urls);
-    QList<QUrl> urls() const;
     void setDragEnabled(bool enable);
     bool dragEnabled() const;
 

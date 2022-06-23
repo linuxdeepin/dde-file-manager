@@ -31,6 +31,7 @@ class CustomModePrivate
 {
 public:
     explicit CustomModePrivate(CustomMode *qq);
+    ~CustomModePrivate();
     CustomDataHandler *dataHandler = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
 private:

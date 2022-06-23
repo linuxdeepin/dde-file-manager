@@ -497,6 +497,11 @@ void CanvasManagerPrivate::onFileInserted(const QModelIndex &parent, int first, 
             // need open editor,only by menu create file
             q->openEditor(url);
         } else {
+            QPair<int, QPoint> pos;
+            if (GridIns->point(path, pos)) {
+                // already exists
+                continue;
+            }
             GridIns->append(path);
         }
     }

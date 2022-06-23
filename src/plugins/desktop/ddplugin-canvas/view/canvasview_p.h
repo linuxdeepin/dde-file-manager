@@ -94,9 +94,9 @@ public:
         return QPoint(canvasInfo.columnCount - 1, canvasInfo.rowCount - 1);
     }
 
-    inline QPoint gridAt(const QPoint &viewPos) const {
-        auto row = (viewPos.x() - viewMargins.left()) / canvasInfo.gridWidth;
-        auto col = (viewPos.y() - viewMargins.top()) / canvasInfo.gridHeight;
+    inline QPoint gridAt(const QPoint &point) const {
+        auto row = (point.x() - viewMargins.left()) / canvasInfo.gridWidth;
+        auto col = (point.y() - viewMargins.top()) / canvasInfo.gridHeight;
         return QPoint(row, col);
     }
 

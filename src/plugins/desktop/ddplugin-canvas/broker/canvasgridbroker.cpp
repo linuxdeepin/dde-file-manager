@@ -43,19 +43,28 @@ CanvasGridBroker::CanvasGridBroker(CanvasGrid *gridPtr, QObject *parent)
 CanvasGridBroker::~CanvasGridBroker()
 {
     CanvasGridDisconnect(slot_CanvasGrid_Items);
+    CanvasGridDisconnect(slot_CanvasGrid_Item);
     CanvasGridDisconnect(slot_CanvasGrid_Point);
+    CanvasGridDisconnect(slot_CanvasGrid_TryAppendAfter);
 }
 
 bool CanvasGridBroker::init()
 {
     CanvasGridSlot(slot_CanvasGrid_Items, &CanvasGridBroker::items);
+    CanvasGridSlot(slot_CanvasGrid_Item, &CanvasGridBroker::item);
     CanvasGridSlot(slot_CanvasGrid_Point, &CanvasGridBroker::point);
+    CanvasGridSlot(slot_CanvasGrid_TryAppendAfter, &CanvasGridBroker::tryAppendAfter);
     return true;
 }
 
 QStringList CanvasGridBroker::items(int index)
 {
     return grid->items(index);
+}
+
+QString CanvasGridBroker::item(int index, const QPoint &gridPos)
+{
+    return grid->item(index, gridPos);
 }
 
 int CanvasGridBroker::point(const QString &item, QPoint *pos)
@@ -68,5 +77,10 @@ int CanvasGridBroker::point(const QString &item, QPoint *pos)
         }
     }
     return -1;
+}
+
+void CanvasGridBroker::tryAppendAfter(const QStringList &items, int index, const QPoint &begin)
+{
+    grid->tryAppendAfter(items, index, begin);
 }
 

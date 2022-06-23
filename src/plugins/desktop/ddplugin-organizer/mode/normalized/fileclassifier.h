@@ -55,6 +55,7 @@ public:
 public:
     QString replace(const QUrl &oldUrl, const QUrl &newUrl) override;
     QString append(const QUrl &) override;
+    void insert(const QUrl &, const QString &, const int) override;
     QString remove(const QUrl &) override;
     QString change(const QUrl &) override;
 signals:

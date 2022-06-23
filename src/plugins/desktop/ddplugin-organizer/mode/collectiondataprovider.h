@@ -40,15 +40,22 @@ public:
     virtual QString name(const QString &key) const;
     virtual QList<QString> keys() const;
     virtual QList<QUrl> items(const QString &key) const;
+    virtual void moveUrls(const QList<QUrl> &urls, const QString &targetKey, int targetIndex);
+    virtual void addPreItems(const QString &targetKey, const QList<QUrl> &urls, int targetIndex);
+    virtual bool checkPreItem(const QUrl &url, QString &key, int &index);
+    virtual bool takePreItem(const QUrl &url, QString &key, int &index);
 protected:
     virtual QString replace(const QUrl &oldUrl, const QUrl &newUrl) = 0;
     virtual QString append(const QUrl &) = 0;
+    virtual void insert(const QUrl &, const QString &, const int) = 0;
     virtual QString remove(const QUrl &) = 0;
     virtual QString change(const QUrl &) = 0;
 signals:
-    // todo(wcl) add signals
+    void nameChanged(const QString &key, const QString &name);
+    void itemsChanged(const QString &key);
 protected:
     QHash<QString, CollectionBaseDataPtr> collections;
+    QHash<QString, QPair<int, QList<QUrl>>> preCollectionItems;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

@@ -46,6 +46,7 @@ protected slots:
     bool filterDataRested(QList<QUrl> *urls) override;
     bool filterDataInserted(const QUrl &url) override;
     bool filterDataRenamed(const QUrl &oldUrl, const QUrl &newUrl) override;
+    bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint) override;
 private slots:
     void onNewCollection(const QList<QUrl> &);
 private:

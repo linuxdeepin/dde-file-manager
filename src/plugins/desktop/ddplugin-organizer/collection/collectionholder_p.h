@@ -22,22 +22,25 @@
 #define COLLECTIONHOLDER_P_H
 
 #include "collection/collectionholder.h"
+#include "mode/collectiondataprovider.h"
+
+#include <QPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class CollectionHolderPrivate
 {
 public:
-    explicit CollectionHolderPrivate(CollectionHolder *qq);
-public:
-    QString id;
-    QString name;
-    FileProxyModel *model = nullptr;
-    CollectionFrame *frame = nullptr;
-    CollectionWidget *widget = nullptr;
+    explicit CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq);
+    ~CollectionHolderPrivate();
 
-private:
+public:
     CollectionHolder *q;
+    QString id;
+    QPointer<CollectionDataProvider> provider = nullptr;
+    QPointer<FileProxyModel> model = nullptr;
+    QPointer<CollectionFrame> frame = nullptr;
+    QPointer<CollectionWidget> widget = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

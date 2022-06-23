@@ -48,6 +48,7 @@ CanvasViewBroker::CanvasViewBroker(CanvasManager *mrg, QObject *parent)
 CanvasViewBroker::~CanvasViewBroker()
 {
     CanvasViewDisconnect(slot_CanvasView_VisualRect);
+    CanvasViewDisconnect(slot_CanvasView_GridPos);
     CanvasViewDisconnect(slot_CanvasView_Refresh);
     CanvasViewDisconnect(slot_CanvasView_Update);
     CanvasViewDisconnect(slot_CanvasView_Select);
@@ -59,6 +60,7 @@ CanvasViewBroker::~CanvasViewBroker()
 bool CanvasViewBroker::init()
 {
     CanvasViewSlot(slot_CanvasView_VisualRect, &CanvasViewBroker::visualRect);
+    CanvasViewSlot(slot_CanvasView_GridPos, &CanvasViewBroker::gridPos);
     CanvasViewSlot(slot_CanvasView_Refresh, &CanvasViewBroker::refresh);
     CanvasViewSlot(slot_CanvasView_Update, &CanvasViewBroker::update);
     CanvasViewSlot(slot_CanvasView_Select, &CanvasViewBroker::select);
@@ -84,6 +86,14 @@ QRect CanvasViewBroker::visualRect(int idx, const QUrl &url)
     if (auto view = getView(idx))
         rect = view->d->visualRect(url.toString());
     return rect;
+}
+
+QPoint CanvasViewBroker::gridPos(int idx, const QPoint &viewPoint)
+{
+    QPoint pos;
+    if (auto view = getView(idx))
+        pos = view->d->gridAt(viewPoint);
+    return pos;
 }
 
 void CanvasViewBroker::refresh(int idx)

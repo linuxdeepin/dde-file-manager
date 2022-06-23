@@ -22,8 +22,8 @@
 #include "view/operator/fileoperatorproxy.h"
 #include "utils/fileutil.h"
 
-#include <dfm-base/utils/fileutils.h>
-#include <dfm-base/utils/sysinfoutils.h>
+#include "dfm-base/utils/fileutils.h"
+#include "dfm-base/utils/sysinfoutils.h"
 
 #include <QMimeData>
 #include <QDateTime>

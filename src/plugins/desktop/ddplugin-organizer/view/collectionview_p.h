@@ -22,10 +22,12 @@
 #define COLLECTIONVIEW_P_H
 
 #include "view/collectionview.h"
+#include "mode/collectiondataprovider.h"
 
 #include <QAtomicInteger>
 #include <QTimer>
 #include <QUrl>
+#include <QPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -33,9 +35,11 @@ class CollectionViewPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit CollectionViewPrivate(CollectionView *qq);
+    explicit CollectionViewPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionView *qq, QObject *parent = nullptr);
+    ~CollectionViewPrivate();
 
     void initUI();
+    void initConnect();
     void updateRegionView();
     void updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize);
     void updateVerticalBarRange();
@@ -60,11 +64,7 @@ public:
     bool checkXdndDirectSave(QDragEnterEvent *event) const;
     void preproccessDropEvent(QDropEvent *event, const QUrl &targetUrl) const;
     void handleMoveMimeData(QDropEvent *event, const QUrl &url);
-    bool dropFilter(QDropEvent *event);
-    bool dropClientDownload(QDropEvent *event) const;
-    bool dropDirectSaveMode(QDropEvent *event) const;
-    bool dropBetweenView(QDropEvent *event) const;
-    bool dropMimeData(QDropEvent *event) const;
+    bool drop(QDropEvent *event);
 
 private:
     void updateRowCount(const int &viewHeight, const int &minCellHeight);
@@ -76,7 +76,25 @@ private:
     void drawEllipseBackground(QPainter *painter, const QRect &rect) const;
     void updateTarget(const QMimeData *data, const QUrl &url);
 
+    bool dropFilter(QDropEvent *event);
+    bool dropClientDownload(QDropEvent *event) const;
+    bool dropDirectSaveMode(QDropEvent *event) const;
+    bool dropBetweenCollection(QDropEvent *event) const;
+    bool dropFromCanvas(QDropEvent *event) const;
+    bool dropMimeData(QDropEvent *event) const;
+
+private slots:
+    void onItemsChanged(const QString &key);
+
 public:
+    CollectionView *q = nullptr;
+    CanvasModelShell *canvasModelShell = nullptr;
+    CanvasViewShell *canvasViewShell = nullptr;
+    CanvasGridShell *canvasGridShell = nullptr;
+
+    QString id;
+    QPointer<CollectionDataProvider> provider = nullptr;
+
     int space = 0;
     QMargins viewMargins;
     QMargins cellMargins = QMargins(2, 2, 2, 2);
@@ -85,17 +103,12 @@ public:
     int cellWidth = 1;
     int cellHeight = 1;
 
-    QList<QUrl> urls;
-
     QAtomicInteger<bool> canUpdateVerticalBarRange = true;
     QAtomicInteger<bool> needUpdateVerticalBarRange = false;
     bool showGrid = false;
 
     QTimer touchDragTimer;
     QUrl dropTargetUrl;
-
-private:
-    CollectionView *q;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

@@ -29,6 +29,7 @@
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 class ModelDataHandler;
+class CanvasViewShell;
 class FileInfoModelShell;
 class FileProxyModelPrivate;
 class FileProxyModel : public QAbstractProxyModel
@@ -37,7 +38,7 @@ class FileProxyModel : public QAbstractProxyModel
     friend class FileProxyModelPrivate;
 public:
     explicit FileProxyModel(QObject *parent = nullptr);
-    ~FileProxyModel();
+    ~FileProxyModel() override;
     void setModelShell(FileInfoModelShell *shell);
     void setHandler(ModelDataHandler *);
     ModelDataHandler *handler() const;
@@ -48,6 +49,8 @@ public:
     QUrl fileUrl(const QModelIndex &index) const;
     void refresh(const QModelIndex &parent, bool global = false, int ms = 50);
     void update();
+    bool fetch(const QList<QUrl> &urls);
+    bool take(const QList<QUrl> &urls);
 public:
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
     QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override;

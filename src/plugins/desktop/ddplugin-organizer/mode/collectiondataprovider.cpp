@@ -20,6 +20,9 @@
  */
 #include "collectiondataprovider.h"
 
+#include <QDebug>
+#include <QPair>
+
 DDP_ORGANIZER_USE_NAMESPACE
 
 CollectionDataProvider::CollectionDataProvider(QObject *parent) : QObject(parent)
@@ -66,3 +69,99 @@ QList<QUrl> CollectionDataProvider::items(const QString &key) const
 
     return ret;
 }
+
+void CollectionDataProvider::moveUrls(const QList<QUrl> &urls, const QString &targetKey, int targetIndex)
+{
+    if (urls.isEmpty())
+        return;
+
+    auto sourceId = key(urls.first());
+    if (sourceId.isEmpty()) {
+        // not belong collection
+        return;
+    }
+
+    if (sourceId == targetKey) {
+        // same collection
+        auto it = collections.find(sourceId);
+        if (it != collections.end()) {
+            for (auto url : urls) {
+                int oldIndex = it.value()->items.indexOf(url);
+                if (-1 == oldIndex) {
+                    qWarning() << "unknow error:" << url << it.value()->items;
+                    continue;
+                }
+                if (oldIndex < targetIndex)
+                    targetIndex--;
+                it.value()->items.removeOne(url);
+            }
+            for (auto url : urls) {
+                it.value()->items.insert(targetIndex++, url);
+            }
+            emit itemsChanged(sourceId);
+        }
+    } else {
+        // collection to other collection
+        auto it = collections.find(sourceId);
+        if (it != collections.end()) {
+            for (auto url : urls) {
+                it.value()->items.removeOne(url);
+            }
+            emit itemsChanged(sourceId);
+        } else {
+            qWarning() << "can not found :" << sourceId;
+        }
+        it = collections.find(targetKey);
+        if (it != collections.end()) {
+            for (auto url : urls) {
+                it.value()->items.insert(targetIndex++, url);
+            }
+            emit itemsChanged(targetKey);
+        }
+    }
+}
+
+void CollectionDataProvider::addPreItems(const QString &targetKey, const QList<QUrl> &urls, int targetIndex)
+{
+    auto it = preCollectionItems.find(targetKey);
+    if (it == preCollectionItems.end()) {
+        QPair<int, QList<QUrl>> items{targetIndex, urls};
+        preCollectionItems.insert(targetKey, items);
+    } else {
+        // merge to existing index
+        it.value().second.append(urls);
+    }
+}
+
+bool CollectionDataProvider::checkPreItem(const QUrl &url, QString &key, int &index)
+{
+    for (auto it = preCollectionItems.constBegin(); it != preCollectionItems.constEnd(); ++it) {
+        if (it.value().second.contains(url)) {
+            key = it.key();
+            index = it.value().first;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool CollectionDataProvider::takePreItem(const QUrl &url, QString &key, int &index)
+{
+    for (auto it = preCollectionItems.begin(); it != preCollectionItems.end(); ++it) {
+        if (it.value().second.contains(url)) {
+            key = it.key();
+            // current index will to be used,add it
+            index = it.value().first++;
+
+            it.value().second.removeAll(url);
+            if (it.value().second.isEmpty())
+                preCollectionItems.remove(key);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+

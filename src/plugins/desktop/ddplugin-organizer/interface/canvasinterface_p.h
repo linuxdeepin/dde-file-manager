@@ -24,6 +24,8 @@
 #include "canvasinterface.h"
 #include "fileinfomodelshell.h"
 #include "canvasmodelshell.h"
+#include "canvasviewshell.h"
+#include "canvasgridshell.h"
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -35,6 +37,8 @@ public:
 public:
    FileInfoModelShell *fileInfoModel = nullptr;
    CanvasModelShell *canvaModel = nullptr;
+   CanvasViewShell *canvasView = nullptr;
+   CanvasGridShell *canvasGrid = nullptr;
 private:
     CanvasInterface *q;
 };
