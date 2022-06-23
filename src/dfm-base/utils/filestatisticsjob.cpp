@@ -487,6 +487,9 @@ void FileStatisticsJob::statistcsOtherFileSystem()
 
 void FileStatisticsJob::statistcsExtFileSystem()
 {
+    const bool excludeSources = d->fileHints.testFlag(kExcludeSourceFile);
+    const bool singleDepth = d->fileHints.testFlag(kSingleDepth);
+
     for (auto url : d->sourceUrlList) {
         if (!d->stateCheck()) {
             d->setState(kStoppedState);
@@ -494,7 +497,7 @@ void FileStatisticsJob::statistcsExtFileSystem()
         }
         char *paths[2] = { nullptr, nullptr };
         paths[0] = strdup(url.path().toUtf8().toStdString().data());
-        FTS *fts = fts_open(paths, d->fileHints.testFlag(kSingleDepth) ? FTS_NOCHDIR : 0, nullptr);
+        FTS *fts = fts_open(paths, FTS_PHYSICAL, nullptr);
         if (paths[0])
             free(paths[0]);
 
@@ -510,6 +513,19 @@ void FileStatisticsJob::statistcsExtFileSystem()
             if (ent == nullptr) {
                 break;
             }
+
+            if (excludeSources) {
+                const QUrl &currentUrl = QUrl::fromLocalFile(QString::fromLocal8Bit(ent->fts_path));
+                if (url == currentUrl)
+                    continue;
+            }
+
+            if (singleDepth && ent->fts_level == 1) {
+                int ret = fts_set(fts, ent, FTS_SKIP);
+                if (-1 == ret)
+                    qWarning() << "skip sub dir failed, current url: " << ent->fts_path;
+            }
+
             unsigned short flag = ent->fts_info;
 
             // file counted

@@ -64,6 +64,8 @@ public:
     QString selectOnlyOneFile;
     QString selectedNetworkOnlyOneFolder;
 
+    bool showContains { true };
+
     int fileCount = 0;
     qint64 fileSize = 0;
     int folderCount = 0;

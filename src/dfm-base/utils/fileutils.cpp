@@ -257,6 +257,18 @@ bool FileUtils::isGvfsFile(const QUrl &url)
     return match.hasMatch();
 }
 
+bool FileUtils::isMtpFile(const QUrl &url)
+{
+    if (!url.isValid())
+        return false;
+
+    const QString &path = url.toLocalFile();
+    static const QString gvfsMatch { R"(^/run/user/\d+/gvfs/mtp:host|^root/.gvfs/mtp:host)" };
+    QRegularExpression re { gvfsMatch };
+    QRegularExpressionMatch match { re.match(path) };
+    return match.hasMatch();
+}
+
 QString FileUtils::preprocessingFileName(QString name)
 {
     // eg: [\\:*\"?<>|\r\n]
