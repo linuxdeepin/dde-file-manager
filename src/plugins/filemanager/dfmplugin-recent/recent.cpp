@@ -154,7 +154,7 @@ void Recent::installToSideBar()
 void Recent::addFileOperations()
 {
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::kRecent, RecentMenuCreator::name());
+    WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kRecent, RecentMenuCreator::name());
 
     propertyServIns->registerBasicViewFiledExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
 
@@ -190,9 +190,9 @@ void Recent::addFileOperations()
 
 void Recent::addDelegateSettings()
 {
-    DelegateService::service()->registerUrlTransform(Global::kRecent, [](const QUrl &in) -> QUrl {
+    DelegateService::service()->registerUrlTransform(Global::Scheme::kRecent, [](const QUrl &in) -> QUrl {
         auto out { in };
-        out.setScheme(Global::kFile);
+        out.setScheme(Global::Scheme::kFile);
         return out;
     });
 }

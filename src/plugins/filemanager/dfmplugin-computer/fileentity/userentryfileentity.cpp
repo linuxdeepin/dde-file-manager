@@ -87,7 +87,7 @@ QUrl UserEntryFileEntity::targetUrl() const
     if (path.isEmpty())
         return QUrl();
     QUrl targetUrl;
-    targetUrl.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    targetUrl.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     targetUrl.setPath(path);
     return targetUrl;
 }

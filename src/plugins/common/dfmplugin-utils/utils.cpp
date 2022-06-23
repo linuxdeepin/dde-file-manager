@@ -35,9 +35,13 @@ DPUTILS_USE_NAMESPACE
 
 static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
 {
+    // no translate for gvfs file, invoking suffix/mimeTypeName might cost huge time
+    if (fileInfo->url().path().contains(QRegularExpression(DFMBASE_NAMESPACE::Global::Regex::kGvfsRoot)))
+        return fileInfo;
+
     const QString &suffix = fileInfo->suffix();
     const QString &mimeTypeName = fileInfo->mimeTypeName();
-    if (suffix == DFMBASE_NAMESPACE::Global::kDesktop && mimeTypeName == "application/x-desktop") {
+    if (suffix == DFMBASE_NAMESPACE::Global::Scheme::kDesktop && mimeTypeName == "application/x-desktop") {
         const QUrl &url = fileInfo->url();
         return DFMLocalFileInfoPointer(new DFMBASE_NAMESPACE::DesktopFileInfo(url));
     }
@@ -48,7 +52,7 @@ void Utils::initialize()
 {
     GlobalEventReceiver::instance()->initEventConnect();
     OpenWithEventReceiver::instance()->initEventConnect();
-    DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::AbstractFileInfo>(DFMBASE_NAMESPACE::Global::kFile, transFileInfo);
+    DFMBASE_NAMESPACE::InfoFactory::regInfoTransFunc<DFMBASE_NAMESPACE::AbstractFileInfo>(DFMBASE_NAMESPACE::Global::Scheme::kFile, transFileInfo);
 }
 
 bool Utils::start()

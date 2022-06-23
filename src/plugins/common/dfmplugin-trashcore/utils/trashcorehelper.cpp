@@ -52,7 +52,7 @@ bool TrashCoreHelper::isEmpty()
 QUrl TrashCoreHelper::rootUrl()
 {
     QUrl url;
-    url.setScheme(Global::kTrash);
+    url.setScheme(Global::Scheme::kTrash);
     url.setPath("/");
     return url;
 }
@@ -74,7 +74,7 @@ QUrl TrashCoreHelper::fromTrashFile(const QString &filePath)
 
 QString TrashCoreHelper::scheme()
 {
-    return Global::kTrash;
+    return Global::Scheme::kTrash;
 }
 
 QWidget *TrashCoreHelper::createTrashPropertyDialog(const QUrl &url)

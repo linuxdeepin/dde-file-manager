@@ -113,7 +113,7 @@ QUrl MasteredMediaDirIterator::changeScheme(const QUrl &in) const
     } else {
         path.replace(mntPoint, devFile + "/" + kBurnSegOndisc);
     }
-    ret.setScheme(Global::kBurn);
+    ret.setScheme(Global::Scheme::kBurn);
     ret.setPath(path);
     if (skip.contains(ret)) {
         ret.setFragment("dup");

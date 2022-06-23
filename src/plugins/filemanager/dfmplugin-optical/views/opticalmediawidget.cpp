@@ -177,7 +177,7 @@ void OpticalMediaWidget::handleErrorMount()
     auto winId { OpticalHelper::winServIns()->findWindowId(this) };
     FileManagerWindow *window { OpticalHelper::winServIns()->findWindowById(winId) };
     if (window) {
-        QUrl jumpUrl { UrlRoute::rootUrl(Global::kComputer) };
+        QUrl jumpUrl { UrlRoute::rootUrl(Global::Scheme::kComputer) };
         window->cd(jumpUrl);
     }
 

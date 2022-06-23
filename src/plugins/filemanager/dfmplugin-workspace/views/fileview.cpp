@@ -821,7 +821,7 @@ bool FileView::cdUp()
     } else {
         auto windowId = WorkspaceHelper::instance()->windowId(this);
         QUrl computerRoot;
-        computerRoot.setScheme(Global::kComputer);
+        computerRoot.setScheme(Global::Scheme::kComputer);
         computerRoot.setPath("/");
         WorkspaceEventCaller::sendChangeCurrentUrl(windowId, computerRoot);
     }

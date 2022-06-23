@@ -380,7 +380,7 @@ void VaultHelper::slotlockVault(int state)
         VaultAutoLock::instance()->slotLockVault(state);
         emit VaultHelper::instance()->sigLocked(state);
         QUrl url;
-        url.setScheme(QString(Global::kComputer));
+        url.setScheme(QString(Global::Scheme::kComputer));
         url.setPath("/");
         for (quint64 wid : winIDs) {
             defaultCdAction(wid, url);

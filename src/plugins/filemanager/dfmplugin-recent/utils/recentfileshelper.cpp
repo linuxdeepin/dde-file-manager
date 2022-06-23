@@ -50,7 +50,7 @@ bool RecentFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls
 
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
-        url.setScheme(Global::kFile);
+        url.setScheme(Global::Scheme::kFile);
         redirectedFileUrls << url;
     }
     RecentEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
@@ -64,7 +64,7 @@ bool RecentFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const 
 
     QList<QUrl> redirectedFileUrls;
     for (QUrl url : urls) {
-        url.setScheme(Global::kFile);
+        url.setScheme(Global::Scheme::kFile);
         redirectedFileUrls << url;
     }
     RecentEventCaller::sendWriteToClipboard(windowId, action, redirectedFileUrls);
@@ -101,7 +101,7 @@ void RecentFilesHelper::removeRecent(const QList<QUrl> &urls)
             //list << DUrl::fromLocalFile(url.path()).toString();
             //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
             QUrl newUrl = url;
-            newUrl.setScheme(Global::kFile);
+            newUrl.setScheme(Global::Scheme::kFile);
             list << newUrl.toString();
         }
 

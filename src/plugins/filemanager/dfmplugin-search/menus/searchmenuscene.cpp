@@ -160,7 +160,7 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
             currentScene.append(sortAndDisplayScene);
     } else {
         const auto &parentUrl = SearchHelper::searchTargetUrl(d->currentDir);
-        if (Global::kFile == parentUrl.scheme()) {
+        if (Global::Scheme::kFile == parentUrl.scheme()) {
             if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
                 currentScene.append(workspaceScene);
         } else {

@@ -41,6 +41,10 @@ class TraversalDirThread : public QThread
     QList<QUrl> childrenList;   // 当前遍历出来的所有文件
     bool stopFlag = false;
 
+    QStringList nameFilters;
+    QDir::Filters filters;
+    QDirIterator::IteratorFlags flags;
+
 public:
     explicit TraversalDirThread(const QUrl &url, const QStringList &nameFilters = QStringList(),
                                 QDir::Filters filters = QDir::NoFilter,

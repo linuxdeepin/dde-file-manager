@@ -321,7 +321,7 @@ bool WorkspaceMenuScene::normalMenuTriggered(QAction *action)
                     return false;
                 d->view->edit(index, QAbstractItemView::EditKeyPressed, nullptr);
             } else {
-                WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::kFile, true);
+                WorkspaceEventCaller::sendShowCustomTopWidget(d->windowId, Global::Scheme::kFile, true);
             }
             return true;
         }

@@ -144,7 +144,7 @@ void ComputerItemWatcher::initDeviceConn()
 void ComputerItemWatcher::initAppWatcher()
 {
     QUrl extensionUrl;
-    extensionUrl.setScheme(Global::kFile);
+    extensionUrl.setScheme(Global::Scheme::kFile);
     extensionUrl.setPath(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath));
     appEntryWatcher.reset(new LocalFileWatcher(extensionUrl, this));
     appEntryWatcher->startWatcher();
@@ -159,7 +159,7 @@ ComputerDataList ComputerItemWatcher::getUserDirItems()
     static const QStringList udirs = { "desktop", "videos", "music", "pictures", "documents", "downloads" };
     for (auto dir : udirs) {
         QUrl url;
-        url.setScheme(DFMBASE_NAMESPACE::Global::kEntry);
+        url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kEntry);
         url.setPath(QString("%1.%2").arg(dir).arg(SuffixInfo::kUserDir));
         //        auto info = InfoFactory::create<EntryFileInfo>(url);
         DFMEntryFileInfoPointer info(new EntryFileInfo(url));
@@ -393,7 +393,7 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         sbItem.iconName = info->fileIcon().name() + "-symbolic";
     sbItem.text = info->displayName();
     sbItem.removable = removable;
-    sbItem.subGroup = Global::kComputer;
+    sbItem.subGroup = Global::Scheme::kComputer;
     sbItem.targetUrl = info->targetUrl().isValid() ? info->targetUrl() : QUrl();
 
     sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
@@ -496,7 +496,7 @@ void ComputerItemWatcher::onDeviceAdded(const QUrl &devUrl, int groupId, bool ne
 
     if (info->suffix() == SuffixInfo::kProtocol) {
         QString id = ComputerUtils::getProtocolDevIdByUrl(info->url());
-        if (id.startsWith(Global::kSmb)) {
+        if (id.startsWith(Global::Scheme::kSmb)) {
             StashMountsUtils::stashMount(info->url(), info->displayName());
             removeDevice(ComputerUtils::makeStashedProtocolDevUrl(id));
         }
@@ -622,7 +622,7 @@ void ComputerItemWatcher::onProtocolDeviceUnmounted(const QString &id)
 {
     auto &&devUrl = ComputerUtils::makeProtocolDevUrl(id);
     removeDevice(devUrl);
-    if (id.startsWith(Global::kSmb) && StashMountsUtils::isStashMountsEnabled())
+    if (id.startsWith(Global::Scheme::kSmb) && StashMountsUtils::isStashMountsEnabled())
         onDeviceAdded(ComputerUtils::makeStashedProtocolDevUrl(id), getGroupId(diskGroup()));
 
     routeMapper.remove(ComputerUtils::makeProtocolDevUrl(id));

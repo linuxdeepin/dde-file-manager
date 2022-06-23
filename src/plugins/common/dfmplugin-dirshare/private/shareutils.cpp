@@ -43,7 +43,7 @@ bool ShareUtils::canShare(AbstractFileInfoPointer info)
     if (DevProxyMng->isFileOfProtocolMounts(info->filePath()))
         return false;
 
-    if (info->url().scheme() == Global::kBurn || DevProxyMng->isFileFromOptical(info->filePath()))
+    if (info->url().scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->filePath()))
         return false;
 
     return true;

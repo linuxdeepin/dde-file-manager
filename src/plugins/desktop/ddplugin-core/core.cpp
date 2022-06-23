@@ -48,10 +48,10 @@ DDPCORE_USE_NAMESPACE
 
 static void registerFileSystem()
 {
-    UrlRoute::regScheme(Global::kFile, "/");
-    InfoFactory::regClass<LocalFileInfo>(Global::kFile);
-    DirIteratorFactory::regClass<LocalDirIterator>(Global::kFile);
-    WatcherFactory::regClass<LocalFileWatcher>(Global::kFile);
+    UrlRoute::regScheme(Global::Scheme::kFile, "/");
+    InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+    DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
+    WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
 }
 
 void ddplugin_core::Core::initialize()

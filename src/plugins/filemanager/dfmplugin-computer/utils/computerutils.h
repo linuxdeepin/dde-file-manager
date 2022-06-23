@@ -45,7 +45,7 @@ class ComputerUtils
 public:
     inline static QString scheme()
     {
-        return DFMBASE_NAMESPACE::Global::kComputer;
+        return DFMBASE_NAMESPACE::Global::Scheme::kComputer;
     }
 
     inline static QIcon icon()

@@ -33,7 +33,7 @@ DDP_CANVAS_BEGIN_NAMESPACE
 inline QUrl covertDesktopUrlToFile(const QUrl &desktopUrl) {
     QUrl fileUrl = DFMBASE_NAMESPACE::UrlRoute::pathToUrl(
                 DFMBASE_NAMESPACE::UrlRoute::urlToPath(desktopUrl),
-                DFMBASE_NAMESPACE::Global::kFile);
+                DFMBASE_NAMESPACE::Global::Scheme::kFile);
     return fileUrl;
 }
 

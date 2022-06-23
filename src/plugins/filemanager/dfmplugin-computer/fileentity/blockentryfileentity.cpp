@@ -211,7 +211,7 @@ QUrl BlockEntryFileEntity::targetUrl() const
             return QUrl::fromLocalFile("/data" + userHome);
     }
 
-    target.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+    target.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
     target.setPath(mpt);
     return target;
 }

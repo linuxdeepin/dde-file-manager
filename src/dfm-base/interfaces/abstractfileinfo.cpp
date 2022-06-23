@@ -984,7 +984,7 @@ bool DFMBASE_NAMESPACE::AbstractFileInfo::canDrop()
     }
 
     if (!isSymLink()) {
-        const bool isDesktop = mimeTypeName() == Global::kMimeTypeAppXDesktop;
+        const bool isDesktop = mimeTypeName() == Global::Mime::kTypeAppXDesktop;
         return isDir() || isDesktop;
     }
 

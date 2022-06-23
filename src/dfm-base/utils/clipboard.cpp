@@ -79,7 +79,7 @@ void onClipboardDataChanged()
     QString errorStr;
     for (QUrl &url : mimeData->urls()) {
         if (url.scheme().isEmpty())
-            url.setScheme(Global::kFile);
+            url.setScheme(Global::Scheme::kFile);
 
         {
             QMutexLocker lk(&clipboardFileUrlsMutex);
@@ -340,7 +340,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
                 QList<QUrl> tmpurls;
                 tmpurls += QUrl::fromStringList(results.split("\n"));
                 for (QUrl url : tmpurls) {
-                    if (!url.toString().startsWith(Global::kFile))
+                    if (!url.toString().startsWith(Global::Scheme::kFile))
                         continue;
 
                     QString path = url.path();
@@ -377,7 +377,7 @@ QList<QUrl> ClipBoard::getUrlsByX11()
     QList<QUrl> clipboardFileUrls;
     for (QUrl url : urls) {
         //链接文件的inode不加入clipbordFileinode，只用url判断clip，避免多个同源链接文件的逻辑误判
-        if (!url.toString().startsWith(Global::kFile))
+        if (!url.toString().startsWith(Global::Scheme::kFile))
             continue;
 
         QString path = url.path();

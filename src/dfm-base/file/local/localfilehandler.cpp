@@ -671,7 +671,7 @@ QUrl LocalFileHandler::smbFileUrl(const QString &filePath)
     const QString &path = match.captured("path");
 
     QUrl newUrl;
-    newUrl.setScheme(Global::kSmb);
+    newUrl.setScheme(Global::Scheme::kSmb);
     newUrl.setHost(host);
     newUrl.setPath("/" + path.mid(0, path.lastIndexOf("/")));
     return newUrl;
@@ -924,7 +924,7 @@ bool LocalFileHandler::doOpenFiles(const QList<QUrl> &urls, const QString &deskt
     QList<QUrl> transUrls = urls;
     for (const QUrl &url : urls) {
         DecoratorFileInfo fileInfo(url);
-        if (fileInfo.suffix() == Global::kDesktop) {
+        if (fileInfo.suffix() == Global::Scheme::kDesktop) {
             ret = launchApp(url.path()) || ret;   //有一个成功就成功
             transUrls.removeOne(url);
             continue;

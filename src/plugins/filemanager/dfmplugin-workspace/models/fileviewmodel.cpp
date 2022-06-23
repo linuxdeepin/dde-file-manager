@@ -218,7 +218,7 @@ const FileViewItem *FileViewModel::itemFromIndex(const QModelIndex &index) const
 
 QModelIndex FileViewModel::setRootUrl(const QUrl &url)
 {
-    if (url.scheme() == Global::kFile && !d->root.isNull() && d->root->url() == url) {
+    if (url.scheme() == Global::Scheme::kFile && !d->root.isNull() && d->root->url() == url) {
         QApplication::restoreOverrideCursor();
         QModelIndex root = createIndex(0, 0, d->root.data());
 
@@ -471,7 +471,7 @@ QMimeData *FileViewModel::mimeData(const QModelIndexList &indexes) const
 
     QByteArray userID;
     userID.append(QString::number(SysInfoUtils::getUserId()));
-    data->setData(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey, userID);
+    data->setData(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey, userID);
 
     return data;
 }

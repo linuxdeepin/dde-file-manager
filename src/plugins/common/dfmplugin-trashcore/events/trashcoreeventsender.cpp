@@ -45,7 +45,7 @@ TrashCoreEventSender::TrashCoreEventSender(QObject *parent)
 void TrashCoreEventSender::initTrashWatcher()
 {
     QUrl trashFilesUrl;
-    trashFilesUrl.setScheme(Global::kFile);
+    trashFilesUrl.setScheme(Global::Scheme::kFile);
     trashFilesUrl.setPath(StandardPaths::location(StandardPaths::kTrashFilesPath));
 
     trashFileWatcher = new LocalFileWatcher(trashFilesUrl, this);

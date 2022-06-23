@@ -120,7 +120,9 @@ void FileViewItem::setUrl(const QUrl url)
     if (!d->fileinfo)
         abort();
 
-    d->fileinfo->refresh();
+    // refresh for GVFS files cost huge time.
+    if (!url.path().contains(QRegularExpression(Global::Regex::kGvfsRoot)))
+        d->fileinfo->refresh();
     setData(QVariant(d->fileinfo->fileName()), kItemNameRole);
 }
 

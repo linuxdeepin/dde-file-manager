@@ -58,7 +58,7 @@ public:
 
     inline static QString scheme()
     {
-        return DFMBASE_NAMESPACE::Global::kTrash;
+        return DFMBASE_NAMESPACE::Global::Scheme::kTrash;
     }
 
     inline static QIcon icon()

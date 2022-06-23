@@ -113,7 +113,7 @@ void Trash::installToSideBar()
 void Trash::addFileOperations()
 {
     TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::kTrash, TrashMenuCreator::name());
+    WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kTrash, TrashMenuCreator::name());
 
     propertyServIns->registerBasicViewFiledExpand(TrashHelper::propetyExtensionFunc, TrashHelper::scheme());
     propertyServIns->registerFilterControlField(TrashHelper::scheme(), Property::FilePropertyControlFilter::kPermission);

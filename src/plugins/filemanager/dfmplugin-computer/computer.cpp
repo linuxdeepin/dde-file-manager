@@ -57,8 +57,8 @@ void Computer::initialize()
 
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true, tr("Computer"));
     ViewFactory::regClass<ComputerView>(ComputerUtils::scheme());
-    UrlRoute::regScheme(Global::kEntry, "/", QIcon(), true);
-    InfoFactory::regClass<EntryFileInfo>(Global::kEntry);
+    UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
+    InfoFactory::regClass<EntryFileInfo>(Global::Scheme::kEntry);
 
     EntryEntityFactor::registCreator<UserEntryFileEntity>(SuffixInfo::kUserDir);
     EntryEntityFactor::registCreator<BlockEntryFileEntity>(SuffixInfo::kBlock);
@@ -106,7 +106,7 @@ void Computer::onWindowOpened(quint64 winId)
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
     auto regSortAndQueryItems = [] {
-        SideBarService::service()->registerSortFunc(DFMBASE_NAMESPACE::Global::kComputer, [](const QUrl &a, const QUrl &b) { return ComputerUtils::sortItem(a, b); });
+        SideBarService::service()->registerSortFunc(DFMBASE_NAMESPACE::Global::Scheme::kComputer, [](const QUrl &a, const QUrl &b) { return ComputerUtils::sortItem(a, b); });
         ComputerItemWatcherInstance->startQueryItems();
     };
     if (window->workSpace())
@@ -124,7 +124,7 @@ void Computer::onWindowOpened(quint64 winId)
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
 
-    propertyServIns->registerCustomizePropertyView(ComputerUtils::devicePropertyDialog, DFMBASE_NAMESPACE::Global::kEntry);
+    propertyServIns->registerCustomizePropertyView(ComputerUtils::devicePropertyDialog, DFMBASE_NAMESPACE::Global::Scheme::kEntry);
 }
 
 void Computer::onWindowClosed(quint64 winId)

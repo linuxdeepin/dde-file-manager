@@ -160,7 +160,7 @@ void CrumbBarPrivate::writeUrlToClipboard(const QUrl &url)
         // why? The format of the custom scheme URL was incorrect when it was converted to a string
         // eg: QUrl("recent:///") -> "recent:/"
         QUrl tmpUrl(url);
-        tmpUrl.setScheme(Global::kFile);
+        tmpUrl.setScheme(Global::Scheme::kFile);
         copyPath = tmpUrl.toString().replace(0, 4, url.scheme());
     }
 

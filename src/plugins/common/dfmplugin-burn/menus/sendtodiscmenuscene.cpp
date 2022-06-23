@@ -162,7 +162,7 @@ bool SendToDiscMenuScene::initialize(const QVariantHash &params)
     if (delegateServIns->isRegisterUrlTransform(scheme))
         url = delegateServIns->urlTransform(url);
 
-    if (url.scheme() != Global::kFile)
+    if (url.scheme() != Global::Scheme::kFile)
         return false;
 
     return AbstractMenuScene::initialize(params);

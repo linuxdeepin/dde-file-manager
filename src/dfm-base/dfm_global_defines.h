@@ -116,38 +116,39 @@ enum CreateFileType : uint8_t {
     kCreateFileTypeDefault = 0xff,
 };
 
-inline constexpr char kMimetypeAppDesktop[] { "application/x-desktop" };
-inline constexpr char kMimeTypeCdImage[] { "application/x-cd-image" };
-inline constexpr char kMimeTypeISO9660Image[] { "application/x-iso9660-image" };
-inline constexpr char kMimeTypeAppXml[] { "application/xml" };
-inline constexpr char kMimeTypeAppPdf[] { "application/pdf" };
-inline constexpr char kMimeTypeAppMxf[] { "application/mxf" };
-inline constexpr char kMimeTypeAppVMAsf[] { "application/vnd.ms-asf" };
-inline constexpr char kMimeTypeAppCRRMedia[] { "application/cnd.rn-realmedia" };
-inline constexpr char kMimeTypeAppVRRMedia[] { "application/vnd.rn-realmedia" };
-inline constexpr char kMimeTypeTextHtml[] { "text/html" };
-inline constexpr char kMimeTypeAppXhtmlXml[] { "application/xhtml+xml" };
-inline constexpr char kMimeTypeTextXPython[] { "text/x-python" };
-inline constexpr char kMimeTypeTextPlain[] { "text/plain" };
-inline constexpr char kMimeTypeAppXOleStorage[] { "application/x-ole-storage" };
-inline constexpr char kMimeTypeAppZip[] { "application/zip" };
-inline constexpr char kMimeTypeAppXDesktop[] { "application/x-desktop" };
+namespace Mime {
+inline constexpr char kTypeAppDesktop[] { "application/x-desktop" };
+inline constexpr char kTypeCdImage[] { "application/x-cd-image" };
+inline constexpr char kTypeISO9660Image[] { "application/x-iso9660-image" };
+inline constexpr char kTypeAppXml[] { "application/xml" };
+inline constexpr char kTypeAppPdf[] { "application/pdf" };
+inline constexpr char kTypeAppMxf[] { "application/mxf" };
+inline constexpr char kTypeAppVMAsf[] { "application/vnd.ms-asf" };
+inline constexpr char kTypeAppCRRMedia[] { "application/cnd.rn-realmedia" };
+inline constexpr char kTypeAppVRRMedia[] { "application/vnd.rn-realmedia" };
+inline constexpr char kTypeTextHtml[] { "text/html" };
+inline constexpr char kTypeAppXhtmlXml[] { "application/xhtml+xml" };
+inline constexpr char kTypeTextXPython[] { "text/x-python" };
+inline constexpr char kTypeTextPlain[] { "text/plain" };
+inline constexpr char kTypeAppXOleStorage[] { "application/x-ole-storage" };
+inline constexpr char kTypeAppZip[] { "application/zip" };
+inline constexpr char kTypeAppXDesktop[] { "application/x-desktop" };
 // image
-inline constexpr char kMimeTypeImageIef[] { "image/ief" };
-inline constexpr char kMimeTypeImageTiff[] { "image/tiff" };
-inline constexpr char kMimeTypeImageXTMultipage[] { "image/x-tiff-multipage" };
-inline constexpr char kMimeTypeImageVDMultipage[] { "image/vnd.djvu+multipage" };
-inline constexpr char kMimeTypeImageXADng[] { "image/x-adobe-dng" };
-inline constexpr char kMimeTypeImageJpeg[] { "image/jpeg" };
-inline constexpr char kMimeTypeImagePng[] { "image/png" };
-inline constexpr char kMimeTypeImagePipeg[] { "image/pipeg" };
-inline constexpr char kMimeTypeImageVDjvu[] { "image/vnd.djvu" };
-inline constexpr char kMimeTypeImageSvgXml[] { "image/svg+xml" };
+inline constexpr char kTypeImageIef[] { "image/ief" };
+inline constexpr char kTypeImageTiff[] { "image/tiff" };
+inline constexpr char kTypeImageXTMultipage[] { "image/x-tiff-multipage" };
+inline constexpr char kTypeImageVDMultipage[] { "image/vnd.djvu+multipage" };
+inline constexpr char kTypeImageXADng[] { "image/x-adobe-dng" };
+inline constexpr char kTypeImageJpeg[] { "image/jpeg" };
+inline constexpr char kTypeImagePng[] { "image/png" };
+inline constexpr char kTypeImagePipeg[] { "image/pipeg" };
+inline constexpr char kTypeImageVDjvu[] { "image/vnd.djvu" };
+inline constexpr char kTypeImageSvgXml[] { "image/svg+xml" };
 
 inline constexpr char kMimeDataUserIDKey[] { "userid_for_drag" };
+}   // namespace Mime
 
-inline constexpr uint8_t kMaxFileNameCharCount { 255 };
-
+namespace Scheme {
 inline constexpr char kSmb[] { "smb" };
 inline constexpr char kSmbShare[] { "smb-share" };
 inline constexpr char kFtp[] { "ftp" };
@@ -162,10 +163,15 @@ inline constexpr char kDav[] { "dav" };
 inline constexpr char kEntry[] { "entry" };
 inline constexpr char kBurn[] { "burn" };
 inline constexpr char kComputer[] { "computer" };
-inline constexpr char kDevice[] { "device" };
 inline constexpr char kTrash[] { "trash" };
 inline constexpr char kRecent[] { "recent" };
 inline constexpr char kUserShare[] { "usershare" };
+}   // namespace Scheme
+
+namespace Regex {
+inline constexpr char kGvfsRoot[] { R"(^/run/user/.*/gvfs/|^/root/.gvfs/)" };
+}   // namespace GlobalRegex
+
 }   //namespace Global
 
 DFMBASE_END_NAMESPACE

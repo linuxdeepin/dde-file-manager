@@ -120,7 +120,7 @@ QUrl BurnHelper::fromBurnFile(const QString &dev)
 {
     QString path { dev + "/" BURN_SEG_STAGING "/" };
     QUrl ret;
-    ret.setScheme(Global::kBurn);
+    ret.setScheme(Global::Scheme::kBurn);
     ret.setPath(path);
     return ret;
 }
@@ -159,7 +159,7 @@ QString BurnHelper::burnDestDevice(const QUrl &url)
     static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
 
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(rxp, &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(1);
 }
@@ -170,7 +170,7 @@ QString BurnHelper::burnFilePath(const QUrl &url)
     static QRegularExpression rxp { "^(.*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")(.*)$" };
 
     QRegularExpressionMatch m;
-    if (url.scheme() != Global::kBurn || !url.path().contains(rxp, &m))
+    if (url.scheme() != Global::Scheme::kBurn || !url.path().contains(rxp, &m))
         return {};
     return m.captured(3);
 }

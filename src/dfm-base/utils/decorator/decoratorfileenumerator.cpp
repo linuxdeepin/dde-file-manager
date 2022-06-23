@@ -25,6 +25,8 @@
 #include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
+#include <QRegularExpression>
+
 DFMBASE_BEGIN_NAMESPACE
 
 class DecoratorFileEnumeratorPrivate
@@ -46,6 +48,8 @@ DFMBASE_END_NAMESPACE
 
 DFMBASE_USE_NAMESPACE
 
+static constexpr char kNetworkFilesRex[] { R"((^/run/user/.*/gvfs/|^/root/.gvfs/)(sftp|ftp|smb|dav))" };
+
 DecoratorFileEnumerator::DecoratorFileEnumerator(const QString &filePath,
                                                  const QStringList &nameFilters /*= QStringList()*/,
                                                  DFMIO::DEnumerator::DirFilters filters /*= DFMIO::DEnumerator::DirFilter::NoFilter*/,
@@ -54,8 +58,11 @@ DecoratorFileEnumerator::DecoratorFileEnumerator(const QString &filePath,
 {
     d->url = QUrl::fromLocalFile(filePath);
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(d->url.scheme(), static_cast<QUrl>(d->url));
-    if (factory)
+    if (factory) {
         d->denumerator = factory->createEnumerator(nameFilters, filters, flags);
+        if (filePath.contains(QRegularExpression(kNetworkFilesRex)))
+            d->denumerator->setTimeout(2000);
+    }
 }
 
 DecoratorFileEnumerator::DecoratorFileEnumerator(const QUrl &url,
@@ -66,8 +73,11 @@ DecoratorFileEnumerator::DecoratorFileEnumerator(const QUrl &url,
 {
     d->url = url;
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
-    if (factory)
+    if (factory) {
         d->denumerator = factory->createEnumerator(nameFilters, filters, flags);
+        if (url.path().contains(QRegularExpression(kNetworkFilesRex)))
+            d->denumerator->setTimeout(2000);
+    }
 }
 
 DecoratorFileEnumerator::DecoratorFileEnumerator(QSharedPointer<dfmio::DEnumerator> dfileEnumerator)

@@ -73,7 +73,7 @@ QMap<QString, QString> StashMountsUtils::stashedMounts()
 
     QStringList keys = cfgSettings()->keys(StashedMountsKeys::kJsonGroup).toList();
     for (const auto &key : keys) {
-        if (!key.startsWith(Global::kSmb)) {   // old v1 version, which's key is start with '/run/user...'
+        if (!key.startsWith(Global::Scheme::kSmb)) {   // old v1 version, which's key is start with '/run/user...'
             QMap<QString, QVariant> vals = cfgSettings()->value(StashedMountsKeys::kJsonGroup, key).toMap();
             if (vals.contains(StashedMountsKeys::kProtocolKey)
                 && vals.contains(StashedMountsKeys::kHostKey)
@@ -176,7 +176,7 @@ void StashMountsUtils::stashMountedMounts()
 {
     QStringList &&ids = DevProxyMng->getAllProtocolIds();
     for (auto id : ids) {
-        if (id.startsWith(Global::kSmb)) {
+        if (id.startsWith(Global::Scheme::kSmb)) {
             DFMEntryFileInfoPointer info(new EntryFileInfo(ComputerUtils::makeProtocolDevUrl(id)));
             QString displayName = info->displayName();
             if (!displayName.isEmpty()) {

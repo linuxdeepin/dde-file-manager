@@ -48,10 +48,10 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 
 void Optical::initialize()
 {
-    UrlRoute::regScheme(Global::kBurn, "/", OpticalHelper::icon(), true);
-    InfoFactory::regClass<MasteredMediaFileInfo>(Global::kBurn, InfoFactory::kNoCache);
-    WatcherFactory::regClass<MasteredMediaFileWatcher>(Global::kBurn, WatcherFactory::kNoCache);
-    DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::kBurn);
+    UrlRoute::regScheme(Global::Scheme::kBurn, "/", OpticalHelper::icon(), true);
+    InfoFactory::regClass<MasteredMediaFileInfo>(Global::Scheme::kBurn, InfoFactory::kNoCache);
+    WatcherFactory::regClass<MasteredMediaFileWatcher>(Global::Scheme::kBurn, WatcherFactory::kNoCache);
+    DirIteratorFactory::regClass<MasteredMediaDirIterator>(Global::Scheme::kBurn);
 
     bindEvents();
 
@@ -99,8 +99,8 @@ void Optical::addOpticalCrumbToTitleBar()
     static std::once_flag flag;
     std::call_once(flag, []() {
         TitleBar::CustomCrumbInfo info;
-        info.scheme = Global::kBurn;
-        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == Global::kBurn; };
+        info.scheme = Global::Scheme::kBurn;
+        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == Global::Scheme::kBurn; };
         info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
             QList<TitleBar::CrumbData> ret;
             QUrl curUrl(url);
@@ -124,8 +124,8 @@ void Optical::addOpticalCrumbToTitleBar()
 
 void Optical::addFileOperations()
 {
-    OpticalHelper::workspaceServIns()->addScheme(Global::kBurn);
-    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::kBurn, OpticalMenuSceneCreator::name());
+    OpticalHelper::workspaceServIns()->addScheme(Global::Scheme::kBurn);
+    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::Scheme::kBurn, OpticalMenuSceneCreator::name());
 
     FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
     fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;
@@ -152,13 +152,13 @@ void Optical::addFileOperations()
     fileOpeationsHandle->deletes = &OpticalFilesHelper::deleteFilesHandle;
     fileOpeationsHandle->moveToTash = &OpticalFilesHelper::deleteFilesHandle;
     fileOpeationsHandle->linkFile = &OpticalFilesHelper::linkFileHandle;
-    OpticalHelper::fileOperationsServIns()->registerOperations(Global::kBurn, fileOpeationsHandle);
+    OpticalHelper::fileOperationsServIns()->registerOperations(Global::Scheme::kBurn, fileOpeationsHandle);
 }
 
 void Optical::addCustomTopWidget()
 {
     Workspace::CustomTopWidgetInfo info;
-    info.scheme = Global::kBurn;
+    info.scheme = Global::Scheme::kBurn;
     info.keepShow = false;
     info.createTopWidgetCb = []() {
         return new OpticalMediaWidget;
@@ -177,16 +177,16 @@ void Optical::addCustomTopWidget()
 
 void Optical::addDelegateSettings()
 {
-    OpticalHelper::dlgateServIns()->registerTransparentHandle(Global::kBurn, [](const QUrl &url) -> bool {
+    OpticalHelper::dlgateServIns()->registerTransparentHandle(Global::Scheme::kBurn, [](const QUrl &url) -> bool {
         return !OpticalHelper::burnIsOnDisc(url);
     });
-    OpticalHelper::dlgateServIns()->registerUrlTransform(Global::kBurn, &OpticalHelper::tansToLocalFile);
+    OpticalHelper::dlgateServIns()->registerUrlTransform(Global::Scheme::kBurn, &OpticalHelper::tansToLocalFile);
 }
 
 void Optical::addPropertySettings()
 {
     // TODO(lixiang): change to slot event
-    propertyServIns->registerFilterControlField(Global::kBurn, Property::FilePropertyControlFilter::kPermission);
+    propertyServIns->registerFilterControlField(Global::Scheme::kBurn, Property::FilePropertyControlFilter::kPermission);
 }
 
 void Optical::bindEvents()

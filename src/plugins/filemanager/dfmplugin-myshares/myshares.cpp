@@ -89,7 +89,7 @@ bool MyShares::start()
     DSC_NAMESPACE::FileOperationsService::service()->registerOperations(ShareUtils::scheme(), fileOpeationsHandle);
 
     delegateServIns->registerUrlTransform(ShareUtils::scheme(), [](QUrl in) {
-        in.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+        in.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
         return in;
     });
 

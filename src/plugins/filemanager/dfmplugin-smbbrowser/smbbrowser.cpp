@@ -44,17 +44,17 @@ DFMBASE_USE_NAMESPACE
 
 void SmbBrowser::initialize()
 {
-    UrlRoute::regScheme(Global::kSmb, "/", SmbBrowserUtils::icon(), true);
+    UrlRoute::regScheme(Global::Scheme::kSmb, "/", SmbBrowserUtils::icon(), true);
     UrlRoute::regScheme(SmbBrowserUtils::networkScheme(), "/", SmbBrowserUtils::icon(), true);
 
-    InfoFactory::regClass<SmbShareFileInfo>(Global::kSmb);
-    DirIteratorFactory::regClass<SmbShareIterator>(Global::kSmb);
+    InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kSmb);
+    DirIteratorFactory::regClass<SmbShareIterator>(Global::Scheme::kSmb);
 
-    InfoFactory::regClass<SmbShareFileInfo>(Global::kFtp);
-    DirIteratorFactory::regClass<SmbShareIterator>(Global::kFtp);
+    InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kFtp);
+    DirIteratorFactory::regClass<SmbShareIterator>(Global::Scheme::kFtp);
 
-    InfoFactory::regClass<SmbShareFileInfo>(Global::kSFtp);
-    DirIteratorFactory::regClass<SmbShareIterator>(Global::kSFtp);
+    InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kSFtp);
+    DirIteratorFactory::regClass<SmbShareIterator>(Global::Scheme::kSFtp);
 
     InfoFactory::regClass<SmbShareFileInfo>(SmbBrowserUtils::networkScheme());
     DirIteratorFactory::regClass<SmbShareIterator>(SmbBrowserUtils::networkScheme());
@@ -70,8 +70,8 @@ void SmbBrowser::initialize()
 bool SmbBrowser::start()
 {
     DSB_FM_USE_NAMESPACE
-    WorkspaceService::service()->addScheme(Global::kSmb);
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::kSmb, SmbBrowserMenuCreator::name());
+    WorkspaceService::service()->addScheme(Global::Scheme::kSmb);
+    WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kSmb, SmbBrowserMenuCreator::name());
 
     WorkspaceService::service()->addScheme(SmbBrowserUtils::networkScheme());
     WorkspaceService::service()->setWorkspaceMenuScene(SmbBrowserUtils::networkScheme(), SmbBrowserMenuCreator::name());
@@ -107,9 +107,9 @@ void SmbBrowser::initOperations()
     DSC_USE_NAMESPACE
     FileOperationsFunctions funcs(new FileOperationsSpace::FileOperationsInfo);
     funcs->openFiles = &SmbBrowserUtils::mountSmb;
-    FileOperationsService::service()->registerOperations(Global::kSmb, funcs);
-    FileOperationsService::service()->registerOperations(Global::kFtp, funcs);
-    FileOperationsService::service()->registerOperations(Global::kSFtp, funcs);
+    FileOperationsService::service()->registerOperations(Global::Scheme::kSmb, funcs);
+    FileOperationsService::service()->registerOperations(Global::Scheme::kFtp, funcs);
+    FileOperationsService::service()->registerOperations(Global::Scheme::kSFtp, funcs);
 }
 
 void SmbBrowser::addNeighborToSidebar()
@@ -128,14 +128,14 @@ void SmbBrowser::addNeighborToSidebar()
 void SmbBrowser::registerSambaPrehandler()
 {
     DSB_FM_USE_NAMESPACE
-    if (!WorkspaceService::service()->registerFileViewRoutePrehandle(Global::kSmb, sambaPrehandler)) {
+    if (!WorkspaceService::service()->registerFileViewRoutePrehandle(Global::Scheme::kSmb, sambaPrehandler)) {
         qWarning() << "smb's prehandler has been registered";
     }
 }
 
 void SmbBrowser::sambaPrehandler(const QUrl &url, std::function<void()> after)
 {
-    if (url.scheme() == Global::kSmb) {
+    if (url.scheme() == Global::Scheme::kSmb) {
         DevMngIns->mountNetworkDeviceAsync(url.toString(), [after](bool ok, DFMMOUNT::DeviceError err, const QString &) {
             if ((ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) && after) {
                 after();

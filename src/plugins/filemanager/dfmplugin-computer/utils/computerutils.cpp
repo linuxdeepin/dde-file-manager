@@ -53,7 +53,7 @@ bool ComputerUtils::contextMenuEnabled = true;
 QUrl ComputerUtils::makeBlockDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(Global::kEntry);
+    devUrl.setScheme(Global::Scheme::kEntry);
     auto shortenBlk = id;
     shortenBlk.remove(QString(DeviceId::kBlockDeviceIdPrefix));   // /org/freedesktop/UDisks2/block_devices/sda1 -> sda1
     auto path = QString("%1.%2").arg(shortenBlk).arg(SuffixInfo::kBlock);   // sda1.blockdev
@@ -63,7 +63,7 @@ QUrl ComputerUtils::makeBlockDevUrl(const QString &id)
 
 QString ComputerUtils::getBlockDevIdByUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kEntry)
+    if (url.scheme() != Global::Scheme::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kBlock))
         return "";
@@ -76,7 +76,7 @@ QString ComputerUtils::getBlockDevIdByUrl(const QUrl &url)
 QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(Global::kEntry);
+    devUrl.setScheme(Global::Scheme::kEntry);
     auto path = id.toUtf8().toBase64();
     QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kProtocol);
     devUrl.setPath(encodecPath);
@@ -85,7 +85,7 @@ QUrl ComputerUtils::makeProtocolDevUrl(const QString &id)
 
 QString ComputerUtils::getProtocolDevIdByUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kEntry)
+    if (url.scheme() != Global::Scheme::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kProtocol))
         return "";
@@ -108,7 +108,7 @@ QUrl ComputerUtils::makeAppEntryUrl(const QString &filePath)
     QString newPath = QString("%1.%2").arg(fileName).arg(SuffixInfo::kAppEntry);
 
     QUrl url;
-    url.setScheme(Global::kEntry);
+    url.setScheme(Global::Scheme::kEntry);
     url.setPath(newPath);
     return url;
 }
@@ -122,7 +122,7 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
 
     QString fileName = entryUrl.path().remove("." + QString(SuffixInfo::kAppEntry));
     QUrl origUrl;
-    origUrl.setScheme(Global::kFile);
+    origUrl.setScheme(Global::Scheme::kFile);
     origUrl.setPath(QString("%1/%2.%3").arg(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath)).arg(fileName).arg("desktop"));
     return origUrl;
 }
@@ -130,7 +130,7 @@ QUrl ComputerUtils::getAppEntryFileUrl(const QUrl &entryUrl)
 QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
 {
     QUrl devUrl;
-    devUrl.setScheme(Global::kEntry);
+    devUrl.setScheme(Global::Scheme::kEntry);
     auto path = id.toUtf8().toBase64();
     QString encodecPath = QString("%1.%2").arg(QString(path)).arg(SuffixInfo::kStashedProtocol);
     devUrl.setPath(encodecPath);
@@ -139,7 +139,7 @@ QUrl ComputerUtils::makeStashedProtocolDevUrl(const QString &id)
 
 QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kEntry)
+    if (url.scheme() != Global::Scheme::kEntry)
         return "";
     if (!url.path().endsWith(SuffixInfo::kStashedProtocol))
         return "";
@@ -152,7 +152,7 @@ QString ComputerUtils::getProtocolDevIdByStashedUrl(const QUrl &url)
 
 QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
 {
-    if (stashedUrl.scheme() != Global::kEntry)
+    if (stashedUrl.scheme() != Global::Scheme::kEntry)
         return {};
     if (!stashedUrl.path().endsWith(SuffixInfo::kStashedProtocol))
         return {};
@@ -160,14 +160,14 @@ QUrl ComputerUtils::convertToProtocolDevUrlFrom(const QUrl &stashedUrl)
     QString path = stashedUrl.path();
     path.replace(SuffixInfo::kStashedProtocol, SuffixInfo::kProtocol);
     QUrl ret;
-    ret.setScheme(Global::kEntry);
+    ret.setScheme(Global::Scheme::kEntry);
     ret.setPath(path);
     return ret;
 }
 
 QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
 {
-    if (protocolDevUrl.scheme() != Global::kEntry)
+    if (protocolDevUrl.scheme() != Global::Scheme::kEntry)
         return {};
     if (!protocolDevUrl.path().endsWith(SuffixInfo::kProtocol))
         return {};
@@ -175,7 +175,7 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
     QString path = protocolDevUrl.path();
     path.replace(SuffixInfo::kProtocol, SuffixInfo::kStashedProtocol);
     QUrl ret;
-    ret.setScheme(Global::kEntry);
+    ret.setScheme(Global::Scheme::kEntry);
     ret.setPath(path);
     return ret;
 }
@@ -183,7 +183,7 @@ QUrl ComputerUtils::convertToStashedUrlFrom(const QUrl &protocolDevUrl)
 QUrl ComputerUtils::makeLocalUrl(const QString &path)
 {
     QUrl u;
-    u.setScheme(Global::kFile);
+    u.setScheme(Global::Scheme::kFile);
     u.setPath(path);
     return u;
 }
@@ -192,7 +192,7 @@ QUrl ComputerUtils::makeBurnUrl(const QString &id)
 {
     QString dev = id.mid(id.lastIndexOf("/") + 1);
     QUrl u;
-    u.setScheme(Global::kBurn);
+    u.setScheme(Global::Scheme::kBurn);
     // burn:///dev/sr0/disc_files/
     u.setPath(QString("/dev/%1/disc_files/").arg(dev));
     return u;
@@ -223,7 +223,7 @@ bool ComputerUtils::shouldLoopPartitionsHide()
 
 bool ComputerUtils::sortItem(const QUrl &a, const QUrl &b)
 {
-    if (a.scheme() != Global::kEntry || b.scheme() != Global::kEntry)
+    if (a.scheme() != Global::Scheme::kEntry || b.scheme() != Global::Scheme::kEntry)
         return false;
     DFMEntryFileInfoPointer infoA(new EntryFileInfo(a));
     DFMEntryFileInfoPointer infoB(new EntryFileInfo(b));
@@ -344,7 +344,7 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
 
 QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
 {
-    if (url.scheme() == Global::kEntry)
+    if (url.scheme() == Global::Scheme::kEntry)
         return url;
 
     QUrl converted = url;
@@ -352,12 +352,12 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
         converted = delegateServIns->urlTransform(converted);
 
     QString devId;
-    if (converted.scheme() == Global::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
+    if (converted.scheme() == Global::Scheme::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {
         if (devId.startsWith(kBlockDeviceIdPrefix))
             converted = ComputerUtils::makeBlockDevUrl(devId);
         else
             converted = ComputerUtils::makeProtocolDevUrl(devId);
-    } else if (!converted.isValid() && url.scheme() == Global::kBurn) {
+    } else if (!converted.isValid() && url.scheme() == Global::Scheme::kBurn) {
         // empty disc do not have mapped mount path.
         auto path = url.path();
         QRegularExpression re("^/dev/(.*)/disc_files/");

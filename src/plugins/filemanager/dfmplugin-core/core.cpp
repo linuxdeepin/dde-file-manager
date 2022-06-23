@@ -65,11 +65,11 @@ void Core::initialize()
     }
 
     // 注册路由
-    UrlRoute::regScheme(Global::kFile, "/");
+    UrlRoute::regScheme(Global::Scheme::kFile, "/");
     // 注册Scheme为"file"的扩展的文件信息 本地默认文件的
-    InfoFactory::regClass<LocalFileInfo>(Global::kFile);
-    DirIteratorFactory::regClass<LocalDirIterator>(Global::kFile);
-    WatcherFactory::regClass<LocalFileWatcher>(Global::kFile);
+    InfoFactory::regClass<LocalFileInfo>(Global::Scheme::kFile);
+    DirIteratorFactory::regClass<LocalDirIterator>(Global::Scheme::kFile);
+    WatcherFactory::regClass<LocalFileWatcher>(Global::Scheme::kFile);
     // 初始化剪切板
     ClipBoard::instance();
 }

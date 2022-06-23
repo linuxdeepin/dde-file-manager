@@ -494,8 +494,8 @@ void DragDropOper::handleMoveMimeData(QDropEvent *event, const QUrl &url)
 
 bool DragDropOper::isSameUser(const QMimeData *data) const
 {
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey)) {
-        QString userID = data->data(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey);
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey)) {
+        QString userID = data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey);
         return userID == QString::number(SysInfoUtils::getUserId());
     }
 

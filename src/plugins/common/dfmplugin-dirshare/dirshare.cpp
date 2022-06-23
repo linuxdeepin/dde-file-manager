@@ -60,7 +60,7 @@ dpf::Plugin::ShutdownFlag DirShare::stop()
 QWidget *DirShare::createShareControlWidget(const QUrl &url)
 {
     DFMBASE_USE_NAMESPACE
-    static QStringList supported { Global::kFile, Global::kUserShare };
+    static QStringList supported { Global::Scheme::kFile, Global::Scheme::kUserShare };
     if (!supported.contains(url.scheme()))
         return nullptr;
 

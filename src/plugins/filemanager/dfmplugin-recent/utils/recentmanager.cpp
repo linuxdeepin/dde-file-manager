@@ -127,7 +127,7 @@ QUrl RecentManager::urlTransform(const QUrl &url)
         return url;
 
     QUrl out { url };
-    out.setScheme(Global::kFile);
+    out.setScheme(Global::Scheme::kFile);
     return out;
 }
 

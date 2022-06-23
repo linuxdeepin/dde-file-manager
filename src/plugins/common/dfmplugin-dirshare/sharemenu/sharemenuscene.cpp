@@ -77,7 +77,7 @@ bool ShareMenuScene::initialize(const QVariantHash &params)
         return false;
 
     QUrl u(d->selectFiles.first());
-    if (u.scheme() != Global::kFile)
+    if (u.scheme() != Global::Scheme::kFile)
         return false;
 
     auto info = InfoFactory::create<AbstractFileInfo>(u, true);
@@ -147,7 +147,7 @@ bool ShareMenuScene::triggered(QAction *action)
         return false;
 
     QUrl u = d->selectFiles.first();
-    if (u.scheme() != Global::kFile)
+    if (u.scheme() != Global::Scheme::kFile)
         return false;
 
     if (!QFileInfo(u.path()).isDir())

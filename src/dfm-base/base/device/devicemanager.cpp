@@ -757,7 +757,7 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
     dlg.setDomain(domainDefault);
     dlg.setUser(userDefault);
 
-    if (uri.startsWith(Global::kFtp) || uri.startsWith(Global::kSFtp))
+    if (uri.startsWith(Global::Scheme::kFtp) || uri.startsWith(Global::Scheme::kSFtp))
         dlg.setDomainLineVisible(false);
 
     DFMMOUNT::MountPassInfo info;

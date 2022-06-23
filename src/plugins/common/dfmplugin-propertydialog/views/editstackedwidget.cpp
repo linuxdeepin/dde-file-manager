@@ -42,7 +42,6 @@ DFMBASE_USE_NAMESPACE
 DPPROPERTYDIALOG_USE_NAMESPACE
 
 const int kTextLineHeight = 18;
-const int kMaxFileNameCharCount = 255;
 
 NameTextEdit::NameTextEdit(const QString &text, QWidget *parent)
     : QTextEdit(text, parent)
@@ -94,7 +93,7 @@ void NameTextEdit::slotTextChanged()
     QVector<uint> list = text.toUcs4();
     int cursor_pos = this->textCursor().position() - text_length + text.length();
 
-    while (text.toLocal8Bit().count() > kMaxFileNameCharCount) {
+    while (text.toLocal8Bit().count() > NAME_MAX) {
         text.chop(1);
     }
 

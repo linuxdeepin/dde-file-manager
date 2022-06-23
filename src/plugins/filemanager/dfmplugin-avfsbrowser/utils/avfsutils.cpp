@@ -95,7 +95,7 @@ QUrl AvfsUtils::localUrlToAvfsUrl(const QUrl &url)
 
 QUrl AvfsUtils::localArchiveToAvfsUrl(const QUrl &url)
 {
-    if (url.scheme() != Global::kFile) {
+    if (url.scheme() != Global::Scheme::kFile) {
         qWarning() << "non-local file doesn't support to convert to avfs url";
         return url;
     }

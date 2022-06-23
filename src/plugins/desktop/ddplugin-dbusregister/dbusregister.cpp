@@ -41,7 +41,7 @@ DFMBASE_USE_NAMESPACE
 void DBusRegister::initialize()
 {
     QString errStr;
-    UrlRoute::regScheme(Global::kEntry, "/", QIcon(), true);
+    UrlRoute::regScheme(Global::Scheme::kEntry, "/", QIcon(), true);
 }
 
 bool DBusRegister::start()

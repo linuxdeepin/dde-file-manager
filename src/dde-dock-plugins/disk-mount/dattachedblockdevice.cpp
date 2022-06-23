@@ -44,7 +44,7 @@ static QUrl makeBurnFileUrl(const QString &device)
 {
     QUrl url;
     QString virtualPath(device + "/" + kBurnSegOndisc + "/");
-    url.setScheme(DFMBASE_NAMESPACE::Global::kBurn);
+    url.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kBurn);
     url.setPath(virtualPath);
     return url;
 }

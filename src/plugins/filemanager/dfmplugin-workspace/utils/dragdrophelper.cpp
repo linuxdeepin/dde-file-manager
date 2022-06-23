@@ -300,8 +300,8 @@ QSharedPointer<AbstractFileInfo> DragDropHelper::fileInfoAtPos(const QPoint &pos
 
 bool DragDropHelper::isSameUser(const QMimeData *data)
 {
-    if (data->hasFormat(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey)) {
-        QString userID = data->data(DFMGLOBAL_NAMESPACE::kMimeDataUserIDKey);
+    if (data->hasFormat(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey)) {
+        QString userID = data->data(DFMGLOBAL_NAMESPACE::Mime::kMimeDataUserIDKey);
         return userID == QString::number(SysInfoUtils::getUserId());
     }
 

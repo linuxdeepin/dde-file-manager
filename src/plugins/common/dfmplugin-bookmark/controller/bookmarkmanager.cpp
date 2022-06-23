@@ -259,7 +259,7 @@ void BookMarkManager::getMountInfo(const QUrl &url, QString &mountPoint, QString
     QString devStr(info.device());
     if (devStr.startsWith("/dev/")) {
         QUrl tmp;
-        tmp.setScheme(Global::kDevice);
+        tmp.setScheme(Global::Scheme::kTrash);
         tmp.setPath(devStr);
         devStr = tmp.toString();
     } else if (devStr == "gvfsd-fuse") {
@@ -389,9 +389,9 @@ void BookMarkManager::cdBookMarkUrlCallBack(quint64 windowId, const QUrl &url)
         return;
     }
 
-    if (bookmarkMap[url].deviceUrl.startsWith(Global::kSmb)
-        || bookmarkMap[url].deviceUrl.startsWith(Global::kFtp)
-        || bookmarkMap[url].deviceUrl.startsWith(Global::kSFtp)) {
+    if (bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSmb)
+        || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kFtp)
+        || bookmarkMap[url].deviceUrl.startsWith(Global::Scheme::kSFtp)) {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
         if (info && info->exists()) {
             if (info->isDir())

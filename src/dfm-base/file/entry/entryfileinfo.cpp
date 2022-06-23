@@ -55,7 +55,7 @@ EntryFileInfo::EntryFileInfo(const QUrl &url)
 {
     d = static_cast<EntryFileInfoPrivate *>(dptr.data());
     d->init();
-    Q_ASSERT_X(url.scheme() == Global::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
+    Q_ASSERT_X(url.scheme() == Global::Scheme::kEntry, __FUNCTION__, "This is not EntryFileInfo's scheme");
 }
 
 EntryFileInfo::~EntryFileInfo()

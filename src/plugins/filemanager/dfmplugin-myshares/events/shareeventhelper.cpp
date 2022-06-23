@@ -85,7 +85,7 @@ bool ShareEventHelper::hookSendChangeCurrentUrl(quint64 winId, const QUrl &url)
 {
     if (url.scheme() == ShareUtils::scheme() && url.path() != "/") {
         auto u(url);
-        u.setScheme(DFMBASE_NAMESPACE::Global::kFile);
+        u.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
         QList<QUrl> urls { u };
         ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::kOpenInCurrentWindow);
         return true;

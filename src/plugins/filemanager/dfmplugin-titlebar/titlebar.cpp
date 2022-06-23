@@ -58,7 +58,7 @@ void TitleBar::initialize()
     connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &TitleBar::onWindowClosed, Qt::DirectConnection);
 
     // file scheme for crumbar
-    CrumbManager::instance()->registerCrumbCreator(Global::kFile, []() {
+    CrumbManager::instance()->registerCrumbCreator(Global::Scheme::kFile, []() {
         CrumbInterface *interface { new CrumbInterface };
         interface->registewrSupportedUrlCallback(&TitleBarHelper::crumbSupportedUrl);
         interface->registerSeprateUrlCallback(&TitleBarHelper::crumbSeprateUrl);
@@ -68,9 +68,9 @@ void TitleBar::initialize()
     // event has been sended before the Window showed
     bindEvents();
 
-    UrlRoute::regScheme(Global::kSmb, "/", {}, true);
-    UrlRoute::regScheme(Global::kFtp, "/", {}, true);
-    UrlRoute::regScheme(Global::kSFtp, "/", {}, true);
+    UrlRoute::regScheme(Global::Scheme::kSmb, "/", {}, true);
+    UrlRoute::regScheme(Global::Scheme::kFtp, "/", {}, true);
+    UrlRoute::regScheme(Global::Scheme::kSFtp, "/", {}, true);
 
     TitleBarUnicastReceiver::instance()->connectService();
 }

@@ -344,23 +344,23 @@ bool FileUtils::isLowSpeedDevice(const QUrl &url)
 
     if (match.hasMatch()) {
         const QString &scheme = match.captured("scheme");
-        static QStringList schemeList = { QString(Global::kMtp),
-                                          QString(Global::kGPhoto),
-                                          QString(Global::kGPhoto2),
-                                          QString(Global::kSmb),
-                                          QString(Global::kSmbShare),
-                                          QString(Global::kFtp),
-                                          QString(Global::kSFtp) };
+        static QStringList schemeList = { QString(Global::Scheme::kMtp),
+                                          QString(Global::Scheme::kGPhoto),
+                                          QString(Global::Scheme::kGPhoto2),
+                                          QString(Global::Scheme::kSmb),
+                                          QString(Global::Scheme::kSmbShare),
+                                          QString(Global::Scheme::kFtp),
+                                          QString(Global::Scheme::kSFtp) };
         return schemeList.contains(scheme);
     }
 
     const QString &device = dfmio::DFMUtils::devicePathFromUrl(url);
 
-    return device.startsWith(QString(Global::kMtp) + "://")
-            || device.startsWith(QString(Global::kGPhoto) + "://")
-            || device.startsWith(QString(Global::kGPhoto2) + "://")
-            || device.startsWith(QString(Global::kSmbShare) + "://")
-            || device.startsWith(QString(Global::kSmb) + "://");
+    return device.startsWith(QString(Global::Scheme::kMtp) + "://")
+            || device.startsWith(QString(Global::Scheme::kGPhoto) + "://")
+            || device.startsWith(QString(Global::Scheme::kGPhoto2) + "://")
+            || device.startsWith(QString(Global::Scheme::kSmbShare) + "://")
+            || device.startsWith(QString(Global::Scheme::kSmb) + "://");
 }
 
 bool FileUtils::isLocalDevice(const QUrl &url)
@@ -410,7 +410,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
         if (!info)
             continue;
 
-        bool isDesktopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+        bool isDesktopApp = info->mimeTypeName().contains(Global::Mime::kTypeAppDesktop);
 
         ///###: symlink is also processed here.
         QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->baseName();
@@ -422,7 +422,7 @@ QMap<QUrl, QUrl> FileUtils::fileBatchReplaceText(const QList<QUrl> &originUrls, 
             continue;
         }
 
-        int maxLength = Global::kMaxFileNameCharCount - suffix.toLocal8Bit().size();
+        int maxLength = NAME_MAX - suffix.toLocal8Bit().size();
 
         if (fileBaseName.toLocal8Bit().size() > maxLength) {
             fileBaseName = cutString(fileBaseName, maxLength, QTextCodec::codecForLocale());
@@ -455,14 +455,14 @@ QMap<QUrl, QUrl> FileUtils::fileBatchAddText(const QList<QUrl> &originUrls, cons
             continue;
 
         // debug case 25414: failure to rename desktop app name
-        bool isDesktopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+        bool isDesktopApp = info->mimeTypeName().contains(Global::Mime::kTypeAppDesktop);
 
         QString fileBaseName = isDesktopApp ? info->fileDisplayName() : info->baseName();   //{ info->baseName() };
         QString oldFileName = fileBaseName;
 
         QString addText = pair.first;
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
-        int maxLength = Global::kMaxFileNameCharCount - info->fileName().toLocal8Bit().size();
+        int maxLength = NAME_MAX - info->fileName().toLocal8Bit().size();
 
         if (addText.toLocal8Bit().size() > maxLength) {
             addText = cutString(addText, maxLength, QTextCodec::codecForLocale());
@@ -517,12 +517,12 @@ QMap<QUrl, QUrl> FileUtils::fileBatchCustomText(const QList<QUrl> &originUrls, c
             continue;
 
         // debug case 25414: failure to rename desktop app name
-        bool isDesktopApp = info->mimeTypeName().contains(Global::kMimetypeAppDesktop);
+        bool isDesktopApp = info->mimeTypeName().contains(Global::Mime::kTypeAppDesktop);
 
         QString fileBaseName { pair.first };
         const QString &indexString = QString::number(index);
         const QString &suffix = info->suffix().isEmpty() ? QString() : QString(".") + info->suffix();
-        int maxLength = Global::kMaxFileNameCharCount - indexString.toLocal8Bit().size() - suffix.toLocal8Bit().size();
+        int maxLength = NAME_MAX - indexString.toLocal8Bit().size() - suffix.toLocal8Bit().size();
 
         if (fileBaseName.toLocal8Bit().size() > maxLength) {
             fileBaseName = cutString(fileBaseName, maxLength, QTextCodec::codecForLocale());
@@ -705,9 +705,9 @@ QByteArray FileUtils::detectCharset(const QByteArray &data, const QString &fileN
     const QString &mimetypeName = mimeType.name();
     KEncodingProber::ProberType proberType = KEncodingProber::Universal;
 
-    if (mimetypeName == Global::kMimeTypeAppXml
-        || mimetypeName == Global::kMimeTypeTextHtml
-        || mimetypeName == Global::kMimeTypeAppXhtmlXml) {
+    if (mimetypeName == Global::Mime::kTypeAppXml
+        || mimetypeName == Global::Mime::kTypeTextHtml
+        || mimetypeName == Global::Mime::kTypeAppXhtmlXml) {
         const QString &_data = QString::fromLatin1(data);
         QRegularExpression pattern("<\\bmeta.+\\bcharset=(?'charset'\\S+?)\\s*['\"/>]");
 
@@ -761,7 +761,7 @@ QByteArray FileUtils::detectCharset(const QByteArray &data, const QString &fileN
                 break;
             }
         }
-    } else if (mimetypeName == Global::kMimeTypeTextXPython) {
+    } else if (mimetypeName == Global::Mime::kTypeTextXPython) {
         QRegularExpression pattern("^#coding\\s*:\\s*(?'coding'\\S+)$");
         QTextStream stream(data);
 

@@ -43,7 +43,7 @@ bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)
     bool takeHandle = false;
     QList<QUrl> archives, others;
     for (auto url : urls) {
-        if (url.scheme() != Global::kFile && url.scheme() != AvfsUtils::scheme())
+        if (url.scheme() != Global::Scheme::kFile && url.scheme() != AvfsUtils::scheme())
             return false;
         if (url.scheme() == AvfsUtils::scheme()) {
             takeHandle = true;
