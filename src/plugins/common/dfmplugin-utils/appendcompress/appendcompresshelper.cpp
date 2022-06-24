@@ -79,7 +79,7 @@ bool AppendCompressHelper::canAppendCompress(const QList<QUrl> &fromUrls, const 
     if (toFilePath.isEmpty())
         return false;
 
-    if (dpfHookSequence->run("dfmplugin_utils", "hook_NotAllowdAppendCompress", fromUrls, toUrl)) {
+    if (dpfHookSequence->run("dfmplugin_utils", "hook_AppendCompress_Prohibit", fromUrls, toUrl)) {
         return false;
     }
 

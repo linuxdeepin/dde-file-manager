@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "openwithhelper.h"
-#include "views/openwith/openwithwidget.h"
+#include "openwith/openwithwidget.h"
 
 #include "dfm-base/base/schemefactory.h"
 

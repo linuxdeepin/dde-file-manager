@@ -1,11 +1,9 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     zhangsheng<zhangsheng@uniontech.com>
+ * Author:     lixiang<lixianga@uniontech.com>
  *
- * Maintainer: max-lv<lvwujun@uniontech.com>
- *             lanxuesong<lanxuesong@uniontech.com>
- *             xushitong<xushitong@uniontech.com>
+ * Maintainer: lixiang<lixianga@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,23 +17,27 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-#include "utils.h"
-#include "global/globalmanager.h"
-#include "openwith/openwithmanager.h"
-#include "appendcompress/appendcompressmanager.h"
+ */
+#include "openwitheventreceiver.h"
+#include "openwith/openwithdialog.h"
+
+#include <dfm-framework/dpf.h>
 
 DPUTILS_USE_NAMESPACE
 
-void Utils::initialize()
+void OpenWithEventReceiver::initEventConnect()
 {
-    GlobalManager::instance().init();
-    OpenWithManager::instance().init();
-    AppendCompressManager::instance().init();
+    dpfSlotChannel->connect("dfmplugin_utils", "slot_OpenWith_ShowDialog", this, &OpenWithEventReceiver::showOpenWithDialog);
 }
 
-bool Utils::start()
+void OpenWithEventReceiver::showOpenWithDialog(const QList<QUrl> &urls)
 {
-    OpenWithManager::instance().start();
-    return true;
+    OpenWithDialog *d = new OpenWithDialog(urls);
+    d->setDisplayPosition(OpenWithDialog::Center);
+    d->open();
+}
+
+OpenWithEventReceiver::OpenWithEventReceiver(QObject *parent)
+    : QObject(parent)
+{
 }

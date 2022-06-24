@@ -20,13 +20,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef GLOBALEVENTRECEIVER_H
-#define GLOBALEVENTRECEIVER_H
+#ifndef APPENDCOMPRESSEVENTRECEIVER_H
+#define APPENDCOMPRESSEVENTRECEIVER_H
 
 #include "dfmplugin_utils_global.h"
 
 #include <QObject>
-#include <QUrl>
 
 QT_BEGIN_NAMESPACE
 class QMimeData;
@@ -34,26 +33,23 @@ QT_END_NAMESPACE
 
 DPUTILS_BEGIN_NAMESPACE
 
-class GlobalEventReceiver : public QObject
+class AppendCompressEventReceiver : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(GlobalEventReceiver)
+    Q_DISABLE_COPY(AppendCompressEventReceiver)
 
 public:
-    static GlobalEventReceiver *instance();
+    explicit AppendCompressEventReceiver(QObject *parent = nullptr);
+
     void initEventConnect();
 
 public slots:
-    void handleOpenAsAdmin(const QUrl &url);
     bool handleSetMouseStyle(const QList<QUrl> &fromUrls, const QUrl &toUrl, Qt::DropAction *type);
     bool handleDragDropCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     bool handleSetMouseStyleOnDesktop(int viewIndex, const QMimeData *mime, const QPoint &viewPos, void *extData);
     bool handleDragDropCompressOnDesktop(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData);
-
-private:
-    explicit GlobalEventReceiver(QObject *parent = nullptr);
 };
 
 DPUTILS_END_NAMESPACE
 
-#endif   // GLOBALEVENTRECEIVER_H
+#endif   // APPENDCOMPRESSEVENTRECEIVER_H

@@ -20,35 +20,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef UTILS_H
-#define UTILS_H
+#include "appendcompressmanager.h"
 
-#include "dfmplugin_utils_global.h"
+DPUTILS_USE_NAMESPACE
 
-#include <dfm-framework/dpf.h>
-
-DPUTILS_BEGIN_NAMESPACE
-
-class Utils : public DPF_NAMESPACE::Plugin
+AppendCompressManager &AppendCompressManager::instance()
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "utils.json")
+    static AppendCompressManager ins;
+    return ins;
+}
 
-    DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
+void AppendCompressManager::init()
+{
+    eventReceiver->initEventConnect();
+}
 
-    // begin open with
-    DPF_EVENT_REG_SLOT(slot_OpenWith_ShowDialog)
-    // end open with
-
-    // begin AppendCompress
-    DPF_EVENT_REG_HOOK(hook_AppendCompress_Prohibit)
-    // end AppendCompress
-
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-};
-
-DPUTILS_END_NAMESPACE
-
-#endif   // UTILS_H
+AppendCompressManager::AppendCompressManager(QObject *parent)
+    : QObject(parent)
+{
+}

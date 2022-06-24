@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lixiang<lixianga@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: lixiang<lixianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +19,34 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef OPENWITHEVENTRECEIVER_H
-#define OPENWITHEVENTRECEIVER_H
+*/
+#ifndef GLOBALMANAGER_H
+#define GLOBALMANAGER_H
+
 #include "dfmplugin_utils_global.h"
+#include "global/globaleventreceiver.h"
 
 #include <QObject>
 
 DPUTILS_BEGIN_NAMESPACE
-class OpenWithEventReceiver : public QObject
+
+class GlobalManager : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(GlobalManager)
+
 public:
-    static OpenWithEventReceiver *instance();
+    static GlobalManager &instance();
 
-    void initEventConnect();
-
-public:   //! slot event
-    void showOpenWithDialog(const QList<QUrl> &urls);
+    void init();
 
 private:
-    explicit OpenWithEventReceiver(QObject *parent = nullptr);
+    explicit GlobalManager(QObject *parent = nullptr);
+
+private:
+    QScopedPointer<GlobalEventReceiver> eventReceiver { new GlobalEventReceiver };
 };
+
 DPUTILS_END_NAMESPACE
-#endif   // OPENWITHEVENTRECEIVER_H
+
+#endif   // GLOBALMANAGER_H

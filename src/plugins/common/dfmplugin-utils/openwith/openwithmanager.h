@@ -20,35 +20,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef OPENWITHMANAGER_H
+#define OPENWITHMANAGER_H
 
 #include "dfmplugin_utils_global.h"
+#include "openwith/openwitheventreceiver.h"
 
-#include <dfm-framework/dpf.h>
+#include <QObject>
 
 DPUTILS_BEGIN_NAMESPACE
 
-class Utils : public DPF_NAMESPACE::Plugin
+class OpenWithManager : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "utils.json")
-
-    DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
-
-    // begin open with
-    DPF_EVENT_REG_SLOT(slot_OpenWith_ShowDialog)
-    // end open with
-
-    // begin AppendCompress
-    DPF_EVENT_REG_HOOK(hook_AppendCompress_Prohibit)
-    // end AppendCompress
+    Q_DISABLE_COPY(OpenWithManager)
 
 public:
-    virtual void initialize() override;
-    virtual bool start() override;
+    static OpenWithManager &instance();
+
+    void init();
+    void start();
+
+private:
+    explicit OpenWithManager(QObject *parent = nullptr);
+
+private:
+    QScopedPointer<OpenWithEventReceiver> eventReceiver { new OpenWithEventReceiver };
 };
 
 DPUTILS_END_NAMESPACE
 
-#endif   // UTILS_H
+#endif   // OPENWITHMANAGER_H

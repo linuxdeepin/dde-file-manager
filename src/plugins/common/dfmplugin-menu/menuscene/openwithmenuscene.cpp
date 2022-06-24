@@ -229,7 +229,7 @@ bool OpenWithMenuScene::triggered(QAction *action)
 
     if (actProperty == ActionID::kOpenWithCustom) {
         auto selectUrls = action->property(kSelectedUrls).value<QList<QUrl>>();
-        dpfSlotChannel->push("dfmplugin_utils", "slot_ShowOpenWithDialog", selectUrls);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", selectUrls);
         return true;
     }
 

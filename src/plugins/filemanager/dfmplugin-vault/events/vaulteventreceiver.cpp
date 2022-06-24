@@ -27,7 +27,8 @@ void VaultEventReceiver::connectEvent()
 {
     dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", this, &VaultEventReceiver::computerOpenItem);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_EnterFileView", VaultEventReceiver::instance(), &VaultEventReceiver::EnterFileView);
-    dpfHookSequence->follow("dfmplugin_utils", "hook_NotAllowdAppendCompress", VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit",
+                            VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)

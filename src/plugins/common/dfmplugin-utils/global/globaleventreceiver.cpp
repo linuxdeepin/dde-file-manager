@@ -20,35 +20,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef UTILS_H
-#define UTILS_H
+#include "globaleventreceiver.h"
 
-#include "dfmplugin_utils_global.h"
+#include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/dpf.h>
 
-DPUTILS_BEGIN_NAMESPACE
+#include <QDir>
+#include <QProcess>
 
-class Utils : public DPF_NAMESPACE::Plugin
+DPUTILS_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
+
+GlobalEventReceiver::GlobalEventReceiver(QObject *parent)
+    : QObject(parent)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "utils.json")
+}
 
-    DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
+GlobalEventReceiver::~GlobalEventReceiver()
+{
+}
 
-    // begin open with
-    DPF_EVENT_REG_SLOT(slot_OpenWith_ShowDialog)
-    // end open with
+void GlobalEventReceiver::initEventConnect()
+{
+    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenAsAdmin,
+                                   this, &GlobalEventReceiver::handleOpenAsAdmin);
+}
 
-    // begin AppendCompress
-    DPF_EVENT_REG_HOOK(hook_AppendCompress_Prohibit)
-    // end AppendCompress
+void GlobalEventReceiver::handleOpenAsAdmin(const QUrl &url)
+{
+    if (url.isEmpty() || !url.isValid()) {
+        qWarning() << "Invalid Url: " << url;
+        return;
+    }
 
-public:
-    virtual void initialize() override;
-    virtual bool start() override;
-};
+    QString localPath { url.toLocalFile() };
+    if (!QDir(localPath).exists()) {
+        qWarning() << "Url path not exists: " << localPath;
+        return;
+    }
 
-DPUTILS_END_NAMESPACE
-
-#endif   // UTILS_H
+    QProcess::startDetached("dde-file-manager-pkexec", { localPath });
+}
