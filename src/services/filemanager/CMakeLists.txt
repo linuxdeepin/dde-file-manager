@@ -77,13 +77,6 @@ FILE(GLOB SEARCH_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/search/utils/*.cpp"
 )
 
-FILE(GLOB COMPUTER_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/computer/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/computer/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/computer/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/computer/private/*.cpp"
-)
-
 FILE(GLOB COMMAND_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/command/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/command/*.cpp"
@@ -109,7 +102,6 @@ add_library(
     ${WORKSPACE_FILES}
     ${DETAILSPACE_FILES}
     ${SEARCH_FILES}
-    ${COMPUTER_FILES}
     ${COMMAND_FILES}
     ${BOOKMARK_FILES}
 )

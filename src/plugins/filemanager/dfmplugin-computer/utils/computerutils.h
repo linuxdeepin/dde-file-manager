@@ -40,6 +40,10 @@
 
 DPCOMPUTER_BEGIN_NAMESPACE
 
+namespace EventNameSpace {
+inline constexpr char kComputerEventSpace[] { DPF_MACRO_TO_STR(DPCOMPUTER_NAMESPACE) };
+}
+
 class ComputerUtils
 {
 public:

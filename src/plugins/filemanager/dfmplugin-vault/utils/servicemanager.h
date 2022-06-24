@@ -26,7 +26,6 @@
 #include "services/filemanager/fileencrypt/fileencryptservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/computer/computerservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
@@ -46,8 +45,6 @@ public:
     static DSB_FM_NAMESPACE::SideBarService *sideBarServiceInstance();
 
     static DSB_FM_NAMESPACE::WindowsService *windowServiceInstance();
-
-    static DSB_FM_NAMESPACE::ComputerService *computerServiceInstance();
 
     static DSB_FM_NAMESPACE::TitleBarService *titleBarServiceInstance();
 

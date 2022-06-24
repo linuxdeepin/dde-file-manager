@@ -90,26 +90,6 @@ WindowsService *ServiceManager::windowServiceInstance()
     return windowsService;
 }
 
-ComputerService *ServiceManager::computerServiceInstance()
-{
-    static ComputerService *computerService = nullptr;
-    if (computerService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(ComputerService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        computerService = ctx.service<ComputerService>(ComputerService::name());
-        if (!computerService) {
-            qCritical() << "Failed, init computer \"computerService\" is empty";
-            abort();
-        }
-    }
-    return computerService;
-}
-
 TitleBarService *ServiceManager::titleBarServiceInstance()
 {
     static TitleBarService *titleBarService = nullptr;

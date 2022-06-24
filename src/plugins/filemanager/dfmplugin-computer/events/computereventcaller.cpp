@@ -23,7 +23,6 @@
 #include "computereventcaller.h"
 #include "utils/computerutils.h"
 
-#include "services/filemanager/computer/computer_defines.h"
 #include "services/filemanager/windows/windowsservice.h"
 #include "services/common/propertydialog/property_defines.h"
 
@@ -107,27 +106,21 @@ void ComputerEventCaller::sendEnterInNewTab(quint64 winId, const QUrl &url)
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenNewTab, winId, url);
 }
 
-void ComputerEventCaller::sendContextActionTriggered(quint64 winId, const QUrl &url, const QString &action)
-{
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kContextActionTriggered, winId, url, action);
-    qDebug() << "action triggered: " << url << action;
-}
-
 void ComputerEventCaller::sendOpenItem(quint64 winId, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnOpenItem, winId, url);
+    dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_Operation_OpenItem", winId, url);
     qDebug() << "send open item: " << url;
 }
 
 void ComputerEventCaller::sendCtrlNOnItem(quint64 winId, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnCtrlNTriggered, winId, url);
+    dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlN", winId, url);
     qDebug() << "send ctrl n at item: " << url;
 }
 
 void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::EventType::kOnCtrlTTriggered, winId, url);
+    dpfSignalDispatcher->publish(EventNameSpace::kComputerEventSpace, "signal_ShortCut_CtrlT", winId, url);
     qDebug() << "send ctrl t at item: " << url;
 }
 

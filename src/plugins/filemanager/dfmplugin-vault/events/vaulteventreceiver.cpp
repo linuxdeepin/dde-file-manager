@@ -4,7 +4,6 @@
 
 #include "dfm-base/base/urlroute.h"
 
-#include "services/filemanager/computer/computer_defines.h"
 #include "services/common/delegate/delegateservice.h"
 
 #include <dfm-framework/dpf.h>
@@ -26,10 +25,9 @@ VaultEventReceiver *VaultEventReceiver::instance()
 
 void VaultEventReceiver::connectEvent()
 {
-    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::EventType::kOnOpenItem, this, &VaultEventReceiver::computerOpenItem);
-    dpfHookSequence->follow("dfmplugin_utils", "hook_NotAllowdAppendCompress",
-                            VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
+    dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", this, &VaultEventReceiver::computerOpenItem);
     dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_EnterFileView", VaultEventReceiver::instance(), &VaultEventReceiver::EnterFileView);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_NotAllowdAppendCompress", VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
 }
 
 void VaultEventReceiver::computerOpenItem(quint64 winId, const QUrl &url)

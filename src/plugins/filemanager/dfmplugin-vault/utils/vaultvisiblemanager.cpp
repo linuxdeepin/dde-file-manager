@@ -44,6 +44,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
 #include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <DSysInfo>
 
@@ -128,7 +129,7 @@ void VaultVisibleManager::addSideBarVaultItem()
 void VaultVisibleManager::addComputer()
 {
     if (isVaultEnabled()) {
-        ServiceManager::computerServiceInstance()->addDevice(tr("Vault"), QUrl("entry:///vault.vault"));
+        dpfSlotChannel->push("dfmplugin_computer", "slot_AddDevice", tr("Vault"), QUrl("entry:///vault.vault"));
     }
 }
 
@@ -176,7 +177,7 @@ void VaultVisibleManager::removeSideBarVaultItem()
 
 void VaultVisibleManager::removeComputerVaultItem()
 {
-    ServiceManager::computerServiceInstance()->removeDevice(QUrl("entry:///vault.vault"));
+    dpfSlotChannel->push("dfmplugin_computer", "slot_RemoveDevice", QUrl("entry:///vault.vault"));
 }
 
 VaultVisibleManager *VaultVisibleManager::instance()

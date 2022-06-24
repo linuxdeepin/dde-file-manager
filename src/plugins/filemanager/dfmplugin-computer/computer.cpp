@@ -168,8 +168,9 @@ void Computer::regComputerToSearch()
 
 void Computer::bindEvents()
 {
-    static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPCOMPUTER_NAMESPACE) };
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_SetContextMenuEnable", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::setContextMenuEnable);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_SetContextMenuEnable", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::setContextMenuEnable);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_AddDevice", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::doAddDevice);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::doRemoveDevice);
 }
 
 DPCOMPUTER_END_NAMESPACE
