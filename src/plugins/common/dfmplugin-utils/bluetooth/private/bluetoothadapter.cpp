@@ -23,7 +23,8 @@
 
 #include "bluetoothadapter.h"
 
-DSC_USE_NAMESPACE
+DPUTILS_USE_NAMESPACE
+
 BluetoothAdapter::BluetoothAdapter(QObject *parent)
     : QObject(parent),
       id(""),

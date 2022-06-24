@@ -24,7 +24,7 @@
 #ifndef BLUETOOTHMANAGER_H
 #define BLUETOOTHMANAGER_H
 
-#include "dfm_common_service_global.h"
+#include "dfmplugin_utils_global.h"
 
 #include <QObject>
 #include <QDBusObjectPath>
@@ -32,7 +32,8 @@
 
 #define BluetoothManagerInstance BluetoothManager::instance()
 
-DSC_BEGIN_NAMESPACE
+DPUTILS_BEGIN_NAMESPACE
+
 class BluetoothAdapter;
 class BluetoothManagerPrivate;
 
@@ -76,6 +77,6 @@ private:
 
     Q_DECLARE_PRIVATE(BluetoothManager)
 };
-DSC_END_NAMESPACE
+DPUTILS_END_NAMESPACE
 
 #endif   // BLUETOOTHMANAGER_H

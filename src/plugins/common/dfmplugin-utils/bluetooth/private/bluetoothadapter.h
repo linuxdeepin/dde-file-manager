@@ -24,8 +24,7 @@
 #ifndef BLUETOOTHADAPTER_H
 #define BLUETOOTHADAPTER_H
 
-#include "dfm_common_service_global.h"
-
+#include "dfmplugin_utils_global.h"
 #include "bluetoothdevice.h"
 
 #include <QObject>
@@ -34,7 +33,8 @@
 /**
  * @brief 蓝牙模块适配器，管理终端的蓝牙设备，是一对多的关系
  */
-DSC_BEGIN_NAMESPACE
+DPUTILS_BEGIN_NAMESPACE
+
 class BluetoothAdapter : public QObject
 {
     Q_OBJECT
@@ -69,6 +69,7 @@ private:
     bool powered;
     QMap<QString, const BluetoothDevice *> devices;
 };
-DSC_END_NAMESPACE
+
+DPUTILS_END_NAMESPACE
 
 #endif   // BLUETOOTHADAPTER_H

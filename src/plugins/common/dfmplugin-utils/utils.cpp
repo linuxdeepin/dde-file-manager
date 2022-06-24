@@ -24,6 +24,7 @@
 #include "global/globalmanager.h"
 #include "openwith/openwithmanager.h"
 #include "appendcompress/appendcompressmanager.h"
+#include "bluetooth/bluetootheventmanager.h"
 
 DPUTILS_USE_NAMESPACE
 
@@ -32,6 +33,7 @@ void Utils::initialize()
     GlobalManager::instance().init();
     OpenWithManager::instance().init();
     AppendCompressManager::instance().init();
+    BluetoothEventManager::instance().init();
 }
 
 bool Utils::start()

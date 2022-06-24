@@ -20,17 +20,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef BLUETOOTH_DEFINES_H
-#define BLUETOOTH_DEFINES_H
+#ifndef BLUETOOTHEVENTMANAGER_H
+#define BLUETOOTHEVENTMANAGER_H
 
-#include "dfm_common_service_global.h"
+#include "dfmplugin_utils_global.h"
 
-DSC_BEGIN_NAMESPACE
+#include <QObject>
 
-namespace EventType {
-extern const int kSendFiles;
-}   // namespace EventType
+DPUTILS_BEGIN_NAMESPACE
 
-DSC_END_NAMESPACE
+class BluetoothEventManager : public QObject
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(BluetoothEventManager)
 
-#endif   // BLUETOOTH_DEFINES_H
+public:
+    static BluetoothEventManager &instance();
+    void init();
+
+    bool bluetoothAvailable();
+    void sendFiles(const QStringList &paths, const QString &deviceId = "");
+
+private:
+    explicit BluetoothEventManager(QObject *parent = nullptr);
+};
+
+DPUTILS_END_NAMESPACE
+
+#endif   // BLUETOOTHEVENTMANAGER_H

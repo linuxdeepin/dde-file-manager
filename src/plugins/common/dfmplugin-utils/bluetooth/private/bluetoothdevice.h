@@ -24,14 +24,15 @@
 #ifndef BLUETOOTHDEVICE_H
 #define BLUETOOTHDEVICE_H
 
-#include "dfm_common_service_global.h"
+#include "dfmplugin_utils_global.h"
 
 #include <QObject>
 
 /**
  * @brief 蓝牙连接的终端设备，例如含有蓝牙模块的手机/电脑
  */
-DSC_BEGIN_NAMESPACE
+DPUTILS_BEGIN_NAMESPACE
+
 class BluetoothDevice : public QObject
 {
     Q_OBJECT
@@ -83,5 +84,5 @@ private:
     bool trusted;   // 是否信任该设备
     State state;
 };
-DSC_END_NAMESPACE
+DPUTILS_END_NAMESPACE
 #endif   // BLUETOOTHDEVICE_H

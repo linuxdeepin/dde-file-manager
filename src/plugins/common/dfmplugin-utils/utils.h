@@ -36,14 +36,42 @@ class Utils : public DPF_NAMESPACE::Plugin
 
     DPF_EVENT_NAMESPACE(DPUTILS_NAMESPACE)
 
-    // begin open with
+    // *******************begin open with*******************
     DPF_EVENT_REG_SLOT(slot_OpenWith_ShowDialog)
-    // end open with
+    // *******************end open with*******************
 
-    // begin AppendCompress
+    // *******************begin AppendCompress*******************
     DPF_EVENT_REG_HOOK(hook_AppendCompress_Prohibit)
-    // end AppendCompress
+    // *******************end AppendCompress*******************
 
+    // TODO(xust) some part should be refactor.
+    // *******************begin UserShare*******************
+    // slots
+    DPF_EVENT_REG_SLOT(slot_UserShare_StartSmbd)
+    DPF_EVENT_REG_SLOT(slot_UserShare_IsSmbdRunning)
+    DPF_EVENT_REG_SLOT(slot_UserShare_SetSmbPasswd)
+    DPF_EVENT_REG_SLOT(slot_UserShare_AddShare)
+    DPF_EVENT_REG_SLOT(slot_UserShare_RemoveShare)
+    DPF_EVENT_REG_SLOT(slot_UserShare_IsPathShared)
+    DPF_EVENT_REG_SLOT(slot_UserShare_GetAllShareInfos)
+    DPF_EVENT_REG_SLOT(slot_UserShare_GetShareInfoOfFilePath)
+    DPF_EVENT_REG_SLOT(slot_UserShare_GetShareInfoOfShareName)
+    DPF_EVENT_REG_SLOT(slot_UserShare_GetShareNameOfFilePath)
+    DPF_EVENT_REG_SLOT(slot_UserShare_GetCurrentUserName)
+    DPF_EVENT_REG_SLOT(slot_UserShare_GetWhoSharedByShareName)
+
+    // signals
+    DPF_EVENT_REG_SIGNAL(signal_UserShare_ShareCountChanged)
+    DPF_EVENT_REG_SIGNAL(signal_UserShare_ShareAdded)
+    DPF_EVENT_REG_SIGNAL(signal_UserShare_ShareRemoved)
+    DPF_EVENT_REG_SIGNAL(signal_UserShare_RemoveShareFailed)
+    // *******************end UserShare*******************
+
+    // *******************begin Bluetooth*******************
+    // slots
+    DPF_EVENT_REG_SLOT(slot_Bluetooth_IsAvailable)
+    DPF_EVENT_REG_SLOT(slot_Bluetooth_SendFiles)
+    // *******************end Bluetooth*******************
 public:
     virtual void initialize() override;
     virtual bool start() override;

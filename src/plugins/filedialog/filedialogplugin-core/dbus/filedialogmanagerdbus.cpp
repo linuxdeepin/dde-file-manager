@@ -25,17 +25,16 @@
 #include "dbus/filedialog_adaptor.h"
 #include "utils/appexitcontroller.h"
 
-#include "services/common/bluetooth/bluetoothservice.h"
-
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <QApplication>
 #include <QDBusConnection>
 #include <QUuid>
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 FileDialogManagerDBus::FileDialogManagerDBus(QObject *parent)
@@ -132,7 +131,7 @@ QStringList FileDialogManagerDBus::monitorFiles() const
 
 void FileDialogManagerDBus::showBluetoothTransDialog(const QString &id, const QStringList &URIs)
 {
-    BluetoothService::service()->sendFiles(URIs, BluetoothService::TransferMode::kSendToDeviceDirectly, id);
+    dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", URIs, id);
 }
 
 void FileDialogManagerDBus::onDialogDestroy()

@@ -29,7 +29,6 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/bluetooth/bluetooth_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -280,20 +279,24 @@ void FileOperatorProxy::deleteFiles(const CanvasView *view)
 void FileOperatorProxy::showFilesProperty(const CanvasView *view)
 {
     dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
-                                          view->selectionModel()->selectedUrls());
+                                 view->selectionModel()->selectedUrls());
 }
 
 void FileOperatorProxy::sendFilesToBluetooth(const CanvasView *view)
 {
     QList<QUrl> urls = view->selectionModel()->selectedUrls();
-    if (!urls.isEmpty())
-        dpfSignalDispatcher->publish(DSC_NAMESPACE::EventType::kSendFiles, view->selectionModel()->selectedUrls());
+    if (!urls.isEmpty()) {
+        QStringList paths;
+        for (const auto &u : urls)
+            paths << u.path();
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", paths, "");
+    }
 }
 
 void FileOperatorProxy::undoFiles(const CanvasView *view)
 {
     dpfSignalDispatcher->publish(GlobalEventType::kRevocation,
-                                          view->winId(), nullptr);
+                                 view->winId(), nullptr);
 }
 
 void FileOperatorProxy::dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)

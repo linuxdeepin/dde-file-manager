@@ -24,7 +24,7 @@
 #ifndef BLUETOOTHMANAGER_P_H
 #define BLUETOOTHMANAGER_P_H
 
-#include "dfm_common_service_global.h"
+#include "dfmplugin_utils_global.h"
 #include "bluetoothmanager.h"
 
 #include <QDBusConnection>
@@ -33,7 +33,7 @@
 template<class T>
 class QFutureWatcher;
 
-DSC_BEGIN_NAMESPACE
+DPUTILS_BEGIN_NAMESPACE
 class BluetoothModel;
 class BluetoothDevice;
 class BluetoothManagerPrivate : public QObject
@@ -78,6 +78,6 @@ public:
 
     Q_DECLARE_PUBLIC(BluetoothManager)
 };
-DSC_END_NAMESPACE
+DPUTILS_END_NAMESPACE
 
 #endif   // BLUETOOTHMANAGER_P_H

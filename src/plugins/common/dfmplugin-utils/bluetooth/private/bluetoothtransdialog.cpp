@@ -82,9 +82,9 @@ static constexpr char kNoDeviceDark[] { "://icons/deepin/builtin/dark/icons/dfm_
 
 static constexpr long kFileTransferSizeLimits = 2147483648;   // 2GB = 2 * 1024 * 1024 * 1024 Bytes
 
-DSC_USE_NAMESPACE
+DPUTILS_USE_NAMESPACE
 
-BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTransDialog::TransferMode mode, QString targetDevId, QWidget *parent)
+BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, QString targetDevId, QWidget *parent)
     : DDialog(parent), urlsWaitToSend(urls), dialogToken(QUuid::createUuid().toString())
 {
     initUI();
@@ -94,7 +94,7 @@ BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, BluetoothTra
     updateDeviceList();   // 打开多个窗口的时候蓝牙设备不一定任何更新操作，因此这时依靠蓝牙状态的变更去更新列表不可取，手动获取一次列表
     BluetoothManagerInstance->refresh();
 
-    if (mode == kSendToDeviceDirectly)
+    if (!targetDevId.isEmpty())   // specify a device to receive the files.
         sendFilesToDevice(targetDevId);
 
     // 调试布局

@@ -23,7 +23,7 @@
 
 #include "bluetoothmodel.h"
 
-DSC_USE_NAMESPACE
+DPUTILS_USE_NAMESPACE
 
 BluetoothModel::BluetoothModel(QObject *parent)
     : QObject(parent)

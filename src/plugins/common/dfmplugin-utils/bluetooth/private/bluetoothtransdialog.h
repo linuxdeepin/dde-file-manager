@@ -24,7 +24,7 @@
 #ifndef BLUETOOTHTRANSDIALOG_H
 #define BLUETOOTHTRANSDIALOG_H
 
-#include "dfm_common_service_global.h"
+#include "dfmplugin_utils_global.h"
 
 #include <dtkwidget_global.h>
 #include <DDialog>
@@ -44,7 +44,7 @@ class QStandardItemModel;
 class QStackedWidget;
 QT_END_NAMESPACE
 
-DSC_BEGIN_NAMESPACE
+DPUTILS_BEGIN_NAMESPACE
 
 class BluetoothDevice;
 class BluetoothAdapter;
@@ -52,12 +52,7 @@ class BluetoothTransDialog : public DDialog
 {
     Q_OBJECT
 public:
-    enum TransferMode {
-        kSelectDeviceToSend = 0,   // 先选择设备再发送
-        kSendToDeviceDirectly   // 直接发送到指定设备
-    };
-
-    BluetoothTransDialog(const QStringList &urls, TransferMode mode = kSelectDeviceToSend, QString targetDevId = QString(), QWidget *parent = nullptr);
+    BluetoothTransDialog(const QStringList &urls, QString targetDevId = QString(), QWidget *parent = nullptr);
 
     static bool isBluetoothIdle();
 
@@ -135,6 +130,6 @@ private:
     QStringList connectedAdapters;
     QString dialogToken;   // 用于标识当前对话框ID
 };
-DSC_END_NAMESPACE
+DPUTILS_END_NAMESPACE
 
 #endif   // BLUETOOTHTRANSDIALOG_H

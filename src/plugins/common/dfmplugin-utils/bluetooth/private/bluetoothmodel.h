@@ -20,45 +20,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef BLUETOOTHSERVICE_H
-#define BLUETOOTHSERVICE_H
 
-#include "dfm_common_service_global.h"
+#ifndef BLUETOOTHMODEL_H
+#define BLUETOOTHMODEL_H
 
-#include <dfm-framework/service/pluginservicecontext.h>
+#include "bluetoothadapter.h"
 
-DSC_BEGIN_NAMESPACE
+#include <QObject>
 
-class BluetoothService final : public dpf::PluginService, dpf::AutoServiceRegister<BluetoothService>
+/**
+ * @brief 蓝牙模块数据模型，管理所有的适配器，是一对多关系
+ */
+DPUTILS_BEGIN_NAMESPACE
+
+class BluetoothModel : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(BluetoothService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
-
 public:
-    enum TransferMode {
-        kSelectDeviceToSend = 0,
-        kSendToDeviceDirectly
-    };
+    explicit BluetoothModel(QObject *parent = nullptr);
+    QMap<QString, const BluetoothAdapter *> getAdapters() const;
+    const BluetoothAdapter *adapterById(const QString &id);
 
-    static QString name()
-    {
-        return "org.deepin.service.BluetoothService";
-    }
+public Q_SLOTS:
+    void addAdapter(BluetoothAdapter *adapter);
+    const BluetoothAdapter *removeAdapater(const QString &adapterId);
 
-    static BluetoothService *service();
-
-    bool bluetoothEnable();
-
-public slots:
-    void sendFiles(const QList<QUrl> &urls);
-    void sendFiles(const QStringList &paths, TransferMode mode = kSelectDeviceToSend, const QString &deviceId = {});
+Q_SIGNALS:
+    void adapterAdded(const BluetoothAdapter *adapter) const;
+    void adapterRemoved(const BluetoothAdapter *adapter) const;
 
 private:
-    explicit BluetoothService(QObject *parent = nullptr);
-    virtual ~BluetoothService() override;
+    QMap<QString, const BluetoothAdapter *> adapters;
 };
+DPUTILS_END_NAMESPACE
 
-DSC_END_NAMESPACE
-
-#endif   // BLUETOOTHSERVICE_H
+#endif   // BLUETOOTHMODEL_H

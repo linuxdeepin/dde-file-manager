@@ -26,7 +26,6 @@
 #include "menuutils.h"
 
 #include "services/common/menu/menu_defines.h"
-#include "services/common/bluetooth/bluetoothservice.h"
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
@@ -172,7 +171,8 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
     if (!subMenu)
         return;
 
-    if (DSC_NAMESPACE::BluetoothService::service()->bluetoothEnable()) {
+    bool bluetoothAvailable = dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_IsAvailable").toBool();
+    if (bluetoothAvailable) {
         auto *act = subMenu->addAction(predicateName[ActionID::kSendToBluetooth]);
         act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
         if (folderSelected)
@@ -232,7 +232,7 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
     DSC_USE_NAMESPACE
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
     if (actId == ActionID::kSendToBluetooth) {
-        BluetoothService::service()->sendFiles(filePaths);
+        dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", filePaths, "");
     } else if (actId.startsWith(ActionID::kSendToRemovablePrefix)) {
         qDebug() << "send files to: " << act->data().toUrl() << ", " << selectFiles;
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
@@ -243,11 +243,11 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
             QString linkName = FileUtils::nonExistSymlinkFileName(url);
             QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
             dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,
-                                                  windowId,
-                                                  url,
-                                                  linkUrl,
-                                                  false,
-                                                  true);
+                                         windowId,
+                                         url,
+                                         linkUrl,
+                                         false,
+                                         true);
         }
     }
 }
