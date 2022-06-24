@@ -6,9 +6,10 @@ pkgdesc='Deepin File Manager'
 arch=('x86_64' 'aarch64')
 url="https://github.com/linuxdeepin/dde-file-manager"
 license=('GPL3')
-depends=('deepin-anything-git' 'disomaster-git' 'file' 'gio-qt' 'libmediainfo' 'avfs' 'polkit-qt5' 'poppler'
-         'ffmpegthumbnailer' 'startdde-git' 'taglib' 'jemalloc' 'htmlcxx' 'mimetic' 'lucene++')
-makedepends=('git' 'deepin-movie-git' 'lucene++' 'jemalloc' 'kcodecs' 'htmlcxx' 'libgsf' 'mimetic' 'boost' 'boost-libs' 'qt5-tools' 'deepin-dock-git' 'deepin-gettext-tools-git' 'gtest')
+depends=('deepin-qt5integration-git' 'deepin-anything-git' 'disomaster-git' 'docparser-git' 'file' 'gio-qt'
+         'libmediainfo' 'lucene++' 'avfs' 'polkit-qt5' 'poppler' 'ffmpegthumbnailer' 'jemalloc'
+         'kcodecs' 'startdde-git' 'taglib' 'htmlcxx' 'libgsf' 'mimetic' 'boost-libs')
+makedepends=('boost' 'qt5-tools' 'deepin-dock-git' 'deepin-movie-git' 'deepin-gettext-tools-git')
 optdepends=('deepin-manual: for help menual'
             'deepin-shortcut-viewer: for shortcut display'
             'deepin-screensaver: for screensaver chooser'
@@ -18,29 +19,31 @@ optdepends=('deepin-manual: for help menual'
 groups=('deepin-git')
 provides=('deepin-file-manager')
 conflicts=('deepin-file-manager')
-source=("$pkgname-$pkgver::source.tar.gz")
-sha512sums=('SKIP')
-pkgver() {
-    cd $pkgname-$pkgver
-    git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
-}
+source=('source.tar.gz'
+        fix-crash-426.patch
+        gcc12.patch)
+sha512sums=('SKIP'
+            'aaa093d4ee601902cd4e391e51053812297e8730fbbebfb9cb7c6a7746bd2ce7bffc83753863d58f4a4eaf0e514c45a26ff1635ababd6653ff38cb4ae1aab21b'
+            '4e3a35742efd43ecfc70a9bfa7e41b80e73a9197f0afa922d300ac27d655286d6fe3c8891c8a13bf08fd1e0e0b0d6a03e63f7f8af18e00673ea51db549fd5f46')
 
 prepare() {
-    cd $pkgname-$pkgver
+  cd $deepin_source_name
+  patch -p1 -i ../fix-crash-426.patch
+  patch -p1 -i ../gcc12.patch # Fix build with GCC 12
   sed -e 's|systembusconf.path = /etc/dbus-1/system.d|systembusconf.path = /usr/share/dbus-1/system.d|' \
       -e 's|systemd_service.path = /lib/systemd/system|systemd_service.path = /usr/lib/systemd/system|' \
       -i src/dde-file-manager-daemon/dde-file-manager-daemon.pro
 }
 
 build() {
-  cd ${pkgname}
+  cd $deepin_source_name
 
   qmake-qt5 PREFIX=/usr filemanager.pro
   make
 }
 
 package() {
-  cd ${pkgname}
+  cd $deepin_source_name
 
   make INSTALL_ROOT="$pkgdir" install
 }
