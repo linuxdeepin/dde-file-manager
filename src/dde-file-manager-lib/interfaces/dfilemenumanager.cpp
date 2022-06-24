@@ -235,10 +235,12 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                 if(isSmb){
                     DUrl mountUrl;
                     QString shareName = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kShareName);
+                    QString shareHost = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kServer);
                     QString name = currentUrl.path();
+                    QString host = currentUrl.host();
                     if(name.startsWith("/"))
                         name = name.mid(1);
-                    if(name == shareName){
+                    if(name == shareName && host == shareHost){
                         isMounted =  true;
                         break;
                     }

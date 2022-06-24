@@ -990,10 +990,6 @@ void DFMSideBar::initDeviceConnection()
             //如果最后一个SMB挂载已被移除 且 配置为 （无需常驻SMB挂载 或 是批量卸载），需要跳转到计算机界面和从侧边栏移除smb聚合项
             if (lastOneShareFolderRemved && (!keepSmb || isBathUnmuntSmb)){
                 switchToComputerItem = true;
-                DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
-                if(window){
-                    switchToComputerItem = switchToComputerItem && window->isActiveWindow();//当前激活的窗口，卸载smb后才跳转到计算机界面
-                }
                 deviceListener->setBatchedRemovingSmbMount(false);
                 //The smb ip item data like: smb://xx.xx.xx.xx
                 emit rootFileManager->rootFileWather()->fileDeleted(DUrl(QString("%1://%2").arg(SMB_SCHEME).arg(smbIp)));
@@ -1028,7 +1024,9 @@ void DFMSideBar::initDeviceConnection()
             } else {
                 urlSkip = DUrl::fromLocalFile(QDir::homePath());
             }
-            if(switchToComputerItem)
+            DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
+            //后面会根据switchToComputerItem为true去removeItem(), 因此此前不能改变switchToComputerItem的状态
+            if(switchToComputerItem && window && window->isActiveWindow())
                 this->jumpToItem(urlSkip);
         }
         //DFileService::instance()->changeRootFile(url,false); //性能优化，注释
