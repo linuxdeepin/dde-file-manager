@@ -28,13 +28,13 @@ DDP_ORGANIZER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 namespace  {
-    inline const char kTypeKeyApp[] = "Apps";
-    inline const char kTypeKeyDoc[] = "Documents";
-    inline const char kTypeKeyPic[] = "Pictures";
-    inline const char kTypeKeyVid[] = "Videos";
-    inline const char kTypeKeyMuz[] = "Music";
-    inline const char kTypeKeyFld[] = "Folders";
-    inline const char kTypeKeyOth[] = "Other";
+    inline const char kTypeKeyApp[] = "Type_Apps";
+    inline const char kTypeKeyDoc[] = "Type_Documents";
+    inline const char kTypeKeyPic[] = "Type_Pictures";
+    inline const char kTypeKeyVid[] = "Type_Videos";
+    inline const char kTypeKeyMuz[] = "Type_Music";
+    inline const char kTypeKeyFld[] = "Type_Folders";
+    inline const char kTypeKeyOth[] = "Type_Other";
 
     inline const char kTypeSuffixDoc[] = "pdf,txt,doc,docx,dot,dotx,ppt,pptx,pot,potx,xls,xlsx,xlt,xltx,wps,wpt,rtf,md,latex";
     inline const char kTypeSuffixPic[] = "jpg,jpeg,jpe,bmp,png,gif,svg,tif,tiff";

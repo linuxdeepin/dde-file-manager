@@ -30,12 +30,13 @@
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class CanvasView;
+class CanvasViewBroker;
 class CanvasItemDelegatePrivate;
 class CanvasItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
     friend class CanvasItemDelegatePrivate;
-
+    friend class CanvasViewBroker;
 public:
     explicit CanvasItemDelegate(QAbstractItemView *parentPtr = nullptr);
     ~CanvasItemDelegate() override;
@@ -57,11 +58,11 @@ public:
     bool mayExpand(QModelIndex *who = nullptr) const;
     static QRectF boundingRect(const QList<QRectF> &rects);
     QSize paintDragIcon(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index);
-
-protected:
-    void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
+public:
     QRect iconRect(const QRect &paintRect) const;
     static QRect labelRect(const QRect &paintRect, const QRect &usedRect);
+protected:
+    void initStyleOption(QStyleOptionViewItem *option, const QModelIndex &index) const override;
     QRect textPaintRect(const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rText, bool elide) const;
     static QRect paintIcon(QPainter *painter, const QIcon &icon, const QRectF &rect, Qt::Alignment alignment = Qt::AlignCenter,
                            QIcon::Mode mode = QIcon::Normal, QIcon::State state = QIcon::Off);

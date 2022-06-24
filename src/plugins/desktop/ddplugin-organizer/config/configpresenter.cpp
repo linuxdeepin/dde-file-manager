@@ -133,3 +133,22 @@ void ConfigPresenter::saveCustomProfile(const QList<CollectionBaseDataPtr> &base
     conf->sync();
 }
 
+QList<CollectionBaseDataPtr> ConfigPresenter::normalProfile() const
+{
+    return conf->collectionBase(false);
+}
+
+void ConfigPresenter::saveNormalProfile(const QList<CollectionBaseDataPtr> &baseDatas)
+{
+    QMap<QString, CollectionBaseDataPtr> profiles;
+
+    int index = 0;
+    for (auto iter = baseDatas.begin(); iter != baseDatas.end(); ++iter) {
+        // using key as group
+        profiles.insert(iter->data()->key, *iter);
+        ++index;
+    }
+    conf->writeCollectionBase(false, profiles);
+    conf->sync();
+}
+

@@ -43,6 +43,8 @@ public slots:
     void update(int idx);
     void select(const QList<QUrl> &urls);
     QList<QUrl> selectedUrls(int idx);
+public:
+    QRect iconRect(int idx, QRect visualRect);
 private:
     CanvasManager *manager = nullptr;
 };

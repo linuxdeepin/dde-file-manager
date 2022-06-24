@@ -23,6 +23,7 @@
 #include "canvasmanager.h"
 #include "view/canvasview.h"
 #include "view/canvasview_p.h"
+#include "delegate/canvasitemdelegate_p.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -51,6 +52,8 @@ CanvasViewBroker::~CanvasViewBroker()
     CanvasViewDisconnect(slot_CanvasView_Update);
     CanvasViewDisconnect(slot_CanvasView_Select);
     CanvasViewDisconnect(slot_CanvasView_SelectedUrls);
+
+    CanvasViewDisconnect(slot_CanvasItemDelegate_IconRect);
 }
 
 bool CanvasViewBroker::init()
@@ -60,6 +63,8 @@ bool CanvasViewBroker::init()
     CanvasViewSlot(slot_CanvasView_Update, &CanvasViewBroker::update);
     CanvasViewSlot(slot_CanvasView_Select, &CanvasViewBroker::select);
     CanvasViewSlot(slot_CanvasView_SelectedUrls, &CanvasViewBroker::selectedUrls);
+
+    CanvasViewSlot(slot_CanvasItemDelegate_IconRect, &CanvasViewBroker::iconRect);
     return true;
 }
 
@@ -132,5 +137,15 @@ QList<QUrl> CanvasViewBroker::selectedUrls(int idx)
         urls = viewOn;
     }
     return urls;
+}
+
+QRect CanvasViewBroker::iconRect(int idx, QRect visualRect)
+{
+    QRect ret;
+    if (auto view = getView(idx)) {
+        visualRect = visualRect.marginsRemoved(view->d->gridMargins);
+        ret = view->itemDelegate()->iconRect(visualRect);
+    }
+    return ret;
 }
 

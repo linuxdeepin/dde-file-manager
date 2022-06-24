@@ -40,6 +40,26 @@ NormalizedModePrivate::~NormalizedModePrivate()
     holders.clear();
 }
 
+void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
+{
+    // order by config
+    for (const CollectionBaseDataPtr &cfg : cfgs) {
+        if (auto base = classifier->baseData(cfg->key)) {
+            QList<QUrl> org = base->items;
+            QList<QUrl> ordered;
+            for (const QUrl &old : cfg->items) {
+                if (org.contains(old)) {
+                    ordered << old;
+                    org.removeOne(old);
+                }
+            }
+
+            ordered.append(org);
+            base->items = ordered;
+        }
+    }
+}
+
 NormalizedMode::NormalizedMode(QObject *parent)
     : CanvasOrganizer(parent)
     , d(new NormalizedModePrivate(this))
@@ -104,7 +124,12 @@ void NormalizedMode::rebuild()
         time.start();
         auto files = model->files();
         d->classifier->reset(files);
+
+        // order item as config
+        d->restore(CfgPresenter->normalProfile());
+
         qInfo() << QString("Classifying %0 files takes %1ms").arg(files.size()).arg(time.elapsed());
+        CfgPresenter->saveNormalProfile(d->classifier->baseData());
     }
 
     // 从分类器中获取组,根据组创建分区

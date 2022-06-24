@@ -115,6 +115,9 @@ private:
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_Files)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_FileInfo)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_Refresh)
+
+    // CanvasItemDelegate begin
+    DPF_EVENT_REG_SLOT(slot_CanvasItemDelegate_IconRect)
 };
 
 DDP_CANVAS_END_NAMESPACE

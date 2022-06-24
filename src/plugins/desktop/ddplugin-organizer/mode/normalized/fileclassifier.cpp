@@ -70,6 +70,16 @@ void FileClassifier::reset(const QList<QUrl> &urls)
     }
 }
 
+QList<CollectionBaseDataPtr> FileClassifier::baseData() const
+{
+    return collections.values();
+}
+
+CollectionBaseDataPtr FileClassifier::baseData(const QString &key) const
+{
+    return collections.value(key);
+}
+
 QString FileClassifier::replace(const QUrl &oldUrl, const QUrl &newUrl)
 {
     QString oldType = key(oldUrl);

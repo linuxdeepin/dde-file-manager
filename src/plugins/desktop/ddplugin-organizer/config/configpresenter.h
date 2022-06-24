@@ -42,6 +42,9 @@ public:
     void setClassification(Classifier cf);
     QList<CollectionBaseDataPtr> customProfile() const;
     void saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas);
+
+    QList<CollectionBaseDataPtr> normalProfile() const;
+    void saveNormalProfile(const QList<CollectionBaseDataPtr> &baseDatas);
 signals:
     void changeEnableState(bool e);
     void switchToNormalized(int);

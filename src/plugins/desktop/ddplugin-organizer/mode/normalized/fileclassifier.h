@@ -50,6 +50,9 @@ public:
     virtual QString className(const QString &) const = 0;
     virtual void reset(const QList<QUrl> &);
 public:
+    CollectionBaseDataPtr baseData(const QString &key) const;
+    QList<CollectionBaseDataPtr> baseData() const;
+public:
     QString replace(const QUrl &oldUrl, const QUrl &newUrl) override;
     QString append(const QUrl &) override;
     QString remove(const QUrl &) override;
