@@ -23,11 +23,11 @@
 #include "corehelper.h"
 #include "views/filedialog.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -66,8 +66,7 @@ static bool pwPluginVersionGreaterThen(const QString &v)
  */
 void CoreHelper::delayInvokeProxy(std::function<void()> func, quint64 winID, QObject *parent)
 {
-    DSB_FM_USE_NAMESPACE
-    auto window = qobject_cast<FileDialog *>(WindowsService::service()->findWindowById(winID));
+    auto window = qobject_cast<FileDialog *>(FMWindowsIns.findWindowById(winID));
     Q_ASSERT(window);
 
     if (window->workSpace()) {

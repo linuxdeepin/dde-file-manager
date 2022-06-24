@@ -23,7 +23,7 @@
 #include "utils/searchhelper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
@@ -407,8 +407,8 @@ void AdvanceSearchBar::onOptionChanged()
     formData[AdvanceSearchBarPrivate::kAccessDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kAccessDateRange]->currentData();
     formData[AdvanceSearchBarPrivate::kCreateDateRange] = d->asbCombos[AdvanceSearchBarPrivate::kCreateDateRange]->currentData();
 
-    auto winId = WindowsService::service()->findWindowId(this);
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto winId = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (!window)
         return;
 
@@ -427,8 +427,8 @@ void AdvanceSearchBar::onResetButtonPressed()
 
 void AdvanceSearchBar::hideEvent(QHideEvent *event)
 {
-    auto winId = WindowsService::service()->findWindowId(this);
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto winId = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (window && !window->isMinimized()) {
         resetForm();
         d->filterInfoCache.clear();

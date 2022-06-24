@@ -32,7 +32,6 @@
 #include "events/shareeventhelper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/search/searchservice.h"
@@ -41,9 +40,11 @@
 #include "services/common/fileoperations/fileoperations_defines.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 #include "services/common/delegate/delegateservice.h"
+
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -62,9 +63,9 @@ void MyShares::initialize()
     claimSubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
 
     DSB_FM_USE_NAMESPACE
-    connect(WindowsService::service(), &WindowsService::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowClosed, this, &MyShares::onWindowClosed, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &MyShares::onWindowClosed, Qt::DirectConnection);
 
     UserShareService::service();   // for loading shares.
     connect(UserShareService::service(), &UserShareService::shareAdded, this, [this] { this->addToSidebar(); }, Qt::DirectConnection);
@@ -111,7 +112,7 @@ void MyShares::onWindowOpened(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
 
     if (window->sideBar())
         addToSidebar();

@@ -24,10 +24,11 @@
 #include "events/bookmarkeventreceiver.h"
 #include "menu/bookmarkmenuscene.h"
 
-#include "dfm-base/dfm_event_defines.h"
 #include "services/common/menu/menuservice.h"
-
 #include "services/filemanager/bookmark/bookmark_defines.h"
+
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 DPBOOKMARK_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -35,7 +36,7 @@ DSC_USE_NAMESPACE
 
 void BookMark::initialize()
 {
-    connect(BookMarkHelper::winServIns(), &DSB_FM_NAMESPACE::WindowsService::windowCreated, this,
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
             &BookMark::onWindowCreated, Qt::DirectConnection);
 
     dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult,
@@ -62,7 +63,7 @@ dpf::Plugin::ShutdownFlag BookMark::stop()
 
 void BookMark::onWindowCreated(quint64 winId)
 {
-    auto window = BookMarkHelper::winServIns()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
     connect(window, &FileManagerWindow::sideBarInstallFinished, this,

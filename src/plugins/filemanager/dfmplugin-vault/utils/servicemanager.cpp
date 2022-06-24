@@ -70,26 +70,6 @@ SideBarService *ServiceManager::sideBarServiceInstance()
     return sideBarService;
 }
 
-WindowsService *ServiceManager::windowServiceInstance()
-{
-    static WindowsService *windowsService = nullptr;
-    if (windowsService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(WindowsService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        windowsService = ctx.service<WindowsService>(WindowsService::name());
-        if (!windowsService) {
-            qCritical() << "Failed, init windows \"sideBarService\" is empty";
-            abort();
-        }
-    }
-    return windowsService;
-}
-
 TitleBarService *ServiceManager::titleBarServiceInstance()
 {
     static TitleBarService *titleBarService = nullptr;

@@ -25,7 +25,7 @@
 
 #include "dfmplugin_detailspace_global.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QMap>
 #include <QUrl>

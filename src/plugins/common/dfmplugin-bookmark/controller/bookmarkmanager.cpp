@@ -29,9 +29,10 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicemanager.h"
+#include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <DDialog>
 
@@ -233,7 +234,7 @@ QMap<QUrl, BookmarkData> BookMarkManager::getBookMarkDataMap() const
 
 int BookMarkManager::showRemoveBookMarkDialog(quint64 winId)
 {
-    auto window = BookMarkHelper::winServIns()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (!window) {
         qCritical("can not find window");
         abort();

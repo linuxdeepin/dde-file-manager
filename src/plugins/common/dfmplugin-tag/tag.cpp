@@ -31,14 +31,16 @@
 #include "menu/tagdirmenuscene.h"
 #include "events/tageventreceiver.h"
 
-#include "dfm-base/base/urlroute.h"
-#include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/application/application.h"
-#include "dfm-base/base/application/settings.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/delegate/delegateservice.h"
+
+#include "dfm-base/base/urlroute.h"
+#include "dfm-base/base/schemefactory.h"
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -60,7 +62,7 @@ void Tag::initialize()
     DirIteratorFactory::regClass<TagDirIterator>(TagManager::scheme());
     delegateServIns->registerUrlTransform(TagManager::scheme(), TagHelper::redirectTagUrl);
 
-    connect(TagHelper::winServIns(), &WindowsService::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
     connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);
 
     TagManager::instance();
@@ -92,7 +94,7 @@ bool Tag::start()
 
 void Tag::onWindowOpened(quint64 windId)
 {
-    auto window = TagHelper::winServIns()->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "Tag", "Cannot find window by id");
 
     if (window->titleBar())

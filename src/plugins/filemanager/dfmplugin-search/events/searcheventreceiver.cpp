@@ -22,10 +22,12 @@
 #include "searcheventcaller.h"
 #include "utils/searchhelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/search/searchservice.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 DPSEARCH_BEGIN_NAMESPACE
 
 dfmplugin_search::SearchEventReceiver *dfmplugin_search::SearchEventReceiver::instance()
@@ -36,9 +38,7 @@ dfmplugin_search::SearchEventReceiver *dfmplugin_search::SearchEventReceiver::in
 
 void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     Q_ASSERT(window);
 
     const auto &curUrl = window->currentUrl();

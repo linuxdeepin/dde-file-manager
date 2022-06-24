@@ -50,7 +50,7 @@ void Trash::initialize()
     delegateServIns->registerUrlTransform(TrashHelper::scheme(), TrashHelper::toLocalFile);
     DSC_NAMESPACE::MenuService::service()->registerScene(TrashMenuCreator::name(), new TrashMenuCreator());
 
-    connect(TrashHelper::winServIns(), &WindowsService::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Trash::start()
@@ -74,7 +74,7 @@ dpf::Plugin::ShutdownFlag Trash::stop()
 
 void Trash::onWindowOpened(quint64 windId)
 {
-    auto window = TrashHelper::winServIns()->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "Trash", "Cannot find window by id");
     if (window->titleBar())
         regTrashCrumbToTitleBar();

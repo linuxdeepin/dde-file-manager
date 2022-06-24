@@ -25,9 +25,10 @@
 #include "models/filesortfilterproxymodel.h"
 #include "models/fileviewmodel.h"
 #include "events/workspaceeventcaller.h"
-#include "services/filemanager/windows/windowsservice.h"
+
 #include "services/filemanager/workspace/workspaceservice.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
@@ -175,9 +176,7 @@ void WorkspaceHelper::removeWorkspace(quint64 windowId)
 
 quint64 WorkspaceHelper::windowId(const QWidget *sender)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    return windowService->findWindowId(sender);
+    return FMWindowsIns.findWindowId(sender);
 }
 
 void WorkspaceHelper::switchViewMode(quint64 windowId, int viewMode)

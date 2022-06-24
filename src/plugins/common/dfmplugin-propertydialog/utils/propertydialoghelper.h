@@ -3,7 +3,7 @@
 
 #include "dfmplugin_propertydialog_global.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
 DPPROPERTYDIALOG_BEGIN_NAMESPACE

@@ -27,11 +27,12 @@
 #include "views/titlebarwidget.h"
 #include "events/titlebarunicastreceiver.h"
 #include "events/titlebareventreceiver.h"
-#include "dfm-base/dfm_global_defines.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
+
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -41,7 +42,6 @@
 DPTITLEBAR_USE_NAMESPACE
 
 namespace GlobalPrivate {
-static DSB_FM_NAMESPACE::WindowsService *windowService { nullptr };
 static TitleBarWidget *titleBar { nullptr };
 }   // namespace GlobalPrivate
 
@@ -50,12 +50,9 @@ void TitleBar::initialize()
     DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
 
-    auto &ctx = dpfInstance.serviceContext();
-    Q_ASSERT_X(ctx.loaded(WindowsService::name()), "SideBar", "WindowService not loaded");
-    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
-    connect(GlobalPrivate::windowService, &WindowsService::windowCreated, this, &TitleBar::onWindowCreated, Qt::DirectConnection);
-    connect(GlobalPrivate::windowService, &WindowsService::windowOpened, this, &TitleBar::onWindowOpened, Qt::DirectConnection);
-    connect(GlobalPrivate::windowService, &WindowsService::windowClosed, this, &TitleBar::onWindowClosed, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &TitleBar::onWindowCreated, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &TitleBar::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &TitleBar::onWindowClosed, Qt::DirectConnection);
 
     // file scheme for crumbar
     CrumbManager::instance()->registerCrumbCreator(Global::Scheme::kFile, []() {
@@ -95,7 +92,7 @@ void TitleBar::onWindowOpened(quint64 windId)
 {
     DFMBASE_USE_NAMESPACE
 
-    auto window = GlobalPrivate::windowService->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "SideBar", "Cannot find window by id");
     window->installTitleBar(GlobalPrivate::titleBar);
     window->installTitleMenu(TitleBarHelper::createSettingsMenu(windId));

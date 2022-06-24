@@ -27,7 +27,6 @@
 #include "views/emptyTrashWidget.h"
 #include "dfm_event_defines.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/trash/trashservice.h"
@@ -77,9 +76,7 @@ QUrl TrashHelper::rootUrl()
 
 quint64 TrashHelper::windowId(QWidget *sender)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    return windowService->findWindowId(sender);
+    return FMWindowsIns.findWindowId(sender);
 }
 
 void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, const QPoint &globalPos)
@@ -308,18 +305,6 @@ bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Glo
     return false;
 }
 
-DSB_FM_NAMESPACE::WindowsService *TrashHelper::winServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-}
-
 DSB_FM_NAMESPACE::TitleBarService *TrashHelper::titleServIns()
 {
     auto &ctx = dpfInstance.serviceContext();
@@ -375,9 +360,9 @@ void TrashHelper::onTrashStateChanged()
 
     isTrashEmpty = isEmpty();
 
-    const QList<quint64> &windowIds = winServIns()->windowIdList();
+    const QList<quint64> &windowIds = FMWindowsIns.windowIdList();
     for (const quint64 winId : windowIds) {
-        auto window = winServIns()->findWindowById(winId);
+        auto window = FMWindowsIns.findWindowById(winId);
         if (window) {
             const QUrl &url = window->currentUrl();
             if (url.scheme() == scheme())

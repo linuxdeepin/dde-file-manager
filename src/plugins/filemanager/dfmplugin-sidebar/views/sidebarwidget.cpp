@@ -31,7 +31,7 @@
 #include "utils/sidebarinfocachemananger.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/utils/systempathutil.h"
 
 #include <QApplication>
@@ -204,7 +204,7 @@ void SideBarWidget::updateSelection()
 {
     // after sort the hightlight may lose, re-select the highlight item.
     quint64 winId = SideBarHelper::windowId(this);
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (window)
         setCurrentUrl(window->currentUrl());
 }

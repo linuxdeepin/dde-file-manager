@@ -26,7 +26,7 @@
 #include "utils/searchhistroymanager.h"
 #include "utils/titlebarhelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include "dfm-base/base/schemefactory.h"
 
@@ -498,8 +498,8 @@ void AddressBar::setCurrentUrl(const QUrl &url)
 
 QUrl AddressBar::currentUrl()
 {
-    auto id = WindowsService::service()->findWindowId(this);
-    auto window = WindowsService::service()->findWindowById(id);
+    auto id = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(id);
     if (window)
         return window->currentUrl();
     return {};

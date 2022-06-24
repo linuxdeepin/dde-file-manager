@@ -29,6 +29,7 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/devicemanager.h"
@@ -174,8 +175,8 @@ void OpticalMediaWidget::updateUi()
 
 void OpticalMediaWidget::handleErrorMount()
 {
-    auto winId { OpticalHelper::winServIns()->findWindowId(this) };
-    FileManagerWindow *window { OpticalHelper::winServIns()->findWindowById(winId) };
+    auto winId { FMWindowsIns.findWindowId(this) };
+    FileManagerWindow *window { FMWindowsIns.findWindowById(winId) };
     if (window) {
         QUrl jumpUrl { UrlRoute::rootUrl(Global::Scheme::kComputer) };
         window->cd(jumpUrl);
@@ -271,8 +272,8 @@ void OpticalMediaWidget::onStagingFileStatisticsFinished()
         return;
     }
 
-    auto id = OpticalHelper::winServIns()->findWindowId(this);
-    auto window = OpticalHelper::winServIns()->findWindowById(id);
+    auto id = FMWindowsIns.findWindowId(this);
+    auto window = FMWindowsIns.findWindowById(id);
     OpticalEventCaller::sendOpenBurnDlg(curDev, isSupportedUDF(), window);
 }
 

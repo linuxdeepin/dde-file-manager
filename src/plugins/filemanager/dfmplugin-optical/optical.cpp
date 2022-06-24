@@ -38,6 +38,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 DPOPTICAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -55,7 +56,7 @@ void Optical::initialize()
 
     bindEvents();
 
-    connect(OpticalHelper::winServIns(), &WindowsService::windowCreated, this,
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
             [this]() {
                 addOpticalCrumbToTitleBar();
             },

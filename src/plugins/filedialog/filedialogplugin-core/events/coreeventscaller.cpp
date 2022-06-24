@@ -23,18 +23,19 @@
 #include "coreeventscaller.h"
 #include "utils/corehelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "services/filemanager/sidebar/sidebar_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
 
 void CoreEventsCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)
 {
-    quint64 id = WindowsService::service()->findWindowId(sender);
+    quint64 id = FMWindowsIns.findWindowId(sender);
     Q_ASSERT(id > 0);
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSwitchViewMode, id, int(mode));
@@ -48,12 +49,12 @@ void CoreEventsCaller::sendSelectFiles(quint64 windowId, const QList<QUrl> &file
 void CoreEventsCaller::setSidebarItemVisible(const QUrl &url, bool visible)
 {
     dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::SideBar::EventType::kItemVisibleSetting,
-                                          url, visible);
+                                 url, visible);
 }
 
 void CoreEventsCaller::setSelectionMode(QWidget *sender, const QAbstractItemView::SelectionMode mode)
 {
-    quint64 id = WindowsService::service()->findWindowId(sender);
+    quint64 id = FMWindowsIns.findWindowId(sender);
     Q_ASSERT(id > 0);
     auto func = [id, mode]() {
         dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetSelectionMode, id, mode);
@@ -63,7 +64,7 @@ void CoreEventsCaller::setSelectionMode(QWidget *sender, const QAbstractItemView
 
 void CoreEventsCaller::setEnabledSelectionModes(QWidget *sender, const QList<QAbstractItemView::SelectionMode> &modes)
 {
-    quint64 id = WindowsService::service()->findWindowId(sender);
+    quint64 id = FMWindowsIns.findWindowId(sender);
     Q_ASSERT(id > 0);
 
     auto func = [id, modes] {

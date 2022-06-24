@@ -27,7 +27,7 @@
 #include "events/sidebareventcaller.h"
 #include "events/sidebareventreceiver.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/systempathutil.h"
@@ -80,9 +80,7 @@ void SideBarHelper::removeSideBar(quint64 windowId)
 
 quint64 SideBarHelper::windowId(QWidget *sender)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    return windowService->findWindowId(sender);
+    return FMWindowsIns.findWindowId(sender);
 }
 
 SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QString &group)

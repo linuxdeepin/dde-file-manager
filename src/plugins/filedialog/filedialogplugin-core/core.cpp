@@ -26,19 +26,20 @@
 #include "views/filedialog.h"
 #include "menus/filedialogmenuscene.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
 #include "services/common/menu/menuservice.h"
 
 #include <QDBusError>
 #include <QDBusConnection>
 
-DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
 
 bool Core::start()
 {
-    WindowsService::service()->setCustomWindowCreator([](const QUrl &url) {
+    FMWindowsIns.setCustomWindowCreator([](const QUrl &url) {
         return new FileDialog(url);
     });
 

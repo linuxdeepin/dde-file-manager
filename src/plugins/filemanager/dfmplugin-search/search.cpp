@@ -29,15 +29,15 @@
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/search/searchservice.h"
 #include "services/common/menu/menuservice.h"
 
+#include "dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/dfm_event_defines.h"
-#include "dfm_global_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -55,7 +55,7 @@ void Search::initialize()
 
     subscribeEvent();
 
-    connect(WindowsService::service(), &WindowsService::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
 
 bool Search::start()
@@ -80,7 +80,7 @@ void Search::subscribeEvent()
 
 void Search::onWindowOpened(quint64 windId)
 {
-    auto window = WindowsService::service()->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "Search", "Cannot find window by id");
 
     if (window->workSpace())

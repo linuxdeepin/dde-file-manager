@@ -26,17 +26,17 @@
 #include "deviceproperty/devicepropertydialog.h"
 
 #include "services/common/delegate/delegateservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
+#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
-#include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/framework.h>
 
@@ -200,9 +200,7 @@ QUrl ComputerUtils::makeBurnUrl(const QString &id)
 
 quint64 ComputerUtils::getWinId(QWidget *widget)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto winServ = ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
-    return winServ->findWindowId(widget);
+    return FMWindowsIns.findWindowId(widget);
 }
 
 bool ComputerUtils::isPresetSuffix(const QString &suffix)

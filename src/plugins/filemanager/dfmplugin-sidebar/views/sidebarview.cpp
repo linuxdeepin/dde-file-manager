@@ -26,7 +26,7 @@
 #include "utils/fileoperatorhelper.h"
 #include "utils/sidebarhelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -72,7 +72,7 @@ void SideBarViewPrivate::notifyOrderChanged()
         return;
 
     QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
-        quint64 winId = DSB_FM_NAMESPACE::WindowsService::service()->findWindowId(q);
+        quint64 winId = FMWindowsIns.findWindowId(q);
         dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_SidebarSorted", winId, draggedGroup);
         SideBarHelper::updateSideBarSelection(winId);
         draggedGroup = "";

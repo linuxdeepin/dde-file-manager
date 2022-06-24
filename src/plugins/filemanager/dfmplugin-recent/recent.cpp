@@ -52,7 +52,7 @@ void Recent::initialize()
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
     DSC_NAMESPACE::MenuService::service()->registerScene(RecentMenuCreator::name(), new RecentMenuCreator());
 
-    connect(RecentManager::winServIns(), &WindowsService::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
     RecentManager::instance();
@@ -93,7 +93,7 @@ void Recent::onRecentDisplayChanged(bool enabled)
 
 void Recent::onWindowOpened(quint64 windId)
 {
-    auto window = RecentManager::winServIns()->findWindowById(windId);
+    auto window = FMWindowsIns.findWindowById(windId);
     Q_ASSERT_X(window, "Recent", "Cannot find window by id");
     if (window->titleBar())
         regRecentCrumbToTitleBar();

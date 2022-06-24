@@ -22,7 +22,6 @@
 #include "core.h"
 #include "events/coreeventreceiver.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/command/commandservice.h"
 #include "services/common/menu/menuservice.h"
 
@@ -36,7 +35,7 @@
 #include "dfm-base/file/local/localdiriterator.h"
 #include "dfm-base/file/local/localfilewatcher.h"
 #include "dfm-base/utils/clipboard.h"
-#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/dpf.h>
@@ -51,18 +50,12 @@ DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
-static WindowsService *windowService { nullptr };
 static Application *kDFMApp { nullptr };
 }   // namespace GlobalPrivate
 
 void Core::initialize()
 {
     QString errStr;
-    auto &ctx = dpfInstance.serviceContext();
-    if (!ctx.load(WindowsService::name(), &errStr)) {
-        qCritical() << errStr;
-        abort();
-    }
 
     // 注册路由
     UrlRoute::regScheme(Global::Scheme::kFile, "/");
@@ -78,13 +71,6 @@ bool Core::start()
 {
     qDebug() << __PRETTY_FUNCTION__;
     GlobalPrivate::kDFMApp = new Application;   // must create it
-    auto &ctx = dpfInstance.serviceContext();
-    qInfo() << "import service list" << ctx.services();
-    GlobalPrivate::windowService = ctx.service<WindowsService>(WindowsService::name());
-    if (!GlobalPrivate::windowService) {
-        qCritical() << "Failed, init window \"windowService\" is empty";
-        abort();
-    }
 
     // mount business
     if (!DevProxyMng->connectToService()) {

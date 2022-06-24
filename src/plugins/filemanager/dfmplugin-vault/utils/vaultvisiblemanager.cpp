@@ -89,7 +89,7 @@ void VaultVisibleManager::infoRegister()
 void VaultVisibleManager::pluginServiceRegister()
 {
     if (!serviceRegisterState) {
-        connect(ServiceManager::windowServiceInstance(), &WindowsService::windowOpened, this, &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
+        connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &VaultVisibleManager::onWindowOpened, Qt::DirectConnection);
         VaultEventReceiver::instance()->connectEvent();
         serviceRegisterState = true;
     }
@@ -154,7 +154,7 @@ void VaultVisibleManager::addFileOperations()
 
 void VaultVisibleManager::onWindowOpened(quint64 winID)
 {
-    auto window = ServiceManager::windowServiceInstance()->findWindowById(winID);
+    auto window = FMWindowsIns.findWindowById(winID);
 
     if (window->sideBar())
         addSideBarVaultItem();

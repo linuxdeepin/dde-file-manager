@@ -29,9 +29,10 @@
 
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -62,7 +63,7 @@ void SmbBrowser::initialize()
     DSC_NAMESPACE::MenuService::service()->registerScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
 
     DSB_FM_USE_NAMESPACE
-    connect(WindowsService::service(), &WindowsService::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
 
     connect(dpfListener, &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerSambaPrehandler, Qt::DirectConnection);
 }
@@ -91,7 +92,7 @@ void SmbBrowser::onWindowCreated(quint64 winId)
 void SmbBrowser::onWindowOpened(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     if (window->sideBar())
         addNeighborToSidebar();
     else

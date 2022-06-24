@@ -26,7 +26,7 @@
 #include "utils/sidebarinfocachemananger.h"
 
 #include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -73,7 +73,7 @@ QList<QUrl> SideBarEventReceiver::handleGetGroupItems(quint64 winId, const QStri
 
     SideBarWidget *wid { nullptr };
     for (auto sb : SideBarHelper::allSideBar()) {
-        if (WindowsService::service()->findWindowId(sb) == winId) {
+        if (FMWindowsIns.findWindowId(sb) == winId) {
             wid = sb;
             break;
         }

@@ -26,12 +26,12 @@
 #include "utils/workspacehelper.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/menu/menu_defines.h"
 
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/fileutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/framework.h>
 
@@ -57,7 +57,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
     params[MenuParamKey::kCurrentDir] = view->rootUrl();
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = true;
-    params[MenuParamKey::kWindowId] = WindowsService::service()->findWindowId(view);
+    params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);
 
     if (!scene->initialize(params)) {
         delete scene;
@@ -99,7 +99,7 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
     params[MenuParamKey::kIndexFlags] = QVariant::fromValue(indexFlags);
     params[MenuParamKey::kOnDesktop] = false;
     params[MenuParamKey::kIsEmptyArea] = false;
-    params[MenuParamKey::kWindowId] = WindowsService::service()->findWindowId(view);
+    params[MenuParamKey::kWindowId] = FMWindowsIns.findWindowId(view);
     params = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
 
     if (!scene->initialize(params)) {

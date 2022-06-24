@@ -23,13 +23,15 @@
 #include "detailspacehelper.h"
 #include "views/detailspacewidget.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
+
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/framework.h>
 
 DPDETAILSPACE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 QMap<quint64, DetailSpaceWidget *> DetailSpaceHelper::kDetailSpaceMap {};
 
@@ -46,7 +48,7 @@ void DetailSpaceHelper::addDetailSpace(quint64 windowId)
     QMutexLocker locker(&DetailSpaceHelper::mutex());
     if (!kDetailSpaceMap.contains(windowId)) {
         DetailSpaceWidget *detailSpaceWidget = new DetailSpaceWidget;
-        auto window = WindowsService::service()->findWindowById(windowId);
+        auto window = FMWindowsIns.findWindowById(windowId);
         window->installDetailView(detailSpaceWidget);
         kDetailSpaceMap.insert(windowId, detailSpaceWidget);
     }

@@ -23,19 +23,20 @@
 #include "computereventcaller.h"
 #include "utils/computerutils.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/propertydialog/property_defines.h"
 
-#include "dfm-base/dbusservice/global_server_defines.h"
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/urlroute.h"
-#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 
 #include <QWidget>
 
+DFMBASE_USE_NAMESPACE
 DPCOMPUTER_BEGIN_NAMESPACE
 
 /*!
@@ -49,8 +50,7 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QUrl &url)
         return;
 
     DSB_FM_USE_NAMESPACE
-    auto windowServ = WindowsService::service();
-    quint64 winId = windowServ->findWindowId(sender);
+    quint64 winId = FMWindowsIns.findWindowId(sender);
 
     cdTo(winId, url);
 }

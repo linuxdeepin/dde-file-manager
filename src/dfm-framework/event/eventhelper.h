@@ -184,7 +184,7 @@ template<class T>
 using ReturnType = typename ReturnTypeHelper<T>::type;
 
 /*
- * copy from qobjectdefs_impl.h
+ * copy from qobjectdefs_impl.h and kylinpluginframewrok
  * trick to set the return value of a slot that works even if the signal or the slot returns void
  * to be used like     function(), ApplyReturnValue<ReturnType>(ret.data()urn_value)
  * if function() returns a value, the operator,(T, ApplyReturnValue<ReturnType>) is called, but if it
@@ -245,7 +245,7 @@ struct EventHelper<Result (T::*)(void)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -258,7 +258,7 @@ struct EventHelper<Result (T::*)(Arg1)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 1 && s) {
+        if (args.count() == 1) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>()),
                     ApplyReturnValue<Result>(ret.data());
         }
@@ -266,7 +266,7 @@ struct EventHelper<Result (T::*)(Arg1)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -279,7 +279,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 2 && s) {
+        if (args.count() == 2) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>()),
                     ApplyReturnValue<Result>(ret.data());
@@ -288,7 +288,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -301,7 +301,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 3 && s) {
+        if (args.count() == 3) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>()),
@@ -311,7 +311,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -324,7 +324,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 4 && s) {
+        if (args.count() == 4) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -335,7 +335,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -348,7 +348,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 5 && s) {
+        if (args.count() == 5) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -360,7 +360,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -373,7 +373,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 6 && s) {
+        if (args.count() == 6) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -386,7 +386,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -399,7 +399,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 7 && s) {
+        if (args.count() == 7) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -413,7 +413,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7)>
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -426,7 +426,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 8 && s) {
+        if (args.count() == 8) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -441,7 +441,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8)
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 
@@ -454,7 +454,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
     QVariant invoke(const QVariantList &args)
     {
         QVariant ret = resultGenerator<Result>();
-        if (args.count() == 9 && s) {
+        if (args.count() == 9) {
             emit(s->*f)(args.at(0).value<REMOVE_CONST_REF(Arg1)>(),
                         args.at(1).value<REMOVE_CONST_REF(Arg2)>(),
                         args.at(2).value<REMOVE_CONST_REF(Arg3)>(),
@@ -470,7 +470,7 @@ struct EventHelper<Result (T::*)(Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Arg8,
     }
 
 protected:
-    QPointer<T> s;
+    T *s;
     Func f;
 };
 

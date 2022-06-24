@@ -27,7 +27,6 @@
 #include "views/titlebarwidget.h"
 
 #include "services/filemanager/titlebar/titlebar_defines.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/search/searchservice.h"
 
@@ -38,6 +37,7 @@
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -75,9 +75,7 @@ void TitleBarHelper::removeTitleBar(quint64 windowId)
 
 quint64 TitleBarHelper::windowId(QWidget *sender)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    return windowService->findWindowId(sender);
+    return FMWindowsIns.findWindowId(sender);
 }
 
 QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
@@ -273,9 +271,7 @@ bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
 
 void TitleBarHelper::showSettingsDialog(quint64 windowId)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
+    auto window = FMWindowsIns.findWindowById(windowId);
 
     if (!window) {
         qWarning() << "Invalid window id: " << windowId;
@@ -287,9 +283,7 @@ void TitleBarHelper::showSettingsDialog(quint64 windowId)
 
 void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
+    auto window = FMWindowsIns.findWindowById(windowId);
 
     if (!window || window->property("ConnectToServerDialogShown").toBool())
         return;
@@ -306,9 +300,7 @@ void TitleBarHelper::showConnectToServerDialog(quint64 windowId)
 
 void TitleBarHelper::showUserSharePasswordSettingDialog(quint64 windowId)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
+    auto window = FMWindowsIns.findWindowById(windowId);
     if (!window || window->property("UserSharePwdSettingDialogShown").toBool()) {
         return;
     }

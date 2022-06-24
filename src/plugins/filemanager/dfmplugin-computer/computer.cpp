@@ -30,19 +30,20 @@
 #include "menu/computermenuscene.h"
 
 #include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/search/searchservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/menu/menuservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
-#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 DSB_FM_USE_NAMESPACE
+DFMBASE_USE_NAMESPACE
 
 DPCOMPUTER_BEGIN_NAMESPACE
 /*!
@@ -68,9 +69,9 @@ void Computer::initialize()
 
     ComputerUnicastReceiver::instance()->connectService();
 
-    connect(WindowsService::service(), &WindowsService::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
-    connect(WindowsService::service(), &WindowsService::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
+    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 
     bindEvents();
 }
@@ -102,7 +103,7 @@ void Computer::onWindowCreated(quint64 winId)
 
 void Computer::onWindowOpened(quint64 winId)
 {
-    auto window = WindowsService::service()->findWindowById(winId);
+    auto window = FMWindowsIns.findWindowById(winId);
     Q_ASSERT_X(window, "Computer", "Cannot find window by id");
 
     auto regSortAndQueryItems = [] {

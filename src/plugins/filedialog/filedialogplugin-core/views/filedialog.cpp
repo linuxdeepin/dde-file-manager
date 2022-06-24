@@ -26,7 +26,6 @@
 #include "utils/corehelper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/delegate/delegateservice.h"
 
@@ -34,6 +33,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <DDialog>
 #include <DPlatformWindowHandle>
@@ -186,7 +186,7 @@ void FileDialog::cd(const QUrl &url)
     DSB_FM_USE_NAMESPACE
     FileManagerWindow::cd(url);
 
-    auto window = WindowsService::service()->findWindowById(this->internalWinId());
+    auto window = FMWindowsIns.findWindowById(this->internalWinId());
     if (!window)
         return;
 

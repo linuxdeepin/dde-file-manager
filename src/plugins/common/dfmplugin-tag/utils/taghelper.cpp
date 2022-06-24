@@ -23,6 +23,8 @@
 #include "tagmanager.h"
 #include "widgets/tageditor.h"
 
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
 #include <QMap>
 #include <QVector>
 #include <QPainter>
@@ -252,18 +254,6 @@ QUrl TagHelper::redirectTagUrl(const QUrl &url)
         return url;
 
     return QUrl::fromLocalFile(url.fragment(QUrl::FullyDecoded));
-}
-
-WindowsService *TagHelper::winServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WindowsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WindowsService>(DSB_FM_NAMESPACE::WindowsService::name());
 }
 
 TitleBarService *TagHelper::titleServIns()

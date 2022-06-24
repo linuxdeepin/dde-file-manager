@@ -22,10 +22,10 @@
 */
 #include "corehelper.h"
 
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/framework.h>
 
@@ -33,15 +33,12 @@
 #include <QProcess>
 
 DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void CoreHelper::cd(quint64 windowId, const QUrl &url)
 {
     Q_ASSERT(url.isValid());
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    auto window = windowService->findWindowById(windowId);
+    auto window = FMWindowsIns.findWindowById(windowId);
 
     if (!window) {
         qWarning() << "Invalid window id: " << windowId;
@@ -63,7 +60,5 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
 
 void CoreHelper::openNewWindow(const QUrl &url)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    auto windowService = ctx.service<WindowsService>(WindowsService::name());
-    windowService->showWindow(url, true);
+    FMWindowsIns.showWindow(url, true);
 }

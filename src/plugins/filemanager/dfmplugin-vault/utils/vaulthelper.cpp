@@ -34,7 +34,6 @@
 #include "dbus/vaultdbusutils.h"
 
 #include "services/common/delegate/delegateservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
@@ -42,6 +41,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/framework.h>
 #include <dfm-io/dfmio_utils.h>

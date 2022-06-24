@@ -27,9 +27,10 @@
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
-#include "services/filemanager/windows/windowsservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
+
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QObject>
 DPVAULT_BEGIN_NAMESPACE
@@ -43,8 +44,6 @@ public:
     static DSB_FM_NAMESPACE::FileEncryptService *fileEncryptServiceInstance();
 
     static DSB_FM_NAMESPACE::SideBarService *sideBarServiceInstance();
-
-    static DSB_FM_NAMESPACE::WindowsService *windowServiceInstance();
 
     static DSB_FM_NAMESPACE::TitleBarService *titleBarServiceInstance();
 
