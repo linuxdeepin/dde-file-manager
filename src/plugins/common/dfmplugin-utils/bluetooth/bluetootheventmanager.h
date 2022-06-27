@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class BluetoothEventManager : public QObject
 {
@@ -45,6 +45,6 @@ private:
     explicit BluetoothEventManager(QObject *parent = nullptr);
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // BLUETOOTHEVENTMANAGER_H

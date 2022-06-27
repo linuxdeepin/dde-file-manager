@@ -28,7 +28,7 @@
 #include <QButtonGroup>
 #include <QUrl>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 class OpenWithWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -51,5 +51,5 @@ private:
     QButtonGroup *openWithBtnGroup { nullptr };
     QUrl currentFileUrl;
 };
-DPUTILS_END_NAMESPACE
+}
 #endif   // OPENWITHWIDGET_H

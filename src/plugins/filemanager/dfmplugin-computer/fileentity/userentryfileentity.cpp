@@ -29,7 +29,7 @@
 
 #include <QDebug>
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 /*!
  * \class UserEntryFileEntity

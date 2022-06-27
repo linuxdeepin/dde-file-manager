@@ -33,7 +33,7 @@
  * @date 13.1.2013
  */
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DesktopFile
 {
@@ -69,6 +69,6 @@ private:
     bool hidden = false;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DESKTOPFILE_H

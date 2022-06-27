@@ -39,7 +39,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DArrowLineDrawer;
 DWIDGET_END_NAMESPACE
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class DFMRoundBackground : public QObject
 {
@@ -94,5 +94,5 @@ private:
     QList<QWidget *> extendedControl {};
     QUrl currentFileUrl {};
 };
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // DEVICEPROPERTYVIEW_H

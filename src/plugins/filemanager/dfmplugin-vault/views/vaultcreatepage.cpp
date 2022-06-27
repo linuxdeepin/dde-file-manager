@@ -34,7 +34,7 @@
 #include <QHBoxLayout>
 #include <QMouseEvent>
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 VaultActiveView::VaultActiveView(QWidget *parent)
     : VaultPageBase(parent)
 {

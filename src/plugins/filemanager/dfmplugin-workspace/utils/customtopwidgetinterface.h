@@ -32,7 +32,7 @@ QT_BEGIN_NAMESPACE
 class QWidget;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 using DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback;
 using DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback;
@@ -56,5 +56,5 @@ private:
     ShowTopWidgetCallback showTopWidgetFunc;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 #endif   // CUSTOMTOPWIDGETINTERFACE_H

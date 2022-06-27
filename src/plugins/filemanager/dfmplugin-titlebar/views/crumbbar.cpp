@@ -44,7 +44,7 @@
 #include <QMouseEvent>
 #include <QUrlQuery>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 

@@ -31,7 +31,7 @@
 #include <QDebug>
 #include <QMenu>
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 static constexpr char k3rdSortBy[] { "sort-by" };

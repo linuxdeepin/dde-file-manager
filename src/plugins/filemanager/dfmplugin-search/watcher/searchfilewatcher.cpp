@@ -29,7 +29,7 @@
 #include <algorithm>
 
 DSB_FM_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 SearchFileWatcherPrivate::SearchFileWatcherPrivate(const QUrl &fileUrl, SearchFileWatcher *qq)
     : AbstractFileWatcherPrivate(fileUrl, qq)
@@ -131,4 +131,4 @@ void SearchFileWatcher::onFileRenamed(const QUrl &fromUrl, const QUrl &toUrl)
     emit fileRename(fromUrl, isMatched ? toUrl : QUrl());
 }
 
-DPSEARCH_END_NAMESPACE
+}

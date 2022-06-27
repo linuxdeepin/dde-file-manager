@@ -34,7 +34,7 @@
 #define DFMGLOBAL_END_NAMESPACE }
 #define DFMGLOBAL_USE_NAMESPACE using namespace DFMGLOBAL_NAMESPACE;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 namespace Global {
 enum class ViewMode {
     kNoneMode = 0x00,
@@ -174,7 +174,7 @@ inline constexpr char kGvfsRoot[] { R"(^/run/user/.*/gvfs/|^/root/.gvfs/)" };
 
 }   //namespace Global
 
-DFMBASE_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::CreateFileType);
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::Global::OperatorCallback);

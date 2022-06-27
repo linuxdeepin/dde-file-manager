@@ -29,7 +29,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractFrame;
 class FileManagerWindowPrivate;
@@ -102,6 +102,6 @@ private:
     QScopedPointer<FileManagerWindowPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // FILEMANAGERWINDOW_H

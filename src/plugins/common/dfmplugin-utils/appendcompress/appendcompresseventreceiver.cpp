@@ -28,7 +28,7 @@
 #include <QDropEvent>
 #include <QMimeData>
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 Q_DECLARE_METATYPE(const QMimeData *)
 Q_DECLARE_METATYPE(Qt::DropAction *)

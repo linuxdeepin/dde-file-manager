@@ -33,7 +33,7 @@
 
 #include <libmount.h>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 using namespace GlobalServerDefines::DeviceProperty;
 
 QString DeviceUtils::getBlockDeviceId(const QString &deviceDesc)

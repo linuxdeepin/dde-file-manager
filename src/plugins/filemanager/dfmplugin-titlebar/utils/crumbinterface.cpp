@@ -25,7 +25,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 
 CrumbInterface::CrumbInterface(QObject *parent)

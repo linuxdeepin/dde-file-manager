@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <QApplication>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DCORE_USE_NAMESPACE
 
 static constexpr char kCfgAppId[] { "dde-file-manager" };

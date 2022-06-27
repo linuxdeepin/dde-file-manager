@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class Settings;
 class ApplicationPrivate;
@@ -130,6 +130,6 @@ private:
     QScopedPointer<ApplicationPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // APPLICATION_H

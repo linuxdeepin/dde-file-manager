@@ -37,7 +37,7 @@
 #include <QWidget>
 
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 /*!
  * \brief ComputerEventCaller::cdTo
@@ -134,4 +134,4 @@ void ComputerEventCaller::sendErase(const QString &dev)
     dpfSlotChannel->push("dfmplugin_burn", "slot_Erase", dev);
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

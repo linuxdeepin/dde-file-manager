@@ -31,7 +31,7 @@
 /**
  * @brief 蓝牙连接的终端设备，例如含有蓝牙模块的手机/电脑
  */
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class BluetoothDevice : public QObject
 {
@@ -84,5 +84,5 @@ private:
     bool trusted;   // 是否信任该设备
     State state;
 };
-DPUTILS_END_NAMESPACE
+}
 #endif   // BLUETOOTHDEVICE_H

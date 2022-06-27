@@ -24,7 +24,7 @@
 
 #include "views/fileviewitem.h"
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileViewItem;
 class FileViewItemPrivate : public QSharedData
@@ -41,6 +41,6 @@ public:
     }
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEWITEM_P_H

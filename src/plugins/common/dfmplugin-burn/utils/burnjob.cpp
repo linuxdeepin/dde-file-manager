@@ -45,7 +45,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
 DFM_BURN_USE_NS
 using namespace GlobalServerDefines;

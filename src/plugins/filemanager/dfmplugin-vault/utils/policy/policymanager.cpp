@@ -25,7 +25,7 @@
 
 #include <QDBusConnection>
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 PolicyManager::VaultPageMark PolicyManager::recordVaultPageMark;
 bool PolicyManager::vaultVisiable = true;
 PolicyManager::PolicyManager(QObject *parent)

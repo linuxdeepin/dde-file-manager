@@ -26,7 +26,7 @@
 
 #include "dfm-base/base/standardpaths.h"
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 /*!
  * \class StashedProtocolEntryFileEntity

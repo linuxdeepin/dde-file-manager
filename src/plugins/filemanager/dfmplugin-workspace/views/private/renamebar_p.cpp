@@ -29,7 +29,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 RenameBarPrivate::RenameBarPrivate(RenameBar *const qPtr)
     : q_ptr(qPtr)

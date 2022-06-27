@@ -26,7 +26,7 @@
 
 #include <QMimeDatabase>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class MimeDatabase
 {
@@ -77,6 +77,6 @@ public:
     static QList<QMimeType> allMimeTypes();
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // MIMEDATABASE_H

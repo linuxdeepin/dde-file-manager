@@ -22,7 +22,7 @@
 #include "crumbmodel.h"
 #include "dtkwidget_global.h"
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
 
 CrumbModel::CrumbModel(QObject *parent)

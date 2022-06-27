@@ -28,7 +28,7 @@
 #include <QMutex>
 #include <QMap>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class WatcherCachePrivate
 {
     friend class WatcherCache;
@@ -40,6 +40,6 @@ public:
     explicit WatcherCachePrivate(WatcherCache *qq);
     virtual ~WatcherCachePrivate();
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // WATCHERCACHE_P_H

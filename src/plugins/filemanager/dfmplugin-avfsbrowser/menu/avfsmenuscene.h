@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsMenuSceneCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -61,6 +61,6 @@ private:
     QScopedPointer<AvfsMenuScenePrivate> d;
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSMENUSCENE_H

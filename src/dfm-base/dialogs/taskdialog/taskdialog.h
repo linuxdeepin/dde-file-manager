@@ -37,7 +37,7 @@ class QListWidgetItem;
 class QMutex;
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class TaskWidget;
 class TaskDialog : public DAbstractDialog
 {
@@ -75,6 +75,6 @@ private:
     static int kMaxHeight;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // TASKDIALOG_H

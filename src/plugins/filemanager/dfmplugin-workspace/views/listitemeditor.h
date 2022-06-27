@@ -7,7 +7,7 @@
 
 #include <QLineEdit>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class ListItemEditor : public QLineEdit
 {
@@ -49,5 +49,5 @@ private:
     int theMaxCharSize = INT_MAX;
     DTK_WIDGET_NAMESPACE::DArrowRectangle *tooltip = nullptr;
 };
-DPWORKSPACE_END_NAMESPACE
+}
 #endif   // LISTITEMEDITOR_H

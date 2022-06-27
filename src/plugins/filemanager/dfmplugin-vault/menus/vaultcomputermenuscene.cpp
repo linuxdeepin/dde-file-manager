@@ -28,7 +28,7 @@
 
 #include <QMenu>
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *VaultComputerMenuCreator::create()

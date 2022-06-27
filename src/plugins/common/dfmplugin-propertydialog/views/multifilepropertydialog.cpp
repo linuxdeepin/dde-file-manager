@@ -31,7 +31,7 @@
 
 DFMBASE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 MultiFilePropertyDialog::MultiFilePropertyDialog(const QList<QUrl> &urls, QWidget *const parent)
     : DDialog(parent), urlList(urls)

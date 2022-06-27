@@ -38,7 +38,7 @@
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 AdvanceSearchBarPrivate::AdvanceSearchBarPrivate(AdvanceSearchBar *qq)
     : DBoxWidget(QBoxLayout::LeftToRight, qq),
@@ -437,4 +437,4 @@ void AdvanceSearchBar::hideEvent(QHideEvent *event)
     QScrollArea::hideEvent(event);
 }
 
-DPSEARCH_END_NAMESPACE
+}

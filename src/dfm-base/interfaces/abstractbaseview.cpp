@@ -24,7 +24,7 @@
 
 #include "widgets/dfmwindow/filemanagerwindow.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 /*!
  * \class BaseView
@@ -81,4 +81,4 @@ void AbstractBaseView::notifySelectUrlChanged(const QList<QUrl> &urlList)
         emit w->selectUrlChanged(urlList);
 }
 
-DFMBASE_END_NAMESPACE
+}

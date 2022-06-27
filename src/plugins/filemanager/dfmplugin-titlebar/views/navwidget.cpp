@@ -25,7 +25,7 @@
 
 #include <QAbstractButton>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 
 NavWidgetPrivate::NavWidgetPrivate(NavWidget *qq)
     : QObject(qq), q(qq)

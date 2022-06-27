@@ -42,7 +42,7 @@ using namespace PolkitQt1;
 
 DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 constexpr int kKeyVerifyDeleteBtn = 1;
 constexpr int kPassWordDeleteBtn = 2;
 VaultRemovePages::VaultRemovePages(QWidget *parent)

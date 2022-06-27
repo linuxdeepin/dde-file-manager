@@ -32,7 +32,7 @@
 
 #define BluetoothManagerInstance BluetoothManager::instance()
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class BluetoothAdapter;
 class BluetoothManagerPrivate;
@@ -77,6 +77,6 @@ private:
 
     Q_DECLARE_PRIVATE(BluetoothManager)
 };
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // BLUETOOTHMANAGER_H

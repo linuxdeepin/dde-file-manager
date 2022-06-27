@@ -40,7 +40,7 @@
 #include <QPainterPath>
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static constexpr int kMsgLabelWidth { 350 };
 static constexpr int kSpeedLabelWidth = { 100 };

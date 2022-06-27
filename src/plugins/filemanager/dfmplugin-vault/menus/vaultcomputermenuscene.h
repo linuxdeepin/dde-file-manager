@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 
 class VaultComputerMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -59,6 +59,6 @@ private:
     QScopedPointer<VaultComputerMenuScenePrivate> d;
 };
 
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULTCOMPUTERMENUSCENE_H

@@ -26,7 +26,7 @@
 #include "interfaces/abstractmenuscene.h"
 #include "interfaces/abstractscenecreator.h"
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -56,5 +56,5 @@ private:
     QScopedPointer<SearchMenuScenePrivate> d;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 #endif   // SEARCHMENUSCENE_H

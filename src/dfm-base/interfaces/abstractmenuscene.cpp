@@ -20,7 +20,7 @@
  */
 #include "private/abstractmenuscene_p.h"
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 AbstractMenuScenePrivate::AbstractMenuScenePrivate(AbstractMenuScene *qq)
     : QObject(qq)

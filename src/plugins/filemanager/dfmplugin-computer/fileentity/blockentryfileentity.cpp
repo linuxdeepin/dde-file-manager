@@ -39,7 +39,7 @@
 #include <QDir>
 
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 namespace IconName {
 static constexpr char kRootBlock[] { "drive-harddisk-root" };

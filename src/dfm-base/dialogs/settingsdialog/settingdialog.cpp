@@ -46,7 +46,7 @@
 #include <QJsonDocument>
 #endif
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 #ifndef ENABLE_QUICK_SEARCH
 namespace {

@@ -29,7 +29,7 @@
 #include <QObject>
 #include <QMap>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class FilePropertyDialogManager : public QObject
 {
     Q_OBJECT
@@ -79,5 +79,5 @@ private:
 
     //    QMap<QUrl, DevicePropertyDialog *> devicePropertyDialogs;
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // FILEPROPERTYDIALOGMANAGER_H

@@ -8,7 +8,7 @@
 #include <dfm-framework/framework.h>
 
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 #define STR1(s) #s
 #define STR2(s) STR1(s)

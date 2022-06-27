@@ -32,11 +32,11 @@
 
 class QDrag;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractBaseView;
-DFMBASE_END_NAMESPACE
+}
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class TabPrivate
 {
@@ -63,6 +63,6 @@ public:
     bool borderLeft = false;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // TABPRIVATE_H

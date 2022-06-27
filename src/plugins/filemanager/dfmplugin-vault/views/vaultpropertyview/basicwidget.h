@@ -30,7 +30,7 @@
 
 #include <QCheckBox>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -67,5 +67,5 @@ private:
     int fSize { 0 };
     int fCount { 0 };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // BASICWIDGET_H

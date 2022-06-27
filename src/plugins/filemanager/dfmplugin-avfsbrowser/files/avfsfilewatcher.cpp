@@ -23,7 +23,7 @@
 #include "avfsfilewatcher.h"
 #include "private/avfsfilewatcher_p.h"
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 
 AvfsFileWatcher::AvfsFileWatcher(const QUrl &url, QObject *parent)
     : AbstractFileWatcher(new AvfsFileWatcherPrivate(url, this))

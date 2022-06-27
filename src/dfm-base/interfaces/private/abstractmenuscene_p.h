@@ -24,7 +24,7 @@
 #include "interfaces/abstractmenuscene.h"
 #include "interfaces/abstractfileinfo.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractMenuScenePrivate : public QObject
 {
@@ -52,5 +52,5 @@ public:
     QMap<QString, QString> predicateName;   // id -- text
 };
 
-DFMBASE_END_NAMESPACE
+}
 #endif   // ABSTRACTMENUSCENE_P_H

@@ -31,7 +31,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 // for first icon item icon AlignCenter...
 class IconItemDelegate : public DStyledItemDelegate
@@ -74,6 +74,6 @@ private:
     void initData();
     void initConnections();
 };
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // CrumbBar_P_H

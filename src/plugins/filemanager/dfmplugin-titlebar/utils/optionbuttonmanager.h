@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QHash>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class OptionButtonManager : public QObject
 {
@@ -61,6 +61,6 @@ private:
     OptBtnVisibleStateMap stateMap;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // OPTIONBUTTONMANAGER_H

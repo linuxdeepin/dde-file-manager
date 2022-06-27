@@ -27,11 +27,11 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class DesktopFile;
-DFMBASE_END_NAMESPACE
+}
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 namespace ExtraPropertyName {
 inline constexpr char kExecuteCommand[] { "execute_command" };
@@ -62,5 +62,5 @@ private:
     QUrl fileUrl;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // APPENTRYFILEENTITY_H

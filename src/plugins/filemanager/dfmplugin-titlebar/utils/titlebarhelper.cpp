@@ -45,7 +45,7 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

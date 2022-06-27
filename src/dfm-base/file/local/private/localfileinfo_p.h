@@ -34,7 +34,7 @@
 #include <QMimeType>
 #include <QReadWriteLock>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileInfoPrivate : public AbstractFileInfoPrivate
 {
     friend class LocalFileInfo;
@@ -155,7 +155,7 @@ QMimeType LocalFileInfoPrivate::readMimeType(QMimeDatabase::MatchMode mode) cons
                                              mode);
 }
 
-DFMBASE_END_NAMESPACE
+}
 Q_DECLARE_METATYPE(DFMBASE_NAMESPACE::LocalFileInfoPrivate *)
 
 #endif   // LOCALFILEINFO_P_H

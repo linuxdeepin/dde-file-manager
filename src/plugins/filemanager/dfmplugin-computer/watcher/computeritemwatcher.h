@@ -34,12 +34,12 @@
 
 #define ComputerItemWatcherInstance DPCOMPUTER_NAMESPACE::ComputerItemWatcher::instance()
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcher;
-DFMBASE_END_NAMESPACE
+}
 
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 typedef QList<ComputerItemData> ComputerDataList;
 class ComputerItemWatcher : public QObject
 {
@@ -125,5 +125,5 @@ private:
 
     QMap<QUrl, QUrl> routeMapper;
 };
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // COMPUTERITEMWATCHER_H

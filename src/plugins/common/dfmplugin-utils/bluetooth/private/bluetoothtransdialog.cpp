@@ -82,7 +82,7 @@ static constexpr char kNoDeviceDark[] { "://icons/deepin/builtin/dark/icons/dfm_
 
 static constexpr long kFileTransferSizeLimits = 2147483648;   // 2GB = 2 * 1024 * 1024 * 1024 Bytes
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 BluetoothTransDialog::BluetoothTransDialog(const QStringList &urls, QString targetDevId, QWidget *parent)
     : DDialog(parent), urlsWaitToSend(urls), dialogToken(QUuid::createUuid().toString())

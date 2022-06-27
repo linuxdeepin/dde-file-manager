@@ -33,7 +33,7 @@
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 static inline QString parseDecodedComponent(const QString &data)
 {
@@ -221,4 +221,4 @@ SearchHelper::~SearchHelper()
 {
 }
 
-DPSEARCH_END_NAMESPACE
+}

@@ -25,7 +25,7 @@
 #include "dfm-base/dfm_base_global.h"
 
 class QString;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class Subscriber
 {
 public:
@@ -39,6 +39,6 @@ public:
 private:
     int eventKeys { 0 };
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // SUBSCRIBER_H

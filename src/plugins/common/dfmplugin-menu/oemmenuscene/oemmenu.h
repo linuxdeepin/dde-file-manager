@@ -27,7 +27,7 @@
 #include <QAction>
 #include <QScopedPointer>
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class OemMenuPrivate;
 class OemMenu : public QObject
@@ -52,6 +52,6 @@ private:
     Q_DISABLE_COPY(OemMenu)
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // OEMMENU_H

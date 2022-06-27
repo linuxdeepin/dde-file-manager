@@ -23,7 +23,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 void OpenWithEventReceiver::initEventConnect()
 {

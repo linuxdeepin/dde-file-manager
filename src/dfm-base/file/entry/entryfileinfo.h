@@ -27,7 +27,7 @@
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class EntryFileInfoPrivate;
 class EntryFileInfo : public AbstractFileInfo
@@ -87,7 +87,7 @@ private:
     EntryFileInfoPrivate *d = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 typedef QSharedPointer<DFMBASE_NAMESPACE::EntryFileInfo> DFMEntryFileInfoPointer;
 Q_DECLARE_METATYPE(DFMEntryFileInfoPointer)

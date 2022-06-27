@@ -28,7 +28,7 @@
 #include <DDialog>
 #include <DPasswordEdit>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class UserSharePasswordSettingDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
@@ -45,6 +45,6 @@ private:
     QWidget *content;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // USERSHAREPASSWORDSETTINGDIALOG_H

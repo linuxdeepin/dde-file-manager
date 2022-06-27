@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class AppendCompressManager : public QObject
 {
@@ -47,6 +47,6 @@ private:
     QScopedPointer<AppendCompressEventReceiver> eventReceiver { new AppendCompressEventReceiver };
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // APPENDCOMPRESSMANAGER_H

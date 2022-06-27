@@ -38,7 +38,7 @@
 #include <QMimeData>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DragDropHelper::DragDropHelper(FileView *parent)

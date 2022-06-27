@@ -54,7 +54,7 @@
 #include <QApplication>
 #include <QUrlQuery>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

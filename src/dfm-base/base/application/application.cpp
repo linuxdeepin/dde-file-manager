@@ -31,7 +31,7 @@
 #include <QMetaEnum>
 #include <QtConcurrent>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, gsGlobal, ("deepin/dde-file-manager", Settings::kGenericConfig))
 Q_GLOBAL_STATIC_WITH_ARGS(Settings, asGlobal, ("deepin/dde-file-manager/dde-file-manager", Settings::kGenericConfig))
@@ -349,4 +349,4 @@ void Application::onSettingsValueEdited(const QString &group, const QString &key
     d->_q_onSettingsValueEdited(group, key, value);
 }
 
-DFMBASE_END_NAMESPACE
+}

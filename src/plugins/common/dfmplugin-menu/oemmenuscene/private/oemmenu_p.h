@@ -31,7 +31,7 @@
 #include <QSharedPointer>
 #include <QSharedData>
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class OemMenu;
 class OemMenuPrivate : public QSharedData
@@ -82,6 +82,6 @@ public:
     OemMenu *q;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // OEMMENU_P_H

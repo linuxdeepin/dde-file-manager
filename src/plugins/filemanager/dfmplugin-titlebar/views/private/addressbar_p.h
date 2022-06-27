@@ -50,7 +50,7 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 class CrumbInterface;
 class AddressBarPrivate : public QObject
 {
@@ -113,6 +113,6 @@ protected:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   //AddressBar_P_H

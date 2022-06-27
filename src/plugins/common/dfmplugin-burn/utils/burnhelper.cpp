@@ -36,7 +36,7 @@
 #include <QStandardPaths>
 #include <QRegularExpression>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

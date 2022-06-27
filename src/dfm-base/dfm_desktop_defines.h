@@ -23,7 +23,7 @@
 
 #include "dfm-base/dfm_base_global.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 //显示模式
 enum DisplayMode {
@@ -46,6 +46,6 @@ inline constexpr char kPropWidgetName[] = "WidgetName";
 inline constexpr char kPropWidgetLevel[] = "WidgetLevel";
 }
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif // DFM_DESKTOP_DEFINES_H

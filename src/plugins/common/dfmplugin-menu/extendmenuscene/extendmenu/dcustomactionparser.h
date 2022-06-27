@@ -34,7 +34,7 @@
 
 class QFileSystemWatcher;
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class RegisterCustomFormat
 {
@@ -99,6 +99,6 @@ private:
 
 #define CustomParserIns DPMENU_NAMESPACE::DCustomActionParser::instance()
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // DCUSTOMACTIONPARSER_H

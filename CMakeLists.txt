@@ -41,6 +41,15 @@ if(NOT DEFINED DFM_PLUGIN_DIR)
     set(DFM_PLUGIN_DIR ${LIB_INSTALL_DIR}/dde-file-manager/plugins)
 endif()
 
+# translate
+if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
+
+    # generate qm
+    execute_process(COMMAND bash "translate_generation.sh"
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+endif()
+
 # sub directories
 add_subdirectory(src/apps)
 add_subdirectory(src/dde-dock-plugins)

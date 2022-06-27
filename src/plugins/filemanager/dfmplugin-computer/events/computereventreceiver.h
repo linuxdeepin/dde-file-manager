@@ -29,7 +29,7 @@
 
 #define ComputerEventReceiverIns DPCOMPUTER_NAMESPACE::ComputerEventReceiver::instance()
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerEventReceiver final : public QObject
 {
@@ -44,6 +44,6 @@ private:
     explicit ComputerEventReceiver(QObject *parent = nullptr);
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTEREVENTRECEIVER_H

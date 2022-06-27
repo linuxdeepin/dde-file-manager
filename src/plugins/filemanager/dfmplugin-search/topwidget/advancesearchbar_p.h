@@ -40,7 +40,7 @@ class QLabel;
 class QComboBox;
 QT_END_NAMESPACE
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class AdvanceSearchBar;
 class AdvanceSearchBarPrivate : public DTK_WIDGET_NAMESPACE::DBoxWidget
@@ -93,6 +93,6 @@ public:
     AdvanceSearchBar *q;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // ADVANCESEARCHBAR_P_H

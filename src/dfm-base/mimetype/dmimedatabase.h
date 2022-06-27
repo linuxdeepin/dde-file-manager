@@ -28,7 +28,7 @@
 
 #include <QMimeDatabase>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DMimeDatabase : public QMimeDatabase
 {
@@ -47,6 +47,6 @@ private:
     QHash<QString, QMimeType> inodMimetypeCache;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DMIMEDATABASE_H

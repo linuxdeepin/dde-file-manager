@@ -23,8 +23,9 @@
 
 #include "computerdatastruct.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 namespace ContextMenuAction {
+
 QString trOpenInNewWin()
 {
     return QObject::tr("Open in new window");
@@ -79,4 +80,4 @@ QString trErase()
 }
 
 }   // namespace ContextMenuActionTrs
-DPCOMPUTER_END_NAMESPACE
+}

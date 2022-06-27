@@ -35,7 +35,7 @@ class QToolButton;
 class QHBoxLayout;
 
 DSB_FM_USE_NAMESPACE
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 using DFMBASE_NAMESPACE::Global::ViewMode;
 class OptionButtonBox;
@@ -66,6 +66,6 @@ private:
 
     ViewMode currentMode { ViewMode::kIconMode };
 };
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // OPTIONBUTTONBOX_P_H

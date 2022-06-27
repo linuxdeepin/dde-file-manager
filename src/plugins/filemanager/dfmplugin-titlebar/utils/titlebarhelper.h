@@ -31,7 +31,7 @@
 #include <QWidget>
 #include <QMenu>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 using DSB_FM_NAMESPACE::TitleBar::CrumbData;
 
@@ -63,6 +63,6 @@ private:
     static QMap<quint64, TitleBarWidget *> kTitleBarMap;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBARHELPER_H

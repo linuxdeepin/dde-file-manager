@@ -24,7 +24,7 @@
 
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 ServiceManager::ServiceManager(QObject *parent)
     : QObject(parent)
 {

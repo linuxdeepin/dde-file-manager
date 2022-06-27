@@ -43,7 +43,7 @@ class DWaterProgress;
 class DLabel;
 DWIDGET_END_NAMESPACE
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultActiveFinishedView : public QWidget
 {
     Q_OBJECT
@@ -88,5 +88,5 @@ private:
     //! 辅助进度条，实现加密过程效果
     QTimer *timer { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTACTIVEFINISHEDVIEW_H

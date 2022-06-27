@@ -29,7 +29,7 @@
 #include <QMenu>
 
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 HeaderView::HeaderView(Qt::Orientation orientation, FileView *parent)
     : QHeaderView(orientation, parent),

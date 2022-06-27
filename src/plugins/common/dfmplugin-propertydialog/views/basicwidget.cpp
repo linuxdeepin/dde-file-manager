@@ -38,7 +38,7 @@ DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 CPY_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 BasicWidget::BasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)

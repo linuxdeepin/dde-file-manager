@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class PropertyEventReceiver : public QObject
 {
     Q_OBJECT
@@ -43,5 +43,5 @@ signals:
 public slots:
     void showPropertyControl(const QList<QUrl> &url);
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // PROPERTYDIALOGEVENTRECEIVER_H

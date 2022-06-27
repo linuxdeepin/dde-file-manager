@@ -27,7 +27,7 @@
 #include <QStandardPaths>
 #include <QMap>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 /*!
  * \class StandardPaths 基础路径提供类
  *
@@ -374,4 +374,4 @@ QString StandardPaths::iconName(const QString &dirName)
 StandardPaths::StandardPaths()
 {
 }
-DFMBASE_END_NAMESPACE
+}

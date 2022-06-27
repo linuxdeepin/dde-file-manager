@@ -23,7 +23,7 @@
 
 #include "bluetoothdevice.h"
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 BluetoothDevice::BluetoothDevice(QObject *parent)
     : QObject(parent), paired(false), trusted(false), state(kStateUnavailable)

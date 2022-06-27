@@ -25,7 +25,7 @@
 #include <QObject>
 #include <QUrl>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 class OpenWithHelper : public QObject
 {
     Q_OBJECT
@@ -38,5 +38,5 @@ signals:
 
 public slots:
 };
-DPUTILS_END_NAMESPACE
+}
 #endif   // OPENWITHHELPER_H

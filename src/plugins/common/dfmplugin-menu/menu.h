@@ -32,7 +32,7 @@ namespace dfm_service_common {
 class MenuService;
 }
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class Menu : public dpf::Plugin
 {
@@ -57,6 +57,6 @@ private:
     dfm_service_common::MenuService *menuServer = nullptr;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // MENU_H

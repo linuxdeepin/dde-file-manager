@@ -28,7 +28,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 void dfmplugin_search::SearchEventCaller::sendChangeCurrentUrl(quint64 winId, const QUrl &url)
 {
@@ -60,4 +60,4 @@ void SearchEventCaller::sendStopSpinner(quint64 winId)
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_StopSpinner", winId);
 }
 
-DPSEARCH_END_NAMESPACE
+}

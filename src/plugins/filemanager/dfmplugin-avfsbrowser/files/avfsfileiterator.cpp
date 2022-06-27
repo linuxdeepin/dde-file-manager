@@ -26,7 +26,7 @@
 
 #include <QDebug>
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 AvfsFileIterator::AvfsFileIterator(const QUrl &url, const QStringList &nameFilters, QDir::Filters filters, QDirIterator::IteratorFlags flags)

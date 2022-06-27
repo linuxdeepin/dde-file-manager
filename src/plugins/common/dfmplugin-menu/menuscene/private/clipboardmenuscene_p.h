@@ -24,17 +24,17 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 DFMBASE_USE_NAMESPACE
 
 class ClipBoardMenuScenePrivate : public AbstractMenuScenePrivate
 {
-
+    Q_OBJECT
 public:
     friend class ClipBoardMenuScene;
     explicit ClipBoardMenuScenePrivate(AbstractMenuScene *qq);
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // CLIPBOARDMENUSCENE_P_H

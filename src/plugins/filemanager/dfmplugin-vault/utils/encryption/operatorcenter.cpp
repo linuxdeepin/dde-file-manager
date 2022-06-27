@@ -34,7 +34,7 @@
 #include <QtGlobal>
 #include <QProcess>
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent), strCryfsPassword(""), strUserKey(""), standOutput("")
 {

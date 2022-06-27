@@ -26,7 +26,7 @@
 #include "interfaces/private/abstractfileinfo_p.h"
 
 DFMBASE_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchFileInfoPrivate : public AbstractFileInfoPrivate
 {
@@ -35,6 +35,6 @@ public:
     virtual ~SearchFileInfoPrivate();
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHFILEINFO_P_H

@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class Utils : public DPF_NAMESPACE::Plugin
 {
@@ -77,6 +77,6 @@ public:
     virtual bool start() override;
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // UTILS_H

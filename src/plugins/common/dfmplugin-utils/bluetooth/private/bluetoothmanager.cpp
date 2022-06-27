@@ -39,7 +39,7 @@
 #define ControlcenterPath "/com/deepin/dde/ControlCenter"
 #define ControlcenterInterface "com.deepin.dde.ControlCenter"
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 BluetoothManagerPrivate::BluetoothManagerPrivate(BluetoothManager *qq)
     : QObject(qq),

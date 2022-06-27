@@ -38,7 +38,7 @@
 #include <fts.h>
 #include <sys/stat.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 static constexpr uint16_t kSizeChangeinterval { 200 };
 
@@ -557,4 +557,4 @@ void FileStatisticsJob::statistcsExtFileSystem()
     d->setState(kStoppedState);
 }
 
-DFMBASE_END_NAMESPACE
+}

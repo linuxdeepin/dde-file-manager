@@ -27,7 +27,7 @@
 #include <QDir>
 #include <QRegularExpression>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 QHash<QString, SchemeNode> UrlRoute::kSchemeInfos {};
 QMultiMap<int, QString> UrlRoute::kSchemeRealTree {};
@@ -411,4 +411,4 @@ QString SchemeNode::displayName() const
     return name;
 }
 
-DFMBASE_END_NAMESPACE
+}

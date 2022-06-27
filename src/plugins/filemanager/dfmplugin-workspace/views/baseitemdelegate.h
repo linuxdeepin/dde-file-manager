@@ -31,7 +31,7 @@ QT_BEGIN_NAMESPACE
 class QTextLayout;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileViewHelper;
 class FileView;
@@ -154,6 +154,6 @@ protected:
     Q_DECLARE_PRIVATE_D(d, BaseItemDelegate)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // BASEITEMDELEGATE_H

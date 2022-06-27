@@ -26,7 +26,7 @@
 
 #include <QLineEdit>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class AddressBarPrivate;
 class AddressBar : public QLineEdit
@@ -69,6 +69,6 @@ public slots:
     void stopSpinner();
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   //AddressBar_H

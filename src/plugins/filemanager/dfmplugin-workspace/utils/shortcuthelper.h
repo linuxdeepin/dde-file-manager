@@ -28,7 +28,7 @@
 #include <QKeySequence>
 #include <QKeyEvent>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class ShortcutHelper : public QObject
@@ -63,6 +63,6 @@ private:
     FileView *view { nullptr };
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // SHORTCUTHELPER_H

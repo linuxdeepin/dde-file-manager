@@ -47,7 +47,7 @@ static constexpr char kBurnUsedSize[] { "BurnUsedSize" };
 static constexpr char kBurnMediaType[] { "BurnMediaType" };
 static constexpr char kBurnWriteSpeed[] { "BurnWriteSpeed" };
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DFM_MOUNT_USE_NS
 
 DevPtr DeviceHelper::createDevice(const QString &devId, dfmmount::DeviceType type)

@@ -40,7 +40,7 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 static constexpr char kViewShortcutKey[] = "_view_shortcut_key";
 static constexpr char kCurrentEventSpace[] = { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };

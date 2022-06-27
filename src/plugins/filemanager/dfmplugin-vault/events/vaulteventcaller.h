@@ -25,7 +25,7 @@
 
 #include <QUrl>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultEventCaller
 {
     VaultEventCaller() = delete;
@@ -38,5 +38,5 @@ public:
     static void sendBookMarkDisabled(const QString scheme);
     static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //VAULTEVENTCALLER_H

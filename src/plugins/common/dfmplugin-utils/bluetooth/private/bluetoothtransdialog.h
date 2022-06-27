@@ -44,7 +44,7 @@ class QStandardItemModel;
 class QStackedWidget;
 QT_END_NAMESPACE
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class BluetoothDevice;
 class BluetoothAdapter;
@@ -130,6 +130,6 @@ private:
     QStringList connectedAdapters;
     QString dialogToken;   // 用于标识当前对话框ID
 };
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // BLUETOOTHTRANSDIALOG_H

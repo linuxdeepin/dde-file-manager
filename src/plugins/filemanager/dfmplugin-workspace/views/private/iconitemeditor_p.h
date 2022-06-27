@@ -29,7 +29,7 @@
 class QTextEdit;
 
 DWIDGET_USE_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class IconItemEditor;
 class IconItemEditorPrivate
@@ -54,4 +54,4 @@ public:
     IconItemEditor *q_ptr;
     Q_DECLARE_PUBLIC(IconItemEditor)
 };
-DPWORKSPACE_END_NAMESPACE
+}

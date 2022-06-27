@@ -66,7 +66,7 @@ inline QByteArray dataToMd5Hex(const QByteArray &data)
     return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
 }
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DThumbnailProviderPrivate
 {
@@ -107,9 +107,9 @@ class DFileThumbnailProviderPrivate : public DThumbnailProvider
 {
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 QSet<QString> DThumbnailProviderPrivate::hasThumbnailMimeHash;
 Q_GLOBAL_STATIC(DFileThumbnailProviderPrivate, ftpGlobal)

@@ -33,12 +33,12 @@
 
 #include <DListView>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class EntryFileInfo;
-DFMBASE_END_NAMESPACE
+}
 
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerModel;
 class ComputerViewPrivate;
@@ -92,5 +92,5 @@ private:
     QScopedPointer<ComputerViewPrivate> dp;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // COMPUTERVIEW_H

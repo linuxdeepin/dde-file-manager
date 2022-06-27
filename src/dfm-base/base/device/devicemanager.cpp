@@ -42,7 +42,7 @@
 #include <dfm-mount/dmount.h>
 #include <mutex>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 DFM_MOUNT_USE_NS
 using namespace GlobalServerDefines;
 

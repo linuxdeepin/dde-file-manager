@@ -35,7 +35,7 @@
 
 using namespace DTK_NAMESPACE::Widget;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class TaskDialog;
 class ComputerPropertyDialog;
@@ -104,7 +104,7 @@ private:
     QIcon errorIcon;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #define DialogManagerInstance DFMBASE_NAMESPACE::DialogManager::instance()
 

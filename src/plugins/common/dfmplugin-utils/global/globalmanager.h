@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class GlobalManager : public QObject
 {
@@ -47,6 +47,6 @@ private:
     QScopedPointer<GlobalEventReceiver> eventReceiver { new GlobalEventReceiver };
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // GLOBALMANAGER_H

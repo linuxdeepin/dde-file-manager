@@ -38,7 +38,7 @@
 #include <QUrl>
 #include <QWaitCondition>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 namespace EventNameSpace {
 inline constexpr char kComputerEventSpace[] { DPF_MACRO_TO_STR(DPCOMPUTER_NAMESPACE) };
@@ -108,6 +108,6 @@ private:
     static QWaitCondition condForCheckGvfs;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTERUTILS_H

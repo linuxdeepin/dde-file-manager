@@ -32,7 +32,7 @@ QT_BEGIN_HEADER
 class QItemSelection;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 class FileView;
 class SelectHelper : public QObject
 {
@@ -58,5 +58,5 @@ private:
     QItemSelection currentSelection;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 #endif   // SELECTHELPER_H

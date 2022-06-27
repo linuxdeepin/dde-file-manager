@@ -30,7 +30,7 @@
 #include <unistd.h>
 
 DCORE_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 QString SysInfoUtils::getUser()
 {

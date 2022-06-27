@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 class OpenWithEventReceiver : public QObject
 {
     Q_OBJECT
@@ -37,5 +37,5 @@ public:
 public:   //! slot event
     void showOpenWithDialog(const QList<QUrl> &urls);
 };
-DPUTILS_END_NAMESPACE
+}
 #endif   // OPENWITHEVENTRECEIVER_H

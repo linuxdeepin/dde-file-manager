@@ -35,7 +35,7 @@ DWIDGET_END_NAMESPACE
 class QComboBox;
 class QCheckBox;
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 
 class PermissionManagerWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
@@ -85,5 +85,5 @@ private:
     int readWriteFlag = 6;
     int readWriteWithXFlag = 7;
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // PERMISSIONMANAGERWIDGET_H

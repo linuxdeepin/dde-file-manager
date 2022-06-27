@@ -29,7 +29,7 @@
 
 class QAction;
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 
 class VaultComputerMenuScene;
 class VaultComputerMenuScenePrivate : DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -41,6 +41,6 @@ public:
     explicit VaultComputerMenuScenePrivate(VaultComputerMenuScene *qq);
 };
 
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULTCOMPUTERMENUSCENE_P_H

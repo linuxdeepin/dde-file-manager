@@ -28,11 +28,11 @@
 #include <QSharedPointer>
 #include <QGraphicsObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractBaseView;
-DFMBASE_END_NAMESPACE
+}
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class TabPrivate;
 class Tab : public QGraphicsObject
@@ -97,6 +97,6 @@ private:
     QSharedPointer<TabPrivate> d;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // TAB_H

@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class FileOperatorMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -41,6 +41,7 @@ public:
 class FileOperatorMenuScenePrivate;
 class FileOperatorMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit FileOperatorMenuScene(QObject *parent = nullptr);
     QString name() const override;
@@ -54,5 +55,5 @@ private:
     FileOperatorMenuScenePrivate *const d = nullptr;
 };
 
-DPMENU_END_NAMESPACE
+}
 #endif   // FILEOPERATORMENUSCENE_H

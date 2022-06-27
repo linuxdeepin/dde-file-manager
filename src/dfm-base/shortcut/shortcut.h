@@ -29,7 +29,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 struct ShortcutItem
 {
@@ -61,5 +61,5 @@ private:
     QList<ShortcutGroup> shortcutGroups;
 };
 
-DFMBASE_END_NAMESPACE
+}
 #endif   // SHORTCUT_H

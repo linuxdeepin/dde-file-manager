@@ -25,7 +25,7 @@
 #include "dfmplugin_computer_global.h"
 #include "views/computerview.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 class ComputerModel;
 class ComputerViewPrivate
 {
@@ -38,5 +38,5 @@ private:
     ComputerView *q { nullptr };
     ComputerModel *model { nullptr };
 };
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // COMPUTERVIEW_P_H

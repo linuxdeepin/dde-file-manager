@@ -31,7 +31,7 @@
 #include <QHBoxLayout>
 #include <QEvent>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 

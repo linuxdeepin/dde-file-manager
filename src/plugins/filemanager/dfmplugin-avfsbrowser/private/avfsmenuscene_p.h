@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsMenuScene;
 class AvfsMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -40,5 +40,5 @@ public:
     explicit AvfsMenuScenePrivate(AvfsMenuScene *qq);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 #endif   // AVFSMENUSCENE_P_H

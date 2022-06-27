@@ -41,7 +41,7 @@ class DLabel;
 DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultRetrievePassword;
 class VaultUnlockPages : public VaultPageBase
 {
@@ -74,5 +74,5 @@ private:
 
     PasswordRecoveryView *passwordRecoveryView { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //!VAULTUNLOCKPAGES_H

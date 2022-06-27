@@ -28,7 +28,7 @@
 #include <QString>
 #include <QMap>
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 namespace DCustomActionDefines {
 // 分割线
@@ -166,6 +166,6 @@ struct FileBasicInfos
 };
 }
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // DCUSTOMACTIONDEFINE_H

@@ -31,7 +31,7 @@
 #include <QLabel>
 
 DWIDGET_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 BasicStatusBar::BasicStatusBar(QWidget *parent)
     : QFrame(parent),

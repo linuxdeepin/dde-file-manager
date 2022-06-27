@@ -43,7 +43,7 @@
 
 DSC_USE_NAMESPACE
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 void Workspace::initialize()
 {

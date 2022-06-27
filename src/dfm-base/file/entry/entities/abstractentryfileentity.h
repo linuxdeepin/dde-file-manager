@@ -31,7 +31,7 @@
 #include <QIcon>
 #include <QDebug>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractEntryFileEntity : public QObject
 {
@@ -89,6 +89,6 @@ public:
     }
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // ENTRYFILEENTITY_H

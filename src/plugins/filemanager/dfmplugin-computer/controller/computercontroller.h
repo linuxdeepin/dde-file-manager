@@ -32,7 +32,7 @@
 
 #define ComputerControllerInstance DPCOMPUTER_NAMESPACE::ComputerController::instance()
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerController : public QObject
 {
@@ -77,6 +77,6 @@ private:
     void waitUDisks2DataReady(const QString &id);
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTERCONTROLLER_H

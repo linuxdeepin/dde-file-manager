@@ -29,7 +29,7 @@
 
 #include <QObject>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerUnicastReceiver : public QObject
 {
@@ -47,6 +47,6 @@ private:
     explicit ComputerUnicastReceiver(QObject *parent = nullptr);
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTERUNICASTRECEIVER_H

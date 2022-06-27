@@ -9,7 +9,7 @@
 
 #include <QScrollArea>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultPropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -48,5 +48,5 @@ private:
     int extendedHeight { 0 };
     DTK_WIDGET_NAMESPACE::DPlatformWindowHandle *platformWindowHandle { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTPROPERTYDIALOG_H

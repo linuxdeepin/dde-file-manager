@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/local/localfileinfo.h"
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
 {
@@ -38,6 +38,6 @@ public:
     virtual QUrl url() const override;
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSFILEINFO_H

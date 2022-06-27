@@ -45,7 +45,7 @@
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 /*!
  * \class Computer
  * \brief the plugin initializer
@@ -53,7 +53,7 @@ DPCOMPUTER_BEGIN_NAMESPACE
 void Computer::initialize()
 {
     DFMBASE_USE_NAMESPACE
-    DPCOMPUTER_USE_NAMESPACE
+    using namespace dfmplugin_computer;
     DSC_USE_NAMESPACE
 
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true, tr("Computer"));
@@ -174,4 +174,4 @@ void Computer::bindEvents()
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::doRemoveDevice);
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

@@ -39,7 +39,7 @@ inline constexpr int kListViewMinimumWidth { 80 };
 inline constexpr int kListViewDefaultWidth { 120 };
 }   // namespace GlobalPrivate
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class ShortcutHelper;
 class FileViewHelper;
@@ -105,6 +105,6 @@ class FileViewPrivate
     void pureResizeEvent(QResizeEvent *event);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEW_P_H

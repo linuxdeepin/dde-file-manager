@@ -32,11 +32,12 @@
 
 #include <QGSettings>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class WorkspaceMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     explicit WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq);
 
@@ -111,6 +112,6 @@ private:
     WorkspaceMenuScene *q;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACEMENUSCENE_P_H

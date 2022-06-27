@@ -37,7 +37,7 @@ Q_DECLARE_METATYPE(QString *)
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPDETAILSPACE_USE_NAMESPACE
+using namespace dfmplugin_detailspace;
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE) };
 

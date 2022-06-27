@@ -31,7 +31,7 @@
 #include <QKeyEvent>
 #include <QHideEvent>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 /*!
  * \class FileManagerWindowPrivate
@@ -384,4 +384,4 @@ void FileManagerWindow::initConnect()
 {
 }
 
-DFMBASE_END_NAMESPACE
+}

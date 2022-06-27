@@ -27,7 +27,7 @@
 
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 #define STR1(s) #s
 #define STR2(s) STR1(s)

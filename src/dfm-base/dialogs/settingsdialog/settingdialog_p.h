@@ -33,9 +33,9 @@
 #include <QVariant>
 
 DCORE_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 template<typename Key, typename T>
 class BidirectionHash
 {
@@ -137,5 +137,5 @@ private:
         { "advance.other.show_filesystemtag_on_diskicon", Application::kShowFileSystemTagOnDiskIcon },
     };
 };
-DFMBASE_END_NAMESPACE
+}
 #endif   // DFMSETTINGDIALOG_P_H

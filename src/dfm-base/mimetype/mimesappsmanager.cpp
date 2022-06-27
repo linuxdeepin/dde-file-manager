@@ -49,7 +49,7 @@ extern "C" {
 }
 #define signals public
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 QStringList MimesAppsManager::DesktopFiles = {};
 QMap<QString, QStringList> MimesAppsManager::MimeApps = {};

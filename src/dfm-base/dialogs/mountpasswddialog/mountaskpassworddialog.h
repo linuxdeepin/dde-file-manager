@@ -38,7 +38,7 @@
 #include <DPasswordEdit>
 #include <DButtonBox>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class MountAskPasswordDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
@@ -85,6 +85,6 @@ private:
     bool domainLineVisible { true };
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // MOUNTASKPASSWORDDIALOG_H

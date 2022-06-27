@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class StashedProtocolEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
@@ -45,6 +45,6 @@ public:
     virtual bool isAccessable() const override;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // STASHEDPROTOCOLENTRYFILEENTITY_H

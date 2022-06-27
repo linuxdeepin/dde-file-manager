@@ -33,7 +33,7 @@
 #include <QItemSelection>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class WorkspaceEventCaller
 {
@@ -62,7 +62,7 @@ public:
     static bool sendEnterFileView(const quint64 &winId, const QUrl &url);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(QPainter *)
 

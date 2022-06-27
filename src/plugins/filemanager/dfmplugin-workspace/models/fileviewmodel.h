@@ -39,7 +39,7 @@
 
 class QAbstractItemView;
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileViewModelPrivate;
 class FileViewModel : public QAbstractItemModel
@@ -114,6 +114,6 @@ signals:
     void selectAndEditFile(const QUrl &url);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEWMODEL_H

@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 
 class PropertyMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -54,6 +54,6 @@ private:
     PropertyMenuScenePrivate *const d = nullptr;
 };
 
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 
 #endif   // PROPERTYMENUSCENE_H

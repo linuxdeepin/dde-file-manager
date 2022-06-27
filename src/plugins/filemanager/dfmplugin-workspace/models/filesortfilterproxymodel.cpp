@@ -29,7 +29,7 @@
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileSortFilterProxyModel::FileSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)

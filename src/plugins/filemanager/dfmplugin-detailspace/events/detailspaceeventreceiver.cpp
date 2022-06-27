@@ -28,7 +28,7 @@
 
 #include <functional>
 
-DPDETAILSPACE_USE_NAMESPACE
+using namespace dfmplugin_detailspace;
 DSB_FM_USE_NAMESPACE
 
 DetailSpaceEventReceiver *DetailSpaceEventReceiver::instance()

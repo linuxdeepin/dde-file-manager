@@ -69,7 +69,7 @@ extern "C" {
 }
 #define signals public
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 LocalFileHandler::LocalFileHandler()
 {

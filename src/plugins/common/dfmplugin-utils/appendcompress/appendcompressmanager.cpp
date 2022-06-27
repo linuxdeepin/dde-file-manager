@@ -22,7 +22,7 @@
 */
 #include "appendcompressmanager.h"
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 AppendCompressManager &AppendCompressManager::instance()
 {

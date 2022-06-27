@@ -30,9 +30,9 @@
 #include <QSettings>
 #include <QLocale>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class DesktopFileInfoPrivate : public QSharedData
 {
 public:
@@ -84,7 +84,7 @@ public:
     QString deepinID;
     QString deepinVendor;
 };
-DFMBASE_END_NAMESPACE
+}
 
 DesktopFileInfo::DesktopFileInfo(const QUrl &fileUrl)
     : LocalFileInfo(fileUrl), d(new DesktopFileInfoPrivate(fileUrl))

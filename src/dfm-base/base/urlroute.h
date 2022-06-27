@@ -29,7 +29,7 @@
 #include <QMap>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 struct SchemeNode
 {
@@ -85,6 +85,6 @@ public:
                               bool preferredLocalPath = true, QUrl::UserInputResolutionOptions options = QUrl::AssumeLocalFile);
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // URLROUTE_H

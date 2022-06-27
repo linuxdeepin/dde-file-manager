@@ -44,7 +44,7 @@
 #include <QApplication>
 #include <QStandardPaths>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
 
 SendToMenuScene::SendToMenuScene(QObject *parent)

@@ -29,7 +29,7 @@
 #include <QDebug>
 #include <QJsonDocument>
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 RemotePasswdManager *RemotePasswdManager::instance()
 {

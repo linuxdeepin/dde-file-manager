@@ -31,7 +31,7 @@
 #include <QThread>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class TraversalDirThread : public QThread
 {
@@ -64,6 +64,6 @@ protected:
     virtual void run() override;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DFMTRAVERSALDIRTHREAD_H

@@ -23,7 +23,7 @@
 
 #include <QItemSelectionModel>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileSelectionModelPrivate::FileSelectionModelPrivate(FileSelectionModel *qq)
     : QObject(qq),

@@ -23,7 +23,7 @@
 
 #include "bluetoothadapter.h"
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 BluetoothAdapter::BluetoothAdapter(QObject *parent)
     : QObject(parent),

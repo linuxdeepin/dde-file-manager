@@ -21,7 +21,7 @@
  */
 #include "listitemdelegate_p.h"
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 ListItemDelegatePrivate::ListItemDelegatePrivate(ListItemDelegate *qq)
     : BaseItemDelegatePrivate(qq)

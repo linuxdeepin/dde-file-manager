@@ -31,7 +31,7 @@
 #include <QLabel>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 FileViewStatusBar::FileViewStatusBar(QWidget *parent)
     : BasicStatusBar(parent)

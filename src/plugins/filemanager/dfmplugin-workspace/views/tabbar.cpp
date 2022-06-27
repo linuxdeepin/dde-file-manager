@@ -39,7 +39,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 TabBar::TabBar(QWidget *parent)
     : QGraphicsView(parent)

@@ -30,7 +30,7 @@
 
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 DSB_FM_USE_NAMESPACE
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };

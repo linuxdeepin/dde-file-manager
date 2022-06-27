@@ -28,7 +28,7 @@
 
 class QPushButton;
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultActiveStartView : public QWidget
 {
     Q_OBJECT
@@ -46,5 +46,5 @@ public slots:
 private:
     QPushButton *startBtn { nullptr };   //! 开启包厢按钮
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTACTIVESTARTVIEW_H

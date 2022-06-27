@@ -30,7 +30,7 @@
 #include <QMap>
 #include <QUrl>
 #include <QMutex>
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailSpaceWidget;
 class DetailSpaceHelper
@@ -47,6 +47,6 @@ private:
     static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILSPACEHELPER_H

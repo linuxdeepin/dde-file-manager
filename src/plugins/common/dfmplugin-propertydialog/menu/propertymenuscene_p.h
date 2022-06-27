@@ -25,7 +25,7 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 DFMBASE_USE_NAMESPACE
 
 class PropertyMenuScenePrivate : public AbstractMenuScenePrivate
@@ -38,6 +38,6 @@ private:
     void updateMenu(QMenu *menu);
 };
 
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 
 #endif   // PROPERTYMENUSCENE_P_H

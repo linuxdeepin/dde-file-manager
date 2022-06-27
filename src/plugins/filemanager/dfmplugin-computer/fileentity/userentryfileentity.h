@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class UserEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
@@ -48,5 +48,5 @@ private:
     QString dirName;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // USERENTRYFILEENTITY_H

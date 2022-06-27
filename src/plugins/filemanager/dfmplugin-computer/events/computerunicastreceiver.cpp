@@ -26,7 +26,7 @@
 
 #include "services/filemanager/dfm_filemanager_service_global.h"
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 
 #define STR1(s) #s
 #define STR2(s) STR1(s)

@@ -40,7 +40,7 @@
 #include <QSlider>
 #include <QVBoxLayout>
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 VaultActiveSetUnlockMethodView::VaultActiveSetUnlockMethodView(QWidget *parent)
     : QWidget(parent)
 {

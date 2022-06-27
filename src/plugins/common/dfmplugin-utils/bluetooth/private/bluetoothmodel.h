@@ -31,7 +31,7 @@
 /**
  * @brief 蓝牙模块数据模型，管理所有的适配器，是一对多关系
  */
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class BluetoothModel : public QObject
 {
@@ -52,6 +52,6 @@ Q_SIGNALS:
 private:
     QMap<QString, const BluetoothAdapter *> adapters;
 };
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // BLUETOOTHMODEL_H

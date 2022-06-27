@@ -31,7 +31,7 @@
 USING_IO_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPDETAILSPACE_USE_NAMESPACE
+using namespace dfmplugin_detailspace;
 
 const int kImageExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 const int kVideoExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();

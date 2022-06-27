@@ -41,7 +41,7 @@
 
 #include <functional>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 template<class CT>
 class GC;
@@ -455,6 +455,6 @@ private:
     static DirIteratorFactory &instance();   // 获取全局实例
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // SCHEMEFACTORY_H

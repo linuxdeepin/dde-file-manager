@@ -29,7 +29,7 @@
 
 #include <functional>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class FinallyUtil
 {
@@ -45,6 +45,6 @@ private:
     bool hasDismissed { false };
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // FINALLYUTIL_H

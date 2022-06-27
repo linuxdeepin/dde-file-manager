@@ -28,7 +28,7 @@
 #include <QUrl>
 #include <QWidget>
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchHelper final : public QObject
 {
@@ -70,6 +70,6 @@ private:
     ~SearchHelper() override;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHHELPER_H

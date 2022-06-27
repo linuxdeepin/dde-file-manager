@@ -38,7 +38,7 @@ inline constexpr qreal kDragIconRotate { 10.0 };
 inline constexpr qreal kDragIconOpacity { 0.1 };
 }
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class FileViewModel;
@@ -57,6 +57,6 @@ private:
     FileView *view { nullptr };
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // VIEWDRAWHELPER_H

@@ -62,7 +62,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 static constexpr char kDDETrashId[] { "dde-trash" };
 static constexpr char kDDEComputerId[] { "dde-computer" };
@@ -1315,4 +1315,4 @@ bool Match::match(const QString &path, const QString &name)
     return false;
 }
 
-DFMBASE_END_NAMESPACE
+}

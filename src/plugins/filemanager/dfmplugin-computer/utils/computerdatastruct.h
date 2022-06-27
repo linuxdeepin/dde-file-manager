@@ -30,7 +30,7 @@
 #include <QUrl>
 
 class QWidget;
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 /*!
  * \brief The ComputerItemData struct
  * provide the basic info of computer item
@@ -101,5 +101,5 @@ extern QString trLogoutAndClearSavedPasswd();
 extern QString trProperties();
 }   // namespace ContextMenuActionTrs
 
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // COMPUTERDATASTRUCT_H

@@ -5,7 +5,7 @@
 
 #include <QStyledItemDelegate>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class CompleterViewDelegate : public QStyledItemDelegate
 {
@@ -19,6 +19,6 @@ public:
                    const QModelIndex &index) const override;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // COMPLETERVIEWDELEGATE_H

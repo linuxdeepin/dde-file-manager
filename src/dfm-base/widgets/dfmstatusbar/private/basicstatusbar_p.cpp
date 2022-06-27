@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 BasicStatusBarPrivate::BasicStatusBarPrivate(BasicStatusBar *qq)
     : QObject(qq),

@@ -27,7 +27,7 @@
 #include <QString>
 #include <QDir>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 
 inline constexpr char kVaultDecryptDirName[] { "vault_unlocked" };
 inline constexpr char kVaultEncrypyDirName[] { "vault_encrypted" };
@@ -101,5 +101,5 @@ enum PageType : int {
     kRetrievePage = 2,
     kPasswordRecoverPage = 3
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   //! VAULTGLOBALDEFINE_H

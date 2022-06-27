@@ -33,7 +33,7 @@
 #include <QPointer>
 
 using FileNodePointer = QSharedPointer<DPWORKSPACE_NAMESPACE::FileViewItem>;
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 class FileNodeManagerThread : public QThread
 {
     Q_OBJECT
@@ -146,6 +146,6 @@ private:
     //    QString roleDisplayString(int role);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEWMODEL_P_H

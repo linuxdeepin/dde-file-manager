@@ -24,16 +24,17 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 DFMBASE_USE_NAMESPACE
 
 class NewCreateMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     friend class NewCreateMenuScene;
     explicit NewCreateMenuScenePrivate(NewCreateMenuScene *qq);
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // NEWCREATEMENUSCENE_P_H

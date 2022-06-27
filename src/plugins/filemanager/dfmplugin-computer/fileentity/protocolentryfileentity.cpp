@@ -32,8 +32,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
-DPCOMPUTER_USE_NAMESPACE
-
+using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
 
 /*!

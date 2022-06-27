@@ -29,7 +29,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 
 #define STR1(s) #s
 #define STR2(s) STR1(s)

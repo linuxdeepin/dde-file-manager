@@ -45,7 +45,7 @@
 
 #include <unistd.h>
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 DFMBASE_USE_NAMESPACE
 
 bool ComputerUtils::contextMenuEnabled = true;

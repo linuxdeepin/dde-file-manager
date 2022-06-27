@@ -32,7 +32,7 @@
 #include <QDir>
 #include <QAbstractItemView>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class WorkspaceEventReceiver final : public QObject
 {
@@ -73,6 +73,6 @@ private:
     explicit WorkspaceEventReceiver(QObject *parent = nullptr);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACEEVENTRECEIVER_H

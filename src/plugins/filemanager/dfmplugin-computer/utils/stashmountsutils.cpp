@@ -38,7 +38,7 @@
 #include <QUrl>
 
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 namespace StashedMountsKeys {
 const char *const kJsonGroup { "RemoteMounts" };
@@ -206,4 +206,4 @@ QJsonDocument StashMountsUtils::cfgDocument()
     return cfgDoc;
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

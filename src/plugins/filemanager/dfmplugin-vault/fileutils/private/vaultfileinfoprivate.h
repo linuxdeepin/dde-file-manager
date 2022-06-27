@@ -28,7 +28,7 @@
 #include <QReadWriteLock>
 
 DFMBASE_USE_NAMESPACE
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultFileInfo;
 class VaultFileInfoPrivate : public AbstractFileInfoPrivate
 {
@@ -36,5 +36,5 @@ public:
     explicit VaultFileInfoPrivate(AbstractFileInfo *qp = nullptr);
     virtual ~VaultFileInfoPrivate();
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTFILEINFOPRIVATE_H

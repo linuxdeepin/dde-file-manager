@@ -40,7 +40,7 @@ class QScrollArea;
 class QCheckBox;
 QT_END_NAMESPACE
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class OpenWithDialogListItem : public QWidget
 {
@@ -102,5 +102,5 @@ private:
 
     OpenWithDialogListItem *checkedItem { nullptr };
 };
-DPUTILS_END_NAMESPACE
+}
 #endif   // OPENWITHDIALOG_H

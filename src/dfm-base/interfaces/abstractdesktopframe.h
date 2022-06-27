@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractDesktopFrame : public QObject
 {
@@ -44,6 +44,6 @@ signals: // must connect with Qt::DirectConnection
 public slots:
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif // ABSTRACTDESKTOPFRAME_H

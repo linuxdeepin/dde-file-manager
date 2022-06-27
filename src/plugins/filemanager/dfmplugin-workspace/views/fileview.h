@@ -32,7 +32,7 @@
 #include <QDir>
 
 DWIDGET_USE_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class SelectHelper;
 class DragDropHelper;
@@ -238,6 +238,6 @@ private:
     bool cdUp();
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILEVIEW_H

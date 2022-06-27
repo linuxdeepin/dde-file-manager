@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QTimer>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultAutoLock : public QObject
 {
     Q_OBJECT
@@ -79,5 +79,5 @@ private:
 
     bool isCacheTimeReloaded;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTAUTOLOCK_H

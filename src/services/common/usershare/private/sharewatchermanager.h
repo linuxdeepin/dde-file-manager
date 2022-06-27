@@ -30,9 +30,9 @@
 #include <QObject>
 #include <QMap>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcher;
-DFMBASE_END_NAMESPACE
+}
 
 DSC_BEGIN_NAMESPACE
 

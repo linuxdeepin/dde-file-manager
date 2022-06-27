@@ -29,7 +29,7 @@
 #include <QUrl>
 
 class QWidget;
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ComputerEventCaller
 {
@@ -52,6 +52,6 @@ public:
     static void sendErase(const QString &dev);
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTEREVENTCALLER_H

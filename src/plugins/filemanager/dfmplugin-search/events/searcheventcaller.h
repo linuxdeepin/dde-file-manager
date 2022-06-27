@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchEventCaller
 {
@@ -40,6 +40,6 @@ private:
     SearchEventCaller() = delete;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHEVENTCALLER_H

@@ -28,7 +28,7 @@
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 OpenWithWidget::OpenWithWidget(QWidget *parent)
     : DArrowLineDrawer(parent)

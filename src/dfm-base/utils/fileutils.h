@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/desktopfile.h"
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class FileUtils
 {
@@ -111,7 +111,7 @@ private:
     QList<QPair<QString, QString>> patternList;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 typedef QSharedPointer<DFMBASE_NAMESPACE::FileUtils::FilesSizeInfo> SizeInfoPointer;
 

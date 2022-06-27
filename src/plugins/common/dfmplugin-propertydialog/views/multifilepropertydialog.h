@@ -42,7 +42,7 @@ class QLabel;
 class QVBoxLayout;
 class QGridLayout;
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class MultiFilePropertyDialog : public DTK_WIDGET_NAMESPACE::DDialog
 {
     Q_OBJECT
@@ -70,5 +70,5 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *fileCountLabel { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // MULTIFILEPROPERTYDIALOG_H

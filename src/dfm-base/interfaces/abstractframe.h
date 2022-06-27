@@ -28,7 +28,7 @@
 #include <QFrame>
 #include <QUrl>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class AbstractFrame : public QFrame
 {
@@ -41,6 +41,6 @@ public:
     virtual QUrl currentUrl() const = 0;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // ABSTRACTFRAME_H

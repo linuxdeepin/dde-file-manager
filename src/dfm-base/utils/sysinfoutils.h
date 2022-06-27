@@ -27,7 +27,7 @@
 #include <QObject>
 #include <QMimeData>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class SysInfoUtils
 {
@@ -44,6 +44,6 @@ public:
     static bool isProfessional();
     static bool isSameUser(const QMimeData *data);
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // SYSINFOUTILS_H

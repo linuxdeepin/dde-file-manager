@@ -26,7 +26,7 @@
 
 #include <QWidget>
 #include <QStyleOptionViewItem>
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class IconItemDelegate;
 class ExpandedItem : public QWidget
@@ -70,6 +70,6 @@ private:
     bool canDeferredDelete { true };
     IconItemDelegate *delegate { nullptr };
 };
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // EXPANDEDITEM_H

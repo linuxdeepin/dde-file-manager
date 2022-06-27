@@ -27,7 +27,7 @@
 
 #include <QScrollArea>
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class AdvanceSearchBarPrivate;
 class AdvanceSearchBar : public QScrollArea
@@ -49,6 +49,6 @@ private:
     AdvanceSearchBarPrivate *d;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // ADVANCESEARCHBAR_H

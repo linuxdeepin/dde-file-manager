@@ -31,7 +31,7 @@
 #include <QString>
 #include <QUrl>
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsUtils
 {
@@ -71,6 +71,6 @@ public:
     static QString parseDirIcon(const QString &path);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSUTILS_H

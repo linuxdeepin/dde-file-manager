@@ -33,7 +33,7 @@
 /**
  * @brief 蓝牙模块适配器，管理终端的蓝牙设备，是一对多的关系
  */
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class BluetoothAdapter : public QObject
 {
@@ -70,6 +70,6 @@ private:
     QMap<QString, const BluetoothDevice *> devices;
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // BLUETOOTHADAPTER_H

@@ -27,7 +27,7 @@
 
 #include <QAbstractItemView>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 BaseItemDelegatePrivate::BaseItemDelegatePrivate(BaseItemDelegate *qq)
     : q_ptr(qq)

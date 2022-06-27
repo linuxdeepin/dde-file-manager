@@ -27,7 +27,7 @@
 #include <QMutex>
 #include <QTimer>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class InfoCachePrivate
 {
     friend class InfoCache;
@@ -47,6 +47,6 @@ public:
     virtual ~InfoCachePrivate();
     void updateSortByTimeCacheUrlList(const QUrl &url);
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // INFOCACHE_P_H

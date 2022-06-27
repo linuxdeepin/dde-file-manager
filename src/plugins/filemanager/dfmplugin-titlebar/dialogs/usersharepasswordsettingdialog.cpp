@@ -34,7 +34,7 @@
 #include <QWindow>
 
 DFMBASE_USE_NAMESPACE
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
 DSC_USE_NAMESPACE
 

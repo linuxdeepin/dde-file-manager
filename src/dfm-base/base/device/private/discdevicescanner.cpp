@@ -40,7 +40,7 @@ static constexpr int kTimerInterval { 3000 };
 static const char kDesktopAppName[] { "dde-desktop" };
 static constexpr char kBlockDeviceIdPrefix[] { "/org/freedesktop/UDisks2/block_devices/" };
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 DiscDeviceScanner::DiscDeviceScanner(QObject *parent)
     : QObject(parent)

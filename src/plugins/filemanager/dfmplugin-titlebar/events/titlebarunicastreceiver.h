@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class TitleBarUnicastReceiver : public QObject
 {
@@ -46,6 +46,6 @@ private:
     explicit TitleBarUnicastReceiver(QObject *parent = nullptr);
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBARUNICASTRECEIVER_H

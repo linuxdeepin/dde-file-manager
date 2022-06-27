@@ -26,7 +26,7 @@
 
 #include "utils/titlebarhelper.h"
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 TitleBarEventReceiver *TitleBarEventReceiver::instance()
 {
     static TitleBarEventReceiver receiver;

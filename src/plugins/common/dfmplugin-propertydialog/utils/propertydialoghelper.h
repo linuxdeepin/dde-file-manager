@@ -6,7 +6,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class PropertyDialogHelper : public QObject
 {
     Q_OBJECT
@@ -15,5 +15,5 @@ public:
 
     static DSC_NAMESPACE::PropertyDialogService *propertyServiceInstance();
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // PROPERTYDIALOGHELPER_H

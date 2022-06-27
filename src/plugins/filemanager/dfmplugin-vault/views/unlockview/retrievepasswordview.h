@@ -31,7 +31,7 @@
 
 #include <polkit-qt5-1/PolkitQt1/Authority>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class RetrievePasswordView : public QFrame
 {
     Q_OBJECT
@@ -128,5 +128,5 @@ private:
 
     QString validationResults;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTRETRIEVEPASSWORD_H

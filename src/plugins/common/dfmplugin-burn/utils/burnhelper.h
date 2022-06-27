@@ -28,7 +28,7 @@
 #include <QUrl>
 #include <QVariantMap>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 namespace Persistence {
 inline constexpr char kBurnStateGroup[] { "BurnState" };
@@ -51,6 +51,6 @@ public:
     static void updateBurningStateToPersistence(const QString &id, const QString &dev, bool working);
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // BURNHELPER_H

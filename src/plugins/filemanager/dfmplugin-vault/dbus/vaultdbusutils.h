@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QVariant>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultDBusUtils
 {
 public:
@@ -50,5 +50,5 @@ public:
 
     static void restoreLeftoverErrorInputTimes();
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTDBUSUTILS_H

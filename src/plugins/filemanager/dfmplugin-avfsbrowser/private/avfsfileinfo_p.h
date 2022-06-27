@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsFileInfo;
 class AvfsFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
@@ -38,6 +38,6 @@ public:
     explicit AvfsFileInfoPrivate(AvfsFileInfo *qq);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSFILEINFO_P_H

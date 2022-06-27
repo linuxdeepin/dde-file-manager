@@ -35,7 +35,7 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 ClipBoard *ClipBoard::self { nullptr };
 
 namespace GlobalData {

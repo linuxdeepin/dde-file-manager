@@ -31,7 +31,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileViewStatusBar : public BasicStatusBar
 {
@@ -58,6 +58,6 @@ private:
     QSlider *scaleSlider = nullptr;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // STATUSBAR_H

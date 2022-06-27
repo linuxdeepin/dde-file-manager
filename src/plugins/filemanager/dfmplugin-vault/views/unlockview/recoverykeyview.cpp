@@ -39,7 +39,7 @@
 
 DWIDGET_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 
 RecoveryKeyView::RecoveryKeyView(QWidget *parent)
     : QFrame(parent)

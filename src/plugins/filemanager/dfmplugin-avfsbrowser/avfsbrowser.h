@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsBrowser : public dpf::Plugin
 {
@@ -47,6 +47,6 @@ private:
     void claimSubScene(const QString &subScene);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSBROWSER_H

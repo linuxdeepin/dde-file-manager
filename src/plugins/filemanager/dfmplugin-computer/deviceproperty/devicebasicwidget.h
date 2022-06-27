@@ -29,7 +29,7 @@
 
 #include <DArrowLineDrawer>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 class DeviceBasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -60,5 +60,5 @@ private:
     QFrame *deviceInfoFrame { nullptr };
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
 };
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // DEVICEBASICWIDGET_H

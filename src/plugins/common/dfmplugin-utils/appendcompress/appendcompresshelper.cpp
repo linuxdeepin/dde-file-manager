@@ -25,7 +25,7 @@
 #include <QProcess>
 #include <QFileInfo>
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 AppendCompressHelper::AppendCompressHelper(QObject *parent)
     : QObject(parent)

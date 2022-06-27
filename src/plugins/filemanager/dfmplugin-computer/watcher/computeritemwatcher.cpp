@@ -45,7 +45,7 @@
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
 
 /*!
@@ -660,4 +660,4 @@ void ComputerItemWatcher::onBlockDeviceLocked(const QString &id)
     onUpdateBlockItem(id);
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

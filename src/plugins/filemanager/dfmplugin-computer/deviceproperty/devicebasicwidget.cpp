@@ -25,7 +25,7 @@
 DWIDGET_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 DeviceBasicWidget::DeviceBasicWidget(QWidget *parent)
     : DArrowLineDrawer(parent)
 {

@@ -31,7 +31,7 @@
 #include <QFrame>
 #include <QUrl>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class CrumbInterface;
 class CrumbBarPrivate;
@@ -67,6 +67,6 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // CrumbBar_H

@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QUrl>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class GlobalEventReceiver : public QObject
 {
@@ -44,6 +44,6 @@ public slots:
     void handleOpenAsAdmin(const QUrl &url);
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // GLOBALEVENTRECEIVER_H

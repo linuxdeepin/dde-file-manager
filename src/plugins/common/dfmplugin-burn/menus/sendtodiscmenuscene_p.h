@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/private/abstractmenuscene_p.h"
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 DFMBASE_USE_NAMESPACE
 
 class SendToDiscMenuScene;
@@ -50,6 +50,6 @@ private:
     bool disableStage { false };
 };
 
-DPBURN_END_NAMESPACE
+}
 
 #endif   // SENDTODISCMENUSCENE_P_H

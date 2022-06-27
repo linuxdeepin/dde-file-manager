@@ -28,11 +28,11 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class AbstractBaseView;
-DFMBASE_END_NAMESPACE
+}
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class Tab;
 class TabCloseButton;
@@ -115,6 +115,6 @@ private:
     QMultiHash<QString, QUrl> allMntedDevs;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // TABBAR_H

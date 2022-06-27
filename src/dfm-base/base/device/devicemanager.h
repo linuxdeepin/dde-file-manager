@@ -33,7 +33,7 @@
 
 #define DevMngIns DFMBASE_NAMESPACE::DeviceManager::instance()
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 typedef DFMMOUNT::DeviceOperateCallbackWithMessage CallbackType1;
 typedef DFMMOUNT::DeviceOperateCallback CallbackType2;
@@ -146,6 +146,6 @@ private:
     QScopedPointer<DeviceManagerPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // NEWDEVICEMANAGER_H

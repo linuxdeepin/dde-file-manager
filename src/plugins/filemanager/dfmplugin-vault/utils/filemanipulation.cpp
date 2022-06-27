@@ -32,7 +32,7 @@
 
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 FileManipulation::FileManipulation(QObject *parent)
     : QObject(parent)
 {

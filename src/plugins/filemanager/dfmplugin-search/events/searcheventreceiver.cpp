@@ -28,7 +28,7 @@
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 dfmplugin_search::SearchEventReceiver *dfmplugin_search::SearchEventReceiver::instance()
 {
@@ -74,4 +74,4 @@ SearchEventReceiver::SearchEventReceiver(QObject *parent)
 {
 }
 
-DPSEARCH_END_NAMESPACE
+}

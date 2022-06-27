@@ -38,7 +38,7 @@
 #include <QDir>
 #include <QTimer>
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

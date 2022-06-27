@@ -25,7 +25,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class Search : public dpf::Plugin
 {
@@ -45,6 +45,6 @@ private slots:
     void followEvent();
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCH_H

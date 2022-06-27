@@ -37,7 +37,7 @@
 #include <QMenu>
 #include <QProcess>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DSC_USE_NAMESPACE
 using namespace GlobalServerDefines;
 

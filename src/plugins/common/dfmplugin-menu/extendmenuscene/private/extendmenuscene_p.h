@@ -26,7 +26,7 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 
 class ExtendMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
@@ -43,6 +43,6 @@ public:
     QMap<QAction *, DCustomActionDefines::Separator> cacheActionsSeparator;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // EXTENDMENUSCENE_P_H

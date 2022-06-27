@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class OpenWithManager : public QObject
 {
@@ -48,6 +48,6 @@ private:
     QScopedPointer<OpenWithEventReceiver> eventReceiver { new OpenWithEventReceiver };
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // OPENWITHMANAGER_H

@@ -35,7 +35,7 @@
 #include <QVector>
 #include <QTimer>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
 
 ComputerModel::ComputerModel(QObject *parent)
@@ -417,4 +417,4 @@ void ComputerModel::onItemPropertyChanged(const QUrl &url, const QString &key, c
         SideBarService::service()->updateItemName(url, val.toString(), true);
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

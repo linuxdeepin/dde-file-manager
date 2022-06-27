@@ -26,7 +26,7 @@
 #include "appendcompress/appendcompressmanager.h"
 #include "bluetooth/bluetootheventmanager.h"
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 void Utils::initialize()
 {

@@ -39,7 +39,7 @@
 
 #include <QDebug>
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 void AvfsBrowser::initialize()

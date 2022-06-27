@@ -28,7 +28,7 @@
 #include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 class Computer : public dpf::Plugin
 {
     Q_OBJECT
@@ -62,6 +62,6 @@ private:
     void regComputerToSearch();
     void bindEvents();
 };
-DPCOMPUTER_END_NAMESPACE
+}
 
 #endif   // COMPUTER_H

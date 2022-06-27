@@ -30,7 +30,7 @@
 #include <QHash>
 #include <QtConcurrent>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 Q_GLOBAL_STATIC(QMimeDatabase, mimedb)
 

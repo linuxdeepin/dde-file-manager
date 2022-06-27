@@ -31,7 +31,7 @@ QT_BEGIN_NAMESPACE
 class QMimeData;
 QT_END_NAMESPACE
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class AppendCompressEventReceiver : public QObject
 {
@@ -50,6 +50,6 @@ public slots:
     bool handleDragDropCompressOnDesktop(int viewIndex, const QMimeData *md, const QPoint &viewPos, void *extData);
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // APPENDCOMPRESSEVENTRECEIVER_H

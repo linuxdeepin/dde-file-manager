@@ -29,7 +29,7 @@
 
 #include <QStyledItemDelegate>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class ListItemEditor;
 class ListItemDelegatePrivate;
@@ -72,6 +72,6 @@ private:
     Q_DECLARE_PRIVATE_D(d, ListItemDelegate)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // DLISTITEMDELEGATE_H

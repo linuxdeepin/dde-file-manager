@@ -27,7 +27,7 @@
 #include <QListView>
 #include <QFileSystemModel>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 class CompleterView : public QListView
 {
     Q_OBJECT
@@ -43,6 +43,6 @@ signals:
     void listCurrentChanged(const QModelIndex &current);
     void listSelectionChanged(const QItemSelection &selected);
 };
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   //DFMCOMPLETERVIEW_H

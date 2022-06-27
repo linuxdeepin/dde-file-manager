@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
 DFMBASE_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchFileInfoPrivate;
 class SearchFileInfo : public AbstractFileInfo
@@ -48,6 +48,6 @@ public:
 };
 
 using SearchFileInfoPointer = QSharedPointer<SearchFileInfo>;
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHFILEINFO_H

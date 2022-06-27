@@ -26,7 +26,7 @@
 #include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 
 class PropertyDialog : public dpf::Plugin
 {
@@ -44,6 +44,6 @@ private:
     void bindScene(const QString &parentScene);
 };
 
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 
 #endif   // DETAILSPACE_H

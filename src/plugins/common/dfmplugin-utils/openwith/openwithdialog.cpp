@@ -56,7 +56,7 @@
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 OpenWithDialogListItem::OpenWithDialogListItem(const QIcon &icon, const QString &text, QWidget *parent)
     : QWidget(parent),

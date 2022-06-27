@@ -26,7 +26,7 @@
 
 #include <dfm-io/core/denumerator.h>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DecoratorFileEnumeratorPrivate;
 class DecoratorFileEnumerator
@@ -61,6 +61,6 @@ private:
     QSharedPointer<DecoratorFileEnumeratorPrivate> d = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DECORATORFILEENUMERATOR_H

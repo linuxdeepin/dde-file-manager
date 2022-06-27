@@ -29,7 +29,7 @@
 #include <QDir>
 #include <QProcess>
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 DFMBASE_USE_NAMESPACE
 
 GlobalEventReceiver::GlobalEventReceiver(QObject *parent)

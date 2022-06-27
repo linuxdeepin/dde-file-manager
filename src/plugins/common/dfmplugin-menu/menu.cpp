@@ -35,7 +35,7 @@
 
 #include <QWidget>
 
-DPMENU_USE_NAMESPACE
+using namespace dfmplugin_menu;
 DSC_USE_NAMESPACE
 
 void Menu::initialize()

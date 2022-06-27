@@ -20,7 +20,7 @@
  */
 #include "abstractfilepreviewplugin.h"
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 AbstractFilePreviewPlugin::AbstractFilePreviewPlugin(QObject *parent)
     : QObject(parent)
 {

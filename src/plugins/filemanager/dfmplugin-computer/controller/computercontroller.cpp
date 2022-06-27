@@ -54,7 +54,7 @@
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
 
 ComputerController *ComputerController::instance()

@@ -30,7 +30,7 @@
 
 class QStackedWidget;
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 
 class VaultRemoveProgressView;
 class VaultRemoveByRecoverykeyView;
@@ -77,5 +77,5 @@ private:
 
     QLabel *hintInfo { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTREMOVEPAGES_H

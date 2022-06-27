@@ -28,7 +28,7 @@
 
 #include <QAbstractItemView>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class WorkspaceEventSequence : public QObject
 {
@@ -50,6 +50,6 @@ private:
     explicit WorkspaceEventSequence(QObject *parent = nullptr);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACEEVENTSEQUENCE_H

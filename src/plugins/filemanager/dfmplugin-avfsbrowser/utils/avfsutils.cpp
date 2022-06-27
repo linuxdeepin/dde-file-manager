@@ -36,7 +36,7 @@
 
 #include <unistd.h>
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 

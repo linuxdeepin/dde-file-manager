@@ -27,7 +27,7 @@
 
 #define SearchEventReceiverIns DPSEARCH_NAMESPACE::SearchEventReceiver::instance()
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchEventReceiver final : public QObject
 {
@@ -46,6 +46,6 @@ private:
     explicit SearchEventReceiver(QObject *parent = nullptr);
 };
 
-DPSEARCH_END_NAMESPACE
+}
 
 #endif   // SEARCHEVENTRECEIVER_H

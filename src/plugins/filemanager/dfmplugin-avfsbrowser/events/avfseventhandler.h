@@ -29,7 +29,7 @@
 #include <QList>
 #include <QObject>
 
-DPAVFSBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_avfsbrowser {
 
 class AvfsEventHandler : public QObject
 {
@@ -51,6 +51,6 @@ public:
     void showProperty(const QList<QUrl> &urls);
 };
 
-DPAVFSBROWSER_END_NAMESPACE
+}
 
 #endif   // AVFSEVENTHANDLER_H

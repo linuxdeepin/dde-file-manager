@@ -31,7 +31,7 @@
 
 #include <mutex>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DefenderController : public QObject
 {
@@ -63,7 +63,7 @@ private:
     QList<QUrl> scanningPaths;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #define DefenderInstance DefenderController::instance()
 

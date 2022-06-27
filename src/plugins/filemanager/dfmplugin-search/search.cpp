@@ -42,7 +42,7 @@
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 void Search::initialize()
 {
@@ -127,4 +127,4 @@ void Search::followEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", SearchHelper::instance(), &SearchHelper::blockPaste);
 }
 
-DPSEARCH_END_NAMESPACE
+}

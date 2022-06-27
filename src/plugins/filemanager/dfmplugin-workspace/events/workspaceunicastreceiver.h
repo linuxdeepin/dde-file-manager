@@ -9,7 +9,7 @@
 
 #include <QObject>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 class WorkspaceUnicastReceiver : public QObject
 {
     Q_OBJECT
@@ -43,5 +43,5 @@ public slots:
 private:
     explicit WorkspaceUnicastReceiver(QObject *parent = nullptr);
 };
-DPWORKSPACE_END_NAMESPACE
+}
 #endif   // WORKSPACEUNICASTRECEIVER_H

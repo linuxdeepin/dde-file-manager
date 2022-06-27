@@ -30,7 +30,7 @@
 
 #include <QThread>
 
-DPBURN_BEGIN_NAMESPACE
+namespace dfmplugin_burn {
 
 class AbstractBurnJob : public QThread
 {
@@ -155,7 +155,7 @@ protected:
     virtual void work() override;
 };
 
-DPBURN_END_NAMESPACE
+}
 Q_DECLARE_METATYPE(DFMBURN::BurnOptions)
 
 #endif   // BURNJOB_H

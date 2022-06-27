@@ -4,7 +4,7 @@
 #include "dfmplugin_vault_global.h"
 
 #include <QObject>
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultEventReceiver : public QObject
 {
     Q_OBJECT
@@ -21,5 +21,5 @@ public slots:
     bool handleNotAllowedAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
     void EnterFileView(const quint64 &winId, const QUrl &url);
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTEVENTRECEIVER_H

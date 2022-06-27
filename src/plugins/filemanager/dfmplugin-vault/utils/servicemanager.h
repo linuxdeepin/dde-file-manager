@@ -33,7 +33,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QObject>
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class ServiceManager : public QObject
 {
     Q_OBJECT
@@ -53,5 +53,5 @@ public:
 
     static QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand> basicViewFieldFunc(const QUrl &url);
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // SERVICEMANAGER_H

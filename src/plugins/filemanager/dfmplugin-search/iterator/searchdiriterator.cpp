@@ -31,7 +31,7 @@
 #include <dfm-framework/framework.h>
 
 DSB_FM_USE_NAMESPACE
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 SearchDirIteratorPrivate::SearchDirIteratorPrivate(const QUrl &url, SearchDirIterator *qq)
     : QObject(qq),
@@ -188,4 +188,4 @@ void SearchDirIterator::close()
     SearchService::service()->stop(d->taskId);
 }
 
-DPSEARCH_END_NAMESPACE
+}

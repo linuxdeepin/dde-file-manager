@@ -24,7 +24,7 @@
 #include <QTimer>
 #include <QDebug>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 /*!
  * \brief The AbstractScreenProxy class
  * 屏幕代理创建类，可实现但不限于平台xcb与wayland
@@ -61,4 +61,4 @@ void AbstractScreenProxy::appendEvent(AbstractScreenProxy::Event e)
     eventShot->start(100);
 }
 
-DFMBASE_END_NAMESPACE
+}

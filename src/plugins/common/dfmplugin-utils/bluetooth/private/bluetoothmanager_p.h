@@ -33,7 +33,7 @@
 template<class T>
 class QFutureWatcher;
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 class BluetoothModel;
 class BluetoothDevice;
 class BluetoothManagerPrivate : public QObject
@@ -78,6 +78,6 @@ public:
 
     Q_DECLARE_PUBLIC(BluetoothManager)
 };
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // BLUETOOTHMANAGER_P_H

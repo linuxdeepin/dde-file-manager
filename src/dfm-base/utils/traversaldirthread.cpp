@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 TraversalDirThread::TraversalDirThread(const QUrl &url,
                                        const QStringList &nameFilters,

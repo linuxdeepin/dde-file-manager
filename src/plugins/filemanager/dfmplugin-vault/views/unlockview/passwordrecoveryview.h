@@ -26,7 +26,7 @@
 #include <QFrame>
 
 #include <DLabel>
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class PasswordRecoveryView : public QFrame
 {
     Q_OBJECT
@@ -71,5 +71,5 @@ private:
     //! 安全提示
     DTK_WIDGET_NAMESPACE::DLabel *hintMsg { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // PASSWORDRECOVERYPAGE_H

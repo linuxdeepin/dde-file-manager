@@ -37,7 +37,7 @@ class DToolTip;
 class DFloatingWidget;
 DWIDGET_END_NAMESPACE
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 
 class VaultRemoveByPasswordView : public QWidget
 {
@@ -83,5 +83,5 @@ private:
     DTK_WIDGET_NAMESPACE::DToolTip *tooltip { nullptr };
     DTK_WIDGET_NAMESPACE::DFloatingWidget *floatWidget { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTREMOVEBYPASSWORDVIEW_H

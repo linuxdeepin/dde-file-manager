@@ -37,7 +37,7 @@
  * \class SettingsPrivate 通用设置的私有类
  * \brief The SettingsPrivate class 保存类Settings的所有数据和成员变量
  */
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class SettingsPrivate
 {
@@ -948,4 +948,4 @@ void Settings::setWatchChanges(bool watchChanges)
     }
 }
 
-DFMBASE_END_NAMESPACE
+}

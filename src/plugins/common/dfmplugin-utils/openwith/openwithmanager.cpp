@@ -25,7 +25,7 @@
 
 #include "services/common/propertydialog/propertydialogservice.h"
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 OpenWithManager &OpenWithManager::instance()
 {

@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
 
 void BurnEventCaller::sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, bool isCopy)

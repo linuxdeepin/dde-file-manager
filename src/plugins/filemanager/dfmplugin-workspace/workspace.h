@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class Workspace : public dpf::Plugin
 {
@@ -73,6 +73,6 @@ private slots:
     void onWindowClosed(quint64 winId);
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACE_H

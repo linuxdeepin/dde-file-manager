@@ -27,7 +27,7 @@
 
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 class ProtocolEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
@@ -48,5 +48,5 @@ public:
     virtual QUrl targetUrl() const override;
 };
 
-DPCOMPUTER_END_NAMESPACE
+}
 #endif   // PROTOCOLENTRYFILEENTITY_H

@@ -32,7 +32,7 @@
 
 #include <dfm-framework/event/event.h>
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 bool AvfsEventHandler::hookOpenFiles(quint64 winId, const QList<QUrl> &urls)

@@ -29,7 +29,7 @@
 #include <QFileInfo>
 #include <QRegularExpression>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static QStringList wrongMimeTypeNames {
     Global::Mime::kTypeAppXOleStorage, Global::Mime::kTypeAppZip

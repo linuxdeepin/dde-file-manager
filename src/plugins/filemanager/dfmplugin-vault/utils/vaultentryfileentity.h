@@ -26,7 +26,7 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultEntryFileEntity : public DFMBASE_NAMESPACE::AbstractEntryFileEntity
 {
     Q_OBJECT
@@ -58,5 +58,5 @@ private:
     DFMBASE_NAMESPACE::FileStatisticsJob *fileCalculationUtils { nullptr };
     mutable bool showSizeState { false };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTENTRYFILEENTITY_H

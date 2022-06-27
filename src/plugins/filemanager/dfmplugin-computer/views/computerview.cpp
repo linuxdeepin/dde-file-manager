@@ -41,7 +41,7 @@
 #include <QtConcurrent>
 #include <QApplication>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
 
 ComputerView::ComputerView(const QUrl &url, QWidget *parent)
@@ -319,4 +319,4 @@ ComputerViewPrivate::ComputerViewPrivate(ComputerView *qq)
 {
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

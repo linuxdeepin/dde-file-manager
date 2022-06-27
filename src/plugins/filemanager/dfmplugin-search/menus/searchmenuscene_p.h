@@ -25,7 +25,7 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 class SearchMenuScene;
 class SearchMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -44,5 +44,5 @@ private:
     SearchMenuScene *q;
 };
 
-DPSEARCH_END_NAMESPACE
+}
 #endif   // SEARCHMENUSCENE_P_H

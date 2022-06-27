@@ -36,7 +36,7 @@
 DSB_FM_USE_NAMESPACE
 
 using namespace Workspace;
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileViewModel;
 class FileSortFilterProxyModel : public QSortFilterProxyModel
@@ -103,6 +103,6 @@ private:
     bool readOnly = false;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILESORTFILTERPROXYMODEL_H

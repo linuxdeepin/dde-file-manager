@@ -28,7 +28,7 @@
 #include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailSpace : public dpf::Plugin
 {
@@ -47,6 +47,6 @@ private slots:
     void onWindowClosed(quint64 windId);
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILSPACE_H

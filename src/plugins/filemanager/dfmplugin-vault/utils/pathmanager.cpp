@@ -21,7 +21,7 @@
 #include "pathmanager.h"
 #include "vaultdefine.h"
 
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 PathManager::PathManager(QObject *parent)
     : QObject(parent)
 {

@@ -28,7 +28,7 @@
 
 #include <QFile>
 
-DPCOMPUTER_BEGIN_NAMESPACE
+namespace dfmplugin_computer {
 
 /*!
  * \class AppEntryFileEntity
@@ -108,4 +108,4 @@ QString AppEntryFileEntity::getFormattedExecCommand() const
     return cmd.remove("\"").remove("'");
 }
 
-DPCOMPUTER_END_NAMESPACE
+}

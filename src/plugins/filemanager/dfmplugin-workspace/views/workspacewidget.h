@@ -48,7 +48,7 @@ class QVBoxLayout;
 class QStackedLayout;
 QT_END_NAMESPACE
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class TabBar;
 class FileView;
@@ -116,6 +116,6 @@ private:
     DTK_WIDGET_NAMESPACE::DHorizontalLine *tabBottomLine { nullptr };
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // WORKSPACEWIDGET_H

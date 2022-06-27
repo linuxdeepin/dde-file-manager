@@ -31,7 +31,7 @@
 
 Q_DECLARE_METATYPE(QString *)
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 DSB_FM_USE_NAMESPACE
 
 void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)

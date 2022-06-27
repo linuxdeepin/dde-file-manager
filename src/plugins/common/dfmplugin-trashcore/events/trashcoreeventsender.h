@@ -26,9 +26,9 @@
 
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class LocalFileWatcher;
-DFMBASE_END_NAMESPACE
+}
 
 DPTRASHCORE_BEGIN_NAMESPACE
 

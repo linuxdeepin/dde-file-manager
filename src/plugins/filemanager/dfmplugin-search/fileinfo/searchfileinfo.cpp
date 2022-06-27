@@ -24,7 +24,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 
-DPSEARCH_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
 SearchFileInfoPrivate::SearchFileInfoPrivate(AbstractFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
@@ -102,4 +102,4 @@ QString SearchFileInfo::loadingTip() const
     return QObject::tr("Searching...");
 }
 
-DPSEARCH_END_NAMESPACE
+}

@@ -32,7 +32,7 @@ DCORE_BEGIN_NAMESPACE
 class DConfig;
 DCORE_END_NAMESPACE
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class GroupPolicy : public QObject
 {
@@ -56,6 +56,6 @@ private:
     Dtk::Core::DConfig *config;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // GROUPPOLICY_H

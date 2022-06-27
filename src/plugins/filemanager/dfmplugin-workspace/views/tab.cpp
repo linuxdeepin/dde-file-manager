@@ -39,7 +39,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 Tab::Tab(QGraphicsObject *parent, AbstractBaseView *view)
     : QGraphicsObject(parent),

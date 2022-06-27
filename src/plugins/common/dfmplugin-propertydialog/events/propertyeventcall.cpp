@@ -26,7 +26,7 @@
 #include <QUrl>
 
 DFMBASE_USE_NAMESPACE
-DPPROPERTYDIALOG_USE_NAMESPACE
+using namespace dfmplugin_propertydialog;
 
 void PropertyEventCall::sendSetPermissionManager(quint64 winID, const QUrl &url, const QFileDevice::Permissions permissions)
 {

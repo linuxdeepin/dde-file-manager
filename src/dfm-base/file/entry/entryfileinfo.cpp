@@ -29,7 +29,7 @@
 #include <QRegularExpression>
 #include <QAction>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 EntryFileInfoPrivate::EntryFileInfoPrivate(EntryFileInfo *qq)
     : AbstractFileInfoPrivate(qq)
@@ -181,4 +181,4 @@ QVariantHash EntryFileInfo::extraProperties() const
     return d->entity ? d->entity->extraProperties() : QVariantHash();
 }
 
-DFMBASE_END_NAMESPACE
+}

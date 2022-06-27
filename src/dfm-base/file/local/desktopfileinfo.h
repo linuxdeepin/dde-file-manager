@@ -29,7 +29,7 @@
 #include <QUrl>
 #include <QObject>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DesktopFileInfoPrivate;
 class DesktopFileInfo : public LocalFileInfo
@@ -70,6 +70,6 @@ public:
 private:
     QSharedPointer<DesktopFileInfoPrivate> d = nullptr;
 };
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DESKTOPFILEINFO_H

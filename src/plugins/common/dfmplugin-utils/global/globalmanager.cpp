@@ -26,7 +26,7 @@
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 
 static QSharedPointer<dfmbase::AbstractFileInfo> transFileInfo(QSharedPointer<dfmbase::AbstractFileInfo> fileInfo)
 {

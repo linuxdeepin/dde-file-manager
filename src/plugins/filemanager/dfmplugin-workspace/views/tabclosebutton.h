@@ -26,7 +26,7 @@
 
 #include <QGraphicsObject>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class TabCloseButton : public QGraphicsObject
 {
@@ -59,6 +59,6 @@ private:
     bool activeWidthTab = false;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // TABCLOSEBUTTON_H

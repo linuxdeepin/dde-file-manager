@@ -53,7 +53,7 @@ DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
-DPVAULT_USE_NAMESPACE
+using namespace dfmplugin_vault;
 VaultVisibleManager::VaultVisibleManager(QObject *parent)
     : QObject(parent)
 {

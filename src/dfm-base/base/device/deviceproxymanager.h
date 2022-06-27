@@ -31,7 +31,7 @@
 #define DevProxyMng DFMBASE_NAMESPACE::DeviceProxyManager::instance()
 
 class DeviceManagerInterface;
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DeviceProxyManagerPrivate;
 /*!
@@ -107,6 +107,6 @@ private:
     QScopedPointer<DeviceProxyManagerPrivate> d;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // DEVICEPROXYMANAGER_H

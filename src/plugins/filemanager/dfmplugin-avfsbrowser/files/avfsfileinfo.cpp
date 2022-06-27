@@ -27,7 +27,7 @@
 
 #include "dfm-base/base/schemefactory.h"
 
-DPAVFSBROWSER_USE_NAMESPACE
+using namespace dfmplugin_avfsbrowser;
 DFMBASE_USE_NAMESPACE
 
 AvfsFileInfo::AvfsFileInfo(const QUrl &url)

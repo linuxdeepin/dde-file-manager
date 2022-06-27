@@ -40,7 +40,7 @@
 QT_BEGIN_NAMESPACE
 class QFrame;
 QT_END_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class CustomTopWidgetInterface;
 class WorkspaceWidget;
@@ -132,6 +132,6 @@ private:
     Q_DISABLE_COPY(WorkspaceHelper)
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILSPACEHELPER_H

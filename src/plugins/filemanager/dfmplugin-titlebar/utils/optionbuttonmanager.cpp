@@ -22,7 +22,7 @@
 */
 #include "optionbuttonmanager.h"
 
-DPTITLEBAR_USE_NAMESPACE
+using namespace dfmplugin_titlebar;
 
 OptionButtonManager *OptionButtonManager::instance()
 {

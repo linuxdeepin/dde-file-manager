@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class TitleBar : public dpf::Plugin
 {
@@ -58,6 +58,6 @@ private slots:
     void bindEvents();
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBAR_H

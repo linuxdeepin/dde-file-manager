@@ -27,7 +27,7 @@
 
 #include <QRegularExpression>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class DecoratorFileEnumeratorPrivate
 {
@@ -44,9 +44,9 @@ public:
     QUrl url;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static constexpr char kNetworkFilesRex[] { R"((^/run/user/.*/gvfs/|^/root/.gvfs/)(sftp|ftp|smb|dav))" };
 

@@ -31,7 +31,7 @@
 #include <QDesktopWidget>
 #include <QMutex>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static const int kDefaultWidth { 700 };
 int TaskDialog::kMaxHeight { 0 };

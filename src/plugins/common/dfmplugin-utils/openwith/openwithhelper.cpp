@@ -24,7 +24,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 DFMBASE_USE_NAMESPACE
-DPUTILS_USE_NAMESPACE
+using namespace dfmplugin_utils;
 OpenWithHelper::OpenWithHelper(QObject *parent)
     : QObject(parent)
 {

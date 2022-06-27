@@ -27,12 +27,13 @@
 #include <interfaces/private/abstractmenuscene_p.h>
 
 DFMBASE_USE_NAMESPACE
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileView;
 class SortAndDisplayMenuScene;
 class SortAndDisplayMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend SortAndDisplayMenuScene;
 
 public:
@@ -50,6 +51,6 @@ private:
     FileView *view = nullptr;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // SORTANDDISPLAYMENUSCENE_P_H

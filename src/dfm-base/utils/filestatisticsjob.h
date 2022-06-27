@@ -28,7 +28,7 @@
 
 #include <QThread>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class FileStatisticsJobPrivate;
 class FileStatisticsJob : public QThread
@@ -104,7 +104,7 @@ private:
     void statistcsOtherFileSystem();
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(DFMBASE_NAMESPACE::FileStatisticsJob::FileHints)
 

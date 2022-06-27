@@ -30,7 +30,7 @@
 
 #include <QObject>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 class TitleBarEventCaller
 {
@@ -49,6 +49,6 @@ public:
     static void sendCheckAddressInputStr(QString *str);
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // TITLEBAREVENTCALLER_H

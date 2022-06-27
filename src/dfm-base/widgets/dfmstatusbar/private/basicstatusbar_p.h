@@ -33,7 +33,7 @@
 class QLabel;
 class QHBoxLayout;
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 
 class BasicStatusBar;
 class BasicStatusBarPrivate : public QObject
@@ -78,6 +78,6 @@ public:
     bool isJobDisconnect = true;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
 #endif   // BASICSTATUSBARPRIVATE_H

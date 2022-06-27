@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QUrl>
 
-DPUTILS_BEGIN_NAMESPACE
+namespace dfmplugin_utils {
 
 class AppendCompressHelper : public QObject
 {
@@ -41,6 +41,6 @@ private:
     static bool canAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
 };
 
-DPUTILS_END_NAMESPACE
+}
 
 #endif   // APPENDCOMPRESSHELPER_H

@@ -31,7 +31,7 @@
 
 #include <QCheckBox>
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class BasicWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
     Q_OBJECT
@@ -82,5 +82,5 @@ private:
     QFrame *frameMain { nullptr };
     QUrl currentUrl;
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // BASICWIDGET_H

@@ -29,7 +29,7 @@
 
 #include <QObject>
 
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 
 class DetailSpaceEventReceiver final : public QObject
 {
@@ -50,6 +50,6 @@ private:
     explicit DetailSpaceEventReceiver(QObject *parent = nullptr);
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 
 #endif   // DETAILSPACEEVENTRECEIVER_H

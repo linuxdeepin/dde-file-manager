@@ -29,7 +29,7 @@
 
 #include <QDBusServiceWatcher>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 static constexpr char kDesktopService[] { "com.deepin.filemanager.service" };
 static constexpr char kDevMngPath[] { "/com/deepin/filemanager/service/DeviceManager" };
 static constexpr char kDevMngIFace[] { "com.deepin.filemanager.service.DeviceManager" };

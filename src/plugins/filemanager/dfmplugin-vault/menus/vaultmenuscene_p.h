@@ -25,7 +25,7 @@
 
 #include "services/common/menu/menuservice.h"
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
 public:
@@ -44,5 +44,5 @@ private:
 public:
     DSC_NAMESPACE::MenuService *menuServer = nullptr;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTMENUSCENE_P_H

@@ -38,7 +38,7 @@
 #include <QWidget>
 #include <QTimer>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPBURN_NAMESPACE) };

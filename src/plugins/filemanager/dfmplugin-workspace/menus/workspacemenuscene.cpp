@@ -32,7 +32,7 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/fileutils.h"
 
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE

@@ -26,7 +26,7 @@
 
 #include <QTimer>
 
-DPWORKSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_workspace {
 
 class FileSelectionModelPrivate : public QObject
 {
@@ -44,6 +44,6 @@ public:
     QTimer timer;
 };
 
-DPWORKSPACE_END_NAMESPACE
+}
 
 #endif   // FILESELECTIONMODEL_P_H

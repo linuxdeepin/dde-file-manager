@@ -33,7 +33,7 @@
 #include <QRadioButton>
 
 DWIDGET_USE_NAMESPACE
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class RadioFrame : public QFrame
 {
     Q_OBJECT
@@ -99,5 +99,5 @@ private:
     //! 保存密钥权限提示
     DLabel *otherRadioBtnHitMsg { nullptr };
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTACTIVESAVEKEYFILEVIEW_H

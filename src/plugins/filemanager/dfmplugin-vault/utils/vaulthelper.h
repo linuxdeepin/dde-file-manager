@@ -33,7 +33,7 @@
 #include <QMenu>
 #include <QTimer>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class VaultHelper final : public QObject
 {
     Q_OBJECT
@@ -128,6 +128,6 @@ private:
     quint64 currentWinID { 0 };
 };
 
-DPVAULT_END_NAMESPACE
+}
 
 #endif   // VAULTHELPER_H

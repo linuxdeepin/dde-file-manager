@@ -33,7 +33,7 @@
 #include <QDebug>
 #include <QApplication>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 /*!
  * \class AbstractFileWatcherPrivate 文件监视器私有类
  *
@@ -132,4 +132,4 @@ void LocalFileWatcher::notifyFileDeleted(const QUrl &url)
     emit fileDeleted(url);
 }
 
-DFMBASE_END_NAMESPACE
+}

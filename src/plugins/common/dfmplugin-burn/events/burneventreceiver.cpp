@@ -41,7 +41,7 @@
 #include <QtConcurrent>
 #include <QDir>
 
-DPBURN_USE_NAMESPACE
+using namespace dfmplugin_burn;
 DFMBASE_USE_NAMESPACE
 using namespace GlobalServerDefines;
 

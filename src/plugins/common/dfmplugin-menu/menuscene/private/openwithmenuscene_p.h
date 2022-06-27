@@ -25,17 +25,18 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPMENU_BEGIN_NAMESPACE
+namespace dfmplugin_menu {
 DFMBASE_USE_NAMESPACE
 
 class OpenWithMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     friend class OpenWithMenuScene;
     explicit OpenWithMenuScenePrivate(OpenWithMenuScene *qq);
     QStringList recommendApps;
 };
 
-DPMENU_END_NAMESPACE
+}
 
 #endif   // OPENWITHMENUSCENE_P_H

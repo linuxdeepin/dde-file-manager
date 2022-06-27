@@ -31,7 +31,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DLabel;
 DWIDGET_END_NAMESPACE
 
-DPPROPERTYDIALOG_BEGIN_NAMESPACE
+namespace dfmplugin_propertydialog {
 class CloseAllDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
 {
     Q_OBJECT
@@ -56,5 +56,5 @@ private:
     DTK_WIDGET_NAMESPACE::DLabel *messageLabel { nullptr };
     QPushButton *closeButton { nullptr };
 };
-DPPROPERTYDIALOG_END_NAMESPACE
+}
 #endif   // CLOSEALLDIALOG_H

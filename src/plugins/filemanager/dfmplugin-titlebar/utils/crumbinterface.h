@@ -31,7 +31,7 @@
 #include <QObject>
 #include <QPointer>
 
-DPTITLEBAR_BEGIN_NAMESPACE
+namespace dfmplugin_titlebar {
 
 #define FAKE_VIRTUAL
 
@@ -81,6 +81,6 @@ private:
     QPointer<DFMBASE_NAMESPACE::TraversalDirThread> folderCompleterJobPointer;
 };
 
-DPTITLEBAR_END_NAMESPACE
+}
 
 #endif   // CRUMBINTERFACE_H

@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 class FileManipulation : public QObject
 {
     Q_OBJECT
@@ -64,5 +64,5 @@ public:
 
     static bool renameFilesHandleAddText(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> replacePair);
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // FILEMANIPULATION_H

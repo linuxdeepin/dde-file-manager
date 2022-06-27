@@ -29,7 +29,7 @@
 
 #include <QUrl>
 #include <QFrame>
-DPDETAILSPACE_BEGIN_NAMESPACE
+namespace dfmplugin_detailspace {
 class FileBaseInfoView : public QFrame
 {
     Q_OBJECT
@@ -98,5 +98,5 @@ private:
     QUrl currentUrl;
 };
 
-DPDETAILSPACE_END_NAMESPACE
+}
 #endif   // FILEBASEINFOVIEW_H

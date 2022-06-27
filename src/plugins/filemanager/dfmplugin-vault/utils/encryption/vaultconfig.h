@@ -29,7 +29,7 @@
 QT_BEGIN_NAMESPACE class QSettings;
 QT_END_NAMESPACE
 
-DPVAULT_BEGIN_NAMESPACE
+namespace dfmplugin_vault {
 inline constexpr char kConfigNodeName[] { "INFO" };
 inline constexpr char kConfigKeyCipher[] { "pbkgcipher" };
 inline constexpr char kConfigKeyVersion[] { "version" };
@@ -47,5 +47,5 @@ private:
     QString currentFilePath;
     QSettings *pSetting;
 };
-DPVAULT_END_NAMESPACE
+}
 #endif   // VAULTCONFIG_H

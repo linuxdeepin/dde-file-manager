@@ -26,7 +26,7 @@
 
 #include <QDebug>
 
-DPCOMPUTER_USE_NAMESPACE
+using namespace dfmplugin_computer;
 DFMBASE_USE_NAMESPACE
 
 ComputerEventReceiver *ComputerEventReceiver::instance()

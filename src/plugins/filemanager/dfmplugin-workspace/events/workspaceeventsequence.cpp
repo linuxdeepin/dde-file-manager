@@ -37,7 +37,7 @@ Q_DECLARE_METATYPE(QList<QAbstractItemView::SelectionMode> *)
 DPF_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
-DPWORKSPACE_USE_NAMESPACE
+using namespace dfmplugin_workspace;
 
 static constexpr char kCurrentEventSpace[] { DPF_MACRO_TO_STR(DPWORKSPACE_NAMESPACE) };
 

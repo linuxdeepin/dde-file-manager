@@ -32,7 +32,7 @@
 #include <QFile>
 #include <QDebug>
 
-DFMBASE_BEGIN_NAMESPACE
+namespace dfmbase {
 class HideFileHelperPrivate
 {
 public:
@@ -91,9 +91,9 @@ public:
     QSharedPointer<DFMIO::DFile> dfile = nullptr;
 };
 
-DFMBASE_END_NAMESPACE
+}
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 HideFileHelper::HideFileHelper(const QUrl &dir)
     : d(new HideFileHelperPrivate(this, dir))
 {

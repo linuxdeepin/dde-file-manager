@@ -35,7 +35,7 @@
 
 #include <QDir>
 
-DFMBASE_USE_NAMESPACE
+using namespace dfmbase;
 
 static const QString kUserTrashFullOpened = "user-trash-full-opened";
 
