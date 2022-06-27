@@ -52,11 +52,13 @@ private:
 
     // CanvasView begin
     DPF_EVENT_REG_SLOT(slot_CanvasView_VisualRect)
-    DPF_EVENT_REG_SLOT(slot_CanvasView_GridPos)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Refresh)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Update)
     DPF_EVENT_REG_SLOT(slot_CanvasView_Select)
     DPF_EVENT_REG_SLOT(slot_CanvasView_SelectedUrls)
+    DPF_EVENT_REG_SLOT(slot_CanvasView_GridSize)
+    DPF_EVENT_REG_SLOT(slot_CanvasView_GridPos)
+    DPF_EVENT_REG_SLOT(slot_CanvasView_GridVisualRect)
 
     DPF_EVENT_REG_HOOK(hook_CanvasView_ContextMenu)
     DPF_EVENT_REG_HOOK(hook_CanvasView_DropData)

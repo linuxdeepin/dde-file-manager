@@ -26,6 +26,7 @@
 #include <QString>
 #include <QUrl>
 #include <QSharedPointer>
+#include <QRect>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -57,6 +58,14 @@ public:
 };
 
 typedef QSharedPointer<CollectionBaseData> CollectionBaseDataPtr;
+
+class CollectionStyle
+{
+public:
+    int screenIndex = -1;
+    QString key;
+    QRect rect;
+};
 
 DDP_ORGANIZER_END_NAMESPACE
 

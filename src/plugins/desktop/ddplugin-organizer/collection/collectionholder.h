@@ -22,6 +22,7 @@
 #define COLLECTIONHOLDER_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include <DFrame>
 
@@ -78,9 +79,11 @@ public:
     void setDragEnabled(bool enable);
     bool dragEnabled() const;
 
+    void setStyle(const CollectionStyle &style);
+    CollectionStyle style() const;
 signals:
+    void styleChanged(const QString &id);
     void sigRequestClose(const QString &id);
-
 private:
     QSharedPointer<CollectionHolderPrivate> d = nullptr;
 };

@@ -45,6 +45,14 @@ public:
 
     QList<CollectionBaseDataPtr> normalProfile() const;
     void saveNormalProfile(const QList<CollectionBaseDataPtr> &baseDatas);
+
+    CollectionStyle normalStyle(const QString &key) const;
+    void updateNormalStyle(const CollectionStyle &style) const;
+    void writeNormalStyle(const QList<CollectionStyle> &styles) const;
+
+    CollectionStyle customStyle(const QString &key) const;
+    void updateCustomStyle(const CollectionStyle &style) const;
+    void writeCustomStyle(const QList<CollectionStyle> &styles) const;
 signals:
     void changeEnableState(bool e);
     void switchToNormalized(int);

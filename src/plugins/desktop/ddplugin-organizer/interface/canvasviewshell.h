@@ -24,6 +24,8 @@
 #include "ddplugin_organizer_global.h"
 
 #include <QObject>
+#include <QRect>
+#include <QUrl>
 
 class QMimeData;
 
@@ -40,7 +42,9 @@ public:
 
 public:
     QPoint gridPos(const int &viewIndex, const QPoint &viewPoint);
-
+    QRect visualRect(int viewIndex, const QUrl &url);
+    QRect gridVisualRect(int viewIndex, const QPoint &gridPos);
+    QSize gridSize(int viewIndex);
 signals: // unqiue and direct signals
     bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPos);
 

@@ -36,7 +36,7 @@ public:
 public:
     QString item(int index, const QPoint &gridPos);
     void tryAppendAfter(const QStringList &items, int index, const QPoint &begin);
-
+    int point(const QString &item, QPoint *pos);
 };
 
 }

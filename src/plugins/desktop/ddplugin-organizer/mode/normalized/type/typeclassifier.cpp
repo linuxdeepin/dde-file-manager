@@ -102,7 +102,22 @@ ModelDataHandler *TypeClassifier::dataHandler() const
 
 QStringList TypeClassifier::classes() const
 {
-    return d->keyNames.keys();
+    QStringList usedKey = d->keyNames.keys();
+    // order it
+    const QMap<QString, int> fixOrder = {
+        {kTypeKeyApp, 0},
+        {kTypeKeyDoc, 1},
+        {kTypeKeyPic, 2},
+        {kTypeKeyVid, 3},
+        {kTypeKeyMuz, 4},
+        {kTypeKeyFld, 5},
+        {kTypeKeyOth, 6}
+    };
+    const int max = fixOrder.size();
+    std::sort(usedKey.begin(), usedKey.end(), [&fixOrder, max](const QString &t1, const QString &t2){
+        return fixOrder.value(t1, max) < fixOrder.value(t2, max);
+    });
+    return usedKey;
 }
 
 QString TypeClassifier::classify(const QUrl &url) const

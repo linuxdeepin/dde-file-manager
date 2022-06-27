@@ -68,6 +68,8 @@ public:
     void setStretchStep(const int step);
     int stretchStep() const;
 
+signals:
+    void geometryChanged();
 protected:
     bool event(QEvent *event) override;
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -82,7 +84,6 @@ protected:
 
 private:
     void initUi();
-
 private:
     QSharedPointer<CollectionFramePrivate> d = nullptr;
 };

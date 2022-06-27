@@ -45,9 +45,14 @@ public:
     void setClassification(int cf);
 
     QList<CollectionBaseDataPtr> collectionBase(bool custom) const;
-    CollectionBaseDataPtr collectionBase(bool custom, const QString &profile) const;
-    void updateCollectionBase(bool custom, const QString &profile, const CollectionBaseDataPtr &base);
-    void writeCollectionBase(bool custom, const QMap<QString, CollectionBaseDataPtr> &base);
+    CollectionBaseDataPtr collectionBase(bool custom, const QString &key) const;
+    void updateCollectionBase(bool custom, const CollectionBaseDataPtr &base);
+    void writeCollectionBase(bool custom, const QList<CollectionBaseDataPtr> &base);
+
+    CollectionStyle collectionStyle(bool custom, const QString &key) const;
+    void updateCollectionStyle(bool custom, const CollectionStyle &style);
+    void writeCollectionStyle(bool custom, const QList<CollectionStyle> &styles);
+
 signals:
 
 public slots:

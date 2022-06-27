@@ -67,7 +67,12 @@ CollectionHolder::CollectionHolder(const QString &uuid, ddplugin_organizer::Coll
     : QObject(parent)
     , d(new CollectionHolderPrivate(uuid, dataProvider, this))
 {
+    d->styleTimer.setSingleShot(true);
+    d->styleTimer.setInterval(500);
 
+    connect(&d->styleTimer, &QTimer::timeout, this, [this](){
+        emit styleChanged(id());
+    });
 }
 
 CollectionHolder::~CollectionHolder()
@@ -116,18 +121,18 @@ void CollectionHolder::createFrame(Surface *surface, FileProxyModel *model)
 
     d->frame = new CollectionFrame(surface);
 
-    // todo set geometry by config
-    d->frame->setGeometry(QRect(200, 200, 400, 240));
-
     d->model = model;
     d->widget = new CollectionWidget(d->id, d->provider, d->frame);
     d->widget->setModel(d->model);
-    d->widget->setGeometry(d->frame->geometry());
+    d->widget->setGeometry(QRect(QPoint(0, 0), d->frame->size()));
 
     d->frame->setWidget(d->widget);
 
     connect(d->widget, &CollectionWidget::sigRequestClose, this, &CollectionHolder::sigRequestClose);
     connect(d->widget, &CollectionWidget::sigRequestAdjustSize, d.data(), &CollectionHolderPrivate::onAdjustFrameSize);
+    connect(d->frame, &CollectionFrame::geometryChanged, this, [this](){
+        d->styleTimer.start();
+    });
 }
 
 Surface *CollectionHolder::surface() const
@@ -276,4 +281,21 @@ void CollectionHolder::setDragEnabled(bool enable)
 bool CollectionHolder::dragEnabled() const
 {
     return d->widget->dragEnabled();
+}
+
+void CollectionHolder::setStyle(const CollectionStyle &style)
+{
+    if (style.rect.isValid())
+        d->frame->setGeometry(style.rect);
+}
+
+CollectionStyle CollectionHolder::style() const
+{
+    CollectionStyle style;
+    style.key = id();
+    // todo get index.
+    style.screenIndex = 1;
+
+    style.rect = d->frame->geometry();
+    return style;
 }

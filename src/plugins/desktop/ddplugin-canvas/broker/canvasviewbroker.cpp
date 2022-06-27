@@ -53,6 +53,8 @@ CanvasViewBroker::~CanvasViewBroker()
     CanvasViewDisconnect(slot_CanvasView_Update);
     CanvasViewDisconnect(slot_CanvasView_Select);
     CanvasViewDisconnect(slot_CanvasView_SelectedUrls);
+    CanvasViewDisconnect(slot_CanvasView_GridSize);
+    CanvasViewDisconnect(slot_CanvasView_GridVisualRect);
 
     CanvasViewDisconnect(slot_CanvasItemDelegate_IconRect);
 }
@@ -65,6 +67,8 @@ bool CanvasViewBroker::init()
     CanvasViewSlot(slot_CanvasView_Update, &CanvasViewBroker::update);
     CanvasViewSlot(slot_CanvasView_Select, &CanvasViewBroker::select);
     CanvasViewSlot(slot_CanvasView_SelectedUrls, &CanvasViewBroker::selectedUrls);
+    CanvasViewSlot(slot_CanvasView_GridSize, &CanvasViewBroker::gridSize);
+    CanvasViewSlot(slot_CanvasView_GridVisualRect, &CanvasViewBroker::gridVisualRect);
 
     CanvasViewSlot(slot_CanvasItemDelegate_IconRect, &CanvasViewBroker::iconRect);
     return true;
@@ -88,12 +92,29 @@ QRect CanvasViewBroker::visualRect(int idx, const QUrl &url)
     return rect;
 }
 
+QRect CanvasViewBroker::gridVisualRect(int idx, const QPoint &gridPos)
+{
+    QRect rect;
+    if (auto view = getView(idx))
+        rect = view->d->visualRect(gridPos);
+    return rect;
+}
+
 QPoint CanvasViewBroker::gridPos(int idx, const QPoint &viewPoint)
 {
     QPoint pos;
     if (auto view = getView(idx))
         pos = view->d->gridAt(viewPoint);
     return pos;
+}
+
+QSize CanvasViewBroker::gridSize(int idx)
+{
+    QSize size;
+    if (auto view = getView(idx))
+        size = QSize(view->d->canvasInfo.columnCount, view->d->canvasInfo.rowCount);
+
+    return size;
 }
 
 void CanvasViewBroker::refresh(int idx)

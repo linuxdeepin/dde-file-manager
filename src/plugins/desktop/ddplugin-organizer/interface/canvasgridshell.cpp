@@ -24,6 +24,8 @@
 
 #include <QPoint>
 
+Q_DECLARE_METATYPE(QPoint *)
+
 using namespace ddplugin_organizer;
 
 #define CanvasGridPush(topic) \
@@ -56,4 +58,9 @@ QString CanvasGridShell::item(int index, const QPoint &gridPos)
 void CanvasGridShell::tryAppendAfter(const QStringList &items, int index, const QPoint &begin)
 {
     CanvasGridPush2(slot_CanvasGrid_TryAppendAfter, items, index, begin);
+}
+
+int CanvasGridShell::point(const QString &item, QPoint *pos)
+{
+    return CanvasGridPush2(slot_CanvasGrid_Point, item, pos).toInt();
 }

@@ -28,9 +28,6 @@
 
 DDP_ORGANIZER_USE_NAMESPACE
 
-namespace  {
-inline constexpr char kProfilePrefix[] = "Collection_";
-}
 class ConfigPresenterGlobal : public ConfigPresenter{};
 Q_GLOBAL_STATIC(ConfigPresenterGlobal, configPresenter)
 
@@ -122,14 +119,7 @@ QList<CollectionBaseDataPtr> ConfigPresenter::customProfile() const
 
 void ConfigPresenter::saveCustomProfile(const QList<CollectionBaseDataPtr> &baseDatas)
 {
-    QMap<QString, CollectionBaseDataPtr> profiles;
-
-    int index = 0;
-    for (auto iter = baseDatas.begin(); iter != baseDatas.end(); ++iter) {
-        profiles.insert(QString(kProfilePrefix) + QString::number(index), *iter);
-        ++index;
-    }
-    conf->writeCollectionBase(true, profiles);
+    conf->writeCollectionBase(true, baseDatas);
     conf->sync();
 }
 
@@ -140,15 +130,49 @@ QList<CollectionBaseDataPtr> ConfigPresenter::normalProfile() const
 
 void ConfigPresenter::saveNormalProfile(const QList<CollectionBaseDataPtr> &baseDatas)
 {
-    QMap<QString, CollectionBaseDataPtr> profiles;
-
-    int index = 0;
-    for (auto iter = baseDatas.begin(); iter != baseDatas.end(); ++iter) {
-        // using key as group
-        profiles.insert(iter->data()->key, *iter);
-        ++index;
-    }
-    conf->writeCollectionBase(false, profiles);
+    conf->writeCollectionBase(false, baseDatas);
     conf->sync();
+}
+
+CollectionStyle ConfigPresenter::customStyle(const QString &key) const
+{
+    if (key.isEmpty())
+        return CollectionStyle();
+
+    return conf->collectionStyle(true, key);
+}
+
+void ConfigPresenter::updateCustomStyle(const CollectionStyle &style) const
+{
+    if (style.key.isEmpty())
+        return ;
+
+    conf->updateCollectionStyle(true, style);
+}
+
+void ConfigPresenter::writeCustomStyle(const QList<CollectionStyle> &styles) const
+{
+    conf->writeCollectionStyle(true, styles);
+}
+
+CollectionStyle ConfigPresenter::normalStyle(const QString &key) const
+{
+    if (key.isEmpty())
+        return CollectionStyle();
+
+    return conf->collectionStyle(false, key);
+}
+
+void ConfigPresenter::updateNormalStyle(const CollectionStyle &style) const
+{
+    if (style.key.isEmpty())
+        return;
+
+    conf->updateCollectionStyle(false, style);
+}
+
+void ConfigPresenter::writeNormalStyle(const QList<CollectionStyle> &styles) const
+{
+    conf->writeCollectionStyle(false, styles);
 }
 

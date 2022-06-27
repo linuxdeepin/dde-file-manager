@@ -65,6 +65,21 @@ QPoint CanvasViewShell::gridPos(const int &viewIndex, const QPoint &viewPoint)
     return CanvasViewPush2(slot_CanvasView_GridPos, viewIndex, viewPoint).toPoint();
 }
 
+QRect CanvasViewShell::visualRect(int viewIndex, const QUrl &url)
+{
+    return CanvasViewPush2(slot_CanvasView_VisualRect, viewIndex, url).toRect();
+}
+
+QRect CanvasViewShell::gridVisualRect(int viewIndex, const QPoint &gridPos)
+{
+    return CanvasViewPush2(slot_CanvasView_GridVisualRect, viewIndex, gridPos).toRect();
+}
+
+QSize CanvasViewShell::gridSize(int viewIndex)
+{
+    return CanvasViewPush2(slot_CanvasView_GridSize, viewIndex).toSize();
+}
+
 bool CanvasViewShell::eventDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint, void *extData)
 {
     Q_UNUSED(extData)

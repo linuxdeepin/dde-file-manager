@@ -76,14 +76,6 @@ bool CustomMode::initialize(FileProxyModel *m)
 
     connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection);
 
-    // must be DirectConnection to keep sequential
-    connect(model, &FileProxyModel::rowsInserted, this, &CustomMode::onFileInserted, Qt::DirectConnection);
-    connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &CustomMode::onFileAboutToBeRemoved, Qt::DirectConnection);
-    connect(model, &FileProxyModel::dataReplaced, this, &CustomMode::onFileRenamed, Qt::DirectConnection);
-
-    connect(model, &FileProxyModel::dataChanged, this, &CustomMode::onFileDataChanged, Qt::QueuedConnection);
-    connect(model, &FileProxyModel::modelReset, this, &CustomMode::rebuild, Qt::QueuedConnection);
-
     d->dataHandler = new CustomDataHandler();
 
     // restore collection as config
@@ -93,10 +85,17 @@ bool CustomMode::initialize(FileProxyModel *m)
     model->setHandler(d->dataHandler);
     model->refresh(model->rootIndex(), false, 0);
 
-    // creating if there already are files.
-    if (!model->files().isEmpty())
-        rebuild();
+    // must be DirectConnection to keep sequential
+    connect(model, &FileProxyModel::rowsInserted, this, &CustomMode::onFileInserted, Qt::DirectConnection);
+    connect(model, &FileProxyModel::rowsAboutToBeRemoved, this, &CustomMode::onFileAboutToBeRemoved, Qt::DirectConnection);
+    connect(model, &FileProxyModel::dataReplaced, this, &CustomMode::onFileRenamed, Qt::DirectConnection);
 
+    // connect after refreshing model to avoid that redundantly rebuilding by modelReset.
+    connect(model, &FileProxyModel::dataChanged, this, &CustomMode::onFileDataChanged, Qt::QueuedConnection);
+    connect(model, &FileProxyModel::modelReset, this, &CustomMode::rebuild, Qt::QueuedConnection);
+
+    // creating
+    rebuild();
     return true;
 }
 
@@ -109,14 +108,55 @@ void CustomMode::reset()
     model->refresh(model->rootIndex(), false, 0);
 }
 
+void CustomMode::layout()
+{
+    const int holderSize = d->holders.values().size();
+    if (holderSize < 1)
+        return;
+
+    QList<CollectionHolderPointer> unassigned;
+    QRect *used = new QRect[holderSize];
+    int usedCount = 0;
+
+    // first retore geometry as config file.
+    for (const CollectionHolderPointer &holder : d->holders.values()) {
+        auto style = CfgPresenter->customStyle(holder->id());
+        if (style.rect.isValid()) {
+            holder->setStyle(style);
+            used[usedCount++] = style.rect;
+        } else
+            unassigned.append(holder);
+    }
+
+    // second assign geomrey for unrecord view
+    QRegion usedRegion;
+    usedRegion.setRects(used, usedCount);
+    delete[] used;
+
+    for (const CollectionHolderPointer &holder : unassigned) {
+        // todo 二维矩形排样算法
+    }
+
+    // third adjust overlaped or outranged view
+
+    // save style
+    QList<CollectionStyle> styles;
+    for (const CollectionHolderPointer &holder : d->holders.values())
+        styles << holder->style();
+    CfgPresenter->writeCustomStyle(styles);
+}
+
 void CustomMode::rebuild()
 {
-    // remove invaild url
-    d->dataHandler->check(QSet<QUrl>::fromList(model->files()));
+    {
+        auto files = QSet<QUrl>::fromList(model->files());
+        // remove invaild url
+        d->dataHandler->check(files);
 
-    // write config
-    CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
-    //
+        // write config. do not save if no files.
+        if (!files.isEmpty())
+            CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
+    }
 
     // get region name and items, then create collection.
     for (const QString &key : d->dataHandler->keys()) {
@@ -135,8 +175,14 @@ void CustomMode::rebuild()
             collectionHolder->setCanvasViewShell(canvasViewShell);
             collectionHolder->setCanvasGridShell(canvasGridShell);
             collectionHolder->setName(name);
-            d->holders.insert(key, collectionHolder);
+
             connect(collectionHolder.data(), &CollectionHolder::sigRequestClose, this, &CustomMode::onDeleteCollection);
+            // temp. save style.
+            connect(collectionHolder.data(), &CollectionHolder::styleChanged, this, [this](const QString &id){
+                if (auto holder = d->holders.value(id)) {
+                    CfgPresenter->updateCustomStyle(holder->style());
+                }
+            });
 
             // enable rename,move,adjust,close,stretch
             collectionHolder->setRenamable(true);
@@ -144,11 +190,14 @@ void CustomMode::rebuild()
             collectionHolder->setAdjustable(true);
             collectionHolder->setClosable(true);
             collectionHolder->setStretchable(true);
+
+            d->holders.insert(key, collectionHolder);
         }
 
         collectionHolder->show();
     }
 
+    layout();
     emit collectionChanged();
 }
 
@@ -272,6 +321,9 @@ bool CustomMode::filterDropData(int viewIndex, const QMimeData *mimeData, const 
 
 void CustomMode::onNewCollection(const QList<QUrl> &list)
 {
+    if (list.isEmpty())
+        return;
+
     // todo 检查数据有效性
     CollectionBaseDataPtr base(new CollectionBaseData);
     base->name = tr("New Collection");
@@ -280,7 +332,25 @@ void CustomMode::onNewCollection(const QList<QUrl> &list)
 
     d->dataHandler->addBaseData(base);
 
-    model->refresh(model->rootIndex(), false, 0);;
+    Q_ASSERT(!list.isEmpty());
+    QPoint gridPos;
+    int screen = canvasGridShell->point(list.first().toString(), &gridPos);
+
+    // todo match the surface.
+    // screen index
+    if (screen > 0) {
+        auto rect = canvasViewShell->visualRect(screen, list.first());
+        CollectionStyle style;
+        style.key = base->key;
+        style.screenIndex = screen;
+        style.rect = QRect(rect.topLeft(), QSize(rect.width() * 4, rect.height() * 2))
+                .marginsRemoved(QMargins(4, 4, 4, 4)); // defalut size
+
+        // save the style of new collection.
+        CfgPresenter->updateCustomStyle(style);
+    }
+
+    model->refresh(model->rootIndex(), false, 0);
 }
 
 void CustomMode::onDeleteCollection(const QString &key)

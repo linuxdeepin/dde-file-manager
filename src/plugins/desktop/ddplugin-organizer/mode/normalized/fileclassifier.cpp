@@ -169,7 +169,7 @@ QString FileClassifier::append(const QUrl &url)
         auto it = collections.find(ret);
         if (it != collections.end()) {
             it.value()->items.append(url);
-            emit itemsChanged(cur);
+            emit itemsChanged(ret);
         } else {
             Q_ASSERT_X(it == collections.end(), "TypeClassifier", QString("unrecognized type %0").arg(ret).toStdString().c_str());
         }

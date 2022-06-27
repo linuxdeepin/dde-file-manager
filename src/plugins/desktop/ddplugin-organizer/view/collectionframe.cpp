@@ -392,10 +392,14 @@ void CollectionFrame::mouseMoveEvent(QMouseEvent *event)
         if (d->canStretch() && CollectionFramePrivate::StretchState == d->frameState) {
             d->stretchEndPoint = this->mapToParent(event->pos());
             d->updateFrameGeometry();
+
+            emit geometryChanged();
         } else if (d->canMove() && CollectionFramePrivate::MoveState == d->frameState) {
             QPoint movePoint = this->mapToParent(event->pos()) - d->moveStartPoint;
             d->moveStartPoint = this->mapToParent(event->pos());
             this->move(pos().x() + movePoint.x(), pos().y() + movePoint.y());
+
+            emit geometryChanged();
         }
     } else if (event->buttons().testFlag(Qt::NoButton)) {
         d->responseArea = d->getCurrentResponseArea(event->pos());

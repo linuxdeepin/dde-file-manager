@@ -232,7 +232,8 @@ bool FrameManager::initialize()
 
 void FrameManager::layout()
 {
-
+    if (d->organizer)
+        d->organizer->layout();
 }
 
 void FrameManager::switchMode(OrganizerMode mode)
@@ -247,7 +248,7 @@ void FrameManager::switchMode(OrganizerMode mode)
 
     connect(d->organizer, &CanvasOrganizer::collectionChanged, d, &FrameManagerPrivate::refeshCanvas);
 
-    // 初始化创建集合窗口
+    // initialize to create collection widgets
     if (!d->surfaceWidgets.isEmpty())
         d->organizer->setSurfaces(d->surfaceWidgets.values());
 
@@ -255,9 +256,6 @@ void FrameManager::switchMode(OrganizerMode mode)
     d->organizer->setCanvasViewShell(d->canvas->canvasView());
     d->organizer->setCanvasGridShell(d->canvas->canvasGrid());
     d->organizer->initialize(d->model);
-
-
-    // 布局
 }
 
 void FrameManager::turnOn(bool build)
@@ -315,7 +313,7 @@ void FrameManager::onBuild()
     d->buildSurface();
 
     if (d->organizer) {
-        // 仅重新布局
+        d->organizer->layout();
     } else {
         d->buildOrganizer();
     }
@@ -344,6 +342,8 @@ void FrameManager::onGeometryChanged()
             d->layoutSurface(win, surface);
     }
 
-    // 布局集合窗口
+    // layout collection widgets
+    if (d->organizer)
+        d->organizer->layout();
 }
 

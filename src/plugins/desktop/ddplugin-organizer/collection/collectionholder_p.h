@@ -27,6 +27,7 @@
 #include "organizer_defines.h"
 
 #include <QPointer>
+#include <QTimer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -48,6 +49,7 @@ public:
     QPointer<CollectionFrame> frame = nullptr;
     QPointer<CollectionWidget> widget = nullptr;
     QPointer<Surface> surface = nullptr;
+    QTimer styleTimer;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

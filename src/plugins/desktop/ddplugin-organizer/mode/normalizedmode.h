@@ -37,6 +37,7 @@ public:
    ~NormalizedMode() override;
    bool initialize(FileProxyModel *) override;
    void reset() override;
+   void layout() override;
 public slots:
    void rebuild();
    void onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl);

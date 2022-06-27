@@ -21,6 +21,7 @@
 #include "normalized/normalizedmode_p.h"
 #include "models/fileproxymodel.h"
 #include "config/configpresenter.h"
+#include "interface/canvasviewshell.h"
 
 #include <QDebug>
 #include <QTime>
@@ -116,6 +117,53 @@ void NormalizedMode::reset()
     Q_ASSERT(d->classifier);
 }
 
+void NormalizedMode::layout()
+{
+    // todo screen index
+    const int screenIdx = 1; // todo
+    const QSize gridSize = canvasViewShell->gridSize(screenIdx);
+    const int widthTime = 4; // todo time is follow icon level;
+    const int heightTime = 2;
+    auto holders = d->holders.values();
+    {
+        const QStringList &ordered =  d->classifier->classes();
+        const int max = ordered.size();
+        std::sort(holders.begin(), holders.end(), [&ordered, max](const CollectionHolderPointer &t1,
+                  const CollectionHolderPointer &t2) {
+            int i1 = ordered.indexOf(t1->id());
+            if (i1 < 0)
+                i1 = max;
+            int i2 = ordered.indexOf(t2->id());
+            if (i2 < 0)
+                i2 = max;
+            return i1 < i2;
+        });
+    }
+
+    QList<CollectionStyle> toSave;
+    QPoint nextPos(0, 0);
+    for (const CollectionHolderPointer &holder : holders) {
+        auto style = holder->style();
+        // todo 网格超出的处理
+
+        auto rect = canvasViewShell->gridVisualRect(screenIdx, nextPos);
+        style.rect = QRect(rect.topLeft(), QSize(rect.width() * widthTime, rect.height() * heightTime))
+                .marginsRemoved(QMargins(4, 4, 4, 4));
+        holder->setStyle(style);
+
+        toSave << style;
+
+        // next
+        nextPos.setY(nextPos.y() + heightTime);
+        if (nextPos.y() + heightTime  > gridSize.height()) {
+            nextPos.setY(0);
+            nextPos.setX(nextPos.x() + widthTime);
+        }
+    }
+
+    CfgPresenter->writeNormalStyle(toSave);
+}
+
 void NormalizedMode::rebuild()
 {
     // 使用分类器对文件进行分类，后续性能问题需考虑异步分类
@@ -129,7 +177,8 @@ void NormalizedMode::rebuild()
         d->restore(CfgPresenter->normalProfile());
 
         qInfo() << QString("Classifying %0 files takes %1ms").arg(files.size()).arg(time.elapsed());
-        CfgPresenter->saveNormalProfile(d->classifier->baseData());
+        if (!files.isEmpty())
+            CfgPresenter->saveNormalProfile(d->classifier->baseData());
     }
 
     // 从分类器中获取组,根据组创建分区
@@ -162,6 +211,9 @@ void NormalizedMode::rebuild()
         collectionHolder->show();
     }
     // 删除无需的组
+
+
+    layout();
 
     emit collectionChanged();
 }
