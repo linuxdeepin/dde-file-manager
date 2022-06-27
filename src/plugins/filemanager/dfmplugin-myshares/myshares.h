@@ -43,6 +43,9 @@ protected Q_SLOTS:
     void onWindowOpened(quint64 windd);
     void onWindowClosed(quint64 winId);
 
+    void onShareAdded(const QString &path);
+    void onShareRemoved(const QString &path);
+
 private:
     void addToSidebar();
     void regMyShareToSearch();

@@ -23,7 +23,10 @@
 #include "usersharehelper.h"
 #include "sharewatchermanager.h"
 
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/sysinfoutils.h"
 
 #include <QDBusInterface>
 #include <QDBusConnection>
@@ -40,7 +43,7 @@
 #include <pwd.h>
 #include <unistd.h>
 
-namespace dfm_service_common {
+namespace dfmplugin_dirshare {
 
 namespace DaemonServiceIFace {
 static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
@@ -101,22 +104,31 @@ bool UserShareHelper::share(const ShareInfo &info)
     ShareInfo oldShare = getOldShareByNewShare(info);
     qDebug() << "OldShare: " << oldShare << "\nNewShare: " << info;
 
-    if (info.isValid()) {
-        if (info.getShareName().startsWith("-") || info.getShareName().endsWith(" ")) {
+    if (isValidShare(info)) {
+        const auto &&name = info.value(ShareInfoKeys::kName).toString();
+        if (name.startsWith("-") || name.endsWith(" ")) {
             DialogManagerInstance->showErrorDialog(tr("The share name must not contain %1, and cannot start with a dash (-) or whitespace, or end with whitespace.").arg("%<>*?|/\\+=;:,\""), "");
             return false;
         }
 
         QStringList netArgs;
-        auto _info = info;
-        if (_info.getWritable())
-            _info.setUserShareAcl("Everyone:f");
+        auto param = info;
+        if (param.value(ShareInfoKeys::kWritable).toBool())
+            param.insert(ShareInfoKeys::kAcl, "Everyone:F");
         else
-            _info.setUserShareAcl("Everyone:R");
+            param.insert(ShareInfoKeys::kAcl, "Everyone:R");
+
+        if (param.value(ShareInfoKeys::kAnonymous).toBool())
+            param.insert(ShareInfoKeys::kGuestEnable, "guest_ok=y");
+        else
+            param.insert(ShareInfoKeys::kGuestEnable, "guest_ok=n");
 
         netArgs << "usershare"
-                << "add" << _info.getShareName() << _info.getPath() << _info.getComment()
-                << _info.getUserShareAcl() << _info.getGuestEnable();
+                << "add" << param.value(ShareInfoKeys::kName).toString()
+                << param.value(ShareInfoKeys::kPath).toString()
+                << param.value(ShareInfoKeys::kComment).toString()
+                << param.value(ShareInfoKeys::kAcl).toString()
+                << param.value(ShareInfoKeys::kGuestEnable).toString();
 
         QString err;
         int code = runNetCmd(netArgs, -1, &err);
@@ -126,8 +138,8 @@ bool UserShareHelper::share(const ShareInfo &info)
         }
     }
 
-    if (oldShare.isValid())
-        removeShareByPath(oldShare.getPath());
+    if (isValidShare(oldShare))
+        removeShareByPath(oldShare.value(ShareInfoKeys::kPath).toString());
 
     return true;
 }
@@ -139,30 +151,30 @@ void UserShareHelper::setSambaPasswd(const QString &userName, const QString &pas
 
 void UserShareHelper::removeShareByPath(const QString &path)
 {
-    const QString &&shareName = getShareNameByPath(path);
+    const QString &&shareName = shareNameByPath(path);
     if (!shareName.isEmpty())
         removeShareByShareName(shareName);
 }
 
-ShareInfoList UserShareHelper::shareInfos() const
+ShareInfoList UserShareHelper::shareInfos()
 {
     return sharedInfos.values();
 }
 
-ShareInfo UserShareHelper::getShareInfoByPath(const QString &path) const
+ShareInfo UserShareHelper::shareInfoByPath(const QString &path)
 {
-    const QString &&shareName = getShareNameByPath(path);
-    return getShareInfoByShareName(shareName);
+    const QString &&shareName = shareNameByPath(path);
+    return shareInfoByShareName(shareName);
 }
 
-ShareInfo UserShareHelper::getShareInfoByShareName(const QString &name) const
+ShareInfo UserShareHelper::shareInfoByShareName(const QString &name)
 {
     if (!name.isEmpty() && sharedInfos.contains(name))
         return sharedInfos.value(name);
-    return ShareInfo();
+    return {};
 }
 
-QString UserShareHelper::getShareNameByPath(const QString &path) const
+QString UserShareHelper::shareNameByPath(const QString &path)
 {
     if (sharePathToShareName.contains(path)) {
         const auto &&names = sharePathToShareName.value(path);
@@ -172,18 +184,18 @@ QString UserShareHelper::getShareNameByPath(const QString &path) const
     return "";
 }
 
-uint UserShareHelper::getUidByShareName(const QString &name) const
+uint UserShareHelper::whoShared(const QString &name)
 {
     QFileInfo info(QString("%1/%2").arg(ShareConfig::kShareConfigPath).arg(name));
     return info.ownerId();
 }
 
-bool UserShareHelper::isShared(const QString &path) const
+bool UserShareHelper::isShared(const QString &path)
 {
     return sharePathToShareName.contains(path);
 }
 
-QString UserShareHelper::getCurrentUserName() const
+QString UserShareHelper::currentUserName()
 {
     return getpwuid(getuid())->pw_name;
 }
@@ -214,6 +226,25 @@ void UserShareHelper::startSambaServiceAsync(StartSambaFinished onFinished)
 
 UserShareHelper::~UserShareHelper()
 {
+}
+
+bool UserShareHelper::canShare(AbstractFileInfoPointer info)
+{
+    if (!info || !info->isDir() || !info->isReadable())
+        return false;
+
+    DFMBASE_USE_NAMESPACE
+    // in v20, this part controls whether to disable share action.
+    if (info->ownerId() != static_cast<uint>(SysInfoUtils::getUserId()) && !SysInfoUtils::isRootUser())
+        return false;
+
+    if (DevProxyMng->isFileOfProtocolMounts(info->filePath()))
+        return false;
+
+    if (info->url().scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->filePath()))
+        return false;
+
+    return true;
 }
 
 void UserShareHelper::readShareInfos(bool sendSignal)
@@ -248,36 +279,39 @@ void UserShareHelper::readShareInfos(bool sendSignal)
         file.close();
 
         auto shareInfo = makeInfoByFileContent(info);
-        if (shareInfo.isValid()) {
-            sharedInfos.insert(shareInfo.getShareName(), shareInfo);
+        if (isValidShare(shareInfo)) {
+            const auto &&name = shareInfo.value(ShareInfoKeys::kName).toString();
+            const auto &&path = shareInfo.value(ShareInfoKeys::kPath).toString();
 
-            QStringList names = sharePathToShareName.value(shareInfo.getPath(), {});
-            names.append(shareInfo.getShareName());
-            sharePathToShareName.insert(shareInfo.getPath(), names);
+            sharedInfos.insert(name, shareInfo);
+            QStringList names = sharePathToShareName.value(path, {});
+            names.append(name);
+            sharePathToShareName.insert(path, names);
         }
     }
 
     ShareInfoList newShares;
     for (const auto &info : sharedInfos.values()) {
-        if (info.isValid()) {
-            if (!oldSharedInfoKeys.contains(info.getShareName()))
+        if (isValidShare(info)) {
+            if (!oldSharedInfoKeys.contains(info.value(ShareInfoKeys::kName).toString()))
                 newShares << info;
             else
-                oldSharedInfoKeys.removeOne(info.getShareName());
+                oldSharedInfoKeys.removeOne(info.value(ShareInfoKeys::kName).toString());
         }
     }
 
     // broadcast deleted shares
     for (const QString &shareName : oldSharedInfoKeys) {
-        const QString &filePath = shareInfoCache.value(shareName).getPath();
-        Q_EMIT shareRemoved(filePath);
+        const QString &filePath = shareInfoCache.value(shareName).value(ShareInfoKeys::kPath).toString();
+        emitShareRemoved(filePath);
         watcherManager->remove(filePath);
     }
 
     // broadcast new shares
     for (const ShareInfo &info : newShares) {
-        Q_EMIT shareAdded(info.getPath());
-        watcherManager->add(info.getPath());
+        const auto &&path = info.value(ShareInfoKeys::kPath).toString();
+        emitShareAdded(path);
+        watcherManager->add(path);
     }
 
     if (!sendSignal)
@@ -285,9 +319,9 @@ void UserShareHelper::readShareInfos(bool sendSignal)
 
     int count = validShareInfoCount();
     if (count == 0)
-        Q_EMIT shareRemoved("/");
+        emitShareRemoved("/");
 
-    Q_EMIT shareCountChanged(count);
+    emitShareCountChanged(count);
 }
 
 void UserShareHelper::onShareChanged(const QString &path)
@@ -330,7 +364,7 @@ void UserShareHelper::initMonitorPath()
 {
     const auto lst = shareInfos();
     for (auto info : lst)
-        watcherManager->add(info.getPath());
+        watcherManager->add(info.value(ShareInfoKeys::kPath).toString());
 }
 
 void UserShareHelper::removeShareByShareName(const QString &name)
@@ -349,7 +383,7 @@ void UserShareHelper::removeShareByShareName(const QString &name)
 
 void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPath)
 {
-    const QString &&shareName = getShareNameByPath(deletedPath);
+    const QString &&shareName = shareNameByPath(deletedPath);
     if (shareName.isEmpty())
         return;
 
@@ -358,10 +392,10 @@ void UserShareHelper::removeShareWhenShareFolderDeleted(const QString &deletedPa
 
 ShareInfo UserShareHelper::getOldShareByNewShare(const ShareInfo &newShare)
 {
-    QStringList shareNames = sharePathToShareName.value(newShare.getPath());
-    shareNames.removeOne(newShare.getShareName());
+    QStringList shareNames = sharePathToShareName.value(newShare.value(ShareInfoKeys::kPath).toString());
+    shareNames.removeOne(newShare.value(ShareInfoKeys::kName).toString());
     if (shareNames.count() > 0)
-        return getShareInfoByShareName(shareNames.last());
+        return shareInfoByShareName(shareNames.last());
     return ShareInfo();
 }
 
@@ -426,16 +460,13 @@ ShareInfo UserShareHelper::makeInfoByFileContent(const QMap<QString, QString> &c
     ShareInfo info;
     if (!shareName.isEmpty() && !sharePath.isEmpty()
         && QFile(sharePath).exists() && !shareAcl.isEmpty()) {
-        info.setShareName(shareName.toLower());
-        info.setPath(sharePath);
-        info.setComment(contents.value(ShareConfig::kShareComment));
-        info.setGuestEnable(contents.value(ShareConfig::kGuestOk));
-        info.setUserShareAcl(shareAcl);
-
-        if (shareAcl.toUpper().contains("R"))
-            info.setWritable(false);
-        else if (shareAcl.toUpper().contains("F"))
-            info.setWritable(true);
+        info = {
+            { ShareInfoKeys::kName, shareName.toLower() },
+            { ShareInfoKeys::kPath, sharePath },
+            { ShareInfoKeys::kComment, contents.value(ShareConfig::kShareComment) },
+            { ShareInfoKeys::kAcl, shareAcl },
+            { ShareInfoKeys::kGuestEnable, contents.value(ShareConfig::kGuestOk) }
+        };
     }
     return info;
 }
@@ -444,7 +475,7 @@ int UserShareHelper::validShareInfoCount() const
 {
     int count = 0;
     for (const auto &info : sharedInfos)
-        count += (info.isValid() ? 1 : 0);
+        count += isValidShare(info) ? 1 : 0;
     return count;
 }
 
@@ -471,6 +502,35 @@ bool UserShareHelper::setSmbdAutoStart()
     return reply.value();
 }
 
+bool UserShareHelper::isValidShare(const QVariantMap &info) const
+{
+    auto name = info.value(ShareInfoKeys::kName).toString();
+    auto path = info.value(ShareInfoKeys::kPath).toString();
+    return !name.isEmpty() && QFile(path).exists();
+}
+
+void UserShareHelper::emitShareCountChanged(int count)
+{
+    Q_EMIT shareCountChanged(count);
+    dpfSignalDispatcher->publish(kEventSpace, "signal_Share_ShareCountChanged", count);
+}
+
+void UserShareHelper::emitShareAdded(const QString &path)
+{
+    Q_EMIT shareAdded(path);
+    dpfSignalDispatcher->publish(kEventSpace, "signal_Share_ShareAdded", path);
+}
+
+void UserShareHelper::emitShareRemoved(const QString &path)
+{
+    Q_EMIT shareRemoved(path);
+    dpfSignalDispatcher->publish(kEventSpace, "signal_Share_ShareRemoved", path);
+}
+
+void UserShareHelper::emitShareRemoveFailed(const QString &path)
+{
+}
+
 UserShareHelper::UserShareHelper(QObject *parent)
     : QObject(parent)
 {
@@ -484,5 +544,4 @@ UserShareHelper::UserShareHelper(QObject *parent)
 
     initMonitorPath();
 }
-
 }

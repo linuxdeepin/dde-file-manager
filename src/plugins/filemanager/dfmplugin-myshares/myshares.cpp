@@ -37,7 +37,6 @@
 #include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/search/searchservice.h"
-#include "services/common/usershare/usershareservice.h"
 #include "services/common/fileoperations/fileoperations_defines.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 
@@ -68,14 +67,6 @@ void MyShares::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &MyShares::onWindowClosed, Qt::DirectConnection);
-
-    UserShareService::service();   // for loading shares.
-    connect(UserShareService::service(), &UserShareService::shareAdded, this, [this] { this->addToSidebar(); }, Qt::DirectConnection);
-    connect(UserShareService::service(), &UserShareService::shareRemoved, this, [] {
-        if (UserShareService::service()->shareInfos().count() == 0)
-            SideBarService::service()->removeItem(ShareUtils::rootUrl());
-    },
-            Qt::DirectConnection);
 }
 
 bool MyShares::start()
@@ -90,6 +81,9 @@ bool MyShares::start()
         return true;
     };
     DSC_NAMESPACE::FileOperationsService::service()->registerOperations(ShareUtils::scheme(), fileOpeationsHandle);
+
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
+    dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
 
     hookEvent();
 
@@ -126,10 +120,23 @@ void MyShares::onWindowClosed(quint64 winId)
 {
 }
 
+void MyShares::onShareAdded(const QString &)
+{
+    addToSidebar();
+}
+
+void MyShares::onShareRemoved(const QString &)
+{
+    DSB_FM_USE_NAMESPACE
+    int count = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_AllShareInfos").value<ShareInfoList>().count();
+    if (count == 0)
+        SideBarService::service()->removeItem(ShareUtils::rootUrl());
+}
+
 void MyShares::addToSidebar()
 {
-    DSC_USE_NAMESPACE
-    if (UserShareService::service()->shareInfos().count() == 0)
+    int count = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_AllShareInfos").value<ShareInfoList>().count();
+    if (count == 0)
         return;
 
     DSB_FM_USE_NAMESPACE

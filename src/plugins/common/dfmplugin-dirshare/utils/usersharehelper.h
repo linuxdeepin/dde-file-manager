@@ -23,8 +23,9 @@
 #ifndef USERSHAREHELPER_H
 #define USERSHAREHELPER_H
 
-#include "usershare/usershare_defines.h"
-#include "dfm_common_service_global.h"
+#include "dfmplugin_dirshare_global.h"
+
+#include "dfm-base/interfaces/abstractfileinfo.h"
 
 #include <QObject>
 #include <QTimer>
@@ -33,7 +34,11 @@
 #include <QFuture>
 
 class QDBusInterface;
-namespace dfm_service_common {
+namespace dfmplugin_dirshare {
+
+using StartSambaFinished = std::function<void(bool, const QString &)>;
+typedef QVariantMap ShareInfo;
+typedef QList<QVariantMap> ShareInfoList;
 
 class ShareWatcherManager;
 class UserShareHelper : public QObject
@@ -43,23 +48,23 @@ class UserShareHelper : public QObject
 
 public:
     static UserShareHelper *instance();
+    virtual ~UserShareHelper() override;
 
-    bool share(const ShareInfo &info);
+    static bool canShare(AbstractFileInfoPointer info);
+
+    bool share(const QVariantMap &info);
     void setSambaPasswd(const QString &userName, const QString &passwd);
     void removeShareByPath(const QString &path);
-    ShareInfoList shareInfos() const;
-    ShareInfo getShareInfoByPath(const QString &path) const;
-    ShareInfo getShareInfoByShareName(const QString &name) const;
-    QString getShareNameByPath(const QString &path) const;
-    uint getUidByShareName(const QString &name) const;
-    bool isShared(const QString &path) const;
-    QString getCurrentUserName() const;
+    ShareInfoList shareInfos();
+    ShareInfo shareInfoByPath(const QString &path);
+    ShareInfo shareInfoByShareName(const QString &name);
+    QString shareNameByPath(const QString &path);
+    uint whoShared(const QString &name);
+    bool isShared(const QString &path);
+    QString currentUserName();
 
     bool isSambaServiceRunning();
     void startSambaServiceAsync(StartSambaFinished onFinished);
-
-    ~UserShareHelper();
-    explicit UserShareHelper(QObject *parent = nullptr);
 
 Q_SIGNALS:
     void shareCountChanged(int count);
@@ -74,6 +79,8 @@ protected Q_SLOTS:
     void onShareMoved(const QString &from, const QString &to);
 
 private:
+    explicit UserShareHelper(QObject *parent = nullptr);
+
     void initConnect();
     void initMonitorPath();
 
@@ -89,6 +96,13 @@ private:
     QPair<bool, QString> startSmbService();
     bool setSmbdAutoStart();
 
+    bool isValidShare(const ShareInfo &info) const;
+
+    void emitShareCountChanged(int count);
+    void emitShareAdded(const QString &path);
+    void emitShareRemoved(const QString &path);
+    void emitShareRemoveFailed(const QString &path);
+
 private:
     QTimer *pollingSharesTimer;
     QSharedPointer<QDBusInterface> userShareInter { nullptr };
@@ -100,6 +114,8 @@ private:
 };
 }
 
-#define UserShareHelperInstance DSC_NAMESPACE::UserShareHelper::instance()
+Q_DECLARE_METATYPE(DPDIRSHARE_NAMESPACE::StartSambaFinished)
+
+#define UserShareHelperInstance DPDIRSHARE_NAMESPACE::UserShareHelper::instance()
 
 #endif   // USERSHAREHELPER_H

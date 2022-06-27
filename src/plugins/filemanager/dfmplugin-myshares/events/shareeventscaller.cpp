@@ -24,7 +24,6 @@
 #include "utils/shareutils.h"
 
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/usershare/usershare_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -63,7 +62,7 @@ void ShareEventsCaller::sendOpenDirs(quint64 winId, const QList<QUrl> &urls, Sha
 
 void ShareEventsCaller::sendCancelSharing(const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::EventType::kRemoveShare, url.path());
+    dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_RemoveShare", url.path());
 }
 
 void ShareEventsCaller::sendShowProperty(const QList<QUrl> &urls)

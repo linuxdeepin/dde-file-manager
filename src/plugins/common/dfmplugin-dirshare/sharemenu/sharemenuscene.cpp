@@ -22,11 +22,9 @@
 */
 #include "sharemenuscene.h"
 #include "private/sharemenuscene_p.h"
-#include "private/shareutils.h"
+#include "utils/usersharehelper.h"
 
-#include "services/common/usershare/usershareservice.h"
 #include "services/common/propertydialog/property_defines.h"
-
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_menu_defines.h"
@@ -98,12 +96,13 @@ bool ShareMenuScene::create(QMenu *parent)
     auto info = InfoFactory::create<AbstractFileInfo>(d->selectFiles.first(), true);
     if (info->isDir()) {
         DSC_USE_NAMESPACE
-        if (UserShareService::service()->isSharedPath(info->absoluteFilePath())) {
+        bool shared = UserShareHelperInstance->isShared(info->absoluteFilePath());
+        if (shared) {
             auto act = parent->addAction(d->predicateName[ShareActionId::kActRemoveShareKey]);
             act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActRemoveShareKey);
             d->predicateAction.insert(ShareActionId::kActRemoveShareKey, act);
         } else {
-            if (ShareUtils::canShare(info)) {
+            if (UserShareHelper::canShare(info)) {
                 auto act = parent->addAction(d->predicateName[ShareActionId::kActAddShareKey]);
                 act->setProperty(ActionPropertyKey::kActionID, ShareActionId::kActAddShareKey);
                 d->predicateAction.insert(ShareActionId::kActAddShareKey, act);
@@ -159,7 +158,7 @@ bool ShareMenuScene::triggered(QAction *action)
         d->addShare(u);
         return true;
     } else if (key == ShareActionId::kActRemoveShareKey) {
-        UserShareService::service()->removeShare(u.path());
+        UserShareHelperInstance->removeShareByPath(u.path());
         return true;
     }
 

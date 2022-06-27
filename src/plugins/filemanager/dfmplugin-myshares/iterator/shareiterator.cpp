@@ -25,9 +25,10 @@
 #include "utils/shareutils.h"
 #include "fileinfo/sharefileinfo.h"
 
-#include "services/common/usershare/usershareservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+
+#include <dfm-framework/event/event.h>
 
 using namespace dfmplugin_myshares;
 DFMBASE_USE_NAMESPACE
@@ -47,7 +48,7 @@ QUrl ShareIterator::next()
     if (d->shares.isEmpty())
         return {};
     d->currentInfo = d->shares.takeFirst();
-    return ShareUtils::makeShareUrl(d->currentInfo.getPath());
+    return ShareUtils::makeShareUrl(d->currentInfo.value(ShareInfoKeys::kPath).toString());
 }
 
 bool ShareIterator::hasNext() const
@@ -57,12 +58,12 @@ bool ShareIterator::hasNext() const
 
 QString ShareIterator::fileName() const
 {
-    return d->currentInfo.getShareName();
+    return d->currentInfo.value(ShareInfoKeys::kName).toString();
 }
 
 QUrl ShareIterator::fileUrl() const
 {
-    return ShareUtils::makeShareUrl(d->currentInfo.getPath());
+    return ShareUtils::makeShareUrl(d->currentInfo.value(ShareInfoKeys::kPath).toString());
 }
 
 const AbstractFileInfoPointer ShareIterator::fileInfo() const
@@ -78,8 +79,7 @@ QUrl ShareIterator::url() const
 ShareIteratorPrivate::ShareIteratorPrivate(ShareIterator *qq)
     : q(qq)
 {
-    DSC_USE_NAMESPACE
-    shares = UserShareService::service()->shareInfos();
+    shares = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_AllShareInfos").value<QList<QVariantMap>>();
 }
 
 ShareIteratorPrivate::~ShareIteratorPrivate()

@@ -38,6 +38,9 @@ class ShareWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
 public:
     explicit ShareWatcher(const QUrl &url, QObject *parent = nullptr);
     virtual ~ShareWatcher() override;
+
+    void shareAdded(const QString &path);
+    void shareRemoved(const QString &path);
 };
 
 }

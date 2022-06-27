@@ -20,31 +20,43 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "shareutils.h"
+#ifndef SHAREWATCHERMANAGER_H
+#define SHAREWATCHERMANAGER_H
 
-#include "dfm-base/dfm_global_defines.h"
-#include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfmplugin_dirshare_global.h"
 
-#include <QDebug>
+#include "dfm-base/dfm_base_global.h"
 
-using namespace dfmplugin_dirshare;
-DFMBASE_USE_NAMESPACE
+#include <QObject>
+#include <QMap>
 
-bool ShareUtils::canShare(AbstractFileInfoPointer info)
-{
-    if (!info || !info->isDir() || !info->isReadable())
-        return false;
-
-    // in v20, this part controls whether to disable share action.
-    if (info->ownerId() != SysInfoUtils::getUserId() && !SysInfoUtils::isRootUser())
-        return false;
-
-    if (DevProxyMng->isFileOfProtocolMounts(info->filePath()))
-        return false;
-
-    if (info->url().scheme() == Global::Scheme::kBurn || DevProxyMng->isFileFromOptical(info->filePath()))
-        return false;
-
-    return true;
+namespace dfmbase {
+class LocalFileWatcher;
 }
+
+namespace dfmplugin_dirshare {
+
+class ShareWatcherManager : public QObject
+{
+    Q_OBJECT
+
+public:
+    explicit ShareWatcherManager(QObject *parent = nullptr);
+    ~ShareWatcherManager();
+
+    DFMBASE_NAMESPACE::LocalFileWatcher *add(const QString &path);
+    void remove(const QString &path);
+
+Q_SIGNALS:
+    void fileDeleted(const QString &filePath);
+    void fileAttributeChanged(const QString &filePath);
+    void fileMoved(const QString &fromFilePath, const QString &toFilePath);
+    void subfileCreated(const QString &filePath);
+
+private:
+    QMap<QString, DFMBASE_NAMESPACE::LocalFileWatcher *> watchers;
+};
+
+}
+
+#endif   // SHAREWATCHERMANAGER_H

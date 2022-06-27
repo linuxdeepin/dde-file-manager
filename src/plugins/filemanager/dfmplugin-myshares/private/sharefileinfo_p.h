@@ -25,8 +25,6 @@
 
 #include "dfmplugin_myshares_global.h"
 
-#include "services/common/usershare/usershare_defines.h"
-#include "services/common/usershare/usershareservice.h"
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
 namespace dfmplugin_myshares {
@@ -42,7 +40,7 @@ public:
     virtual ~ShareFileInfoPrivate();
 
 private:
-    DSC_NAMESPACE::ShareInfo info;
+    ShareInfo info;
 };
 
 }
