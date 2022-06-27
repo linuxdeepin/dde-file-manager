@@ -49,6 +49,10 @@ void VaultConfig::set(const QString &nodeName, const QString &keyName, QVariant 
 
 QVariant VaultConfig::get(const QString &nodeName, const QString &keyName)
 {
-    QVariant var = m_pSetting->value(QString("/%1/%2").arg(nodeName).arg(keyName));
-    return var;
+    return m_pSetting->value(QString("/%1/%2").arg(nodeName).arg(keyName));
+}
+
+QVariant VaultConfig::get(const QString &nodeName, const QString &keyName, const QVariant &defaultValue)
+{
+    return m_pSetting->value(QString("/%1/%2").arg(nodeName).arg(keyName), defaultValue);
 }

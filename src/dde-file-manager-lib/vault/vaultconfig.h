@@ -28,6 +28,7 @@
 #define CONFIG_KEY_VERSION          "version"
 #define CONFIG_VAULT_VERSION        "new"
 #define CONFIG_VAULT_VERSION_1050   "1050"
+#define CONFIG_KEY_ALGONAME         "algoName"
 
 #include <QVariant>
 
@@ -42,6 +43,7 @@ public:
     ~VaultConfig();
     void set(const QString &nodeName, const QString &keyName, QVariant value);
     QVariant get(const QString &nodeName, const QString &keyName);
+    QVariant get(const QString &nodeName, const QString &keyName, const QVariant &defaultValue);
 
 private:
     QString m_filePath;
