@@ -278,12 +278,6 @@ bool DesktopFileInfo::canMoveOrCopy() const
     return true;
 }
 
-bool DesktopFileInfo::canRename() const
-{
-    // todo(lxs) wait for rename func for desktop file.
-    return false;
-}
-
 QMap<QString, QVariant> DesktopFileInfo::desktopFileInfo(const QUrl &fileUrl)
 {
     QMap<QString, QVariant> map;

@@ -95,12 +95,14 @@ void TrashPropertyDialog::initUI()
 
     addContent(contenFrame);
 
-    connect(fileCalculationUtils, &FileStatisticsJob::sizeChanged, this, &TrashPropertyDialog::slotTrashDirSizeChange);
+    connect(fileCalculationUtils, &FileStatisticsJob::dataNotify, this, &TrashPropertyDialog::slotTrashDirSizeChange);
     fileCalculationUtils->start(QList<QUrl>() << url);
 }
 
-void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size)
+void TrashPropertyDialog::slotTrashDirSizeChange(qint64 size, int filesCount, int directoryCount)
 {
+    Q_UNUSED(filesCount)
+    Q_UNUSED(directoryCount)
     fileCountAndFileSize->setRightValue(FileUtils::formatSize(size), Qt::ElideNone, Qt::AlignHCenter);
 }
 
