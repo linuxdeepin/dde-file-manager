@@ -23,7 +23,7 @@
 
 #include "interfaces/screen/abstractscreenproxy.h"
 
-#include "dfm-framework/dpf.h"
+#include <dfm-framework/dpf.h>
 
 #define CanvasCorePush(topic) \
         dpfSlotChannel->push("ddplugin_core", QT_STRINGIFY2(topic))

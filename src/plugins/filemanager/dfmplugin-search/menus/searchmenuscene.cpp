@@ -23,22 +23,23 @@
 #include "utils/searchhelper.h"
 
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/filemanager/workspace/workspaceservice.h"
 
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <DDesktopServices>
 
 #include <QProcess>
+#include <QMenu>
 
 DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_search;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 static constexpr char kWorkspaceMenuSceneName[] = "WorkspaceMenu";
 static constexpr char kSortAndDisplayMenuSceneName[] = "SortAndDisplayMenu";
@@ -156,16 +157,16 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
     QVariantHash tmpParams = params;
     QList<AbstractMenuScene *> currentScene;
     if (d->isEmptyArea) {
-        if (auto sortAndDisplayScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
+        if (auto sortAndDisplayScene = dfmplugin_menu_util::menuSceneCreateScene(kSortAndDisplayMenuSceneName))
             currentScene.append(sortAndDisplayScene);
     } else {
         const auto &parentUrl = SearchHelper::searchTargetUrl(d->currentDir);
         if (Global::Scheme::kFile == parentUrl.scheme()) {
-            if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
+            if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
                 currentScene.append(workspaceScene);
         } else {
             auto parentSceneName = WorkspaceService::service()->findMenuScene(parentUrl.scheme());
-            if (auto scene = MenuService::service()->createScene(parentSceneName))
+            if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(parentSceneName))
                 currentScene.append(scene);
 
             const auto &targetUrl = SearchHelper::searchTargetUrl(d->currentDir);

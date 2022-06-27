@@ -22,7 +22,7 @@
 #include "extendmenuscene/extendmenu/dcustomactionbuilder.h"
 #include "extendmenuscene/extendmenu/dcustomactionparser.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 
@@ -31,7 +31,6 @@
 
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 AbstractMenuScene *ExtendMenuCreator::create()
 {

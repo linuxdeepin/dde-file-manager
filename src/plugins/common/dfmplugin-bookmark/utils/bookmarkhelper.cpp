@@ -72,17 +72,5 @@ dfm_service_filemanager::WorkspaceService *BookMarkHelper::workspaceServIns()
     return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }
 
-dfm_service_common::MenuService *BookMarkHelper::menuServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::MenuService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::MenuService>(DSC_NAMESPACE::MenuService::name());
-}
-
 BookMarkHelper::BookMarkHelper(QObject *parent)
     : QObject(parent) {}

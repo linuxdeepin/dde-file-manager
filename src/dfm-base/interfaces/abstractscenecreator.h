@@ -29,6 +29,7 @@ namespace dfmbase {
 class AbstractMenuScene;
 class AbstractSceneCreator : public QObject
 {
+    Q_OBJECT
 public:
     AbstractSceneCreator();
     virtual ~AbstractSceneCreator();

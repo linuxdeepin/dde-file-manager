@@ -23,14 +23,13 @@
 #include "private/openwithmenuscene_p.h"
 #include "menuutils.h"
 
-#include "services/common/menu/menu_defines.h"
-
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/desktopfileinfo.h"
 #include "dfm-base/mimetype/mimesappsmanager.h"
 #include "dfm-base/utils/properties.h"
 #include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -40,7 +39,6 @@
 
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 static const char *const kAppName = "AppName";
 static const char *const kSelectedUrls = "SelectedUrls";

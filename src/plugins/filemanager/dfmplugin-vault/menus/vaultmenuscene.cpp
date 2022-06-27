@@ -21,13 +21,14 @@
 #include "vaultmenuscene.h"
 #include "vaultmenuscene_p.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QMenu>
 #include <QList>
 
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 static const char *const kWorkSpaceScene = "WorkspaceMenu";
@@ -40,7 +41,7 @@ AbstractMenuScene *VaultMenuSceneCreator::create()
 VaultMenuScenePrivate::VaultMenuScenePrivate(VaultMenuScene *qq)
     : AbstractMenuScenePrivate(qq)
 {
-    menuServer = MenuService::service();
+
 }
 
 QStringList VaultMenuScenePrivate::emptyMenuActionRule()
@@ -86,7 +87,7 @@ void VaultMenuScenePrivate::filterMenuAction(QMenu *menu, const QStringList &act
     if (actionlist.isEmpty())
         return;
 
-    QList<QAction *> removeActions;
+    //QList<QAction *> removeActions;
     for (auto act : actionlist) {
         if (act->isSeparator())
             continue;
@@ -132,7 +133,7 @@ bool VaultMenuScene::initialize(const QVariantHash &params)
     }
 
     QList<AbstractMenuScene *> currentScene;
-    if (auto workspaceScene = d->menuServer->createScene(kWorkSpaceScene))
+    if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkSpaceScene))
         currentScene.append(workspaceScene);
     setSubscene(currentScene);
 

@@ -24,8 +24,10 @@
 
 #include "plugins/common/dfmplugin-menu/menuscene/menuutils.h"
 
-DDP_ORGANIZER_USE_NAMESPACE
+#include <QMenu>
+#include <QDebug>
 
+DDP_ORGANIZER_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *ExtendCanvasCreator::create()
@@ -37,8 +39,6 @@ ExtendCanvasScenePrivate::ExtendCanvasScenePrivate(ExtendCanvasScene *qq)
     : AbstractMenuScenePrivate(qq)
     , q(qq)
 {
-    // 获取菜单服务
-    menuServer = MenuService::service();
 }
 
 void ExtendCanvasScenePrivate::emptyMenu(QMenu *parent)

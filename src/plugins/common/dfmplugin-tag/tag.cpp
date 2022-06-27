@@ -31,15 +31,17 @@
 #include "menu/tagdirmenuscene.h"
 #include "events/tageventreceiver.h"
 
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
-#include "services/common/menu/menuservice.h"
 #include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
@@ -83,11 +85,11 @@ bool Tag::start()
     followEvent();
     TagEventReceiver::instance()->initConnect();
 
-    MenuService::service()->registerScene(TagMenuCreator::name(), new TagMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(TagMenuCreator::name(), new TagMenuCreator);
     bindScene("FileOperatorMenu");
 
     WorkspaceService::service()->setWorkspaceMenuScene(TagManager::scheme(), TagDirMenuCreator::name());
-    MenuService::service()->registerScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
 
     return true;
 }
@@ -178,14 +180,15 @@ void Tag::followEvent()
 
 void Tag::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(TagMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(TagMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(TagMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        // todo(lym) menu
+//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+//            if (scene == parentScene)
+//                MenuService::service()->bind(TagMenuCreator::name(), scene);
+//        },
+//                Qt::DirectConnection);
     }
 }
 

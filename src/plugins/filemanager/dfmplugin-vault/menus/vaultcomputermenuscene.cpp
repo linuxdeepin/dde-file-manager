@@ -24,7 +24,7 @@
 #include "vaultcomputermenuscene_p.h"
 #include "utils/vaulthelper.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QMenu>
 
@@ -52,7 +52,6 @@ QString VaultComputerMenuScene::name() const
 
 bool VaultComputerMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (d->selectFiles.count() == 1 && d->selectFiles.first().path().endsWith(".vault"))

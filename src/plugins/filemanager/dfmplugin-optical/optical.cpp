@@ -31,7 +31,8 @@
 #include "menus/opticalmenuscene.h"
 #include "events/opticaleventreceiver.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
@@ -76,12 +77,12 @@ void Optical::initialize()
                 }
             },
             Qt::DirectConnection);
-
-    MenuService::service()->registerScene(OpticalMenuSceneCreator::name(), new OpticalMenuSceneCreator);
 }
 
 bool Optical::start()
 {
+    dfmplugin_menu_util::menuSceneRegisterScene(OpticalMenuSceneCreator::name(), new OpticalMenuSceneCreator);
+
     addFileOperations();
     addCustomTopWidget();
     addDelegateSettings();

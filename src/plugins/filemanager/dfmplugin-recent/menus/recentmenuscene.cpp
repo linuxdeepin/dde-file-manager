@@ -24,11 +24,11 @@
 #include "utils/recentfileshelper.h"
 #include "utils/recentfileshelper.h"
 
-#include "services/common/menu/menu_defines.h"
-#include "services/common/menu/menuservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -73,8 +73,6 @@ QString RecentMenuScene::name() const
 
 bool RecentMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
-
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
@@ -97,13 +95,13 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
             qDebug() << errString;
             return false;
         }
-        if (auto workspaceScene = MenuService::service()->createScene(kWorkspaceMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
             currentScene.append(workspaceScene);
     } else {
-        if (auto workspaceScene = MenuService::service()->createScene(kSortAndDisplayMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kSortAndDisplayMenuSceneName))
             currentScene.append(workspaceScene);
 
-        if (auto workspaceScene = MenuService::service()->createScene(kOpenDirMenuSceneName))
+        if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kOpenDirMenuSceneName))
             currentScene.append(workspaceScene);
     }
 
@@ -119,8 +117,6 @@ bool RecentMenuScene::initialize(const QVariantHash &params)
 
 bool RecentMenuScene::create(QMenu *parent)
 {
-    DSC_USE_NAMESPACE
-
     if (!d->isEmptyArea) {
         auto actRemove = parent->addAction(d->predicateName[RecentActionID::kRemove]);
         actRemove->setProperty(ActionPropertyKey::kActionID, RecentActionID::kRemove);
@@ -152,7 +148,6 @@ void RecentMenuScene::updateState(QMenu *parent)
 
 bool RecentMenuScene::triggered(QAction *action)
 {
-    DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == RecentActionID::kRemove) {
@@ -170,9 +165,9 @@ bool RecentMenuScene::triggered(QAction *action)
         }
         qWarning() << "action not found, id: " << actId;
         return false;
-    } else {
-        return AbstractMenuScene::triggered(action);
     }
+
+    return AbstractMenuScene::triggered(action);
 }
 
 AbstractMenuScene *RecentMenuScene::scene(QAction *action) const
@@ -219,7 +214,7 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto sceneName = actionScene->name();
-            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (emptyDisableActions.contains(sceneName, actId)) {
                 menu->removeAction(act);
                 continue;
@@ -253,11 +248,11 @@ void RecentMenuScenePrivate::updateMenu(QMenu *menu)
                 continue;
 
             auto sceneName = actionScene->name();
-            auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            auto actId = act->property(ActionPropertyKey::kActionID).toString();
             if (selectDisableActions.contains(sceneName, actId))
                 menu->removeAction(act);
 
-            const auto &p = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID);
+            const auto &p = act->property(ActionPropertyKey::kActionID);
             if (p == RecentActionID::kRemove) {
                 removeAct = act;
             } else if (p == dfmplugin_menu::ActionID::kCopy) {
@@ -288,7 +283,7 @@ void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
 {
     auto actions = menu->actions();
     auto iter = std::find_if(actions.begin(), actions.end(), [](QAction *act) {
-        auto actId = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+        auto actId = act->property(ActionPropertyKey::kActionID).toString();
         return actId == kSrtTimeModifiedActionId;
     });
 

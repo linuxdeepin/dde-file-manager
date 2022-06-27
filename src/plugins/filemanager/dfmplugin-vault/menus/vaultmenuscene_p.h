@@ -20,10 +20,9 @@
  */
 #ifndef VAULTMENUSCENE_P_H
 #define VAULTMENUSCENE_P_H
+
 #include "vaultmenuscene.h"
 #include "interfaces/private/abstractmenuscene_p.h"
-
-#include "services/common/menu/menuservice.h"
 
 namespace dfmplugin_vault {
 class VaultMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
@@ -40,9 +39,6 @@ public:
 
 private:
     void updateMenu(QMenu *menu);
-
-public:
-    DSC_NAMESPACE::MenuService *menuServer = nullptr;
 };
 }
 #endif   // VAULTMENUSCENE_P_H

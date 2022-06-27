@@ -25,7 +25,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menus/extendcanvasscene.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "dfm-base/dfm_desktop_defines.h"
 
 #include <QAbstractItemView>
@@ -204,9 +204,8 @@ FrameManager::~FrameManager()
     turnOff();
 
     // unregister menu
-    auto menuService = DSC_NAMESPACE::MenuService::service();
-    menuService->unBind(ExtendCanvasCreator::name());
-    auto creator = menuService->unregisterScene(ExtendCanvasCreator::name());
+    dfmplugin_menu_util::menuSceneUnbind(ExtendCanvasCreator::name());
+    auto creator = dfmplugin_menu_util::menuSceneUnregisterScene(ExtendCanvasCreator::name());
     if (creator)
         delete creator;
 }
@@ -217,9 +216,8 @@ bool FrameManager::initialize()
     CfgPresenter->initialize();
 
     // register menu for canvas
-    auto menuService = DSC_NAMESPACE::MenuService::service();
-    menuService->registerScene(ExtendCanvasCreator::name(), new ExtendCanvasCreator());
-    menuService->bind(ExtendCanvasCreator::name(), "CanvasMenu");
+    dfmplugin_menu_util::menuSceneRegisterScene(ExtendCanvasCreator::name(), new ExtendCanvasCreator());
+    dfmplugin_menu_util::menuSceneBind(ExtendCanvasCreator::name(), "CanvasMenu");
 
     bool enable = CfgPresenter->isEnable();
     qInfo() << "Organizer enable:" << enable;

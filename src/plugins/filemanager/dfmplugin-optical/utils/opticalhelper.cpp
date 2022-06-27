@@ -257,18 +257,6 @@ DSC_NAMESPACE::DelegateService *OpticalHelper::dlgateServIns()
     return delegateServIns;
 }
 
-DSC_NAMESPACE::MenuService *OpticalHelper::menuServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::MenuService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::MenuService>(DSC_NAMESPACE::MenuService::name());
-}
-
 QRegularExpression OpticalHelper::burnRxp()
 {
     static QRegularExpression rxp { "^([\\s\\S]*?)/(" BURN_SEG_ONDISC "|" BURN_SEG_STAGING ")([\\s\\S]*)$" };

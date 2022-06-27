@@ -34,9 +34,10 @@
 #include "menus/vaultmenuscene.h"
 #include "menus/vaultcomputermenuscene.h"
 
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/delegate/delegateservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -103,9 +104,9 @@ void VaultVisibleManager::pluginServiceRegister()
 
         delegateServIns->registerUrlTransform(VaultHelper::instance()->scheme(), VaultHelper::vaultToLocalUrl);
 
-        MenuService::service()->registerScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
-        MenuService::service()->bind(VaultComputerMenuCreator::name(), "ComputerMenu");
-        MenuService::service()->registerScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
+        dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
+        dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");
+        dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
         WorkspaceService::service()->setWorkspaceMenuScene(VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
     }
 }

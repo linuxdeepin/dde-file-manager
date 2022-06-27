@@ -22,8 +22,7 @@
 #include "action_defines.h"
 #include "menuutils.h"
 
-#include "services/common/menu/menu_defines.h"
-
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -42,7 +41,6 @@
 
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 AbstractMenuScene *FileOperatorMenuCreator::create()
 {

@@ -18,12 +18,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef MENU_DEFINES_H
-#define MENU_DEFINES_H
+#ifndef DFM_MENU_DEFINES_H
+#define DFM_MENU_DEFINES_H
 
-#include "dfm_common_service_global.h"
+#include "dfm-base/dfm_base_global.h"
 
-DSC_BEGIN_NAMESPACE
+DFMBASE_BEGIN_NAMESPACE
 
 namespace MenuParamKey {
 // file menu params for initialize
@@ -44,6 +44,6 @@ inline constexpr char kActionID[] = "actionID";   // string
 
 }
 
-DSC_END_NAMESPACE
+DFMBASE_END_NAMESPACE
 
-#endif   // MENU_DEFINES_H
+#endif // DFM_MENU_DEFINES_H

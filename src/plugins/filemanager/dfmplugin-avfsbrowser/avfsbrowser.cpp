@@ -28,7 +28,8 @@
 #include "menu/avfsmenuscene.h"
 #include "events/avfseventhandler.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
@@ -63,7 +64,7 @@ bool AvfsBrowser::start()
 
     DSC_USE_NAMESPACE
     DelegateService::service()->registerUrlTransform(AvfsUtils::scheme(), &AvfsUtils::avfsUrlToLocal);
-    MenuService::service()->registerScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator());
+    dfmplugin_menu_util::menuSceneRegisterScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator());
 
     DSB_FM_USE_NAMESPACE
     WorkspaceService::service()->addScheme(AvfsUtils::scheme());
@@ -99,16 +100,16 @@ void AvfsBrowser::regCrumb()
 
 void AvfsBrowser::claimSubScene(const QString &subScene)
 {
-    DSC_USE_NAMESPACE
-    if (MenuService::service()->contains(subScene)) {
-        MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
+    if (dfmplugin_menu_util::menuSceneContains(subScene)) {
+        dfmplugin_menu_util::menuSceneBind(subScene, AvfsMenuSceneCreator::name());
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
-            if (subScene == addedScene) {
-                MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
-                MenuService::service()->disconnect(this);
-            }
-        },
-                Qt::DirectConnection);
+        //todo(xst) menu
+//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
+//            if (subScene == addedScene) {
+//                MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
+//                MenuService::service()->disconnect(this);
+//            }
+//        },
+//                Qt::DirectConnection);
     }
 }

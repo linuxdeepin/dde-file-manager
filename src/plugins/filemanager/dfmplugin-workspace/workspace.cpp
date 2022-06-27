@@ -31,8 +31,9 @@
 #include "menus/workspacemenuscene.h"
 #include "menus/sortanddisplaymenuscene.h"
 
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
@@ -41,7 +42,6 @@
 
 #include <dfm-framework/framework.h>
 
-DSC_USE_NAMESPACE
 
 using namespace dfmplugin_workspace;
 
@@ -55,15 +55,16 @@ void Workspace::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
     WorkspaceUnicastReceiver::instance()->connectService();
-    MenuService::service()->registerScene(WorkspaceMenuCreator::name(), new WorkspaceMenuCreator());
-    MenuService::service()->registerScene(SortAndDisplayMenuCreator::name(), new SortAndDisplayMenuCreator());
-    MenuService::service()->bind(SortAndDisplayMenuCreator::name(), WorkspaceMenuCreator::name());
 }
 
 bool Workspace::start()
 {
     DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
+
+    dfmplugin_menu_util::menuSceneRegisterScene(WorkspaceMenuCreator::name(), new WorkspaceMenuCreator());
+    dfmplugin_menu_util::menuSceneRegisterScene(SortAndDisplayMenuCreator::name(), new SortAndDisplayMenuCreator());
+    dfmplugin_menu_util::menuSceneBind(SortAndDisplayMenuCreator::name(), WorkspaceMenuCreator::name());
 
     WorkspaceEventReceiver::instance()->initConnection();
 

@@ -23,7 +23,7 @@
 #include "utils/propertydialoghelper.h"
 #include "menu/propertymenuscene.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -39,7 +39,7 @@ bool PropertyDialog::start()
 
     PropertyDialogHelper::propertyServiceInstance()->addComputerPropertyToPropertyService();
 
-    MenuService::service()->registerScene(PropertyMenuCreator::name(), new PropertyMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(PropertyMenuCreator::name(), new PropertyMenuCreator);
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
     return true;
@@ -52,13 +52,14 @@ dpf::Plugin::ShutdownFlag PropertyDialog::stop()
 
 void PropertyDialog::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(PropertyMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(PropertyMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(PropertyMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        // todo(zs) menu using signal_MenuScene_SceneAdded
+//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+//            if (scene == parentScene)
+//                MenuService::service()->bind(PropertyMenuCreator::name(), scene);
+//        },
+//                Qt::DirectConnection);
     }
 }

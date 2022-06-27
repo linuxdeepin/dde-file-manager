@@ -25,7 +25,7 @@
 #include "utils/avfsutils.h"
 #include "events/avfseventhandler.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <QDebug>
@@ -59,7 +59,6 @@ QString AvfsMenuScene::name() const
 
 bool AvfsMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
@@ -76,7 +75,6 @@ bool AvfsMenuScene::initialize(const QVariantHash &params)
 
 bool AvfsMenuScene::create(QMenu *parent)
 {
-    DSC_USE_NAMESPACE
     using namespace AvfsMenuActionId;
 
     // create all subscene first and take all of the actions;
@@ -126,7 +124,6 @@ void AvfsMenuScene::updateState(QMenu *parent)
 
 bool AvfsMenuScene::triggered(QAction *action)
 {
-    DSC_USE_NAMESPACE
     using namespace AvfsMenuActionId;
 
     auto id = action->property(ActionPropertyKey::kActionID).toString();

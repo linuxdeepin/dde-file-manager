@@ -22,11 +22,10 @@
 */
 #include "filedialogmenuscene.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QMenu>
 
-DSC_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

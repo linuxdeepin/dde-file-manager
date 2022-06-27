@@ -25,10 +25,10 @@
 #include "utils/computerdatastruct.h"
 #include "controller/computercontroller.h"
 
-#include "services/common/menu/menu_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/base/device/deviceutils.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QMenu>
 #include <QRegularExpression>
@@ -57,7 +57,6 @@ QString ComputerMenuScene::name() const
 
 bool ComputerMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
@@ -77,7 +76,6 @@ bool ComputerMenuScene::create(QMenu *parent)
         return false;
 
     using namespace ContextMenuAction;
-    DSC_USE_NAMESPACE
 
     d->triggerFromSidebar = parent->property(kActionTriggeredFromSidebar).toBool();
 
@@ -273,7 +271,7 @@ void ComputerMenuScenePrivate::updateMenu(QMenu *menu, const QStringList &disabl
     auto actions = menu->actions();
     std::for_each(actions.cbegin(), actions.cend(), [&](QAction *act) {
         if (act && !act->isSeparator()) {
-            auto key = act->property(DSC_NAMESPACE::ActionPropertyKey::kActionID).toString();
+            auto key = act->property(ActionPropertyKey::kActionID).toString();
             if (!keeps.contains(key))
                 menu->removeAction(act);
         }

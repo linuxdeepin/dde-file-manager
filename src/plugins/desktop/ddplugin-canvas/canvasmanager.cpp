@@ -28,7 +28,7 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "menu/canvasmenuscene.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_desktop_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -105,7 +105,7 @@ void CanvasManager::init()
     dpfSignalDispatcher->subscribe("dfmplugin_trashcore", "signal_TrashCore_TrashStateChanged", this, &CanvasManager::onTrashStateChanged);
 
     // register menu
-    DSC_NAMESPACE::MenuService::service()->registerScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(CanvasMenuCreator::name(), new CanvasMenuCreator);
 
     // self hook
     d->hookIfs = new CanvasManagerHook(this);

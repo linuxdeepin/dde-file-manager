@@ -25,7 +25,8 @@
 #include "widget/sharecontrolwidget.h"
 #include "private/shareutils.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -42,7 +43,7 @@ void DirShare::initialize()
 
 bool DirShare::start()
 {
-    MenuService::service()->registerScene(ShareMenuCreator::name(), new ShareMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(ShareMenuCreator::name(), new ShareMenuCreator);
 
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
@@ -73,13 +74,14 @@ QWidget *DirShare::createShareControlWidget(const QUrl &url)
 
 void DirShare::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(ShareMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(ShareMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(ShareMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        // todo(xst) menu signal_MenuScene_SceneAdded
+//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+//            if (scene == parentScene)
+//                MenuService::service()->bind(ShareMenuCreator::name(), scene);
+//        },
+//                Qt::DirectConnection);
     }
 }

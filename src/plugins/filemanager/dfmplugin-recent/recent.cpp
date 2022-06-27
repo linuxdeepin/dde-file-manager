@@ -28,7 +28,8 @@
 #include "menus/recentmenuscene.h"
 #include "events/recenteventreceiver.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
@@ -50,7 +51,6 @@ void Recent::initialize()
     InfoFactory::regClass<RecentFileInfo>(RecentManager::scheme());
     WatcherFactory::regClass<RecentFileWatcher>(RecentManager::scheme());
     DirIteratorFactory::regClass<RecentDirIterator>(RecentManager::scheme());
-    DSC_NAMESPACE::MenuService::service()->registerScene(RecentMenuCreator::name(), new RecentMenuCreator());
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
@@ -60,6 +60,8 @@ void Recent::initialize()
 
 bool Recent::start()
 {
+    dfmplugin_menu_util::menuSceneRegisterScene(RecentMenuCreator::name(), new RecentMenuCreator());
+
     delegateServIns->registerUrlTransform(RecentManager::scheme(), RecentManager::urlTransform);
 
     DetailFilterTypes filter = DetailFilterType::kFileSizeField;

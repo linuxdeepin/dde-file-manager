@@ -26,14 +26,13 @@
 #include "views/filedialog.h"
 #include "menus/filedialogmenuscene.h"
 
-#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/menu/menuservice.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QDBusError>
 #include <QDBusConnection>
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DIALOGCORE_USE_NAMESPACE
 
@@ -92,19 +91,20 @@ void Core::onAllPluginsStarted()
     if (!registerDialogDBus())
         abort();
 
-    MenuService::service()->registerScene(FileDialogMenuCreator::name(), new FileDialogMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(FileDialogMenuCreator::name(), new FileDialogMenuCreator);
     bindScene("WorkspaceMenu");
 }
 
 void Core::bindScene(const QString &parentScene)
 {
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(FileDialogMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(FileDialogMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(FileDialogMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        //todo(zs) menu
+//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+//            if (scene == parentScene)
+//                MenuService::service()->bind(FileDialogMenuCreator::name(), scene);
+//        },
+//                Qt::DirectConnection);
     }
 }

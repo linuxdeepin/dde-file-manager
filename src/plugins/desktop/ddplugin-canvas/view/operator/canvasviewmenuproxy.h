@@ -23,13 +23,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-#include "services/common/dfm_common_service_global.h"
-
 #include <QObject>
-
-namespace dfm_service_common {
-class MenuService;
-}
 
 DDP_CANVAS_BEGIN_NAMESPACE
 class CanvasView;
@@ -47,7 +41,6 @@ public slots:
 
 private:
     CanvasView *view;
-    dfm_service_common::MenuService *extensionMenuServer = nullptr;
 };
 
 DDP_CANVAS_END_NAMESPACE

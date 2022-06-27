@@ -27,9 +27,10 @@
 #include "utils/burnsignalmanager.h"
 #include "events/burneventreceiver.h"
 
-#include "services/common/menu/menuservice.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/base/application/application.h"
@@ -51,8 +52,7 @@ void Burn::initialize()
 
 bool Burn::start()
 {
-    DSC_USE_NAMESPACE
-    MenuService::service()->registerScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
+    dfmplugin_menu_util::menuSceneRegisterScene(SendToDiscMenuCreator::name(), new SendToDiscMenuCreator);
     bindScene("SendToMenu");
 
     DiscStateManager::instance()->initilaize();
@@ -66,15 +66,15 @@ bool Burn::start()
 
 void Burn::bindScene(const QString &parentScene)
 {
-    DSC_USE_NAMESPACE
-    if (MenuService::service()->contains(parentScene)) {
-        MenuService::service()->bind(SendToDiscMenuCreator::name(), parentScene);
+    if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
+        dfmplugin_menu_util::menuSceneBind(SendToDiscMenuCreator::name(), parentScene);
     } else {
-        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-            if (scene == parentScene)
-                MenuService::service()->bind(SendToDiscMenuCreator::name(), scene);
-        },
-                Qt::DirectConnection);
+        // todo(zs) menu using signal_MenuScene_SceneAdded
+//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+//            if (scene == parentScene)
+//                MenuService::service()->bind(SendToDiscMenuCreator::name(), scene);
+//        },
+//                Qt::DirectConnection);
     }
 }
 

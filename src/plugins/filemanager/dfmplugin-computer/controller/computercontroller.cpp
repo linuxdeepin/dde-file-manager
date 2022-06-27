@@ -30,9 +30,10 @@
 #include "utils/remotepasswdmanager.h"
 #include "watcher/computeritemwatcher.h"
 
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/menu/menuservice.h"
-#include "services/common/menu/menu_defines.h"
+
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
@@ -135,8 +136,7 @@ void ComputerController::onMenuRequest(quint64 winId, const QUrl &url, bool trig
     if (!ComputerUtils::contextMenuEnabled)
         return;
 
-    DSC_USE_NAMESPACE
-    auto scene = MenuService::service()->createScene(ComputerUtils::menuSceneName());
+    auto scene = dfmplugin_menu_util::menuSceneCreateScene(ComputerUtils::menuSceneName());
     if (!scene) {
         qWarning() << "Craete scene for computer failed: " << ComputerUtils::menuSceneName();
         return;

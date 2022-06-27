@@ -24,16 +24,13 @@
 #include "interfaces/private/abstractmenuscene_p.h"
 #include "canvasmenu_defines.h"
 
-#include <services/common/dfm_common_service_global.h>
-#include <services/common/menu/menuservice.h>
-#include "services/common/menu/menu_defines.h"
-#include <plugins/common/dfmplugin-menu/menuscene/action_defines.h>
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QMap>
 #include <QMultiHash>
 #include <QGSettings>
 
-DSC_USE_NAMESPACE
 DDP_CANVAS_BEGIN_NAMESPACE
 
 class CanvasView;
@@ -104,7 +101,6 @@ public:
     QPoint gridPos;
 
     CanvasView *view { nullptr };
-    MenuService *menuServer = nullptr;
 
     QMultiHash<QString, QString> emptyDisableActions;
     QMultiHash<QString, QString> normalDisableActions;

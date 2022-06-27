@@ -25,10 +25,9 @@
 #include "interfaces/private/abstractmenuscene_p.h"
 #include "workspacemenu_defines.h"
 
-#include "services/common/dfm_common_service_global.h"
-#include "services/common/menu/menuservice.h"
-#include "services/common/menu/menu_defines.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QGSettings>
 
@@ -106,8 +105,6 @@ public:
 
 public:
     FileView *view = nullptr;
-    DSC_NAMESPACE::MenuService *menuServer = nullptr;
-
 private:
     WorkspaceMenuScene *q;
 };

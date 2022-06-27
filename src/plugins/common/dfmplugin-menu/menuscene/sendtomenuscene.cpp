@@ -25,9 +25,9 @@
 #include "action_defines.h"
 #include "menuutils.h"
 
-#include "services/common/menu/menu_defines.h"
 #include "services/common/delegate/delegateservice.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -102,7 +102,7 @@ bool SendToMenuScene::create(QMenu *parent)
 
         if (!d->onDesktop) {
             auto *act = parent->addAction(d->predicateName[ActionID::kSendToDesktop]);
-            act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
+            act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToDesktop);
             d->predicateAction[ActionID::kSendToDesktop] = act;
         }
 
@@ -115,7 +115,7 @@ bool SendToMenuScene::create(QMenu *parent)
             } else {
                 auto sendToAct = parent->addAction(d->predicateName[ActionID::kSendTo]);
                 sendToAct->setMenu(sendToMenu);
-                sendToAct->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendTo);
+                sendToAct->setProperty(ActionPropertyKey::kActionID, ActionID::kSendTo);
                 d->predicateAction[ActionID::kSendTo] = sendToAct;
             }
         }
@@ -174,7 +174,7 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
     bool bluetoothAvailable = dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_IsAvailable").toBool();
     if (bluetoothAvailable) {
         auto *act = subMenu->addAction(predicateName[ActionID::kSendToBluetooth]);
-        act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
+        act->setProperty(ActionPropertyKey::kActionID, ActionID::kSendToBluetooth);
         if (folderSelected)
             act->setEnabled(false);
         predicateAction[ActionID::kSendToBluetooth] = act;
@@ -214,7 +214,7 @@ void SendToMenuScenePrivate::addSubActions(QMenu *subMenu)
         if (act) {
             QString actId = ActionID::kSendToRemovablePrefix + QString::number(idx++);
             predicateAction.insert(actId, act);
-            act->setProperty(DSC_NAMESPACE::ActionPropertyKey::kActionID, actId);
+            act->setProperty(ActionPropertyKey::kActionID, actId);
         }
     }
 }

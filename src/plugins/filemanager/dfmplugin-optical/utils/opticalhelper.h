@@ -29,7 +29,6 @@
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 #include "services/common/delegate/delegateservice.h"
-#include "services/common/menu/menuservice.h"
 
 #include <QIcon>
 #include <QRegularExpression>
@@ -65,8 +64,6 @@ public:
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
     static DSC_NAMESPACE::DelegateService *dlgateServIns();
-    static DSC_NAMESPACE::MenuService *menuServIns();
-
 private:
     static QRegularExpression burnRxp();
 };

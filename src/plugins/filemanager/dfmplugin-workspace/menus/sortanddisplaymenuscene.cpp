@@ -26,7 +26,7 @@
 #include "views/fileview.h"
 #include "models/filesortfilterproxymodel.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
@@ -36,7 +36,6 @@
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
-DSC_USE_NAMESPACE
 
 AbstractMenuScene *SortAndDisplayMenuCreator::create()
 {

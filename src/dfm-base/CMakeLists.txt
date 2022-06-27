@@ -32,6 +32,7 @@ set(GLOBAL_H dfm_base_global.h
              dfm_event_defines.h
              dfm_global_defines.h
              dfm_desktop_defines.h
+             dfm_menu_defines.h
              )
 
 FILE (GLOB INTERFACES_FILES

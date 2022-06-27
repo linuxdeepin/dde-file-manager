@@ -27,11 +27,12 @@
 #include "topwidget/advancesearchbar.h"
 #include "menus/searchmenuscene.h"
 
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/search/searchservice.h"
-#include "services/common/menu/menuservice.h"
 
 #include "dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -39,7 +40,6 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 namespace dfmplugin_search {
@@ -51,7 +51,6 @@ void Search::initialize()
     InfoFactory::regClass<SearchFileInfo>(SearchHelper::scheme());
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
-    MenuService::service()->registerScene(SearchMenuCreator::name(), new SearchMenuCreator());
 
     subscribeEvent();
 
@@ -60,6 +59,7 @@ void Search::initialize()
 
 bool Search::start()
 {
+    dfmplugin_menu_util::menuSceneRegisterScene(SearchMenuCreator::name(), new SearchMenuCreator());
     return true;
 }
 

@@ -22,11 +22,8 @@
 #include "canvasmanager.h"
 #include "utils/fileutil.h"
 
-#include <services/common/menu/menuservice.h>
-
 #include <dfm-base/utils/clipboard.h>
 
-DSC_USE_NAMESPACE
 DDP_CANVAS_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

@@ -23,7 +23,6 @@
 #include "events/coreeventreceiver.h"
 
 #include "services/filemanager/command/commandservice.h"
-#include "services/common/menu/menuservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/application/application.h"
@@ -47,7 +46,6 @@
 DFMBASE_USE_NAMESPACE
 DPCORE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 namespace GlobalPrivate {
 static Application *kDFMApp { nullptr };

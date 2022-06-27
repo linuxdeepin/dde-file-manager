@@ -24,7 +24,7 @@
 #include "private/mysharemenuscene_p.h"
 #include "events/shareeventscaller.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <QMenu>
 #include <QDebug>
@@ -47,7 +47,6 @@ QString MyShareMenuScene::name() const
 
 bool MyShareMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
@@ -72,7 +71,6 @@ void MyShareMenuScene::updateState(QMenu *parent)
 bool MyShareMenuScene::triggered(QAction *action)
 {
     do {
-        DSC_USE_NAMESPACE
         QString id = action->property(ActionPropertyKey::kActionID).toString();
         if (!d->predicateAction.contains(id))
             break;
@@ -112,7 +110,6 @@ void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
     if (isEmptyArea)
         return;
 
-    DSC_USE_NAMESPACE
     auto act = parent->addAction(predicateName[MySharesActionId::kOpenShareFolder]);
     act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kOpenShareFolder);
     predicateAction[MySharesActionId::kOpenShareFolder] = act;

@@ -25,15 +25,18 @@
 #include "menus/workspacemenuscene.h"
 #include "utils/workspacehelper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-#include "services/common/menu/menuservice.h"
-#include "services/common/menu/menu_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
+#include "services/filemanager/workspace/workspace_defines.h"
+
+#include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/framework.h>
+
+#include <QMenu>
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -47,7 +50,7 @@ FileViewMenuHelper::FileViewMenuHelper(FileView *parent)
 
 void FileViewMenuHelper::showEmptyAreaMenu()
 {
-    auto scene = MenuService::service()->createScene(currentMenuScene());
+    auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
         return;
@@ -76,7 +79,7 @@ void FileViewMenuHelper::showEmptyAreaMenu()
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
 {
-    auto scene = MenuService::service()->createScene(currentMenuScene());
+    auto scene = dfmplugin_menu_util::menuSceneCreateScene(currentMenuScene());
     if (!scene) {
         qWarning() << "Create scene failed, scene name: " << currentMenuScene();
         return;

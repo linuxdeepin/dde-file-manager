@@ -25,11 +25,14 @@
 #include "utils/tagmanager.h"
 #include "widgets/tagcolorlistwidget.h"
 
-#include "services/common/menu/menu_defines.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+
 #include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
+
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_menu_defines.h"
 
 #include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
@@ -38,7 +41,6 @@
 #include <QWidgetAction>
 
 DPTAG_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 TagMenuScene::TagMenuScene(QObject *parent)
@@ -64,7 +66,7 @@ bool TagMenuScene::initialize(const QVariantHash &params)
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
     d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
-    const auto &tmpParams = dpfSlotChannel->push("dfmplugin_menu", "slot_PerfectMenuParams", params).value<QVariantHash>();
+    const auto &tmpParams = dfmplugin_menu_util::menuPerfectParams(params);
     d->isDDEDesktopFileIncluded = tmpParams.value(MenuParamKey::kIsDDEDesktopFileIncluded, false).toBool();
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
 

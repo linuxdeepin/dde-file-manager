@@ -21,10 +21,11 @@
 #include "propertymenuscene.h"
 #include "propertymenuscene_p.h"
 
-#include "services/common/menu/menu_defines.h"
+
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 
+#include "dfm-base/dfm_menu_defines.h"
 #include <dfm-base/mimetype/mimesappsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/desktopfileinfo.h>
