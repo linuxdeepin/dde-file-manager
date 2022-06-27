@@ -31,7 +31,7 @@
 #include <QMap>
 #include <QSet>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 struct BookmarkData
 {
@@ -92,6 +92,6 @@ private:
     QSet<QString> bookMarkDisabledSchemes;
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif   // BOOKMARKMANAGER_H

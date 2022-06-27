@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class FileInfoModel;
 class FileInfoModelBroker : public QObject
 {
@@ -52,6 +52,6 @@ private:
     FileInfoModel *model = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // FILEINFOMODELBROKER_H

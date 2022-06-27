@@ -34,7 +34,7 @@
 
 #include <mutex>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace EventType {
 const int kRemoveShare = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
@@ -204,4 +204,4 @@ QDebug operator<<(QDebug dbg, const ShareInfo &obj)
     dbg.nospace() << "}";
     return dbg;
 }
-DSC_END_NAMESPACE
+}

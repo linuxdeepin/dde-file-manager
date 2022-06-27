@@ -37,7 +37,7 @@
 #include <QObject>
 #include <QLabel>
 
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE

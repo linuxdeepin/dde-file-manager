@@ -22,7 +22,7 @@
 #include "tagcrumbedit.h"
 
 DWIDGET_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagCrumbEdit::TagCrumbEdit(QWidget *parent)
     : DCrumbEdit(parent)

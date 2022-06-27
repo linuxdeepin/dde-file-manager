@@ -30,7 +30,7 @@
 #include <QWidget>
 #include <QFileDialog>
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class FileDialogPrivate;
 class FileDialogStatusBar;
@@ -151,6 +151,6 @@ private:
     QScopedPointer<FileDialogPrivate> d;
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // FILEDIALOG_H

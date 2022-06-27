@@ -33,7 +33,7 @@
 #include <dfm-io/core/dfile.h>
 
 USING_IO_NAMESPACE
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 DFMBASE_USE_NAMESPACE
 class StorageInfo;
 class DoMoveToTrashFilesWorker : public FileOperateBaseWorker
@@ -69,6 +69,6 @@ private:
     QSharedPointer<StorageInfo> targetStorageInfo { nullptr };   // target file's device infor
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // DOMOVETOTRASHFILESWORKER_H

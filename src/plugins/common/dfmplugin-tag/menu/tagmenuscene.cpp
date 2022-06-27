@@ -40,7 +40,7 @@
 #include <QMenu>
 #include <QWidgetAction>
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
 
 TagMenuScene::TagMenuScene(QObject *parent)

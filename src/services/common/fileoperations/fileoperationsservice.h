@@ -28,7 +28,7 @@
 
 #include <dfm-framework/framework.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class FileOperationsService final : public dpf::PluginService,
                                     dpf::AutoServiceRegister<FileOperationsService>
 {
@@ -62,6 +62,6 @@ private:
     virtual ~FileOperationsService() override;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // FILEOPERATIONSSERVICE_H

@@ -26,7 +26,7 @@
 
 #include <QAbstractItemView>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class ShortcutOper;
 class DragDropOper;
 class ClickSelecter;
@@ -107,5 +107,5 @@ private:
     QScopedPointer<CanvasViewPrivate> d;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif   // CANVASVIEW_H

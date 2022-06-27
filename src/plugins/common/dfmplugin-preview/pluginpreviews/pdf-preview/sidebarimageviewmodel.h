@@ -26,7 +26,7 @@
 
 #include <QAbstractListModel>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 typedef enum E_SideBar {
     SIDE_THUMBNIL = 0
 } E_SideBar;
@@ -51,11 +51,11 @@ typedef struct ImagePageInfo_t
 
     bool operator>(const ImagePageInfo_t &other) const;
 } ImagePageInfo_t;
-PREVIEW_END_NAMESPACE
+}
 
 Q_DECLARE_METATYPE(PREVIEW_NAMESPACE::ImagePageInfo_t);
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class DocSheet;
 class SideBarImageViewModel : public QAbstractListModel
 {
@@ -158,5 +158,5 @@ private:
     QList<ImagePageInfo_t> pageList;
     static QMap<QObject *, QVector<QPixmap>> g_sheetPixmapMap;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // SIDEBARIMAGEVIEWMODEL_H

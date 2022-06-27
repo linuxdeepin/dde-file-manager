@@ -28,7 +28,7 @@
 #include <QMultiMap>
 #include <QPluginLoader>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class PreviewPluginLoaderPrivate;
 class PreviewPluginLoader : public QObject
 {
@@ -88,5 +88,5 @@ QList<PluginInterface *> dLoadPluginList(const PreviewPluginLoader *loader, cons
 
     return list;
 }
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif

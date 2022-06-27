@@ -30,7 +30,7 @@
 #include <QThread>
 
 DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class RestoreTrashFiles : private AbstractJob
 {
     Q_OBJECT
@@ -40,6 +40,6 @@ class RestoreTrashFiles : private AbstractJob
 public:
     ~RestoreTrashFiles() override;
 };
-DSC_END_NAMESPACE
+}
 
 #endif   // RESTORETRASHFILES_H

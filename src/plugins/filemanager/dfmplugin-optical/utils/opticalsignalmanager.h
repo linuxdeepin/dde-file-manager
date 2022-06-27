@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalSignalManager : public QObject
 {
@@ -44,6 +44,6 @@ private:
     explicit OpticalSignalManager(QObject *parent = nullptr);
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALSIGNALMANAGER_H

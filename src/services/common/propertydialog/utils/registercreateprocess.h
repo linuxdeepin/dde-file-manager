@@ -25,8 +25,8 @@
 
 #include <QWidget>
 
-DSC_BEGIN_NAMESPACE
-CPY_BEGIN_NAMESPACE
+namespace dfm_service_common {
+namespace Property {
 class RegisterCreateProcess
 {
 private:
@@ -122,6 +122,6 @@ public:
      */
     FilePropertyControlFilter contorlFieldFilter(const QUrl &url);
 };
-CPY_END_NAMESPACE
-DSC_END_NAMESPACE
+}
+}
 #endif   // REGISTERCREATEPROCESS_H

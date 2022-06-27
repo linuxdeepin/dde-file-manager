@@ -29,7 +29,7 @@
 #include <QMimeData>
 #include <QDebug>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 DodgeOper::DodgeOper(CanvasView *parent)
     : QObject(parent), view(parent)

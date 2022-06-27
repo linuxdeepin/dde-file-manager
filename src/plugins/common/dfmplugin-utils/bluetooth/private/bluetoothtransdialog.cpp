@@ -50,28 +50,28 @@
 #include <QUuid>
 #include <QDateTime>
 
-#define TITLE_BT_TRANS_FILE BluetoothTransDialog::tr("Bluetooth File Transfer")
-#define TITLE_BT_TRANS_SUCC BluetoothTransDialog::tr("File Transfer Successful")
-#define TITLE_BT_TRANS_FAIL BluetoothTransDialog::tr("File Transfer Failed")
+#define TITLE_BT_TRANS_FILE dfmplugin_utils::BluetoothTransDialog::tr("Bluetooth File Transfer")
+#define TITLE_BT_TRANS_SUCC dfmplugin_utils::BluetoothTransDialog::tr("File Transfer Successful")
+#define TITLE_BT_TRANS_FAIL dfmplugin_utils::BluetoothTransDialog::tr("File Transfer Failed")
 
-#define TXT_SENDING_FILE BluetoothTransDialog::tr("Sending files to \"<b style=\"font-weight: 550;\">%1</b>\"")
-#define TXT_SENDING_FAIL BluetoothTransDialog::tr("Failed to send files to \"<b style=\"font-weight: 550;\">%1</b>\"")
-#define TXT_SENDING_SUCC BluetoothTransDialog::tr("Sent to \"<b style=\"font-weight: 550;\">%1</b>\" successfully")
-#define TXT_SELECT_DEVIC BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
-#define TXT_NO_DEV_FOUND BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
-#define TXT_WAIT_FOR_RCV BluetoothTransDialog::tr("Waiting to be received...")
-#define TXT_GOTO_BT_SETS BluetoothTransDialog::tr("Go to Bluetooth Settings")
-#define TXT_SEND_PROGRES BluetoothTransDialog::tr("%1/%2 Sent")
-#define TXT_ERROR_REASON BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected")
-#define TXT_FILE_OVERSIZ BluetoothTransDialog::tr("Unable to send the file more than 2 GB")
-#define TXT_FILE_ZEROSIZ BluetoothTransDialog::tr("Unable to send 0 KB files")
-#define TXT_FILE_NOEXIST BluetoothTransDialog::tr("File doesn't exist")
+#define TXT_SENDING_FILE dfmplugin_utils::BluetoothTransDialog::tr("Sending files to \"<b style=\"font-weight: 550;\">%1</b>\"")
+#define TXT_SENDING_FAIL dfmplugin_utils::BluetoothTransDialog::tr("Failed to send files to \"<b style=\"font-weight: 550;\">%1</b>\"")
+#define TXT_SENDING_SUCC dfmplugin_utils::BluetoothTransDialog::tr("Sent to \"<b style=\"font-weight: 550;\">%1</b>\" successfully")
+#define TXT_SELECT_DEVIC dfmplugin_utils::BluetoothTransDialog::tr("Select a Bluetooth device to receive files")
+#define TXT_NO_DEV_FOUND dfmplugin_utils::BluetoothTransDialog::tr("Cannot find the connected Bluetooth device")
+#define TXT_WAIT_FOR_RCV dfmplugin_utils::BluetoothTransDialog::tr("Waiting to be received...")
+#define TXT_GOTO_BT_SETS dfmplugin_utils::BluetoothTransDialog::tr("Go to Bluetooth Settings")
+#define TXT_SEND_PROGRES dfmplugin_utils::BluetoothTransDialog::tr("%1/%2 Sent")
+#define TXT_ERROR_REASON dfmplugin_utils::BluetoothTransDialog::tr("Error: the Bluetooth device is disconnected")
+#define TXT_FILE_OVERSIZ dfmplugin_utils::BluetoothTransDialog::tr("Unable to send the file more than 2 GB")
+#define TXT_FILE_ZEROSIZ dfmplugin_utils::BluetoothTransDialog::tr("Unable to send 0 KB files")
+#define TXT_FILE_NOEXIST dfmplugin_utils::BluetoothTransDialog::tr("File doesn't exist")
 
-#define TXT_NEXT BluetoothTransDialog::tr("Next", "button")
-#define TXT_CANC BluetoothTransDialog::tr("Cancel", "button")
-#define TXT_DONE BluetoothTransDialog::tr("Done", "button")
-#define TXT_RTRY BluetoothTransDialog::tr("Retry", "button")
-#define TXT_OKAY BluetoothTransDialog::tr("OK", "button")
+#define TXT_NEXT dfmplugin_utils::BluetoothTransDialog::tr("Next", "button")
+#define TXT_CANC dfmplugin_utils::BluetoothTransDialog::tr("Cancel", "button")
+#define TXT_DONE dfmplugin_utils::BluetoothTransDialog::tr("Done", "button")
+#define TXT_RTRY dfmplugin_utils::BluetoothTransDialog::tr("Retry", "button")
+#define TXT_OKAY dfmplugin_utils::BluetoothTransDialog::tr("OK", "button")
 
 static constexpr char kIconConnect[] { "notification-bluetooth-connected" };
 static constexpr char kIconDisconn[] { "notification-bluetooth-disconnected" };

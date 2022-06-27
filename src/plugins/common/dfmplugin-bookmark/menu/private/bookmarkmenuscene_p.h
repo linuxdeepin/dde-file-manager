@@ -26,11 +26,12 @@
 
 #include "interfaces/private/abstractmenuscene_p.h"
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookmarkMenuScene;
 class BookmarkMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class BookmarkMenuScene;
 
 public:
@@ -39,6 +40,6 @@ public:
     bool showBookMarkMenu = true;
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif   // BOOKMARKMENUSCENE_P_H

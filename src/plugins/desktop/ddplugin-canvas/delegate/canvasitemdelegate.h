@@ -27,7 +27,7 @@
 #include <QTextOption>
 #include <QTextLayout>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasView;
 class CanvasViewBroker;
@@ -95,5 +95,5 @@ private:
     CanvasItemDelegatePrivate *const d = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif   // CANVASITEMDELEGATE_H

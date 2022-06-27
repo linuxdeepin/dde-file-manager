@@ -28,7 +28,7 @@
 #include "dfm-base/base/standardpaths.h"
 
 DFMBASE_USE_NAMESPACE
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 
 TrashDirIteratorPrivate::TrashDirIteratorPrivate(TrashDirIterator *qq)
     : q(qq)

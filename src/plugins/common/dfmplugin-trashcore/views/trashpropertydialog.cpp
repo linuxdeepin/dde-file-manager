@@ -28,7 +28,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPTRASHCORE_USE_NAMESPACE
+using namespace dfmplugin_trashcore;
 TrashPropertyDialog::TrashPropertyDialog(QWidget *parent)
     : DDialog(parent),
       fileCalculationUtils(new FileStatisticsJob())

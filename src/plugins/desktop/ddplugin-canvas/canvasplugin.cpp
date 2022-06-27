@@ -24,7 +24,7 @@
 
 #include <dfm-base/utils/clipboard.h>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 
 void CanvasPlugin::initialize()

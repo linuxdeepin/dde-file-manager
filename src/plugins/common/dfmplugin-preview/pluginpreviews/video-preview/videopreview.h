@@ -32,7 +32,7 @@
 
 #include <playlist_model.h>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class VideoPreview : public DFMBASE_NAMESPACE::AbstractBasePreview
 {
     Q_OBJECT
@@ -68,5 +68,5 @@ private:
     friend class VideoWidget;
     friend class VideoStatusBar;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // VIDEOPREVIEW_H

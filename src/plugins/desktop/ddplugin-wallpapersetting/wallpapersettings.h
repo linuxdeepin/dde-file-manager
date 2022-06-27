@@ -25,7 +25,7 @@
 
 #include <DBlurEffectWidget>
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 class WallpaperSettingsPrivate;
 class WallpaperSettings : public DTK_WIDGET_NAMESPACE::DBlurEffectWidget
 {
@@ -46,12 +46,14 @@ public:
     static QStringList availableWallpaperSlide();
     void adjustGeometry();
     void refreshList();
-    QPair<QString,QString> currentWallpaper() const;
+    QPair<QString, QString> currentWallpaper() const;
+
 public:
     void onGeometryChanged();
 signals:
     void backgroundChanged();
     void quit();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void showEvent(QShowEvent *) override;
@@ -64,12 +66,14 @@ protected:
     void loadScreenSaver();
     void applyToDesktop();
     void applyToGreeter();
+
 private:
     void init();
+
 private:
     WallpaperSettingsPrivate *d;
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
-#endif // WALLPAPERSETTINGS_H
+#endif   // WALLPAPERSETTINGS_H

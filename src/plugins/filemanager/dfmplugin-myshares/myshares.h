@@ -27,7 +27,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 class MyShares : public dpf::Plugin
 {
     Q_OBJECT
@@ -50,5 +50,5 @@ private:
     void hookEvent();
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 #endif   // MYSHARESPLUGIN_H

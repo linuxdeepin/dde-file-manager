@@ -27,7 +27,7 @@
 #include <QVBoxLayout>
 
 DFMBASE_USE_NAMESPACE
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 
 UnknowFilePreview::UnknowFilePreview(QObject *parent)
     : AbstractBasePreview(parent)

@@ -38,15 +38,15 @@
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 
 #define DESKTOP_BUTTON_ID "desktop"
 #define LOCK_SCREEN_BUTTON_ID "lock-screen"
 #define DESKTOP_AND_LOCKSCREEN_BUTTON_ID "desktop-lockscreen"
 #define SCREENSAVER_BUTTON_ID "screensaver"
 
-#define BUTTON_NARROW_WIDTH     79
-#define BUTTON_WIDE_WIDTH       164
+#define BUTTON_NARROW_WIDTH 79
+#define BUTTON_WIDE_WIDTH 164
 
 #define CanvasCoreSubscribe(topic, recv, func) \
     dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), recv, func);
@@ -60,7 +60,8 @@ const int WallpaperSettingsPrivate::kListHeight = 100;
 
 static constexpr char kDefaultWallpaperPath[] { "/usr/share/backgrounds/default_background.jpg" };
 
-static inline QString covertUrlToLocalPath(const QString &url) {
+static inline QString covertUrlToLocalPath(const QString &url)
+{
     if (url.startsWith("/"))
         return url;
     else
@@ -70,8 +71,7 @@ static inline QString covertUrlToLocalPath(const QString &url) {
 DFMBASE_USE_NAMESPACE
 
 WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
-    : QObject(parent)
-    , q(parent)
+    : QObject(parent), q(parent)
 {
 
     qInfo() << "create com.deepin.wm interface.";
@@ -99,7 +99,7 @@ WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
     sessionIfs = new SessionIfs("com.deepin.SessionManager",
                                 "/com/deepin/SessionManager",
                                 QDBusConnection::sessionBus(), this);
-    connect(sessionIfs, &SessionIfs::LockedChanged, this, [this](bool locked){
+    connect(sessionIfs, &SessionIfs::LockedChanged, this, [this](bool locked) {
         if (locked)
             q->hide();
     });
@@ -112,9 +112,9 @@ WallpaperSettingsPrivate::WallpaperSettingsPrivate(WallpaperSettings *parent)
 void WallpaperSettingsPrivate::propertyForWayland()
 {
     q->winId();
-    if (auto win = q->windowHandle()){
+    if (auto win = q->windowHandle()) {
         qDebug() << "set wayland role override";
-        win->setProperty("_d_dwayland_window-type","wallpaper-set");
+        win->setProperty("_d_dwayland_window-type", "wallpaper-set");
     } else {
         qCritical() << "wayland role error,windowHandle is nullptr!";
     }
@@ -157,11 +157,11 @@ void WallpaperSettingsPrivate::initUI()
         DButtonBoxButton *screensaverBtn = new DButtonBoxButton(tr("Screensaver"), q);
         screensaverBtn->installEventFilter(q);
         screensaverBtn->setMinimumWidth(40);
-        switchModeControl->setButtonList({wallpaperBtn, screensaverBtn}, true);
+        switchModeControl->setButtonList({ wallpaperBtn, screensaverBtn }, true);
         if (mode == WallpaperSettings::Mode::ScreenSaverMode)
             screensaverBtn->setChecked(true);
     } else {
-        switchModeControl->setButtonList({wallpaperBtn}, true);
+        switchModeControl->setButtonList({ wallpaperBtn }, true);
         wallpaperBtn->setChecked(true);
         wallpaperBtn->installEventFilter(q);
     }
@@ -210,16 +210,11 @@ void WallpaperSettingsPrivate::adjustModeSwitcher()
     int toolsWidth = 0;
     if (WallpaperSettings::Mode::ScreenSaverMode == mode) {
         auto margins = toolLayout->contentsMargins();
-        int width = waitControlLabel->sizeHint().width() +
-                    waitControl->sizeHint().width() +
-                    lockScreenBox->sizeHint().width();
+        int width = waitControlLabel->sizeHint().width() + waitControl->sizeHint().width() + lockScreenBox->sizeHint().width();
 
         toolsWidth = margins.left() + width + toolLayout->count() * toolLayout->spacing();
     } else if (WallpaperSettings::Mode::WallpaperMode == mode) {
-        toolsWidth = carouselCheckBox->sizeHint().width() +
-                     carouselLayout->contentsMargins().left() +
-                     carouselLayout->contentsMargins().right() +
-                     carouselLayout->spacing();
+        toolsWidth = carouselCheckBox->sizeHint().width() + carouselLayout->contentsMargins().left() + carouselLayout->contentsMargins().right() + carouselLayout->spacing();
 
         if (carouselCheckBox->isChecked())
             toolsWidth += carouselControl->sizeHint().width();
@@ -228,7 +223,7 @@ void WallpaperSettingsPrivate::adjustModeSwitcher()
     // prevent the toggle control from overlapping the toolbar on the left at low resolution
     int x = q->width() / 2 - switchModeControl->width() / 2;
     if (x < toolsWidth)
-        x = q->width()  - switchModeControl->width() - 5;
+        x = q->width() - switchModeControl->width() - 5;
 
     switchModeControl->move(x, (wallpaperList->y() - switchModeControl->height()) / 2);
 }
@@ -372,15 +367,15 @@ void WallpaperSettingsPrivate::onListBackgroundReply(QDBusPendingCallWatcher *wa
             item->setSketch(path);
             // only item is greeterbackground,deletable is false.
             item->setDeletable(iter->second);
-            item->addButton(DESKTOP_BUTTON_ID, tr("Desktop","button"), BUTTON_NARROW_WIDTH, 0, 0, 1, 1);
-            item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Lock Screen","button"), BUTTON_NARROW_WIDTH, 0, 1, 1, 1);
+            item->addButton(DESKTOP_BUTTON_ID, tr("Desktop", "button"), BUTTON_NARROW_WIDTH, 0, 0, 1, 1);
+            item->addButton(LOCK_SCREEN_BUTTON_ID, tr("Lock Screen", "button"), BUTTON_NARROW_WIDTH, 0, 1, 1, 1);
             item->addButton(DESKTOP_AND_LOCKSCREEN_BUTTON_ID, tr("Both"), BUTTON_WIDE_WIDTH, 1, 0, 1, 2);
             item->show();
             connect(item, &WallpaperItem::buttonClicked, this, &WallpaperSettingsPrivate::onItemButtonClicked);
             connect(item, &WallpaperItem::tab, this, &WallpaperSettingsPrivate::onItemTab);
             connect(item, &WallpaperItem::backtab, this, &WallpaperSettingsPrivate::onItemBacktab);
 
-            if (path.remove("file://") == actualEffectivedWallpaper) { //均有机会出现头部为file:///概率
+            if (path.remove("file://") == actualEffectivedWallpaper) {   //均有机会出现头部为file:///概率
                 emit item->pressed(item);
             }
         }
@@ -470,7 +465,7 @@ void WallpaperSettingsPrivate::onCloseButtonClicked()
     QString itemData = closeButton->property("background").toString();
     qInfo() << "delete background" << itemData;
     if (!itemData.isEmpty()) {
-        appearanceIfs->Delete("background", itemData); // 当前自定义壁纸不一定能删成功
+        appearanceIfs->Delete("background", itemData);   // 当前自定义壁纸不一定能删成功
         needDelWallpaper << itemData;
         wallpaperList->removeItem(itemData);
         closeButton->hide();
@@ -501,7 +496,7 @@ void WallpaperSettingsPrivate::onMousePressed(const QPoint &pos, int button)
             }
         } else {
             qCritical() << "lost screen " << screenName << "closed";
-            return ;
+            return;
         }
     }
 }
@@ -531,7 +526,7 @@ void WallpaperSettingsPrivate::initCloseButton()
     closeButton = new DIconButton(q);
     closeButton->setIcon(QIcon::fromTheme("dfm_close_round_normal"));
     closeButton->setFixedSize(24, 24);
-    closeButton->setIconSize({24, 24});
+    closeButton->setIconSize({ 24, 24 });
     closeButton->setFlat(true);
     closeButton->setFocusPolicy(Qt::NoFocus);
     closeButton->hide();
@@ -716,8 +711,7 @@ bool WallpaperSettingsPrivate::eventFilter(QObject *watched, QEvent *event)
 }
 
 WallpaperSettings::WallpaperSettings(const QString &screenName, Mode mode, QWidget *parent)
-    : DBlurEffectWidget(parent)
-    , d(new WallpaperSettingsPrivate(this))
+    : DBlurEffectWidget(parent), d(new WallpaperSettingsPrivate(this))
 {
     d->screenName = screenName;
     d->mode = mode;
@@ -789,20 +783,20 @@ void WallpaperSettings::setWallpaperSlideShow(const QString &period)
 
 QVector<int> WallpaperSettings::availableScreenSaverTime()
 {
-    static QVector<int> policy {60, 300, 600, 900, 1800, 3600, 0};
+    static QVector<int> policy { 60, 300, 600, 900, 1800, 3600, 0 };
     return policy;
 }
 
 QStringList WallpaperSettings::availableWallpaperSlide()
 {
-    static const QStringList policy{"30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup"};
+    static const QStringList policy { "30", "60", "300", "600", "900", "1800", "3600", "login", "wakeup" };
     return policy;
 }
 
 void WallpaperSettings::adjustGeometry()
 {
     const QRect screenRect = ddplugin_desktop_util::screenProxyScreen(d->screenName)->geometry();
-    int actualHeight =  d->kFrameHeight + d->kHeaderSwitcherHeight;
+    int actualHeight = d->kFrameHeight + d->kHeaderSwitcherHeight;
     setFixedSize(screenRect.width() - 20, actualHeight);
 
     qInfo() << "move befor: " << this->geometry() << d->wallpaperList->geometry() << height()
@@ -888,18 +882,18 @@ void WallpaperSettings::hideEvent(QHideEvent *event)
 
 void WallpaperSettings::keyPressEvent(QKeyEvent *event)
 {
-    QWidgetList widgetList; //Controls can be selected on the record page
+    QWidgetList widgetList;   //Controls can be selected on the record page
     if (d->mode == Mode::WallpaperMode) {
-        widgetList << d->carouselCheckBox; //Automatic wallpaper change button
+        widgetList << d->carouselCheckBox;   //Automatic wallpaper change button
         // Replace cycle button group
-        if (d->carouselControl->isVisible()){
+        if (d->carouselControl->isVisible()) {
             for (QAbstractButton *button : d->carouselControl->buttonList()) {
                 widgetList << qobject_cast<QWidget *>(button);
             }
         }
     } else {
         //Idle time button group
-        for (QAbstractButton *button: d->waitControl->buttonList()) {
+        for (QAbstractButton *button : d->waitControl->buttonList()) {
             widgetList << qobject_cast<QWidget *>(button);
         }
         //button for needing a password
@@ -910,13 +904,12 @@ void WallpaperSettings::keyPressEvent(QKeyEvent *event)
         widgetList.clear();
 
         // Mode switching button group
-        for (QAbstractButton *button: d->switchModeControl->buttonList()) {
+        for (QAbstractButton *button : d->switchModeControl->buttonList()) {
             widgetList << qobject_cast<QWidget *>(button);
         }
     }
 
-    switch(event->key())
-    {
+    switch (event->key()) {
     case Qt::Key_Escape:
         hide();
         qDebug() << "escape key pressed, quit.";
@@ -924,15 +917,15 @@ void WallpaperSettings::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Right:
         qDebug() << "Right";
         //Select the next control in the list
-        if(widgetList.indexOf(focusWidget(),0) < widgetList.count()-1) {
-            widgetList.at(widgetList.indexOf(focusWidget(),0)+1)->setFocus();
+        if (widgetList.indexOf(focusWidget(), 0) < widgetList.count() - 1) {
+            widgetList.at(widgetList.indexOf(focusWidget(), 0) + 1)->setFocus();
         }
         break;
     case Qt::Key_Left:
         qDebug() << "Left";
         //Select the previous control in the list
-        if (widgetList.indexOf(focusWidget(),0) > 0) {
-            widgetList.at(widgetList.indexOf(focusWidget(),0)-1)->setFocus();
+        if (widgetList.indexOf(focusWidget(), 0) > 0) {
+            widgetList.at(widgetList.indexOf(focusWidget(), 0) - 1)->setFocus();
         }
         break;
     default:
@@ -945,8 +938,8 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key = dynamic_cast<QKeyEvent *>(event);
-        qDebug() << "keyPress" <<  (Qt::Key)key->key();
-        if(!key) {
+        qDebug() << "keyPress" << (Qt::Key)key->key();
+        if (!key) {
             qDebug() << "key is null.";
             return DBlurEffectWidget::eventFilter(object, event);
         }
@@ -955,14 +948,14 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
             qDebug() << "Tab";
             //第一个区域发出tab信号，则跳转到第二个区域的第一个控件上
             if (object == d->carouselCheckBox
-                    || d->carouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
-                    || object == d->lockScreenBox
-                    || d->waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                || d->carouselControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))
+                || object == d->lockScreenBox
+                || d->waitControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))) {
                 d->switchModeControl->buttonList().first()->setFocus();
-                return  true;
+                return true;
             }
             //The second area tab jumps to the first control (button) of the current option (wallpaperitem) in the third area
-            if (d->switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+            if (d->switchModeControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))) {
                 if (nullptr == d->wallpaperList->currentItem()) {
                     return false;
                 }
@@ -973,13 +966,13 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
                 }
             }
             //The tab of the third area jumps to the first area: the tab signal connected to wallpaperitem is processed
-        } else if (key->key() == Qt::Key_Backtab) { //BackTab
+        } else if (key->key() == Qt::Key_Backtab) {   //BackTab
             qDebug() << "BackTab(Shift Tab)";
             //If the first area sends a backtab signal, it will jump to the first control (button) of the current option (wallpaperitem) in the third area
             if (object == d->carouselCheckBox
-                    || d->carouselControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))
-                    || object == d->lockScreenBox
-                    || d->waitControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+                || d->carouselControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))
+                || object == d->lockScreenBox
+                || d->waitControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))) {
                 if (nullptr == d->wallpaperList->currentItem()) {
                     return false;
                 }
@@ -993,7 +986,7 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
             //The backtab of the third area jumps to the second area: the backtab signal of the connected wallpaperitem is processed
 
             //If the second area sends a backtab signal, it jumps to the first control of the first area
-            if (d->switchModeControl->buttonList().contains(qobject_cast<QAbstractButton*>(object))) {
+            if (d->switchModeControl->buttonList().contains(qobject_cast<QAbstractButton *>(object))) {
                 if (d->mode == Mode::WallpaperMode) {
                     d->carouselCheckBox->setFocus();
                 } else {
@@ -1001,15 +994,15 @@ bool WallpaperSettings::eventFilter(QObject *object, QEvent *event)
                 }
                 return true;
             }
-        } else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) { //Qcheckbox treats the arrow keys as tab keys
+        } else if (key->key() == Qt::Key_Right || key->key() == Qt::Key_Left) {   //Qcheckbox treats the arrow keys as tab keys
             // Do not send other types, or you will receive two key events
-            if (object == d->carouselCheckBox || object == d->lockScreenBox){
+            if (object == d->carouselCheckBox || object == d->lockScreenBox) {
                 keyPressEvent(key);
                 return true;
             } else {
                 return false;
             }
-        } else if (key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) {  // 屏蔽上下键
+        } else if (key->key() == Qt::Key_Up || key->key() == Qt::Key_Down) {   // 屏蔽上下键
             return true;
         } else {
             return false;
@@ -1075,7 +1068,7 @@ void WallpaperSettings::loadScreenSaver()
         item->setSketch(coverPath);
         item->setEnableThumbnail(false);
         item->setDeletable(false);
-        item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply","button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
+        item->addButton(SCREENSAVER_BUTTON_ID, tr("Apply", "button"), BUTTON_WIDE_WIDTH, 0, 0, 1, 2);
         item->show();
 
         connect(item, &WallpaperItem::buttonClicked, d, &WallpaperSettingsPrivate::onItemButtonClicked);
@@ -1083,7 +1076,7 @@ void WallpaperSettings::loadScreenSaver()
         connect(item, &WallpaperItem::backtab, d, &WallpaperSettingsPrivate::onItemBacktab);
 
         // When entering for the first time, select the current setting screensaver
-        if(!currentItem && !name.isEmpty() && name == currentScreensaver) {
+        if (!currentItem && !name.isEmpty() && name == currentScreensaver) {
             currentItem = item;
         }
     }
@@ -1162,4 +1155,3 @@ void WallpaperSettings::init()
     CanvasCoreSubscribe(signal_ScreenProxy_DisplayModeChanged, d, &WallpaperSettingsPrivate::onScreenChanged);
     CanvasCoreSubscribe(signal_ScreenProxy_ScreenGeometryChanged, this, &WallpaperSettings::onGeometryChanged);
 }
-

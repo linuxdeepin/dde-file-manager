@@ -26,7 +26,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 class Recent : public dpf::Plugin
 {
     Q_OBJECT
@@ -52,5 +52,5 @@ private:
     void followEvent();
 };
 
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTPLUGIN_H

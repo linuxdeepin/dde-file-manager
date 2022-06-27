@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPDIRSHARE_BEGIN_NAMESPACE
+namespace dfmplugin_dirshare {
 
 class ShareUtils
 {
@@ -35,6 +35,6 @@ public:
     static bool canShare(AbstractFileInfoPointer info);
 };
 
-DPDIRSHARE_END_NAMESPACE
+}
 
 #endif   // SHAREUTILS_H

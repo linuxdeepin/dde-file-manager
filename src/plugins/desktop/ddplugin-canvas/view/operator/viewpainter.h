@@ -26,7 +26,7 @@
 
 #include <QPainter>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class ViewPainter : public QPainter
 {
@@ -65,6 +65,6 @@ protected:
     CanvasViewPrivate *d = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // VIEWPAINTER_H

@@ -40,7 +40,7 @@
 #include <QRegularExpression>
 #include <QDebug>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 
 /*!
  * \brief setWorkArgs 设置当前任务的参数

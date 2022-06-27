@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 CopyFiles::CopyFiles(QObject *parent)
     : AbstractJob(new DoCopyFilesWorker(), parent)
 {

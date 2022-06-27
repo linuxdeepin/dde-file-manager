@@ -37,7 +37,7 @@ inline constexpr char kDiscburnStaging[] { "discburn" };
 inline constexpr char kBurnSegOndisc[] { "disc_files" };
 inline constexpr char kBurnSegStaging[] { "staging_files" };
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalHelper
 {
@@ -68,6 +68,6 @@ private:
     static QRegularExpression burnRxp();
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALHELPER_H

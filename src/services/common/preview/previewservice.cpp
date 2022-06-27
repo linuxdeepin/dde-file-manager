@@ -24,15 +24,15 @@
 
 #include <mutex>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 namespace Preview {
 namespace EventType {
 const int kShowPreviewEvent = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
 }
-DSC_END_NAMESPACE
+}
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 PreviewService::PreviewService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<PreviewService>()

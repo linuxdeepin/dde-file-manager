@@ -28,7 +28,7 @@
 
 #include <QUrl>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 #if 0   // destop should use file:// rather than desktop://.
 inline QUrl covertDesktopUrlToFile(const QUrl &desktopUrl) {
     QUrl fileUrl = DFMBASE_NAMESPACE::UrlRoute::pathToUrl(
@@ -54,7 +54,7 @@ protected:
     explicit DesktopFileCreator();
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #define FileCreator DDP_CANVAS_NAMESPACE::DesktopFileCreator::instance()
 #endif   // FILEUTIL_H

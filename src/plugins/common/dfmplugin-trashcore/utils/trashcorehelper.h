@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 
 class TrashCoreHelper
 {
@@ -40,6 +40,6 @@ public:
     static QWidget *createTrashPropertyDialog(const QUrl &url);
 };
 
-DPTRASHCORE_END_NAMESPACE
+}
 
 #endif   // TRASHCOREHELPER_H

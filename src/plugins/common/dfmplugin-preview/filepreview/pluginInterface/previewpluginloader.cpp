@@ -27,7 +27,7 @@
 #include <QJsonArray>
 #include <QApplication>
 
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 Q_GLOBAL_STATIC(QList<PreviewPluginLoader *>, qt_factory_loaders)
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMutex, qt_factoryloader_mutex, (QMutex::Recursive))

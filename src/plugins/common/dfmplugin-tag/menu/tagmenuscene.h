@@ -27,7 +27,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 class TagColorListWidget;
 class TagMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -43,6 +43,7 @@ public:
 class TagMenuScenePrivate;
 class TagMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit TagMenuScene(QObject *parent = nullptr);
     virtual ~TagMenuScene() override;
@@ -67,6 +68,6 @@ private:
     QAction *createColorListAction() const;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGMENUSCENE_H

@@ -34,7 +34,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DCrumbEdit;
 DWIDGET_END_NAMESPACE
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagColorListWidget;
 class TagWidgetPrivate;
@@ -64,6 +64,6 @@ protected:
     QSharedPointer<TagWidgetPrivate> d;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGWIDGET_H

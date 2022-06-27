@@ -26,7 +26,7 @@
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 FileProvider::FileProvider(QObject *parent)
     : QObject(parent)

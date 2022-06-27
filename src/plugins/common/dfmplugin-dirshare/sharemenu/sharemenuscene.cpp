@@ -36,7 +36,7 @@
 #include <QFileInfo>
 #include <QMenu>
 
-DPDIRSHARE_USE_NAMESPACE
+using namespace dfmplugin_dirshare;
 
 ShareMenuScenePrivate::ShareMenuScenePrivate(dfmbase::AbstractMenuScene *qq)
     : AbstractMenuScenePrivate(qq)

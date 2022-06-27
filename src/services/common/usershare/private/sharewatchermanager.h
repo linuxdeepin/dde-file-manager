@@ -34,7 +34,7 @@ namespace dfmbase {
 class LocalFileWatcher;
 }
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class ShareWatcherManager : public QObject
 {
@@ -57,6 +57,6 @@ private:
     QMap<QString, DFMBASE_NAMESPACE::LocalFileWatcher *> watchers;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // SHAREWATCHERMANAGER_H

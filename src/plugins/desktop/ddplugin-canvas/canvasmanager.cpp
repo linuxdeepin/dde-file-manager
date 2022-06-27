@@ -40,7 +40,7 @@
 #include <QCoreApplication>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 #define CanvasCoreSubscribe(topic, func) \
     dpfSignalDispatcher->subscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);

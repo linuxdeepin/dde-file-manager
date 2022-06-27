@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QPointer>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class PdfWidget;
 
 class PDFPreview : public DFMBASE_NAMESPACE::AbstractBasePreview
@@ -54,5 +54,5 @@ private:
 
     QPointer<PdfWidget> pdfWidget;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // PDFPREVIEW_H

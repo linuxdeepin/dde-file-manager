@@ -34,7 +34,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-DPDIRSHARE_USE_NAMESPACE
+using namespace dfmplugin_dirshare;
 DSC_USE_NAMESPACE
 
 void DirShare::initialize()

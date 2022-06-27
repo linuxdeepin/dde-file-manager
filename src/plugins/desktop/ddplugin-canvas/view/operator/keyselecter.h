@@ -29,7 +29,7 @@
 
 class QTimer;
 class QKeyEvent;
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class KeySelecter : public ClickSelecter
 {
@@ -53,5 +53,5 @@ protected:
     QTimer *searchTimer;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif // KEYSELECTER_H

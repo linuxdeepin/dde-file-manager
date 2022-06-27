@@ -26,7 +26,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE
 
 void OpticalEventCaller::sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent)

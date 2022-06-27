@@ -41,7 +41,7 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE

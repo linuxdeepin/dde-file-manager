@@ -30,7 +30,7 @@
 #include <QThread>
 
 DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class DoCopyFilesWorker;
 class CopyFiles : public AbstractJob
 {
@@ -41,6 +41,6 @@ class CopyFiles : public AbstractJob
 public:
     ~CopyFiles() override;
 };
-DSC_END_NAMESPACE
+}
 
 #endif   // COPYFILES_H

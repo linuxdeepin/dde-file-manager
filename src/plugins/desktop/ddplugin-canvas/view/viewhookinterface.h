@@ -28,7 +28,7 @@
 class QMimeData;
 class QPainter;
 class QStyleOptionViewItem;
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class ViewHookInterface
 {
@@ -51,6 +51,6 @@ public:
     virtual bool drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData = nullptr) const;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // VIEWHOOKINTERFACE_H

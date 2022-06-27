@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentDirIteratorPrivate;
 class RecentDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
@@ -59,5 +59,5 @@ private:
     QScopedPointer<RecentDirIteratorPrivate> d;
 };
 
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTDIRITERATOR_H

@@ -31,7 +31,7 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 DoCleanTrashFilesWorker::DoCleanTrashFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)
 {

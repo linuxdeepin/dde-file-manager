@@ -62,7 +62,7 @@ DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 
 FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
     : QObject(nullptr),

@@ -24,7 +24,7 @@
 
 #include "dfmplugin_tag_global.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 inline constexpr char kSidebarOrder[] { "SideBar/ItemOrder" };
 inline constexpr char kTagOrderKey[] { "tag" };
@@ -51,6 +51,6 @@ private:
     explicit TagEventReceiver(QObject *parent = nullptr);
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGEVENTRECEIVER_H

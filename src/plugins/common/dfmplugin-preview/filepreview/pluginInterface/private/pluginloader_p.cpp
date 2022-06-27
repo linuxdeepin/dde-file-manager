@@ -24,7 +24,7 @@
 #include <QDir>
 #include <QDebug>
 
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 QStringList PreviewPluginLoaderPrivate::pluginPaths;
 constexpr char kPluginPath[] { "/../../plugins/common/dfmplugin-preview/previews" };
 PreviewPluginLoaderPrivate::PreviewPluginLoaderPrivate(QObject *parent)

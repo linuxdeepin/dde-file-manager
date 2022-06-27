@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class PreviewDialogManager : public QObject
 {
     Q_OBJECT
@@ -42,5 +42,5 @@ public slots:
 private:
     FilePreviewDialog *filePreviewDialog { nullptr };
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif   // PREVIEWDIALOGMANAGER_H

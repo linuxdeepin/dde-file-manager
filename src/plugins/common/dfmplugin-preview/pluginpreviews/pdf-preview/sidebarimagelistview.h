@@ -26,7 +26,7 @@
 
 #include <DListView>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class DocSheet;
 class SideBarImageViewModel;
 
@@ -106,5 +106,5 @@ private:
     DocSheet *docSheet { nullptr };
     SideBarImageViewModel *imageModel { nullptr };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // SIDEBARIMAGELISTVIEW_H

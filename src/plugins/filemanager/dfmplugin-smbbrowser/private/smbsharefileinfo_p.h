@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class SmbShareFileInfo;
 class SmbShareFileInfoPrivate : public dfmbase::AbstractFileInfoPrivate
@@ -42,6 +42,6 @@ private:
     SmbShareNode node;
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 
 #endif   // SMBSHAREFILEINFO_P_H

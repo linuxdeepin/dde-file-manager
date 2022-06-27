@@ -29,7 +29,7 @@
 #include "services/common/usershare/usershareservice.h"
 #include "dfm-base/interfaces/private/abstractfileinfo_p.h"
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareFileInfo;
 class ShareFileInfoPrivate : public DFMBASE_NAMESPACE::AbstractFileInfoPrivate
@@ -45,6 +45,6 @@ private:
     DSC_NAMESPACE::ShareInfo info;
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREFILEINFO_P_H

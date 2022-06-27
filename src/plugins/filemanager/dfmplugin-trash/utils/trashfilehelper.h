@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashFileHelper
 {
@@ -67,5 +67,5 @@ public:
     // Todo(yanghao)
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHFILEHELPER_H

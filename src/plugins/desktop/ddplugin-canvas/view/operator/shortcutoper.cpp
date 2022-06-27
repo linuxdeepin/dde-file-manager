@@ -42,7 +42,7 @@
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 #define regAction(shortcut, autoRepeat)                                             \
     {                                                                               \

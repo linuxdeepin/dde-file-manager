@@ -26,7 +26,7 @@
 
 DFMBASE_USE_NAMESPACE
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 RecentFileWatcherPrivate::RecentFileWatcherPrivate(const QUrl &fileUrl, RecentFileWatcher *qq)
     : AbstractFileWatcherPrivate(fileUrl, qq)
@@ -135,4 +135,4 @@ void RecentFileWatcher::onFileAttributeChanged(const QUrl &url)
     emit fileAttributeChanged(newUrl);
 }
 
-DPRECENT_END_NAMESPACE
+}

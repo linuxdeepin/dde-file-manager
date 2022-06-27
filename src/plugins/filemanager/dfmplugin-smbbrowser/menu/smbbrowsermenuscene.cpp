@@ -32,7 +32,7 @@
 
 #include <QMenu>
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *SmbBrowserMenuCreator::create()

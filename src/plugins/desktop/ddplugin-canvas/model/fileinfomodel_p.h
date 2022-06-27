@@ -26,7 +26,7 @@
 
 #include <QReadWriteLock>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class FileInfoModelPrivate : public QObject
 {
@@ -50,6 +50,6 @@ private:
     FileInfoModel *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // FILEINFOMODEL_P_H

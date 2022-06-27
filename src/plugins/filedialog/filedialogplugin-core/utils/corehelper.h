@@ -32,7 +32,7 @@
 
 #include <functional>
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class CoreHelper
 {
@@ -45,6 +45,6 @@ public:
     static void urlTransform(QList<QUrl> *urls);
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // COREHELPER_H

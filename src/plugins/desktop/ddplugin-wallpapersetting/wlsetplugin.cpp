@@ -25,7 +25,7 @@
 
 #include "dfm-base/utils/universalutils.h"
 
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 
 #define WlSetSlot(topic, args...) \
             dpfSlotChannel->connect(QT_STRINGIFY(DDP_WALLPAERSETTING_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)

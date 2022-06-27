@@ -31,7 +31,7 @@
 
 class QLabel;
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class ImageView;
 class ImagePreview : public DFMBASE_NAMESPACE::AbstractBasePreview
 {
@@ -57,5 +57,5 @@ private:
     QPointer<ImageView> imageView;
     QString imageTitle;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // IMAGEPREVIEW_H

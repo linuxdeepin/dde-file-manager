@@ -23,7 +23,7 @@
 #include "movetotrashfiles.h"
 #include "domovetotrashfilesworker.h"
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 MoveToTrashFiles::MoveToTrashFiles(QObject *parent)
     : AbstractJob(new DoMoveToTrashFilesWorker(), parent)
 {

@@ -34,7 +34,7 @@
 
 class QObject;
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class StorageInfo;
 
 class FileOperateBaseWorker : public AbstractWorker
@@ -141,6 +141,6 @@ protected:
     QSharedPointer<QThreadPool> threadPool { nullptr };   // copy small file thread pool
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // FILEOPERATEBASEWORKER_H

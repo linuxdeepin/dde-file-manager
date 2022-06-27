@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareIteratorPrivate;
 class ShareIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
@@ -53,6 +53,6 @@ private:
     QScopedPointer<ShareIteratorPrivate> d;
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREITERATOR_H

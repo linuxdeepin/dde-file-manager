@@ -35,7 +35,7 @@
  * 错误信息可能信号已发送了，只能使用JobHandlePointer去判断是否有错误，并做相应的处理
  */
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 FileOperationsService::FileOperationsService(QObject *parent)
     : dpf::PluginService(parent), dpf::AutoServiceRegister<FileOperationsService>()
 {

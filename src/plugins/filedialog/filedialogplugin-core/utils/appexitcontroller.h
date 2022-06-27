@@ -30,7 +30,7 @@
 
 #include <functional>
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class AppExitController : public QObject
 {
@@ -59,6 +59,6 @@ private:
     int totalSeconds { 0 };
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // APPEXITCONTROLLER_H

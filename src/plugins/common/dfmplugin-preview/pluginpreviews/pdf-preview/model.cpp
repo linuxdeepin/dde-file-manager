@@ -28,7 +28,7 @@
 #include <QProcess>
 #include <QFile>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 Document *DocumentFactory::getDocument(const int &fileType, const QString &filePath,
                                        const QString &password, Document::Error &error)
 {

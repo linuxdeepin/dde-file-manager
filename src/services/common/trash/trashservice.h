@@ -25,7 +25,7 @@
 #include "trash_defines.h"
 #include <dfm-framework/service/pluginservicecontext.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class TrashService final : public dpf::PluginService, dpf::AutoServiceRegister<TrashService>
 {
@@ -47,7 +47,7 @@ private:
     virtual ~TrashService() = default;
 };
 
-DSC_END_NAMESPACE
+}
 
 #define trashServIns ::dfm_service_common::TrashService::instance()
 

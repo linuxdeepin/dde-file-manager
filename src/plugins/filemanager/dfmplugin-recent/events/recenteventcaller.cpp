@@ -27,7 +27,7 @@
 #include <dfm-framework/framework.h>
 #include <QUrl>
 
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE
 
 void RecentEventCaller::sendOpenWindow(const QUrl &url)

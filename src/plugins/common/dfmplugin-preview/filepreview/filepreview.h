@@ -25,7 +25,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class FilePreview : public dpf::Plugin
 {
     Q_OBJECT
@@ -36,5 +36,5 @@ public:
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif   // FILEPREVIEW_H

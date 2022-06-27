@@ -41,7 +41,7 @@ extern "C" {
 #include <unistd.h>
 #include <sys/utsname.h>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 DFMBASE_USE_NAMESPACE
 
 QSet<QString> FileOperationsUtils::fileNameUsing = {};

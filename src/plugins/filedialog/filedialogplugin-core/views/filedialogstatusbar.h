@@ -35,7 +35,7 @@ class QComboBox;
 class QPushButton;
 QT_END_NAMESPACE
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class FileDialogStatusBar : public QFrame
 {
@@ -97,6 +97,6 @@ private:
     QList<QPair<QLabel *, QComboBox *>> customComboBoxList;
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // FILEDIALOGSTATUSBAR_H

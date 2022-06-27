@@ -25,7 +25,7 @@
 #include "dfm-base/utils/universalutils.h"
 
 DFMBASE_USE_NAMESPACE
-CPY_USE_NAMESPACE
+using namespace Property;
 QString ComputerPropertyHelper::scheme()
 {
     return Global::Scheme::kComputer;

@@ -37,7 +37,7 @@
 #include <QSettings>
 #include <QStorageInfo>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 DoRestoreTrashFilesWorker::DoRestoreTrashFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)
 {

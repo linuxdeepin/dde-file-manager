@@ -43,7 +43,7 @@
 #include <sys/stat.h>
 #include <syscall.h>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 
 DoCutFilesWorker::DoCutFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)

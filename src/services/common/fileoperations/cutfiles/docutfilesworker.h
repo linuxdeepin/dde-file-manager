@@ -34,7 +34,7 @@
 
 #include <QObject>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class StorageInfo;
 
@@ -65,6 +65,6 @@ private:
     bool checkSelf(const AbstractFileInfoPointer &fromInfo);
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // DOCUTFILESWORKER_H

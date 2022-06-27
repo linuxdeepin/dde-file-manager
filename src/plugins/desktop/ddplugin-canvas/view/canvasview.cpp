@@ -45,7 +45,7 @@
 #include <QTimer>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 CanvasView::CanvasView(QWidget *parent)
     : QAbstractItemView(parent), d(new CanvasViewPrivate(this))

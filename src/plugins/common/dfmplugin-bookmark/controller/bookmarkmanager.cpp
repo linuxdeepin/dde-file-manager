@@ -46,7 +46,7 @@
 
 USING_IO_NAMESPACE
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 static constexpr char kConfigGroupName[] { "BookMark" };
 static constexpr char kConfigKeyName[] { "Items" };
 
@@ -85,9 +85,9 @@ QVariantMap BookmarkData::serialize()
     return v;
 }
 
-DPBOOKMARK_END_NAMESPACE
+}
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE

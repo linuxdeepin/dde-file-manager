@@ -42,7 +42,7 @@
 #include <fcntl.h>
 #include <zlib.h>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 USING_IO_NAMESPACE
 
 DoCopyFilesWorker::DoCopyFilesWorker(QObject *parent)

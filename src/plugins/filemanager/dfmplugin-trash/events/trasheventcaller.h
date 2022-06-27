@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashEventCaller
 {
@@ -40,6 +40,6 @@ public:
     static void sendShowEmptyTrash(quint64 winId, bool visible);
 };
 
-DPTRASH_END_NAMESPACE
+}
 
 #endif   // TRASHEVENTCALLER_H

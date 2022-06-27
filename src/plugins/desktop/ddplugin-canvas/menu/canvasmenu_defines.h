@@ -23,7 +23,7 @@
 
 #include "ddplugin_canvas_global.h"
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 namespace ActionID {
 inline constexpr char kSortBy[] = "sort-by";
@@ -43,6 +43,6 @@ namespace CanvasMenuParams {
 inline constexpr char kDesktopGridPos[] = "DesktopGridPos";
 }
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASMENU_DEFINES_H

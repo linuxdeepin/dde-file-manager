@@ -25,7 +25,7 @@
 #include <QHBoxLayout>
 
 DWIDGET_USE_NAMESPACE
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 
 const int WallpaperList::kItemWidth = 172;
 const int WallpaperList::kItemHeight = 100;

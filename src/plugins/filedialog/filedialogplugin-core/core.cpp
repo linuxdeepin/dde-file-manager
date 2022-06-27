@@ -34,7 +34,7 @@
 #include <QDBusConnection>
 
 DFMBASE_USE_NAMESPACE
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 
 bool Core::start()
 {

@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 
 class TrashCoreUnicastReceiver : public QObject
 {
@@ -44,6 +44,6 @@ private:
     explicit TrashCoreUnicastReceiver(QObject *parent = nullptr);
 };
 
-DPTRASHCORE_END_NAMESPACE
+}
 
 #endif   // TRASHCOREUNICASTRECEIVER_H

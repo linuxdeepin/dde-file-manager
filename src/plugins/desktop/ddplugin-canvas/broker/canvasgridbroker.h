@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QPoint>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasGrid;
 class CanvasGridBroker : public QObject
@@ -44,6 +44,6 @@ private:
     CanvasGrid *grid = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASGRIDBROKER_H

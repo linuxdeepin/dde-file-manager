@@ -32,7 +32,7 @@
 #include <QSharedPointer>
 
 DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class AbstractWorker;
 class AbstractJob : public QObject
 {
@@ -64,6 +64,6 @@ protected:
     QThread thread;   // 线程
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // ABSTRACTJOB_H

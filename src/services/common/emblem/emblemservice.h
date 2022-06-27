@@ -28,7 +28,7 @@
 
 #include <dfm-framework/framework.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class EmblemService final : public dpf::PluginService, dpf::AutoServiceRegister<EmblemService>
 {
@@ -46,6 +46,6 @@ private:
     explicit EmblemService(QObject *parent = nullptr);
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // EMBLEMSERVICE_H

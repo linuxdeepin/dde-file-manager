@@ -27,7 +27,7 @@
 
 #include <mutex>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 
 void DelegateService::registerTransparentHandle(const DelegateService::KeyType &scheme, const DelegateService::TransparentHandle &handle)
 {

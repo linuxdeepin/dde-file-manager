@@ -31,7 +31,7 @@
 
 #include <QDir>
 
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE
 
 bool OpticalFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)

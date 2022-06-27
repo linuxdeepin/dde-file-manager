@@ -27,7 +27,7 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 CanvasModelFilter::CanvasModelFilter(CanvasProxyModel *m) : model(m)
 {

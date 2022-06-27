@@ -42,7 +42,7 @@ DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 void Recent::initialize()
 {
@@ -198,4 +198,4 @@ void Recent::addDelegateSettings()
         return out;
     });
 }
-DPRECENT_END_NAMESPACE
+}

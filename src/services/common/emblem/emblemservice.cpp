@@ -23,7 +23,7 @@
 
 #include "dfm-base/utils/universalutils.h"
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace Emblem {
 namespace EventType {
@@ -33,9 +33,9 @@ const int kFetchExtendEmblems = DFMBASE_NAMESPACE::UniversalUtils::registerEvent
 }
 }
 
-DSC_END_NAMESPACE
+}
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 
 EmblemService::EmblemService(QObject *parent)
     : dpf::PluginService(parent),

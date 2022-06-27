@@ -27,7 +27,7 @@
 
 #include <QQueue>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDirIterator;
 class TagDirIteratorPrivate
@@ -48,6 +48,6 @@ private:
     TagDirIterator *q { nullptr };
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGDIRITERATOR_P_H

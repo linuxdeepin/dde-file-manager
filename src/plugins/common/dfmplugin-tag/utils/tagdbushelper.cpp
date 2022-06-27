@@ -23,7 +23,7 @@
 
 #include "interfaces/tagdbusinterface.h"
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagDBusHelper::TagDBusHelper(QObject *parent)
     : QObject(parent)

@@ -28,7 +28,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class FileDialogMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -55,6 +55,6 @@ private:
     AbstractMenuScene *workspaceScene { nullptr };
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // FILEDIALOGMENUSCENE_H

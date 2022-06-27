@@ -31,7 +31,7 @@
 
 #include <QObject>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 DFMBASE_USE_NAMESPACE
 class DoCleanTrashFilesWorker : public FileOperateBaseWorker
 {
@@ -61,6 +61,6 @@ private:
     QString trashFilePath;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // DOCLEANTRASHFILESWORKER_H

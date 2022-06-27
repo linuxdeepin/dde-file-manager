@@ -31,11 +31,12 @@
 #include <QMultiHash>
 #include <QGSettings>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasView;
 class CanvasMenuScenePrivate : public dfmbase::AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     explicit CanvasMenuScenePrivate(CanvasMenuScene *qq);
 
@@ -87,7 +88,7 @@ public:
         // the gsetting control for refresh action
         if (QGSettings::isSchemaInstalled("com.deepin.dde.filemanager.contextmenu")) {
             const QGSettings menuSwitch("com.deepin.dde.filemanager.contextmenu",
-                                               "/com/deepin/dde/filemanager/contextmenu/");
+                                        "/com/deepin/dde/filemanager/contextmenu/");
             if (menuSwitch.keys().contains("refresh")) {
                 auto showRefreh = menuSwitch.get("refresh");
                 if (showRefreh.isValid())
@@ -96,6 +97,7 @@ public:
         }
         return false;
     }
+
 public:
     QMap<QAction *, int> iconSizeAction;
     QPoint gridPos;
@@ -109,5 +111,5 @@ private:
     CanvasMenuScene *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif   // CANVASMENUSCENE_P_H

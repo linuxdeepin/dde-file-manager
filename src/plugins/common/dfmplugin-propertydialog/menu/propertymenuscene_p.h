@@ -30,6 +30,7 @@ DFMBASE_USE_NAMESPACE
 
 class PropertyMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
 public:
     friend class PropertyMenuScene;
     explicit PropertyMenuScenePrivate(PropertyMenuScene *qq = nullptr);

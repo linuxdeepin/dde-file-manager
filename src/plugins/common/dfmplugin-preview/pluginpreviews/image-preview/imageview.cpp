@@ -33,7 +33,7 @@
 #include <QDebug>
 #include <QMovie>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 #define MIN_SIZE QSize(400, 300)
 
 ImageView::ImageView(const QString &fileName, const QByteArray &format, QWidget *parent)

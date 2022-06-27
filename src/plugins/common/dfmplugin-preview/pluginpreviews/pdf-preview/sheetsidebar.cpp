@@ -31,7 +31,7 @@
 #include <QResizeEvent>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 SheetSidebar::SheetSidebar(DocSheet *parent, PreviewWidgesFlags widgesFlag)
     : QWidget(parent), docSheet(parent), widgetsFlag(widgesFlag)
 {

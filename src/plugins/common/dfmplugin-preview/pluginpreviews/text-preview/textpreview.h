@@ -32,7 +32,7 @@
 
 #include <fstream>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class TextBrowserEdit;
 class TextPreview : public DFMBASE_NAMESPACE::AbstractBasePreview
 {
@@ -63,5 +63,5 @@ private:
 
     int readSize = 0;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // TEXTPREVIEW_H

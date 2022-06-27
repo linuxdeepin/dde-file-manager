@@ -34,7 +34,7 @@
 
 class QStorageInfo;
 USING_IO_NAMESPACE
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 DFMBASE_USE_NAMESPACE
 class DoRestoreTrashFilesWorker : public FileOperateBaseWorker
 {
@@ -69,6 +69,6 @@ private:
     QString trashInfoPath;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // DOCUTFILESWORKER_H

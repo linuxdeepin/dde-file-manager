@@ -24,7 +24,7 @@
 #include "dfmplugin_trash_global.h"
 #include <QFrame>
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class EmptyTrashWidget : public QFrame
 {
@@ -36,6 +36,6 @@ signals:
     void emptyTrash();
 };
 
-DPTRASH_END_NAMESPACE
+}
 
 #endif   // EMPTYTRASHWIDGET_H

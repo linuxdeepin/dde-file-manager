@@ -26,7 +26,7 @@
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashDirIteratorPrivate;
 class TrashDirIterator : public DFMBASE_NAMESPACE::AbstractDirIterator
@@ -58,5 +58,5 @@ private:
     QScopedPointer<TrashDirIteratorPrivate> d;
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHDIRITERATOR_H

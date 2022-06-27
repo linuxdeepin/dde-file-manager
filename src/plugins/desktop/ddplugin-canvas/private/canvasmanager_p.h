@@ -35,7 +35,7 @@
 #include "broker/canvasviewbroker.h"
 #include "broker/canvasgridbroker.h"
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 typedef QSharedPointer<CanvasView> CanvasViewPointer;
 
@@ -85,5 +85,5 @@ private:
     CanvasManager *q = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 #endif   // CANVASMANAGER_P_H

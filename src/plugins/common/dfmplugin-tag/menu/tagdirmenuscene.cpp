@@ -34,7 +34,7 @@
 #include <QMenu>
 
 DWIDGET_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
 
 TagDirMenuScenePrivate::TagDirMenuScenePrivate(TagDirMenuScene *qq)

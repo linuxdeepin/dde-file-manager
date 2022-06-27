@@ -31,7 +31,7 @@
 #include <player_widget.h>
 #include <player_engine.h>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class VideoPreview;
 class VideoWidget : public dmr::PlayerWidget
 {
@@ -45,5 +45,5 @@ public:
     VideoPreview *p;
     QLabel *title;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // PLAYERWIDGET_H

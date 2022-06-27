@@ -25,7 +25,7 @@
 #include <QObject>
 #include <QWidget>
 
-CPY_BEGIN_NAMESPACE
+namespace Property {
 class ComputerPropertyHelper : public QObject
 {
     Q_OBJECT
@@ -38,5 +38,5 @@ public:
 public:
     static QWidget *createComputerProperty(const QUrl &url);
 };
-CPY_END_NAMESPACE
+}
 #endif   //COMUPERPROPERTYHELPER_H

@@ -37,7 +37,7 @@
 #include <QMenu>
 #include <QCoreApplication>
 
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 DSB_FM_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE

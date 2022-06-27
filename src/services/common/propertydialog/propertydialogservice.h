@@ -25,7 +25,7 @@
 
 #include <dfm-framework/framework.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class PropertyDialogService final : public dpf::PluginService, dpf::AutoServiceRegister<PropertyDialogService>
 {
@@ -64,6 +64,6 @@ public:
 
     void addComputerPropertyToPropertyService();
 };
-DSC_END_NAMESPACE
+}
 #define propertyServIns ::DSC_NAMESPACE::PropertyDialogService::service()
 #endif   // PROPERTYDIALOGSERVICE_H

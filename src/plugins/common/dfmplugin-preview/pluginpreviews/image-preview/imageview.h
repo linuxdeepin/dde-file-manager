@@ -24,7 +24,7 @@
 
 #include "preview_plugin_global.h"
 #include <QLabel>
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class ImageView : public QLabel
 {
     Q_OBJECT
@@ -38,5 +38,5 @@ private:
     QSize sourceImageSize;
     QMovie *movie { nullptr };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // IMAGEVIEW_H

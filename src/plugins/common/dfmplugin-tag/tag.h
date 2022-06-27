@@ -27,7 +27,7 @@
 #include <dfm-framework/framework.h>
 #include <dfm-framework/event/event.h>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class Tag : public dpf::Plugin
 {
@@ -56,6 +56,6 @@ private:
     void bindEvents();
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAG_H

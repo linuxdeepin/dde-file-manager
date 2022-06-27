@@ -24,7 +24,7 @@
 
 #include <QUrl>
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 bool TagOperationHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
 {

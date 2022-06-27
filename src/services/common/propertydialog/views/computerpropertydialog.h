@@ -31,7 +31,7 @@
 #include <QGroupBox>
 #include <QThread>
 
-CPY_BEGIN_NAMESPACE
+namespace Property {
 class ComputerInfoThread : public QThread
 {
     Q_OBJECT
@@ -89,5 +89,5 @@ private:
     DFMBASE_NAMESPACE::KeyValueLabel *computerMemory { nullptr };
     ComputerInfoThread *thread { nullptr };
 };
-CPY_END_NAMESPACE
+}
 #endif   // COMPUTERDETAILVIEW_H

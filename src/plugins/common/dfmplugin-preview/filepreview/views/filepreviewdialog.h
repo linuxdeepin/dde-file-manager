@@ -34,7 +34,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DWindowCloseButton;
 DWIDGET_END_NAMESPACE
 
-DPFILEPREVIEW_BEGIN_NAMESPACE
+namespace dfmplugin_filepreview {
 class FilePreviewDialog : public DTK_WIDGET_NAMESPACE::DAbstractDialog
 {
     Q_OBJECT
@@ -86,5 +86,5 @@ private:
     DFMBASE_NAMESPACE::AbstractBasePreview *preview { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
 };
-DPFILEPREVIEW_END_NAMESPACE
+}
 #endif

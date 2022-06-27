@@ -25,7 +25,7 @@
 #include <dfm-framework/framework.h>
 
 DPF_USE_NAMESPACE
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 FilePreviewEventReceiver::FilePreviewEventReceiver(QObject *parent)
     : QObject(parent)
 {

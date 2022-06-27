@@ -31,7 +31,7 @@ DWIDGET_BEGIN_NAMESPACE
 class DSpinner;
 DWIDGET_END_NAMESPACE
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 
 class LoadingLabel : public QFrame
 {
@@ -55,6 +55,6 @@ private:
     QSize spinnerSize = QSize(24, 24);
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
 #endif // LOADINGLABEL_H

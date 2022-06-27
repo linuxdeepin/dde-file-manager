@@ -28,7 +28,7 @@
 
 #include <QDebug>
 
-DPDIRSHARE_USE_NAMESPACE
+using namespace dfmplugin_dirshare;
 DFMBASE_USE_NAMESPACE
 
 bool ShareUtils::canShare(AbstractFileInfoPointer info)

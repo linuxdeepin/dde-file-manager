@@ -24,7 +24,7 @@
 
 #include "dfm-base/file/local/localfilewatcher.h"
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 DFMBASE_USE_NAMESPACE
 
 ShareWatcherManager::ShareWatcherManager(QObject *parent)

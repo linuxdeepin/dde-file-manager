@@ -33,7 +33,7 @@
 #include <QStackedLayout>
 #include <QRegExpValidator>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class RenameDialogPrivate : public QObject
 {
@@ -80,6 +80,6 @@ private:
     RenameDialog *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // RENAMEDIALOGPRIVATE_H

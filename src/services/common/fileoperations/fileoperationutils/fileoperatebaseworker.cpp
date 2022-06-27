@@ -49,7 +49,7 @@
 static const quint32 kMaxBufferLength { 1024 * 1024 * 1 };
 constexpr uint32_t kBigFileSize { 300 * 1024 * 1024 };
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 USING_IO_NAMESPACE
 
 FileOperateBaseWorker::FileOperateBaseWorker(QObject *parent)

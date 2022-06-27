@@ -30,7 +30,7 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 
 VideoPreview::VideoPreview(QObject *parent)
     : AbstractBasePreview(parent)

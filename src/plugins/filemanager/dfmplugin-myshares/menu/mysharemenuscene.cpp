@@ -29,7 +29,7 @@
 #include <QMenu>
 #include <QDebug>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 
 MyShareMenuScene::MyShareMenuScene(QObject *parent)
     : AbstractMenuScene(parent), d(new MyShareMenuScenePrivate(this))

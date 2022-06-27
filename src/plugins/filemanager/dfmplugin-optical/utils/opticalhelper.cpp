@@ -38,7 +38,7 @@
 #include <QStandardPaths>
 
 DFMBASE_USE_NAMESPACE
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 
 // TODO(zhangs): rm define
 #define DISCBURN_STAGING "discburn"

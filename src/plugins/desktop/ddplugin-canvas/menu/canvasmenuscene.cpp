@@ -46,7 +46,7 @@
 #include <QDBusInterface>
 #include <QDBusPendingCall>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 DPMENU_USE_NAMESPACE
 

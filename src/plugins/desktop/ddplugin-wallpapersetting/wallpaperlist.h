@@ -33,7 +33,7 @@
 
 class QHBoxLayout;
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 
 class WallpaperList : public QScrollArea
 {
@@ -100,6 +100,6 @@ private:
     int currentIndex = 0;
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
 #endif // WALLPAPERLIST_H

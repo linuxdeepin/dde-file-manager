@@ -28,7 +28,7 @@
 
 #include <xcb/xcb.h>
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 class AutoActivateWindowPrivate : public QObject
 {
     Q_OBJECT
@@ -52,5 +52,5 @@ private:
     xcb_window_t watchedWin = {0};
     QTimer checkTimer;
 };
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 #endif // AUTOACTIVATEWINDOW_P_H

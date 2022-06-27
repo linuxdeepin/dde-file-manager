@@ -35,10 +35,11 @@ class QCheckBox;
 class QLineEdit;
 class QComboBox;
 
-DPDIRSHARE_BEGIN_NAMESPACE
+namespace dfmplugin_dirshare {
 
 class ShareControlWidget : public DTK_WIDGET_NAMESPACE::DArrowLineDrawer
 {
+    Q_OBJECT
 public:
     explicit ShareControlWidget(const QUrl &url, QWidget *parent = nullptr);
 
@@ -66,6 +67,6 @@ private:
     AbstractFileWatcherPointer watcher { nullptr };
 };
 
-DPDIRSHARE_END_NAMESPACE
+}
 
 #endif   // SHARECONTROLWIDGET_H

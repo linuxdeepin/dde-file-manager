@@ -24,7 +24,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
 
 void BookMarkEventCaller::sendBookMarkOpenInNewWindow(const QUrl &url)

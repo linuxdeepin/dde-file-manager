@@ -25,7 +25,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 
 class WallpaperSettings;
 class EventHandle : public QObject
@@ -67,5 +67,5 @@ private:
     DPF_EVENT_REG_SLOT(slot_WallpaperSettings_ScreenSaverSetting)
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 #endif   // WLSETPLUGIN_H

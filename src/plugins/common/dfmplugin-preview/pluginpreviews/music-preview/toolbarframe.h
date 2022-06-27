@@ -33,7 +33,7 @@ class QLabel;
 class QMediaPlayer;
 class QTimer;
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class ToolBarFrame : public QFrame
 {
     Q_OBJECT
@@ -67,5 +67,5 @@ private:
     QLabel *durationLabel { nullptr };
     QTimer *updateProgressTimer { nullptr };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // TOOLBARFRAME_H

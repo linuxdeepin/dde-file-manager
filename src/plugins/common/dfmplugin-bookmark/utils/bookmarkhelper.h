@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookMarkHelper : public QObject
 {
@@ -48,6 +48,6 @@ private:
     explicit BookMarkHelper(QObject *parent = nullptr);
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif   // BOOKMARKHELPER_H

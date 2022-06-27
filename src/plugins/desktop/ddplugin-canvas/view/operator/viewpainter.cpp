@@ -27,7 +27,7 @@
 
 #include <QPainterPath>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 ViewPainter::ViewPainter(CanvasViewPrivate *dd)
     : QPainter(dd->q->viewport())

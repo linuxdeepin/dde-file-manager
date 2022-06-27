@@ -25,7 +25,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookMark : public DPF_NAMESPACE::Plugin
 {
@@ -44,6 +44,6 @@ private:
     void bindScene(const QString &parentScene);
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif   // BOOKMARK_H

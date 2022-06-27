@@ -28,7 +28,7 @@
 
 #include <QUrl>
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 DFMBASE_USE_NAMESPACE
 
 void TagEventCaller::sendOpenWindow(const QUrl &url)

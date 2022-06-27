@@ -20,7 +20,7 @@
  */
 #include "canvasmanagerhookinterface.h"
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 CanvasManagerHookInterface::CanvasManagerHookInterface()
 {

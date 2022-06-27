@@ -23,12 +23,12 @@
 
 #include "dfm_common_service_global.h"
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 namespace Preview {
 namespace EventType {
 extern const int kShowPreviewEvent;
 }
 }
-DSC_END_NAMESPACE
+}
 
 #endif   //! PREVIEW_DEFINE_H

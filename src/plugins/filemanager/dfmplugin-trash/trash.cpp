@@ -40,7 +40,7 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 
 void Trash::initialize()
 {

@@ -27,7 +27,7 @@
 
 #include <QAbstractItemModel>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class FileFilter;
 class FileInfoModelPrivate;
 class FileInfoModel : public QAbstractItemModel
@@ -70,6 +70,6 @@ private:
     FileInfoModelPrivate *d;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // FILEINFOMODEL_H

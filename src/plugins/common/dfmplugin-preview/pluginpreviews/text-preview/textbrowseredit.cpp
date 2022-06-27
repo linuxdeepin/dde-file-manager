@@ -25,7 +25,7 @@
 
 #include <algorithm>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 constexpr int kReadTextSize { 1024 * 1024 * 5 };
 TextBrowserEdit::TextBrowserEdit(QWidget *parent)
     : QPlainTextEdit(parent)

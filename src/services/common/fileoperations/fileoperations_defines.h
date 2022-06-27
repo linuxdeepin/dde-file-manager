@@ -35,7 +35,7 @@
 
 #include <functional>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace FileOperationsSpace {
 using HandleOperationCopy = std::function<JobHandlePointer(const quint64 windowId,
@@ -136,7 +136,7 @@ struct FileOperationsInfo
 
 };   // namespace FileOperationsSpace
 
-DSC_END_NAMESPACE
+}
 
 using FileOperationsFunctions = QSharedPointer<DSC_NAMESPACE::FileOperationsSpace::FileOperationsInfo>;
 Q_DECLARE_METATYPE(FileOperationsFunctions)

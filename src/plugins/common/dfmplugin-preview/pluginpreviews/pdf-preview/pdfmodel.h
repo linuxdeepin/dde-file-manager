@@ -32,7 +32,7 @@ class DPdfDoc;
 class DPdfPage;
 class DPdfAnnot;
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 
 class PDFPage : public Page
 {
@@ -79,5 +79,5 @@ private:
 
     qreal docYRes = 72;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // PDFMODEL_H

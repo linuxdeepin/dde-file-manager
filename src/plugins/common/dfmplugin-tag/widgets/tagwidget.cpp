@@ -30,7 +30,7 @@
 
 #include <DArrowRectangle>
 
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagWidget::TagWidget(QUrl url, QWidget *parent)
     : QFrame(parent),

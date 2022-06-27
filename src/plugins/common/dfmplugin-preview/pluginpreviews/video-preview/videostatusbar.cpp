@@ -25,7 +25,7 @@
 #include <DIconButton>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 VideoStatusBar::VideoStatusBar(VideoPreview *preview)
     : QWidget(nullptr), p(preview), slider(new QSlider(this)), timeLabel(new QLabel(this)), sliderIsPressed(false)
 {

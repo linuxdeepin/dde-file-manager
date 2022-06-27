@@ -31,7 +31,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
 
 void BookMark::initialize()

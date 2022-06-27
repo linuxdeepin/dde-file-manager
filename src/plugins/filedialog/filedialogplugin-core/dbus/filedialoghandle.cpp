@@ -37,7 +37,7 @@
 #include <mutex>
 
 DFMBASE_USE_NAMESPACE
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 DWIDGET_USE_NAMESPACE
 
 class FileDialogHandlePrivate

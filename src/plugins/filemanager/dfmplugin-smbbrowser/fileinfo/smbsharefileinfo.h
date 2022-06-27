@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class SmbShareFileInfo : public dfmbase::AbstractFileInfo
 {
@@ -44,6 +44,6 @@ public:
     virtual bool canDrag() override;
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 
 #endif   // SMBSHAREFILEINFO_H

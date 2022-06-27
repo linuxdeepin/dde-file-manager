@@ -28,7 +28,7 @@
 
 #include <QList>
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareIterator;
 class ShareIteratorPrivate
@@ -45,6 +45,6 @@ private:
     DSC_NAMESPACE::ShareInfo currentInfo;
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREITERATOR_P_H

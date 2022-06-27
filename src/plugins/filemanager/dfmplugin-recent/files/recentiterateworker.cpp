@@ -34,7 +34,7 @@
 #include <QMutexLocker>
 
 DFMBASE_USE_NAMESPACE
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 RecentIterateWorker::RecentIterateWorker()
     : QObject()
@@ -89,4 +89,4 @@ void RecentIterateWorker::doWork()
             emit deleteExistRecentUrls(deleteUrls);
     }
 }
-DPRECENT_END_NAMESPACE
+}

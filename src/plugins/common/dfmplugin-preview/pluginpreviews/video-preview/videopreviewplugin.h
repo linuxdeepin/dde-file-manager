@@ -28,7 +28,7 @@
 
 #include <libdmr/player_widget.h>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class VideoPreviewPlugin : public DFMBASE_NAMESPACE::AbstractFilePreviewPlugin
 {
     Q_OBJECT
@@ -37,5 +37,5 @@ class VideoPreviewPlugin : public DFMBASE_NAMESPACE::AbstractFilePreviewPlugin
 public slots:
     DFMBASE_NAMESPACE::AbstractBasePreview *create(const QString &key) override;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // VIDEOPREVIEWPLUGIN_H

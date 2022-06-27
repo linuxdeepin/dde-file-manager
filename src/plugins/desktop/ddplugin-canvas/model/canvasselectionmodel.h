@@ -25,7 +25,7 @@
 
 #include <QItemSelectionModel>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasProxyModel;
 class CanvasSelectionModel : public QItemSelectionModel
 {
@@ -35,5 +35,5 @@ public:
     CanvasProxyModel *model();
     QList<QUrl> selectedUrls();
 };
-DDP_CANVAS_END_NAMESPACE
+}
 #endif // CANVASSELECTIONMODEL_H

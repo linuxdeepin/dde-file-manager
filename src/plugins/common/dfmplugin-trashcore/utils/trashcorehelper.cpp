@@ -33,7 +33,7 @@
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DPTRASHCORE_USE_NAMESPACE
+using namespace dfmplugin_trashcore;
 
 bool TrashCoreHelper::isEmpty()
 {

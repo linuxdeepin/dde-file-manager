@@ -40,7 +40,7 @@
 #include <pwd.h>
 #include <unistd.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace DaemonServiceIFace {
 static constexpr char kInterfaceService[] { "com.deepin.filemanager.daemon" };
@@ -485,4 +485,4 @@ UserShareHelper::UserShareHelper(QObject *parent)
     initMonitorPath();
 }
 
-DSC_END_NAMESPACE
+}

@@ -26,7 +26,7 @@
 #include <QReadWriteLock>
 
 DFMBASE_USE_NAMESPACE
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 class DesktopFileCreatorGlogal : public DesktopFileCreator{};
 Q_GLOBAL_STATIC(DesktopFileCreatorGlogal, desktopFileCreatorGlogal)

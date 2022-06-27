@@ -38,7 +38,7 @@
 #include <QSharedPointer>
 #include <QTime>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 DFMBASE_USE_NAMESPACE
 
 class UpdateProgressTimer;
@@ -193,6 +193,6 @@ public:
     QMutex cacheCopyingMutex;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // ABSTRACTWORKER_H

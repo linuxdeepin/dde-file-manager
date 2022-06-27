@@ -31,7 +31,7 @@
 #include <QPainterPath>
 
 DGUI_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 ThumbnailDelegate::ThumbnailDelegate(QAbstractItemView *parent)
     : DStyledItemDelegate(parent)
 {

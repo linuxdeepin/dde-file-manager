@@ -25,7 +25,7 @@
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 // TODO(zhangs): refactor it
 
@@ -68,7 +68,7 @@ private:
     UrlTransformHandleMap urlTransformHandles;
 };
 
-DSC_END_NAMESPACE
+}
 
 #define delegateServIns ::dfm_service_common::DelegateService::service()
 #endif   // DELEGATESERVICE_H

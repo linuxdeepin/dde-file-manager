@@ -25,7 +25,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasManager;
 class CanvasPlugin : public dpf::Plugin
 {
@@ -120,6 +120,6 @@ private:
     DPF_EVENT_REG_SLOT(slot_CanvasItemDelegate_IconRect)
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASPLUGIN_H

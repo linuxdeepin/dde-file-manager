@@ -29,7 +29,7 @@
 
 #include <functional>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace EventType {
 extern const int kRemoveShare;
@@ -78,7 +78,7 @@ QDebug operator<<(QDebug dbg, const ShareInfo &obj);
 
 using StartSambaFinished = std::function<void(bool, const QString &)>;
 
-DSC_END_NAMESPACE
+}
 
 typedef QList<DSC_NAMESPACE::ShareInfo> ShareInfoList;
 

@@ -29,15 +29,15 @@
 #include <QMap>
 #include <QDebug>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 #define CPY_NAMESPACE Property
 
 #define CPY_BEGIN_NAMESPACE namespace CPY_NAMESPACE {
 #define CPY_END_NAMESPACE }
 #define CPY_USE_NAMESPACE using namespace CPY_NAMESPACE;
-DSC_END_NAMESPACE
+}
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 CPY_BEGIN_NAMESPACE
 namespace EventType {
@@ -93,6 +93,6 @@ struct DeviceInfo
 };
 
 CPY_END_NAMESPACE
-DSC_END_NAMESPACE
+}
 Q_DECLARE_METATYPE(DSC_NAMESPACE::CPY_NAMESPACE::DeviceInfo)
 #endif   //PROPERTY_DEFINE_H

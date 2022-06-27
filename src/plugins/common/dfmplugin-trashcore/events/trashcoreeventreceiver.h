@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 
 class TrashCoreEventReceiver final : public QObject
 {
@@ -43,6 +43,6 @@ private:
     explicit TrashCoreEventReceiver(QObject *parent = nullptr);
 };
 
-DPTRASHCORE_END_NAMESPACE
+}
 
 #endif   // COREEVENTRECEIVER_H

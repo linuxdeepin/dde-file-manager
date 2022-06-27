@@ -27,11 +27,12 @@
 #include <interfaces/private/abstractmenuscene_p.h>
 
 DFMBASE_USE_NAMESPACE
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class MyShareMenuScene;
 class MyShareMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class MyShareMenuScene;
 
 public:
@@ -42,6 +43,6 @@ private:
     bool triggered(const QString &id);
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // MYSHAREMENUSCENE_P_H

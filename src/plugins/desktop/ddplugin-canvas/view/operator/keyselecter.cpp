@@ -27,7 +27,7 @@
 #include <QKeyEvent>
 #include <QTimer>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 KeySelecter::KeySelecter(CanvasView *parent)
     : ClickSelecter(parent)

@@ -37,7 +37,7 @@
 Q_DECLARE_METATYPE(QDir::Filters);
 
 DFMBASE_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagEventReceiver *TagEventReceiver::instance()
 {

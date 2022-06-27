@@ -26,7 +26,7 @@
 #include "dfm-base/dfm_global_defines.h"
 
 DFMBASE_USE_NAMESPACE
-DPTAG_USE_NAMESPACE
+using namespace dfmplugin_tag;
 
 TagDirIteratorPrivate::TagDirIteratorPrivate(TagDirIterator *qq)
     : q(qq)

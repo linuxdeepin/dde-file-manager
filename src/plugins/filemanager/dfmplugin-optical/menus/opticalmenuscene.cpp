@@ -31,7 +31,7 @@
 
 #include <QMenu>
 
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
 

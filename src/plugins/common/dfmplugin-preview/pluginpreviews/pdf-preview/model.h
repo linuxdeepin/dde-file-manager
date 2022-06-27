@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QRect>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class DPdfAnnot;
 class FormField : public QObject
 {
@@ -83,5 +83,5 @@ class DocumentFactory
 public:
     static Document *getDocument(const int &fileType, const QString &filePath, const QString &password, Document::Error &error);
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // MODEL_H

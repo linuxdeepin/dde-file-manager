@@ -28,12 +28,12 @@
 
 #include <functional>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace Delegate {
 using IsTransparentCallback = std::function<bool(const QUrl &)>;
 using UrlTransformCallback = std::function<QUrl(const QUrl &)>;
 };   // namespace delegate
-DSC_END_NAMESPACE
+}
 
 #endif   //DELEGATE_DEFINE_H

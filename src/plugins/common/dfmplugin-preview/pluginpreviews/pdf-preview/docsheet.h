@@ -32,7 +32,7 @@
 
 class QTemporaryDir;
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class SheetBrowser;
 class SheetRenderer;
 class SheetSidebar;
@@ -346,5 +346,5 @@ private:
     bool fullSiderBarVisible { false };
     EncryptionPage *encrytionPage { nullptr };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // DOCSHEET_H

@@ -26,7 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 DFMBASE_USE_NAMESPACE
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentFileInfoPrivate : public AbstractFileInfoPrivate
 {
@@ -101,4 +101,4 @@ QUrl RecentFileInfo::redirectedFileUrl() const
     return d->proxy ? d->proxy->url() : url();
 };
 
-DPRECENT_END_NAMESPACE
+}

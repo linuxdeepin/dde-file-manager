@@ -28,12 +28,12 @@
 #include <QUrl>
 #include <QPointer>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class MusicMessageView;
 class ToolBarFrame;
-PREVIEW_END_NAMESPACE
+}
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class MusicPreview : public DFMBASE_NAMESPACE::AbstractBasePreview
 {
     Q_OBJECT
@@ -61,5 +61,5 @@ private:
     QPointer<MusicMessageView> musicView;
     QPointer<ToolBarFrame> statusBarFrame;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // MUSICPREVIEWPLUGIN_H

@@ -26,7 +26,7 @@
 
 #include "services/common/usershare/usershareservice.h"
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 DSC_USE_NAMESPACE
 
 ShareWatcher::ShareWatcher(const QUrl &url, QObject *parent)

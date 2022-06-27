@@ -41,7 +41,7 @@
 #include <fcntl.h>
 
 USING_IO_NAMESPACE
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 DoMoveToTrashFilesWorker::DoMoveToTrashFilesWorker(QObject *parent)
     : FileOperateBaseWorker(parent)
 {

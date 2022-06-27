@@ -31,7 +31,7 @@
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 
 void CoreEventsCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)
 {

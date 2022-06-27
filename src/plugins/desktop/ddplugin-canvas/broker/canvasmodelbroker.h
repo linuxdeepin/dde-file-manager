@@ -28,7 +28,7 @@
 #include <QModelIndex>
 #include <QVariant>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasProxyModel;
 class CanvasModelBroker : public QObject
 {
@@ -60,6 +60,6 @@ private:
     CanvasProxyModel *model = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASMODELBROKER_H

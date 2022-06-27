@@ -21,7 +21,6 @@
 #ifndef RENAMEDIALOG_H
 #define RENAMEDIALOG_H
 
-
 #include "ddplugin_canvas_global.h"
 
 #include <dfm-base/dfm_global_defines.h>
@@ -30,7 +29,7 @@
 #include <QSharedPointer>
 #include <DDialog>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class RenameDialogPrivate;
 class RenameDialog : public Dtk::Widget::DDialog
@@ -62,5 +61,5 @@ private:
     QSharedPointer<RenameDialogPrivate> d;
 };
 
-DDP_CANVAS_END_NAMESPACE
-#endif // RENAMEDIALOG_H
+}
+#endif   // RENAMEDIALOG_H

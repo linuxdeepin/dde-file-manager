@@ -41,7 +41,7 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/utils/dialogmanager.h"
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 DFMBASE_USE_NAMESPACE
 
 void SmbBrowser::initialize()

@@ -23,7 +23,7 @@
 #include "opticaleventreceiver.h"
 #include "utils/opticalhelper.h"
 
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 
 OpticalEventReceiver &OpticalEventReceiver::instance()
 {

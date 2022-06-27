@@ -40,7 +40,7 @@
 
 #include <QDebug>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasViewPrivate : public QObject
 {
@@ -144,6 +144,6 @@ public:
     CanvasView *q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASVIEW_P_H

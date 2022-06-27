@@ -31,7 +31,7 @@
 #include <QApplication>
 #include <QDebug>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 class BoxSelecterGlobal : public BoxSelecter{};
 Q_GLOBAL_STATIC(BoxSelecterGlobal, boxSelecterGlobal)
 

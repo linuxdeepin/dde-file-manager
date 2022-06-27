@@ -24,7 +24,7 @@
 #include "dfmplugin_trash_global.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashFileInfoPrivate;
 class TrashFileInfo : public DFMBASE_NAMESPACE::AbstractFileInfo
@@ -58,6 +58,6 @@ private:
 };
 
 using TrashFileInfoPointer = QSharedPointer<TrashFileInfo>;
-DPTRASH_END_NAMESPACE
+}
 
 #endif   // TRASHFILEINFO_H

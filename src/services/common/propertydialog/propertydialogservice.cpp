@@ -25,18 +25,18 @@
 
 #include <mutex>
 
-DSC_BEGIN_NAMESPACE
-CPY_BEGIN_NAMESPACE
+namespace dfm_service_common {
+namespace Property {
 namespace EventType {
 const int kEvokePropertyDialog = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
 }
 
-CPY_END_NAMESPACE
-DSC_END_NAMESPACE
+}
+}
 
 DFMBASE_USE_NAMESPACE
-CPY_USE_NAMESPACE
-DSC_USE_NAMESPACE
+using namespace Property;
+using namespace dfm_service_common;
 PropertyDialogService::PropertyDialogService(QObject *parent)
     : dpf::PluginService(parent),
       dpf::AutoServiceRegister<PropertyDialogService>()

@@ -27,7 +27,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class Optical : public dpf::Plugin
 {
@@ -53,6 +53,6 @@ private slots:
     void onDeviceChanged(const QString &id, bool isUnmount = false);
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICAL_H

@@ -33,7 +33,7 @@
 #include <QCoreApplication>
 
 DFMBASE_USE_NAMESPACE
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 class TrashFileInfoPrivate : public AbstractFileInfoPrivate
 {
 public:
@@ -272,4 +272,4 @@ bool TrashFileInfo::isHidden() const
     return false;
 }
 
-DPTRASH_END_NAMESPACE
+}

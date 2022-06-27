@@ -24,7 +24,7 @@
 
 #include "dfmplugin_tag_global.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagEventCaller
 {
@@ -37,6 +37,6 @@ public:
     static void sendFileUpdate(const QString &path);
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGEVENTCALLER_H

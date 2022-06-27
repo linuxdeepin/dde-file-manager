@@ -28,7 +28,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 PdfWidget::PdfWidget(QWidget *parent)
     : QWidget(parent)
 {

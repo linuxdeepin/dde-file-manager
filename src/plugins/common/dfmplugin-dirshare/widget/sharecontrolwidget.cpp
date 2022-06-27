@@ -41,7 +41,7 @@
 
 #include <unistd.h>
 
-DPDIRSHARE_USE_NAMESPACE
+using namespace dfmplugin_dirshare;
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE

@@ -25,7 +25,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 class Trash : public dpf::Plugin
 {
     Q_OBJECT
@@ -47,5 +47,5 @@ private:
     void addCustomTopWidget();
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHPLUGIN_H

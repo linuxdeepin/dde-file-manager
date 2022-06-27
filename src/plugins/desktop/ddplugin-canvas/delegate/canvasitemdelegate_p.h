@@ -28,7 +28,7 @@
 #include <QTextDocument>
 #include <QAbstractItemView>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasItemDelegatePrivate
 {
@@ -38,18 +38,21 @@ public:
 
     ElideTextLayout *createTextlayout(const QModelIndex &index, const QPainter *painter = nullptr) const;
 
-    inline QRect availableTextRect(QRect labelRect) const {
+    inline QRect availableTextRect(QRect labelRect) const
+    {
         // available text rect top is label rect minus icon space and text padding.
         labelRect.setTop(labelRect.top() + CanvasItemDelegate::kIconSpacing
-                    + CanvasItemDelegate::kTextPadding);
+                         + CanvasItemDelegate::kTextPadding);
         return labelRect;
     }
-    inline bool isHighlight(const QStyleOptionViewItem &option) const {
+    inline bool isHighlight(const QStyleOptionViewItem &option) const
+    {
         return (option.state & QStyle::State_Selected) && option.showDecorationSelected;
     }
 
     bool needExpend(const QStyleOptionViewItem &option,
                     const QModelIndex &index, const QRect &rText, QRect *needText = nullptr) const;
+
 public:
     // default icon size is 48px.
     int currentIconLevel = -1;
@@ -62,6 +65,6 @@ public:
     CanvasItemDelegate *const q;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASITEMDELEGATE_P_H

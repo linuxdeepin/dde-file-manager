@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class CanvasViewMenuProxy : public QObject
 {
@@ -43,6 +43,6 @@ private:
     CanvasView *view;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASVIEWMENUPROXY_H

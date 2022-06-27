@@ -29,7 +29,7 @@
 #include <QPainter>
 #include <QGridLayout>
 
-DDP_WALLPAERSETTING_USE_NAMESPACE
+using namespace ddplugin_wallpapersetting;
 
 WrapperWidget::WrapperWidget(QWidget *parent) : QWidget(parent)
 {

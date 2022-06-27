@@ -42,7 +42,7 @@
 DFMBASE_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 
 bool RecentFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
 {

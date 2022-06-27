@@ -24,7 +24,7 @@
 
 #include "dfmplugin_tag_global.h"
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagOperationHelper
 {
@@ -32,6 +32,6 @@ public:
     static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGOPERATIONHELPER_H

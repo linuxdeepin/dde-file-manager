@@ -26,7 +26,7 @@
 #include <QString>
 #include <QWidget>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 /**
  * @brief The FileType enum
  * 支持文档类型
@@ -80,5 +80,5 @@ enum ScaleMode {
 
 extern "C" void setMainWidget(QWidget *pMainWidget);
 extern "C" QWidget *getMainDialog();
-PREVIEW_END_NAMESPACE
+}
 #endif   // GLOBAL_H

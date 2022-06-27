@@ -28,13 +28,13 @@
 
 #include <functional>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace Trash {
 namespace EventType {
 extern const int kEmptyTrash;
 }
 }
-DSC_END_NAMESPACE
+}
 
 #endif   //TRASH_DEFINE_H

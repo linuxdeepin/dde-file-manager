@@ -45,7 +45,7 @@ static constexpr char kTrashMenuSceneName[] = "TrashMenu";
 static const char *const kOemMenuSceneName = "OemMenu";
 static const char *const kOpenDirMenuSceneName = "OpenDirMenu";
 
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *TrashMenuCreator::create()

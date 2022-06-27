@@ -22,7 +22,7 @@
 
 #include <mutex>
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 
 BookMarkHelper *BookMarkHelper::instance()
 {

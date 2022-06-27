@@ -39,7 +39,7 @@
 
 #include <DSysInfo>
 
-DPOPTICAL_USE_NAMESPACE
+using namespace dfmplugin_optical;
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE

@@ -28,7 +28,7 @@
 #include <QPushButton>
 
 DWIDGET_USE_NAMESPACE
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 
 EmptyTrashWidget::EmptyTrashWidget(QWidget *parent)
     : QFrame(parent)

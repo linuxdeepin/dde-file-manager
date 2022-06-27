@@ -20,8 +20,8 @@
  */
 #include "registercreateprocess.h"
 
-DSC_USE_NAMESPACE
-CPY_USE_NAMESPACE
+using namespace dfm_service_common;
+using namespace Property;
 
 RegisterCreateProcess::RegisterCreateProcess()
 {

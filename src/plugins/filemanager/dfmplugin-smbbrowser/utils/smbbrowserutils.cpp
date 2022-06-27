@@ -32,7 +32,7 @@
 
 #include <QUrl>
 
-DPSMBBROWSER_USE_NAMESPACE
+using namespace dfmplugin_smbbrowser;
 
 QMutex SmbBrowserUtils::mutex;
 QMap<QUrl, SmbShareNode> SmbBrowserUtils::shareNodes;

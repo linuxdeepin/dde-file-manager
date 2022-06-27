@@ -31,7 +31,7 @@
 
 using namespace std;
 DFMBASE_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 
 TextPreview::TextPreview(QObject *parent)
     : AbstractBasePreview(parent)

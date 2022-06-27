@@ -46,4 +46,4 @@ inline constexpr char kActionID[] = "actionID";   // string
 
 DFMBASE_END_NAMESPACE
 
-#endif // DFM_MENU_DEFINES_H
+#endif   // DFM_MENU_DEFINES_H

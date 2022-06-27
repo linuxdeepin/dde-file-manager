@@ -26,7 +26,7 @@
 
 #include <DStyledItemDelegate>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class ThumbnailDelegate : public DTK_WIDGET_NAMESPACE::DStyledItemDelegate
 {
 public:
@@ -54,5 +54,5 @@ protected:
 private:
     QAbstractItemView *itemViewParent { nullptr };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // THUMBNAILDELEGATE_H

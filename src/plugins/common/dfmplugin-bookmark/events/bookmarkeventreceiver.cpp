@@ -25,7 +25,7 @@
 
 #include <QDebug>
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 
 BookMarkEventReceiver *BookMarkEventReceiver::instance()
 {

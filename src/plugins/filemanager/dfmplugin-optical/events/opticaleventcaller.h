@@ -28,7 +28,7 @@
 #include <QUrl>
 #include <QWidget>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalEventCaller
 {
@@ -38,6 +38,6 @@ public:
     static void sendOpenBurnDlg(const QString &dev, bool isSupportedUDF, QWidget *parent);
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALEVENTCALLER_H

@@ -26,7 +26,7 @@
 
 #include <DCrumbEdit>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagCrumbEdit : public DTK_WIDGET_NAMESPACE::DCrumbEdit
 {
@@ -43,6 +43,6 @@ private:
     bool isEditByDoubleClick { false };
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGCRUMBEDIT_H

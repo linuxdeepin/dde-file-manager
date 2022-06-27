@@ -29,7 +29,7 @@ Q_DECLARE_METATYPE(QModelIndex *)
 Q_DECLARE_METATYPE(QSharedPointer<DFMBASE_NAMESPACE::LocalFileInfo> *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 #define FileInfoModelPublish(topic, args...) \
             dpfSignalDispatcher->publish(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), ##args)

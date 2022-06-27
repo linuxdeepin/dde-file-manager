@@ -30,7 +30,7 @@
 
 class QScroller;
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class SheetOperation;
 class BrowserPage;
 class DocSheet;
@@ -269,5 +269,5 @@ private:
     bool canTouchScreen { false };
     QScroller *scrollerPage { nullptr };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // SHEETBROWSER_H

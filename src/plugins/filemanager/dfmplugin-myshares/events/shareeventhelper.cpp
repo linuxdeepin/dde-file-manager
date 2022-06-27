@@ -28,7 +28,7 @@
 
 #include <QDebug>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 
 ShareEventHelper *dfmplugin_myshares::ShareEventHelper::instance()
 {

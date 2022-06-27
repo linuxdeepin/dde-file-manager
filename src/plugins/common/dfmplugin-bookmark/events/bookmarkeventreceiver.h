@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookMarkEventReceiver : public QObject
 {
@@ -44,6 +44,6 @@ private:
     explicit BookMarkEventReceiver(QObject *parent = nullptr);
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif   // BOOKMARKEVENTRECEIVER_H

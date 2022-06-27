@@ -28,7 +28,7 @@
 
 #include <QObject>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDBusHelper;
 class TagManager final : public QObject
@@ -102,6 +102,6 @@ private:
     TagDBusHelper *dbusHelper;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGMANAGER_H

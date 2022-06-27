@@ -31,7 +31,7 @@
 #include <QMimeData>
 #include <QFileDevice>
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 class RecentFilesHelper
 {
 public:
@@ -67,5 +67,5 @@ private:
     static QUrl checkTargetUrl(const QUrl &url);
 };
 
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTFILESHELPER_H

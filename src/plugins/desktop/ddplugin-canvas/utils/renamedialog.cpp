@@ -33,7 +33,7 @@
 #define VSPACEWIDTH 10
 #define MARGINWIDTH 0
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 DFMBASE_USE_NAMESPACE
 
 RenameDialogPrivate::RenameDialogPrivate(RenameDialog *qq)

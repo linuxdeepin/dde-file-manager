@@ -45,7 +45,7 @@
 #include <QThread>
 #include <QTimer>
 
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentManager final : public QObject
 {
@@ -113,5 +113,5 @@ private:
     QMap<QUrl, AbstractFileInfoPointer> recentNodes;
 };
 
-DPRECENT_END_NAMESPACE
+}
 #endif   // RECENTMANAGER_H

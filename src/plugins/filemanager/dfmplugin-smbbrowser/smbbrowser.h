@@ -27,7 +27,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class SmbBrowser : public dpf::Plugin
 {
@@ -51,5 +51,5 @@ private:
     static void sambaPrehandler(const QUrl &url, std::function<void()> after);
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 #endif   // MYSHARESPLUGIN_H

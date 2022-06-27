@@ -27,7 +27,7 @@
 #include <dfm-framework/dpf.h>
 
 DFMBASE_USE_NAMESPACE
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 
 RecentEventReceiver *RecentEventReceiver::instance()
 {

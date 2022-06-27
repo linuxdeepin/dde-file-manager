@@ -25,7 +25,7 @@
 #include "dfmplugin_trash_global.h"
 #include "dfm-base/interfaces/abstractfilewatcher.h"
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashFileWatcherPrivate;
 class TrashFileWatcher : public DFMBASE_NAMESPACE::AbstractFileWatcher
@@ -47,6 +47,6 @@ private:
     TrashFileWatcherPrivate *dptr;
 };
 
-DPTRASH_END_NAMESPACE
+}
 
 #endif   // TRASHFILEWATCHER_H

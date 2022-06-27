@@ -26,7 +26,7 @@
 #include <QObject>
 #include <QRect>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasManager;
 class CanvasView;
 class CanvasViewBroker : public QObject
@@ -49,6 +49,6 @@ private:
     CanvasManager *manager = nullptr;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // CANVASVIEWBROKER_H

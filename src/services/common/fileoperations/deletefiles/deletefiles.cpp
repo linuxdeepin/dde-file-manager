@@ -23,7 +23,7 @@
 #include "deletefiles.h"
 #include "dodeletefilesworker.h"
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 DeleteFiles::DeleteFiles(QObject *parent)
     : AbstractJob(new DoDeleteFilesWorker(), parent)
 {

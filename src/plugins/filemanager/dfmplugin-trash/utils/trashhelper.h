@@ -44,7 +44,7 @@ namespace dfmbase {
 class LocalFileWatcher;
 }
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class EmptyTrashWidget;
 class TrashHelper final : public QObject
@@ -103,5 +103,5 @@ private:
     bool isTrashEmpty;
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHHELPER_H

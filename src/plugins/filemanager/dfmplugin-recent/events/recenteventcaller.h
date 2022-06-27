@@ -30,7 +30,7 @@
 #include <QObject>
 
 DFMBASE_USE_NAMESPACE
-DPRECENT_BEGIN_NAMESPACE
+namespace dfmplugin_recent {
 
 class RecentEventCaller
 {
@@ -50,6 +50,6 @@ public:
                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 };
 
-DPRECENT_END_NAMESPACE
+}
 
 #endif   // RECENTEVENTCALLER_H

@@ -29,7 +29,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 DFMBASE_USE_NAMESPACE
 
 void ShareEventsCaller::sendOpenDirs(quint64 winId, const QList<QUrl> &urls, ShareEventsCaller::OpenMode mode)

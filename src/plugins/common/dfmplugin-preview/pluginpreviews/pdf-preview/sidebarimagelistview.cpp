@@ -32,7 +32,7 @@
 #include <QMouseEvent>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 SideBarImageListView::SideBarImageListView(DocSheet *sheet, QWidget *parent)
     : DListView(parent), docSheet(sheet)
 {

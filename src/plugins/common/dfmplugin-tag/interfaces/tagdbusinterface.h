@@ -26,7 +26,7 @@
 
 #include <QtDBus/QtDBus>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagDBusInterface : public QDBusAbstractInterface
 {
@@ -46,6 +46,6 @@ Q_SIGNALS:
     void untagFiles(const QVariantMap &file_be_removed_tags);
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGDBUSINTERFACE_H

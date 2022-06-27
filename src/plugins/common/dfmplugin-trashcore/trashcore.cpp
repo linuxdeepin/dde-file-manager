@@ -28,7 +28,7 @@
 
 #include "services/common/trash/trash_defines.h"
 
-DPTRASHCORE_USE_NAMESPACE
+using namespace dfmplugin_trashcore;
 
 void TrashCore::initialize()
 {

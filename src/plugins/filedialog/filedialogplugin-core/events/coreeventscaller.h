@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QAbstractItemView>
 
-DIALOGCORE_BEGIN_NAMESPACE
+namespace filedialog_core {
 
 class CoreEventsCaller
 {
@@ -43,6 +43,6 @@ public:
     static void setMenuDisbaled();
 };
 
-DIALOGCORE_END_NAMESPACE
+}
 
 #endif   // COREEVENTSCALLER_H

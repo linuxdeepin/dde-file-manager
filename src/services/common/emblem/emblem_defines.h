@@ -24,7 +24,7 @@
 
 #include "dfm_common_service_global.h"
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 namespace Emblem {
 namespace EventType {
@@ -34,6 +34,6 @@ extern const int kFetchExtendEmblems;
 }
 }
 
-DSC_END_NAMESPACE
+}
 
 #endif   // EMBLEM_DEFINES_H

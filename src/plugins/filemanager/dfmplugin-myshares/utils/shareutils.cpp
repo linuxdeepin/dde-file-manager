@@ -27,7 +27,7 @@
 
 #include <QDebug>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 
 QString ShareUtils::scheme()
 {

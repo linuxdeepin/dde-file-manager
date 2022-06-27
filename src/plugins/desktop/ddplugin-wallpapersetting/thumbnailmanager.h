@@ -28,7 +28,7 @@
 #include <QFutureWatcher>
 #include <QPixmap>
 
-DDP_WALLPAERSETTING_BEGIN_NAMESPACE
+namespace ddplugin_wallpapersetting {
 
 class ThumbnailManager : public QObject
 {
@@ -58,6 +58,6 @@ private:
     QQueue<QString> queuedRequests;
 };
 
-DDP_WALLPAERSETTING_END_NAMESPACE
+}
 
 #endif // THUMBNAILMANAGER_H

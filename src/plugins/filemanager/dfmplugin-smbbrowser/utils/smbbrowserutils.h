@@ -29,7 +29,7 @@
 #include <QIcon>
 #include <QMutex>
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class SmbBrowserUtils
 {
@@ -45,6 +45,6 @@ public:
     static QMap<QUrl, SmbShareNode> shareNodes;
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 
 #endif   // SMBBROWSERUTILS_H

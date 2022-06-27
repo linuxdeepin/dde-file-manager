@@ -26,7 +26,7 @@
 
 #include <QMenu>
 
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *FileDialogMenuCreator::create()

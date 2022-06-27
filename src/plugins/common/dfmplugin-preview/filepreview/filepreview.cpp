@@ -21,7 +21,7 @@
 #include "filepreview.h"
 #include "events/fileprevieweventreceiver.h"
 
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 
 void FilePreview::initialize()
 {

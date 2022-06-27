@@ -38,7 +38,7 @@
 #include <QMenu>
 #include <QMap>
 
-DPBOOKMARK_USE_NAMESPACE
+using namespace dfmplugin_bookmark;
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 

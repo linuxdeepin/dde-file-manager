@@ -164,5 +164,13 @@ int main(int argc, char *argv[])
         abort();
     }
 
+    {
+        // load translation
+        QString appName = a.applicationName();
+        a.setApplicationName("dde-file-manager");
+        a.loadTranslator();
+        a.setApplicationName(appName);
+    }
+
     return a.exec();
 }

@@ -30,7 +30,7 @@
 #include <QMutex>
 #include <QUrl>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class FileFilter;
 class FileProvider : public QObject
 {
@@ -65,6 +65,6 @@ private:
     QSharedPointer<DFMBASE_NAMESPACE::TraversalDirThread> traversalThread;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // FILEPROVIDER_H

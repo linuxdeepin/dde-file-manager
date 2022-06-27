@@ -31,7 +31,7 @@
 #include <QTimer>
 #include <QPointer>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class UpdateProgressTimer : public QObject
 {
     Q_OBJECT
@@ -100,6 +100,6 @@ private:
     static QMutex mutex;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // FILEOPERATIONSUTILS_H

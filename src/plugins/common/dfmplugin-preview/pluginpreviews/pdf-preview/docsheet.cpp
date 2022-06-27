@@ -42,7 +42,7 @@
 #include <QScreen>
 
 DWIDGET_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 QReadWriteLock DocSheet::lockReadWrite;
 QStringList DocSheet::uuidList;
 QList<DocSheet *> DocSheet::sheetList;

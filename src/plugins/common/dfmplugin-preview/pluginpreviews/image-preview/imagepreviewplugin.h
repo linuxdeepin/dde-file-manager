@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractfilepreviewplugin.h"
 #include "imagepreview.h"
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class ImagePreviewPlugin : public DFMBASE_NAMESPACE::AbstractFilePreviewPlugin
 {
     Q_OBJECT
@@ -35,5 +35,5 @@ class ImagePreviewPlugin : public DFMBASE_NAMESPACE::AbstractFilePreviewPlugin
 public slots:
     DFMBASE_NAMESPACE::AbstractBasePreview *create(const QString &key) Q_DECL_OVERRIDE;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // IMAGEPREVIEWPLUGIN_H

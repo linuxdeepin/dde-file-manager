@@ -30,7 +30,7 @@
 
 #include <QGraphicsItem>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class Page;
 class SheetBrowser;
 
@@ -141,5 +141,5 @@ private:
 
     QSizeF originSizeF;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // BROWSERPAGE_H

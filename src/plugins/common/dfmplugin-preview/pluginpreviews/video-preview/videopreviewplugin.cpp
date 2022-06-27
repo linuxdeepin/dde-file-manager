@@ -22,7 +22,7 @@
 #include "videopreviewplugin.h"
 
 DFMBASE_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 
 AbstractBasePreview *VideoPreviewPlugin::create(const QString &key)
 {

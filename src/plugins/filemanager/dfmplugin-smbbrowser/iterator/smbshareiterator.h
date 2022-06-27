@@ -27,7 +27,7 @@
 
 #include "dfm-base/interfaces/abstractdiriterator.h"
 
-DPSMBBROWSER_BEGIN_NAMESPACE
+namespace dfmplugin_smbbrowser {
 
 class SmbShareIteratorPrivate;
 class SmbShareIterator : public dfmbase::AbstractDirIterator
@@ -53,6 +53,6 @@ private:
     QScopedPointer<SmbShareIteratorPrivate> d;
 };
 
-DPSMBBROWSER_END_NAMESPACE
+}
 
 #endif   // SMBSHAREITERATOR_H

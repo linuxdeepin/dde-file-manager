@@ -42,7 +42,7 @@
 #include <QThreadPool>
 #include <QMultiMap>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 USING_IO_NAMESPACE
 DFMBASE_USE_NAMESPACE
 class StorageInfo;
@@ -69,6 +69,6 @@ private slots:
     void onUpdateProgress() override;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // DOCOPYFILESWORKER_H

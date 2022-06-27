@@ -25,7 +25,7 @@
 
 #include <dfm-framework/framework.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class PreviewService final : public dpf::PluginService, dpf::AutoServiceRegister<PreviewService>
 {
     Q_OBJECT
@@ -43,6 +43,6 @@ public:
 
     static PreviewService *instance();
 };
-DSC_END_NAMESPACE
+}
 #define previewServIns ::DSC_NAMESPACE::PreviewService::instance()
 #endif   // PREVIEWSERVICE_H

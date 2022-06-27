@@ -26,7 +26,7 @@
 
 #include <sys/stat.h>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 
 static QString preprocessPath(const QString &path, StorageInfo::PathHints hints)
 {

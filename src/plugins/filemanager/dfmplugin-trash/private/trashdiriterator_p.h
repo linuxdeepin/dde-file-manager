@@ -27,7 +27,7 @@
 
 #include <QDirIterator>
 
-DPTRASH_BEGIN_NAMESPACE
+namespace dfmplugin_trash {
 
 class TrashDirIterator;
 
@@ -44,5 +44,5 @@ private:
     TrashDirIterator *q { nullptr };
 };
 
-DPTRASH_END_NAMESPACE
+}
 #endif   // TRASHDIRITERATORPRIVATE_H

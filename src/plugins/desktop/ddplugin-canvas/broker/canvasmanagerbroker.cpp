@@ -24,7 +24,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 #define CanvasManagerSlot(topic, args...) \
             dpfSlotChannel->connect(QT_STRINGIFY(DDP_CANVAS_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)

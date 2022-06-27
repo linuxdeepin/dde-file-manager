@@ -25,7 +25,7 @@
 
 #include <QObject>
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookMarkEventCaller
 {
@@ -38,6 +38,6 @@ public:
     static void sendOpenBookMarkInWindow(quint64 windowId, const QUrl &url);
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif // BOOKMARKEVENTCALLER_H

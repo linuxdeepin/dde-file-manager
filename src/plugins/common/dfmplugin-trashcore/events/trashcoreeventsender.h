@@ -30,7 +30,7 @@ namespace dfmbase {
 class LocalFileWatcher;
 }
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 
 class TrashCoreEventSender final : public QObject
 {
@@ -53,6 +53,6 @@ private:
     bool isEmpty { false };
 };
 
-DPTRASHCORE_END_NAMESPACE
+}
 
 #endif   // TRASHCOREEVENTSENDER_H

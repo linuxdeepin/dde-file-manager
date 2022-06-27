@@ -30,7 +30,7 @@
 #include <QObject>
 #include <QThread>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class CutFiles : public AbstractJob
 {
@@ -42,6 +42,6 @@ public:
     ~CutFiles() override;
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // CUTFILES_H

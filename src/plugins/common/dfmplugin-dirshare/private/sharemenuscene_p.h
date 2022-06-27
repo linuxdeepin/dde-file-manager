@@ -26,12 +26,13 @@
 #include "dfmplugin_dirshare_global.h"
 #include <interfaces/private/abstractmenuscene_p.h>
 
-DPDIRSHARE_BEGIN_NAMESPACE
+namespace dfmplugin_dirshare {
 DFMBASE_USE_NAMESPACE
 
 class ShareMenuScene;
 class ShareMenuScenePrivate : public AbstractMenuScenePrivate
 {
+    Q_OBJECT
     friend class ShareMenuScene;
 
 public:
@@ -41,6 +42,6 @@ private:
     void addShare(const QUrl &url);
 };
 
-DPDIRSHARE_END_NAMESPACE
+}
 
 #endif   // SHAREMENUSCENE_P_H

@@ -49,7 +49,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 
 void MyShares::initialize()
 {

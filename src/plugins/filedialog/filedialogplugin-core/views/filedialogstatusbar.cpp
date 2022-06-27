@@ -34,7 +34,7 @@
 #include <QDebug>
 #include <QFontMetrics>
 
-DIALOGCORE_USE_NAMESPACE
+using namespace filedialog_core;
 
 FileDialogStatusBar::FileDialogStatusBar(QWidget *parent)
     : QFrame(parent)

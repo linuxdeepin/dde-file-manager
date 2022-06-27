@@ -23,7 +23,7 @@
 #include "cleantrashfiles.h"
 #include "docleantrashfilesworker.h"
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 CleanTrashFiles::CleanTrashFiles(QObject *parent)
     : AbstractJob(new DoCleanTrashFilesWorker(), parent)
 {

@@ -41,6 +41,7 @@ public:
 class PropertyMenuScenePrivate;
 class PropertyMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit PropertyMenuScene(QObject *parent = nullptr);
     QString name() const override;

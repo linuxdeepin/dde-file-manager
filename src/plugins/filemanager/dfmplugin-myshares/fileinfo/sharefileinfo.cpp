@@ -26,7 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 DFMBASE_USE_NAMESPACE
-DPMYSHARES_USE_NAMESPACE
+using namespace dfmplugin_myshares;
 DSC_USE_NAMESPACE
 
 ShareFileInfo::ShareFileInfo(const QUrl &url)

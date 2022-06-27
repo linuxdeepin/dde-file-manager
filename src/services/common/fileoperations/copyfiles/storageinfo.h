@@ -34,7 +34,7 @@ extern "C" {
 }
 #define signals public
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class StorageDataInfo : public QSharedData
 {
 public:
@@ -125,7 +125,7 @@ inline bool operator!=(const StorageInfo &first, const StorageInfo &second)
     return !(first == second);
 }
 
-DSC_END_NAMESPACE
+}
 
 QT_BEGIN_NAMESPACE
 #ifndef QT_NO_DEBUG_STREAM

@@ -26,7 +26,7 @@
 #include <QUrl>
 #include <QDebug>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 DoDeleteFilesWorker::DoDeleteFilesWorker(QObject *parent)
     : AbstractWorker(parent)
 {

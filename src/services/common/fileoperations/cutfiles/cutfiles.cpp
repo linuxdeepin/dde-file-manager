@@ -23,7 +23,7 @@
 
 #include "cutfiles.h"
 #include "docutfilesworker.h"
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 
 CutFiles::CutFiles(QObject *parent)
     : AbstractJob(new DoCutFilesWorker(), parent)

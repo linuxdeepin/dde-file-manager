@@ -26,7 +26,7 @@
 
 #include <dfm-framework/dpf.h>
 
-DPTRASHCORE_BEGIN_NAMESPACE
+namespace dfmplugin_trashcore {
 class TrashCore : public dpf::Plugin
 {
     Q_OBJECT
@@ -39,6 +39,6 @@ public:
     virtual bool start() override;
     virtual dpf::Plugin::ShutdownFlag stop() override;
 };
-DPTRASHCORE_END_NAMESPACE
+}
 
 #endif   // TRASHCOREPLUGIN_H

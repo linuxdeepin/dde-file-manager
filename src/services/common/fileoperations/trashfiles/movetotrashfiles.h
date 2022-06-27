@@ -30,7 +30,7 @@
 #include <QThread>
 
 DFMBASE_USE_NAMESPACE
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 class MoveToTrashFiles : private AbstractJob
 {
     Q_OBJECT
@@ -40,6 +40,6 @@ class MoveToTrashFiles : private AbstractJob
 public:
     ~MoveToTrashFiles() override;
 };
-DSC_END_NAMESPACE
+}
 
 #endif   // MOVETOtRASHFILES_H

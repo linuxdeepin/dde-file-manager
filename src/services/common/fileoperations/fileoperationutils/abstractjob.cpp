@@ -26,7 +26,7 @@
 #include <QDebug>
 #include <QUrl>
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 /*!
  * \brief AbstractJob::setJobArgs 设置任务的参数
  * \param handle 任务处理控制器

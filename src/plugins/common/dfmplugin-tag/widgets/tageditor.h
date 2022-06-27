@@ -35,7 +35,7 @@
 #include <QFocusEvent>
 #include <QTimer>
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 class TagEditor final : public DTK_WIDGET_NAMESPACE::DArrowRectangle
 {
@@ -78,6 +78,6 @@ private:
     bool isSettingDefault = false;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGEDITOR_H

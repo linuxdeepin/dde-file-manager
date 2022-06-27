@@ -26,7 +26,7 @@
 #include "dfm-base/interfaces/abstractfilepreviewplugin.h"
 #include "musicpreview.h"
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class MusicPreviewPlugin : public DFMBASE_NAMESPACE::AbstractFilePreviewPlugin
 {
     Q_OBJECT
@@ -35,5 +35,5 @@ class MusicPreviewPlugin : public DFMBASE_NAMESPACE::AbstractFilePreviewPlugin
 public:
     DFMBASE_NAMESPACE::AbstractBasePreview *create(const QString &key) Q_DECL_OVERRIDE;
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // MUSICPREVIEWPLUGIN_H

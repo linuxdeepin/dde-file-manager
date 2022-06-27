@@ -28,7 +28,7 @@
 
 #include <dfm-framework/service/pluginservicecontext.h>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class UserShareService final : public dpf::PluginService, dpf::AutoServiceRegister<UserShareService>
 {
@@ -73,5 +73,5 @@ private:
     void initEventHandlers();
 };
 
-DSC_END_NAMESPACE
+}
 #endif   // USERSHARESERVICE_H

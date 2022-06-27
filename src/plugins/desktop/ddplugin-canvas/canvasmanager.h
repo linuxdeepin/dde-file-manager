@@ -26,7 +26,7 @@
 
 #include <QObject>
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 class CanvasView;
 class CanvasProxyModel;
 class FileInfoModel;
@@ -65,5 +65,5 @@ private:
     CanvasManagerPrivate *d = nullptr;
 };
 #define CanvasIns CanvasManager::instance()
-DDP_CANVAS_END_NAMESPACE
+}
 #endif   // CANVASMANAGER_H

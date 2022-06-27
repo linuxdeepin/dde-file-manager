@@ -29,7 +29,7 @@
 #include <QUrl>
 
 DFMBASE_USE_NAMESPACE
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 PreviewFileOperation::PreviewFileOperation(QObject *parent)
     : QObject(parent)
 {

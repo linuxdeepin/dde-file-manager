@@ -27,7 +27,7 @@
 #include "dfm-base/interfaces/abstractmenuscene.h"
 #include "dfm-base/interfaces/abstractscenecreator.h"
 
-DPBOOKMARK_BEGIN_NAMESPACE
+namespace dfmplugin_bookmark {
 
 class BookmarkMenuCreator : public DFMBASE_NAMESPACE::AbstractSceneCreator
 {
@@ -43,6 +43,7 @@ public:
 class BookmarkMenuScenePrivate;
 class BookmarkMenuScene : public DFMBASE_NAMESPACE::AbstractMenuScene
 {
+    Q_OBJECT
 public:
     explicit BookmarkMenuScene(QObject *parent = nullptr);
     virtual ~BookmarkMenuScene() override;
@@ -58,6 +59,6 @@ private:
     QScopedPointer<BookmarkMenuScenePrivate> d;
 };
 
-DPBOOKMARK_END_NAMESPACE
+}
 
 #endif   // BOOKMARKMENUSCENE_H

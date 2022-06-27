@@ -30,7 +30,7 @@
 class QSettings;
 class QTimer;
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class DisplayConfig : public QObject
 {
@@ -72,6 +72,6 @@ private:
 
 #define DispalyIns DisplayConfig::instance()
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // DISPLAYCONFIG_H

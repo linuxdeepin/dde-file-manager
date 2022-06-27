@@ -28,7 +28,7 @@
 
 extern uint qHash(const QPoint &key, uint seed);
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 typedef QPair<int, QPoint> GridPos;
 class GridCore
@@ -91,6 +91,6 @@ public:
     QStringList appendAfter(QStringList items, int index, const QPoint &begin);
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif // GRIDCORE_H

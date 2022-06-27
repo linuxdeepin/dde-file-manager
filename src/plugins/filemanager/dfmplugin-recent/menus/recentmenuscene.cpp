@@ -49,7 +49,7 @@ static constexpr char kSortByActionId[] = "sort-by";
 static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
 
 DSB_FM_USE_NAMESPACE
-DPRECENT_USE_NAMESPACE
+using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE
 
 AbstractMenuScene *RecentMenuCreator::create()

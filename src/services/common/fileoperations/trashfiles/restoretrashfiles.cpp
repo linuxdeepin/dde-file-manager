@@ -23,7 +23,7 @@
 #include "restoretrashfiles.h"
 #include "dorestoretrashfilesworker.h"
 
-DSC_USE_NAMESPACE
+using namespace dfm_service_common;
 RestoreTrashFiles::RestoreTrashFiles(QObject *parent)
     : AbstractJob(new DoRestoreTrashFilesWorker(), parent)
 {

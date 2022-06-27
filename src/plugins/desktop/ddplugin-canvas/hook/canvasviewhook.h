@@ -23,7 +23,7 @@
 
 #include "view/viewhookinterface.h"
 
-DDP_CANVAS_BEGIN_NAMESPACE
+namespace ddplugin_canvas {
 
 class CanvasViewHook : public QObject, public ViewHookInterface
 {
@@ -45,6 +45,6 @@ public:
     bool drawFile(int viewIndex, const QUrl &file, QPainter *painter, const QStyleOptionViewItem *option, void *extData = nullptr) const override;
 };
 
-DDP_CANVAS_END_NAMESPACE
+}
 
 #endif   // CANVASVIEWHOOK_H

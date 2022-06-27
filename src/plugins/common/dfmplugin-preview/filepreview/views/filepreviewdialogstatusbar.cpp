@@ -21,7 +21,7 @@
 #include "filepreviewdialogstatusbar.h"
 #include <QHBoxLayout>
 
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 
 FilePreviewDialogStatusBar::FilePreviewDialogStatusBar(QWidget *parent)
     : QFrame(parent)

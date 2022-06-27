@@ -35,7 +35,7 @@
 
 #include <QFileInfo>
 
-DPTRASH_USE_NAMESPACE
+using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
 
 bool TrashFileHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)

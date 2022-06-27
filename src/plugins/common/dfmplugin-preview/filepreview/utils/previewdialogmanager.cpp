@@ -26,7 +26,7 @@
 #include <DPlatformWindowHandle>
 
 DFMBASE_USE_NAMESPACE
-DPFILEPREVIEW_USE_NAMESPACE
+using namespace dfmplugin_filepreview;
 
 PreviewDialogManager *PreviewDialogManager::instance()
 {

@@ -27,7 +27,7 @@
 
 #include <QObject>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalEventReceiver : public QObject
 {
@@ -45,6 +45,6 @@ public:
     explicit OpticalEventReceiver(QObject *parent = nullptr);
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALEVENTRECEIVER_H

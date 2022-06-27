@@ -31,7 +31,7 @@
 #include <QUrl>
 #include <QMimeData>
 
-DPOPTICAL_BEGIN_NAMESPACE
+namespace dfmplugin_optical {
 
 class OpticalFilesHelper
 {
@@ -57,6 +57,6 @@ public:
                                QString *error);
 };
 
-DPOPTICAL_END_NAMESPACE
+}
 
 #endif   // OPTICALFILESHELPER_H

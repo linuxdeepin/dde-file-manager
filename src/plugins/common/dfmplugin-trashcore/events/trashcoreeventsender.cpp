@@ -32,7 +32,7 @@
 
 #include <functional>
 
-DPTRASHCORE_USE_NAMESPACE
+using namespace dfmplugin_trashcore;
 DFMBASE_USE_NAMESPACE
 
 TrashCoreEventSender::TrashCoreEventSender(QObject *parent)

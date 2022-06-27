@@ -24,7 +24,7 @@
 #include "utils/keyutil.h"
 #include "grid/canvasgrid.h"
 
-DDP_CANVAS_USE_NAMESPACE
+using namespace ddplugin_canvas;
 
 ClickSelecter::ClickSelecter(CanvasView *parent)
     : QObject(parent)

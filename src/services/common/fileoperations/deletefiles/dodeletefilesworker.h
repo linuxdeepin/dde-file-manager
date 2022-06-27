@@ -30,7 +30,7 @@
 
 #include <QObject>
 
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 DFMBASE_USE_NAMESPACE
 class DoDeleteFilesWorker : public AbstractWorker
 {
@@ -60,6 +60,6 @@ private:
     QAtomicInteger<qint64> deleteFilesCount { 0 };
 };
 
-DSC_END_NAMESPACE
+}
 
 #endif   // DODELETEFILESWORKER_H

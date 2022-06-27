@@ -27,7 +27,7 @@
 
 #include <dfm-framework/framework.h>
 
-DPDIRSHARE_BEGIN_NAMESPACE
+namespace dfmplugin_dirshare {
 
 class DirShare : public DPF_NAMESPACE::Plugin
 {
@@ -44,6 +44,6 @@ private:
     void bindScene(const QString &parentScene);
 };
 
-DPDIRSHARE_END_NAMESPACE
+}
 
 #endif   // DIRSHARE_H

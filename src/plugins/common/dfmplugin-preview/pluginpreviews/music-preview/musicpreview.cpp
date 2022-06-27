@@ -53,7 +53,7 @@
 #include <taglib/mp4properties.h>
 
 DFMBASE_USE_NAMESPACE
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 MusicPreview::MusicPreview(QObject *parent)
     : AbstractBasePreview(parent)
 {

@@ -31,7 +31,7 @@
 #include <dpdfpage.h>
 #include <dpdfdoc.h>
 
-PREVIEW_USE_NAMESPACE
+using namespace plugin_filepreview;
 #define LOCK_DOCUMENT QMutexLocker docMutexLocker(docMutex);
 
 PDFPage::PDFPage(QMutex *mutex, DPdfPage *page)

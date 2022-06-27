@@ -33,7 +33,7 @@
 #include <QFuture>
 
 class QDBusInterface;
-DSC_BEGIN_NAMESPACE
+namespace dfm_service_common {
 
 class ShareWatcherManager;
 class UserShareHelper : public QObject
@@ -98,7 +98,7 @@ private:
 
     ShareWatcherManager *watcherManager { nullptr };
 };
-DSC_END_NAMESPACE
+}
 
 #define UserShareHelperInstance DSC_NAMESPACE::UserShareHelper::instance()
 

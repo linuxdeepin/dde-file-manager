@@ -27,15 +27,15 @@
 #include <QWidget>
 #include <QStackedLayout>
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 enum PreviewWidgesFlag {
     PREVIEW_THUMBNAIL = 0x0001,
 };
-PREVIEW_END_NAMESPACE
+}
 Q_DECLARE_FLAGS(PreviewWidgesFlags, PREVIEW_NAMESPACE::PreviewWidgesFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(PreviewWidgesFlags)
 
-PREVIEW_BEGIN_NAMESPACE
+namespace plugin_filepreview {
 class DocSheet;
 class ThumbnailWidget;
 
@@ -106,5 +106,5 @@ private:
 
     ThumbnailWidget *thumbnailWidget { nullptr };
 };
-PREVIEW_END_NAMESPACE
+}
 #endif   // SHEETSIDEBAR_H

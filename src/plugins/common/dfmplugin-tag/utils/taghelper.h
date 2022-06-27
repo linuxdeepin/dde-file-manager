@@ -34,7 +34,7 @@
 
 class QPainter;
 
-DPTAG_BEGIN_NAMESPACE
+namespace dfmplugin_tag {
 
 inline constexpr int kTagDiameter { 10 };
 
@@ -97,6 +97,6 @@ private:
     QList<TagColorDefine> colorDefines;
 };
 
-DPTAG_END_NAMESPACE
+}
 
 #endif   // TAGHELPER_H

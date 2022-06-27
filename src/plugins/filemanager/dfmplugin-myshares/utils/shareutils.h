@@ -29,7 +29,7 @@
 #include <QIcon>
 #include <QUrl>
 
-DPMYSHARES_BEGIN_NAMESPACE
+namespace dfmplugin_myshares {
 
 class ShareUtils
 {
@@ -42,6 +42,6 @@ public:
     static QUrl convertToLocalUrl(const QUrl &shareUrl);
 };
 
-DPMYSHARES_END_NAMESPACE
+}
 
 #endif   // SHAREUTILS_H
