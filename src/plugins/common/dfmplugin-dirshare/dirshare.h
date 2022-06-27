@@ -66,7 +66,12 @@ public:
 private:
     static QWidget *createShareControlWidget(const QUrl &url);
     void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
     void bindEvents();
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
 }

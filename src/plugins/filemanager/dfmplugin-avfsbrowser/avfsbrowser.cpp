@@ -74,8 +74,8 @@ bool AvfsBrowser::start()
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", AvfsUtils::instance(), &AvfsUtils::urlsToLocal);
 
     regCrumb();
-    claimSubScene("SortAndDisplayMenu");   //  yours last second but it's mine now
-    claimSubScene("OpenWithMenu");   //  yours last second but it's mine now
+    beMySubScene("SortAndDisplayMenu");   //  yours last second but it's mine now
+    beMySubScene("OpenWithMenu");   //  yours last second but it's mine now
 
     return true;
 }
@@ -99,18 +99,23 @@ void AvfsBrowser::regCrumb()
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", AvfsUtils::scheme(), QVariantMap {});
 }
 
-void AvfsBrowser::claimSubScene(const QString &subScene)
+void AvfsBrowser::beMySubScene(const QString &subScene)
 {
     if (dfmplugin_menu_util::menuSceneContains(subScene)) {
         dfmplugin_menu_util::menuSceneBind(subScene, AvfsMenuSceneCreator::name());
     } else {
-        //todo(xst) menu
-        //        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
-        //            if (subScene == addedScene) {
-        //                MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
-        //                MenuService::service()->disconnect(this);
-        //            }
-        //        },
-        //                Qt::DirectConnection);
+        waitToBind << subScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &AvfsBrowser::beMySubOnAdded);
+    }
+}
+
+void AvfsBrowser::beMySubOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &AvfsBrowser::beMySubOnAdded);
+        beMySubScene(newScene);
     }
 }

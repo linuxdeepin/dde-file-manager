@@ -61,7 +61,7 @@ void MyShares::initialize()
     DirIteratorFactory::regClass<ShareIterator>(ShareUtils::scheme());
     WatcherFactory::regClass<ShareWatcher>(ShareUtils::scheme());
     dfmplugin_menu_util::menuSceneRegisterScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
-    claimSubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
+    beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
 
     DSB_FM_USE_NAMESPACE
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
@@ -160,19 +160,24 @@ void MyShares::regMyShareToSearch()
     SearchService::service()->regCustomSearchInfo(info);
 }
 
-void MyShares::claimSubScene(const QString &scene)
+void MyShares::beMySubScene(const QString &scene)
 {
     if (dfmplugin_menu_util::menuSceneContains(scene)) {
         dfmplugin_menu_util::menuSceneBind(scene, MyShareMenuCreator::name());
     } else {
-        //todo(xst) menu
-        //        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
-        //            if (scene == addedScene) {
-        //                MenuService::service()->bind(scene, MyShareMenuCreator::name());
-        //                MenuService::service()->disconnect(this);
-        //            }
-        //        },
-        //                Qt::DirectConnection);
+        waitToBind << scene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &MyShares::beMySubOnAdded);
+    }
+}
+
+void MyShares::beMySubOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &MyShares::beMySubOnAdded);
+        beMySubScene(newScene);
     }
 }
 

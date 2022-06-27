@@ -78,12 +78,19 @@ void DirShare::bindScene(const QString &parentScene)
     if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
         dfmplugin_menu_util::menuSceneBind(ShareMenuCreator::name(), parentScene);
     } else {
-        // todo(xst) menu signal_MenuScene_SceneAdded
-        //        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-        //            if (scene == parentScene)
-        //                MenuService::service()->bind(ShareMenuCreator::name(), scene);
-        //        },
-        //                Qt::DirectConnection);
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &DirShare::bindSceneOnAdded);
+    }
+}
+
+void DirShare::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &DirShare::bindSceneOnAdded);
+        bindScene(newScene);
     }
 }
 

@@ -44,7 +44,12 @@ public:
 private:
     void followEvents();
     void regCrumb();
-    void claimSubScene(const QString &subScene);
+    void beMySubScene(const QString &subScene);
+    void beMySubOnAdded(const QString &newScene);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
 }
