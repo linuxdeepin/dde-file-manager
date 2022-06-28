@@ -98,6 +98,12 @@ public:
     static bool checkGvfsMountExist(const QUrl &url, int timeout = 2000);
     static void setCursorState(bool busy = false);
 
+    static QStringList allSystemUUIDs();
+    static QList<QUrl> systemBlkDevUrlByUUIDs(const QStringList &uuids);
+    static void diskHideToDConfig(int attr, const QVariant &var);
+    static void diskHideToDSetting(const QString &cfgPath, const QString &cfgKey, const QVariant &var);
+    static bool isEqualDiskHideConfig(const QVariant &varDConf, const QVariant &varDSet);
+
 public:
     static bool contextMenuEnabled;   // TODO(xust) tmp solution, using GroupPolicy instead.
 

@@ -192,6 +192,7 @@ void ComputerView::initConnect()
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideNativeDisks, this, [this](bool hide) { this->hideSystemPartitions(hide); });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideLoopPartitions, this, [this](bool hide) { this->hideLoopPartitions(hide); });
     connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideFileSystemTag, this, [this]() { this->update(); });
+    //    connect(ComputerItemWatcherInstance, &ComputerItemWatcher::hideDisks, this, &ComputerView::hideSpecificDisks);
 
     connectShortcut(QKeySequence(Qt::Key::Key_I | Qt::Modifier::CTRL), [this](DFMEntryFileInfoPointer info) {
         if (info)
@@ -255,6 +256,29 @@ void ComputerView::onRenameRequest(quint64 winId, const QUrl &url)
     auto idx = model->index(r, 0);
     if (idx.isValid())
         edit(idx);
+}
+
+void ComputerView::hideSpecificDisks(const QList<QUrl> &hiddenDisks)
+{
+    auto model = this->computerModel();
+    if (!model) {
+        qCritical() << "model is released somewhere! " << __FUNCTION__;
+        return;
+    }
+
+    for (int i = 7; i < model->items.count(); i++) {   // 7 means where the disk group start.
+        auto item = model->items.at(i);
+        if (hiddenDisks.contains(item.url)) {
+            this->setRowHidden(i, true);
+        } else {
+            QList<EntryFileInfo::EntryOrder> supportedToHide { EntryFileInfo::kOrderSysDiskRoot,
+                                                               EntryFileInfo::kOrderSysDiskData,
+                                                               EntryFileInfo::kOrderSysDisks };
+            if (item.info && supportedToHide.contains(item.info->order())) {
+                this->setRowHidden(i, false);
+            }
+        }
+    }
 }
 
 void ComputerView::hideSystemPartitions(bool hide)

@@ -50,6 +50,18 @@ QStringList DeviceProxyManager::getAllBlockIds(GlobalServerDefines::DeviceQueryO
     }
 }
 
+QStringList DeviceProxyManager::getAllBlockIdsByUUID(const QStringList &uuids, GlobalServerDefines::DeviceQueryOptions opts)
+{
+    const auto &&devices = getAllBlockIds(opts);
+    QStringList devs;
+    for (const auto &id : devices) {
+        const auto &&info = queryBlockInfo(id);
+        if (uuids.contains(info.value(GlobalServerDefines::DeviceProperty::kUUID).toString()))
+            devs << id;
+    }
+    return devs;
+}
+
 QStringList DeviceProxyManager::getAllProtocolIds()
 {
     if (d->isDBusRuning()) {

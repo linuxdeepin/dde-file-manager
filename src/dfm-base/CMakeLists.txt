@@ -66,8 +66,12 @@ FILE (GLOB BASE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/base/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/base/grouppolicy/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/base/grouppolicy/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/base/configs/*/*/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/application/private/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/base/device/*.h"
@@ -261,3 +265,10 @@ install(FILES ${MIMETYPE_FILES} DESTINATION ${Mimetypes})
 set(MimetypeAssociations "${ShareDir}/mimetypeassociations")
 FILE(GLOB MIMETYPEASSOCIATIONS_FILES ${AssetsPath}/mimetypeassociations/*)
 install(FILES ${MIMETYPEASSOCIATIONS_FILES} DESTINATION ${MimetypeAssociations})
+
+set(DFMAppId "org.deepin.dde.file-manager")
+set(ConfigPath ${AssetsPath}/configs)
+set(DConfigTemplate org.deepin.dde.file-manager.json)
+dconfig_meta_files(APPID ${DFMAppId}
+    BASE ${ConfigPath}
+    FILES ${ConfigPath}/${DConfigTemplate})

@@ -1,9 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liqiang<liqianga@uniontech.com>
+ * Author:     xushitong<xushitong@uniontech.com>
  *
- * Maintainer: liqiang<liqianga@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,44 +20,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef GROUPPOLICY_H
-#define GROUPPOLICY_H
+#ifndef DCONFIGMANAGER_P_H
+#define DCONFIGMANAGER_P_H
 
 #include "dfm_base_global.h"
 
 #include <dtkcore_global.h>
-
-#include <QObject>
-#include <QVariant>
+#include <QMap>
+#include <QReadWriteLock>
 
 DCORE_BEGIN_NAMESPACE
 class DConfig;
 DCORE_END_NAMESPACE
 
-namespace dfmbase {
+DFMBASE_BEGIN_NAMESPACE
 
-class GroupPolicy : public QObject
+class DConfigManager;
+class DConfigManagerPrivate
 {
-    Q_OBJECT
+    friend DConfigManager;
+    DConfigManager *q { nullptr };
+
+    QMap<QString, DTK_NAMESPACE::DCORE_NAMESPACE::DConfig *> configs;
+    QReadWriteLock lock;
+
 public:
-    static GroupPolicy *instance();
-
-    QStringList keys();
-    bool contains(const QString &key);
-    QVariant value(const QString &key, const QVariant &fallback = QVariant());
-    void setValue(const QString &key, const QVariant &value);
-
-signals:
-    void valueChanged(const QString &key);
-
-protected:
-    explicit GroupPolicy(QObject *parent = nullptr);
-    bool isValidConfig();
-
-private:
-    Dtk::Core::DConfig *config;
+    explicit DConfigManagerPrivate(DConfigManager *qq)
+        : q(qq) {}
 };
 
-}
+DFMBASE_END_NAMESPACE
 
-#endif   // GROUPPOLICY_H
+#endif   // DCONFIGMANAGER_P_H

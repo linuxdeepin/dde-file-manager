@@ -47,7 +47,6 @@ class ComputerItemWatcher : public QObject
 
 public:
     static ComputerItemWatcher *instance();
-    virtual ~ComputerItemWatcher() override;
 
     ComputerDataList items();
     ComputerDataList getInitedItems();
@@ -80,12 +79,14 @@ Q_SIGNALS:
     void hideFileSystemTag(bool hide);
     void hideNativeDisks(bool hide);
     void hideLoopPartitions(bool hide);
+    void hideDisks(const QList<QUrl> &devs);
 
 protected Q_SLOTS:
     void onDeviceAdded(const QUrl &devUrl, int groupId, bool needSidebarItem = true);
     void onDevicePropertyChangedQVar(const QString &id, const QString &propertyName, const QVariant &var);
     void onDevicePropertyChangedQDBusVar(const QString &id, const QString &propertyName, const QDBusVariant &var);
-    void onAppAttributeChanged(Application::GenericAttribute ga, const QVariant &value);
+    void onGenAttributeChanged(Application::GenericAttribute ga, const QVariant &value);
+    void onDConfigChanged(const QString &cfg, const QString &cfgKey);
 
     void onBlockDeviceAdded(const QString &id);
     void onBlockDeviceRemoved(const QString &id);
@@ -100,9 +101,12 @@ protected Q_SLOTS:
 
 private:
     explicit ComputerItemWatcher(QObject *parent = nullptr);
+    virtual ~ComputerItemWatcher() override;
+
     void initConn();
     void initDeviceConn();
     void initAppWatcher();
+    void initConfSync();
 
     ComputerDataList getUserDirItems();
     ComputerDataList getBlockDeviceItems(bool &hasNewItem);

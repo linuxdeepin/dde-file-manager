@@ -69,6 +69,10 @@ QStringList DeviceManager::getAllBlockDevID(DeviceQueryOptions opts)
             continue;
         if (opts.testFlag(DeviceQueryOption::kOptical) && !data.value(DeviceProperty::kOptical).toBool())
             continue;
+        if (opts.testFlag(DeviceQueryOption::kSystem) && !data.value(DeviceProperty::kHintSystem).toBool())
+            continue;
+        if (opts.testFlag(DeviceQueryOption::kLoop) && !data.value(DeviceProperty::kIsLoopDevice).toBool())
+            continue;
         filteredRet << id;
     }
     return filteredRet;

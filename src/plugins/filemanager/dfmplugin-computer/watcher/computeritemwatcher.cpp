@@ -27,6 +27,9 @@
 #include "fileentity/appentryfileentity.h"
 #include "fileentity/stashedprotocolentryfileentity.h"
 
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/base/configs/dconfig/configsynchronizer.h"
+#include "dfm-base/base/configs/dconfig/dconfigmanager.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dbusservice/dbus_interface/devicemanagerdbus_interface.h"
 #include "dfm-base/utils/universalutils.h"
@@ -37,7 +40,6 @@
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
-#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -74,6 +76,7 @@ ComputerItemWatcher::ComputerItemWatcher(QObject *parent)
 {
     initAppWatcher();
     initConn();
+    initConfSync();
 }
 
 ComputerItemWatcher::~ComputerItemWatcher()
@@ -130,7 +133,8 @@ void ComputerItemWatcher::initConn()
         removeDevice(appUrl);
     });
 
-    connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onAppAttributeChanged);
+    connect(Application::instance(), &Application::genericAttributeChanged, this, &ComputerItemWatcher::onGenAttributeChanged);
+    connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &ComputerItemWatcher::onDConfigChanged);
 
     initDeviceConn();
     connect(DevProxyMng, &DeviceProxyManager::devMngDBusRegistered, this, [this]() { startQueryItems(); });
@@ -159,6 +163,19 @@ void ComputerItemWatcher::initAppWatcher()
     extensionUrl.setPath(StandardPaths::location(StandardPaths::kExtensionsAppEntryPath));
     appEntryWatcher.reset(new LocalFileWatcher(extensionUrl, this));
     appEntryWatcher->startWatcher();
+}
+
+void ComputerItemWatcher::initConfSync()
+{
+    auto ins { ConfigSynchronizer::instance() };
+    SyncPair pair {
+        { SettingType::kGenAttr, Application::GenericAttribute::kHiddenSystemPartition },
+        { kDefaultCfgPath, kKeyHideDisk },
+        &ComputerUtils::diskHideToDConfig,
+        &ComputerUtils::diskHideToDSetting,
+        &ComputerUtils::isEqualDiskHideConfig
+    };
+    ins->watchChange(pair);
 }
 
 ComputerDataList ComputerItemWatcher::getUserDirItems()
@@ -566,7 +583,7 @@ void ComputerItemWatcher::onDevicePropertyChangedQDBusVar(const QString &id, con
     }
 }
 
-void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga, const QVariant &value)
+void ComputerItemWatcher::onGenAttributeChanged(Application::GenericAttribute ga, const QVariant &value)
 {
     if (ga == Application::GenericAttribute::kShowFileSystemTagOnDiskIcon) {
         Q_EMIT hideFileSystemTag(!value.toBool());
@@ -605,6 +622,17 @@ void ComputerItemWatcher::onAppAttributeChanged(Application::GenericAttribute ga
                     addSidebarItem(item.info);
             }
         }
+    }
+}
+
+void ComputerItemWatcher::onDConfigChanged(const QString &cfg, const QString &cfgKey)
+{
+    if (cfgKey == kKeyHideDisk && cfg == kDefaultCfgPath) {
+        const auto &&currHiddenDisks = DConfigManager::instance()->value(cfg, cfgKey).toStringList().toSet();
+        const auto &&allSystemUUIDs = ComputerUtils::allSystemUUIDs().toSet();
+        const auto &&needToBeHidden = currHiddenDisks - (currHiddenDisks - allSystemUUIDs);   // setA ∩ setB
+        const auto &&devUrls = ComputerUtils::systemBlkDevUrlByUUIDs(needToBeHidden.toList());
+        Q_EMIT hideDisks(devUrls);
     }
 }
 

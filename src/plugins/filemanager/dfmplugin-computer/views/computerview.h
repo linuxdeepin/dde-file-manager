@@ -84,6 +84,7 @@ private Q_SLOTS:
     void cdTo(const QModelIndex &index);
     void onMenuRequest(const QPoint &pos);
     void onRenameRequest(quint64 winId, const QUrl &url);
+    void hideSpecificDisks(const QList<QUrl> &hiddenDisks);
 
 Q_SIGNALS:
     void enterPressed(const QModelIndex &index);
