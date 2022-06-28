@@ -22,9 +22,11 @@
 #define MUSTERMODE_H
 
 #include "ddplugin_organizer_global.h"
+#include "private/surface.h"
 #include "organizer_defines.h"
 
 #include <QObject>
+#include <QMap>
 
 class QMimeData;
 
@@ -50,7 +52,7 @@ public:
     virtual void setCanvasModelShell(CanvasModelShell *sh);
     virtual void setCanvasViewShell(CanvasViewShell *sh);
     virtual void setCanvasGridShell(CanvasGridShell *sh);
-    virtual void setSurface(QWidget *w);
+    virtual void setSurfaces(QList<SurfacePointer> surfaces);
     virtual void reset();
 
 signals:
@@ -66,7 +68,7 @@ protected:
     CanvasModelShell *canvasModelShell = nullptr;
     CanvasViewShell *canvasViewShell = nullptr;
     CanvasGridShell *canvasGridShell = nullptr;
-    QWidget *surface = nullptr;
+    QList<SurfacePointer> surfaces;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

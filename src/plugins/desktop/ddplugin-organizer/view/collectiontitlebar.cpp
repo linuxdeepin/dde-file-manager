@@ -35,8 +35,9 @@ static constexpr int kMenuBtnHeight = 18;
 DDP_ORGANIZER_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
-CollectionTitleBarPrivate::CollectionTitleBarPrivate(CollectionTitleBar *qq)
+CollectionTitleBarPrivate::CollectionTitleBarPrivate(const QString &uuid, CollectionTitleBar *qq)
     : q(qq)
+    , id(uuid)
 {
     nameLabel = new DLabel(q);
     nameLabel->setWordWrap(false);
@@ -85,6 +86,15 @@ CollectionTitleBarPrivate::CollectionTitleBarPrivate(CollectionTitleBar *qq)
     q->setLayout(mainLayout);
 
     connect(nameLineEdit, &DLineEdit::editingFinished, this, &CollectionTitleBarPrivate::titleNameModified);
+    connect(menuBtn, &DPushButton::clicked, this, &CollectionTitleBarPrivate::showMenu);
+
+    menu = new DMenu(q);
+    connect(menu, &DMenu::aboutToHide, this, [=] () {
+        if (needHidden) {
+            needHidden = false;
+            q->setVisible(false);
+        }
+    });
 }
 
 CollectionTitleBarPrivate::~CollectionTitleBarPrivate()
@@ -94,8 +104,11 @@ CollectionTitleBarPrivate::~CollectionTitleBarPrivate()
 
 void CollectionTitleBarPrivate::modifyTitleName()
 {
-    if (!canRename)
+    if (!renamable)
         return;
+
+    if (q->isHidden())
+        q->setHidden(false);
 
     nameWidget->setCurrentWidget(nameLineEdit);
     nameLineEdit->setText(titleName);
@@ -122,9 +135,63 @@ void CollectionTitleBarPrivate::updateDisplayName()
     nameLabel->setToolTip(titleName);
 }
 
-CollectionTitleBar::CollectionTitleBar(QWidget *parent)
+void CollectionTitleBarPrivate::showMenu()
+{
+    QAction *action = nullptr;
+    if (adjustable) {
+        action = new QAction(menu);
+        action->setText(tr("Size"));
+        menu->addAction(action);
+
+        DMenu *subMenu = new DMenu(menu);
+        action->setMenu(subMenu);
+
+        action = new QAction(subMenu);
+        action->setText(tr("Large"));
+        subMenu->addAction(action);
+        connect(action, &QAction::triggered, this, [=] () {
+            emit q->sigRequestAdjustSize(CollectionFrameSize::kLarge);
+        });
+
+        action = new QAction(subMenu);
+        action->setText(tr("Small"));
+        subMenu->addAction(action);
+        connect(action, &QAction::triggered, this, [=] () {
+            emit q->sigRequestAdjustSize(CollectionFrameSize::kSmall);
+        });
+    }
+
+    if (renamable) {
+        action = new QAction(menu);
+        action->setText(tr("Rename"));
+        menu->addAction(action);
+        connect(action, &QAction::triggered, this, &CollectionTitleBarPrivate::modifyTitleName);
+    }
+
+    if (closable) {
+        menu->addSeparator();
+
+        action = new QAction(menu);
+        action->setText(tr("Delete"));
+        menu->addAction(action);
+        connect(action, &QAction::triggered, this, &CollectionTitleBarPrivate::sendRequestClose);
+    }
+
+    if (menu->actions().isEmpty())
+        return;
+
+    menu->exec(QCursor::pos());
+    menu->clear();
+}
+
+void CollectionTitleBarPrivate::sendRequestClose()
+{
+    emit q->sigRequestClose(id);
+}
+
+CollectionTitleBar::CollectionTitleBar(const QString &uuid, QWidget *parent)
     : DBlurEffectWidget(parent)
-    , d(new CollectionTitleBarPrivate(this))
+    , d(new CollectionTitleBarPrivate(uuid, this))
 {
     setObjectName("titleBar");
     setBlendMode(DBlurEffectWidget::InWindowBlend);
@@ -138,14 +205,53 @@ CollectionTitleBar::~CollectionTitleBar()
 
 }
 
+bool CollectionTitleBar::setTitleBarVisible(const bool &visible)
+{
+    // todo 显隐逻辑待根据场景细化(需求：当鼠标移出集合时，隐藏该集合的标题栏)
+    // 标题栏操作过程中（正在重命名、弹出菜单选项），移出鼠标是否隐藏标题栏？
+    if (!visible && d->menu->isVisible()) {
+        d->needHidden = true;
+        return false;
+    }
+
+    d->needHidden = false;
+    this->setVisible(visible);
+    return true;
+}
+
+bool CollectionTitleBar::titleBarVisible() const
+{
+    return this->isVisible();
+}
+
 void CollectionTitleBar::setRenamable(const bool renamable)
 {
-    d->canRename = renamable;
+    d->renamable = renamable;
 }
 
 bool CollectionTitleBar::renamable() const
 {
-    return d->canRename;
+    return d->renamable;
+}
+
+void CollectionTitleBar::setClosable(const bool closable)
+{
+    d->closable = closable;
+}
+
+bool CollectionTitleBar::closable() const
+{
+    return d->closable;
+}
+
+void CollectionTitleBar::setAdjustable(const bool adjustable)
+{
+    d->adjustable = adjustable;
+}
+
+bool CollectionTitleBar::adjustable() const
+{
+    return d->adjustable;
 }
 
 void CollectionTitleBar::setTitleName(const QString &name)

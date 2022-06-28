@@ -144,16 +144,20 @@ void NormalizedMode::rebuild()
 
         if (collectionHolder.isNull()) {
             collectionHolder.reset(new CollectionHolder(key, d->classifier));
-            collectionHolder->createFrame(surface, model);
+            collectionHolder->createFrame(surfaces.first().data(), model);
             collectionHolder->setName(name);
             d->holders.insert(name, collectionHolder);
-        }
 
-        // disable rename,move,adjust,drag
-        collectionHolder->setRenamable(false);
-        collectionHolder->setMovable(false);
-        collectionHolder->setAdjustable(false);
-        collectionHolder->setDragEnabled(false);
+            // disable rename,move,drag,close,stretch
+            collectionHolder->setRenamable(false);
+            collectionHolder->setMovable(false);
+            collectionHolder->setDragEnabled(false);
+            collectionHolder->setClosable(false);
+            collectionHolder->setStretchable(false);
+
+            // enable adjust
+            collectionHolder->setAdjustable(true);
+        }
 
         collectionHolder->show();
     }

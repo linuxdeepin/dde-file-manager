@@ -23,16 +23,22 @@
 
 #include "collection/collectionholder.h"
 #include "mode/collectiondataprovider.h"
+#include "private/surface.h"
+#include "organizer_defines.h"
 
 #include <QPointer>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class CollectionHolderPrivate
+class CollectionHolderPrivate : public QObject
 {
+    Q_OBJECT
 public:
-    explicit CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq);
+    explicit CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq, QObject *parent = nullptr);
     ~CollectionHolderPrivate();
+
+public slots:
+    void onAdjustFrameSize(const CollectionFrameSize &size);
 
 public:
     CollectionHolder *q;
@@ -41,6 +47,7 @@ public:
     QPointer<FileProxyModel> model = nullptr;
     QPointer<CollectionFrame> frame = nullptr;
     QPointer<CollectionWidget> widget = nullptr;
+    QPointer<Surface> surface = nullptr;
 };
 
 DDP_ORGANIZER_END_NAMESPACE

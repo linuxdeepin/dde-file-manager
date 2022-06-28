@@ -34,6 +34,7 @@ public:
     ~CustomModePrivate();
     CustomDataHandler *dataHandler = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
+
 private:
     CustomMode *q;
 };

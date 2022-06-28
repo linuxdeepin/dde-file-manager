@@ -22,6 +22,7 @@
 #define COLLECTIONWIDGET_H
 
 #include "ddplugin_organizer_global.h"
+#include "organizer_defines.h"
 
 #include "DBlurEffectWidget"
 
@@ -55,8 +56,16 @@ public:
 
     void setTitleName(const QString &name);
     QString titleName() const;
-    void setRenamable(const bool renamable = true);
+    void setRenamable(const bool renamable = false);
     bool renamable() const;
+    void setClosable(const bool closable = false);
+    bool closable() const;
+    void setAdjustable(const bool adjustable = false);
+    bool adjustable() const;
+
+signals:
+    void sigRequestClose(const QString &id);
+    void sigRequestAdjustSize(const CollectionFrameSize &size);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

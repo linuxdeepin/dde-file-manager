@@ -49,6 +49,7 @@ protected slots:
     bool filterDropData(int viewIndex, const QMimeData *mimeData, const QPoint &viewPoint) override;
 private slots:
     void onNewCollection(const QList<QUrl> &);
+    void onDeleteCollection(const QString &key);
 private:
     CustomModePrivate *d;
 };

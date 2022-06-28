@@ -43,6 +43,11 @@ enum Classifier {
     kSize
 };
 
+enum class CollectionFrameSize {
+    kSmall = 0,
+    kLarge
+};
+
 class CollectionBaseData
 {
 public:

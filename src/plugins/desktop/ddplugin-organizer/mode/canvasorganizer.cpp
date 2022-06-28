@@ -105,9 +105,9 @@ void CanvasOrganizer::setCanvasGridShell(CanvasGridShell *sh)
     // hook canvas grid, must be DirectConnection
 }
 
-void CanvasOrganizer::setSurface(QWidget *w)
+void CanvasOrganizer::setSurfaces(QList<SurfacePointer> surfaces)
 {
-    surface = w;
+    this->surfaces = surfaces;
 }
 
 void CanvasOrganizer::reset()

@@ -27,6 +27,7 @@
 #include <QDebug>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QApplication>
 
 static constexpr int kTitleBarHeight = 36;
 
@@ -34,9 +35,9 @@ DWIDGET_USE_NAMESPACE
 DDP_ORGANIZER_USE_NAMESPACE
 
 CollectionWidgetPrivate::CollectionWidgetPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionWidget *qq, QObject *parent)
-    : QObject (parent)
-    , q (qq)
-    , id (uuid)
+    : QObject(parent)
+    , q(qq)
+    , id(uuid)
     , provider(dataProvider)
 {
     connect(provider, &CollectionDataProvider::nameChanged, this, &CollectionWidgetPrivate::onNameChanged);
@@ -69,12 +70,15 @@ CollectionWidget::CollectionWidget(const QString &uuid, ddplugin_organizer::Coll
     d->mainLayout->setContentsMargins(0, 0, 0, 0);
     d->mainLayout->addWidget(d->view);
 
-    d->titleBar = new CollectionTitleBar(this);
+    d->titleBar = new CollectionTitleBar(uuid, this);
     d->titleBar->move(0, 0);
     d->titleBar->setFixedHeight(kTitleBarHeight);
     d->titleBar->hide();
 
     this->setLayout(d->mainLayout);
+
+    connect(d->titleBar, &CollectionTitleBar::sigRequestClose, this, &CollectionWidget::sigRequestClose, Qt::QueuedConnection);
+    connect(d->titleBar, &CollectionTitleBar::sigRequestAdjustSize, this, &CollectionWidget::sigRequestAdjustSize, Qt::DirectConnection);
 }
 
 CollectionWidget::~CollectionWidget()
@@ -132,6 +136,26 @@ bool CollectionWidget::renamable() const
     return d->titleBar->renamable();
 }
 
+void CollectionWidget::setClosable(const bool closable)
+{
+    d->titleBar->setClosable(closable);
+}
+
+bool CollectionWidget::closable() const
+{
+    return d->titleBar->closable();
+}
+
+void CollectionWidget::setAdjustable(const bool adjustable)
+{
+    d->titleBar->setAdjustable(adjustable);
+}
+
+bool CollectionWidget::adjustable() const
+{
+    return d->titleBar->adjustable();
+}
+
 void CollectionWidget::resizeEvent(QResizeEvent *event)
 {
     DBlurEffectWidget::resizeEvent(event);
@@ -160,14 +184,15 @@ bool CollectionWidget::eventFilter(QObject *obj, QEvent *event)
 
 void CollectionWidget::enterEvent(QEvent *event)
 {
-    d->titleBar->show();
+    d->titleBar->setTitleBarVisible(true);
 
     DBlurEffectWidget::enterEvent(event);
 }
 
 void CollectionWidget::leaveEvent(QEvent *event)
 {
-    d->titleBar->hide();
+
+    d->titleBar->setTitleBarVisible(false);
 
     DBlurEffectWidget::leaveEvent(event);
 }

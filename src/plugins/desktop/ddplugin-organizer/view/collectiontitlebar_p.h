@@ -26,9 +26,11 @@
 #include <DStackedWidget>
 #include <DLineEdit>
 #include <DLabel>
-#include <QPushButton>
+#include <DPushButton>
+#include <DMenu>
 
 #include <QHBoxLayout>
+#include <QAtomicInteger>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
@@ -36,21 +38,31 @@ class CollectionTitleBarPrivate : public QObject
 {
     Q_OBJECT
 public:
-    explicit CollectionTitleBarPrivate(CollectionTitleBar *qq = nullptr);
+    explicit CollectionTitleBarPrivate(const QString &uuid, CollectionTitleBar *qq = nullptr);
     ~CollectionTitleBarPrivate();
 
     void modifyTitleName();
     void titleNameModified();
     void updateDisplayName();
+    void showMenu();
+
+    void sendRequestClose();
+
 public:
     CollectionTitleBar *q = nullptr;
+    QString id;
+
     QHBoxLayout *mainLayout = nullptr;
     Dtk::Widget::DLabel *nameLabel = nullptr;
     Dtk::Widget::DLineEdit *nameLineEdit = nullptr;
     Dtk::Widget::DStackedWidget *nameWidget = nullptr;
     Dtk::Widget::DPushButton *menuBtn = nullptr;
+    Dtk::Widget::DMenu *menu = nullptr;
 
-    bool canRename = true;
+    QAtomicInteger<bool> needHidden = false;
+    bool renamable = false;
+    bool closable = false;
+    bool adjustable = false;
     QString titleName;
 };
 

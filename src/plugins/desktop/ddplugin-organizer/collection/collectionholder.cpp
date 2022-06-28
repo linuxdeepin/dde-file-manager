@@ -25,9 +25,11 @@
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 
 DDP_ORGANIZER_USE_NAMESPACE
+DWIDGET_USE_NAMESPACE
 
-CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq)
-    : q(qq)
+CollectionHolderPrivate::CollectionHolderPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionHolder *qq, QObject *parent)
+    : QObject(qq)
+    , q(qq)
     , id(uuid)
     , provider(dataProvider)
 {
@@ -44,6 +46,20 @@ CollectionHolderPrivate::~CollectionHolderPrivate()
     if (widget) {
         widget->setParent(nullptr);
         delete widget;
+    }
+}
+
+void CollectionHolderPrivate::onAdjustFrameSize(const CollectionFrameSize &size)
+{
+    // todo:从网格或视图获取图标rect
+    QRect iconRect(0, 0, 92, 115);
+    QRect collectionRect = frame->geometry();
+    if (size == CollectionFrameSize::kSmall) {
+        collectionRect.setHeight(iconRect.height() * 2);
+        frame->setGeometry(collectionRect);
+    } else if (size == CollectionFrameSize::kLarge) {
+        collectionRect.setHeight(iconRect.height() * 4);
+        frame->setGeometry(collectionRect);
     }
 }
 
@@ -89,8 +105,15 @@ void CollectionHolder::setName(const QString &text)
     d->widget->setTitleName(text);
 }
 
-void CollectionHolder::createFrame(QWidget *surface, FileProxyModel *model)
+DFrame *CollectionHolder::frame() const
 {
+    return d->frame;
+}
+
+void CollectionHolder::createFrame(Surface *surface, FileProxyModel *model)
+{
+    d->surface = surface;
+
     d->frame = new CollectionFrame(surface);
 
     // todo set geometry by config
@@ -102,6 +125,14 @@ void CollectionHolder::createFrame(QWidget *surface, FileProxyModel *model)
     d->widget->setGeometry(d->frame->geometry());
 
     d->frame->setWidget(d->widget);
+
+    connect(d->widget, &CollectionWidget::sigRequestClose, this, &CollectionHolder::sigRequestClose);
+    connect(d->widget, &CollectionWidget::sigRequestAdjustSize, d.data(), &CollectionHolderPrivate::onAdjustFrameSize);
+}
+
+Surface *CollectionHolder::surface() const
+{
+    return d->surface;
 }
 
 void CollectionHolder::show()
@@ -134,6 +165,7 @@ void CollectionHolder::setClosable(const bool closable)
         features &= ~CollectionFrame::CollectionFrameClosable;
 
     d->frame->setCollectionFeatures(features);
+    d->widget->setClosable(closable);
 }
 
 bool CollectionHolder::closable() const
@@ -173,6 +205,22 @@ bool CollectionHolder::hiddableCollection() const
     return d->frame->collectionFeatures().testFlag(CollectionFrame::CollectionFrameHiddable);
 }
 
+void CollectionHolder::setStretchable(const bool stretchable)
+{
+    auto features = d->frame->collectionFeatures();
+    if (stretchable)
+        features |= CollectionFrame::CollectionFrameStretchable;
+    else
+        features &= ~CollectionFrame::CollectionFrameStretchable;
+
+    d->frame->setCollectionFeatures(features);
+}
+
+bool CollectionHolder::stretchable() const
+{
+    return d->frame->collectionFeatures().testFlag(CollectionFrame::CollectionFrameStretchable);
+}
+
 void CollectionHolder::setAdjustable(const bool adjustable)
 {
     auto features = d->frame->collectionFeatures();
@@ -182,6 +230,7 @@ void CollectionHolder::setAdjustable(const bool adjustable)
         features &= ~CollectionFrame::CollectionFrameAdjustable;
 
     d->frame->setCollectionFeatures(features);
+    d->widget->setAdjustable(adjustable);
 }
 
 bool CollectionHolder::adjustable() const

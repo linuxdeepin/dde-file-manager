@@ -249,7 +249,7 @@ void FrameManager::switchMode(OrganizerMode mode)
 
     // 初始化创建集合窗口
     if (!d->surfaceWidgets.isEmpty())
-        d->organizer->setSurface(d->surfaceWidgets.first().data());
+        d->organizer->setSurfaces(d->surfaceWidgets.values());
 
     d->organizer->setCanvasModelShell(d->canvas->canvasModel());
     d->organizer->setCanvasViewShell(d->canvas->canvasView());

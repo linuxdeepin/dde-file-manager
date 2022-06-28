@@ -23,6 +23,8 @@
 
 #include "ddplugin_organizer_global.h"
 
+#include <DFrame>
+
 #include <QObject>
 #include <QSharedPointer>
 
@@ -35,6 +37,7 @@ class CollectionDataProvider;
 class CanvasModelShell;
 class CanvasViewShell;
 class CanvasGridShell;
+class Surface;
 class CollectionHolderPrivate;
 class CollectionHolder : public QObject
 {
@@ -49,10 +52,12 @@ public:
     QString id() const;
     QString name();
     void setName(const QString &);
-    void createFrame(QWidget *surface, FileProxyModel *model);
+    Dtk::Widget::DFrame *frame() const;
+    void createFrame(Surface *surface, FileProxyModel *model);
+    Surface *surface() const;
     void show();
 
-    void setMovable(const bool movable = true);
+    void setMovable(const bool movable = false);
     bool movable() const;
     void setClosable(const bool closable = false);
     bool closable() const;
@@ -60,16 +65,21 @@ public:
     bool floatable() const;
     void setHiddableCollection(const bool hiddable = false);
     bool hiddableCollection() const;
-    void setAdjustable(const bool adjustable = true);
+    void setStretchable(const bool stretchable = false);
+    bool stretchable() const;
+    void setAdjustable(const bool adjustable = false);
     bool adjustable() const;
-    void setHiddableTitleBar(const bool hiddable = true);
+    void setHiddableTitleBar(const bool hiddable = false);
     bool hiddableTitleBar() const;
     void setHiddableView(const bool hiddable = false);
     bool hiddableView() const;
-    void setRenamable(const bool renamable = true);
+    void setRenamable(const bool renamable = false);
     bool renamable() const;
     void setDragEnabled(bool enable);
     bool dragEnabled() const;
+
+signals:
+    void sigRequestClose(const QString &id);
 
 private:
     QSharedPointer<CollectionHolderPrivate> d = nullptr;

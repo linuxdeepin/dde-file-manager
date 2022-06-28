@@ -24,12 +24,15 @@
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
 #include "config/configpresenter.h"
+#include "desktoputils/ddpugin_eventinterface_helper.h"
+#include "dfm-base/dfm_desktop_defines.h"
 
 #include <QDebug>
 #include <QUuid>
 #include <QMimeData>
 
-DDP_ORGANIZER_USE_NAMESPACE
+using namespace ddplugin_organizer;
+using namespace dfmbase;
 
 CustomModePrivate::CustomModePrivate(CustomMode *qq) : q(qq)
 {
@@ -127,18 +130,21 @@ void CustomMode::rebuild()
 
         if (collectionHolder.isNull()) {
             collectionHolder.reset(new CollectionHolder(key, d->dataHandler));
-            collectionHolder->createFrame(surface, model);
+            collectionHolder->createFrame(surfaces.first().data(), model);
             collectionHolder->setCanvasModelShell(canvasModelShell);
             collectionHolder->setCanvasViewShell(canvasViewShell);
             collectionHolder->setCanvasGridShell(canvasGridShell);
             collectionHolder->setName(name);
             d->holders.insert(key, collectionHolder);
-        }
+            connect(collectionHolder.data(), &CollectionHolder::sigRequestClose, this, &CustomMode::onDeleteCollection);
 
-        // disable rename,move and adjust
-        collectionHolder->setRenamable(true);
-        collectionHolder->setMovable(true);
-        collectionHolder->setAdjustable(true);
+            // enable rename,move,adjust,close,stretch
+            collectionHolder->setRenamable(true);
+            collectionHolder->setMovable(true);
+            collectionHolder->setAdjustable(true);
+            collectionHolder->setClosable(true);
+            collectionHolder->setStretchable(true);
+        }
 
         collectionHolder->show();
     }
@@ -275,6 +281,53 @@ void CustomMode::onNewCollection(const QList<QUrl> &list)
     d->dataHandler->addBaseData(base);
 
     model->refresh(model->rootIndex(), false, 0);;
+}
+
+void CustomMode::onDeleteCollection(const QString &key)
+{
+    QList<QUrl> urls;
+    for (auto handler : d->dataHandler->baseDatas()) {
+        if (handler->key == key) {
+            urls = handler->items;
+            break;
+        }
+    }
+
+    d->dataHandler->removeBaseData(key);
+    // write config
+    CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
+
+    if (urls.isEmpty()) {
+        d->holders.remove(key);
+        return;
+    }
+
+    int viewIndex = 1;
+    auto holder = d->holders.take(key);
+    auto &&viewName = holder->surface()->property(DesktopFrameProperty::kPropScreenName).toString();
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
+    for (auto win : root) {
+        const QString &&screen = win->property(DesktopFrameProperty::kPropScreenName).toString();
+        if (screen == viewName)
+            break;
+        viewIndex++;
+    }
+    if (viewIndex >= root.count())
+        viewIndex = 1;
+
+    auto &&viewPoint = holder->frame()->geometry().topLeft();
+    auto &&gridPos = canvasViewShell->gridPos(viewIndex, viewPoint);
+
+    QStringList files;
+    for (auto url : urls) {
+        files << url.toString();
+    }
+
+    model->take(urls);
+    canvasGridShell->tryAppendAfter(files, viewIndex, gridPos);
+
+    for (auto url : urls)
+        canvasModelShell->fetch(url);
 }
 
 
