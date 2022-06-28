@@ -24,8 +24,7 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include <dfm-framework/framework.h>
-#include <dfm-framework/event/event.h>
+#include <dfm-framework/dpf.h>
 
 namespace dfmplugin_tag {
 
@@ -51,7 +50,7 @@ private slots:
 private:
     static QWidget *createTagWidget(const QUrl &url);
     void addFileOperations();
-    void followEvent();
+    void followEvents();
     void bindScene(const QString &parentScene);
     void bindEvents();
 };

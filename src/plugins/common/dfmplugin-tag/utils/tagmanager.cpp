@@ -456,6 +456,21 @@ bool TagManager::fileDropHandle(const QList<QUrl> &fromUrls, const QUrl &toUrl)
     return false;
 }
 
+bool TagManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    if (url.scheme() == TagManager::scheme()) {
+        QVariantMap map;
+        const QString &tagName = TagHelper::instance()->getTagNameFromUrl(url);
+        map["CrumbData_Key_Url"] = url;
+        map["CrumbData_Key_IconName"] = TagManager::instance()->getTagIconName(tagName);
+        mapGroup->push_back(map);
+        return true;
+    }
+
+    return false;
+}
+
 void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     QMenu *menu = new QMenu;

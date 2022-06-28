@@ -44,11 +44,10 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/dpf.h>
-
 #include <QRectF>
 
-Q_DECLARE_METATYPE(QRectF *)
+Q_DECLARE_METATYPE(QRectF *);
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -70,6 +69,7 @@ void Tag::initialize()
     TagManager::instance();
 
     bindEvents();
+    followEvents();
 }
 
 bool Tag::start()
@@ -82,7 +82,6 @@ bool Tag::start()
     filter |= DetailFilterType::kFileInterviewTimeField;
     DetailSpaceService::serviceInstance()->registerFilterControlField(TagManager::scheme(), filter);
 
-    followEvent();
     TagEventReceiver::instance()->initConnect();
 
     dfmplugin_menu_util::menuSceneRegisterScene(TagMenuCreator::name(), new TagMenuCreator);
@@ -112,15 +111,7 @@ void Tag::onWindowOpened(quint64 windId)
 
 void Tag::regTagCrumbToTitleBar()
 {
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = TagManager::scheme();
-    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TagManager::scheme(); };
-    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-        QString tagName = TagHelper::instance()->getTagNameFromUrl(url);
-        return { TitleBar::CrumbData(url, tr(""), TagManager::instance()->getTagIconName(tagName)) };
-    };
-
-    TagHelper::titleServIns()->addCustomCrumbar(info);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", TagManager::scheme(), QVariantMap {});
 }
 
 void Tag::onAllPluginsInitialized()
@@ -166,7 +157,7 @@ void Tag::addFileOperations()
     TagHelper::fileOperationsServIns()->registerOperations(TagManager::scheme(), fileOpeationsHandle);
 }
 
-void Tag::followEvent()
+void Tag::followEvents()
 {
     dpfHookSequence->follow(Workspace::EventType::kPaintListItem, TagManager::instance(), &TagManager::paintListTagsHandle);
     dpfHookSequence->follow(Workspace::EventType::kPaintIconItem, TagManager::instance(), &TagManager::paintIconTagsHandle);
@@ -176,6 +167,9 @@ void Tag::followEvent()
     // paste
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
+
+    // titlebar crumb
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", TagManager::instance(), &TagManager::sepateTitlebarCrumb);
 }
 
 void Tag::bindScene(const QString &parentScene)

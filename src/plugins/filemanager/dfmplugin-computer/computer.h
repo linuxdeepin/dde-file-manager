@@ -61,6 +61,7 @@ private:
     void regComputerCrumbToTitleBar();
     void regComputerToSearch();
     void bindEvents();
+    void followEvents();
 };
 }
 

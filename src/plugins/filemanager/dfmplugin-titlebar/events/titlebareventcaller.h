@@ -25,7 +25,6 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>

@@ -216,18 +216,6 @@ bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
     return false;
 }
 
-DSB_FM_NAMESPACE::TitleBarService *OpticalHelper::titleServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
-}
-
 DSB_FM_NAMESPACE::WorkspaceService *OpticalHelper::workspaceServIns()
 {
     auto &ctx = dpfInstance.serviceContext();

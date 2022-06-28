@@ -163,7 +163,6 @@ void NavWidget::initializeUi()
 
 void NavWidget::initConnect()
 {
-    DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
 
     connect(d->navBackButton, &QAbstractButton::clicked, this, &NavWidget::back);

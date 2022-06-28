@@ -25,7 +25,6 @@
 
 #include "dfmplugin_avfsbrowser_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "dfm-base/mimetype/mimetypedisplaymanager.h"
 
 #include <QString>
@@ -67,7 +66,7 @@ public:
     static QUrl localArchiveToAvfsUrl(const QUrl &url);
     static QUrl makeAvfsUrl(const QString &path);
 
-    static QList<DSB_FM_NAMESPACE::TitleBar::CrumbData> seperateUrl(const QUrl &url);
+    static QList<QVariantMap> seperateUrl(const QUrl &url);
     static QString parseDirIcon(const QString &path);
 };
 

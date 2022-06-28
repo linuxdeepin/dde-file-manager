@@ -45,6 +45,7 @@ public:
 
     bool hookOpenFiles(quint64 winId, const QList<QUrl> &urls);
     bool hookEnterPressed(quint64 winId, const QList<QUrl> &urls);
+    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
 
     void openArchivesAsDir(quint64 winId, const QList<QUrl> &urls);
     void writeToClipbord(quint64 winId, const QList<QUrl> &urls);

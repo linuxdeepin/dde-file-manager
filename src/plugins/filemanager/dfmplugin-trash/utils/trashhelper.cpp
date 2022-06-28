@@ -305,18 +305,6 @@ bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Glo
     return false;
 }
 
-DSB_FM_NAMESPACE::TitleBarService *TrashHelper::titleServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
-}
-
 SideBarService *TrashHelper::sideBarServIns()
 {
     auto &ctx = dpfInstance.serviceContext();

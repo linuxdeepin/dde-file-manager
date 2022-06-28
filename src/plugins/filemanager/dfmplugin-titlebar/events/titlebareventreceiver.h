@@ -38,12 +38,18 @@ public:
     static TitleBarEventReceiver *instance();
 
 public slots:
+    // receive other plugin signals
     void handleTabAdded(quint64 windowId);
     void handleTabChanged(quint64 windowId, int index);
     void handleTabMoved(quint64 windowId, int from, int to);
     void handleTabRemovd(quint64 windowId, int index);
+
+    // self slots
+    bool handleCustomRegister(const QString &scheme, const QVariantMap &properties);
+
     void handleStartSpinner(quint64 windowId);
     void handleStopSpinner(quint64 windowId);
+
     void handleShowFilterButton(quint64 windowId, bool visible);
     void handleViewModeChanged(quint64 windowId, int mode);
 

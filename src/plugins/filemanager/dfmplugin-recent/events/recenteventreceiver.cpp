@@ -37,7 +37,7 @@ RecentEventReceiver *RecentEventReceiver::instance()
 
 void RecentEventReceiver::initConnect()
 {
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_CheckInputAdddressStr", instance(), &RecentEventReceiver::handleAddressInputStr);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_InputAdddressStr_Check", instance(), &RecentEventReceiver::handleAddressInputStr);
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, RecentEventReceiver::instance(), &RecentEventReceiver::handleWindowUrlChanged);
 }
 

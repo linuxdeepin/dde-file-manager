@@ -29,9 +29,7 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/search/searchservice.h"
 
 #include "dfm_global_defines.h"
@@ -39,6 +37,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -70,9 +70,9 @@ dpf::Plugin::ShutdownFlag Search::stop()
 
 void Search::subscribeEvent()
 {
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StartSearch", SearchEventReceiverIns, &SearchEventReceiver::handleSearch);
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_StopSearch", SearchEventReceiverIns, &SearchEventReceiver::handleStopSearch);
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_ShowFilterView", SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Search_Start", SearchEventReceiverIns, &SearchEventReceiver::handleSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Search_Stop", SearchEventReceiverIns, &SearchEventReceiver::handleStopSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_FilterView_Show", SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
 
     followEvent();
@@ -96,11 +96,9 @@ void Search::onWindowOpened(quint64 windId)
 
 void Search::regSearchCrumbToTitleBar()
 {
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = SearchHelper::scheme();
-    info.keepAddressBar = true;
-    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == SearchHelper::scheme(); };
-    TitleBarService::service()->addCustomCrumbar(info);
+    QVariantMap property;
+    property["Property_Key_KeepAddressBar"] = true;
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", SearchHelper::scheme(), property);
 }
 
 void Search::regSearchToWorkspace()

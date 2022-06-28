@@ -22,11 +22,9 @@
 #define SERVICEMANAGER_H
 #include "dfmplugin_vault_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/fileencrypt/fileencryptservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 
@@ -44,8 +42,6 @@ public:
     static DSB_FM_NAMESPACE::FileEncryptService *fileEncryptServiceInstance();
 
     static DSB_FM_NAMESPACE::SideBarService *sideBarServiceInstance();
-
-    static DSB_FM_NAMESPACE::TitleBarService *titleBarServiceInstance();
 
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
 

@@ -24,7 +24,6 @@
 #define TITLEBARUNICASTRECEIVER_H
 
 #include "dfmplugin_titlebar_global.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include <QObject>
 
@@ -37,10 +36,10 @@ class TitleBarUnicastReceiver : public QObject
 
 public:
     static TitleBarUnicastReceiver *instance();
-    void connectService();
+    // void connectService();
 
 public slots:
-    bool invokeAddCustomCrumbar(const DSB_FM_NAMESPACE::TitleBar::CustomCrumbInfo &info);
+    //  bool invokeAddCustomCrumbar(const DSB_FM_NAMESPACE::TitleBar::CustomCrumbInfo &info);
 
 private:
     explicit TitleBarUnicastReceiver(QObject *parent = nullptr);

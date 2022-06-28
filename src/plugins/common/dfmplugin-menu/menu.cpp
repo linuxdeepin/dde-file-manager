@@ -39,15 +39,16 @@ using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
 
 #define MenuHandlePublish(topic, args...) \
-            dpfSignalDispatcher->publish(QT_STRINGIFY(DPMENU_NAMESPACE), QT_STRINGIFY2(topic), ##args)
+    dpfSignalDispatcher->publish(QT_STRINGIFY(DPMENU_NAMESPACE), QT_STRINGIFY2(topic), ##args)
 
 #define MenuHandleSlot(topic, args...) \
-            dpfSlotChannel->connect(QT_STRINGIFY(DPMENU_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
+    dpfSlotChannel->connect(QT_STRINGIFY(DPMENU_NAMESPACE), QT_STRINGIFY2(topic), this, ##args)
 
 #define MenuHandleDisconnect(topic) \
-            dpfSlotChannel->disconnect(QT_STRINGIFY(DPMENU_NAMESPACE), QT_STRINGIFY2(topic))
+    dpfSlotChannel->disconnect(QT_STRINGIFY(DPMENU_NAMESPACE), QT_STRINGIFY2(topic))
 
-MenuHandle::MenuHandle(QObject *parent) : QObject(parent)
+MenuHandle::MenuHandle(QObject *parent)
+    : QObject(parent)
 {
     Q_ASSERT(qApp->thread() == QThread::currentThread());
 }
@@ -81,10 +82,10 @@ bool MenuHandle::init()
 
     MenuHandleSlot(slot_Menu_PerfectParams, &MenuHandle::perfectMenuParams);
 
-    registerScene(NewCreateMenuCreator::name(), new NewCreateMenuCreator);    // 注册新建场景
-    registerScene(ClipBoardMenuCreator::name(), new ClipBoardMenuCreator);    // 注册剪切板场景
-    registerScene(OpenDirMenuCreator::name(), new OpenDirMenuCreator);        // 注册文件夹场景
-    registerScene(FileOperatorMenuCreator::name(), new FileOperatorMenuCreator);     // 注册文件场景
+    registerScene(NewCreateMenuCreator::name(), new NewCreateMenuCreator);   // 注册新建场景
+    registerScene(ClipBoardMenuCreator::name(), new ClipBoardMenuCreator);   // 注册剪切板场景
+    registerScene(OpenDirMenuCreator::name(), new OpenDirMenuCreator);   // 注册文件夹场景
+    registerScene(FileOperatorMenuCreator::name(), new FileOperatorMenuCreator);   // 注册文件场景
     registerScene(OpenWithMenuCreator::name(), new OpenWithMenuCreator);
     registerScene(SendToMenuCreator::name(), new SendToMenuCreator);
     registerScene(ExtendMenuCreator::name(), new ExtendMenuCreator);
@@ -227,7 +228,8 @@ bool Menu::start()
 
 dpf::Plugin::ShutdownFlag Menu::stop()
 {
-    delete handle;
-    handle = nullptr;
+    // TODO(zhangs): adjust stop time
+    //    delete handle;
+    //    handle = nullptr;
     return kSync;
 }

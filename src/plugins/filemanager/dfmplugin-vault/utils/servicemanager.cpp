@@ -70,26 +70,6 @@ SideBarService *ServiceManager::sideBarServiceInstance()
     return sideBarService;
 }
 
-TitleBarService *ServiceManager::titleBarServiceInstance()
-{
-    static TitleBarService *titleBarService = nullptr;
-    if (titleBarService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(TitleBarService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        titleBarService = ctx.service<TitleBarService>(TitleBarService::name());
-        if (!titleBarService) {
-            qCritical() << "Failed, init titlebar \"titleBarService\" is empty";
-            abort();
-        }
-    }
-    return titleBarService;
-}
-
 WorkspaceService *ServiceManager::workspaceServiceInstance()
 {
     static WorkspaceService *workspaceService = nullptr;

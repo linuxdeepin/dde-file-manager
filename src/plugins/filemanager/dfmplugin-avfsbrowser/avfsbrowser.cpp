@@ -32,7 +32,6 @@
 
 #include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -41,6 +40,8 @@
 #include <QDebug>
 
 using namespace dfmplugin_avfsbrowser;
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
+
 DFMBASE_USE_NAMESPACE
 
 void AvfsBrowser::initialize()
@@ -86,16 +87,14 @@ void AvfsBrowser::followEvents()
 {
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_OpenLocalFiles", AvfsEventHandler::instance(), &AvfsEventHandler::hookOpenFiles);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_EnterPressed", AvfsEventHandler::instance(), &AvfsEventHandler::hookEnterPressed);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", AvfsEventHandler::instance(), &AvfsEventHandler::sepateTitlebarCrumb);
 }
 
 void AvfsBrowser::regCrumb()
 {
     DSB_FM_USE_NAMESPACE
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = AvfsUtils::scheme();
-    info.supportedCb = [](const QUrl &url) { return url.scheme() == AvfsUtils::scheme(); };
-    info.seperateCb = &AvfsUtils::seperateUrl;
-    TitleBarService::service()->addCustomCrumbar(info);
+
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", AvfsUtils::scheme(), QVariantMap {});
 }
 
 void AvfsBrowser::claimSubScene(const QString &subScene)
@@ -104,12 +103,12 @@ void AvfsBrowser::claimSubScene(const QString &subScene)
         dfmplugin_menu_util::menuSceneBind(subScene, AvfsMenuSceneCreator::name());
     } else {
         //todo(xst) menu
-//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
-//            if (subScene == addedScene) {
-//                MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
-//                MenuService::service()->disconnect(this);
-//            }
-//        },
-//                Qt::DirectConnection);
+        //        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
+        //            if (subScene == addedScene) {
+        //                MenuService::service()->bind(subScene, AvfsMenuSceneCreator::name());
+        //                MenuService::service()->disconnect(this);
+        //            }
+        //        },
+        //                Qt::DirectConnection);
     }
 }

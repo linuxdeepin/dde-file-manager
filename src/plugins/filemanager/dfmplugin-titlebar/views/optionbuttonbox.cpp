@@ -32,6 +32,7 @@
 #include <QDebug>
 
 using namespace dfmplugin_titlebar;
+DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 OptionButtonBoxPrivate::OptionButtonBoxPrivate(OptionButtonBox *parent)

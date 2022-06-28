@@ -81,6 +81,17 @@ bool AvfsEventHandler::hookEnterPressed(quint64 winId, const QList<QUrl> &urls)
     return hookOpenFiles(winId, urls);
 }
 
+bool AvfsEventHandler::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    if (url.scheme() == AvfsUtils::scheme()) {
+        *mapGroup = AvfsUtils::seperateUrl(url);
+        return true;
+    }
+
+    return false;
+}
+
 void AvfsEventHandler::openArchivesAsDir(quint64 winId, const QList<QUrl> &urls)
 {
     if (urls.count() == 1) {

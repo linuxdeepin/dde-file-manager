@@ -50,8 +50,10 @@ public slots:
 private slots:
     void publishSceneAdded(const QString &scene);
     void publishSceneRemoved(const QString &scene);
+
 protected:
     void createSubscene(DFMBASE_NAMESPACE::AbstractSceneCreator *creator, DFMBASE_NAMESPACE::AbstractMenuScene *parent);
+
 private:
     QHash<QString, DFMBASE_NAMESPACE::AbstractSceneCreator *> creators;
     QReadWriteLock locker;
@@ -68,6 +70,7 @@ public:
 
 private:
     MenuHandle *handle = nullptr;
+
 private:
     DPF_EVENT_NAMESPACE(DPMENU_NAMESPACE)
     // MenuScene

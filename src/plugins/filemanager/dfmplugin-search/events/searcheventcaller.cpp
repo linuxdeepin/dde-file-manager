@@ -22,7 +22,6 @@
 #include "utils/searchhelper.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
-#include "services/filemanager/titlebar/titlebar_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 
@@ -45,19 +44,19 @@ void SearchEventCaller::sendShowAdvanceSearchBar(quint64 winId, bool visible)
 void SearchEventCaller::sendShowAdvanceSearchButton(quint64 winId, bool visible)
 {
     DSB_FM_USE_NAMESPACE
-    dpfSlotChannel->push("dfmplugin_titlebar", "slot_ShowFilterButton", winId, visible);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_FilterButton_Show", winId, visible);
 }
 
 void SearchEventCaller::sendStartSpinner(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
-    dpfSlotChannel->push("dfmplugin_titlebar", "slot_StartSpinner", winId);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Spinner_Start", winId);
 }
 
 void SearchEventCaller::sendStopSpinner(quint64 winId)
 {
     DSB_FM_USE_NAMESPACE
-    dpfSlotChannel->push("dfmplugin_titlebar", "slot_StopSpinner", winId);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Spinner_Stop", winId);
 }
 
 }

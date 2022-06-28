@@ -89,24 +89,24 @@ void TitleBarEventCaller::sendSearch(QWidget *sender, const QString &keyword)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_StartSearch", id, keyword);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Search_Start", id, keyword);
 }
 
 void TitleBarEventCaller::sendStopSearch(QWidget *sender)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_StopSearch", id);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_Search_Stop", id);
 }
 
 void TitleBarEventCaller::sendShowFilterView(QWidget *sender, bool visible)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_ShowFilterView", id, visible);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_FilterView_Show", id, visible);
 }
 
 void TitleBarEventCaller::sendCheckAddressInputStr(QString *str)
 {
-    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_CheckInputAdddressStr", str);
+    dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_InputAdddressStr_Check", str);
 }

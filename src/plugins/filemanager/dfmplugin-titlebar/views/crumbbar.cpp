@@ -120,7 +120,7 @@ void CrumbBarPrivate::checkArrowVisiable()
 
 void CrumbBarPrivate::updateController(const QUrl &url)
 {
-    if (!crumbController || !crumbController->supportedUrl(url)) {
+    if (!crumbController || !crumbController->isSupportedScheme(url.scheme())) {
         if (crumbController) {
             crumbController->deleteLater();
         }

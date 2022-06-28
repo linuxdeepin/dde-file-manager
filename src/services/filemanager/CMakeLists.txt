@@ -38,12 +38,6 @@ FILE(GLOB SIDEBAR_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.cpp"
 )
 
-FILE(GLOB TITLEBAR_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/titlebar/private/*.cpp"
-)
 
 FILE(GLOB WORKSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.h"
@@ -98,7 +92,6 @@ add_library(
     ${WINDOWS_FILES}
     ${FILEENCRYPT_FILES}
     ${SIDEBAR_FILES}
-    ${TITLEBAR_FILES}
     ${WORKSPACE_FILES}
     ${DETAILSPACE_FILES}
     ${SEARCH_FILES}

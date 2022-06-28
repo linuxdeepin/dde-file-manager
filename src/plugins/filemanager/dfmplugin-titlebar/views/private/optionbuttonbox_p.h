@@ -24,7 +24,6 @@
 
 #include "dfmplugin_titlebar_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QPushButton>
@@ -34,7 +33,6 @@
 class QToolButton;
 class QHBoxLayout;
 
-DSB_FM_USE_NAMESPACE
 namespace dfmplugin_titlebar {
 
 using DFMBASE_NAMESPACE::Global::ViewMode;
@@ -66,6 +64,6 @@ private:
 
     ViewMode currentMode { ViewMode::kIconMode };
 };
-}
+}   // namespace dfmplugin_titlebar
 
 #endif   // OPTIONBUTTONBOX_P_H

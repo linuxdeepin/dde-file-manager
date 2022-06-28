@@ -93,10 +93,7 @@ void Trash::regTrashCrumbToTitleBar()
 {
     static std::once_flag flag;
     std::call_once(flag, []() {
-        TitleBar::CustomCrumbInfo info;
-        info.scheme = TrashHelper::scheme();
-        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == TrashHelper::scheme(); };
-        TrashHelper::titleServIns()->addCustomCrumbar(info);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", TrashHelper::scheme(), QVariantMap {});
     });
 }
 

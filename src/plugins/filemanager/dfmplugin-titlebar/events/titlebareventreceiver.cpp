@@ -23,8 +23,10 @@
 #include "titlebareventreceiver.h"
 #include "views/titlebarwidget.h"
 #include "views/navwidget.h"
-
+#include "utils/crumbmanager.h"
+#include "utils/crumbinterface.h"
 #include "utils/titlebarhelper.h"
+#include "utils/optionbuttonmanager.h"
 
 using namespace dfmplugin_titlebar;
 TitleBarEventReceiver *TitleBarEventReceiver::instance()
@@ -63,6 +65,39 @@ void TitleBarEventReceiver::handleTabRemovd(quint64 windowId, int index)
     if (!w)
         return;
     w->navWidget()->removeNavStackAt(index);
+}
+
+bool TitleBarEventReceiver::handleCustomRegister(const QString &scheme, const QVariantMap &properties)
+{
+    Q_ASSERT(!scheme.isEmpty());
+    if (CrumbManager::instance()->isRegisted(scheme)) {
+        qWarning() << "Crumb sechme " << scheme << "has been resigtered!";
+        return false;
+    }
+
+    bool keepAddressBar { properties.value(CustomKey::kKeepAddressBar).toBool() };
+    bool hideListViewBtn { properties.value(CustomKey::kHideListViewBtn).toBool() };
+    bool hideIconViewBtn { properties.value(CustomKey::kHideIconViewBtn).toBool() };
+    bool hideDetailSpaceBtn { properties.value(CustomKey::kHideDetailSpaceBtn).toBool() };
+
+    int state { OptionButtonManager::kDoNotHide };
+    if (hideListViewBtn)
+        state |= OptionButtonManager::kHideListViewBtn;
+    if (hideIconViewBtn)
+        state |= OptionButtonManager::kHideIconViewBtn;
+    if (hideDetailSpaceBtn)
+        state |= OptionButtonManager::kHideDetailSpaceBtn;
+    if (state != OptionButtonManager::kDoNotHide)
+        OptionButtonManager::instance()->setOptBtnVisibleState(scheme, static_cast<OptionButtonManager::OptBtnVisibleState>(state));
+
+    CrumbManager::instance()->registerCrumbCreator(scheme, [=]() {
+        CrumbInterface *interface { new CrumbInterface };
+        interface->setSupportedScheme(scheme);
+        interface->setKeepAddressBar(keepAddressBar);
+        return interface;
+    });
+
+    return true;
 }
 
 void TitleBarEventReceiver::handleStartSpinner(quint64 windowId)

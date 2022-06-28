@@ -27,7 +27,6 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 using namespace dfmplugin_detailspace;
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void DetailSpace::initialize()

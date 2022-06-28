@@ -47,6 +47,7 @@ DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
 void Optical::initialize()
 {
@@ -100,27 +101,7 @@ void Optical::addOpticalCrumbToTitleBar()
 {
     static std::once_flag flag;
     std::call_once(flag, []() {
-        TitleBar::CustomCrumbInfo info;
-        info.scheme = Global::Scheme::kBurn;
-        info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == Global::Scheme::kBurn; };
-        info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-            QList<TitleBar::CrumbData> ret;
-            QUrl curUrl(url);
-            while (true) {
-                auto fileInfo = InfoFactory::create<AbstractFileInfo>(curUrl);
-                if (!fileInfo)
-                    break;
-                QString &&displayText = fileInfo->fileDisplayName();
-                ret.push_front(TitleBar::CrumbData(curUrl, displayText));
-                if (fileInfo->parentUrl() == QUrl::fromLocalFile(QDir::homePath())) {
-                    ret.front().iconName = "media-optical-symbolic";
-                    break;
-                }
-                curUrl = fileInfo->parentUrl();
-            }
-            return ret;
-        };
-        OpticalHelper::titleServIns()->addCustomCrumbar(info);
+        dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", QString(Global::Scheme::kBurn), QVariantMap {});
     });
 }
 
@@ -199,6 +180,7 @@ void Optical::bindEvents()
                             &OpticalEventReceiver::handleCheckDragDropAction);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDragMove", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleCheckDragDropAction);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
 }
 
 void Optical::onDeviceChanged(const QString &id, bool isUnmount)

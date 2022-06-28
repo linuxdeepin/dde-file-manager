@@ -26,7 +26,6 @@
 #include "dialogs/usersharepasswordsettingdialog.h"
 #include "views/titlebarwidget.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/search/searchservice.h"
 
@@ -83,21 +82,21 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
     QMenu *menu = new QMenu();
 
     QAction *action { new QAction(QObject::tr("New window")) };
-    action->setData(TitleBar::MenuAction::kNewWindow);
+    action->setData(MenuAction::kNewWindow);
     menu->addAction(action);
 
     menu->addSeparator();
 
     action = new QAction(QObject::tr("Connect to Server"));
-    action->setData(TitleBar::MenuAction::kConnectToServer);
+    action->setData(MenuAction::kConnectToServer);
     menu->addAction(action);
 
     action = new QAction(QObject::tr("Set share password"));
-    action->setData(TitleBar::MenuAction::kSetUserSharePassword);
+    action->setData(MenuAction::kSetUserSharePassword);
     menu->addAction(action);
 
     action = new QAction(QObject::tr("Settings"));
-    action->setData(TitleBar::MenuAction::kSettings);
+    action->setData(MenuAction::kSettings);
     menu->addAction(action);
 
     QObject::connect(menu, &QMenu::triggered, [id](QAction *act) {
@@ -108,11 +107,6 @@ QMenu *TitleBarHelper::createSettingsMenu(quint64 id)
     });
 
     return menu;
-}
-
-bool TitleBarHelper::crumbSupportedUrl(const QUrl &url)
-{
-    return url.scheme() == Global::Scheme::kFile;
 }
 
 QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
@@ -180,6 +174,18 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
     }
 
     return list;
+}
+
+QList<CrumbData> TitleBarHelper::tansToCrumbDataList(const QList<QVariantMap> &mapGroup)
+{
+    QList<CrumbData> group;
+    for (auto &&map : mapGroup) {
+        const auto &url { map[CustomKey::kUrl].toUrl() };
+        const auto &text { map[CustomKey::kDisplayText].toString() };
+        const auto &icon { map[CustomKey::kIconName].toString() };
+        group.push_back(CrumbData { url, text, icon });
+    }
+    return group;
 }
 
 bool TitleBarHelper::displayIcon()
@@ -323,17 +329,17 @@ QMutex &TitleBarHelper::mutex()
 
 void TitleBarHelper::handleSettingMenuTriggered(quint64 windowId, int action)
 {
-    switch (static_cast<TitleBar::MenuAction>(action)) {
-    case TitleBar::MenuAction::kNewWindow:
+    switch (static_cast<MenuAction>(action)) {
+    case MenuAction::kNewWindow:
         TitleBarEventCaller::sendOpenWindow(QUrl());
         break;
-    case TitleBar::MenuAction::kSettings:
+    case MenuAction::kSettings:
         TitleBarHelper::showSettingsDialog(windowId);
         break;
-    case TitleBar::MenuAction::kConnectToServer:
+    case MenuAction::kConnectToServer:
         TitleBarHelper::showConnectToServerDialog(windowId);
         break;
-    case TitleBar::MenuAction::kSetUserSharePassword:
+    case MenuAction::kSetUserSharePassword:
         TitleBarHelper::showUserSharePasswordSettingDialog(windowId);
         break;
     }

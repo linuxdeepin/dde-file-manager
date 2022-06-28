@@ -214,6 +214,22 @@ bool RecentManager::detailViewIcon(const QUrl &url, QString *iconName)
     return false;
 }
 
+bool RecentManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+
+    if (url.scheme() == RecentManager::scheme()) {
+        QVariantMap map;
+        map["CrumbData_Key_Url"] = RecentManager::rootUrl();
+        map["CrumbData_Key_DisplayText"] = tr("Recent");
+        map["CrumbData_Key_IconName"] = RecentManager::icon().name();
+        mapGroup->push_back(map);
+        return true;
+    }
+
+    return false;
+}
+
 RecentManager::RecentManager(QObject *parent)
     : QObject(parent)
 {
@@ -286,18 +302,6 @@ void RecentManager::onDeleteExistRecentUrls(QList<QUrl> &urls)
             }
         }
     }
-}
-
-DSB_FM_NAMESPACE::TitleBarService *RecentManager::titleServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
 }
 
 SideBarService *RecentManager::sideBarServIns()

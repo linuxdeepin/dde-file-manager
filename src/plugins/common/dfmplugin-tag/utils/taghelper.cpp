@@ -256,18 +256,6 @@ QUrl TagHelper::redirectTagUrl(const QUrl &url)
     return QUrl::fromLocalFile(url.fragment(QUrl::FullyDecoded));
 }
 
-TitleBarService *TagHelper::titleServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::TitleBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::TitleBarService>(DSB_FM_NAMESPACE::TitleBarService::name());
-}
-
 SideBarService *TagHelper::sideBarServIns()
 {
     auto &ctx = dpfInstance.serviceContext();

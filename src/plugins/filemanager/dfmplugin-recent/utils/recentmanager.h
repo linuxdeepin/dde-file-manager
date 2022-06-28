@@ -25,7 +25,6 @@
 #include "dfmplugin_recent_global.h"
 #include "files/recentfileinfo.h"
 
-#include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
@@ -85,6 +84,7 @@ public:
     bool customRoleDisplayName(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QString *displayName);
     bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
     bool detailViewIcon(const QUrl &url, QString *iconName);
+    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
 
 signals:
     void asyncHandleFileChanged();
@@ -101,7 +101,6 @@ private slots:
 
 public:
     // services instance
-    static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
     static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();

@@ -33,7 +33,6 @@
 
 #include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/search/searchservice.h"
-#include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
@@ -42,6 +41,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -75,6 +76,7 @@ void Computer::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Computer::onWindowClosed, Qt::DirectConnection);
 
     bindEvents();
+    followEvents();
 }
 
 bool Computer::start()
@@ -146,17 +148,11 @@ void Computer::addComputerToSidebar()
 
 void Computer::regComputerCrumbToTitleBar()
 {
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = ComputerUtils::scheme();
-    info.hideIconViewBtn = true;
-    info.hideListViewBtn = true;
-    info.hideDetailSpaceBtn = true;
-    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == ComputerUtils::scheme(); };
-    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-        Q_UNUSED(url);
-        return { TitleBar::CrumbData(ComputerUtils::rootUrl(), tr("Computer"), ComputerUtils::icon().name()) };
-    };
-    TitleBarService::service()->addCustomCrumbar(info);
+    QVariantMap property;
+    property["Property_Key_HideIconViewBtn"] = true;
+    property["Property_Key_HideListViewBtn"] = true;
+    property["Property_Key_HideDetailSpaceBtn"] = true;
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", ComputerUtils::scheme(), property);
 }
 
 void Computer::regComputerToSearch()
@@ -174,4 +170,9 @@ void Computer::bindEvents()
     dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::doRemoveDevice);
 }
 
+void Computer::followEvents()
+{
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::sepateTitlebarCrumb);
 }
+
+}   // namespace dfmplugin_computer

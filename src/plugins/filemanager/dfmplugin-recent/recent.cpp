@@ -38,6 +38,8 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
+
 DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -55,6 +57,8 @@ void Recent::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Recent::onWindowOpened, Qt::DirectConnection);
     connect(Application::instance(), &Application::recentDisplayChanged, this, &Recent::onRecentDisplayChanged, Qt::DirectConnection);
 
+    followEvent();
+    RecentEventReceiver::instance()->initConnect();
     RecentManager::instance();
 }
 
@@ -71,10 +75,6 @@ bool Recent::start()
 
     addFileOperations();
     addDelegateSettings();
-
-    followEvent();
-
-    RecentEventReceiver::instance()->initConnect();
 
     return true;
 }
@@ -131,18 +131,12 @@ void Recent::followEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", RecentManager::instance(), &RecentManager::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
 }
 
 void Recent::regRecentCrumbToTitleBar()
 {
-    TitleBar::CustomCrumbInfo info;
-    info.scheme = RecentManager::scheme();
-    info.supportedCb = [](const QUrl &url) -> bool { return url.scheme() == RecentManager::scheme(); };
-    info.seperateCb = [](const QUrl &url) -> QList<TitleBar::CrumbData> {
-        Q_UNUSED(url);
-        return { TitleBar::CrumbData(RecentManager::rootUrl(), tr("Recent"), RecentManager::icon().name()) };
-    };
-    RecentManager::titleServIns()->addCustomCrumbar(info);
+    dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", RecentManager::scheme(), QVariantMap {});
 }
 
 void Recent::installToSideBar()

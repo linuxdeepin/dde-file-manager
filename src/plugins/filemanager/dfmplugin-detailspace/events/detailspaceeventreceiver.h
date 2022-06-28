@@ -25,8 +25,6 @@
 
 #include "dfmplugin_detailspace_global.h"
 
-#include "services/filemanager/titlebar/titlebar_defines.h"
-
 #include <QObject>
 
 namespace dfmplugin_detailspace {

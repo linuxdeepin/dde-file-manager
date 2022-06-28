@@ -23,7 +23,10 @@
 #include "opticaleventreceiver.h"
 #include "utils/opticalhelper.h"
 
+#include "dfm-base/base/schemefactory.h"
+
 using namespace dfmplugin_optical;
+DFMBASE_USE_NAMESPACE
 
 OpticalEventReceiver &OpticalEventReceiver::instance()
 {
@@ -59,6 +62,31 @@ bool OpticalEventReceiver::handleCheckDragDropAction(const QList<QUrl> &urls, co
             *action = Qt::CopyAction;
             return true;
         }
+    }
+
+    return false;
+}
+
+bool OpticalEventReceiver::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    if (url.scheme() == DFMBASE_NAMESPACE::Global::Scheme::kBurn) {
+        QUrl curUrl(url);
+        while (true) {
+            auto fileInfo = InfoFactory::create<AbstractFileInfo>(curUrl);
+            if (!fileInfo)
+                break;
+            QVariantMap map;
+            map["CrumbData_Key_Url"] = curUrl;
+            map["CrumbData_Key_DisplayText"] = fileInfo->fileDisplayName();
+            mapGroup->push_front(map);
+            if (fileInfo->parentUrl() == QUrl::fromLocalFile(QDir::homePath())) {
+                mapGroup->front()["CrumbData_Key_IconName"] = "media-optical-symbolic";
+                break;
+            }
+            curUrl = fileInfo->parentUrl();
+        }
+        return true;
     }
 
     return false;

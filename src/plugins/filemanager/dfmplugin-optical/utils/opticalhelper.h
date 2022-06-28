@@ -25,7 +25,6 @@
 
 #include "dfmplugin_optical_global.h"
 
-#include "services/filemanager/titlebar/titlebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 #include "services/common/delegate/delegateservice.h"
@@ -60,7 +59,6 @@ public:
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
 
     // services instance
-    static DSB_FM_NAMESPACE::TitleBarService *titleServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
     static DSC_NAMESPACE::DelegateService *dlgateServIns();

@@ -21,9 +21,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "crumbinterface.h"
+#include "utils/titlebarhelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
+
+#include <dfm-framework/event/event.h>
 
 using namespace dfmplugin_titlebar;
 DFMBASE_USE_NAMESPACE
@@ -38,9 +42,19 @@ void CrumbInterface::setKeepAddressBar(bool keep)
     keepAddr = keep;
 }
 
+void CrumbInterface::setSupportedScheme(const QString &scheme)
+{
+    curScheme = scheme;
+}
+
 bool CrumbInterface::isKeepAddressBar()
 {
     return keepAddr;
+}
+
+bool CrumbInterface::isSupportedScheme(const QString &scheme)
+{
+    return curScheme == scheme;
 }
 
 void CrumbInterface::processAction(CrumbInterface::ActionType type)
@@ -66,19 +80,15 @@ void CrumbInterface::crumbUrlChangedBehavior(const QUrl &url)
     }
 }
 
-bool CrumbInterface::supportedUrl(const QUrl &url)
-{
-    if (supportedUrlFunc)
-        return supportedUrlFunc(url);
-
-    return false;
-}
-
 QList<CrumbData> CrumbInterface::seprateUrl(const QUrl &url)
 {
-    if (seprateUrlFunc) {
-        return seprateUrlFunc(url);
-    }
+    if (url.scheme() == Global::Scheme::kFile)
+        return TitleBarHelper::crumbSeprateUrl(url);
+
+    // TODO(zhangs): follow
+    QList<QVariantMap> mapGroup;
+    if (dpfHookSequence->run("dfmplugin_titlebar", "hook_Crumb_Seprate", url, &mapGroup))
+        return TitleBarHelper::tansToCrumbDataList(mapGroup);
 
     // default method
     QList<CrumbData> list;
@@ -147,16 +157,6 @@ void CrumbInterface::cancelCompletionListTransmission()
 {
     if (folderCompleterJobPointer)
         folderCompleterJobPointer->stop();
-}
-
-void CrumbInterface::registewrSupportedUrlCallback(const supportedUrlCallback &func)
-{
-    supportedUrlFunc = func;
-}
-
-void CrumbInterface::registerSeprateUrlCallback(const seprateUrlCallback &func)
-{
-    seprateUrlFunc = func;
 }
 
 void CrumbInterface::onUpdateChildren(const QList<QUrl> &urlList)
