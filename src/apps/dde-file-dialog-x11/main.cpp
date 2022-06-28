@@ -150,7 +150,6 @@ int main(int argc, char *argv[])
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setQuitOnLastWindowClosed(false);
     a.setProperty("GTK", true);   // see: FileDialogHandle::winId()
-    // TODO(zhangs): installTranslator
 
     DPF_NAMESPACE::backtrace::initbacktrace();
     initLog();
@@ -158,6 +157,14 @@ int main(int argc, char *argv[])
     if (!pluginsLoad()) {
         qCritical() << "Load pugin failed!";
         abort();
+    }
+
+    {
+        // load translation
+        auto appName = a.applicationName();
+        a.setApplicationName("dde-file-manager");
+        a.loadTranslator();
+        a.setApplicationName(appName);
     }
 
     return a.exec();

@@ -20,6 +20,8 @@ usr/share/applications/dde-open.desktop
 usr/share/applications/dde-computer.desktop
 usr/share/applications/dde-trash.desktop
 
+usr/share/dde-file-manager/translations/*.qm
+
 usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialog.xml
 usr/share/dbus-1/interfaces/com.deepin.filemanager.filedialogmanager.xml
 usr/share/dbus-1/services/com.deepin.dde.desktop.service

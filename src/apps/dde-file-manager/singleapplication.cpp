@@ -79,52 +79,6 @@ QString SingleApplication::userServerName(const QString &key)
     return userKey;
 }
 
-bool SingleApplication::loadTranslator(QList<QLocale> localeFallback)
-{
-    DApplication::loadTranslator(localeFallback);
-
-    QStringList translateDirs;
-
-    const QStringList &dataDirs = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
-
-    for (QString path : dataDirs) {
-        translateDirs << path.append("/").append(applicationName()).append("/translations");
-    }
-
-    const QString name = QStringLiteral("dde-file-manager-app");
-
-    for (const QLocale &locale : localeFallback) {
-        QString translateFilename = QString("%1_%2").arg(name).arg(locale.name());
-        for (QString path : translateDirs) {
-            const QString &translatePath = path.append("/").append(translateFilename);
-            if (QFile::exists(translatePath + ".qm")) {
-                qDebug() << "load translate" << translatePath;
-                QTranslator *translator = new QTranslator(this);
-                translator->load(translatePath);
-                installTranslator(translator);
-                return true;
-            }
-        }
-
-        QStringList parseLocalNameList = locale.name().split("_", QString::SkipEmptyParts);
-        if (parseLocalNameList.length() > 0) {
-            translateFilename = QString("%1_%2").arg(name).arg(parseLocalNameList.at(0));
-            for (QString path : translateDirs) {
-                const QString &translatePath = path.append("/").append(translateFilename);
-                if (QFile::exists(translatePath + ".qm")) {
-                    qDebug() << "translatePath after feedback:" << translatePath;
-                    QTranslator *translator = new QTranslator(this);
-                    translator->load(translatePath);
-                    installTranslator(translator);
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
 void SingleApplication::openAsAdmin()
 {
     if (WindowUtils ::isWayLand()) {

@@ -52,4 +52,5 @@ install(FILES pkexec/dde-file-manager-pkexec DESTINATION bin)
 # manual
 install(DIRECTORY assets/dde-file-manager DESTINATION share/deepin-manual/manual-assets/application)
 
-# TODO(zhangs): translation
+# translation
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/translations DESTINATION share/${PROJECT_NAME} FILES_MATCHING PATTERN "*.qm")
