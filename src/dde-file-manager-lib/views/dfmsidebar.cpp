@@ -526,31 +526,6 @@ void DFMSideBar::onContextMenuRequested(const QPoint &pos)
     QScopedPointer<DFMSideBarItemInterface> interface(DFMSideBarManager::instance()->createByIdentifier(identifierStr));
     QMenu *menu = nullptr;
     if (interface) {
-        if (FileUtils::isSmbHostOnly(item->url())){//如果用户点击弹出右键菜单的item是SMB设备(item->url() = smb://host)
-            QStringList list;
-            DUrlList urlList;
-            QList<DAbstractFileInfoPointer> filist  = rootFileManager->getRootFile();
-            qInfo()<<item->url();
-            foreach (DAbstractFileInfoPointer r, filist) {
-                QString scheme = item->url().scheme()+"://";
-                QString host = item->url().host();
-                QString smbIp;
-                bool isSmbRelated = FileUtils::isSmbRelatedUrl(r->fileUrl(),smbIp);
-                if ( !isSmbRelated || (isSmbRelated && !r->fileUrl().toString().contains(host)))//!isSmbRelated:排除ftp挂载
-                    continue;
-
-                 if (r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted(r->fileUrl())){
-                    list << r->fileUrl().toString();//把用户右击的SMB侧边栏子项对应的已挂载的SMB地址筛选出来
-                }
-            }
-            if (list.isEmpty()){//如果用户右击的SMB侧边栏子项没有对应已挂载的SMB地址
-                list << item->url().toString();//保存smb://host确保list不为空，
-            }
-            if (!list.isEmpty()){
-                item->setData(QVariant::fromValue(list),DFMSideBarItem::ItemSmbMountedUrls);
-            }
-        }
-
         menu = interface->contextMenu(this, item);
 
         if (menu) {
@@ -1025,6 +1000,7 @@ void DFMSideBar::initDeviceConnection()
                 urlSkip = DUrl::fromLocalFile(QDir::homePath());
             }
             DFileManagerWindow *window = qobject_cast<DFileManagerWindow *>(this->window());
+
             //后面会根据switchToComputerItem为true去removeItem(), 因此此前不能改变switchToComputerItem的状态
             if(switchToComputerItem && window && window->isActiveWindow())
                 this->jumpToItem(urlSkip);
