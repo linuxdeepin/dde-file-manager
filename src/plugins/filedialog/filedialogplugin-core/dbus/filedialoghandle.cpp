@@ -33,6 +33,7 @@
 #include <QWindow>
 #include <QTimer>
 #include <QEventLoop>
+#include <QCoreApplication>
 
 #include <mutex>
 
@@ -251,7 +252,11 @@ qulonglong FileDialogHandle::winId() const
 {
     D_DC(FileDialogHandle);
 
-    waitForWindowShow();
+    // browser use gtk start filedialog
+    // gtk call the `winId` must be showed in the window after
+    if (qApp->property("GTK").toBool())
+        waitForWindowShow();
+
     return d->dialog->winId();
 }
 

@@ -149,6 +149,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName(ORGANIZATION_NAME);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setQuitOnLastWindowClosed(false);
+    a.setProperty("GTK", true);
     // TODO(zhangs): installTranslator
 
     DPF_NAMESPACE::backtrace::initbacktrace();
