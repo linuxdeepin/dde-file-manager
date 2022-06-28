@@ -179,12 +179,22 @@ void Tag::bindScene(const QString &parentScene)
     if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
         dfmplugin_menu_util::menuSceneBind(TagMenuCreator::name(), parentScene);
     } else {
-        // todo(lym) menu
-        //        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-        //            if (scene == parentScene)
-        //                MenuService::service()->bind(TagMenuCreator::name(), scene);
-        //        },
-        //                Qt::DirectConnection);
+        menuScenes << parentScene;
+        if (!subscribedEvent)
+            subscribedEvent = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Tag::onMenuSceneAdded);
+    }
+}
+
+void Tag::onMenuSceneAdded(const QString &scene)
+{
+    if (menuScenes.contains(scene)) {
+        menuScenes.remove(scene);
+        dfmplugin_menu_util::menuSceneBind(TagMenuCreator::name(), scene);
+
+        if (menuScenes.isEmpty()) {
+            dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Tag::onMenuSceneAdded);
+            subscribedEvent = false;
+        }
     }
 }
 

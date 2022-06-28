@@ -76,11 +76,21 @@ void BookMark::bindScene(const QString &parentScene)
     if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
         dfmplugin_menu_util::menuSceneBind(BookmarkMenuCreator::name(), parentScene);
     } else {
-        //todo(lym) menu
-//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-//            if (scene == parentScene)
-//                MenuService::service()->bind(BookmarkMenuCreator::name(), scene);
-//        },
-//                Qt::DirectConnection);
+        menuScenes << parentScene;
+        if (!subscribedEvent)
+            subscribedEvent = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &BookMark::onMenuSceneAdded);
+    }
+}
+
+void BookMark::onMenuSceneAdded(const QString &scene)
+{
+    if (menuScenes.contains(scene)) {
+        menuScenes.remove(scene);
+        dfmplugin_menu_util::menuSceneBind(BookmarkMenuCreator::name(), scene);
+
+        if (menuScenes.isEmpty()) {
+            dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &BookMark::onMenuSceneAdded);
+            subscribedEvent = false;
+        }
     }
 }

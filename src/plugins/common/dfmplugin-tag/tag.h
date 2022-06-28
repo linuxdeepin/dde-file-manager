@@ -52,7 +52,11 @@ private:
     void addFileOperations();
     void followEvents();
     void bindScene(const QString &parentScene);
+    void onMenuSceneAdded(const QString &scene);
     void bindEvents();
+
+    QSet<QString> menuScenes;
+    bool subscribedEvent { false };
 };
 
 }
