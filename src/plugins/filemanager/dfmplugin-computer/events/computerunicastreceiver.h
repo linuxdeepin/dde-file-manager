@@ -42,7 +42,6 @@ public:
     void setContextMenuEnable(bool enable);
     bool doAddDevice(const QString &name, const QUrl &url);
     void doRemoveDevice(const QUrl &url);
-    bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
 
 private:
     explicit ComputerUnicastReceiver(QObject *parent = nullptr);

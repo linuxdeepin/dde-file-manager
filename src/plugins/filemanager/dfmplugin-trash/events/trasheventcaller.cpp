@@ -21,7 +21,6 @@
 #include "trasheventcaller.h"
 #include "utils/trashhelper.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 

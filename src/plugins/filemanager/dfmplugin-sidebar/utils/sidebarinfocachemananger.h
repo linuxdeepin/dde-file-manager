@@ -25,8 +25,6 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-
 #include <QObject>
 #include <QHash>
 
@@ -37,7 +35,6 @@ class SideBarInfoCacheMananger
     Q_DISABLE_COPY(SideBarInfoCacheMananger)
 
 public:
-    using ItemInfo = DSB_FM_NAMESPACE::SideBar::ItemInfo;
     using Index = int;
     using Group = QString;
     using GroupList = QStringList;
@@ -48,22 +45,21 @@ public:
     static SideBarInfoCacheMananger *instance();
 
     bool contains(const ItemInfo &info) const;
+    bool contains(const QUrl &url) const;
     GroupList groups() const;
     CacheInfoList indexCacheMap(const Group &name) const;
+    bool containsHiddenUrl(const QUrl &url);
+    ItemInfo itemInfo(const QUrl &url);   // the funcs is for QHash<QUrl, ItemInfo> bindedInfos;
 
     bool addItemInfoCache(const ItemInfo &info);
     bool insertItemInfoCache(Index i, const ItemInfo &info);
     bool removeItemInfoCache(const Group &name, const QUrl &url);
     bool removeItemInfoCache(const QUrl &url);
+    bool updateItemInfoCache(const Group &name, const QUrl &url, const ItemInfo &info);
+    bool updateItemInfoCache(const QUrl &url, const ItemInfo &info);
 
-    bool containsHiddenUrl(const QUrl &url);
-    void addHiddenUrl(const QUrl &url);
-    void removeHiddenUrl(const QUrl &url);
-
-    // these 3 funcs is for QHash<QUrl, ItemInfo> bindedInfos;
-    void bindItemInfo(const QUrl &url, const ItemInfo &info);
-    ItemInfo itemInfo(const QUrl &url);
-    void removeBindedItemInfo(const QUrl &url);
+    void addHiddenUrl(const QUrl &url);   // TODO(zhangs): update
+    void removeHiddenUrl(const QUrl &url);   // TODO(zhangs): update
 
 private:
     SideBarInfoCacheMananger();

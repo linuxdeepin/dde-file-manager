@@ -49,7 +49,6 @@ void ComputerEventCaller::cdTo(QWidget *sender, const QUrl &url)
     if (!url.isValid())
         return;
 
-    DSB_FM_USE_NAMESPACE
     quint64 winId = FMWindowsIns.findWindowId(sender);
 
     cdTo(winId, url);

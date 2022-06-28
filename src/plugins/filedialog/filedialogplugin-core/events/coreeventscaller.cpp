@@ -24,7 +24,6 @@
 #include "utils/corehelper.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
-#include "services/filemanager/sidebar/sidebar_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
@@ -48,8 +47,8 @@ void CoreEventsCaller::sendSelectFiles(quint64 windowId, const QList<QUrl> &file
 
 void CoreEventsCaller::setSidebarItemVisible(const QUrl &url, bool visible)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::SideBar::EventType::kItemVisibleSetting,
-                                 url, visible);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Hidden",
+                         url, visible);
 }
 
 void CoreEventsCaller::setSelectionMode(QWidget *sender, const QAbstractItemView::SelectionMode mode)
@@ -75,6 +74,6 @@ void CoreEventsCaller::setEnabledSelectionModes(QWidget *sender, const QList<QAb
 
 void CoreEventsCaller::setMenuDisbaled()
 {
-    dpfSlotChannel->push("dfmplugin_sidebar", "slot_SetContextMenuEnable", false);
-    dpfSlotChannel->push("dfmplugin_computer", "slot_SetContextMenuEnable", false);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_ContextMenu_SetEnable", false);
+    dpfSlotChannel->push("dfmplugin_computer", "slot_ContextMenu_SetEnable", false);
 }

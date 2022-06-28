@@ -24,6 +24,8 @@
 #include "utils/sidebarhelper.h"
 #include "views/sidebaritem.h"
 
+#include <dfm-framework/event/event.h>
+
 DPSIDEBAR_USE_NAMESPACE
 
 SideBarManager *SideBarManager::instance()
@@ -39,8 +41,9 @@ void SideBarManager::runCd(SideBarItem *item, quint64 windowId)
 
     auto url = item->url();
     auto info = item->itemInfo();
-    if (info.cdCb) {
-        info.cdCb(windowId, url);
+
+    if (info.clickedCb) {
+        info.clickedCb(windowId, url);
     } else {
         SideBarHelper::defaultCdAction(windowId, url);
     }

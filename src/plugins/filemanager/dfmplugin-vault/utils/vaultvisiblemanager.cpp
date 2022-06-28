@@ -49,6 +49,11 @@
 
 #include <DSysInfo>
 
+using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+Q_DECLARE_METATYPE(ItemClickedActionCallback);
+Q_DECLARE_METATYPE(ContextMenuCallback);
+
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
@@ -112,16 +117,19 @@ void VaultVisibleManager::pluginServiceRegister()
 void VaultVisibleManager::addSideBarVaultItem()
 {
     if (isVaultEnabled()) {
-        SideBar::ItemInfo item;
-        item.group = SideBar::DefaultGroup::kDevice;
-        item.url = VaultHelper::instance()->rootUrl();
-        item.iconName = VaultHelper::instance()->icon().name();
-        item.text = tr("My Vault");
-        item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-        item.contextMenuCb = VaultHelper::contenxtMenuHandle;
-        item.cdCb = VaultHelper::siderItemClicked;
+        ItemClickedActionCallback cdCb { VaultHelper::siderItemClicked };
+        ContextMenuCallback contextMenuCb { VaultHelper::contenxtMenuHandle };
+        Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+        QVariantMap map {
+            { "Property_Key_Group", "Group_Device" },
+            { "Property_Key_DisplayName", tr("My Vault") },
+            { "Property_Key_Icon", VaultHelper::instance()->icon() },
+            { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+            { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
+            { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+        };
 
-        ServiceManager::sideBarServiceInstance()->insertItem(1, item);
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 1, VaultHelper::instance()->rootUrl(), map);
     }
 }
 
@@ -171,7 +179,7 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
 
 void VaultVisibleManager::removeSideBarVaultItem()
 {
-    ServiceManager::sideBarServiceInstance()->removeItem(VaultHelper::instance()->rootUrl());
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", VaultHelper::instance()->rootUrl());
 }
 
 void VaultVisibleManager::removeComputerVaultItem()

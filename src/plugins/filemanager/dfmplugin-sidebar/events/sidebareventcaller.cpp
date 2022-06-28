@@ -22,16 +22,15 @@
 */
 #include "sidebareventcaller.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
+
 #include <QUrl>
 
 DSC_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 void SideBarEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
@@ -42,7 +41,7 @@ void SideBarEventCaller::sendItemActived(quint64 windowId, const QUrl &url)
 void SideBarEventCaller::sendEject(const QUrl &url)
 {
     qInfo() << "Eject device: " << url;
-    dpfSignalDispatcher->publish(SideBar::EventType::kEjectAction, url);
+    dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Item_EjectClicked", url);
 }
 
 void SideBarEventCaller::sendOpenWindow(const QUrl &url)

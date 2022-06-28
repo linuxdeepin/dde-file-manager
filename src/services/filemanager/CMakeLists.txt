@@ -16,28 +16,12 @@ FILE(GLOB GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-FILE(GLOB WINDOWS_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/windows/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/windows/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/windows/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/windows/private/*.cpp"
-)
-
-
 FILE(GLOB FILEENCRYPT_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/private/*.cpp"
 )
-
-FILE(GLOB SIDEBAR_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/sidebar/private/*.cpp"
-)
-
 
 FILE(GLOB WORKSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.h"
@@ -89,9 +73,7 @@ add_library(
     ${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
-    ${WINDOWS_FILES}
     ${FILEENCRYPT_FILES}
-    ${SIDEBAR_FILES}
     ${WORKSPACE_FILES}
     ${DETAILSPACE_FILES}
     ${SEARCH_FILES}

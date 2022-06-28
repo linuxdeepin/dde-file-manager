@@ -39,12 +39,23 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <QDebug>
 #include <QApplication>
 #include <QWindow>
 
+using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+using FindMeCallback = std::function<bool(const QUrl &itemUrl, const QUrl &targetUrl)>;
+Q_DECLARE_METATYPE(ItemClickedActionCallback);
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(RenameCallback);
+Q_DECLARE_METATYPE(FindMeCallback);
+
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+
 namespace dfmplugin_computer {
 using namespace GlobalServerDefines;
 
@@ -378,28 +389,13 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
 {
     // additem to sidebar
     bool removable = info->extraProperty(DeviceProperty::kRemovable).toBool() || info->suffix() == SuffixInfo::kProtocol;
-    if (ComputerUtils::shouldSystemPartitionHide() && info->suffix() == SuffixInfo::kBlock && !removable) return;
+    if (ComputerUtils::shouldSystemPartitionHide() && info->suffix() == SuffixInfo::kBlock && !removable)
+        return;
 
-    DSB_FM_USE_NAMESPACE;
-    SideBar::ItemInfo sbItem;
-    sbItem.group = SideBar::DefaultGroup::kDevice;
-    sbItem.url = info->url();
-    sbItem.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    if (info->renamable())
-        sbItem.flags |= Qt::ItemIsEditable;
-    if (info->fileIcon().name().startsWith("media"))
-        sbItem.iconName = "media-optical-symbolic";
-    else
-        sbItem.iconName = info->fileIcon().name() + "-symbolic";
-    sbItem.text = info->displayName();
-    sbItem.removable = removable;
-    sbItem.subGroup = Global::Scheme::kComputer;
-    sbItem.targetUrl = info->targetUrl().isValid() ? info->targetUrl() : QUrl();
-
-    sbItem.cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
-    sbItem.contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
-    sbItem.renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
-    sbItem.findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
+    ItemClickedActionCallback cdCb = [](quint64 winId, const QUrl &url) { ComputerControllerInstance->onOpenItem(winId, url); };
+    ContextMenuCallback contextMenuCb = [](quint64 winId, const QUrl &url, const QPoint &) { ComputerControllerInstance->onMenuRequest(winId, url, true); };
+    RenameCallback renameCb = [](quint64 winId, const QUrl &url, const QString &name) { ComputerControllerInstance->doRename(winId, url, name); };
+    FindMeCallback findMeCb = [this](const QUrl &itemUrl, const QUrl &targetUrl) {
         if (this->routeMapper.contains(itemUrl))
             return DFMBASE_NAMESPACE::UniversalUtils::urlEquals(this->routeMapper.value(itemUrl), targetUrl);
 
@@ -407,13 +403,36 @@ void ComputerItemWatcher::addSidebarItem(DFMEntryFileInfoPointer info)
         auto mntUrl = info->targetUrl();
         return dfmbase::UniversalUtils::urlEquals(mntUrl, targetUrl);
     };
-    SideBarService::service()->addItem(sbItem);
-    SideBarService::service()->updateItemName(info->url(), info->displayName(), info->renamable());
+
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    if (info->renamable())
+        flags |= Qt::ItemIsEditable;
+    QString iconName { info->fileIcon().name() };
+    if (info->fileIcon().name().startsWith("media"))
+        iconName = "media-optical-symbolic";
+    else
+        iconName += "-symbolic";
+
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Device" },
+        { "Property_Key_SubGroup", Global::Scheme::kComputer },
+        { "Property_Key_DisplayName", info->displayName() },
+        { "Property_Key_Icon", QIcon::fromTheme(iconName) },
+        { "Property_Key_FinalUrl", info->targetUrl().isValid() ? info->targetUrl() : QUrl() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_Ejectable", removable },
+        { "Property_Key_CallbackItemClicked", QVariant::fromValue(cdCb) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) },
+        { "Property_Key_CallbackFindMe", QVariant::fromValue(findMeCb) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", info->url(), map);
 }
 
 void ComputerItemWatcher::removeSidebarItem(const QUrl &url)
 {
-    SideBarService::service()->removeItem(url);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", url);
 }
 
 void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntUrl)
@@ -431,7 +450,11 @@ void ComputerItemWatcher::insertUrlMapper(const QString &devId, const QUrl &mntU
 
 void ComputerItemWatcher::updateSidebarItem(const QUrl &url, const QString &newName, bool editable)
 {
-    SideBarService::service()->updateItemName(url, newName, editable);
+    QVariantMap map {
+        { "Property_Key_DisplayName", newName },
+        { "Property_Key_Editable", editable }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", url, map);
 }
 
 void ComputerItemWatcher::addDevice(const QString &groupName, const QUrl &url)

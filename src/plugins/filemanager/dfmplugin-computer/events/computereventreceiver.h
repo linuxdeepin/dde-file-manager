@@ -39,6 +39,8 @@ public:
 
 public Q_SLOTS:
     void handleItemEject(const QUrl &url);
+    bool handleSepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+    bool handleSortItem(const QString &group, const QString &subGroup, const QUrl &a, const QUrl &b);
 
 private:
     explicit ComputerEventReceiver(QObject *parent = nullptr);

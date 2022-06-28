@@ -25,8 +25,6 @@
 
 #include "dfmplugin_sidebar_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-
 #include <QMap>
 #include <QMutex>
 #include <QWidget>
@@ -45,13 +43,13 @@ public:
     static void removeSideBar(quint64 windowId);
     static quint64 windowId(QWidget *sender);
     static SideBarItem *createDefaultItem(const QString &pathKey, const QString &group);
-    static SideBarItem *createItemByInfo(const DSB_FM_NAMESPACE::SideBar::ItemInfo &info);
+    static SideBarItem *createItemByInfo(const ItemInfo &info);
     static SideBarItemSeparator *createSeparatorItem(const QString &group);
     static QString makeItemIdentifier(const QString &group, const QUrl &url);
     static void defaultCdAction(quint64 windowId, const QUrl &url);
     static void defaultContenxtMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos);
-    static bool registerSortFunc(const QString &subGroup, DSB_FM_NAMESPACE::SideBar::SortFunc func);
-    static DSB_FM_NAMESPACE::SideBar::SortFunc sortFunc(const QString &subGroup);
+    static bool registerSortFunc(const QString &subGroup, SortFunc func);
+    static SortFunc sortFunc(const QString &subGroup);
     static void updateSideBarSelection(quint64 winId);
 
 public:
@@ -60,7 +58,7 @@ public:
 private:
     static QMutex &mutex();
     static QMap<quint64, SideBarWidget *> kSideBarMap;
-    static QMap<QString, DSB_FM_NAMESPACE::SideBar::SortFunc> kSortFuncs;
+    static QMap<QString, SortFunc> kSortFuncs;
 };
 
 DPSIDEBAR_END_NAMESPACE

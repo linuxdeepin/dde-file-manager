@@ -54,7 +54,7 @@
 #include <QThread>
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
+
 using namespace dfmplugin_computer;
 using namespace GlobalServerDefines;
 
@@ -236,7 +236,11 @@ void ComputerController::doSetAlias(DFMEntryFileInfoPointer info, const QString 
 
     // update sidebar and computer display
     QString sidebarName = displayAlias.isEmpty() ? info->displayName() : displayAlias;
-    SideBarService::service()->updateItemName(info->url(), sidebarName, true);
+    QVariantMap map {
+        { "Property_Key_DisplayName", sidebarName },
+        { "Property_Key_Editable", true }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Update", info->url(), map);
     Q_EMIT updateItemAlias(info->url());
 }
 
@@ -491,7 +495,7 @@ void ComputerController::actRename(quint64 winId, DFMEntryFileInfoPointer info, 
     if (!triggerFromSidebar)
         Q_EMIT requestRename(winId, info->url());
     else
-        SideBarService::service()->triggerItemEdit(winId, info->url());
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_TriggerEdit", winId, info->url());
 }
 
 void ComputerController::actFormat(quint64 winId, DFMEntryFileInfoPointer info)

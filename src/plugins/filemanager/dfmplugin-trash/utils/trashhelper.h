@@ -24,7 +24,6 @@
 
 #include "dfmplugin_trash_global.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 #include "services/common/propertydialog/property_defines.h"
@@ -87,7 +86,6 @@ public:
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
     // services instance
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 

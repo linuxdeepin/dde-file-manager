@@ -21,7 +21,6 @@
 */
 #include "recenteventcaller.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>

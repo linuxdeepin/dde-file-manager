@@ -41,7 +41,7 @@ DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
-QMap<QString, SideBar::SortFunc> SideBarHelper::kSortFuncs {};
+QMap<QString, SortFunc> SideBarHelper::kSortFuncs {};
 bool SideBarHelper::contextMenuEnabled { true };
 
 QList<SideBarWidget *> SideBarHelper::allSideBar()
@@ -97,32 +97,30 @@ SideBarItem *SideBarHelper::createDefaultItem(const QString &pathKey, const QStr
                                         group,
                                         url);
     auto flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren | Qt::ItemIsDropEnabled };
-    DSB_FM_NAMESPACE::SideBar::ItemInfo info;
+    ItemInfo info;
     info.group = group;
-    info.iconName = iconName;
-    info.text = text;
+    info.icon = QIcon::fromTheme(iconName);
+    info.displayName = text;
     info.url = url;
     info.flags = flags;
-    info.cdCb = defaultCdAction;
+    info.clickedCb = defaultCdAction;
     info.contextMenuCb = defaultContenxtMenu;
-    item->setItemInfo(info);
 
     item->setFlags(flags);
 
     return item;
 }
 
-SideBarItem *SideBarHelper::createItemByInfo(const SideBar::ItemInfo &info)
+SideBarItem *SideBarHelper::createItemByInfo(const ItemInfo &info)
 {
-    SideBarItem *item = new SideBarItem(QIcon::fromTheme(info.iconName),
-                                        info.text,
+    SideBarItem *item = new SideBarItem(info.icon,
+                                        info.displayName,
                                         info.group,
                                         info.url);
     item->setFlags(info.flags);
-    item->setItemInfo(info);
 
     // create `unmount action` for removable device
-    if (info.removable) {
+    if (info.isEjectable) {
         DViewItemActionList lst;
         DViewItemAction *action = new DViewItemAction(Qt::AlignCenter, QSize(16, 16), QSize(), true);
         action->setIcon(QIcon::fromTheme("media-eject-symbolic"));
@@ -182,7 +180,7 @@ void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const
     delete menu;
 }
 
-bool SideBarHelper::registerSortFunc(const QString &subGroup, SideBar::SortFunc func)
+bool SideBarHelper::registerSortFunc(const QString &subGroup, SortFunc func)
 {
     if (kSortFuncs.contains(subGroup)) {
         qDebug() << subGroup << "has already been registered";
@@ -192,7 +190,7 @@ bool SideBarHelper::registerSortFunc(const QString &subGroup, SideBar::SortFunc 
     return true;
 }
 
-SideBar::SortFunc SideBarHelper::sortFunc(const QString &subGroup)
+SortFunc SideBarHelper::sortFunc(const QString &subGroup)
 {
     return kSortFuncs.value(subGroup, nullptr);
 }

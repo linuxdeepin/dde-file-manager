@@ -42,6 +42,7 @@ private slots:
 
 private:
     void bindScene(const QString &parentScene);
+    void bindEvents();
     void onMenuSceneAdded(const QString &scene);
 
     QSet<QString> menuScenes;

@@ -25,8 +25,6 @@
 
 #include "dfmplugin_computer_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/device/devicemanager.h"

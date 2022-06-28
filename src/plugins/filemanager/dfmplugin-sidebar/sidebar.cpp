@@ -24,7 +24,6 @@
 #include "views/sidebarwidget.h"
 #include "views/sidebaritem.h"
 #include "utils/sidebarhelper.h"
-#include "events/sidebarunicastreceiver.h"
 #include "events/sidebareventreceiver.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
@@ -41,8 +40,7 @@ void SideBar::initialize()
 {
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SideBar::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &SideBar::onWindowClosed, Qt::DirectConnection);
-    SideBarUnicastReceiver::instance()->connectService();
-    SideBarEventReceiver::instance()->connectService();
+    SideBarEventReceiver::instance()->bindEvents();
 }
 
 bool SideBar::start()

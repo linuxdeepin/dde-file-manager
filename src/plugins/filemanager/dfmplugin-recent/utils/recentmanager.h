@@ -25,7 +25,6 @@
 #include "dfmplugin_recent_global.h"
 #include "files/recentfileinfo.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 #include "services/common/propertydialog/property_defines.h"
@@ -102,7 +101,6 @@ private slots:
 
 public:
     // services instance
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 

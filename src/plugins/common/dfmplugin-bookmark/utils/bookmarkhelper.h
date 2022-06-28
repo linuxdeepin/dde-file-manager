@@ -23,7 +23,6 @@
 
 #include "dfmplugin_bookmark_global.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 
 #include <QObject>
@@ -42,8 +41,8 @@ public:
     QIcon icon();
 
     // services instance
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
+
 private:
     explicit BookMarkHelper(QObject *parent = nullptr);
 };

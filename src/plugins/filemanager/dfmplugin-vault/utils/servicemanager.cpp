@@ -50,26 +50,6 @@ FileEncryptService *ServiceManager::fileEncryptServiceInstance()
     return vaultService;
 }
 
-SideBarService *ServiceManager::sideBarServiceInstance()
-{
-    static SideBarService *sideBarService = nullptr;
-    if (sideBarService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(SideBarService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        sideBarService = ctx.service<SideBarService>(SideBarService::name());
-        if (!sideBarService) {
-            qCritical() << "Failed, init sidebar \"sideBarService\" is empty";
-            abort();
-        }
-    }
-    return sideBarService;
-}
-
 WorkspaceService *ServiceManager::workspaceServiceInstance()
 {
     static WorkspaceService *workspaceService = nullptr;

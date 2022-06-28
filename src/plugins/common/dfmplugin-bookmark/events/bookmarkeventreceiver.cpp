@@ -50,7 +50,7 @@ void BookMarkEventReceiver::handleSidebarOrderChanged(quint64 winId, const QStri
 {
     if (group != "Bookmark")
         return;
-    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_GetGroupItems", winId, group);
+    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_Group_UrlList", winId, group);
     BookMarkManager::instance()->sortItemsByOrder(items.value<QList<QUrl>>());
 }
 

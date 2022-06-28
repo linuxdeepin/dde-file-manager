@@ -137,14 +137,16 @@ void Tag::installToSideBar()
         QUrl u(item);
         auto query = u.query().split("=", QString::SkipEmptyParts);
         if (query.count() == 2 && tagNames.contains(query[1])) {
-            SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(query[1]);
-            TagHelper::sideBarServIns()->addItem(item);
+            auto &&url { TagHelper::instance()->makeTagUrlByTagName(query[1]) };
+            auto &&map { TagHelper::instance()->createSidebarItemInfo(query[1]) };
+            dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
             tagNames.removeAll(query[1]);
         }
     }
     for (const auto &tag : tagNames) {   // if tag order is not complete.
-        SideBar::ItemInfo item = TagHelper::instance()->createSidebarItemInfo(tag);
-        TagHelper::sideBarServIns()->addItem(item);
+        auto &&url { TagHelper::instance()->makeTagUrlByTagName(tag) };
+        auto &&map { TagHelper::instance()->createSidebarItemInfo(tag) };
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", url, map);
     }
 }
 
@@ -201,5 +203,5 @@ void Tag::onMenuSceneAdded(const QString &scene)
 void Tag::bindEvents()
 {
     dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, TagEventReceiver::instance(), &TagEventReceiver::handleWindowUrlChanged);
-    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_SidebarSorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", TagEventReceiver::instance(), &TagEventReceiver::handleSidebarOrderChanged);
 }

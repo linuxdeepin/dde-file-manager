@@ -29,9 +29,15 @@
 #include <QVector>
 #include <QPainter>
 #include <QUrl>
+#include <QIcon>
 
 #include <random>
 #include <mutex>
+
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, const QString &name)>;
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(RenameCallback);
 
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
@@ -205,23 +211,24 @@ void TagHelper::paintTags(QPainter *painter, QRectF &rect, const QList<QColor> &
     painter->setRenderHint(QPainter::Antialiasing, antialiasing);
 }
 
-SideBar::ItemInfo TagHelper::createSidebarItemInfo(const QString &tag)
+QVariantMap TagHelper::createSidebarItemInfo(const QString &tag)
 {
-    SideBar::ItemInfo item;
-    item.group = SideBar::DefaultGroup::kTag;
+    ContextMenuCallback contextMenuCb { TagManager::contenxtMenuHandle };
+    RenameCallback renameCb { TagManager::renameHandle };
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable };
+    QVariantMap infoMap {
+        { "Property_Key_Url", makeTagUrlByTagName(tag) },
+        { "Property_Key_Group", "Group_Tag" },
+        { "Property_Key_DisplayName", tag },
+        { "Property_Key_Icon", QIcon::fromTheme(TagManager::instance()->getTagIconName(tag)) },
+        { "Property_Key_Editable", true },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) },
+        { "Property_Key_CallbackRename", QVariant::fromValue(renameCb) }
 
-    QUrl tagUrl;
-    tagUrl.setScheme(TagManager::scheme());
-    tagUrl.setPath("/" + tag);
+    };
 
-    item.url = tagUrl;
-    item.iconName = TagManager::instance()->getTagIconName(tag);
-    item.text = tag;
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEditable;
-    item.renameCb = TagManager::renameHandle;
-    item.contextMenuCb = TagManager::contenxtMenuHandle;
-
-    return item;
+    return infoMap;
 }
 
 void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList)
@@ -266,18 +273,6 @@ bool TagHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
         (*urls).push_back(redirectTagUrl(url));
     }
     return true;
-}
-
-SideBarService *TagHelper::sideBarServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
 }
 
 WorkspaceService *TagHelper::workspaceServIns()

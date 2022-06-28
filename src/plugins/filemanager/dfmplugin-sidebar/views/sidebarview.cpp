@@ -73,7 +73,7 @@ void SideBarViewPrivate::notifyOrderChanged()
 
     QTimer::singleShot(0, this, [=] {   // this must be invoked after items are sorted finished
         quint64 winId = FMWindowsIns.findWindowId(q);
-        dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_SidebarSorted", winId, draggedGroup);
+        dpfSignalDispatcher->publish("dfmplugin_sidebar", "signal_Sidebar_Sorted", winId, draggedGroup);
         SideBarHelper::updateSideBarSelection(winId);
         draggedGroup = "";
     });

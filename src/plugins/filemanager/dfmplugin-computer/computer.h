@@ -36,7 +36,7 @@ class Computer : public dpf::Plugin
 
     DPF_EVENT_NAMESPACE(DPCOMPUTER_NAMESPACE)
     // slots
-    DPF_EVENT_REG_SLOT(slot_SetContextMenuEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
+    DPF_EVENT_REG_SLOT(slot_ContextMenu_SetEnable)   // TODO(xust) tmp solution, using GroupPolicy instead.
     DPF_EVENT_REG_SLOT(slot_AddDevice)
     DPF_EVENT_REG_SLOT(slot_RemoveDevice)
 

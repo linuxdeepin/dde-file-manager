@@ -24,8 +24,6 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 
@@ -76,7 +74,7 @@ public:
 
     void paintTags(QPainter *painter, QRectF &rect, const QList<QColor> &colors) const;
 
-    DSB_FM_NAMESPACE::SideBar::ItemInfo createSidebarItemInfo(const QString &tag);
+    QVariantMap createSidebarItemInfo(const QString &tag);
 
     void showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList);
 
@@ -84,7 +82,6 @@ public:
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
     // services instance
-    static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 

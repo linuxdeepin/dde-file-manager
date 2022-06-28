@@ -48,18 +48,6 @@ QIcon BookMarkHelper::icon()
     return QIcon::fromTheme("folder-bookmark-symbolic");
 }
 
-dfm_service_filemanager::SideBarService *BookMarkHelper::sideBarServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
-
 dfm_service_filemanager::WorkspaceService *BookMarkHelper::workspaceServIns()
 {
     auto &ctx = dpfInstance.serviceContext();

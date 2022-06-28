@@ -68,21 +68,6 @@ void ComputerUnicastReceiver::doRemoveDevice(const QUrl &url)
     ComputerItemWatcherInstance->removeDevice(url);
 }
 
-bool ComputerUnicastReceiver::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
-{
-    Q_ASSERT(mapGroup);
-    if (url.scheme() == ComputerUtils::scheme()) {
-        QVariantMap map;
-        map["CrumbData_Key_Url"] = url;
-        map["CrumbData_Key_DisplayText"] = tr("Computer");
-        map["CrumbData_Key_IconName"] = ComputerUtils::icon().name();
-        mapGroup->push_back(map);
-        return true;
-    }
-
-    return false;
-}
-
 void ComputerUnicastReceiver::setContextMenuEnable(bool enable)
 {
     ComputerUtils::contextMenuEnabled = enable;

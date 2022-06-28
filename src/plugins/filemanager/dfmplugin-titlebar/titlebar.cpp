@@ -25,7 +25,6 @@
 #include "utils/crumbinterface.h"
 #include "utils/crumbmanager.h"
 #include "views/titlebarwidget.h"
-#include "events/titlebarunicastreceiver.h"
 #include "events/titlebareventreceiver.h"
 
 #include "services/filemanager/workspace/workspace_defines.h"
@@ -46,7 +45,6 @@ static TitleBarWidget *kTitleBar { nullptr };
 
 void TitleBar::initialize()
 {
-    DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &TitleBar::onWindowCreated, Qt::DirectConnection);

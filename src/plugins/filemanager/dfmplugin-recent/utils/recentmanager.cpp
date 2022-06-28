@@ -316,18 +316,6 @@ void RecentManager::onDeleteExistRecentUrls(QList<QUrl> &urls)
     }
 }
 
-SideBarService *RecentManager::sideBarServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::SideBarService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::SideBarService>(DSB_FM_NAMESPACE::SideBarService::name());
-}
-
 DSB_FM_NAMESPACE::WorkspaceService *RecentManager::workspaceServIns()
 {
     auto &ctx = dpfInstance.serviceContext();

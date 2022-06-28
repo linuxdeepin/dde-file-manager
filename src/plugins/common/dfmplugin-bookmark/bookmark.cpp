@@ -39,13 +39,7 @@ void BookMark::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this,
             &BookMark::onWindowCreated, Qt::DirectConnection);
 
-    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult,
-                                   BookMarkEventReceiver::instance(),
-                                   &BookMarkEventReceiver::handleRenameFile);
-    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_SidebarSorted", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
-    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled,
-                                   BookMarkEventReceiver::instance(),
-                                   &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
+    bindEvents();
 }
 
 bool BookMark::start()
@@ -93,4 +87,15 @@ void BookMark::onMenuSceneAdded(const QString &scene)
             subscribedEvent = false;
         }
     }
+}
+
+void BookMark::bindEvents()
+{
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult,
+                                   BookMarkEventReceiver::instance(),
+                                   &BookMarkEventReceiver::handleRenameFile);
+    dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
+    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled,
+                                   BookMarkEventReceiver::instance(),
+                                   &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
 }

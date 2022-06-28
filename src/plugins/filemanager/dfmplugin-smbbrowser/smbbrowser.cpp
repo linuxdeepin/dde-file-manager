@@ -29,7 +29,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 
@@ -116,15 +115,15 @@ void SmbBrowser::initOperations()
 
 void SmbBrowser::addNeighborToSidebar()
 {
-    DSB_FM_USE_NAMESPACE
+    Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Network" },
+        { "Property_Key_DisplayName", tr("Computers in LAN") },
+        { "Property_Key_Icon", SmbBrowserUtils::icon() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) }
+    };
 
-    SideBar::ItemInfo entry;
-    entry.group = SideBar::DefaultGroup::kNetwork;
-    entry.iconName = SmbBrowserUtils::icon().name();
-    entry.text = tr("Computers in LAN");
-    entry.url = SmbBrowserUtils::netNeighborRootUrl();
-    entry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
-    SideBarService::service()->insertItem(0, entry);
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, SmbBrowserUtils::netNeighborRootUrl(), map);
 }
 
 void SmbBrowser::registerSambaPrehandler()

@@ -172,7 +172,7 @@ void TagEventReceiver::handleSidebarOrderChanged(quint64 winId, const QString &g
 {
     if (group != "Tag")
         return;
-    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_GetGroupItems", winId, group);
+    auto items = dpfSlotChannel->push("dfmplugin_sidebar", "slot_Group_UrlList", winId, group);
     auto urls = items.value<QList<QUrl>>();
 
     QVariantList lst;

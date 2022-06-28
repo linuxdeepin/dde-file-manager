@@ -26,7 +26,7 @@
 #include "utils/corehelper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
+#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"

@@ -37,8 +37,10 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 
-Q_DECLARE_METATYPE(QList<QVariantMap> *)
-Q_DECLARE_METATYPE(QList<QUrl> *)
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(QList<QVariantMap> *);
+Q_DECLARE_METATYPE(QList<QUrl> *);
 
 DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -105,20 +107,23 @@ void Recent::onWindowOpened(quint64 windId)
 
 void Recent::addRecentItem()
 {
-    SideBar::ItemInfo item;
-    item.group = SideBar::DefaultGroup::kCommon;
-    item.url = RecentManager::rootUrl();
-    item.iconName = RecentManager::icon().name();
-    item.text = tr("Recent");
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    item.contextMenuCb = RecentManager::contenxtMenuHandle;
+    ContextMenuCallback contextMenuCb { RecentManager::contenxtMenuHandle };
 
-    RecentManager::sideBarServIns()->insertItem(0, item);
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Common" },
+        { "Property_Key_DisplayName", tr("Recent") },
+        { "Property_Key_Icon", RecentManager::icon() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, RecentManager::rootUrl(), map);
 }
 
 void Recent::removeRecentItem()
 {
-    RecentManager::sideBarServIns()->removeItem(RecentManager::rootUrl());
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", RecentManager::rootUrl());
 }
 
 void Recent::followEvent()

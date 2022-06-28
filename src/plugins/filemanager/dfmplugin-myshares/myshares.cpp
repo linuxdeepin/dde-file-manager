@@ -34,8 +34,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/sidebar/sidebar_defines.h"
-#include "services/filemanager/sidebar/sidebarservice.h"
 #include "services/filemanager/search/searchservice.h"
 #include "services/common/fileoperations/fileoperations_defines.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
@@ -130,7 +128,7 @@ void MyShares::onShareRemoved(const QString &)
     DSB_FM_USE_NAMESPACE
     int count = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_AllShareInfos").value<ShareInfoList>().count();
     if (count == 0)
-        SideBarService::service()->removeItem(ShareUtils::rootUrl());
+        dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", ShareUtils::rootUrl());
 }
 
 void MyShares::addToSidebar()
@@ -139,16 +137,17 @@ void MyShares::addToSidebar()
     if (count == 0)
         return;
 
-    DSB_FM_USE_NAMESPACE
-    SideBar::ItemInfo shareEntry;
-    shareEntry.group = SideBar::DefaultGroup::kNetwork;
-    shareEntry.iconName = ShareUtils::icon().name();
-    if (!shareEntry.iconName.endsWith("-symbolic"))
-        shareEntry.iconName.append("-symbolic");
-    shareEntry.text = ShareUtils::displayName();
-    shareEntry.url = ShareUtils::rootUrl();
-    shareEntry.flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren;
-    SideBarService::service()->addItem(shareEntry);
+    Qt::ItemFlags flags { Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemNeverHasChildren };
+    QString iconName { ShareUtils::icon().name() };
+    if (!iconName.endsWith("-symbolic"))
+        iconName.append("-symbolic");
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Network" },
+        { "Property_Key_DisplayName", ShareUtils::displayName() },
+        { "Property_Key_Icon", QIcon::fromTheme(iconName) },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", ShareUtils::rootUrl(), map);
 }
 
 void MyShares::regMyShareToSearch()

@@ -34,6 +34,8 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
+using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+Q_DECLARE_METATYPE(ContextMenuCallback)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -99,14 +101,17 @@ void Trash::regTrashCrumbToTitleBar()
 
 void Trash::installToSideBar()
 {
-    SideBar::ItemInfo item;
-    item.group = SideBar::DefaultGroup::kCommon;
-    item.url = TrashHelper::rootUrl();
-    item.iconName = TrashHelper::icon().name();
-    item.text = tr("Trash");
-    item.flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    item.contextMenuCb = TrashHelper::contenxtMenuHandle;
-    TrashHelper::sideBarServIns()->addItem(item);
+    ContextMenuCallback contextMenuCb { TrashHelper::contenxtMenuHandle };
+
+    Qt::ItemFlags flags { Qt::ItemIsEnabled | Qt::ItemIsSelectable };
+    QVariantMap map {
+        { "Property_Key_Group", "Group_Common" },
+        { "Property_Key_DisplayName", tr("Trash") },
+        { "Property_Key_Icon", TrashHelper::icon() },
+        { "Property_Key_QtItemFlags", QVariant::fromValue(flags) },
+        { "Property_Key_CallbackContextMenu", QVariant::fromValue(contextMenuCb) }
+    };
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Add", TrashHelper::rootUrl(), map);
 }
 
 void Trash::addFileOperations()

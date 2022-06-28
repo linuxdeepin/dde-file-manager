@@ -29,7 +29,6 @@
 #include <QVariant>
 
 DPSIDEBAR_USE_NAMESPACE
-using namespace DSB_FM_NAMESPACE::SideBar;
 
 SideBarItem::SideBarItem(const QUrl &url)
     : SideBarItem(QIcon(), QString(), QString(), url)
@@ -75,11 +74,6 @@ void SideBarItem::setGroup(const QString &group)
 QString SideBarItem::subGourp() const
 {
     return itemInfo().subGroup;
-}
-
-void SideBarItem::setItemInfo(ItemInfo info)
-{
-    SideBarInfoCacheMananger::instance()->bindItemInfo(info.url, info);
 }
 
 ItemInfo SideBarItem::itemInfo() const
