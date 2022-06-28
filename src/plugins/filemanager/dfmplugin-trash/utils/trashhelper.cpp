@@ -305,6 +305,18 @@ bool TrashHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const Glo
     return false;
 }
 
+bool TrashHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != TrashHelper::scheme())
+            return false;
+        (*urls).push_back(toLocalFile(url));
+    }
+    return true;
+}
+
 SideBarService *TrashHelper::sideBarServIns()
 {
     auto &ctx = dpfInstance.serviceContext();

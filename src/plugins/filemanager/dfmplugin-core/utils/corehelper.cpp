@@ -22,15 +22,15 @@
 */
 #include "corehelper.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 #include <QDir>
 #include <QProcess>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DPCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -49,8 +49,12 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     window->cd(url);
 
     QUrl titleUrl { url };
-    if (delegateServIns->isRegisterUrlTransform(titleUrl.scheme()))
-        titleUrl = delegateServIns->urlTransform(url);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", titleUrl, &urls);
+
+    if (ok && !urls.isEmpty())
+        titleUrl = urls.first();
+
     auto fileInfo = InfoFactory::create<AbstractFileInfo>(titleUrl);
     if (fileInfo) {
         QUrl url { fileInfo->url() };

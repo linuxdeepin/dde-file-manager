@@ -24,8 +24,6 @@
 #include "fileoperations/filecopymovejob.h"
 #include "fileoperationsevent/fileoperationseventhandler.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/utils/hidefilehelper.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/file/local/localfilehandler.h"
@@ -40,6 +38,8 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QDebug>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -338,7 +338,12 @@ JobHandlePointer FileOperationsEventReceiver::doCopyFile(const quint64 windowId,
     if (sources.isEmpty())
         return nullptr;
 
-    const QList<QUrl> &sourcesTrans = delegateServIns->urlsTransform(sources);
+    QList<QUrl> sourcesTrans = sources;
+
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", sourcesTrans, &urls);
+    if (ok && !urls.isEmpty())
+        sourcesTrans = urls;
 
     if (!target.isLocalFile()) {
         FileOperationsFunctions function { nullptr };
@@ -377,7 +382,11 @@ JobHandlePointer FileOperationsEventReceiver::doCutFile(quint64 windowId, const 
     if (sources.isEmpty())
         return nullptr;
 
-    const QList<QUrl> &sourcesTrans = delegateServIns->urlsTransform(sources);
+    QList<QUrl> sourcesTrans = sources;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", sourcesTrans, &urls);
+    if (ok && !urls.isEmpty())
+        sourcesTrans = urls;
 
     if (!target.isLocalFile()) {
         FileOperationsFunctions function { nullptr };
@@ -493,7 +502,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
             }
             // TODO:: make dir finished need to send make dir finished event
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
+                                         windowId, QList<QUrl>() << url, ok, error);
             return ok;
         }
         return handleOperationMkdir(windowId, url);
@@ -516,7 +525,7 @@ bool FileOperationsEventReceiver::doMkdir(const quint64 windowId, const QUrl url
     targetUrl = urlNew;
 
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMkdirResult,
-                                          windowId, QList<QUrl>() << url, ok, error);
+                                 windowId, QList<QUrl>() << url, ok, error);
     saveFileOperation({ targetUrl }, {}, GlobalEventType::kDeleteFiles);
     return ok;
 }
@@ -557,7 +566,7 @@ QString FileOperationsEventReceiver::doTouchFilePremature(const quint64 windowId
                 dialogManager->showErrorDialog("touch file error", error);
             }
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kTouchFileResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
+                                         windowId, QList<QUrl>() << url, ok, error);
             return ok ? url.path() : QString();
         }
         return doTouchFilePractically(windowId, url) ? url.path() : QString();
@@ -896,7 +905,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                                  windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+                                         windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
             if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
                 saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
             return ok;
@@ -917,7 +926,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+                                 windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
     return ok;
@@ -961,7 +970,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                                  windowId, successUrls, ok, error);
+                                         windowId, successUrls, ok, error);
             if (!successUrls.isEmpty())
                 saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
             return ok;
@@ -975,7 +984,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 
     // publish result
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 
@@ -992,7 +1001,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     bool ok = doRenameFiles(windowId, urls, pair, {}, type, successUrls, error, custom, callback);
     // publish result
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 }
@@ -1016,7 +1025,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
             }
             // TODO:: file renameFile finished need to send file renameFile finished event
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                                  windowId, successUrls, ok, error);
+                                         windowId, successUrls, ok, error);
             if (!successUrls.isEmpty())
                 saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
             return ok;
@@ -1027,7 +1036,7 @@ bool FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
 
     // publish result
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 
@@ -1041,7 +1050,7 @@ void FileOperationsEventReceiver::handleOperationRenameFiles(const quint64 windo
     bool ok = doRenameFiles(windowId, urls, {}, pair, RenameTypes::kBatchAppend, successUrls, error, custom, callback);
     // publish result
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                          windowId, successUrls, ok, error);
+                                 windowId, successUrls, ok, error);
     if (!successUrls.isEmpty())
         saveFileOperation(successUrls.values(), successUrls.keys(), GlobalEventType::kRenameFiles);
 }
@@ -1125,7 +1134,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
                 dialogManager->showErrorDialog("link file error", error);
             }
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                                  windowId, QList<QUrl>() << url << link, ok, error);
+                                         windowId, QList<QUrl>() << url << link, ok, error);
             return ok;
         }
     }
@@ -1149,7 +1158,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
         dialogManager->showErrorDialog("link file error", error);
     }
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
-                                          windowId, QList<QUrl>() << url << urlValid, ok, error);
+                                 windowId, QList<QUrl>() << url << urlValid, ok, error);
     return ok;
 }
 
@@ -1193,7 +1202,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
             }
             // TODO:: set file permissions finished need to send set file permissions finished event
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
-                                                  windowId, QList<QUrl>() << url, ok, error);
+                                         windowId, QList<QUrl>() << url, ok, error);
             return ok;
         }
     }
@@ -1207,7 +1216,7 @@ bool FileOperationsEventReceiver::handleOperationSetPermission(const quint64 win
     info->refresh();
     // TODO:: set file permissions finished need to send set file permissions finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kSetPermissionResult,
-                                          windowId, QList<QUrl>() << url, ok, error);
+                                 windowId, QList<QUrl>() << url, ok, error);
     return ok;
 }
 
@@ -1280,7 +1289,7 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
             }
             // TODO:: open file in terminal finished need to send open file in terminal finished event
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
-                                                  windowId, urls, result, error);
+                                         windowId, urls, result, error);
             return ok;
         }
     }
@@ -1300,7 +1309,7 @@ bool FileOperationsEventReceiver::handleOperationOpenInTerminal(const quint64 wi
 
     // TODO:: open file in terminal finished need to send open file in terminal finished event
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kOpenInTerminalResult,
-                                          windowId, urls, result, error);
+                                 windowId, urls, result, error);
 
     return ok;
 }

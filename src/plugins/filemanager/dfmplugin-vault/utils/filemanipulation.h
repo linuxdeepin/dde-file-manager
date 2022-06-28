@@ -63,6 +63,8 @@ public:
     static bool renameFilesHandle(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, QString> replacePair, bool flg);
 
     static bool renameFilesHandleAddText(const quint64 windowId, const QList<QUrl> urlList, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> replacePair);
+
+    static QList<QUrl> transUrlsToLocal(const QList<QUrl> &urls);
 };
 }
 #endif   // FILEMANIPULATION_H

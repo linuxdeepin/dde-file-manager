@@ -43,7 +43,8 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
+
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
@@ -399,6 +400,18 @@ void VaultHelper::recordTime(const QString &group, const QString &key)
 {
     Settings setting(kVaultTimeConfigFile);
     setting.setValue(group, key, QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+}
+
+bool VaultHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != VaultHelper::scheme())
+            return false;
+        (*urls).push_back(vaultToLocalUrl(url));
+    }
+    return true;
 }
 
 VaultHelper::VaultHelper()

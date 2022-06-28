@@ -85,6 +85,7 @@ public:
     bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
     bool detailViewIcon(const QUrl &url, QString *iconName);
     bool sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup);
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
 signals:
     void asyncHandleFileChanged();
@@ -111,6 +112,5 @@ private:
     AbstractFileWatcherPointer watcher;
     QMap<QUrl, AbstractFileInfoPointer> recentNodes;
 };
-
 }
 #endif   // RECENTMANAGER_H

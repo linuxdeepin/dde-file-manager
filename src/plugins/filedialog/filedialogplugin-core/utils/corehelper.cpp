@@ -23,8 +23,6 @@
 #include "corehelper.h"
 #include "views/filedialog.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
@@ -189,17 +187,4 @@ QString CoreHelper::findExtensioName(const QString &fileName, const QStringList 
         }
     }
     return newNameFilterExtension;
-}
-
-void CoreHelper::urlTransform(QList<QUrl> *urls)
-{
-    Q_ASSERT(urls);
-
-    for (int i = 0; i != urls->size(); i++) {
-        auto url { urls->at(i) };
-        if (delegateServIns->isRegisterUrlTransform(url.scheme())) {
-            url = delegateServIns->urlTransform(url);
-            urls->replace(i, url);
-        }
-    }
 }

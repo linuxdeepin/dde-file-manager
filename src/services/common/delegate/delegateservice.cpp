@@ -57,40 +57,6 @@ bool DelegateService::isTransparent(const QUrl &url)
     return transparentHandles.value(scheme)(url);
 }
 
-void DelegateService::registerUrlTransform(const DelegateService::KeyType &scheme, const UrlTransformHandle &handle)
-{
-    if (isRegisterUrlTransform(scheme))
-        return;
-
-    urlTransformHandles.insert(scheme, handle);
-}
-
-bool DelegateService::isRegisterUrlTransform(const DelegateService::KeyType &scheme)
-{
-    return urlTransformHandles.contains(scheme);
-}
-
-QUrl DelegateService::urlTransform(const QUrl &url)
-{
-    const QString &scheme { url.scheme() };
-    if (!isRegisterUrlTransform(scheme))
-        return url;
-
-    return urlTransformHandles.value(scheme)(url);
-}
-
-QList<QUrl> DelegateService::urlsTransform(const QList<QUrl> &urls)
-{
-    QList<QUrl> urlsTrans;
-    for (const QUrl &url : urls) {
-        if (isRegisterUrlTransform(url.scheme())) {
-            QUrl urlTemp = urlTransform(url);
-            urlsTrans.push_back(urlTemp);
-        }
-    }
-    return urlsTrans.isEmpty() ? urls : urlsTrans;
-}
-
 DelegateService *DelegateService::service()
 {
     auto &ctx = dpfInstance.serviceContext();

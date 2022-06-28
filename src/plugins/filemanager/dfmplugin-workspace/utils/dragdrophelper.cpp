@@ -25,21 +25,21 @@
 #include "models/filesortfilterproxymodel.h"
 #include "events/workspaceeventsequence.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include "dfm-framework/event/event.h"
+#include <dfm-framework/event/event.h>
 
 #include <DFileDragClient>
 #include <QMimeData>
 
+Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
-Q_DECLARE_METATYPE(Qt::DropAction *)
 
 DragDropHelper::DragDropHelper(FileView *parent)
     : QObject(parent),
@@ -65,8 +65,11 @@ bool DragDropHelper::dragEnter(QDragEnterEvent *event)
     }
 
     if (!currentDragUrls.isEmpty()) {
-        currentDragUrls = delegateServIns->urlsTransform(currentDragUrls);
-        const_cast<QMimeData *>(event->mimeData())->setUrls(currentDragUrls);
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", currentDragUrls, &urls);
+
+        if (ok && !urls.isEmpty())
+            const_cast<QMimeData *>(event->mimeData())->setUrls(urls);
     }
 
     bool fall = true;

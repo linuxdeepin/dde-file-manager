@@ -35,7 +35,6 @@
 
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
-#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -46,8 +45,9 @@
 
 #include <QRectF>
 
-Q_DECLARE_METATYPE(QRectF *);
-Q_DECLARE_METATYPE(QList<QVariantMap> *);
+Q_DECLARE_METATYPE(QRectF *)
+Q_DECLARE_METATYPE(QList<QVariantMap> *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -61,7 +61,6 @@ void Tag::initialize()
     InfoFactory::regClass<TagFileInfo>(TagManager::scheme());
     WatcherFactory::regClass<TagFileWatcher>(TagManager::scheme());
     DirIteratorFactory::regClass<TagDirIterator>(TagManager::scheme());
-    delegateServIns->registerUrlTransform(TagManager::scheme(), TagHelper::redirectTagUrl);
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Tag::onWindowOpened, Qt::DirectConnection);
     connect(dpfListener, &dpf::Listener::pluginsInitialized, this, &Tag::onAllPluginsInitialized, Qt::DirectConnection);
@@ -170,6 +169,9 @@ void Tag::followEvents()
 
     // titlebar crumb
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", TagManager::instance(), &TagManager::sepateTitlebarCrumb);
+
+    // url trans
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TagHelper::instance(), &TagHelper::urlsToLocal);
 }
 
 void Tag::bindScene(const QString &parentScene)
@@ -178,11 +180,11 @@ void Tag::bindScene(const QString &parentScene)
         dfmplugin_menu_util::menuSceneBind(TagMenuCreator::name(), parentScene);
     } else {
         // todo(lym) menu
-//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-//            if (scene == parentScene)
-//                MenuService::service()->bind(TagMenuCreator::name(), scene);
-//        },
-//                Qt::DirectConnection);
+        //        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
+        //            if (scene == parentScene)
+        //                MenuService::service()->bind(TagMenuCreator::name(), scene);
+        //        },
+        //                Qt::DirectConnection);
     }
 }
 

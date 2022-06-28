@@ -72,6 +72,12 @@ class Utils : public DPF_NAMESPACE::Plugin
     DPF_EVENT_REG_SLOT(slot_Bluetooth_IsAvailable)
     DPF_EVENT_REG_SLOT(slot_Bluetooth_SendFiles)
     // *******************end Bluetooth*******************
+
+    // *******************begin utils: url to local*****************
+    // hook events
+    DPF_EVENT_REG_HOOK(hook_UrlsTransform)
+    // *******************end  utils: url to local******************
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

@@ -41,13 +41,15 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(QList<QVariantMap> *)
+
 using namespace dfmplugin_optical;
+
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
-
-Q_DECLARE_METATYPE(Qt::DropAction *)
-Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
 void Optical::initialize()
 {
@@ -88,6 +90,9 @@ bool Optical::start()
     addCustomTopWidget();
     addDelegateSettings();
     addPropertySettings();
+
+    // follow event
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 
     return true;
 }
@@ -163,7 +168,6 @@ void Optical::addDelegateSettings()
     OpticalHelper::dlgateServIns()->registerTransparentHandle(Global::Scheme::kBurn, [](const QUrl &url) -> bool {
         return !OpticalHelper::burnIsOnDisc(url);
     });
-    OpticalHelper::dlgateServIns()->registerUrlTransform(Global::Scheme::kBurn, &OpticalHelper::tansToLocalFile);
 }
 
 void Optical::addPropertySettings()

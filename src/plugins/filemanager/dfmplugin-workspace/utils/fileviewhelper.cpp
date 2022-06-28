@@ -37,11 +37,15 @@
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/utils/universalutils.h"
 
+#include <dfm-framework/event/event.h>
+
 #include <DApplication>
 
 #include <QTextEdit>
 #include <QAbstractItemView>
 #include <QTimer>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 namespace dfmplugin_workspace {
 const char *const kEidtorShowSuffix = "_d_whether_show_suffix";
@@ -75,7 +79,12 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
 
     //  cutting
     if (ClipBoard::instance()->clipboardAction() == ClipBoard::kCutAction) {
-        if (ClipBoard::instance()->clipboardFileUrlList().contains(delegateServIns->urlTransform(file->url())))
+        QUrl localUrl = file->url();
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+        if (ok && !urls.isEmpty())
+            localUrl = urls.first();
+        if (ClipBoard::instance()->clipboardFileUrlList().contains(localUrl))
             return true;
 
         // the linked file only judges the URL, not the inode,

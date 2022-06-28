@@ -40,14 +40,15 @@
 #include "services/common/usershare/usershareservice.h"
 #include "services/common/fileoperations/fileoperations_defines.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-#include <dfm-framework/dpf.h>
+#include <dfm-framework/event/event.h>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 using namespace dfmplugin_myshares;
 
@@ -89,11 +90,6 @@ bool MyShares::start()
         return true;
     };
     DSC_NAMESPACE::FileOperationsService::service()->registerOperations(ShareUtils::scheme(), fileOpeationsHandle);
-
-    delegateServIns->registerUrlTransform(ShareUtils::scheme(), [](QUrl in) {
-        in.setScheme(DFMBASE_NAMESPACE::Global::Scheme::kFile);
-        return in;
-    });
 
     hookEvent();
 
@@ -163,13 +159,13 @@ void MyShares::claimSubScene(const QString &scene)
         dfmplugin_menu_util::menuSceneBind(scene, MyShareMenuCreator::name());
     } else {
         //todo(xst) menu
-//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
-//            if (scene == addedScene) {
-//                MenuService::service()->bind(scene, MyShareMenuCreator::name());
-//                MenuService::service()->disconnect(this);
-//            }
-//        },
-//                Qt::DirectConnection);
+        //        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &addedScene) {
+        //            if (scene == addedScene) {
+        //                MenuService::service()->bind(scene, MyShareMenuCreator::name());
+        //                MenuService::service()->disconnect(this);
+        //            }
+        //        },
+        //                Qt::DirectConnection);
     }
 }
 
@@ -180,4 +176,5 @@ void MyShares::hookEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", ShareEventHelper::instance(), &ShareEventHelper::blockPaste);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendOpenWindow", ShareEventHelper::instance(), &ShareEventHelper::hookSendOpenWindow);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendChangeCurrentUrl", ShareEventHelper::instance(), &ShareEventHelper::hookSendChangeCurrentUrl);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", ShareUtils::instance(), &ShareUtils::urlsToLocal);
 }

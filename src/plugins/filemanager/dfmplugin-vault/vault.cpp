@@ -20,6 +20,11 @@
 */
 #include "vault.h"
 #include "utils/vaultvisiblemanager.h"
+#include "utils/vaulthelper.h"
+
+#include <QUrl>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 using namespace dfmplugin_vault;
 
@@ -31,6 +36,10 @@ void Vault::initialize()
 bool Vault::start()
 {
     VaultVisibleManager::instance()->pluginServiceRegister();
+
+    // follow event
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
+
     return true;
 }
 

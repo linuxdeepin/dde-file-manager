@@ -27,7 +27,6 @@
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/filemanager/sidebar/sidebarservice.h"
-#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
@@ -58,8 +57,9 @@
 #include <qpa/qplatformtheme.h>
 #include <qpa/qplatformdialoghelper.h>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace filedialog_core;
@@ -103,7 +103,11 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
 void FileDialogPrivate::handleOpenAcceptBtnClicked()
 {
     QList<QUrl> urls { WorkspaceService::service()->selectedUrls(q->internalWinId()) };
-    CoreHelper::urlTransform(&urls);
+
+    QList<QUrl> urlsTrans {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urls, &urlsTrans);
+    if (ok && !urlsTrans.isEmpty())
+        urls = urlsTrans;
 
     switch (fileMode) {
     case QFileDialog::AnyFile:
@@ -238,8 +242,11 @@ void FileDialog::setDirectoryUrl(const QUrl &directory)
 QUrl FileDialog::directoryUrl() const
 {
     QUrl url { currentUrl() };
-    if (DelegateService::service()->isRegisterUrlTransform(url.scheme()))
-        url = DelegateService::service()->urlTransform(url);
+
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << url, &urls);
+    if (ok && !urls.empty())
+        url = urls.first();
 
     return url;
 }
@@ -279,17 +286,12 @@ QList<QUrl> FileDialog::selectedUrls() const
         return {};
     // TODO(zhangs): orderedSelectedUrls
     QList<QUrl> list { WorkspaceService::service()->selectedUrls(internalWinId()) };
-    QList<QUrl>::iterator begin = list.begin();
-    while (begin != list.end()) {
-        QUrl curUrl { *begin };
-        if (DelegateService::service()->isRegisterUrlTransform(curUrl.scheme()))
-            curUrl = DelegateService::service()->urlTransform(curUrl);
 
-        if (!curUrl.isEmpty() && curUrl.isValid())
-            *begin = curUrl;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", list, &urls);
 
-        ++begin;
-    }
+    if (ok && !urls.isEmpty())
+        list = urls;
 
     if (d->acceptMode == QFileDialog::AcceptSave) {
         QUrl fileUrl = list.isEmpty() ? currentUrl() : list.first();

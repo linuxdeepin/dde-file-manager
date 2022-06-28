@@ -31,14 +31,14 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 
-Q_DECLARE_METATYPE(QList<QVariantMap> *);
+Q_DECLARE_METATYPE(QList<QVariantMap> *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -65,16 +65,12 @@ void Recent::initialize()
 bool Recent::start()
 {
     dfmplugin_menu_util::menuSceneRegisterScene(RecentMenuCreator::name(), new RecentMenuCreator());
-
-    delegateServIns->registerUrlTransform(RecentManager::scheme(), RecentManager::urlTransform);
-
     DetailFilterTypes filter = DetailFilterType::kFileSizeField;
     filter |= DetailFilterType::kFileChangeTImeField;
     filter |= DetailFilterType::kFileInterviewTimeField;
     DetailSpaceService::serviceInstance()->registerFilterControlField(RecentManager::scheme(), filter);
 
     addFileOperations();
-    addDelegateSettings();
 
     return true;
 }
@@ -132,6 +128,7 @@ void Recent::followEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
 }
 
 void Recent::regRecentCrumbToTitleBar()
@@ -182,14 +179,5 @@ void Recent::addFileOperations()
     fileOpeationsHandle->linkFile = &RecentFilesHelper::createLinkFileHandle;
 
     RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
-}
-
-void Recent::addDelegateSettings()
-{
-    DelegateService::service()->registerUrlTransform(Global::Scheme::kRecent, [](const QUrl &in) -> QUrl {
-        auto out { in };
-        out.setScheme(Global::Scheme::kFile);
-        return out;
-    });
 }
 }

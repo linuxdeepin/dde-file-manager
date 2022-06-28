@@ -81,6 +81,7 @@ public:
     void showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList);
 
     static QUrl redirectTagUrl(const QUrl &url);
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
 
     // services instance
     static DSB_FM_NAMESPACE::SideBarService *sideBarServIns();

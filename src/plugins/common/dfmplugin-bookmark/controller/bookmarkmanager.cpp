@@ -24,8 +24,6 @@
 #include "events/bookmarkeventcaller.h"
 #include "utils/bookmarkhelper.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/device/devicemanager.h"
@@ -43,6 +41,8 @@
 #include <QMenu>
 #include <QApplication>
 #include <QStorageInfo>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 USING_IO_NAMESPACE
 
@@ -123,9 +123,17 @@ bool BookMarkManager::addBookMark(const QList<QUrl> &urls)
     int count = urls.size();
     if (count < 0)
         return false;
-    for (QUrl url : urls) {
-        if (delegateServIns->isRegisterUrlTransform(url.scheme()))
-            url = delegateServIns->urlTransform(url);
+
+    QList<QUrl> urlsTemp = urls;
+    if (!urlsTemp.isEmpty()) {
+        QList<QUrl> urlsTrans {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urlsTemp, &urlsTrans);
+
+        if (ok && !urlsTrans.isEmpty())
+            urlsTemp = urlsTrans;
+    }
+
+    for (const QUrl &url : urlsTemp) {
         QFileInfo info(url.path());
         if (info.isDir()) {
             BookmarkData bookmarkData;

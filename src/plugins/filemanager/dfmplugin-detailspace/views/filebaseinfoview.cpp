@@ -20,13 +20,14 @@
  */
 #include "filebaseinfoview.h"
 #include "services/filemanager/detailspace/detailspaceservice.h"
-#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 
 #include <dfm-framework/event/event.h>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 USING_IO_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -145,8 +146,11 @@ void FileBaseInfoView::basicExpand(const QUrl &url)
 void FileBaseInfoView::basicFieldFilter(const QUrl &url)
 {
     QUrl filterUrl = url;
-    if (delegateServIns->isRegisterUrlTransform(filterUrl.scheme()))
-        filterUrl = delegateServIns->urlTransform(filterUrl);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << filterUrl, &urls);
+
+    if (ok && !urls.isEmpty())
+        filterUrl = urls.first();
 
     DetailFilterTypes fieldFilter = detailServIns->contorlFieldFilter(filterUrl);
     if (fieldFilter & DetailFilterType::kFileNameField) {
@@ -218,7 +222,11 @@ void FileBaseInfoView::basicFill(const QUrl &url)
     if (fileDuration && fileDuration->RightValue().isEmpty())
         fileDuration->setVisible(false);
 
-    QUrl localUrl = delegateServIns->urlTransform(url);
+    QUrl localUrl = url;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+    if (ok && !urls.isEmpty())
+        localUrl = urls.first();
 
     AbstractFileInfoPointer localinfo = InfoFactory::create<AbstractFileInfo>(localUrl);
 

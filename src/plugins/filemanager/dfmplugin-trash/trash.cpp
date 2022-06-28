@@ -28,7 +28,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
@@ -36,6 +35,7 @@
 #include "dfm-base/base/schemefactory.h"
 
 Q_DECLARE_METATYPE(Qt::DropAction *)
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -48,7 +48,6 @@ void Trash::initialize()
     InfoFactory::regClass<TrashFileInfo>(TrashHelper::scheme());
     WatcherFactory::regClass<TrashFileWatcher>(TrashHelper::scheme());
     DirIteratorFactory::regClass<TrashDirIterator>(TrashHelper::scheme());
-    delegateServIns->registerUrlTransform(TrashHelper::scheme(), TrashHelper::toLocalFile);
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Trash::onWindowOpened, Qt::DirectConnection);
 }
@@ -65,6 +64,7 @@ bool Trash::start()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TrashHelper::instance(), &TrashHelper::urlsToLocal);
 
     return true;
 }

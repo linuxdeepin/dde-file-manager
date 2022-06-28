@@ -22,8 +22,6 @@
 #include "action_defines.h"
 #include "menuutils.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/clipboard.h"
@@ -35,9 +33,10 @@
 #include <QMenu>
 #include <QVariant>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 AbstractMenuScene *ClipBoardMenuCreator::create()
 {
@@ -178,7 +177,11 @@ bool ClipBoardMenuScene::triggered(QAction *action)
     QString id = d->predicateAction.key(action);
 
     // trans url to local
-    const QList<QUrl> &selectedUrlsTemp = delegateServIns->urlsTransform(d->selectFiles);
+    QList<QUrl> selectedUrlsTemp = d->selectFiles;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", selectedUrlsTemp, &urls);
+    if (ok && !urls.isEmpty())
+        selectedUrlsTemp = urls;
 
     if (id == ActionID::kPaste) {
         ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();

@@ -27,12 +27,15 @@
 #include "dfm-base/utils/fileutils.h"
 
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/delegate/delegateservice.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <QFileInfo>
 #include <QDateTime>
 #include <QApplication>
 #include <QSet>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -230,7 +233,12 @@ void BasicWidget::basicFill(const QUrl &url)
         fileCount->setVisible(false);
 
     if (fileType && fileType->RightValue().isEmpty()) {
-        QUrl localUrl = delegateServIns->urlTransform(url);
+        QUrl localUrl = url;
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+        if (ok && !urls.isEmpty())
+            localUrl = urls.first();
+
         QMimeType mimeType = MimeDatabase::mimeTypeForUrl(localUrl);
         MimeDatabase::FileType type = MimeDatabase::mimeFileTypeNameToEnum(mimeType.name());
         switch (static_cast<int>(type)) {

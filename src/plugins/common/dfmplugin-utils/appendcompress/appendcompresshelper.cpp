@@ -20,7 +20,7 @@
 */
 #include "appendcompresshelper.h"
 
-#include "dfm-framework/event/event.h"
+#include <dfm-framework/event/event.h>
 
 #include <QProcess>
 #include <QFileInfo>

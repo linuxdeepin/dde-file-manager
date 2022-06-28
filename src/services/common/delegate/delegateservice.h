@@ -52,11 +52,6 @@ public:
     TransparentHandleMap getTransparentHandles();
     bool isTransparent(const QUrl &url);
 
-    void registerUrlTransform(const KeyType &scheme, const UrlTransformHandle &handle);
-    bool isRegisterUrlTransform(const KeyType &scheme);
-    QUrl urlTransform(const QUrl &url);
-    QList<QUrl> urlsTransform(const QList<QUrl> &urls);
-
     static DelegateService *service();
 
 private:
@@ -65,7 +60,6 @@ private:
 
 private:
     TransparentHandleMap transparentHandles;
-    UrlTransformHandleMap urlTransformHandles;
 };
 
 }

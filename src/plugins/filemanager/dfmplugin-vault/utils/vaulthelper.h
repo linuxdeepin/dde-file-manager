@@ -84,6 +84,8 @@ public:
 
     static void recordTime(const QString &group, const QString &key);
 
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+
 public slots:
     void slotlockVault(int state);
 

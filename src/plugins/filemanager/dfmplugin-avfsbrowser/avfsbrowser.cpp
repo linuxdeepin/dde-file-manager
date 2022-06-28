@@ -30,7 +30,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/delegate/delegateservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -38,6 +37,8 @@
 #include "dfm-base/base/application/settings.h"
 
 #include <QDebug>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 using namespace dfmplugin_avfsbrowser;
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
@@ -63,13 +64,14 @@ bool AvfsBrowser::start()
     connect(Application::instance(), &Application::previewCompressFileChanged,
             this, [](bool enable) { enable ? AvfsUtils::mountAvfs() : AvfsUtils::unmountAvfs(); }, Qt::DirectConnection);
 
-    DSC_USE_NAMESPACE
-    DelegateService::service()->registerUrlTransform(AvfsUtils::scheme(), &AvfsUtils::avfsUrlToLocal);
     dfmplugin_menu_util::menuSceneRegisterScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator());
 
     DSB_FM_USE_NAMESPACE
     WorkspaceService::service()->addScheme(AvfsUtils::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(AvfsUtils::scheme(), AvfsMenuSceneCreator::name());
+
+    // follow event
+    dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", AvfsUtils::instance(), &AvfsUtils::urlsToLocal);
 
     regCrumb();
     claimSubScene("SortAndDisplayMenu");   //  yours last second but it's mine now

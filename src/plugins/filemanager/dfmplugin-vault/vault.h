@@ -23,7 +23,7 @@
 
 #include "dfmplugin_vault_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 namespace dfmplugin_vault {
 class Vault : public dpf::Plugin

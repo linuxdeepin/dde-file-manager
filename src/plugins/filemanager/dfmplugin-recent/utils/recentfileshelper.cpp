@@ -29,8 +29,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include <DDialog>
 #include <DRecentManager>
 #include <DDesktopServices>
@@ -38,6 +36,8 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QProcess>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMBASE_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -120,7 +120,13 @@ bool RecentFilesHelper::openFileLocation(const QUrl &url)
         return QProcess::startDetached("dde-file-manager", QStringList() << "--show-item" << urls << "--raw");
     }
 
-    return DDesktopServices::showFileItem(delegateServIns->urlTransform(url));
+    QUrl localUrl = url;
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+    if (ok && !urls.isEmpty())
+        localUrl = urls.first();
+
+    return DDesktopServices::showFileItem(localUrl);
 }
 
 void RecentFilesHelper::openFileLocation(const QList<QUrl> &urls)

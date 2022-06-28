@@ -25,8 +25,6 @@
 #include "action_defines.h"
 #include "menuutils.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -43,6 +41,8 @@
 #include <QFileInfo>
 #include <QApplication>
 #include <QStandardPaths>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 using namespace dfmplugin_menu;
 DFMBASE_USE_NAMESPACE
@@ -64,7 +64,6 @@ QString SendToMenuScene::name() const
 
 bool SendToMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
@@ -229,7 +228,6 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         auto f = DFMBASE_NAMESPACE::InfoFactory::create<AbstractFileInfo>(url, true);
         filePaths << f->absoluteFilePath();
     }
-    DSC_USE_NAMESPACE
     QString actId = act->property(ActionPropertyKey::kActionID).toString();
     if (actId == ActionID::kSendToBluetooth) {
         dpfSlotChannel->push("dfmplugin_utils", "slot_Bluetooth_SendFiles", filePaths, "");
@@ -238,8 +236,13 @@ void SendToMenuScenePrivate::handleActionTriggered(QAction *act)
         dpfSignalDispatcher->publish(GlobalEventType::kCopy, QApplication::activeWindow()->winId(), selectFiles, act->data().toUrl(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
     } else if (actId == ActionID::kSendToDesktop) {
         QString desktopPath = StandardPaths::location(StandardPaths::kDesktopPath);
-        const QList<QUrl> &urlsTrans = delegateServIns->urlsTransform(selectFiles);
-        for (const auto &url : urlsTrans) {
+        QList<QUrl> urlsTrans = selectFiles;
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urlsTrans, &urls);
+        if (ok && !urls.isEmpty())
+            urlsTrans = urls;
+
+        for (const QUrl &url : urlsTrans) {
             QString linkName = FileUtils::nonExistSymlinkFileName(url);
             QUrl linkUrl = QUrl::fromLocalFile(desktopPath + "/" + linkName);
             dpfSignalDispatcher->publish(GlobalEventType::kCreateSymlink,

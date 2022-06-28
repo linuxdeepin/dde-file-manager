@@ -31,13 +31,13 @@
 #include "dfm-base/utils/dialogmanager.h"
 #include "dfm-base/utils/fileutils.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include <dfm-framework/dpf.h>
 #include <dfm-io/dfmio_utils.h>
 
 #include <QAction>
 #include <QDebug>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -302,16 +302,22 @@ void ShortcutHelper::showFilesProperty()
 
 void ShortcutHelper::previewFiles()
 {
-    QList<QUrl> Urls = view->selectedUrlList();
-    QList<QUrl> selectUrls;
-    for (QUrl &url : Urls) {
-        selectUrls.append(delegateServIns->urlTransform(url));
-    }
-    Urls = view->model()->getCurrentDirFileUrls();
-    QList<QUrl> currentDirUrls;
-    for (QUrl &url : Urls) {
-        currentDirUrls.append(delegateServIns->urlTransform(url));
-    }
+    QList<QUrl> urls = view->selectedUrlList();
+
+    QList<QUrl> selectUrls = urls;
+    QList<QUrl> urlsTrans {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urls, &urlsTrans);
+    if (ok && !urlsTrans.isEmpty())
+        selectUrls = urlsTrans;
+
+    urls = view->model()->getCurrentDirFileUrls();
+
+    urlsTrans.clear();
+    QList<QUrl> currentDirUrls = urls;
+    ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", currentDirUrls, &urlsTrans);
+    if (ok && !urlsTrans.isEmpty())
+        currentDirUrls = urlsTrans;
+
     FileOperatorHelperIns->previewFiles(view, selectUrls, currentDirUrls);
 }
 

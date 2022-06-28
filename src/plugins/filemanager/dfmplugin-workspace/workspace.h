@@ -61,7 +61,7 @@ class Workspace : public dpf::Plugin
     DPF_EVENT_REG_HOOK(hook_ShortCut_PasteFiles)
     DPF_EVENT_REG_HOOK(hook_ShortCut_DeleteFiles)
     DPF_EVENT_REG_HOOK(hook_ShortCut_MoveToTrash)
-    DPF_EVENT_REG_HOOK(hook_ShortCut_EnterPressed);
+    DPF_EVENT_REG_HOOK(hook_ShortCut_EnterPressed)
 
 public:
     virtual void initialize() override;

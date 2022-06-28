@@ -4,10 +4,10 @@
 
 #include "dfm-base/base/urlroute.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include <dfm-framework/dpf.h>
 #include <dfm-framework/framework.h>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -60,7 +60,12 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
     if (!fromUrls.isEmpty()) {
         const QUrl &url = fromUrls.first();
         if (url.isValid()) {
-            QUrl localUrl = delegateServIns->urlTransform(url);
+            QUrl localUrl = url;
+            QList<QUrl> urls {};
+            bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+            if (ok && !urls.isEmpty())
+                localUrl = urls.first();
+
             QString localPath = localUrl.toLocalFile();
             if (localPath.startsWith(vaultRootPath))
                 return true;
@@ -68,7 +73,12 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
     }
 
     if (toUrl.isValid()) {
-        QUrl localUrl = delegateServIns->urlTransform(toUrl);
+        QUrl localUrl = toUrl;
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << localUrl, &urls);
+        if (ok && !urls.isEmpty())
+            localUrl = urls.first();
+
         QString localPath = localUrl.toLocalFile();
         if (localPath.startsWith(vaultRootPath))
             return true;

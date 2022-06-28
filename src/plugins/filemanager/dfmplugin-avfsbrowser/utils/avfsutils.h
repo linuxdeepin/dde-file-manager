@@ -32,9 +32,12 @@
 
 namespace dfmplugin_avfsbrowser {
 
-class AvfsUtils
+class AvfsUtils : public QObject
 {
+    Q_DISABLE_COPY(AvfsUtils)
 public:
+    static AvfsUtils *instance();
+
     static inline QString scheme()
     {
         return "avfs";
@@ -68,6 +71,11 @@ public:
 
     static QList<QVariantMap> seperateUrl(const QUrl &url);
     static QString parseDirIcon(const QString &path);
+
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+
+private:
+    explicit AvfsUtils(QObject *parent = nullptr);
 };
 
 }

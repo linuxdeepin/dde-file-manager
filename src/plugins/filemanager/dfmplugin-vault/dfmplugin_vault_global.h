@@ -21,9 +21,10 @@
 #ifndef DFMPLUGIN_VAULT_GLOBAL_H
 #define DFMPLUGIN_VAULT_GLOBAL_H
 
+#define DPVAULT_NAMESPACE dfmplugin_vault
+
 #define DPVAULT_BEGIN_NAMESPACE namespace dfmplugin_vault {
 #define DPVAULT_END_NAMESPACE }
 #define DPVAULT_USE_NAMESPACE using namespace dfmplugin_vault;
-#define DPVAULT_NAMESPACE dfmplugin_vault
 
 #endif   // DFMPLUGIN_VAULT_GLOBAL_H

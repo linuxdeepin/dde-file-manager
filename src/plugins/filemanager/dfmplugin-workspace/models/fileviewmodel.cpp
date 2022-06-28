@@ -29,8 +29,6 @@
 #include "events/workspaceeventsequence.h"
 #include "filesortfilterproxymodel.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -43,8 +41,9 @@
 #include <QList>
 #include <QMimeData>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DFMGLOBAL_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -486,10 +485,11 @@ bool FileViewModel::dropMimeData(const QMimeData *data, Qt::DropAction action, i
 
     QUrl targetUrl = itemFromIndex(parent)->url();
     AbstractFileInfoPointer targetFileInfo = itemFromIndex(parent)->fileInfo();
-    QList<QUrl> dropUrls;
-    for (QUrl &url : data->urls()) {
-        dropUrls << delegateServIns->urlTransform(url);
-    }
+    QList<QUrl> dropUrls = data->urls();
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", dropUrls, &urls);
+    if (ok && !urls.isEmpty())
+        dropUrls = urls;
 
     if (targetFileInfo->isSymLink()) {
         // TODO: trans 'targetUrl' to source url

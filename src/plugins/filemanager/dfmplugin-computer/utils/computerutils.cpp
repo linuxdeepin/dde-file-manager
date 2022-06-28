@@ -25,8 +25,6 @@
 #include "utils/computerdatastruct.h"
 #include "deviceproperty/devicepropertydialog.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/entry/entryfileinfo.h"
@@ -44,6 +42,8 @@
 #include <QApplication>
 
 #include <unistd.h>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 using namespace dfmplugin_computer;
 DFMBASE_USE_NAMESPACE
@@ -346,8 +346,11 @@ QUrl ComputerUtils::convertToDevUrl(const QUrl &url)
         return url;
 
     QUrl converted = url;
-    if (delegateServIns->isRegistedTransparentHandle(converted.scheme()))   // first convert it to local file
-        converted = delegateServIns->urlTransform(converted);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << converted, &urls);
+
+    if (ok && !urls.isEmpty())
+        converted = urls.first();
 
     QString devId;
     if (converted.scheme() == Global::Scheme::kFile && DevProxyMng->isMptOfDevice(converted.path(), devId)) {

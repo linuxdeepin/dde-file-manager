@@ -230,6 +230,18 @@ bool RecentManager::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *map
     return false;
 }
 
+bool RecentManager::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != RecentManager::scheme())
+            return false;
+        (*urls).push_back(urlTransform(url));
+    }
+    return true;
+}
+
 RecentManager::RecentManager(QObject *parent)
     : QObject(parent)
 {

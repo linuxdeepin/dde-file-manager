@@ -45,6 +45,17 @@ using namespace dfmplugin_optical;
 #define BURN_SEG_ONDISC "disc_files"
 #define BURN_SEG_STAGING "staging_files"
 
+OpticalHelper *OpticalHelper::instance()
+{
+    static OpticalHelper instance;
+    return &instance;
+}
+
+QString OpticalHelper::scheme()
+{
+    return Global::Scheme::kBurn;
+}
+
 QIcon OpticalHelper::icon()
 {
     return QIcon::fromTheme(iconString());
@@ -243,6 +254,23 @@ DSC_NAMESPACE::FileOperationsService *OpticalHelper::fileOperationsServIns()
 DSC_NAMESPACE::DelegateService *OpticalHelper::dlgateServIns()
 {
     return delegateServIns;
+}
+
+bool OpticalHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
+{
+    if (!urls)
+        return false;
+    for (const QUrl &url : origins) {
+        if (url.scheme() != OpticalHelper::scheme())
+            return false;
+        (*urls).push_back(tansToLocalFile(url));
+    }
+    return true;
+}
+
+OpticalHelper::OpticalHelper(QObject *parent)
+    : QObject(parent)
+{
 }
 
 QRegularExpression OpticalHelper::burnRxp()

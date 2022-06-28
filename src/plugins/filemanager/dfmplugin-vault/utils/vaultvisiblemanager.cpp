@@ -102,8 +102,6 @@ void VaultVisibleManager::pluginServiceRegister()
         propertyServIns->registerBasicViewFiledExpand(ServiceManager::basicViewFieldFunc, VaultHelper::instance()->scheme());
         propertyServIns->registerFilterControlField(VaultHelper::instance()->scheme(), Property::FilePropertyControlFilter::kPermission);
 
-        delegateServIns->registerUrlTransform(VaultHelper::instance()->scheme(), VaultHelper::vaultToLocalUrl);
-
         dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
         dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");
         dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);

@@ -28,12 +28,13 @@
 
 #include "services/common/propertydialog/property_defines.h"
 #include "services/common/preview/preview_defines.h"
-#include "services/common/delegate/delegateservice.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/schemefactory.h"
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -130,7 +131,10 @@ void FileOperatorHelper::copyFiles(const FileView *view)
 
     QList<QUrl> selectedUrls = view->selectedUrlList();
     // trans url to local
-    selectedUrls = delegateServIns->urlsTransform(selectedUrls);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", selectedUrls, &urls);
+    if (ok && !urls.isEmpty())
+        selectedUrls = urls;
 
     if (selectedUrls.size() == 1) {
         const AbstractFileInfoPointer &fileInfo = InfoFactory::create<AbstractFileInfo>(selectedUrls.first());
@@ -154,7 +158,10 @@ void FileOperatorHelper::cutFiles(const FileView *view)
     if (!fileInfo || !fileInfo->isWritable())
         return;
     QList<QUrl> selectedUrls = view->selectedUrlList();
-    selectedUrls = delegateServIns->urlsTransform(selectedUrls);
+    QList<QUrl> urls {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", selectedUrls, &urls);
+    if (ok && !urls.isEmpty())
+        selectedUrls = urls;
 
     qInfo() << "selected urls: " << selectedUrls
             << " currentUrl: " << view->rootUrl();

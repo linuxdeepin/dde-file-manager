@@ -38,9 +38,13 @@ inline constexpr char kBurnSegStaging[] { "staging_files" };
 
 namespace dfmplugin_optical {
 
-class OpticalHelper
+class OpticalHelper : public QObject
 {
+    Q_DISABLE_COPY(OpticalHelper)
 public:
+    static OpticalHelper *instance();
+
+    static QString scheme();
     static QIcon icon();
     static QString iconString();
     static QUrl localStagingRoot();
@@ -62,7 +66,12 @@ public:
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
     static DSC_NAMESPACE::DelegateService *dlgateServIns();
+
+    bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+
 private:
+    explicit OpticalHelper(QObject *parent = nullptr);
+
     static QRegularExpression burnRxp();
 };
 

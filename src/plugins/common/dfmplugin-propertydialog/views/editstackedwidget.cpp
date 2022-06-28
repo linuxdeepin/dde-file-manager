@@ -20,8 +20,6 @@
 */
 #include "editstackedwidget.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -36,6 +34,8 @@
 #include <QFileInfo>
 #include <QLabel>
 #include <QPainterPath>
+
+Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -277,7 +277,12 @@ void EditStackedWidget::showTextShowFrame()
     if (fileNameEdit->isCanceled())
         initTextShowFrame(newName);
     else {
-        QUrl oldUrl = delegateServIns->urlTransform(filerUrl);
+        QUrl oldUrl = filerUrl;
+        QList<QUrl> urls {};
+        bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", QList<QUrl>() << oldUrl, &urls);
+        if (ok && !urls.isEmpty())
+            oldUrl = urls.first();
+
         QUrl newUrl = QUrl::fromLocalFile(QFileInfo(oldUrl.path()).absolutePath() + "/" + newName);
 
         if (oldUrl == newUrl) {
