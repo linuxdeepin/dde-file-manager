@@ -19,22 +19,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "iteratorsearcher.h"
-#include "search/utils/searchhelper.h"
+#include "utils/searchhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
 
 #include <QDebug>
 
-namespace {
 static int kEmitInterval = 50;   // 推送时间间隔（ms
-const char *const kFilterFolders = "^/(dev|proc|sys|run|tmpfs).*$";
-}
+static constexpr char kFilterFolders[] = "^/(dev|proc|sys|run|tmpfs).*$";
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_USE_NAMESPACE
 
 IteratorSearcher::IteratorSearcher(const QUrl &url, const QString &key, QObject *parent)
-    : AbstractSearcher(url, RegularExpression::checkWildcardAndToRegularExpression(key), parent)
+    : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(key), parent)
 {
     searchPathList << url;
     regex = QRegularExpression(keyword, QRegularExpression::CaseInsensitiveOption);
@@ -140,5 +138,3 @@ void IteratorSearcher::doSearch()
         iterator.clear();
     }
 }
-
-DSB_FM_END_NAMESPACE

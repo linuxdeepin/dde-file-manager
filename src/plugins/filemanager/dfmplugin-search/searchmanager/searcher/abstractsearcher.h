@@ -21,12 +21,12 @@
 #ifndef ABSTRACTSEARCHER_H
 #define ABSTRACTSEARCHER_H
 
-#include "dfm_filemanager_service_global.h"
+#include "dfmplugin_search_global.h"
 
 #include <QObject>
 #include <QUrl>
 
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_BEGIN_NAMESPACE
 
 class AbstractSearcher : public QObject
 {
@@ -52,6 +52,6 @@ protected:
     QString keyword;
 };
 
-DSB_FM_END_NAMESPACE
+DPSEARCH_END_NAMESPACE
 
 #endif   // ABSTRACTSEARCHER_H

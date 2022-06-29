@@ -21,11 +21,11 @@
 #ifndef FULLTEXTSEARCHER_H
 #define FULLTEXTSEARCHER_H
 
-#include "search/searcher/abstractsearcher.h"
+#include "searchmanager/searcher/abstractsearcher.h"
 
 #include <QObject>
 
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_BEGIN_NAMESPACE
 
 class FullTextSearcherPrivate;
 class FullTextSearcher : public AbstractSearcher
@@ -48,6 +48,6 @@ private:
     FullTextSearcherPrivate *d = nullptr;
 };
 
-DSB_FM_END_NAMESPACE
+DPSEARCH_END_NAMESPACE
 
 #endif   // FULLTEXTSEARCHER_H

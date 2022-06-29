@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     liuzhangjian<liqianga@uniontech.com>
+ * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
- * Maintainer: liuzhangjian<liqianga@uniontech.com>
+ * Maintainer: liuzhangjian<liuzhangjian@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,28 +18,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCH_DEFINES_H
-#define SEARCH_DEFINES_H
+#include "abstractsearcher.h"
 
-#include "dfm_filemanager_service_global.h"
+DPSEARCH_USE_NAMESPACE
 
-#include <QObject>
-
-DSB_FM_BEGIN_NAMESPACE
-
-namespace Search {
-
-struct CustomSearchInfo
+AbstractSearcher::AbstractSearcher(const QUrl &url, const QString &key, QObject *parent)
+    : QObject(parent),
+      searchUrl(url),
+      keyword(key)
 {
-    QString scheme;
-    QString redirectedPath;
-    bool isDisableSearch { false };
-};
-
 }
-
-DSB_FM_END_NAMESPACE
-
-Q_DECLARE_METATYPE(DSB_FM_NAMESPACE::Search::CustomSearchInfo);
-
-#endif   // SEARCH_DEFINES_H

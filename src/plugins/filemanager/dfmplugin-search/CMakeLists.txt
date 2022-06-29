@@ -18,6 +18,11 @@ if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
 endif()
 
 find_package(Dtk REQUIRED Widget REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+#full-text search dependences
+pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
+pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 
 add_library(${PROJECT_NAME}
     SHARED
@@ -37,6 +42,8 @@ target_link_libraries(${PROJECT_NAME}
     DFMSERVICE::common
     DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
+    PkgConfig::Lucene
+    PkgConfig::Docparser
 )
 
 #install library file

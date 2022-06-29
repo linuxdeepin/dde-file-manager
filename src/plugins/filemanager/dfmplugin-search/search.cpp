@@ -21,16 +21,17 @@
 #include "search.h"
 #include "events/searcheventreceiver.h"
 #include "utils/searchhelper.h"
+#include "utils/custommanager.h"
 #include "fileinfo/searchfileinfo.h"
 #include "iterator/searchdiriterator.h"
 #include "watcher/searchfilewatcher.h"
 #include "topwidget/advancesearchbar.h"
 #include "menus/searchmenuscene.h"
+#include "searchmanager/searchmanager.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/search/searchservice.h"
 
 #include "dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
@@ -52,7 +53,7 @@ void Search::initialize()
     DirIteratorFactory::regClass<SearchDirIterator>(SearchHelper::scheme());
     WatcherFactory::regClass<SearchFileWatcher>(SearchHelper::scheme());
 
-    subscribeEvent();
+    bindEvents();
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Search::onWindowOpened, Qt::DirectConnection);
 }
@@ -66,16 +67,6 @@ bool Search::start()
 dpf::Plugin::ShutdownFlag Search::stop()
 {
     return kSync;
-}
-
-void Search::subscribeEvent()
-{
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Search_Start", SearchEventReceiverIns, &SearchEventReceiver::handleSearch);
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Search_Stop", SearchEventReceiverIns, &SearchEventReceiver::handleStopSearch);
-    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_FilterView_Show", SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
-
-    followEvent();
 }
 
 void Search::onWindowOpened(quint64 windId)
@@ -115,14 +106,36 @@ void Search::regSearchToWorkspace()
     WorkspaceService::service()->addCustomTopWidget(info);
 }
 
-void Search::followEvent()
+void Search::bindEvents()
 {
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", SearchHelper::instance(), &SearchHelper::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", SearchHelper::instance(), &SearchHelper::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", SearchHelper::instance(), &SearchHelper::customRoleData);
+    // hook events
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles",
+                            SearchHelper::instance(), &SearchHelper::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName",
+                            SearchHelper::instance(), &SearchHelper::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData",
+                            SearchHelper::instance(), &SearchHelper::customRoleData);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
+                            SearchHelper::instance(), &SearchHelper::blockPaste);
 
-    // disable paste
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", SearchHelper::instance(), &SearchHelper::blockPaste);
+    // subscribe signal events
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Search_Start",
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_Search_Stop",
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleStopSearch);
+    dpfSignalDispatcher->subscribe("dfmplugin_titlebar", "signal_FilterView_Show",
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleShowAdvanceSearchBar);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl,
+                                   SearchEventReceiverIns, &SearchEventReceiver::handleUrlChanged);
+
+    // connect self slot events
+    static constexpr auto selfSpace { DPF_MACRO_TO_STR(DPSEARCH_NAMESPACE) };
+    dpfSlotChannel->connect(selfSpace, "slot_Custom_Register",
+                            CustomManager::instance(), &CustomManager::registerCustomInfo);
+    dpfSlotChannel->connect(selfSpace, "slot_Custom_IsDisableSearch",
+                            CustomManager::instance(), &CustomManager::isDisableSearch);
+    dpfSlotChannel->connect(selfSpace, "slot_Custom_RedirectedPath",
+                            CustomManager::instance(), &CustomManager::redirectedPath);
 }
 
 }

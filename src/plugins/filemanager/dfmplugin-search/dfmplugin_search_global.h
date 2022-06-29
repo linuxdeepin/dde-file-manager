@@ -30,6 +30,11 @@ DPSEARCH_BEGIN_NAMESPACE
 namespace SearchActionId {
 inline constexpr char kOpenFileLocation[] { "open-file-location" };
 }
+
+namespace CustomKey {
+inline constexpr char kDisableSearch[] { "Property_Key_DisableSearch" };
+inline constexpr char kRedirectedPath[] { "Property_Key_RedirectedPath" };
+}
 DPSEARCH_END_NAMESPACE
 
 #endif   // DFMPLUGIN_SEARCH_GLOBAL_H

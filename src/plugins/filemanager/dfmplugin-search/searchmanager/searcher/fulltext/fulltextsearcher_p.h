@@ -21,7 +21,7 @@
 #ifndef FULLTEXTSEARCHER_P_H
 #define FULLTEXTSEARCHER_P_H
 
-#include "search/searcher/abstractsearcher.h"
+#include "searchmanager/searcher/abstractsearcher.h"
 
 #include <lucene++/LuceneHeaders.h>
 
@@ -30,7 +30,7 @@
 #include <QMutex>
 #include <QTime>
 
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_BEGIN_NAMESPACE
 
 class FullTextSearcher;
 class FullTextSearcherPrivate : public QObject
@@ -95,6 +95,6 @@ private:
     FullTextSearcher *q = nullptr;
 };
 
-DSB_FM_END_NAMESPACE
+DPSEARCH_END_NAMESPACE
 
 #endif   // FULLTEXTSEARCHER_P_H

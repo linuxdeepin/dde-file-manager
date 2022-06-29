@@ -34,7 +34,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/search/searchservice.h"
 #include "services/common/fileoperations/fileoperations_defines.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
 
@@ -152,11 +151,9 @@ void MyShares::addToSidebar()
 
 void MyShares::regMyShareToSearch()
 {
-    DSB_FM_USE_NAMESPACE
-    Search::CustomSearchInfo info;
-    info.scheme = ShareUtils::scheme();
-    info.isDisableSearch = true;
-    SearchService::service()->regCustomSearchInfo(info);
+    QVariantMap property;
+    property["Property_Key_DisableSearch"] = true;
+    dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", ShareUtils::scheme(), property);
 }
 
 void MyShares::beMySubScene(const QString &scene)

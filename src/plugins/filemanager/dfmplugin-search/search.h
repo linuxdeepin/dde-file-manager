@@ -32,17 +32,22 @@ class Search : public dpf::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "search.json")
 
+    DPF_EVENT_NAMESPACE(DPSEARCH_NAMESPACE)
+    // slot events
+    DPF_EVENT_REG_SLOT(slot_Custom_Register)
+    DPF_EVENT_REG_SLOT(slot_Custom_IsDisableSearch)
+    DPF_EVENT_REG_SLOT(slot_Custom_RedirectedPath)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual ShutdownFlag stop() override;
-    void subscribeEvent();
 
 private slots:
     void onWindowOpened(quint64 windId);
     void regSearchCrumbToTitleBar();
     void regSearchToWorkspace();
-    void followEvent();
+    void bindEvents();
 };
 
 }

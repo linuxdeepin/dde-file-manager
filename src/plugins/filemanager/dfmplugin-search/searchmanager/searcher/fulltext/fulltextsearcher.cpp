@@ -21,7 +21,7 @@
 #include "fulltextsearcher.h"
 #include "fulltextsearcher_p.h"
 #include "chineseanalyzer.h"
-#include "search/utils/searchhelper.h"
+#include "utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/application.h"
@@ -45,17 +45,15 @@
 #include <exception>
 #include <docparser.h>
 
-namespace {
-const char *const kFilterFolders = "^/(boot|dev|proc|sys|run|lib|usr|data/home).*$";
-const char *const kSupportFiles = "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
-                                  "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)";
+static constexpr char kFilterFolders[] = "^/(boot|dev|proc|sys|run|lib|usr|data/home).*$";
+static constexpr char kSupportFiles[] = "(rtf)|(odt)|(ods)|(odp)|(odg)|(docx)|(xlsx)|(pptx)|(ppsx)|(md)|"
+                                        "(xls)|(xlsb)|(doc)|(dot)|(wps)|(ppt)|(pps)|(txt)|(pdf)|(dps)";
 static int kMaxResultNum = 100000;   // 最大搜索结果数
 static int kEmitInterval = 50;   // 推送时间间隔
-}
 
 using namespace Lucene;
 DFMBASE_USE_NAMESPACE
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_USE_NAMESPACE
 
 bool FullTextSearcherPrivate::isIndexCreating = false;
 FullTextSearcherPrivate::FullTextSearcherPrivate(FullTextSearcher *parent)
@@ -381,7 +379,7 @@ bool FullTextSearcherPrivate::doSearch(const QString &path, const QString &keywo
                 if (modifyTime.toStdWString() != storeTime) {
                     continue;
                 } else {
-                    if (!SearchHelper::isHiddenFile(StringUtils::toUTF8(resultPath).c_str(), hiddenFileHash, searchPath)) {
+                    if (!SearchHelper::instance()->isHiddenFile(StringUtils::toUTF8(resultPath).c_str(), hiddenFileHash, searchPath)) {
                         if (isDelDataPrefix)
                             resultPath.insert(0, L"/data");
                         QMutexLocker lk(&mutex);
@@ -518,5 +516,3 @@ QList<QUrl> FullTextSearcher::takeAll()
     QMutexLocker lk(&d->mutex);
     return std::move(d->allResults);
 }
-
-DSB_FM_END_NAMESPACE

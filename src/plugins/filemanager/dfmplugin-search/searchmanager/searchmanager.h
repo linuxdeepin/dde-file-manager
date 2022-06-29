@@ -18,45 +18,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ITERATORSEARCHER_H
-#define ITERATORSEARCHER_H
+#ifndef SEARCHMANAGER_H
+#define SEARCHMANAGER_H
 
-#include "search/searcher/abstractsearcher.h"
+#include "dfmplugin_search_global.h"
 
-#include <QTime>
-#include <QMutex>
-#include <QRegularExpression>
+#include <QObject>
 
-DSB_FM_BEGIN_NAMESPACE
+namespace dfmplugin_search {
 
-class IteratorSearcher : public AbstractSearcher
+class MainController;
+class SearchManager : public QObject
 {
     Q_OBJECT
-    friend class TaskCommander;
-    friend class TaskCommanderPrivate;
+    Q_DISABLE_COPY(SearchManager)
+
+public:
+    static SearchManager *instance();
+
+    void init();
+    bool search(const QString &taskId, const QUrl &url, const QString &keyword);
+    QList<QUrl> matchedResults(const QString &taskId);
+    void stop(const QString &taskId);
+
+signals:
+    void matched(const QString &taskId);
+    void searchCompleted(const QString &taskId);
+    void searchStoped(const QString &taskId);
 
 private:
-    explicit IteratorSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
+    explicit SearchManager(QObject *parent = nullptr);
+    ~SearchManager();
 
-    bool search() override;
-    void stop() override;
-    bool hasItem() const override;
-    QList<QUrl> takeAll() override;
-    void tryNotify();
-    void doSearch();
-
-private:
-    QAtomicInt status = kReady;
-    QList<QUrl> allResults;
-    mutable QMutex mutex;
-    QList<QUrl> searchPathList;
-    QRegularExpression regex;
-
-    //计时
-    QTime notifyTimer;
-    int lastEmit = 0;
+    MainController *mainController = nullptr;
 };
 
-DSB_FM_END_NAMESPACE
+}
 
-#endif   // ITERATORSEARCHER_H
+#endif   // SEARCHMANAGER_H

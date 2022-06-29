@@ -34,6 +34,13 @@ TraversalDirThread::TraversalDirThread(const QUrl &url,
                                        QObject *parent)
     : QThread(parent), dirUrl(url), nameFilters(nameFilters), filters(filters), flags(flags)
 {
+    if (dirUrl.isValid() /*&& !UrlRoute::isVirtual(dirUrl)*/) {
+        dirIterator = DirIteratorFactory::create<AbstractDirIterator>(url, nameFilters, filters, flags);
+        if (!dirIterator) {
+            qWarning() << "Failed create dir iterator from" << url;
+            return;
+        }
+    }
 }
 
 TraversalDirThread::~TraversalDirThread()
@@ -72,13 +79,8 @@ void TraversalDirThread::stopAndDeleteLater()
 
 void TraversalDirThread::run()
 {
-    if (dirUrl.isValid() /*&& !UrlRoute::isVirtual(dirUrl)*/) {
-        dirIterator = DirIteratorFactory::create<AbstractDirIterator>(dirUrl, nameFilters, filters, flags);
-        if (!dirIterator) {
-            qWarning() << "Failed create dir iterator from" << dirUrl;
-            return;
-        }
-    }
+    if (dirIterator.isNull())
+        return;
 
     while (dirIterator->hasNext()) {
         if (stopFlag)

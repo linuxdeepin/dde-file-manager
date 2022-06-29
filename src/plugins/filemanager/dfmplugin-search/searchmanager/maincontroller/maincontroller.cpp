@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "maincontroller.h"
-#include "search/searcher/fulltextsearcher/fulltextsearcher.h"
+#include "searchmanager/searcher/fulltext/fulltextsearcher.h"
 
 #include "dfm-base/base/application/settings.h"
 
@@ -31,7 +31,7 @@
 #include <QDebug>
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_USE_NAMESPACE
 
 MainController::MainController(QObject *parent)
     : QObject(parent)
@@ -119,5 +119,3 @@ void MainController::onFileChanged(const QString &path)
         });
     }
 }
-
-DSB_FM_END_NAMESPACE

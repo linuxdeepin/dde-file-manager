@@ -27,7 +27,6 @@
 #include "views/titlebarwidget.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/filemanager/search/searchservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -233,8 +232,8 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         TitleBarEventCaller::sendCd(sender, url);
     } else {
         if (currentUrl.isValid()) {
-            auto searchInfo = SearchService::service()->findCustomSearchInfo(currentUrl.scheme());
-            if (searchInfo.isDisableSearch) {
+            bool isDisableSearch = dpfSlotChannel->push("dfmplugin_search", "slot_Custom_IsDisableSearch", currentUrl).toBool();
+            if (isDisableSearch) {
                 qInfo() << "search : current directory disable to search! " << currentUrl;
                 return;
             }

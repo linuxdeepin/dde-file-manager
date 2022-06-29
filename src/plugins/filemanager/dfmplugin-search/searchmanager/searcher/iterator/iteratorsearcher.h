@@ -18,48 +18,45 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef ANYTHINGSEARCH_H
-#define ANYTHINGSEARCH_H
+#ifndef ITERATORSEARCHER_H
+#define ITERATORSEARCHER_H
 
-#include "search/searcher/abstractsearcher.h"
+#include "searchmanager/searcher/abstractsearcher.h"
 
-#include <QSharedPointer>
 #include <QTime>
 #include <QMutex>
+#include <QRegularExpression>
 
-class ComDeepinAnythingInterface;
+DPSEARCH_BEGIN_NAMESPACE
 
-DSB_FM_BEGIN_NAMESPACE
-
-class AnythingSearcher : public AbstractSearcher
+class IteratorSearcher : public AbstractSearcher
 {
     Q_OBJECT
     friend class TaskCommander;
     friend class TaskCommanderPrivate;
 
 private:
-    explicit AnythingSearcher(const QUrl &url, const QString &keyword, bool dataFlag, QObject *parent = nullptr);
-    virtual ~AnythingSearcher() override;
+    explicit IteratorSearcher(const QUrl &url, const QString &key, QObject *parent = nullptr);
 
-    static bool isSupported(const QUrl &url, bool &isPrependData);
     bool search() override;
     void stop() override;
     bool hasItem() const override;
     QList<QUrl> takeAll() override;
     void tryNotify();
+    void doSearch();
 
 private:
-    ComDeepinAnythingInterface *anythingInterface = nullptr;
     QAtomicInt status = kReady;
     QList<QUrl> allResults;
     mutable QMutex mutex;
-    bool isPrependData;
+    QList<QUrl> searchPathList;
+    QRegularExpression regex;
 
     //计时
     QTime notifyTimer;
     int lastEmit = 0;
 };
 
-DSB_FM_END_NAMESPACE
+DPSEARCH_END_NAMESPACE
 
-#endif   // ANYTHINGSEARCH_H
+#endif   // ITERATORSEARCHER_H

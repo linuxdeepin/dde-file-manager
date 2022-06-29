@@ -65,6 +65,16 @@ public:
     // disable paste
     bool blockPaste(quint64 winId, const QUrl &to);
 
+    QString checkWildcardAndToRegularExpression(const QString &pattern);
+    QString wildcardToRegularExpression(const QString &pattern);
+    inline QString anchoredPattern(const QString &expression)
+    {
+        return QLatin1String("\\A(?:")
+                + expression
+                + QLatin1String(")\\z");
+    }
+    bool isHiddenFile(const QString &fileName, QHash<QString, QSet<QString>> &filters, const QString &searchPath);
+
 private:
     explicit SearchHelper(QObject *parent = nullptr);
     ~SearchHelper() override;

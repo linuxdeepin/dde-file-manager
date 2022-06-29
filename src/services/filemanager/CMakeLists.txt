@@ -37,24 +37,6 @@ FILE(GLOB DETAILSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*/*.cpp"
 )
 
-FILE(GLOB SEARCH_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/task/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/maincontroller/task/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/fulltextsearcher/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/fulltextsearcher/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/filenamesearcher/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/searcher/filenamesearcher/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/search/utils/*.cpp"
-)
-
 FILE(GLOB COMMAND_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/command/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/command/*.cpp"
@@ -83,11 +65,6 @@ add_library(
 
 find_package(Dtk REQUIRED Widget REQUIRED)
 find_package(Qt5 COMPONENTS X11Extras REQUIRED)
-find_package(PkgConfig REQUIRED)
-
-#full-text search dependences
-pkg_check_modules(Lucene REQUIRED IMPORTED_TARGET liblucene++ liblucene++-contrib)
-pkg_check_modules(Docparser REQUIRED IMPORTED_TARGET docparser)
 
 add_library(DFMSERVICE::filemanager ALIAS ${PROJECT_NAME})
 
@@ -108,8 +85,6 @@ target_link_libraries(${PROJECT_NAME}
     DFMSERVICE::common
     Qt5::X11Extras
     ${DtkWidget_LIBRARIES}
-    PkgConfig::Lucene
-    PkgConfig::Docparser
 )
 
 #install library file

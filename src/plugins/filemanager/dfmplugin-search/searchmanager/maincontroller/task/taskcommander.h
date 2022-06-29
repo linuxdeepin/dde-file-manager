@@ -18,15 +18,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "abstractsearcher.h"
+#ifndef TASKCOMMANDER_H
+#define TASKCOMMANDER_H
 
-DSB_FM_BEGIN_NAMESPACE
+#include "dfmplugin_search_global.h"
 
-AbstractSearcher::AbstractSearcher(const QUrl &url, const QString &key, QObject *parent)
-    : QObject(parent),
-      searchUrl(url),
-      keyword(key)
+#include <QObject>
+
+DPSEARCH_BEGIN_NAMESPACE
+
+class TaskCommanderPrivate;
+class TaskCommander : public QObject
 {
-}
+    Q_OBJECT
+    friend class MainController;
 
-DSB_FM_END_NAMESPACE
+private:
+    explicit TaskCommander(QString taskId, const QUrl &url, const QString &keyword, QObject *parent = nullptr);
+    QString taskID() const;
+    QList<QUrl> getResults() const;
+    bool start();
+    void stop();
+    void deleteSelf();
+    void createSearcher(const QUrl &url, const QString &keyword);
+
+signals:
+    void matched(QString taskId);
+    void finished(QString taskId);
+
+private:
+    TaskCommanderPrivate *d;
+};
+
+DPSEARCH_END_NAMESPACE
+
+#endif   // TASKCOMMANDER_H

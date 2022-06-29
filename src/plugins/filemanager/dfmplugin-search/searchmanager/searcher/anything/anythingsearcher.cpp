@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "anythingsearcher.h"
-#include "search/utils/searchhelper.h"
+#include "utils/searchhelper.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dbusservice/dbus_interface/anything_interface.h"
@@ -27,17 +27,15 @@
 #include <QDBusReply>
 #include <QDebug>
 
-namespace {
 static int kEmitInterval = 50;   // 推送时间间隔（ms）
 static qint32 kMaxCount = 100;   // 最大搜索结果数量
 static qint64 kMaxTime = 500;   // 最大搜索时间（ms）
-}
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_USE_NAMESPACE
 
 AnythingSearcher::AnythingSearcher(const QUrl &url, const QString &keyword, bool dataFlag, QObject *parent)
-    : AbstractSearcher(url, RegularExpression::checkWildcardAndToRegularExpression(keyword), parent),
+    : AbstractSearcher(url, SearchHelper::instance()->checkWildcardAndToRegularExpression(keyword), parent),
       isPrependData(dataFlag)
 {
     anythingInterface = new ComDeepinAnythingInterface("com.deepin.anything",
@@ -100,7 +98,7 @@ bool AnythingSearcher::search()
             if (status.loadAcquire() != kRuning)
                 return false;
 
-            if (!SearchHelper::isHiddenFile(item, hiddenFileHash, searchDirList.first())) {
+            if (!SearchHelper::instance()->isHiddenFile(item, hiddenFileHash, searchDirList.first())) {
                 // 去除掉添加的data前缀
                 if (isPrependData && item.startsWith("/data"))
                     item = item.mid(5);
@@ -181,5 +179,3 @@ bool AnythingSearcher::isSupported(const QUrl &url, bool &isPrependData)
 
     return true;
 }
-
-DSB_FM_END_NAMESPACE

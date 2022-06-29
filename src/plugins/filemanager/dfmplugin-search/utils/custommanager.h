@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
  * Author:     liuzhangjian<liuzhangjian@uniontech.com>
  *
@@ -18,30 +18,33 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SEARCHSERVICE_P_H
-#define SEARCHSERVICE_P_H
+#ifndef CUSTOMMANAGER_H
+#define CUSTOMMANAGER_H
 
-#include "search/searchservice.h"
-#include "search/maincontroller/maincontroller.h"
+#include "dfmplugin_search_global.h"
+#include <QVariantMap>
 
-#include <QFuture>
+namespace dfmplugin_search {
 
-DSB_FM_BEGIN_NAMESPACE
-
-class SearchServicePrivate : public QObject
+class CustomManager : public QObject
 {
     Q_OBJECT
-    friend class SearchService;
-
+    Q_DISABLE_COPY(CustomManager)
 public:
-    explicit SearchServicePrivate(SearchService *parent);
-    ~SearchServicePrivate();
+    static CustomManager *instance();
+
+    bool registerCustomInfo(const QString &scheme, const QVariantMap &properties);
+    bool isRegisted(const QString &scheme) const;
+    bool isDisableSearch(const QUrl &url);
+    QString redirectedPath(const QUrl &url);
 
 private:
-    MainController *mainController = nullptr;
-    QHash<QString, Search::CustomSearchInfo> customSearchInfoHash;
+    explicit CustomManager();
+
+    using CustomInfos = QMap<QString, QVariantMap>;
+    CustomInfos customInfos;
 };
 
-DSB_FM_END_NAMESPACE
+}
 
-#endif   // SEARCHSERVICE_P_H
+#endif   // CUSTOMMANAGER_H

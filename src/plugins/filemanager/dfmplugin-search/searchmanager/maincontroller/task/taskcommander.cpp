@@ -20,13 +20,13 @@
  */
 #include "taskcommander.h"
 #include "taskcommander_p.h"
-#include "search/searcher/fulltextsearcher/fulltextsearcher.h"
-#include "search/searcher/filenamesearcher/anythingsearcher.h"
-#include "search/searcher/filenamesearcher/iteratorsearcher.h"
+#include "searchmanager/searcher/fulltext/fulltextsearcher.h"
+#include "searchmanager/searcher/anything/anythingsearcher.h"
+#include "searchmanager/searcher/iterator/iteratorsearcher.h"
 
 #include <QtConcurrent>
 
-DSB_FM_BEGIN_NAMESPACE
+DPSEARCH_USE_NAMESPACE
 
 TaskCommanderPrivate::TaskCommanderPrivate(TaskCommander *parent)
     : QObject(parent),
@@ -165,5 +165,3 @@ void TaskCommander::createSearcher(const QUrl &url, const QString &keyword)
     connect(searcher, &AbstractSearcher::unearthed, d, &TaskCommanderPrivate::onUnearthed, Qt::DirectConnection);
     d->allSearchers << searcher;
 }
-
-DSB_FM_END_NAMESPACE

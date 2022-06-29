@@ -31,7 +31,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/search/searchservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 
@@ -154,10 +153,9 @@ void Computer::regComputerCrumbToTitleBar()
 
 void Computer::regComputerToSearch()
 {
-    Search::CustomSearchInfo info;
-    info.scheme = ComputerUtils::scheme();
-    info.redirectedPath = "/";
-    SearchService::service()->regCustomSearchInfo(info);
+    QVariantMap property;
+    property["Property_Key_RedirectedPath"] = "/";
+    dpfSlotChannel->push("dfmplugin_search", "slot_Custom_Register", ComputerUtils::scheme(), property);
 }
 
 void Computer::bindEvents()

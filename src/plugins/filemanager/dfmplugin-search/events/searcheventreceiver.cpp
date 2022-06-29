@@ -21,12 +21,10 @@
 #include "searcheventreceiver.h"
 #include "searcheventcaller.h"
 #include "utils/searchhelper.h"
-
-#include "services/filemanager/search/searchservice.h"
+#include "searchmanager/searchmanager.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 namespace dfmplugin_search {
 
@@ -55,7 +53,7 @@ void SearchEventReceiver::handleSearch(quint64 winId, const QString &keyword)
 
 void SearchEventReceiver::handleStopSearch(quint64 winId)
 {
-    SearchService::service()->stop(QString::number(winId));
+    SearchManager::instance()->stop(QString::number(winId));
 }
 
 void SearchEventReceiver::handleShowAdvanceSearchBar(quint64 winId, bool visible)

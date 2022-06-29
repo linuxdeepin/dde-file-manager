@@ -30,13 +30,11 @@ QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
 QT_END_NAMESPACE
 
-DSB_FM_BEGIN_NAMESPACE
-
+DPSEARCH_BEGIN_NAMESPACE
 class MainController : public QObject
 {
     Q_OBJECT
-    friend class SearchService;
-    friend class SearchServicePrivate;
+    friend class SearchManager;
 
 private:
     explicit MainController(QObject *parent = nullptr);
@@ -61,6 +59,6 @@ private:
     QFuture<void> indexFuture;
 };
 
-DSB_FM_END_NAMESPACE
+DPSEARCH_END_NAMESPACE
 
 #endif   // MAINCONTROLLER_H
