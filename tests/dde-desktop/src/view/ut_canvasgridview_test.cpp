@@ -1196,7 +1196,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_lastIndex)
     bool theSameOne = tempIndex == tempIndexCanvs;
     EXPECT_TRUE(theSameOne);
 }
-#endif
+
 
 TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
     ASSERT_NE(m_canvasGridView, nullptr);
@@ -1209,7 +1209,7 @@ TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
     auto expectValue = count1 != count2;
     EXPECT_TRUE(expectValue);
 }
-
+#endif
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection){
     ASSERT_NE(m_canvasGridView, nullptr);
     m_canvasGridView->d->mousePressed = false;
@@ -1484,7 +1484,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_autoMergeSelectedUr
     delete model;
     model = nullptr;
 }
-#endif
+
 //new
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
@@ -1528,7 +1528,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
     m_canvasGridView->startDrag(Qt::MoveAction);
     EXPECT_TRUE(judge);
 }
-
+#endif
 TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory)
 {
     bool ret = m_canvasGridView->fetchDragEventUrlsFromSharedMemory();
@@ -1664,7 +1664,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_decreaseIcon)
     });
     loop.exec();
 }
-#endif
+
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_gridat)
 {
@@ -1687,7 +1687,6 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_gridat)
     }
 }
 
-#ifndef __arm__
 TEST_F(CanvasGridViewTest, canvasGridViewTest_syncIconLevel)
 {
     int level = m_canvasGridView->itemDelegate()->iconSizeLevel();
@@ -1698,7 +1697,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_syncIconLevel)
     m_canvasGridView->syncIconLevel(level);
     EXPECT_EQ(level, m_canvasGridView->itemDelegate()->iconSizeLevel());
 }
-#endif
+
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_openUrls)
 {
@@ -1732,7 +1731,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_openUrls)
     QString temp = m_canvasGridView->canvansScreenName();
     EXPECT_EQ(temp, m_canvasGridView->m_screenName);
 }
-
+#endif
 static bool increase = false;
 static bool decrease = false;
 static bool keyctrlispressed()
@@ -2112,7 +2111,7 @@ TEST_F(CanvasGridViewTest, test_viewSelectedUrls)
     m_canvasGridView->viewSelectedUrls(validSel, validIndexes);
     EXPECT_TRUE(validIndexes.size() == validSel.size());
 }
-#endif
+
 TEST_F(CanvasGridViewTest, test_renderToPixmap)
 {
     qApp->processEvents();
@@ -2132,7 +2131,7 @@ TEST_F(CanvasGridViewTest, test_renderToPixmap)
     m_canvasGridView->renderToPixmap(selects);
     EXPECT_TRUE(judge);
 }
-
+#endif
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
     ASSERT_NE(m_canvasGridView, nullptr);
 
