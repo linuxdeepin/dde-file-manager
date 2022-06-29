@@ -1,0 +1,25 @@
+diff --git a/src/dde-file-manager-lib/dialogs/private/ddesktoprenamedialog_p.h b/src/dde-file-manager-lib/dialogs/private/ddesktoprenamedialog_p.h
+index 80c5c202c..3d6bc9988 100644
+--- a/src/dde-file-manager-lib/dialogs/private/ddesktoprenamedialog_p.h
++++ b/src/dde-file-manager-lib/dialogs/private/ddesktoprenamedialog_p.h
+@@ -29,6 +29,7 @@
+ #include <QComboBox>
+ #include <QHBoxLayout>
+ #include <QStackedLayout>
++#include <array>
+ 
+ #include "interfaces/dfileservices.h"
+ 
+diff --git a/src/dde-file-manager-lib/views/drenamebar.h b/src/dde-file-manager-lib/views/drenamebar.h
+index 45f3b094a..5ada4bcb8 100644
+--- a/src/dde-file-manager-lib/views/drenamebar.h
++++ b/src/dde-file-manager-lib/views/drenamebar.h
+@@ -29,7 +29,7 @@
+ #include <QList>
+ #include <QFrame>
+ #include <memory>
+-
++#include <array>
+ 
+ #include "shutil/filebatchprocess.h"
+ 
