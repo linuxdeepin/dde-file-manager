@@ -652,8 +652,14 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
         return false;
     }
 
-    if (itemInfo->absolutePath() != StandardPaths::location(StandardPaths::kDesktopPath)) {
+    if (itemInfo->absolutePath() != q->model()->fileUrl(q->model()->rootIndex()).toLocalFile()) {
         qDebug() << "source file not belong desktop:" << event->mimeData()->urls();
+        return false;
+    }
+
+    auto targetIndex = q->indexAt(event->pos());
+    if (targetIndex.isValid()) {
+        qDebug() << "drop on target:" << targetIndex << q->model()->fileUrl(targetIndex);
         return false;
     }
 
@@ -904,7 +910,7 @@ QModelIndex CollectionView::indexAt(const QPoint &point) const
     {
         QPoint viewPoint(point.x() + horizontalOffset(), point.y() + verticalOffset());
         int node = d->posToNode(d->pointToPos(viewPoint));
-        if (node >= d->provider->items(d->id).count())
+        if (node < 0 || node >= d->provider->items(d->id).count())
             return QModelIndex();
         rowIndex = model()->index(d->provider->items(d->id).at(node));
         if (!rowIndex.isValid())

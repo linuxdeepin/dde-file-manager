@@ -23,6 +23,7 @@
 #include "interface/canvasviewshell.h"
 #include "interface/fileinfomodelshell.h"
 #include "modeldatahandler.h"
+#include "utils/fileoperator.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/sysinfoutils.h"
@@ -516,22 +517,19 @@ bool FileProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     }
 
     if (DFMBASE_NAMESPACE::FileUtils::isTrashDesktopFile(targetFileUrl)) {
-        // todo(wangcl)
-//        FileOperatorProxyIns->dropToTrash(urlList);
+        FileOperatorIns->dropToTrash(urlList);
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isComputerDesktopFile(targetFileUrl)) {
         return true;
     } else if (DFMBASE_NAMESPACE::FileUtils::isDesktopFile(targetFileUrl)) {
-        // todo(wangcl)
-//        FileOperatorProxyIns->dropToApp(urlList, targetFileUrl.toLocalFile());
+        FileOperatorIns->dropToApp(urlList, targetFileUrl.toLocalFile());
         return true;
     }
 
     switch (action) {
     case Qt::CopyAction:
     case Qt::MoveAction:
-        // todo(wangcl)
-//        FileOperatorProxyIns->dropFiles(action, targetFileUrl, urlList);
+        FileOperatorIns->dropFiles(action, targetFileUrl, urlList);
         break;
     case Qt::LinkAction:
         break;
