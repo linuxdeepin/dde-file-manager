@@ -1867,10 +1867,7 @@ void DFileView::dragEnterEvent(QDragEnterEvent *event)
 
     //由于普通用户无法访问root用户的共享内存，跨用户的情况使用从mimedata中取url的方式
     bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
-    if (sameUser) {
-        if (!fetchDragEventUrlsFromSharedMemory())
-            return;
-    } else {
+    if (!sameUser || !fetchDragEventUrlsFromSharedMemory()) {
         m_urlsForDragEvent = event->mimeData()->urls();
     }
 
