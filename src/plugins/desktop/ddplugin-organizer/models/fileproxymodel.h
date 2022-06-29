@@ -40,6 +40,7 @@ public:
     explicit FileProxyModel(QObject *parent = nullptr);
     ~FileProxyModel() override;
     void setModelShell(FileInfoModelShell *shell);
+    FileInfoModelShell *modelShell() const;
     void setHandler(ModelDataHandler *);
     ModelDataHandler *handler() const;
     QModelIndex rootIndex() const;

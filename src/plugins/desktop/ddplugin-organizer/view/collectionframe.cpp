@@ -221,7 +221,7 @@ int CollectionFramePrivate::calcRightX()
     int minLimitX = stretchBeforRect.bottomLeft().x() + minWidth;
     int afterX = stretchEndPoint.x() > minLimitX ? stretchEndPoint.x() : minLimitX;
 
-    QWidget *parentWidget = static_cast<QWidget *>(q->parent());
+    QWidget *parentWidget = qobject_cast<QWidget *>(q->parent());
     if (parentWidget) {
         int maxLimitX = parentWidget->geometry().width();
         afterX = afterX > maxLimitX ? maxLimitX : afterX;
@@ -244,7 +244,7 @@ int CollectionFramePrivate::calcBottomY()
     int minLimitY = stretchBeforRect.topLeft().y() + minHeight;
     int afterY = stretchEndPoint.y() > minLimitY ? stretchEndPoint.y() : minLimitY;
 
-    QWidget *parentWidget = static_cast<QWidget *>(q->parent());
+    QWidget *parentWidget = qobject_cast<QWidget *>(q->parent());
     if (parentWidget) {
         int maxLimitY = parentWidget->geometry().height();
         afterY = afterY > maxLimitY ? maxLimitY : afterY;

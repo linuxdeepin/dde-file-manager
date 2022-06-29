@@ -692,6 +692,11 @@ CanvasViewPrivate::CanvasViewPrivate(CanvasView *qq)
     shortcutOper = new ShortcutOper(q);
     menuProxy = new CanvasViewMenuProxy(q);
     viewSetting = new ViewSettingUtil(q);
+
+#ifdef QT_DEBUG
+    showGrid = true;
+#endif
+
 }
 
 CanvasViewPrivate::~CanvasViewPrivate()

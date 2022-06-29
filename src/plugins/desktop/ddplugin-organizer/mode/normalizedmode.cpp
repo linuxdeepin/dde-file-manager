@@ -101,7 +101,6 @@ bool NormalizedMode::initialize(FileProxyModel *m)
     connect(model, &FileProxyModel::dataChanged, this, &NormalizedMode::onFileDataChanged, Qt::QueuedConnection);
     connect(model, &FileProxyModel::modelReset, this, &NormalizedMode::rebuild, Qt::QueuedConnection);
 
-
     // creating if there already are files.
     if (!model->files().isEmpty())
         rebuild();

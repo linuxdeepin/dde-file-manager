@@ -25,6 +25,8 @@
 #include "customdatahandler.h"
 #include "collection/collectionholder.h"
 
+#include <QTimer>
+
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
 class CustomModePrivate
@@ -34,7 +36,7 @@ public:
     ~CustomModePrivate();
     CustomDataHandler *dataHandler = nullptr;
     QHash<QString, CollectionHolderPointer> holders;
-
+    QTimer dataSyncTimer;
 private:
     CustomMode *q;
 };

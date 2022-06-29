@@ -103,3 +103,14 @@ QList<QUrl> FileInfoModelShell::files() const
     QVariant ret = FileInfoModelPush(slot_FileInfoModel_Files);
     return ret.value<QList<QUrl>>();
 }
+
+void FileInfoModelShell::refresh(const QModelIndex &parent)
+{
+    FileInfoModelPush2(slot_FileInfoModel_Refresh, parent);
+}
+
+int FileInfoModelShell::modelState()
+{
+    QVariant ret = FileInfoModelPush2(slot_FileInfoModel_ModelState);
+    return ret.toInt();
+}

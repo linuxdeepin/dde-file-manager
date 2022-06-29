@@ -49,6 +49,7 @@ public:
     Q_INVOKABLE QUrl fileUrl(const QModelIndex &index) const;
     Q_INVOKABLE QList<QUrl> files() const;
     Q_INVOKABLE void refresh(const QModelIndex &parent);
+    Q_INVOKABLE int modelState() const;  // 0 is uninitialized, 1 is ok, 2 is refreshing.
     Q_INVOKABLE void update();
 public:
     QModelIndex index(int row, int column = 0,

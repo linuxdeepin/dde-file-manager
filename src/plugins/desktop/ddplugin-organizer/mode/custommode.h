@@ -51,6 +51,7 @@ protected slots:
 private slots:
     void onNewCollection(const QList<QUrl> &);
     void onDeleteCollection(const QString &key);
+    void onItemsChanged();
 private:
     CustomModePrivate *d;
 };

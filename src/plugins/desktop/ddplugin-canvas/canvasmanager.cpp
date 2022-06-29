@@ -265,8 +265,8 @@ void CanvasManager::onCanvasBuild()
         }
     }
 
-    // todo(zy) 优化首次加载与屏幕改变的加载重复问题，现在在初始化时有冗余
-    if (d->canvasModel->rowCount(d->canvasModel->rootIndex()) > 0)
+    // source model is ready
+    if (d->sourceModel->modelState() & 0x1)
         reloadItem();
 }
 

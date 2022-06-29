@@ -653,7 +653,7 @@ bool CollectionViewPrivate::dropFromCanvas(QDropEvent *event) const
     }
 
     if (itemInfo->absolutePath() != q->model()->fileUrl(q->model()->rootIndex()).toLocalFile()) {
-        qDebug() << "source file not belong desktop:" << event->mimeData()->urls();
+        qWarning() << "source file not belong desktop:" << event->mimeData()->urls();
         return false;
     }
 

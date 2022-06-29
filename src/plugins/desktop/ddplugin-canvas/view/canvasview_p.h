@@ -121,7 +121,7 @@ public: // 绘制扩展的特殊处理
 public:
     static const QMargins gridMiniMargin;
     static const QSize dockReserveSize;
-    bool showGrid = true;
+    bool showGrid = false;
     int screenNum;
 
     CanvasInfo canvasInfo;

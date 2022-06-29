@@ -291,6 +291,11 @@ void FileProxyModel::setModelShell(FileInfoModelShell *shell)
     endResetModel();
 }
 
+FileInfoModelShell *FileProxyModel::modelShell() const
+{
+    return d->shell;
+}
+
 void FileProxyModel::setHandler(ModelDataHandler *handler)
 {
     d->handler = handler;

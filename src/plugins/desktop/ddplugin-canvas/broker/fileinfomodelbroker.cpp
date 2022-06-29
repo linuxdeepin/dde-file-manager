@@ -56,6 +56,7 @@ FileInfoModelBroker::~FileInfoModelBroker()
     FileInfoModelDisconnect(slot_FileInfoModel_Files);
     FileInfoModelDisconnect(slot_FileInfoModel_FileInfo);
     FileInfoModelDisconnect(slot_FileInfoModel_Refresh);
+    FileInfoModelDisconnect(slot_FileInfoModel_ModelState);
 }
 
 bool FileInfoModelBroker::init()
@@ -70,6 +71,7 @@ bool FileInfoModelBroker::init()
     FileInfoModelSlot(slot_FileInfoModel_Files, &FileInfoModelBroker::files);
     FileInfoModelSlot(slot_FileInfoModel_FileInfo, &FileInfoModelBroker::fileInfo);
     FileInfoModelSlot(slot_FileInfoModel_Refresh, &FileInfoModelBroker::refresh);
+    FileInfoModelSlot(slot_FileInfoModel_ModelState, &FileInfoModelBroker::modelState);
 
     return true;
 }
@@ -107,6 +109,11 @@ QList<QUrl> FileInfoModelBroker::files()
 void FileInfoModelBroker::refresh(const QModelIndex &parent)
 {
     model->refresh(parent);
+}
+
+int FileInfoModelBroker::modelState()
+{
+    return model->modelState();
 }
 
 void FileInfoModelBroker::onDataReplaced(const QUrl &oldUrl, const QUrl &newUrl)

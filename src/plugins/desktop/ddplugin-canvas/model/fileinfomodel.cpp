@@ -42,6 +42,7 @@ FileInfoModelPrivate::FileInfoModelPrivate(FileInfoModel *qq)
 
 void FileInfoModelPrivate::doRefresh()
 {
+    modelState = FileInfoModelPrivate::RefreshState;
     fileProvider->refresh(filters);
 }
 
@@ -62,6 +63,8 @@ void FileInfoModelPrivate::resetData(const QList<QUrl> &urls)
         fileList = fileUrls;
         fileMap = fileMaps;
     }
+
+    modelState = FileInfoModelPrivate::NormalState;
     q->endResetModel();
 }
 
@@ -302,7 +305,12 @@ void FileInfoModel::refresh(const QModelIndex &parent)
     if (parent != rootIndex())
         return;
 
-    d->fileProvider->refresh(d->filters);
+    d->doRefresh();
+}
+
+int FileInfoModel::modelState() const
+{
+    return d->modelState;
 }
 
 void FileInfoModel::update()

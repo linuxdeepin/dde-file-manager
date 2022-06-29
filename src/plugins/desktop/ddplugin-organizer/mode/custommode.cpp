@@ -23,6 +23,7 @@
 #include "interface/canvasgridshell.h"
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
+#include "interface/fileinfomodelshell.h"
 #include "config/configpresenter.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "dfm-base/dfm_desktop_defines.h"
@@ -48,7 +49,9 @@ CustomMode::CustomMode(QObject *parent)
     : CanvasOrganizer(parent)
     , d(new CustomModePrivate(this))
 {
-
+    d->dataSyncTimer.setInterval(500);
+    d->dataSyncTimer.setSingleShot(true);
+    connect(&d->dataSyncTimer, &QTimer::timeout, this, &CustomMode::onItemsChanged);
 }
 
 CustomMode::~CustomMode()
@@ -77,13 +80,15 @@ bool CustomMode::initialize(FileProxyModel *m)
     connect(CfgPresenter, &ConfigPresenter::newCollection, this, &CustomMode::onNewCollection);
 
     d->dataHandler = new CustomDataHandler();
+    connect(d->dataHandler, &CustomDataHandler::itemsChanged, this, [this](){
+        d->dataSyncTimer.start();
+    }); // delay to save collection datas
 
     // restore collection as config
     QList<CollectionBaseDataPtr> store = CfgPresenter->customProfile();
     d->dataHandler->reset(store);
 
     model->setHandler(d->dataHandler);
-    model->refresh(model->rootIndex(), false, 0);
 
     // must be DirectConnection to keep sequential
     connect(model, &FileProxyModel::rowsInserted, this, &CustomMode::onFileInserted, Qt::DirectConnection);
@@ -94,8 +99,17 @@ bool CustomMode::initialize(FileProxyModel *m)
     connect(model, &FileProxyModel::dataChanged, this, &CustomMode::onFileDataChanged, Qt::QueuedConnection);
     connect(model, &FileProxyModel::modelReset, this, &CustomMode::rebuild, Qt::QueuedConnection);
 
-    // creating
-    rebuild();
+    {
+        int srcState = model->modelShell()->modelState();
+        if (srcState & 0x1) {// 0x1 is ready
+            model->refresh(model->rootIndex(), false, 0); // refresh own model.
+        } else if (srcState == 0) {// 0x0 is uninitialized
+            model->refresh(model->rootIndex(), true, 0); // refresh source model.
+        } else {
+            qDebug() << "source model is refreshing" << srcState;
+        }
+    }
+
     return true;
 }
 
@@ -124,8 +138,9 @@ void CustomMode::layout()
         if (style.rect.isValid()) {
             holder->setStyle(style);
             used[usedCount++] = style.rect;
-        } else
+        } else {
             unassigned.append(holder);
+        }
     }
 
     // second assign geomrey for unrecord view
@@ -150,6 +165,7 @@ void CustomMode::rebuild()
 {
     {
         auto files = QSet<QUrl>::fromList(model->files());
+
         // remove invaild url
         d->dataHandler->check(files);
 
@@ -203,10 +219,7 @@ void CustomMode::rebuild()
 
 void CustomMode::onFileRenamed(const QUrl &oldUrl, const QUrl &newUrl)
 {
-    if (!d->dataHandler->replace(oldUrl, newUrl).isEmpty()) {
-        //todo(zy)
-        // 写入配置文件
-    }
+    d->dataHandler->replace(oldUrl, newUrl).isEmpty();
 }
 
 void CustomMode::onFileInserted(const QModelIndex &parent, int first, int last)
@@ -237,19 +250,12 @@ void CustomMode::onFileInserted(const QModelIndex &parent, int first, int last)
 
 void CustomMode::onFileAboutToBeRemoved(const QModelIndex &parent, int first, int last)
 {
-    bool ok = false;
     for (int i = first; i <= last; i++) {
         QModelIndex index = model->index(i, 0, parent);
         if (Q_UNLIKELY(!index.isValid()))
             continue;
         QUrl url = model->fileUrl(index);
-        if (!d->dataHandler->remove(url).isEmpty() && !ok)
-            ok = true;
-    }
-
-    if (ok) {
-        //todo(zy)
-        // 写入配置文件
+        d->dataHandler->remove(url);
     }
 }
 
@@ -398,6 +404,11 @@ void CustomMode::onDeleteCollection(const QString &key)
 
     for (auto url : urls)
         canvasModelShell->fetch(url);
+}
+
+void CustomMode::onItemsChanged()
+{
+    CfgPresenter->saveCustomProfile(d->dataHandler->baseDatas());
 }
 
 

@@ -120,6 +120,7 @@ private:
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_Files)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_FileInfo)
     DPF_EVENT_REG_SLOT(slot_FileInfoModel_Refresh)
+    DPF_EVENT_REG_SLOT(slot_FileInfoModel_ModelState)
 
     // CanvasItemDelegate begin
     DPF_EVENT_REG_SLOT(slot_CanvasItemDelegate_IconRect)

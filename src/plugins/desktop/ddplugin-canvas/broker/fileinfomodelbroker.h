@@ -46,6 +46,7 @@ public slots:
     QList<QUrl> files();
     DFMLocalFileInfoPointer fileInfo(const QModelIndex &index);
     void refresh(const QModelIndex &parent);
+    int modelState();
 private slots:
     void onDataReplaced(const QUrl &oldUrl, const QUrl &newUrl);
 private:
