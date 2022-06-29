@@ -147,9 +147,7 @@ void DFMSideBarView::dragEnterEvent(QDragEnterEvent *event)
         m_urlsForDragEvent.clear();
     } else {
         bool sameUser = DFMGlobal::isMimeDatafromCurrentUser(event->mimeData());
-        if (sameUser) {
-            fetchDragEventUrlsFromSharedMemory();
-        } else {
+        if (!sameUser || !fetchDragEventUrlsFromSharedMemory()) {
             m_urlsForDragEvent = event->mimeData()->urls();
         }
     }
