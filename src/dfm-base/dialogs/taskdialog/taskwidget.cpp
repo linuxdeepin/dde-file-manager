@@ -676,6 +676,9 @@ void TaskWidget::showConflictButtons(bool showBtns, bool showConflict)
         if (showConflict && !widConfict->isHidden()) {
             h += widConfict->sizeHint().height();
         }
+    } else {
+        widButton->hide();
+        widConfict->hide();
     }
 
     setFixedHeight(h);
