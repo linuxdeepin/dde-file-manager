@@ -33,6 +33,8 @@ usr/share/dbus-1/system-services/com.deepin.filemanager.daemon.service
 
 usr/share/deepin-manual/manual-assets/application
 usr/share/dde-file-manager/extensions/appEntry/.readme
+usr/share/dde-file-manager/mimetypes/*.mimetype
+usr/share/dde-file-manager/mimetypeassociations/*.json
 usr/share/polkit-1/actions/*.policy
 usr/share/glib-2.0/schemas/*.filemanager.gschema.xml
 
