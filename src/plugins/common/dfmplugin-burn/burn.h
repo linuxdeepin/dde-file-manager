@@ -46,9 +46,14 @@ public:
 
 private slots:
     void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
     void bindEvents();
     bool changeUrlEventFilter(quint64 windowId, const QUrl &url);
     void onPersistenceDataChanged(const QString &group, const QString &key, const QVariant &value);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
 }

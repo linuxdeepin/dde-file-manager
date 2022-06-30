@@ -100,11 +100,18 @@ void Core::bindScene(const QString &parentScene)
     if (dfmplugin_menu_util::menuSceneContains(parentScene)) {
         dfmplugin_menu_util::menuSceneBind(FileDialogMenuCreator::name(), parentScene);
     } else {
-        //todo(zs) menu
-//        connect(MenuService::service(), &MenuService::sceneAdded, this, [=](const QString &scene) {
-//            if (scene == parentScene)
-//                MenuService::service()->bind(FileDialogMenuCreator::name(), scene);
-//        },
-//                Qt::DirectConnection);
+        waitToBind << parentScene;
+        if (!eventSubscribed)
+            eventSubscribed = dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Core::bindSceneOnAdded);
+    }
+}
+
+void Core::bindSceneOnAdded(const QString &newScene)
+{
+    if (waitToBind.contains(newScene)) {
+        waitToBind.remove(newScene);
+        if (waitToBind.isEmpty())
+            eventSubscribed = !dpfSignalDispatcher->unsubscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", this, &Core::bindSceneOnAdded);
+        bindScene(newScene);
     }
 }

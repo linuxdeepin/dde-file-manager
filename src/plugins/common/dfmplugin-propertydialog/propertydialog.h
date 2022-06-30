@@ -42,6 +42,11 @@ public:
 
 private:
     void bindScene(const QString &parentScene);
+    void bindSceneOnAdded(const QString &newScene);
+
+private:
+    QSet<QString> waitToBind;
+    bool eventSubscribed { false };
 };
 
 }
