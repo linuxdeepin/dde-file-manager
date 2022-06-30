@@ -276,17 +276,21 @@ void VaultManagerDBus::timerEvent(QTimerEvent *event)
 
 bool VaultManagerDBus::IsValidInvoker()
 {
-    static QStringList VaultwhiteProcess = { "/usr/bin/dde-file-manager" };
+#ifdef QT_DEBUG
+    return true;
+#else
+    static QStringList kVaultWhiteProcess = { "/usr/bin/dde-file-manager" };
     if (connection().isConnected()) {
         uint pid = connection().interface()->servicePid(message().service()).value();
         QFileInfo f(QString("/proc/%1/exe").arg(pid));
         if (!f.exists())
             return false;
         QString Path = f.canonicalFilePath();
-        return VaultwhiteProcess.contains(Path);
+        return kVaultWhiteProcess.contains(Path);
     }
     qWarning() << "Failed to get pid. The caller is not a member of the whitelist";
     return false;
+#endif
 }
 
 QString VaultManagerDBus::GetCurrentUser() const

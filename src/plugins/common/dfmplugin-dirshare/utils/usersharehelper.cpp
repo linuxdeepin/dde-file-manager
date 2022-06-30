@@ -465,7 +465,9 @@ ShareInfo UserShareHelper::makeInfoByFileContent(const QMap<QString, QString> &c
             { ShareInfoKeys::kPath, sharePath },
             { ShareInfoKeys::kComment, contents.value(ShareConfig::kShareComment) },
             { ShareInfoKeys::kAcl, shareAcl },
-            { ShareInfoKeys::kGuestEnable, contents.value(ShareConfig::kGuestOk) }
+            { ShareInfoKeys::kGuestEnable, contents.value(ShareConfig::kGuestOk) },
+            { ShareInfoKeys::kAnonymous, contents.value(ShareConfig::kGuestOk) == "y" },
+            { ShareInfoKeys::kWritable, shareAcl.toUpper() == "S-1-1-0:F" }   // just for current needs.
         };
     }
     return info;
