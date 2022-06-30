@@ -91,7 +91,9 @@ JobHandlePointer FileManipulation::copyHandle(const quint64 windowId, const QLis
             actualUrls << url;
         }
     }
-    const QUrl &url = transUrlsToLocal({ target }).first();
+
+    // if use &, transUrlsToLocal return value will free, and url is invalid, app crash, the same below
+    const QUrl url = transUrlsToLocal({ target }).first();
     dpfSignalDispatcher->publish(GlobalEventType::kCopy, windowId, actualUrls, url, flags, nullptr);
     return {};
 }
@@ -106,7 +108,7 @@ JobHandlePointer FileManipulation::cutHandle(const quint64 windowId, const QList
             actualUrls << url;
         }
     }
-    const QUrl &url = transUrlsToLocal({ target }).first();
+    const QUrl url = transUrlsToLocal({ target }).first();
     dpfSignalDispatcher->publish(GlobalEventType::kCutFile, windowId, actualUrls, url, flags, nullptr);
     return {};
 }
@@ -115,7 +117,7 @@ bool FileManipulation::mkdirHandle(const quint64 windowId, const QUrl url, QStri
 {
     Q_UNUSED(error)
 
-    const QUrl &dirUrl = transUrlsToLocal({ url }).first();
+    const QUrl dirUrl = transUrlsToLocal({ url }).first();
     return dpfSignalDispatcher->publish(GlobalEventType::kMkdir,
                                         windowId,
                                         dirUrl);
@@ -123,7 +125,7 @@ bool FileManipulation::mkdirHandle(const quint64 windowId, const QUrl url, QStri
 
 bool FileManipulation::touchFileHandle(const quint64 windowId, const QUrl url, QString *error, const Global::CreateFileType type)
 {
-    const QUrl &dirUrl = transUrlsToLocal({ url }).first();
+    const QUrl dirUrl = transUrlsToLocal({ url }).first();
     return dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
                                         windowId,
                                         dirUrl,
@@ -134,8 +136,8 @@ bool FileManipulation::renameHandle(const quint64 windowId, const QUrl oldUrl, c
 {
     Q_UNUSED(error)
 
-    const QUrl &ourl = transUrlsToLocal({ oldUrl }).first();
-    const QUrl &nurl = transUrlsToLocal({ newUrl }).first();
+    const QUrl ourl = transUrlsToLocal({ oldUrl }).first();
+    const QUrl nurl = transUrlsToLocal({ newUrl }).first();
     return dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, windowId, ourl, nurl, flags);
 }
 
