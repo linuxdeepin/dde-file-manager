@@ -56,7 +56,7 @@ GroupPolicy::GroupPolicy(QObject *parent) : QObject(parent)
 QStringList GroupPolicy::getKeys()
 {
     if (!DTK_POLICY_SUPPORT)
-        return {};
+        return QStringList();
 #if (DTK_POLICY_SUPPORT)
     if (!m_config || !m_config->isValid()) {
         qWarning() << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_config->name(), m_config->subpath());
@@ -64,6 +64,7 @@ QStringList GroupPolicy::getKeys()
     }
     return m_config->keyList();
 #endif
+    return QStringList();
 }
 
 bool GroupPolicy::containKey(const QString &key)

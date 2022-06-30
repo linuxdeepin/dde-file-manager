@@ -36,7 +36,7 @@
 
 TEST(DstatusbarTest,init)
 {
-    DStatusBar w;
+    DStatusBar w(nullptr);
 
     EXPECT_NE(nullptr, w.m_scaleSlider);
     EXPECT_TRUE(nullptr == w.m_rejectButton);

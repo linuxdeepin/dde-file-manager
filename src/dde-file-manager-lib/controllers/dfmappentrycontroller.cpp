@@ -40,7 +40,7 @@ const QList<DAbstractFileInfoPointer> DFMAppEntryController::getChildren(const Q
     static const QString appEntryPath = DFMStandardPaths::location(DFMStandardPaths::ExtensionsAppEntryPath);
     QDir appEntryDir(appEntryPath);
     if (!appEntryDir.exists())
-        return {};
+        return QList<DAbstractFileInfoPointer>();
 
     QList<DAbstractFileInfoPointer> ret;
     auto entries = appEntryDir.entryList(QDir::Files);

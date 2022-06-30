@@ -34,6 +34,7 @@ namespace  {
         }
         DFM_NAMESPACE::DFMCrumbInterface *create(const QString &key)
         {
+            return nullptr;
         }
     };
 
