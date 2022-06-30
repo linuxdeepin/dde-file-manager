@@ -228,8 +228,7 @@ bool Menu::start()
 
 dpf::Plugin::ShutdownFlag Menu::stop()
 {
-    // TODO(zhangs): adjust stop time
-    //    delete handle;
-    //    handle = nullptr;
+    delete handle;
+    handle = nullptr;
     return kSync;
 }

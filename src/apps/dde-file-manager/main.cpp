@@ -233,5 +233,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    return a.exec();
+    int ret { a.exec() };
+    DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    return ret;
 }

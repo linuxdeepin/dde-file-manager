@@ -125,5 +125,7 @@ int main(int argc, char *argv[])
         abort();
     }
 
-    return a.exec();
+    int ret { a.exec() };
+    DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    return ret;
 }

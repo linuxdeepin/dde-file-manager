@@ -164,5 +164,7 @@ int main(int argc, char *argv[])
         a.setApplicationName(appName);
     }
 
-    return a.exec();
+    int ret { a.exec() };
+    DPF_NAMESPACE::LifeCycle::shutdownPlugins();
+    return ret;
 }
