@@ -596,7 +596,8 @@ int AccessControlManager::accessMode(const QString &mps)
 {
     if (mps.isEmpty())
         return POLICY_DISABLE;
-    char *path = mps.toLocal8Bit().data();
+    QByteArray tem = mps.toLocal8Bit();
+    char *path = tem.data();
     if (access(path, W_OK) == 0)
         return POLICY_RW;
     if (access(path, R_OK) == 0)

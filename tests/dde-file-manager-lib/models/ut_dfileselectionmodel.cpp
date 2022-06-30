@@ -26,7 +26,7 @@
 #include "addr_pri.h"
 
 #include <gtest/gtest.h>
-
+using namespace FileManagerSelectionModel;
 ACCESS_PRIVATE_FIELD(DFileSelectionModel, QItemSelectionModel::SelectionFlags, m_currentCommand);
 ACCESS_PRIVATE_FIELD(DFileSelectionModel, QTimer, m_timer);
 ACCESS_PRIVATE_FUN(DFileSelectionModel, void(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command), select);

@@ -1638,6 +1638,7 @@ int DialogManager::showPrivilegeDialog_SW(int nRet, const QString &srcfilename)
             return -1;
         }
     }
+    return -1;
 }
 
 #endif

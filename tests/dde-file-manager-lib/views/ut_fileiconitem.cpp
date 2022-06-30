@@ -32,7 +32,7 @@
 #ifndef __arm__
 TEST(FileIconItemTest,init)
 {
-    FileIconItem w;
+    FileIconItem w(nullptr);
     w.updateStyleSheet();
     EXPECT_NE(nullptr,w.icon);
     EXPECT_NE(nullptr,w.edit);

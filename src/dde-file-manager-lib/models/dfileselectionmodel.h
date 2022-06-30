@@ -26,9 +26,11 @@
 
 #include <QItemSelectionModel>
 #include <QTimer>
-
+class DFileView;
+namespace FileManagerSelectionModel {
 class DFileSelectionModel : public QItemSelectionModel
 {
+    friend class ::DFileView;
 public:
     explicit DFileSelectionModel(QAbstractItemModel *model = 0);
     explicit DFileSelectionModel(QAbstractItemModel *model, QObject *parent);
@@ -37,7 +39,6 @@ public:
     int selectedCount() const;
 
     QModelIndexList selectedIndexes() const;
-
 protected:
     void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) override;
     void clear() override;
@@ -52,8 +53,6 @@ private:
     QModelIndex m_lastSelectedIndex;
     QItemSelectionModel::SelectionFlags m_currentCommand;
     QTimer m_timer;
-
-    friend class DFileView;
 };
-
+}
 #endif // DFILESELECTIONMODEL_H

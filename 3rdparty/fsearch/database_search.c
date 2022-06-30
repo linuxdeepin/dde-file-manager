@@ -334,42 +334,42 @@ search_query_free (void * data)
 static search_query_t *
 search_query_new (const char *query, bool match_case)
 {
-    search_query_t *new = calloc (1, sizeof (search_query_t));
-    assert (new != NULL);
+    search_query_t *temNew = calloc (1, sizeof (search_query_t));
+    assert (temNew != NULL);
 
-    new->query = g_strdup (query);
-    new->query_len = strlen (query);
-    new->has_uppercase = fs_str_has_upper (query);
-    new->has_separator = strchr (query, '/') ? 1 : 0;
+    temNew->query = g_strdup (query);
+    temNew->query_len = strlen (query);
+    temNew->has_uppercase = fs_str_has_upper (query);
+    temNew->has_separator = strchr (query, '/') ? 1 : 0;
     // TODO: this might not work at all times?
-    if (utf8len (query) != new->query_len) {
-        new->is_utf8 = 1;
+    if (utf8len (query) != temNew->query_len) {
+        temNew->is_utf8 = 1;
     }
     else {
-        new->is_utf8 = 0;
+        temNew->is_utf8 = 0;
     }
     if (strchr (query, '*') || strchr (query, '?')) {
         if (match_case) {
-            new->search_func = search_wildcard;
+            temNew->search_func = search_wildcard;
         }
         else {
-            new->search_func = search_wildcard_icase;
+            temNew->search_func = search_wildcard_icase;
         }
     }
     else {
         if (match_case) {
-            new->search_func = search_normal;
+            temNew->search_func = search_normal;
         }
         else {
-            if (new->is_utf8) {
-                new->search_func = search_normal_icase_u8;
+            if (temNew->is_utf8) {
+                temNew->search_func = search_normal_icase_u8;
             }
             else {
-                new->search_func = search_normal_icase;
+                temNew->search_func = search_normal_icase;
             }
         }
     }
-    return new;
+    return temNew;
 }
 
 static search_query_t **

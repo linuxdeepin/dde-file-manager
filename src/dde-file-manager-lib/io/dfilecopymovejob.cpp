@@ -2468,10 +2468,8 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
             QThread::msleep(1);
         }
         copyinfo->currentpos = current_pos;
-        char *buffer = new char[size_block + 1];
 
         if (Q_UNLIKELY(!stateCheck())) {
-            delete[]  buffer;
             close(fromfd);
             return false;
         }
@@ -2482,11 +2480,10 @@ bool DFileCopyMoveJobPrivate::doCopyFileOnBlock(const DAbstractFileInfoPointer f
                     ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos;
             countrefinesize(fromInfo->size() <= 0
                             ? FileUtils::getMemoryPageSize() : fromInfo->size() - current_pos);
-            delete[]  buffer;
             close(fromfd);
             return true;
         }
-
+        char *buffer = new char[size_block + 1];
         qint64 size_read = read(fromfd, buffer, static_cast<size_t>(size_block));
 
         if (Q_UNLIKELY(!stateCheck())) {
@@ -4360,7 +4357,7 @@ void DFileCopyMoveJob::run()
                                 if (!ok) {
                                     d->targetLogSecionSize = 512;
 
-                                    qCWarning(fileJob(),);
+                                    qCWarning(fileJob());
                                 }
 
                                 if (d->targetIsRemovable) {

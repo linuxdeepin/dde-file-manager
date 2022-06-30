@@ -9,7 +9,7 @@
 
 TEST(xcb,set_window_type_dock)
 {
-    QWidget w;
+    QWidget w(nullptr);
     w.winId();
     EXPECT_NE(nullptr,w.windowHandle());
 

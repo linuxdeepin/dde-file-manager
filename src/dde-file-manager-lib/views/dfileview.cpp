@@ -188,7 +188,7 @@ void SelectWork::run()
         m_pModel->update();
     }
 }
-
+using namespace FileManagerSelectionModel;
 DFileView::DFileView(QWidget *parent)
     : DListView(parent), d_ptr(new DFileViewPrivate(this)), m_currentTargetUrl(DUrl())
 {

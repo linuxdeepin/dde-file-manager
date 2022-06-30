@@ -24,7 +24,7 @@
 #include "dfileselectionmodel.h"
 
 #include <QDebug>
-
+using namespace FileManagerSelectionModel;
 DFileSelectionModel::DFileSelectionModel(QAbstractItemModel *model)
     : QItemSelectionModel(model)
 {

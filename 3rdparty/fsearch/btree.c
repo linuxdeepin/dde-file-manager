@@ -31,21 +31,21 @@ btree_node_new (const char *name,
                 uint32_t pos,
                 bool is_dir)
 {
-    BTreeNode *new = calloc (1, sizeof (BTreeNode));
-    assert (new);
+    BTreeNode *temNew = calloc (1, sizeof (BTreeNode));
+    assert (temNew);
 
-    new->parent = NULL;
-    new->children = NULL;
-    new->next = NULL;
+    temNew->parent = NULL;
+    temNew->children = NULL;
+    temNew->next = NULL;
 
     // data
-    new->name = strdup (name);
-    new->mtime = mtime;
-    new->size = size;
-    new->pos = pos;
-    new->is_dir = is_dir;
+    temNew->name = strdup (name);
+    temNew->mtime = mtime;
+    temNew->size = size;
+    temNew->pos = pos;
+    temNew->is_dir = is_dir;
 
-    return new;
+    return temNew;
 }
 
 static void
