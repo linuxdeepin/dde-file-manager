@@ -18,35 +18,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "canvasplugin.h"
-#include "canvasmanager.h"
-#include "utils/fileutil.h"
 
-#include <dfm-base/utils/clipboard.h>
+#include "core.h"
+#include "utils/windowutils.h"
+#include "screen/screenproxyqt.h"
+#include "frame/windowframe.h"
 
-using namespace ddplugin_canvas;
+#include "interfaces/screen/abstractscreen.h"
+#include "stubext.h"
+
+#include <gtest/gtest.h>
+
+DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+DDPCORE_USE_NAMESPACE
 
-void CanvasPlugin::initialize()
+TEST(TestEventHandle, init_event)
 {
-}
+    EventHandle *handle = new EventHandle;
 
-bool CanvasPlugin::start()
-{
-    // initialize file creator
-    DesktopFileCreator::instance();
+    stub_ext::StubExt stub;
+    stub.set_lamda(&WindowUtils::isWayLand, [](){
+        return false;
+    });
 
-    // 初始化剪切板
-    ClipBoard::instance();
+    bool reset = false;
+    stub.set_lamda(VADDR(ScreenProxyQt, reset), [&reset](){
+        reset = true;
+    });
 
-    proxy = new CanvasManager();
-    proxy->init();
-    return true;
-}
+    bool init = false;
+    stub.set_lamda(&WindowFrame::init, [&init](){
+        init = true;
+        return true;
+    });
 
-dpf::Plugin::ShutdownFlag CanvasPlugin::stop()
-{
-    delete proxy;
-    proxy = nullptr;
-    return kSync;
+    delete handle;
 }

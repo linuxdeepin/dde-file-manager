@@ -832,8 +832,7 @@ QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, c
 bool CanvasItemDelegate::extendPaintText(QPainter *painter, const QUrl &url, QRectF *rect)
 {
     const int role = Global::ItemRoles::kItemFileDisplayNameRole;
-    // todo(zy) using right event id
-    return dpfHookSequence->run(GlobalEventType::kTempDesktopPaintTag, role, url, painter, rect);
+    return dpfHookSequence->run("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", role, url, painter, rect);
 }
 
 void CanvasItemDelegate::paintLabel(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index, const QRect &rLabel) const

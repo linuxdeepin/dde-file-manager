@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
-# add sub dir for business plugins
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
+set(DESKTOP_PLUGIN_DIR "${PROJECT_SOURCE_PATH}/plugins/desktop")
 
+# add sub dir for business plugins
 add_subdirectory(ddplugin-core)
 add_subdirectory(ddplugin-background)
 add_subdirectory(ddplugin-canvas)

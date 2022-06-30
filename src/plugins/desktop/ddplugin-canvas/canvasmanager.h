@@ -36,8 +36,9 @@ class CanvasManager : public QObject
 {
     Q_OBJECT
     friend class CanvasManagerPrivate;
-
 public:
+    explicit CanvasManager(QObject *parent = nullptr);
+    ~CanvasManager();
     static CanvasManager *instance();
     void init();
     void update();
@@ -56,9 +57,6 @@ public slots:
     void onTrashStateChanged();
 protected slots:
     void reloadItem();
-protected:
-    explicit CanvasManager(QObject *parent = nullptr);
-    ~CanvasManager();
 signals:
 
 private:

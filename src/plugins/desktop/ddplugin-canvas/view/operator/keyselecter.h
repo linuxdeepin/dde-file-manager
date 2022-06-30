@@ -48,7 +48,6 @@ signals:
 public slots:
     void clearSearchKey();
 protected:
-    CanvasView *view;
     QString searchKeys;
     QTimer *searchTimer;
 };

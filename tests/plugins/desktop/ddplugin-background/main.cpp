@@ -17,36 +17,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#include "canvasplugin.h"
-#include "canvasmanager.h"
-#include "utils/fileutil.h"
+*/
 
-#include <dfm-base/utils/clipboard.h>
+#include <gtest/gtest.h>
+#include <sanitizer/asan_interface.h>
+#include <QCoreApplication>
 
-using namespace ddplugin_canvas;
-DFMBASE_USE_NAMESPACE
-
-void CanvasPlugin::initialize()
+int main(int argc, char *argv[])
 {
-}
+    QCoreApplication app(argc, argv);
 
-bool CanvasPlugin::start()
-{
-    // initialize file creator
-    DesktopFileCreator::instance();
+    ::testing::InitGoogleTest(&argc, argv);
 
-    // 初始化剪切板
-    ClipBoard::instance();
+    int ret = RUN_ALL_TESTS();
 
-    proxy = new CanvasManager();
-    proxy->init();
-    return true;
-}
+#ifdef ENABLE_TSAN_TOOL
+    __sanitizer_set_report_path("../../../asan_ddplugin-background.log");
+#endif
 
-dpf::Plugin::ShutdownFlag CanvasPlugin::stop()
-{
-    delete proxy;
-    proxy = nullptr;
-    return kSync;
+    return ret;
 }

@@ -31,7 +31,6 @@ using namespace ddplugin_canvas;
 
 KeySelecter::KeySelecter(CanvasView *parent)
     : ClickSelecter(parent)
-    , view(parent)
 {
     searchTimer = new QTimer(this);
     searchTimer->setSingleShot(true);

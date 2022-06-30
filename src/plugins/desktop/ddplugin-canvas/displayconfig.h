@@ -29,6 +29,7 @@
 
 class QSettings;
 class QTimer;
+class QThread;
 
 namespace ddplugin_canvas {
 
@@ -68,6 +69,7 @@ private:
     QMutex mtxLock;
     QSettings *settings = nullptr;
     QTimer *syncTimer = nullptr;
+    QThread *workThread = nullptr;
 };
 
 #define DispalyIns DisplayConfig::instance()

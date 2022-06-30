@@ -48,19 +48,21 @@ using namespace ddplugin_canvas;
 #define CanvasCoreUnsubscribe(topic, func) \
     dpfSignalDispatcher->unsubscribe("ddplugin_core", QT_STRINGIFY2(topic), this, func);
 
-class CanvasManagerGlobal : public CanvasManager
-{
-};
-Q_GLOBAL_STATIC(CanvasManagerGlobal, canvasManagerGlobal)
+CanvasManager *CanvasManagerPrivate::global = nullptr;
 
 CanvasManager::CanvasManager(QObject *parent)
     : QObject(parent), d(new CanvasManagerPrivate(this))
 {
-    Q_ASSERT(thread() == qApp->thread());
+    Q_ASSERT_X(thread() == qApp->thread(), "CanvasManager", "object can only be created in main thread.");
+
+    Q_ASSERT_X(!CanvasManagerPrivate::global, "CanvasManager", "there should be only one object");
+    CanvasManagerPrivate::global = this;
 }
 
 CanvasManager::~CanvasManager()
 {
+    CanvasManagerPrivate::global = nullptr;
+
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &CanvasManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &CanvasManager::onCanvasBuild);
     CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &CanvasManager::onGeometryChanged);
@@ -70,7 +72,7 @@ CanvasManager::~CanvasManager()
 
 CanvasManager *CanvasManager::instance()
 {
-    return canvasManagerGlobal;
+    return CanvasManagerPrivate::global;
 }
 
 static QString getScreenName(QWidget *win)

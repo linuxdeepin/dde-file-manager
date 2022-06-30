@@ -81,6 +81,7 @@ public:
     CanvasModelBroker *modelBroker = nullptr;
     CanvasViewBroker *viewBroker = nullptr;
     CanvasGridBroker *gridBroker = nullptr;
+    static CanvasManager *global;
 private:
     CanvasManager *q = nullptr;
 };

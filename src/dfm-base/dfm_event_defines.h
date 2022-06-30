@@ -83,9 +83,6 @@ enum GlobalEventType : DPF_NAMESPACE::EventType {
     kOpenInTerminalResult,
     kCleanTrashResult,
     kHideFilesResult,
-
-    kTempDesktopPaintTag = 9998,   //! todo(zy) need to delete when find solution
-
     kMaxEventType = DPF_NAMESPACE::EventTypeScope::kWellKnownEventTop
 };
 }

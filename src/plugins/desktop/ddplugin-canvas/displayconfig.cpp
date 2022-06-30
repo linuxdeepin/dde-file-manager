@@ -77,9 +77,9 @@ DisplayConfig::DisplayConfig(QObject *parent) : QObject(parent)
     // to disable automerge after upgrading
     compatibilityFuncForDisbaleAutoMerage(settings);
 
-    auto work = new QThread(this);
-    this->moveToThread(work);
-    work->start();
+    workThread = new QThread(this);
+    moveToThread(workThread);
+    workThread->start();
 
     // delay sync
     syncTimer = new QTimer();
@@ -93,6 +93,16 @@ DisplayConfig::DisplayConfig(QObject *parent) : QObject(parent)
 
 DisplayConfig::~DisplayConfig()
 {
+    if (workThread) {
+        workThread->quit();
+        int wait = 5;
+        if (workThread->isRunning() && wait--) {
+            qInfo() << "wait DisplayConfig thread exit" << wait;
+            workThread->wait(100);
+            qInfo() << "DisplayConfig thread exited";
+        }
+    }
+
     delete settings;
     settings = nullptr;
 

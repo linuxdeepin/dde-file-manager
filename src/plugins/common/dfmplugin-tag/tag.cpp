@@ -151,8 +151,9 @@ void Tag::followEvents()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintListItem", TagManager::instance(), &TagManager::paintListTagsHandle);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintIconItem", TagManager::instance(), &TagManager::paintIconTagsHandle);
 
-    // todo(zy) need to delete
-    dpfHookSequence->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
+    // canvas
+    dpfHookSequence->follow("ddplugin_canvas", "hook_CanvasItemDelegate_PaintText", TagManager::instance(), &TagManager::paintIconTagsHandle);
+
     // paste
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
