@@ -1178,6 +1178,11 @@ void CanvasGridView::keyPressEvent(QKeyEvent *event)
 
     case Qt::AltModifier:
         if (event->key() == Qt::Key_M) {
+
+            // 策略整体菜单隐藏
+            if (DFileMenuManager::menuHidden(qAppName()))
+                return;
+
             //新需求gesetting控制右键菜单隐藏功能,和产品确认调整为gsetting高于本身配置文件，即gsetting有相关配置后本身的json相关配置失效
             auto tempGsetting = GridManager::instance()->isGsettingShow("context-menu", QVariant());
             if (tempGsetting.isValid()) {
