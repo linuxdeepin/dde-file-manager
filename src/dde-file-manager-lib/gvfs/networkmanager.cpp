@@ -149,6 +149,7 @@ void NetworkManager::addSmbServerToHistory(const DUrl &url)
         }else{//访问连接已经包含在历史记录中,先移除再追加到最后，用于下次打开对话框时显示上次连接。
             historyManager->removeSearchHistory(toHistory);
             historyManager->writeIntoSearchHistory(toHistory);
+            qInfo()<<"1 hostList = "<<historyManager->toStringList();
         }
     }
 }

@@ -284,6 +284,7 @@ void ConnectToServerDialog::initUI()
     addContent(contentFrame);
     QStringList stringList = Singleton<SearchHistroyManager>::instance()->toStringList();
     QStringList hostList;
+    QString lastOne;
     foreach (const QString& hisString, stringList) {
         DUrl testUrl(hisString);
         QString host = testUrl.host();
@@ -293,6 +294,7 @@ void ConnectToServerDialog::initUI()
 
         hostList << QString("%1://%2").arg(scheme).arg(host);
     }
+    lastOne = hostList.last();
     hostList.removeDuplicates();//由于历史记录中有很多设备相同，但是路径不同的记录，这里又只提取了设备，所以这里显示时要去重。
     QStringList schemeList;
     schemeList << QString("%1://").arg(SMB_SCHEME);
@@ -301,7 +303,6 @@ void ConnectToServerDialog::initUI()
 
     while(hostList.count() > Max_HISTORY_ITEM - 1 )
         hostList.takeFirst();
-
     m_completer = new QCompleter(hostList,this);
     m_completer->setCaseSensitivity(Qt::CaseInsensitive);
     m_completer->setFilterMode(Qt::MatchContains);
@@ -313,7 +314,6 @@ void ConnectToServerDialog::initUI()
 
     m_serverComboBox->addItems(hostList);
     m_serverComboBox->insertItem(m_serverComboBox->count(), tr("Clear History"));
-    m_serverComboBox->setEditable(true);
     m_serverComboBox->setCompleter(m_completer);
     m_serverComboBox->clearEditText();
 
@@ -325,9 +325,11 @@ void ConnectToServerDialog::initUI()
 
 
     if(hostList.count() > 0){
-        QString lastOne = hostList.last();
         QString scheme = lastOne.section("://",0,0);
         if(!scheme.isEmpty()){
+            int checkedIndex = m_serverComboBox->findText(lastOne);
+            if(checkedIndex >= 0)
+                m_serverComboBox->setCurrentIndex(checkedIndex);
             m_serverComboBox->setEditText(lastOne.section("//",-1));
             m_schemeComboBox->setCurrentText(scheme + "://");
         }
@@ -408,6 +410,9 @@ void ConnectToServerDialog::initConnect()
         if ( history!= m_schemeComboBox->currentText() + m_serverComboBox->currentText()) {
             DUrl histroyUrl(history);
             m_schemeComboBox->setCurrentText(histroyUrl.scheme()+"://");
+            int checkedIndex = m_serverComboBox->findText(history);
+            if(checkedIndex >= 0)
+                m_serverComboBox->setCurrentIndex(checkedIndex);
             m_serverComboBox->setCurrentText(histroyUrl.host());
             if (DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::LightType)
                 m_addButton->setIcon(QIcon(QPixmap(":icons/deepin/builtin/light/icons/collect_cancel.svg").scaled(16,16)));
