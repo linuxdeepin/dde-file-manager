@@ -75,8 +75,13 @@ void AbstractBurnJob::setProperty(AbstractBurnJob::PropertyType type, const QVar
 
 void AbstractBurnJob::addTask()
 {
-    if (jobHandlePtr)
+    if (jobHandlePtr) {
         DialogManagerInstance->addTask(jobHandlePtr);
+        JobInfoPointer info { new QMap<quint8, QVariant> };
+        info->insert(AbstractJobHandler::NotifyInfoKey::kCurrentProgressKey, lastProgress);
+        info->insert(AbstractJobHandler::NotifyInfoKey::kTotalSizeKey, 100);
+        emit jobHandlePtr->proccessChangedNotify(info);
+    }
 }
 
 void AbstractBurnJob::updateMessage(JobInfoPointer ptr)
