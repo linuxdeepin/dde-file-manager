@@ -462,11 +462,9 @@ void DFMAddressBar::initConnections()
         if (!DUrl::fromUserInput(str).isLocalFile()) {
             //从配置文件中更新historyList，因为搜索历史列表可能在连接到服务器对话框中有改变
             QStringList list = Singleton<SearchHistroyManager>::instance()->toStringList();
-            if(!list.isEmpty())
-                historyList.append(list);
+            historyList.append(list);
             historyList.removeDuplicates();
             if (!historyList.contains(str) || !list.contains(str)) {
-
                 DUrl inputUrl(str);
                 if (!inputUrl.scheme().isEmpty() && inputUrl.scheme() == SMB_SCHEME){
                     //smb挂载路径不在这里写入历史记录，在NetworkManager中挂载成功后写入
@@ -683,6 +681,10 @@ void DFMAddressBar::updateCompletionState(const QString &text)
 
         // History completion.
         isHistoryInCompleterModel = true;
+        //这里需要重新给historyList赋值，否则当前刚访问过的smb地址不会立即出现在候选下拉框中fix bug:142829
+        //因为smb地址是在访问成功后写入缓存文件，没有及时添加到这里的historyList中。
+        historyList.clear();
+        historyList.append(Singleton<SearchHistroyManager>::instance()->toStringList());
         // 修复bug-62117 搜索补全中不显示保险箱全路径
         QStringList::iterator itr = historyList.begin();
         while (itr != historyList.end()) {
