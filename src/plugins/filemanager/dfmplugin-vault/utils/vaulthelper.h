@@ -27,6 +27,7 @@
 
 #include "dfm-base/interfaces/abstractjobhandler.h"
 #include "dfm-base/utils/clipboard.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QObject>
 #include <QIcon>
@@ -37,6 +38,7 @@ namespace dfmplugin_vault {
 class VaultHelper final : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(VaultHelper)
 public:
     inline QString scheme()
     {
@@ -85,6 +87,23 @@ public:
     static void recordTime(const QString &group, const QString &key);
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+    bool cutFile(const quint64 windowId, const QList<QUrl> sources,
+                 const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool copyFile(const quint64 windowId, const QList<QUrl> sources,
+                  const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool moveToTrash(const quint64 windowId, const QList<QUrl> sources,
+                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool deleteFile(const quint64 windowId, const QList<QUrl> sources,
+                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
+    bool renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl,
+                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool makeDir(const quint64 windowId, const QUrl url);
+    bool touchFile(const quint64 windowId, const QUrl url, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString *error);
+    bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                              const QList<QUrl> urls);
+    bool renameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> replacePair, bool flg);
+    bool renameFilesAddText(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, DFMBASE_NAMESPACE::AbstractJobHandler::FileNameAddFlag> replacePair);
 
 public slots:
     void slotlockVault(int state);
@@ -120,6 +139,9 @@ signals:
 
     //! 通知关闭对话框
     void sigCloseWindow();
+
+private:
+    QList<QUrl> transUrlsToLocal(const QList<QUrl> &urls);
 
 private:
     explicit VaultHelper();

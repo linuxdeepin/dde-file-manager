@@ -75,6 +75,9 @@ public:
     static bool isEmpty();
     static void emptyTrash(const quint64 windowId = 0);
     static ExpandFieldMap propetyExtensionFunc(const QUrl &url);
+    static JobHandlePointer restoreFromTrashHandle(const quint64 windowId,
+                                                   const QList<QUrl> urls,
+                                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
 
     bool checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action);
     bool detailViewIcon(const QUrl &url, QString *iconName);
@@ -88,6 +91,19 @@ public:
     // services instance
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
+
+    // file operation
+    bool cutFile(const quint64 windowId, const QList<QUrl> sources,
+                 const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
+                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool moveToTrash(const quint64 windowId, const QList<QUrl> sources,
+                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool deleteFile(const quint64 windowId, const QList<QUrl> sources,
+                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
+    bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
+                              const QList<QUrl> urls);
 
 private:
     void onTrashStateChanged();

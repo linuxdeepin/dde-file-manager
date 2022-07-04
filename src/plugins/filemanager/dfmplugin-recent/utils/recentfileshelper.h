@@ -31,41 +31,28 @@
 #include <QMimeData>
 #include <QFileDevice>
 
-namespace dfmplugin_recent {
-class RecentFilesHelper
+DPRECENT_BEGIN_NAMESPACE
+class RecentFilesHelper : public QObject
 {
+    Q_DISABLE_COPY(RecentFilesHelper)
 public:
-    static bool openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error);
-    static void pasteFilesHandle(const QList<QUrl> sources,
-                                 const QUrl target,
-                                 bool isCopy = true);
-    static bool writeUrlToClipboardHandle(const quint64 windowId,
-                                          const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                                          const QList<QUrl> urls);
-
-    static JobHandlePointer deleteFilesHandle(const quint64 windowId,
-                                              const QList<QUrl> sources,
-                                              const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
+    static RecentFilesHelper *instance();
 
     static void removeRecent(const QList<QUrl> &urls);
 
     static bool openFileLocation(const QUrl &url);
 
     static void openFileLocation(const QList<QUrl> &urls);
-    static bool setPermissionHandle(const quint64 windowId,
-                                    const QUrl url,
-                                    const QFileDevice::Permissions permissions,
-                                    QString *error);
-    static bool createLinkFileHandle(const quint64 windowId,
-                                     const QUrl url,
-                                     const QUrl link,
-                                     const bool force,
-                                     const bool silence,
-                                     QString *error);
+
+    bool setPermissionHandle(const quint64 windowId,
+                             const QUrl url,
+                             const QFileDevice::Permissions permissions,
+                             bool *ok,
+                             QString *error);
 
 private:
-    static QUrl checkTargetUrl(const QUrl &url);
+    explicit RecentFilesHelper(QObject *parent = nullptr);
 };
+DPRECENT_END_NAMESPACE
 
-}
 #endif   // RECENTFILESHELPER_H

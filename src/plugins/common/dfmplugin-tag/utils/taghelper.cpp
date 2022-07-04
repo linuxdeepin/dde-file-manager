@@ -22,6 +22,7 @@
 #include "taghelper.h"
 #include "tagmanager.h"
 #include "widgets/tageditor.h"
+#include "events/tageventcaller.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
@@ -297,6 +298,27 @@ FileOperationsService *TagHelper::fileOperationsServIns()
     });
 
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}
+
+bool TagHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : urls) {
+        if (url.fragment().isEmpty()) {
+            redirectedFileUrls.append(url);
+        } else {
+            QUrl redirectUrl = QUrl::fromLocalFile(url.fragment(QUrl::FullyEncoded));
+            redirectedFileUrls.append(redirectUrl);
+        }
+    }
+
+    TagEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
+    return true;
 }
 
 void TagHelper::initTagColorDefines()

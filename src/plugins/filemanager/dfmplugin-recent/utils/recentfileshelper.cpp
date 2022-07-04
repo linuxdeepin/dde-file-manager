@@ -44,41 +44,10 @@ DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_recent;
 
-bool RecentFilesHelper::openFilesHandle(quint64 windowId, const QList<QUrl> urls, const QString *error)
+RecentFilesHelper *RecentFilesHelper::instance()
 {
-    Q_UNUSED(error)
-
-    QList<QUrl> redirectedFileUrls;
-    for (QUrl url : urls) {
-        url.setScheme(Global::Scheme::kFile);
-        redirectedFileUrls << url;
-    }
-    RecentEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
-    return true;
-}
-
-bool RecentFilesHelper::writeUrlToClipboardHandle(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
-{
-    if (action == ClipBoard::ClipboardAction::kCutAction)
-        return true;
-
-    QList<QUrl> redirectedFileUrls;
-    for (QUrl url : urls) {
-        url.setScheme(Global::Scheme::kFile);
-        redirectedFileUrls << url;
-    }
-    RecentEventCaller::sendWriteToClipboard(windowId, action, redirectedFileUrls);
-    return true;
-}
-
-JobHandlePointer RecentFilesHelper::deleteFilesHandle(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
-{
-    Q_UNUSED(windowId)
-    Q_UNUSED(flags)
-
-    RecentFilesHelper::removeRecent(sources);
-
-    return {};
+    static RecentFilesHelper instance;
+    return &instance;
 }
 
 void RecentFilesHelper::removeRecent(const QList<QUrl> &urls)
@@ -137,48 +106,27 @@ void RecentFilesHelper::openFileLocation(const QList<QUrl> &urls)
     }
 }
 
-bool RecentFilesHelper::setPermissionHandle(const quint64 windowId, const QUrl url, const QFileDevice::Permissions permissions, QString *error)
+bool RecentFilesHelper::setPermissionHandle(const quint64 windowId, const QUrl url, const QFileDevice::Permissions permissions, bool *ok, QString *error)
 {
+    if (Global::Scheme::kRecent != url.scheme())
+        return false;
+
     Q_UNUSED(windowId)
-    Q_UNUSED(error)
 
     const QUrl &localUrl = RecentManager::urlTransform(url);
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
 
-    return fileHandler.setPermissions(localUrl, permissions);
+    bool succ = fileHandler.setPermissions(localUrl, permissions);
+    if (!succ && error)
+        *error = fileHandler.errorString();
+
+    if (ok)
+        *ok = succ;
+
+    return true;
 }
 
-bool RecentFilesHelper::createLinkFileHandle(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence, QString *error)
+RecentFilesHelper::RecentFilesHelper(QObject *parent)
+    : QObject(parent)
 {
-    Q_UNUSED(windowId)
-    Q_UNUSED(error)
-
-    if (force) {
-        const AbstractFileInfoPointer &toInfo = InfoFactory::create<AbstractFileInfo>(link);
-        if (toInfo && toInfo->exists()) {
-            DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-            fileHandler.deleteFile(link);
-        }
-    }
-
-    QUrl urlValid { link };
-    if (silence)
-        urlValid = checkTargetUrl(link);
-
-    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
-    const QUrl &localUrl = RecentManager::urlTransform(url);
-    return fileHandler.createSystemLink(localUrl, urlValid);
-}
-
-QUrl RecentFilesHelper::checkTargetUrl(const QUrl &url)
-{
-    const QUrl &urlParent = DFMIO::DFMUtils::directParentUrl(url);
-    if (!urlParent.isValid())
-        return url;
-
-    const QString &nameValid = FileUtils::nonExistSymlinkFileName(url, urlParent);
-    if (!nameValid.isEmpty())
-        return urlParent.toString() + QDir::separator() + nameValid;
-
-    return url;
 }

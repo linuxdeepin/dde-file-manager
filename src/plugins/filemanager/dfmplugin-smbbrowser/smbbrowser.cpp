@@ -76,7 +76,10 @@ bool SmbBrowser::start()
 
     WorkspaceService::service()->addScheme(SmbBrowserUtils::networkScheme());
     WorkspaceService::service()->setWorkspaceMenuScene(SmbBrowserUtils::networkScheme(), SmbBrowserMenuCreator::name());
-    initOperations();
+
+    // hook events, file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", SmbBrowserUtils::instance(), &SmbBrowserUtils::mountSmb);
+
     return true;
 }
 
@@ -97,20 +100,6 @@ void SmbBrowser::onWindowOpened(quint64 winId)
         addNeighborToSidebar();
     else
         connect(window, &FileManagerWindow::sideBarInstallFinished, this, [this] { addNeighborToSidebar(); }, Qt::DirectConnection);
-}
-
-void SmbBrowser::onWindowClosed(quint64 winId)
-{
-}
-
-void SmbBrowser::initOperations()
-{
-    DSC_USE_NAMESPACE
-    FileOperationsFunctions funcs(new FileOperationsSpace::FileOperationsInfo);
-    funcs->openFiles = &SmbBrowserUtils::mountSmb;
-    FileOperationsService::service()->registerOperations(Global::Scheme::kSmb, funcs);
-    FileOperationsService::service()->registerOperations(Global::Scheme::kFtp, funcs);
-    FileOperationsService::service()->registerOperations(Global::Scheme::kSFtp, funcs);
 }
 
 void SmbBrowser::addNeighborToSidebar()

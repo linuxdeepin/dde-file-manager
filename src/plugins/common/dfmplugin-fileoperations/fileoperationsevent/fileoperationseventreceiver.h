@@ -49,7 +49,6 @@ class FileOperationsEventReceiver final : public QObject
 
 public:
     static FileOperationsEventReceiver *instance();
-    void connectService();
 
 public slots:
     void handleOperationCopy(const quint64 windowId,
@@ -224,10 +223,6 @@ public slots:
     void handleOperationHideFiles(const quint64 windowId, const QList<QUrl> urls,
                                   const QVariant custom, DFMBASE_NAMESPACE::Global::OperatorCallback callback);
 
-private slots:
-    void invokeRegister(const QString scheme, const FileOperationsFunctions functions);
-    void invokeUnregister(const QString scheme);
-
 private:
     enum class RenameTypes {
         kBatchRepalce,
@@ -278,7 +273,6 @@ private:
     QSharedPointer<QMutex> getServiceMutex { nullptr };
     QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
-    QMap<QString, FileOperationsFunctions> functions;
     QSharedPointer<QMutex> functionsMutex { nullptr };
     QSharedPointer<OperationsStackManagerInterface> operationsStackDbus;
 };

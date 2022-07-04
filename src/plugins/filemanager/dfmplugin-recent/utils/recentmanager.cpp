@@ -32,6 +32,12 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
+#include "dfm-base/file/local/localfilehandler.h"
+
+#include <dfm-io/dfmio_utils.h>
+
+#include <DDialog>
+#include <DRecentManager>
 
 #include <QFile>
 #include <QMenu>
@@ -242,6 +248,119 @@ bool RecentManager::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
     return true;
 }
 
+bool RecentManager::cutFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    Q_UNUSED(windowId)
+    Q_UNUSED(sources)
+    Q_UNUSED(flags)
+
+    return target.scheme() == scheme();
+}
+
+bool RecentManager::copyFile(const quint64, const QList<QUrl>, const QUrl target, const AbstractJobHandler::JobFlags)
+{
+    return target.scheme() == scheme();
+}
+
+bool RecentManager::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+    if (sources.first().scheme() != scheme())
+        return false;
+
+    Q_UNUSED(windowId)
+    Q_UNUSED(flags)
+
+    removeRecent(sources);
+
+    return true;
+}
+
+bool RecentManager::openFileInPlugin(quint64 winId, QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : urls) {
+        url.setScheme(Global::Scheme::kFile);
+        redirectedFileUrls << url;
+    }
+    RecentEventCaller::sendOpenFiles(winId, redirectedFileUrls);
+    return true;
+}
+
+bool RecentManager::linkFile(const quint64 windowId, const QUrl url, const QUrl link, const bool force, const bool silence)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    Q_UNUSED(windowId)
+
+    if (force) {
+        const AbstractFileInfoPointer &toInfo = InfoFactory::create<AbstractFileInfo>(link);
+        if (toInfo && toInfo->exists()) {
+            DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+            fileHandler.deleteFile(link);
+        }
+    }
+
+    auto checkTargetUrl = [](const QUrl &url) -> QUrl {
+        const QUrl &urlParent = DFMIO::DFMUtils::directParentUrl(url);
+        if (!urlParent.isValid())
+            return url;
+
+        const QString &nameValid = FileUtils::nonExistSymlinkFileName(url, urlParent);
+        if (!nameValid.isEmpty())
+            return urlParent.toString() + QDir::separator() + nameValid;
+
+        return url;
+    };
+
+    QUrl urlValid { link };
+    if (silence)
+        urlValid = checkTargetUrl(link);
+
+    DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
+    const QUrl &localUrl = RecentManager::urlTransform(url);
+    fileHandler.createSystemLink(localUrl, urlValid);
+
+    return true;
+}
+
+bool RecentManager::writeUrlsToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+    if (action == ClipBoard::ClipboardAction::kCutAction)
+        return true;
+
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : urls) {
+        url.setScheme(Global::Scheme::kFile);
+        redirectedFileUrls << url;
+    }
+    RecentEventCaller::sendWriteToClipboard(windowId, action, redirectedFileUrls);
+    return true;
+}
+
+bool RecentManager::openFileInTerminal(const quint64 windowId, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    Q_UNUSED(windowId);
+
+    return true;
+}
+
 RecentManager::RecentManager(QObject *parent)
     : QObject(parent)
 {
@@ -283,6 +402,34 @@ void RecentManager::init()
     watcher->startWatcher();
 
     connect(DevProxyMng, &DeviceProxyManager::protocolDevUnmounted, this, &RecentManager::updateRecent);
+}
+
+void RecentManager::removeRecent(const QList<QUrl> &urls)
+{
+    DDialog dlg;
+    dlg.setIcon(QIcon::fromTheme("dialog-warning"));
+    dlg.addButton(QObject::tr("Cancel", "button"));
+    dlg.addButton(QObject::tr("Remove", "button"), true, DDialog::ButtonRecommend);
+
+    if (urls.size() == 1)
+        dlg.setTitle(QObject::tr("Do you want to remove this item?"));
+    else
+        dlg.setTitle(QObject::tr("Do yout want to remove %1 items?").arg(urls.size()));
+    dlg.setMessage(QObject::tr("It does not delete the original files"));
+
+    int code = dlg.exec();
+    if (code == 1) {
+        QStringList list;
+        for (const QUrl &url : urls) {
+            //list << DUrl::fromLocalFile(url.path()).toString();
+            //通过durl转换path会出现编码问题，这里直接用字符串拼出正确的path;
+            QUrl newUrl = url;
+            newUrl.setScheme(Global::Scheme::kFile);
+            list << newUrl.toString();
+        }
+
+        DTK_CORE_NAMESPACE::DRecentManager::removeItems(list);
+    }
 }
 
 void RecentManager::updateRecent()

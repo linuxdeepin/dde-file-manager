@@ -144,22 +144,3 @@ JobHandlePointer FileOperationsService::cleanTrash(const QList<QUrl> &sources)
     task->setJobArgs(jobHandler, sources);
     return jobHandler;
 }
-/*!
- * \brief FileOperationsService::registerOperations Register your own file operation
- * \param scheme Scheme of the file
- * \param function Functions of file operation group
- */
-void FileOperationsService::registerOperations(const QString scheme, const FileOperationsFunctions function)
-{
-    QString topic = QString(metaObject()->className()) + "::" + QString(__FUNCTION__);
-    dpfInstance.eventUnicast().push(topic, scheme, function);
-}
-/*!
- * \brief FileOperationsService::unregisterOperations register your own file operation
- * \param scheme Scheme of the file
- */
-void FileOperationsService::unregisterOperations(const QString scheme)
-{
-    QString topic = QString(metaObject()->className()) + "::" + QString(__FUNCTION__);
-    dpfInstance.eventUnicast().push(topic, scheme);
-}

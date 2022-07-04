@@ -41,6 +41,8 @@ using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url
 Q_DECLARE_METATYPE(ContextMenuCallback);
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 Q_DECLARE_METATYPE(QList<QUrl> *);
+Q_DECLARE_METATYPE(bool *)
+Q_DECLARE_METATYPE(QFlags<QFileDevice::Permission>)
 
 DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
@@ -73,6 +75,9 @@ bool Recent::start()
     DetailSpaceService::serviceInstance()->registerFilterControlField(RecentManager::scheme(), filter);
 
     addFileOperations();
+
+    // events
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", RecentFilesHelper::instance(), &RecentFilesHelper::setPermissionHandle);
 
     return true;
 }
@@ -134,6 +139,15 @@ void Recent::followEvent()
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
+
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", RecentManager::instance(), &RecentManager::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", RecentManager::instance(), &RecentManager::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", RecentManager::instance(), &RecentManager::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", RecentManager::instance(), &RecentManager::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", RecentManager::instance(), &RecentManager::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", RecentManager::instance(), &RecentManager::linkFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", RecentManager::instance(), &RecentManager::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", RecentManager::instance(), &RecentManager::openFileInTerminal);
 }
 
 void Recent::regRecentCrumbToTitleBar()
@@ -155,34 +169,5 @@ void Recent::addFileOperations()
     WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kRecent, RecentMenuCreator::name());
 
     propertyServIns->registerBasicViewFiledExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
-
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->copy = [](const quint64,
-                                   const QList<QUrl>,
-                                   const QUrl,
-                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags) -> JobHandlePointer {
-        return {};
-    };
-    fileOpeationsHandle->cut = [](const quint64,
-                                  const QList<QUrl>,
-                                  const QUrl,
-                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags) -> JobHandlePointer {
-        return {};
-    };
-
-    fileOpeationsHandle->openInTerminal = [](const quint64,
-                                             const QList<QUrl>,
-                                             QString *) -> bool {
-        return true;
-    };
-
-    fileOpeationsHandle->deletes = &RecentFilesHelper::deleteFilesHandle;
-    fileOpeationsHandle->moveToTash = &RecentFilesHelper::deleteFilesHandle;
-    fileOpeationsHandle->openFiles = &RecentFilesHelper::openFilesHandle;
-    fileOpeationsHandle->setPermission = &RecentFilesHelper::setPermissionHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &RecentFilesHelper::writeUrlToClipboardHandle;
-    fileOpeationsHandle->linkFile = &RecentFilesHelper::createLinkFileHandle;
-
-    RecentManager::fileOperationsServIns()->registerOperations(RecentManager::scheme(), fileOpeationsHandle);
 }
 }

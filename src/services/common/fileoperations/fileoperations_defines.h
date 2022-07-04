@@ -111,34 +111,8 @@ using HandleOperationCleanTrash = std::function<JobHandlePointer(const quint64 w
 using HandleOperationWriteDataToClipboard = std::function<JobHandlePointer(const quint64 windowId,
                                                                            const QMimeData *data)>;
 
-struct FileOperationsInfo
-{
-    HandleOperationCopy copy { nullptr };
-    HandleOperationCut cut { nullptr };
-    HandleOperationMoveToTrash moveToTash { nullptr };
-    HandleOperationMoveFromPlugin moveFromPlugin { nullptr };
-    HandleOperationRestoreFromTrash restoreFromTrash { nullptr };
-    HandleOperationDeletes deletes { nullptr };
-    HandleOperationOpenFiles openFiles { nullptr };
-    HandleOperationOpenFilesByApp openFilesByApp { nullptr };
-    HandleOperationRenameFile renameFile { nullptr };
-    HandleOperationMkdir makeDir { nullptr };
-    HandleOperationTouchFile touchFile { nullptr };
-    HandleOperationLinkFile linkFile { nullptr };
-    HandleOperationSetPermission setPermission { nullptr };
-    HandleOperationWriteUrlsToClipboard writeUrlsToClipboard { nullptr };
-    HandleOperationOpenInTerminal openInTerminal { nullptr };
-    HandleOperationCleanTrash cleanTrash { nullptr };
-    HandleOperationWriteDataToClipboard writeDataToClipboard { nullptr };   // TODO(lanxuesong): impl me!
-    HandleOperationRenameFiles renameFiles { nullptr };
-    HandleOperationRenameFilesAddText renameFilesAddText { nullptr };
-};
-
 };   // namespace FileOperationsSpace
 
 }
-
-using FileOperationsFunctions = QSharedPointer<DSC_NAMESPACE::FileOperationsSpace::FileOperationsInfo>;
-Q_DECLARE_METATYPE(FileOperationsFunctions)
 
 #endif   // FILEOPERATIONS_DEFINES_H

@@ -54,6 +54,8 @@
 #include <QStorageInfo>
 #include <QApplication>
 
+Q_DECLARE_METATYPE(QList<QUrl> *)
+
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSC_USE_NAMESPACE
@@ -375,6 +377,16 @@ void VaultHelper::newOpenWindow()
     openNewWindow(rootUrl());
 }
 
+QList<QUrl> VaultHelper::transUrlsToLocal(const QList<QUrl> &urls)
+{
+    QList<QUrl> urlsTrans {};
+    bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urls, &urlsTrans);
+    if (ok && !urlsTrans.isEmpty())
+        return urlsTrans;
+
+    return urls;
+}
+
 void VaultHelper::slotlockVault(int state)
 {
     if (state == 0) {
@@ -411,6 +423,167 @@ bool VaultHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
             return false;
         (*urls).push_back(vaultToLocalUrl(url));
     }
+    return true;
+}
+
+bool VaultHelper::cutFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    if (target.scheme() != scheme())
+        return false;
+
+    QList<QUrl> actualUrls;
+    for (const QUrl &url : sources) {
+        if (FileUtils::isComputerDesktopFile(url) || FileUtils::isTrashDesktopFile(url)) {
+            continue;
+        } else {
+            actualUrls << url;
+        }
+    }
+    const QUrl url = transUrlsToLocal({ target }).first();
+    dpfSignalDispatcher->publish(GlobalEventType::kCutFile, windowId, actualUrls, url, flags, nullptr);
+
+    return true;
+}
+
+bool VaultHelper::copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    if (target.scheme() != scheme())
+        return false;
+
+    QList<QUrl> actualUrls;
+    for (const QUrl &url : sources) {
+        if (FileUtils::isComputerDesktopFile(url) || FileUtils::isTrashDesktopFile(url)) {
+            continue;
+        } else {
+            actualUrls << url;
+        }
+    }
+
+    // if use &, transUrlsToLocal return value will free, and url is invalid, app crash, the same below
+    const QUrl url = transUrlsToLocal({ target }).first();
+    dpfSignalDispatcher->publish(GlobalEventType::kCopy, windowId, actualUrls, url, flags, nullptr);
+    return true;
+}
+
+bool VaultHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+    if (sources.first().scheme() != scheme())
+        return false;
+
+    Q_UNUSED(flags)
+    QList<QUrl> redirectedFileUrls = transUrlsToLocal(sources);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
+                                 windowId,
+                                 redirectedFileUrls, flags, nullptr);
+    return true;
+}
+
+bool VaultHelper::deleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+    if (sources.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> redirectedFileUrls = transUrlsToLocal(sources);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
+                                 windowId,
+                                 redirectedFileUrls, flags, nullptr);
+    return true;
+}
+
+bool VaultHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> redirectedFileUrls = transUrlsToLocal(urls);
+
+    if (!redirectedFileUrls.isEmpty())
+        VaultEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
+
+    return true;
+}
+
+bool VaultHelper::renameFile(const quint64 windowId, const QUrl oldUrl, const QUrl newUrl, const AbstractJobHandler::JobFlags flags)
+{
+    if (oldUrl.scheme() != scheme())
+        return false;
+
+    const QUrl ourl = transUrlsToLocal({ oldUrl }).first();
+    const QUrl nurl = transUrlsToLocal({ newUrl }).first();
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFile, windowId, ourl, nurl, flags);
+
+    return true;
+}
+
+bool VaultHelper::makeDir(const quint64 windowId, const QUrl url)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    const QUrl dirUrl = transUrlsToLocal({ url }).first();
+    dpfSignalDispatcher->publish(GlobalEventType::kMkdir, windowId, dirUrl);
+
+    return true;
+}
+
+bool VaultHelper::touchFile(const quint64 windowId, const QUrl url, const DFMGLOBAL_NAMESPACE::CreateFileType type, QString *error)
+{
+    if (url.scheme() != scheme())
+        return false;
+
+    const QUrl dirUrl = transUrlsToLocal({ url }).first();
+    dpfSignalDispatcher->publish(GlobalEventType::kTouchFile,
+                                 windowId, dirUrl, type, *error);
+    return true;
+}
+
+bool VaultHelper::writeUrlsToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> redirectedFileUrls = transUrlsToLocal(urls);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+
+    return true;
+}
+
+bool VaultHelper::renameFiles(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, QString> replacePair, bool flg)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> actualUrls = transUrlsToLocal(urls);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair, flg);
+
+    return true;
+}
+
+bool VaultHelper::renameFilesAddText(const quint64 windowId, const QList<QUrl> urls, const QPair<QString, AbstractJobHandler::FileNameAddFlag> replacePair)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> actualUrls = transUrlsToLocal(urls);
+
+    dpfSignalDispatcher->publish(GlobalEventType::kRenameFiles, windowId, actualUrls, replacePair);
+
     return true;
 }
 

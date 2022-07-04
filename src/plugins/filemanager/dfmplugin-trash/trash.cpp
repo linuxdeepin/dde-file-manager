@@ -23,7 +23,6 @@
 #include "trashdiriterator.h"
 #include "trashfilewatcher.h"
 #include "utils/trashhelper.h"
-#include "utils/trashfilehelper.h"
 #include "menus/trashmenuscene.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -67,6 +66,14 @@ bool Trash::start()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TrashHelper::instance(), &TrashHelper::urlsToLocal);
+
+    // hook events, file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", TrashHelper::instance(), &TrashHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", TrashHelper::instance(), &TrashHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashHelper::instance(), &TrashHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashHelper::instance(), &TrashHelper::deleteFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashHelper::instance(), &TrashHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", TrashHelper::instance(), &TrashHelper::writeUrlsToClipboard);
 
     return true;
 }
@@ -121,16 +128,6 @@ void Trash::addFileOperations()
 
     propertyServIns->registerBasicViewFiledExpand(TrashHelper::propetyExtensionFunc, TrashHelper::scheme());
     propertyServIns->registerFilterControlField(TrashHelper::scheme(), Property::FilePropertyControlFilter::kPermission);
-
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &TrashFileHelper::openFilesHandle;
-    fileOpeationsHandle->writeUrlsToClipboard = &TrashFileHelper::writeToClipBoardHandle;
-    fileOpeationsHandle->moveToTash = &TrashFileHelper::moveToTrashHandle;
-    fileOpeationsHandle->moveFromPlugin = &TrashFileHelper::moveFromTrashHandle;
-    fileOpeationsHandle->deletes = &TrashFileHelper::deletesHandle;
-    fileOpeationsHandle->copy = &TrashFileHelper::copyHandle;
-    fileOpeationsHandle->cut = &TrashFileHelper::cutHandle;
-    TrashHelper::fileOperationsServIns()->registerOperations(TrashHelper::scheme(), fileOpeationsHandle);
 }
 
 void Trash::addCustomTopWidget()

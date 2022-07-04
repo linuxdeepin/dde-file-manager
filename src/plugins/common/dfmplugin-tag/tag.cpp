@@ -25,7 +25,6 @@
 #include "files/tagdiriterator.h"
 #include "utils/taghelper.h"
 #include "utils/tagmanager.h"
-#include "utils/tagoperationhelper.h"
 #include "widgets/tagwidget.h"
 #include "menu/tagmenuscene.h"
 #include "menu/tagdirmenuscene.h"
@@ -68,7 +67,6 @@ void Tag::initialize()
     TagManager::instance();
 
     bindEvents();
-    followEvents();
 }
 
 bool Tag::start()
@@ -88,6 +86,8 @@ bool Tag::start()
 
     WorkspaceService::service()->setWorkspaceMenuScene(TagManager::scheme(), TagDirMenuCreator::name());
     dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
+
+    followEvents();
 
     return true;
 }
@@ -116,7 +116,6 @@ void Tag::regTagCrumbToTitleBar()
 void Tag::onAllPluginsInitialized()
 {
     TagHelper::workspaceServIns()->addScheme(TagManager::scheme());
-    addFileOperations();
 }
 
 QWidget *Tag::createTagWidget(const QUrl &url)
@@ -150,14 +149,6 @@ void Tag::installToSideBar()
     }
 }
 
-void Tag::addFileOperations()
-{
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &TagOperationHelper::openFilesHandle;
-
-    TagHelper::fileOperationsServIns()->registerOperations(TagManager::scheme(), fileOpeationsHandle);
-}
-
 void Tag::followEvents()
 {
     dpfHookSequence->follow(Workspace::EventType::kPaintListItem, TagManager::instance(), &TagManager::paintListTagsHandle);
@@ -174,6 +165,9 @@ void Tag::followEvents()
 
     // url trans
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TagHelper::instance(), &TagHelper::urlsToLocal);
+
+    // file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TagHelper::instance(), &TagHelper::openFileInPlugin);
 }
 
 void Tag::bindScene(const QString &parentScene)

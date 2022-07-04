@@ -45,6 +45,7 @@ public:
     static QUrl convertToLocalUrl(const QUrl &shareUrl);
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+    bool openFileInPlugin(quint64 winId, QList<QUrl> urls);
 
 private:
     explicit ShareUtils(QObject *parent = nullptr);

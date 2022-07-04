@@ -49,8 +49,6 @@ public slots:
 
     void addComputer();
 
-    void addFileOperations();
-
     void removeSideBarVaultItem();
 
     void removeComputerVaultItem();

@@ -42,10 +42,8 @@ public:
 protected Q_SLOTS:
     void onWindowCreated(quint64 winId);
     void onWindowOpened(quint64 windd);
-    void onWindowClosed(quint64 winId);
 
 private:
-    void initOperations();
     void addNeighborToSidebar();
     void registerSambaPrehandler();
     static void sambaPrehandler(const QUrl &url, std::function<void()> after);

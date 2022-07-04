@@ -22,7 +22,6 @@
 */
 #include "optical.h"
 #include "utils/opticalhelper.h"
-#include "utils/opticalfileshelper.h"
 #include "utils/opticalsignalmanager.h"
 #include "mastered/masteredmediafileinfo.h"
 #include "mastered/masteredmediafilewatcher.h"
@@ -94,6 +93,16 @@ bool Optical::start()
     // follow event
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 
+    // file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", OpticalHelper::instance(), &OpticalHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", OpticalHelper::instance(), &OpticalHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", OpticalHelper::instance(), &OpticalHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", OpticalHelper::instance(), &OpticalHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", OpticalHelper::instance(), &OpticalHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", OpticalHelper::instance(), &OpticalHelper::linkFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", OpticalHelper::instance(), &OpticalHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", OpticalHelper::instance(), &OpticalHelper::openFileInTerminal);
+
     return true;
 }
 
@@ -114,33 +123,6 @@ void Optical::addFileOperations()
 {
     OpticalHelper::workspaceServIns()->addScheme(Global::Scheme::kBurn);
     OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::Scheme::kBurn, OpticalMenuSceneCreator::name());
-
-    FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = &OpticalFilesHelper::openFilesHandle;
-    fileOpeationsHandle->copy = [](const quint64 windowId,
-                                   const QList<QUrl> sources,
-                                   const QUrl target,
-                                   const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags) -> JobHandlePointer {
-        Q_UNUSED(windowId)
-        Q_UNUSED(flags)
-        OpticalFilesHelper::pasteFilesHandle(sources, target);
-        return {};
-    };
-    fileOpeationsHandle->cut = [](const quint64 windowId,
-                                  const QList<QUrl> sources,
-                                  const QUrl target,
-                                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags) -> JobHandlePointer {
-        Q_UNUSED(windowId)
-        Q_UNUSED(flags)
-        OpticalFilesHelper::pasteFilesHandle(sources, target, false);
-        return {};
-    };
-    fileOpeationsHandle->writeUrlsToClipboard = &OpticalFilesHelper::writeUrlToClipboardHandle;
-    fileOpeationsHandle->openInTerminal = &OpticalFilesHelper::openInTerminalHandle;
-    fileOpeationsHandle->deletes = &OpticalFilesHelper::deleteFilesHandle;
-    fileOpeationsHandle->moveToTash = &OpticalFilesHelper::deleteFilesHandle;
-    fileOpeationsHandle->linkFile = &OpticalFilesHelper::linkFileHandle;
-    OpticalHelper::fileOperationsServIns()->registerOperations(Global::Scheme::kBurn, fileOpeationsHandle);
 }
 
 void Optical::addCustomTopWidget()

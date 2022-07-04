@@ -54,8 +54,6 @@ public:
                          const QUrl &target,
                          const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags &flags = DFMBASE_NAMESPACE::AbstractJobHandler::JobFlag::kNoHint);
     JobHandlePointer cleanTrash(const QList<QUrl> &sources);
-    void registerOperations(const QString scheme, const FileOperationsFunctions function);
-    void unregisterOperations(const QString scheme);
 
 private:
     explicit FileOperationsService(QObject *parent = nullptr);

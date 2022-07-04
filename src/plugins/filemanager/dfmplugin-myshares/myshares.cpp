@@ -72,12 +72,6 @@ bool MyShares::start()
 
     WorkspaceService::service()->addScheme(ShareUtils::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(ShareUtils::scheme(), MyShareMenuCreator::name());
-    FileOperationsFunctions fileOpeationsHandle(new DSC_NAMESPACE::FileOperationsSpace::FileOperationsInfo);
-    fileOpeationsHandle->openFiles = [](quint64 winId, QList<QUrl> urls, QString *) {
-        ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::OpenMode::kOpenInCurrentWindow);
-        return true;
-    };
-    DSC_NAMESPACE::FileOperationsService::service()->registerOperations(ShareUtils::scheme(), fileOpeationsHandle);
 
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
@@ -185,4 +179,7 @@ void MyShares::hookEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendOpenWindow", ShareEventHelper::instance(), &ShareEventHelper::hookSendOpenWindow);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_SendChangeCurrentUrl", ShareEventHelper::instance(), &ShareEventHelper::hookSendChangeCurrentUrl);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", ShareUtils::instance(), &ShareUtils::urlsToLocal);
+
+    // file operation
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", ShareUtils::instance(), &ShareUtils::openFileInPlugin);
 }

@@ -55,6 +55,10 @@ class TagHelper : public QObject
     Q_DISABLE_COPY(TagHelper)
 public:
     static TagHelper *instance();
+    inline static QString scheme()
+    {
+        return "tag";
+    }
 
     QList<QColor> defualtColors() const;
 
@@ -84,6 +88,9 @@ public:
     // services instance
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
+
+    // file operation
+    bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
 
 private:
     explicit TagHelper(QObject *parent = nullptr);

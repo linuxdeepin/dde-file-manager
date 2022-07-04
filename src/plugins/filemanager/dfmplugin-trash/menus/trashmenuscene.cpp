@@ -22,7 +22,6 @@
 #include "trashmenuscene.h"
 #include "private/trashmenuscene_p.h"
 #include "utils/trashhelper.h"
-#include "utils/trashfilehelper.h"
 
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -155,10 +154,10 @@ bool TrashMenuScene::triggered(QAction *action)
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == TrashActionId::kRestore) {
-            TrashFileHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
+            TrashHelper::restoreFromTrashHandle(0, d->selectFiles, AbstractJobHandler::JobFlag::kRevocation);
             return true;
         } else if (actId == TrashActionId::kRestoreAll) {
-            TrashFileHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
+            TrashHelper::restoreFromTrashHandle(0, { d->currentDir }, AbstractJobHandler::JobFlag::kRevocation);
             return true;
         } else if (actId == TrashActionId::kEmptyTrash) {
             TrashHelper::emptyTrash();

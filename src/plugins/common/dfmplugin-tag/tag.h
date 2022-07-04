@@ -49,7 +49,6 @@ private slots:
 
 private:
     static QWidget *createTagWidget(const QUrl &url);
-    void addFileOperations();
     void followEvents();
     void bindScene(const QString &parentScene);
     void onMenuSceneAdded(const QString &scene);

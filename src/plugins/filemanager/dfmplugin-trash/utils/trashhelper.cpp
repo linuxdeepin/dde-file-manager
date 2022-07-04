@@ -43,6 +43,8 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <dfm-io/dfmio_utils.h>
+
 #include <DHorizontalLine>
 #include <DApplicationHelper>
 
@@ -207,6 +209,21 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
     return map;
 }
 
+JobHandlePointer TrashHelper::restoreFromTrashHandle(const quint64 windowId, const QList<QUrl> urls, const AbstractJobHandler::JobFlags flags)
+{
+    QList<QUrl> urlsLocal;
+    for (const auto &url : urls) {
+        if (url.scheme() == TrashHelper::scheme())
+            urlsLocal.append(TrashHelper::toLocalFile(url));
+    }
+
+    dpfSignalDispatcher->publish(GlobalEventType::kRestoreFromTrash,
+                                 windowId,
+                                 urlsLocal,
+                                 flags, nullptr);
+    return {};
+}
+
 bool TrashHelper::checkDragDropAction(const QList<QUrl> &urls, const QUrl &urlTo, Qt::DropAction *action)
 {
     if (urls.isEmpty())
@@ -338,6 +355,121 @@ dfm_service_common::FileOperationsService *TrashHelper::fileOperationsServIns()
     });
 
     return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
+}
+
+bool TrashHelper::cutFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    if (target.scheme() != scheme())
+        return false;
+
+    if (sources.isEmpty())
+        return true;
+
+    const QUrl &urlSource = sources.first();
+    if (Q_UNLIKELY(FileUtils::isGvfsFile(urlSource) || DFMIO::DFMUtils::fileIsRemovable(urlSource))) {
+        dpfSignalDispatcher->publish(GlobalEventType::kDeleteFiles,
+                                     windowId,
+                                     sources, flags, nullptr);
+    } else {
+        dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
+                                     windowId,
+                                     sources, flags, nullptr);
+    }
+    return true;
+}
+
+bool TrashHelper::copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target, const AbstractJobHandler::JobFlags flags)
+{
+    if (target.scheme() != scheme())
+        return false;
+
+    dpfSignalDispatcher->publish(GlobalEventType::kMoveToTrash,
+                                 windowId,
+                                 sources, flags, nullptr);
+    return true;
+}
+
+bool TrashHelper::moveToTrash(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+    if (sources.first().scheme() != scheme())
+        return false;
+
+    Q_UNUSED(flags)
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : sources) {
+        redirectedFileUrls << TrashHelper::toLocalFile(url);
+    }
+    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
+                                 windowId,
+                                 redirectedFileUrls,
+                                 AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
+    return true;
+}
+
+bool TrashHelper::deleteFile(const quint64 windowId, const QList<QUrl> sources, const AbstractJobHandler::JobFlags flags)
+{
+    if (sources.isEmpty())
+        return false;
+    if (sources.first().scheme() != scheme())
+        return false;
+
+    Q_UNUSED(flags)
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : sources) {
+        redirectedFileUrls << TrashHelper::toLocalFile(url);
+    }
+    dpfSignalDispatcher->publish(GlobalEventType::kCleanTrash,
+                                 windowId,
+                                 redirectedFileUrls,
+                                 AbstractJobHandler::DeleteDialogNoticeType::kDeleteTashFiles, nullptr);
+    return true;
+}
+
+bool TrashHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    bool isOpenFile = false;
+    QList<QUrl> redirectedFileUrls;
+    for (const QUrl &url : urls) {
+        QUrl redirectedFileUrl = TrashHelper::toLocalFile(url);
+        QFileInfo fileInfo(redirectedFileUrl.path());
+        if (fileInfo.isFile()) {
+            isOpenFile = true;
+            continue;
+        }
+        redirectedFileUrls << redirectedFileUrl;
+    }
+    if (!redirectedFileUrls.isEmpty())
+        TrashEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
+
+    if (isOpenFile) {
+        QString strMsg = QObject::tr("Unable to open items in the trash, please restore it first");
+        DialogManagerInstance->showMessageDialog(DialogManager::kMsgWarn, strMsg);
+    }
+    return true;
+}
+
+bool TrashHelper::writeUrlsToClipboard(const quint64 windowId, const ClipBoard::ClipboardAction action, const QList<QUrl> urls)
+{
+    if (urls.isEmpty())
+        return false;
+    if (urls.first().scheme() != scheme())
+        return false;
+
+    QList<QUrl> redirectedFileUrls;
+    for (QUrl url : urls) {
+        redirectedFileUrls << TrashHelper::toLocalFile(url);
+    }
+
+    dpfSignalDispatcher->publish(GlobalEventType::kWriteUrlsToClipboard, windowId, action, redirectedFileUrls);
+
+    return true;
 }
 
 void TrashHelper::onTrashStateChanged()

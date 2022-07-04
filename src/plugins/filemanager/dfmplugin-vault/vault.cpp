@@ -25,6 +25,7 @@
 #include <QUrl>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(QString *)
 
 using namespace dfmplugin_vault;
 
@@ -39,6 +40,16 @@ bool Vault::start()
 
     // follow event
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", VaultHelper::instance(), &VaultHelper::urlsToLocal);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", VaultHelper::instance(), &VaultHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", VaultHelper::instance(), &VaultHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", VaultHelper::instance(), &VaultHelper::deleteFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", VaultHelper::instance(), &VaultHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFile", VaultHelper::instance(), &VaultHelper::renameFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MakeDir", VaultHelper::instance(), &VaultHelper::makeDir);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_TouchFile", VaultHelper::instance(), &VaultHelper::touchFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", VaultHelper::instance(), &VaultHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFiles", VaultHelper::instance(), &VaultHelper::renameFiles);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_RenameFilesAddText", VaultHelper::instance(), &VaultHelper::renameFilesAddText);
 
     return true;
 }

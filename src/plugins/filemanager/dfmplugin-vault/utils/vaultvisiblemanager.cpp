@@ -28,7 +28,6 @@
 #include "utils/vaultentryfileentity.h"
 #include "events/vaulteventreceiver.h"
 #include "events/vaulteventcaller.h"
-#include "utils/filemanipulation.h"
 #include "utils/policy/policymanager.h"
 #include "utils/servicemanager.h"
 #include "menus/vaultmenuscene.h"
@@ -140,25 +139,6 @@ void VaultVisibleManager::addComputer()
     }
 }
 
-void VaultVisibleManager::addFileOperations()
-{
-    if (isVaultEnabled()) {
-        FileOperationsFunctions fileOpeationsHandle(new FileOperationsSpace::FileOperationsInfo);
-        fileOpeationsHandle->openFiles = &FileManipulation::openFilesHandle;
-        fileOpeationsHandle->writeUrlsToClipboard = &FileManipulation::writeToClipBoardHandle;
-        fileOpeationsHandle->moveToTash = &FileManipulation::moveToTrashHandle;
-        fileOpeationsHandle->deletes = &FileManipulation::deletesHandle;
-        fileOpeationsHandle->copy = &FileManipulation::copyHandle;
-        fileOpeationsHandle->cut = &FileManipulation::cutHandle;
-        fileOpeationsHandle->makeDir = &FileManipulation::mkdirHandle;
-        fileOpeationsHandle->touchFile = &FileManipulation::touchFileHandle;
-        fileOpeationsHandle->renameFile = &FileManipulation::renameHandle;
-        fileOpeationsHandle->renameFiles = &FileManipulation::renameFilesHandle;
-        fileOpeationsHandle->renameFilesAddText = &FileManipulation::renameFilesHandleAddText;
-        ServiceManager::fileOperationsServIns()->registerOperations(VaultHelper::instance()->scheme(), fileOpeationsHandle);
-    }
-}
-
 void VaultVisibleManager::onWindowOpened(quint64 winID)
 {
     auto window = FMWindowsIns.findWindowById(winID);
@@ -173,7 +153,6 @@ void VaultVisibleManager::onWindowOpened(quint64 winID)
     else
         connect(window, &FileManagerWindow::workspaceInstallFinished, this, &VaultVisibleManager::addComputer, Qt::DirectConnection);
 
-    addFileOperations();
     VaultEventCaller::sendBookMarkDisabled(VaultHelper::instance()->scheme());
 }
 
