@@ -26,8 +26,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/bookmark/bookmark_defines.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
@@ -95,7 +93,7 @@ void BookMark::bindEvents()
                                    BookMarkEventReceiver::instance(),
                                    &BookMarkEventReceiver::handleRenameFile);
     dpfSignalDispatcher->subscribe("dfmplugin_sidebar", "signal_Sidebar_Sorted", BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleSidebarOrderChanged);
-    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled,
-                                   BookMarkEventReceiver::instance(),
-                                   &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPBOOKMARK_NAMESPACE), "slot_Scheme_Disable",
+                            BookMarkEventReceiver::instance(), &BookMarkEventReceiver::handleAddSchemeOfBookMarkDisabled);
 }

@@ -21,27 +21,24 @@
  */
 #include "trashcore.h"
 #include "utils/trashcorehelper.h"
-#include "events/trashcoreunicastreceiver.h"
 #include "events/trashcoreeventreceiver.h"
 #include "events/trashcoreeventsender.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
-#include "services/common/trash/trash_defines.h"
+#include "services/common/propertydialog/propertydialogservice.h"
 
 using namespace dfmplugin_trashcore;
 
 void TrashCore::initialize()
 {
-    TrashCoreUnicastReceiver::instance()->connectService();
     TrashCoreEventSender::instance();
 }
 
 bool TrashCore::start()
 {
     DSC_USE_NAMESPACE
-    dpfSignalDispatcher->subscribe(Trash::EventType::kEmptyTrash,
-                                            TrashCoreEventReceiver::instance(),
-                                            &TrashCoreEventReceiver::handleEmptyTrash);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPTRASHCORE_NAMESPACE), "slot_TrashCore_EmptyTrash",
+                            TrashCoreEventReceiver::instance(),
+                            &TrashCoreEventReceiver::handleEmptyTrash);
     propertyServIns->registerCustomizePropertyView(TrashCoreHelper::createTrashPropertyDialog, TrashCoreHelper::scheme());
 
     return true;

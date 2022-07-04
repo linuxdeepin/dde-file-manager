@@ -20,10 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "singleapplication.h"
+#include "commandparser.h"
 
 #include <dfm-base/utils/windowutils.h>
-
-#include <services/filemanager/command/commandservice.h>
 
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -33,7 +32,6 @@
 #include <QDir>
 #include <QProcess>
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 SingleApplication::SingleApplication(int &argc, char **argv, int)
@@ -172,15 +170,15 @@ void SingleApplication::readData()
         arguments << QString::fromLocal8Bit(arg);
     }
 
-    commandServIns->process(arguments);
+    CommandParser::instance().process(arguments);
 
-    if (commandServIns->isSet("get-monitor-files")) {
+    if (CommandParser::instance().isSet("get-monitor-files")) {
         //Todo(yanghao&lxs): get-monitor-files
 
         return;
     }
 
-    commandServIns->processCommand();
+    CommandParser::instance().processCommand();
 }
 
 void SingleApplication::closeServer()

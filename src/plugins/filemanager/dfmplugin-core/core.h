@@ -24,13 +24,17 @@
 
 #include "dfmplugin_core_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPCORE_BEGIN_NAMESPACE
 class Core : public dpf::Plugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.filemanager" FILE "core.json")
+
+    DPF_EVENT_NAMESPACE(DPCORE_NAMESPACE)
+    DPF_EVENT_REG_SIGNAL(signal_StartApp)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;

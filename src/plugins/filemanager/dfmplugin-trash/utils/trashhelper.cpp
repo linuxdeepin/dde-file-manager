@@ -29,7 +29,6 @@
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/trash/trashservice.h"
 
 #include "dfm-framework/framework.h"
 
@@ -179,7 +178,7 @@ bool TrashHelper::isEmpty()
 
 void TrashHelper::emptyTrash(const quint64 windowId)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Trash::EventType::kEmptyTrash, windowId);
+    dpfSlotChannel->push("dfmplugin_trashcore", "slot_TrashCore_EmptyTrash", windowId);
 }
 
 TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)

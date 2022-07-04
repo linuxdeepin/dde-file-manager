@@ -15,6 +15,8 @@ set(SRCS
     main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/singleapplication.h
     ${CMAKE_CURRENT_SOURCE_DIR}/singleapplication.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/commandparser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/commandparser.cpp
     )
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)

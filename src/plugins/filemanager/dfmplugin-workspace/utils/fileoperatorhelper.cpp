@@ -27,7 +27,6 @@
 #include "dfm-framework/framework.h"
 
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/preview/preview_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
@@ -293,7 +292,7 @@ void FileOperatorHelper::sendBluetoothFiles(const FileView *view)
 void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
 {
     quint64 winID = WorkspaceHelper::instance()->windowId(view);
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, winID, selectUrls, currentDirUrls);
+    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", winID, selectUrls, currentDirUrls);
 }
 
 void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)

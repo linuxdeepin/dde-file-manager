@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             liuyangming<liuyangming@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +19,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef COMMADNSERVICE_H
-#define COMMADNSERVICE_H
-
-#include "dfm_filemanager_service_global.h"
-
-#include <dfm-framework/service/pluginservicecontext.h>
+*/
+#ifndef COMMANDPARSER_H
+#define COMMANDPARSER_H
 
 #include <QObject>
 
@@ -34,32 +31,23 @@ class QCoreApplication;
 class QCommandLineOption;
 QT_END_NAMESPACE
 
-DSB_FM_BEGIN_NAMESPACE
-
-class CommandService final : public dpf::PluginService, dpf::AutoServiceRegister<CommandService>
+class CommandParser : public QObject
 {
     Q_OBJECT
-    Q_DISABLE_COPY(CommandService)
-    friend class dpf::QtClassFactory<dpf::PluginService>;
+    Q_DISABLE_COPY(CommandParser)
 
 public:
-    static QString name()
-    {
-        return "org.deepin.service.CommandService";
-    }
+    static CommandParser &instance();
 
-    explicit CommandService(QObject *parent = nullptr);
-    virtual ~CommandService() override;
-    static CommandService *instance();
-
-    void process();
+    void bindEvents();
     bool isSet(const QString &name) const;
     QString value(const QString &name) const;
     void processCommand();
+    void process();
     void process(const QStringList &arguments);
 
 private:
-    void init();
+    void initialize();
     void initOptions();
     void addOption(const QCommandLineOption &option);
 
@@ -71,10 +59,10 @@ private:
     void openInUrls();
 
 private:
+    explicit CommandParser(QObject *parent = nullptr);
+
+private:
     QCommandLineParser *commandParser;
 };
 
-DSB_FM_END_NAMESPACE
-
-#define commandServIns ::dfm_service_filemanager::CommandService::instance()
-#endif   // COMMADNSERVICE_H
+#endif   // COMMANDPARSER_H

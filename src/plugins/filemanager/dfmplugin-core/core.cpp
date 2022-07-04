@@ -22,8 +22,6 @@
 #include "core.h"
 #include "events/coreeventreceiver.h"
 
-#include "services/filemanager/command/commandservice.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/standardpaths.h"
@@ -37,7 +35,6 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/dpf.h>
 #include <dfm-mount/ddevicemanager.h>
 
 #include <QTimer>
@@ -45,7 +42,6 @@
 
 DFMBASE_USE_NAMESPACE
 DPCORE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 
 namespace GlobalPrivate {
 static Application *kDFMApp { nullptr };
@@ -93,6 +89,8 @@ bool Core::start()
 
 dpf::Plugin::ShutdownFlag Core::stop()
 {
+    if (GlobalPrivate::kDFMApp)
+        delete GlobalPrivate::kDFMApp;
     return kSync;
 }
 
@@ -110,7 +108,7 @@ void Core::onAllPluginsStarted()
     // dde-select-dialog also uses the core plugin, don't start filemanger window
     QString &&curAppName { qApp->applicationName() };
     if (curAppName == "dde-file-manager")
-        commandServIns->processCommand();
+        dpfSignalDispatcher->publish(DPF_MACRO_TO_STR(DPCORE_NAMESPACE), "signal_StartApp");
     else
         qInfo() << "Current app name is: " << curAppName << " Don't show filemanger window";
 }

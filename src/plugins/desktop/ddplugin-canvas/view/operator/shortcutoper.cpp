@@ -22,13 +22,10 @@
 #include "view/canvasview.h"
 #include "model/canvasselectionmodel.h"
 #include "delegate/canvasitemdelegate.h"
-#include "services/common/preview/preview_defines.h"
 #include "view/canvasview_p.h"
 #include "fileoperatorproxy.h"
 #include "canvasmanager.h"
 #include "utils/fileutil.h"
-
-#include <services/common/preview/preview_defines.h>
 
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/base/application/settings.h>
@@ -320,5 +317,5 @@ void ShortcutOper::previewFiles()
     for (QUrl &url : urls) {
         currentDirUrls.append(UrlRoute::fromLocalFile(url.path()));
     }
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
+    dpfSlotChannel->push("dfmplugin_filepreview", "slot_PreviewDialog_Show", view->topLevelWidget()->winId(), selectUrls, currentDirUrls);
 }

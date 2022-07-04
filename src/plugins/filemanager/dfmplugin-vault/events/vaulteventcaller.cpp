@@ -23,9 +23,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "services/common/propertydialog/property_defines.h"
 
-#include "services/filemanager/bookmark/bookmark_defines.h"
-
-#include <dfm-framework/framework.h>
+#include <dfm-framework/event/event.h>
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -53,7 +51,7 @@ void VaultEventCaller::sendVaultProperty(const QUrl &url)
 
 void VaultEventCaller::sendBookMarkDisabled(const QString scheme)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::BookMark::EventType::kBookMarkDisabled, scheme);
+    dpfSlotChannel->push("dfmplugin_bookmark", "slot_Scheme_Disable", scheme);
 }
 
 void VaultEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls)

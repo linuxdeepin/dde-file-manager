@@ -32,6 +32,10 @@ class BookMark : public DPF_NAMESPACE::Plugin
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.deepin.plugin.common" FILE "bookmark.json")
 
+    DPF_EVENT_NAMESPACE(DPBOOKMARK_NAMESPACE)
+
+    DPF_EVENT_REG_SLOT(slot_Scheme_Disable)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
@@ -49,6 +53,6 @@ private:
     bool subscribedEvent { false };
 };
 
-}
+}   // namespace dfmplugin_bookmark
 
 #endif   // BOOKMARK_H

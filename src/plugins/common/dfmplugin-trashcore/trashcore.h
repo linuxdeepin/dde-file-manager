@@ -34,11 +34,14 @@ class TrashCore : public dpf::Plugin
 
     DPF_EVENT_NAMESPACE(DPTRASHCORE_NAMESPACE)
     DPF_EVENT_REG_SIGNAL(signal_TrashCore_TrashStateChanged)
+
+    DPF_EVENT_REG_SLOT(slot_TrashCore_EmptyTrash)
+
 public:
     virtual void initialize() override;
     virtual bool start() override;
     virtual dpf::Plugin::ShutdownFlag stop() override;
 };
-}
+}   // namespace dfmplugin_trashcore
 
 #endif   // TRASHCOREPLUGIN_H

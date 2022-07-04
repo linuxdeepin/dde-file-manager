@@ -206,7 +206,7 @@ public:
     {
         if (!globalFilterMap.isEmpty()) {
             QVariantList ret;
-            makeVariantList(&ret, param, args...);
+            makeVariantList(&ret, param, std::forward<Args>(args)...);
             if (globalFiltered(type, ret))
                 return false;
         }
@@ -254,7 +254,7 @@ public:
     {
         if (!globalFilterMap.isEmpty()) {
             QVariantList ret;
-            makeVariantList(&ret, param, args...);
+            makeVariantList(&ret, param, std::forward<Args>(args)...);
             if (globalFiltered(type, ret))
                 return QFuture<bool>();
         }

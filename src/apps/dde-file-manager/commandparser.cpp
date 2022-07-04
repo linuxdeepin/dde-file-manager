@@ -1,10 +1,11 @@
 /*
  * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: huangyu<huangyub@uniontech.com>
- *             liuyangming<liuyangming@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,76 +19,47 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
+#include "commandparser.h"
 
-#include "commandservice.h"
-
-#include <dfm-framework/framework.h>
-
-#include "services/common/propertydialog/property_defines.h"
+#include "services/common/propertydialog/property_defines.h"   // TODO(zhangs): remove it
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
+
+#include <dfm-framework/event/event.h>
 
 #include <QCoreApplication>
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 #include <QDebug>
 
-DSB_FM_USE_NAMESPACE
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
-CommandService::CommandService(QObject *parent)
-    : dpf::PluginService(parent),
-      dpf::AutoServiceRegister<CommandService>(),
-      commandParser(new QCommandLineParser)
+CommandParser &CommandParser::instance()
 {
-    init();
+    static CommandParser ins;
+    return ins;
 }
 
-CommandService::~CommandService()
+void CommandParser::bindEvents()
 {
+    dpfSignalDispatcher->subscribe("dfmplugin_core", "signal_StartApp", this, &CommandParser::openInUrls);
 }
 
-CommandService *CommandService::instance()
-{
-
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::CommandService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::CommandService>(DSB_FM_NAMESPACE::CommandService::name());
-}
-
-void CommandService::process()
-{
-    return process(qApp->arguments());
-}
-
-bool CommandService::isSet(const QString &name) const
+bool CommandParser::isSet(const QString &name) const
 {
     return commandParser->isSet(name);
 }
 
-QString CommandService::value(const QString &name) const
+QString CommandParser::value(const QString &name) const
 {
     return commandParser->value(name);
 }
 
-void CommandService::init()
-{
-    commandParser->setApplicationDescription(QString("%1 helper").arg(QCoreApplication::applicationName()));
-    initOptions();
-    commandParser->addHelpOption();
-    commandParser->addVersionOption();
-}
-
-void CommandService::processCommand()
+void CommandParser::processCommand()
 {
     // whether to add setQuitOnLastWindowClosed
     if (isSet("d"))
@@ -114,7 +86,25 @@ void CommandService::processCommand()
     openInUrls();
 }
 
-void CommandService::initOptions()
+void CommandParser::process()
+{
+    return process(qApp->arguments());
+}
+
+void CommandParser::process(const QStringList &arguments)
+{
+    commandParser->process(arguments);
+}
+
+void CommandParser::initialize()
+{
+    commandParser->setApplicationDescription(QString("%1 helper").arg(QCoreApplication::applicationName()));
+    initOptions();
+    commandParser->addHelpOption();
+    commandParser->addVersionOption();
+}
+
+void CommandParser::initOptions()
 {
     QCommandLineOption newWindowOption(QStringList() << "n"
                                                      << "new-window",
@@ -163,27 +153,22 @@ void CommandService::initOptions()
     addOption(openHomeOption);
 }
 
-void CommandService::addOption(const QCommandLineOption &option)
+void CommandParser::addOption(const QCommandLineOption &option)
 {
     commandParser->addOption(option);
 }
 
-void CommandService::process(const QStringList &arguments)
-{
-    commandParser->process(arguments);
-}
-
-QStringList CommandService::positionalArguments() const
+QStringList CommandParser::positionalArguments() const
 {
     return commandParser->positionalArguments();
 }
 
-QStringList CommandService::unknownOptionNames() const
+QStringList CommandParser::unknownOptionNames() const
 {
     return commandParser->unknownOptionNames();
 }
 
-void CommandService::showPropertyDialog()
+void CommandParser::showPropertyDialog()
 {
     QStringList paths = positionalArguments();
     QList<QUrl> urlList;
@@ -205,7 +190,7 @@ void CommandService::showPropertyDialog()
     dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urlList);
 }
 
-void CommandService::openWithDialog()
+void CommandParser::openWithDialog()
 {
     QStringList files = positionalArguments();
 
@@ -227,15 +212,14 @@ void CommandService::openWithDialog()
     dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", urlList);
 }
 
-void CommandService::openInHomeDirectory()
+void CommandParser::openInHomeDirectory()
 {
     QString homePath = StandardPaths::location(StandardPaths::StandardLocation::kHomePath);
     QUrl url = QUrl::fromUserInput(homePath);
     dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
-    // Todo(yanghao):isSet("n")
 }
 
-void CommandService::openInUrls()
+void CommandParser::openInUrls()
 {
     QList<QUrl> argumentUrls;
 
@@ -277,4 +261,11 @@ void CommandService::openInUrls()
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, QUrl());
     for (const QUrl &url : argumentUrls)
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url);
+}
+
+CommandParser::CommandParser(QObject *parent)
+    : QObject(parent),
+      commandParser(new QCommandLineParser)
+{
+    initialize();
 }

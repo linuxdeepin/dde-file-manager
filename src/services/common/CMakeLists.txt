@@ -32,30 +32,11 @@ FILE(GLOB FILEOPERATIONS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/fileoperationutils/*.cpp"
 )
 
-FILE(GLOB DIALOG_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/taskdialog/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/taskdialog/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/propertydialog/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/propertydialog/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/mountpasswddialog/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/mountpasswddialog/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/settingsdialog/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/dialog/settingsdialog/*.cpp"
-)
-
 FILE(GLOB PROPERTYDIALOG_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*/*.cpp"
-)
-
-
-FILE(GLOB BLUETOOTH_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/bluetooth/private/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*/*.cpp"
 )
 
 FILE(GLOB DELEGATE_FILES
@@ -63,23 +44,6 @@ FILE(GLOB DELEGATE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/delegate/*.cpp"
 )
 
-FILE(GLOB USERSHARE_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/usershare/private/*.cpp"
-    )
-
-FILE(GLOB PREVIEW_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*/*.cpp"
-    )
-
-
-FILE(GLOB TRASH_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/trash/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/trash/*.cpp"
-)
 
 FILE(GLOB EMBLEM_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/emblem/*.h"
@@ -90,13 +54,8 @@ add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
     ${FILEOPERATIONS_FILES}
-    ${DIALOG_FILES}
     ${PROPERTYDIALOG_FILES}
-    ${BLUETOOTH_FILES}
     ${DELEGATE_FILES}
-    ${USERSHARE_FILES}
-    ${PREVIEW_FILES}
-    ${TRASH_FILES}
     ${EMBLEM_FILES}
 )
 

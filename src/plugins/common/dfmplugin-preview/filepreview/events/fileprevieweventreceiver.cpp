@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "fileprevieweventreceiver.h"
-#include "services/common/preview/preview_defines.h"
 #include "utils/previewdialogmanager.h"
 
 #include <dfm-framework/framework.h>
@@ -39,7 +38,7 @@ FilePreviewEventReceiver *FilePreviewEventReceiver::instance()
 
 void FilePreviewEventReceiver::connectService()
 {
-    dpfSignalDispatcher->subscribe(DSC_NAMESPACE::Preview::EventType::kShowPreviewEvent, this, &FilePreviewEventReceiver::showFilePreview);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPFILEPREVIEW_NAMESPACE), "slot_PreviewDialog_Show", this, &FilePreviewEventReceiver::showFilePreview);
 }
 
 void FilePreviewEventReceiver::showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
