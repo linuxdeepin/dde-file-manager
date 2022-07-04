@@ -27,6 +27,7 @@
 #include "dfmvaultactivefinishedview.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "controllers/vaultcontroller.h"
+#include "vault/vaultconfig.h"
 
 #include <QDebug>
 #include <QStackedWidget>
@@ -108,8 +109,19 @@ void DFMVaultActiveView::slotNextWidget()
         int nIndex = m_pStackedWidget->currentIndex();
         int nCount = m_pStackedWidget->count();
         if (nIndex < nCount - 1) {
-            int nNextIndex = nIndex + 1;
-            m_pStackedWidget->setCurrentIndex(nNextIndex);
+            if (nIndex == 1) {  // 设置加密方式界面
+                VaultConfig config;
+                QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+                if (encryptionMethod == CONFIG_METHOD_VALUE_KEY) {
+                    m_pStackedWidget->setCurrentIndex(nIndex + 1);
+                } else if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                    m_pStackedWidget->setCurrentIndex(nIndex + 2);
+                } else if (encryptionMethod == "NoExist") {
+                    qWarning() << "Get encryption method failed, cant not next!";
+                }
+                return;
+            }
+            m_pStackedWidget->setCurrentIndex(nIndex + 1);
         } else {
             setBeginingState();   // 控件文本恢复初值
             emit accept();

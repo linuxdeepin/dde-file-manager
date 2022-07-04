@@ -36,6 +36,12 @@
 #include <QtGlobal>
 #include <QProcess>
 
+#undef signals
+extern "C" {
+    #include <libsecret/secret.h>
+}
+#define signals public
+
 OperatorCenter::OperatorCenter(QObject *parent)
     : QObject(parent), m_strCryfsPassword(""), m_strUserKey(""), m_standOutput("")
 {
@@ -288,7 +294,13 @@ bool OperatorCenter::saveSaltAndCiphertext(const QString &password, const QStrin
     passwordHintFile.close();
 
     // 缓存cryfs密码
-    m_strCryfsPassword = strSaltAndCiphertext;
+    VaultConfig config;
+    QString useUserPassword = config.get(CONFIG_NODE_NAME, CONFIG_KEY_USE_USER_PASSWORD, QVariant("NoExist")).toString();
+    if (useUserPassword != "NoExist") {
+        m_strCryfsPassword = password;
+    } else {
+        m_strCryfsPassword = strSaltAndCiphertext;
+    }
 
     return true;
 }
@@ -365,7 +377,15 @@ bool OperatorCenter::checkPassword(const QString &password, QString &cipher)
             qDebug() << "password error!";
             return false;
         }
-        cipher = strNewSaltAndCipher;
+
+        VaultConfig config;
+        QString useUserPassword = config.get(CONFIG_NODE_NAME, CONFIG_KEY_USE_USER_PASSWORD, QVariant("NoExist")).toString();
+        if (useUserPassword != "NoExist") {
+            cipher = password;
+        } else {
+            cipher = strNewSaltAndCipher;
+        }
+
     } else {   // 如果是旧版本，验证第一次加密的结果
         // 获得本地盐及密文
         QString strfilePath = makeVaultLocalPath(PASSWORD_FILE_NAME);
@@ -633,4 +653,72 @@ int OperatorCenter::executionShellCommand(const QString &strCmd, QStringList &ls
             return res;
         }
     }
+}
+
+bool OperatorCenter::setPasswordToKeyring(const QString &password)
+{
+    qInfo() << "Vault: Store password start!";
+
+    GError *error = NULL;
+    SecretService *service = NULL;
+    QByteArray baPassword = password.toLatin1();
+    const char *cPassword = baPassword.data();
+    // 创建密码结构体
+    SecretValue *value = secret_value_new_full(g_strdup(cPassword), strlen(cPassword), "text/plain", (GDestroyNotify)secret_password_free);
+    // 同步获取密码服务
+    service = secret_service_get_sync(SECRET_SERVICE_NONE, NULL, &error);
+    if (error == NULL) {
+        GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+        // 获取当前登录用户信息
+        char *userName = getlogin();
+        qInfo() << "Get user name : " << QString(userName);
+        g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
+        g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
+        secret_service_store_sync(service, NULL, attributes, NULL, "uos cryfs password", value, NULL, &error);
+    }
+    secret_value_unref(value);
+    g_object_unref(value);
+
+    if (error != NULL) {
+        qWarning() << "Vault: Store password failed! error :" << QString(error->message);
+        return false;
+    }
+
+    qInfo() << "Vault: Store password end!";
+
+    return true;
+}
+
+QString OperatorCenter::getPasswordFromKeyring()
+{
+    qInfo() << "Vault: Read password start!";
+
+    QString result { "" };
+
+    GError *error = NULL;
+    SecretService *service = NULL;
+    char *userName = getlogin();
+    qInfo() << "Vault: Get user name : " << QString(userName);
+    GHashTable *attributes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+    g_hash_table_insert(attributes, g_strdup("user"), g_strdup(userName));
+    g_hash_table_insert(attributes, g_strdup("domain"), g_strdup("uos.cryfs"));
+
+    service = secret_service_get_sync(SECRET_SERVICE_NONE, NULL, &error);
+
+    // 获取密码
+    SecretValue *value_read = secret_service_lookup_sync(service, NULL, attributes, NULL, &error);
+    gsize length;
+    const gchar* passwd = secret_value_get(value_read, &length);
+    if (length > 0) {
+        qInfo() << "Vault: Read password not empty!";
+        result = QString(passwd);
+    }
+
+    secret_value_unref(value_read);
+    g_hash_table_unref(attributes);
+    g_object_unref(service);
+
+    qWarning() << "Vault: Read password end!";
+
+    return result;
 }

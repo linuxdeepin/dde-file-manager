@@ -115,7 +115,7 @@ TEST_F(TestCryFsHandle, tst_unlockVault)
 
 TEST_F(TestCryFsHandle, tst_runVaultProcess)
 {
-    int exitCode = m_controller->runVaultProcess("", "", "");
+    int exitCode = m_controller->runVaultProcess("", "", "", false);
     if(exitCode == 0)
         EXPECT_EQ(0, exitCode);
 }

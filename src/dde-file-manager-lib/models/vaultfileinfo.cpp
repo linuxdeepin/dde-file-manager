@@ -26,6 +26,7 @@
 #include "dfileservices.h"
 #include "controllers/vaultcontroller.h"
 #include "dfilesystemmodel.h"
+#include "vault/vaultconfig.h"
 
 #include <QStandardPaths>
 #include <QIcon>
@@ -198,16 +199,27 @@ QVector<MenuAction> VaultFileInfo::menuActionList(DAbstractFileInfo::MenuType ty
 
             QVector<MenuAction> actions;
             if (vaultState == VaultController::Unlocked) {
-
-                actions << MenuAction::Open
-                        << MenuAction::OpenInNewWindow
-                        << MenuAction::Separator
-                        << MenuAction::LockNow
-                        << MenuAction::AutoLock
-                        << MenuAction::Separator
-                        << MenuAction::DeleteVault
-                        << MenuAction::Separator
-                        << MenuAction::Property;
+                // 透明加密方式下，移除【立即上锁】【自动上锁】选项
+                VaultConfig config;
+                QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+                if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                    actions << MenuAction::Open
+                            << MenuAction::OpenInNewWindow
+                            << MenuAction::Separator
+                            << MenuAction::DeleteVault
+                            << MenuAction::Separator
+                            << MenuAction::Property;
+                } else {
+                    actions << MenuAction::Open
+                            << MenuAction::OpenInNewWindow
+                            << MenuAction::Separator
+                            << MenuAction::LockNow
+                            << MenuAction::AutoLock
+                            << MenuAction::Separator
+                            << MenuAction::DeleteVault
+                            << MenuAction::Separator
+                            << MenuAction::Property;
+                }
             } else if (vaultState == VaultController::Encrypted) {
                 actions << MenuAction::UnLock;
                 if(!VaultController::getVaultVersion())

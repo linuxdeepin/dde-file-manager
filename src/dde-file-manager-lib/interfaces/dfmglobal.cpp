@@ -56,6 +56,7 @@
 #include "plugins/schemepluginmanager.h"
 #include "extensionimpl/dfmextpluginmanager.h"
 #include "plugins/pluginemblemmanager.h"
+#include "vault/vaultdbusresponse.h"
 
 #include <DArrowRectangle>
 
@@ -579,6 +580,13 @@ void DFMGlobal::initEmblemPluginManagerConnection()
 {
     connect(PluginEmblemManager::instance(), &PluginEmblemManager::updatePluginEmblem,
             fileSignalManager, &FileSignalManager::requestUpdateAllFileView);
+}
+
+void DFMGlobal::initVaultDbusResponse()
+{
+    VaultDbusResponse::instance()->connectLockScreenDBus();
+    // 解锁保险箱
+    VaultDbusResponse::instance()->transparentUnlockVault();
 }
 
 QString DFMGlobal::getUser()

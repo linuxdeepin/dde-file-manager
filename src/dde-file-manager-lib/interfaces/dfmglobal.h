@@ -319,6 +319,7 @@ public:
     static void initBluetoothManager();
     static void initRootFileManager();
     static void initEmblemPluginManagerConnection();
+    static void initVaultDbusResponse();
 
     static QString getUser();
     static int getUserId();

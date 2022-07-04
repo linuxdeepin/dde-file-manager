@@ -24,6 +24,7 @@
 #include "operatorcenter.h"
 #include "accessibility/ac-lib-file-manager.h"
 #include "controllers/vaultcontroller.h"
+#include "vault/vaultconfig.h"
 
 #include <DPasswordEdit>
 #include <DLabel>
@@ -62,12 +63,12 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     pLabel->setAlignment(Qt::AlignHCenter);
 
     // 类型
-    DLabel *pTypeLabel = new DLabel(tr("Method"), this);
+    DLabel *pTypeLabel = new DLabel(tr("Encryption method"), this);
     AC_SET_ACCESSIBLE_NAME(pTypeLabel, AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_LABEL);
     m_pTypeCombo = new QComboBox(this);
     AC_SET_ACCESSIBLE_NAME(m_pTypeCombo, AC_VAULT_ACTIVE_SET_PASSWORD_TYPE_COMBOX);
     QStringList lstItems;
-    lstItems << tr("Manual")/* << tr("Random")*/;
+    lstItems << tr("Key encryption") << tr("Transparent encryption");
     m_pTypeCombo->addItems(lstItems);
     connect(m_pTypeCombo, SIGNAL(currentIndexChanged(int)),
             this, SLOT(slotTypeChanged(int)));
@@ -120,7 +121,13 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     m_pTips->setMaxLength(14);
     m_pTips->setPlaceholderText(tr("Optional"));
 
-
+    // 透明加密描述文本
+    TransparentEncryptionText = new DLabel(tr("\nThe file vault will be automatically unlocked when accessed, "
+                                              "without verifying the password. "
+                                              "Files in it will be inaccessible under other user accounts. "), this);
+    AC_SET_ACCESSIBLE_NAME(TransparentEncryptionText, AC_VAULT_ACTIVE_SET_PASSWORD_TRANSPARENT_LABEL);
+    TransparentEncryptionText->setVisible(false);
+    TransparentEncryptionText->setWordWrap(true);
 
     // 下一步按钮
     m_pNext = new QPushButton(tr("Next"), this);
@@ -128,42 +135,6 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     m_pNext->setEnabled(false);
     connect(m_pNext, &QPushButton::clicked,
             this, &DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked);
-
-    // 其他解锁方式
-//    m_pOtherMethod = new QCheckBox(tr("Fingerprint"), this);
-//    m_pOtherMethod->setVisible(false);
-    // 长度
-//    m_pLengthLabel = new QLabel(tr("Length"), this);
-//    m_pLengthSlider = new QSlider(this);
-//    m_pLengthSlider->setOrientation(Qt::Horizontal);
-//    m_pLengthSlider->setRange(8, 24);
-//    connect(m_pLengthSlider, &QSlider::valueChanged,
-//            this, &DFMVaultActiveSetUnlockMethodView::slotLengthChanged);
-//    m_pLengthEdit = new QLineEdit(this);
-//    m_pLengthEdit->setMaximumWidth(60);
-//    m_pLengthEdit->setReadOnly(true);
-//    m_pLengthEdit->setText(tr("8Bit"));
-//    m_pStrengthLabel = new QLabel(tr("Week"), this);
-//    m_pStrengthLabel->setStyleSheet("color: #FF4500");
-//    m_pStrengthLabel->setMaximumWidth(50);
-//    m_pLengthLabel->setVisible(false);
-//    m_pLengthSlider->setVisible(false);
-//    m_pLengthEdit->setVisible(false);
-//    m_pStrengthLabel->setVisible(false);
-
-    // 结果
-//    m_pResultLabel = new QLabel(tr("Result"), this);
-//    m_pResultEdit = new QLineEdit(tr(""), this);
-//    connect(m_pResultEdit, &QLineEdit::textChanged,
-//            this, &DFMVaultActiveSetUnlockMethodView::slotGenerateEditChanged);
-//    m_pResultLabel->setVisible(false);
-//    m_pResultEdit->setVisible(false);
-
-    // 生成随即密码按钮
-//    m_pGenerateBtn = new QPushButton(tr("Generate"), this);
-//    connect(m_pGenerateBtn, &QPushButton::clicked,
-//            this, &DFMVaultActiveSetUnlockMethodView::slotGeneratePasswordBtnClicked);
-//    m_pGenerateBtn->setVisible(false);
 
     // 布局
     play1 = new QGridLayout();
@@ -290,97 +261,78 @@ void DFMVaultActiveSetUnlockMethodView::slotGenerateEditChanged(const QString &s
 
 void DFMVaultActiveSetUnlockMethodView::slotNextBtnClicked()
 {
-    QString strPassword = m_pPassword->text();
-    QString strPasswordHint = m_pTips->text();
-    if (OperatorCenter::getInstance()->saveSaltAndCiphertext(strPassword, strPasswordHint)
-            && OperatorCenter::getInstance()->createKeyNew(strPassword))
-        emit sigAccepted();
+    VaultConfig config;
+    config.set(CONFIG_NODE_NAME, CONFIG_KEY_USE_USER_PASSWORD, QVariant("1"));
+    if (m_pTypeCombo->currentIndex() == 0) {    // 密钥加密
+        QString strPassword = m_pPassword->text();
+        QString strPasswordHint = m_pTips->text();
+        if (OperatorCenter::getInstance()->saveSaltAndCiphertext(strPassword, strPasswordHint)
+                && OperatorCenter::getInstance()->createKeyNew(strPassword)) {
+            // 记录加密方式
+            config.set(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant(CONFIG_METHOD_VALUE_KEY));
+
+            emit sigAccepted();
+        }
+    } else {    // 透明加密
+        // 生成随机密码
+        const QString &strPassword = OperatorCenter::getInstance()->autoGeneratePassword(18);
+        if (strPassword.isEmpty()) {
+            qWarning() << "auto Generate password failed!";
+            return;
+        }
+        qInfo() << "打印密码，方便调试功能，记得清除此打印！随机密码为：" << strPassword;
+        // 保存随机密码到Keyring
+        if (OperatorCenter::getInstance()->setPasswordToKeyring(strPassword)) {
+            // 记录加密方式
+            config.set(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant(CONFIG_METHOD_VALUE_TRANSPARENT));
+            // 记录版本信息
+            config.set(CONFIG_NODE_NAME, CONFIG_KEY_VERSION, QVariant(CONFIG_VAULT_VERSION_1050));
+
+            emit sigAccepted();
+        }
+    }
 }
 
 void DFMVaultActiveSetUnlockMethodView::slotTypeChanged(int index)
 {
-    if (index) { // 随机
-
+    if (index) { // 透明加密
         play1->removeWidget(m_pPasswordLabel);
         play1->removeWidget(m_pPassword);
         play1->removeWidget(m_pRepeatPasswordLabel);
         play1->removeWidget(m_pRepeatPassword);
-//        play1->removeWidget(m_pOtherMethod);
-
+        play1->removeWidget(m_pPasswordHintLabel);
+        play1->removeWidget(m_pTips);
         m_pPasswordLabel->setVisible(false);
         m_pPassword->setVisible(false);
         m_pRepeatPasswordLabel->setVisible(false);
         m_pRepeatPassword->setVisible(false);
-//        m_pOtherMethod->setVisible(false);
+        m_pPasswordHintLabel->setVisible(false);
+        m_pTips->setVisible(false);
 
-//        play1->addWidget(m_pLengthLabel, 2, 0, 1, 1, Qt::AlignLeft);
-//        play1->addWidget(m_pLengthSlider, 2, 1, 1, 3);
-//        play1->addWidget(m_pLengthEdit, 2, 4, 1, 1);
-//        play1->addWidget(m_pStrengthLabel, 2, 5, 1, 1);
-//        play1->addWidget(m_pResultLabel, 3, 0, 1, 1, Qt::AlignLeft);
-//        play1->addWidget(m_pResultEdit, 3, 1, 1, 5);
-//        play1->addWidget(m_pGenerateBtn, 5, 2, 1, 2, Qt::AlignHCenter);
+        play1->addWidget(TransparentEncryptionText, 1, 0, 3, 6);
+        TransparentEncryptionText->setVisible(true);
 
-//        m_pLengthLabel->setVisible(true);
-//        m_pLengthSlider->setVisible(true);
-//        m_pLengthEdit->setVisible(true);
-//        m_pStrengthLabel->setVisible(true);
-//        m_pResultLabel->setVisible(true);
-//        m_pResultEdit->setVisible(true);
-//        m_pGenerateBtn->setVisible(true);
+        m_pNext->setEnabled(true);
+    } else { // 密钥加密
+        play1->removeWidget(TransparentEncryptionText);
+        TransparentEncryptionText->setVisible(false);
 
-        // 检测密码的正确性
-//        slotGenerateEditChanged(m_pResultEdit->text());
-
-    } else { // 手动
-
-        play1->addWidget(m_pPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
-        play1->addWidget(m_pPassword, 2, 1, 1, 5);
-        play1->addWidget(m_pRepeatPasswordLabel, 3, 0, 1, 1, Qt::AlignLeft);
-        play1->addWidget(m_pRepeatPassword, 3, 1, 1, 5);
-//        play1->addWidget(m_pOtherMethod, 5, 2, 1, 2, Qt::AlignHCenter);
-
+        play1->addWidget(m_pPasswordLabel, 1, 0, 1, 1, Qt::AlignLeft);
+        play1->addWidget(m_pPassword, 1, 1, 1, 5);
+        play1->addWidget(m_pRepeatPasswordLabel, 2, 0, 1, 1, Qt::AlignLeft);
+        play1->addWidget(m_pRepeatPassword, 2, 1, 1, 5);
+        play1->addWidget(m_pPasswordHintLabel, 3, 0, 1, 1, Qt::AlignLeft);
+        play1->addWidget(m_pTips, 3, 1, 1, 5);
         m_pPasswordLabel->setVisible(true);
         m_pPassword->setVisible(true);
         m_pRepeatPasswordLabel->setVisible(true);
         m_pRepeatPassword->setVisible(true);
-//        m_pOtherMethod->setVisible(true);
+        m_pPasswordHintLabel->setVisible(true);
+        m_pTips->setVisible(true);
 
-//        play1->removeWidget(m_pLengthLabel);
-//        play1->removeWidget(m_pLengthSlider);
-//        play1->removeWidget(m_pLengthEdit);
-//        play1->removeWidget(m_pStrengthLabel);
-//        play1->removeWidget(m_pResultLabel);
-//        play1->removeWidget(m_pResultEdit);
-//        play1->removeWidget(m_pGenerateBtn);
-
-//        m_pLengthLabel->setVisible(false);
-//        m_pLengthSlider->setVisible(false);
-//        m_pLengthEdit->setVisible(false);
-//        m_pStrengthLabel->setVisible(false);
-//        m_pResultLabel->setVisible(false);
-//        m_pResultEdit->setVisible(false);
-//        m_pGenerateBtn->setVisible(false);
-
-        // 检测密码正确性
-        slotRepeatPasswordEditFinished();
+        checkInputInfo() ? m_pNext->setEnabled(true) : m_pNext->setEnabled(false);
     }
 }
-
-//void DFMVaultActiveSetUnlockMethodView::slotLengthChanged(int length)
-//{
-//    m_pLengthEdit->setText(QString("%1%2").arg(length).arg(tr("Bit")));
-//    if(length > 7 && length < 12){
-//        m_pStrengthLabel->setText(tr("Week"));
-//        m_pStrengthLabel->setStyleSheet("color: #FF4500");
-//    }else if(length >= 12 && length < 19){
-//        m_pStrengthLabel->setText(tr("Medium"));
-//        m_pStrengthLabel->setStyleSheet("color: #EEC900");
-//    }else if(length >= 19 && length < 25){
-//        m_pStrengthLabel->setText(tr("Strong"));
-//        m_pStrengthLabel->setStyleSheet("color: #32CD32");
-//    }
-//}
 
 void DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength(const QString &password)
 {
@@ -389,12 +341,6 @@ void DFMVaultActiveSetUnlockMethodView::slotLimiPasswordLength(const QString &pa
         pPasswordEdit->setText(password.mid(0, PASSWORD_LENGHT_MAX));
     }
 }
-
-//void DFMVaultActiveSetUnlockMethodView::slotGeneratePasswordBtnClicked()
-//{
-//    QString strPassword = OperatorCenter::getInstance().autoGeneratePassword(m_pLengthSlider->value());
-//    m_pResultEdit->setText(strPassword);
-//}
 
 bool DFMVaultActiveSetUnlockMethodView::checkPassword(const QString &password)
 {

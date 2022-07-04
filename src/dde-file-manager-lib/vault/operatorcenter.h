@@ -123,6 +123,20 @@ public:
     //! 执行shell命令并获得shell命令的返回值
     int executionShellCommand(const QString &strCmd, QStringList &lstShellOutput);
 
+    /**
+     * @brief storeInfoToKwin   储存密码到Kwin
+     * @param userName          用户名
+     * @return                  操作成功或失败
+     */
+    bool setPasswordToKeyring(const QString &password);
+
+    /**
+     * @brief getPasswordFromKwin       从Kwin中获取密码
+     * @param userName                  用户名
+     * @return                          密码
+     */
+    QString getPasswordFromKeyring();
+
 private:
     explicit OperatorCenter(QObject *parent = nullptr);
     // 组织保险箱本地文件路径
