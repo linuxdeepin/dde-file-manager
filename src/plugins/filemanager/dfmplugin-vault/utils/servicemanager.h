@@ -22,7 +22,6 @@
 #define SERVICEMANAGER_H
 #include "dfmplugin_vault_global.h"
 
-#include "services/filemanager/fileencrypt/fileencryptservice.h"
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
 #include "services/common/fileoperations/fileoperationsservice.h"
@@ -38,8 +37,6 @@ public:
     explicit ServiceManager(QObject *parent = nullptr);
 
 public:
-    static DSB_FM_NAMESPACE::FileEncryptService *fileEncryptServiceInstance();
-
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
 
     static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();

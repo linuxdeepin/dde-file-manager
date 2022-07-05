@@ -25,10 +25,10 @@
 #include "utils/policy/policymanager.h"
 #include "utils/pathmanager.h"
 #include "utils/servicemanager.h"
+#include "utils/fileencrypthandle.h"
 #include "removevaultview/vaultremoveprogressview.h"
 #include "removevaultview/vaultremovebypasswordview.h"
 #include "removevaultview/vaultremovebyrecoverykeyview.h"
-#include "services/filemanager/fileencrypt/fileencryptservice.h"
 
 #include <DLabel>
 #include <QFrame>
@@ -95,7 +95,7 @@ VaultRemovePages::VaultRemovePages(QWidget *parent)
 void VaultRemovePages::initConnect()
 {
     connect(this, &VaultRemovePages::buttonClicked, this, &VaultRemovePages::onButtonClicked);
-    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalLockVaultState, this, &VaultRemovePages::onLockVault);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, this, &VaultRemovePages::onLockVault);
     connect(progressView, &VaultRemoveProgressView::removeFinished, this, &VaultRemovePages::onVualtRemoveFinish);
 }
 

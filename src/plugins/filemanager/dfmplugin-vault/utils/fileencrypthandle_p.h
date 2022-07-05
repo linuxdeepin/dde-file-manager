@@ -22,8 +22,7 @@
 #ifndef VAULTHANDLE_P_H
 #define VAULTHANDLE_P_H
 
-#include "dfm_filemanager_service_global.h"
-#include "fileencrypt/fileencrypterrorcode.h"
+#include "dfmplugin_vault_global.h"
 
 #include <QMap>
 
@@ -31,34 +30,32 @@ class QMutex;
 class QProcess;
 class QThread;
 
-DSB_FM_BEGIN_NAMESPACE
+DPVAULT_BEGIN_NAMESPACE
 
 class FileEncryptHandle;
-class FileEncryptPrivate
+class FileEncryptHandlerPrivate
 {
     friend class FileEncryptHandle;
-    Q_DISABLE_COPY(FileEncryptPrivate)
-private:
-    explicit FileEncryptPrivate(FileEncryptHandle *q = nullptr);
-
-    ~FileEncryptPrivate();
+    Q_DISABLE_COPY(FileEncryptHandlerPrivate)
 
 private:
+    explicit FileEncryptHandlerPrivate(FileEncryptHandle *qq = nullptr);
+    ~FileEncryptHandlerPrivate();
+
     int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
-
     int runVaultProcess(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type, int blockSize);
-
     int lockVaultProcess(QString unlockFileDir);
-
     void initEncryptType();
 
 private:
-    QProcess *process = nullptr;
-    QMutex *mutex = nullptr;
-    QThread *thread = nullptr;
+    QProcess *process { nullptr };
+    QMutex *mutex { nullptr };
+    QThread *thread { nullptr };
     QMap<int, int> activeState;
     QMap<EncryptType, QString> encryptTypeMap;
-    FileEncryptHandle *q_ptr = nullptr;
+    FileEncryptHandle *q { nullptr };
 };
-DSB_FM_END_NAMESPACE
+
+DPVAULT_END_NAMESPACE
+
 #endif   //VAULTHANDLE_P_H

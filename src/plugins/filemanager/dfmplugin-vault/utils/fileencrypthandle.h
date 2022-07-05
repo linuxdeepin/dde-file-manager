@@ -22,73 +22,46 @@
 #ifndef VAULTHANDLE_H
 #define VAULTHANDLE_H
 
-#include "dfm_filemanager_service_global.h"
-#include "fileencrypt/fileencrypterrorcode.h"
+#include "dfmplugin_vault_global.h"
 
 #include <QObject>
 
-DSB_FM_BEGIN_NAMESPACE
+DPVAULT_BEGIN_NAMESPACE
 
-class FileEncryptService;
-class FileEncryptPrivate;
+class FileEncryptHandlerPrivate;
 class FileEncryptHandle : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(FileEncryptHandle)
-private:
-    friend class FileEncryptServicePrivate;
-    explicit FileEncryptHandle(QObject *parent = nullptr);
 
 public:
-    virtual ~FileEncryptHandle() override;
+    static FileEncryptHandle *instance();
 
-private:
     void createVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString, EncryptType type = EncryptType::AES_256_GCM, int blockSize = 32768);
-
     void unlockVault(QString lockBaseDir, QString unlockFileDir, QString DSecureString);
-
     void lockVault(QString unlockFileDir);
-
     void createDirIfNotExist(QString path);
+    VaultState state(const QString &encryptBaseDir, const QString &decryptFileDir) const;
 
 signals:
-    /*!
-     * \brief                错误输出
-     * \param[in] error:     错误信息
-     */
     void signalReadError(QString error);
-
-    /*!
-     * \brief                标准输出
-     * \param[in] msg:       输出信息
-     */
     void signalReadOutput(QString msg);
-
-    /*!
-     * \brief                创建保险箱是否成功的信号
-     * \param[in] state:     返回ErrorCode枚举值
-     */
     void signalCreateVault(int state);
-
-    /*!
-     * \brief                解锁保险箱是否成功的信号
-     * \param[in] state:     返回ErrorCode枚举值
-     */
     void signalUnlockVault(int state);
-
-    /*!
-     * \brief                加锁保险箱是否成功的信号
-     * \param[in] state      返回ErrorCode枚举值
-     */
     void signalLockVault(int state);
 
-private slots:
+public slots:
     void slotReadError();
-
     void slotReadOutput();
 
 private:
-    FileEncryptPrivate *fileencryptHandlePrivatePtr = nullptr;
+    explicit FileEncryptHandle(QObject *parent = nullptr);
+    virtual ~FileEncryptHandle() override;
+
+private:
+    FileEncryptHandlerPrivate *d = nullptr;
 };
-DSB_FM_END_NAMESPACE
+
+DPVAULT_END_NAMESPACE
+
 #endif   // VAULTHANDLE_H

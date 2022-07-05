@@ -30,6 +30,7 @@
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
 #include "utils/policy/policymanager.h"
+#include "utils/fileencrypthandle.h"
 #include "events/vaulteventcaller.h"
 #include "dbus/vaultdbusutils.h"
 
@@ -313,30 +314,30 @@ void VaultHelper::createVault(QString &password)
 {
     static bool flg = true;
     if (flg) {
-        connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState, VaultHelper::instance(), &VaultHelper::sigCreateVault);
+        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault, VaultHelper::instance(), &VaultHelper::sigCreateVault);
         flg = false;
     }
-    ServiceManager::fileEncryptServiceInstance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
+    FileEncryptHandle::instance()->createVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
 void VaultHelper::unlockVault(QString &password)
 {
     static bool flg = true;
     if (flg) {
-        connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, VaultHelper::instance(), &VaultHelper::sigUnlocked);
+        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, VaultHelper::instance(), &VaultHelper::sigUnlocked);
         flg = false;
     }
-    ServiceManager::fileEncryptServiceInstance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
+    FileEncryptHandle::instance()->unlockVault(PathManager::vaultLockPath(), PathManager::vaultUnlockPath(), password);
 }
 
 void VaultHelper::lockVault()
 {
     static bool flg = true;
     if (flg) {
-        connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalLockVaultState, VaultHelper::instance(), &VaultHelper::slotlockVault);
+        connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalLockVault, VaultHelper::instance(), &VaultHelper::slotlockVault);
         flg = false;
     }
-    ServiceManager::fileEncryptServiceInstance()->lockVault(PathManager::vaultUnlockPath());
+    FileEncryptHandle::instance()->lockVault(PathManager::vaultUnlockPath());
 }
 
 void VaultHelper::creatVaultDialog()

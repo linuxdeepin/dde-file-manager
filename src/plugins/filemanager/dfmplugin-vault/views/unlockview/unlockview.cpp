@@ -25,6 +25,7 @@
 #include "utils/vaultdefine.h"
 #include "utils/vaultautolock.h"
 #include "utils/servicemanager.h"
+#include "utils/fileencrypthandle.h"
 #include "dbus/vaultdbusutils.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -103,7 +104,7 @@ void UnlockView::initUI()
     this->setLayout(mainLayout);
 
     connect(passwordEdit, &DPasswordEdit::textChanged, this, &UnlockView::onPasswordChanged);
-    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalUnlockVaultState, this, &UnlockView::onVaultUlocked);
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalUnlockVault, this, &UnlockView::onVaultUlocked);
     connect(tipsButton, &QPushButton::clicked, this, [this] {
         QString strPwdHint("");
         if (InterfaceActiveVault::getPasswordHint(strPwdHint)) {

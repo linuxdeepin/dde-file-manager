@@ -24,6 +24,7 @@
 #include "utils/vaulthelper.h"
 #include "utils/servicemanager.h"
 #include "utils/policy/policymanager.h"
+#include "utils/fileencrypthandle.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
@@ -122,7 +123,7 @@ VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)
     widgetTow->setVisible(false);
     widgetThree->setVisible(false);
 
-    connect(ServiceManager::fileEncryptServiceInstance(), &FileEncryptService::signalCreateVaultState,
+    connect(FileEncryptHandle::instance(), &FileEncryptHandle::signalCreateVault,
             this, &VaultActiveFinishedView::slotEncryptComplete);
 
     // 初始化定时器

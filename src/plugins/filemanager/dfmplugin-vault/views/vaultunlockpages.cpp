@@ -26,7 +26,6 @@
 #include "utils/vaultdefine.h"
 #include "utils/vaulthelper.h"
 #include "utils/vaultautolock.h"
-#include "services/filemanager/fileencrypt/fileencryptservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/application/settings.h"
 
@@ -49,8 +48,6 @@
 #include <QProcess>
 
 DFMBASE_USE_NAMESPACE
-DPF_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 VaultUnlockPages::VaultUnlockPages(QWidget *parent)

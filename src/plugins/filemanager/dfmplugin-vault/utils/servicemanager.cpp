@@ -30,26 +30,6 @@ ServiceManager::ServiceManager(QObject *parent)
 {
 }
 
-FileEncryptService *ServiceManager::fileEncryptServiceInstance()
-{
-    static FileEncryptService *vaultService = nullptr;
-    if (vaultService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(FileEncryptService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        vaultService = ctx.service<FileEncryptService>(FileEncryptService::name());
-        if (!vaultService) {
-            qCritical() << "Failed, init vault \"sideBarService\" is empty";
-            abort();
-        }
-    }
-    return vaultService;
-}
-
 WorkspaceService *ServiceManager::workspaceServiceInstance()
 {
     static WorkspaceService *workspaceService = nullptr;

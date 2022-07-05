@@ -16,13 +16,6 @@ FILE(GLOB GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-FILE(GLOB FILEENCRYPT_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileencrypt/private/*.cpp"
-)
-
 FILE(GLOB WORKSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.cpp"
@@ -42,7 +35,6 @@ add_library(
     ${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
-    ${FILEENCRYPT_FILES}
     ${WORKSPACE_FILES}
     ${DETAILSPACE_FILES}
 )

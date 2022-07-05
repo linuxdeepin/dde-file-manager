@@ -72,15 +72,6 @@ inline constexpr char kjsonKeyInterviewItme[] { "InterviewTime" };
 inline constexpr char kjsonKeyLockTime[] { "LockTime" };
 inline constexpr char kjsonKeyCreateTime[] { "CreateTime" };
 
-enum class VaultState : int {
-    kNotExisted = 0,
-    kEncrypted,
-    kUnlocked,
-    kUnderProcess,
-    kBroken,
-    kNotAvailable
-};
-
 //!! 保险箱当前页面标记
 enum VaultPageMark {
     kUnknown,
