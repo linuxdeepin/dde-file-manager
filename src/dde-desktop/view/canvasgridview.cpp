@@ -2631,9 +2631,7 @@ void CanvasGridView::initUI()
     }
 
     m_canvasOwnActions.insert("DisplaySettings", ContextMenuAction::DisplaySettings);
-    m_canvasOwnActions.insert("CornerSettings", ContextMenuAction::CornerSettings);
     m_canvasOwnActions.insert("WallpaperSettings", ContextMenuAction::WallpaperSettings);
-    m_canvasOwnActions.insert("FileManagerProperty", ContextMenuAction::FileManagerProperty);
     m_canvasOwnActions.insert("AutoMerge", ContextMenuAction::AutoMerge);
     m_canvasOwnActions.insert("AutoSort", ContextMenuAction::AutoSort);
     m_canvasOwnActions.insert("IconSize", ContextMenuAction::IconSize);

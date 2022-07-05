@@ -976,93 +976,40 @@ void DFileMenuData::initData()
 
     // action predicate
     actionPredicate[MenuAction::Open] =  "Open";
-    actionPredicate[MenuAction::OpenDisk] =  "OpenDisk";
+    actionPredicate[MenuAction::OpenWith] =  "OpenWith";
+    actionPredicate[MenuAction::OpenFileLocation] =  "OpenFileLocation";
+    actionPredicate[MenuAction::StageFileForBurning] =  "StageFileForBurning";
     actionPredicate[MenuAction::OpenInNewWindow] =  "OpenInNewWindow";
     actionPredicate[MenuAction::OpenInNewTab] =  "OpenInNewTab";
-    actionPredicate[MenuAction::OpenDiskInNewWindow] =  "OpenDiskInNewWindow";
-    actionPredicate[MenuAction::OpenDiskInNewTab] =  "OpenDiskInNewTab";
     actionPredicate[MenuAction::OpenAsAdmin] =  "OpenAsAdmin";
-    actionPredicate[MenuAction::OpenWith] =  "OpenWith";
-    actionPredicate[MenuAction::OpenWithCustom] =  "OpenWithCustom";
-    actionPredicate[MenuAction::OpenFileLocation] = "OpenFileLocation";
-    actionPredicate[MenuAction::Compress] = "Compress";
-    actionPredicate[MenuAction::Decompress] = "Decompress";
-    actionPredicate[MenuAction::DecompressHere] = "DecompressHere";
     actionPredicate[MenuAction::Cut] = "Cut";
     actionPredicate[MenuAction::Copy] = "Copy";
     actionPredicate[MenuAction::Paste] = "Paste";
-    actionPredicate[MenuAction::Rename] = "Rename";
-    actionPredicate[MenuAction::BookmarkRename] = "BookmarkRename";
-    actionPredicate[MenuAction::BookmarkRemove] = "BookmarkRemove";
-    actionPredicate[MenuAction::CreateSymlink] = "CreateSymlink";
-    actionPredicate[MenuAction::SendToDesktop] = "SendToDesktop";
-    actionPredicate[MenuAction::SendToRemovableDisk] = "SendToRemovableDisk";
-    actionPredicate[MenuAction::SendToBluetooth] = "SendToBluetooth";
-    actionPredicate[MenuAction::AddToBookMark] = "AddToBookMark";
-    actionPredicate[MenuAction::Delete] = "Delete";
-    actionPredicate[MenuAction::Property] = "Property";
-    actionPredicate[MenuAction::NewFolder] = "NewFolder";
-    actionPredicate[MenuAction::NewWindow] = "NewWindow";
     actionPredicate[MenuAction::SelectAll] = "SelectAll";
-    actionPredicate[MenuAction::Separator] = "Separator";
-    actionPredicate[MenuAction::ClearRecent] = "ClearRecent";
-    actionPredicate[MenuAction::ClearTrash] = "ClearTrash";
-    actionPredicate[MenuAction::DisplayAs] = "DisplayAs";
-    actionPredicate[MenuAction::SortBy] = "SortBy";
-    actionPredicate[MenuAction::NewDocument] = "NewDocument";
-    actionPredicate[MenuAction::NewWord] = "NewWord";
-    actionPredicate[MenuAction::NewExcel] = "NewExcel";
-    actionPredicate[MenuAction::NewPowerpoint] = "NewPowerpoint";
-    actionPredicate[MenuAction::NewText] = "NewText";
-    actionPredicate[MenuAction::OpenInTerminal] = "OpenInTerminal";
+    actionPredicate[MenuAction::Rename] = "Rename";
+    actionPredicate[MenuAction::Delete] = "Delete"; // 删除/移除/还原
+    actionPredicate[MenuAction::CompleteDeletion] = "CompleteDeletion";// 彻底删除
+    actionPredicate[MenuAction::ClearTrash] =  "ClearTrash";
     actionPredicate[MenuAction::Restore] = "Restore";
     actionPredicate[MenuAction::RestoreAll] = "RestoreAll";
-    actionPredicate[MenuAction::CompleteDeletion] = "CompleteDeletion";
     actionPredicate[MenuAction::Mount] = "Mount";
-    actionPredicate[MenuAction::Unmount] = "Unmount";
-    actionPredicate[MenuAction::Eject] = "Eject";
-    actionPredicate[MenuAction::SafelyRemoveDrive] = "SafelyRemoveDrive";
-    actionPredicate[MenuAction::Name] = "Name";
-    actionPredicate[MenuAction::Size] = "Size";
-    actionPredicate[MenuAction::Type] = "Type";
-    actionPredicate[MenuAction::CreatedDate] = "CreatedDate";
-    actionPredicate[MenuAction::LastModifiedDate] = "LastModifiedDate";
-    actionPredicate[MenuAction::LastRead] = "LastRead";
-    actionPredicate[MenuAction::DeletionDate] = "DeletionDate";
-    actionPredicate[MenuAction::SourcePath] = "SourcePath";
-    actionPredicate[MenuAction::AbsolutePath] = "AbsolutePath";
-    actionPredicate[MenuAction::Settings] = "Settings";
-    actionPredicate[MenuAction::Exit] = "Exit";
-    actionPredicate[MenuAction::IconView] = "IconView";
-    actionPredicate[MenuAction::ListView] = "ListView";
-    actionPredicate[MenuAction::ExtendView] = "ExtendView";
-    actionPredicate[MenuAction::SetAsWallpaper] = "SetAsWallpaper";
-    actionPredicate[MenuAction::ForgetPassword] = "ForgetPassword";
     actionPredicate[MenuAction::Share] = "Share";
     actionPredicate[MenuAction::UnShare] = "UnShare";
-    actionPredicate[MenuAction::SetUserSharePassword] = "SetUserSharePassword";
-    actionPredicate[MenuAction::FormatDevice] = "FormatDevice";
-    actionPredicate[MenuAction::OpticalBlank] = "OpticalBlank";
-    actionPredicate[MenuAction::Vault] = "Vault";
+    actionPredicate[MenuAction::CreateSymlink] = "CreateSymlink";
+    actionPredicate[MenuAction::AddToBookMark] = "AddToBookMark";
+    actionPredicate[MenuAction::BookmarkRemove] = "BookmarkRemove";
     actionPredicate[MenuAction::TagInfo] = "TagInfo";
     actionPredicate[MenuAction::TagFilesUseColor] = "TagFilesUseColor";
-    actionPredicate[MenuAction::ChangeTagColor] = "ChangeTagColor";
-    actionPredicate[MenuAction::DeleteTags] = "DeleteTags";
-    actionPredicate[MenuAction::RenameTag] = "RenameTag";
-    actionPredicate[MenuAction::RemoveFromRecent] = "RemoveFromRecent";
-    actionPredicate[MenuAction::MountImage] = "MountImage";
-    actionPredicate[MenuAction::StageFileForBurning] = "StageFileForBurning";
-    actionPredicate[MenuAction::LockNow] = "LockNow";
-    actionPredicate[MenuAction::AutoLock] = "AutoLock";
-    actionPredicate[MenuAction::Never] = "Never";
-    actionPredicate[MenuAction::FiveMinutes] = "FiveMinutes";
-    actionPredicate[MenuAction::TenMinutes] = "TenMinutes";
-    actionPredicate[MenuAction::TwentyMinutes] = "TwentyMinutes";
-    actionPredicate[MenuAction::DeleteVault] = "DeleteVault";
-    actionPredicate[MenuAction::UnLock] = "UnLock";
-    actionPredicate[MenuAction::UnLockByKey] = "UnLockByKey";
-    actionPredicate[MenuAction::RemoveStashedRemoteConn] = "RemoveStashedRemoteConn";
+    actionPredicate[MenuAction::SendToDesktop] = "SendToDesktop";
+    actionPredicate[MenuAction::SendToRemovableDisk] = "SendToRemovableDisk"; // 发送到/发送到可移动磁盘
+    actionPredicate[MenuAction::SetAsWallpaper] =  "SetAsWallpaper";
+    actionPredicate[MenuAction::OpenInTerminal] = "OpenInTerminal";
+    actionPredicate[MenuAction::NewFolder] = "NewFolder";
+    actionPredicate[MenuAction::NewDocument] = "NewDocument";
+    actionPredicate[MenuAction::DisplayAs] =  "DisplayAs";
+    actionPredicate[MenuAction::SortBy] =  "SortBy";
     actionPredicate[MenuAction::RefreshView] = "RefreshView";
+    actionPredicate[MenuAction::Property] = "Property";
 }
 
 void DFileMenuData::initActions()
@@ -1109,7 +1056,10 @@ void DFileMenuData::initActions()
 
         QAction *action = new QAction(actionIcons.value(key), actionKeys.value(key), nullptr);
         action->setData(key);
-        action->setProperty("predicate", actionPredicate.value(key));
+
+        if (actionPredicate.contains(key))
+            action->setProperty("predicate", actionPredicate.value(key));
+
         actions.insert(key, action);
         actionToMenuAction.insert(action, key);
     }
