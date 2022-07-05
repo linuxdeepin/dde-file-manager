@@ -81,7 +81,7 @@ public:
     static const int minimumWidth = 120;
     static const int maximumWidth = 200;
     void rootFileResult();
-    void jumpToComputerItem(bool toComputerItem = true);
+    void jumpToItem(const DUrl& url, GroupName group = Device);
 private:
     bool isSmbItemExisted(const DUrl &smbDevice);
 signals:

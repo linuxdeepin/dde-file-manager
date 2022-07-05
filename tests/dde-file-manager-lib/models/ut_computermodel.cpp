@@ -28,6 +28,7 @@
 #include <gtest/gtest.h>
 #include <QTimer>
 #include <QIcon>
+#include <QPluginLoader>
 
 #include "stub.h"
 #include "stubext.h"
@@ -37,7 +38,7 @@
 #define private public
 #define protected public
 #include "models/computermodel.h"
-
+#include "plugins/schemepluginmanager.h"
 DWIDGET_USE_NAMESPACE
 namespace {
 class TestComputerModel : public testing::Test

@@ -97,13 +97,19 @@ Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr")
 #else
 Q_LOGGING_CATEGORY(mountManager, "gvfs.mountMgr", QtInfoMsg)
 #endif
-//关于SMB只鉴权一次的实现原理：
-//保存SMB共享目录的登录鉴权数据，当打开其它共享目录时，如果有上次的登录鉴权数据则不再弹出鉴权对话框，先使用上次的登录数据；
-//如果没有权限访问其它共享目录，则会反复进入ask_password_cb()函数，通过倒计数器m_clearLoginDataCounter(默认值为3)
-//减小到0时，清空上次的登录鉴权数据，从而再次弹出鉴权对话框让用户重新鉴权
+/*
+关于SMB只鉴权一次的实现原理：
+1、回调函数ask_password_cb用于询问鉴权密码等信息，无论匿名还是非匿名挂载都会被调用；
+2、保存SMB共享目录的登录鉴权数据m_loginObj，当打开其它共享目录时，如果上次的登录鉴权数据m_loginObj不为空，则不再弹出鉴权对话框，先使用上次的登录数据；
+3、对于非匿名挂载，如果没有权限访问其它共享目录，则会反复进入ask_password_cb()函数，通过倒计数器m_clearLoginDataCounter(默认值为3)
+减小到0时，清空上次的登录鉴权数据，从而再次弹出鉴权对话框让用户重新鉴权；
+4、对于匿名挂载，当用户更换smb ip地址进行挂载时，不同于非匿名挂载，这时不会反复触发ask_password_cb()回调函数，此时若m_loginObj不为空，也会导致不会弹出鉴权窗口，
+解决方式为：挂载时，进行本次和上次的smb ip比对，如果ip更换，则清空m_loginObj（fix bug:#144273）
+*/
+#define decreaseCounter 3
 QJsonObject GvfsMountManager::m_obj;
 QJsonObject GvfsMountManager::m_loginObj;
-int GvfsMountManager::m_clearLoginDataCounter = 3;
+int GvfsMountManager::m_clearLoginDataCounter = decreaseCounter;
 QString GvfsMountManager::m_mountScheme = SMB_SCHEME;
 GvfsMountManager::GvfsMountManager(QObject *parent) : QObject(parent)
 {
@@ -765,7 +771,7 @@ void GvfsMountManager::monitor_volume_changed(GVolumeMonitor *volume_monitor, GV
 GMountOperation *GvfsMountManager::new_mount_op(bool isDisk = true)
 {
     GMountOperation *op;
-    GvfsMountManager::m_clearLoginDataCounter = 3;
+    GvfsMountManager::m_clearLoginDataCounter = decreaseCounter;
     op = g_mount_operation_new();
     g_signal_connect(op, "ask_question", G_CALLBACK(ask_question_cb), NULL);
     g_signal_connect(op, "ask_password",
@@ -889,15 +895,22 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         return;
 
     }
+    QString currentHost;
+    if(MountTimerHash.contains(op) && MountEventHash.value(op))
+        currentHost = MountEventHash.value(op)->fileUrl().host();
     if(m_mountScheme == SMB_SCHEME){
+        QString previousHost;
+        if(!m_loginObj.isEmpty()){
+            previousHost = m_loginObj.value("host").toString();
+            if(currentHost != previousHost)//用户更换了smb主机
+                clearLoginData();//清空上次的登录数据，为下面重新鉴权做准备(fix bug:#144273)
+        }
         m_clearLoginDataCounter--;
         //正常情况进入一次该函数，成功打开目录后就不会再进入了；
         //如果用户切换到了需要重新鉴权的目录，而采用上次的登录数据，该函数会反复进入，当达到3次，即会弹出重新鉴权对话框，达到切换访问目录的目的
         if(m_clearLoginDataCounter == 0){
-            while (!m_loginObj.isEmpty()) {
-                m_loginObj.take(m_loginObj.keys().first());
-            }
-            m_clearLoginDataCounter = 3;
+            clearLoginData();
+            m_clearLoginDataCounter = decreaseCounter;
         }
     }else{//ftp or some others
         clearLoginData();
@@ -929,6 +942,8 @@ void GvfsMountManager::ask_password_cb(GMountOperation *op, const char *message,
         m_loginObj = DThreadUtil::runInMainThread(requestPasswordDialog,
                                                 MountEventHash.value(op)->windowId(),
                                                 MountEventHash.value(op)->fileUrl().isSMBFile(), m_obj, op);
+        if(!m_loginObj.isEmpty())//此处如果m_loginObj为空,说明用户在鉴权对话框上点击了取消
+            m_loginObj.insert("host",currentHost);
     }
     //1、此后每次都用loginObj的数据登录；
     //2、如果用户访问的目录发生匿名和密码的切换，上次的登录数据无效，会导致该函数反复进入，引起m_clearLoginDataCounter递减；
@@ -1522,7 +1537,7 @@ MountStatus GvfsMountManager::mount_sync(const DFMUrlBaseEvent &event)
         CancellHash.insert(op,cancell);
 
     g_file_mount_enclosing_volume(file, static_cast<GMountMountFlags>(0),
-                                  op, cancell, mount_done_cb, op);
+                                  op, cancell, mount_done_cb, op);//Starts a mount_operation, mounting the volume that contains the file location.
     timer->start();
     int ret = event_loop->exec();
     if (MountTimerHash.value(op))
