@@ -173,7 +173,30 @@ void GetInfoWork::run()
                 if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
                     Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
                 } else {
-                    Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+                    // 专业版
+                    if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()) {
+                        // 是否激活
+                        QDBusInterface deepinLicenseInfo("com.deepin.license",
+                                                         "/com/deepin/license/Info",
+                                                         "com.deepin.license.Info",
+                                                         QDBusConnection::systemBus());
+                       int activeInfo = deepinLicenseInfo.property("AuthorizationState").toInt();
+                       if (activeInfo == 1) {
+                           // 政务授权、企业授权、原始授权
+                           uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
+                           if (authorizedInfo == 1) {
+                               Edition = DSysInfo::uosEditionName() + "(" + tr("For Government") + ")" + "(" + DSysInfo::minorVersion() + ")";
+                           } else if (authorizedInfo == 2) {
+                               Edition = DSysInfo::uosEditionName() + "(" + tr("For Enterprise") + ")" + "(" + DSysInfo::minorVersion() + ")";
+                           } else {
+                               Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+                           }
+                       } else {
+                           Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+                       }
+                    } else {
+                        Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+                    }
                 }
             }
             // 获取系统版本号
@@ -463,7 +486,30 @@ QHash<QString, QString> ComputerPropertyDialog::getMessage(const QStringList &da
         if (DSysInfo::UosType::UosServer == DSysInfo::uosType()) {  // 服务器版本
             Edition = DSysInfo::minorVersion() + DSysInfo::uosEditionName();
         } else {
-            Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+            // 专业版
+            if (DSysInfo::UosEdition::UosProfessional == DSysInfo::uosEditionType()) {
+                // 是否激活
+                QDBusInterface deepinLicenseInfo("com.deepin.license",
+                                                 "/com/deepin/license/Info",
+                                                 "com.deepin.license.Info",
+                                                 QDBusConnection::systemBus());
+               int activeInfo = deepinLicenseInfo.property("AuthorizationState").toInt();
+               if (activeInfo == 1) {
+                   // 政务授权、企业授权、原始授权
+                   uint authorizedInfo = deepinLicenseInfo.property("AuthorizationProperty").toUInt();
+                   if (authorizedInfo == 1) {
+                       Edition = DSysInfo::uosEditionName() + "(" + tr("For Government") + ")" + "(" + DSysInfo::minorVersion() + ")";
+                   } else if (authorizedInfo == 2) {
+                       Edition = DSysInfo::uosEditionName() + "(" + tr("For Enterprise") + ")" + "(" + DSysInfo::minorVersion() + ")";
+                   } else {
+                       Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+                   }
+               } else {
+                   Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+               }
+            } else {
+                Edition = DSysInfo::uosEditionName() + "(" + DSysInfo::minorVersion() + ")";
+            }
         }
         //! 获取系统版本号
         version = DSysInfo::majorVersion();
