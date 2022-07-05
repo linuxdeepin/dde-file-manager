@@ -1492,7 +1492,9 @@ void DFileManagerWindow::initConnect()
             if (d->currentView && d->currentView->widget()) {
                 QSize variable(1, 1);
                 d->currentView->widget()->resize(d->currentView->widget()->size() - variable);
-                d->currentView->widget()->resize(d->currentView->widget()->size() + variable);
+                QTimer::singleShot(0,this,[=](){//fix bug:#143339
+                    d->currentView->widget()->resize(d->currentView->widget()->size() + variable);
+                });
             }
             qDebug() << "File information window on the right";
         }

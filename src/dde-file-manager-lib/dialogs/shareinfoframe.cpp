@@ -452,14 +452,19 @@ bool ShareInfoFrame::doShareInfoSetting()
     //该权限修改逻辑只针对普通用户共享自己的文件时有效
     //root用户共享的行为不主动修改目录权限，既共享时不修改/root的其他执行权限和普通用户主目录的其他执行权限
     if (ret && m_anonymityCombox->currentIndex() != 0 && getuid() != 0) {
-        DUrl userUrl = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-        if (m_fileinfo->path().startsWith(userUrl.path())) {
-            DAbstractFileInfoPointer userFileInfo = fileService->createFileInfo(this, userUrl);
-            if (userFileInfo && userFileInfo->exists()
-                    && (userFileInfo->permissions() & QFileDevice::ExeOther) != QFileDevice::ExeOther)
-                fileService->setPermissions(this, userUrl, userFileInfo->permissions() | QFileDevice::ExeOther);
-        }
-    }
+         DUrl userUrl = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));//userUrl allways = file:///home/username
+         if(m_fileinfo->path().contains(userUrl.path())){
+             if (!m_fileinfo->path().startsWith(userUrl.path())) {//for example: m_fileinfo->path() = /data/home/username/somefolder
+                 QString prefix = m_fileinfo->path().section(userUrl.path(),0,0);//pick "/data"
+                 QString newPath = prefix + userUrl.path();//remove "/somefolder" => "/data/home/username"
+                 userUrl.setPath(newPath);
+             }
+             DAbstractFileInfoPointer userFileInfo = fileService->createFileInfo(this, userUrl);
+             if (userFileInfo && userFileInfo->exists()
+                     && (userFileInfo->permissions() & QFileDevice::ExeOther) != QFileDevice::ExeOther)
+                 fileService->setPermissions(this, userUrl, userFileInfo->permissions() | QFileDevice::ExeOther);
+         }
+     }
 
     return ret;
 }
