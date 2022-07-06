@@ -23,20 +23,11 @@ FILE(GLOB WORKSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/workspace/private/*.cpp"
 )
 
-FILE(GLOB DETAILSPACE_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/detailspace/*/*.cpp"
-)
-
-
 add_library(
     ${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
     ${WORKSPACE_FILES}
-    ${DETAILSPACE_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

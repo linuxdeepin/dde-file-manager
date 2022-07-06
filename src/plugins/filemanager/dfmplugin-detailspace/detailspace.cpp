@@ -32,11 +32,11 @@ DFMBASE_USE_NAMESPACE
 void DetailSpace::initialize()
 {
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &DetailSpace::onWindowClosed, Qt::DirectConnection);
+    DetailSpaceEventReceiver::instance().connectService();
 }
 
 bool DetailSpace::start()
 {
-    DetailSpaceEventReceiver::instance()->connectService();
     return true;
 }
 

@@ -31,7 +31,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/filemanager/detailspace/detailspaceservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -69,10 +68,10 @@ void Recent::initialize()
 bool Recent::start()
 {
     dfmplugin_menu_util::menuSceneRegisterScene(RecentMenuCreator::name(), new RecentMenuCreator());
-    DetailFilterTypes filter = DetailFilterType::kFileSizeField;
-    filter |= DetailFilterType::kFileChangeTImeField;
-    filter |= DetailFilterType::kFileInterviewTimeField;
-    DetailSpaceService::serviceInstance()->registerFilterControlField(RecentManager::scheme(), filter);
+
+    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                         RecentManager::scheme(), filtes);
 
     addFileOperations();
 
@@ -136,7 +135,7 @@ void Recent::followEvent()
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
-    dpfHookSequence->follow("dfmplugin_detailspace", "hook_DetailViewIcon", RecentManager::instance(), &RecentManager::detailViewIcon);
+    dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
 

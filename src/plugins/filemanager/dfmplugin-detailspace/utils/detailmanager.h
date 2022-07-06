@@ -21,18 +21,41 @@
 #ifndef DETAILMANAGER_H
 #define DETAILMANAGER_H
 
+#include "dfmplugin_detailspace_global.h"
+
 #include <QObject>
+
+namespace dfmplugin_detailspace {
 
 class DetailManager : public QObject
 {
     Q_OBJECT
+    Q_DISABLE_COPY(DetailManager)
+
 public:
+    static DetailManager &instance();
+
+    bool registerExtensionView(CustomViewExtensionView view, int index = -1);
+    void unregisterExtensionView(int index);
+    QMap<int, QWidget *> createExtensionView(const QUrl &url);
+
+    bool registerBasicViewExtension(const QString &scheme, BasicViewFieldFunc func);
+    void unregisterBasicViewExtension(const QString &scheme);
+    QMap<BasicExpandType, BasicExpandMap> createBasicViewExtensionField(const QUrl &url);
+
+    bool addBasicFiledFiltes(const QString &scheme, DetailFilterType filters);
+    void removeBasicFiledFilters(const QString &scheme);
+    DetailFilterType basicFiledFiltes(const QUrl &url);
+
+private:
     explicit DetailManager(QObject *parent = nullptr);
 
-signals:
-
-public slots:
-    void showDetailView(const QUrl &url);
+private:
+    QMultiHash<int, CustomViewExtensionView> constructList {};
+    QHash<QString, DetailFilterType> detailFilterHash {};
+    QHash<QString, BasicViewFieldFunc> basicViewFieldFuncHash {};
 };
+
+}   // namespace dfmplugin_detailspace
 
 #endif   // DETAILMANAGER_H

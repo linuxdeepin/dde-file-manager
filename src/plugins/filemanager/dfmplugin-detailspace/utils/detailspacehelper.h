@@ -47,6 +47,6 @@ private:
     static QMap<quint64, DetailSpaceWidget *> kDetailSpaceMap;
 };
 
-}
+}   // namespace dfmplugin_detailspace
 
 #endif   // DETAILSPACEHELPER_H

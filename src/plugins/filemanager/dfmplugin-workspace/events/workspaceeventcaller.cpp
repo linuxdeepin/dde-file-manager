@@ -25,7 +25,7 @@
 #include "services/common/propertydialog/property_defines.h"
 #include "services/common/emblem/emblem_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
-#include "services/filemanager/detailspace/detailspace_defines.h"
+
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm_global_defines.h"
@@ -96,7 +96,7 @@ void WorkspaceEventCaller::sendShowCustomTopWidget(const quint64 windowID, const
 
 void WorkspaceEventCaller::sendSetSelectDetailFileUrl(const quint64 windowId, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::DetailEventType::kSetDetailViewSelectFileUrl, windowId, url);
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Select", windowId, url);
 }
 
 void WorkspaceEventCaller::sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)

@@ -22,27 +22,41 @@
 */
 #include "detailspaceeventreceiver.h"
 #include "utils/detailspacehelper.h"
-#include "services/filemanager/detailspace/detailspace_defines.h"
+#include "utils/detailmanager.h"
 
 #include <dfm-framework/event/event.h>
 
 #include <functional>
 
 using namespace dfmplugin_detailspace;
-DSB_FM_USE_NAMESPACE
 
-DetailSpaceEventReceiver *DetailSpaceEventReceiver::instance()
+DetailSpaceEventReceiver &DetailSpaceEventReceiver::instance()
 {
     static DetailSpaceEventReceiver receiver;
-    return &receiver;
+    return receiver;
 }
 
 void DetailSpaceEventReceiver::connectService()
 {
-    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView,
-                                   this, &DetailSpaceEventReceiver::handleTileBarShowDetailView);
-    dpfSignalDispatcher->subscribe(DSB_FM_NAMESPACE::DetailEventType::kSetDetailViewSelectFileUrl,
-                                   this, &DetailSpaceEventReceiver::setSelect);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_DetailView_Show",
+                            this, &DetailSpaceEventReceiver::handleTileBarShowDetailView);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_DetailView_Select",
+                            this, &DetailSpaceEventReceiver::handleSetSelect);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_ViewExtension_Register",
+                            this, &DetailSpaceEventReceiver::handleViewExtensionRegister);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_ViewExtension_Unregister",
+                            this, &DetailSpaceEventReceiver::handleViewExtensionUnregister);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicViewExtension_Register",
+                            this, &DetailSpaceEventReceiver::handleBasicFiledFilterAdd);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicViewExtension_Unregister",
+                            this, &DetailSpaceEventReceiver::handleBasicFiledFilterRemove);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicFiledFilter_Add",
+                            this, &DetailSpaceEventReceiver::handleBasicFiledFilterAdd);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicFiledFilter_Remove",
+                            this, &DetailSpaceEventReceiver::handleBasicFiledFilterRemove);
 }
 
 void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, bool checked)
@@ -50,9 +64,47 @@ void DetailSpaceEventReceiver::handleTileBarShowDetailView(quint64 windowId, boo
     DetailSpaceHelper::showDetailView(windowId, checked);
 }
 
-void DetailSpaceEventReceiver::setSelect(quint64 windowId, const QUrl &url)
+void DetailSpaceEventReceiver::handleSetSelect(quint64 windowId, const QUrl &url)
 {
     DetailSpaceHelper::setDetailViewSelectFileUrl(windowId, url);
+}
+
+bool DetailSpaceEventReceiver::handleViewExtensionRegister(CustomViewExtensionView view, int index)
+{
+    return DetailManager::instance().registerExtensionView(view, index);
+}
+
+void DetailSpaceEventReceiver::handleViewExtensionUnregister(int index)
+{
+    DetailManager::instance().unregisterExtensionView(index);
+}
+
+bool DetailSpaceEventReceiver::handleBasicViewExtensionRegister(const QString &scheme, BasicViewFieldFunc func)
+{
+    return DetailManager::instance().registerBasicViewExtension(scheme, func);
+}
+
+void DetailSpaceEventReceiver::handleBasicViewExtensionUnregister(const QString &scheme)
+{
+    DetailManager::instance().unregisterBasicViewExtension(scheme);
+}
+
+bool DetailSpaceEventReceiver::handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums)
+{
+    QMetaEnum &&metaState { QMetaEnum::fromType<DetailFilterType>() };
+    QString &&join { enums.join("|") };
+    bool ok { false };
+
+    auto &&enumValues { static_cast<DetailFilterType>(metaState.keysToValue(join.toUtf8().constData(), &ok)) };
+    if (ok)
+        ok = DetailManager::instance().addBasicFiledFiltes(scheme, enumValues);
+
+    return ok;
+}
+
+void DetailSpaceEventReceiver::handleBasicFiledFilterRemove(const QString &scheme)
+{
+    DetailManager::instance().removeBasicFiledFilters(scheme);
 }
 
 DetailSpaceEventReceiver::DetailSpaceEventReceiver(QObject *parent)

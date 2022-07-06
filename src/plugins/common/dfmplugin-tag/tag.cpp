@@ -34,7 +34,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/filemanager/detailspace/detailspaceservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -45,9 +44,12 @@
 
 #include <QRectF>
 
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+
 Q_DECLARE_METATYPE(QRectF *)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(CustomViewExtensionView)
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -68,27 +70,25 @@ void Tag::initialize()
     TagManager::instance();
 
     bindEvents();
+    followEvents();
+    TagEventReceiver::instance()->initConnect();
 }
 
 bool Tag::start()
 {
     PropertyDialogService::service()->registerControlExpand(Tag::createTagWidget, 0);
-    DetailSpaceService::serviceInstance()->registerControlExpand(Tag::createTagWidget);
+    CustomViewExtensionView func { Tag::createTagWidget };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
 
-    DetailFilterTypes filter = DetailFilterType::kFileSizeField;
-    filter |= DetailFilterType::kFileChangeTImeField;
-    filter |= DetailFilterType::kFileInterviewTimeField;
-    DetailSpaceService::serviceInstance()->registerFilterControlField(TagManager::scheme(), filter);
-
-    TagEventReceiver::instance()->initConnect();
+    QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
+                         TagManager::scheme(), filtes);
 
     dfmplugin_menu_util::menuSceneRegisterScene(TagMenuCreator::name(), new TagMenuCreator);
     bindScene("FileOperatorMenu");
 
     WorkspaceService::service()->setWorkspaceMenuScene(TagManager::scheme(), TagDirMenuCreator::name());
     dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
-
-    followEvents();
 
     return true;
 }

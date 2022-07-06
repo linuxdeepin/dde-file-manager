@@ -22,15 +22,14 @@
 */
 #include "detailspacehelper.h"
 #include "views/detailspacewidget.h"
-
-#include "services/filemanager/detailspace/detailspaceservice.h"
+#include "utils/detailmanager.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/framework.h>
 
 using namespace dfmplugin_detailspace;
-DSB_FM_USE_NAMESPACE
+
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, DetailSpaceWidget *> DetailSpaceHelper::kDetailSpaceMap {};
@@ -87,7 +86,7 @@ void DetailSpaceHelper::setDetailViewSelectFileUrl(quint64 windowId, const QUrl 
     DetailSpaceWidget *w = findDetailSpaceByWindowId(windowId);
     if (w) {
         w->setCurrentUrl(url);
-        QMap<int, QWidget *> widgetMap = detailServIns->createControlView(url);
+        QMap<int, QWidget *> widgetMap = DetailManager::instance().createExtensionView(url);
         if (!widgetMap.isEmpty()) {
             QList<int> indexs = widgetMap.keys();
             for (int &index : indexs) {

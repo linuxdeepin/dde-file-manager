@@ -22,7 +22,6 @@
 #include "detailview.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/mimetype/mimedatabase.h"
-#include "services/filemanager/detailspace/detailspace_defines.h"
 
 #include <dfm-framework/dpf.h>
 
@@ -35,7 +34,6 @@
 
 Q_DECLARE_METATYPE(QString *)
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_detailspace;
 
@@ -145,7 +143,7 @@ void DetailView::initInfoUI()
 
 void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
 {
-    if (widgetFilter == DSB_FM_NAMESPACE::DetailFilterType::kIconView) {
+    if (widgetFilter == DetailFilterType::kIconView) {
         return;
     } else {
         AbstractFileInfoPointer info = InfoFactory::create<AbstractFileInfo>(url);
@@ -164,11 +162,11 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
 
         auto findPluginIcon = [](const QUrl &url) -> QString {
             QString iconName;
-            bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_DetailViewIcon", url, &iconName);
+            bool ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
             if (ok && !iconName.isEmpty())
                 return iconName;
 
-            ok = dpfHookSequence->run(kCurrentEventSpace, "hook_DetailViewIcon", url, &iconName);
+            ok = dpfHookSequence->run(kCurrentEventSpace, "hook_Icon_Fetch", url, &iconName);
             if (ok && !iconName.isEmpty())
                 return iconName;
 
@@ -189,7 +187,7 @@ void DetailView::createHeadUI(const QUrl &url, int widgetFilter)
 
 void DetailView::createBasicWidget(const QUrl &url, int widgetFilter)
 {
-    if (widgetFilter == DSB_FM_NAMESPACE::DetailFilterType::kBasicView) {
+    if (widgetFilter == DetailFilterType::kBasicView) {
         return;
     } else {
         fileBaseInfoView = new FileBaseInfoView(this);

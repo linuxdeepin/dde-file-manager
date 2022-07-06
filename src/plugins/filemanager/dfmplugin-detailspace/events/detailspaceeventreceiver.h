@@ -35,14 +35,19 @@ class DetailSpaceEventReceiver final : public QObject
     Q_DISABLE_COPY(DetailSpaceEventReceiver)
 
 public:
-    static DetailSpaceEventReceiver *instance();
+    static DetailSpaceEventReceiver &instance();
 
     void connectService();
 
 public slots:
     void handleTileBarShowDetailView(quint64 windowId, bool checked);
-
-    void setSelect(quint64 windowId, const QUrl &url);
+    void handleSetSelect(quint64 windowId, const QUrl &url);
+    bool handleViewExtensionRegister(CustomViewExtensionView view, int index);
+    void handleViewExtensionUnregister(int index);
+    bool handleBasicViewExtensionRegister(const QString &scheme, BasicViewFieldFunc func);
+    void handleBasicViewExtensionUnregister(const QString &scheme);
+    bool handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums);
+    void handleBasicFiledFilterRemove(const QString &scheme);
 
 private:
     explicit DetailSpaceEventReceiver(QObject *parent = nullptr);

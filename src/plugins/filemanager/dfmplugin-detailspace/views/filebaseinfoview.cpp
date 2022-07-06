@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "filebaseinfoview.h"
-#include "services/filemanager/detailspace/detailspaceservice.h"
+#include "utils/detailmanager.h"
 
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -30,8 +30,8 @@
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
 USING_IO_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
 using namespace dfmplugin_detailspace;
 
 const int kImageExten = DFMBASE_NAMESPACE::UniversalUtils::registerEventType();
@@ -94,7 +94,7 @@ void FileBaseInfoView::initFileMap()
 
 void FileBaseInfoView::basicExpand(const QUrl &url)
 {
-    QMap<BasicExpandType, BasicExpandMap> fieldCondition = detailServIns->createBasicExpandField(url);
+    QMap<BasicExpandType, BasicExpandMap> fieldCondition = DetailManager::instance().createBasicViewExtensionField(url);
 
     QList<BasicExpandType> keys = fieldCondition.keys();
     for (BasicExpandType key : keys) {
@@ -152,44 +152,44 @@ void FileBaseInfoView::basicFieldFilter(const QUrl &url)
     if (ok && !urls.isEmpty())
         filterUrl = urls.first();
 
-    DetailFilterTypes fieldFilter = detailServIns->contorlFieldFilter(filterUrl);
-    if (fieldFilter & DetailFilterType::kFileNameField) {
+    auto fieldFilters { DetailManager::instance().basicFiledFiltes(filterUrl) };
+    if (fieldFilters & DetailFilterType::kFileNameField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileName);
         fileName->deleteLater();
         fileName = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileSizeField) {
+    if (fieldFilters & DetailFilterType::kFileSizeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileSize);
         fileSize->deleteLater();
         fileSize = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileTypeField) {
+    if (fieldFilters & DetailFilterType::kFileTypeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileType);
         fileType->deleteLater();
         fileType = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileDurationField) {
+    if (fieldFilters & DetailFilterType::kFileDurationField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileDuration);
         fileDuration->deleteLater();
         fileDuration = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileViewSizeField) {
+    if (fieldFilters & DetailFilterType::kFileViewSizeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileViewSize);
         fileViewSize->deleteLater();
         fileViewSize = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileChangeTImeField) {
+    if (fieldFilters & DetailFilterType::kFileChangeTimeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileChangeTIme);
         fileChangeTime->deleteLater();
         fileChangeTime = nullptr;
     }
 
-    if (fieldFilter & DetailFilterType::kFileInterviewTimeField) {
+    if (fieldFilters & DetailFilterType::kFileInterviewTimeField) {
         fieldMap.remove(BasicFieldExpandEnum::kFileInterviewTime);
         fileInterviewTime->deleteLater();
         fileInterviewTime = nullptr;

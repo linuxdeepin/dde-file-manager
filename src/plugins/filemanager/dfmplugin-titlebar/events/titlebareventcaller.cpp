@@ -22,7 +22,6 @@
 */
 #include "titlebareventcaller.h"
 #include "utils/titlebarhelper.h"
-#include "services/filemanager/detailspace/detailspace_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -32,7 +31,6 @@
 Q_DECLARE_METATYPE(QString *)
 
 using namespace dfmplugin_titlebar;
-DSB_FM_USE_NAMESPACE
 
 void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)
 {
@@ -46,7 +44,7 @@ void TitleBarEventCaller::sendDetailViewState(QWidget *sender, bool checked)
 {
     quint64 id = TitleBarHelper::windowId(sender);
     Q_ASSERT(id > 0);
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::DetailEventType::kShowDetailView, id, checked);
+    dpfSlotChannel->push("dfmplugin_detailspace", "slot_DetailView_Show", id, checked);
 }
 
 void TitleBarEventCaller::sendCd(QWidget *sender, const QUrl &url)
