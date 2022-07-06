@@ -65,6 +65,11 @@ bool ComputerEventReceiver::handleSortItem(const QString &group, const QString &
     return ComputerUtils::sortItem(a, b);
 }
 
+void ComputerEventReceiver::setContextMenuEnable(bool enable)
+{
+    ComputerUtils::contextMenuEnabled = enable;
+}
+
 ComputerEventReceiver::ComputerEventReceiver(QObject *parent)
     : QObject(parent)
 {

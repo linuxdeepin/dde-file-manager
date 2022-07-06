@@ -24,7 +24,6 @@
 #include "utils/computerutils.h"
 #include "views/computerview.h"
 #include "fileentity/entryfileentities.h"
-#include "events/computerunicastreceiver.h"
 #include "events/computereventreceiver.h"
 #include "watcher/computeritemwatcher.h"
 #include "menu/computermenuscene.h"
@@ -66,8 +65,6 @@ void Computer::initialize()
     EntryEntityFactor::registCreator<ProtocolEntryFileEntity>(SuffixInfo::kProtocol);
     EntryEntityFactor::registCreator<StashedProtocolEntryFileEntity>(SuffixInfo::kStashedProtocol);
     EntryEntityFactor::registCreator<AppEntryFileEntity>(SuffixInfo::kAppEntry);
-
-    ComputerUnicastReceiver::instance()->connectService();
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &Computer::onWindowCreated, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Computer::onWindowOpened, Qt::DirectConnection);
@@ -160,9 +157,9 @@ void Computer::regComputerToSearch()
 
 void Computer::bindEvents()
 {
-    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ContextMenu_SetEnable", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::setContextMenuEnable);
-    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_AddDevice", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::doAddDevice);
-    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerUnicastReceiver::instance(), &ComputerUnicastReceiver::doRemoveDevice);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_ContextMenu_SetEnable", ComputerEventReceiver::instance(), &ComputerEventReceiver::setContextMenuEnable);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_AddDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::addDevice);
+    dpfSlotChannel->connect(EventNameSpace::kComputerEventSpace, "slot_RemoveDevice", ComputerItemWatcherInstance, &ComputerItemWatcher::removeDevice);
 }
 
 void Computer::followEvents()
