@@ -98,7 +98,7 @@
     </message>
     <message>
         <source>Scanning the device, stop it?</source>
-        <translation>Skanowanie urządzenia, czy chcesz zatrzymać?</translation>
+        <translation>Skanowanie urządzenia, zatrzymać?</translation>
     </message>
     <message>
         <source>Confirm</source>

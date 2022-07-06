@@ -2,43 +2,43 @@
 <context>
     <name>CanvasGridView</name>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3437"/>
+        <location filename="../view/canvasgridview.cpp" line="3451"/>
         <source>Icon size</source>
         <translation>Symbolgröße</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3446"/>
+        <location filename="../view/canvasgridview.cpp" line="3460"/>
         <source>Auto merge</source>
         <translation>Automatisch zusammenführen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3458"/>
+        <location filename="../view/canvasgridview.cpp" line="3472"/>
         <source>Auto arrange</source>
         <translation>Automatisch sortieren</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3497"/>
+        <location filename="../view/canvasgridview.cpp" line="3511"/>
         <source>Corner Settings</source>
         <translation>Eckeneinstellungen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3506"/>
-        <location filename="../view/canvasgridview.cpp" line="3511"/>
+        <location filename="../view/canvasgridview.cpp" line="3520"/>
+        <location filename="../view/canvasgridview.cpp" line="3525"/>
         <source>Set Wallpaper</source>
         <translation>Hintergrundbild festlegen</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3509"/>
+        <location filename="../view/canvasgridview.cpp" line="3523"/>
         <source>Wallpaper and Screensaver</source>
         <translation>Hintergrundbild und Bildschirmschoner</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3690"/>
+        <location filename="../view/canvasgridview.cpp" line="3706"/>
         <source>Properties</source>
         <translation>Eigenschaften</translation>
     </message>
     <message>
-        <location filename="../view/canvasgridview.cpp" line="3487"/>
+        <location filename="../view/canvasgridview.cpp" line="3501"/>
         <source>Display Settings</source>
         <translation>Anzeigeeinstellungen</translation>
     </message>
@@ -82,74 +82,74 @@
 <context>
     <name>Frame</name>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="725"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="727"/>
         <source>Wallpaper Slideshow</source>
         <translation>Hintergrundbild-Slideshow</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="771"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="773"/>
         <source>When login</source>
         <translation>Bei der Anmeldung</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="773"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="775"/>
         <source>When wakeup</source>
         <translation>Beim Aufwachen</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="825"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="827"/>
         <source>Require a password on wakeup</source>
         <translation>Beim Aufwachen ein Passwort anfordern</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="857"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="859"/>
         <source>Never</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="859"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="861"/>
         <source>Wait:</source>
         <translation>Warten:</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="892"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="894"/>
         <source>Wallpaper</source>
         <translation>Hintergrundbild</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="904"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="906"/>
         <source>Screensaver</source>
         <translation>Bildschirmschoner</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="969"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="971"/>
         <source>Loading wallpapers...</source>
         <translation>Hintergrundbilder werden geladen ...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="971"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="973"/>
         <source>Loading screensavers...</source>
         <translation>Bildschirmschoner werden geladen ...</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1028"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1031"/>
         <source>Desktop</source>
         <comment>button</comment>
         <translation>Desktop</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1029"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1032"/>
         <source>Lock Screen</source>
         <comment>button</comment>
         <translation>Sperrbildschirm</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1030"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1033"/>
         <source>Both</source>
         <translation>Beide</translation>
     </message>
     <message>
-        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1105"/>
+        <location filename="../../dde-wallpaper-chooser/frame.cpp" line="1108"/>
         <source>Apply</source>
         <comment>button</comment>
         <translation>Anwenden</translation>
