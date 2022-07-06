@@ -28,17 +28,12 @@ FILE(GLOB DELEGATE_FILES
 )
 
 
-FILE(GLOB EMBLEM_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/emblem/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/emblem/*.cpp"
-)
 
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
     ${PROPERTYDIALOG_FILES}
     ${DELEGATE_FILES}
-    ${EMBLEM_FILES}
 )
 
 find_package(Dtk REQUIRED Widget REQUIRED)

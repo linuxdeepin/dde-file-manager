@@ -23,7 +23,6 @@
 #include "workspaceeventcaller.h"
 
 #include "services/common/propertydialog/property_defines.h"
-#include "services/common/emblem/emblem_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
@@ -101,7 +100,7 @@ void WorkspaceEventCaller::sendSetSelectDetailFileUrl(const quint64 windowId, co
 
 void WorkspaceEventCaller::sendPaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
 {
-    dpfSignalDispatcher->publish(Emblem::EventType::kPaintEmblems, painter, paintArea, url);
+    dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, paintArea, url);
 }
 
 void WorkspaceEventCaller::sendViewSelectionChanged(const quint64 windowID, const QItemSelection &selected, const QItemSelection &deselected)

@@ -26,8 +26,6 @@
 #include "view/canvasview_p.h"
 #include "view/operator/fileoperatorproxy.h"
 
-#include <services/common/emblem/emblem_defines.h>
-
 #include <base/application/application.h>
 #include <base/application/settings.h>
 #include <dfm-base/utils/clipboard.h>
@@ -821,7 +819,7 @@ QRect CanvasItemDelegate::paintIcon(QPainter *painter, const QIcon &icon,
 QRectF CanvasItemDelegate::paintEmblems(QPainter *painter, const QRectF &rect, const QUrl &url)
 {
     //todo(zy) uing extend painter by registering.
-    if (!dpfSignalDispatcher->publish(DSC_NAMESPACE::Emblem::EventType::kPaintEmblems, painter, rect, url)) {
+    if (!dpfSlotChannel->push("dfmplugin_emblem", "slot_FileEmblems_Paint", painter, rect, url).toBool()) {
         static std::once_flag printLog;
         std::call_once(printLog, []() {
             qWarning() << "publish `kPaintEmblems` event failed!";

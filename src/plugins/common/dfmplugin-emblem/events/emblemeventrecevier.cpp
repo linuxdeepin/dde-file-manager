@@ -21,7 +21,6 @@
  */
 #include "emblemeventrecevier.h"
 #include "utils/emblemmanager.h"
-#include "services/common/emblem/emblem_defines.h"
 
 #include "dfm-base/dfm_global_defines.h"
 
@@ -41,18 +40,16 @@ EmblemEventRecevier *EmblemEventRecevier::instance()
     return &ins;
 }
 
-void EmblemEventRecevier::handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
+bool EmblemEventRecevier::handlePaintEmblems(QPainter *painter, const QRectF &paintArea, const QUrl &url)
 {
     int role = kItemIconRole;
     QRectF rect = paintArea;
-    EmblemManager::instance()->paintEmblems(role, url, painter, &rect);
+    return EmblemManager::instance()->paintEmblems(role, url, painter, &rect);
 }
 
 void EmblemEventRecevier::initializeConnections() const
 {
-    DSC_USE_NAMESPACE
-
-    dpfSignalDispatcher->subscribe(Emblem::EventType::kPaintEmblems,
-                                   EmblemEventRecevier::instance(),
-                                   &EmblemEventRecevier::handlePaintEmblems);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPEMBLEM_NAMESPACE), "slot_FileEmblems_Paint",
+                            EmblemEventRecevier::instance(),
+                            &EmblemEventRecevier::handlePaintEmblems);
 }

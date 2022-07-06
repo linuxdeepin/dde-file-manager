@@ -26,11 +26,10 @@ DPEMBLEM_USE_NAMESPACE
 
 void Emblem::initialize()
 {
+    EmblemEventRecevier::instance()->initializeConnections();
 }
 
 bool Emblem::start()
 {
-    EmblemEventRecevier::instance()->initializeConnections();
-
     return true;
 }
