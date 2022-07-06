@@ -29,6 +29,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
+#include "dfm-base/utils/clipboard.h"
 
 #include <QMap>
 #include <QColor>

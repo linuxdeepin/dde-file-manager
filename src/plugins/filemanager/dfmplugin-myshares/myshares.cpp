@@ -24,6 +24,7 @@
 #include "myshares.h"
 
 #include "utils/shareutils.h"
+#include "utils/sharefilehelper.h"
 #include "fileinfo/sharefileinfo.h"
 #include "iterator/shareiterator.h"
 #include "watcher/sharewatcher.h"
@@ -34,8 +35,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperations_defines.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
@@ -51,7 +50,6 @@ using namespace dfmplugin_myshares;
 void MyShares::initialize()
 {
     DFMBASE_USE_NAMESPACE
-    DSC_USE_NAMESPACE
     UrlRoute::regScheme(ShareUtils::scheme(), "/", ShareUtils::icon(), true, tr("My Shares"));
 
     InfoFactory::regClass<ShareFileInfo>(ShareUtils::scheme());
@@ -181,5 +179,5 @@ void MyShares::hookEvent()
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", ShareUtils::instance(), &ShareUtils::urlsToLocal);
 
     // file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", ShareUtils::instance(), &ShareUtils::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", ShareFileHelper::instance(), &ShareFileHelper::openFileInPlugin);
 }

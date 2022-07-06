@@ -25,7 +25,6 @@
 #include "dfmplugin_trash_global.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
 #include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/utils/clipboard.h"
@@ -90,20 +89,6 @@ public:
 
     // services instance
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
-
-    // file operation
-    bool cutFile(const quint64 windowId, const QList<QUrl> sources,
-                 const QUrl target, const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    bool copyFile(const quint64 windowId, const QList<QUrl> sources, const QUrl target,
-                  const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    bool moveToTrash(const quint64 windowId, const QList<QUrl> sources,
-                     const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    bool deleteFile(const quint64 windowId, const QList<QUrl> sources,
-                    const DFMBASE_NAMESPACE::AbstractJobHandler::JobFlags flags);
-    bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
-    bool writeUrlsToClipboard(const quint64 windowId, const DFMBASE_NAMESPACE::ClipBoard::ClipboardAction action,
-                              const QList<QUrl> urls);
 
 private:
     void onTrashStateChanged();

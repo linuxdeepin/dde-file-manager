@@ -24,6 +24,7 @@
 #include "files/tagfilewatcher.h"
 #include "files/tagdiriterator.h"
 #include "utils/taghelper.h"
+#include "utils/tagfilehelper.h"
 #include "utils/tagmanager.h"
 #include "widgets/tagwidget.h"
 #include "menu/tagmenuscene.h"
@@ -167,7 +168,7 @@ void Tag::followEvents()
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TagHelper::instance(), &TagHelper::urlsToLocal);
 
     // file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TagHelper::instance(), &TagHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TagFileHelper::instance(), &TagFileHelper::openFileInPlugin);
 }
 
 void Tag::bindScene(const QString &parentScene)

@@ -24,7 +24,7 @@
 #include "files/recentdiriterator.h"
 #include "files/recentfilewatcher.h"
 #include "utils/recentmanager.h"
-#include "utils/recentfileshelper.h"
+#include "utils/recentfilehelper.h"
 #include "menus/recentmenuscene.h"
 #include "events/recenteventreceiver.h"
 
@@ -77,7 +77,7 @@ bool Recent::start()
     addFileOperations();
 
     // events
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", RecentFilesHelper::instance(), &RecentFilesHelper::setPermissionHandle);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", RecentFileHelper::instance(), &RecentFileHelper::setPermissionHandle);
 
     return true;
 }
@@ -140,14 +140,14 @@ void Recent::followEvent()
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
 
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", RecentManager::instance(), &RecentManager::cutFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", RecentManager::instance(), &RecentManager::copyFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", RecentManager::instance(), &RecentManager::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", RecentManager::instance(), &RecentManager::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", RecentManager::instance(), &RecentManager::openFileInPlugin);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", RecentManager::instance(), &RecentManager::linkFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", RecentManager::instance(), &RecentManager::writeUrlsToClipboard);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", RecentManager::instance(), &RecentManager::openFileInTerminal);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", RecentFileHelper::instance(), &RecentFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", RecentFileHelper::instance(), &RecentFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", RecentFileHelper::instance(), &RecentFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", RecentFileHelper::instance(), &RecentFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", RecentFileHelper::instance(), &RecentFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", RecentFileHelper::instance(), &RecentFileHelper::linkFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", RecentFileHelper::instance(), &RecentFileHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", RecentFileHelper::instance(), &RecentFileHelper::openFileInTerminal);
 }
 
 void Recent::regRecentCrumbToTitleBar()

@@ -24,8 +24,7 @@
 #define FILEOPERATIONSEVENTRECEIVER_H
 
 #include "dfmplugin_fileoperations_global.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
-#include "services/common/fileoperations/fileoperations_defines.h"
+#include "fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/dbusservice/dbus_interface/operationsstackmanagerdbus_interface.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -230,7 +229,6 @@ private:
         kBatchAppend
     };
     explicit FileOperationsEventReceiver(QObject *parent = nullptr);
-    bool initService();
     QString newDocmentName(const QString targetdir,
                            const QString suffix,
                            const DFMBASE_NAMESPACE::Global::CreateFileType fileType);
@@ -271,7 +269,6 @@ private:
 private:
     QSharedPointer<FileCopyMoveJob> copyMoveJob { nullptr };
     QSharedPointer<QMutex> getServiceMutex { nullptr };
-    QPointer<DSC_NAMESPACE::FileOperationsService> operationsService { nullptr };
     DFMBASE_NAMESPACE::DialogManager *dialogManager { nullptr };
     QSharedPointer<QMutex> functionsMutex { nullptr };
     QSharedPointer<OperationsStackManagerInterface> operationsStackDbus;

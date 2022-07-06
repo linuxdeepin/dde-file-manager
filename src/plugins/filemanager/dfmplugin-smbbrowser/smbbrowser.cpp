@@ -30,7 +30,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"

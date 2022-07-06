@@ -15,23 +15,6 @@ FILE(GLOB GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-FILE(GLOB FILEOPERATIONS_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/copyfiles/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/copyfiles/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/cutfiles/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/cutfiles/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/deletefiles/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/deletefiles/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/cleantrash/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/cleantrash/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/trashfiles/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/trashfiles/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/fileoperationutils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/fileoperations/fileoperationutils/*.cpp"
-)
-
 FILE(GLOB PROPERTYDIALOG_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.cpp"
@@ -53,7 +36,6 @@ FILE(GLOB EMBLEM_FILES
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
-    ${FILEOPERATIONS_FILES}
     ${PROPERTYDIALOG_FILES}
     ${DELEGATE_FILES}
     ${EMBLEM_FILES}

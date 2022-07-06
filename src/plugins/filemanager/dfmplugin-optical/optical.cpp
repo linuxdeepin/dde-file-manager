@@ -22,6 +22,7 @@
 */
 #include "optical.h"
 #include "utils/opticalhelper.h"
+#include "utils/opticalfilehelper.h"
 #include "utils/opticalsignalmanager.h"
 #include "mastered/masteredmediafileinfo.h"
 #include "mastered/masteredmediafilewatcher.h"
@@ -94,14 +95,14 @@ bool Optical::start()
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 
     // file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", OpticalHelper::instance(), &OpticalHelper::cutFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", OpticalHelper::instance(), &OpticalHelper::copyFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", OpticalHelper::instance(), &OpticalHelper::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", OpticalHelper::instance(), &OpticalHelper::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", OpticalHelper::instance(), &OpticalHelper::openFileInPlugin);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", OpticalHelper::instance(), &OpticalHelper::linkFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", OpticalHelper::instance(), &OpticalHelper::writeUrlsToClipboard);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", OpticalHelper::instance(), &OpticalHelper::openFileInTerminal);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", OpticalFileHelper::instance(), &OpticalFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", OpticalFileHelper::instance(), &OpticalFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", OpticalFileHelper::instance(), &OpticalFileHelper::linkFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", OpticalFileHelper::instance(), &OpticalFileHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInTerminal);
 
     return true;
 }

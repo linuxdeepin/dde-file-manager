@@ -25,7 +25,6 @@
 #include "dfmplugin_tag_global.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
 
 #include <QColor>
 
@@ -87,10 +86,6 @@ public:
 
     // services instance
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
-
-    // file operation
-    bool openFileInPlugin(quint64 windowId, const QList<QUrl> urls);
 
 private:
     explicit TagHelper(QObject *parent = nullptr);

@@ -41,19 +41,7 @@ FileCopyMoveJob::FileCopyMoveJob(QObject *parent)
 
 bool FileCopyMoveJob::getOperationsAndDialogService()
 {
-    QMutexLocker lk(getOperationsAndDialogServiceMutex.data());
-    if (operationsService.isNull()) {
-        auto &ctx = DPF_NAMESPACE::Framework::instance().serviceContext();
-        operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-        if (!operationsService) {
-            QString errStr;
-            if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name(), &errStr)) {
-                qCritical() << errStr;
-                abort();
-            }
-            operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-        }
-    }
+    operationsService.reset(new FileOperationsService(this));
 
     return operationsService && dialogManager;
 }

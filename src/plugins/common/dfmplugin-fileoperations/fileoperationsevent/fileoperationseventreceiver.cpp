@@ -55,26 +55,6 @@ FileOperationsEventReceiver::FileOperationsEventReceiver(QObject *parent)
     functionsMutex.reset(new QMutex);
     copyMoveJob.reset(new FileCopyMoveJob);
     initDBus();
-    initService();
-}
-
-bool FileOperationsEventReceiver::initService()
-{
-    QMutexLocker lk(getServiceMutex.data());
-    if (operationsService.isNull()) {
-        auto &ctx = DPF_NAMESPACE::Framework::instance().serviceContext();
-        operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-        if (!operationsService) {
-            QString errStr;
-            if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name(), &errStr)) {
-                qCritical() << errStr;
-                abort();
-            }
-            operationsService = ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-        }
-    }
-
-    return operationsService && dialogManager;
 }
 
 QString FileOperationsEventReceiver::newDocmentName(QString targetdir,

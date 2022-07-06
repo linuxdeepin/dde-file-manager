@@ -22,7 +22,6 @@
 #include "taghelper.h"
 #include "tagmanager.h"
 #include "widgets/tageditor.h"
-#include "events/tageventcaller.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
@@ -41,7 +40,6 @@ Q_DECLARE_METATYPE(ContextMenuCallback);
 Q_DECLARE_METATYPE(RenameCallback);
 
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagHelper *TagHelper::instance()
@@ -286,39 +284,6 @@ WorkspaceService *TagHelper::workspaceServIns()
     });
 
     return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
-}
-
-FileOperationsService *TagHelper::fileOperationsServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-}
-
-bool TagHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
-{
-    if (urls.isEmpty())
-        return false;
-    if (urls.first().scheme() != scheme())
-        return false;
-
-    QList<QUrl> redirectedFileUrls;
-    for (QUrl url : urls) {
-        if (url.fragment().isEmpty()) {
-            redirectedFileUrls.append(url);
-        } else {
-            QUrl redirectUrl = QUrl::fromLocalFile(url.fragment(QUrl::FullyEncoded));
-            redirectedFileUrls.append(redirectUrl);
-        }
-    }
-
-    TagEventCaller::sendOpenFiles(windowId, redirectedFileUrls);
-    return true;
 }
 
 void TagHelper::initTagColorDefines()

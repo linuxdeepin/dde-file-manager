@@ -21,7 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "shareutils.h"
-#include "events/shareeventscaller.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_global_defines.h"
@@ -85,17 +84,6 @@ bool ShareUtils::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
             return false;
         (*urls).push_back(convertToLocalUrl(url));
     }
-    return true;
-}
-
-bool ShareUtils::openFileInPlugin(quint64 winId, QList<QUrl> urls)
-{
-    if (urls.isEmpty())
-        return false;
-    if (urls.first().scheme() != scheme())
-        return false;
-
-    ShareEventsCaller::sendOpenDirs(winId, urls, ShareEventsCaller::OpenMode::kOpenInCurrentWindow);
     return true;
 }
 

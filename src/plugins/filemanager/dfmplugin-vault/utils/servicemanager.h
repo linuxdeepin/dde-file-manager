@@ -24,7 +24,6 @@
 
 #include "services/filemanager/workspace/workspaceservice.h"
 #include "services/common/propertydialog/propertydialogservice.h"
-#include "services/common/fileoperations/fileoperationsservice.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
@@ -38,8 +37,6 @@ public:
 
 public:
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
-
-    static DSC_NAMESPACE::FileOperationsService *fileOperationsServIns();
 
     static QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand> basicViewFieldFunc(const QUrl &url);
 };

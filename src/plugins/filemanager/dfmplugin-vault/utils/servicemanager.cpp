@@ -50,18 +50,6 @@ WorkspaceService *ServiceManager::workspaceServiceInstance()
     return workspaceService;
 }
 
-FileOperationsService *ServiceManager::fileOperationsServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSC_NAMESPACE::FileOperationsService::name()))
-            abort();
-    });
-
-    return ctx.service<DSC_NAMESPACE::FileOperationsService>(DSC_NAMESPACE::FileOperationsService::name());
-}
-
 QMap<Property::BasicExpandType, Property::BasicExpand> ServiceManager::basicViewFieldFunc(const QUrl &url)
 {
     Property::BasicExpand expandFiledMap;

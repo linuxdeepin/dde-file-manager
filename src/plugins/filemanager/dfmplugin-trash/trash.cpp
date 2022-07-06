@@ -23,6 +23,7 @@
 #include "trashdiriterator.h"
 #include "trashfilewatcher.h"
 #include "utils/trashhelper.h"
+#include "utils/trashfilehelper.h"
 #include "menus/trashmenuscene.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
@@ -68,12 +69,12 @@ bool Trash::start()
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TrashHelper::instance(), &TrashHelper::urlsToLocal);
 
     // hook events, file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", TrashHelper::instance(), &TrashHelper::cutFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", TrashHelper::instance(), &TrashHelper::copyFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashHelper::instance(), &TrashHelper::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashHelper::instance(), &TrashHelper::deleteFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashHelper::instance(), &TrashHelper::openFileInPlugin);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", TrashHelper::instance(), &TrashHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", TrashFileHelper::instance(), &TrashFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", TrashFileHelper::instance(), &TrashFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", TrashFileHelper::instance(), &TrashFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", TrashFileHelper::instance(), &TrashFileHelper::deleteFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", TrashFileHelper::instance(), &TrashFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", TrashFileHelper::instance(), &TrashFileHelper::writeUrlsToClipboard);
 
     return true;
 }
