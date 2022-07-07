@@ -811,8 +811,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="125"/>
-        <source>
-The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
+        <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -4127,7 +4126,7 @@ The file vault will be automatically unlocked when accessed, without verifying t
     <message>
         <location filename="../views/dfmopticalmediawidget.cpp" line="341"/>
         <source>Free Space %1</source>
-        <translation>Espacio libre% 1</translation>
+        <translation>Espacio libre %1</translation>
     </message>
     <message>
         <location filename="../../dialogs/dtaskdialog.cpp" line="277"/>
