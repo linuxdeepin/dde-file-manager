@@ -122,7 +122,7 @@ DFMVaultActiveSetUnlockMethodView::DFMVaultActiveSetUnlockMethodView(QWidget *pa
     m_pTips->setPlaceholderText(tr("Optional"));
 
     // 透明加密描述文本
-    TransparentEncryptionText = new DLabel(tr("\nThe file vault will be automatically unlocked when accessed, "
+    TransparentEncryptionText = new DLabel("\n" + tr("The file vault will be automatically unlocked when accessed, "
                                               "without verifying the password. "
                                               "Files in it will be inaccessible under other user accounts. "), this);
     AC_SET_ACCESSIBLE_NAME(TransparentEncryptionText, AC_VAULT_ACTIVE_SET_PASSWORD_TRANSPARENT_LABEL);
