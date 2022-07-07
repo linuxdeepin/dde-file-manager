@@ -227,8 +227,11 @@ void BasicWidget::basicFill(const QUrl &url)
         fileAccessed->setRightValue(info->lastRead().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
     if (fileModified && fileModified->RightValue().isEmpty())
         fileModified->setRightValue(info->lastModified().toString("yyyy/MM/dd hh:mm:ss"), Qt::ElideNone, Qt::AlignVCenter, true);
-    if (fileSize && fileSize->RightValue().isEmpty())
-        fileSize->setRightValue(FileUtils::formatSize(info->size()), Qt::ElideNone, Qt::AlignVCenter, true);
+    if (fileSize && fileSize->RightValue().isEmpty()) {
+        fSize = info->size();
+        fCount = 1;
+        fileSize->setRightValue(FileUtils::formatSize(fSize), Qt::ElideNone, Qt::AlignVCenter, true);
+    }
     if (fileCount && fileCount->RightValue().isEmpty())
         fileCount->setVisible(false);
 
