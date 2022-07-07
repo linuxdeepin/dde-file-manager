@@ -811,8 +811,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="125"/>
-        <source>
-The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
+        <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation type="unfinished"/>
     </message>
     <message>

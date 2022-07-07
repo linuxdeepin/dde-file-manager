@@ -330,12 +330,12 @@
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="501"/>
         <source>For Government</source>
-        <translation type="unfinished"/>
+        <translation>Voor overheden</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="503"/>
         <source>For Enterprise</source>
-        <translation type="unfinished"/>
+        <translation>Voor zakelijk gebruik</translation>
     </message>
 </context>
 <context>
@@ -766,17 +766,17 @@
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="66"/>
         <source>Encryption method</source>
-        <translation type="unfinished"/>
+        <translation>Versleutelmethode</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="71"/>
         <source>Key encryption</source>
-        <translation type="unfinished"/>
+        <translation>Sleutel</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="71"/>
         <source>Transparent encryption</source>
-        <translation type="unfinished"/>
+        <translation>Transparant</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="82"/>
@@ -811,8 +811,7 @@
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="125"/>
-        <source>
-The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
+        <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -2670,12 +2669,12 @@ The file vault will be automatically unlocked when accessed, without verifying t
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="188"/>
         <source>For Government</source>
-        <translation type="unfinished"/>
+        <translation>Voor overheden</translation>
     </message>
     <message>
         <location filename="../dialogs/computerpropertydialog.cpp" line="190"/>
         <source>For Enterprise</source>
-        <translation type="unfinished"/>
+        <translation>Voor zakelijk gebruik</translation>
     </message>
 </context>
 <context>

@@ -811,10 +811,8 @@
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="125"/>
-        <source>
-The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
-        <translation>
-選擇透明加密方案，使用者進入保險箱將自動解鎖，無需驗密。保險箱中的文件，在其他使用者帳戶下將無法訪問。</translation>
+        <source>The file vault will be automatically unlocked when accessed, without verifying the password. Files in it will be inaccessible under other user accounts. </source>
+        <translation>選擇透明加密方案，使用者進入保險箱將自動解鎖，無需驗密。保險箱中的文件，在其他使用者帳戶下將無法訪問。</translation>
     </message>
     <message>
         <location filename="../views/dfmvaultactivesetunlockmethodview.cpp" line="133"/>
