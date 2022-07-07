@@ -128,7 +128,8 @@ void ComputerViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewIt
         painter->drawPixmap(option.rect.x() + leftmargin, option.rect.y() + topmargin, icon.pixmap(iconsize));
 
         painter->setFont(par->font());
-        painter->setPen(qApp->palette().color((option.state & QStyle::StateFlag::State_Selected) ? QPalette::ColorRole::HighlightedText : QPalette::ColorRole::Text));
+        // bug#144527 计算机界面目录选中不要反色
+        painter->setPen(qApp->palette().color(QPalette::ColorRole::Text));
         painter->drawText(option.rect.x() + (option.rect.width() - fstw) / 2, option.rect.y() + topmargin + iconsize + text_topmargin, elided_text);
         return;
     }
