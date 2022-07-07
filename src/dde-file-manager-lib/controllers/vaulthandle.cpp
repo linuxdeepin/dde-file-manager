@@ -239,8 +239,11 @@ QString CryFsHandle::encryptAlgoNameOfGroupPolicy()
         }
     }
 
-    if (!isSupportAlgoName(algoName))
-        algoName = DEFAULT_AES_ALGO_NAME;
+    if (!isSupportAlgoName(algoName)) {
+        algoName = DEFAULT_SM4_ALGO_NAME;
+        if (!isSupportAlgoName(algoName))
+            algoName = DEFAULT_AES_ALGO_NAME;
+    }
 
     return algoName;
 }
