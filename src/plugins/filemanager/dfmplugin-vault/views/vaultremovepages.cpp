@@ -40,7 +40,6 @@
 
 using namespace PolkitQt1;
 
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_vault;
 constexpr int kKeyVerifyDeleteBtn = 1;

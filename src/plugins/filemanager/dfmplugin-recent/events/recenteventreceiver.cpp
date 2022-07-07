@@ -26,6 +26,11 @@
 
 #include <dfm-framework/dpf.h>
 
+#include <QDir>
+
+Q_DECLARE_METATYPE(QDir::Filters);
+Q_DECLARE_METATYPE(QString *)
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_recent;
 
@@ -54,7 +59,7 @@ void RecentEventReceiver::handleWindowUrlChanged(quint64 winId, const QUrl &url)
     if (url.scheme() == RecentManager::scheme()) {
         QTimer::singleShot(0, this, [=] {
             QDir::Filters f = QDir::AllEntries | QDir::NoDotAndDotDot | QDir::System | QDir::Hidden;
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetViewFilter", winId, f);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetFilter", winId, f);
         });
     }
 }

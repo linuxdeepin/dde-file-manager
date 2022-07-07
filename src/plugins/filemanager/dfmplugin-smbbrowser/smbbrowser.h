@@ -29,6 +29,8 @@
 
 namespace dfmplugin_smbbrowser {
 
+using Prehandler = std::function<void(const QUrl &url, std::function<void()> after)>;
+
 class SmbBrowser : public dpf::Plugin
 {
     Q_OBJECT
@@ -50,4 +52,7 @@ private:
 };
 
 }
+
+Q_DECLARE_METATYPE(dfmplugin_smbbrowser::Prehandler)
+
 #endif   // MYSHARESPLUGIN_H

@@ -231,21 +231,12 @@ bool OpticalHelper::isDupFileNameInPath(const QString &path, const QUrl &url)
     return false;
 }
 
-DSB_FM_NAMESPACE::WorkspaceService *OpticalHelper::workspaceServIns()
+bool OpticalHelper::isTransparent(const QUrl &url)
 {
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
+    if (url.scheme() == OpticalHelper::scheme())
+        return !burnIsOnDisc(url);
 
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
-}
-
-DSC_NAMESPACE::DelegateService *OpticalHelper::dlgateServIns()
-{
-    return delegateServIns;
+    return false;
 }
 
 bool OpticalHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)

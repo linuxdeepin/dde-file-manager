@@ -33,8 +33,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/deviceproxymanager.h"
@@ -44,11 +42,11 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
 
+using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
+
 using namespace dfmplugin_optical;
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 void Optical::initialize()
 {
@@ -85,7 +83,9 @@ bool Optical::start()
 {
     dfmplugin_menu_util::menuSceneRegisterScene(OpticalMenuSceneCreator::name(), new OpticalMenuSceneCreator);
 
-    addFileOperations();
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kBurn));
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", QString(Global::Scheme::kBurn), OpticalMenuSceneCreator::name());
+
     addCustomTopWidget();
     addDelegateSettings();
     addPropertySettings();
@@ -93,15 +93,7 @@ bool Optical::start()
     // follow event
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", OpticalHelper::instance(), &OpticalHelper::urlsToLocal);
 
-    // file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", OpticalFileHelper::instance(), &OpticalFileHelper::cutFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", OpticalFileHelper::instance(), &OpticalFileHelper::copyFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInPlugin);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", OpticalFileHelper::instance(), &OpticalFileHelper::linkFile);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", OpticalFileHelper::instance(), &OpticalFileHelper::writeUrlsToClipboard);
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInTerminal);
+    addFileOperations();
 
     return true;
 }
@@ -121,35 +113,42 @@ void Optical::addOpticalCrumbToTitleBar()
 
 void Optical::addFileOperations()
 {
-    OpticalHelper::workspaceServIns()->addScheme(Global::Scheme::kBurn);
-    OpticalHelper::workspaceServIns()->setWorkspaceMenuScene(Global::Scheme::kBurn, OpticalMenuSceneCreator::name());
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CutFile", OpticalFileHelper::instance(), &OpticalFileHelper::cutFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_CopyFile", OpticalFileHelper::instance(), &OpticalFileHelper::copyFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_MoveToTrash", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_DeleteFile", OpticalFileHelper::instance(), &OpticalFileHelper::moveToTrash);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_LinkFile", OpticalFileHelper::instance(), &OpticalFileHelper::linkFile);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_WriteUrlsToClipboard", OpticalFileHelper::instance(), &OpticalFileHelper::writeUrlsToClipboard);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenInTerminal", OpticalFileHelper::instance(), &OpticalFileHelper::openFileInTerminal);
 }
 
 void Optical::addCustomTopWidget()
 {
-    Workspace::CustomTopWidgetInfo info;
-    info.scheme = Global::Scheme::kBurn;
-    info.keepShow = false;
-    info.createTopWidgetCb = []() {
+    QVariantMap info;
+
+    info["Property_Key_Scheme"] = Global::Scheme::kBurn;
+    info["Property_Key_KeepShow"] = false;
+
+    info["Property_Key_CreateTopWidgetCallback"] = QVariant([]() {
         return new OpticalMediaWidget;
-    };
-    info.showTopWidgetCb = [](QWidget *w, const QUrl &url) {
+    });
+
+    info["Property_Key_ShowTopWidgetCallback"] = QVariant([](QWidget *w, const QUrl &url) {
         bool ret { true };
         OpticalMediaWidget *mediaWidget = qobject_cast<OpticalMediaWidget *>(w);
         if (mediaWidget)
             ret = mediaWidget->updateDiscInfo(url);
 
         return ret;
-    };
+    });
 
-    OpticalHelper::workspaceServIns()->addCustomTopWidget(info);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", info);
 }
 
 void Optical::addDelegateSettings()
 {
-    OpticalHelper::dlgateServIns()->registerTransparentHandle(Global::Scheme::kBurn, [](const QUrl &url) -> bool {
-        return !OpticalHelper::burnIsOnDisc(url);
-    });
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_CheckTransparent", OpticalHelper::instance(), &OpticalHelper::isTransparent);
 }
 
 void Optical::addPropertySettings()
@@ -163,9 +162,9 @@ void Optical::bindEvents()
 {
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_DeleteFiles", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleDeleteFilesShortcut);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_CheckDragDropAction", &OpticalEventReceiver::instance(),
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleCheckDragDropAction);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDragMove", &OpticalEventReceiver::instance(),
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDragMove", &OpticalEventReceiver::instance(),
                             &OpticalEventReceiver::handleCheckDragDropAction);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", &OpticalEventReceiver::instance(), &OpticalEventReceiver::sepateTitlebarCrumb);
 }
@@ -177,6 +176,6 @@ void Optical::onDeviceChanged(const QString &id, bool isUnmount)
         QUrl url { QString("burn:///dev/%1/disc_files/").arg(volTag) };
         if (isUnmount)
             emit OpticalSignalManager::instance()->discUnmounted(url);
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", url);
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
     }
 }

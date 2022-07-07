@@ -26,7 +26,6 @@
 #include "dfm-base/dfm_base_global.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
-#include "workspace/workspace_defines.h"
 #include "dfm_global_defines.h"
 
 #include <QDir>
@@ -63,7 +62,7 @@ public:
     CustomTopWidgetInterface *createTopWidgetByScheme(const QString &scheme);
     void setCustomTopWidgetVisible(quint64 windowId, const QString &scheme, bool visible);
     void setFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
-    void setFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void setFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback);
     void setWorkspaceMenuScene(const QString &scheme, const QString &scene);
     void setDefaultViewMode(const QString &scheme, const DFMBASE_NAMESPACE::Global::ViewMode mode);
     void setSelectionMode(const quint64 windowID, const QAbstractItemView::SelectionMode &mode);
@@ -78,7 +77,6 @@ public:
     quint64 windowId(const QWidget *sender);
     void switchViewMode(quint64 windowId, int viewMode);
     void addScheme(const QString &scheme);
-    bool schemeViewIsFileView(const QString &scheme);
     void openUrlInNewTab(quint64 windowId, const QUrl &viewMode);
     void actionNewWindow(const QList<QUrl> &urls);
     void actionNewTab(quint64 windowId, const QUrl &url);
@@ -89,16 +87,17 @@ public:
     void setSort(quint64 windowId, DFMBASE_NAMESPACE::Global::ItemRoles role);
     DFMBASE_NAMESPACE::Global::ItemRoles sortRole(quint64 windowId);
 
-    bool reigsterViewRoutePrehandler(const QString &scheme, const DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler prehandler);
-    DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);
+    bool reigsterViewRoutePrehandler(const QString &scheme, const FileViewRoutePrehaldler prehandler);
+    FileViewRoutePrehaldler viewRoutePrehandler(const QString &scheme);
 
-    void closePersistentEditor(const quint64 windowID, const QModelIndex &index);
+    void closePersistentEditor(const quint64 windowID);
 
     void setViewFilter(const quint64 windowID, const QDir::Filters filter);
     void setNameFilter(const quint64 windowID, const QStringList &filter);
     void setReadOnly(const quint64 windowID, const bool readOnly);
 
     int getViewFilter(const quint64 windowID);
+    QStringList getNameFilter(const quint64 windowId);
 
     void laterRequestSelectFiles(const QList<QUrl> &urls);
 
@@ -111,7 +110,7 @@ signals:
     void viewModeChanged(quint64 windowId, int viewMode);
     void openNewTab(quint64 windowId, const QUrl &url);
     void requestSetViewFilterData(quint64 windowId, const QUrl &url, const QVariant &data);
-    void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const DSB_FM_NAMESPACE::Workspace::FileViewFilterCallback callback);
+    void requestSetViewFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback);
     void requestSelectFiles(const QList<QUrl> &urlList);
     void trashStateChanged();
     void requestFileUpdate(const QUrl &url);
@@ -120,7 +119,7 @@ private:
     explicit WorkspaceHelper(QObject *parent = nullptr);
     static QMutex &mutex();
     static QMap<quint64, WorkspaceWidget *> kWorkspaceMap;
-    static QMap<QString, DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler> kPrehandlers;
+    static QMap<QString, FileViewRoutePrehaldler> kPrehandlers;
 
     FileView *findFileViewByWindowID(const quint64 windowID);
 

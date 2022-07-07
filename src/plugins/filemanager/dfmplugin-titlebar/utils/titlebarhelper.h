@@ -45,7 +45,6 @@ public:
     static QList<CrumbData> crumbSeprateUrl(const QUrl &url);
     static QList<CrumbData> tansToCrumbDataList(const QList<QVariantMap> &mapGroup);
     static bool displayIcon();
-    static bool tabAddable(quint64 windowId);
     static void handlePressed(QWidget *sender, const QString &text, bool *isSearch = nullptr);
     static bool handleConnection(QWidget *sender, const QUrl &url);
 

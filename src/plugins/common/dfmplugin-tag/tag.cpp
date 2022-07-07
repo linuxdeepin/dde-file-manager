@@ -50,7 +50,6 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 void Tag::initialize()
@@ -81,12 +80,6 @@ bool Tag::start()
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
                          TagManager::scheme(), filtes);
 
-    dfmplugin_menu_util::menuSceneRegisterScene(TagMenuCreator::name(), new TagMenuCreator);
-    bindScene("FileOperatorMenu");
-
-    WorkspaceService::service()->setWorkspaceMenuScene(TagManager::scheme(), TagDirMenuCreator::name());
-    dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
-
     return true;
 }
 
@@ -113,7 +106,13 @@ void Tag::regTagCrumbToTitleBar()
 
 void Tag::onAllPluginsInitialized()
 {
-    TagHelper::workspaceServIns()->addScheme(TagManager::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", TagManager::scheme());
+
+    dfmplugin_menu_util::menuSceneRegisterScene(TagMenuCreator::name(), new TagMenuCreator);
+    bindScene("FileOperatorMenu");
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TagManager::scheme(), TagDirMenuCreator::name());
+    dfmplugin_menu_util::menuSceneRegisterScene(TagDirMenuCreator::name(), new TagDirMenuCreator);
 }
 
 QWidget *Tag::createTagWidget(const QUrl &url)
@@ -149,14 +148,14 @@ void Tag::installToSideBar()
 
 void Tag::followEvents()
 {
-    dpfHookSequence->follow(Workspace::EventType::kPaintListItem, TagManager::instance(), &TagManager::paintListTagsHandle);
-    dpfHookSequence->follow(Workspace::EventType::kPaintIconItem, TagManager::instance(), &TagManager::paintIconTagsHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintListItem", TagManager::instance(), &TagManager::paintListTagsHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Delegate_PaintIconItem", TagManager::instance(), &TagManager::paintIconTagsHandle);
 
     // todo(zy) need to delete
     dpfHookSequence->follow(GlobalEventType::kTempDesktopPaintTag, TagManager::instance(), &TagManager::paintIconTagsHandle);
     // paste
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles", TagManager::instance(), &TagManager::pasteHandle);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop", TagManager::instance(), &TagManager::fileDropHandle);
 
     // titlebar crumb
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", TagManager::instance(), &TagManager::sepateTitlebarCrumb);

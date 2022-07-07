@@ -23,7 +23,6 @@
 #define FILESORTFILTERPROXYMODEL_H
 
 #include "dfmplugin_workspace_global.h"
-#include "workspace/workspace_defines.h"
 #include "views/fileviewitem.h"
 #include "events/workspaceeventsequence.h"
 
@@ -33,9 +32,6 @@
 #include <QSortFilterProxyModel>
 #include <QDir>
 
-DSB_FM_USE_NAMESPACE
-
-using namespace Workspace;
 namespace dfmplugin_workspace {
 
 class FileViewModel;
@@ -74,6 +70,7 @@ public:
 
     // Filter
     QDir::Filters getFilters() const;
+    QStringList getNameFilters() const;
     void setFilters(const QDir::Filters &filters);
     void setNameFilters(const QStringList &nameFilters);
     void setFilterData(const QVariant &data);

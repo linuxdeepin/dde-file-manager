@@ -25,8 +25,6 @@
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/utils/sysinfoutils.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_menu_defines.h"
@@ -36,7 +34,6 @@
 #include <QProcess>
 #include <QMenu>
 
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 using namespace dfmplugin_search;
 DFMBASE_USE_NAMESPACE
@@ -165,7 +162,7 @@ bool SearchMenuScene::initialize(const QVariantHash &params)
             if (auto workspaceScene = dfmplugin_menu_util::menuSceneCreateScene(kWorkspaceMenuSceneName))
                 currentScene.append(workspaceScene);
         } else {
-            auto parentSceneName = WorkspaceService::service()->findMenuScene(parentUrl.scheme());
+            auto parentSceneName = dpfSlotChannel->push("dfmplugin_workspace", "slot_FindMenuScene", parentUrl.scheme()).toString();
             if (auto scene = dfmplugin_menu_util::menuSceneCreateScene(parentSceneName))
                 currentScene.append(scene);
 
@@ -236,7 +233,7 @@ bool SearchMenuScene::triggered(QAction *action)
 
         // select all
         if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_SelectAll", d->windowId);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectAll", d->windowId);
             return true;
         }
     }

@@ -24,8 +24,6 @@
 
 #include "dfmplugin_tag_global.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include <QColor>
 
 class QPainter;
@@ -83,9 +81,6 @@ public:
 
     static QUrl redirectTagUrl(const QUrl &url);
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
-
-    // services instance
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
 
 private:
     explicit TagHelper(QObject *parent = nullptr);

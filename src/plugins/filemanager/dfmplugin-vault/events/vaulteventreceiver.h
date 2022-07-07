@@ -19,7 +19,7 @@ public:
 public slots:
     void computerOpenItem(quint64 winId, const QUrl &url);
     bool handleNotAllowedAppendCompress(const QList<QUrl> &fromUrls, const QUrl &toUrl);
-    void EnterFileView(const quint64 &winId, const QUrl &url);
+    void handleCurrentUrlChanged(const quint64 &winId, const QUrl &url);
 };
 }
 #endif   // VAULTEVENTRECEIVER_H

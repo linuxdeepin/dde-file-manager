@@ -28,8 +28,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -39,8 +37,9 @@ Q_DECLARE_METATYPE(ContextMenuCallback)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(BasicViewFieldFunc)
+Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(QVariant *)
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;
 
@@ -58,14 +57,17 @@ bool Trash::start()
 {
     dfmplugin_menu_util::menuSceneRegisterScene(TrashMenuCreator::name(), new TrashMenuCreator());
 
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", TrashHelper::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", TrashHelper::scheme(), TrashMenuCreator::name());
+
     addCustomTopWidget();
     addFileOperations();
 
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_CheckDragDropAction", TrashHelper::instance(), &TrashHelper::checkDragDropAction);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", TrashHelper::instance(), &TrashHelper::detailViewIcon);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", TrashHelper::instance(), &TrashHelper::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", TrashHelper::instance(), &TrashHelper::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", TrashHelper::instance(), &TrashHelper::customRoleData);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", TrashHelper::instance(), &TrashHelper::urlsToLocal);
 
     // hook events, file operation
@@ -124,9 +126,6 @@ void Trash::installToSideBar()
 
 void Trash::addFileOperations()
 {
-    TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kTrash, TrashMenuCreator::name());
-
     BasicViewFieldFunc func { TrashHelper::propetyExtensionFunc };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
                          func, TrashHelper::scheme());
@@ -138,9 +137,12 @@ void Trash::addFileOperations()
 
 void Trash::addCustomTopWidget()
 {
-    Workspace::CustomTopWidgetInfo info;
-    info.scheme = TrashHelper::scheme();
-    info.createTopWidgetCb = TrashHelper::createEmptyTrashTopWidget;
-    info.showTopWidgetCb = TrashHelper::showTopWidget;
-    TrashHelper::workspaceServIns()->addCustomTopWidget(info);
+    QVariantMap info;
+
+    info["Property_Key_Scheme"] = TrashHelper::scheme();
+    info["Property_Key_KeepShow"] = false;
+    info["Property_Key_CreateTopWidgetCallback"] = &TrashHelper::createEmptyTrashTopWidget;
+    info["Property_Key_ShowTopWidgetCallback"] = &TrashHelper::showTopWidget;
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", info);
 }

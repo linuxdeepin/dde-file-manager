@@ -23,12 +23,11 @@
 #include "coreeventscaller.h"
 #include "utils/corehelper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
-DSB_FM_USE_NAMESPACE
+#include <QUrl>
+
 DFMBASE_USE_NAMESPACE
 using namespace filedialog_core;
 
@@ -42,7 +41,7 @@ void CoreEventsCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::
 
 void CoreEventsCaller::sendSelectFiles(quint64 windowId, const QList<QUrl> &files)
 {
-    dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::Workspace::EventType::kSelectFiles, windowId, files);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectFiles", windowId, files);
 }
 
 void CoreEventsCaller::setSidebarItemVisible(const QUrl &url, bool visible)
@@ -56,7 +55,7 @@ void CoreEventsCaller::setSelectionMode(QWidget *sender, const QAbstractItemView
     quint64 id = FMWindowsIns.findWindowId(sender);
     Q_ASSERT(id > 0);
     auto func = [id, mode]() {
-        dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetSelectionMode, id, mode);
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetSelectionMode", id, mode);
     };
     CoreHelper::delayInvokeProxy(func, id, sender);
 }
@@ -67,7 +66,7 @@ void CoreEventsCaller::setEnabledSelectionModes(QWidget *sender, const QList<QAb
     Q_ASSERT(id > 0);
 
     auto func = [id, modes] {
-        dpfSignalDispatcher->publish(DSB_FM_NAMESPACE::Workspace::EventType::kSetEnabledSelectionModes, id, modes);
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetEnabledSelectionModes", id, modes);
     };
     CoreHelper::delayInvokeProxy(func, id, sender);
 }
@@ -76,4 +75,9 @@ void CoreEventsCaller::setMenuDisbaled()
 {
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_ContextMenu_SetEnable", false);
     dpfSlotChannel->push("dfmplugin_computer", "slot_ContextMenu_SetEnable", false);
+}
+
+QList<QUrl> CoreEventsCaller::sendGetSelectedFiles(const quint64 windowID)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetSelectedUrls", windowID).value<QList<QUrl>>();
 }

@@ -31,8 +31,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -40,9 +38,10 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
+Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(QVariant *)
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 namespace dfmplugin_search {
 
 void Search::initialize()
@@ -94,26 +93,27 @@ void Search::regSearchCrumbToTitleBar()
 
 void Search::regSearchToWorkspace()
 {
-    WorkspaceService::service()->addScheme(SearchHelper::scheme());
-    WorkspaceService::service()->setDefaultViewMode(SearchHelper::scheme(), Global::ViewMode::kListMode);
-    WorkspaceService::service()->setWorkspaceMenuScene(SearchHelper::scheme(), SearchMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", SearchHelper::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SearchHelper::scheme(), SearchMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetDefaultViewMode", SearchHelper::scheme(), Global::ViewMode::kListMode);
 
-    Workspace::CustomTopWidgetInfo info;
-    info.scheme = SearchHelper::scheme();
-    info.keepShow = false;
-    info.createTopWidgetCb = []() { return new AdvanceSearchBar(); };
-    info.showTopWidgetCb = SearchHelper::showTopWidget;
-    WorkspaceService::service()->addCustomTopWidget(info);
+    QVariantMap info;
+    info["Property_Key_Scheme"] = SearchHelper::scheme();
+    info["Property_Key_KeepShow"] = false;
+
+    info["Property_Key_CreateTopWidgetCallback"] = QVariant([]() { return new AdvanceSearchBar(); });
+    info["Property_Key_ShowTopWidgetCallback"] = &SearchHelper::showTopWidget;
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", info);
 }
 
 void Search::bindEvents()
 {
     // hook events
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles",
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles",
                             SearchHelper::instance(), &SearchHelper::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName",
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName",
                             SearchHelper::instance(), &SearchHelper::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData",
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData",
                             SearchHelper::instance(), &SearchHelper::customRoleData);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
                             SearchHelper::instance(), &SearchHelper::blockPaste);

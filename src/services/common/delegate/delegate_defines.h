@@ -1,10 +1,11 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2022 Uniontech Software Technology Co., Ltd.
  *
- * Author:     yanghao<yanghao@uniontech.com>
+ * Author:     zhangsheng<zhangsheng@uniontech.com>
  *
- * Maintainer: zhangsheng<zhangsheng@uniontech.com>
- *             liuyangming<liuyangming@uniontech.com>
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             xushitong<xushitong@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +20,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef DELEGATE_DEFINE_H
-#define DELEGATE_DEFINE_H
+#ifndef DELEGATE_DEFINES_H
+#define DELEGATE_DEFINES_H
 
-#include "dfm_common_service_global.h"
+#include "services/filemanager/dfm_filemanager_service_global.h"
 
-#include <QObject>
-
-#include <functional>
-
-namespace dfm_service_common {
-
-namespace Delegate {
-using IsTransparentCallback = std::function<bool(const QUrl &)>;
-using UrlTransformCallback = std::function<QUrl(const QUrl &)>;
-};   // namespace delegate
-}
-
-#endif   //DELEGATE_DEFINE_H
+#endif   // DELEGATE_DEFINES_H

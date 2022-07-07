@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QVariant>
 #include <QObject>
+#include <QUrl>
 
 #include <mutex>
 

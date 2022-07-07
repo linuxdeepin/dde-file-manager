@@ -22,8 +22,6 @@
 #define SERVICEMANAGER_H
 #include "dfmplugin_vault_global.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <QObject>
@@ -38,8 +36,6 @@ public:
     explicit ServiceManager(QObject *parent = nullptr);
 
 public:
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
-
     static ExpandFieldMap basicViewFieldFunc(const QUrl &url);
 };
 }

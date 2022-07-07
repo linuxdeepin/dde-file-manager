@@ -29,8 +29,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -59,7 +57,6 @@ void SmbBrowser::initialize()
     InfoFactory::regClass<SmbShareFileInfo>(SmbBrowserUtils::networkScheme());
     DirIteratorFactory::regClass<SmbShareIterator>(SmbBrowserUtils::networkScheme());
 
-    DSB_FM_USE_NAMESPACE
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
 
     connect(dpfListener, &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerSambaPrehandler, Qt::DirectConnection);
@@ -69,15 +66,11 @@ bool SmbBrowser::start()
 {
     dfmplugin_menu_util::menuSceneRegisterScene(SmbBrowserMenuCreator::name(), new SmbBrowserMenuCreator());
 
-    DSB_FM_USE_NAMESPACE
-    WorkspaceService::service()->addScheme(Global::Scheme::kSmb);
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kSmb, SmbBrowserMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSmb));
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", QString(Global::Scheme::kSmb), SmbBrowserMenuCreator::name());
 
-    WorkspaceService::service()->addScheme(SmbBrowserUtils::networkScheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(SmbBrowserUtils::networkScheme(), SmbBrowserMenuCreator::name());
-
-    // hook events, file operation
-    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", SmbBrowserUtils::instance(), &SmbBrowserUtils::mountSmb);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", SmbBrowserUtils::networkScheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SmbBrowserUtils::networkScheme(), SmbBrowserMenuCreator::name());
 
     return true;
 }
@@ -89,11 +82,11 @@ dpf::Plugin::ShutdownFlag SmbBrowser::stop()
 
 void SmbBrowser::onWindowCreated(quint64 winId)
 {
+    Q_UNUSED(winId)
 }
 
 void SmbBrowser::onWindowOpened(quint64 winId)
 {
-    DSB_FM_USE_NAMESPACE
     auto window = FMWindowsIns.findWindowById(winId);
     if (window->sideBar())
         addNeighborToSidebar();
@@ -116,8 +109,8 @@ void SmbBrowser::addNeighborToSidebar()
 
 void SmbBrowser::registerSambaPrehandler()
 {
-    DSB_FM_USE_NAMESPACE
-    if (!WorkspaceService::service()->registerFileViewRoutePrehandle(Global::Scheme::kSmb, sambaPrehandler)) {
+    Prehandler handler { SmbBrowser::sambaPrehandler };
+    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSmb), handler).toBool()) {
         qWarning() << "smb's prehandler has been registered";
     }
 }

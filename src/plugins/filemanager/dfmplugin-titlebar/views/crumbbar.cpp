@@ -382,7 +382,7 @@ void CrumbBar::onCustomContextMenu(const QPoint &point)
         return;
 
     quint64 id { window()->internalWinId() };
-    bool tabAddable { TitleBarHelper::tabAddable(id) };
+    bool tabAddable { TitleBarEventCaller::sendCheckTabAddable(id) };
     bool displayIcon { TitleBarHelper::displayIcon() };
     QMenu *menu { new QMenu() };
     QUrl url { index.data(CrumbModel::FileUrlRole).toUrl() };

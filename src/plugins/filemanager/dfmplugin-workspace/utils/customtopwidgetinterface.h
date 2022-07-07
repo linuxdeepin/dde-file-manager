@@ -24,8 +24,6 @@
 
 #include "dfmplugin_workspace_global.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
@@ -33,9 +31,6 @@ class QWidget;
 QT_END_NAMESPACE
 
 namespace dfmplugin_workspace {
-
-using DSB_FM_NAMESPACE::Workspace::CreateTopWidgetCallback;
-using DSB_FM_NAMESPACE::Workspace::ShowTopWidgetCallback;
 
 class CustomTopWidgetInterface : public QObject
 {

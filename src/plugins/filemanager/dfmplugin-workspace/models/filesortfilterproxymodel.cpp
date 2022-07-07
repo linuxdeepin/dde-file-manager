@@ -202,6 +202,11 @@ QDir::Filters FileSortFilterProxyModel::getFilters() const
     return filters;
 }
 
+QStringList FileSortFilterProxyModel::getNameFilters() const
+{
+    return nameFilters;
+}
+
 void FileSortFilterProxyModel::setFilters(const QDir::Filters &filters)
 {
     this->filters = filters;

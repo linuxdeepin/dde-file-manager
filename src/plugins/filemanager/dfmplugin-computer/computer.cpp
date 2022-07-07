@@ -30,8 +30,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -42,7 +40,6 @@ using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 namespace dfmplugin_computer {
@@ -80,9 +77,8 @@ bool Computer::start()
 
     dfmplugin_menu_util::menuSceneRegisterScene(ComputerMenuCreator::name(), new ComputerMenuCreator());
 
-    DSB_FM_USE_NAMESPACE
-    WorkspaceService::service()->addScheme(ComputerUtils::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(ComputerUtils::scheme(), ComputerMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", ComputerUtils::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", ComputerUtils::scheme(), ComputerMenuCreator::name());
 
     return true;
 }

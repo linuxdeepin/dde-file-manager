@@ -20,6 +20,9 @@
  */
 #include "bookmarkhelper.h"
 
+#include <QUrl>
+#include <QIcon>
+
 #include <mutex>
 
 using namespace dfmplugin_bookmark;
@@ -46,18 +49,6 @@ QUrl BookMarkHelper::rootUrl()
 QIcon BookMarkHelper::icon()
 {
     return QIcon::fromTheme("folder-bookmark-symbolic");
-}
-
-dfm_service_filemanager::WorkspaceService *BookMarkHelper::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }
 
 BookMarkHelper::BookMarkHelper(QObject *parent)

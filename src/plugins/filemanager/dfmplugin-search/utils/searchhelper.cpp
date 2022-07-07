@@ -21,8 +21,6 @@
 #include "searchhelper.h"
 #include "topwidget/advancesearchbar.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "dfm-base/base/schemefactory.h"
 
@@ -30,7 +28,9 @@
 
 #include <QUrlQuery>
 
-DSB_FM_USE_NAMESPACE
+Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(QVariant *)
+
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 namespace dfmplugin_search {
@@ -153,7 +153,7 @@ bool SearchHelper::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleL
         return false;
 
     const QUrl &targetUrl = searchTargetUrl(rootUrl);
-    if (!dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomColumnRoles", targetUrl, roleList)) {
+    if (!dpfHookSequence->run("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", targetUrl, roleList)) {
         roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFilePathRole);
         roleList->append(kItemFileLastModifiedRole);
@@ -170,7 +170,7 @@ bool SearchHelper::customRoleDisplayName(const QUrl &rootUrl, const ItemRoles ro
         return false;
 
     const QUrl &targetUrl = searchTargetUrl(rootUrl);
-    if (dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", targetUrl, role, displayName))
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", targetUrl, role, displayName))
         return true;
 
     if (role == kItemFilePathRole) {
@@ -187,7 +187,7 @@ bool SearchHelper::customRoleData(const QUrl &rootUrl, const QUrl &url, const It
         return false;
 
     const QUrl &targetUrl = searchTargetUrl(rootUrl);
-    if (dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomRoleData", targetUrl, url, role, data))
+    if (dpfHookSequence->run("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", targetUrl, url, role, data))
         return true;
 
     if (role == kItemFilePathRole) {

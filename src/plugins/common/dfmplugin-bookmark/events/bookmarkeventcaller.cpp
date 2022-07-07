@@ -49,3 +49,8 @@ void BookMarkEventCaller::sendOpenBookMarkInWindow(quint64 windowId, const QUrl 
 {
     dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, windowId, url);
 }
+
+bool BookMarkEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+}

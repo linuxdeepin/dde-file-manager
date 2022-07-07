@@ -34,8 +34,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
@@ -58,7 +56,6 @@ void MyShares::initialize()
     dfmplugin_menu_util::menuSceneRegisterScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
     beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
 
-    DSB_FM_USE_NAMESPACE
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &MyShares::onWindowClosed, Qt::DirectConnection);
@@ -66,10 +63,8 @@ void MyShares::initialize()
 
 bool MyShares::start()
 {
-    DSB_FM_USE_NAMESPACE
-
-    WorkspaceService::service()->addScheme(ShareUtils::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(ShareUtils::scheme(), MyShareMenuCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", ShareUtils::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", ShareUtils::scheme(), MyShareMenuCreator::name());
 
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", this, &MyShares::onShareAdded);
     dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", this, &MyShares::onShareRemoved);
@@ -90,7 +85,6 @@ void MyShares::onWindowCreated(quint64 winId)
 
 void MyShares::onWindowOpened(quint64 winId)
 {
-    DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
     auto window = FMWindowsIns.findWindowById(winId);
 
@@ -107,6 +101,7 @@ void MyShares::onWindowOpened(quint64 winId)
 
 void MyShares::onWindowClosed(quint64 winId)
 {
+    Q_UNUSED(winId)
 }
 
 void MyShares::onShareAdded(const QString &)
@@ -116,7 +111,6 @@ void MyShares::onShareAdded(const QString &)
 
 void MyShares::onShareRemoved(const QString &)
 {
-    DSB_FM_USE_NAMESPACE
     int count = dpfSlotChannel->push("dfmplugin_dirshare", "slot_Share_AllShareInfos").value<ShareInfoList>().count();
     if (count == 0)
         dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Remove", ShareUtils::rootUrl());

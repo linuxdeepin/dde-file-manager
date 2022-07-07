@@ -37,7 +37,6 @@
 #include <QFileDevice>
 
 Q_DECLARE_METATYPE(QFileDevice::Permissions)
-Q_DECLARE_METATYPE(QList<QUrl>)
 
 DPFILEOPERATIONS_BEGIN_NAMESPACE
 class FileCopyMoveJob;

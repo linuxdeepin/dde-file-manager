@@ -24,10 +24,9 @@
 
 #include "dfmplugin_trash_global.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <QUrl>
 #include <QIcon>
@@ -86,9 +85,6 @@ public:
     bool customRoleData(const QUrl &rootUrl, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role, QVariant *data);
 
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
-
-    // services instance
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
 
 private:
     void onTrashStateChanged();

@@ -21,32 +21,12 @@
 #include "servicemanager.h"
 
 #include <mutex>
+#include <QUrl>
 
-DSB_FM_USE_NAMESPACE
 using namespace dfmplugin_vault;
 ServiceManager::ServiceManager(QObject *parent)
     : QObject(parent)
 {
-}
-
-WorkspaceService *ServiceManager::workspaceServiceInstance()
-{
-    static WorkspaceService *workspaceService = nullptr;
-    if (workspaceService == nullptr) {
-        auto &ctx = dpfInstance.serviceContext();
-        QString errStr;
-        if (!ctx.load(WorkspaceService::name(), &errStr)) {
-            qCritical() << errStr;
-            abort();
-        }
-
-        workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-        if (!workspaceService) {
-            qCritical() << "Failed, init workspace \"workspaceService\" is empty";
-            abort();
-        }
-    }
-    return workspaceService;
 }
 
 ServiceManager::ExpandFieldMap ServiceManager::basicViewFieldFunc(const QUrl &url)

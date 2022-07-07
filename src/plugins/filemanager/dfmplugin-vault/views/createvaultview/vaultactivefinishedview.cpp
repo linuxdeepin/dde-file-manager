@@ -45,7 +45,6 @@
 using namespace PolkitQt1;
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 VaultActiveFinishedView::VaultActiveFinishedView(QWidget *parent)

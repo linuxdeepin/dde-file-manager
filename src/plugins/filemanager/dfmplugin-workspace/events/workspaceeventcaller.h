@@ -58,8 +58,6 @@ public:
     static bool sendRenameStartEdit(const quint64 &winId, const QUrl &url);
 
     static bool sendRenameEndEdit(const quint64 &winId, const QUrl &url);
-
-    static bool sendEnterFileView(const quint64 &winId, const QUrl &url);
 };
 
 }

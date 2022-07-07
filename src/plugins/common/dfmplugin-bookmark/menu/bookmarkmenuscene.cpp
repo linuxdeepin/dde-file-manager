@@ -26,7 +26,6 @@
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_menu_defines.h"

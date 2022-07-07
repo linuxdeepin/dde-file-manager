@@ -26,8 +26,6 @@
 #include "dialogs/usersharepasswordsettingdialog.h"
 #include "views/titlebarwidget.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/device/devicemanager.h"
@@ -44,7 +42,6 @@
 #include <QStorageInfo>
 
 using namespace dfmplugin_titlebar;
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, TitleBarWidget *> TitleBarHelper::kTitleBarMap {};
@@ -191,16 +188,6 @@ bool TitleBarHelper::displayIcon()
 {
     QGSettings settings("com.deepin.dde.filemanager.general", "/com/deepin/dde/filemanager/general/");
     return settings.get("contextMenuIcons").toBool();
-}
-
-bool TitleBarHelper::tabAddable(quint64 windowId)
-{
-    auto &ctx = dpfInstance.serviceContext();
-    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (workspaceService)
-        return workspaceService->tabAddable(windowId);
-
-    return false;
 }
 
 void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *isSearch)

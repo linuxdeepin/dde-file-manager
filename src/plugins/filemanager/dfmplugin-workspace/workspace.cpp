@@ -27,7 +27,6 @@
 #include "utils/workspacehelper.h"
 #include "utils/customtopwidgetinterface.h"
 #include "events/workspaceeventreceiver.h"
-#include "events/workspaceunicastreceiver.h"
 #include "menus/workspacemenuscene.h"
 #include "menus/sortanddisplaymenuscene.h"
 
@@ -44,26 +43,23 @@ using namespace dfmplugin_workspace;
 
 void Workspace::initialize()
 {
-    DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
 
     ViewFactory::regClass<FileView>(Global::Scheme::kFile);
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &Workspace::onWindowOpened, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &Workspace::onWindowClosed, Qt::DirectConnection);
-    WorkspaceUnicastReceiver::instance()->connectService();
+
+    WorkspaceEventReceiver::instance()->initConnection();
 }
 
 bool Workspace::start()
 {
-    DSB_FM_USE_NAMESPACE
     DFMBASE_USE_NAMESPACE
 
     dfmplugin_menu_util::menuSceneRegisterScene(WorkspaceMenuCreator::name(), new WorkspaceMenuCreator());
     dfmplugin_menu_util::menuSceneRegisterScene(SortAndDisplayMenuCreator::name(), new SortAndDisplayMenuCreator());
     dfmplugin_menu_util::menuSceneBind(SortAndDisplayMenuCreator::name(), WorkspaceMenuCreator::name());
-
-    WorkspaceEventReceiver::instance()->initConnection();
 
     const QString &scheme = Global::Scheme::kFile;
 

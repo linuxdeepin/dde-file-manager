@@ -100,7 +100,7 @@ bool DragDropHelper::dragMove(QDragMoveEvent *event)
         QUrl toUrl = hoverFileInfo->url();
         QList<QUrl> fromUrls = event->mimeData()->urls();
         Qt::DropAction dropAction = event->dropAction();
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_FileDragMove", fromUrls, toUrl, &dropAction)) {
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDragMove", fromUrls, toUrl, &dropAction)) {
             event->setDropAction(dropAction);
             event->accept();
             return true;
@@ -186,7 +186,7 @@ bool DragDropHelper::drop(QDropEvent *event)
 
         QUrl toUrl = view->sourceModel()->itemFromIndex(isDropAtRootIndex ? hoverIndex : view->model()->mapToSource(hoverIndex))->url();
         QList<QUrl> fromUrls = event->mimeData()->urls();
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_FileDrop", fromUrls, toUrl)) {
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_DragDrop_FileDrop", fromUrls, toUrl)) {
             return true;
         }
 

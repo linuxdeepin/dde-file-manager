@@ -22,10 +22,10 @@
 #include "advancesearchbar_p.h"
 #include "utils/searchhelper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-
 #include "dfm-base/interfaces/abstractfileinfo.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
@@ -36,7 +36,6 @@
 #include <QApplication>
 
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 namespace dfmplugin_search {
 
@@ -416,8 +415,10 @@ void AdvanceSearchBar::onOptionChanged()
     formData[AdvanceSearchBarPrivate::kCurrentUrl] = curUrl;
     d->filterInfoCache[curUrl] = formData;
 
-    WorkspaceService::service()->setFileViewFilterData(winId, curUrl, QVariant::fromValue(formData));
-    WorkspaceService::service()->setFileViewFilterCallback(winId, curUrl, AdvanceSearchBarPrivate::shouldVisiableByFilterRule);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterData", winId, curUrl, QVariant::fromValue(formData));
+
+    FilterCallback callback { AdvanceSearchBarPrivate::shouldVisiableByFilterRule };
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetCustomFilterCallback", winId, curUrl, QVariant::fromValue(callback));
 }
 
 void AdvanceSearchBar::onResetButtonPressed()

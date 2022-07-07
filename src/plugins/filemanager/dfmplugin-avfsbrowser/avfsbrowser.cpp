@@ -30,7 +30,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -66,9 +65,8 @@ bool AvfsBrowser::start()
 
     dfmplugin_menu_util::menuSceneRegisterScene(AvfsMenuSceneCreator::name(), new AvfsMenuSceneCreator());
 
-    DSB_FM_USE_NAMESPACE
-    WorkspaceService::service()->addScheme(AvfsUtils::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(AvfsUtils::scheme(), AvfsMenuSceneCreator::name());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", AvfsUtils::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", AvfsUtils::scheme(), AvfsMenuSceneCreator::name());
 
     // follow event
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", AvfsUtils::instance(), &AvfsUtils::urlsToLocal);
@@ -94,8 +92,6 @@ void AvfsBrowser::followEvents()
 
 void AvfsBrowser::regCrumb()
 {
-    DSB_FM_USE_NAMESPACE
-
     dpfSlotChannel->push("dfmplugin_titlebar", "slot_Custom_Register", AvfsUtils::scheme(), QVariantMap {});
 }
 

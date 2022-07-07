@@ -25,9 +25,6 @@
 
 #include "dfmplugin_optical_global.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/utils/clipboard.h"
 
 #include <QIcon>
@@ -63,11 +60,8 @@ public:
     static void createStagingFolder(const QString &path);
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
 
-    // services instance
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
-    static DSC_NAMESPACE::DelegateService *dlgateServIns();
-
     bool urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls);
+    bool isTransparent(const QUrl &url);
 
 private:
     explicit OpticalHelper(QObject *parent = nullptr);

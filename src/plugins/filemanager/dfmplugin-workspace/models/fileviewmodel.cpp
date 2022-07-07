@@ -25,7 +25,6 @@
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
 #include "utils/fileoperatorhelper.h"
-#include "workspace/workspace_defines.h"
 #include "events/workspaceeventsequence.h"
 #include "filesortfilterproxymodel.h"
 
@@ -151,7 +150,7 @@ void FileViewModelPrivate::doWatcherEvent()
                 continue;
             else if (event.second == kRmFile) {
                 nodeManager->clearChildren();
-                dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
+                dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", fileUrl);
                 break;
             }
             //todo:先不做
@@ -166,7 +165,7 @@ void FileViewModelPrivate::doWatcherEvent()
             q->selectAndRenameFile(fileUrl);
         } else {
             nodeManager->removeChildren(fileUrl);
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", fileUrl);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", fileUrl);
         }
     }
     q->childrenUpdated();

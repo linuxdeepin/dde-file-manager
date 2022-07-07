@@ -23,8 +23,6 @@
 
 #include "dfmplugin_bookmark_global.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include <QObject>
 
 namespace dfmplugin_bookmark {
@@ -39,9 +37,6 @@ public:
     QString scheme();
     QUrl rootUrl();
     QIcon icon();
-
-    // services instance
-    static DSB_FM_NAMESPACE::WorkspaceService *workspaceServIns();
 
 private:
     explicit BookMarkHelper(QObject *parent = nullptr);

@@ -58,3 +58,8 @@ void SideBarEventCaller::sendShowFilePropertyDialog(const QUrl &url)
     urls << url;
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
+
+bool SideBarEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+}

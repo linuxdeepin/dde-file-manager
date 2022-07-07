@@ -35,8 +35,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
@@ -56,10 +54,8 @@ Q_DECLARE_METATYPE(ContextMenuCallback);
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 Q_DECLARE_METATYPE(BasicViewFieldFunc)
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 VaultVisibleManager::VaultVisibleManager(QObject *parent)
@@ -103,7 +99,8 @@ void VaultVisibleManager::pluginServiceRegister()
     }
 
     if (isVaultEnabled()) {
-        ServiceManager::workspaceServiceInstance()->addScheme(VaultHelper::instance()->scheme());
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", VaultHelper::instance()->scheme());
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
 
         CustomViewExtensionView customView { VaultHelper::createVaultPropertyDialog };
         dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
@@ -119,7 +116,6 @@ void VaultVisibleManager::pluginServiceRegister()
         dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
         dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");
         dfmplugin_menu_util::menuSceneRegisterScene(VaultMenuSceneCreator::name(), new VaultMenuSceneCreator);
-        WorkspaceService::service()->setWorkspaceMenuScene(VaultHelper::instance()->scheme(), VaultMenuSceneCreator::name());
     }
 }
 

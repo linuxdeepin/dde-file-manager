@@ -42,7 +42,6 @@
 #include <QKeyEvent>
 #include <QPushButton>
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -82,8 +81,6 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
             view->stopWork();
     }
 
-    quint64 winId = WorkspaceHelper::instance()->windowId(this);
-    WorkspaceEventCaller::sendEnterFileView(winId, url);
     workspaceUrl = url;
 
     if (!tabBar->currentTab())

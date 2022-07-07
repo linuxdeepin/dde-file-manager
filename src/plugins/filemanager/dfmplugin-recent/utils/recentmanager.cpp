@@ -26,8 +26,6 @@
 #include "files/recentfilewatcher.h"
 #include "events/recenteventcaller.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/systempathutil.h"
@@ -44,7 +42,6 @@
 #include <QCoreApplication>
 
 using namespace dfmplugin_recent;
-DSB_FM_USE_NAMESPACE
 DPF_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
@@ -93,14 +90,7 @@ void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const 
         RecentEventCaller::sendOpenTab(windowId, url);
     });
 
-    auto &ctx = dpfInstance.serviceContext();
-    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (!workspaceService) {
-        qCritical() << "Failed, recentManager contenxtMenuHandle \"WorkspaceService\" is empty";
-        abort();
-    }
-
-    newTabAct->setDisabled(!workspaceService->tabAddable(windowId));
+    newTabAct->setDisabled(!RecentEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Clear recent history"), [url]() {
@@ -344,16 +334,4 @@ void RecentManager::onDeleteExistRecentUrls(QList<QUrl> &urls)
             }
         }
     }
-}
-
-DSB_FM_NAMESPACE::WorkspaceService *RecentManager::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }

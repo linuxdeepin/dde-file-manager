@@ -24,6 +24,7 @@
 #include "utils/opticalhelper.h"
 
 #include "dfm-base/base/schemefactory.h"
+#include "dfm-base/dfm_global_defines.h"
 
 using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE

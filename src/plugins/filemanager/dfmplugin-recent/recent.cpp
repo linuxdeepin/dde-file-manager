@@ -42,8 +42,9 @@ Q_DECLARE_METATYPE(QList<QUrl> *);
 Q_DECLARE_METATYPE(bool *)
 Q_DECLARE_METATYPE(QFlags<QFileDevice::Permission>)
 Q_DECLARE_METATYPE(BasicViewFieldFunc)
+Q_DECLARE_METATYPE(QString *);
+Q_DECLARE_METATYPE(QVariant *)
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 namespace dfmplugin_recent {
@@ -71,6 +72,9 @@ bool Recent::start()
     QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",
                          RecentManager::scheme(), filtes);
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", RecentManager::scheme());
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", RecentManager::scheme(), RecentMenuCreator::name());
 
     addFileOperations();
 
@@ -131,9 +135,9 @@ void Recent::removeRecentItem()
 
 void Recent::followEvent()
 {
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomColumnRoles", RecentManager::instance(), &RecentManager::customColumnRole);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleDisplayName", RecentManager::instance(), &RecentManager::customRoleDisplayName);
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_Model_FetchCustomRoleData", RecentManager::instance(), &RecentManager::customRoleData);
     dpfHookSequence->follow("dfmplugin_detailspace", "hook_Icon_Fetch", RecentManager::instance(), &RecentManager::detailViewIcon);
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", RecentManager::instance(), &RecentManager::sepateTitlebarCrumb);
     dpfHookSequence->follow("dfmplugin_utils", "hook_UrlsTransform", RecentManager::instance(), &RecentManager::urlsToLocal);
@@ -163,9 +167,6 @@ void Recent::installToSideBar()
 
 void Recent::addFileOperations()
 {
-    RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
-    WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kRecent, RecentMenuCreator::name());
-
     BasicViewFieldFunc func { RecentManager::propetyExtensionFunc };
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
                          func, RecentManager::scheme());

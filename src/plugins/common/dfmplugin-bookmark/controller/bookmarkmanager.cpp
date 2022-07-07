@@ -95,7 +95,6 @@ QVariantMap BookmarkData::serialize()
 
 using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 BookMarkManager *BookMarkManager::instance()
@@ -366,7 +365,7 @@ void BookMarkManager::contextMenuHandle(quint64 windowId, const QUrl &url, const
     auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
         BookMarkEventCaller::sendBookMarkOpenInNewTab(windowId, url);
     });
-    newTabAct->setEnabled(bEnabled && BookMarkHelper::workspaceServIns()->tabAddable(windowId));
+    newTabAct->setEnabled(bEnabled && BookMarkEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
 

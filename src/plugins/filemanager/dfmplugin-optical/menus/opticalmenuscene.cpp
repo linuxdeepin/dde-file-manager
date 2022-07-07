@@ -33,7 +33,6 @@
 
 using namespace dfmplugin_optical;
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 
 static constexpr char kWorkspaceMenuSceneName[] = "WorkspaceMenu";
 

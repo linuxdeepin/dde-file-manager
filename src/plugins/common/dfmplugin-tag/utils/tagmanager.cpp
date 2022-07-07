@@ -38,7 +38,6 @@
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagManager::TagManager(QObject *parent)
@@ -484,7 +483,7 @@ void TagManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPo
         TagEventCaller::sendOpenTab(windowId, url);
     });
 
-    newTabAct->setDisabled(!TagHelper::workspaceServIns()->tabAddable(windowId));
+    newTabAct->setDisabled(!TagEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
 

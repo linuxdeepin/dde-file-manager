@@ -37,6 +37,7 @@ public:
     static void sendOpenTab(quint64 windowId, const QUrl &url);
     static void sendOpenFiles(const quint64 windowID, const QList<QUrl> &urls);
     static void sendFileUpdate(const QString &path);
+    static bool sendCheckTabAddable(quint64 windowId);
 
     static QRectF getVisibleGeometry(const quint64 windowID);
     static QRectF getItemRect(const quint64 windowID, const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role);

@@ -40,5 +40,5 @@ void BurnEventCaller::sendPasteFiles(const QList<QUrl> &urls, const QUrl &dest, 
 
 void BurnEventCaller::sendCloseTab(const QUrl &url)
 {
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_CloseTab", url);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Close", url);
 }

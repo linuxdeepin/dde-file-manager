@@ -58,3 +58,8 @@ void RecentEventCaller::sendCutFiles(const quint64 windowID, const QList<QUrl> &
 {
     dpfSignalDispatcher->publish(GlobalEventType::kCutFile, windowID, sourceUrls, target, flags, nullptr);
 }
+
+bool RecentEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+}

@@ -26,8 +26,6 @@
 #include "models/fileviewmodel.h"
 #include "events/workspaceeventcaller.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/fileutils.h"
@@ -39,11 +37,10 @@
 #include <QTimer>
 
 using namespace dfmplugin_workspace;
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, WorkspaceWidget *> WorkspaceHelper::kWorkspaceMap {};
-QMap<QString, DSB_FM_NAMESPACE::Workspace::FileViewRoutePrehaldler> WorkspaceHelper::kPrehandlers {};
+QMap<QString, FileViewRoutePrehaldler> WorkspaceHelper::kPrehandlers {};
 
 QMap<quint64, QPair<QUrl, QUrl>> WorkspaceHelper::kSelectionAndRenameFile {};
 QMap<quint64, QPair<QUrl, QUrl>> WorkspaceHelper::kSelectionFile {};
@@ -93,7 +90,7 @@ void WorkspaceHelper::setFilterData(quint64 windowId, const QUrl &url, const QVa
     emit requestSetViewFilterData(windowId, url, data);
 }
 
-void WorkspaceHelper::setFilterCallback(quint64 windowId, const QUrl &url, const Workspace::FileViewFilterCallback callback)
+void WorkspaceHelper::setFilterCallback(quint64 windowId, const QUrl &url, const FileViewFilterCallback callback)
 {
     emit requestSetViewFilterCallback(windowId, url, callback);
 }
@@ -189,14 +186,6 @@ void WorkspaceHelper::addScheme(const QString &scheme)
     ViewFactory::regClass<FileView>(scheme);
 }
 
-bool WorkspaceHelper::schemeViewIsFileView(const QString &scheme)
-{
-    auto view = ViewFactory::find(scheme);
-    if (!view)
-        return false;
-    return dynamic_cast<FileView *>(view);
-}
-
 void WorkspaceHelper::openUrlInNewTab(quint64 windowId, const QUrl &url)
 {
     emit openNewTab(windowId, url);
@@ -260,7 +249,7 @@ Global::ItemRoles WorkspaceHelper::sortRole(quint64 windowId)
     return Global::ItemRoles::kItemUnknowRole;
 }
 
-bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const Workspace::FileViewRoutePrehaldler prehandler)
+bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const FileViewRoutePrehaldler prehandler)
 {
     if (kPrehandlers.contains(scheme))
         return false;
@@ -268,16 +257,17 @@ bool WorkspaceHelper::reigsterViewRoutePrehandler(const QString &scheme, const W
     return true;
 }
 
-Workspace::FileViewRoutePrehaldler WorkspaceHelper::viewRoutePrehandler(const QString &scheme)
+FileViewRoutePrehaldler WorkspaceHelper::viewRoutePrehandler(const QString &scheme)
 {
     return kPrehandlers.value(scheme, nullptr);
 }
 
-void WorkspaceHelper::closePersistentEditor(const quint64 windowID, const QModelIndex &index)
+void WorkspaceHelper::closePersistentEditor(const quint64 windowID)
 {
     FileView *view = findFileViewByWindowID(windowID);
-    if (view)
-        view->closePersistentEditor(index);
+    if (view && view->state() == 3) {   // protected enum, 3 means EditingState.
+        view->closePersistentEditor(view->currentIndex());
+    }
 }
 
 void WorkspaceHelper::setViewFilter(const quint64 windowID, const QDir::Filters filter)
@@ -308,6 +298,15 @@ int WorkspaceHelper::getViewFilter(const quint64 windowID)
         return view->getFilters();
 
     return QDir::NoFilter;
+}
+
+QStringList WorkspaceHelper::getNameFilter(const quint64 windowId)
+{
+    FileView *view = findFileViewByWindowID(windowId);
+    if (view)
+        return view->model()->getNameFilters();
+
+    return {};
 }
 
 void WorkspaceHelper::laterRequestSelectFiles(const QList<QUrl> &urls)

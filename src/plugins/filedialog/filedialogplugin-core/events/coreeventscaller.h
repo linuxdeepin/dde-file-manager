@@ -41,6 +41,7 @@ public:
     static void setSelectionMode(QWidget *sender, const QAbstractItemView::SelectionMode mode);
     static void setEnabledSelectionModes(QWidget *sender, const QList<QAbstractItemView::SelectionMode> &modes);
     static void setMenuDisbaled();
+    static QList<QUrl> sendGetSelectedFiles(const quint64 windowID);
 };
 
 }

@@ -31,6 +31,7 @@
 Q_DECLARE_METATYPE(QString *)
 
 using namespace dfmplugin_titlebar;
+DFMGLOBAL_USE_NAMESPACE
 
 void TitleBarEventCaller::sendViewMode(QWidget *sender, DFMBASE_NAMESPACE::Global::ViewMode mode)
 {
@@ -107,4 +108,15 @@ void TitleBarEventCaller::sendShowFilterView(QWidget *sender, bool visible)
 void TitleBarEventCaller::sendCheckAddressInputStr(QString *str)
 {
     dpfSignalDispatcher->publish("dfmplugin_titlebar", "signal_InputAdddressStr_Check", str);
+}
+
+bool TitleBarEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
+}
+
+ViewMode TitleBarEventCaller::sendGetDefualtViewMode(const QString &scheme)
+{
+    int defaultViewMode = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetDefaultViewMode", scheme).toInt();
+    return static_cast<ViewMode>(defaultViewMode);
 }

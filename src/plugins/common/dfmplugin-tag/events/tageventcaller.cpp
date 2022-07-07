@@ -56,7 +56,12 @@ void TagEventCaller::sendOpenFiles(const quint64 windowID, const QList<QUrl> &ur
 void TagEventCaller::sendFileUpdate(const QString &path)
 {
     QUrl fileUrl = QUrl::fromLocalFile(path);
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_FileUpdate", fileUrl);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_FileUpdate", fileUrl);
+}
+
+bool TagEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
 }
 
 QRectF TagEventCaller::getVisibleGeometry(const quint64 windowID)

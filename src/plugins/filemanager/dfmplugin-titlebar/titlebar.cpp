@@ -27,8 +27,6 @@
 #include "views/titlebarwidget.h"
 #include "events/titlebareventreceiver.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
@@ -106,14 +104,13 @@ void TitleBar::onWindowClosed(quint64 windId)
 
 void TitleBar::bindEvents()
 {
-    DSB_FM_USE_NAMESPACE
-    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabAdded,
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_Tab_Added",
                                    TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabAdded);
-    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabChanged,
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_Tab_Changed",
                                    TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabChanged);
-    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabMoved,
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_Tab_Moved",
                                    TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabMoved);
-    dpfSignalDispatcher->subscribe(Workspace::EventType::kTabRemoved,
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_Tab_Removed",
                                    TitleBarEventReceiver::instance(), &TitleBarEventReceiver::handleTabRemovd);
 
     dpfSignalDispatcher->subscribe(DFMBASE_NAMESPACE::kSwitchViewMode,

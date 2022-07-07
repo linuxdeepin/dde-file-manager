@@ -28,6 +28,7 @@
 #include <dfm-io/dfmio_utils.h>
 
 #include <QUrl>
+#include <QFileInfo>
 
 DPTRASH_USE_NAMESPACE
 TrashFileHelper *TrashFileHelper::instance()

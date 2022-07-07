@@ -28,7 +28,6 @@
 #include "events/sidebareventreceiver.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
-#include "services/filemanager/workspace/workspaceservice.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/systempathutil.h"
 
@@ -37,7 +36,6 @@
 #include <QMenu>
 
 DPSIDEBAR_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 QMap<quint64, SideBarWidget *> SideBarHelper::kSideBarMap {};
@@ -164,13 +162,8 @@ void SideBarHelper::defaultContenxtMenu(quint64 windowId, const QUrl &url, const
     auto newTabAct = menu->addAction(QObject::tr("Open in new tab"), [windowId, url]() {
         SideBarEventCaller::sendOpenTab(windowId, url);
     });
-    auto &ctx = dpfInstance.serviceContext();
-    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (!workspaceService) {
-        qCritical() << "Failed, defaultContenxtMenu \"WorkspaceService\" is empty";
-        abort();
-    }
-    newTabAct->setDisabled(!workspaceService->tabAddable(windowId));
+
+    newTabAct->setDisabled(!SideBarEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
     menu->addAction(QObject::tr("Properties"), [url]() {

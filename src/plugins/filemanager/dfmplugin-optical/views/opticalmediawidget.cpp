@@ -38,6 +38,7 @@
 #include <dfm-burn/dburn_global.h>
 
 #include <DSysInfo>
+#include <QDir>
 
 using namespace dfmplugin_optical;
 DWIDGET_USE_NAMESPACE

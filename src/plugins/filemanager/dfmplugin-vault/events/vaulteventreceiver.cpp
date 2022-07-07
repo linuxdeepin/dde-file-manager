@@ -3,6 +3,8 @@
 #include "utils/vaulthelper.h"
 
 #include "dfm-base/base/urlroute.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/dpf.h>
 #include <dfm-framework/framework.h>
@@ -25,8 +27,9 @@ VaultEventReceiver *VaultEventReceiver::instance()
 
 void VaultEventReceiver::connectEvent()
 {
+    dpfSignalDispatcher->subscribe(GlobalEventType::kChangeCurrentUrl, VaultEventReceiver::instance(), &VaultEventReceiver::handleCurrentUrlChanged);
     dpfSignalDispatcher->subscribe("dfmplugin_computer", "signal_Operation_OpenItem", this, &VaultEventReceiver::computerOpenItem);
-    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_EnterFileView", VaultEventReceiver::instance(), &VaultEventReceiver::EnterFileView);
+
     dpfHookSequence->follow("dfmplugin_utils", "hook_AppendCompress_Prohibit",
                             VaultEventReceiver::instance(), &VaultEventReceiver::handleNotAllowedAppendCompress);
 }
@@ -87,9 +90,11 @@ bool VaultEventReceiver::handleNotAllowedAppendCompress(const QList<QUrl> &fromU
     return false;
 }
 
-void VaultEventReceiver::EnterFileView(const quint64 &winId, const QUrl &url)
+void VaultEventReceiver::handleCurrentUrlChanged(const quint64 &winId, const QUrl &url)
 {
-    if (url.scheme() == VaultHelper::instance()->scheme())
+    auto window = FMWindowsIns.findWindowById(winId);
+
+    if (url.scheme() == VaultHelper::instance()->scheme() && window)
         VaultHelper::instance()->appendWinID(winId);
     else
         VaultHelper::instance()->removeWinID(winId);

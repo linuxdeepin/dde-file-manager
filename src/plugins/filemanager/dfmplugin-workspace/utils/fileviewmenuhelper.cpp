@@ -27,8 +27,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/fileutils.h"

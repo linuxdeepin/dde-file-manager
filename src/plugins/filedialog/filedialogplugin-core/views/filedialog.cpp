@@ -25,14 +25,12 @@
 #include "events/coreeventscaller.h"
 #include "utils/corehelper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/mimetype/dmimedatabase.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <DDialog>
 #include <DPlatformWindowHandle>
@@ -53,14 +51,14 @@
 #include <QLabel>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonObject>
 
 #include <qpa/qplatformtheme.h>
 #include <qpa/qplatformdialoghelper.h>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(QDir::Filters);
 
-DSB_FM_USE_NAMESPACE
-DPF_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace filedialog_core;
 
@@ -73,7 +71,7 @@ FileDialogPrivate::FileDialogPrivate(FileDialog *qq)
 void FileDialogPrivate::handleSaveAcceptBtnClicked()
 {
     if (acceptCanOpenOnSave) {
-        auto &&urls = WorkspaceService::service()->selectedUrls(q->internalWinId());
+        auto &&urls = CoreEventsCaller::sendGetSelectedFiles(q->internalWinId());
         if (!urls.isEmpty())
             q->cd(urls.first());
         return;
@@ -102,7 +100,7 @@ void FileDialogPrivate::handleSaveAcceptBtnClicked()
 
 void FileDialogPrivate::handleOpenAcceptBtnClicked()
 {
-    QList<QUrl> urls { WorkspaceService::service()->selectedUrls(q->internalWinId()) };
+    QList<QUrl> urls { CoreEventsCaller::sendGetSelectedFiles(q->internalWinId()) };
 
     QList<QUrl> urlsTrans {};
     bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", urls, &urlsTrans);
@@ -177,17 +175,16 @@ FileDialog::FileDialog(const QUrl &url, QWidget *parent)
 
 FileDialog::~FileDialog()
 {
-    dpfSignalDispatcher->unsubscribe(Workspace::EventType::kViewSelectionChanged, this,
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_SelectionChanged", this,
                                      &FileDialog::onViewSelectionChanged);
-    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
-    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
+    dpfSignalDispatcher->unsubscribe("dfmplugin_workspace", "signal_View_RenameStartEdit", this, &FileDialog::handleRenameEndAcceptBtn);
 
     dpfSignalDispatcher->removeGlobalEventFilter(this);
 }
 
 void FileDialog::cd(const QUrl &url)
 {
-    DSB_FM_USE_NAMESPACE
     FileManagerWindow::cd(url);
 
     auto window = FMWindowsIns.findWindowById(this->internalWinId());
@@ -212,7 +209,8 @@ void FileDialog::updateAsDefaultSize()
 
 QFileDialog::ViewMode FileDialog::currentViewMode() const
 {
-    auto mode = WorkspaceService::service()->currentViewMode(internalWinId());
+    int viewMode = dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetDefaultViewMode", internalWinId()).toInt();
+    auto mode = static_cast<DFMGLOBAL_NAMESPACE::ViewMode>(viewMode);
     if (mode == Global::ViewMode::kListMode)
         return QFileDialog::Detail;
 
@@ -285,7 +283,7 @@ QList<QUrl> FileDialog::selectedUrls() const
     if (!d->isFileView)
         return {};
     // TODO(zhangs): orderedSelectedUrls
-    QList<QUrl> list { WorkspaceService::service()->selectedUrls(internalWinId()) };
+    QList<QUrl> list { CoreEventsCaller::sendGetSelectedFiles(internalWinId()) };
 
     QList<QUrl> urls {};
     bool ok = dpfHookSequence->run("dfmplugin_utils", "hook_UrlsTransform", list, &urls);
@@ -342,8 +340,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     if (d->fileMode == QFileDialog::DirectoryOnly
         || d->fileMode == QFileDialog::Directory) {
         // 清理只显示目录时对文件名添加的过滤条件
-        // getFileView()->setNameFilters(QStringList());
-        dpfSignalDispatcher->publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList());
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList());
     }
 
     d->fileMode = mode;
@@ -356,7 +353,7 @@ void FileDialog::setFileMode(QFileDialog::FileMode mode)
     case QFileDialog::DirectoryOnly:
     case QFileDialog::Directory:
         // 文件名中不可能包含 '/', 此处目的是过滤掉所有文件
-        dpfSignalDispatcher->publish(Workspace::EventType::kSetNameFilter, internalWinId(), QStringList("/"));
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), QStringList("/"));
         urlSchemeEnable("recent", false);
         // fall through
         [[fallthrough]];
@@ -443,12 +440,13 @@ void FileDialog::setOptions(QFileDialog::Options options)
 
     d->options = options;
 
-    dpfSignalDispatcher->publish(Workspace::EventType::kSetReadOnly,
-                                 internalWinId(), options.testFlag(QFileDialog::ReadOnly));
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter",
+                         internalWinId(), options.testFlag(QFileDialog::ReadOnly));
 
     if (options.testFlag(QFileDialog::ShowDirsOnly)) {
-        // TODO(liuyangming):
-        // getFileView()->setFilters(getFileView()->filters() & ~QDir::Files & ~QDir::Drives);
+        QDir::Filters filters = filter() & ~QDir::Files & ~QDir::Drives;
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetFilter",
+                             internalWinId(), filters);
     }
 }
 
@@ -745,7 +743,7 @@ void FileDialog::selectNameFilterByIndex(int index)
     if ((d->fileMode == QFileDialog::DirectoryOnly || d->fileMode == QFileDialog::Directory) && QStringList("/") != newNameFilters)
         newNameFilters = QStringList("/");
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_SetNameFilter", internalWinId(), newNameFilters);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetNameFilter", internalWinId(), newNameFilters);
 }
 
 int FileDialog::selectedNameFilterIndex() const
@@ -757,15 +755,12 @@ int FileDialog::selectedNameFilterIndex() const
 
 QDir::Filters FileDialog::filter() const
 {
-    // TODO(liuyangming):
-    // return getFileView() ? getFileView()->filters() : QDir::Filters();
-
-    return {};
+    return static_cast<QDir::Filters>(dpfSlotChannel->push("dfmplugin_workspace", "slot_View_GetFilter", internalWinId()).toInt());
 }
 
 void FileDialog::setFilter(QDir::Filters filters)
 {
-    dpfSignalDispatcher->publish(Workspace::EventType::kSetViewFilter, internalWinId(), filters);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetFilter", internalWinId(), filters);
 }
 
 void FileDialog::updateAcceptButtonState()
@@ -781,7 +776,7 @@ void FileDialog::updateAcceptButtonState()
     bool dialogShowMode = d->acceptMode;
     bool isVirtual = UrlRoute::isVirtual(fileInfo->url().scheme());
     if (dialogShowMode == QFileDialog::AcceptOpen) {
-        auto size = WorkspaceService::service()->selectedUrls(internalWinId()).size();
+        auto size = CoreEventsCaller::sendGetSelectedFiles(internalWinId()).size();
         bool isSelectFiles = size > 0;
         // 1.打开目录（非虚拟目录） 2.打开文件（选中文件）
         statusBar()->acceptButton()->setDisabled((isDirMode && isVirtual) || (!isDirMode && !isSelectFiles));
@@ -801,7 +796,7 @@ void FileDialog::handleEnterPressed()
 
     // TODO(zhangs): titlebar edit status
     bool exit { false };
-    auto &&urls = WorkspaceService::service()->selectedUrls(internalWinId());
+    auto &&urls = CoreEventsCaller::sendGetSelectedFiles(internalWinId());
     for (const QUrl &url : urls) {
         auto info = InfoFactory::create<AbstractFileInfo>(url);
         if (!info || info->isDir()) {
@@ -818,9 +813,8 @@ void FileDialog::handleUrlChanged(const QUrl &url)
 {
     QString scheme { url.scheme() };
 
-    DSB_FM_USE_NAMESPACE
     d->lastIsFileView = d->isFileView;
-    d->isFileView = WorkspaceService::service()->schemeViewIsFileView(scheme);
+    d->isFileView = dpfSlotChannel->push("dfmplugin_workspace", "slot_CheckSchemeViewIsFileView", scheme).toBool();
 
     // init accept mode, worskapce must initialized
     bool isFirst { false };
@@ -929,14 +923,7 @@ bool FileDialog::eventFilter(QObject *watched, QEvent *event)
             return true;
         } else if (e->modifiers() == Qt::NoModifier || e->modifiers() == Qt::KeypadModifier) {
             if (e == QKeySequence::Cancel) {
-                // TODO(liuyangming):
-                //                DFileView *fileView = d->view;
-                //                if (fileView) {
-                //                    if (fileView->state() == 3) {
-                //                        fileView->closePersistentEditor(fileView->currentIndex());
-                //                        return true;
-                //                    }
-                //                }
+                dpfSlotChannel->push("dfmplugin_workspace", "slot_View_ClosePersistentEditor", internalWinId());
                 close();
             } else if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return) {
                 handleEnterPressed();
@@ -988,8 +975,8 @@ void FileDialog::initConnect()
 
 void FileDialog::initEventsConnect()
 {
-    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
-    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_RenameStartEdit", this, &FileDialog::handleRenameStartAcceptBtn);
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_RenameEndEdit", this, &FileDialog::handleRenameEndAcceptBtn);
 }
 
 void FileDialog::initEventsFilter()
@@ -1037,11 +1024,11 @@ void FileDialog::updateViewState()
         return;
     }
 
-    dpfSignalDispatcher->publish(Workspace::EventType::kSetViewDragEnabled, internalWinId(), false);
-    dpfSignalDispatcher->publish(Workspace::EventType::kSetViewDragDropMode, internalWinId(), QAbstractItemView::NoDragDrop);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetDragEnabled", internalWinId(), false);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetDragDropMode", internalWinId(), QAbstractItemView::NoDragDrop);
 
     // TODO(liuyangming): currentChanged
-    dpfSignalDispatcher->subscribe(Workspace::EventType::kViewSelectionChanged, this,
+    dpfSignalDispatcher->subscribe("dfmplugin_workspace", "signal_View_SelectionChanged", this,
                                    &FileDialog::onViewSelectionChanged);
 
     if (!d->nameFilters.isEmpty())
@@ -1142,9 +1129,7 @@ QString FileDialog::modelCurrentNameFilter() const
     if (!d->isFileView)
         return "";
 
-    // TODO(liuyangming):
-    QStringList filters;
-    //  const QStringList &filters = getFileView()->nameFilters();
+    const QStringList &filters = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_GetNameFilter", internalWinId()).toStringList();
 
     if (filters.isEmpty()) {
         return QString();

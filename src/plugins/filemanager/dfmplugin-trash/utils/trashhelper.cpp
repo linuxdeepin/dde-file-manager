@@ -27,10 +27,6 @@
 #include "views/emptyTrashWidget.h"
 #include "dfm_event_defines.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
-
-#include "dfm-framework/framework.h"
-
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -55,7 +51,6 @@
 #include <QPushButton>
 
 using namespace dfmplugin_trash;
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
@@ -89,14 +84,7 @@ void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, co
         TrashEventCaller::sendOpenTab(windowId, url);
     });
 
-    auto &ctx = dpfInstance.serviceContext();
-    auto workspaceService = ctx.service<WorkspaceService>(WorkspaceService::name());
-    if (!workspaceService) {
-        qCritical() << "Failed, TrashHelper contenxtMenuHandle \"WorkspaceService\" is empty";
-        abort();
-    }
-
-    newTabAct->setDisabled(!workspaceService->tabAddable(windowId));
+    newTabAct->setDisabled(!TrashEventCaller::sendCheckTabAddable(windowId));
 
     menu->addSeparator();
 
@@ -325,18 +313,6 @@ bool TrashHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
         (*urls).push_back(toLocalFile(url));
     }
     return true;
-}
-
-DSB_FM_NAMESPACE::WorkspaceService *TrashHelper::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }
 
 void TrashHelper::onTrashStateChanged()

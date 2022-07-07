@@ -36,9 +36,9 @@ Q_DECLARE_METATYPE(Qt::DropAction *)
 void AppendCompressEventReceiver::initEventConnect()
 {
     // workspace
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDragMove",
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDragMove",
                             this, &AppendCompressEventReceiver::handleSetMouseStyle);
-    dpfHookSequence->follow("dfmplugin_workspace", "hook_FileDrop",
+    dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop",
                             this, &AppendCompressEventReceiver::handleDragDropCompress);
 
     // desktop

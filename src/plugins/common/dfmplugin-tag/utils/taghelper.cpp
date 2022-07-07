@@ -39,7 +39,6 @@ using RenameCallback = std::function<void(quint64 windowId, const QUrl &url, con
 Q_DECLARE_METATYPE(ContextMenuCallback);
 Q_DECLARE_METATYPE(RenameCallback);
 
-DSB_FM_USE_NAMESPACE
 using namespace dfmplugin_tag;
 
 TagHelper *TagHelper::instance()
@@ -272,18 +271,6 @@ bool TagHelper::urlsToLocal(const QList<QUrl> &origins, QList<QUrl> *urls)
         (*urls).push_back(redirectTagUrl(url));
     }
     return true;
-}
-
-WorkspaceService *TagHelper::workspaceServIns()
-{
-    auto &ctx = dpfInstance.serviceContext();
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&ctx]() {
-        if (!ctx.load(DSB_FM_NAMESPACE::WorkspaceService::name()))
-            abort();
-    });
-
-    return ctx.service<DSB_FM_NAMESPACE::WorkspaceService>(DSB_FM_NAMESPACE::WorkspaceService::name());
 }
 
 void TagHelper::initTagColorDefines()

@@ -23,7 +23,6 @@
 #include "private/recentmenuscene_p.h"
 #include "utils/recentfilehelper.h"
 
-#include "services/filemanager/workspace/workspaceservice.h"
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -32,6 +31,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/dfm_global_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -47,7 +47,6 @@ static constexpr char kExtendMenuSceneName[] = "ExtendMenu";
 static constexpr char kSortByActionId[] = "sort-by";
 static constexpr char kSrtTimeModifiedActionId[] = "sort-by-time-modified";
 
-DSB_FM_USE_NAMESPACE
 using namespace dfmplugin_recent;
 DFMBASE_USE_NAMESPACE
 
@@ -156,10 +155,10 @@ bool RecentMenuScene::triggered(QAction *action)
             RecentFileHelper::openFileLocation(d->selectFiles);
             return true;
         } else if (actId == RecentActionID::kSortByPath) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFilePathRole);
             return true;
         } else if (actId == RecentActionID::kSortByLastRead) {
-            dpfSlotChannel->push("dfmplugin_workspace", "slot_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
+            dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_SetSort", d->windowId, Global::ItemRoles::kItemFileLastReadRole);
             return true;
         }
         qWarning() << "action not found, id: " << actId;
@@ -291,7 +290,7 @@ void RecentMenuScenePrivate::updateSubMenu(QMenu *menu)
         menu->insertAction(predicateAction[RecentActionID::kSortByLastRead], predicateAction[RecentActionID::kSortByPath]);
         menu->removeAction(*iter);
 
-        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_CurrentSortRole", windowId).value<Global::ItemRoles>();
+        auto role = dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_CurrentSortRole", windowId).value<Global::ItemRoles>();
         switch (role) {
         case Global::ItemRoles::kItemFilePathRole:
             predicateAction[RecentActionID::kSortByPath]->setChecked(true);

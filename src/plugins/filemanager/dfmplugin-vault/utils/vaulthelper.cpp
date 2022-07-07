@@ -34,8 +34,6 @@
 #include "events/vaulteventcaller.h"
 #include "dbus/vaultdbusutils.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/utils/dialogmanager.h"
@@ -57,9 +55,7 @@
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
-DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
 QUrl VaultHelper::rootUrl()

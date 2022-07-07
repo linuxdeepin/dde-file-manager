@@ -150,7 +150,7 @@ bool OpenDirMenuScene::triggered(QAction *action)
 
     // select all
     if (actionId == dfmplugin_menu::ActionID::kSelectAll) {
-        dpfSlotChannel->push("dfmplugin_workspace", "slot_SelectAll", d->windowId);
+        dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SelectAll", d->windowId);
         return true;
     }
 

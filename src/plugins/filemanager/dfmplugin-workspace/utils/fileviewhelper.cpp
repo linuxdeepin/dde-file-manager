@@ -29,8 +29,6 @@
 #include "utils/workspacehelper.h"
 #include "utils/fileoperatorhelper.h"
 
-#include "services/common/delegate/delegateservice.h"
-
 #include "dfm-base/base/application/application.h"
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/utils/clipboard.h"
@@ -95,10 +93,8 @@ bool FileViewHelper::isTransparent(const QModelIndex &index) const
         }
     }
 
-    if (delegateServIns->isTransparent(file->url()))
+    if (WorkspaceEventSequence::instance()->doCheckTransparent(file->url()))
         return true;
-
-    // Todo(yanghao)
 
     return false;
 }

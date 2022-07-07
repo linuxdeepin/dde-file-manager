@@ -59,7 +59,6 @@ WorkspaceMenuScenePrivate::WorkspaceMenuScenePrivate(WorkspaceMenuScene *qq)
     : AbstractMenuScenePrivate(qq),
       q(qq)
 {
-
 }
 
 void WorkspaceMenuScenePrivate::sortMenuAction(QMenu *menu, const QStringList &sortRule)

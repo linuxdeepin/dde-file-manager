@@ -21,17 +21,14 @@
 #include "trasheventcaller.h"
 #include "utils/trashhelper.h"
 
-#include "services/filemanager/workspace/workspace_defines.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/dialogmanager.h"
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QUrl>
 
 using namespace dfmplugin_trash;
 DFMBASE_USE_NAMESPACE
-DSB_FM_USE_NAMESPACE
 
 void TrashEventCaller::sendOpenWindow(const QUrl &url)
 {
@@ -60,5 +57,10 @@ void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)
 
 void TrashEventCaller::sendShowEmptyTrash(quint64 winId, bool visible)
 {
-    dpfSignalDispatcher->publish(Workspace::EventType::kShowCustomTopWidget, winId, TrashHelper::scheme(), visible);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_ShowCustomTopWidget", winId, TrashHelper::scheme(), visible);
+}
+
+bool TrashEventCaller::sendCheckTabAddable(quint64 windowId)
+{
+    return dpfSlotChannel->push("dfmplugin_workspace", "slot_Tab_Addable", windowId).toBool();
 }

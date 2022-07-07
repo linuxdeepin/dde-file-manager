@@ -19,8 +19,6 @@ FILE(GLOB GLOBAL_FILES
 FILE(GLOB WORKSPACE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/workspace/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/workspace/private/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/workspace/private/*.cpp"
 )
 
 add_library(
