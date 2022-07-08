@@ -1641,7 +1641,7 @@ void FileView::loadViewState(const QUrl &url)
     QVariant defaultIconSize = Application::instance()->appAttribute(Application::kIconSizeLevel).toInt();
     d->currentIconSizeLevel = fileViewStateValue(url, "iconSizeLevel", defaultIconSize).toInt();
 
-    d->currentSortRole = static_cast<ItemRoles>(fileViewStateValue(url, "sortRole", kItemNameRole).toInt());
+    d->currentSortRole = static_cast<ItemRoles>(fileViewStateValue(url, "sortRole", kItemFileDisplayNameRole).toInt());
     d->currentSortOrder = static_cast<Qt::SortOrder>(fileViewStateValue(url, "sortOrder", Qt::SortOrder::AscendingOrder).toInt());
 }
 

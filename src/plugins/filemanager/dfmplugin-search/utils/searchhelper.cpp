@@ -154,7 +154,7 @@ bool SearchHelper::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleL
 
     const QUrl &targetUrl = searchTargetUrl(rootUrl);
     if (!dpfHookSequence->run("dfmplugin_workspace", "hook_FetchCustomColumnRoles", targetUrl, roleList)) {
-        roleList->append(kItemNameRole);
+        roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFilePathRole);
         roleList->append(kItemFileLastModifiedRole);
         roleList->append(kItemFileSizeRole);

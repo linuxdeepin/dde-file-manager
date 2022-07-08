@@ -259,7 +259,7 @@ bool TrashHelper::detailViewIcon(const QUrl &url, QString *iconName)
 bool TrashHelper::customColumnRole(const QUrl &rootUrl, QList<Global::ItemRoles> *roleList)
 {
     if (rootUrl.scheme() == scheme()) {
-        roleList->append(kItemNameRole);
+        roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFileOriginalPath);
         roleList->append(kItemFileDeletionDate);
         roleList->append(kItemFileSizeRole);

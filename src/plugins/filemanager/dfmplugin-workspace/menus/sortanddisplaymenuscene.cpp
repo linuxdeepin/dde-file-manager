@@ -127,7 +127,7 @@ bool SortAndDisplayMenuScene::triggered(QAction *action)
         {
             // sort by name
             if (actionId == ActionID::kSrtName) {
-                d->sortByRole(Global::ItemRoles::kItemNameRole);
+                d->sortByRole(Global::ItemRoles::kItemFileDisplayNameRole);
                 return true;
             }
 
@@ -232,7 +232,7 @@ void SortAndDisplayMenuScenePrivate::updateEmptyAreaActionState()
     // sort  by
     auto role = static_cast<ItemRoles>(view->model()->sortRole());
     switch (role) {
-    case kItemNameRole:
+    case kItemFileDisplayNameRole:
         predicateAction[ActionID::kSrtName]->setChecked(true);
         break;
     case kItemFileLastModifiedRole:

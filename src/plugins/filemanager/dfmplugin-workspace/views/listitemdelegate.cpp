@@ -166,7 +166,7 @@ void ListItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
     QRect rect = optRect;
     for (int i = 0; i < columnRoleList.length(); ++i) {
         int rol = columnRoleList.at(i);
-        if (rol == kItemNameRole) {
+        if (rol == kItemFileDisplayNameRole) {
             int iconOffset = i == 0 ? iconRect.right() + 1 : 0;
 
             rect.setLeft(columnX + iconOffset);

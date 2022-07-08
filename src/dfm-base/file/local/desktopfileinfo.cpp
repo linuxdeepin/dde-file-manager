@@ -192,7 +192,7 @@ QIcon DesktopFileInfo::fileIcon()
 
 QString DesktopFileInfo::fileName() const
 {
-    return fileDisplayName();
+    return LocalFileInfo::fileName();
 }
 
 QString DesktopFileInfo::fileDisplayName() const

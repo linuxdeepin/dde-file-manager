@@ -150,7 +150,7 @@ bool RecentManager::removeRecentFile(const QUrl &url)
 bool RecentManager::customColumnRole(const QUrl &rootUrl, QList<ItemRoles> *roleList)
 {
     if (rootUrl.scheme() == scheme()) {
-        roleList->append(kItemNameRole);
+        roleList->append(kItemFileDisplayNameRole);
         roleList->append(kItemFilePathRole);
         roleList->append(kItemFileLastReadRole);
         roleList->append(kItemFileSizeRole);

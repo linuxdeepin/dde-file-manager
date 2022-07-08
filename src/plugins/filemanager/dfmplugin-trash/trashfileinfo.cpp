@@ -80,7 +80,7 @@ TrashFileInfo::~TrashFileInfo()
 
 QString TrashFileInfo::fileName() const
 {
-    const QUrl &url = this->url();
+    const QUrl &url = TrashHelper::toLocalFile(this->url());
     if (FileUtils::isDesktopFile(url)) {
         DesktopFileInfo dfi(url);
         return dfi.fileDisplayName();

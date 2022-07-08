@@ -188,7 +188,7 @@ ItemRoles FileSortFilterProxyModel::getRoleByColumn(const int &column) const
     if (columnRoleList.length() > column)
         return columnRoleList.at(column);
 
-    return kItemNameRole;
+    return kItemFileDisplayNameRole;
 }
 
 int FileSortFilterProxyModel::getColumnByRole(const ItemRoles role) const
@@ -297,13 +297,13 @@ bool FileSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
 
     // When the selected sort attribute value is the same, sort by file name
     if (leftData == rightData) {
-        QString leftName = fileModel->data(left, kItemNameRole).toString();
-        QString rightName = fileModel->data(right, kItemNameRole).toString();
+        QString leftName = fileModel->data(left, kItemFileDisplayNameRole).toString();
+        QString rightName = fileModel->data(right, kItemFileDisplayNameRole).toString();
         return FileUtils::compareString(leftName, rightName, sortOrder());
     }
 
     switch (sortRole()) {
-    case kItemNameRole:
+    case kItemFileDisplayNameRole:
     case kItemFileLastModifiedRole:
     case kItemFileMimeTypeRole:
         return FileUtils::compareString(leftData.toString(), rightData.toString(), sortOrder()) == (sortOrder() == Qt::AscendingOrder);
@@ -416,7 +416,7 @@ QString FileSortFilterProxyModel::roleDisplayString(int role) const
         return displayName;
 
     switch (role) {
-    case kItemNameRole:
+    case kItemFileDisplayNameRole:
         return tr("Name");
     case kItemFileLastModifiedRole:
         return tr("Time modified");
@@ -448,7 +448,7 @@ QList<ItemRoles> FileSortFilterProxyModel::getColumnRoles() const
             roles.append(static_cast<ItemRoles>(var.toInt()));
         }
     } else if (!customOnly) {
-        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemNameRole
+        static QList<ItemRoles> defualtColumnRoleList = QList<ItemRoles>() << kItemFileDisplayNameRole
                                                                            << kItemFileLastModifiedRole
                                                                            << kItemFileSizeRole
                                                                            << kItemFileMimeTypeRole;
