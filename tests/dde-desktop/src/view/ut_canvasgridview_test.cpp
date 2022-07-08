@@ -106,7 +106,7 @@ void waitDataEvent(CanvasGridView *view)
 ASSERT_EQ(m_canvasGridView->model()->rowCount(), GridManager::instance()->allItems().size());
 
 static int stubRet = 0;
-#ifndef __arm__
+
 TEST(CanvasGridViewTest_begin, beginTest)
 {
     auto path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
@@ -121,7 +121,7 @@ TEST(CanvasGridViewTest_begin, beginTest)
     ASSERT_TRUE(QFileInfo::exists(path + '/' + CanvasGridViewTest::tstFile));
     ASSERT_TRUE(QFileInfo::exists(path + '/' + CanvasGridViewTest::tstDir));
 }
-#endif
+
 TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_indexAt){
     ASSERT_NE(m_canvasGridView, nullptr);
     auto utModel = m_canvasGridView->model();
@@ -145,7 +145,7 @@ TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_indexAt){
         }
     }
 }
-#ifndef __arm__
+
 TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_currentUrl){
     ASSERT_NE(m_canvasGridView, nullptr);
     auto tgUrl = m_canvasGridView->currentUrl();
@@ -175,7 +175,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_setRootUrl){
     QProcess::execute("mv " + tgPath1 +" "  + tgPath2);
     QProcess::execute("rm " + tgPath2);
 }
-#endif
+
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setCurrentUrl){
     //file:///home/lee/Desktop
     QString desktopPath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
@@ -209,13 +209,13 @@ TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_visualRect){
     //    ASSERT_TRUE(tempRec == tgRect);
 }
 
-#ifndef __arm__
+
 TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_canvansScreenName){
     ASSERT_NE(m_canvasGridView, nullptr);
     auto tempTg = m_canvasGridView->m_screenName == m_canvasGridView->canvansScreenName();
     EXPECT_TRUE(tempTg);
 }
-#endif
+
 TEST_F(CanvasGridViewTest, TEST_CanvasGridViewTest_cellSize){
     ASSERT_NE(m_canvasGridView, nullptr);
     QSize tempSize(m_canvasGridView->d->cellWidth,m_canvasGridView->d->cellHeight);
@@ -435,7 +435,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_showNormalMenu){
         stubRet = 1;
         return (QAction*)nullptr;
     });
-    auto exec_foo = (QAction* (DFileMenu::*)())(&DFileMenu::exec);
+    auto exec_foo = (QAction* (DFileMenu::*)())&DFileMenu::exec;
     st.set(exec_foo, exec_stub);
 
     auto noneWld = (bool(*)())([](){return false;});
@@ -464,7 +464,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_showEmptyAreaMenu){
         stubRet = 1;
         return (QAction*)nullptr;
     });
-    auto exec_foo = (QAction* (DFileMenu::*)())(&DFileMenu::exec);
+    auto exec_foo = (QAction* (DFileMenu::*)())&DFileMenu::exec;
     st.set(exec_foo, exec_stub);
 
     auto noneWld = (bool(*)())([](){return false;});
@@ -741,30 +741,37 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent_Question)
     QKeyEvent keyPressEvt_Key_Question(QEvent::KeyPress, Qt::Key_Question, Qt::ControlModifier | Qt::ShiftModifier);
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_Question);
 }
-
+/*
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent_AltM)
 {
     stub_ext::StubExt stu;
     QKeyEvent keyPressEvt_Key_AltM(QEvent::KeyPress, Qt::Key_M, Qt::AltModifier);
-    bool isOn = true;
-    bool isCall = false;
-    stu.set_lamda(ADDR(GridManager, isGsettingShow), [&isCall, &isOn](){isCall = true; return isOn;});
+    QTimer timer;
+    QObject::connect(&timer, &QTimer::timeout, [&]{
+        timer.stop();
+        QWidget tempWdg;
+        tempWdg.show();
+        tempWdg.close();
+    });
+    timer.start(1000);
+    stu.set_lamda(ADDR(QVariant, isValid), [](){return true;});
 
     bool judge = false;
-    stu.set_lamda(ADDR(CanvasGridView, showNormalMenu),[&judge](){judge = true; return;});
-    stu.set_lamda(ADDR(CanvasGridView, showEmptyAreaMenu),[&judge](){judge = true; return;});
+    stu.set_lamda(ADDR(CanvasGridView, showNormalMenu),[&judge](){judge = !judge; return;});
+    stu.set_lamda(ADDR(CanvasGridView, showEmptyAreaMenu),[&judge](){judge = !judge; return;});
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
     EXPECT_TRUE(judge);
-    EXPECT_TRUE(isCall);
 
-    judge = false;
-    isOn = false;
-    isCall = false;
+    bool isgset = false;
+    stu.set_lamda(ADDR(GridManager, isGsettingShow), [&isgset](){isgset = true; return false;});
     m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
-    EXPECT_FALSE(judge);
-    EXPECT_TRUE(isCall);
-}
+    EXPECT_TRUE(isgset);
 
+    stu.reset(&QVariant::isValid);
+    stu.set_lamda(ADDR(QVariant, isValid), [](){return false;});
+    m_canvasGridView->keyPressEvent(&keyPressEvt_Key_AltM);
+}
+*/
 /* todo ut failed
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_keyPressEvent_KeyR)
 {
@@ -1196,7 +1203,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_lastIndex)
     bool theSameOne = tempIndex == tempIndexCanvs;
     EXPECT_TRUE(theSameOne);
 }
-
+#endif
 
 TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
     ASSERT_NE(m_canvasGridView, nullptr);
@@ -1209,7 +1216,7 @@ TEST_F(CanvasGridViewTest, Test_CanvasGridViewTest_select){
     auto expectValue = count1 != count2;
     EXPECT_TRUE(expectValue);
 }
-#endif
+
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection){
     ASSERT_NE(m_canvasGridView, nullptr);
     m_canvasGridView->d->mousePressed = false;
@@ -1484,7 +1491,7 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_autoMergeSelectedUr
     delete model;
     model = nullptr;
 }
-
+#endif
 //new
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
@@ -1528,7 +1535,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_startDrag)
     m_canvasGridView->startDrag(Qt::MoveAction);
     EXPECT_TRUE(judge);
 }
-#endif
+
 TEST_F(CanvasGridViewTest, canvasGridViewTest_fetchDragEventUrlsFromSharedMemory)
 {
     bool ret = m_canvasGridView->fetchDragEventUrlsFromSharedMemory();
@@ -1664,7 +1671,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_decreaseIcon)
     });
     loop.exec();
 }
-
+#endif
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_gridat)
 {
@@ -1687,6 +1694,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_gridat)
     }
 }
 
+#ifndef __arm__
 TEST_F(CanvasGridViewTest, canvasGridViewTest_syncIconLevel)
 {
     int level = m_canvasGridView->itemDelegate()->iconSizeLevel();
@@ -1697,7 +1705,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_syncIconLevel)
     m_canvasGridView->syncIconLevel(level);
     EXPECT_EQ(level, m_canvasGridView->itemDelegate()->iconSizeLevel());
 }
-
+#endif
 
 TEST_F(CanvasGridViewTest, canvasGridViewTest_openUrls)
 {
@@ -1731,7 +1739,7 @@ TEST_F(CanvasGridViewTest, canvasGridViewTest_openUrls)
     QString temp = m_canvasGridView->canvansScreenName();
     EXPECT_EQ(temp, m_canvasGridView->m_screenName);
 }
-#endif
+
 static bool increase = false;
 static bool decrease = false;
 static bool keyctrlispressed()
@@ -2111,7 +2119,7 @@ TEST_F(CanvasGridViewTest, test_viewSelectedUrls)
     m_canvasGridView->viewSelectedUrls(validSel, validIndexes);
     EXPECT_TRUE(validIndexes.size() == validSel.size());
 }
-
+#endif
 TEST_F(CanvasGridViewTest, test_renderToPixmap)
 {
     qApp->processEvents();
@@ -2131,7 +2139,7 @@ TEST_F(CanvasGridViewTest, test_renderToPixmap)
     m_canvasGridView->renderToPixmap(selects);
     EXPECT_TRUE(judge);
 }
-#endif
+
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_setSelection_three){
     ASSERT_NE(m_canvasGridView, nullptr);
 
