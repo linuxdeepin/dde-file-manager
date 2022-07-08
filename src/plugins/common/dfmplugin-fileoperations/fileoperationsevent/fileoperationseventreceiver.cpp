@@ -755,8 +755,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     QString error;
     if (!oldUrl.isLocalFile()) {
         if (dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_RenameFile", windowId, oldUrl, newUrl, flags)) {
+            QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
             dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                         windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+                                         windowId, renamedFiles, ok, error);
             if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
                 saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
             return true;
@@ -776,8 +777,9 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
         dialogManager->showRenameBusyErrDialog();
     }
     // TODO:: file renameFile finished need to send file renameFile finished event
+    QMap<QUrl, QUrl> renamedFiles { { oldUrl, newUrl } };
     dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kRenameFileResult,
-                                 windowId, QList<QUrl>() << oldUrl << newUrl, ok, error);
+                                 windowId, renamedFiles, ok, error);
     if (!flags.testFlag(AbstractJobHandler::JobFlag::kRevocation))
         saveFileOperation({ newUrl }, { oldUrl }, GlobalEventType::kRenameFile);
     return ok;

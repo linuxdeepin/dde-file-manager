@@ -39,8 +39,7 @@ public:
 public slots:
     void handleFileCutResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls, bool ok, const QString &errMsg);
     void handleFileRemoveResult(const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
-    void handleFileRenameResult(quint64 winId, const QList<QUrl> &srcUrls, bool ok, const QString &errMsg);
-    void handleFilesRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
+    void handleFileRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg);
     void handleWindowUrlChanged(quint64 winId, const QUrl &url);
     void handleRestoreFromTrashResult(const QList<QUrl> &srcUrls, const QList<QUrl> &destUrls,
                                       const QVariantList &customInfos, bool ok, const QString &errMsg);

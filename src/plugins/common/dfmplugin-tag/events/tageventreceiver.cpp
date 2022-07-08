@@ -51,7 +51,6 @@ void TagEventReceiver::initConnect()
     dpfSignalDispatcher->subscribe(GlobalEventType::kMoveToTrashResult, this, &TagEventReceiver::handleFileRemoveResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kDeleteFilesResult, this, &TagEventReceiver::handleFileRemoveResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, this, &TagEventReceiver::handleFileRenameResult);
-    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult, this, &TagEventReceiver::handleFilesRenameResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kRestoreFromTrashResult, this, &TagEventReceiver::handleRestoreFromTrashResult);
 
     dpfSlotChannel->connect("dfmplugin_tag", "slot_GetTags", this, &TagEventReceiver::handleGetTags);
@@ -93,29 +92,21 @@ void TagEventReceiver::handleFileRemoveResult(const QList<QUrl> &srcUrls, bool o
     }
 }
 
-void TagEventReceiver::handleFileRenameResult(quint64 winId, const QList<QUrl> &srcUrls, bool ok, const QString &errMsg)
+void TagEventReceiver::handleFileRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg)
 {
     Q_UNUSED(winId)
     Q_UNUSED(errMsg)
 
-    if (!ok || srcUrls.size() != 2)
-        return;
-
-    QStringList tags = TagManager::instance()->getTagsByUrls({ srcUrls.at(0) });
-    if (!tags.isEmpty()) {
-        TagManager::instance()->removeTagsOfFiles(tags, { srcUrls.at(0) });
-        TagManager::instance()->addTagsForFiles(tags, { srcUrls.at(1) });
-    }
-}
-
-void TagEventReceiver::handleFilesRenameResult(quint64 winId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg)
-{
-    if (!ok)
+    if (!ok || renamedUrls.isEmpty())
         return;
 
     auto iter = renamedUrls.constBegin();
     for (; iter != renamedUrls.constEnd(); ++iter) {
-        handleFileRenameResult(winId, QList<QUrl>() << iter.key() << iter.value(), ok, errMsg);
+        QStringList tags = TagManager::instance()->getTagsByUrls({ iter.key() });
+        if (!tags.isEmpty()) {
+            TagManager::instance()->removeTagsOfFiles(tags, { iter.key() });
+            TagManager::instance()->addTagsForFiles(tags, { iter.value() });
+        }
     }
 }
 

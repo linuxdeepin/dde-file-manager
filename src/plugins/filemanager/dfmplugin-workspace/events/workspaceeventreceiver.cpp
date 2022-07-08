@@ -140,6 +140,8 @@ void WorkspaceEventReceiver::initConnection()
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
     dpfSignalDispatcher->subscribe(GlobalEventType::kCopyResult,
                                    WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handlePasteFileResult);
+    dpfSignalDispatcher->subscribe(GlobalEventType::kRenameFileResult,
+                                   WorkspaceEventReceiver::instance(), &WorkspaceEventReceiver::handleRenameFileResult);
 }
 
 void WorkspaceEventReceiver::handleTileBarSwitchModeTriggered(quint64 windowId, int mode)
@@ -244,6 +246,17 @@ void WorkspaceEventReceiver::handlePasteFileResult(const QList<QUrl> &srcUrls, c
 
     if (!destUrls.isEmpty())
         WorkspaceHelper::instance()->laterRequestSelectFiles(destUrls);
+}
+
+void WorkspaceEventReceiver::handleRenameFileResult(const quint64 windowId, const QMap<QUrl, QUrl> &renamedUrls, bool ok, const QString &errMsg)
+{
+    Q_UNUSED(windowId)
+    Q_UNUSED(errMsg)
+
+    if (!ok || renamedUrls.isEmpty())
+        return;
+
+    WorkspaceHelper::instance()->laterRequestSelectFiles(renamedUrls.values());
 }
 
 void WorkspaceEventReceiver::handleFileUpdate(const QUrl &url)
