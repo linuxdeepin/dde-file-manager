@@ -23,6 +23,9 @@
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
 #include "vault/vaultlockmanager.h"
+#include "vault/vaultconfig.h"
+#include "vault/operatorcenter.h"
+#include "vault/vaultdbusresponse.h"
 #include "dfmsettings.h"
 #include "views/dfmvaultunlockpages.h"
 #include "views/dfmvaultrecoverykeypages.h"
@@ -60,7 +63,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
     if (enState != VaultController::Unlocked) {
         switch (enState) {
         case VaultController::NotAvailable: {
-            qDebug() << "cryfs not installed!";
+            qWarning() << "Vault: cryfs not installed!";
             break;
         }
         case VaultController::NotExisted: {
@@ -68,10 +71,18 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
             break;
         }
         case VaultController::Encrypted: {
-            if (url.host() == "certificate") {
-                page = qobject_cast<DFMVaultRecoveryKeyPages *>(new DFMVaultRecoveryKeyPages(wndPtr));
+            // 如果是透明加密方式，直接开锁
+            VaultConfig config;
+            QString encryptionMethod = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ENCRYPTION_METHOD, QVariant("NoExist")).toString();
+            if (encryptionMethod == CONFIG_METHOD_VALUE_TRANSPARENT) {
+                if (!VaultDbusResponse::instance()->transparentUnlockVault())
+                    return false;
             } else {
-                page = qobject_cast<DFMVaultUnlockPages *>(new DFMVaultUnlockPages(wndPtr));
+                if (url.host() == "certificate") {
+                    page = qobject_cast<DFMVaultRecoveryKeyPages *>(new DFMVaultRecoveryKeyPages(wndPtr));
+                } else {
+                    page = qobject_cast<DFMVaultUnlockPages *>(new DFMVaultUnlockPages(wndPtr));
+                }
             }
             break;
         }

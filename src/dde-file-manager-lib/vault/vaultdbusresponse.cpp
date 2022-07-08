@@ -80,7 +80,6 @@ bool VaultDbusResponse::transparentUnlockVault()
         if (!QFile::exists(mountdir)) {
             QDir().mkpath(mountdir);
         }
-        qInfo() << "临时打印密码，方便调试:" << passwd;
         // 解锁保险箱
         int result = unlockVault(basedir, mountdir, passwd);
         if (!result) {
