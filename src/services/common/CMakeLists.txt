@@ -15,13 +15,6 @@ FILE(GLOB GLOBAL_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
-FILE(GLOB PROPERTYDIALOG_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/propertydialog/*/*.cpp"
-)
-
 FILE(GLOB DELEGATE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/delegate/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/delegate/*.cpp"
@@ -32,7 +25,6 @@ FILE(GLOB DELEGATE_FILES
 add_library(${PROJECT_NAME}
     SHARED
     ${GLOBAL_FILES}
-    ${PROPERTYDIALOG_FILES}
     ${DELEGATE_FILES}
 )
 

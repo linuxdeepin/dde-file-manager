@@ -28,7 +28,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/dfm_global_defines.h"

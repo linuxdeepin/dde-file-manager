@@ -36,7 +36,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/common/delegate/delegateservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -48,10 +47,14 @@
 
 #include <DSysInfo>
 
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
 using ItemClickedActionCallback = std::function<void(quint64 windowId, const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 Q_DECLARE_METATYPE(ItemClickedActionCallback);
 Q_DECLARE_METATYPE(ContextMenuCallback);
+Q_DECLARE_METATYPE(CustomViewExtensionView)
+Q_DECLARE_METATYPE(BasicViewFieldFunc)
 
 DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -102,9 +105,16 @@ void VaultVisibleManager::pluginServiceRegister()
     if (isVaultEnabled()) {
         ServiceManager::workspaceServiceInstance()->addScheme(VaultHelper::instance()->scheme());
 
-        propertyServIns->registerCustomizePropertyView(VaultHelper::createVaultPropertyDialog, VaultHelper::instance()->scheme());
-        propertyServIns->registerBasicViewFiledExpand(ServiceManager::basicViewFieldFunc, VaultHelper::instance()->scheme());
-        propertyServIns->registerFilterControlField(VaultHelper::instance()->scheme(), Property::FilePropertyControlFilter::kPermission);
+        CustomViewExtensionView customView { VaultHelper::createVaultPropertyDialog };
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
+                             customView, VaultHelper::instance()->scheme());
+
+        BasicViewFieldFunc func { ServiceManager::basicViewFieldFunc };
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                             func, VaultHelper::instance()->scheme());
+        QStringList &&filters { "kPermission" };
+        dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
+                             VaultHelper::instance()->scheme(), filters);
 
         dfmplugin_menu_util::menuSceneRegisterScene(VaultComputerMenuCreator::name(), new VaultComputerMenuCreator());
         dfmplugin_menu_util::menuSceneBind(VaultComputerMenuCreator::name(), "ComputerMenu");

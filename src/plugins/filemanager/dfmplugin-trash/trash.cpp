@@ -29,17 +29,17 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 Q_DECLARE_METATYPE(ContextMenuCallback)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
+Q_DECLARE_METATYPE(BasicViewFieldFunc)
 
-DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_trash;
@@ -127,8 +127,13 @@ void Trash::addFileOperations()
     TrashHelper::workspaceServIns()->addScheme(TrashHelper::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kTrash, TrashMenuCreator::name());
 
-    propertyServIns->registerBasicViewFiledExpand(TrashHelper::propetyExtensionFunc, TrashHelper::scheme());
-    propertyServIns->registerFilterControlField(TrashHelper::scheme(), Property::FilePropertyControlFilter::kPermission);
+    BasicViewFieldFunc func { TrashHelper::propetyExtensionFunc };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                         func, TrashHelper::scheme());
+
+    QStringList &&filtes { "kPermission" };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
+                         TrashHelper::scheme(), filtes);
 }
 
 void Trash::addCustomTopWidget()

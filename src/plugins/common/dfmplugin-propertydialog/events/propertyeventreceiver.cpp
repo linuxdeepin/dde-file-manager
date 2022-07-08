@@ -19,18 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "propertyeventreceiver.h"
-#include "utils/filepropertydialogmanager.h"
-#include "services/common/propertydialog/property_defines.h"
+#include "utils/propertydialogutil.h"
+#include "utils/propertydialogmanager.h"
 
-#include <dfm-framework/framework.h>
-#include <dfm-framework/event/event.h>
+#include <dfm-framework/dpf.h>
 
-DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
-
-#define STR1(s) #s
-#define STR2(s) STR1(s)
 
 PropertyEventReceiver::PropertyEventReceiver(QObject *parent)
     : QObject(parent)
@@ -43,13 +37,82 @@ PropertyEventReceiver *PropertyEventReceiver::instance()
     return &receiver;
 }
 
-void PropertyEventReceiver::connectService()
+void PropertyEventReceiver::bindEvents()
 {
-    dpfSignalDispatcher->subscribe(Property::EventType::kEvokePropertyDialog, this, &PropertyEventReceiver::showPropertyControl);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_PropertyDialog_Show",
+                            this, &PropertyEventReceiver::handleShowPropertyDialog);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_ViewExtension_Register",
+                            this, &PropertyEventReceiver::handleViewExtensionRegister);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_ViewExtension_Unregister",
+                            this, &PropertyEventReceiver::handleViewExtensionUnregister);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_CustomView_Register",
+                            this, &PropertyEventReceiver::handleCustomViewRegister);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_CustomView_UnRegister",
+                            this, &PropertyEventReceiver::handleCustomViewUnregister);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_BasicViewExtension_Register",
+                            this, &PropertyEventReceiver::handleBasicViewExtensionRegister);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_BasicViewExtension_Unregister",
+                            this, &PropertyEventReceiver::handleBasicViewExtensionUnregister);
+
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_BasicFiledFilter_Add",
+                            this, &PropertyEventReceiver::handleBasicFiledFilterAdd);
+    dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPPROPERTYDIALOG_NAMESPACE), "slot_BasicFiledFilter_Remove",
+                            this, &PropertyEventReceiver::handleBasicFiledFilterRemove);
 }
 
-void PropertyEventReceiver::showPropertyControl(const QList<QUrl> &url)
+void PropertyEventReceiver::handleShowPropertyDialog(const QList<QUrl> &urls)
 {
-    FilePropertyDialogManager *fileDialogManager = FilePropertyDialogManager::instance();
-    fileDialogManager->showPropertyDialog(url);
+    PropertyDialogUtil *fileDialogManager = PropertyDialogUtil::instance();
+    fileDialogManager->showPropertyDialog(urls);
+}
+
+bool PropertyEventReceiver::handleViewExtensionRegister(CustomViewExtensionView view, int index)
+{
+    return PropertyDialogManager::instance().registerExtensionView(view, index);
+}
+
+void PropertyEventReceiver::handleViewExtensionUnregister(int index)
+{
+    PropertyDialogManager::instance().unregisterExtensionView(index);
+}
+
+bool PropertyEventReceiver::handleCustomViewRegister(CustomViewExtensionView view, const QString &scheme)
+{
+    return PropertyDialogManager::instance().registerCustomView(view, scheme);
+}
+
+void PropertyEventReceiver::handleCustomViewUnregister(const QString &scheme)
+{
+    PropertyDialogManager::instance().unregisterCustomView(scheme);
+}
+
+bool PropertyEventReceiver::handleBasicViewExtensionRegister(BasicViewFieldFunc func, const QString &scheme)
+{
+    return PropertyDialogManager::instance().registerBasicViewExtension(func, scheme);
+}
+
+void PropertyEventReceiver::handleBasicViewExtensionUnregister(const QString &scheme)
+{
+    PropertyDialogManager::instance().unregisterBasicViewExtension(scheme);
+}
+
+bool PropertyEventReceiver::handleBasicFiledFilterAdd(const QString &scheme, const QStringList &enums)
+{
+    QMetaEnum &&metaState { QMetaEnum::fromType<PropertyFilterType>() };
+    QString &&join { enums.join("|") };
+    bool ok { false };
+
+    auto &&enumValues { static_cast<PropertyFilterType>(metaState.keysToValue(join.toUtf8().constData(), &ok)) };
+    if (ok)
+        ok = PropertyDialogManager::instance().addBasicFiledFiltes(scheme, enumValues);
+
+    return ok;
+}
+
+void PropertyEventReceiver::handleBasicFiledFilterRemove(const QString &scheme)
+{
+    PropertyDialogManager::instance().removeBasicFiledFilters(scheme);
 }

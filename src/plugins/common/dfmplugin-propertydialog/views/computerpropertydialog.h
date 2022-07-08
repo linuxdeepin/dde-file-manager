@@ -21,7 +21,7 @@
 #ifndef COMPUTERDETAILVIEW_H
 #define COMPUTERDETAILVIEW_H
 
-#include "propertydialog/property_defines.h"
+#include "dfmplugin_propertydialog_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 
 #include <DAbstractDialog>
@@ -31,7 +31,7 @@
 #include <QGroupBox>
 #include <QThread>
 
-namespace Property {
+namespace dfmplugin_propertydialog {
 class ComputerInfoThread : public QThread
 {
     Q_OBJECT

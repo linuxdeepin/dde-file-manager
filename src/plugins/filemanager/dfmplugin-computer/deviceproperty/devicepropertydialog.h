@@ -26,7 +26,6 @@
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
 #include "devicebasicwidget.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include <DDialog>
 #include <DColoredProgressBar>
@@ -68,7 +67,7 @@ private:
     void setProgressBar(qint64 totalSize, qint64 freeSize);
 
 public slots:
-    void setSelectDeviceInfo(const DSC_NAMESPACE::Property::DeviceInfo &info);
+    void setSelectDeviceInfo(const DeviceInfo &info);
 
     void insertExtendedControl(int index, QWidget *widget);
 

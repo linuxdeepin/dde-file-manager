@@ -19,13 +19,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "computerpropertyhelper.h"
-#include "propertydialog/views/computerpropertydialog.h"
+#include "views/computerpropertydialog.h"
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/universalutils.h"
 
 DFMBASE_USE_NAMESPACE
-using namespace Property;
+using namespace dfmplugin_propertydialog;
 QString ComputerPropertyHelper::scheme()
 {
     return Global::Scheme::kComputer;

@@ -23,7 +23,6 @@
 #include "dfmplugin_vault_global.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
@@ -32,13 +31,16 @@ namespace dfmplugin_vault {
 class ServiceManager : public QObject
 {
     Q_OBJECT
+    using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
+    using ExpandFieldMap = QMap<QString, BasicExpand>;
+
 public:
     explicit ServiceManager(QObject *parent = nullptr);
 
 public:
     static DSB_FM_NAMESPACE::WorkspaceService *workspaceServiceInstance();
 
-    static QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand> basicViewFieldFunc(const QUrl &url);
+    static ExpandFieldMap basicViewFieldFunc(const QUrl &url);
 };
 }
 #endif   // SERVICEMANAGER_H

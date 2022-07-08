@@ -23,8 +23,6 @@
 #include "computereventcaller.h"
 #include "utils/computerutils.h"
 
-#include "services/common/propertydialog/property_defines.h"
-
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
@@ -125,7 +123,7 @@ void ComputerEventCaller::sendCtrlTOnItem(quint64 winId, const QUrl &url)
 
 void ComputerEventCaller::sendShowPropertyDialog(const QList<QUrl> &urls)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void ComputerEventCaller::sendErase(const QString &dev)

@@ -189,7 +189,6 @@ void ComputerMenuScene::updateState(QMenu *parent)
 
 bool ComputerMenuScene::triggered(QAction *action)
 {
-    DSC_USE_NAMESPACE
     using namespace ContextMenuAction;
     auto key = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(key) && d->predicateAction.value(key) == action) {

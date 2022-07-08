@@ -23,7 +23,10 @@
 #include "openwithmanager.h"
 #include "openwith/openwithhelper.h"
 
-#include "services/common/propertydialog/propertydialogservice.h"
+#include <dfm-framework/dpf.h>
+
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+Q_DECLARE_METATYPE(CustomViewExtensionView)
 
 using namespace dfmplugin_utils;
 
@@ -40,7 +43,8 @@ void OpenWithManager::init()
 
 void OpenWithManager::start()
 {
-    propertyServIns->registerControlExpand(OpenWithHelper::createOpenWithWidget, 2);
+    CustomViewExtensionView func { OpenWithHelper::createOpenWithWidget };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
 }
 
 OpenWithManager::OpenWithManager(QObject *parent)

@@ -26,15 +26,16 @@
 #include "utils/usersharehelper.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_global_defines.h"
 
 #include <QLabel>
 #include <QHBoxLayout>
 
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+Q_DECLARE_METATYPE(CustomViewExtensionView)
+
 using namespace dfmplugin_dirshare;
-DSC_USE_NAMESPACE
 
 void DirShare::initialize()
 {
@@ -48,7 +49,8 @@ bool DirShare::start()
     bindScene("CanvasMenu");
     bindScene("WorkspaceMenu");
 
-    PropertyDialogService::service()->registerControlExpand(DirShare::createShareControlWidget, 2);
+    CustomViewExtensionView func { DirShare::createShareControlWidget };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 2);
 
     bindEvents();
     return true;

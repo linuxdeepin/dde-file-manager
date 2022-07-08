@@ -49,9 +49,9 @@ void DetailSpaceEventReceiver::connectService()
                             this, &DetailSpaceEventReceiver::handleViewExtensionUnregister);
 
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicViewExtension_Register",
-                            this, &DetailSpaceEventReceiver::handleBasicFiledFilterAdd);
+                            this, &DetailSpaceEventReceiver::handleBasicViewExtensionRegister);
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicViewExtension_Unregister",
-                            this, &DetailSpaceEventReceiver::handleBasicFiledFilterRemove);
+                            this, &DetailSpaceEventReceiver::handleBasicViewExtensionUnregister);
 
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPDETAILSPACE_NAMESPACE), "slot_BasicFiledFilter_Add",
                             this, &DetailSpaceEventReceiver::handleBasicFiledFilterAdd);

@@ -68,8 +68,6 @@ QString TrashMenuScene::name() const
 
 bool TrashMenuScene::initialize(const QVariantHash &params)
 {
-    DSC_USE_NAMESPACE
-
     d->currentDir = params.value(MenuParamKey::kCurrentDir).toUrl();
     d->selectFiles = params.value(MenuParamKey::kSelectFiles).value<QList<QUrl>>();
     if (!d->selectFiles.isEmpty())
@@ -119,8 +117,6 @@ bool TrashMenuScene::initialize(const QVariantHash &params)
 
 bool TrashMenuScene::create(QMenu *parent)
 {
-    DSC_USE_NAMESPACE
-
     if (d->isEmptyArea) {
         auto isDisabled = TrashHelper::isEmpty() || !UniversalUtils::urlEquals(d->currentDir, TrashHelper::rootUrl());
 
@@ -150,7 +146,6 @@ void TrashMenuScene::updateState(QMenu *parent)
 
 bool TrashMenuScene::triggered(QAction *action)
 {
-    DSC_USE_NAMESPACE
     const QString &actId = action->property(ActionPropertyKey::kActionID).toString();
     if (d->predicateAction.contains(actId)) {
         if (actId == TrashActionId::kRestore) {

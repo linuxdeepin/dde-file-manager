@@ -30,20 +30,19 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/propertydialog/propertydialogservice.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
 
+using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
 Q_DECLARE_METATYPE(ContextMenuCallback);
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 Q_DECLARE_METATYPE(QList<QUrl> *);
 Q_DECLARE_METATYPE(bool *)
 Q_DECLARE_METATYPE(QFlags<QFileDevice::Permission>)
+Q_DECLARE_METATYPE(BasicViewFieldFunc)
 
-DSC_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -167,6 +166,8 @@ void Recent::addFileOperations()
     RecentManager::workspaceServIns()->addScheme(RecentManager::scheme());
     WorkspaceService::service()->setWorkspaceMenuScene(Global::Scheme::kRecent, RecentMenuCreator::name());
 
-    propertyServIns->registerBasicViewFiledExpand(RecentManager::propetyExtensionFunc, RecentManager::scheme());
+    BasicViewFieldFunc func { RecentManager::propetyExtensionFunc };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicViewExtension_Register",
+                         func, RecentManager::scheme());
 }
 }

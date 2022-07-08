@@ -131,7 +131,7 @@ int DevicePropertyDialog::contentHeight() const
             + 40);
 }
 
-void DevicePropertyDialog::setSelectDeviceInfo(const DSC_NAMESPACE::Property::DeviceInfo &info)
+void DevicePropertyDialog::setSelectDeviceInfo(const DeviceInfo &info)
 {
     currentFileUrl = info.deviceUrl;
     deviceIcon->setPixmap(info.icon.pixmap(128, 128));

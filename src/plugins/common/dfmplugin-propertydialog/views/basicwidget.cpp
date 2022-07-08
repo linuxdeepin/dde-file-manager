@@ -19,14 +19,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "basicwidget.h"
-#include "utils/propertydialoghelper.h"
 #include "events/propertyeventcall.h"
+#include "utils/propertydialogmanager.h"
 
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/mimetype/mimedatabase.h"
 #include "dfm-base/utils/fileutils.h"
-
-#include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -39,8 +37,6 @@ Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
-CPY_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
 BasicWidget::BasicWidget(QWidget *parent)
@@ -107,11 +103,11 @@ void BasicWidget::initUI()
 
 void BasicWidget::basicExpand(const QUrl &url)
 {
-    QMap<BasicExpandType, BasicExpand> fieldCondition = PropertyDialogHelper::propertyServiceInstance()->basicExpandField(url);
+    QMap<BasicExpandType, BasicExpandMap> fieldCondition = PropertyDialogManager::instance().createBasicViewExtensionField(url);
 
     QList<BasicExpandType> keys = fieldCondition.keys();
     for (BasicExpandType key : keys) {
-        BasicExpand expand = fieldCondition.value(key);
+        BasicExpandMap expand = fieldCondition.value(key);
         QList<BasicFieldExpandEnum> filterEnumList = expand.keys();
         switch (key) {
         case kFieldInsert: {
@@ -173,32 +169,32 @@ void BasicWidget::basicExpand(const QUrl &url)
 
 void BasicWidget::basicFieldFilter(const QUrl &url)
 {
-    FilePropertyControlFilter fieldFilter = propertyServIns->contorlFieldFilter(url);
-    if (fieldFilter & FilePropertyControlFilter::kFileSizeFiled) {
+    PropertyFilterType fieldFilter = PropertyDialogManager::instance().basicFiledFiltes(url);
+    if (fieldFilter & PropertyFilterType::kFileSizeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileSize);
         fileSize->deleteLater();
         fileSize = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileTypeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileTypeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileType);
         fileType->deleteLater();
         fileType = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileCountFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileCountFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileCount);
         fileCount->deleteLater();
         fileCount = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFilePositionFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFilePositionFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFilePosition);
         filePosition->deleteLater();
         filePosition = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileCreateTimeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileCreateTimeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileCreateTime);
         fileCreated->deleteLater();
         fileCreated = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileAccessedTimeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileAccessedTimeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileAccessedTime);
         fileAccessed->deleteLater();
         fileAccessed = nullptr;
-    } else if (fieldFilter & FilePropertyControlFilter::kFileModifiedTimeFiled) {
+    } else if (fieldFilter & PropertyFilterType::kFileModifiedTimeFiled) {
         fieldMap.remove(BasicFieldExpandEnum::kFileModifiedTime);
         fileModified->deleteLater();
         fileModified = nullptr;

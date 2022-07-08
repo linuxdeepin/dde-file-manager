@@ -29,4 +29,22 @@
 #define DPCOMPUTER_END_NAMESPACE }
 #define DPCOMPUTER_USE_NAMESPACE using namespace DPCOMPUTER_NAMESPACE;
 
+#include <QIcon>
+#include <QUrl>
+
+DPCOMPUTER_BEGIN_NAMESPACE
+
+struct DeviceInfo
+{
+    QIcon icon;
+    QUrl deviceUrl;
+    QUrl mountPoint;
+    QString deviceName;
+    QString deviceType;
+    QString fileSystem;
+    qint64 totalCapacity;
+    qint64 availableSpace;
+};
+
+DPCOMPUTER_END_NAMESPACE
 #endif   // DFMPLUGIN_COMPUTER_GLOBAL_H

@@ -20,12 +20,12 @@
  */
 #ifndef COMUPERPROPERTYHELPER_H
 #define COMUPERPROPERTYHELPER_H
-#include "propertydialog/property_defines.h"
+#include "dfmplugin_propertydialog_global.h"
 
 #include <QObject>
 #include <QWidget>
 
-namespace Property {
+namespace dfmplugin_propertydialog {
 class ComputerPropertyHelper : public QObject
 {
     Q_OBJECT

@@ -22,8 +22,6 @@
 */
 #include "commandparser.h"
 
-#include "services/common/propertydialog/property_defines.h"   // TODO(zhangs): remove it
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/standardpaths.h"
@@ -35,7 +33,6 @@
 #include <QCommandLineOption>
 #include <QDebug>
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 CommandParser &CommandParser::instance()
@@ -187,7 +184,7 @@ void CommandParser::showPropertyDialog()
     if (urlList.isEmpty())
         return;
 
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urlList);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urlList);
 }
 
 void CommandParser::openWithDialog()

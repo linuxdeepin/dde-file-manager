@@ -33,15 +33,12 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/propertydialog/propertydialogservice.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 
 #include <dfm-framework/framework.h>
-
 
 using namespace dfmplugin_workspace;
 

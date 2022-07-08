@@ -26,8 +26,6 @@
 #include "models/filesortfilterproxymodel.h"
 #include "dfm-framework/framework.h"
 
-#include "services/common/propertydialog/property_defines.h"
-
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/utils/fileutils.h"
@@ -274,8 +272,7 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
     QList<QUrl> urls = view->selectedUrlList();
     if (urls.isEmpty())
         urls.append(view->rootUrl());
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
-                                 urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void FileOperatorHelper::sendBluetoothFiles(const FileView *view)

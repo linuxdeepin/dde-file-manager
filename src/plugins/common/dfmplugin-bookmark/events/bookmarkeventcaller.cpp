@@ -20,9 +20,10 @@
  */
 #include "bookmarkeventcaller.h"
 #include "dfm-base/dfm_event_defines.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-framework/framework.h>
+
+#include <QUrl>
 
 using namespace dfmplugin_bookmark;
 DFMBASE_USE_NAMESPACE
@@ -41,7 +42,7 @@ void BookMarkEventCaller::sendShowBookMarkPropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void BookMarkEventCaller::sendOpenBookMarkInWindow(quint64 windowId, const QUrl &url)

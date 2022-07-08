@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef FILEPROPERTYDIALOGMANAGER_H
-#define FILEPROPERTYDIALOGMANAGER_H
+#ifndef PROPERTYDIALOGUTIL_H
+#define PROPERTYDIALOGUTIL_H
 
 #include "dfmplugin_propertydialog_global.h"
 
@@ -30,13 +30,13 @@
 #include <QMap>
 
 namespace dfmplugin_propertydialog {
-class FilePropertyDialogManager : public QObject
+class PropertyDialogUtil : public QObject
 {
     Q_OBJECT
 public:
-    explicit FilePropertyDialogManager(QObject *parent = nullptr);
+    explicit PropertyDialogUtil(QObject *parent = nullptr);
 
-    virtual ~FilePropertyDialogManager() override;
+    virtual ~PropertyDialogUtil() override;
 
 public slots:
 
@@ -57,7 +57,7 @@ public slots:
     void updateCloseIndicator();
 
 public:
-    static FilePropertyDialogManager *instance();
+    static PropertyDialogUtil *instance();
 
 private:
     /*!
@@ -80,4 +80,4 @@ private:
     //    QMap<QUrl, DevicePropertyDialog *> devicePropertyDialogs;
 };
 }
-#endif   // FILEPROPERTYDIALOGMANAGER_H
+#endif   // PROPERTYDIALOGUTIL_H

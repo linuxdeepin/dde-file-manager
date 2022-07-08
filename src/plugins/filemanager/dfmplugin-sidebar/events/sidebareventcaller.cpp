@@ -23,13 +23,11 @@
 #include "sidebareventcaller.h"
 
 #include "dfm-base/dfm_event_defines.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-framework/event/event.h>
 
 #include <QUrl>
 
-DSC_USE_NAMESPACE
 DPSIDEBAR_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
@@ -58,5 +56,5 @@ void SideBarEventCaller::sendShowFilePropertyDialog(const QUrl &url)
 {
     QList<QUrl> urls;
     urls << url;
-    dpfSignalDispatcher->publish(Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }

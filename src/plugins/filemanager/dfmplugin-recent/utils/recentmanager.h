@@ -26,7 +26,6 @@
 #include "files/recentfileinfo.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
@@ -48,7 +47,8 @@ class RecentManager final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(RecentManager)
-    using ExpandFieldMap = QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand>;
+    using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
+    using ExpandFieldMap = QMap<QString, BasicExpand>;
 
 public:
     static RecentManager *instance();

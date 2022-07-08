@@ -23,7 +23,6 @@
 #include <mutex>
 
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 using namespace dfmplugin_vault;
 ServiceManager::ServiceManager(QObject *parent)
     : QObject(parent)
@@ -50,13 +49,12 @@ WorkspaceService *ServiceManager::workspaceServiceInstance()
     return workspaceService;
 }
 
-QMap<Property::BasicExpandType, Property::BasicExpand> ServiceManager::basicViewFieldFunc(const QUrl &url)
+ServiceManager::ExpandFieldMap ServiceManager::basicViewFieldFunc(const QUrl &url)
 {
-    Property::BasicExpand expandFiledMap;
+    BasicExpand expandFiledMap;
+    expandFiledMap.insert("kFilePosition", qMakePair(tr("Location"), url.url()));
 
-    expandFiledMap.insert(Property::BasicFieldExpandEnum::kFilePosition, qMakePair(tr("Location"), url.url()));
-
-    QMap<Property::BasicExpandType, Property::BasicExpand> expandMap;
-    expandMap.insert(Property::BasicExpandType::kFieldReplace, expandFiledMap);
+    ExpandFieldMap expandMap;
+    expandMap.insert("kFieldReplace", expandFiledMap);
     return expandMap;
 }

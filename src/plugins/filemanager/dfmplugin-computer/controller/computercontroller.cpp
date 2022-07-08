@@ -31,7 +31,6 @@
 #include "watcher/computeritemwatcher.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/dfm_menu_defines.h"
 #include "dfm-base/base/application/application.h"

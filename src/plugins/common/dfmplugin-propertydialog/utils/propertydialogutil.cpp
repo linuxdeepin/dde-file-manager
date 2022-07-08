@@ -18,10 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "filepropertydialogmanager.h"
+#include "propertydialogutil.h"
 #include "views/multifilepropertydialog.h"
-
-#include "services/common/propertydialog/propertydialogservice.h"
+#include "propertydialogmanager.h"
 
 #include <QApplication>
 #include <QScreen>
@@ -29,21 +28,20 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-DSC_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 const int kMaxPropertyDialogNumber = 16;
-FilePropertyDialogManager::FilePropertyDialogManager(QObject *parent)
+PropertyDialogUtil::PropertyDialogUtil(QObject *parent)
     : QObject(parent)
 {
     closeIndicatorTimer = new QTimer(this);
     closeIndicatorTimer->setInterval(1000);
     closeAllDialog = new CloseAllDialog;
     closeAllDialog->setWindowIcon(QIcon::fromTheme("dde-file-manager"));
-    connect(closeAllDialog, &CloseAllDialog::allClosed, this, &FilePropertyDialogManager::closeAllFilePropertyDialog);
-    connect(closeIndicatorTimer, &QTimer::timeout, this, &FilePropertyDialogManager::updateCloseIndicator);
+    connect(closeAllDialog, &CloseAllDialog::allClosed, this, &PropertyDialogUtil::closeAllFilePropertyDialog);
+    connect(closeIndicatorTimer, &QTimer::timeout, this, &PropertyDialogUtil::updateCloseIndicator);
 }
 
-FilePropertyDialogManager::~FilePropertyDialogManager()
+PropertyDialogUtil::~PropertyDialogUtil()
 {
     filePropertyDialogs.clear();
 
@@ -52,7 +50,7 @@ FilePropertyDialogManager::~FilePropertyDialogManager()
     }
 }
 
-void FilePropertyDialogManager::showPropertyDialog(const QList<QUrl> &urls)
+void PropertyDialogUtil::showPropertyDialog(const QList<QUrl> &urls)
 {
     for (const QUrl &url : urls) {
         QWidget *widget = createCustomizeView(url);
@@ -71,7 +69,7 @@ void FilePropertyDialogManager::showPropertyDialog(const QList<QUrl> &urls)
     }
 }
 
-void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls)
+void PropertyDialogUtil::showFilePropertyDialog(const QList<QUrl> &urls)
 {
     int count = urls.count();
     if (count < kMaxPropertyDialogNumber) {
@@ -82,7 +80,7 @@ void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls)
                 dialog->selectFileUrl(url);
                 filePropertyDialogs.insert(url, dialog);
                 createControlView(url);
-                connect(dialog, &FilePropertyDialog::closed, this, &FilePropertyDialogManager::closeFilePropertyDialog);
+                connect(dialog, &FilePropertyDialog::closed, this, &PropertyDialogUtil::closeFilePropertyDialog);
                 if (1 == count) {
                     QPoint pos = getPropertyPos(dialog->size().width(), dialog->height());
                     dialog->move(pos);
@@ -115,7 +113,7 @@ void FilePropertyDialogManager::showFilePropertyDialog(const QList<QUrl> &urls)
  * \param index     Subscript to be inserted
  * \param widget    The view to be inserted
  */
-void FilePropertyDialogManager::insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget)
+void PropertyDialogUtil::insertExtendedControlFileProperty(const QUrl &url, int index, QWidget *widget)
 {
     if (widget) {
         FilePropertyDialog *dialog = nullptr;
@@ -132,7 +130,7 @@ void FilePropertyDialogManager::insertExtendedControlFileProperty(const QUrl &ur
  * \brief           Normal view control extension
  * \param widget    The view to be inserted
  */
-void FilePropertyDialogManager::addExtendedControlFileProperty(const QUrl &url, QWidget *widget)
+void PropertyDialogUtil::addExtendedControlFileProperty(const QUrl &url, QWidget *widget)
 {
     if (widget) {
         FilePropertyDialog *dialog = nullptr;
@@ -145,7 +143,7 @@ void FilePropertyDialogManager::addExtendedControlFileProperty(const QUrl &url, 
     }
 }
 
-void FilePropertyDialogManager::closeFilePropertyDialog(const QUrl url)
+void PropertyDialogUtil::closeFilePropertyDialog(const QUrl url)
 {
     if (filePropertyDialogs.contains(url)) {
         filePropertyDialogs.remove(url);
@@ -155,7 +153,7 @@ void FilePropertyDialogManager::closeFilePropertyDialog(const QUrl url)
         closeAllDialog->close();
 }
 
-void FilePropertyDialogManager::closeAllFilePropertyDialog()
+void PropertyDialogUtil::closeAllFilePropertyDialog()
 {
     QList<FilePropertyDialog *> dialogs = filePropertyDialogs.values();
     for (FilePropertyDialog *dialog : dialogs) {
@@ -165,7 +163,7 @@ void FilePropertyDialogManager::closeAllFilePropertyDialog()
     closeAllDialog->close();
 }
 
-void FilePropertyDialogManager::createControlView(const QUrl &url)
+void PropertyDialogUtil::createControlView(const QUrl &url)
 {
     QMap<int, QWidget *> controlView = createView(url);
     int count = controlView.keys().count();
@@ -179,7 +177,7 @@ void FilePropertyDialogManager::createControlView(const QUrl &url)
     }
 }
 
-void FilePropertyDialogManager::updateCloseIndicator()
+void PropertyDialogUtil::updateCloseIndicator()
 {
     qint64 size { 0 };
     int fileCount { 0 };
@@ -192,23 +190,23 @@ void FilePropertyDialogManager::updateCloseIndicator()
     closeAllDialog->setTotalMessage(size, fileCount);
 }
 
-FilePropertyDialogManager *FilePropertyDialogManager::instance()
+PropertyDialogUtil *PropertyDialogUtil::instance()
 {
-    static FilePropertyDialogManager propertyManager;
+    static PropertyDialogUtil propertyManager;
     return &propertyManager;
 }
 
-QMap<int, QWidget *> FilePropertyDialogManager::createView(const QUrl &url)
+QMap<int, QWidget *> PropertyDialogUtil::createView(const QUrl &url)
 {
-    return propertyServIns->createControlView(url);
+    return PropertyDialogManager::instance().createExtensionView(url);
 }
 
-QWidget *FilePropertyDialogManager::createCustomizeView(const QUrl &url)
+QWidget *PropertyDialogUtil::createCustomizeView(const QUrl &url)
 {
-    return propertyServIns->createWidget(url);
+    return PropertyDialogManager::instance().createCustomView(url);
 }
 
-QPoint FilePropertyDialogManager::getPropertyPos(int dialogWidth, int dialogHeight)
+QPoint PropertyDialogUtil::getPropertyPos(int dialogWidth, int dialogHeight)
 {
     const QScreen *cursor_screen = Q_NULLPTR;
     const QPoint &cursor_pos = QCursor::pos();
@@ -235,7 +233,7 @@ QPoint FilePropertyDialogManager::getPropertyPos(int dialogWidth, int dialogHeig
     return QPoint(x, y) + cursor_screen->geometry().topLeft();
 }
 
-QPoint FilePropertyDialogManager::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
+QPoint PropertyDialogUtil::getPerportyPos(int dialogWidth, int dialogHeight, int count, int index)
 {
     Q_UNUSED(dialogHeight)
     const QScreen *cursor_screen = Q_NULLPTR;

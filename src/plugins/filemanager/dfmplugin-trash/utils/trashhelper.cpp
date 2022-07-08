@@ -28,7 +28,6 @@
 #include "dfm_event_defines.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-framework/framework.h"
 
@@ -57,7 +56,6 @@
 
 using namespace dfmplugin_trash;
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
 
@@ -185,10 +183,6 @@ void TrashHelper::emptyTrash(const quint64 windowId)
 
 TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
 {
-    using BasicExpandType = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType;
-    using BasicExpand = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand;
-    using BasicFieldExpandEnum = DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum;
-
     const auto &info = InfoFactory::create<AbstractFileInfo>(url);
 
     ExpandFieldMap map;
@@ -196,14 +190,14 @@ TrashHelper::ExpandFieldMap TrashHelper::propetyExtensionFunc(const QUrl &url)
         // source path
         BasicExpand expand;
         const QString &sourcePath = info->redirectedFileUrl().path();
-        expand.insert(BasicFieldExpandEnum::kFileModifiedTime, qMakePair(QObject::tr("Source path"), sourcePath));
-        map[BasicExpandType::kFieldInsert] = expand;
+        expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
+        map["kFieldInsert"] = expand;
     }
     {
         // trans trash path
         BasicExpand expand;
-        expand.insert(BasicFieldExpandEnum::kFilePosition, qMakePair(QObject::tr("Location"), TrashHelper::toLocalFile(url).path()));
-        map[BasicExpandType::kFieldReplace] = expand;
+        expand.insert("kFilePosition", qMakePair(QObject::tr("Location"), TrashHelper::toLocalFile(url).path()));
+        map["kFieldReplace"] = expand;
     }
 
     return map;

@@ -20,24 +20,21 @@
 */
 #include "propertydialog.h"
 #include "events/propertyeventreceiver.h"
-#include "utils/propertydialoghelper.h"
 #include "menu/propertymenuscene.h"
+#include "utils/propertydialogmanager.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-DSC_USE_NAMESPACE
-DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
 
 void PropertyDialog::initialize()
 {
-    PropertyEventReceiver::instance()->connectService();
+    PropertyEventReceiver::instance()->bindEvents();
 }
 
 bool PropertyDialog::start()
 {
-
-    PropertyDialogHelper::propertyServiceInstance()->addComputerPropertyToPropertyService();
+    PropertyDialogManager::instance().addComputerPropertyDialog();
 
     dfmplugin_menu_util::menuSceneRegisterScene(PropertyMenuCreator::name(), new PropertyMenuCreator);
     bindScene("CanvasMenu");

@@ -33,7 +33,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/propertydialog/propertydialogservice.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/base/urlroute.h"
@@ -155,8 +154,9 @@ void Optical::addDelegateSettings()
 
 void Optical::addPropertySettings()
 {
-    // TODO(lixiang): change to slot event
-    propertyServIns->registerFilterControlField(Global::Scheme::kBurn, Property::FilePropertyControlFilter::kPermission);
+    QStringList &&filtes { "kPermission" };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_BasicFiledFilter_Add",
+                         QString(Global::Scheme::kBurn), filtes);
 }
 
 void Optical::bindEvents()

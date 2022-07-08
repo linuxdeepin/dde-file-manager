@@ -21,7 +21,6 @@
 #include "trasheventcaller.h"
 #include "utils/trashhelper.h"
 
-#include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
@@ -56,7 +55,7 @@ void TrashEventCaller::sendEmptyTrash(const quint64 windowID, const QList<QUrl> 
 
 void TrashEventCaller::sendTrashPropertyDialog(const QUrl &url)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, QList<QUrl>() << url);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url);
 }
 
 void TrashEventCaller::sendShowEmptyTrash(quint64 winId, bool visible)

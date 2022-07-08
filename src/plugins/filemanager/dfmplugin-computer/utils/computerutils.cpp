@@ -327,7 +327,7 @@ QWidget *ComputerUtils::devicePropertyDialog(const QUrl &url)
 
     DFMEntryFileInfoPointer info(new EntryFileInfo(devUrl));
     DevicePropertyDialog *dialog = new DevicePropertyDialog;
-    DSC_NAMESPACE::Property::DeviceInfo devInfo;
+    DeviceInfo devInfo;
     devInfo.icon = info->fileIcon();
     devInfo.deviceUrl = info->url();
     devInfo.mountPoint = info->targetUrl();

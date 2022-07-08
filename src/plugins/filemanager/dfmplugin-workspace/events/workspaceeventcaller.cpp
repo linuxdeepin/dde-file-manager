@@ -22,7 +22,6 @@
 */
 #include "workspaceeventcaller.h"
 
-#include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 
 #include "dfm-base/dfm_event_defines.h"
@@ -33,7 +32,6 @@
 
 DFMGLOBAL_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
-DSC_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 DFMBASE_USE_NAMESPACE
 

@@ -21,11 +21,9 @@
 #include "vaulteventcaller.h"
 
 #include "dfm-base/dfm_event_defines.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-framework/event/event.h>
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_vault;
 
@@ -46,7 +44,7 @@ void VaultEventCaller::sendOpenTab(quint64 windowId, const QUrl &url)
 
 void VaultEventCaller::sendVaultProperty(const QUrl &url)
 {
-    dpfSignalDispatcher->publish(Property::EventType::kEvokePropertyDialog, QList<QUrl>() << url);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", QList<QUrl>() << url);
 }
 
 void VaultEventCaller::sendBookMarkDisabled(const QString scheme)

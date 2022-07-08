@@ -25,7 +25,6 @@
 #include "dfmplugin_trash_global.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include "dfm-base/utils/clipboard.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
@@ -48,7 +47,8 @@ class TrashHelper final : public QObject
 {
     Q_OBJECT
     Q_DISABLE_COPY(TrashHelper)
-    using ExpandFieldMap = QMap<DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType, DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand>;
+    using BasicExpand = QMultiMap<QString, QPair<QString, QString>>;
+    using ExpandFieldMap = QMap<QString, BasicExpand>;
 
 public:
     static TrashHelper *instance();

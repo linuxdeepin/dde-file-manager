@@ -31,7 +31,6 @@
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
 #include "services/filemanager/workspace/workspaceservice.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/urlroute.h"
@@ -39,6 +38,8 @@
 #include "dfm-base/file/entry/entryfileinfo.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+Q_DECLARE_METATYPE(CustomViewExtensionView)
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 
 DSB_FM_USE_NAMESPACE
@@ -53,7 +54,6 @@ void Computer::initialize()
 {
     DFMBASE_USE_NAMESPACE
     using namespace dfmplugin_computer;
-    DSC_USE_NAMESPACE
 
     UrlRoute::regScheme(ComputerUtils::scheme(), "/", ComputerUtils::icon(), true, tr("Computer"));
     ViewFactory::regClass<ComputerView>(ComputerUtils::scheme());
@@ -118,7 +118,9 @@ void Computer::onWindowOpened(quint64 winId)
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regComputerToSearch(); }, Qt::DirectConnection);
 
-    propertyServIns->registerCustomizePropertyView(ComputerUtils::devicePropertyDialog, DFMBASE_NAMESPACE::Global::Scheme::kEntry);
+    CustomViewExtensionView func { ComputerUtils::devicePropertyDialog };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
+                         func, DFMBASE_NAMESPACE::Global::Scheme::kEntry);
 }
 
 void Computer::onWindowClosed(quint64 winId)

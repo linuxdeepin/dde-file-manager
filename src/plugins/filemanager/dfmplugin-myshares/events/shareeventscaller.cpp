@@ -23,7 +23,6 @@
 #include "shareeventscaller.h"
 #include "utils/shareutils.h"
 
-#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 
 #include <dfm-framework/framework.h>
@@ -67,7 +66,7 @@ void ShareEventsCaller::sendCancelSharing(const QUrl &url)
 
 void ShareEventsCaller::sendShowProperty(const QList<QUrl> &urls)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }
 
 void ShareEventsCaller::sendSwitchDisplayMode(quint64 winId, Global::ViewMode mode)

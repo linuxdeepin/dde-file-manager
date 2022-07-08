@@ -23,7 +23,6 @@
 #define TRASHCOREHELPER_H
 
 #include "dfmplugin_trashcore_global.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include <QObject>
 

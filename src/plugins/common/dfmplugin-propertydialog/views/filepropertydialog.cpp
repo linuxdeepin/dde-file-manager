@@ -21,8 +21,9 @@
 #include "filepropertydialog.h"
 #include "basicwidget.h"
 #include "permissionmanagerwidget.h"
+#include "utils/propertydialogmanager.h"
+
 #include "dfm-base/base/schemefactory.h"
-#include "services/common/propertydialog/propertydialogservice.h"
 
 #include <DFontSizeManager>
 #include <denhancedwidget.h>
@@ -38,8 +39,6 @@
 #include <QVBoxLayout>
 #include <QFrame>
 
-DSC_USE_NAMESPACE
-CPY_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_propertydialog;
@@ -124,16 +123,16 @@ void FilePropertyDialog::createPermissionManagerWidget(const QUrl &url)
 
 void FilePropertyDialog::viewControlFilter(const QUrl &url)
 {
-    FilePropertyControlFilter controlFilter = propertyServIns->contorlFieldFilter(url);
-    if ((controlFilter & FilePropertyControlFilter::kIconTitle) < 1) {
+    PropertyFilterType controlFilter = PropertyDialogManager::instance().basicFiledFiltes(url);
+    if ((controlFilter & PropertyFilterType::kIconTitle) < 1) {
         createHeadUI(url);
     }
 
-    if ((controlFilter & FilePropertyControlFilter::kBasisInfo) < 1) {
+    if ((controlFilter & PropertyFilterType::kBasisInfo) < 1) {
         createBasicWidget(url);
     }
 
-    if ((controlFilter & FilePropertyControlFilter::kPermission) < 1) {
+    if ((controlFilter & PropertyFilterType::kPermission) < 1) {
         createPermissionManagerWidget(url);
     }
 }

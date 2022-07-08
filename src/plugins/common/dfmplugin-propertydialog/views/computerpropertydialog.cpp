@@ -35,7 +35,7 @@
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
-using namespace Property;
+using namespace dfmplugin_propertydialog;
 ComputerPropertyDialog::ComputerPropertyDialog(QWidget *parent)
     : DDialog(parent)
 {

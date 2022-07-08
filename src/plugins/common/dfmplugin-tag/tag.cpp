@@ -33,8 +33,6 @@
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/propertydialog/propertydialogservice.h"
-
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/base/application/application.h"
@@ -51,7 +49,6 @@ Q_DECLARE_METATYPE(QList<QVariantMap> *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(CustomViewExtensionView)
 
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 DSB_FM_USE_NAMESPACE
 using namespace dfmplugin_tag;
@@ -76,9 +73,9 @@ void Tag::initialize()
 
 bool Tag::start()
 {
-    PropertyDialogService::service()->registerControlExpand(Tag::createTagWidget, 0);
     CustomViewExtensionView func { Tag::createTagWidget };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_ViewExtension_Register", func, -1);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_ViewExtension_Register", func, 0);
 
     QStringList &&filtes { "kFileSizeField", "kFileChangeTimeField", "kFileInterviewTimeField" };
     dpfSlotChannel->push("dfmplugin_detailspace", "slot_BasicFiledFilter_Add",

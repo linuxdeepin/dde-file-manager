@@ -24,7 +24,6 @@
 #include "dfmplugin_computer_global.h"
 #include "dfm-base/widgets/dfmkeyvaluelabel/keyvaluelabel.h"
 #include "dfm-base/interfaces/abstractfileinfo.h"
-#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/utils/filestatisticsjob.h"
 
 #include <DArrowLineDrawer>
@@ -43,7 +42,7 @@ private:
 public:
     void selectFileUrl(const QUrl &url);
 
-    void selectFileInfo(const DSC_NAMESPACE::Property::DeviceInfo &info);
+    void selectFileInfo(const DeviceInfo &info);
 
 public slots:
     void slotFileDirSizeChange(qint64 size, int filesCount, int directoryCount);

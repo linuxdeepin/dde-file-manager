@@ -28,7 +28,6 @@
 
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/utils/clipboard.h"
-#include "services/common/propertydialog/property_defines.h"
 
 #include <dfm-framework/framework.h>
 
@@ -278,8 +277,7 @@ void FileOperatorProxy::deleteFiles(const CanvasView *view)
 
 void FileOperatorProxy::showFilesProperty(const CanvasView *view)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog,
-                                 view->selectionModel()->selectedUrls());
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", view->selectionModel()->selectedUrls());
 }
 
 void FileOperatorProxy::sendFilesToBluetooth(const CanvasView *view)

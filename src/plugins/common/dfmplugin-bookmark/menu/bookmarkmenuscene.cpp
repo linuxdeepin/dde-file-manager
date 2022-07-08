@@ -26,7 +26,6 @@
 #include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
-#include "services/common/propertydialog/property_defines.h"
 #include "services/filemanager/workspace/workspace_defines.h"
 #include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/base/schemefactory.h"
@@ -39,7 +38,6 @@
 #include <QMap>
 
 using namespace dfmplugin_bookmark;
-DSC_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
 
 BookmarkMenuScene::BookmarkMenuScene(QObject *parent)

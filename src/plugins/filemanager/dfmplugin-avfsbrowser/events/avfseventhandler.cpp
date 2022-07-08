@@ -23,7 +23,6 @@
 #include "avfseventhandler.h"
 #include "utils/avfsutils.h"
 
-#include "services/common/propertydialog/property_defines.h"
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/file/local/localfilehandler.h"
 #include "dfm-base/mimetype/mimedatabase.h"
@@ -110,5 +109,5 @@ void AvfsEventHandler::writeToClipbord(quint64 winId, const QList<QUrl> &urls)
 
 void AvfsEventHandler::showProperty(const QList<QUrl> &urls)
 {
-    dpfSignalDispatcher->publish(DSC_NAMESPACE::Property::EventType::kEvokePropertyDialog, urls);
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls);
 }

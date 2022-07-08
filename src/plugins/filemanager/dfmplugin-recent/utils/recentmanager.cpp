@@ -112,17 +112,13 @@ void RecentManager::contenxtMenuHandle(quint64 windowId, const QUrl &url, const 
 
 RecentManager::ExpandFieldMap RecentManager::propetyExtensionFunc(const QUrl &url)
 {
-    using BasicExpandType = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpandType;
-    using BasicExpand = DSC_NAMESPACE::CPY_NAMESPACE::BasicExpand;
-    using BasicFieldExpandEnum = DSC_NAMESPACE::CPY_NAMESPACE::BasicFieldExpandEnum;
-
     BasicExpand expand;
     const auto &info = InfoFactory::create<AbstractFileInfo>(url);
     const QString &sourcePath = info->redirectedFileUrl().toLocalFile();
-    expand.insert(BasicFieldExpandEnum::kFileModifiedTime, qMakePair(QObject::tr("Source path"), sourcePath));
+    expand.insert("kFileModifiedTime", qMakePair(QObject::tr("Source path"), sourcePath));
 
     ExpandFieldMap map;
-    map[BasicExpandType::kFieldInsert] = expand;
+    map["kFieldInsert"] = expand;
 
     return map;
 }

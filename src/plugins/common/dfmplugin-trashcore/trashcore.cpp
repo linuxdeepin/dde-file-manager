@@ -24,7 +24,8 @@
 #include "events/trashcoreeventreceiver.h"
 #include "events/trashcoreeventsender.h"
 
-#include "services/common/propertydialog/propertydialogservice.h"
+using CustomViewExtensionView = std::function<QWidget *(const QUrl &url)>;
+Q_DECLARE_METATYPE(CustomViewExtensionView)
 
 using namespace dfmplugin_trashcore;
 
@@ -35,11 +36,13 @@ void TrashCore::initialize()
 
 bool TrashCore::start()
 {
-    DSC_USE_NAMESPACE
     dpfSlotChannel->connect(DPF_MACRO_TO_STR(DPTRASHCORE_NAMESPACE), "slot_TrashCore_EmptyTrash",
                             TrashCoreEventReceiver::instance(),
                             &TrashCoreEventReceiver::handleEmptyTrash);
-    propertyServIns->registerCustomizePropertyView(TrashCoreHelper::createTrashPropertyDialog, TrashCoreHelper::scheme());
+
+    CustomViewExtensionView func { TrashCoreHelper::createTrashPropertyDialog };
+    dpfSlotChannel->push("dfmplugin_propertydialog", "slot_CustomView_Register",
+                         func, TrashCoreHelper::scheme());
 
     return true;
 }
