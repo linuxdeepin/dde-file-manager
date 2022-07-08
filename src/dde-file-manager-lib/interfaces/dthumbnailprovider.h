@@ -33,6 +33,7 @@
 
 QT_BEGIN_NAMESPACE
 class QMimeType;
+class QLibrary;
 QT_END_NAMESPACE
 
 DFM_BEGIN_NAMESPACE
@@ -82,6 +83,7 @@ protected:
 
 private:
     QScopedPointer<DThumbnailProviderPrivate> d_ptr;
+    QLibrary *m_libMovieViewer = nullptr;
     Q_DECLARE_PRIVATE(DThumbnailProvider)
 };
 

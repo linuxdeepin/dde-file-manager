@@ -110,7 +110,7 @@ win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-li
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../dde-file-manager-lib/debug -ldde-file-manager
 else:unix: LIBS += -L$$OUT_PWD/../dde-file-manager-lib -ldde-file-manager \
                    -L$$OUT_PWD/../dde-file-manager-extension -ldfm-extension \
-                   -lKF5Codecs \
+                   -lKF5Codecs
 
 CONFIG(debug, debug|release) {
     DEPENDPATH += $$PWD/../dde-file-manager-lib $$PWD/../dde-file-manager-extension
