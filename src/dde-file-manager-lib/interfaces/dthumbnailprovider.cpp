@@ -31,6 +31,7 @@
 #include "fileoperations/filejob.h"
 #include "dfmapplication.h"
 
+#include <QUrl>
 #include <QCryptographicHash>
 #include <QDir>
 #include <QDateTime>
@@ -61,7 +62,6 @@ DFM_BEGIN_NAMESPACE
 
 #define FORMAT ".png"
 //#define CREATE_VEDIO_THUMB "CreateVedioThumbnail"
-
 inline QByteArray dataToMd5Hex(const QByteArray &data)
 {
     return QCryptographicHash::hash(data, QCryptographicHash::Md5).toHex();
@@ -549,9 +549,27 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
             d->errorString = QString("load image failed from the ffmpeg application");
         }
     } else {
-        thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
-        d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
-
+        //显式调用库函数getMovieCover获取视频缩略图，以兼容文管旧版本
+        bool thumnailCreatedByMovieLib = false;
+        //获取缩略图生成库函数getMovieCover的指针
+        if(m_libMovieViewer && m_libMovieViewer->isLoaded()){
+            typedef void(*getMovieCover)(const QUrl &url, const QString &savePath, QImage *imageRet);
+            getMovieCover func= reinterpret_cast<void(*)(const QUrl &, const QString &, QImage *)>(m_libMovieViewer->resolve("getMovieCover"));
+            if(func){//存在导出函数getMovieCover
+                auto url = QUrl::fromLocalFile(absoluteFilePath);
+                QImage img;
+                func(url,absolutePath,&img);//调用getMovieCover生成缩略图
+                if(!img.isNull()){
+                    *image = img;
+                    thumnailCreatedByMovieLib = true;
+                }
+            }
+        }
+        if(thumnailCreatedByMovieLib){//调用库函数getMovieCover提取缩略图成功
+            d->errorString.clear();
+        }else{//若调用库函数getMovieCover提取缩略图失败，下面走旧逻辑
+            thumbnail = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->createThumbnail(info, (DTK_GUI_NAMESPACE::DThumbnailProvider::Size)size);
+            d->errorString = DTK_GUI_NAMESPACE::DThumbnailProvider::instance()->errorString();
         if (d->errorString.isEmpty()) {
             emit createThumbnailFinished(absoluteFilePath, thumbnail);
             emit thumbnailChanged(absoluteFilePath, thumbnail);
@@ -647,7 +665,8 @@ QString DThumbnailProvider::createThumbnail(const QFileInfo &info, DThumbnailPro
                 }
             }
         }
-    }
+     }
+   }
 
 _return:
     // successful
@@ -764,6 +783,8 @@ DThumbnailProvider::DThumbnailProvider(QObject *parent)
     , d_ptr(new DThumbnailProviderPrivate(this))
 {
     d_func()->init();
+    m_libMovieViewer = new QLibrary("libimageviewer.so");
+    m_libMovieViewer->load();
 }
 
 DThumbnailProvider::~DThumbnailProvider()
@@ -773,6 +794,12 @@ DThumbnailProvider::~DThumbnailProvider()
     d->running = false;
     d->waitCondition.wakeAll();
     wait();
+
+    if(m_libMovieViewer && m_libMovieViewer->isLoaded()){
+        m_libMovieViewer->unload();
+        delete m_libMovieViewer;
+        m_libMovieViewer = nullptr;
+    }
 }
 
 void DThumbnailProvider::run()
