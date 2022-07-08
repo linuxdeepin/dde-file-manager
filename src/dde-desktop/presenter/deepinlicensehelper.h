@@ -32,14 +32,18 @@ class DeepinLicenseHelper : public QObject
 {
     Q_OBJECT
 public:
+    enum LicenseState {
+        Unauthorized = 0,
+        Authorized,
+        AuthorizedLapse,
+        TrialAuthorized,
+        TrialExpired
+    };
     static DeepinLicenseHelper *instance();
     void init();
     void delayGetState();
 signals:
-    void licenseStateChanged();
-    void postLicenseState(int);
-
-public slots:
+    void postLicenseState(int state, int prop);
 
 protected:
     explicit DeepinLicenseHelper(QObject *parent = nullptr);

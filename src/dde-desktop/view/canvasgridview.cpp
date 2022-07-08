@@ -2627,7 +2627,7 @@ void CanvasGridView::initUI()
     if (desktopSettings.keys().contains("water-mask") && desktopSettings.value("water-mask").toBool()) {
         d->waterMaskFrame = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json", this);
         d->waterMaskFrame->lower();
-        d->waterMaskFrame->updatePosition();
+        d->waterMaskFrame->refresh();
     }
 
     m_canvasOwnActions.insert("DisplaySettings", ContextMenuAction::DisplaySettings);
