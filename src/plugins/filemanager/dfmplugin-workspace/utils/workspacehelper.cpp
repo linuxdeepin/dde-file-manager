@@ -31,7 +31,7 @@
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/base/application/application.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDir>
 #include <QTimer>

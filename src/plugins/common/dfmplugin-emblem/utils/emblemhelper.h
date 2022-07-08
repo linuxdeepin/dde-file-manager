@@ -25,7 +25,8 @@
 #include "dfmplugin_emblem_global.h"
 
 #include "dfm-base/interfaces/abstractfileinfo.h"
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/dpf.h>
 
 #include <QIcon>
 

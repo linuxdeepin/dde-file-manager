@@ -24,7 +24,7 @@
 
 #include "daemonplugin_tagdatamanager_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 class TagDataManagerDBus;
 DAEMONPTAGDM_BEGIN_NAMESPACE

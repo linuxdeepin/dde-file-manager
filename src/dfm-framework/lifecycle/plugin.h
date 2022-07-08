@@ -23,7 +23,6 @@
 #define PLUGIN_H
 
 #include "dfm-framework/dfm_framework_global.h"
-#include "dfm-framework/service/pluginservice.h"
 
 #include <QObject>
 #include <QSharedData>

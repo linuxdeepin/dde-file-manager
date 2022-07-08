@@ -21,7 +21,7 @@
 #include "previewdialogmanager.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <DPlatformWindowHandle>
 

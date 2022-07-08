@@ -23,7 +23,6 @@
 
 #include "dfmplugin_propertydialog_global.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
 namespace dfmplugin_propertydialog {

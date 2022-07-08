@@ -23,11 +23,12 @@
 #include "filefilter.h"
 #include "utils/fileutil.h"
 
-#include <base/standardpaths.h>
+#include <dfm-base/base/standardpaths.h>
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/dpf.h>
 
 #include <QMimeData>
 #include <QDateTime>
@@ -160,7 +161,7 @@ void FileInfoModelPrivate::replaceData(const QUrl &oldUrl, const QUrl &newUrl)
                 fileMap.insert(newUrl, newInfo);
                 lk.unlock();
                 emit q->dataReplaced(oldUrl, newUrl);
-            }          
+            }
 
             auto index = q->index(position);
             emit q->dataChanged(index, index);

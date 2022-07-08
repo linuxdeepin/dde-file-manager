@@ -33,7 +33,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 

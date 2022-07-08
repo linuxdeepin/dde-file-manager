@@ -37,7 +37,7 @@
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 #include "dfm-base/base/schemefactory.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 using namespace dfmplugin_workspace;
 

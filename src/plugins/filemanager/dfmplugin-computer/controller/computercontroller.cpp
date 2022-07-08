@@ -44,7 +44,7 @@
 #include "dfm-base/dfm_event_defines.h"
 #include "dfm-base/dbusservice/global_server_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDebug>
 #include <QApplication>

@@ -33,7 +33,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 using namespace dfmplugin_titlebar;
 

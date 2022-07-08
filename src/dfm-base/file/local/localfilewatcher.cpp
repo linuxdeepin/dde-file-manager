@@ -24,8 +24,8 @@
 #include "base/urlroute.h"
 
 #include <dfm-io/core/dwatcher.h>
-#include <dfmio_global.h>
-#include <dfmio_register.h>
+#include <dfm-io/dfmio_global.h>
+#include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
 #include <QEvent>

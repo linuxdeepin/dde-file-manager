@@ -23,7 +23,6 @@
 #define FILEPROPERTYVIEW_H
 
 #include "dfmplugin_propertydialog_global.h"
-#include "dfm_common_service_global.h"
 #include "editstackedwidget.h"
 
 #include <DDialog>

@@ -39,8 +39,6 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    DFMSERVICE::common
-    DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
     PkgConfig::Lucene
     PkgConfig::Docparser

@@ -11,9 +11,6 @@ usr/lib/*/dde-file-manager/plugins/*.so
 usr/lib/*/dde-file-manager/plugins/previews/*.so
 usr/lib/*/libdfm-base.so.*
 usr/lib/*/libdfm-framework.so.*
-usr/lib/*/libdfmservice-common.so.*
-usr/lib/*/libdfmservice-filemanager.so.*
-usr/lib/*/libdfmservice-desktop.so.*
 
 usr/share/applications/dde-file-manager.desktop
 usr/share/applications/dde-open.desktop

@@ -25,7 +25,7 @@
 
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 using namespace dfmplugin_myshares;
 DFMBASE_USE_NAMESPACE

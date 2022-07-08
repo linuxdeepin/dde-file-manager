@@ -26,7 +26,7 @@
 #include "dfm-base/utils/universalutils.h"
 #include "dfm-base/base/standardpaths.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QDir>
 #include <QDirIterator>

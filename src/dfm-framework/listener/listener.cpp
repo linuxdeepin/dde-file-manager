@@ -21,7 +21,6 @@
  */
 #include "listener.h"
 #include "dfm-framework/listener/private/listener_p.h"
-#include "dfm-framework/service/qtclassmanager.h"
 
 DPF_BEGIN_NAMESPACE
 

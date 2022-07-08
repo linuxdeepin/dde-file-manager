@@ -24,8 +24,6 @@ FILE(GLOB FRAMEWORK_FEATURE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/event/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/dispatcher/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/dispatcher/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/unicast/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/event/unicast/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/channel/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/channel/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/event/sequence/*.h"
@@ -42,8 +40,6 @@ FILE(GLOB FRAMEWORK_FEATURE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/log/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/log/private/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/log/private/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/service/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/service/*.cpp"
     )
 
 find_package(Qt5 COMPONENTS Core REQUIRED)

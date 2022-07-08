@@ -25,7 +25,6 @@
 
 #include "dfmplugin_detailspace_global.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
 namespace dfmplugin_detailspace {

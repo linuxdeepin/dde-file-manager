@@ -35,8 +35,6 @@
 #include "dfm-base/dbusservice/global_server_defines.h"
 #include "dfm-base/file/local/localfilehandler.h"
 
-#include <dfm-framework/framework.h>
-
 #include <DDialog>
 #include <QtConcurrent>
 #include <QDir>

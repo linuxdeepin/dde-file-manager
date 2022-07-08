@@ -24,8 +24,7 @@
 #define ENTRYFILEENTITY_H
 
 #include "dfm-base/dfm_base_global.h"
-#include "dfm-framework/service/qtclassfactory.h"
-#include "file/entry/entryfileinfo.h"
+#include "dfm-base/file/entry/entryfileinfo.h"
 
 #include <QUrl>
 #include <QIcon>

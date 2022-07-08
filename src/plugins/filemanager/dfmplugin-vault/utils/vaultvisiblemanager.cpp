@@ -40,7 +40,6 @@
 #include "dfm-base/file/entry/entities/abstractentryfileentity.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/event/event.h>
 
 #include <DSysInfo>

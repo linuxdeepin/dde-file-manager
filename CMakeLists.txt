@@ -57,7 +57,6 @@ add_subdirectory(src/dfm-base)
 add_subdirectory(src/dfm-extension)
 add_subdirectory(src/dfm-framework)
 add_subdirectory(src/plugins)
-add_subdirectory(src/services)
 
 option(ENABLE_UNIT_TESTS "Enable unit tests" ON)
 message(STATUS "Enable testing: ${ENABLE_UNIT_TESTS}")

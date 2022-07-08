@@ -21,7 +21,7 @@
 #include "fileprevieweventreceiver.h"
 #include "utils/previewdialogmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DPF_USE_NAMESPACE
 using namespace dfmplugin_filepreview;

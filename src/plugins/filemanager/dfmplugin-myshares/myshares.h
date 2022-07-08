@@ -25,7 +25,7 @@
 
 #include "dfmplugin_myshares_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 namespace dfmplugin_myshares {
 class MyShares : public dpf::Plugin

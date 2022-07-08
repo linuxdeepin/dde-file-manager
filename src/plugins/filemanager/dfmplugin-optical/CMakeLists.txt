@@ -40,8 +40,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Svg
     DFM::base
     DFM::framework
-    DFMSERVICE::common
-    DFMSERVICE::filemanager
     ${DtkWidget_LIBRARIES}
 )
 

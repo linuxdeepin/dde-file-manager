@@ -26,7 +26,7 @@
 #include "dfmplugin_fileoperations_global.h"
 #include "dfm-base/interfaces/abstractjobhandler.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QObject>
 

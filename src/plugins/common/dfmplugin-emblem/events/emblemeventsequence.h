@@ -25,7 +25,8 @@
 #include "dfmplugin_emblem_global.h"
 
 #include "dfm-base/dfm_global_defines.h"
-#include <dfm-framework/framework.h>
+
+#include <dfm-framework/dpf.h>
 
 DPEMBLEM_BEGIN_NAMESPACE
 

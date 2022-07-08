@@ -24,7 +24,7 @@
 #include "ddplugin_background_global.h"
 #include "backgroundmanager.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DDP_BACKGROUND_BEGIN_NAMESPACE
 

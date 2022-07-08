@@ -25,7 +25,7 @@
 
 #include "dfmplugin_optical_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 namespace dfmplugin_optical {
 

@@ -25,7 +25,7 @@
 
 #include "daemonplugin_mountcontrol_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 class MountControlDBus;
 DAEMONPMOUNTCONTROL_BEGIN_NAMESPACE

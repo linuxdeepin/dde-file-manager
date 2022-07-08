@@ -58,6 +58,5 @@ add_subdirectory(dde-dock-plugins)
 add_subdirectory(dfm-extension)
 add_subdirectory(dfm-framework)
 add_subdirectory(plugins)
-add_subdirectory(services)
 
 

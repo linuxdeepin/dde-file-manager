@@ -14,6 +14,9 @@ FILE(GLOB UTILS_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.json"
     )
 
+find_package(Dtk REQUIRED Widget REQUIRED)
+
+
 add_library(${PROJECT_NAME}
     SHARED
     ${UTILS_FILES}
@@ -21,10 +24,14 @@ add_library(${PROJECT_NAME}
 
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+        ${DtkWidget_INCLUDE_DIRS}
+)
+
 target_link_libraries(${PROJECT_NAME}
     DFM::base
     DFM::framework
-    DFMSERVICE::common
     ${DtkWidget_LIBRARIES}
 )
 

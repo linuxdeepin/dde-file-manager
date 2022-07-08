@@ -26,7 +26,6 @@
 #include "dfm-framework/event/dispatcher/eventdispatcher.h"
 #include "dfm-framework/event/sequence/eventsequence.h"
 #include "dfm-framework/event/channel/eventchannel.h"
-#include "dfm-framework/event/unicast/eventunicast.h"   // TODO(zhangs): remove it after refactor services
 
 // ====== Event API Statement ======
 // usually the namespace of the plugin

@@ -28,7 +28,7 @@
 #include "dfm-base/base/application/settings.h"
 #include "dfm-base/base/application/application.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <dfm-io/dfmio_utils.h>
 

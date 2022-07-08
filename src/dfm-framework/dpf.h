@@ -27,7 +27,6 @@
 #include <dfm-framework/event/event.h>
 #include <dfm-framework/lifecycle/lifecycle.h>
 #include <dfm-framework/listener/listener.h>
-#include <dfm-framework/service/pluginservicecontext.h>   // TODO(zhangs): remove it
 #include <dfm-framework/log/framelogmanager.h>
 #include <dfm-framework/log/codetimecheck.h>
 

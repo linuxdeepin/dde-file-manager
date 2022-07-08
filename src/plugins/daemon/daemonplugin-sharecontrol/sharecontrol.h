@@ -25,7 +25,7 @@
 
 #include "daemonplugin_sharecontrol_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 class ShareControlDBus;
 DAEMONPSHARECONTROL_BEGIN_NAMESPACE

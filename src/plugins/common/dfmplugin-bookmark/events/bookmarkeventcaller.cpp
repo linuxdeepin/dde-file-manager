@@ -21,8 +21,6 @@
 #include "bookmarkeventcaller.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
-
 #include <QUrl>
 
 using namespace dfmplugin_bookmark;

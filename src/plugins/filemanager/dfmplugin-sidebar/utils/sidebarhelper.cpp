@@ -31,7 +31,7 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/utils/systempathutil.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 

@@ -30,7 +30,6 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm-base/dfm_menu_defines.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>

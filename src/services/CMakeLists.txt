@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 3.10)
-
-add_subdirectory(desktop)
-add_subdirectory(filemanager)
-add_subdirectory(common)

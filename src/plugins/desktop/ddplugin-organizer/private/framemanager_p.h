@@ -28,7 +28,7 @@
 #include "models/fileproxymodel.h"
 #include "interface/canvasinterface.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 

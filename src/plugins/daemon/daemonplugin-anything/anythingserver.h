@@ -25,7 +25,7 @@
 
 #include "daemonplugin_anything_global.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DAEMONPANYTHING_BEGIN_NAMESPACE
 

@@ -26,11 +26,12 @@
 #include "view/canvasview_p.h"
 #include "view/operator/fileoperatorproxy.h"
 
-#include <base/application/application.h>
-#include <base/application/settings.h>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/clipboard.h>
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
+
 #include <dfm_event_defines.h>
 
 #include <DApplication>

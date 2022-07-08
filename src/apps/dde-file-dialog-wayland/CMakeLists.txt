@@ -20,6 +20,7 @@ add_executable(${PROJECT_NAME} ${SRCS})
 target_link_libraries(
     ${PROJECT_NAME}
     Qt5::Widgets
+    DFM::base
     DFM::framework
     ${DtkWidget_LIBRARIES}
 )

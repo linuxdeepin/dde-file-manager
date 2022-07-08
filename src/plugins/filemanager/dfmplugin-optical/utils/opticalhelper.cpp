@@ -32,7 +32,6 @@
 #include "dfm-base/base/device/deviceutils.h"
 #include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
 #include <dfm-framework/event/event.h>
 
 #include <dfm-burn/dburn_global.h>

@@ -26,7 +26,7 @@
 #include "dfm-base/base/schemefactory.h"
 #include "dfm_global_defines.h"
 
-#include <dfm-framework/framework.h>
+#include <dfm-framework/dpf.h>
 
 DFMGLOBAL_USE_NAMESPACE
 using namespace dfmplugin_workspace;

@@ -29,8 +29,8 @@
 #include <QDebug>
 
 #include <dfm-io/core/denumerator.h>
-#include <dfmio_global.h>
-#include <dfmio_register.h>
+#include <dfm-io/dfmio_global.h>
+#include <dfm-io/dfmio_register.h>
 #include <dfm-io/core/diofactory.h>
 
 namespace dfmplugin_vault {
