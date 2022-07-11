@@ -215,6 +215,31 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
     if (url.scheme() != newUrl.scheme())
         return false;
 
+    // check device, use set displayname if device is mtp
+    if (Q_UNLIKELY(FileUtils::isMtpFile(newUrl))) {
+        const QUrl &fromParentUrl = UrlRoute::urlParent(url);
+        const QUrl &toParentUrl = UrlRoute::urlParent(newUrl);
+        if (fromParentUrl == toParentUrl) {
+            AbstractFileInfoPointer toInfo = InfoFactory::create<AbstractFileInfo>(newUrl);
+            const QString &newName = toInfo->fileName();
+            QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
+            if (!factory) {
+                qWarning() << "create factory failed, url: " << url;
+                return false;
+            }
+            QSharedPointer<DFMIO::DOperator> oper = factory->createOperator();
+            if (!oper) {
+                qWarning() << "create operator failed, url: " << url;
+                return false;
+            }
+
+            bool success = oper->renameFile(newName);
+            if (success)
+                return true;
+        }
+    }
+
+    // use system api
     const QByteArray &sourceFile = url.toLocalFile().toLocal8Bit();
     const QByteArray &targetFile = newUrl.toLocalFile().toLocal8Bit();
 
@@ -227,6 +252,7 @@ bool LocalFileHandler::renameFile(const QUrl &url, const QUrl &newUrl)
         return true;
     }
 
+    // use dfm-io api
     QSharedPointer<DFMIO::DIOFactory> factory = produceQSharedIOFactory(url.scheme(), static_cast<QUrl>(url));
     if (!factory) {
         qWarning() << "create factory failed, url: " << url;
