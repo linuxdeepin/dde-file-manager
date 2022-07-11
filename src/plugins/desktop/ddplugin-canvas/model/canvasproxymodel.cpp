@@ -61,6 +61,8 @@ void CanvasProxyModelPrivate::sourceRowsInserted(const QModelIndex &sourceParent
         auto url = srcModel->fileUrl(srcModel->index(i));
         if (hookIfs && hookIfs->dataInserted(url)) {
             qDebug() << "filter by extend module:" << url;
+            // todo:发信号通知view，该url已被劫持？view进行一些收尾处理，比如如果url为右键新建，则清理待重命名文件记录
+            // todo:清理待重命名记录时发送事件？以便于扩展模块进行收尾处理，比如滚动位置以显示该url，或选中该url，或进入重命名编辑状态
             continue;
         }
 

@@ -22,6 +22,7 @@
 #define FILEOPERATOR_H
 
 #include "ddplugin_organizer_global.h"
+#include "mode/collectiondataprovider.h"
 
 #include "dfm-base/dfm_global_defines.h"
 
@@ -38,10 +39,16 @@ class FileOperator : public QObject
 public:
     ~FileOperator();
     static FileOperator *instance();
+    void setDataProvider(CollectionDataProvider *provider);
 
-    void dropFiles(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
+    void dropFilesToCollection(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls, const QString &key, const int index);
+    void dropFilesToCanvas(const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
     void dropToTrash(const QList<QUrl> &urls);
     void dropToApp(const QList<QUrl> &urls, const QString &app);
+
+public:
+    void callBackFunction(const DFMBASE_NAMESPACE::Global::CallbackArgus args);
+
 protected:
     explicit FileOperator(QObject *parent = nullptr);
 

@@ -82,6 +82,7 @@ private:
     bool dropBetweenCollection(QDropEvent *event) const;
     bool dropFromCanvas(QDropEvent *event) const;
     bool dropMimeData(QDropEvent *event) const;
+    bool dropFiles(QDropEvent *event) const;
 
 private slots:
     void onItemsChanged(const QString &key);

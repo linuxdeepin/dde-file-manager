@@ -24,6 +24,7 @@
 #include "fileoperator.h"
 
 #include <QObject>
+#include <QPointer>
 
 namespace ddplugin_organizer {
 
@@ -31,13 +32,35 @@ class FileOperatorPrivate : public QObject
 {
     Q_OBJECT
 public:
+
+    enum CallBackFunc {
+        kCallBackTouchFile,
+        kCallBackTouchFolder,
+        kCallBackCopyFiles,
+        kCallBackCutFiles,
+        kCallBackPasteFiles,
+        kCallBackOpenFiles,
+        kCallBackRenameFiles,
+        kCallBackOpenFilesByApp,
+        kCallBackMoveToTrash,
+        kCallBackDeleteFiles
+    };
+
     explicit FileOperatorPrivate(FileOperator *qq);
+
+    void callBackTouchFile(const QUrl &target, const QVariantMap &customData);
+    void callBackPasteFiles(const JobInfoPointer info);
+    void callBackRenameFiles(const QList<QUrl> &sources, const QList<QUrl> &targets);
 
 public:
     FileOperator *q = nullptr;
+    QPointer<CollectionDataProvider> provider = nullptr;
 
+    DFMGLOBAL_NAMESPACE::OperatorCallback callBack;
 };
 
 }
+
+Q_DECLARE_METATYPE(ddplugin_organizer::FileOperatorPrivate::CallBackFunc)
 
 #endif // FILEOPERATOR_P_H

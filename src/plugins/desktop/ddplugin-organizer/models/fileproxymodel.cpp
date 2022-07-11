@@ -534,7 +534,7 @@ bool FileProxyModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
     switch (action) {
     case Qt::CopyAction:
     case Qt::MoveAction:
-        FileOperatorIns->dropFiles(action, targetFileUrl, urlList);
+        FileOperatorIns->dropFilesToCanvas(action, targetFileUrl, urlList);
         break;
     case Qt::LinkAction:
         break;

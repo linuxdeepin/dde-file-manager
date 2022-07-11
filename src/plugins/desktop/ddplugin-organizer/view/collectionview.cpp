@@ -26,6 +26,7 @@
 #include "interface/canvasmodelshell.h"
 #include "interface/canvasviewshell.h"
 #include "interface/canvasgridshell.h"
+#include "utils/fileoperator.h"
 
 #include "dfm-base/utils/windowutils.h"
 #include "dfm-base/base/schemefactory.h"
@@ -686,6 +687,12 @@ bool CollectionViewPrivate::dropMimeData(QDropEvent *event) const
     if (model->supportedDropActions() & event->dropAction() && enableDrop) {
         preproccessDropEvent(event, targetIndex.isValid() ? model->fileUrl(targetIndex) : model->fileUrl(model->rootIndex()));
         const Qt::DropAction action = event->dropAction();
+
+        if (!targetIndex.isValid()) {
+            qDebug() << "drop files to collection.";
+            return dropFiles(event);
+        }
+
         if (model->dropMimeData(event->mimeData(), action, targetIndex.row(), targetIndex.column(), targetIndex)) {
             if (action != event->dropAction()) {
                 event->setDropAction(action);
@@ -697,6 +704,21 @@ bool CollectionViewPrivate::dropMimeData(QDropEvent *event) const
         return true;
     }
     return false;
+}
+
+bool CollectionViewPrivate::dropFiles(QDropEvent *event) const
+{
+    // drop files to collection
+    auto urls = event->mimeData()->urls();
+    QPoint viewPoint(event->pos().x() + q->horizontalOffset(), event->pos().y() + q->verticalOffset());
+    auto dropPos = pointToPos(viewPoint);
+    auto index = posToNode(dropPos);
+    QUrl targetUrl = q->model()->fileUrl(q->model()->rootIndex());
+
+    FileOperatorIns->dropFilesToCollection(event->dropAction(), targetUrl, urls, id, index);
+
+    event->acceptProposedAction();
+    return true;
 }
 
 void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &minCellHeight)

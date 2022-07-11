@@ -27,6 +27,7 @@
 #include "config/configpresenter.h"
 #include "desktoputils/ddpugin_eventinterface_helper.h"
 #include "dfm-base/dfm_desktop_defines.h"
+#include "utils/fileoperator.h"
 
 #include <QDebug>
 #include <QUuid>
@@ -89,6 +90,7 @@ bool CustomMode::initialize(FileProxyModel *m)
     d->dataHandler->reset(store);
 
     model->setHandler(d->dataHandler);
+    FileOperatorIns->setDataProvider(d->dataHandler);
 
     // must be DirectConnection to keep sequential
     connect(model, &FileProxyModel::rowsInserted, this, &CustomMode::onFileInserted, Qt::DirectConnection);
