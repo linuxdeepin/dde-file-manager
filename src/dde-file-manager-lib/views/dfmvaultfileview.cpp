@@ -22,6 +22,7 @@
 
 #include "dfmvaultfileview.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/vaulterrorcode.h"
 #include "vault/vaultlockmanager.h"
 #include "vault/vaultconfig.h"
 #include "vault/operatorcenter.h"
@@ -114,7 +115,7 @@ bool DFMVaultFileView::setRootUrl(const DUrl &url)
 
 void DFMVaultFileView::onLeaveVault(int state)
 {
-    if (state == 0 || state == 1) {
+    if (state == 0 || state == 1 || state == static_cast<int>(ErrorCode::MountdirEncrypted)) {
         this->cd(DUrl(COMPUTER_ROOT));
         VaultController::ins()->setVauleCurrentPageMark(VaultPageMark::UNKNOWN);
     }
