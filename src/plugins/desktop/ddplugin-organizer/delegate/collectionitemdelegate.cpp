@@ -25,14 +25,14 @@
 #include "view/collectionview_p.h"
 #include "models/fileproxymodel.h"
 
-#include <base/application/application.h>
-#include <base/application/settings.h>
-#include <dfm-base/utils/clipboard.h>
-#include <dfm-base/dfm_base_global.h>
-#include <dfm-base/dfm_global_defines.h>
+#include "dfm-base/base/application/application.h"
+#include "dfm-base/base/application/settings.h"
+#include "dfm-base/utils/clipboard.h"
+#include "dfm-base/dfm_base_global.h"
+#include "dfm-base/dfm_global_defines.h"
+#include "dfm-base/dfm_event_defines.h"
 
-#include <dfm-framework/framework.h>
-#include <dfm_event_defines.h>
+#include <dfm-framework/dpf.h>
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -62,6 +62,9 @@ const int CollectionItemDelegate::kTextPadding = 4;
 const int CollectionItemDelegate::kIconSpacing = 5;
 const int CollectionItemDelegate::kIconBackRadius = 18;
 const int CollectionItemDelegate::kIconRectRadius = 4;
+
+static constexpr int kIconTopSpacing = 4;
+static constexpr int kIconBottomSpacing = 2;
 
 CollectionItemDelegatePrivate::CollectionItemDelegatePrivate(CollectionItemDelegate *qq)
     : q(qq)
@@ -135,6 +138,8 @@ CollectionItemDelegate::CollectionItemDelegate(QAbstractItemView *parentPtr)
                              << tr("Medium")
                              << tr("Large")
                              << tr("Super large");
+    // word number of per line
+    d->charOfLine << 7 << 7 << 7 << 10 << 10;
 
     // 初始化默认图标为小
     const int iconLevel = 1;
@@ -650,7 +655,7 @@ QRect CollectionItemDelegate::iconRect(const QRect &paintRect) const
 
     rIcon.setSize(parent()->iconSize());
     rIcon.moveCenter(paintRect.center());
-    rIcon.moveTop(paintRect.top());
+    rIcon.moveTop(paintRect.top() + kIconTopSpacing);
 
     return rIcon;
 }
@@ -684,6 +689,28 @@ QRect CollectionItemDelegate::textPaintRect(const QStyleOptionViewItem &option, 
 
 void CollectionItemDelegate::updateItemSizeHint() const
 {
+    // todo(wangcl) 现有UI不合适，设计师需要继续调整
+//    int textFontWidth = parent()->fontMetrics().width("中");
+//    auto iconSize = parent()->iconSize();
+
+//    int width;
+//    {
+//        // defalut word num
+//        const int minWidth = iconSize.width();
+//        int num = 7;
+//        int index = d->iconSizes.indexOf(iconSize.width());
+//        if (index >= 0 && index < d->charOfLine.size())
+//            num = d->charOfLine.at(index);
+
+//        width = kTextPadding + num * textFontWidth + kTextPadding;
+//        if (Q_UNLIKELY(width < minWidth))
+//            width = minWidth;
+//    }
+
+//    int height = kIconTopSpacing + iconSize.height() + kIconBottomSpacing + kTextPadding + 2 * d->textLineHeight + kTextPadding;
+
+//    d->itemSizeHint = QSize(width, height);
+
     int width = parent()->iconSize().width() * 17 / 10;
     int height = parent()->iconSize().height()
             + 10 + 2 * d->textLineHeight;

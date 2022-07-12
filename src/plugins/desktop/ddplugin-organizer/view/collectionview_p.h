@@ -67,8 +67,8 @@ public:
     bool drop(QDropEvent *event);
 
 private:
-    void updateRowCount(const int &viewHeight, const int &minCellHeight);
-    void updateColumnCount(const int &viewWidth, const int &minCellWidth);
+    void updateRowCount(const int &viewHeight, const int &itemHeight);
+    void updateColumnCount(const int &viewWidth, const int &itemWidth);
     void updateCellMargins(const QSize &itemSize, const QSize &cellSize);
     void updateViewMargins(const QSize &viewSize, const QMargins &oldMargins);
 

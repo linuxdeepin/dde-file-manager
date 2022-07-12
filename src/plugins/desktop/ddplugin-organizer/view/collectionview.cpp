@@ -19,7 +19,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "collectionview_p.h"
-#include "dfm-base/utils/windowutils.h"
 #include "models/fileproxymodel.h"
 #include "delegate/collectionitemdelegate.h"
 #include "mode/collectiondataprovider.h"
@@ -47,6 +46,10 @@
 DDP_ORGANIZER_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+static constexpr int kCollectionViewMargin = 4;
+static constexpr int kCollectionItemVerticalMaxMargin = 5;
+static constexpr int kCollectionItemVertiaclMinMargin = 1;
 
 CollectionViewPrivate::CollectionViewPrivate(const QString &uuid, CollectionDataProvider *dataProvider, CollectionView *qq, QObject *parent)
     : QObject(parent)
@@ -97,7 +100,8 @@ void CollectionViewPrivate::updateRegionView()
     q->itemDelegate()->updateItemSizeHint();
     auto itemSize = q->itemDelegate()->sizeHint(QStyleOptionViewItem(), QModelIndex());
 
-    updateViewSizeData(q->geometry().size(), QMargins(0, 0, 0, 0), itemSize);
+    const QMargins viewMargin(kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin, kCollectionViewMargin);
+    updateViewSizeData(q->geometry().size(), viewMargin, itemSize);
 }
 
 QList<QRect> CollectionViewPrivate::itemPaintGeomertys(const QModelIndex &index) const
@@ -128,19 +132,13 @@ QRect CollectionViewPrivate::visualRect(const QPoint &pos) const
 
 void CollectionViewPrivate::updateViewSizeData(const QSize &viewSize, const QMargins &viewMargins, const QSize &itemSize)
 {
-    // 固定行高与间隔边距,无行数限制
-    // top margin is for icon top spacing
-    // todo:define ICON_TOP_SPACE_DESKTOP 2
-    static const QMargins minMargin(0, 2, 0, 0);
-    int minCellWidth = itemSize.width() + minMargin.left() + minMargin.right();
-    updateColumnCount(viewSize.width(), minCellWidth);
+    updateViewMargins(viewSize, viewMargins);
 
-    int minCellHeight = itemSize.height() + minMargin.top() + minMargin.bottom();
-    updateRowCount(viewSize.height(), minCellHeight);
+    updateColumnCount(viewSize.width(), itemSize.width());
+
+    updateRowCount(viewSize.height(), itemSize.height());
 
     updateCellMargins(itemSize, QSize(cellWidth, cellHeight));
-
-    updateViewMargins(viewSize, viewMargins);
 }
 
 void CollectionViewPrivate::updateVerticalBarRange()
@@ -721,15 +719,27 @@ bool CollectionViewPrivate::dropFiles(QDropEvent *event) const
     return true;
 }
 
-void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &minCellHeight)
+void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &itemHeight)
 {
-    rowCount = viewHeight / minCellHeight;
+    const int availableHeight = viewHeight - viewMargins.top() - viewMargins.bottom();
+    rowCount = availableHeight / itemHeight;
     if (Q_UNLIKELY(rowCount < 1)) {
-        qWarning() << "Row count is 0!Fix it to 1,and set cell height to:" << minCellHeight;
-        cellHeight = minCellHeight;
+        qWarning() << "Row count is 0!Fix it to 1,and set cell height to:" << itemHeight;
+        cellHeight = itemHeight;
         rowCount = 1;
     } else {
-        cellHeight = viewHeight / rowCount;
+        int margin = (availableHeight - rowCount * itemHeight) / (rowCount + 1) / 2;
+        if (margin > kCollectionItemVerticalMaxMargin)
+            margin = kCollectionItemVerticalMaxMargin;
+        else if (margin < kCollectionItemVertiaclMinMargin)
+            margin = kCollectionItemVertiaclMinMargin;
+
+        cellHeight = itemHeight + 2 * margin;
+
+        // update viewMargins
+        viewMargins.setTop(viewMargins.top() + margin);
+        viewMargins.setBottom(viewMargins.bottom() + margin);
+        // there is a scroll bar in the vertical direction, so you don't need to care about the unused height
     }
 
     if (Q_UNLIKELY(cellHeight < 1)) {
@@ -738,15 +748,28 @@ void CollectionViewPrivate::updateRowCount(const int &viewHeight, const int &min
     }
 }
 
-void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &minCellWidth)
+void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &itemWidth)
 {
-    columnCount = viewWidth / minCellWidth;
+    const int availableWidth = viewWidth - viewMargins.left() - viewMargins.right();
+    columnCount = availableWidth / itemWidth;
     if (Q_UNLIKELY(columnCount < 1)) {
         qWarning() << "Column count is 0!Fix it to 1,and set cell width to:" << viewWidth;
         cellWidth = viewWidth;
         columnCount = 1;
     } else {
-        cellWidth = viewWidth / columnCount;
+        int margin = (availableWidth - columnCount * itemWidth) / (columnCount + 1) / 2;
+        cellWidth = itemWidth + 2 * margin;
+
+        // update viewMargins
+        int leftViewMargin = viewMargins.left() + margin;
+        int rightViewMargin = viewMargins.right() + margin;
+        int unUsedWidth = viewWidth - leftViewMargin - rightViewMargin - columnCount * cellWidth;
+        // try to divide equally
+        leftViewMargin += unUsedWidth / 2;
+        rightViewMargin += unUsedWidth - unUsedWidth / 2;
+
+        viewMargins.setLeft(leftViewMargin);
+        viewMargins.setRight(rightViewMargin);
     }
 
     if (Q_UNLIKELY(cellWidth < 1)) {
@@ -757,7 +780,6 @@ void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &m
 
 void CollectionViewPrivate::updateCellMargins(const QSize &itemSize, const QSize &cellSize)
 {
-    // todo:UI不合理，待确认
     const int horizontalMargin = cellSize.width() - itemSize.width();
     const int verticalMargin = cellSize.height() - itemSize.height();
     const int leftMargin = horizontalMargin / 2;
@@ -770,13 +792,10 @@ void CollectionViewPrivate::updateCellMargins(const QSize &itemSize, const QSize
 
 void CollectionViewPrivate::updateViewMargins(const QSize &viewSize, const QMargins &oldMargins)
 {
-    const int horizontalMargin = (viewSize.width() - cellWidth * columnCount);
-    const int leftMargin = horizontalMargin / 2;
-    const int rightMargin = horizontalMargin - leftMargin;
-    const int topMargin = 0;
-    const int bottomMargin = 0;
+    Q_UNUSED(viewSize)
 
-    viewMargins = oldMargins + QMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+    // fixed value,required by design
+    viewMargins = oldMargins;
 }
 
 void CollectionViewPrivate::drawDragText(QPainter *painter, const QString &str, const QRect &rect) const
@@ -824,7 +843,9 @@ CollectionView::CollectionView(const QString &uuid, CollectionDataProvider *data
     : QAbstractItemView(parent)
     , d(new CollectionViewPrivate(uuid, dataProvider, this))
 {
-
+#ifdef QT_DEBUG
+    d->showGrid = true;
+#endif
 }
 
 CollectionView::~CollectionView()
