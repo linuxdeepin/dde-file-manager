@@ -3057,25 +3057,6 @@ void DFileSystemModel::selectAndRenameFile(const DUrl &fileUrl)
             event.setWindowId(windowId);
             emit newFileByInternal(fileUrl);
         }
-    } else if (fileUrl.isVaultFile()) { //! 设置保险箱新建文件选中并重命名状态
-        DUrl url = DUrl::fromLocalFile(VaultController::vaultToLocal(fileUrl));
-        if (AppController::selectionAndRenameFile.first == url) {
-            quint64 windowId = AppController::selectionAndRenameFile.second;
-
-            if (windowId != parent()->windowId()) {
-                return;
-            }
-
-            AppController::selectionAndRenameFile = qMakePair(DUrl(), 0);
-            DFMUrlBaseEvent event(this, fileUrl);
-            event.setWindowId(windowId);
-
-            TIMER_SINGLESHOT_OBJECT(const_cast<DFileSystemModel *>(this), 100, {
-                emit fileSignalManager->requestSelectRenameFile(event);
-            }, event)
-
-            emit newFileByInternal(fileUrl);
-        }
     } else if (AppController::selectionAndRenameFile.first == fileUrl) {
         quint64 windowId = AppController::selectionAndRenameFile.second;
 
