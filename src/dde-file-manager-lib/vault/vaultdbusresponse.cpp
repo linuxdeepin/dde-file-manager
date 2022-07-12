@@ -22,6 +22,7 @@
 #include "vaultconfig.h"
 #include "operatorcenter.h"
 #include "controllers/vaulterrorcode.h"
+#include "grouppolicy.h"
 
 #include <QDBusConnection>
 #include <QDBusArgument>
@@ -84,6 +85,17 @@ bool VaultDbusResponse::transparentUnlockVault()
         int result = unlockVault(basedir, mountdir, passwd);
         if (!result) {
             qInfo() << "Vault: Unlock vault success!";
+            // 同步组策略算法
+            if (DTK_POLICY_SUPPORT) {
+                const QString &algoName = config.get(CONFIG_NODE_NAME, CONFIG_KEY_ALGONAME, QVariant("NoExist")).toString();
+                if (algoName == "NoExist") {
+                    // 字段不存在，引入国密之前的保险箱，默认算法为aes-256-gcm
+                    GroupPolicy::instance()->setValue(GROUP_POLICY_VAULT_ALGO_NAME, DEFAULT_AES_ALGO_NAME);
+                } else {
+                    if (!algoName.isEmpty())
+                        GroupPolicy::instance()->setValue(GROUP_POLICY_VAULT_ALGO_NAME, algoName);
+                }
+            }
             // 更新保险箱访问时间时间
             ChangeJson(VAULT_TIME_CONFIG_FILE_SUFFIX,
                        QString("VaultTime"),

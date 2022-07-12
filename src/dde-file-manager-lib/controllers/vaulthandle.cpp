@@ -41,10 +41,6 @@
 #include <QDateTime>
 #include <unistd.h>
 
-#define GROUP_POLICY_VAULT_ALGO_NAME    "dfm.vault.algo.name"
-#define DEFAULT_AES_ALGO_NAME           "aes-256-gcm"
-#define DEFAULT_SM4_ALGO_NAME           "sm4-128-ecb"
-
 CryFsHandle::CryFsHandle(QObject *parent) : QObject(parent)
 {
     m_process = new QProcess(this);
