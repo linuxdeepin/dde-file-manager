@@ -240,7 +240,7 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
                     DUrl mountUrl;
                     QString shareName = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kShareName);
                     QString shareHost = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kServer);
-                    QString name = currentUrl.path();
+                    QString name = currentUrl.path().toLower();//共享文件夹名称转小写
                     QString host = currentUrl.host();
                     if(name.startsWith("/"))
                         name = name.mid(1);
