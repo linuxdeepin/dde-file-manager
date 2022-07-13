@@ -71,6 +71,9 @@ void MyShareMenuScene::updateState(QMenu *parent)
 bool MyShareMenuScene::triggered(QAction *action)
 {
     do {
+        if (!action)
+            return false;
+
         QString id = action->property(ActionPropertyKey::kActionID).toString();
         if (!d->predicateAction.contains(id))
             break;
@@ -108,6 +111,9 @@ MyShareMenuScenePrivate::MyShareMenuScenePrivate(AbstractMenuScene *qq)
 void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
 {
     if (isEmptyArea)
+        return;
+
+    if (!parent)
         return;
 
     auto act = parent->addAction(predicateName[MySharesActionId::kOpenShareFolder]);

@@ -30,6 +30,7 @@
 #include "plugins/filemanager/dfmplugin-myshares/utils/sharefilehelper.h"
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/event/channel/eventchannel.h>
 
@@ -46,10 +47,6 @@ public:
     MyShares ins;
 };
 
-#define _ qDebug() << "stub function invoked!" << __LINE__;   // use to make sure the stub function is invoked.
-//#undef _
-//#define _
-
 // NOTE! if you want to simplify your stub for events,
 // just stub the 'QVariant EventChannel::send(const QVariantList &params)'
 // but you will see a lots of error message in console.
@@ -62,27 +59,40 @@ TEST_F(UT_MyShares, Start)
     typedef void (MyShares::*SubFunc1)(const QString &);   // type of MyShares::onShareAdded, MyShares::onShareRemoved
     typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, MyShares *, SubFunc1);
     auto subscribe = static_cast<Subscribe>(&EventDispatcherManager::subscribe);
-    stub.set_lamda(subscribe, [] { _ return true; });
+    stub.set_lamda(subscribe, [] { __DBG_STUB_INVOKE__ return true; });
 
     typedef QVariant (EventChannelManager::*Push1)(const QString &, const QString &, QString);
     typedef QVariant (EventChannelManager::*Push2)(const QString &, const QString &, QString, QString &&);
 
     auto push1 = static_cast<Push1>(&EventChannelManager::push);
-    stub.set_lamda(push1, [] { _ return QVariant(); });
+    stub.set_lamda(push1, [] { __DBG_STUB_INVOKE__ return QVariant(); });
 
     auto push2 = static_cast<Push2>(&EventChannelManager::push);
-    stub.set_lamda(push2, [] { _ return QVariant(); });
+    stub.set_lamda(push2, [] { __DBG_STUB_INVOKE__ return QVariant(); });
 
-    stub.set_lamda(&MyShares::hookEvent, [] { _ });
+    stub.set_lamda(&MyShares::hookEvent, [] { __DBG_STUB_INVOKE__ });
 
     EXPECT_TRUE(ins.start());
+}
+
+static bool stubRegistScene(const QString &, DFMBASE_NAMESPACE::AbstractSceneCreator *creator)
+{
+    if (creator)
+        delete creator;
+    return true;
 }
 
 TEST_F(UT_MyShares, Initialize)
 {
     stub_ext::StubExt stub;
+    stub.set_lamda(&MyShares::beMySubScene, [] { __DBG_STUB_INVOKE__ });
 
-    stub.set_lamda(&MyShares::beMySubScene, [] { _ });
+    AddrAny any;
+    std::map<std::string, void *> result;
+    any.get_local_func_addr_symtab("^dfmplugin_menu_util", result);
+    auto regScene = result.at("dfmplugin_menu_util::menuSceneRegisterScene(QString const&, dfmbase::AbstractSceneCreator*)");
+    if (regScene)
+        stub.set(regScene, stubRegistScene);
 
     EXPECT_NO_FATAL_FAILURE(ins.initialize());
 }
@@ -97,24 +107,29 @@ TEST_F(UT_MyShares, OnWindowOpened)
 {
     stub_ext::StubExt stub;
 
-    // run else block first.
     DFMBASE_USE_NAMESPACE
-    stub.set_lamda(&FileManagerWindow::sideBar, [] { _ return nullptr; });
-    stub.set_lamda(&FileManagerWindow::titleBar, [] { _ return nullptr; });
+    FileManagerWindow *win = new FileManagerWindow(QUrl());
+    stub.set_lamda(&FileManagerWindowsManager::findWindowById, [win] { __DBG_STUB_INVOKE__ return win; });
+
+    // run else block first.
+    stub.set_lamda(&FileManagerWindow::sideBar, [] { __DBG_STUB_INVOKE__ return nullptr; });
+    stub.set_lamda(&FileManagerWindow::titleBar, [] { __DBG_STUB_INVOKE__ return nullptr; });
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(0));
 
     // run if true block
-    stub.set_lamda(&FileManagerWindow::sideBar, [] { _ return reinterpret_cast<AbstractFrame *>(1); });   // this lambda's  _  return  value is only used to work in 'if' block and will never and should never be used.
-    stub.set_lamda(&FileManagerWindow::titleBar, [] { _ return reinterpret_cast<AbstractFrame *>(1); });   // this lambda's  _  return  value is only used to work in 'if' block and will never and should never be used.
-    stub.set_lamda(&MyShares::addToSidebar, [] { _ });
-    stub.set_lamda(&MyShares::regMyShareToSearch, [] { _ });
+    stub.set_lamda(&FileManagerWindow::sideBar, [] { __DBG_STUB_INVOKE__ return reinterpret_cast<AbstractFrame *>(1); });   // this lambda's  _  return  value is only used to work in 'if' block and will never and should never be used.
+    stub.set_lamda(&FileManagerWindow::titleBar, [] { __DBG_STUB_INVOKE__ return reinterpret_cast<AbstractFrame *>(1); });   // this lambda's  _  return  value is only used to work in 'if' block and will never and should never be used.
+    stub.set_lamda(&MyShares::addToSidebar, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&MyShares::regMyShareToSearch, [] { __DBG_STUB_INVOKE__ });
     EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(0));
+
+    delete win;
 }
 
 TEST_F(UT_MyShares, OnShareAdded)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&MyShares::addToSidebar, [] { _ });
+    stub.set_lamda(&MyShares::addToSidebar, [] { __DBG_STUB_INVOKE__ });
     EXPECT_NO_FATAL_FAILURE(ins.onShareAdded(""));
 }
 
@@ -125,10 +140,10 @@ TEST_F(UT_MyShares, OnShareRemoved)
 
     stub_ext::StubExt stub;
     auto push3 = static_cast<Push3>(&EventChannelManager::push);
-    stub.set_lamda(push3, [] { _ return QVariant(); });
+    stub.set_lamda(push3, [] { __DBG_STUB_INVOKE__ return QVariant(); });
 
     auto push4 = static_cast<Push4>(&EventChannelManager::push);
-    stub.set_lamda(push4, [] { _ return QVariant(); });
+    stub.set_lamda(push4, [] { __DBG_STUB_INVOKE__ return QVariant(); });
 
     EXPECT_NO_FATAL_FAILURE(ins.onShareRemoved(""));
     EXPECT_NO_FATAL_FAILURE(ins.onShareRemoved("whatever/path"));
@@ -141,18 +156,18 @@ TEST_F(UT_MyShares, AddToSideBar)
 
     typedef QVariant (EventChannelManager::*Push3)(const QString &, const QString &);
     auto push3 = static_cast<Push3>(&EventChannelManager::push);
-    stub.set_lamda(push3, [] { _ return QVariant(); });
+    stub.set_lamda(push3, [] { __DBG_STUB_INVOKE__ return QVariant(); });
     EXPECT_NO_FATAL_FAILURE(ins.addToSidebar());
     stub.clear();
 
     stub.set_lamda(push3, [] {
         ShareInfoList lst { ShareInfo() };
-        _ return QVariant::fromValue<ShareInfoList>(lst);
+        __DBG_STUB_INVOKE__ return QVariant::fromValue<ShareInfoList>(lst);
     });
 
     typedef QVariant (EventChannelManager::*Push5)(const QString &, const QString &, QUrl, QVariantMap &);
     auto push5 = static_cast<Push5>(&EventChannelManager::push);
-    stub.set_lamda(push5, [] { _ return QVariant(); });
+    stub.set_lamda(push5, [] { __DBG_STUB_INVOKE__ return QVariant(); });
     EXPECT_NO_FATAL_FAILURE(ins.addToSidebar());
 }
 
@@ -162,8 +177,18 @@ TEST_F(UT_MyShares, RegMyShareToSearch)
 
     typedef QVariant (EventChannelManager::*Push5)(const QString &, const QString &, QString, QVariantMap &);
     auto push5 = static_cast<Push5>(&EventChannelManager::push);
-    stub.set_lamda(push5, [] { _ return QVariant(); });
+    stub.set_lamda(push5, [] { __DBG_STUB_INVOKE__ return QVariant(); });
     EXPECT_NO_FATAL_FAILURE(ins.regMyShareToSearch());
+}
+
+static bool stubContains(const QString &)
+{
+    return true;
+}
+
+static bool stubBind(const QString &, const QString &)
+{
+    return true;
 }
 
 TEST_F(UT_MyShares, BeMySubScene)
@@ -174,44 +199,45 @@ TEST_F(UT_MyShares, BeMySubScene)
     typedef void (MyShares::*SubFunc1)(const QString &);   // type of MyShares::onShareAdded, MyShares::onShareRemoved
     typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, MyShares *, SubFunc1);
     auto subscribe = static_cast<Subscribe>(&EventDispatcherManager::subscribe);
-    stub.set_lamda(subscribe, [] { _ return true; });
+    stub.set_lamda(subscribe, [] { __DBG_STUB_INVOKE__ return true; });
     ins.eventSubscribed = false;
     EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
 
     // test if branch
-    typedef QVariant (EventChannelManager::*Push1)(const QString &, const QString &, QString);
-    typedef QVariant (EventChannelManager::*Push2)(const QString &, const QString &, QString, const QString &);
-    auto pushContains = static_cast<Push1>(&EventChannelManager::push);
-    auto pushBind = static_cast<Push2>(&EventChannelManager::push);
-    stub.set_lamda(pushContains, [] { _ return true; });
-    stub.set_lamda(pushBind, [] { _ return true; });
-    EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
 
     // seems there is no way to get addr of static-inline functions.
-    //    AddrAny any;
-    //    std::map<std::string, void *> result;
-    //    any.get_local_func_addr_symtab("^dfmplugin_menu_util", result);
-    //    if (result.size() >= 2) {
-    //        auto contains = result.at("dfmplugin_menu_util::menuSceneContains(QString const&)");
-    //        auto bind = result.at("dfmplugin_menu_util::menuSceneBind(QString const&, QString const&)");
-    //        if (!contains || !bind)
-    //            return;
+    AddrAny any;
+    std::map<std::string, void *> result;
+    any.get_local_func_addr_symtab("^dfmplugin_menu_util", result);
+    if (result.size() >= 2) {
+        auto contains = result.at("dfmplugin_menu_util::menuSceneContains(QString const&)");
+        auto bind = result.at("dfmplugin_menu_util::menuSceneBind(QString const&, QString const&)");
+        if (!contains || !bind)
+            return;
 
-    //        //        stub.set_lamda(dfmplugin_menu_util::menuSceneContains, [] { _ return true; });
-    //        //        stub.set_lamda(dfmplugin_menu_util::menuSceneBind, [] { _ return true; });
-    //        EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
-    //    }
+        stub.set(contains, stubContains);
+        stub.set(bind, stubBind);
+        EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
+    } else {
+        typedef QVariant (EventChannelManager::*Push1)(const QString &, const QString &, QString);
+        typedef QVariant (EventChannelManager::*Push2)(const QString &, const QString &, QString, const QString &);
+        auto pushContains = static_cast<Push1>(&EventChannelManager::push);
+        auto pushBind = static_cast<Push2>(&EventChannelManager::push);
+        stub.set_lamda(pushContains, [] { __DBG_STUB_INVOKE__ return true; });
+        stub.set_lamda(pushBind, [] { __DBG_STUB_INVOKE__ return true; });
+        EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
+    }
 }
 
 TEST_F(UT_MyShares, BeMySubOnAdded)
 {
     stub_ext::StubExt stub;
-    stub.set_lamda(&MyShares::beMySubScene, [](void *, const QString &) { _ });
+    stub.set_lamda(&MyShares::beMySubScene, [](void *, const QString &) { __DBG_STUB_INVOKE__ });
 
     typedef void (MyShares::*SubFunc1)(const QString &);   // type of MyShares::onShareAdded, MyShares::onShareRemoved
     typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, MyShares *, SubFunc1);
     auto unsubscribe = static_cast<Subscribe>(&EventDispatcherManager::unsubscribe);
-    stub.set_lamda(unsubscribe, [] { _ return true; });
+    stub.set_lamda(unsubscribe, [] { __DBG_STUB_INVOKE__ return true; });
 
     ins.waitToBind.clear();
     ins.waitToBind.insert("hello");
@@ -239,19 +265,19 @@ TEST_F(UT_MyShares, HookEvent)
     typedef bool (EventSequenceManager::*HookType5)(const QString &, const QString &, ShareFileHelper *, HookFunc5);
 
     auto follow1 = static_cast<HookType1>(&EventSequenceManager::follow);
-    stub.set_lamda(follow1, [] { _ return true; });
+    stub.set_lamda(follow1, [] { __DBG_STUB_INVOKE__ return true; });
 
     auto follow2 = static_cast<HookType2>(&EventSequenceManager::follow);
-    stub.set_lamda(follow2, [] { _ return true; });
+    stub.set_lamda(follow2, [] { __DBG_STUB_INVOKE__ return true; });
 
     auto follow3 = static_cast<HookType3>(&EventSequenceManager::follow);
-    stub.set_lamda(follow3, [] { _ return true; });
+    stub.set_lamda(follow3, [] { __DBG_STUB_INVOKE__ return true; });
 
     auto follow4 = static_cast<HookType4>(&EventSequenceManager::follow);
-    stub.set_lamda(follow4, [] { _ return true; });
+    stub.set_lamda(follow4, [] { __DBG_STUB_INVOKE__ return true; });
 
     auto follow5 = static_cast<HookType5>(&EventSequenceManager::follow);
-    stub.set_lamda(follow5, [] { _ return true; });
+    stub.set_lamda(follow5, [] { __DBG_STUB_INVOKE__ return true; });
 
     EXPECT_NO_FATAL_FAILURE(ins.hookEvent());
 }

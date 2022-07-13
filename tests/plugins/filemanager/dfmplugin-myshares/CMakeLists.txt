@@ -2,11 +2,16 @@ cmake_minimum_required(VERSION 3.10)
 
 project(test-dfmplugin-myshares)
 
+set(PluginPath ${PROJECT_SOURCE_PATH}/plugins/filemanager/dfmplugin-myshares/)
+
 # UT文件
 file(GLOB_RECURSE UT_CXX_FILE
     FILES_MATCHING PATTERN "*.cpp" "*.h")
+file(GLOB_RECURSE SRC_FILES
+    FILES_MATCHING PATTERN "${PluginPath}/*.cpp" "${PluginPath}/*.h")
 
 add_executable(${PROJECT_NAME}
+    ${SRC_FILES}
     ${UT_CXX_FILE}
     ${CPP_STUB_SRC}
 )
@@ -14,9 +19,10 @@ add_executable(${PROJECT_NAME}
 find_package(Dtk REQUIRED Widget REQUIRED)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-    "../../../../src/plugins/filemanager/dfmplugin-myshares/")
-target_link_libraries(${PROJECT_NAME}
-    DFMPlugin::myshares
+    "${PluginPath}")
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    DFM::base
+    DFM::framework
     ${DtkWidget_LIBRARIES}
 )
 

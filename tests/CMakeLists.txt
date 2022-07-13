@@ -18,13 +18,16 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(PROJECT_SOURCE_PATH "${CMAKE_SOURCE_DIR}/../src")
+set(PROJECT_SOURCE_PATH "${CMAKE_SOURCE_DIR}/src")
 include_directories(${PROJECT_SOURCE_PATH})
 
 # UT依赖
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 link_libraries(${GTEST_LIBRARIES} pthread stdc++fs)
+
+# defines to determind whether to show invoke log at stub function.
+add_definitions(-DDEBUG_STUB_INVOKE)
 
 # 打桩工具
 set(TEST_UTILS_PATH "../3rdparty/testutils")
