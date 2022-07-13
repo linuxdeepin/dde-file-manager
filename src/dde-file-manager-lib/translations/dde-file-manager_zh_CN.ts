@@ -2538,6 +2538,13 @@
         <location filename="../configure/global-setting-template-fedora.js" line="299"/>
         <location filename="../configure/global-setting-template-pro.js" line="299"/>
         <location filename="../configure/global-setting-template.js" line="298"/>
+        <source>Hide my directories</source>
+        <translation>隐藏我的目录</translation>
+    </message>
+    <message>
+        <location filename="../configure/global-setting-template-fedora.js" line="299"/>
+        <location filename="../configure/global-setting-template-pro.js" line="299"/>
+        <location filename="../configure/global-setting-template.js" line="298"/>
         <source>Hide system disk</source>
         <translation>隐藏系统盘</translation>
     </message>

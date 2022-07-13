@@ -74,6 +74,7 @@ public:
         GA_ShowedHiddenFiles, // 显示隐藏文件
         GA_ShowedFileSuffix, // 显示文件后缀
         GA_DisableNonRemovableDeviceUnmount, // 禁用本地磁盘卸载功能
+        GA_HiddenMyDirectories, // 隐藏我的目录
         GA_HiddenSystemPartition, // 隐藏系统分区
         GA_ShowRecentFileEntry, // 在侧边栏显示“最近文件”入口
         GA_ShowCsdCrumbBarClickableArea, // 在面包屑栏预留可供点击以进入地址栏编辑状态的区域

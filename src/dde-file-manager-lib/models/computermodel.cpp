@@ -46,6 +46,7 @@
 #include "vault/vaulthelper.h"
 #include "computermodel.h"
 #include "utils.h"
+#include "dfmapplication.h"
 
 #include <QtConcurrent>
 
@@ -61,6 +62,8 @@ ComputerModel::ComputerModel(QObject *parent)
     m_nitems = 0;
     m_appEntryWatcher.reset(fileService->createFileWatcher(nullptr, DUrl(APPENTRY_ROOT), this));
 
+    bool disabledMyDirectories = DFMApplication::genericAttribute(DFMApplication::GA_HiddenMyDirectories).toBool();
+
     // 光驱事件
     connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
 
@@ -68,7 +71,8 @@ ComputerModel::ComputerModel(QObject *parent)
     m_initThread.first = false;
     m_initThread.second = QtConcurrent::run([=](){
 #endif
-        addItem(makeSplitterUrl(MyDirectories));
+        if(!disabledMyDirectories)
+            addItem(makeSplitterUrl(MyDirectories));
         auto rootInit = [=](const QList<DAbstractFileInfoPointer> &ch){
             QMutexLocker lx(&m_initItemMutex);
             bool opticalchanged = false;
@@ -79,7 +83,8 @@ ComputerModel::ComputerModel(QObject *parent)
                     return;
 #endif
                 if (chi->scheme() == DFMROOT_SCHEME && chi->suffix() == SUFFIX_USRDIR) {
-                    addItem(chi->fileUrl());
+                    if(!disabledMyDirectories)
+                        addItem(chi->fileUrl());
                 } else {
                     //跳过smb挂载或缓存项，后面单独创建聚合项
                     QString smbIp;
@@ -146,7 +151,9 @@ ComputerModel::ComputerModel(QObject *parent)
             m_items.clear();
             endResetModel();
             m_nitems = 0;
-            addItem(makeSplitterUrl(MyDirectories));
+            bool disabledMyDirectories = DFMApplication::genericAttribute(DFMApplication::GA_HiddenMyDirectories).toBool();
+            if(!disabledMyDirectories)
+                addItem(makeSplitterUrl(MyDirectories));
             QList<DAbstractFileInfoPointer> ch = rootFileManager->getRootFile();
             if (!g_isFileDialogMode) {
                 DFMAppEntryController appEntryController;

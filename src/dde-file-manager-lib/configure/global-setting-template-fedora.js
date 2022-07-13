@@ -21,7 +21,7 @@
                             "items": [
                                 qsTranslate("GenerateSettingTranslate", "Click"),
                                 qsTranslate("GenerateSettingTranslate", "Double click")
-                                ],
+                            ],
                             "default": 1
                         }
                     ]
@@ -162,27 +162,27 @@
             "name": qsTranslate("GenerateSettingTranslate", "Advanced"),
             "groups": [
                 {
-                  "key": "index",
-                  "name": qsTranslate("GenerateSettingTranslate", "Index"),
-                  "options": [
-                    {
+                    "key": "index",
+                    "name": qsTranslate("GenerateSettingTranslate", "Index"),
+                    "options": [
+                        {
                             "key": "index_internal",
                             "text": qsTranslate("GenerateSettingTranslate", "Auto index internal disk"),
                             "type": "checkbox",
                             "default": true
-                    },
-                    {
+                        },
+                        {
                             "key": "index_external",
                             "text": qsTranslate("GenerateSettingTranslate", "Index external storage device after connected to computer"),
                             "type": "checkbox",
                             "default": false
-                    },
-                    {
+                        },
+                        {
                             "key": "index_search",
                             "text": qsTranslate("GenerateSettingTranslate", "Full-Text search"),
                             "type": "checkbox",
                             "default": false
-                    }
+                        }
                     ]
                 },
                 {
@@ -295,6 +295,12 @@
                     "name": qsTranslate("GenerateSettingTranslate", "Other"),
                     "options": [
                         {
+                            "key": "hide_my_directories",
+                            "text": qsTranslate("GenerateSettingTranslate", "Hide my directories"),
+                            "type": "checkbox",
+                            "default": false
+                        },
+                        {
                             "key": "hide_system_partition",
                             "text": qsTranslate("GenerateSettingTranslate", "Hide system disk"),
                             "type": "checkbox",
@@ -324,5 +330,5 @@
             ]
         }
 
-      ]
+    ]
 }
