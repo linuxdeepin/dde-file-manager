@@ -203,7 +203,6 @@ greaterThan(QT.dtkcore.VERSION, 5.5.18) {
   meta_file.files += \
   policyconfig/org.deepin.dde.file-manager.json
   meta_file.appid = org.deepin.dde.file-manager
-  meta_file.base = policyconfig
   message("dconfig is supported.")
   DCONFIG_META_FILES += meta_file
   load(dtk_install_dconfig)
