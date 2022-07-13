@@ -27,7 +27,7 @@
 
 TEST(ExtendViewTest,init)
 {
-    ExtendView w(nullptr);
+    ExtendView w;
     EXPECT_NE(nullptr,w.m_extendListView);
     EXPECT_NE(nullptr,w.m_detailView);
 }

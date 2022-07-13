@@ -26,7 +26,7 @@
 
 TEST(DTagActionWidgetTest,set_checked_color_list_empty)
 {
-    DTagActionWidget wid(nullptr);
+    DTagActionWidget wid;
     wid.setCheckedColorList({});
     EXPECT_EQ(true,wid.checkedColorList().isEmpty());
 }

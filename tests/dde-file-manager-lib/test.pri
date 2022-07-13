@@ -122,7 +122,7 @@ SOURCES += \
     $$PWD/dialogs/ut_basedialog.cpp \
     $$PWD/dialogs/ut_burnoptdialog.cpp \
     $$PWD/dialogs/ut_closealldialogindicator.cpp \
-    $$PWD/dialogs/ut_connecttoserverdialog.cpp \
+    #$$PWD/dialogs/ut_connecttoserverdialog.cpp \
     $$PWD/dialogs/ut_ddeskprenamedialog.cpp \
     $$PWD/dialogs/ut_dfmsettingdialog.cpp \
     $$PWD/dialogs/ut_dialogmanager.cpp \

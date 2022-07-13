@@ -32,7 +32,7 @@
 
 TEST(DToolBarTest,init)
 {
-    DToolBar w(nullptr);
+    DToolBar w;
     EXPECT_NE(nullptr,w.m_addressToolBar);
     EXPECT_NE(nullptr,w.m_backButton);
     EXPECT_NE(nullptr,w.m_forwardButton);
