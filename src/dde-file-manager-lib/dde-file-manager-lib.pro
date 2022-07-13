@@ -200,13 +200,20 @@ INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations
  icon includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
 
 greaterThan(QT.dtkcore.VERSION, 5.5.18) {
-meta_file.files += \
+  meta_file.files += \
   policyconfig/org.deepin.dde.file-manager.json
-meta_file.appid = org.deepin.dde.file-manager
-meta_file.base = policyconfig
+  meta_file.appid = org.deepin.dde.file-manager
+  meta_file.base = policyconfig
+  message("dconfig is supported.")
+  DCONFIG_META_FILES += meta_file
+  load(dtk_install_dconfig)
+}
 
-DCONFIG_META_FILES += meta_file
-load(dtk_install_dconfig)
+lessThan(QT.dtkcore.VERSION, 5.5.18){
+  message("dconfig is not supported.")
+  meta_file.files = policyconfig/org.deepin.dde.file-manager.json
+  meta_file.path = $$PREFIX/share/dsg/configs
+  INSTALLS += meta_file
 }
 
 DISTFILES += \
