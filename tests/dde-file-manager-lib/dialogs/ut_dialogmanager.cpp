@@ -1062,7 +1062,7 @@ TEST_F(TestDialogManager, testShowBreakSymlinkDialog2)
 
     EXPECT_NO_FATAL_FAILURE(m_pTester->showBreakSymlinkDialog(targetName, linkfile));
 }
-
+/*
 TEST_F(TestDialogManager, testShowConnectToServerDialog)
 {
     void(*stub3_show)() = []()->void{};
@@ -1096,7 +1096,7 @@ TEST_F(TestDialogManager, testShowConnectToServerDialog2)
         w = nullptr;
     }
 }
-
+*/
 TEST_F(TestDialogManager, testShowUserSharePasswordSettingDialog)
 {
     quint64 winId(12345678);

@@ -120,8 +120,7 @@ TEST(DesktopTest,set_visible)
 
     QVector<ScreenPointer> screens = ScreenMrg->logicScreens();
     auto canvas = viewManager->canvas();
-    int screenCount = screens.size();
-    for (int i = 0; i < screenCount; ++i) {
+    for (int i = 0; i < screens.size(); ++i) {
         desktop.SetVisible(i + 1,false);
         if (!canvas.contains(screens.at(i))) continue;
         CanvasViewPointer view = canvas.value(screens.at(i));
