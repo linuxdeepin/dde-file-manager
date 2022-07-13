@@ -56,9 +56,7 @@ void MyShares::initialize()
     dfmplugin_menu_util::menuSceneRegisterScene(MyShareMenuCreator::name(), new MyShareMenuCreator);
     beMySubScene("SortAndDisplayMenu");   // using workspace's SortAndDisplayAsMenu
 
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowCreated, this, &MyShares::onWindowCreated, Qt::DirectConnection);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &MyShares::onWindowOpened, Qt::DirectConnection);
-    connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &MyShares::onWindowClosed, Qt::DirectConnection);
 }
 
 bool MyShares::start()
@@ -79,10 +77,6 @@ dpf::Plugin::ShutdownFlag MyShares::stop()
     return dpf::Plugin::ShutdownFlag::kSync;
 }
 
-void MyShares::onWindowCreated(quint64 winId)
-{
-}
-
 void MyShares::onWindowOpened(quint64 winId)
 {
     DFMBASE_USE_NAMESPACE
@@ -97,11 +91,6 @@ void MyShares::onWindowOpened(quint64 winId)
         regMyShareToSearch();
     else
         connect(window, &FileManagerWindow::titleBarInstallFinished, this, [this] { regMyShareToSearch(); }, Qt::DirectConnection);
-}
-
-void MyShares::onWindowClosed(quint64 winId)
-{
-    Q_UNUSED(winId)
 }
 
 void MyShares::onShareAdded(const QString &)

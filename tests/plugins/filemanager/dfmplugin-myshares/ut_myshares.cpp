@@ -1,0 +1,257 @@
+/*
+ * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ *
+ * Author:     xushitong<xushitong@uniontech.com>
+ *
+ * Maintainer: max-lv<lvwujun@uniontech.com>
+ *             lanxuesong<lanxuesong@uniontech.com>
+ *             zhangsheng<zhangsheng@uniontech.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "stubext.h"
+#include "addr_any.h"
+
+#include "plugins/filemanager/dfmplugin-myshares/myshares.h"
+#include "plugins/filemanager/dfmplugin-myshares/events/shareeventhelper.h"
+#include "plugins/filemanager/dfmplugin-myshares/utils/shareutils.h"
+#include "plugins/filemanager/dfmplugin-myshares/utils/sharefilehelper.h"
+#include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindow.h"
+
+#include <dfm-framework/event/channel/eventchannel.h>
+
+#include <gtest/gtest.h>
+
+DPMYSHARES_USE_NAMESPACE
+DPF_USE_NAMESPACE
+
+class UT_MyShares : public testing::Test
+{
+public:
+    virtual void SetUp() override {}
+    virtual void TearDown() override {}
+    MyShares ins;
+};
+
+#define _ qDebug() << "stub function invoked!" << __LINE__;   // use to make sure the stub function is invoked.
+//#undef _
+//#define _
+
+// NOTE! if you want to simplify your stub for events,
+// just stub the 'QVariant EventChannel::send(const QVariantList &params)'
+// but you will see a lots of error message in console.
+// so if you do not want to see them, stub the `push` directly like me did.
+// so does to 'follow/subscribe...'
+TEST_F(UT_MyShares, Start)
+{
+    stub_ext::StubExt stub;
+
+    typedef void (MyShares::*SubFunc1)(const QString &);   // type of MyShares::onShareAdded, MyShares::onShareRemoved
+    typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, MyShares *, SubFunc1);
+    auto subscribe = static_cast<Subscribe>(&EventDispatcherManager::subscribe);
+    stub.set_lamda(subscribe, [] { _ return true; });
+
+    typedef QVariant (EventChannelManager::*Push1)(const QString &, const QString &, QString);
+    typedef QVariant (EventChannelManager::*Push2)(const QString &, const QString &, QString, QString &&);
+
+    auto push1 = static_cast<Push1>(&EventChannelManager::push);
+    stub.set_lamda(push1, [] { _ return QVariant(); });
+
+    auto push2 = static_cast<Push2>(&EventChannelManager::push);
+    stub.set_lamda(push2, [] { _ return QVariant(); });
+
+    stub.set_lamda(&MyShares::hookEvent, [] { _ });
+
+    EXPECT_TRUE(ins.start());
+}
+
+TEST_F(UT_MyShares, Initialize)
+{
+    stub_ext::StubExt stub;
+
+    stub.set_lamda(&MyShares::beMySubScene, [] { _ });
+
+    EXPECT_NO_FATAL_FAILURE(ins.initialize());
+}
+
+TEST_F(UT_MyShares, Stop)
+{
+    EXPECT_EQ(dpf::Plugin::ShutdownFlag::kSync, ins.stop());
+}
+
+// complete protected/private functions' ut
+TEST_F(UT_MyShares, OnWindowOpened)
+{
+    stub_ext::StubExt stub;
+
+    // run else block first.
+    DFMBASE_USE_NAMESPACE
+    stub.set_lamda(&FileManagerWindow::sideBar, [] { _ return nullptr; });
+    stub.set_lamda(&FileManagerWindow::titleBar, [] { _ return nullptr; });
+    EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(0));
+
+    // run if true block
+    stub.set_lamda(&FileManagerWindow::sideBar, [] { _ return reinterpret_cast<AbstractFrame *>(1); });   // this lambda's  _  return  value is only used to work in 'if' block and will never and should never be used.
+    stub.set_lamda(&FileManagerWindow::titleBar, [] { _ return reinterpret_cast<AbstractFrame *>(1); });   // this lambda's  _  return  value is only used to work in 'if' block and will never and should never be used.
+    stub.set_lamda(&MyShares::addToSidebar, [] { _ });
+    stub.set_lamda(&MyShares::regMyShareToSearch, [] { _ });
+    EXPECT_NO_FATAL_FAILURE(ins.onWindowOpened(0));
+}
+
+TEST_F(UT_MyShares, OnShareAdded)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&MyShares::addToSidebar, [] { _ });
+    EXPECT_NO_FATAL_FAILURE(ins.onShareAdded(""));
+}
+
+TEST_F(UT_MyShares, OnShareRemoved)
+{
+    typedef QVariant (EventChannelManager::*Push3)(const QString &, const QString &);
+    typedef QVariant (EventChannelManager::*Push4)(const QString &, const QString &, QUrl);
+
+    stub_ext::StubExt stub;
+    auto push3 = static_cast<Push3>(&EventChannelManager::push);
+    stub.set_lamda(push3, [] { _ return QVariant(); });
+
+    auto push4 = static_cast<Push4>(&EventChannelManager::push);
+    stub.set_lamda(push4, [] { _ return QVariant(); });
+
+    EXPECT_NO_FATAL_FAILURE(ins.onShareRemoved(""));
+    EXPECT_NO_FATAL_FAILURE(ins.onShareRemoved("whatever/path"));
+    EXPECT_NO_FATAL_FAILURE(ins.onShareRemoved("what/a/good/day"));
+}
+
+TEST_F(UT_MyShares, AddToSideBar)
+{
+    stub_ext::StubExt stub;
+
+    typedef QVariant (EventChannelManager::*Push3)(const QString &, const QString &);
+    auto push3 = static_cast<Push3>(&EventChannelManager::push);
+    stub.set_lamda(push3, [] { _ return QVariant(); });
+    EXPECT_NO_FATAL_FAILURE(ins.addToSidebar());
+    stub.clear();
+
+    stub.set_lamda(push3, [] {
+        ShareInfoList lst { ShareInfo() };
+        _ return QVariant::fromValue<ShareInfoList>(lst);
+    });
+
+    typedef QVariant (EventChannelManager::*Push5)(const QString &, const QString &, QUrl, QVariantMap &);
+    auto push5 = static_cast<Push5>(&EventChannelManager::push);
+    stub.set_lamda(push5, [] { _ return QVariant(); });
+    EXPECT_NO_FATAL_FAILURE(ins.addToSidebar());
+}
+
+TEST_F(UT_MyShares, RegMyShareToSearch)
+{
+    stub_ext::StubExt stub;
+
+    typedef QVariant (EventChannelManager::*Push5)(const QString &, const QString &, QString, QVariantMap &);
+    auto push5 = static_cast<Push5>(&EventChannelManager::push);
+    stub.set_lamda(push5, [] { _ return QVariant(); });
+    EXPECT_NO_FATAL_FAILURE(ins.regMyShareToSearch());
+}
+
+TEST_F(UT_MyShares, BeMySubScene)
+{
+    stub_ext::StubExt stub;
+
+    // test else branch first.
+    typedef void (MyShares::*SubFunc1)(const QString &);   // type of MyShares::onShareAdded, MyShares::onShareRemoved
+    typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, MyShares *, SubFunc1);
+    auto subscribe = static_cast<Subscribe>(&EventDispatcherManager::subscribe);
+    stub.set_lamda(subscribe, [] { _ return true; });
+    ins.eventSubscribed = false;
+    EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
+
+    // test if branch
+    typedef QVariant (EventChannelManager::*Push1)(const QString &, const QString &, QString);
+    typedef QVariant (EventChannelManager::*Push2)(const QString &, const QString &, QString, const QString &);
+    auto pushContains = static_cast<Push1>(&EventChannelManager::push);
+    auto pushBind = static_cast<Push2>(&EventChannelManager::push);
+    stub.set_lamda(pushContains, [] { _ return true; });
+    stub.set_lamda(pushBind, [] { _ return true; });
+    EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
+
+    // seems there is no way to get addr of static-inline functions.
+    //    AddrAny any;
+    //    std::map<std::string, void *> result;
+    //    any.get_local_func_addr_symtab("^dfmplugin_menu_util", result);
+    //    if (result.size() >= 2) {
+    //        auto contains = result.at("dfmplugin_menu_util::menuSceneContains(QString const&)");
+    //        auto bind = result.at("dfmplugin_menu_util::menuSceneBind(QString const&, QString const&)");
+    //        if (!contains || !bind)
+    //            return;
+
+    //        //        stub.set_lamda(dfmplugin_menu_util::menuSceneContains, [] { _ return true; });
+    //        //        stub.set_lamda(dfmplugin_menu_util::menuSceneBind, [] { _ return true; });
+    //        EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
+    //    }
+}
+
+TEST_F(UT_MyShares, BeMySubOnAdded)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(&MyShares::beMySubScene, [](void *, const QString &) { _ });
+
+    typedef void (MyShares::*SubFunc1)(const QString &);   // type of MyShares::onShareAdded, MyShares::onShareRemoved
+    typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, MyShares *, SubFunc1);
+    auto unsubscribe = static_cast<Subscribe>(&EventDispatcherManager::unsubscribe);
+    stub.set_lamda(unsubscribe, [] { _ return true; });
+
+    ins.waitToBind.clear();
+    ins.waitToBind.insert("hello");
+    EXPECT_NO_FATAL_FAILURE(ins.beMySubOnAdded("hello"));
+}
+
+Q_DECLARE_METATYPE(QList<QUrl> *);
+TEST_F(UT_MyShares, HookEvent)
+{
+    stub_ext::StubExt stub;
+
+    typedef bool (ShareEventHelper::*HookFunc1)(quint64, const QList<QUrl> &);   // type of ShareEventHelper::blockDelete/blockMoveToTrash
+    typedef bool (EventSequenceManager::*HookType1)(const QString &, const QString &, ShareEventHelper *, HookFunc1);
+
+    typedef bool (ShareEventHelper::*HookFunc2)(quint64, const QUrl &);   // type of ShareEventHelper::blockPaste, hookSendChangeCurrentUrl
+    typedef bool (EventSequenceManager::*HookType2)(const QString &, const QString &, ShareEventHelper *, HookFunc2);
+
+    typedef bool (ShareEventHelper::*HookFunc3)(const QList<QUrl> &);   // type of ShareEventHelper::hookSendOpenWindow
+    typedef bool (EventSequenceManager::*HookType3)(const QString &, const QString &, ShareEventHelper *, HookFunc3);
+
+    typedef bool (ShareUtils::*HookFunc4)(const QList<QUrl> &, QList<QUrl> *);   // type of ShareUtils::urlsToLocal
+    typedef bool (EventSequenceManager::*HookType4)(const QString &, const QString &, ShareUtils *, HookFunc4);
+
+    typedef bool (ShareFileHelper::*HookFunc5)(quint64, const QList<QUrl> &);
+    typedef bool (EventSequenceManager::*HookType5)(const QString &, const QString &, ShareFileHelper *, HookFunc5);
+
+    auto follow1 = static_cast<HookType1>(&EventSequenceManager::follow);
+    stub.set_lamda(follow1, [] { _ return true; });
+
+    auto follow2 = static_cast<HookType2>(&EventSequenceManager::follow);
+    stub.set_lamda(follow2, [] { _ return true; });
+
+    auto follow3 = static_cast<HookType3>(&EventSequenceManager::follow);
+    stub.set_lamda(follow3, [] { _ return true; });
+
+    auto follow4 = static_cast<HookType4>(&EventSequenceManager::follow);
+    stub.set_lamda(follow4, [] { _ return true; });
+
+    auto follow5 = static_cast<HookType5>(&EventSequenceManager::follow);
+    stub.set_lamda(follow5, [] { _ return true; });
+
+    EXPECT_NO_FATAL_FAILURE(ins.hookEvent());
+}

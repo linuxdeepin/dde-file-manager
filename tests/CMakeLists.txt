@@ -27,6 +27,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 link_libraries(${GTEST_LIBRARIES} pthread stdc++fs)
 
 # 打桩工具
+set(TEST_UTILS_PATH "../3rdparty/testutils")
 file(GLOB CPP_STUB_SRC "${TEST_UTILS_PATH}/cpp-stub/*.h"
     "${TEST_UTILS_PATH}/cpp-stub/*.hpp"
     "${TEST_UTILS_PATH}/stub-ext/*.h"

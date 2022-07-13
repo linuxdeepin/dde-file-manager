@@ -20,6 +20,8 @@ add_library(${PROJECT_NAME}
     ${SHARES_FILES}
 )
 
+add_library(DFMPlugin::myshares ALIAS ${PROJECT_NAME})
+
 set_target_properties(${PROJECT_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ../../)
 
 target_include_directories(${PROJECT_NAME}

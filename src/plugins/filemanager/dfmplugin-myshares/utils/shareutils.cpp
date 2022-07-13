@@ -52,10 +52,7 @@ QString ShareUtils::displayName()
 
 QUrl ShareUtils::rootUrl()
 {
-    QUrl u;
-    u.setScheme(scheme());
-    u.setPath("/");
-    return u;
+    return makeShareUrl("/");
 }
 
 QUrl ShareUtils::makeShareUrl(const QString &path)

@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2022 Uniontech Software Technology Co., Ltd.
+ * Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co., Ltd.
  *
- * Author:     lanxuesong<lanxuesong@uniontech.com>
+ * Author:     luzhen<luzhen@uniontech.com>
+ *
+ * Maintainer: luzhen<luzhen@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,29 +17,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef SHAREFILEHELPER_H
-#define SHAREFILEHELPER_H
+*/
 
-#include "dfmplugin_myshares_global.h"
+#include <gtest/gtest.h>
+#include <sanitizer/asan_interface.h>
+#include <QCoreApplication>
 
-#include <QObject>
-
-DPMYSHARES_BEGIN_NAMESPACE
-
-class ShareFileHelper : public QObject
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(ShareFileHelper)
-public:
-    static ShareFileHelper *instance();
+    QCoreApplication app(argc, argv);
 
-    // file operation
-    bool openFileInPlugin(quint64 windowId, const QList<QUrl> &urls);
+    ::testing::InitGoogleTest(&argc, argv);
 
-private:
-    explicit ShareFileHelper(QObject *parent = nullptr);
-};
-DPMYSHARES_END_NAMESPACE
+    int ret = RUN_ALL_TESTS();
 
-#endif   // SHAREFILEHELPER_H
+#ifdef ENABLE_TSAN_TOOL
+    __sanitizer_set_report_path("../../../asan_dde-file-manager.log");
+#endif
+
+    return ret;
+}

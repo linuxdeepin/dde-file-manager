@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "sharefilehelper.h"
+#include "shareutils.h"
 #include "events/shareeventscaller.h"
 
 #include <QUrl>
@@ -33,11 +34,11 @@ ShareFileHelper::ShareFileHelper(QObject *parent)
 {
 }
 
-bool ShareFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> urls)
+bool ShareFileHelper::openFileInPlugin(quint64 windowId, const QList<QUrl> &urls)
 {
     if (urls.isEmpty())
         return false;
-    if (urls.first().scheme() != scheme())
+    if (urls.first().scheme() != ShareUtils::scheme())
         return false;
 
     ShareEventsCaller::sendOpenDirs(windowId, urls, ShareEventsCaller::OpenMode::kOpenInCurrentWindow);
