@@ -1,3 +1,9 @@
+dde-file-manager (1.0.1-2) UNRELEASED; urgency=medium
+
+  * Autobuild Tag 1.0.1
+
+ -- TagBuilder <shzhuang@shzhuang-pc>  Wed, 13 Jul 2022 17:02:26 +0800
+
 dde-file-manager (1.0.1-1) stable; urgency=low
 
   * Autobuild Tag 1.0.1 
