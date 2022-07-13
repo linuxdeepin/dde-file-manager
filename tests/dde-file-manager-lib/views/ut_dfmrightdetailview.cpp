@@ -32,7 +32,7 @@ TEST(DFMRightDetailViewTest, setUrl){
     DUrl desktopUrl = DUrl::fromLocalFile(desktopPath);
 
     DUrl temp = DUrl();
-    DFMRightDetailView ddv(temp,nullptr);
+    DFMRightDetailView ddv(temp);
 
     EXPECT_TRUE(ddv.d_func()->m_url.isEmpty());
 

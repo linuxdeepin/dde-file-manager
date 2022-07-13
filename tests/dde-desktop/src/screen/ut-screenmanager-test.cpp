@@ -110,8 +110,8 @@ TEST(ScreenObject, geometry)
     ScreenManagerWayland smw;
     auto myScreens = smw.logicScreens();
     ASSERT_EQ(screenList.size(),myScreens.size());
-    int srcrenCount = myScreens.size();
-    for (int i = 0; i < srcrenCount; ++i){
+
+    for (int i = 0; i < myScreens.size(); ++i){
         ScreenPointer obj = myScreens[i];
         ScreenPointer sc = screenList[i];
         if (!sc->name().isEmpty()) {
