@@ -674,14 +674,6 @@ bool FileController::renameFile(const QSharedPointer<DFMRenameEvent> &event) con
         if (result) {
             DFMEventDispatcher::instance()->processEvent<DFMSaveOperatorEvent>(event, dMakeEventPointer<DFMRenameEvent>(nullptr, newUrl, oldUrl));
 
-            // fix bug#126693
-            // 剪贴状态下，重命名成功后，假如新文件存在剪贴记录，则清除
-            if (DFMGlobal::instance()->clipboardAction() == DFMGlobal::CutAction
-                    && DFMGlobal::instance()->clipboardFileUrlList().contains(newUrl)
-                    && newUrl != oldUrl) {
-                DFMGlobal::instance()->removeClipboardFileUrl(newUrl);
-            }
-
             //重命名成功时需要判断该文件原路径是否被添加到了剪贴版，如果是，就需要替换剪贴板路径。
             QList<QUrl> clipUrls = DFMGlobal::fetchUrlsFromClipboard();
             bool needReset = false;

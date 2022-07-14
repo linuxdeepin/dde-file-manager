@@ -653,26 +653,9 @@ QList<QUrl> DFMGlobal::clipboardFileUrlList() const
     return GlobalData::clipboardFileUrls;
 }
 
-void DFMGlobal::removeClipboardFileUrl(const QUrl &url)
-{
-    GlobalData::clipboardFileUrls.removeAll(url);
-}
-
 QList<quint64> DFMGlobal::clipboardFileInodeList() const
 {
     return  GlobalData::clipbordFileinode;
-}
-
-void DFMGlobal::removeClipboardFileInode(const QString &localPath)
-{
-    struct stat statinfo;
-    QByteArray pathArry = localPath.toUtf8();
-    std::string pathStd = pathArry.toStdString();
-    if (stat(pathStd.c_str(), &statinfo) == 0) {
-        if (GlobalData::clipbordFileinode.contains(statinfo.st_ino)) {
-            GlobalData::clipbordFileinode.removeAll(statinfo.st_ino);
-        }
-    }
 }
 
 DFMGlobal::ClipboardAction DFMGlobal::clipboardAction() const
