@@ -379,6 +379,10 @@ bool DFileManagerWindowPrivate::cdForTab(Tab *tab, const DUrl &fileUrl)
     }
 
     if (!current_view || !DFMViewManager::instance()->isSuited(fileUrl, current_view)) {
+        DFileView *fv = dynamic_cast<DFileView *>(currentView);
+        if (fv)
+            fv->cancelDrag();
+
         DFMBaseView *view = DFMViewManager::instance()->createViewByUrl(fileUrl);
         if (view) {
             viewStackLayout->addWidget(view->widget());
