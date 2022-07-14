@@ -28,7 +28,6 @@
 
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/base/schemefactory.h"
-#include "dfm-base/base/device/devicemanager.h"
 #include "dfm-base/file/local/localfileinfo.h"
 #include "dfm-base/utils/systempathutil.h"
 #include "dfm-base/utils/finallyutil.h"
@@ -230,35 +229,6 @@ void TitleBarHelper::handlePressed(QWidget *sender, const QString &text, bool *i
         qInfo() << "search :" << text;
         TitleBarEventCaller::sendSearch(sender, text);
     }
-}
-
-bool TitleBarHelper::handleConnection(QWidget *sender, const QUrl &url)
-{
-    QString &&scheme = url.scheme();
-    if (scheme != Global::Scheme::kSmb && scheme != Global::Scheme::kFtp && scheme != Global::Scheme::kSFtp)
-        return false;
-
-    // TODO(xust) see if i can find any other way to handle the choise (browse the smb shares and mount the samba directly)
-    if (scheme == Global::Scheme::kSmb && url.path() == "/")
-        return false;
-
-    if (url.host().isEmpty()) {
-        DialogManagerInstance->showErrorDialog("", QObject::tr("Mounting device error"));
-        return true;
-    }
-
-    DeviceManager::instance()->mountNetworkDeviceAsync(url.toString(), [sender](bool ok, DFMMOUNT::DeviceError err, const QString &mntPath) {
-        if (!ok && err != DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
-            DialogManagerInstance->showErrorDialogWhenOperateDeviceFailed(DFMBASE_NAMESPACE::DialogManager::kMount, err);
-        } else {
-            QUrl u;
-            u.setScheme(Global::Scheme::kFile);
-            u.setPath(mntPath);
-            TitleBarEventCaller::sendCd(sender, u);
-        }
-    });
-
-    return true;
 }
 
 void TitleBarHelper::showSettingsDialog(quint64 windowId)

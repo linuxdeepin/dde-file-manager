@@ -104,6 +104,7 @@ void WorkspaceWidget::setCurrentUrl(const QUrl &url)
         viewStackLayout->addWidget(fileView->widget());
         viewStackLayout->setCurrentWidget(fileView->widget());
         views.insert(url.scheme(), fileView);
+        fileView->setRootUrl(url);
         tabBar->setCurrentView(fileView.get());
         tabBar->setCurrentUrl(url);
         initCustomTopWidgets(url);

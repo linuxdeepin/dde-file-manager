@@ -43,6 +43,8 @@ DFMBASE_USE_NAMESPACE
 void SmbBrowser::initialize()
 {
     UrlRoute::regScheme(Global::Scheme::kSmb, "/", SmbBrowserUtils::icon(), true);
+    UrlRoute::regScheme(Global::Scheme::kFtp, "/", SmbBrowserUtils::icon(), true);
+    UrlRoute::regScheme(Global::Scheme::kSFtp, "/", SmbBrowserUtils::icon(), true);
     UrlRoute::regScheme(SmbBrowserUtils::networkScheme(), "/", SmbBrowserUtils::icon(), true);
 
     InfoFactory::regClass<SmbShareFileInfo>(Global::Scheme::kSmb);
@@ -59,7 +61,7 @@ void SmbBrowser::initialize()
 
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SmbBrowser::onWindowOpened, Qt::DirectConnection);
 
-    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerSambaPrehandler, Qt::DirectConnection);
+    connect(dpfListener, &dpf::Listener::pluginsStarted, this, &SmbBrowser::registerNetworkAccessPrehandler, Qt::DirectConnection);
 }
 
 bool SmbBrowser::start()
@@ -71,6 +73,9 @@ bool SmbBrowser::start()
 
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", SmbBrowserUtils::networkScheme());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SmbBrowserUtils::networkScheme(), SmbBrowserMenuCreator::name());
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kFtp));
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterFileView", QString(Global::Scheme::kSFtp));
 
     return true;
 }
@@ -107,27 +112,35 @@ void SmbBrowser::addNeighborToSidebar()
     dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Insert", 0, SmbBrowserUtils::netNeighborRootUrl(), map);
 }
 
-void SmbBrowser::registerSambaPrehandler()
+void SmbBrowser::registerNetworkAccessPrehandler()
 {
-    Prehandler handler { SmbBrowser::sambaPrehandler };
-    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSmb), handler).toBool()) {
+    Prehandler handler { SmbBrowser::networkAccessPrehandler };
+    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSmb), handler).toBool())
         qWarning() << "smb's prehandler has been registered";
-    }
+    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kSFtp), handler).toBool())
+        qWarning() << "sftp's prehandler has been registered";
+    if (!dpfSlotChannel->push("dfmplugin_workspace", "slot_Model_RegisterRoutePrehandle", QString(Global::Scheme::kFtp), handler).toBool())
+        qWarning() << "ftp's prehandler has been registered";
 }
 
-void SmbBrowser::sambaPrehandler(const QUrl &url, std::function<void()> after)
+void SmbBrowser::networkAccessPrehandler(quint64 winId, const QUrl &url, std::function<void()> after)
 {
-    if (url.scheme() == Global::Scheme::kSmb) {
-        DevMngIns->mountNetworkDeviceAsync(url.toString(), [after](bool ok, DFMMOUNT::DeviceError err, const QString &) {
-            if ((ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) && after) {
-                after();
-            } else if (after) {
-                DialogManager::instance()->showErrorDialog(tr("Mount device error"), "");
-                qDebug() << DeviceUtils::errMessage(err);
-            }
-        },
-                                           10000);
-    }
+    const auto &&scheme = url.scheme();
+    const QStringList kSupportedSchemes { Global::Scheme::kSmb, Global::Scheme::kFtp, Global::Scheme::kSFtp };
+    if (!kSupportedSchemes.contains(scheme))
+        return;
+
+    DevMngIns->mountNetworkDeviceAsync(url.toString(), [after, winId](bool ok, DFMMOUNT::DeviceError err, const QString &mpt) {
+        if (!mpt.isEmpty()) {
+            dpfSignalDispatcher->publish(GlobalEventType::kChangeCurrentUrl, winId, QUrl::fromLocalFile(mpt));
+        } else if ((ok || err == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) && after) {
+            after();
+        } else {
+            DialogManager::instance()->showErrorDialog(tr("Mount device error"), "");
+            qDebug() << DeviceUtils::errMessage(err);
+        }
+    },
+                                       10000);
 }
 
 QDebug operator<<(QDebug dbg, const DPSMBBROWSER_NAMESPACE::SmbShareNode &node)

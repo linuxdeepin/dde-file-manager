@@ -24,6 +24,7 @@
 
 #include "models/fileviewmodel.h"
 #include "views/fileviewitem.h"
+#include "views/fileview.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/traversaldirthread.h"
 
@@ -118,6 +119,7 @@ class FileViewModelPrivate : public QObject
     QTimer updateTimer;
 
     FileViewModel::State currentState = FileViewModel::Idle;
+    FileView *view { nullptr };
 
 public:
     explicit FileViewModelPrivate(FileViewModel *qq);

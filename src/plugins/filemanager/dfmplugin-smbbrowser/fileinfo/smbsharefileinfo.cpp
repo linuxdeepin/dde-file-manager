@@ -55,7 +55,7 @@ QIcon SmbShareFileInfo::fileIcon()
 
 bool SmbShareFileInfo::isDir() const
 {
-    return false;
+    return true;
 }
 
 bool SmbShareFileInfo::isReadable() const

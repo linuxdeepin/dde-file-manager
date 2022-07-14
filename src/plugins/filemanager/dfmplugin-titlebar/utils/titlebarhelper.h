@@ -46,7 +46,6 @@ public:
     static QList<CrumbData> tansToCrumbDataList(const QList<QVariantMap> &mapGroup);
     static bool displayIcon();
     static void handlePressed(QWidget *sender, const QString &text, bool *isSearch = nullptr);
-    static bool handleConnection(QWidget *sender, const QUrl &url);
 
     static void showSettingsDialog(quint64 windowId);
     static void showConnectToServerDialog(quint64 windowId);

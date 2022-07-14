@@ -79,8 +79,6 @@ FileView::FileView(const QUrl &url, QWidget *parent)
     initializeDelegate();
     initializeStatusBar();
     initializeConnect();
-
-    setRootUrl(url);
 }
 
 FileView::~FileView()

@@ -28,10 +28,11 @@
 #include "events/workspaceeventsequence.h"
 #include "filesortfilterproxymodel.h"
 
+#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/fileutils.h"
 #include "dfm-base/utils/sysinfoutils.h"
-#include "dfm-base/dfm_global_defines.h"
 #include "dfm-base/utils/universalutils.h"
+#include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
 #include <dfm-framework/event/event.h>
 
@@ -183,6 +184,7 @@ FileViewModel::FileViewModel(QAbstractItemView *parent)
     : QAbstractItemModel(parent), d(new FileViewModelPrivate(this))
 {
     connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestFileUpdate, this, &FileViewModel::onFileUpdated);
+    d->view = dynamic_cast<FileView *>(parent);
 }
 
 FileViewModel::~FileViewModel()
@@ -402,9 +404,8 @@ void FileViewModel::fetchMore(const QModelIndex &parent)
     auto prehandler = WorkspaceHelper::instance()->viewRoutePrehandler(url.scheme());
     if (prehandler) {
         QPointer<FileViewModel> guard(this);
-        prehandler(url, [=]() {
-            if (guard)
-                this->traversCurrDir(); });
+        quint64 winId = DFMBASE_NAMESPACE::FileManagerWindowsManager::instance().findWindowId(d->view);
+        prehandler(winId, url, [=]() { if (guard) this->traversCurrDir(); });
     } else {
         traversCurrDir();
     }
