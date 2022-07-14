@@ -38,11 +38,15 @@
 #include "dfm-base/base/device/deviceproxymanager.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+using CreateTopWidgetCallback = std::function<QWidget *()>;
+using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
+Q_DECLARE_METATYPE(CreateTopWidgetCallback);
+Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
 Q_DECLARE_METATYPE(QList<QVariantMap> *)
 
-using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
+//using CreateTopWidgetCallback = std::function<dfmplugin_optical::OpticalMediaWidget *()>;
 
 using namespace dfmplugin_optical;
 
@@ -125,25 +129,27 @@ void Optical::addFileOperations()
 
 void Optical::addCustomTopWidget()
 {
-    QVariantMap info;
-
-    info["Property_Key_Scheme"] = Global::Scheme::kBurn;
-    info["Property_Key_KeepShow"] = false;
-
-    info["Property_Key_CreateTopWidgetCallback"] = QVariant([]() {
+    CreateTopWidgetCallback createCallback { []() {
         return new OpticalMediaWidget;
-    });
+    } };
 
-    info["Property_Key_ShowTopWidgetCallback"] = QVariant([](QWidget *w, const QUrl &url) {
+    ShowTopWidgetCallback showCallback { [](QWidget *w, const QUrl &url) {
         bool ret { true };
         OpticalMediaWidget *mediaWidget = qobject_cast<OpticalMediaWidget *>(w);
         if (mediaWidget)
             ret = mediaWidget->updateDiscInfo(url);
 
         return ret;
-    });
+    } };
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", info);
+    QVariantMap map {
+        { "Property_Key_Scheme", Global::Scheme::kBurn },
+        { "Property_Key_KeepShow", false },
+        { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
+        { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
 }
 
 void Optical::addDelegateSettings()

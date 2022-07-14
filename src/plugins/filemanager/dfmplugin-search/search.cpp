@@ -37,6 +37,10 @@
 #include "dfm-base/base/urlroute.h"
 #include "dfm-base/widgets/dfmwindow/filemanagerwindowsmanager.h"
 
+using CreateTopWidgetCallback = std::function<QWidget *()>;
+using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
+Q_DECLARE_METATYPE(CreateTopWidgetCallback);
+Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(QList<QVariantMap> *);
 Q_DECLARE_METATYPE(QString *);
 Q_DECLARE_METATYPE(QVariant *)
@@ -97,13 +101,17 @@ void Search::regSearchToWorkspace()
     dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterMenuScene", SearchHelper::scheme(), SearchMenuCreator::name());
     dpfSlotChannel->push("dfmplugin_workspace", "slot_View_SetDefaultViewMode", SearchHelper::scheme(), Global::ViewMode::kListMode);
 
-    QVariantMap info;
-    info["Property_Key_Scheme"] = SearchHelper::scheme();
-    info["Property_Key_KeepShow"] = false;
+    CreateTopWidgetCallback createCallback { []() { return new AdvanceSearchBar(); } };
+    ShowTopWidgetCallback showCallback { SearchHelper::showTopWidget };
 
-    info["Property_Key_CreateTopWidgetCallback"] = QVariant([]() { return new AdvanceSearchBar(); });
-    info["Property_Key_ShowTopWidgetCallback"] = &SearchHelper::showTopWidget;
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", info);
+    QVariantMap map {
+        { "Property_Key_Scheme", SearchHelper::scheme() },
+        { "Property_Key_KeepShow", false },
+        { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
+        { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
+    };
+
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
 }
 
 void Search::bindEvents()

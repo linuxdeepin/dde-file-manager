@@ -33,6 +33,10 @@
 
 using BasicViewFieldFunc = std::function<QMap<QString, QMultiMap<QString, QPair<QString, QString>>>(const QUrl &url)>;
 using ContextMenuCallback = std::function<void(quint64 windowId, const QUrl &url, const QPoint &globalPos)>;
+using CreateTopWidgetCallback = std::function<QWidget *()>;
+using ShowTopWidgetCallback = std::function<bool(QWidget *, const QUrl &)>;
+Q_DECLARE_METATYPE(CreateTopWidgetCallback);
+Q_DECLARE_METATYPE(ShowTopWidgetCallback);
 Q_DECLARE_METATYPE(ContextMenuCallback)
 Q_DECLARE_METATYPE(Qt::DropAction *)
 Q_DECLARE_METATYPE(QList<QUrl> *)
@@ -137,12 +141,15 @@ void Trash::addFileOperations()
 
 void Trash::addCustomTopWidget()
 {
-    QVariantMap info;
+    CreateTopWidgetCallback createCallback { TrashHelper::createEmptyTrashTopWidget };
+    ShowTopWidgetCallback showCallback { TrashHelper::showTopWidget };
 
-    info["Property_Key_Scheme"] = TrashHelper::scheme();
-    info["Property_Key_KeepShow"] = false;
-    info["Property_Key_CreateTopWidgetCallback"] = &TrashHelper::createEmptyTrashTopWidget;
-    info["Property_Key_ShowTopWidgetCallback"] = &TrashHelper::showTopWidget;
+    QVariantMap map {
+        { "Property_Key_Scheme", TrashHelper::scheme() },
+        { "Property_Key_KeepShow", false },
+        { "Property_Key_CreateTopWidgetCallback", QVariant::fromValue(createCallback) },
+        { "Property_Key_ShowTopWidgetCallback", QVariant::fromValue(showCallback) }
+    };
 
-    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", info);
+    dpfSlotChannel->push("dfmplugin_workspace", "slot_RegisterCustomTopWidget", map);
 }
