@@ -20,54 +20,64 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 #ifndef WATERMASKFRAME_H
 #define WATERMASKFRAME_H
 
 #include <QFrame>
-#include <QJsonObject>
-#include <QLabel>
-
-enum ActiveState {
-    Unauthorized = 0,  //未授权
-    Authorized,  //已授权
-    AuthorizedLapse,  //授权失效
-    TrialAuthorized, //试用期已授权
-    TrialExpired //试用期已过期
-};
+#include <QMap>
 
 class QHBoxLayout;
+class QLabel;
+class QJsonObject;
 class WaterMaskFrame : public QFrame
 {
     Q_OBJECT
 public:
     explicit WaterMaskFrame(const QString& fileName, QWidget *parent = nullptr);
     ~WaterMaskFrame();
-    bool checkConfigFile(const QString& fileName);
-    void loadConfig(const QString& fileName);
-    void initUI();
-
-private:
-    bool isNeedState();
-    bool parseJson(QString key);
-
 public slots:
+    void refresh();
     void updatePosition();
-    void updateAuthorizationState();
-private slots:
-    void onChangeAuthorizationLabel(int);
+protected slots:
+    void stateChanged(int state, int prop);
+protected:
+    struct ConfigInfo
+    {
+        bool valid = false;
+        QString maskLogoUri;
+        int maskLogoWidth = 232;
+        int maskLogoHeight = 46;
+        int maskTextWidth = 100;
+        int maskTextHeight = 30;
+        int maskWidth = maskLogoWidth + maskTextWidth;
+        int maskHeight = 46;
+        int maskLogoTextSpacing = 0;
+        int xRightBottom = 60;
+        int yRightBottom = 98;
+    };
+    QMap<QString, ConfigInfo> parseJson(QJsonObject *);
+    static QPixmap maskPixmap(const QString &uri, const QSize &size, qreal pixelRatio);
+protected:
+    static bool showLicenseState();
+    static void addWidget(QHBoxLayout *layout, QWidget *wid, const QString &align);
+    static bool usingCn();
+    void loadConfig();
+    void update(const ConfigInfo &, bool normal);
+    void setTextAlign(const QString &maskTextAlign);
 private:
-    QString m_configFile;
-    QJsonObject m_configs;
-    QLabel* m_logoLabel = nullptr;
-    QLabel* m_textLabel = nullptr;
-    QHBoxLayout *m_mainLayout = nullptr;
-    bool m_isMaskAlwaysOn = false;
-    int m_xRightBottom;
-    int m_yRightBottom;
-    int m_maskWidth;
-    int m_maskHeight;
+    ConfigInfo defaultCfg(QJsonObject *);
+    ConfigInfo govCfg(QJsonObject *, bool cn);
+    ConfigInfo entCfg(QJsonObject *, bool cn);
+private:
+    QString configFile;
+    QMap<QString, ConfigInfo> configInfos;
+    QLabel *logoLabel = nullptr;
+    QLabel *textLabel = nullptr;
+    bool maskAlwaysOn = true;
+    int curState = -1;
+    int curProperty = -1;
+    QSize curMaskSize = QSize(0, 0);
+    QPoint curRightBottom = QPoint(0, 0);
 };
 
 #endif // WATERMASKFRAME_H
