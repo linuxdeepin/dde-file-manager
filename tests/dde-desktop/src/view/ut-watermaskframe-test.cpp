@@ -9,26 +9,26 @@
 #include "stubext.h"
 #include "config/config.h"
 #include "dbus/licenceInterface.h"
+
+#include <QLabel>
 #include <QLayout>
 #include <QTest>
 
 using namespace testing;
 
-TEST(WaterMaskFrame,check_config_file_not_existed)
+TEST(WaterMaskFrame, loadConfig_empty)
 {
     WaterMaskFrame wid("");
-    EXPECT_EQ(false,wid.checkConfigFile(QString("/tmp/%0/xx.xx").arg(QUuid::createUuid().toString())));
+    EXPECT_TRUE(wid.configFile.isEmpty());
+    wid.loadConfig();
+
+    EXPECT_TRUE(wid.configInfos.isEmpty());
+
+    qApp->processEvents();
 }
 
-TEST(WaterMaskFrame,check_config_file_empty)
+TEST(WaterMaskFrame, loadConfig_existed)
 {
-    WaterMaskFrame wid("");
-    EXPECT_EQ(false,wid.checkConfigFile(""));
-}
-
-TEST(WaterMaskFrame,check_config_file_existed)
-{
-    WaterMaskFrame wid("/usr/share/deepin/dde-desktop-watermask.json");
     const QString dirPath("/tmp/ut-dde-desktop/watermask");
     QDir dir(dirPath);
     dir.mkpath(dirPath);
@@ -36,98 +36,256 @@ TEST(WaterMaskFrame,check_config_file_existed)
     QSaveFile file(filePath);
     file.open(QSaveFile::WriteOnly);
     file.commit();
+    WaterMaskFrame wid(filePath);
 
-    EXPECT_EQ(true,wid.checkConfigFile(filePath));
+    EXPECT_EQ(wid.configFile, filePath);
+    wid.loadConfig();
+
+    ASSERT_EQ(wid.configInfos.size(), 1);
+
+    auto cfg = wid.configInfos.first();
+    EXPECT_FALSE(cfg.valid);
 }
 
-TEST(WaterMaskFrame, test_updateAuthorizationState)
+TEST(WaterMaskFrame, usingcn)
 {
-    WaterMaskFrame wid("/usr/share/deepin/dde-desktop-watermask.json");
-    wid.updateAuthorizationState();
-}
-
-TEST(WaterMaskFrame, test_parseJson)
-{
-    bool ret;
-    WaterMaskFrame wid("/usr/share/deepin/dde-desktop-watermask.json");
-    ret = wid.parseJson("1");
-    EXPECT_FALSE(ret);
-    wid.m_configs.insert("1", QJsonValue("test"));
-    ret = wid.parseJson("1");
-    EXPECT_TRUE(ret);
-}
-
-TEST(WaterMaskFrame, test_initui)
-{
-    WaterMaskFrame* wid1 = new WaterMaskFrame("/home/xxxxxxx");
-    ASSERT_EQ(wid1->m_mainLayout, nullptr);
-    delete wid1;
-    WaterMaskFrame* wid2 = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
-    ASSERT_NE(wid2->m_mainLayout, nullptr);
-    delete wid2;
-}
-
-TEST(WaterMaskFrame, test_initui_extend)
-{
-    stub_ext::StubExt tub;
-    tub.set_lamda(ADDR(WaterMaskFrame, initUI), [](){});
-
-    WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
-
-    tub.set_lamda(ADDR(Config, getConfig), [](){return 0;});
-    tub.set_lamda(ADDR(WaterMaskFrame, isNeedState), [](){return true;});
-    bool done = false;
-    tub.set_lamda(ADDR(WaterMaskFrame, onChangeAuthorizationLabel), [&wid, &done](WaterMaskFrame *obj, int){
-        if (obj == wid)
-            done = true;
+    stub_ext::StubExt stub;
+    QLocale l;
+    stub.set_lamda(ADDR(QLocale, system), [&l](){
+        return l;
     });
-    tub.reset(ADDR(WaterMaskFrame, initUI));
-    wid->initUI();
 
-    QTest::qWaitFor([&done](){return done;}, 3000);
-    EXPECT_TRUE(done);
-    EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
-    delete wid;
-    wid = nullptr;
+    l = QLocale("zh_CN");
+    EXPECT_TRUE(WaterMaskFrame::usingCn());
 
-    tub.set_lamda(ADDR(WaterMaskFrame, initUI), [](){});
-    tub.set_lamda(ADDR(WaterMaskFrame, isNeedState), [](){return false;});
-    bool getState = false;
-    tub.set_lamda(ADDR(DeepinLicenseHelper, delayGetState), [&getState](){getState = true;});
+    l = QLocale("zh_TW");
+    EXPECT_TRUE(WaterMaskFrame::usingCn());
 
-    wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
-    tub.reset(ADDR(WaterMaskFrame, initUI));
-    wid->initUI();
+    l = QLocale("zh_HK");
+    EXPECT_TRUE(WaterMaskFrame::usingCn());
 
-    QTest::qWaitFor([&getState](){return getState;}, 1000);
-    EXPECT_FALSE(getState);
-    EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
-    delete wid;
-    wid = nullptr;
+    l = QLocale("ug_CN");
+    EXPECT_TRUE(WaterMaskFrame::usingCn());
+
+    l = QLocale("bo_CN");
+    EXPECT_TRUE(WaterMaskFrame::usingCn());
+
+    l = QLocale("en_US");
+    EXPECT_FALSE(WaterMaskFrame::usingCn());
+
+    l = QLocale("en_GB");
+    EXPECT_FALSE(WaterMaskFrame::usingCn());
 }
 
-TEST(WaterMaskFrame, test_onChangeAuthorizationLabel)
+using namespace testing;
+namespace  {
+    class WaterMaskFrameTest : public Test
+    {
+    public:
+        WaterMaskFrameTest() : Test() {}
+
+        virtual void SetUp() override {
+            if (isValid())
+                p = new WaterMaskFrame(path);
+        }
+
+        virtual void TearDown() override {
+            delete  p;
+        }
+        bool isValid() {
+            QFile file(path);
+            if (file.open(QFile::ReadOnly)) {
+                QString datas = file.readAll();
+                file.close();
+                return datas.contains("maskLogoUri")
+                        && datas.contains("maskLogoGovernmentCnUri")
+                        && datas.contains("maskLogoGovernmentEnUri")
+                        && datas.contains("maskLogoEnterpriseCnUri")
+                        && datas.contains("maskLogoEnterpriseEnUri");
+            }
+            return false;
+        }
+
+        const QString path = "/usr/share/deepin/dde-desktop-watermask.json";
+        WaterMaskFrame *p = nullptr;
+    };
+}
+
+TEST_F(WaterMaskFrameTest, loadConfig_system)
 {
-    WaterMaskFrame* wid = new WaterMaskFrame("/usr/share/deepin/dde-desktop-watermask.json");
+    if (!p)
+        return;
+    p->loadConfig();
 
-    int ret = Unauthorized;
-    wid->onChangeAuthorizationLabel(ret);
-    EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+    EXPECT_TRUE(p->configInfos.contains("default"));
+    WaterMaskFrame::ConfigInfo cfg = p->configInfos.value("default");
+    EXPECT_EQ(cfg.maskLogoUri.isEmpty(), !cfg.valid);
 
-    ret = Authorized;
-    wid->onChangeAuthorizationLabel(ret);
-    EXPECT_TRUE(wid->m_textLabel->text().isEmpty());
+    EXPECT_TRUE(p->configInfos.contains("gov-en"));
+    cfg = p->configInfos.value("gov-en");
+    EXPECT_EQ(cfg.maskLogoUri.isEmpty(), !cfg.valid);
 
-    ret = AuthorizedLapse;
-    wid->onChangeAuthorizationLabel(ret);
-    EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+    EXPECT_TRUE(p->configInfos.contains("gov-cn"));
+    cfg = p->configInfos.value("gov-cn");
+    EXPECT_EQ(cfg.maskLogoUri.isEmpty(), !cfg.valid);
 
-    ret = TrialAuthorized;
-    wid->onChangeAuthorizationLabel(ret);
-    EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+    EXPECT_TRUE(p->configInfos.contains("ent-en"));
+    cfg = p->configInfos.value("ent-en");
+    EXPECT_EQ(cfg.maskLogoUri.isEmpty(), !cfg.valid);
 
-    ret = TrialExpired;
-    wid->onChangeAuthorizationLabel(ret);
-    EXPECT_FALSE(wid->m_textLabel->text().isEmpty());
+    EXPECT_TRUE(p->configInfos.contains("ent-cn"));
+    cfg = p->configInfos.value("ent-cn");
+    EXPECT_EQ(cfg.maskLogoUri.isEmpty(), !cfg.valid);
+}
 
+TEST_F(WaterMaskFrameTest, update)
+{
+    if (!p)
+        return;
+
+    WaterMaskFrame::ConfigInfo cfg;
+    cfg.maskLogoUri = "/usr/share/deepin/uos_logo.svg";
+    cfg.valid = true;
+
+    p->textLabel->setText("text");
+
+    p->update(cfg, true);
+
+    EXPECT_TRUE(p->textLabel->text().isEmpty());
+}
+
+
+TEST_F(WaterMaskFrameTest, stateChanged)
+{
+    if (!p)
+        return;
+
+    stub_ext::StubExt stub;
+    WaterMaskFrame::ConfigInfo cfg;
+    bool normal = false;;
+    stub.set_lamda(ADDR(WaterMaskFrame, update), [&cfg, &normal](WaterMaskFrame *self, const WaterMaskFrame::ConfigInfo &c, bool nor){
+        normal = nor;
+        cfg = c;
+    });
+
+    bool show = true;
+    stub.set_lamda(ADDR(WaterMaskFrame, showLicenseState), [&show](){
+        return show;
+    });
+
+    bool cn = true;
+    stub.set_lamda(ADDR(WaterMaskFrame, usingCn), [&cn](){
+        return cn;
+    });
+
+    p->textLabel->clear();
+    p->stateChanged(0, 1);
+    EXPECT_EQ(p->curState, 0);
+    EXPECT_EQ(p->curProperty, 1);
+    EXPECT_TRUE(normal);
+    EXPECT_TRUE(cfg.maskLogoUri.isEmpty());
+    EXPECT_EQ(p->textLabel->text(), "Not authorized");
+
+    {
+        WaterMaskFrame::ConfigInfo c;
+        c.valid = true;
+        c.maskLogoUri = "1";
+        p->configInfos.insert("default", c);
+    }
+
+    p->stateChanged(1, 1);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 1);
+    EXPECT_TRUE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "1");
+    EXPECT_TRUE(p->textLabel->text().isEmpty());
+
+    {
+        WaterMaskFrame::ConfigInfo c;
+        c.valid = true;
+        c.maskLogoUri = "gov-cn";
+        p->configInfos.insert("gov-cn", c);
+    }
+
+    p->stateChanged(1, 1);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 1);
+    EXPECT_FALSE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "gov-cn");
+
+    p->stateChanged(1, 2);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 2);
+    EXPECT_TRUE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "1");
+
+    {
+        WaterMaskFrame::ConfigInfo c;
+        c.valid = true;
+        c.maskLogoUri = "ent-cn";
+        p->configInfos.insert("ent-cn", c);
+    }
+
+    p->stateChanged(1, 2);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 2);
+    EXPECT_FALSE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "ent-cn");
+
+    // en
+    cn = false;
+
+    p->stateChanged(1, 1);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 1);
+    EXPECT_TRUE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "1");
+
+    {
+        WaterMaskFrame::ConfigInfo c;
+        c.valid = true;
+        c.maskLogoUri = "gov-en";
+        p->configInfos.insert("gov-en", c);
+    }
+
+    p->stateChanged(1, 1);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 1);
+    EXPECT_FALSE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "gov-en");
+
+    p->stateChanged(1, 2);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 2);
+    EXPECT_TRUE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "1");
+
+    {
+        WaterMaskFrame::ConfigInfo c;
+        c.valid = true;
+        c.maskLogoUri = "ent-en";
+        p->configInfos.insert("ent-en", c);
+    }
+
+    p->stateChanged(1, 2);
+    EXPECT_EQ(p->curState, 1);
+    EXPECT_EQ(p->curProperty, 2);
+    EXPECT_FALSE(normal);
+    EXPECT_EQ(cfg.maskLogoUri, "ent-en");
+
+    //
+    show = false;
+    p->textLabel->clear();
+    p->stateChanged(0, 0);
+    EXPECT_TRUE(p->textLabel->text().isEmpty());
+
+    p->stateChanged(2, 0);
+    EXPECT_TRUE(p->textLabel->text().isEmpty());
+
+    p->stateChanged(4, 0);
+    EXPECT_TRUE(p->textLabel->text().isEmpty());
+
+    show = true;
+    p->stateChanged(3, 0);
+    EXPECT_EQ(p->textLabel->text(), "In trial period");
 }
