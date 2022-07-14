@@ -103,6 +103,19 @@ bool VaultDbusResponse::transparentUnlockVault()
                        QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
             return true;
         } else {
+            if (result == 1) {
+                QProcess process;
+                QString fusermountBinary = QStandardPaths::findExecutable("fusermount");
+                process.start(fusermountBinary, {"-zu", QString(VAULT_BASE_PATH) + QDir::separator() + QString(VAULT_DECRYPT_DIR_NAME)});
+                process.waitForStarted();
+                process.waitForFinished();
+                process.terminate();
+                if (process.exitStatus() == QProcess::NormalExit && process.exitCode() == 0) {
+                    qInfo() << "Vault: fusermount success!";
+                } else {
+                    qInfo() << "Vault: fusemount failed!";
+                }
+            }
             qWarning() << "Vault: Unlock vault failed, error code: " << result;
         }
     }
