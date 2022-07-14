@@ -970,54 +970,84 @@ QModelIndex CollectionView::indexAt(const QPoint &point) const
 
 QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
-    auto findAvailableRowBackward = [=](int row) {
-        if (row >= 0)
-            --row;
-        return row;
-    };
+    if (d->provider->items(d->id).isEmpty())
+        return QModelIndex();
 
-    auto findAvailableRowForward = [=](int row) {
-        if (row < d->rowCount)
-            ++row;
-        return row;
-    };
-
-    QModelIndex current = currentIndex();
+    const QModelIndex &&current = currentIndex();
     if (!current.isValid()) {
-        int row = findAvailableRowForward(0);   // select first
-        if (-1 == row || d->provider->items(d->id).isEmpty())
-            return QModelIndex();
         const QUrl &url = d->provider->items(d->id).first();
         return model()->index(url);
     }
 
+    auto currentUrl = model()->fileUrl(current);
+    auto node = d->provider->items(d->id).indexOf(currentUrl);
+    if (Q_UNLIKELY(-1 == node)) {
+        qWarning() << "current url not belong to me." << currentUrl << d->provider->items(d->id);
+        return QModelIndex();
+    }
+
+    // todo(wangcl) hand modifiers(ctrl and shift)
+
     switch (cursorAction) {
+    case MovePrevious :
     case MoveLeft : {
-        // todo:通过current从model中获取url，再从gridManager中获取该url的上一个url，再从model中获取对应的index
-        return QModelIndex();
+
+        if (node > 0) {
+            --node;
+        } else {
+            // first index
+            return current;
+        }
     }
+        break;
+    case MoveNext :
     case MoveRight : {
-        // todo:通过current从model中获取url，再从gridManager中获取该url的下一个url，再从model中获取对应的index
-        return QModelIndex();
+
+        if (node < d->provider->items(d->id).count() - 1) {
+            ++node;
+        } else {
+            // last index
+            return current;
+        }
     }
-    case MoveUp :
-    case MovePrevious : {
-        // todo:通过current从model中获取url,再从gridManager中获取该url的网格位置,获取其上一行的位置处的url,再从model获取该url对应的index
-        return QModelIndex();
+        break;
+    case MoveUp : {
+
+        if (node > d->columnCount) {
+            // not first row
+            node -= d->columnCount;
+        } else {
+            // first row
+            return current;
+        }
     }
-    case MoveDown :
-    case MoveNext : {
-        // todo:通过current从model中获取url,再从gridManager中获取该url的网格位置,获取其下一行的位置处的url,再从model获取该url对应的index
-        return QModelIndex();
+        break;
+    case MoveDown : {
+
+        if (node < d->provider->items(d->id).count() - d->columnCount) {
+            node += d->columnCount;
+        } else {
+            auto &&pos = d->nodeToPos(node);
+            auto lastNode = d->provider->items(d->id).count() - 1;
+            auto &&lastPos = d->nodeToPos(lastNode);
+            if (pos.x() != lastPos.x()) {
+                // there are some files in the next row,select last file
+                node = lastNode;
+            } else {
+                // ignore
+                return current;
+            }
+        }
     }
+        break;
     case MoveHome : {
-        // todo:返回第一个
-        return QModelIndex();
+        node = 0;
     }
+        break;
     case MoveEnd : {
-        // todo:返回最后一个
-        return QModelIndex();
+        node = d->provider->items(d->id).count() - 1;
     }
+        break;
     case MovePageUp : {
         // todo:返回上一页的第一个
         // todo:shift?范围选择
@@ -1029,6 +1059,11 @@ QModelIndex CollectionView::moveCursor(CursorAction cursorAction, Qt::KeyboardMo
         return QModelIndex();
     }
     }
+
+    auto &&afterUrl = d->provider->items(d->id).at(node);
+    auto &&afterIndex = model()->index(afterUrl);
+
+    return afterIndex;
 }
 
 int CollectionView::horizontalOffset() const
@@ -1181,6 +1216,14 @@ void CollectionView::resizeEvent(QResizeEvent *event)
     } else {
         d->needUpdateVerticalBarRange = true;
     }
+}
+
+void CollectionView::keyPressEvent(QKeyEvent *event)
+{
+    QAbstractItemView::keyPressEvent(event);
+
+    // must accept event
+    event->accept();
 }
 
 void CollectionView::startDrag(Qt::DropActions supportedActions)
