@@ -2216,8 +2216,12 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
         bool findOldPos = false;
         QPoint oldPos = QPoint(-1, -1);
 
-        if (GridManager::instance()->contains(m_screenNum, oriUrl.toString()) && !oriUrl.fileName().isEmpty()) {
-            oldPos = GridManager::instance()->position(m_screenNum, oriUrl.toString());
+        QPair<int, QPoint> oriUrlPos;
+        QPair<int, QPoint> dstUrlPos;
+        auto findOld = GridManager::instance()->find(oriUrl.toString(), oriUrlPos);
+
+        if (findOld && !oriUrl.fileName().isEmpty()) {
+            oldPos = oriUrlPos.second;
             findOldPos = true;
         }
 
@@ -2226,7 +2230,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
             findNewPos = true;
         }
 
-        findNewPos &= !GridManager::instance()->contains(m_screenNum, dstUrl.toString());
+        findNewPos &= !GridManager::instance()->find(dstUrl.toString(), dstUrlPos);
 
         if (!findNewPos) {
             Q_EMIT itemDeleted(oriUrl);
@@ -2244,7 +2248,7 @@ bool CanvasGridView::setCurrentUrl(const DUrl &url)
                     if (GridManager::instance()->autoArrange())
                         this->delayArrage();
                 } else
-                    GridManager::instance()->add(m_screenNum, oldPos, dstUrl.toString());
+                    GridManager::instance()->add(oriUrlPos.first, oldPos, dstUrl.toString());
 
                 if (GridManager::instance()->autoMerge())
                     this->delayModelRefresh();
