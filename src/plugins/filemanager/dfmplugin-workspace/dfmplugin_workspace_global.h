@@ -29,6 +29,7 @@
 
 #include <QList>
 #include <QDir>
+#include <QVariantMap>
 
 namespace dfmbase {
 class AbstractFileInfo;

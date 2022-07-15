@@ -3,8 +3,48 @@
 // if setting new definition, please use:
 //  #undef DFM_PLUGIN_PATH
 //  #define DFM_PLUGIN_PATH xxx
-#ifndef DFM_PLUGIN_PATH
-#define DFM_PLUGIN_PATH "${DFM_PLUGIN_DIR}"
+
+#ifndef DFM_PLUGIN_COMMON_CORE_DIR
+#    define DFM_PLUGIN_COMMON_CORE_DIR "${DFM_PLUGIN_COMMON_CORE_DIR}"
 #elif
-    #warning "cmake unseting definition DFM_PLUGIN_PATH"
+#    warning "cmake unseting definition DFM_PLUGIN_COMMON_CORE_DIR"
+#endif
+
+#ifndef DFM_PLUGIN_DESKTOP_CORE_DIR
+#    define DFM_PLUGIN_DESKTOP_CORE_DIR "${DFM_PLUGIN_DESKTOP_CORE_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_PLUGIN_DESKTOP_CORE_DIR"
+#endif
+
+#ifndef DFM_PLUGIN_FILEMANAGER_CORE_DIR
+#    define DFM_PLUGIN_FILEMANAGER_CORE_DIR "${DFM_PLUGIN_FILEMANAGER_CORE_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_PLUGIN_FILEMANAGER_CORE_DIR"
+#endif
+
+#ifndef DFM_PLUGIN_COMMON_EDGE_DIR
+#    define DFM_PLUGIN_COMMON_EDGE_DIR "${DFM_PLUGIN_COMMON_EDGE_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_PLUGIN_COMMON_EDGE_DIR"
+#endif
+
+#ifndef DFM_PLUGIN_DAEMON_EDGE_DIR
+#    define DFM_PLUGIN_DAEMON_EDGE_DIR "${DFM_PLUGIN_DAEMON_EDGE_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_PLUGIN_DAEMON_EDGE_DIR"
+#endif
+
+#ifndef DFM_PLUGIN_DESKTOP_EDGE_DIR
+#    define DFM_PLUGIN_DESKTOP_EDGE_DIR "${DFM_PLUGIN_DESKTOP_EDGE_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_PLUGIN_DESKTOP_EDGE_DIR"
+#endif
+
+#ifndef DFM_PLUGIN_FILEMANAGER_EDGE_DIR
+#    define DFM_PLUGIN_FILEMANAGER_EDGE_DIR "${DFM_PLUGIN_FILEMANAGER_EDGE_DIR}"
+#elif
+#    warning "cmake unseting definition DFM_PLUGIN_FILEMANAGER_EDGE_DIR"
+#endif
+#ifndef VERSION
+#    define VERSION "@VERSION@"
 #endif

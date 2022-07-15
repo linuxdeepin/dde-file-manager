@@ -40,7 +40,7 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_DIR}
+    ${DFM_PLUGIN_FILEMANAGER_CORE_DIR}
 )
 
 set(AppEntryInstallDir "${CMAKE_INSTALL_PREFIX}/share/dde-file-manager/extensions/appEntry")

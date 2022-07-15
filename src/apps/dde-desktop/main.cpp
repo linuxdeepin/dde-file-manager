@@ -63,17 +63,19 @@ static bool pluginsLoad()
     DPF_NAMESPACE::LifeCycle::addPluginIID(kFmPluginInterface);
     DPF_NAMESPACE::LifeCycle::addPluginIID(kCommonPluginInterface);
 
-    QDir dir(qApp->applicationDirPath());
-    QString pluginsDir;
-    if (!dir.cd("../../plugins/")) {
-        qInfo() << QString("Path does not exist, use path : %1").arg(DFM_PLUGIN_PATH);
-        pluginsDir = DFM_PLUGIN_PATH;
+    QString pluginsDir(qApp->applicationDirPath() + "/../../plugins");
+    QStringList pluginsDirs;
+    if (!QDir(pluginsDir).exists()) {
+        qInfo() << QString("Path does not exist, use path : %1").arg(DFM_PLUGIN_COMMON_CORE_DIR);
+        pluginsDirs << QString(DFM_PLUGIN_COMMON_CORE_DIR)
+                    << QString(DFM_PLUGIN_DESKTOP_CORE_DIR)
+                    << QString(DFM_PLUGIN_COMMON_EDGE_DIR)
+                    << QString(DFM_PLUGIN_DESKTOP_EDGE_DIR);
     } else {
-        pluginsDir = dir.absolutePath();
+        pluginsDirs.push_back(pluginsDir);
     }
-    qDebug() << "using plugins dir:" << pluginsDir;
-
-    DPF_NAMESPACE::LifeCycle::setPluginPaths({ pluginsDir });
+    qDebug() << "using plugins dir:" << pluginsDirs;
+    DPF_NAMESPACE::LifeCycle::setPluginPaths(pluginsDirs);
 
     qInfo() << "Depend library paths:" << DApplication::libraryPaths();
     qInfo() << "Load plugin paths: " << dpf::LifeCycle::pluginPaths();

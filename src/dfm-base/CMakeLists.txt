@@ -247,16 +247,14 @@ install(DIRECTORY
     PATTERN "resources" EXCLUDE  
 )
 
-# schemas
-FILE(GLOB SCHEMA_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/gschema/*.xml"
-)
 
-install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
-install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
 
 set(AssetsPath ../../assets)
 set(ShareDir ${CMAKE_INSTALL_PREFIX}/share/dde-file-manager)
+
+FILE(GLOB SCHEMA_FILES ${AssetsPath}/gschema/*)
+install(FILES ${SCHEMA_FILES} DESTINATION share/glib-2.0/schemas)
+install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
 
 set(Mimetypes "${ShareDir}/mimetypes")
 FILE(GLOB MIMETYPE_FILES ${AssetsPath}/mimetypes/*)
@@ -265,6 +263,16 @@ install(FILES ${MIMETYPE_FILES} DESTINATION ${Mimetypes})
 set(MimetypeAssociations "${ShareDir}/mimetypeassociations")
 FILE(GLOB MIMETYPEASSOCIATIONS_FILES ${AssetsPath}/mimetypeassociations/*)
 install(FILES ${MIMETYPEASSOCIATIONS_FILES} DESTINATION ${MimetypeAssociations})
+
+set(Templates "${ShareDir}/templates")
+FILE(GLOB TEMPLATES_FILES ${AssetsPath}/templates/*)
+install(FILES ${TEMPLATES_FILES} DESTINATION ${Templates})
+
+set(OemMenuDir "${CMAKE_INSTALL_PREFIX}/share/deepin/dde-file-manager/oem-menuextensions")
+install(FILES ${AssetsPath}/.readme DESTINATION ${OemMenuDir})
+
+set(ContexMenuDir "${CMAKE_INSTALL_PREFIX}/share/applications/context-menus")
+install(FILES ${AssetsPath}/.readme DESTINATION ${ContexMenuDir})
 
 set(DFMAppId "org.deepin.dde.file-manager")
 set(ConfigPath ${AssetsPath}/configs)

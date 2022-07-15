@@ -43,7 +43,7 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_DIR}
+    ${DFM_PLUGIN_DAEMON_EDGE_DIR}
 )
 
 #set(PolicyDir "${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions")

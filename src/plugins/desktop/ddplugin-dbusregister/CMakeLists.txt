@@ -29,7 +29,7 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_DIR}
+    ${DFM_PLUGIN_DESKTOP_CORE_DIR}
 )
 
 # install dbus

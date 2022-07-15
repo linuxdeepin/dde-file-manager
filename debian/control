@@ -44,17 +44,69 @@ Build-Depends:
 Standards-Version: 3.9.8
 Homepage: http://www.deepin.org
 
+Package: dde-desktop
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
+Replaces: dde-file-manager-oem, dde-file-manager (<< 6.0.1)
+Recommends: qt5dxcb-plugin, deepin-screensaver
+Description: deepin desktop-environment - desktop module
+ Deepin Desktop Environment (DDE) - desktop module.
+
 Package: dde-file-manager
 Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends}
-Conflicts: dde-workspace (<< 2.90.5), dde-file-manager-oem
-Replaces: dde-file-manager-oem
-Recommends: dde-qt5integration, avfs, samba, deepin-anything-server,
- qt5dxcb-plugin, deepin-screensaver, cryfs
+Replaces: dde-file-manager-oem, dde-desktop (<< 6.0.1), libdde-file-manager ( << 6.0.1)
+Recommends: dde-qt5integration, avfs, samba, deepin-anything-server, cryfs
 Description: File manager front end
  File manager front-end of Deepin OS
+
+Package: libdde-file-manager
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends}
+Multi-Arch: same
+Description: DDE File Manager core librarys
+ This package contains the shared libraries.
+
+Package: dde-desktop-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - desktop edge plugins module
+ Deepin Desktop Environment (DDE) - desktop edge plugins module.
+
+Package: dde-file-manager-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - filemanager edge plugins module
+ Deepin Desktop Environment (DDE) - filemanager edge plugins module.
+
+Package: dde-file-manager-common-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - filemanager common edge plugins module
+ Deepin Desktop Environment (DDE) - filemanager common edge plugins module.
+
+Package: dde-file-manager-daemon-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - daemon edge plugins module
+ Deepin Desktop Environment (DDE) - daemon edge plugins module.
+
+Package: dde-file-manager-preview-plugins
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - filemanager preview plugins module
+ Deepin Desktop Environment (DDE) - filemanager preview edge plugins module.
+
+Package: dde-disk-mount-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: plugin of dde-dock
+ Disk mount plugin of dde-dock which is created by dde-file-manager
 
 Package: dde-file-manager-dev
 Architecture: any
@@ -63,9 +115,3 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, dde-file-manager( =${binary:Version
 Description: DDE File Manager Devel library
  This package contains the header files and static libraries
  of dde-file-manager
-
-Package: dde-disk-mount-plugin
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: plugin of dde-dock
- Disk mount plugin of dde-dock which is created by dde-file-manager

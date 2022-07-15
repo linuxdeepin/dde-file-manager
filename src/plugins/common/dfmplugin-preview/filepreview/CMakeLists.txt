@@ -20,8 +20,8 @@ add_library(${PROJECT_NAME}
     ${FILEPREVIEW_FILES}
 )
 
-set(PREVIEWLIBPATH ${DFM_PLUGIN_DIR}/previews)
-add_definitions(-DPLUGINDIR=\"${PREVIEWLIBPATH}\")
+
+add_definitions(-DPLUGINDIR=\"${DFM_PLUGIN_PREVIEW_DIR}\")
 
 set(VERSION 1.8.2)
 add_definitions(-DVERSION=\"${VERSION}\")
@@ -45,5 +45,5 @@ install(TARGETS
     ${PROJECT_NAME}
     LIBRARY
     DESTINATION
-    ${DFM_PLUGIN_DIR}
+    ${DFM_PLUGIN_COMMON_EDGE_DIR}
 )
