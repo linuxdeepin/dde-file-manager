@@ -269,6 +269,14 @@ install(FILES ${MIMETYPEASSOCIATIONS_FILES} DESTINATION ${MimetypeAssociations})
 set(DFMAppId "org.deepin.dde.file-manager")
 set(ConfigPath ${AssetsPath}/configs)
 set(DConfigTemplate org.deepin.dde.file-manager.json)
-dconfig_meta_files(APPID ${DFMAppId}
-    BASE ${ConfigPath}
-    FILES ${ConfigPath}/${DConfigTemplate})
+
+if(DEFINED DSG_DATA_DIR)
+    MESSAGE("-- DConfig is supported.")
+    dconfig_meta_files(APPID ${DFMAppId}
+        BASE ${ConfigPath}
+        FILES ${ConfigPath}/${DConfigTemplate})
+else()
+    MESSAGE("-- DConfig is not supported!")
+    set(DSG_DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/dsg)
+    install(FILES ${ConfigPath}/${DConfigTemplate} DESTINATION ${DSG_DATA_DIR}/configs/${DFMAppId})
+endif()
