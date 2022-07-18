@@ -199,14 +199,27 @@ appentry.files = plugins/.readme
 INSTALLS += target templateFiles translations mimetypeFiles mimetypeAssociations appentry \
  icon includes plugin_includes defaultConfig readmefile contextmenusfile policy extensions
 
-greaterThan(QT.dtkcore.VERSION, 5.5.18) {
-meta_file.files += \
-  policyconfig/org.deepin.dde.file-manager.json
-meta_file.appid = org.deepin.dde.file-manager
-meta_file.base = policyconfig
+message("dtkcommon version: $$QT.dtkcommon.VERSION")
+message("dtccore version:   $$QT.dtkcore.VERSION")
+lessThan(QT.dtkcommon.VERSION, 5.5.22) {
+    CONFIG += INSTALL_DCONF_DIRECTLY
+}
+lessThan(QT.dtkcore.VERSION, 5.5.18) {
+    CONFIG += INSTALL_DCONF_DIRECTLY
+}
 
-DCONFIG_META_FILES += meta_file
-load(dtk_install_dconfig)
+INSTALL_DCONF_DIRECTLY {
+    meta_file.files = policyconfig/org.deepin.dde.file-manager.json
+    meta_file.path = $$PREFIX/share/dsg/configs/org.deepin.dde.file-manager
+    INSTALLS += meta_file
+    message("Install DConfig directly into dsg path: $$meta_file.path")
+} else {
+    message("Install DConfig via function.")
+    meta_file.files += policyconfig/org.deepin.dde.file-manager.json
+    meta_file.appid = org.deepin.dde.file-manager
+    meta_file.base = $$PWD/policyconfig
+    DCONFIG_META_FILES += meta_file
+    load(dtk_install_dconfig)
 }
 
 DISTFILES += \
