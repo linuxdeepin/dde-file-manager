@@ -3490,7 +3490,7 @@ void DFileView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &in
         //so扩展菜单
         bool isFileDialog = this->property("isFileDialog").toBool();
         if (!isFileDialog && DFileMenuManager::isExtensionsSupported(rootUrl()))
-            DFileMenuManager::extensionPluginCustomMenu(menu, true, rootUrl(), info->fileUrl(), {});
+            DFileMenuManager::extensionPluginCustomMenu(menu, true, rootUrl(), info->fileUrl(), list, false);
     }
 
     menu->setEventData(rootUrl(), selectedUrls(), windowId(), this, index);

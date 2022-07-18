@@ -1855,41 +1855,41 @@ TEST_F(TestDialogManager, testShowMessageDialog3)
 #ifndef __arm__
 TEST_F(TestDialogManager, testShowBluetoothTransferDlg)
 {
-    DUrlList files;
-    files.push_back(DUrl("file:///home"));
+//    DUrlList files;
+//    files.push_back(DUrl("file:///home"));
 
-    int(*stub_exec)() = []()->int{
-        return 1;
-    };
-    stub_ext::StubExt stub;
-    stub.set(VADDR(QDialog, exec), stub_exec);
-    stub.set_lamda(ADDR(QWidget, show), []{});
-    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
+//    int(*stub_exec)() = []()->int{
+//        return 1;
+//    };
+//    stub_ext::StubExt stub;
+//    stub.set(VADDR(QDialog, exec), stub_exec);
+//    stub.set_lamda(ADDR(QWidget, show), []{});
+//    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
 }
 
 
 TEST_F(TestDialogManager, testShowBluetoothTransferDlg2)
 {
-    DUrlList files;
-    files << DUrl("file:///home")
-          << DUrl("search:///home")
-          << DUrl("burn:///home")
-          << DUrl("tag:///home");
+//    DUrlList files;
+//    files << DUrl("file:///home")
+//          << DUrl("search:///home")
+//          << DUrl("burn:///home")
+//          << DUrl("tag:///home");
 
-    bool(*stub_canSendFiles)() = []()->bool{
-        return true;
-    };
-    Stub stu;
-    stu.set(ADDR(BluetoothTransDialog, canSendFiles), stub_canSendFiles);
+//    bool(*stub_canSendFiles)() = []()->bool{
+//        return true;
+//    };
+//    Stub stu;
+//    stu.set(ADDR(BluetoothTransDialog, canSendFiles), stub_canSendFiles);
 
-    int(*stub2_exec)() = []()->int{
-        return 1;
-    };
-    stub_ext::StubExt stub2;
-    stub2.set(VADDR(QDialog, exec), stub2_exec);
-    stub2.set_lamda(ADDR(QWidget, show), []{});
+//    int(*stub2_exec)() = []()->int{
+//        return 1;
+//    };
+//    stub_ext::StubExt stub2;
+//    stub2.set(VADDR(QDialog, exec), stub2_exec);
+//    stub2.set_lamda(ADDR(QWidget, show), []{});
 
-    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
+//    EXPECT_NO_FATAL_FAILURE(m_pTester->showBluetoothTransferDlg(files));
 }
 #endif
 TEST_F(TestDialogManager, testShowFormatDialog)
