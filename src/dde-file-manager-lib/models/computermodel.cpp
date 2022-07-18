@@ -62,8 +62,6 @@ ComputerModel::ComputerModel(QObject *parent)
     m_nitems = 0;
     m_appEntryWatcher.reset(fileService->createFileWatcher(nullptr, DUrl(APPENTRY_ROOT), this));
 
-    bool disabledMyDirectories = DFMApplication::genericAttribute(DFMApplication::GA_HiddenMyDirectories).toBool();
-
     // 光驱事件
     connect(this, &ComputerModel::opticalChanged, this, &ComputerModel::onOpticalChanged, Qt::QueuedConnection);
 
@@ -71,8 +69,10 @@ ComputerModel::ComputerModel(QObject *parent)
     m_initThread.first = false;
     m_initThread.second = QtConcurrent::run([=](){
 #endif
+        bool disabledMyDirectories = DFMApplication::genericAttribute(DFMApplication::GA_HiddenMyDirectories).toBool();
         if(!disabledMyDirectories)
             addItem(makeSplitterUrl(MyDirectories));
+
         auto rootInit = [=](const QList<DAbstractFileInfoPointer> &ch){
             QMutexLocker lx(&m_initItemMutex);
             bool opticalchanged = false;
@@ -83,6 +83,7 @@ ComputerModel::ComputerModel(QObject *parent)
                     return;
 #endif
                 if (chi->scheme() == DFMROOT_SCHEME && chi->suffix() == SUFFIX_USRDIR) {
+                    bool disabledMyDirectories = DFMApplication::genericAttribute(DFMApplication::GA_HiddenMyDirectories).toBool();
                     if(!disabledMyDirectories)
                         addItem(chi->fileUrl());
                 } else {
