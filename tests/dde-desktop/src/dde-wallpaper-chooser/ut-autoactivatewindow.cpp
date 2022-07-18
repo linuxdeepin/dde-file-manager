@@ -12,7 +12,7 @@
 
 TEST(AutoActivateWindow, test_setWatch)
 {
-    AutoActivateWindow act;
+    AutoActivateWindow act(nullptr);
     ASSERT_EQ(act.d->m_watchedWidget, nullptr);
     ASSERT_FALSE(act.d->m_run);
 

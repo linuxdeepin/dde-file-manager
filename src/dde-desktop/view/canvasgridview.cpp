@@ -3565,15 +3565,17 @@ void CanvasGridView::showEmptyAreaMenu(const Qt::ItemFlags &/*indexFlags*/)
         if (t_tmpPoint.y() + menu->sizeHint().height() > t_tmpRect.bottom())
             t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
 //        menu->exec(t_tmpPoint);
-        QEventLoop eventLoop;
-        d->menuLoop = &eventLoop;
+        QEventLoop *eventLoop = new QEventLoop;
+        d->menuLoop = eventLoop;
         connect(menu, &QMenu::aboutToHide, this, [ = ] {
             if (d->menuLoop)
                 d->menuLoop->exit();
         });
         menu->popup(t_tmpPoint);
         menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
-        eventLoop.exec();
+        DFileMenuManager::menuFilterHiddenActions(menu, DD_MENU_ACTION_HIDDEN);
+        eventLoop->exec();
+        eventLoop->deleteLater();
         d->menuLoop = nullptr;
         menu->deleteLater();
         return;
@@ -3806,15 +3808,17 @@ void CanvasGridView::showNormalMenu(const QModelIndex &index, const Qt::ItemFlag
         if (t_tmpPoint.y() + menu->sizeHint().height() > t_tmpRect.bottom())
             t_tmpPoint.setY(t_tmpPoint.y() - menu->sizeHint().height());
 //        menu->exec(t_tmpPoint);
-        QEventLoop eventLoop;
-        d->menuLoop = &eventLoop;
+        QEventLoop *eventLoop = new QEventLoop;
+        d->menuLoop = eventLoop;
         connect(menu, &QMenu::aboutToHide, this, [ = ] {
             if (d->menuLoop)
                 d->menuLoop->exit();
         });
         menu->popup(t_tmpPoint);
         menu->setGeometry(t_tmpPoint.x(), t_tmpPoint.y(), menu->sizeHint().width(), menu->sizeHint().height());
-        eventLoop.exec();
+        DFileMenuManager::menuFilterHiddenActions(menu, DD_MENU_ACTION_HIDDEN);
+        eventLoop->exec();
+        eventLoop->deleteLater();
         d->menuLoop = nullptr;
         menu->deleteLater();
         return;

@@ -125,7 +125,7 @@ void DeletejobWorker::onProcessedPercent(qlonglong percent){
 
 void DeletejobWorker::handleTimeout(){
     float speed;
-    int remainTime;
+    int remainTime = 0;
     QString speedString;
     if (m_currentProgress - m_lastProgress > 1024 *1024){
         speed = (m_currentProgress - m_lastProgress) / (1024 * 1024);

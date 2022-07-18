@@ -170,16 +170,7 @@ QMenu *DFMSideBarDeviceItemHandler::contextMenu(const DFMSideBar *sidebar, const
     }
 
     DFileMenu *menu = DFileMenuManager::genereteMenuByKeys(av, disabled);
-    if(isSmbIp){
-        QStringList sideBarSmbIpItemNamesList = item->data(DFMSideBarItem::ItemSmbMountedUrls).toStringList();
-        DUrlList urlList;
-        foreach (const QString& var, sideBarSmbIpItemNamesList) {
-            urlList << DUrl(var);
-        }
-        menu->setEventData(DUrl(), urlList, WindowManager::getWindowId(wnd), sidebar);
-    }
-    else
-        menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
+    menu->setEventData(DUrl(), {item->url()}, WindowManager::getWindowId(wnd), sidebar);
     menu->setAccessibleInfo(AC_FILE_MENU_SIDEBAR_DEVICE_ITEM);
 
     return menu;

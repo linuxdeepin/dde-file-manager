@@ -69,6 +69,9 @@
 #include "extensionimpl/private/dfmextmenuimpl_p.h"
 #include "utils/grouppolicy.h"
 
+#include <dgiomount.h>
+#include <dgiofile.h>
+#include <dgiovolumemanager.h>
 #include <DSysInfo>
 
 #include <QMetaObject>
@@ -222,31 +225,33 @@ DFileMenu *DFileMenuManager::createNormalMenu(const DUrl &currentUrl, const DUrl
         ///此处需要判断currentUrl是否形如：smb://xx.xx.xx.xx/<share_folder>
         bool isSmbSharedDir = FileUtils::isSmbShareFolder(currentUrl);
         if (isSmbSharedDir) {
-            // /run/user/1000/gvfs/smb-share:server=xx.xx.xx.xx,share=<folderName>
-            // todo : 'smb-share:domain=WORKGROUP,server=1.2.3.4,share=draw,user=username'
-            QString prefix("/run/user/%1/gvfs/");
-            QString mountDir("smb-share:server=%2,share=%3");
-            mountDir = mountDir.prepend(prefix);
-            QString scheme = currentUrl.scheme();
-            QUrl tem = QUrl::fromPercentEncoding(currentUrl.toString().toLocal8Bit());
-            QString path = tem.path();
-            if(!path.isEmpty()){
-                QString ip = tem.host();
-                QString dirName = path.split("/").last();
-                dirName = QUrl::toPercentEncoding(dirName.toUtf8());//解决目录中含有空格问题
-                QString formatPath = mountDir.arg(getuid()).arg(ip).arg(dirName.toLower());
-                DUrl mountUrl;
-                mountUrl.setScheme(DFMROOT_SCHEME);
-                mountUrl.setPath("/" + QUrl::toPercentEncoding(formatPath + "." SUFFIX_GVFSMP));
-                bool isMounted = FileUtils::isNetworkUrlMounted(mountUrl);
+            bool isMounted = false;
+            for (auto gvfsmp : DGioVolumeManager::getMounts()) {//遍历当前挂载
+                auto rootFile = gvfsmp->getRootFile();
+                if (!rootFile)
+                    continue;
 
-                if (isMounted) {//Menu show unmount item
-                    actions << MenuAction::Unmount;
-                } else {//Menu show mount item
-                    actions << MenuAction::Mount;
+                bool isSmb = FileUtils::isSmbPath(rootFile->path());
+                if(isSmb){
+                    DUrl mountUrl;
+                    QString shareName = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kShareName);
+                    QString shareHost = FileUtils::smbAttribute(rootFile->path(),FileUtils::SmbAttribute::kServer);
+                    QString name = currentUrl.path();
+                    QString host = currentUrl.host();
+                    if(name.startsWith("/"))
+                        name = name.mid(1);
+                    if(name == shareName && host == shareHost){
+                        isMounted =  true;
+                        break;
+                    }
                 }
-                actions << MenuAction::Property;
             }
+            if (isMounted) {//Menu show unmount item
+                actions << MenuAction::Unmount;
+            } else {//Menu show mount item
+                actions << MenuAction::Mount;
+            }
+            actions << MenuAction::Property;
         }
         //修改在挂载的文件下面，不能删除，但是显示了删除
         //判定逻辑，如果是挂载盘，并且这个文件是对应的不是一个虚拟的项（表示有实体），那么这个文件就有彻底删除权限MenuAction::CompleteDeletion

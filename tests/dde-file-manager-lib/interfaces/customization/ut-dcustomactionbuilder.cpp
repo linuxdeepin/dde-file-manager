@@ -35,7 +35,7 @@
 
 TEST(DCustomActionBuilder, set_active_dir_empty)
 {
-    DCustomActionBuilder builder;
+    DCustomActionBuilder builder(nullptr);
     DUrl url("");
     builder.setActiveDir(url);
     EXPECT_EQ(builder.m_dirName, "");

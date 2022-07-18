@@ -510,17 +510,20 @@ DAbstractFileWatcher *MasteredMediaController::createFileWatcher(const QSharedPo
 DUrl MasteredMediaController::getStagingFile(DUrl dst)
 {
     Q_ASSERT(dst.burnDestDevice().length() > 0);
+    QString device = dst.burnDestDevice().replace("/", "_");
+    QString burnFile = dst.burnFilePath();
     return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                                + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
-                               + dst.burnDestDevice().replace('/', '_')
-                               + dst.burnFilePath());
+                               + device
+                               + burnFile);
 }
 
 DUrl MasteredMediaController::getStagingFile(QString dev)
 {
+    QString temDev = dev.replace('/','_');
     return DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)   // ~/.cache
                   + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"                           // ~/.cache/deepin/discburn/
-                  + dev.replace('/','_'));                                                              // ~/.cache/deepin/discburn/_dev_srN
+                  + temDev);                                                              // ~/.cache/deepin/discburn/_dev_srN
 }
 
 QFileDevice::Permissions MasteredMediaController::getPermissionsCopyToLocal()

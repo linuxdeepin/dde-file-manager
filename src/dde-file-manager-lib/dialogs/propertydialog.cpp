@@ -1405,9 +1405,10 @@ QList<QPair<QString, QString> > PropertyDialog::createLocalDeviceInfoWidget(cons
     if (!redirectedFileUrl.isEmpty()) {
         if (redirectedFileUrl.burnIsOnDisc()) {
             if (!redirectedFileUrl.burnDestDevice().isEmpty()) {
+                QString burnDevice = redirectedFileUrl.burnDestDevice().replace("/", "_");
                 DUrl stagingUrl = DUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
                                                       + "/" + qApp->organizationName() + "/" DISCBURN_STAGING "/"
-                                                      + redirectedFileUrl.burnDestDevice().replace('/', '_'));
+                                                      + burnDevice);
                 QString stagingFilePath = stagingUrl.toLocalFile();
                 if (!stagingFilePath.isEmpty()) {
                     fileCount = FileUtils::filesCount(stagingFilePath);

@@ -798,8 +798,9 @@ void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, co
     m_opticalOpSpeed.clear();
     m_isOpticalJob = true;
     jobPrepared();
+    QString path = device.path().replace("/", "_");
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
-                    + "/" DISCBURN_STAGING "/" + device.path().replace('/', '_') + "/");
+                    + "/" DISCBURN_STAGING "/" + path + "/");
 
     m_opticalJobProgress = 0;
     QString strDevice = device.path().mid(5);
@@ -1059,9 +1060,9 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
     m_opticalJobPhase = 0;
     m_opticalOpSpeed.clear();
     jobPrepared();
-
+    QString path = device.path().replace('/', '_');
     QUrl stagingurl(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + qApp->organizationName()
-                    + "/" DISCBURN_STAGING "/" + device.path().replace('/', '_') + "/");
+                    + "/" DISCBURN_STAGING "/" + path + "/");
 
 /////////////////////////////
     constexpr int BUFFERSIZE = 4096;

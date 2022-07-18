@@ -28,7 +28,7 @@
 
 TEST(DTagEditTest,init)
 {
-    DTagEdit w;
+    DTagEdit w(nullptr);
     EXPECT_NE(nullptr,w.m_crumbEdit);
     EXPECT_NE(nullptr,w.m_promptLabel);
     EXPECT_NE(nullptr,w.m_totalLayout);

@@ -28,7 +28,7 @@
 
 DFM_BEGIN_NAMESPACE
 
-
+namespace FileBasicSection {
 class SectionKeyLabel: public QLabel
 {
     Q_OBJECT
@@ -36,6 +36,7 @@ class SectionKeyLabel: public QLabel
 public:
     explicit SectionKeyLabel(const QString &text = "", QWidget *parent = nullptr, Qt::WindowFlags f = {});
 };
+
 
 class SectionValueLabel: public QLabel
 {
@@ -67,7 +68,7 @@ protected:
 private:
     DUrl m_linkTargetUrl;
 };
-
+}
 
 class DFMFileBasicInfoWidgetPrivate;
 class DFMFileBasicInfoWidget : public QFrame

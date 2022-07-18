@@ -43,7 +43,7 @@
 #include <mediainfo/dfmmediainfo.h>
 
 DFM_BEGIN_NAMESPACE
-
+using namespace FileBasicSection;
 SectionKeyLabel::SectionKeyLabel(const QString &text, QWidget *parent, Qt::WindowFlags f):
     QLabel(text, parent, f)
 {
