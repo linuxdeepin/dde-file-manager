@@ -27,6 +27,7 @@
 #include <QThread>
 #include <QQueue>
 #include <QMutex>
+#include <QWaitCondition>
 
 BEGEN_DFMEXT_NAMESPACE
 class DFMExtEmblemIconPlugin;
@@ -80,6 +81,7 @@ private:
     bool bWork { false };
     mutable QMutex mutexMap;
     mutable QMutex mutexQueue;
+    QWaitCondition pathQueueNotEmpty;
     // 发送更新信号的定时器
     QTimer *updateTimer { nullptr };
     // 记录是否初始化了插件
