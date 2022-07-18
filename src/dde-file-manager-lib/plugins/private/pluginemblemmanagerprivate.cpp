@@ -106,6 +106,8 @@ void PluginEmblemManagerPrivate::asyncUpdateEmblemIconsFromPlugin(const DUrl &fi
         mutexQueue.lock();
         filePathQueue.enqueue(pair);
         mutexQueue.unlock();
+        pathQueueNotEmpty.wakeAll();
+
     }
 }
 
@@ -128,12 +130,13 @@ void PluginEmblemManagerPrivate::run()
         data.first = "";
         data.second = -1;
         mutexQueue.lock();
-        if (!filePathQueue.isEmpty()) {
-            data = filePathQueue.dequeue();
-        }
+        while (filePathQueue.isEmpty())
+            pathQueueNotEmpty.wait(&mutexQueue);
+        data = filePathQueue.dequeue();
         mutexQueue.unlock();
         if (data.first == "" || data.second == -1)
             continue;
+
         // 角标总数小于kMaxEmblemCount时，加载插件角标
         if (data.second < kMaxEmblemCount) {
 
