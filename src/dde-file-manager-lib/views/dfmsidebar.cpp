@@ -436,11 +436,11 @@ void DFMSideBar::rootFileResult()
     //无论是否设置smb挂载项常驻，此处只依据RemoteMountsStashManager::stashedSmbDevices()中的内容进行界面显示
     QStringList smbSideBarItems = RemoteMountsStashManager::stashedSmbDevices();
         foreach (const QString& smbDevice, smbSideBarItems) {
-            if (!isSmbItemExisted(DUrl(smbDevice))){//还没有添加
-                DFMSideBarItem *item = DFMSideBarDeviceItemHandler::createItem(smbDevice);
-                if (item){
-                    this->addItem(item, this->groupName(Device));
-                }
+            if (isSmbItemExisted(DUrl(smbDevice)))
+                removeItem(DUrl(smbDevice), this->groupName(Device));
+            DFMSideBarItem *item = DFMSideBarDeviceItemHandler::createItem(smbDevice);
+            if (item){
+                this->addItem(item, this->groupName(Device));
             }
         }
 }
