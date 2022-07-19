@@ -1,3 +1,10 @@
+dde-file-manager (5.6.6) UNRELEASED; urgency=low
+
+  * Autobuild Tag 5.6.6
+  *
+
+ -- TagBuilder <xushitong@uniontech.com>  Wed, 13 Jul 2022 17:52:39 +0800
+
 dde-file-manager (1.0.1-1) stable; urgency=low
 
   * Autobuild Tag 1.0.1 
