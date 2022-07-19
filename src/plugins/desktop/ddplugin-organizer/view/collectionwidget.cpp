@@ -78,7 +78,7 @@ CollectionWidget::CollectionWidget(const QString &uuid, ddplugin_organizer::Coll
     this->setLayout(d->mainLayout);
 
     connect(d->titleBar, &CollectionTitleBar::sigRequestClose, this, &CollectionWidget::sigRequestClose, Qt::QueuedConnection);
-    connect(d->titleBar, &CollectionTitleBar::sigRequestAdjustSize, this, &CollectionWidget::sigRequestAdjustSize, Qt::DirectConnection);
+    connect(d->titleBar, &CollectionTitleBar::sigRequestAdjustSizeMode, this, &CollectionWidget::sigRequestAdjustSizeMode, Qt::DirectConnection);
 }
 
 CollectionWidget::~CollectionWidget()

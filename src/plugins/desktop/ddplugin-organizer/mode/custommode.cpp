@@ -163,6 +163,13 @@ void CustomMode::layout()
     CfgPresenter->writeCustomStyle(styles);
 }
 
+void CustomMode::detachLayout()
+{
+    for (auto holder : d->holders) {
+        holder->setSurface(nullptr);
+    }
+}
+
 void CustomMode::rebuild()
 {
     {

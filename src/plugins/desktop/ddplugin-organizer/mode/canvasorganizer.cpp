@@ -60,6 +60,11 @@ void CanvasOrganizer::layout()
 
 }
 
+void CanvasOrganizer::detachLayout()
+{
+
+}
+
 void CanvasOrganizer::setCanvasModelShell(CanvasModelShell *sh)
 {
     if (sh == canvasModelShell)

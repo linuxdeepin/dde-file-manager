@@ -50,6 +50,7 @@ public:
     virtual OrganizerMode mode() const = 0;
     virtual bool initialize(FileProxyModel *) = 0;
     virtual void layout();
+    virtual void detachLayout();
     virtual void setCanvasModelShell(CanvasModelShell *sh);
     virtual void setCanvasViewShell(CanvasViewShell *sh);
     virtual void setCanvasGridShell(CanvasGridShell *sh);

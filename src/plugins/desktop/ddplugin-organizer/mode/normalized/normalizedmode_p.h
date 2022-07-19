@@ -27,11 +27,16 @@
 
 DDP_ORGANIZER_BEGIN_NAMESPACE
 
-class NormalizedModePrivate
+class NormalizedModePrivate : public QObject
 {
+    Q_OBJECT
 public:
     explicit NormalizedModePrivate(NormalizedMode *qq);
     ~NormalizedModePrivate();
+
+    QPoint findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height);
+
+    void collectionStyleChanged(const QString &id);
 public:
     void restore(const QList<CollectionBaseDataPtr> &cfgs);
     FileClassifier *classifier = nullptr;

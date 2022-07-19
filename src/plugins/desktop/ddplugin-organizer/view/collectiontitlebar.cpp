@@ -139,28 +139,28 @@ void CollectionTitleBarPrivate::showMenu()
 {
     QAction *action = nullptr;
     // todo:调试确认（与标题栏隐藏存在冲突）
-//    if (adjustable) {
-//        action = new QAction(menu);
-//        action->setText(tr("Size"));
-//        menu->addAction(action);
+    if (adjustable) {
+        action = new QAction(menu);
+        action->setText(tr("Size"));
+        menu->addAction(action);
 
-//        DMenu *subMenu = new DMenu(menu);
-//        action->setMenu(subMenu);
+        DMenu *subMenu = new DMenu(menu);
+        action->setMenu(subMenu);
 
-//        action = new QAction(subMenu);
-//        action->setText(tr("Large"));
-//        subMenu->addAction(action);
-//        connect(action, &QAction::triggered, this, [=] () {
-//            emit q->sigRequestAdjustSize(CollectionFrameSize::kLarge);
-//        });
+        action = new QAction(subMenu);
+        action->setText(tr("Large"));
+        subMenu->addAction(action);
+        connect(action, &QAction::triggered, this, [=] () {
+            emit q->sigRequestAdjustSizeMode(CollectionFrameSizeMode::kLarge);
+        });
 
-//        action = new QAction(subMenu);
-//        action->setText(tr("Small"));
-//        subMenu->addAction(action);
-//        connect(action, &QAction::triggered, this, [=] () {
-//            emit q->sigRequestAdjustSize(CollectionFrameSize::kSmall);
-//        });
-//    }
+        action = new QAction(subMenu);
+        action->setText(tr("Small"));
+        subMenu->addAction(action);
+        connect(action, &QAction::triggered, this, [=] () {
+            emit q->sigRequestAdjustSizeMode(CollectionFrameSizeMode::kSmall);
+        });
+    }
 
 //    if (renamable) {
 //        action = new QAction(menu);

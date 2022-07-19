@@ -44,7 +44,7 @@ enum Classifier {
     kSize
 };
 
-enum class CollectionFrameSize {
+enum class CollectionFrameSizeMode {
     kSmall = 0,
     kLarge
 };
@@ -65,8 +65,11 @@ public:
     int screenIndex = -1;
     QString key;
     QRect rect;
+    CollectionFrameSizeMode sizeMode = CollectionFrameSizeMode::kSmall;
 };
 
 DDP_ORGANIZER_END_NAMESPACE
+
+Q_DECLARE_METATYPE(ddplugin_organizer::CollectionFrameSizeMode);
 
 #endif // ORGANIZER_DEFINES_H

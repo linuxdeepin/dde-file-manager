@@ -65,7 +65,7 @@ public:
 
 signals:
     void sigRequestClose(const QString &id);
-    void sigRequestAdjustSize(const CollectionFrameSize &size);
+    void sigRequestAdjustSizeMode(const CollectionFrameSizeMode &sizeMode);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

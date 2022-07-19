@@ -55,6 +55,7 @@ public:
     void setName(const QString &);
     Dtk::Widget::DFrame *frame() const;
     void createFrame(Surface *surface, FileProxyModel *model);
+    void setSurface(Surface *surface);
     Surface *surface() const;
     void show();
 

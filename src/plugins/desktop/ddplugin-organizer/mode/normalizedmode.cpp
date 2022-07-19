@@ -28,6 +28,11 @@
 
 DDP_ORGANIZER_USE_NAMESPACE
 
+static constexpr int kCollectionGridColumnCount = 4;
+static constexpr int kSmallCollectionGridRowCount = 2;
+static constexpr int kLargeCollectionGridRowCount = 4;
+static constexpr int kCollectionGridMargin = 4;
+
 NormalizedModePrivate::NormalizedModePrivate(NormalizedMode *qq) : q(qq)
 {
 
@@ -39,6 +44,61 @@ NormalizedModePrivate::~NormalizedModePrivate()
     classifier = nullptr;
 
     holders.clear();
+}
+
+QPoint NormalizedModePrivate::findValidPos(QPoint &nextPos, int &currentIndex, CollectionStyle &style, const int width, const int height)
+{
+    auto gridSize = q->canvasViewShell->gridSize(currentIndex);
+    if (!gridSize.isValid()) {
+        // fix to last screen,and use overlap pos
+        currentIndex = q->surfaces.count();
+        gridSize = q->canvasViewShell->gridSize(currentIndex);
+    }
+
+    if (nextPos.y() + height > gridSize.height()) {
+        // fix to first row
+        nextPos.setY(0);
+        nextPos.setX(nextPos.x() + width);
+    }
+
+    if (nextPos.x() + width > gridSize.width()) {
+
+        if (currentIndex == q->surfaces.count()) {
+            // overlap pos
+            nextPos.setX(gridSize.width() - width);
+            nextPos.setY(gridSize.height() - height);
+            qDebug() << "stack collection:" << gridSize << width << height << nextPos;
+
+            QPoint validPos(nextPos);
+            // update next pos
+            nextPos.setY(nextPos.y() + height);
+
+            return validPos;
+        }
+
+        // fix to next screen
+        currentIndex += 1;
+
+        // restart find valid pos, in the first position of the next screen
+        nextPos.setX(0);
+        nextPos.setY(0);
+
+        return findValidPos(nextPos, currentIndex, style, width, height);
+    }
+
+    QPoint validPos(nextPos);
+    // update next pos
+    nextPos.setY(nextPos.y() + height);
+
+    return validPos;
+}
+
+void NormalizedModePrivate::collectionStyleChanged(const QString &id)
+{
+    if (auto holder = holders.value(id)) {
+        CfgPresenter->updateNormalStyle(holder->style());
+        q->layout();
+    }
 }
 
 void NormalizedModePrivate::restore(const QList<CollectionBaseDataPtr> &cfgs)
@@ -118,11 +178,6 @@ void NormalizedMode::reset()
 
 void NormalizedMode::layout()
 {
-    // todo screen index
-    const int screenIdx = 1; // todo
-    const QSize gridSize = canvasViewShell->gridSize(screenIdx);
-    const int widthTime = 4; // todo time is follow icon level;
-    const int heightTime = 2;
     auto holders = d->holders.values();
     {
         const QStringList &ordered =  d->classifier->classes();
@@ -139,28 +194,45 @@ void NormalizedMode::layout()
         });
     }
 
+    // screen num is start with 1
+    int screenIdx = 1;
     QList<CollectionStyle> toSave;
     QPoint nextPos(0, 0);
-    for (const CollectionHolderPointer &holder : holders) {
-        auto style = holder->style();
-        // todo 网格超出的处理
 
-        auto rect = canvasViewShell->gridVisualRect(screenIdx, nextPos);
-        style.rect = QRect(rect.topLeft(), QSize(rect.width() * widthTime, rect.height() * heightTime))
-                .marginsRemoved(QMargins(4, 4, 4, 4));
+    for (const CollectionHolderPointer &holder : holders) {
+        auto style = CfgPresenter->normalStyle(holder->id());
+        if (Q_UNLIKELY(style.key != holder->id())) {
+            qWarning() << "unknow err:style key is error:" << style.key << ",and fix to :" << holder->id();
+            style.key = holder->id();
+        }
+
+        int currentHeightTime = style.sizeMode == CollectionFrameSizeMode::kSmall ? kSmallCollectionGridRowCount : kLargeCollectionGridRowCount;
+        auto pos = d->findValidPos(nextPos, screenIdx, style, kCollectionGridColumnCount, currentHeightTime);
+
+        Q_ASSERT(screenIdx > 0);
+        Q_ASSERT(screenIdx <= surfaces.count());
+
+        style.screenIndex = screenIdx;
+        holder->setSurface(surfaces.at(screenIdx - 1).data());
+
+        auto rect = canvasViewShell->gridVisualRect(style.screenIndex, pos);
+
+        style.rect = QRect(rect.topLeft(), QSize(rect.width() * kCollectionGridColumnCount, rect.height() * currentHeightTime))
+                .marginsRemoved(QMargins(kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin, kCollectionGridMargin));
         holder->setStyle(style);
+        holder->show();
 
         toSave << style;
-
-        // next
-        nextPos.setY(nextPos.y() + heightTime);
-        if (nextPos.y() + heightTime  > gridSize.height()) {
-            nextPos.setY(0);
-            nextPos.setX(nextPos.x() + widthTime);
-        }
     }
 
     CfgPresenter->writeNormalStyle(toSave);
+}
+
+void NormalizedMode::detachLayout()
+{
+    for (auto holder : d->holders) {
+        holder->setSurface(nullptr);
+    }
 }
 
 void NormalizedMode::rebuild()
@@ -184,17 +256,20 @@ void NormalizedMode::rebuild()
     for (const QString &key : d->classifier->keys()) {
         const QString &name = d->classifier->name(key);
         auto files = d->classifier->items(key);
-        qDebug() << "type" << name << "files" << files.size();
+        qDebug() << "type" << key << "files" << files.size();
 
         // 复用已有分组
-        CollectionHolderPointer collectionHolder = d->holders.value(name);
+        CollectionHolderPointer collectionHolder = d->holders.value(key);
         // 创建没有的组
 
         if (collectionHolder.isNull()) {
             collectionHolder.reset(new CollectionHolder(key, d->classifier));
             collectionHolder->createFrame(surfaces.first().data(), model);
             collectionHolder->setName(name);
-            d->holders.insert(name, collectionHolder);
+
+            connect(collectionHolder.data(), &CollectionHolder::styleChanged, d, &NormalizedModePrivate::collectionStyleChanged);
+
+            d->holders.insert(key, collectionHolder);
 
             // disable rename,move,drag,close,stretch
             collectionHolder->setRenamable(false);

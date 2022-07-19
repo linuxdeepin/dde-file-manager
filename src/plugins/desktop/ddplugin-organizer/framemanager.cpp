@@ -313,6 +313,7 @@ void FrameManager::onBuild()
     d->buildSurface();
 
     if (d->organizer) {
+        d->organizer->setSurfaces(d->surfaceWidgets.values());
         d->organizer->layout();
     } else {
         d->buildOrganizer();
@@ -330,6 +331,8 @@ void FrameManager::onDetachWindows()
         sur->setParent(nullptr);
 
     // 解绑集合窗口
+    if (d->organizer)
+        d->organizer->detachLayout();
 }
 
 void FrameManager::onGeometryChanged()

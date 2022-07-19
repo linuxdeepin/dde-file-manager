@@ -49,18 +49,10 @@ CollectionHolderPrivate::~CollectionHolderPrivate()
     }
 }
 
-void CollectionHolderPrivate::onAdjustFrameSize(const CollectionFrameSize &size)
+void CollectionHolderPrivate::onAdjustFrameSizeMode(const CollectionFrameSizeMode &sizeMode)
 {
-    // todo:从网格或视图获取图标rect
-    QRect iconRect(0, 0, 92, 115);
-    QRect collectionRect = frame->geometry();
-    if (size == CollectionFrameSize::kSmall) {
-        collectionRect.setHeight(iconRect.height() * 2);
-        frame->setGeometry(collectionRect);
-    } else if (size == CollectionFrameSize::kLarge) {
-        collectionRect.setHeight(iconRect.height() * 4);
-        frame->setGeometry(collectionRect);
-    }
+    this->sizeMode = sizeMode;
+    emit q->styleChanged(id);
 }
 
 CollectionHolder::CollectionHolder(const QString &uuid, ddplugin_organizer::CollectionDataProvider *dataProvider, QObject *parent)
@@ -129,10 +121,18 @@ void CollectionHolder::createFrame(Surface *surface, FileProxyModel *model)
     d->frame->setWidget(d->widget);
 
     connect(d->widget, &CollectionWidget::sigRequestClose, this, &CollectionHolder::sigRequestClose);
-    connect(d->widget, &CollectionWidget::sigRequestAdjustSize, d.data(), &CollectionHolderPrivate::onAdjustFrameSize);
+    connect(d->widget, &CollectionWidget::sigRequestAdjustSizeMode, d.data(), &CollectionHolderPrivate::onAdjustFrameSizeMode);
     connect(d->frame, &CollectionFrame::geometryChanged, this, [this](){
         d->styleTimer.start();
     });
+}
+
+void CollectionHolder::setSurface(Surface *surface)
+{
+    d->surface = surface;
+
+    if (d->frame)
+        d->frame->setParent(surface);
 }
 
 Surface *CollectionHolder::surface() const
@@ -143,6 +143,7 @@ Surface *CollectionHolder::surface() const
 void CollectionHolder::show()
 {
     d->frame->show();
+    d->frame->raise();
 }
 
 void CollectionHolder::setMovable(const bool movable)
@@ -285,8 +286,13 @@ bool CollectionHolder::dragEnabled() const
 
 void CollectionHolder::setStyle(const CollectionStyle &style)
 {
+    if (style.key != id())
+        return;
+
     if (style.rect.isValid())
         d->frame->setGeometry(style.rect);
+    d->screenIndex = style.screenIndex;
+    d->sizeMode = style.sizeMode;
 }
 
 CollectionStyle CollectionHolder::style() const
@@ -294,8 +300,9 @@ CollectionStyle CollectionHolder::style() const
     CollectionStyle style;
     style.key = id();
     // todo get index.
-    style.screenIndex = 1;
+    style.screenIndex = d->screenIndex;
 
     style.rect = d->frame->geometry();
+    style.sizeMode = d->sizeMode;
     return style;
 }

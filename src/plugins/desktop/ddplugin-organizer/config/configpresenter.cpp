@@ -148,11 +148,13 @@ void ConfigPresenter::updateCustomStyle(const CollectionStyle &style) const
         return ;
 
     conf->updateCollectionStyle(true, style);
+    conf->sync();
 }
 
 void ConfigPresenter::writeCustomStyle(const QList<CollectionStyle> &styles) const
 {
     conf->writeCollectionStyle(true, styles);
+    conf->sync();
 }
 
 CollectionStyle ConfigPresenter::normalStyle(const QString &key) const
@@ -169,10 +171,12 @@ void ConfigPresenter::updateNormalStyle(const CollectionStyle &style) const
         return;
 
     conf->updateCollectionStyle(false, style);
+    conf->sync();
 }
 
 void ConfigPresenter::writeNormalStyle(const QList<CollectionStyle> &styles) const
 {
     conf->writeCollectionStyle(false, styles);
+    conf->sync();
 }
 

@@ -49,6 +49,7 @@ inline constexpr char kKeyX[] = "X";
 inline constexpr char kKeyY[] = "Y";
 inline constexpr char kKeyWidth[] = "Width";
 inline constexpr char kKeyHeight[] = "Height";
+inline constexpr char kKeySizeMode[] = "SizeMode";
 } // namepace
 
 OrganizerConfigPrivate::OrganizerConfigPrivate(OrganizerConfig *qq) : q(qq)
@@ -280,6 +281,8 @@ CollectionStyle OrganizerConfig::collectionStyle(bool custom, const QString &key
         style.rect = QRect(x, y, w, h);
     }
 
+    style.sizeMode = d->settings->value(kKeySizeMode).value<CollectionFrameSizeMode>();
+
     d->settings->endGroup();
     d->settings->endGroup();
     d->settings->endGroup();
@@ -301,6 +304,7 @@ void OrganizerConfig::updateCollectionStyle(bool custom, const CollectionStyle &
     d->settings->setValue(kKeyY, style.rect.y());
     d->settings->setValue(kKeyWidth, style.rect.width());
     d->settings->setValue(kKeyHeight, style.rect.height());
+    d->settings->setValue(kKeySizeMode, static_cast<int>(style.sizeMode));
 
     d->settings->endGroup();
     d->settings->endGroup();
@@ -326,6 +330,7 @@ void OrganizerConfig::writeCollectionStyle(bool custom, const QList<CollectionSt
         d->settings->setValue(kKeyY, iter->rect.y());
         d->settings->setValue(kKeyWidth, iter->rect.width());
         d->settings->setValue(kKeyHeight, iter->rect.height());
+        d->settings->setValue(kKeySizeMode, static_cast<int>(iter->sizeMode));
 
         d->settings->endGroup();
     }
