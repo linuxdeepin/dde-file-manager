@@ -605,8 +605,11 @@ void DFMCrumbBar::onListViewContextMenu(const QPoint &point)
     menu->addAction(copyIcon, QObject::tr("Copy path"), [ = ]() {
         // 如果为保险箱路径则进行路径转换
         QString virtualUrl(url.toString());
-        if (VaultController::isVaultFile(virtualUrl))
+        if (VaultController::isVaultFile(virtualUrl)) {
             virtualUrl = VaultController::localPathToVirtualPath(url.toLocalFile());
+        } else if (url.isLocalFile()) {
+            virtualUrl = url.toLocalFile();
+        }
         QGuiApplication::clipboard()->setText(virtualUrl);
     });
 
