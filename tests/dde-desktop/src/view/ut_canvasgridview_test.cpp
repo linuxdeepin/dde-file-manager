@@ -96,7 +96,7 @@ void waitDataEvent(CanvasGridView *view)
 
     QEventLoop loop;
     QObject::connect(model, &DFileSystemModel::sigJobFinished, &loop,&QEventLoop::quit,Qt::QueuedConnection);
-    QTimer::singleShot(2000, &loop, &QEventLoop::quit);
+    QTimer::singleShot(5000, &loop, &QEventLoop::quit);//the original value is 2000
     loop.exec();
     view->delayCustom(0);
 }

@@ -1237,73 +1237,70 @@ void AppController::doRemoveStashedMount(const QString &path)
  */
 void AppController::actionUnmountAllSmbMount(const QSharedPointer<DFMUrlListBaseEvent> &event)
 {
-   DUrlList urlList = event->urlList();
-   DUrlList list;//保存需要卸载的smb挂载url
-   if(urlList.count() <= 0){
-       qInfo()<<"When unmount all, the urlList is empty.";
-       return;
-   }
-   DUrl eventUrl = urlList.first();
-   qInfo()<<eventUrl;
-   if (!FileUtils::isSmbHostOnly(eventUrl)){//确保eventUrl为smb://host格式
-       qInfo()<<"When unmount all, the eventUrl is not a smb device.";
-       return;
-   }
-   QString host = eventUrl.host();
-   //从侧边栏和计算机界面通过右键菜单批量卸载smb挂载，都会执行下面代码收集当前设备的挂载项（修复：不能从计算机界面批量卸载的问题）
-   QList<DAbstractFileInfoPointer> filist  = rootFileManager->getRootFile();
-   foreach (DAbstractFileInfoPointer r, filist) {
-       QString temIp;
-       bool isSmbRelated = FileUtils::isSmbRelatedUrl(r->fileUrl(),temIp);
-       if ( (!isSmbRelated) || (!r->fileUrl().toString().contains(host)))//!isSmbRelated:排除ftp挂载
-           continue;
+    DUrlList urlList = event->urlList();
+    DUrlList list;//保存需要卸载的smb挂载url
+    if(urlList.count() <= 0){
+        qInfo()<<"When unmount all, the urlList is empty.";
+        return;
+    }
+    DUrl eventUrl = urlList.first();
+    qInfo()<<eventUrl;
+    if (!FileUtils::isSmbHostOnly(eventUrl)){//确保eventUrl为smb://host格式
+        qInfo()<<"When unmount all, the eventUrl is not a smb device.";
+        return;
+    }
+    QString host = eventUrl.host();
+    //从侧边栏和计算机界面通过右键菜单批量卸载smb挂载，都会执行下面代码收集当前设备的挂载项（修复：不能从计算机界面批量卸载的问题）
+    QList<DAbstractFileInfoPointer> filist  = rootFileManager->getRootFile();
+    foreach (DAbstractFileInfoPointer r, filist) {
+        QString temIp;
+        bool isSmbRelated = FileUtils::isSmbRelatedUrl(r->fileUrl(),temIp);
+        if ( (!isSmbRelated) || (!r->fileUrl().toString().contains(host)))//!isSmbRelated:排除ftp挂载
+            continue;
 
         if (r->fileUrl().toString().endsWith(QString(".%1").arg(SUFFIX_GVFSMP)) && FileUtils::isNetworkUrlMounted(r->fileUrl())){
-           list << r->fileUrl();
-       }
-   }
-   //设置批量移除smb挂载标志，用途：最后一个卸载后才刷新、跳转到计算机界面
-   deviceListener->setBatchedRemovingSmbMount(true);
-   //若侧边栏有SMB挂载子项，但并没有已挂载的SMB文件夹
-   foreach (DUrl url, list) {
-         QString decodePath = QUrl::fromPercentEncoding(url.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
-         QString folderName = decodePath.section("share=",-1).section(",user=",0,0);
-         folderName = QUrl::fromPercentEncoding(folderName.toUtf8());
-         if(folderName.isEmpty())
-             continue;
-         QString finalPath;
-         // decodePath like : smb-share:domain=WORKGROUP,server=x.x.x.x,share=share_folder,user=username
-         if(decodePath.contains("domain=") && decodePath.contains("user=")){
-             QString domain = decodePath.section("domain=",-1).section(",server=",0,0);
-             QString user = decodePath.section("user=",-1);
-             QByteArray encodedName = QUrl::toPercentEncoding(folderName);
-             finalPath = QString("%1://%2;%3@%4/%5/").arg(SMB_SCHEME).arg(domain).arg(user).arg(host).arg(QString(encodedName));
-         }else if(!decodePath.contains("domain=") && decodePath.contains("user=")){
-             QString user = decodePath.section("user=",-1);
-             QByteArray encodedName = QUrl::toPercentEncoding(folderName);
-             finalPath = QString("%1://%2@%3/%4/").arg(SMB_SCHEME).arg(user).arg(host).arg(QString(encodedName));
-         }else {
-             QByteArray encodedName = QUrl::toPercentEncoding(folderName);
-             finalPath = QString("%1://%2/%3/").arg(SMB_SCHEME).arg(host).arg(QString(encodedName));
-         }
-         deviceListener->unmount(finalPath);
-         QString tPath = finalPath;
-         tPath.chop(1);
-         doRemoveStashedMount(tPath);//这里需要移除缓存
-   }
-   //如果list.isEmpty()，则下面需主动从侧边栏移除SMB挂载子项
-   DFileManagerWindow* managerWindow = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(event->windowId()));
-   if(managerWindow && list.isEmpty()){
-       QTimer::singleShot(125, [=]() {
-           //如果前面没有smb目录卸载操作，在这里主动跳转到计算机页面;（场景：用户只是在地址栏输入了smb host，但是没有做目录挂载操作）
-           //反之则在侧边栏的fileDeleted中槽函数中触发界面跳转
-           //如果上述没有发生挂载目录的卸载操作，则不会触发卸载通知，因此在这里主动移除smb挂载聚合项
+            list << r->fileUrl();
+        }
+    }
+    //设置批量移除smb挂载标志，用途：最后一个卸载后才刷新、跳转到计算机界面
+    deviceListener->setBatchedRemovingSmbMount(true);
+    //若侧边栏有SMB挂载子项，但并没有已挂载的SMB文件夹
+    foreach (DUrl url, list) {
+        QString smbLocalPath = QString("/run/user/%1/gvfs").arg(getuid())+QUrl::fromPercentEncoding(url.path().mid(1).chopped(QString("." SUFFIX_GVFSMP).length()).toUtf8());
+        QString smbUser = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kUser);
+        QString smbDomain = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kDomain);
+        QString smbServer = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kServer);
+        QString smbShareName = FileUtils::smbAttribute(smbLocalPath,FileUtils::SmbAttribute::kShareName);
+        if (smbShareName.isEmpty())
+            continue;
+        QString unmountPath;
+        // A fully smbLocalPath like : smb-share:domain=WORKGROUP,server=x.x.x.x,share=share_folder,user=username
+        if (!smbDomain.isEmpty() && !smbUser.isEmpty()) {
+            unmountPath = QString("%1://%2;%3@%4/%5/").arg(SMB_SCHEME).arg(smbDomain).arg(smbUser).arg(smbServer).arg(smbShareName);
+        }else if (smbDomain.isEmpty() && !smbUser.isEmpty()) {
+            unmountPath = QString("%1://%2@%3/%4/").arg(SMB_SCHEME).arg(smbUser).arg(smbServer).arg(smbShareName);
+        }else {
+            unmountPath = QString("%1://%2/%3/").arg(SMB_SCHEME).arg(smbServer).arg(smbShareName);
+        }
+        QUrl temUrl(unmountPath);
+        unmountPath = temUrl.toEncoded(QUrl::PrettyDecoded);//这种编码方式会保留$、把空格编码为%20、把中文也编码（而toPercentEncoding会把$也编码，导致卸载问题）
+        deviceListener->unmount(unmountPath);
+        unmountPath.chop(1);
+        doRemoveStashedMount(unmountPath);//这里需要移除缓存
+    }
+    //如果list.isEmpty()，则下面需主动从侧边栏移除SMB挂载子项
+    DFileManagerWindow* managerWindow = qobject_cast<DFileManagerWindow *>(WindowManager::getWindowById(event->windowId()));
+    if (managerWindow && list.isEmpty()) {
+        QTimer::singleShot(125, [=]() {
+        //如果前面没有smb目录卸载操作，在这里主动跳转到计算机页面;（场景：用户只是在地址栏输入了smb host，但是没有做目录挂载操作）
+        //反之则在侧边栏的fileDeleted中槽函数中触发界面跳转
+        //如果上述没有发生挂载目录的卸载操作，则不会触发卸载通知，因此在这里主动移除smb挂载聚合项
             RemoteMountsStashManager::removeStashedSmbDevice(eventUrl.toString());
             emit rootFileManager->rootFileWather()->fileDeleted(eventUrl);//多个打开的窗口同步移除smb挂载聚合项
             managerWindow->getLeftSideBar()->jumpToItem(DUrl(COMPUTER_ROOT));
             emit DFMApplication::instance()->reloadComputerModel();//刷新计算机界面上的smb聚合设备
-       });
-   }
+        });
+    }
 }
 
 /**
