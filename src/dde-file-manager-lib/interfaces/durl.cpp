@@ -24,6 +24,7 @@
 
 #include "durl.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "app/define.h"
 
 #include <utility>
 
@@ -374,6 +375,19 @@ bool DUrl::burnIsOnDisc() const
         return false;
     }
     return m.captured(2) == BURN_SEG_ONDISC;
+}
+
+bool DUrl::burnIsOnLocalStaging() const
+{
+    if (!path().contains(DISCBURN_CACHE_MID_PATH))
+        return false;
+
+    static QRegularExpression reg("/_dev_sr[0-9]*/");
+    QRegularExpressionMatch match = reg.match(path());
+    if (match.hasMatch())
+        return true;
+
+    return false;
 }
 
 DUrl DUrl::parentUrl() const

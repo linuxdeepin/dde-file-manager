@@ -186,6 +186,7 @@ public slots:
     void doISOBurn(const DUrl &device, QString volname, int speed, DISOMasterNS::BurnOptions opts); // fork
     void doDiscBlank(const DUrl &device);
     void doISOImageBurn(const DUrl &device, const DUrl &image, int speed, DISOMasterNS::BurnOptions opts); // fork
+    void doDiscAuditLog(const DUrl &device, const QString &stagePath, bool success);
     void opticalJobUpdated(DISOMasterNS::DISOMaster *jobisom, int status, int progress);
     void opticalJobUpdatedByParentProcess(int status, int progress, const QString &speed, const QStringList &msgs);
 
@@ -232,6 +233,7 @@ private:
     QString m_tarDirName;
     QString m_srcPath;
     QString m_tarPath;
+    QString m_curDriveMedia;
     bool m_restoreWithNewName = false;
     QElapsedTimer m_timer;
     qint64 m_lastMsec = 0;

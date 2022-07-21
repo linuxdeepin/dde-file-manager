@@ -35,6 +35,8 @@
 #include "dialogs/dialogmanager.h"
 #include "dialogs/burnoptdialog.h"
 #include "interfaces/dfileproxywatcher.h"
+#include "interfaces/dfmapplication.h"
+#include "interfaces/dfmsettings.h"
 #include "private/dabstractfilewatcher_p.h"
 #include "disomaster.h"
 #include "shutil/fileutils.h"
@@ -533,4 +535,32 @@ QFileDevice::Permissions MasteredMediaController::getPermissionsCopyToLocal()
                                                                 | QFileDevice::WriteGroup | QFileDevice::ReadGroup
                                                                 | QFileDevice::ReadOther);
     return permissionsToLocal;
+}
+
+void MasteredMediaController::mapStagingFilesPath(const DUrlList &srcList, const DUrlList &targetList)
+{
+    if (srcList.size() != targetList.size()) {
+        qWarning() << "Src url size != targt url size";
+        return;
+    }
+
+    QString firsDestPath {targetList[0].path()};
+    static QRegularExpression reg("_dev_sr[0-9]*");
+    QRegularExpressionMatch match;
+    if (!firsDestPath.contains(reg, &match)) {
+        qWarning() << "Cannot map _dev_sr[0-9]";
+        return;
+    }
+    QString dev { match.captured().replace("_", "/")};
+    if (dev.isEmpty()) {
+        qWarning() << "Empty dev";
+        return;
+    }
+
+    QVariantMap map {DFMApplication::dataPersistence()->value("StagingMap", dev).toMap()};
+    for (int i = 0; i != srcList.size(); ++i)
+        map[targetList.at(i).path()] = srcList.at(i).path();
+
+    DFMApplication::dataPersistence()->setValue("StagingMap", dev, map);
+    DFMApplication::dataPersistence()->sync();
 }

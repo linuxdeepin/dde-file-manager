@@ -103,6 +103,7 @@ public:
 
     static DFMSettings *genericObtuselySetting();
     static DFMSettings *appObtuselySetting();
+    static DFMSettings *dataPersistence();
 
 Q_SIGNALS:
     void appAttributeChanged(ApplicationAttribute aa, const QVariant &value);
