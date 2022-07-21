@@ -22,7 +22,7 @@
 
 #include <QScrollBar>
 #include <QDebug>
-
+#include <QTextCodec>
 #include <algorithm>
 
 constexpr int kReadTextSize { 1024 * 1024 * 5 };
@@ -114,6 +114,9 @@ int TextBrowserEdit::verifyEndOfStrIntegrity(const char *s, int l)
 
 void TextBrowserEdit::appendText(std::vector<char>::iterator &data)
 {
+    QString textData;
+    QTextCodec::ConverterState state;
+    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
     if (fileData.size() >= kReadTextSize) {
         char temp[kReadTextSize] { 0 };
 
@@ -124,18 +127,39 @@ void TextBrowserEdit::appendText(std::vector<char>::iterator &data)
         if (!(0 <= ch && 127 >= static_cast<int>(ch))) {
             temp[l] = '\0';
         }
-
         fileData.erase(std::begin(fileData), std::begin(fileData) + l);
-        QString textData = QString::fromLocal8Bit(temp, l);
+
+        codec->toUnicode(QByteArray(temp).constData(), l, &state);
+        if (state.invalidChars > 0){
+            QTextCodec *codec = QTextCodec::codecForName("GBK");
+            QTextStream in(temp);
+            in.setCodec(codec);
+            textData = in.readAll();
+        } else {
+            textData = QString::fromLocal8Bit(temp, l);
+        }
+
         insertPlainText(textData);
     } else if (fileData.size() > 0) {
         unsigned long len = static_cast<unsigned long>(fileData.size());
         char *buf = new char[len];
         std::copy(data, fileData.end(), buf);
         fileData.erase(std::begin(fileData), std::begin(fileData) + static_cast<int>(len));
-        QString textData = QString::fromLocal8Bit(buf, static_cast<int>(len));
+
+        codec->toUnicode(QByteArray(buf,len).constData(), int(len) , &state);
+        if (state.invalidChars > 0){
+            QTextCodec *codec = QTextCodec::codecForName("GBK");
+            QTextStream in(buf);
+            in.setCodec(codec);
+            textData = in.readAll();
+        } else {
+            textData = QString::fromLocal8Bit(buf, static_cast<int>(len));
+        }
+
         delete[] buf;
         buf = nullptr;
         insertPlainText(textData);
     }
 }
+
+
