@@ -67,6 +67,7 @@
 #include "deviceinfo/udisklistener.h"
 #include "deviceinfo/udiskdeviceinfo.h"
 #include "controllers/vaultcontroller.h"
+#include "controllers/masteredmediacontroller.h"
 
 #include <QDesktopServices>
 #include <QDirIterator>
@@ -975,6 +976,10 @@ DUrlList FileController::pasteFilesV2(const QSharedPointer<DFMPasteEvent> &event
         //! 判断目标目录是否是保险箱目录如果是，发送信号激活计算保险大小的线程
         if(!targetUrlList.isEmpty() && targetUrlList.at(0).toLocalFile().contains(VaultController::makeVaultLocalPath())) {
             emit VaultController::ins()->sigFinishedCopyFile();
+        }
+        // 光盘缓存文件映射
+        if (!targetUrlList.isEmpty() && targetUrlList.at(0).burnIsOnLocalStaging()) {
+            MasteredMediaController::mapStagingFilesPath(thisJob->sourceUrlList(), targetUrlList);
         }
     });
 

@@ -230,10 +230,41 @@ int FileUtils::filesCount(const QString &dir)
     return entryList.size();
 }
 
-QStringList FileUtils::filesList(const QString &dir)
+QFileInfoList FileUtils::fileInfoList(const QString &path)
+{
+    QDir dir(path);
+    if (!dir.exists() || dir.isEmpty())
+        return {};
+
+    return dir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks);
+}
+
+/*!
+ * \brief 递归获取目录下所有文件列表，主线程中谨慎使用（文件过多卡死主线程）
+ * \param path
+ * \return
+ */
+QFileInfoList FileUtils::fileInfoListRecursive(const QString &path)
+{
+    QDir dir(path);
+    if (!dir.exists() || dir.isEmpty())
+        return {};
+
+    QFileInfoList fileList {dir.entryInfoList(QDir::Files | QDir::NoSymLinks)};
+    const QFileInfoList &folderList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for(const QFileInfo &info : folderList) {
+         const QFileInfoList &childFileList = fileInfoListRecursive(info.absoluteFilePath());
+         fileList.append(childFileList);
+    }
+
+    return fileList;
+}
+
+QStringList FileUtils::filesList(const QString &path)
 {
     QStringList appNames;
-    QDirIterator it(dir,
+    QDirIterator it(path,
                     QDir::Files | QDir::NoDotAndDotDot,
                     QDirIterator::Subdirectories);
     while (it.hasNext()) {
@@ -514,6 +545,34 @@ QIcon FileUtils::searchAppIcon(const DesktopFile &app,
 
     // Default icon
     return defaultIcon;
+}
+
+QString FileUtils::formatOpticalMediaType(const QString &media)
+{
+    static std::initializer_list<std::pair<QString, QString>> opticalmediakeys {
+        {"optical",                "Optical"},
+        {"optical_cd",             "CD-ROM"},
+        {"optical_cd_r",           "CD-R"},
+        {"optical_cd_rw",          "CD-RW"},
+        {"optical_dvd",            "DVD-ROM"},
+        {"optical_dvd_r",          "DVD-R"},
+        {"optical_dvd_rw",         "DVD-RW"},
+        {"optical_dvd_ram",        "DVD-RAM"},
+        {"optical_dvd_plus_r",     "DVD+R"},
+        {"optical_dvd_plus_rw",    "DVD+RW"},
+        {"optical_dvd_plus_r_dl",  "DVD+R/DL"},
+        {"optical_dvd_plus_rw_dl", "DVD+RW/DL"},
+        {"optical_bd",             "BD-ROM"},
+        {"optical_bd_r",           "BD-R"},
+        {"optical_bd_re",          "BD-RE"},
+        {"optical_hddvd",          "HD DVD-ROM"},
+        {"optical_hddvd_r",        "HD DVD-R"},
+        {"optical_hddvd_rw",       "HD DVD-RW"},
+        {"optical_mo",             "MO"}
+    };
+    static QMap<QString, QString> opticalmediamap(opticalmediakeys);
+
+    return opticalmediamap.value(media);
 }
 //---------------------------------------------------------------------------
 

@@ -62,7 +62,9 @@ public:
     static void recurseFolder(const QString &path, const QString &parent,
                               QStringList *list);
     static int filesCount(const QString &dir);
-    static QStringList filesList(const QString &dir);
+    static QFileInfoList fileInfoList(const QString &path);
+    static QFileInfoList fileInfoListRecursive(const QString &path);
+    static QStringList filesList(const QString &path);
     static qint64 singleDirSize(const DUrl &url);
     static qint64 totalSize(const QString &targetFile);
     static qint64 totalSize(const DUrlList &files);
@@ -79,6 +81,7 @@ public:
                                 const QIcon &defaultIcon = QIcon::fromTheme("unknown"));
     static QIcon searchAppIcon(const DesktopFile &app,
                                const QIcon &defaultIcon = QIcon::fromTheme("application-x-executable"));
+    static QString formatOpticalMediaType(const QString &media);
     static QString formatSize(qint64 num, bool withUnitVisible = true, int precision = 1, int forceUnit = -1, QStringList unitList = QStringList());
     static QString diskUsageString(quint64 &usedSize, quint64 &totalSize, QString strVolTag = "");
     static QString defaultOpticalSize(const QString &tagName, quint64 &usedSize, quint64 &totalSize);
