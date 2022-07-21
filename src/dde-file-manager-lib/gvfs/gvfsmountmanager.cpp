@@ -1571,11 +1571,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     if (MountTimerHash.contains(op))
         MountTimerHash.value(op)->stop();
 
-    if (askPasswordDialogHash.value(op)) {
+    if (askPasswordDialogHash.value(op)) {//挂载成功或者出现bug #149389时，没有回调ask_password_cb，会走此分支
         askPasswordDialogHash.value(op)->deleteLater();
         askPasswordDialogHash.remove(op);
     } else {
-        bshow = false;
+        bshow = false;//用户名或者密码错误，即：回调了ask_password_cb，不再走上面分支
     }
     gboolean succeeded;
     GError *error = nullptr;
@@ -1585,7 +1585,6 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
     succeeded = g_file_mount_enclosing_volume_finish(G_FILE(object), res, &error);
 
     DUrl rootUri = DUrl(g_file_get_uri(G_FILE (object)));
-
     if (!succeeded) {
         Q_ASSERT(error->domain == G_IO_ERROR);
         emit fileSignalManager->requestRemoveSmbUrl(rootUri);
@@ -1595,6 +1594,11 @@ void GvfsMountManager::mount_done_cb(GObject *object, GAsyncResult *res, gpointe
         case G_IO_ERROR_FAILED:
             if (AskingPasswordHash.value(op)) {
                 status = MOUNT_PASSWORD_WRONG;
+                if (bshow){//fix bug:#149389
+                    status = MOUNT_CANCEL;//为避免networkmanager.cpp中陷入挂载死循环
+                    clearLoginData();
+                }
+                qInfo()<<"G_IO_ERROR_FAILED, error message: "<<error->message;
             } else {
                 showWarnDlg = true;
             }
