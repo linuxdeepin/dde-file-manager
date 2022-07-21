@@ -1446,10 +1446,14 @@ TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge)
     QTimer::singleShot(50, &loop, &QEventLoop::quit);
     loop.exec();
     EXPECT_TRUE(ok);
+
+    //restore
+    GridManager::instance()->setAutoMerge(false);
 }
 
 TEST_F(CanvasGridViewTest, CanvasGridViewTest_delayAutoMerge_refresh)
 {
+    ASSERT_FALSE(GridManager::instance()->autoMerge());
     ASSERT_NE(m_canvasGridView, nullptr);
     waitData(m_canvasGridView);
 

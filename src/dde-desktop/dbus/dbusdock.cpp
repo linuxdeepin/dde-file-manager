@@ -79,5 +79,8 @@ DBusDock *DockInfo::dock() const
 DockInfo::DockInfo(QObject *parent)
     : QObject (parent)
 {
+    qInfo() << "create dbus dock.";
     m_dock = new DBusDock(this);
+    m_dock->setTimeout(500);
+    qInfo() << "create dbus dock end";
 }
