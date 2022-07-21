@@ -68,13 +68,14 @@ QRect ScreenObject::availableGeometry() const
     //end
 
     QRect ret = geometry(); //已经缩放过
-
+    qDebug() << "get dock hide mode";
     int dockHideMode = DockInfoIns->hideMode();
-    if ( 1 == dockHideMode) {//隐藏
+    if (1 == dockHideMode) {//隐藏
         qInfo() << "dock is Hidden";
         return ret;
     }
 
+    qDebug() << "hideMode" << dockHideMode << "get dock frontendWindowRect";
     DockRect dockrectI = DockInfoIns->frontendWindowRect(); //原始dock大小
     QRect dockrect = dealRectRatio(dockrectI.operator QRect());  //缩放处理
 
