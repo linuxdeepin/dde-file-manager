@@ -151,6 +151,7 @@ public:
     QString burnDestDevice() const;
     QString burnFilePath() const;
     bool burnIsOnDisc() const;
+    bool burnIsOnLocalStaging() const;
 
     DUrl parentUrl() const;
 

@@ -46,6 +46,8 @@ Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, asGlobal, ("deepin/dde-file-manager/dde-f
 
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, gosGlobal, ("deepin/dde-file-manager.obtusely", DFMSettings::GenericConfig))
 Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("deepin/dde-file-manager/dde-file-manager.obtusely", DFMSettings::GenericConfig))
+Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, dpGlobal, ("deepin/dde-file-manager/dde-file-manager.dp", DFMSettings::GenericConfig))
+
 //Q_GLOBAL_STATIC_WITH_ARGS(DFMSettings, aosGlobal, ("dde-file-manager.obtusely", DFMSettings::AppConfig))
 
 // blumia: since dde-desktop now also do show file selection dialog job, thus dde-desktop should share the same config file
@@ -323,6 +325,18 @@ DFMSettings *DFMApplication::appObtuselySetting()
     }
 
     return aosGlobal;
+}
+
+DFMSettings *DFMApplication::dataPersistence()
+{
+    if (!dpGlobal.exists()) {
+        dpGlobal->setAutoSync(true);
+#ifndef DFM_NO_FILE_WATCHER
+        dpGlobal->setWatchChanges(true);
+#endif
+    }
+
+    return dpGlobal;
 }
 
 DFMApplication::DFMApplication(DFMApplicationPrivate *dd, QObject *parent)

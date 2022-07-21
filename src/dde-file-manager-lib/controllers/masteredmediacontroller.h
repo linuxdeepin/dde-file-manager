@@ -56,6 +56,7 @@ public:
     static DUrl getStagingFile(DUrl dst);
     static DUrl getStagingFile(QString dev/* = "/dev/sr0"*/);
     static QFileDevice::Permissions getPermissionsCopyToLocal();
+    static void mapStagingFilesPath(const DUrlList &srcList, const DUrlList &targetList);
 };
 
 #endif // MASTEREDMEDIACONTROLLER_H

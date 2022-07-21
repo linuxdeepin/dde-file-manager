@@ -25,6 +25,8 @@
 
 #include "shutil/fileutils.h"
 #include "interfaces/dfmstandardpaths.h"
+#include "interfaces/dfmapplication.h"
+#include "interfaces/dfmsettings.h"
 #include "../deviceinfo/udiskdeviceinfo.h"
 #include "../deviceinfo/udisklistener.h"
 #include "../app/define.h"
@@ -775,6 +777,8 @@ void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, co
     QString udiskspath = devicePaths.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    m_curDriveMedia = drive->media();
+
     if (drive->opticalBlank()) {
         QString filePath = device.path() + "/" BURN_SEG_STAGING;
         qDebug() << "ghostSignal path" << filePath;
@@ -917,6 +921,7 @@ void FileJob::doUDBurn(const DUrl &device, const QString &volname, int speed, co
         QByteArray ba(result + 1);
 
         bool ok = result[0] == '0';
+        doDiscAuditLog(device, stagingurl.path(), ok);
         if (ok) { // burn success
             for (int i = 0; i < 20; i++) { // must show 100%
                 opticalJobUpdatedByParentProcess(DISOMasterNS::DISOMaster::JobStatus::Running, 100, m_opticalOpSpeed, m_lastSrcError);
@@ -1038,6 +1043,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
     QString udiskspath = devicePaths.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    m_curDriveMedia = drive->media();
 
     if (drive->opticalBlank()) {
         QString filePath = device.path() + "/" BURN_SEG_STAGING;
@@ -1236,6 +1242,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false; // 刻录结束，把刻录标志置位false
 
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            doDiscAuditLog(device, stagingurl.path(), false);
             //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
             QThread::msleep(1000);
@@ -1252,6 +1259,7 @@ void FileJob::doISOBurn(const DUrl &device, QString volname, int speed, DISOMast
                 emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
+            doDiscAuditLog(device, stagingurl.path(), true);
             if (checkDatas) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
@@ -1293,6 +1301,8 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
     QString udiskspath = nodes.first();
     QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
     QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+    m_curDriveMedia = drive->media();
+
     if (drive->opticalBlank()) {
         QString filePath = device.path() + "/" BURN_SEG_STAGING;
         qDebug() << "ghostSignal path" << filePath;
@@ -1479,6 +1489,7 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
         DFMOpticalMediaWidget::g_mapCdStatusInfo[strDevice].bBurningOrErasing = false;
 
         if (m_opticalJobStatus == DISOMasterNS::DISOMaster::JobStatus::Failed) {
+            doDiscAuditLog(device, image.path(), false);
             // 刻录失败提示
             //emit requestOpticalJobCompletionDialog(tr("Burn process failed"), "dialog-error");
             //fix: 刻录期间误操作弹出菜单会引起一系列错误引导，规避用户误操作后引起不必要的错误信息提示
@@ -1496,6 +1507,7 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
                 emit requestOpticalJobFailureDialog(static_cast<int>(m_jobType), m_lastError, m_lastSrcError);
             }
         } else {
+            doDiscAuditLog(device, image.path(), true);
             if (checkDatas) {
                 // 校验必须成功
                 emit requestOpticalJobCompletionDialog(tr("Data verification successful."),  "dialog-ok");
@@ -1512,6 +1524,85 @@ void FileJob::doISOImageBurn(const DUrl &device, const DUrl &image, int speed, D
     } else {
         perror("fork()");
         return;
+    }
+}
+
+void FileJob::doDiscAuditLog(const DUrl &device, const QString &stagePath, bool success)
+{
+    static qint64 index {0};
+    static qint64 baseID {QDateTime::currentSecsSinceEpoch()};
+
+    qInfo() << "Create D-Bus Auditd interface object start";
+    QDBusInterface auditd("org.deepin.PermissionManger.Auditd",
+                          "/org/deepin/PermissoinManger/Auditd",
+                          "org.deepin.PermissionManger.Auditd",
+                          QDBusConnection::systemBus());
+    auditd.setTimeout(500);
+    if (!auditd.isValid()) {
+        qWarning() << "Invalid Auditd D-Bus interface";
+        return;
+    }
+    qInfo() << "Create D-Bus Auditd interface object end";
+
+    const QStringList &devicePaths = DDiskManager::resolveDeviceNode(device.path(), {});
+    if (devicePaths.isEmpty()) {
+        qWarning() << "devicePaths isempty";
+        return;
+    }
+
+    const QString &udiskspath = devicePaths.first();
+    QScopedPointer<DBlockDevice> blkdev(DDiskManager::createBlockDevice(udiskspath));
+    QScopedPointer<DDiskDevice> drive(DDiskManager::createDiskDevice(blkdev->drive()));
+
+    QFileInfoList burnedFileInfoGroup;
+    QFileInfo info {stagePath};
+    if (info.isFile())  // image file
+        burnedFileInfoGroup.append(info);
+
+    if (info.isDir()) // data files
+        burnedFileInfoGroup = FileUtils::fileInfoList(info.absoluteFilePath());
+
+    // save log
+    static const QString logKey {"dpkg"};
+    static QString logTemplate {tr("ID=%1, DateTime=%2, Burner=%3, DiscType=%4, Result=%5, User=%6, FileName=%7, FileSize=%8, FileType=%9")};
+    QString &&result {success ? tr("Success") : tr("Failed")};
+    QString &&burner {drive->id()};
+    auto &&pathMap = DFMApplication::dataPersistence()->value("StagingMap", device.path()).toMap();
+    qInfo() << "Call D-Bus WriteLog start";
+    for (const QFileInfo &info : burnedFileInfoGroup) {
+        if (!info.exists())
+            continue;
+        QString curLog;
+        QString &&dateTime {QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss")};
+        QString &&absPath {info.absoluteFilePath()};
+        QString &&nativePath {pathMap.contains(absPath) ? pathMap.value(absPath).toString() : absPath};
+
+        if (info.isDir()) {
+            QFileInfoList &&dirFileInfoGroup {FileUtils::fileInfoListRecursive(info.absoluteFilePath())};
+            for (const QFileInfo &subInfo : dirFileInfoGroup) {
+                qint64 &&id {baseID + (index++)};
+                auto fmInfo {DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(subInfo.absoluteFilePath()))};
+                QString &&fileType {fmInfo ? fmInfo->mimeTypeDisplayName() : ""};
+                QString subNativePath {subInfo.absoluteFilePath()};
+                subNativePath = subNativePath.replace(absPath, nativePath);
+                curLog = logTemplate.arg(id).arg(dateTime).arg(burner).arg(FileUtils::formatOpticalMediaType(m_curDriveMedia)).arg(result).arg(DFMGlobal::getUser())
+                        .arg(subNativePath).arg(FileUtils::formatSize(subInfo.size())).arg(fileType);
+                auditd.callWithArgumentList(QDBus::Block, "WriteLog", {logKey, curLog});
+            }
+        } else {
+            qint64 &&id {baseID + (index++)};
+            auto fmInfo {DFileService::instance()->createFileInfo(nullptr, DUrl::fromLocalFile(absPath))};
+            QString &&fileType {fmInfo ? fmInfo->mimeTypeDisplayName() : ""};
+            curLog = logTemplate.arg(id).arg(dateTime).arg(burner).arg(FileUtils::formatOpticalMediaType(m_curDriveMedia)).arg(result).arg(DFMGlobal::getUser())
+                    .arg(nativePath).arg(FileUtils::formatSize(info.size())).arg(fileType);
+            auditd.callWithArgumentList(QDBus::Block, "WriteLog", {logKey, curLog});
+        }
+    }
+    qInfo() << "Call D-Bus WriteLog end";
+
+    if (success) {
+        DFMApplication::dataPersistence()->remove("StagingMap", device.path());
+        DFMApplication::dataPersistence()->sync();
     }
 }
 
